@@ -64,7 +64,7 @@ module Spree
       end
 
       def raise_insufficient_quantity
-        flash[:error] = t('spree_inventory_error_flash_for_insufficient_quantity')
+        flash[:error] = t(:spree_inventory_error_flash_for_insufficient_quantity)
         redirect_to cart_path
       end
 
@@ -92,7 +92,7 @@ module Spree
       end
 
       def rescue_from_spree_gateway_error
-        flash[:error] = t('spree_gateway_error_flash_for_checkout')
+        flash[:error] = t(:spree_gateway_error_flash_for_checkout)
         render :edit
       end
   end

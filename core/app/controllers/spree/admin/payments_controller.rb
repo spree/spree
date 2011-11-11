@@ -40,7 +40,7 @@ module Spree
             until @order.completed?
               @order.next!
             end
-            flash.notice = t('new_order_completed')
+            flash.notice = t(:new_order_completed)
             respond_with(@payment) { |format| format.html { redirect_to admin_order_url(@order) } }
           end
 
@@ -54,9 +54,9 @@ module Spree
         # TODO: consider finer-grained control for this type of action (right now anyone in admin role can perform)
         return unless event = params[:e] and @payment.payment_source
         if @payment.payment_source.send("#{event}", @payment)
-          flash.notice = t('payment_updated')
+          flash.notice = t(:payment_updated)
         else
-          flash[:error] = t('cannot_perform_operation')
+          flash[:error] = t(:cannot_perform_operation)
         end
       rescue Spree::Core::GatewayError => ge
         flash[:error] = "#{ge.message}"

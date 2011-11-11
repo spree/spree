@@ -136,7 +136,7 @@ describe Spree::CheckoutController do
       end
 
       it "should set appropriate flash message" do
-        flash[:error].should == I18n.t('spree_gateway_error_flash_for_checkout')
+        flash[:error].should == I18n.t(:spree_gateway_error_flash_for_checkout)
       end
 
     end
@@ -165,7 +165,7 @@ describe Spree::CheckoutController do
       end
 
       it "should set flash message for no inventory" do
-        flash[:error].should == I18n.t('spree_inventory_error_flash_for_insufficient_quantity' , :names => "'#{product.name}'" )
+        flash[:error].should == I18n.t(:spree_inventory_error_flash_for_insufficient_quantity , :names => "'#{product.name}'" )
       end
 
     end
