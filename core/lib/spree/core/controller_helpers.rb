@@ -17,7 +17,7 @@ module Spree
         receiver.send :helper_method, 'current_gateway'
         receiver.send :helper_method, 'current_order'
         receiver.send :include, SslRequirement
-        receiver.send :include, Spree::CurrentOrder
+        receiver.send :include, Spree::Core::CurrentOrder
       end
 
       module InstanceMethods
