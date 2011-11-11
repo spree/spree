@@ -21,7 +21,7 @@ module Spree
       end
 
       initializer "spree.environment" do |app|
-        app.config.spree = Spree::Environment.new
+        app.config.spree = Spree::Core::Environment.new
       end
 
       initializer "spree.register.calculators" do |app|
