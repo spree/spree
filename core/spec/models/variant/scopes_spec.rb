@@ -11,13 +11,19 @@ describe "Variant scopes" do
     Spree::Variant.descend_by_popularity.first.should == variant_1
   end
 
-  it "finding by option values" do
-    option_type = Factory(:option_type, :name => "bar")
-    option_value = Factory(:option_value, :name => "foo", :option_type => option_type)
-    variant_1.option_values << option_value
-    variant_1.save
+  context "finding by option values" do
+    let!(:option_type) { Factory(:option_type, :name => "bar") }
+    let!(:option_value) do
+      option_value = Factory(:option_value, :name => "foo", :option_type => option_type)
+      variant_1.option_values << option_value
+      variant_1.save
+      option_value
+    end
 
-    variants = product.variants_including_master.has_option(option_type, option_value)
-    variants.should include(variant_1)
+    it "by objects" do
+      variants = product.variants_including_master.has_option(option_type, option_value)
+      variants.should include(variant_1)
+      variants.should_not include(variant_2)
+    end
   end
 end
