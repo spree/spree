@@ -244,4 +244,4 @@ class Spree::Product < ActiveRecord::Base
     end
 end
 
-require 'spree/product/scopes'
+require_dependency 'spree/product/scopes'
