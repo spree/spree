@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Admin::MailMethodsController do
   let(:order) { mock_model(Spree::Order, :complete? => true).as_null_object }
-  let(:mail_method) { mock_model(Spree::Core::MailMethod).as_null_object }
+  let(:mail_method) { mock_model(Spree::MailMethod).as_null_object }
 
   before do
     #controller.stub :current_user => nil
