@@ -14,6 +14,7 @@ describe "Accounts" do
     end
 
     it "should be able to edit a new user" do
+      pending
       visit signup_path
       fill_in "Email", :with => "email@person.com"
       fill_in "Password", :with => "password"

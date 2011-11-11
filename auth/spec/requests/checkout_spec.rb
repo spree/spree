@@ -70,6 +70,8 @@ describe "Checkout", :js => true do
   end
 
   it "should allow a user to register during checkout" do
+    pending
+
     click_link "RoR Mug"
     click_button "Add To Cart"
     click_link "Checkout"
