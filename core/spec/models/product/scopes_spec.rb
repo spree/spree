@@ -354,4 +354,16 @@ describe "product scopes" do
     products.should include(product)
     products.should_not include(other_product)
   end
+
+  it ".taxons_name_eq" do
+    taxon = Factory(:taxon)
+    product = Factory(:product)
+    product.taxons << taxon
+
+    other_product = Factory(:product)
+
+    products = Spree::Product.taxons_name_eq(taxon.name)
+    products.should include(product)
+    products.should_not include(other_product)
+  end
 end
