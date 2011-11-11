@@ -13,11 +13,7 @@ module Spree
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
-
         fire_event('spree.checkout.update')
-        if @order.respond_to?(:coupon_code) && @order.coupon_code.present?
-          fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
-        end
 
         if @order.next
           state_callback(:after)
