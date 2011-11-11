@@ -167,10 +167,9 @@ module Spree
       #
       # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
       # :order => 'COALESCE(cnt, 0) DESC'
-      ::Spree::Product.scope :descend_by_popularity,
-        {
-          :joins => :master,
-          :order => %Q{
+      def self.descend_by_popularity
+        joins(:master).
+        order(%Q{
              COALESCE((
                SELECT
                  COUNT(#{Spree::LineItem.quoted_table_name}.id)
@@ -183,8 +182,8 @@ module Spree
                WHERE
                  popular_variants.product_id = #{Spree::Product.quoted_table_name}.id
              ), 0) DESC
-          }
-        }
+          })
+      end
 
       # Produce an array of keywords for use in scopes.
       # Always return array with at least an empty string to avoid SQL errors

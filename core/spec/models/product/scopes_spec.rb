@@ -305,4 +305,15 @@ describe "product scopes" do
       products.should include(other_product)
     end
   end
+
+  it ".descend_by_popularity" do
+    product = Factory(:product)
+    line_item = Factory(:line_item, :variant => product.master)
+
+    other_product = Factory(:product)
+
+    products = Spree::Product.descend_by_popularity.to_a
+    products.first.should == product
+    products.last.should == other_product
+  end
 end
