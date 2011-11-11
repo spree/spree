@@ -51,7 +51,7 @@ describe Spree::Admin::OverviewController do
       ]
       order.line_items = line_items
       order.save
-      order.stub(:process_payments!).and_raise(Spree::GatewayError)
+      order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
       Spree::Config.set :allow_checkout_on_gateway_error => true
       order.finalize!
 
@@ -86,7 +86,7 @@ describe Spree::Admin::OverviewController do
       ]
       order.line_items = line_items
       order.save
-      order.stub(:process_payments!).and_raise(Spree::GatewayError)
+      order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
       Spree::Config.set :allow_checkout_on_gateway_error => true
       order.finalize!
 
