@@ -13,7 +13,7 @@ end
 
 if Spree::MailMethod.table_exists?
   Spree::MailSettings.init
-  Mail.register_interceptor(Spree::MailInterceptor)
+  Mail.register_interceptor(Spree::Core::MailInterceptor)
 end
 
 # Add extra support goodies (similar to rails active support)
