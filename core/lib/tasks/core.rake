@@ -11,7 +11,7 @@ For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
     if %w{.csv .yml}.include? file.extname
       puts "loading fixture #{Pathname.new(args.dir).join(file)}"
-      Spree::Fixtures.create_fixtures(args.dir, file.to_s.sub(file.extname, ""))
+      Spree::Core::Fixtures.create_fixtures(args.dir, file.to_s.sub(file.extname, ""))
     else
       if file.exist?
         puts "loading ruby #{file}"
