@@ -15,6 +15,10 @@ en:
   coupon: Coupon
   coupon_code: Coupon code
   editing_promotion: Editing Promotion
+  events:
+    spree:
+      checkout:
+        coupon_code_added: Coupon code added
   expiry: Expiry
   free_shipping: Free Shipping
   new_promotion: New Promotion
@@ -65,6 +69,8 @@ en:
       group: From product group
       manual: Manually choose
   rules: Rules
+  spree/order:
+    coupon_code: Coupon Code
   user_rule:
     choose_users: Choose users
   item_total_rule:

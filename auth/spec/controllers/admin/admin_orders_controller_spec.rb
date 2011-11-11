@@ -4,7 +4,7 @@ require 'cancan'
 
 describe Spree::Admin::OrdersController do
 
-  let(:order) { mock_model(Spree::Order, :number => 'R123', :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
+  let(:order) { mock_model(Spree::Order, :number => 'R123', :reload => nil, :save! => true) }
   before do
     Spree::Order.stub :find_by_number => order
     #ensure no respond_overrides are in effect

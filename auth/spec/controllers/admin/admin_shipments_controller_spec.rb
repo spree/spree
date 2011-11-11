@@ -7,7 +7,7 @@ describe Spree::Admin::ShipmentsController do
     let(:user) { Spree::User.new }
     let(:shipment) { mock_model Spree::Shipment }
     let(:shipping_method) { mock_model Spree::ShippingMethod }
-    let(:order) { mock_model(Spree::Order, :number => 'R123', :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
+    let(:order) { mock_model(Spree::Order, :number => 'R123', :reload => nil, :save! => true) }
 
     before do
       controller.stub :current_user => user

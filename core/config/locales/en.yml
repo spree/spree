@@ -67,7 +67,6 @@ en:
           zipcode: "Shipping address zipcode"
         checkout_complete: "Checkout Complete"
         completed_at: "Completed At"
-        coupon_code: "Coupon Code"
         ip_address: "IP Address"
         item_total: "Item Total"
         number: Number
@@ -398,8 +397,6 @@ en:
     spree:
       cart:
         add: 'Add to cart'
-      checkout:
-        coupon_code_added: "Coupon code added"
       order:
         contents_changed: "Order contents changed"
       user:

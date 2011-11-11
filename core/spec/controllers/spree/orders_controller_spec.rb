@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrdersController do
 
-  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
+  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true) }
   before do
     Spree::Order.stub(:find).with(1).and_return(order)
     controller.stub :current_user => nil
