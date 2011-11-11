@@ -139,13 +139,13 @@ module Spree
         like_any([:name], prepare_words(words))
       end
 
-      ::Spree::Product.scope :in_name_or_keywords, lambda{ |words|
-        ::Spree::Product.like_any([:name, :meta_keywords], prepare_words(words))
-      }
+      def self.in_name_or_keywords(words)
+        like_any([:name, :meta_keywords], prepare_words(words))
+      end
 
-      ::Spree::Product.scope :in_name_or_description, lambda{ |words|
-        ::Spree::Product.like_any([:name, :description, :meta_description, :meta_keywords], prepare_words(words))
-      }
+      def self.in_name_or_description(words)
+        like_any([:name, :description, :meta_description, :meta_keywords])
+      end
 
       ::Spree::Product.scope :with_ids, lambda{ |ids|
         ids = ids.split(',') if ids.is_a?(String)

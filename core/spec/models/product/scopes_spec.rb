@@ -253,12 +253,45 @@ describe "product scopes" do
     end
   end
 
-  it ".in_name" do
-    product = Factory(:product, :name => "foobar")
-    other_product = Factory(:product, :name => "fizzbuzz")
-    products = Spree::Product.in_name("foo")
+  context ".in" do
+    let!(:product) do
+      Factory(:product, :name => "foobar",
+                        :meta_keywords => "baz",
+                        :meta_description => "baa",
+                        :description => "wow")
+    end
 
-    products.should include(product)
-    products.should_not include(other_product)
+    let!(:other_product) { Factory(:product, :name => "fizzbuzz") }
+
+    it ".in_name" do
+      products = Spree::Product.in_name("foo")
+
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    it ".in_name_or_keywords" do
+      products = Spree::Product.in_name_or_keywords("baz")
+
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    context ".in_name_or_description" do
+      it "meta_description" do
+        products = Spree::Product.in_name_or_description("baa")
+
+        products.should include(product)
+        products.should_not include(other_product)
+
+        products
+      end
+
+      it "description" do
+        products = Spree::Product.in_name_or_description("wow")
+        products.should include(product)
+        products.should_not include(other_product)
+      end
+    end
   end
 end
