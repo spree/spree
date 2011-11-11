@@ -140,7 +140,7 @@ class Spree::ProductGroup < ActiveRecord::Base
   end
 
   def include?(product)
-    res = apply_on(Spree::Product.id_equals(product.id), false)
+    res = apply_on(Spree::Product.where(:id => product.id), false)
     res.count > 0
   end
 
