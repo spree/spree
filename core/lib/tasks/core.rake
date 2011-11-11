@@ -1,5 +1,5 @@
 require 'active_record'
-require 'spree/custom_fixtures'
+require 'spree/core/custom_fixtures'
 
 namespace :db do
   desc %q{Loads a specified fixture file: 
