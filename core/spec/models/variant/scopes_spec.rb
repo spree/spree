@@ -13,17 +13,40 @@ describe "Variant scopes" do
 
   context "finding by option values" do
     let!(:option_type) { Factory(:option_type, :name => "bar") }
-    let!(:option_value) do
+    let!(:option_value_1) do
       option_value = Factory(:option_value, :name => "foo", :option_type => option_type)
       variant_1.option_values << option_value
-      variant_1.save
       option_value
     end
 
+    let!(:option_value_2) do
+      option_value = Factory(:option_value, :name => "fizz", :option_type => option_type)
+      variant_1.option_values << option_value
+      option_value
+    end
+
+    let!(:product_variants) { product.variants_including_master }
+
     it "by objects" do
-      variants = product.variants_including_master.has_option(option_type, option_value)
+      variants = product_variants.has_option(option_type, option_value_1)
       variants.should include(variant_1)
       variants.should_not include(variant_2)
+    end
+
+    it "by names" do
+      variants = product_variants.has_option("bar", "foo")
+      variants.should include(variant_1)
+      variants.should_not include(variant_2)
+    end
+
+    it "by ids" do
+      variants = product_variants.has_option(option_type.id, option_value_1.id)
+      variants.should include(variant_1)
+      variants.should_not include(variant_2)
+    end
+
+    it "by mixed conditions" do
+      variants = product_variants.has_option(option_type.id, "foo", option_value_2)
     end
   end
 end
