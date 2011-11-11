@@ -62,8 +62,8 @@ Disallow: /users
 
     def configure_application
       application <<-APP
-    config.middleware.use "Spree::Middleware::SeoAssist"
-    config.middleware.use "Spree::Middleware::RedirectLegacyProductUrl"
+    config.middleware.use "Spree::Core::Middleware::SeoAssist"
+    config.middleware.use "Spree::Core::Middleware::RedirectLegacyProductUrl"
 
     config.to_prepare do
       #loads application's model / class decorators
