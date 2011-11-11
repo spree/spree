@@ -150,6 +150,11 @@ class Product < ActiveRecord::Base
     variants.any?
   end
 
+  # returns only active variants
+  def active_variants
+    variants.active.includes([:option_values, :images])
+  end
+
   # returns the number of inventory units "on_hand" for this product
   def on_hand
     has_variants? ? variants.inject(0){|sum, v| sum + v.on_hand} : master.on_hand
