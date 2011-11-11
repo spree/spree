@@ -101,7 +101,7 @@ describe Spree::Gateway::Braintree do
       # transaction.status.should == Braintree::Transaction::Status::SubmittedForSettlement
       # lambda do
       #   @payment.payment_source.capture(@payment)
-      # end.should raise_error(Spree::GatewayError, "Cannot submit for settlement unless status is authorized. (91507)")
+      # end.should raise_error(Spree::Core::GatewayError, "Cannot submit for settlement unless status is authorized. (91507)")
     end
   end
 
