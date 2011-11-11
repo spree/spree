@@ -3,7 +3,7 @@ require 'spec_helper'
 # Its pretty difficult to test this module in isolation b/c it needs to work in conjunction with an actual class that
 # extends ActiveRecord::Base and has a corresponding table in the database.  So we'll just test it using Order and
 # ShippingMethod instead since those classes are including the module.
-describe Spree::CalculatedAdjustments do
+describe Spree::Core::CalculatedAdjustments do
 
   let(:calculator) { mock_model(Spree::Calculator, :compute => 10, :[]= => nil) }
 
