@@ -129,6 +129,9 @@ module Spree
         joins(:variants_including_master => :option_values).where(conditions)
       end
 
+      # Finds all products which have either:
+      # 1) have an option value with the name matching the one given
+      # 2) have a product property with a value matching the one given
       def self.with(value)
         includes(:variants_including_master => :option_values).
         includes(:product_properties).
