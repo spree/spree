@@ -153,10 +153,11 @@ module Spree
         like_any([:name, :description, :meta_description, :meta_keywords])
       end
 
-      ::Spree::Product.scope :with_ids, lambda{ |ids|
-        ids = ids.split(',') if ids.is_a?(String)
-        { :conditions => {:id => ids} }
-      }
+      # Finds all products that have the ids matching the given collection of ids.
+      # Alternatively, you could use find(collection_of_ids), but that would raise an exception if one product couldn't be found
+      def self.with_ids(*ids)
+        where(:id => ids)
+      end
 
       # Sorts products from most popular (poularity is extracted from how many
       # times use has put product in cart, not completed orders)

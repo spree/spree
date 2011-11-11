@@ -294,4 +294,15 @@ describe "product scopes" do
       end
     end
   end
+
+  context ".with_ids" do
+    let!(:product) { Factory(:product) }
+    let!(:other_product) { Factory(:product) }
+
+    it "with a collection of ids" do
+      products = Spree::Product.with_ids(product.id, other_product.id)
+      products.should include(product)
+      products.should include(other_product)
+    end
+  end
 end
