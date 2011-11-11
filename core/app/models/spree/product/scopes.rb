@@ -190,7 +190,7 @@ module Spree
     end
 
     def self.available(available_on = nil)
-      where(arel_table[:available_on].lteq(available_on || Time.zone.now ))
+      where("available_on <= ?", available_on || Time.now)
     end
 
     #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)

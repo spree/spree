@@ -327,4 +327,17 @@ describe "product scopes" do
     other_product.should be_persisted
     products.should_not include(other_product)
   end
+
+  it ".available" do
+    product = Factory(:product, :available_on => 1.day.ago)
+    other_product = Factory(:product, :available_on => 1.day.from_now)
+
+    todays_products = Spree::Product.available
+    todays_products.should include(product)
+    todays_products.should_not include(other_product)
+
+    future_products = Spree::Product.available(2.days.from_now)
+    future_products.should include(product)
+    future_products.should include(other_product)
+  end
 end
