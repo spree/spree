@@ -185,53 +185,57 @@ module Spree
         })
     end
 
-    class << self
-      def not_deleted
-        where(arel_table[:deleted_at].eq(nil))
+    def self.not_deleted
+      where(arel_table[:deleted_at].eq(nil))
+    end
+
+    def self.available(available_on = nil)
+      where(arel_table[:available_on].lteq(available_on || Time.zone.now ))
+    end
+
+    #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
+    def self.active
+      not_deleted.available
+    end
+
+    def self.on_hand
+      where(arel_table[:count_on_hand].gteq(0))
+    end
+
+    def self.taxons_name_eq(name)
+      joins(:taxons).where(Spree::Taxon.arel_table[:name].eq(name))
+    end
+
+    if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
+      if table_exists?
+        scope :group_by_products_id, { :group => column_names.map { |col_name| "#{table_name}.#{col_name}"} }
       end
+    else
+      scope :group_by_products_id, { :group => "#{self.quoted_table_name}.id" }
+    end
+    search_methods :group_by_products_id
 
-      def available(available_on = nil)
-        where(arel_table[:available_on].lteq(available_on || Time.zone.now ))
-      end
+    private
 
-      #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-      def active
-        not_deleted.available
-      end
-
-      def on_hand
-        where(arel_table[:count_on_hand].gteq(0))
-      end
-
-      def id_equals(input_id)
-        where(arel_table[:id].eq(input_id))
-      end
-
-      def taxons_name_eq(name)
-        joins(:taxons).where(Spree::Taxon.arel_table[:name].eq(name))
-      end
-
-      private
-
-      def variant_table_name
+      def self.variant_table_name
         Spree::Variant.quoted_table_name
       end
 
       # specifically avoid having an order for taxon search (conflicts with main order)
-      def prepare_taxon_conditions(taxons)
+      def self.prepare_taxon_conditions(taxons)
         ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
         joins(:taxons).where("spree_taxons.id" => ids)
       end
 
       # Produce an array of keywords for use in scopes.
       # Always return array with at least an empty string to avoid SQL errors
-      def prepare_words(words)
+      def self.prepare_words(words)
         return [''] if words.blank?
         a = words.split(/[,\s]/).map(&:strip)
         a.any? ? a : ['']
       end
 
-      def get_taxons(*ids_or_records_or_names)
+      def self.get_taxons(*ids_or_records_or_names)
         taxons = Spree::Taxon.table_name
         ids_or_records_or_names.flatten.map { |t|
           case t
@@ -245,18 +249,6 @@ module Spree
           end
         }.compact.flatten.uniq
       end
-
-
     end
-
-    if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-      if table_exists?
-        scope :group_by_products_id, { :group => column_names.map { |col_name| "#{table_name}.#{col_name}"} }
-      end
-    else
-      scope :group_by_products_id, { :group => "#{self.quoted_table_name}.id" }
-    end
-    search_methods :group_by_products_id
-  end
 end
 
