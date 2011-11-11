@@ -6,7 +6,7 @@ module Spree
     ssl_required
 
     before_filter :load_order
-    rescue_from Spree::GatewayError, :with => :rescue_from_spree_gateway_error
+    rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     respond_to :html
 

@@ -59,7 +59,7 @@ describe Spree::Creditcard do
     context "when gateway does not match the environment" do
       it "should raise an exception" do
         @payment_gateway.stub :environment => "foo"
-        lambda {@creditcard.authorize(100, @payment)}.should raise_error(Spree::GatewayError)
+        lambda {@creditcard.authorize(100, @payment)}.should raise_error(Spree::Core::GatewayError)
       end
     end
 
@@ -81,7 +81,7 @@ describe Spree::Creditcard do
         @payment.should_not_receive(:pend)
         lambda{
           @creditcard.authorize(100, @payment)
-        }.should raise_error(Spree::GatewayError)
+        }.should raise_error(Spree::Core::GatewayError)
       end
     end
   end
@@ -98,7 +98,7 @@ describe Spree::Creditcard do
     context "when gateway does not match the environment" do
      it "should raise an exception" do
        @payment_gateway.stub :environment => "foo"
-       lambda {@creditcard.purchase(100, @payment)}.should raise_error(Spree::GatewayError)
+       lambda {@creditcard.purchase(100, @payment)}.should raise_error(Spree::Core::GatewayError)
      end
     end
     context "if sucessfull" do
@@ -122,7 +122,7 @@ describe Spree::Creditcard do
        @payment.should_not_receive(:pend)
        lambda{
          @creditcard.purchase(100, @payment)
-       }.should raise_error(Spree::GatewayError)
+       }.should raise_error(Spree::Core::GatewayError)
      end
     end
   end
@@ -164,7 +164,7 @@ describe Spree::Creditcard do
       context "when gateway does not match the environment" do
        it "should raise an exception" do
          @payment_gateway.stub :environment => "foo"
-         lambda {@creditcard.capture(@payment)}.should raise_error(Spree::GatewayError)
+         lambda {@creditcard.capture(@payment)}.should raise_error(Spree::Core::GatewayError)
        end
       end
       context "if sucessfull" do
@@ -184,7 +184,7 @@ describe Spree::Creditcard do
          @payment.should_not_receive(:complete)
          lambda{
            @creditcard.capture(@payment)
-         }.should raise_error(Spree::GatewayError)
+         }.should raise_error(Spree::Core::GatewayError)
        end
       end
     end
@@ -230,7 +230,7 @@ describe Spree::Creditcard do
     context "when gateway does not match the environment" do
       it "should raise an exception" do
         @payment_gateway.stub :environment => "foo"
-        lambda {@creditcard.void(@payment)}.should raise_error(Spree::GatewayError)
+        lambda {@creditcard.void(@payment)}.should raise_error(Spree::Core::GatewayError)
       end
     end
     context "if sucessfull" do
@@ -250,7 +250,7 @@ describe Spree::Creditcard do
         @payment.should_not_receive(:void)
         lambda {
           @creditcard.void(@payment)
-        }.should raise_error(Spree::GatewayError)
+        }.should raise_error(Spree::Core::GatewayError)
       end
     end
   end
@@ -315,7 +315,7 @@ describe Spree::Creditcard do
     context "when gateway does not match the environment" do
       it "should raise an exception" do
         @payment_gateway.stub :environment => "foo"
-        lambda {@creditcard.credit(@payment)}.should raise_error(Spree::GatewayError)
+        lambda {@creditcard.credit(@payment)}.should raise_error(Spree::Core::GatewayError)
       end
     end
 
@@ -349,7 +349,7 @@ describe Spree::Creditcard do
         Spree::Payment.should_not_receive(:create)
         lambda {
           @creditcard.credit(@payment)
-        }.should raise_error(Spree::GatewayError)
+        }.should raise_error(Spree::Core::GatewayError)
       end
     end
   end

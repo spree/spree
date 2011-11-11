@@ -223,7 +223,7 @@ class Spree::Creditcard < ActiveRecord::Base
     end
     logger.error(I18n.t(:gateway_error))
     logger.error("  #{error.to_yaml}")
-    raise Spree::GatewayError.new(text)
+    raise Spree::Core::GatewayError.new(text)
   end
 
   def gateway_options(payment)
@@ -266,6 +266,6 @@ class Spree::Creditcard < ActiveRecord::Base
   def check_environment(gateway)
     return if gateway.environment == Rails.env
     message = I18n.t(:gateway_config_unavailable) + " - #{Rails.env}"
-    raise Spree::GatewayError.new(message)
+    raise Spree::Core::GatewayError.new(message)
   end
 end

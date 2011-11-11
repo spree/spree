@@ -90,7 +90,7 @@ describe Spree::Order do
 
        context "when credit card payment fails" do
          before do
-           order.stub(:process_payments!).and_raise(Spree::GatewayError)
+           order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
          end
 
          context "when not configured to allow failed payments" do

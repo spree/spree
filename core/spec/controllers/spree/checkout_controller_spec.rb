@@ -124,10 +124,10 @@ describe Spree::CheckoutController do
       end
     end
 
-    context "Spree::GatewayError" do
+    context "Spree::Core::GatewayError" do
 
       before do
-        order.stub(:update_attributes).and_raise(Spree::GatewayError)
+        order.stub(:update_attributes).and_raise(Spree::Core::GatewayError)
         post :update, {:state => "whatever"}
       end
 

@@ -44,7 +44,7 @@ module Spree
             respond_with(@payment) { |format| format.html { redirect_to admin_order_url(@order) } }
           end
 
-        rescue Spree::GatewayError => e
+        rescue Spree::Core::GatewayError => e
           flash[:error] = "#{e.message}"
           respond_with(@payment) { |format| format.html { redirect_to new_admin_payment_path(@order) } }
         end
@@ -58,7 +58,7 @@ module Spree
         else
           flash[:error] = t('cannot_perform_operation')
         end
-      rescue Spree::GatewayError => ge
+      rescue Spree::Core::GatewayError => ge
         flash[:error] = "#{ge.message}"
       ensure
         respond_with(@payment) { |format| format.html { redirect_to admin_order_payments_path(@order) } }
