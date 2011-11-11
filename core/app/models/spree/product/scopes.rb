@@ -129,13 +129,11 @@ module Spree
         joins(:variants_including_master => :option_values).where(conditions)
       end
 
-      # finds product having option value OR product_property
-      ::Spree::Product.scope :with, lambda{ |value|
-        {
-          :conditions => ["#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value],
-          :include => [{ :variants_including_master => :option_values }, :product_properties]
-        }
-      }
+      def self.with(value)
+        includes(:variants_including_master => :option_values).
+        includes(:product_properties).
+        where("#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value)
+      end
 
       ::Spree::Product.scope :in_name, lambda{ |words|
         ::Spree::Product.like_any([:name], prepare_words(words))

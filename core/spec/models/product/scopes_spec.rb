@@ -228,4 +228,28 @@ describe "product scopes" do
       products.should_not include(other_product)
     end
   end
+
+  context ".with" do
+    let!(:product) { Factory(:product) }
+    let!(:other_product) { Factory(:product) }
+
+    it "property value" do
+      property = Factory(:property)
+      Spree::ProductProperty.create!(:product => product, :property => property, :value => "foo")
+
+      products = Spree::Product.with("foo")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+
+    it "option value" do
+      option_value = Factory(:option_value, :name => "bar")
+      product.master.option_values << option_value
+      product.master.save
+
+      products = Spree::Product.with("bar")
+      products.should include(product)
+      products.should_not include(other_product)
+    end
+  end
 end
