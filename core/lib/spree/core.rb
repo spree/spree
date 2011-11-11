@@ -90,5 +90,5 @@ if defined?(ActionView)
 end
 
 ActiveSupport.on_load(:action_view) do
-  include Spree::StoreHelpers
+  include Spree::Core::StoreHelpers
 end
