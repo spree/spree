@@ -224,7 +224,7 @@ module Spree
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
         ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
-        joins(:taxons).where("spree_taxons.id" => ids)
+        joins(:taxons).where("#{Spree::Taxon.table_name}.id" => ids)
       end
 
       # Produce an array of keywords for use in scopes.
