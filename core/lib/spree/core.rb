@@ -63,8 +63,8 @@ require 'spree/preference_access'
 require 'spree/config'
 require 'spree/core/mail_settings'
 require 'spree/core/mail_interceptor'
-require 'spree/middleware/redirect_legacy_product_url'
-require 'spree/middleware/seo_assist'
+require 'spree/core/middleware/redirect_legacy_product_url'
+require 'spree/core/middleware/seo_assist'
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'
