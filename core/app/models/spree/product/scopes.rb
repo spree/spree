@@ -135,9 +135,9 @@ module Spree
         where("#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value)
       end
 
-      ::Spree::Product.scope :in_name, lambda{ |words|
-        ::Spree::Product.like_any([:name], prepare_words(words))
-      }
+      def self.in_name(words)
+        like_any([:name], prepare_words(words))
+      end
 
       ::Spree::Product.scope :in_name_or_keywords, lambda{ |words|
         ::Spree::Product.like_any([:name, :meta_keywords], prepare_words(words))

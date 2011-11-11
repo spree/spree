@@ -252,4 +252,13 @@ describe "product scopes" do
       products.should_not include(other_product)
     end
   end
+
+  it ".in_name" do
+    product = Factory(:product, :name => "foobar")
+    other_product = Factory(:product, :name => "fizzbuzz")
+    products = Spree::Product.in_name("foo")
+
+    products.should include(product)
+    products.should_not include(other_product)
+  end
 end
