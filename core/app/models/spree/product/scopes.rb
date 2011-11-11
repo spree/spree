@@ -150,7 +150,7 @@ module Spree
 
       # Finds all products that have a name, description, meta_description or meta_keywords containing the given keywords.
       def self.in_name_or_description(words)
-        like_any([:name, :description, :meta_description, :meta_keywords])
+        like_any([:name, :description, :meta_description, :meta_keywords], prepare_words(words))
       end
 
       # Finds all products that have the ids matching the given collection of ids.
