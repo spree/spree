@@ -136,7 +136,7 @@ module Spree
       end
 
       ::Spree::Product.scope :in_name, lambda{ |words|
-        ::Spree::Product.like_any([:name], prepare_words(words))
+        ::Spree::Product.like_any([:name], prepare_words(*words))
       }
 
       ::Spree::Product.scope :in_name_or_keywords, lambda{ |words|
