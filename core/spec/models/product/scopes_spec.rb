@@ -340,4 +340,18 @@ describe "product scopes" do
     future_products.should include(product)
     future_products.should include(other_product)
   end
+
+  it ".on hand" do
+    product = Factory(:product)
+    product.master.update_attribute(:count_on_hand, 1)
+    product.save!
+
+    other_product = Factory(:product)
+    other_product.master.update_attribute(:count_on_hand, -1)
+    other_product.save!
+
+    products = Spree::Product.on_hand
+    products.should include(product)
+    products.should_not include(other_product)
+  end
 end

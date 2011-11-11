@@ -199,7 +199,7 @@ module Spree
     end
 
     def self.on_hand
-      where(arel_table[:count_on_hand].gteq(0))
+      where("count_on_hand >= 0")
     end
 
     def self.taxons_name_eq(name)
