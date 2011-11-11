@@ -1,5 +1,5 @@
 class Spree::Api::ProductsController < Spree::Api::BaseController
-  include Spree::Search
+  include Spree::Core::Search
 
   private
     def collection
