@@ -12,7 +12,7 @@ ActiveRecord::Base.class_eval do
 end
 
 if Spree::MailMethod.table_exists?
-  Spree::MailSettings.init
+  Spree::Core::MailSettings.init
   Mail.register_interceptor(Spree::Core::MailInterceptor)
 end
 

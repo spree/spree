@@ -18,7 +18,7 @@ module Spree
 
       private
       def initialize_mail_settings
-        Spree::MailSettings.init
+        Spree::Core::MailSettings.init
       end
     end
   end

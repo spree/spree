@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::MailSettings do
+describe Spree::Core::MailSettings do
   let(:mail_method) { Spree::MailMethod.new(:environment => "test") }
 
   context "init" do
@@ -9,7 +9,7 @@ describe Spree::MailSettings do
     context "perform_delivery preference" do
       it "should override the application defaults" do
         mail_method.set_preference(:enable_mail_delivery, false)
-        Spree::MailSettings.init
+        Spree::Core::MailSettings.init
         ActionMailer::Base.perform_deliveries.should be_false
         mail_method.set_preference(:enable_mail_delivery, true)
       end
@@ -23,7 +23,7 @@ describe Spree::MailSettings do
 
         context "mail_auth_type preference" do
           it "should override the application defaults" do
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:authentication].should == "login"
           end
         end
@@ -31,7 +31,7 @@ describe Spree::MailSettings do
         context "mail_host preference" do
           it "should override the application defaults" do
             mail_method.set_preference(:mail_host, "smtp.example.com")
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:address].should == "smtp.example.com"
           end
         end
@@ -39,7 +39,7 @@ describe Spree::MailSettings do
         context "mail_domain preference" do
           it "should override the application defaults" do
             mail_method.set_preference(:mail_domain, "example.com")
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:domain].should == "example.com"
           end
         end
@@ -47,7 +47,7 @@ describe Spree::MailSettings do
         context "mail_port preference" do
           it "should override the application defaults" do
             mail_method.set_preference(:mail_port, "123")
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:port].should == "123"
           end
         end
@@ -55,7 +55,7 @@ describe Spree::MailSettings do
         context "smtp_username preference" do
           it "should override the application defaults" do
             mail_method.set_preference(:smtp_username, "schof")
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:user_name].should == "schof"
           end
         end
@@ -63,7 +63,7 @@ describe Spree::MailSettings do
         context "smtp_password preference" do
           it "should override the application defaults" do
             mail_method.set_preference(:smtp_password, "hellospree!")
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:password].should == "hellospree!"
           end
         end
@@ -71,7 +71,7 @@ describe Spree::MailSettings do
         context "secure_connection_type preference" do
           it "should override the application defaults" do
             mail_method.set_preference(:secure_connection_type, "TLS")
-            Spree::MailSettings.init
+            Spree::Core::MailSettings.init
             ActionMailer::Base.smtp_settings[:enable_starttls_auto].should be_true
           end
         end
