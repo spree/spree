@@ -138,14 +138,17 @@ module Spree
         where("#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value)
       end
 
+      # Finds all products that have a name containing the given words.
       def self.in_name(words)
         like_any([:name], prepare_words(words))
       end
 
+      # Finds all products that have a name or meta_keywords containing the given words.
       def self.in_name_or_keywords(words)
         like_any([:name, :meta_keywords], prepare_words(words))
       end
 
+      # Finds all products that have a name, description, meta_description or meta_keywords containing the given keywords.
       def self.in_name_or_description(words)
         like_any([:name, :description, :meta_description, :meta_keywords])
       end
