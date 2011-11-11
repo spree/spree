@@ -22,191 +22,168 @@ module Spree
       self.scope(name.to_s, relation.order(order_text))
     end
 
-      def self.ascend_by_master_price
-        joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
+    def self.ascend_by_master_price
+      joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
+    end
+
+    def self.descend_by_master_price
+      joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
+    end
+
+    # Ryan Bates - http://railscasts.com/episodes/112
+    # general merging of conditions, names following the searchlogic pattern
+    scope :conditions, lambda { |*args| { :conditions => args } }
+
+    # conditions_all is a more descriptively named enhancement of the above
+    scope :conditions_all, lambda { |*args| { :conditions => [args].flatten } }
+
+    # forming the disjunction of a list of conditions (as strings)
+    scope :conditions_any, lambda { |*args|
+      args = [args].flatten
+      raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
+      {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
+    }
+
+    def self.price_between(low, high)
+      joins(:master).where(Spree::Variant.table_name => { :price => low..high })
+    end
+
+    def self.master_price_lte(price)
+      joins(:master).where("#{variant_table_name}.price <= ?", price)
+    end
+
+    def self.master_price_gte(price)
+      joins(:master).where("#{variant_table_name}.price >= ?", price)
+    end
+
+    # This scope selects products in taxon AND all its descendants
+    # If you need products only within one taxon use
+    #
+    #   Spree::Product.taxons_id_eq(x)
+    def self.in_taxon(taxon)
+      joins(:taxons).where(Spree::Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+    end
+
+    # This scope selects products in all taxons AND all its descendants
+    # If you need products only within one taxon use
+    #
+    #   Spree::Product.taxons_id_eq([x,y])
+    #
+    def self.in_taxons(*taxons)
+      taxons = get_taxons(taxons)
+      taxons.first ? prepare_taxon_conditions(taxons) : scoped
+    end
+
+    def self.in_cached_group(product_group)
+      joins(:product_groups).where("spree_product_groups_products.product_group_id" => product_group)
+    end
+
+    # a scope that finds all products having property specified by name, object or id
+    def self.with_property(property)
+      properties = Spree::Property.table_name
+      conditions = case property
+      when String          then { "#{properties}.name" => property }
+      when Spree::Property then { "#{properties}.id" => property.id }
+      else                      { "#{properties}.id" => property.to_i }
       end
 
-      def self.descend_by_master_price
-        joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
+      joins(:properties).where(conditions)
+    end
+
+    # a simple test for product with a certain property-value pairing
+    # note that it can test for properties with NULL values, but not for absent values
+    def self.with_property_value(property, value)
+      properties = Spree::Property.table_name
+      conditions = case property
+      when String          then ["#{properties}.name = ?", property]
+      when Spree::Property then ["#{properties}.id = ?", property.id]
+      else                      ["#{properties}.id = ?", property.to_i]
+      end
+      conditions = ["#{Spree::ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
+
+      joins(:properties).where(conditions)
+    end
+
+    # a scope that finds all products having an option_type specified by name, object or id
+    def self.with_option(option)
+      option_types = Spree::OptionType.table_name
+      conditions = case option
+      when String            then { "#{option_types}.name" => option }
+      when Spree::OptionType then { "#{option_types}.id" => option.id }
+      else                        { "#{option_types}.id" => option.to_i }
       end
 
-      # Ryan Bates - http://railscasts.com/episodes/112
-      # general merging of conditions, names following the searchlogic pattern
-      scope :conditions, lambda { |*args| { :conditions => args } }
+      joins(:option_types).where(conditions)
+    end
 
-      # conditions_all is a more descriptively named enhancement of the above
-      scope :conditions_all, lambda { |*args| { :conditions => [args].flatten } }
-
-      # forming the disjunction of a list of conditions (as strings)
-      scope :conditions_any, lambda { |*args|
-        args = [args].flatten
-        raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
-        {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
-      }
-
-      def self.price_between(low, high)
-        joins(:master).where(Spree::Variant.table_name => { :price => low..high })
+    # a scope that finds all products having an option value specified by name, object or id
+    def self.with_option_value(option, value)
+      option_values = Spree::OptionValue.table_name
+      option_type_id = case option
+        when String then Spree::OptionType.find_by_name(option) || option.to_i
+        when Spree::OptionType then option.id
+        else option.to_i
       end
 
-      def self.master_price_lte(price)
-        joins(:master).where("#{variant_table_name}.price <= ?", price)
-      end
+      conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
+      joins(:variants_including_master => :option_values).where(conditions)
+    end
 
-      def self.master_price_gte(price)
-        joins(:master).where("#{variant_table_name}.price >= ?", price)
-      end
+    # Finds all products which have either:
+    # 1) have an option value with the name matching the one given
+    # 2) have a product property with a value matching the one given
+    def self.with(value)
+      includes(:variants_including_master => :option_values).
+      includes(:product_properties).
+      where("#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value)
+    end
 
-      # This scope selects products in taxon AND all its descendants
-      # If you need products only within one taxon use
-      #
-      #   Spree::Product.taxons_id_eq(x)
-      def self.in_taxon(taxon)
-        joins(:taxons).where(Spree::Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
-      end
+    # Finds all products that have a name containing the given words.
+    def self.in_name(words)
+      like_any([:name], prepare_words(words))
+    end
 
-      # This scope selects products in all taxons AND all its descendants
-      # If you need products only within one taxon use
-      #
-      #   Spree::Product.taxons_id_eq([x,y])
-      #
-      def self.in_taxons(*taxons)
-        taxons = get_taxons(taxons)
-        taxons.first ? prepare_taxon_conditions(taxons) : scoped
-      end
+    # Finds all products that have a name or meta_keywords containing the given words.
+    def self.in_name_or_keywords(words)
+      like_any([:name, :meta_keywords], prepare_words(words))
+    end
 
-      def self.in_cached_group(product_group)
-        joins(:product_groups).where("spree_product_groups_products.product_group_id" => product_group)
-      end
+    # Finds all products that have a name, description, meta_description or meta_keywords containing the given keywords.
+    def self.in_name_or_description(words)
+      like_any([:name, :description, :meta_description, :meta_keywords], prepare_words(words))
+    end
 
-      # a scope that finds all products having property specified by name, object or id
-      def self.with_property(property)
-        properties = Spree::Property.table_name
-        conditions = case property
-        when String          then { "#{properties}.name" => property }
-        when Spree::Property then { "#{properties}.id" => property.id }
-        else                      { "#{properties}.id" => property.to_i }
-        end
+    # Finds all products that have the ids matching the given collection of ids.
+    # Alternatively, you could use find(collection_of_ids), but that would raise an exception if one product couldn't be found
+    def self.with_ids(*ids)
+      where(:id => ids)
+    end
 
-        joins(:properties).where(conditions)
-      end
-
-      # a simple test for product with a certain property-value pairing
-      # note that it can test for properties with NULL values, but not for absent values
-      def self.with_property_value(property, value)
-        properties = Spree::Property.table_name
-        conditions = case property
-        when String          then ["#{properties}.name = ?", property]
-        when Spree::Property then ["#{properties}.id = ?", property.id]
-        else                      ["#{properties}.id = ?", property.to_i]
-        end
-        conditions = ["#{Spree::ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
-
-        joins(:properties).where(conditions)
-      end
-
-      # a scope that finds all products having an option_type specified by name, object or id
-      def self.with_option(option)
-        option_types = Spree::OptionType.table_name
-        conditions = case option
-        when String            then { "#{option_types}.name" => option }
-        when Spree::OptionType then { "#{option_types}.id" => option.id }
-        else                        { "#{option_types}.id" => option.to_i }
-        end
-
-        joins(:option_types).where(conditions)
-      end
-
-      # a scope that finds all products having an option value specified by name, object or id
-      def self.with_option_value(option, value)
-        option_values = Spree::OptionValue.table_name
-        option_type_id = case option
-          when String then Spree::OptionType.find_by_name(option) || option.to_i
-          when Spree::OptionType then option.id
-          else option.to_i
-        end
-
-        conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-        joins(:variants_including_master => :option_values).where(conditions)
-      end
-
-      # Finds all products which have either:
-      # 1) have an option value with the name matching the one given
-      # 2) have a product property with a value matching the one given
-      def self.with(value)
-        includes(:variants_including_master => :option_values).
-        includes(:product_properties).
-        where("#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value)
-      end
-
-      # Finds all products that have a name containing the given words.
-      def self.in_name(words)
-        like_any([:name], prepare_words(words))
-      end
-
-      # Finds all products that have a name or meta_keywords containing the given words.
-      def self.in_name_or_keywords(words)
-        like_any([:name, :meta_keywords], prepare_words(words))
-      end
-
-      # Finds all products that have a name, description, meta_description or meta_keywords containing the given keywords.
-      def self.in_name_or_description(words)
-        like_any([:name, :description, :meta_description, :meta_keywords], prepare_words(words))
-      end
-
-      # Finds all products that have the ids matching the given collection of ids.
-      # Alternatively, you could use find(collection_of_ids), but that would raise an exception if one product couldn't be found
-      def self.with_ids(*ids)
-        where(:id => ids)
-      end
-
-      # Sorts products from most popular (popularity is extracted from how many
-      # times use has put product in cart, not completed orders)
-      #
-      # there is alternative faster and more elegant solution, it has small drawback though,
-      # it doesn stack with other scopes :/
-      #
-      # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
-      # :order => 'COALESCE(cnt, 0) DESC'
-      def self.descend_by_popularity
-        joins(:master).
-        order(%Q{
-             COALESCE((
-               SELECT
-                 COUNT(#{Spree::LineItem.quoted_table_name}.id)
-               FROM
-                 #{Spree::LineItem.quoted_table_name}
-               JOIN
-                 #{Spree::Variant.quoted_table_name} AS popular_variants
-               ON
-                 popular_variants.id = #{Spree::LineItem.quoted_table_name}.variant_id
-               WHERE
-                 popular_variants.product_id = #{Spree::Product.quoted_table_name}.id
-             ), 0) DESC
-          })
-      end
-
-      # Produce an array of keywords for use in scopes.
-      # Always return array with at least an empty string to avoid SQL errors
-      def self.prepare_words(words)
-        return [''] if words.blank?
-        a = words.split(/[,\s]/).map(&:strip)
-        a.any? ? a : ['']
-      end
-
-      def self.get_taxons(*ids_or_records_or_names)
-        taxons = Spree::Taxon.table_name
-        ids_or_records_or_names.flatten.map { |t|
-          case t
-          when Integer then Spree::Taxon.find_by_id(t)
-          when ActiveRecord::Base then t
-          when String
-            Spree::Taxon.find_by_name(t) ||
-            Spree::Taxon.find(:first, :conditions => [
-              "#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/"
-            ])
-          end
-        }.compact.flatten.uniq
-      end
+    # Sorts products from most popular (popularity is extracted from how many
+    # times use has put product in cart, not completed orders)
+    #
+    # there is alternative faster and more elegant solution, it has small drawback though,
+    # it doesn stack with other scopes :/
+    #
+    # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
+    # :order => 'COALESCE(cnt, 0) DESC'
+    def self.descend_by_popularity
+      joins(:master).
+      order(%Q{
+           COALESCE((
+             SELECT
+               COUNT(#{Spree::LineItem.quoted_table_name}.id)
+             FROM
+               #{Spree::LineItem.quoted_table_name}
+             JOIN
+               #{Spree::Variant.quoted_table_name} AS popular_variants
+             ON
+               popular_variants.id = #{Spree::LineItem.quoted_table_name}.variant_id
+             WHERE
+               popular_variants.product_id = #{Spree::Product.quoted_table_name}.id
+           ), 0) DESC
+        })
+    end
 
     class << self
       def not_deleted
@@ -245,6 +222,30 @@ module Spree
         ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
         joins(:taxons).where("spree_taxons.id" => ids)
       end
+
+      # Produce an array of keywords for use in scopes.
+      # Always return array with at least an empty string to avoid SQL errors
+      def prepare_words(words)
+        return [''] if words.blank?
+        a = words.split(/[,\s]/).map(&:strip)
+        a.any? ? a : ['']
+      end
+
+      def get_taxons(*ids_or_records_or_names)
+        taxons = Spree::Taxon.table_name
+        ids_or_records_or_names.flatten.map { |t|
+          case t
+          when Integer then Spree::Taxon.find_by_id(t)
+          when ActiveRecord::Base then t
+          when String
+            Spree::Taxon.find_by_name(t) ||
+            Spree::Taxon.find(:first, :conditions => [
+              "#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/"
+            ])
+          end
+        }.compact.flatten.uniq
+      end
+
 
     end
 
