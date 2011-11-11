@@ -18,7 +18,6 @@
 # Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
 #
 class Spree::Product < ActiveRecord::Base
-  extend Spree::Product::Scopes
   has_many :product_option_types, :dependent => :destroy
   has_many :option_types, :through => :product_option_types
   has_many :product_properties, :dependent => :destroy
@@ -244,3 +243,5 @@ class Spree::Product < ActiveRecord::Base
       self.product_groups = Spree::ProductGroup.all.select { |pg| pg.include?(self) }
     end
 end
+
+require 'spree/product/scopes'
