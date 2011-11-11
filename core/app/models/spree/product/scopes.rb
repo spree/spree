@@ -159,7 +159,7 @@ module Spree
         where(:id => ids)
       end
 
-      # Sorts products from most popular (poularity is extracted from how many
+      # Sorts products from most popular (popularity is extracted from how many
       # times use has put product in cart, not completed orders)
       #
       # there is alternative faster and more elegant solution, it has small drawback though,
