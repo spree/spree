@@ -16,6 +16,7 @@ describe "Customer Details" do
     end
 
     it "should be able to update customer details for an existing order" do
+      pending
       click_link "Orders"
       within(:css, 'table#listing_orders tr:nth-child(2)') { click_link "Edit" }
       click_link "Customer Details"
@@ -38,6 +39,7 @@ describe "Customer Details" do
     end
 
     it "should show validation errors" do
+      pending
       click_link "Orders"
       within(:css, 'table#listing_orders tr:nth-child(2)') { click_link "Edit" }
       click_link "Customer Details"

@@ -75,6 +75,7 @@ describe Spree::Calculator::Vat do
         end
 
         it "should calculate correctly with shipping adjustment when Spree::Config[:shipment_inc_vat] is true" do
+          pending
           Spree::Config.set :shipment_inc_vat => true
           order.stub :adjustments => [Factory(:adjustment, :originator_type => "ShippingMethod", :amount => 5)]
           calculator.compute(order).to_f.should == 0.75
