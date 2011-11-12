@@ -1,3 +1,5 @@
+require 'highline/import'
+
 # see last line where we create an admin if there is none, asking for email and password
 def prompt_for_admin_password
   password = ask('Password [spree123]: ', String) do |q|
@@ -24,7 +26,6 @@ def create_admin_user
     password = 'spree123'
     email = 'spree@example.com'
   else
-    require 'highline/import'
     puts 'Create the admin user (press enter for defaults).'
     #name = prompt_for_admin_name unless name
     email = prompt_for_admin_email
@@ -55,9 +56,7 @@ if Rails.env.development?
     create_admin_user
   else
     puts 'Admin user has already been previsouly created.'
-    puts 'Would you like to create a new admin user?'
-    res = STDIN.gets.chomp
-    if res =~ /y[es]*/
+    if agree('Would you like to create a new admin user? (yes/no)')
       create_admin_user
     else
       puts 'No admin user created.'
