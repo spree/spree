@@ -51,7 +51,7 @@ def create_admin_user
 end
 
 if Rails.env.development?
-  if Spree::User.where('roles.name' => 'admin').includes(:roles).empty?
+  if Spree::User.admin.empty?
     create_admin_user
   else
     puts 'Admin user has already been previsouly created.'
