@@ -18,7 +18,7 @@ module Spree
       # We should not define price scopes here, as they require something slightly different
       next if name.to_s.include?("master_price")
       parts = name.to_s.match(/(.*)_by_(.*)/)
-      order_text = "#{Spree::Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+      order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
       self.scope(name.to_s, relation.order(order_text))
     end
 
@@ -45,7 +45,7 @@ module Spree
     }
 
     def self.price_between(low, high)
-      joins(:master).where(Spree::Variant.table_name => { :price => low..high })
+      joins(:master).where(Variant.table_name => { :price => low..high })
     end
 
     def self.master_price_lte(price)
@@ -61,7 +61,7 @@ module Spree
     #
     #   Spree::Product.taxons_id_eq(x)
     def self.in_taxon(taxon)
-      joins(:taxons).where(Spree::Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+      joins(:taxons).where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -80,10 +80,10 @@ module Spree
 
     # a scope that finds all products having property specified by name, object or id
     def self.with_property(property)
-      properties = Spree::Property.table_name
+      properties = Property.table_name
       conditions = case property
       when String          then { "#{properties}.name" => property }
-      when Spree::Property then { "#{properties}.id" => property.id }
+      when Property then { "#{properties}.id" => property.id }
       else                      { "#{properties}.id" => property.to_i }
       end
 
@@ -96,20 +96,20 @@ module Spree
       properties = Spree::Property.table_name
       conditions = case property
       when String          then ["#{properties}.name = ?", property]
-      when Spree::Property then ["#{properties}.id = ?", property.id]
+      when Property        then ["#{properties}.id = ?", property.id]
       else                      ["#{properties}.id = ?", property.to_i]
       end
-      conditions = ["#{Spree::ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
+      conditions = ["#{ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
 
       joins(:properties).where(conditions)
     end
 
     # a scope that finds all products having an option_type specified by name, object or id
     def self.with_option(option)
-      option_types = Spree::OptionType.table_name
+      option_types = OptionType.table_name
       conditions = case option
       when String            then { "#{option_types}.name" => option }
-      when Spree::OptionType then { "#{option_types}.id" => option.id }
+      when OptionType        then { "#{option_types}.id" => option.id }
       else                        { "#{option_types}.id" => option.to_i }
       end
 
@@ -118,10 +118,10 @@ module Spree
 
     # a scope that finds all products having an option value specified by name, object or id
     def self.with_option_value(option, value)
-      option_values = Spree::OptionValue.table_name
+      option_values = OptionValue.table_name
       option_type_id = case option
-        when String then Spree::OptionType.find_by_name(option) || option.to_i
-        when Spree::OptionType then option.id
+        when String then OptionType.find_by_name(option) || option.to_i
+        when OptionType then option.id
         else option.to_i
       end
 
@@ -135,7 +135,7 @@ module Spree
     def self.with(value)
       includes(:variants_including_master => :option_values).
       includes(:product_properties).
-      where("#{Spree::OptionValue.table_name}.name = ? OR #{Spree::ProductProperty.table_name}.value = ?", value, value)
+      where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
     end
 
     # Finds all products that have a name containing the given words.
@@ -172,15 +172,15 @@ module Spree
       order(%Q{
            COALESCE((
              SELECT
-               COUNT(#{Spree::LineItem.quoted_table_name}.id)
+               COUNT(#{LineItem.quoted_table_name}.id)
              FROM
-               #{Spree::LineItem.quoted_table_name}
+               #{LineItem.quoted_table_name}
              JOIN
-               #{Spree::Variant.quoted_table_name} AS popular_variants
+               #{Variant.quoted_table_name} AS popular_variants
              ON
-               popular_variants.id = #{Spree::LineItem.quoted_table_name}.variant_id
+               popular_variants.id = #{LineItem.quoted_table_name}.variant_id
              WHERE
-               popular_variants.product_id = #{Spree::Product.quoted_table_name}.id
+               popular_variants.product_id = #{Product.quoted_table_name}.id
            ), 0) DESC
         })
     end
@@ -203,7 +203,7 @@ module Spree
     end
 
     def self.taxons_name_eq(name)
-      joins(:taxons).where(Spree::Taxon.arel_table[:name].eq(name))
+      joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
@@ -218,13 +218,13 @@ module Spree
     private
 
       def self.variant_table_name
-        Spree::Variant.quoted_table_name
+        Variant.quoted_table_name
       end
 
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
         ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
-        joins(:taxons).where("#{Spree::Taxon.table_name}.id" => ids)
+        joins(:taxons).where("#{Taxon.table_name}.id" => ids)
       end
 
       # Produce an array of keywords for use in scopes.
@@ -239,11 +239,11 @@ module Spree
         taxons = Spree::Taxon.table_name
         ids_or_records_or_names.flatten.map { |t|
           case t
-          when Integer then Spree::Taxon.find_by_id(t)
+          when Integer then Taxon.find_by_id(t)
           when ActiveRecord::Base then t
           when String
-            Spree::Taxon.find_by_name(t) ||
-            Spree::Taxon.find(:first, :conditions => [
+            Taxon.find_by_name(t) ||
+            Taxon.find(:first, :conditions => [
               "#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/"
             ])
           end

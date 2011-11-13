@@ -1,3 +1,5 @@
-class Spree::ShippingCategory < ActiveRecord::Base
-  validates :name, :presence => true
+module Spree
+  class ShippingCategory < ActiveRecord::Base
+    validates :name, :presence => true
+  end
 end

@@ -1,3 +1,5 @@
-class Spree::LogEntry < ActiveRecord::Base
-  belongs_to :source, :polymorphic => true
+module Spree
+  class LogEntry < ActiveRecord::Base
+    belongs_to :source, :polymorphic => true
+  end
 end

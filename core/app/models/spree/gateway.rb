@@ -8,7 +8,7 @@ module Spree
     preference :test_mode, :boolean, :default => true
 
     def payment_source_class
-      Spree::Creditcard
+      Creditcard
     end
 
     # instantiates the selected gateway and configures with the options stored in the database

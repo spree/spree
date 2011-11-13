@@ -1,16 +1,18 @@
-class Spree::Country < ActiveRecord::Base
-  has_many :states
+module Spree
+  class Country < ActiveRecord::Base
+    has_many :states
 
-  has_one :zone_member, :as => :zoneable
-  has_one :zone, :through => :zone_member
+    has_one :zone_member, :as => :zoneable
+    has_one :zone, :through => :zone_member
 
-  validates :name, :iso_name, :presence => true
+    validates :name, :iso_name, :presence => true
 
-  def <=>(other)
-    name <=> other.name
-  end
+    def <=>(other)
+      name <=> other.name
+    end
 
-  def to_s
-    name
+    def to_s
+      name
+    end
   end
 end
