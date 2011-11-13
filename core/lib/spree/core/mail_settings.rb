@@ -24,6 +24,7 @@ module Spree
 
           ActionMailer::Base.smtp_settings = mail_server_settings
           ActionMailer::Base.perform_deliveries = true
+          ActionMailer::Base.default_url_options[:host] = Spree::Config[:site_url]
         else
           #logger.warn "NOTICE: Mail not enabled"
           ActionMailer::Base.perform_deliveries = false
