@@ -1,4 +1,6 @@
-class Spree::AuthConfiguration < Spree::Configuration
-  preference :registration_step, :boolean, :default => true
-  preference :signout_after_password_change, :boolean, :default => true
+module Spree
+  class AuthConfiguration < Configuration
+    preference :registration_step, :boolean, :default => true
+    preference :signout_after_password_change, :boolean, :default => true
+  end
 end
