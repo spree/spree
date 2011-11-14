@@ -73,7 +73,6 @@ end
 require 'spree/core/version'
 
 require 'spree/core/engine'
-require 'generators/spree/site/site_generator'
 require 'generators/spree/dummy/dummy_generator'
 require 'generators/spree/sandbox/sandbox_generator'
 
