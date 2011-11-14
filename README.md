@@ -31,16 +31,23 @@ Update your bundle
 
     $ bundle install
 
-Then use the install generator to do the basic setup
+Use the install generator to do the basic setup. The install generator will prompt you to run migrations, setup some
+basic data, and load sample products, orders, etc.
 
     $ rails g spree:site
 
-Now you just need to run the new migrations, and setup some basic data
+To auto accept all prompts while running the install generator, pass -A as an option
+
+	$ rails g spree:site -A
+
+If you chose to ignore the prompts while running the basic install
+generator you can manually run migrations and load basic data with the following
+commands
 
     $ bundle exec rake db:migrate
     $ bundle exec rake db:seed
 
-If you also want some sample products, orders, etc. to play with you can run the appropriate rake task.
+To manually load sample products, orders, etc., run the following rake task
 
     $ bundle exec rake spree_sample:load
 
