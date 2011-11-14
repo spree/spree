@@ -18,7 +18,6 @@ module Spree
 
       @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
       @product_properties = ProductProperty.includes(:property).where(:product_id => @product.id)
-      @selected_variant = @variants.detect { |v| v.available? }
 
       referer = request.env['HTTP_REFERER']
 
