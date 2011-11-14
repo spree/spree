@@ -40,8 +40,8 @@ module Spree
     # forming the disjunction of a list of conditions (as strings)
     scope :conditions_any, lambda { |*args|
       args = [args].flatten
-      raise "non-strings in conditions_any" unless args.all? {|s| s.is_a? String}
-      {:conditions => args.map {|c| "(#{c})"}.join(" OR ")}
+      raise "non-strings in conditions_any" unless args.all? { |s| s.is_a? String }
+      { :conditions => args.map { |c| "(#{c})"}.join(" OR ") }
     }
 
     def self.price_between(low, high)
@@ -75,16 +75,16 @@ module Spree
     end
 
     def self.in_cached_group(product_group)
-      joins(:product_groups).where("spree_product_groups_products.product_group_id" => product_group)
+      joins(:product_groups).where('spree_product_groups_products.product_group_id' => product_group)
     end
 
     # a scope that finds all products having property specified by name, object or id
     def self.with_property(property)
       properties = Property.table_name
       conditions = case property
-      when String          then { "#{properties}.name" => property }
+      when String   then { "#{properties}.name" => property }
       when Property then { "#{properties}.id" => property.id }
-      else                      { "#{properties}.id" => property.to_i }
+      else               { "#{properties}.id" => property.to_i }
       end
 
       joins(:properties).where(conditions)
@@ -95,9 +95,9 @@ module Spree
     def self.with_property_value(property, value)
       properties = Spree::Property.table_name
       conditions = case property
-      when String          then ["#{properties}.name = ?", property]
-      when Property        then ["#{properties}.id = ?", property.id]
-      else                      ["#{properties}.id = ?", property.to_i]
+      when String   then ["#{properties}.name = ?", property]
+      when Property then ["#{properties}.id = ?", property.id]
+      else               ["#{properties}.id = ?", property.to_i]
       end
       conditions = ["#{ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
 
@@ -108,9 +108,9 @@ module Spree
     def self.with_option(option)
       option_types = OptionType.table_name
       conditions = case option
-      when String            then { "#{option_types}.name" => option }
-      when OptionType        then { "#{option_types}.id" => option.id }
-      else                        { "#{option_types}.id" => option.to_i }
+      when String     then { "#{option_types}.name" => option }
+      when OptionType then { "#{option_types}.id" => option.id }
+      else                 { "#{option_types}.id" => option.to_i }
       end
 
       joins(:option_types).where(conditions)
@@ -190,7 +190,7 @@ module Spree
     end
 
     def self.available(available_on = nil)
-      where("available_on <= ?", available_on || Time.now)
+      where('available_on <= ?', available_on || Time.now)
     end
 
     #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
@@ -199,7 +199,7 @@ module Spree
     end
 
     def self.on_hand
-      where("count_on_hand >= 0")
+      where('count_on_hand >= 0')
     end
 
     def self.taxons_name_eq(name)
@@ -216,14 +216,13 @@ module Spree
     search_methods :group_by_products_id
 
     private
-
       def self.variant_table_name
         Variant.quoted_table_name
       end
 
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map{ |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
+        ids = taxons.map { |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
         joins(:taxons).where("#{Taxon.table_name}.id" => ids)
       end
 
@@ -251,4 +250,3 @@ module Spree
       end
     end
 end
-

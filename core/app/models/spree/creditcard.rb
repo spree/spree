@@ -60,7 +60,7 @@ module Spree
 
     # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
     def display_number
-     "XXXX-XXXX-XXXX-#{last_digits}"
+      "XXXX-XXXX-XXXX-#{last_digits}"
     end
 
     #RAILS 3 TODO
@@ -229,7 +229,7 @@ module Spree
 
     def gateway_options(payment)
       options = { :billing_address  => generate_address_hash(payment.order.bill_address),
-                 :shipping_address => generate_address_hash(payment.order.ship_address) }
+                  :shipping_address => generate_address_hash(payment.order.ship_address) }
       options.merge minimal_gateway_options(payment)
     end
 
@@ -237,7 +237,7 @@ module Spree
     def generate_address_hash(address)
       return {} if address.nil?
       { :name => address.full_name, :address1 => address.address1, :address2 => address.address2, :city => address.city,
-       :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone }
+        :state => address.state_text, :zip => address.zipcode, :country => address.country.iso, :phone => address.phone }
     end
 
     # Generates a minimal set of gateway options.  There appears to be some issues with passing in

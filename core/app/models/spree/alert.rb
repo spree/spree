@@ -1,6 +1,6 @@
 module Spree
   class Alert < ActiveResource::Base
-    self.site = "http://alerts.spreecommerce.com/"
+    self.site = 'http://alerts.spreecommerce.com/'
     self.format = :json
 
     def self.current(host)

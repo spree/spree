@@ -54,7 +54,7 @@ module Spree
 
     def self.decrease(order, variant, quantity)
       if Spree::Config[:track_inventory_levels]
-         variant.increment!(:count_on_hand, quantity)
+        variant.increment!(:count_on_hand, quantity)
       end
 
       if Spree::Config[:create_inventory_units]

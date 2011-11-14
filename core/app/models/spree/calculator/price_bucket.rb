@@ -11,7 +11,7 @@ module Spree
     # as object we always get line items, as calculable we have Coupon, ShippingMethod
     def compute(object)
       if object.is_a?(Array)
-        base = object.map{ |o| o.respond_to?(:amount) ? o.amount : o.to_d }.sum
+        base = object.map { |o| o.respond_to?(:amount) ? o.amount : o.to_d }.sum
       else
         base = object.respond_to?(:amount) ? object.amount : object.to_d
       end

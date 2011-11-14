@@ -1,6 +1,5 @@
 module Spree
   class ProductScope < ActiveRecord::Base
-
     before_validation(:on => :create) do
       # Add default empty arguments so scope validates and errors aren't caused when previewing it
       if name && args = self.class.arguments_for_scope_name(name)
@@ -40,11 +39,9 @@ module Spree
     end
 
     def self.arguments_for_scope_name(name)
-      if group = all_scopes.detect{|k,v| v[name.to_sym]}
+      if group = all_scopes.detect { |k,v| v[name.to_sym] }
         group[1][name.to_sym]
       end
     end
-
-
   end
 end
