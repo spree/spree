@@ -34,5 +34,10 @@ describe Spree::Admin::ProductsController do
       get :index, {:authenticity_token => "1+2%3D3%264%275/6%3F", :format => :json}
       response.should be_success
     end
+
+    # Regression test for GH #538
+    it "cannot find a non-existent product" do
+      lambda { get :edit, :id => "non-existent-product" }.should raise_error(ActiveRecord::RecordNotFound)
+    end
   end
 end
