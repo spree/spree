@@ -140,5 +140,14 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         end
       end
     end
+
+    def notify_about_routes
+      unless options[:skip_install_data]
+        puts "************************************************************************************************************"
+        puts "Be sure to add the following two lines to your application's config/routes.rb file to finish setting up spree"
+        puts "mount Spree::Auth::Engine, :at => '/'"
+        puts "mount Spree::Core::Engine, :at => '/'"
+      end
+    end
   end
 end
