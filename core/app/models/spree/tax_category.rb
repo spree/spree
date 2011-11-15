@@ -2,7 +2,7 @@ module Spree
   class TaxCategory < ActiveRecord::Base
     validates :name, :presence => true, :uniqueness => true
 
-    has_many :tax_rates
+    has_many :tax_rates, :dependent => :restrict
 
     before_save :set_default_category
 
