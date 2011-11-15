@@ -19,7 +19,7 @@ module Spree
     preference :show_only_complete_orders_by_default, :boolean, :default => true
     preference :admin_products_per_page, :integer, :default => 10
     preference :admin_pgroup_preview_size, :integer, :default => 10
-    preference :products_per_page, :integer, :default => 10
+    preference :products_per_page, :integer, :default => 12
     preference :logo, :string, :default => 'admin/bg/spree_50.png'
     preference :stylesheets, :string, :default => 'reset, screen' # Comma separate multiple stylesheets, e.g. 'screen,mystyle'
     preference :admin_interface_logo, :string, :default => 'admin/bg/spree_50.png'
