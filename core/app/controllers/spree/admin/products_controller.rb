@@ -95,7 +95,7 @@ module Spree
           @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
           @collection = @collection.includes(includes).limit(params[:limit] || 10)
 
-          tmp = super.where(["variants.sku #{LIKE} ?", "%#{params[:q]}%"])
+          tmp = super.where(["spree_variants.sku #{LIKE} ?", "%#{params[:q]}%"])
           tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
           @collection.concat(tmp)
 
