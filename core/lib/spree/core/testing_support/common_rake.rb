@@ -1,4 +1,4 @@
-require '../lib/generators/spree/site/site_generator'
+require '../lib/generators/spree/install/install_generator'
 
 desc "Generates a dummy app for testing"
 namespace :common do
