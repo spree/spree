@@ -10,7 +10,7 @@ Spree::Order.class_eval do
     line_items.map {|li| li.variant.product}
   end
 
-  unless self.instance_methods.include?('update_adjustments_with_promotion_limiting')
+  unless self.method_defined?('update_adjustments_with_promotion_limiting')
     def update_adjustments_with_promotion_limiting
       update_adjustments_without_promotion_limiting
       return if adjustments.promotion.eligible.none?
