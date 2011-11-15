@@ -28,6 +28,7 @@ module Spree
       opts[:skip_bundle] = true
       opts[:old_style_hash] = true
 
+      puts "Generating dummy Rails application..."
       invoke Rails::Generators::AppGenerator,
         [ File.expand_path(dummy_path, destination_root) ], opts
     end
