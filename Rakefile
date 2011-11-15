@@ -1,7 +1,7 @@
 require 'rake'
 require 'rubygems/package_task'
 require 'thor/group'
-require 'lib/generators/spree/install/install_generator'
+require File.expand_path('../lib/generators/spree/install/install_generator', __FILE__)
 
 spec = eval(File.read('spree.gemspec'))
 Gem::PackageTask.new(spec) do |pkg|
