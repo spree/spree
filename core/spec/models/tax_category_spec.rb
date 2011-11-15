@@ -51,5 +51,15 @@ describe Spree::TaxCategory do
 
   end
 
+  context 'delete' do
+    let!(:tax_category) {Factory(:tax_category)}
+    let!(:tax_rate) {Factory(:tax_rate, :tax_category => tax_category)}
+    it "should not allow deletion when tax rates are assigned" do
+      p tax_category.inspect
+      lambda {tax_category.destroy}.should raise_error ActiveRecord::DeleteRestrictionError
+      p tax_category.inspect
+    end
+  end
+
 
 end
