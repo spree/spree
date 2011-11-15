@@ -90,7 +90,7 @@ module Spree
     end
 
     def remove_directory_if_exists(path)
-      run "rm -r #{path}" if File.directory?(path)
+      remove_dir(path) if File.directory?(path)
     end
 
     def gemfile_path
