@@ -1,6 +1,7 @@
 require 'rake'
 require 'rubygems/package_task'
 require 'thor/group'
+require 'lib/generators/spree/site/site_generator'
 
 spec = eval(File.read('spree.gemspec'))
 Gem::PackageTask.new(spec) do |pkg|
@@ -95,7 +96,7 @@ task :sandbox do
   require 'spree_core'
 
   Spree::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
-  Spree::SiteGenerator.start
+  Spree::SiteGenerator.start ["--auto-accept", "--skip-install-data"]
 
   cmd = "bundle exec rake db:bootstrap AUTO_ACCEPT=true"; puts cmd; system cmd
   cmd = "bundle exec rake assets:precompile:nondigest"; puts cmd; system cmd
