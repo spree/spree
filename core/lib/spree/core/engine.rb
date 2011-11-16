@@ -58,7 +58,7 @@ module Spree
 
       # sets the manifests / assets to be precompiled
       initializer "spree.assets.precompile", :group => :assets do |app|
-        app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js']
+        app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
       end
 
       initializer "spree.asset.pipeline" do |app|
