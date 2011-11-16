@@ -359,6 +359,16 @@ describe "product scopes" do
     products.should_not include(other_product)
   end
 
+  it ".with variant no on hand" do
+    Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    Spree::Config.set :track_inventory_levels => true
+    product = Factory(:product)
+    product.master.update_attribute(:on_hand, 0)
+    variant = Factory(:variant, :product => product, :on_hand => 100, :is_master => false, :deleted_at => nil)
+    product.save!
+    Spree::Product.on_hand.should include (variant.product)
+  end
+
   it ".taxons_name_eq" do
     taxon = Factory(:taxon)
     product = Factory(:product)
