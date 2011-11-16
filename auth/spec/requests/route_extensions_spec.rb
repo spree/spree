@@ -5,19 +5,22 @@ describe Spree::Core::Rails::RouteExtensions do
     Rails.application.routes_reloader.reload!
   end
 
-  context "just core routes" do
+  context "auth + core routes" do
     before do
       Rails.application.routes.prepend do
-        spree :only => :core
+        spree
       end
 
-      Rails.application.routes_reloader.reload!
+      reload_routes!
     end
 
     it "routes to core" do
       visit '/'
+      page.should have_content("Log In")
+      page.status_code.should == 200
+
+      visit '/login'
       page.status_code.should == 200
     end
   end
 end
-
