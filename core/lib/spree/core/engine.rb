@@ -1,6 +1,6 @@
 module Spree
   module Core
-    class Engine < Rails::Engine
+    class Engine < ::Rails::Engine
       isolate_namespace Spree
       engine_name 'spree_core'
 
