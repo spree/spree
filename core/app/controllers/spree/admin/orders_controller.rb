@@ -62,7 +62,6 @@ module Spree
                   @order.user_id = params[:user_id]
                   @order.user true
                 end
-                @order.save
                 @order.create_shipment!
                 return_path = edit_admin_order_shipment_path(@order, @order.shipment)
               else
