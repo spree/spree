@@ -145,8 +145,12 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def notify_about_routes
+      insert_into_file File.join('config', 'routes.rb'), :after => "Application.routes.draw do\n" do
+        "  # Mount Spree's routes\n  mount Spree::Core::Engine, :at => '/'\n"
+      end
+
       puts "*" * 50
-      puts "Be sure to add the following line to your application's config/routes.rb file to finish setting up Spree:"
+      puts "We added the following line to your application's config/routes.rb file:"
       puts " "
       puts "    mount Spree::Core::Engine, :at => '/'"
     end
