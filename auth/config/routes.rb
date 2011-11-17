@@ -8,7 +8,7 @@ Spree::Core::Engine.routes.draw do
              :path_names => { :sign_out => 'logout' }
 end
 
-Spree::Auth::Engine.routes.prepend do
+Spree::Core::Engine.routes.prepend do
   resources :users, :only => [:edit, :update]
 
   devise_scope :user do
