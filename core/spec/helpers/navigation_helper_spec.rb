@@ -1,7 +1,5 @@
 # coding: UTF-8
 require 'spec_helper'
-require 'spree/url_helpers'
-include Spree::UrlHelpers
 
 module Spree
   describe Admin::NavigationHelper do
