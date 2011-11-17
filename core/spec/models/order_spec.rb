@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Order do
   before(:each) do
     @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    Spree::PaymentMethod.create(:type => 'Spree::Gateway::Test', :name => 'Test',
+                                :active => true, :environment => 'test', :description => 'foofah')
   end
 
   context 'validation' do
