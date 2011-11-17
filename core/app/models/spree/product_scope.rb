@@ -76,4 +76,4 @@ module Spree
   end
 end
 
-require 'spree/product_scope/scopes'
+require_dependency 'spree/product_scope/scopes'
