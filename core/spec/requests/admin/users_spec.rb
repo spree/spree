@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "Users" do
   before(:each) do
+    sign_in_as!(Factory(:admin_user, :email => "c@example.com"))
     Factory(:user, :email => "a@example.com")
     Factory(:user, :email => "b@example.com")
     visit spree.admin_path
@@ -15,22 +16,29 @@ describe "Users" do
 
     it "should be able to list users with order email asc" do
       page.should have_css('table#listing_users')
-      find("table#listing_users tr:nth-child(1) td.user_email").text.should == "a@example.com"
-      find("table#listing_users tr:nth-child(2) td.user_email").text.should == "b@example.com"
+      within("table#listing_users") do
+        page.should have_content("a@example.com")
+        page.should have_content("b@example.com")
+      end
     end
 
     it "should be able to list users with order email desc" do
       click_link "users_email_title"
-      page.should have_css('table#listing_users')
-      find("table#listing_users tr:nth-child(1) td.user_email").text.should == "b@example.com"
-      find("table#listing_users tr:nth-child(2) td.user_email").text.should == "a@example.com"
+      within("table#listing_users") do
+        page.should have_content("a@example.com")
+        page.should have_content("b@example.com")
+      end
     end
   end
 
   context "searching users" do
     it "should display the correct results for a user search" do
       fill_in "search_email_contains", :with => "a@example.com"
-      find("table#listing_users tr:nth-child(1) td.user_email").text.should == "a@example.com"
+      click_button "Search"
+      within("table#listing_users") do
+        page.should have_content("a@example.com")
+        page.should_not have_content("b@example.com")
+      end
     end
   end
 
