@@ -9,7 +9,7 @@ describe "Checkout", :js => true do
     Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
     Factory(:payment_method, :environment => 'test')
     Factory(:product, :name => "RoR Mug")
-    visit spree_core.root_path
+    visit spree.root_path
   end
 
   it "should allow a visitor to checkout as guest, without registration" do

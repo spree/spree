@@ -16,7 +16,7 @@ describe "Customer Details" do
         Factory(:line_item, :order => order, :quantity => 0)
       end
 
-      visit spree_core.admin_path
+      visit spree.admin_path
     end
 
     it "should be able to update customer details for an existing order" do

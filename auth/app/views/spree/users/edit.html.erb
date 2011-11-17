@@ -2,7 +2,7 @@
 
 <h1><%= t(:editing_user) %></h1>
 
-<%= form_for @user, :url => spree_auth.user_path(@user), :html => { :method => :put } do |f| %>
+<%= form_for @user, :url => spree.user_path(@user), :html => { :method => :put } do |f| %>
   <%= render :partial => 'spree/shared/user_form', :locals => { :f => f } %>
   <p>
     <%= f.submit t(:update) %>

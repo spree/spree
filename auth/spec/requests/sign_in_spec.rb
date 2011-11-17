@@ -7,7 +7,7 @@ describe "Sign In" do
   end
 
   it "should ask use to sign in" do
-    visit spree_core.admin_path
+    visit spree.admin_path
     page.should_not have_content("Authorization Failure")
   end
 
@@ -31,7 +31,7 @@ describe "Sign In" do
 
   it "should allow a user to access a restricted page after logging in" do
     user = Factory(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
-    visit spree_core.admin_path
+    visit spree.admin_path
     fill_in "user_email", :with => user.email
     fill_in "user_password", :with => user.password
     click_button "Log In"

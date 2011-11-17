@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Adjustments" do
   before(:each) do
-    visit spree_core.admin_path
+    visit spree.admin_path
     order = Factory(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
     Factory(:adjustment, :order => order)
     click_link "Orders"

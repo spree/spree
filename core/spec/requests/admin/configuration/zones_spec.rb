@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Zones" do
   before(:each) do
     Spree::Zone.delete_all
-    visit spree_core.admin_path
+    visit spree.admin_path
     click_link "Configuration"
   end
 

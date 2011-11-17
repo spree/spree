@@ -12,7 +12,7 @@ describe "Order Details" do
         iu.update_attribute_without_callbacks('state', 'sold')
       end
 
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Orders"
 
       within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }

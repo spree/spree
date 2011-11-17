@@ -29,7 +29,7 @@ describe "Prototypes" do
         p.properties << Spree::Property.find_by_name(prop)
       end
 
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Products"
       click_link "Prototypes"
 
@@ -41,7 +41,7 @@ describe "Prototypes" do
 
   context "creating a prototype" do
     it "should allow an admin to create a new product prototype", :js => true do
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Products"
       click_link "Prototypes"
       click_link "new_prototype_link"

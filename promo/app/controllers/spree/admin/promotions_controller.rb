@@ -15,7 +15,7 @@ module Spree
         end
 
         def location_after_save
-          spree_promo.edit_admin_promotion_url(@promotion)
+          spree.edit_admin_promotion_url(@promotion)
         end
 
         def load_data

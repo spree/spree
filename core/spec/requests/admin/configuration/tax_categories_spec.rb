@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Tax Categories" do
   before(:each) do
-    visit spree_core.admin_path
+    visit spree.admin_path
     click_link "Configuration"
   end
 

@@ -22,7 +22,7 @@ Spree::BaseController.class_eval do
             render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application'
           else
             store_location
-            redirect_to spree_auth.login_path and return
+            redirect_to spree.login_path and return
           end
         end
         format.xml do
@@ -36,7 +36,7 @@ Spree::BaseController.class_eval do
 
     def store_location
       # disallow return to login, logout, signup pages
-      disallowed_urls = [spree_auth.signup_url, spree_auth.login_url, spree_auth.destroy_user_session_path]
+      disallowed_urls = [spree.signup_url, spree.login_url, spree.destroy_user_session_path]
       disallowed_urls.map!{ |url| url[/\/\w+$/] }
       unless disallowed_urls.include?(request.fullpath)
         session['user_return_to'] = request.fullpath.gsub('//', '/')

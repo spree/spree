@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
 <h1><%= t(:change_my_password) %></h1>
 
-<%= form_for @user, :url => spree_auth.user_password_path, :html => {:method => :put} do |f| %>
+<%= form_for @user, :url => spree.user_password_path, :html => {:method => :put} do |f| %>
   <p>
     <%= f.label :password %><br />
     <%= f.password_field :password %><br />

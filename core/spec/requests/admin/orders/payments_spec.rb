@@ -27,7 +27,7 @@ describe "Payments" do
     it "should be able to list, edit, and create payment methods for an order", :js => true do
       pending "need to correctly associate inventory_units with order"
 
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Orders"
       within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }
       click_link "Payments"

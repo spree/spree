@@ -15,7 +15,7 @@ describe "Checkout" do
 
       it "should warn the user about out of stock items" do
         pending
-        visit spree_core.root_path
+        visit spree.root_path
         click_link "RoR Mug"
         click_button "add-to-cart-button"
 

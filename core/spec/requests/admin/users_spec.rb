@@ -4,7 +4,7 @@ describe "Users" do
   before(:each) do
     Factory(:user, :email => "a@example.com")
     Factory(:user, :email => "b@example.com")
-    visit spree_core.admin_path
+    visit spree.admin_path
     click_link "Users"
   end
 

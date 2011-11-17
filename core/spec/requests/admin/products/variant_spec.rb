@@ -6,7 +6,7 @@ describe "Variants" do
       product = Factory(:product_with_option_types, :price => "1.99", :cost_price => "1.00", :weight => "2.5", :height => "3.0", :width => "1.0", :depth => "1.5")
       2.times { Factory(:option_type) }
 
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       click_link "Variants"

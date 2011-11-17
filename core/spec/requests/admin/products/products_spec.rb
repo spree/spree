@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Products" do
   before(:each) do
-    visit spree_core.admin_path
+    visit spree.admin_path
   end
 
   context "listing products" do

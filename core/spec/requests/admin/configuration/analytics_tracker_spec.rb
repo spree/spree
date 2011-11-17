@@ -4,7 +4,7 @@ describe "Analytics Tracker" do
   context "index" do
     before(:each) do
       2.times { Factory(:tracker, :environment => "Cucumber") }
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
     end
@@ -26,7 +26,7 @@ describe "Analytics Tracker" do
 
   context "create" do
     before(:each) do
-      visit spree_core.admin_path
+      visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
     end

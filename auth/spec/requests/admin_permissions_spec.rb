@@ -12,19 +12,19 @@ describe "Admin Permissions" do
     end
 
     it "should not be able to list orders" do
-      visit spree_core.admin_orders_path
+      visit spree.admin_orders_path
       page.should have_content("Authorization Failure")
     end
 
     it "should not be able to edit orders" do
       Factory(:order, :number => "R123")
-      visit spree_core.edit_admin_order_path("R123")
+      visit spree.edit_admin_order_path("R123")
       page.should have_content("Authorization Failure")
     end
 
     it "should not be able to view an order" do
       Factory(:order, :number => "R123")
-      visit spree_core.admin_order_path("R123")
+      visit spree.admin_order_path("R123")
       page.should have_content("Authorization Failure")
     end
   end

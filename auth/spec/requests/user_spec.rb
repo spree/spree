@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Users" do
  before(:each) do
    user = Factory(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
-   visit spree_core.admin_path
+   visit spree.admin_path
    fill_in "user_email", :with => user.email
    fill_in "user_password", :with => user.password
    click_button "Log In"

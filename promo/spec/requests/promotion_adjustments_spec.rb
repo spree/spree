@@ -12,7 +12,7 @@ describe "Promotion Adjustments" do
       Factory(:product, :name => "RoR Mug", :price => "40")
       Factory(:product, :name => "RoR Bag", :price => "20")
 
-      visit spree_core.admin_path
+      visit spree.admin_path
 
       fill_in "user_email", :with => user.email
       fill_in "user_password", :with => user.password
@@ -41,7 +41,7 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       click_link "Checkout"
@@ -81,7 +81,7 @@ describe "Promotion Adjustments" do
       within('#action_fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       click_link "Checkout"
@@ -107,7 +107,7 @@ describe "Promotion Adjustments" do
       fill_in "user_password", :with => user.password
       click_button "Log In"
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       click_link "Checkout"
@@ -146,11 +146,11 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 36.00
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 54.00
@@ -172,7 +172,7 @@ describe "Promotion Adjustments" do
       select "Free Shipping", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
       click_link "Checkout"
@@ -191,7 +191,7 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 31.00
       page.should_not have_content("Free Shipping")
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       click_link "Checkout"
@@ -229,13 +229,13 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => "4" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 40.00
 
       visit "/cvv"
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 76.00
@@ -259,7 +259,7 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 20.00
@@ -296,7 +296,7 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_promo.admin_promotions_path
+      visit spree.admin_promotions_path
       click_link "New Promotion"
       fill_in "Name", :with => "10% off"
       select "Order contents changed", :from => "Event"
@@ -309,7 +309,7 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree_core.root_path
+      visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 15.00

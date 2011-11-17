@@ -11,13 +11,13 @@ module NavigationHelpers
   def path_to(page_name)
     case page_name
     when /the home\s?page/
-      spree_core.root_path
+      spree.root_path
     when /the admin home page/
-      spree_core.admin_path
+      spree.admin_path
     when /the sign in page/
-      spree_auth.new_user_session_path
+      spree.new_user_session_path
     when /the sign up page/
-      spree_auth.new_user_registration_path
+      spree.new_user_registration_path
     when /an invalid taxon page/
       "/t/totally_bogus_taxon"
 
@@ -32,7 +32,7 @@ module NavigationHelpers
       begin
         page_name =~ /the (.*) page/
         path_components = $1.split(/\s+/)
-        spree_core.send(path_components.push('path').join('_').to_sym)
+        spree.send(path_components.push('path').join('_').to_sym)
       rescue Object => e
         raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
           "Now, go and add a mapping in #{__FILE__}"
