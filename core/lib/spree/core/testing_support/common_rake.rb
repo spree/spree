@@ -1,4 +1,4 @@
-require '../lib/generators/spree/install/install_generator'
+require File.expand_path('../../../../../lib/generators/spree/install/install_generator', File.dirname(__FILE__))
 
 desc "Generates a dummy app for testing"
 namespace :common do
