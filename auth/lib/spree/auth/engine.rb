@@ -16,11 +16,6 @@ module Spree
 
       config.to_prepare &method(:activate).to_proc
       ActiveRecord::Base.class_eval { include Spree::TokenResource }
-
-      config.after_initialize do
-        Devise.configure_warden!
-        Devise.regenerate_helpers!
-      end
     end
   end
 end

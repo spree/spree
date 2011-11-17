@@ -1,4 +1,4 @@
-Spree::Core::Engine.routes.prepend do
+Spree::Core::Engine.routes.draw do
   devise_for :user,
              :class_name => 'Spree::User',
              :controllers => { :sessions => 'spree/user_sessions',
@@ -6,7 +6,9 @@ Spree::Core::Engine.routes.prepend do
                                :passwords => 'spree/user_passwords' },
              :skip => [:unlocks, :omniauth_callbacks],
              :path_names => { :sign_out => 'logout' }
+end
 
+Spree::Auth::Engine.routes.prepend do
   resources :users, :only => [:edit, :update]
 
   devise_scope :user do
