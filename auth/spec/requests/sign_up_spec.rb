@@ -3,9 +3,7 @@ require 'spec_helper'
 describe "Sign Up" do
   context "with valid data" do
     it "should create a new user" do
-      pending
-
-      visit signup_path
+      visit spree.signup_path
       fill_in "Email", :with => "email@person.com"
       fill_in "Password", :with => "password"
       fill_in "Password Confirmation", :with => "password"
@@ -17,7 +15,7 @@ describe "Sign Up" do
 
   context "with invalid data" do
     it "should not create a new user" do
-      visit signup_path
+      visit spree.signup_path
       fill_in "Email", :with => "email@person.com"
       fill_in "Password", :with => "password"
       fill_in "Password Confirmation", :with => ""
