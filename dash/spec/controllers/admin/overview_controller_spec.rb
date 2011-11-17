@@ -2,6 +2,10 @@ require 'spec_helper'
 
 describe Spree::Admin::OverviewController do
   context '#get_report_data' do
+    before do
+      controller.stub :current_user => Factory(:admin_user)
+    end
+
     it 'should not allow JSON request without a valid token' do
       controller.should_receive(:protect_against_forgery?).at_least(:once).and_return(true)
       expect {
