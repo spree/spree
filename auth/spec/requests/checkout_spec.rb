@@ -145,6 +145,28 @@ describe "Checkout", :js => true do
     page.should have_content("No shipping methods available")
   end
 
+  it "when no payment methods have been configured" do
+    Spree::PaymentMethod.delete_all
+
+    click_link "RoR Mug"
+    click_button "Add To Cart"
+    click_link "Checkout"
+
+    within("#guest_checkout") { fill_in "Email", :with => "spree@test.com" }
+    click_button "Continue"
+    str_addr = "bill_address"
+    address = Factory(:address, :state => Spree::State.first)
+    within('fieldset#billing') { select "United States", :from => "Country" }
+    ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
+    end
+    select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+    check "order_use_billing"
+    click_button "Save and Continue"
+    click_button "Save and Continue"
+    page.should have_content("No payment methods are configured for this environment")
+  end
+
   it "user submits an invalid credit card number" do
     Factory(:bogus_payment_method, :environment => 'test')
     click_link "RoR Mug"
