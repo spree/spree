@@ -36,7 +36,6 @@ require 'nested_set'
 require 'acts_as_list'
 require 'active_merchant'
 require 'meta_search'
-require 'find_by_param'
 require 'jquery-rails'
 
 module Spree
@@ -65,6 +64,7 @@ require 'spree/core/mail_settings'
 require 'spree/core/mail_interceptor'
 require 'spree/core/middleware/redirect_legacy_product_url'
 require 'spree/core/middleware/seo_assist'
+require 'spree/core/permalinks'
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'

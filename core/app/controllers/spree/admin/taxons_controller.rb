@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class TaxonsController < BaseController
-      include Railslove::Plugins::FindByParam::SingletonMethods
 
       respond_to :html, :json, :js
 
