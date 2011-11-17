@@ -146,10 +146,9 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
 
     def notify_about_routes
       puts "************************************************************************************************************"
-      puts "Be sure to add the following three lines to your application's config/routes.rb file to finish setting up spree"
-      puts "mount Spree::Promo::Engine, :at => '/'"
-      puts "mount Spree::Auth::Engine, :at => '/'"
-      puts "mount Spree::Core::Engine, :at => '/'"
+      puts "Be sure to add the following line to your application's config/routes.rb file to finish setting up Spree:"
+      puts " "
+      puts "    mount Spree::Core::Engine, :at => '/'"
     end
   end
 end
