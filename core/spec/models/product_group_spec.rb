@@ -44,7 +44,7 @@ describe Spree::ProductGroup do
     end
 
     let!(:product_scope) { Factory(:product_scope, :name => "with_property", :arguments => ["test"]) }
-    let!(:product_group) { Factory(:product_group, :product_scopes => product_scope) }
+    let!(:product_group) { Factory(:product_group, :product_scopes => [product_scope]) }
 
     it "updates a product group when a property is deleted" do
       pending
