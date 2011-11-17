@@ -4,7 +4,7 @@ describe Spree::UserRegistrationsController do
   context '#create' do
     it 'should fire exactly one spree.user.signup notification' do
       activator = Spree::Activator.create!(:event_name => 'spree.user.signup')
-      ActiveSupport::Notifications.subscribe(/spree.user.signup/) { |*args| activator.activate }
+      ActiveSupport::Notifications.subscribe(/spree.user.signup/) { |*args| activator.activate(args) }
       activator.should_receive(:activate).once
       new_user = Factory.build(:user)
 
