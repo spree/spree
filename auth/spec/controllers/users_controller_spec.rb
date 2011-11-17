@@ -30,14 +30,14 @@ describe Spree::UsersController do
       it 'should perform update' do
         put :update, { :user => { :email => 'mynew@email-address.com' } }
         assigns[:user].email.should == 'mynew@email-address.com'
-        response.should redirect_to(account_url(:only_path => true))
+        response.should redirect_to(spree.account_url(:only_path => true))
       end
     end
 
     context 'when attempting to update other account' do
       it 'should not allow update' do
         put :update, { :user => Factory(:user) }, { :user => { :email => 'mynew@email-address.com' } }
-        response.should redirect_to(login_url(:only_path => true))
+        response.should redirect_to(spree.login_url(:only_path => true))
       end
     end
   end
