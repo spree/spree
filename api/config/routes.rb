@@ -1,4 +1,4 @@
-Spree::Api::Engine.routes.draw do
+Spree::Core::Engine.routes.prepend do
   namespace :admin do
     resources :users do
       member do
