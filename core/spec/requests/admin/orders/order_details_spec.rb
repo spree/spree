@@ -12,6 +12,7 @@ describe "Order Details" do
         iu.update_attribute_without_callbacks('state', 'sold')
       end
 
+      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
       click_link "Orders"
 

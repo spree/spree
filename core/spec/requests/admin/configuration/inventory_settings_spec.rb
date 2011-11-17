@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "Inventory Settings" do
   context "changing settings" do
     before(:each) do
+      sign_in_as!(Factory(:admin_user))
       @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
       Spree::Config.set :allow_backorders => true
       visit admin_path

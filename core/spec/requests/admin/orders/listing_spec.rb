@@ -4,6 +4,7 @@ describe "Orders Listing" do
   before(:each) do
     Factory(:order, :created_at => "2011-01-01 12:36:15", :completed_at => "2011-02-02 12:36:15", :number => "R100")
     Factory(:order, :created_at => "2011-02-01 12:36:15", :completed_at => "2011-02-01 12:36:15", :number => "R200")
+    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
   end
 
