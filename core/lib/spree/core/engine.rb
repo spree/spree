@@ -2,7 +2,7 @@ module Spree
   module Core
     class Engine < ::Rails::Engine
       isolate_namespace Spree
-      engine_name 'spree_core'
+      engine_name 'spree'
 
       config.autoload_paths += %W(#{config.root}/lib)
 
