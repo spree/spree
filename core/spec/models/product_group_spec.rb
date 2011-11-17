@@ -33,4 +33,25 @@ describe Spree::ProductGroup do
     end
 
   end
+
+  # Regression test for #774
+  context "Regression test for #774" do
+
+    let!(:property) { Factory(:property, :name => "test") }
+    let!(:product) do
+      product = Factory(:product)
+      product.properties << property
+    end
+
+    let!(:product_scope) { Factory(:product_scope, :name => "with_property", :arguments => ["test"]) }
+    let!(:product_group) { Factory(:product_group, :product_scopes => product_scope) }
+
+    it "updates a product group when a property is deleted" do
+      pending
+      product_group.products.should include(product)
+      property.destroy
+      product_group.products(true).should_not include(products)
+    end
+
+  end
 end
