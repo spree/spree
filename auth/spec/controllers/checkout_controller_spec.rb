@@ -98,7 +98,7 @@ describe Spree::CheckoutController do
 
           it 'should redirect to the tokenized order view' do
             post :update, { :state => 'confirm' }
-            response.should redirect_to token_order_path('R123', 'ABC')
+            response.should redirect_to spree.token_order_path('R123', 'ABC')
           end
 
           it 'should populate the flash message' do
