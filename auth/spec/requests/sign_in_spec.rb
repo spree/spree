@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Sign In" do
   before(:each) do
     @user = Factory(:user, :email => "email@person.com", :password => "secret", :password_confirmation => "secret")
-    visit login_path
+    visit spree.login_path
   end
 
   it "should ask use to sign in" do
