@@ -4,7 +4,7 @@ describe "Visiting Products" do
   include_context "custom products"
 
   before(:each) do
-    visit spree_core.root_path
+    visit spree.root_path
   end
 
   it "should be able to show the shopping cart after adding a product to it" do

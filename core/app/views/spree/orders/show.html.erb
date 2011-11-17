@@ -6,9 +6,9 @@
   <% end %>
   <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
   <p data-hook="links">
-    <%= link_to t(:back_to_store), spree_core.root_path %>
+    <%= link_to t(:back_to_store), spree.root_path %>
     <% unless params.has_key? :checkout_complete %>
-      | <%= link_to t(:my_account), spree_auth.account_path if current_user%>
+      | <%= link_to t(:my_account), spree.account_path if current_user%>
     <% end %>
   </p>
 </div>

@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Address do
-  before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-  end
-
   context "validations" do
     it { should belong_to(:country) }
     it { should belong_to(:state) }
@@ -38,7 +34,7 @@ describe Spree::Address do
 
   context "validation" do
     let(:state) { Factory(:state, :name => 'maryland', :abbr => 'md') }
-    before { Spree::Config.set :address_requires_state => true }
+    before  { Spree::Config.stub(:get).with(:address_requires_state).and_return(true) }
 
     context "state_name is not nil and country does not have any states" do
       let(:address) { Factory(:address, :state => nil, :state_name => 'alabama')}

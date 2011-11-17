@@ -157,7 +157,6 @@ describe Spree::Order do
 
     end
 
-
     context "when current state is delivery" do
       before do
         order.state = "delivery"

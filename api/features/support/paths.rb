@@ -13,9 +13,9 @@ module NavigationHelpers
     when /the home\s?page/
       '/'
     when /the login page/
-      spree_auth.login_path
+      spree.login_path
     when /the sign in page/
-      spree_auth.new_user_session_path
+      spree.new_user_session_path
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
@@ -27,7 +27,7 @@ module NavigationHelpers
       begin
         page_name =~ /the (.*) page/
         path_components = $1.split(/\s+/)
-        spree_core.send(path_components.push('path').join('_').to_sym)
+        spree.send(path_components.push('path').join('_').to_sym)
       rescue Object => e
         raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
           "Now, go and add a mapping in #{__FILE__}"

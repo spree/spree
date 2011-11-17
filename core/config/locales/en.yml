@@ -389,6 +389,7 @@ en:
     messages:
       could_not_create_taxon: "Could not create taxon"
       no_shipping_methods_available: "No shipping methods available for selected location, please change your address and try again."
+      no_payment_methods_available: "No payment methods are configured for this environment"
   errors_prohibited_this_record_from_being_saved:
     one: "1 error prohibited this record from being saved"
     other: "%{count} errors prohibited this record from being saved"
@@ -548,7 +549,6 @@ en:
   next: Next
   no_items_in_cart: ""
   no_match_found: "No Match Found"
-  no_payment_methods_available: "Can't check out, no payment methods are configured for this environment"
   no_products_found: "No products found"
   no_results: "No results"
   no_user_found: "No user was found with that email address"

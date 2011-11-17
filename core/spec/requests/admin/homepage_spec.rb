@@ -3,7 +3,8 @@ require 'spec_helper'
 describe "Homepage" do
   context "visiting the homepage" do
     before(:each) do
-      visit spree_core.admin_path
+      sign_in_as!(Factory(:admin_user))
+      visit spree.admin_path
     end
 
     it "should have the header text 'Administration'" do
@@ -37,7 +38,8 @@ describe "Homepage" do
 
   context "visiting the products tab" do
     before(:each) do
-      visit spree_core.admin_products_path
+      sign_in_as!(Factory(:admin_user))
+      visit spree.admin_products_path
     end
 
     it "should have a link to products" do
@@ -63,7 +65,8 @@ describe "Homepage" do
 
   context "visiting the users tab" do
     before(:each) do
-      visit spree_core.admin_users_path
+      sign_in_as!(Factory(:admin_user))
+      visit spree.admin_users_path
     end
 
     it "should have the right header text" do

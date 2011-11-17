@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe "General Settings" do
   before(:each) do
-    visit spree_core.admin_path
+    sign_in_as!(Factory(:admin_user))
+    visit spree.admin_path
     click_link "Configuration"
     click_link "General Settings"
   end

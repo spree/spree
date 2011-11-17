@@ -5,7 +5,8 @@ describe "Admin visiting history" do
     order = Factory(:order)
     order.finalize!
 
-    visit spree_core.admin_path
+    sign_in_as!(Factory(:admin_user))
+    visit spree.admin_path
     click_link "Orders"
     within(:css, 'table#listing_orders tbody tr:nth-child(1)') { click_link "Edit" }
     click_link "History"

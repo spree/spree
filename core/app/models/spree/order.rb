@@ -32,6 +32,7 @@ module Spree
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :format => /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i, :if => :require_email
     validate :has_available_shipment
+    validate :has_available_payment
 
     #delegate :ip_address, :to => :checkout
     def ip_address
@@ -284,8 +285,8 @@ module Spree
         shipment.update_attributes(:shipping_method => shipping_method)
       else
         self.shipments << Shipment.create(:order => self,
-                                                 :shipping_method => shipping_method,
-                                                 :address => self.ship_address)
+                                          :shipping_method => shipping_method,
+                                          :address => self.ship_address)
       end
 
     end
@@ -335,6 +336,10 @@ module Spree
     def available_shipping_methods(display_on = nil)
       return [] unless ship_address
       ShippingMethod.all_available(self, display_on)
+    end
+
+    def available_payment_methods(display_on = nil)
+      PaymentMethod.all(display_on)
     end
 
     def rate_hash
@@ -494,7 +499,12 @@ module Spree
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
-
+      
+      def has_available_payment
+        return unless :delivery == state_name.to_sym
+        errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
+      end
+      
       def after_cancel
         # TODO: make_shipments_pending
         # TODO: restock_inventory

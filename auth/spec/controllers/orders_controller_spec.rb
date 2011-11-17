@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Spree::OrdersController do
   ORDER_TOKEN = 'ORDER_TOKEN'
 
-  let(:user) { mock_model Spree::User, :has_role? => false, :email => 'user@example.com', :anonymous? => false }
-  let(:guest_user) { mock_model Spree::User, :has_role? => false, :email => 'user@example.com', :anonymous? => false }
+  let(:user) { Factory(:user) }
+  let(:guest_user) { Factory(:user) }
   let(:order) { Spree::Order.new }
 
   it 'should understand order routes with token' do
@@ -14,7 +14,6 @@ describe Spree::OrdersController do
   end
 
   before do
-    controller.stub :current_user => nil
     Spree::User.stub :anonymous! => guest_user
   end
 

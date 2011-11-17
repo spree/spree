@@ -29,13 +29,13 @@ Spree::CheckoutController.class_eval do
       return unless Spree::Auth::Config[:registration_step]
       return if current_user or current_order.email
       store_location
-      redirect_to spree_auth.checkout_registration_path
+      redirect_to spree.checkout_registration_path
     end
 
-    # Overrides the equivalent method defined in spree_core.  This variation of the method will ensure that users
+    # Overrides the equivalent method defined in Spree::Core.  This variation of the method will ensure that users
     # are redirected to the tokenized order url unless authenticated as a registered user.
     def completion_route
       return order_path(@order) if current_user
-      spree_auth.token_order_path(@order, @order.token)
+      spree.token_order_path(@order, @order.token)
     end
 end

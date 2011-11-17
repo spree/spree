@@ -95,7 +95,10 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def install_migrations
-      silence_warnings { run 'bundle exec rake railties:install:migrations' }
+      puts "Copying migrations..."
+      silence_stream(STDOUT) do
+        silence_warnings { run 'bundle exec rake railties:install:migrations' }
+      end
     end
 
     def run_migrations
@@ -142,11 +145,14 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def notify_about_routes
-      puts "************************************************************************************************************"
-      puts "Be sure to add the following three lines to your application's config/routes.rb file to finish setting up spree"
-      puts "mount Spree::Promo::Engine, :at => '/'"
-      puts "mount Spree::Auth::Engine, :at => '/'"
-      puts "mount Spree::Core::Engine, :at => '/'"
+      insert_into_file File.join('config', 'routes.rb'), :after => "Application.routes.draw do\n" do
+        "  # Mount Spree's routes\n  mount Spree::Core::Engine, :at => '/'\n"
+      end
+
+      puts "*" * 50
+      puts "We added the following line to your application's config/routes.rb file:"
+      puts " "
+      puts "    mount Spree::Core::Engine, :at => '/'"
     end
   end
 end

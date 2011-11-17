@@ -8,7 +8,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
       flash.notice = I18n.t(:successfully_created, :resource => I18n.t(:promotion_action))
     end
     respond_to do |format|
-      format.html { redirect_to spree_promo.edit_admin_promotion_path(@promotion)}
+      format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
       format.js   { render :layout => false }
     end
   end
@@ -20,7 +20,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
       flash.notice = I18n.t(:successfully_removed, :resource => I18n.t(:promotion_action))
     end
     respond_to do |format|
-      format.html { redirect_to spree_promo.edit_admin_promotion_path(@promotion)}
+      format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
       format.js   { render :layout => false }
     end
   end

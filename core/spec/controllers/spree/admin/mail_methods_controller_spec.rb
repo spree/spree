@@ -5,7 +5,7 @@ describe Spree::Admin::MailMethodsController do
   let(:mail_method) { mock_model(Spree::MailMethod).as_null_object }
 
   before do
-    #controller.stub :current_user => nil
+    controller.stub :current_user => Factory(:admin_user)
     Spree::Order.stub :find => order
     Spree::MailMethod.stub :find => mail_method
   end

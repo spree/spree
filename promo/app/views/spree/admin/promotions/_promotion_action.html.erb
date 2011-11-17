@@ -1,7 +1,7 @@
 <% promotion_action = action_form.object %>
 <div class="promotion_action <%= promotion_action.type.demodulize.underscore %>" id="<%= dom_id promotion_action %>">
   <span class="delete">
-    <%= link_to_with_icon 'cross', '', spree_promo.admin_promotion_promotion_action_path(@promotion, promotion_action), :remote => true, :method => :delete %>
+    <%= link_to_with_icon 'cross', '', spree.admin_promotion_promotion_action_path(@promotion, promotion_action), :remote => true, :method => :delete %>
   </span>
   <% type_name = promotion_action.class.name.demodulize.underscore %>
   <% param_prefix = "promotion[promotion_actions_attributes][#{promotion_action.id}]" %>

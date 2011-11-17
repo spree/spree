@@ -3,8 +3,9 @@ require 'spec_helper'
 describe "Analytics Tracker" do
   context "index" do
     before(:each) do
-      2.times { Factory(:tracker, :environment => "Cucumber") }
-      visit spree_core.admin_path
+      2.times { Factory(:tracker, :environment => "test") }
+      sign_in_as!(Factory(:admin_user))
+      visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
     end
@@ -15,18 +16,19 @@ describe "Analytics Tracker" do
 
     it "should have the right tabular values displayed" do
       find('table.index tr:nth-child(1) td:nth-child(1)').text.should == "A100"
-      find('table.index tr:nth-child(1) td:nth-child(2)').text.should == "Cucumber"
+      find('table.index tr:nth-child(1) td:nth-child(2)').text.should == "Test"
       find('table.index tr:nth-child(1) td:nth-child(3)').text.should == "Yes"
 
       find('table.index tr:nth-child(2) td:nth-child(1)').text.should == "A100"
-      find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Cucumber"
+      find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Test"
       find('table.index tr:nth-child(2) td:nth-child(3)').text.should == "Yes"
     end
   end
 
   context "create" do
     before(:each) do
-      visit spree_core.admin_path
+      sign_in_as!(Factory(:admin_user))
+      visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
     end
