@@ -32,7 +32,7 @@ describe Spree::CheckoutController do
 
         it 'should redirect to registration step' do
           get :edit, { :state => 'confirm' }
-          response.should redirect_to checkout_registration_path
+          response.should redirect_to spree.checkout_registration_path
         end
       end
     end
