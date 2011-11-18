@@ -12,11 +12,8 @@ describe "Promotion Adjustments" do
       Factory(:product, :name => "RoR Mug", :price => "40")
       Factory(:product, :name => "RoR Bag", :price => "20")
 
+      sign_in_as!(user)
       visit spree.admin_path
-
-      fill_in "user_email", :with => user.email
-      fill_in "user_password", :with => user.password
-      click_button "Log In"
       click_link "Promotions"
       click_link "New Promotion"
     end
