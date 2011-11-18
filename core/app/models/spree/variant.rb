@@ -9,8 +9,9 @@ module Spree
     has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
     validate :check_price
-    validates :price, :presence => true
-    validates :cost_price, :numericality => true, :allow_nil => true if self.table_exists? && self.column_names.include?('cost_price')
+    validates_numericality_of :price, :greater_than_or_equal_to => 0, :presence => true
+    validates_numericality_of :cost_price, :greater_than_or_equal_to => 0, :allow_nil => true if self.table_exists? && self.column_names.include?('cost_price')
+    validates_numericality_of :count_on_hand
 
     before_save :touch_product
 
