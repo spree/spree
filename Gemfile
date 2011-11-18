@@ -32,12 +32,12 @@ group :ci do
   gem 'mysql2', '~> 0.3.6'
 end
 
-platform :ruby_18 do
-  gem "ruby-debug"
-end
+# platform :ruby_18 do
+#   gem "ruby-debug"
+# end
 
-platform :ruby_19 do
-  gem "ruby-debug19"
-end
+# platform :ruby_19 do
+#   gem "ruby-debug19"
+# end
 
 gemspec
