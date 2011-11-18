@@ -7,6 +7,8 @@ describe "Promotion Adjustments" do
       PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
       SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
       ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
+      Factory(:bogus_payment_method, :environment => 'test')
+
       Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
       user = Factory(:admin_user)
       Factory(:product, :name => "RoR Mug", :price => "40")
