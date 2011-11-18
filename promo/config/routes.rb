@@ -1,4 +1,4 @@
-Spree::Promo::Engine.routes.draw do
+Spree::Core::Engine.routes.prepend do
   namespace :admin do
     resources :promotions do
       resources :promotion_rules
