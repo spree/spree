@@ -22,7 +22,7 @@ module Spree
     private
       def process_spree_action(action, parameters = nil, session = nil, flash = nil, method = "GET")
         parameters ||= {}
-        process(action, parameters.merge!(:use_route => :spree_dash), session, flash, method)
+        process(action, parameters.merge!(:use_route => :spree), session, flash, method)
       end
   end
 end
