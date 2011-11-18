@@ -24,12 +24,6 @@ describe Spree::Variant do
       variant.price = 0
       variant.should be_valid
     end
-
-    it "should validate numericality of on_hand" do
-      variant.on_hand = "abc"
-      variant.price = 0
-      variant.should be_invalid
-    end
   end
 
   context "on_hand=" do
