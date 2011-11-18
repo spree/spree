@@ -32,9 +32,11 @@ group :ci do
   gem 'mysql2', '~> 0.3.6'
 end
 
-if RUBY_VERSION < "1.9"
+platform :ruby_18 do
   gem "ruby-debug"
-else
+end
+
+platform :ruby_19 do
   gem "ruby-debug19"
 end
 

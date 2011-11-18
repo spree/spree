@@ -76,6 +76,7 @@ GEM
       multi_json (~> 1.0)
     acts_as_list (0.1.4)
     addressable (2.2.6)
+    archive-tar-minitar (0.5.2)
     arel (2.2.1)
     bcrypt-ruby (3.0.1)
     braintree (2.13.0)
@@ -147,6 +148,8 @@ GEM
       addressable (~> 2.2.6)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
+    linecache19 (0.5.12)
+      ruby_core_source (>= 0.1.4)
     mail (2.3.0)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -222,6 +225,16 @@ GEM
       ruby-debug-base (~> 0.10.4.0)
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
+    ruby-debug-base19 (0.11.25)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby_core_source (0.1.5)
+      archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.4)
     sass (3.1.10)
     sass-rails (3.1.4)
@@ -279,6 +292,7 @@ DEPENDENCIES
   rcov
   rspec-rails (= 2.6.1)
   ruby-debug
+  ruby-debug19
   sass-rails (~> 3.1.4)
   shoulda (>= 3.0.0.beta)
   spree!
