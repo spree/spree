@@ -21,7 +21,7 @@ describe Spree::Variant do
     end
 
     it "should validate price is 0" do
-      variant.price = 0;
+      variant.price = 0
       variant.should be_valid
     end
 
