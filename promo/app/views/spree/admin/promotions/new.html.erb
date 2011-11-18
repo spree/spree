@@ -1,6 +1,6 @@
 <h1><%= t(:new_promotion) %></h1>
 
-<%= form_for :promotion, :url => spree.admin_promotions_url do |f| %>
+<%= form_for :promotion, :url => collection_url do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
 <% end %>
