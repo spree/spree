@@ -214,9 +214,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def collection_url(options = {})
     if parent_data.present?
-      polymorphic_url([:admin, parent, model_class], options)
+      spree.polymorphic_url([:admin, parent, model_class], options)
     else
-      polymorphic_url([:admin, model_class], options)
+      spree.polymorphic_url([:admin, model_class], options)
     end
   end
 
