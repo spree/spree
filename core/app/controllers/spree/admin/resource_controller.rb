@@ -189,26 +189,26 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def new_object_url(options = {})
     if parent_data.present?
-      new_polymorphic_url([:admin, parent, model_class], options)
+      spree.new_polymorphic_url([:admin, parent, model_class], options)
     else
-      new_polymorphic_url([:admin, model_class], options)
+      spree.new_polymorphic_url([:admin, model_class], options)
     end
   end
 
   def edit_object_url(object, options = {})
     if parent_data.present?
-      send "edit_admin_#{model_name}_#{object_name}_url", parent, object, options
+      spree.send "edit_admin_#{model_name}_#{object_name}_url", parent, object, options
     else
-      send "edit_admin_#{object_name}_url", object, options
+      spree.send "edit_admin_#{object_name}_url", object, options
     end
   end
 
   def object_url(object = nil, options = {})
     target = object ? object : @object
     if parent_data.present?
-      send "admin_#{model_name}_#{object_name}_url", parent, target, options
+      spree.send "admin_#{model_name}_#{object_name}_url", parent, target, options
     else
-      send "admin_#{object_name}_url", target, options
+      spree.send "admin_#{object_name}_url", target, options
     end
   end
 
