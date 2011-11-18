@@ -57,7 +57,7 @@ describe "Promotion Adjustments" do
       click_button "Save and Continue"
       fill_in "order_coupon_code", :with => "ORDER_38"
       click_button "Save and Continue"
-      Spree::Order.first.total.to_f.should == 47.00
+      Spree::Order.first.total.to_f.should == 52.00
     end
 
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
@@ -97,7 +97,7 @@ describe "Promotion Adjustments" do
       click_button "Save and Continue"
       fill_in "order_coupon_code", :with => "SINGLE_USE"
       click_button "Save and Continue"
-      Spree::Order.first.total.to_f.should == 47.00
+      Spree::Order.first.total.to_f.should == 52.00
 
       user = Factory(:user, :email => "john@test.com", :password => "secret", :password_confirmation => "secret")
       click_link "Logout"
@@ -206,7 +206,7 @@ describe "Promotion Adjustments" do
       click_button "Save and Continue"
       click_button "Save and Continue"
       click_button "Save and Continue"
-      Spree::Order.last.total.to_f.should == 42.00
+      Spree::Order.last.total.to_f.should == 63.00
       page.should have_content("Free Shipping")
     end
 
