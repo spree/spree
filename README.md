@@ -20,6 +20,8 @@ All of the gems are designed to work together to provide a fully functional e-co
 however, to use only the pieces you are interested in.  So for example, you could use just the barebones spree\_core gem
 and perhaps combine it with your own custom authorization scheme instead of using spree_auth.
 
+[![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
+
 Using the Gem
 -------------
 
