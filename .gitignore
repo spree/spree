@@ -24,6 +24,7 @@ db/schema.rb
 doc/**/*
 */Gemfile
 */Gemfile.lock
+Gemfile.lock
 lib/products_index_profiler.rb
 log/*.log
 pkg
