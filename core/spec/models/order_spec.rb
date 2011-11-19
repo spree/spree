@@ -20,11 +20,6 @@ describe Spree::Order do
   end
 
   context "factory" do
-    it "should change the Orders count by 1 after factory has been executed" do
-      lambda do
-        Factory(:order_with_totals)
-      end.should change(Spree::Order, :count).by(1)
-    end
     context 'line_item' do
       let(:order) { Factory(:order_with_totals) }
       it "should have a line_item attached to it" do
