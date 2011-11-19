@@ -19,18 +19,6 @@ describe Spree::Order do
     Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
-  context "factory" do
-    context 'line_item' do
-      let(:order) { Factory(:order_with_totals) }
-      it "should have a line_item attached to it" do
-        order.line_items.size.should == 1
-      end
-      it "should be attached to last line_item created " do
-        order.line_items.first.id.should == Spree::LineItem.last.id
-      end
-    end
-  end
-
   context "#products" do
     it "should return ordered products" do
       variant1 = mock_model(Spree::Variant, :product => "product1")
