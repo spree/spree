@@ -39,12 +39,21 @@ end
 
 desc "clean the whole repository by removing all the generated files"
 task :clean do
-  cmd = "rm -rf sandbox"; puts cmd; system cmd
-  cmd = "rm -rf pkg"; puts cmd; system cmd
+  puts "Deleting sandbox..."
+  FileUtils.rm_rf("sandbox")
+  puts "Deleting pkg directory.."
+  FileUtils.rm_rf("pkg")
+
   %w(api auth core dash promo).each do |gem_name|
-    cmd = "rm #{gem_name}/Gemfile*"; puts cmd; system cmd
-    cmd = "rm -rf #{gem_name}/pkg"; puts cmd; system cmd
-    cmd = "cd #{gem_name}/spec &&  rm -rf dummy"; puts cmd; system cmd
+    puts "Cleaning #{gem_name}:"
+    puts "  Deleting #{gem_name}/Gemfile"
+    FileUtils.rm("#{gem_name}/Gemfile")
+    puts "  Deleting #{gem_name}/pkg"
+    FileUtils.rm_rf("#{gem_name}/pkg")
+    puts "  Deleting #{gem_name}'s dummy application"
+    Dir.chdir("#{gem_name}/spec") do
+      FileUtils.rm_rf("dummy")
+    end
   end
 end
 
@@ -53,10 +62,12 @@ namespace :gem do
   task :build do
     %w(core auth api dash promo sample).each do |gem_name|
       puts "########################### #{gem_name} #########################"
-      cmd = "rm -rf #{gem_name}/pkg"; puts cmd; system cmd
+      puts "Deleting #{gem_name}/pkg"
+      FileUtils.rm_rf("#{gem_name}/pkg")
       cmd = "cd #{gem_name} && bundle exec rake gem"; puts cmd; system cmd
     end
-    cmd = "rm -rf pkg"; puts cmd; system cmd
+    puts "Deleting pkg directory"
+    FileUtils.rm_rf("pkg")
     cmd = "bundle exec rake gem"; puts cmd; system cmd
   end
 end
@@ -68,11 +79,12 @@ namespace :gem do
 
     %w(core auth api dash promo sample).each do |gem_name|
       puts "########################### #{gem_name} #########################"
-      cmd = "rm #{gem_name}/pkg"; puts cmd; system cmd
+      puts "Deleting #{gem_name}/pkg"
+      FileUtils.rm("#{gem_name}/pkg")
       cmd = "cd #{gem_name} && bundle exec rake gem"; puts cmd; system cmd
       cmd = "cd #{gem_name}/pkg && gem install spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
     end
-    cmd = "rm -rf pkg"; puts cmd; system cmd
+    FileUtils.rm_rf("#{gem_name}/pkg")
     cmd = "bundle exec rake gem"; puts cmd; system cmd
     cmd = "gem install pkg/spree-#{version}.gem"; puts cmd; system cmd
   end
