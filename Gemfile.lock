@@ -132,6 +132,10 @@ GEM
     ffi (1.0.11)
     gherkin (2.4.21)
       json (>= 1.4.6)
+    guard (0.8.8)
+      thor (~> 0.14.6)
+    guard-rspec (0.5.4)
+      guard (>= 0.8.4)
     highline (1.6.2)
     hike (1.2.1)
     i18n (0.6.0)
@@ -262,6 +266,8 @@ DEPENDENCIES
   database_cleaner (= 0.6.7)
   factory_girl_rails (~> 1.4.0)
   faker
+  guard
+  guard-rspec (~> 0.5.0)
   json
   launchy
   mysql2 (~> 0.3.6)
