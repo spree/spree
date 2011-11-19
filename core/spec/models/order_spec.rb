@@ -11,7 +11,8 @@ describe Spree::Order do
     it { should have_valid_factory(:order) }
   end
 
-  let(:order) { Factory(:order) }
+  let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
+  let(:order) { stub_model(Spree::Order, :user => user) }
   let(:gateway) { Spree::Gateway::Bogus.new(:name => "Credit Card", :active => true) }
 
   before do
@@ -31,14 +32,11 @@ describe Spree::Order do
 
   context "#save" do
     it "should create guest user (when no user assigned)" do
-      order.save
+      order.run_callbacks(:create)
       order.user.should_not be_nil
     end
 
     context "when associated with a registered user" do
-      let(:order) { stub_model(Spree::Order, :user => user) }
-      let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
-
       it "should assign the email address of the user" do
         order.run_callbacks(:create)
         order.email.should == user.email
@@ -64,6 +62,7 @@ describe Spree::Order do
     context "when current state is confirm" do
       before { order.state = "confirm" }
       it "should finalize order when transitioning to complete state" do
+        order.run_callbacks(:create)
         order.should_receive(:finalize!)
         order.next!
       end
@@ -105,6 +104,7 @@ describe Spree::Order do
       let(:rate_1) { mock_model Spree::TaxRate, :amount => 15, :calculator => sales_tax }
 
       before do
+        order.email = user.email
         order.state = "address"
         Spree::TaxRate.stub :match => [rate, rate_1]
       end
@@ -136,6 +136,7 @@ describe Spree::Order do
 
     context "when current state is delivery" do
       before do
+        order.email = user.email
         order.state = "delivery"
         order.shipping_method = mock_model(Spree::ShippingMethod).as_null_object
         order.stub :total => 10.0
@@ -396,10 +397,11 @@ describe Spree::Order do
       # order.update!
     end
 
-    it "should call update! on every shipment" do
-      # shipment = mock_model Shipment
-      shipment = Factory(:shipment)
-      order.shipments = [shipment]
+    it "should call update! on every shipment when Order#update!" do
+      shipment = stub_model(Spree::Shipment, :order => order)
+      order.stub :shipments => [shipment]
+      order.stub(:update_shipment_state) # we don't care about this one
+
       shipment.should_receive(:update!)
       order.update!
     end
@@ -506,6 +508,7 @@ describe Spree::Order do
 
   context "#cancel" do
     before do
+      order.email = user.email
       order.stub :completed? => true
       order.stub :allow_cancel? => true
     end
@@ -583,8 +586,8 @@ describe Spree::Order do
 
   context "create_tax_charge!" do
     let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "Money for the man" }
-    let(:rate) { Spree::TaxRate.create(:amount => 0.05) }
-    let(:rate_1) { Spree::TaxRate.create(:amount => 0.15) }
+    let(:rate) { stub_model(Spree::TaxRate, :amount => 0.05) }
+    let(:rate_1) { stub_model(Spree::TaxRate, :amount => 0.15) }
 
     it "should destory all existing tax adjustments" do
       adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax)
@@ -598,12 +601,27 @@ describe Spree::Order do
       [rate, rate_1].each {|r| r.stub :calculator => sales_tax }
       Spree::TaxRate.stub :match => [rate, rate_1]
 
-      order.create_tax_charge!
-      order.adjustments.tax.size.should == 2
+      adjustment_1_attributes = {
+        :amount => 3,
+        :source => order,
+        :originator => rate,
+        :label => "Money for the man 5.0%",
+        :mandatory => true
+      }
 
-      ["Money for the man 5.0%", "Money for the man 15.0%"].each do |label|
-        order.adjustments.tax.map(&:label).include?(label).should be_true
-      end
+      order.adjustments.should_receive(:create).with(adjustment_1_attributes).once
+
+      adjustment_2_attributes = {
+        :amount => 3,
+        :source => order,
+        :originator => rate_1,
+        :label => "Money for the man 15.0%",
+        :mandatory => true
+      }
+
+      order.adjustments.should_receive(:create).with(adjustment_2_attributes).once
+
+      order.create_tax_charge!
     end
 
     context "when :show_price_inc_vat is true" do
