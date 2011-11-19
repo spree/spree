@@ -1,5 +1,5 @@
 require "rubygems"
-require "spree_core/version"
+require "spree/core/version"
 require "thor"
 require 'spree/extension'
 #require 'spree/application'
