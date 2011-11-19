@@ -48,30 +48,22 @@ describe Spree::Order do
     end
 
     context "when associated with a registered user" do
-      let(:order) { Spree::Order.new }
-      let(:user) { Factory(:user, :email => "user@registered.com") }
-      before {
-        order.user = user
-      }
-      it "should not remove the user" do
-        order.save
-        order.user.should == user
-      end
+      let(:order) { stub_model(Spree::Order, :user => user) }
+      let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
 
       it "should assign the email address of the user" do
-        order.save
+        order.run_callbacks(:create)
         order.email.should == user.email
       end
 
       it "should accept the sample admin email address" do
         user.stub :email => "spree@example.com"
-        order.save
+        order.run_callbacks(:create)
         order.email.should == user.email
       end
 
       it "should reject the automatic email for anonymous users" do
         user.stub :anonymous? => true
-        order.save
         order.email.should be_blank
       end
 
