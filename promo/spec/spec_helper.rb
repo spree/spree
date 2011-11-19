@@ -11,6 +11,8 @@ require 'spree/url_helpers'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'spree/core/testing_support/factories'
+require 'spree/core/testing_support/env'
+
 require 'factories'
 require 'active_record/fixtures'
 fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)

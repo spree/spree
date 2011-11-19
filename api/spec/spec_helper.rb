@@ -5,6 +5,7 @@ require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
 require 'spree/core/testing_support/factories'
+require 'spree/core/testing_support/env'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
