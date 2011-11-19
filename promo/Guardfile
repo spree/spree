@@ -1,16 +1,3 @@
-# guard 'spork', :wait => 60, :cucumber => false, :rspec_env => { 'RAILS_ENV' => 'test' } do
-#   watch('config/application.rb')
-#   watch('config/environment.rb')
-#   watch(%r{^config/environments/.+\.rb$})
-#   watch(%r{^config/initializers/.+\.rb$})
-#   watch('spec/spec_helper.rb')
-#   watch(%r{^spec/support/.+\.rb$})
-#
-#   engines.each do |engine|
-#     watch(%r{^spec/support/.+\.rb$})
-#   end
-# end
-
 guard 'rspec', :version => 2, :spec_paths => %w(spec),
   :cli => (File.read('.rspec').split("\n").join(' ') if File.exists?('.rspec')) do
   watch(%r{^spec/.+_spec\.rb$})
