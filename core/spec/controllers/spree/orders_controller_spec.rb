@@ -65,7 +65,7 @@ describe Spree::OrdersController do
     it "should redirect to cart path (on success)" do
       order.stub(:update_attributes).and_return true
       put :update, {}, {:order_id => 1}
-      response.should redirect_to(cart_path)
+      response.should redirect_to(spree.cart_path)
     end
   end
 
@@ -75,7 +75,7 @@ describe Spree::OrdersController do
       order.stub(:line_items).and_return([])
       order.line_items.should_receive(:destroy_all)
       put :empty
-      response.should redirect_to(cart_path)
+      response.should redirect_to(spree.cart_path)
     end
   end
 

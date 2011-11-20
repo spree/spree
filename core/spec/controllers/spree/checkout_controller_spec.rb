@@ -15,13 +15,13 @@ describe Spree::CheckoutController do
     it "should redirect to the cart path unless checkout_allowed?" do
       order.stub :checkout_allowed? => false
       get :edit, { :state => "delivery" }
-      response.should redirect_to(cart_path)
+      response.should redirect_to(spree.cart_path)
     end
 
     it "should redirect to the cart path if current_order is nil" do
       controller.stub!(:current_order).and_return(nil)
       get :edit, { :state => "delivery" }
-      response.should redirect_to(cart_path)
+      response.should redirect_to(spree.cart_path)
     end
 
     it "should change to the requested state" do
@@ -32,7 +32,7 @@ describe Spree::CheckoutController do
     it "should redirect to cart if order is completed" do
       order.stub(:completed? => true)
       get :edit, {:state => "address"}
-      response.should redirect_to(cart_path)
+      response.should redirect_to(spree.cart_path)
     end
 
   end
@@ -66,7 +66,7 @@ describe Spree::CheckoutController do
         it "should redirect the next state" do
           order.stub :state => "payment"
           post :update, {:state => "delivery"}
-          response.should redirect_to checkout_state_path("payment")
+          response.should redirect_to spree.checkout_state_path("payment")
         end
 
         context "when in the confirm state" do
@@ -74,7 +74,7 @@ describe Spree::CheckoutController do
 
           it "should redirect to the order view" do
             post :update, {:state => "confirm"}
-            response.should redirect_to order_path(order)
+            response.should redirect_to spree.order_path(order)
           end
 
           it "should populate the flash message" do
@@ -120,7 +120,7 @@ describe Spree::CheckoutController do
 
       it "should redirect to the cart_path" do
         post :update, {:state => "confirm"}
-        response.should redirect_to cart_path
+        response.should redirect_to spree.cart_path
       end
     end
 
@@ -162,7 +162,7 @@ describe Spree::CheckoutController do
       end
 
       it "should render edit template" do
-        response.should redirect_to cart_path
+        response.should redirect_to spree.cart_path
       end
 
       it "should set flash message for no inventory" do

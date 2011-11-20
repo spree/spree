@@ -6,7 +6,7 @@ describe "Inventory Settings" do
       sign_in_as!(Factory(:admin_user))
       @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
       Spree::Config.set :allow_backorders => true
-      visit admin_path
+      visit spree.admin_path
       click_link "Configuration"
       click_link "Inventory Settings"
     end
