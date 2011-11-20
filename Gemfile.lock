@@ -229,11 +229,7 @@ GEM
       ffi (~> 1.0.9)
       json_pure
       rubyzip
-    shoulda (3.0.0.beta2)
-      shoulda-context (~> 1.0.0.beta1)
-      shoulda-matchers (~> 1.0.0.beta1)
-    shoulda-context (1.0.0.beta1)
-    shoulda-matchers (1.0.0.beta3)
+    shoulda-matchers (1.0.0)
     sprockets (2.1.1)
       hike (~> 1.2)
       rack (~> 1.0)
@@ -275,7 +271,7 @@ DEPENDENCIES
   rcov
   rspec-rails (~> 2.7.0)
   sass-rails (~> 3.1.4)
-  shoulda (>= 3.0.0.beta)
+  shoulda-matchers (~> 1.0.0)
   spree!
   sqlite3
   uglifier
