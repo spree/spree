@@ -115,7 +115,7 @@ describe Spree::CheckoutController do
 
           it 'should redirect to the standard order view' do
             post :update, { :state => 'confirm' }
-            response.should redirect_to Spree::Core::Engine.routes.url_helpers.order_path('R123')
+            response.should redirect_to spree.order_path('R123')
           end
         end
       end
@@ -156,7 +156,7 @@ describe Spree::CheckoutController do
       order.stub :update_attributes => true
       controller.stub :check_authorization
       put :update_registration, { :order => { :email => 'jobs@railsdog.com' } }
-      response.should redirect_to Spree::Core::Engine.routes.url_helpers.checkout_path
+      response.should redirect_to spree.checkout_path
     end
 
     it 'should check if the user is authorized for :edit' do
