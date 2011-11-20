@@ -2,7 +2,7 @@ require 'active_record'
 require 'spree/core/custom_fixtures'
 
 namespace :db do
-  desc %q{Loads a specified fixture file: 
+  desc %q{Loads a specified fixture file:
 For .yml/.csv use rake db:load_file[spree/filename.yml, /absolute/path/to/parent/]
 For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 

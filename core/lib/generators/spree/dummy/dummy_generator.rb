@@ -67,7 +67,7 @@ module Spree
 
     protected
     def dummy_path
-      'spec/dummy'
+      ENV['DUMMY_PATH'] || 'spec/dummy'
     end
 
     def module_name

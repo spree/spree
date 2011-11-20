@@ -2,6 +2,7 @@ require 'rake'
 require 'rubygems/package_task'
 require 'thor/group'
 require File.expand_path('../lib/generators/spree/install/install_generator', __FILE__)
+require 'spree/core/testing_support/common_rake'
 
 spec = eval(File.read('spree.gemspec'))
 Gem::PackageTask.new(spec) do |pkg|
@@ -19,6 +20,15 @@ def run_all_tests(database_name)
     #puts "########################### #{gem_name}|#{database_name} (features) ###########################"
     #sh "cd #{gem_name} && bundle exec cucumber -p ci"
   #end
+end
+
+desc "Generates a dummy app for testing for every Spree engine"
+task :test_app do
+  %w(api auth core dash promo).each do |engine|
+    ENV['LIB_NAME'] = File.join('spree', engine)
+    ENV['DUMMY_PATH'] = File.expand_path("../#{engine}/spec/dummy", __FILE__)
+    Rake::Task['common:test_app'].execute
+  end
 end
 
 task :default => :all_tests
