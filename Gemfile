@@ -10,6 +10,10 @@ group :assets do
   gem 'uglifier'
 end
 
+group :development do
+  gem 'rails-dev-tweaks'
+end
+
 group :test do
   gem 'guard'
   gem 'guard-rspec', '~> 0.5.0'

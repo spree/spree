@@ -190,6 +190,8 @@ GEM
       activesupport (= 3.1.2)
       bundler (~> 1.0)
       railties (= 3.1.2)
+    rails-dev-tweaks (0.5.1)
+      rails (~> 3.1.0)
     railties (3.1.2)
       actionpack (= 3.1.2)
       activesupport (= 3.1.2)
@@ -272,6 +274,7 @@ DEPENDENCIES
   launchy
   mysql2 (~> 0.3.6)
   nokogiri
+  rails-dev-tweaks
   rcov
   rspec-rails (~> 2.7.0)
   sass-rails (~> 3.1.4)
