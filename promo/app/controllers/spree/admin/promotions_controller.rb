@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class PromotionsController < ResourceController
-      include Spree::Promo::Engine.routes.url_helpers
-
       before_filter :load_data
 
       protected
