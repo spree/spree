@@ -149,10 +149,12 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         "  # Mount Spree's routes\n  mount Spree::Core::Engine, :at => '/'\n"
       end
 
-      puts "*" * 50
-      puts "We added the following line to your application's config/routes.rb file:"
-      puts " "
-      puts "    mount Spree::Core::Engine, :at => '/'"
+      unless options[:quiet]
+        puts "*" * 50
+        puts "We added the following line to your application's config/routes.rb file:"
+        puts " "
+        puts "    mount Spree::Core::Engine, :at => '/'"
+      end
     end
   end
 end
