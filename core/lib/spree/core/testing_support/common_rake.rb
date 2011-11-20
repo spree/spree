@@ -1,4 +1,6 @@
-require '../lib/generators/spree/install/install_generator'
+unless defined?(Spree::InstallGenerator)
+  require '../lib/generators/spree/install/install_generator'
+end
 
 desc "Generates a dummy app for testing"
 namespace :common do
