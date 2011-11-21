@@ -74,36 +74,6 @@ module Spree
     #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
     # default product scope only lists available and non-deleted products
 
-    # ----------------------------------------------------------------------------------------------------------
-    #
-    # The following methods are deprecated and will be removed in a future version of Spree
-    #
-    # ----------------------------------------------------------------------------------------------------------
-
-    def master_price
-      warn "[DEPRECATION] `Product.master_price` is deprecated.  Please use `Product.price` instead. (called from #{caller[0]})"
-      self.price
-    end
-
-    def master_price=(value)
-      warn "[DEPRECATION] `Product.master_price=` is deprecated.  Please use `Product.price=` instead. (called from #{caller[0]})"
-      self.price = value
-    end
-
-    def variants?
-      warn "[DEPRECATION] `Product.variants?` is deprecated.  Please use `Product.has_variants?` instead. (called from #{caller[0]})"
-      self.has_variants?
-    end
-
-    def variant
-      warn "[DEPRECATION] `Product.variant` is deprecated.  Please use `Product.master` instead. (called from #{caller[0]})"
-      self.master
-    end
-
-    # ----------------------------------------------------------------------------------------------------------
-    # end deprecation region
-    # ----------------------------------------------------------------------------------------------------------
-
     def to_param
       return permalink if permalink.present?
       name.to_url
