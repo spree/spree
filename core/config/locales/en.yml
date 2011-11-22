@@ -858,6 +858,7 @@ en:
   ship_address: "Ship Address"
   shipment: Shipment
   shipment_details: Shipment Details
+  shipment_inc_vat: "Shipment including VAT"
   shipment_mailer:
     shipped_email:
       subject: "Shipment Notification"
