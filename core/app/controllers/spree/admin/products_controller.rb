@@ -16,10 +16,10 @@ module Spree
       # instead of actually deleting the product.
       def destroy
         @product = Product.find_by_permalink(params[:id])
-        @product.deleted_at = Time.now()
+        @product.deleted_at = Time.now
 
         @product.variants.each do |v|
-          v.deleted_at = Time.now()
+          v.deleted_at = Time.now
           v.save
         end
 
