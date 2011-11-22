@@ -36,7 +36,7 @@ module Spree
         end
 
         def render_js_for_destroy
-          render :partial => '/admin/shared/destroy'
+          render :partial => '/spree/admin/shared/destroy'
         end
 
         # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
