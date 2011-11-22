@@ -1,11 +1,7 @@
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 
-<% if integrated %>
-require File.expand_path("../../../config/environment.rb",  __FILE__)
-<% else %>
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
-<% end %>
 
 require 'rspec/rails'
 
