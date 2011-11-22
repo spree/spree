@@ -15,9 +15,9 @@ module Spree
 
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
 
-        label_with_first_letters_capitalized = t(options[:label], :default => options[:label]).titleize
+        titleized_label = t(options[:label], :default => options[:label]).titleize
 
-        link = link_to(label_with_first_letters_capitalized, destination_url)
+        link = link_to(titleized_label, destination_url)
 
         css_classes = []
 
