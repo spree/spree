@@ -25,6 +25,9 @@ module Spree
     accepts_nested_attributes_for :payments
     accepts_nested_attributes_for :shipments
 
+    # Needs to happen before save_permalink is called
+    before_validation :generate_order_number, :on => :create
+
     before_create :create_user
     before_create :generate_order_number
     after_create :create_tax_charge!
