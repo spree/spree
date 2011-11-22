@@ -82,7 +82,7 @@ NOTE: When upgrading from previous versions of Spree it's important that you rel
 
 h3. Managing your extension's assets
 
-We're suggesting that all third party extensions should adopt the same approach as spree-core and provide the same four (or less depending on what the extension requires) manifest files, using the same directory structure as outlined above.
+We're suggesting that all third party extensions should adopt the same approach as spree_core and provide the same four (or less depending on what the extension requires) manifest files, using the same directory structure as outlined above.
 
 Third party extension manifest files will not be automatically included in the relevant all.(js|css) files so it's important to document the manual inclusion in your extensions installation instructions or provide a Rails generator to do so.
 

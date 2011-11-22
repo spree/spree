@@ -154,7 +154,7 @@ If you wish to execute only a particular scenario from a feature file then you s
 
 h4. Factory girl
 
-spree-core gem has a good number of factories which can be used for testing. If you are writing an extension or just testing spree you can make use of these factories.
+The spree_core gem has a good number of factories which can be used for testing. If you are writing an extension or just testing spree you can make use of these factories.
 
 <shell>
   $ require 'spree_core/testing_support/factories'
