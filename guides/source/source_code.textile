@@ -89,7 +89,7 @@ h5. Simple Distribution and Installation as Gems
 Using a Spree gem is as simple as adding it to your +Gemfile+ (ie. very simple)
 
 <shell>
-  gem 'spree-core', '0.30.0'
+  gem 'spree_core', '0.70.2'
 </shell>
 
 Distribution of Spree (and its extensions) is also consistent with Rails standards and modularity (see next.)
