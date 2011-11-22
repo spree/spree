@@ -41,7 +41,7 @@ module Spree
           other = self.class.first(:conditions => "#{field} LIKE '#{self.send(field)}%'", :order => "#{field} DESC")
           if other
             # Find the number of that permalink and add one.
-            if /(\d+)$/.match(other.send(field))
+            if /-(\d+)$/.match(other.send(field))
               number = $1.to_i + 1
             # Otherwise default to suffixing it with a 1.
             else
