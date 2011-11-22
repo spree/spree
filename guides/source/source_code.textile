@@ -62,7 +62,7 @@ Within the Spree source, each of the gems is organized into subdirectories as fo
 |_<.Gem|_.Directory|_.Description|
 |spree_api|api|Provides REST API access|
 |spree_auth|auth|Provides authentication and authorization (via authlogic and cancan gems)|
-|spree-core|core|Core functionality - all other gems depend on this gem|
+|spree_core|core|Core functionality - all other gems depend on this gem|
 |spree_dash|dash|Simple overview dashboard|
 |spree_promo|promo|Coupons and promotions|
 |spree_sample|sample|Sample data and images|
