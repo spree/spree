@@ -67,32 +67,6 @@ describe Spree::Product do
   end
 
   context "scopes" do
-    let(:query) { %Q{SELECT "spree_products".* FROM "spree_products" INNER JOIN "spree_variants" ON "spree_variants"."product_id" = "spree_products"."id" AND "spree_variants".is_master = 't' AND "spree_variants".deleted_at IS NULL } }
-
-    context ".master_price_lte" do
-      it 'produces correct sql' do
-        pending
-        sql = query + %Q{WHERE ("spree_variants".price <= 10)}
-        Spree::Product.master_price_lte(10).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('`', '"').sub(/1\b/, "'t'")
-      end
-    end
-
-    context ".master_price_gte" do
-      it 'produces correct sql' do
-        pending
-        sql = query + %Q{WHERE ("spree_variants".price >= 10)}
-        Spree::Product.master_price_gte(10).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('"', '"').sub(/1\b/, "'t'")
-      end
-    end
-
-    context ".price_between" do
-      it 'produces correct sql' do
-        pending
-        sql = query + %Q{WHERE ("spree_variants".price BETWEEN 10 AND 20)}
-        Spree::Product.price_between(10, 20).to_sql.gsub('`', '"').sub(/1\b/, "'t'").should == sql.gsub('`', '"').sub(/1\b/, "'t'")
-      end
-    end
-
     context ".group_by_products_id.count" do
       let(:product) { Factory(:product) }
       it 'produces a properly formed ordered-hash key' do
