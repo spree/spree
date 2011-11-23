@@ -27,7 +27,7 @@
 
       <%if Spree::Config[:show_price_inc_vat] %>
         <%= label_tag :price_includes_vat , I18n.t(:price_with_vat_included, :price => I18n.t(:price)) %><br />
-        <%= text_field_tag :price_including_vat, product_price(@product, :show_vat_text => false), :size => 30 %>
+        <%= text_field_tag :price_including_vat, product_price(@product, :format_as_currency => false), :size => 30 %>
         <%= javascript_tag do -%>
           var effective_tax_rate = <%= @product.effective_tax_rate %>;
         <% end -%>
