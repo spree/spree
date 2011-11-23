@@ -119,7 +119,7 @@ Running Tests
 If you want to run all the tests across all the gems then
 
     $ cd spree
-    $ bundle exec rake          #=> 'this will run both spec and cucumber tests for all the gems'
+    $ bundle exec rake          #=> 'this will run rspec tests for all the gems'
 
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time
 creation of a test application and then you can use it to run the tests.  For example, to run the
