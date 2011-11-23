@@ -49,8 +49,9 @@ describe "Product Variants" do
       within('#sidebar') { click_link "Option Types" }
       within('#new_opt_link') { click_link "Add Option Type" }
       within('#option-types') { click_link "Select" }
-      find('table.index tbody tr:nth-child(2) td:nth-child(1)').text.should == "shirt colors"
-      find('table.index tbody tr:nth-child(2) td:nth-child(2)').text.should == "colors"
+      within(".index") do
+        page.should have_content("shirt colors")
+      end
 
       visit spree.admin_path
       click_link "Products"
@@ -60,8 +61,10 @@ describe "Product Variants" do
       fill_in "variant_sku", :with => "A100"
       click_button "Create"
       page.should have_content("successfully created!")
-      find('table.index tbody tr:nth-child(2) td:nth-child(2)').text.should == "19.99"
-      find('table.index tbody tr:nth-child(2) td:nth-child(3)').text.should == "A100"
+      within(".index") do
+        page.should have_content("19.99")
+        page.should have_content("A100")
+      end
     end
   end
 end
