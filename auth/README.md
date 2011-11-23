@@ -30,10 +30,6 @@ Then run the rspec tests
 
     bundle exec rake spec
 
-Then run the cucumber tests
-
-    bundle exec cucumber
-
 Misc
 ----
 
