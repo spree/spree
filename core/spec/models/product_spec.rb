@@ -82,19 +82,41 @@ describe Spree::Product do
   end
 
   context '#add_properties_and_option_types_from_prototype' do
-    let!(:prototype) { Factory(:prototype) }
-    let(:product) { Factory(:product, :prototype_id => prototype.id) }
+    let!(:property) { stub_model(Spree::Property) }
+
+    let!(:prototype) do
+      prototype = stub_model(Spree::Prototype)
+      prototype.stub :properties => [property]
+      prototype.stub :option_types => [stub_model(Spree::OptionType)] 
+      prototype
+    end
+
+    let(:product) do
+      product = stub_model(Spree::Product, :prototype_id => prototype.id)
+      # The `set_master_variant_defaults` callback requires a maste
+      product.stub :master => stub_model(Spree::Variant)
+      product
+    end
+
     it 'should have one property' do
-      product.product_properties.size.should == 1
+      Spree::Prototype.stub :find_by_id => prototype
+      product.product_properties.should_receive(:create).with(:property => property)
+      product.should_receive(:option_types=).with(prototype.option_types)
+      product.run_callbacks(:create)
     end
   end
 
   context '#has_stock?' do
-    let(:product) { Factory(:product) }
+    let(:product) do
+      product = stub_model(Spree::Product)
+      product.stub :master => stub_model(Spree::Variant)
+      product
+    end
+
     context 'nothing in stock' do
       before do
         Spree::Config.set :track_inventory_levels => true
-        product.master.update_attribute(:on_hand, 0)
+        product.master.stub :on_hand => 0
       end
       specify { product.has_stock?.should be_false }
     end
@@ -109,24 +131,25 @@ describe Spree::Product do
     context 'variant has items in stock' do
       before do
         Spree::Config.set :track_inventory_levels => true
-        product.master.update_attribute(:on_hand, 0)
-        Factory(:variant, :product => product, :on_hand => 100, :is_master => false, :deleted_at => nil)
-        product.reload
+        product.master.stub :on_hand => 0
+        product.stub :variants => [stub_model(Spree::Variant, :on_hand => 100)]
       end
       specify { product.has_stock?.should be_true }
     end
   end
 
   context '#effective_tax_rate' do
-    let(:product) { Factory(:product) }
+    let(:product) { stub_model(Spree::Product) }
 
     it 'should check tax category for applicable rates' do
-      Spree::TaxCategory.any_instance.should_receive(:effective_amount)
+      tax_category = double("Tax Category")
+      product.stub :tax_category => tax_category
+      tax_category.should_receive(:effective_amount)
       product.effective_tax_rate
     end
 
     it 'should return default tax rate when no tax category is defined' do
-      product.update_attribute(:tax_category, nil)
+      product.stub :tax_category => nil
       product.effective_tax_rate.should == Spree::TaxRate.default
     end
 
