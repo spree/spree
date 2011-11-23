@@ -12,7 +12,6 @@ describe Spree::Address do
     it { should validate_presence_of(:zipcode) }
     it { should validate_presence_of(:country) }
     it { should validate_presence_of(:phone) }
-    it { should have_valid_factory(:address) }
   end
 
   context "validation" do
