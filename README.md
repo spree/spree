@@ -128,11 +128,9 @@ tests for the core project.
     $ cd core
     $ bundle exec rake test_app
 
-Now you can run just the specs, just the features or everything together
+You can run all of the tests with a single command
 
-    $ bundle exec rake spec
-    $ bundle exec rake cucumber
-    $ bundle exec rake          #=> 'this will run both spec and cucumber tests for the gem'
+    $ bundle exec rake
 
 If you want to run specs for only a single spec file
 
@@ -141,14 +139,6 @@ If you want to run specs for only a single spec file
 If you want to run a particular line of spec
 
     $ bundle exec rspec spec/models/state_spec.rb:7
-
-If you want to run a single cucumber feature
-
-    $ bundle exec cucumber features/admin/orders.feature --require features
-
-If you want to run a particular scenario then include the line number
-
-    $ bundle exec cucumber features/admin/orders.feature:3 --require features
 
 
 Contributing

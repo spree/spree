@@ -15,11 +15,6 @@ def run_all_tests(database_name)
     sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
     sh "cd #{gem_name} && #{$0} spec"
   end
-
-  #%w(api auth core promo).each do |gem_name|
-    #puts "########################### #{gem_name}|#{database_name} (features) ###########################"
-    #sh "cd #{gem_name} && bundle exec cucumber -p ci"
-  #end
 end
 
 desc "Generates a dummy app for testing for every Spree engine"

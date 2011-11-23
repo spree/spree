@@ -11,7 +11,7 @@ describe "Product Images" do
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       click_link "Images"
       click_link "new_image_link"
-      absolute_path = File.expand_path(Rails.root.join('..', '..', 'features', 'step_definitions', 'ror_ringer.jpeg'))
+      absolute_path = File.expand_path(Rails.root.join('..', '..', 'spec', 'support', 'ror_ringer.jpeg'))
       attach_file('image_attachment', absolute_path)
       click_button "Update"
       page.should have_content("successfully created!")
