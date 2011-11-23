@@ -98,12 +98,14 @@ describe Spree::Product do
       end
       specify { product.has_stock?.should be_false }
     end
+
     context 'master variant has items in stock' do
       before do
         product.master.on_hand = 100
       end
       specify { product.has_stock?.should be_true }
     end
+
     context 'variant has items in stock' do
       before do
         Spree::Config.set :track_inventory_levels => true
