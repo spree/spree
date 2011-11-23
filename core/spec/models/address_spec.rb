@@ -82,12 +82,11 @@ describe Spree::Address do
     end
 
     context "address_requires_state preference is false" do
-      pending "need to fix config settings for specs"
 
       before { Spree::Config.set :address_requires_state => false }
 
-      #let(:address) { Factory(:address, :state => nil, :state_name => nil) }
-      #specify { address.should be_valid }
+      let(:address) { Factory(:address, :state => nil, :state_name => nil) }
+      specify { address.should be_valid }
     end
 
   end
