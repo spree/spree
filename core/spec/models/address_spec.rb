@@ -15,54 +15,51 @@ describe Spree::Address do
   end
 
   context "validation" do
-    let(:state) { Factory(:state, :name => 'maryland', :abbr => 'md') }
-    before  { Spree::Config.stub(:get).with(:address_requires_state).and_return(true) }
-
-    context "state_name is not nil and country does not have any states" do
-      let(:address) { Factory(:address, :state => nil, :state_name => 'alabama')}
-      specify { address.new_record?.should be_false }
+    before do
+      Spree::Config.set :address_requires_state => true
     end
 
-    context "state_name is nil" do
-      let(:address) { Factory.build(:address, :state => nil, :state_name => nil, :country => state.country)}
-      before { address.save }
-      specify { address.errors.full_messages.first.should == "State can't be blank" }
+    let(:country) { mock_model(Spree::Country, :states => [state]) }
+    let(:state) { stub_model(Spree::State, :name => 'maryland', :abbr => 'md') }
+    let(:address) { Spree::Address.new(FactoryGirl.attributes_for(:address, :country => country)) }
+
+    before do
+      country.states.stub :find_all_by_name_or_abbr => [state]
     end
 
-    context "full state name is in state_name and country does contain that state" do
-      let(:address) { Factory(:address, :state => nil, :state_name => 'maryland', :country => state.country)}
-      before do
-        Spree::State.delete_all
-        Spree::Country.delete_all
-        @state = Factory(:state)
-        @address = Factory(:address, :state => nil, :state_name => @state.name, :country => @state.country)
-      end
-      specify do
-        address.should be_valid
-        address.state_id.should_not be_nil
-        address.state_name.should be_nil
-      end
+    it "state_name is not nil and country does not have any states" do
+      address.state = nil
+      address.state_name = 'alabama'
+      address.should be_valid
     end
 
-    context "state abbr is in state_name and country does contain that state" do
-        before do
-          Spree::State.delete_all
-          Spree::Country.delete_all
-          @state = Factory(:state)
-          @address = Factory(:address, :state => nil, :state_name => @state.abbr, :country => @state.country)
-        end
-      specify do
-        @address.should be_valid
-        @address.state_id.should_not be_nil
-        @address.state_name.should be_nil
-      end
+    it "errors when state_name is nil" do
+      address.state_name = nil
+      address.state = nil
+      address.should_not be_valid
     end
 
-    context "state is entered but country does not contain that state" do
-      let(:address) { Factory.build(:address, :state => state, :country => Factory(:country))}
-      before { address.save }
+    it "full state name is in state_name and country does contain that state" do
+      address.state_name = 'alabama'
+      # called by state_validate to set up state_id.
+      # Perhaps this should be a before_validation instead?
+      address.should be_valid
+      address.state.should_not be_nil
+      address.state_name.should be_nil
+    end
 
-      specify { address.errors.full_messages.first.should == 'State is invalid' }
+    it "state abbr is in state_name and country does contain that state" do
+      address.state_name = state.abbr
+      address.should be_valid
+      address.state_id.should_not be_nil
+      address.state_name.should be_nil
+    end
+
+    it "state is entered but country does not contain that state" do
+      address.state = state
+      address.country = stub_model(Spree::Country)
+      address.valid?
+      address.errors["state"].should == ['is invalid']
     end
 
     context "both state and state_name are entered but country does not contain the state" do
@@ -73,12 +70,11 @@ describe Spree::Address do
       end
     end
 
-    context "both state and state_name are entered and country does contain the state" do
-      let(:address) { Factory(:address, :state => state, :state_name => 'maryland', :country => state.country)}
-      specify do
-        address.should be_valid
-        address.state_name.should be_nil
-      end
+    it "both state and state_name are entered and country does contain the state" do
+      address.state = state
+      address.state_name = 'maryland'
+      address.should be_valid
+      address.state_name.should be_nil
     end
 
     context "address_requires_state preference is false" do
