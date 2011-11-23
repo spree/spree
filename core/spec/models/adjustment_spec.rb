@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe Spree::Adjustment do
 
-  context 'validations' do
-    it { should have_valid_factory(:adjustment) }
-  end
-
   context "factory_girl" do
     before do
       Spree::Order.delete_all
