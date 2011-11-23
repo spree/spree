@@ -87,25 +87,25 @@ describe Spree::Address do
   end
 
   context '#full_name' do
-    let(:address) { Factory(:address, :firstname => 'Michael', :lastname => 'Jackson') }
+    let(:address) { stub_model(Spree::Address, :firstname => 'Michael', :lastname => 'Jackson') }
     specify { address.full_name.should == 'Michael Jackson' }
   end
 
   context '#state_text' do
     context 'state is blank' do
-      let(:address) { Factory(:address, :state => nil, :state_name => 'virginia') }
+      let(:address) { stub_model(Spree::Address, :state => nil, :state_name => 'virginia') }
       specify { address.state_text.should == 'virginia' }
     end
 
     context 'both name and abbr is present' do
-      let(:state) { Factory(:state, :name => 'virginia', :abbr => 'va') }
-      let(:address) { Factory(:address, :state => state) }
+      let(:state) { stub_model(Spree::State, :name => 'virginia', :abbr => 'va') }
+      let(:address) { stub_model(Spree::Address, :state => state) }
       specify { address.state_text.should == 'va' }
     end
 
     context 'only name is present' do
-      let(:state) { Factory(:state, :name => 'virginia', :abbr => nil) }
-      let(:address) { Factory(:address, :state => state) }
+      let(:state) { stub_model(Spree::State, :name => 'virginia', :abbr => nil) }
+      let(:address) { stub_model(Spree::Address, :state => state) }
       specify { address.state_text.should == 'virginia' }
     end
 
