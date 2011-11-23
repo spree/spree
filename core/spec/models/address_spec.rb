@@ -15,23 +15,6 @@ describe Spree::Address do
     it { should have_valid_factory(:address) }
   end
 
-  context "factory" do
-    let(:address) { Factory(:address) }
-    specify { address.state.country.should == address.country }
-  end
-
-
-  context 'country usa already exists' do
-    let!(:country) { Factory(:country,  :iso_name => 'UNITED STATES',
-                                        :iso => 'US',
-                                        :name => 'United States',
-                                        :numcode => 840) }
-    let(:address) { Factory(:address) }
-    it 'should have country belonging to usa' do
-      address.country == country
-    end
-  end
-
   context "validation" do
     let(:state) { Factory(:state, :name => 'maryland', :abbr => 'md') }
     before  { Spree::Config.stub(:get).with(:address_requires_state).and_return(true) }
