@@ -20,19 +20,6 @@ describe Spree::Product do
     it { should have_valid_factory(:product) }
   end
 
-  context "factory_girl" do
-    let(:product) { Factory(:product) }
-    it 'should have a saved product record' do
-      product.new_record?.should be_false
-    end
-    it 'should have zero properties record' do
-      product.product_properties.size.should == 0
-    end
-    it 'should have a master variant' do
-      product.master.should be_true
-    end
-  end
-
   context "validations" do
     context "find_by_param" do
 
