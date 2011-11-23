@@ -62,12 +62,12 @@ describe Spree::Address do
       address.errors["state"].should == ['is invalid']
     end
 
-    context "both state and state_name are entered but country does not contain the state" do
-      let(:address) { Factory(:address, :state => state, :state_name => 'maryland', :country => Factory(:country))}
-      specify do
-        address.should be_valid
-        address.state_id.should be_nil
-      end
+    it "both state and state_name are entered but country does not contain the state" do
+      address.state = state
+      address.state_name = 'maryland'
+      address.country = stub_model(Spree::Country)
+      address.should be_valid
+      address.state_id.should be_nil
     end
 
     it "both state and state_name are entered and country does contain the state" do
