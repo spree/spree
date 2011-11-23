@@ -80,7 +80,7 @@ describe Spree::Product do
 
     let(:product) do
       product = stub_model(Spree::Product, :prototype_id => prototype.id)
-      # The `set_master_variant_defaults` callback requires a maste
+      # The `set_master_variant_defaults` callback requires a master
       product.stub :master => stub_model(Spree::Variant)
       product
     end
