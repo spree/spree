@@ -4,7 +4,7 @@ module Spree
       require 'spree/core/gateway_error'
       before_filter :initialize_txn_partials
       before_filter :initialize_order_events
-      before_filter :load_order, :only => [:fire, :resend, :history, :user]
+      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend, :history, :user]
 
       respond_to :html
 
@@ -34,7 +34,6 @@ module Spree
       end
 
       def show
-        load_order
         respond_with(@order)
       end
 
@@ -44,13 +43,11 @@ module Spree
       end
 
       def edit
-        load_order
         respond_with(@order)
       end
 
       def update
         return_path = nil
-        load_order
         if @order.update_attributes(params[:order]) && @order.line_items.present?
           unless @order.complete?
             if params[:order].key?(:email)
