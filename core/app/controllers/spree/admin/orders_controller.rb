@@ -74,7 +74,7 @@ module Spree
             return_path = admin_order_path(@order)
           end
         else
-          @order.errors.add(:line_items, t('errors.messages.blank'))
+          @order.errors.add(:line_items, t('errors.messages.blank')) if @order.line_items.empty?
         end
 
         respond_with(@order) do |format|
