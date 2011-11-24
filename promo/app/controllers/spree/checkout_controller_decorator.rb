@@ -5,7 +5,16 @@ Spree::CheckoutController.class_eval do
       fire_event('spree.checkout.update')
 
       if @order.coupon_code.present?
-        fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
+        # Promotion codes are stored in the preference table
+        # Therefore we need to do a lookup there and find if one exists
+        if Spree::Preference.find_by_owner_type_and_name_and_value('Spree::Activator', 'code', @order.coupon_code)
+          fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
+        # If it doesn't exist, raise an error!
+        # Giving them another chance to enter a valid coupon code
+        else
+          flash[:error] = t(:promotion_not_found)
+          render :edit and return
+        end
       end
 
       if @order.next

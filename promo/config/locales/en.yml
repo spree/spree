@@ -23,6 +23,7 @@ en:
   free_shipping: Free Shipping
   new_promotion: New Promotion
   no_rules_added: No rules added
+  promotion_not_found: The coupon code you entered doesn't exist. Please try again.
   promotion: Promotion
   promotion_actions: Actions
   promotions: Promotions
