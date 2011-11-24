@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'ruby-debug'
 
 describe "Customer Details" do
   before(:each) do
