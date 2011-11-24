@@ -97,9 +97,12 @@
         <%= ship_form.label :address2, t(:street_address_2) %><br />
         <%= ship_form.text_field :address2 %>
       </p>
-      <p class="field" id="scity">
-        <%= ship_form.label :city, t(:city) %><span class="req">*</span><br />
-        <%= ship_form.text_field :city, :class => 'required' %>
+
+      <p class="field" id="scountry">
+        <%= ship_form.label :country_id, t(:country) %><span class="req">*</span><br />
+        <span id="scountry">
+          <%= ship_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %>
+        </span>
       </p>
 
       <% if Spree::Config[:address_requires_state] %>
@@ -126,15 +129,15 @@
         </p>
       <% end %>
 
+      <p class="field" id="scity">
+        <%= ship_form.label :city, t(:city) %><span class="req">*</span><br />
+        <%= ship_form.text_field :city, :class => 'required' %>
+      </p>
+
+
       <p class="field" id="szipcode">
         <%= ship_form.label :zipcode, t(:zip) %><span class="req">*</span><br />
         <%= ship_form.text_field :zipcode, :class => 'required' %>
-      </p>
-      <p class="field" id="scountry">
-        <%= ship_form.label :country_id, t(:country) %><span class="req">*</span><br />
-        <span id="scountry">
-          <%= ship_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %>
-        </span>
       </p>
       <p class="field" id="sphone">
         <%= ship_form.label :phone, t(:phone) %><span class="req">*</span><br />
