@@ -32,13 +32,13 @@ describe Spree::Calculator::Vat do
         before { order.stub :line_items => [] }
 
         it "should return 0 with single tax adjustment" do
-          order.stub :adjustments => [Factory(:adjustment, :originator_type => "TaxRate")]
+          order.stub :adjustments => [Factory(:adjustment, :originator_type => "Spree::TaxRate")]
           calculator.compute(order).to_f.should == 0.0
         end
 
         it "should return 0 with shipping adjustment when Spree::Config[:shipment_inc_vat] is false" do
           Spree::Config.set :shipment_inc_vat => false
-          order.stub :adjustments => [Factory(:adjustment, :originator_type => "ShippingMethod")]
+          order.stub :adjustments => [Factory(:adjustment, :originator_type => "Spree::ShippingMethod")]
           calculator.compute(order).to_f.should == 0.0
         end
 
@@ -65,20 +65,20 @@ describe Spree::Calculator::Vat do
         before { order.stub :line_items => [] }
 
         it "should return 0 with single tax adjustment" do
-          order.stub :adjustments => [Factory(:adjustment, :originator_type => "TaxRate")]
+          order.stub :adjustments => [Factory(:adjustment, :originator_type => "Spree::TaxRate")]
           calculator.compute(order).to_f.should == 0.0
         end
 
         it "should return 0 with shipping adjustment when Spree::Config[:shipment_inc_vat] is false" do
           Spree::Config.set :shipment_inc_vat => false
-          order.stub :adjustments => [Factory(:adjustment, :originator_type => "ShippingMethod", :amount => 5)]
+          order.stub :adjustments => [Factory(:adjustment, :originator_type => "Spree::ShippingMethod", :amount => 5)]
           calculator.compute(order).to_f.should == 0.0
         end
 
         it "should calculate correctly with shipping adjustment when Spree::Config[:shipment_inc_vat] is true" do
           pending
           Spree::Config.set :shipment_inc_vat => true
-          order.stub :adjustments => [Factory(:adjustment, :originator_type => "ShippingMethod", :amount => 5)]
+          order.stub :adjustments => [Factory(:adjustment, :originator_type => "Spree::ShippingMethod", :amount => 5)]
           calculator.compute(order).to_f.should == 0.75
         end
 

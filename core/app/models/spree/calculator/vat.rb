@@ -21,8 +21,8 @@ module Spree
 
       if rate.tax_category.is_default
         order.adjustments.each do | adjust |
-          next if adjust.originator_type == 'TaxRate'
-          next if adjust.originator_type == 'ShippingMethod' and not Spree::Config[:shipment_inc_vat]
+          next if adjust.originator_type == 'Spree::TaxRate'
+          next if adjust.originator_type == 'Spree::ShippingMethod' and not Spree::Config[:shipment_inc_vat]
 
           tax += (adjust.amount * rate.amount).round(2, BigDecimal::ROUND_HALF_UP)
         end

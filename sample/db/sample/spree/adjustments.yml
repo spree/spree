@@ -3,9 +3,9 @@ tax_<%= i %>:
   order: order_<%= i %>
   amount: 0
   source: order_<%= i %>
-  source_type: Order
-  originator:
-  originator_type:
+  source_type: Spree::Order
+  originator: tax_rate_north_america
+  originator_type: Spree::TaxRate
   label: Tax
   locked: false
   mandatory: true
@@ -15,9 +15,9 @@ ship_<%= i %>:
   order: order_<%= i %>
   amount: 5
   source: shipment_<%= i %>
-  source_type: Shipment
-  originator:
-  originator_type:
+  source_type: Spree::Shipment
+  originator: ups_ground
+  originator_type: Spree::ShippingMethod
   label: Shipping
   locked: true
   mandatory: true

@@ -7,7 +7,7 @@
     </tr>
     <tbody id="summary-order-charges" data-hook>
       <% order.adjustments.eligible.each do |adjustment| %>
-      <% next if (adjustment.originator_type == "TaxRate") and (adjustment.amount == 0) %>
+      <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
         <tr>
           <td><%= adjustment.label %>: </td>
           <td><%= number_to_currency adjustment.amount %></td>
