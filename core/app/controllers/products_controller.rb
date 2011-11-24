@@ -17,7 +17,6 @@ class ProductsController < Spree::BaseController
 
     @variants = @product.active_variants
     @product_properties = @product.properties
-    selected_variant # set it up for legacy apps
 
     referer = request.env['HTTP_REFERER']
 
@@ -30,10 +29,6 @@ class ProductsController < Spree::BaseController
 
   private
 
-  def selected_variant
-    @selected_variant ||= @variants.detect { |v| v.available? }
-  end
-  helper_method :selected_variant
   def accurate_title
     @product ? @product.name : super
   end
