@@ -20,7 +20,7 @@ module Spree
       tax = 0
 
       if rate.tax_category.is_default
-        order.adjustments.each do | adjust |
+        order.adjustments.each do |adjust|
           next if adjust.originator_type == 'Spree::TaxRate'
           next if adjust.originator_type == 'Spree::ShippingMethod' and not Spree::Config[:shipment_inc_vat]
 
