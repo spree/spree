@@ -58,6 +58,11 @@ module Spree
       self.update_hooks.add(hook)
     end
 
+    # For compatiblity with Calculator::PriceBucket
+    def amount
+      line_items.map(&:amount).sum
+    end
+
     def to_param
       number.to_s.parameterize.upcase
     end
