@@ -26,7 +26,7 @@ describe "Checkout", :js => true do
 
     str_addr = "bill_address"
     address = Factory(:address, :state => Spree::State.first)
-    select "United States", :from => "order_#{str_addr}_attributes_country"
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
