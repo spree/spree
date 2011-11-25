@@ -13,6 +13,28 @@ describe Spree::OrdersController do
   context "extension testing" do
     context "update" do
 
+      context "specify symbol for handler instead of Proc" do
+        before do
+          @order = Factory(:order)
+          Spree::OrdersController.class_eval do
+            respond_override({:update => {:html => {:success => :success_method}}})
+
+            private
+
+            def success_method
+              render :text => 'success!!!'
+            end
+          end
+        end
+        describe "POST" do
+          it "has value success" do
+            put :update, {}, {:order_id => @order.id}
+            response.should be_success
+            assert (response.body =~ /success!!!/)
+          end
+        end
+      end
+
       context "render" do
         before do
           @order = Factory(:order)
