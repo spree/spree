@@ -513,9 +513,19 @@ module Spree
       end
       
       def after_cancel
-        # TODO: make_shipments_pending
-        # TODO: restock_inventory
+        restock_items!
+
+        #TODO: make_shipments_pending
         OrderMailer.cancel_email(self).deliver
+      end
+
+      def restock_items!
+        shipments.each do |shipment|
+          shipment.inventory_units.each do |inventory_unit|
+            line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
+            Spree::InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
+          end
+        end
       end
   end
 end
