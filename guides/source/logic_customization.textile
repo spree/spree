@@ -83,7 +83,7 @@ The *respond_override* method is used to customize the response from any action,
 
 h4. Example Usage
 
-If you wanted to render a custom partial for the index action of ProductsController, you could include the following in your *app/models/products_controller_decorator.rb* file.
+If you wanted to render a custom partial for the index action of ProductsController, you could include the following in your *app/controllers/products_controller_decorator.rb* file.
 
 <ruby>
   ProductsController.class_eval do
