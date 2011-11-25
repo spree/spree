@@ -12,6 +12,8 @@ describe "Checkout", :js => true do
     visit spree.root_path
   end
 
+  let!(:address) { Factory(:address, :state => Spree::State.first) }
+
   it "should allow a visitor to checkout as guest, without registration" do
     click_link "RoR Mug"
     click_button "Add To Cart"
@@ -25,7 +27,6 @@ describe "Checkout", :js => true do
     page.should have_content("Shipping Address")
 
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
     select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -55,8 +56,7 @@ describe "Checkout", :js => true do
 
     click_link "Checkout"
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -85,8 +85,7 @@ describe "Checkout", :js => true do
     page.should have_content("You have signed up successfully.")
 
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -108,8 +107,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -134,8 +132,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -155,8 +152,7 @@ describe "Checkout", :js => true do
     within("#guest_checkout") { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -176,8 +172,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -203,8 +198,7 @@ describe "Checkout", :js => true do
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
@@ -232,8 +226,7 @@ describe "Checkout", :js => true do
     page.should have_content("This field is required")
 
     str_addr = "bill_address"
-    address = Factory(:address, :state => Spree::State.first)
-    within('fieldset#billing') { select "United States", :from => "Country" }
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
