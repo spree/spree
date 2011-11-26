@@ -18,10 +18,10 @@ describe "Payment Methods" do
       find('table#listing_payment_methods th:nth-child(4)').text.should == "Display"
       find('table#listing_payment_methods th:nth-child(5)').text.should == "Active"
 
-      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1) td:nth-child(1)').text.should == "Check"
-      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1) td:nth-child(2)').text.should == "Spree::PaymentMethod::Check"
-      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(2) td:nth-child(1)').text.should == "Check"
-      find('table#listing_payment_methods tbody:nth-child(2) tr:nth-child(2) td:nth-child(2)').text.should == "Spree::PaymentMethod::Check"
+      # Ensure that it displays the two payment methods we have created
+      within('table#listing_payment_methods') do
+        page.should have_content("Spree::PaymentMethod::Check")
+      end
     end
   end
 

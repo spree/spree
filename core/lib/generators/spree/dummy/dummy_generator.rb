@@ -58,10 +58,6 @@ module Spree
       end
     end
 
-    def cucumber_environment
-      template "cucumber/cucumber.rb", "#{dummy_path}/config/environments/cucumber.rb", :force => true
-    end
-
     attr :lib_name
     attr :database
 

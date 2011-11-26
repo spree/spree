@@ -20,6 +20,8 @@ describe "Promotion Adjustments" do
       click_link "New Promotion"
     end
 
+    let!(:address) { Factory(:address, :state => Spree::State.first) }
+
     it "should allow an admin to create a flat rate discount coupon promo" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "100"
@@ -46,8 +48,7 @@ describe "Promotion Adjustments" do
       click_link "Checkout"
 
       str_addr = "bill_address"
-      address = Factory(:address, :state => Spree::State.first)
-      within('fieldset#billing') { select "United States", :from => "Country" }
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
         fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
       end
@@ -86,8 +87,7 @@ describe "Promotion Adjustments" do
       click_link "Checkout"
 
       str_addr = "bill_address"
-      address = Factory(:address, :state => Spree::State.first)
-      within('fieldset#billing') { select "United States", :from => "Country" }
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
         fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
       end
@@ -112,8 +112,7 @@ describe "Promotion Adjustments" do
       click_link "Checkout"
 
       str_addr = "bill_address"
-      address = Factory(:address, :state => Spree::State.first)
-      within('fieldset#billing') { select "United States", :from => "Country" }
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
         fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
       end
@@ -177,8 +176,7 @@ describe "Promotion Adjustments" do
       click_link "Checkout"
 
       str_addr = "bill_address"
-      address = Factory(:address, :state => Spree::State.first)
-      within('fieldset#billing') { select "United States", :from => "Country" }
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
         fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
       end
@@ -196,8 +194,7 @@ describe "Promotion Adjustments" do
       click_link "Checkout"
 
       str_addr = "bill_address"
-      address = Factory(:address, :state => Spree::State.first)
-      within('fieldset#billing') { select "United States", :from => "Country" }
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
         fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
       end

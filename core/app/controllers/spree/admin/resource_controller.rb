@@ -3,6 +3,7 @@ require 'spree/core/action_callbacks'
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   prepend_before_filter :load_resource
+  rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
 
   respond_to :html
   respond_to :js, :except => [:show, :index]
@@ -70,6 +71,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   protected
+
+  def resource_not_found
+    flash[:error] = flash_message_for(model_class.new, :not_found)
+    redirect_to collection_url
+  end
 
   class << self
     attr_accessor :parent_data

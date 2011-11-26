@@ -1,1 +1,1 @@
-Spree::ProductGroup.all.each {|pg| pg.update_memberships}
+Spree::ProductGroup.all.each { |pg| pg.update_memberships }

@@ -58,6 +58,11 @@ module Spree
       self.update_hooks.add(hook)
     end
 
+    # For compatiblity with Calculator::PriceBucket
+    def amount
+      line_items.map(&:amount).sum
+    end
+
     def to_param
       number.to_s.parameterize.upcase
     end
@@ -483,14 +488,6 @@ module Spree
         self.adjustments.reload.each(&:update!)
       end
 
-      # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
-      # respond to external changes to LineItem, Shipment, other Adjustments, etc.
-      # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
-      # towards adjustment_total.
-      def update_adjustments
-        self.adjustments.reload.each(&:update!)
-      end
-
       # Determine if email is required (we don't want validation errors before we hit the checkout)
       def require_email
         return true unless new_record? or state == 'cart'
@@ -501,16 +498,26 @@ module Spree
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
-      
+
       def has_available_payment
         return unless :delivery == state_name.to_sym
         errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
-      
+
       def after_cancel
-        # TODO: make_shipments_pending
-        # TODO: restock_inventory
+        restock_items!
+
+        #TODO: make_shipments_pending
         OrderMailer.cancel_email(self).deliver
+      end
+
+      def restock_items!
+        shipments.each do |shipment|
+          shipment.inventory_units.each do |inventory_unit|
+            line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
+            Spree::InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
+          end
+        end
       end
   end
 end

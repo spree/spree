@@ -25,11 +25,11 @@ module Spree
           #disabling proper nested include here due to rails 3.1 bug
           #@collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).
           @collection = Spree::User.includes(:bill_address, :ship_address).
-                            where("users.email #{LIKE} :search
-                                   OR addresses.firstname #{LIKE} :search
-                                   OR addresses.lastname #{LIKE} :search
-                                   OR ship_addresses_users.firstname #{LIKE} :search
-                                   OR ship_addresses_users.lastname #{LIKE} :search",
+                            where("spree_users.email #{LIKE} :search
+                                   OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
+                                   OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
+                                   OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)
+                                   OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)",
             { :search => "#{params[:q].strip}%" }).
               limit(params[:limit] || 100)
           end

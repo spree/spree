@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Product Groups" do
   before(:each) do
-    pending "scoping got changed in the namespace, these are kind of broken"
+    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Products"
   end

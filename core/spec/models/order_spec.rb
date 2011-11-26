@@ -507,18 +507,43 @@ describe Spree::Order do
   end
 
   context "#cancel" do
+    let!(:variant) { stub_model(Spree::Variant, :on_hand => 0) }
+    let!(:inventory_unit) { stub_model(Spree::InventoryUnit, :variant => variant) }
+    let!(:shipment) do
+      shipment = stub_model(Spree::Shipment)
+      shipment.stub :inventory_units => [inventory_unit]
+      order.stub :shipments => [shipment]
+      shipment
+    end
+
     before do
       order.email = user.email
+      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 1)]
+      order.line_items.stub :find_by_variant_id => order.line_items.first
+
       order.stub :completed? => true
       order.stub :allow_cancel? => true
     end
+
     it "should send a cancel email" do
+      order.stub :restock_items!
       mail_message = mock "Mail::Message"
       Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
       mail_message.should_receive :deliver
       order.cancel!
     end
-    it "should restock inventory"
+
+    # Regression fix for #729
+    it "should restock inventory" do
+      shipment.stub(:ensure_correct_adjustment)
+      shipment.stub(:update_order)
+      Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+      mail_message.stub :deliver
+      product = order.line_items.first.variant
+      Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 1)
+      order.cancel!
+    end
+
     it "should change shipment status (unless shipped)"
   end
 

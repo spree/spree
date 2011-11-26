@@ -12,10 +12,6 @@ module Spree
       paths.flatten
     end
 
-    # skip cucumber environment for sandbox
-    def cucumber_environment
-    end
-
     protected
     def dummy_path
       'sandbox'

@@ -557,6 +557,7 @@ en:
   none_available: "None Available"
   normal_amount: "Normal Amount"
   not: not
+  not_found: "%{resource} is not found"
   not_shown: "Not Shown"
   note: Note
   notice_messages:

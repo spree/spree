@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :state, :class => Spree::State do
-    name 'ALABAMA'
+    name 'Alabama'
     abbr 'AL'
     country do |country|
       if usa = Spree::Country.find_by_numcode(840)

@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'json'
 gem 'sqlite3'
+gem 'deface', :git => "git://github.com/railsdog/deface"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -18,15 +19,8 @@ group :test do
   gem 'rcov'
   gem 'faker'
   gem 'shoulda-matchers', '~> 1.0.0'
-end
-
-group :cucumber do
-  gem 'cucumber-rails', '1.0.0'
-  gem 'database_cleaner', '= 0.6.7'
-  gem 'nokogiri'
-  gem 'capybara', '1.0.1'
-  gem 'factory_girl_rails', '~> 1.4.0'
-  gem 'faker'
+  gem 'capybara'
+  gem 'database_cleaner'
   gem 'launchy'
 end
 

@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class ProductsController < ResourceController
+      helper 'spree/products'
+
       before_filter :check_json_authenticity, :only => :index
       before_filter :load_data, :except => :index
       update.before :update_before
@@ -15,19 +17,12 @@ module Spree
       # override the destory method to set deleted_at value
       # instead of actually deleting the product.
       def destroy
-        @product = Product.find_by_permalink(params[:id])
-        @product.deleted_at = Time.now()
+        @product = Product.find_by_permalink!(params[:id])
+        @product.update_attribute(:deleted_at, Time.now)
 
-        @product.variants.each do |v|
-          v.deleted_at = Time.now()
-          v.save
-        end
+        @product.variants_including_master.update_all(:deleted_at => Time.now)
 
-        if @product.save
-          flash.notice = I18n.t('notice_messages.product_deleted')
-        else
-          flash.notice = I18n.t('notice_messages.product_not_deleted')
-        end
+        flash.notice = I18n.t('notice_messages.product_deleted')
 
         respond_with(@product) do |format|
           format.html { redirect_to collection_url }
