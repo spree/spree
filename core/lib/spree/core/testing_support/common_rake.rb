@@ -1,5 +1,5 @@
 unless defined?(Spree::InstallGenerator)
-  require '../lib/generators/spree/install/install_generator'
+  require File.expand_path "../../../../../../lib/generators/spree/install/install_generator", __FILE__
 end
 
 desc "Generates a dummy app for testing"
