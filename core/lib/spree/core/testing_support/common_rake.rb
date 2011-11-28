@@ -10,7 +10,7 @@ namespace :common do
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--database=#{ENV['DB_NAME']}", "--quiet"]
     Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--quiet", "--auto-accept", "--skip-install-data"]
     puts "Setting up dummy database..."
-    cmd = "bundle exec rake db:drop db:create db:migrate db:seed RAILS_ENV=test AUTO_ACCEPT=true"
+    cmd = "bundle exec rake db:drop db:create db:migrate RAILS_ENV=test AUTO_ACCEPT=true"
 
     if RUBY_PLATFORM =~ /mswin/ #windows
       cmd += " >nul"
