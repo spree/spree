@@ -533,15 +533,20 @@ describe Spree::Order do
       order.cancel!
     end
 
-    # Regression fix for #729
-    it "should restock inventory" do
-      shipment.stub(:ensure_correct_adjustment)
-      shipment.stub(:update_order)
-      Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
-      mail_message.stub :deliver
-      product = order.line_items.first.variant
-      Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 1)
-      order.cancel!
+    context "restocking inventory" do
+      before do
+        shipment.stub(:ensure_correct_adjustment)
+        shipment.stub(:update_order)
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        mail_message.stub :deliver
+      end
+
+      # Regression fix for #729
+      specify do
+        Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 1)
+        order.cancel!
+      end
+
     end
 
     it "should change shipment status (unless shipped)"
