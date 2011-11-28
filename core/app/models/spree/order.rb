@@ -133,6 +133,7 @@ module Spree
       after_transition :to => 'complete', :do => :finalize!
       after_transition :to => 'delivery', :do => :create_tax_charge!
       after_transition :to => 'payment',  :do => :create_shipment!
+      after_transition :to => 'resumed',  :do => :after_resume
       after_transition :to => 'canceled', :do => :after_cancel
 
     end
@@ -516,6 +517,19 @@ module Spree
           shipment.inventory_units.each do |inventory_unit|
             line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
             Spree::InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
+          end
+        end
+      end
+
+      def after_resume
+        unstock_items!
+      end
+
+      def unstock_items!
+        shipments.each do |shipment|
+          shipment.inventory_units.each do |inventory_unit|
+            line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
+            Spree::InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
           end
         end
       end

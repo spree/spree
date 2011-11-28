@@ -552,6 +552,42 @@ describe Spree::Order do
     it "should change shipment status (unless shipped)"
   end
 
+
+  # Another regression test for #729
+  context "#resume" do
+    before do
+      order.stub :email => "user@spreecommerce.com"
+      order.stub :state => "canceled"
+      order.stub :allow_resume? => true
+    end
+
+    it "should send a resume email" do
+      pending "Pending test for #818"
+      order.stub :unstock_items!
+      order.resume!
+    end
+
+    context "unstocks inventory" do
+      let(:variant) { stub_model(Spree::Variant) }
+
+      before do
+        shipment = stub_model(Spree::Shipment)
+        line_item = stub_model(Spree::LineItem, :variant => variant, :quantity => 1)
+        order.stub :line_items => [line_item]
+        order.line_items.stub :find_by_variant_id => line_item
+
+        order.stub :shipments => [shipment]
+        shipment.stub :inventory_units => [stub_model(Spree::InventoryUnit, :variant => variant)]
+      end
+
+      specify do
+        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 1)
+        order.resume!
+      end
+    end
+
+  end
+
   context "with adjustments" do
     let(:adjustment1) { mock_model(Spree::Adjustment, :amount => 5) }
     let(:adjustment2) { mock_model(Spree::Adjustment, :amount => 10) }
