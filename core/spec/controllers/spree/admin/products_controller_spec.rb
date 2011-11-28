@@ -41,7 +41,9 @@ describe Spree::Admin::ProductsController do
 
     # Regression test for GH #538
     it "cannot find a non-existent product" do
-      lambda { get :edit, :id => "non-existent-product" }.should raise_error(ActiveRecord::RecordNotFound)
+      get :edit, :id => "non-existent-product"
+      response.should redirect_to(spree.admin_products_path)
+      flash[:error].should eql("Product is not found")
     end
   end
 
