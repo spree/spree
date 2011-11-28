@@ -754,4 +754,62 @@ describe Spree::Order do
       end
     end
   end
+
+  context "#tax_zone" do
+    let(:address) { Factory :address }
+    let(:order) { Spree::Order.create(:ship_address => address, :bill_address => address) }
+    let(:zone) { Factory :zone }
+
+    context "when no zones exist" do
+      it "should return nil" do
+        order.tax_zone.should be_nil
+      end
+    end
+
+    context "when default tax zone specified" do
+      #let(:default_zone) { Factory :zone, :name => "foo_zone" }
+
+      before do
+        @default_zone = Factory(:zone, :name => "foo_zone")
+        Spree::Config.set(:default_tax_zone => "foo_zone")
+      end
+
+      context "when there is a matching zone" do
+        before { Spree::Zone.stub(:match => zone) }
+
+        it "should return the matching zone" do
+          order.tax_zone.should == zone
+        end
+      end
+
+      context "when there is no matching zone" do
+        before { Spree::Zone.stub(:match => nil) }
+
+        it "should return the default tax zone" do
+          order.tax_zone.should == @default_zone
+        end
+      end
+    end
+
+    context "when no default tax zone specified" do
+      before { Spree::Config.set(:default_tax_zone => nil) }
+
+      context "when there is a matching zone" do
+        before { Spree::Zone.stub(:match => zone) }
+
+        it "should return the matching zone" do
+          order.tax_zone.should == zone
+        end
+      end
+
+      context "when there is no matching zone" do
+        before { Spree::Zone.stub(:match => nil) }
+
+        it "should return nil" do
+          order.tax_zone.should be_nil
+        end
+      end
+    end
+
+  end
 end

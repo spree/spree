@@ -144,6 +144,13 @@ module Spree
       inventory_units.backorder.present?
     end
 
+    # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
+    # unless there is a specific match
+    def tax_zone
+      default_tax_zone = Spree::Config[:default_tax_zone]
+      Zone.match(ship_address) || Zone.where(:name => default_tax_zone).first
+    end
+
     # This is a multi-purpose method for processing logic related to changes in the Order.  It is meant to be called from
     # various observers so that the Order is aware of changes that affect totals and other values stored in the Order.
     # This method should never do anything to the Order that results in a save call on the object (otherwise you will end
