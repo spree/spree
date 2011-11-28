@@ -16,7 +16,7 @@ namespace :spree do
           end
 
           puts "Syncing files from: #{depracated_assets_path} to: #{new_assets_path}"
-          Spree::FileUtilz.mirror_files(depracated_assets_path.to_s, new_assets_path.to_s)
+          Spree::Core::FileUtilz.mirror_files(depracated_assets_path.to_s, new_assets_path.to_s)
 
 
           puts "Deleting original files from: #{depracated_assets_path}"
