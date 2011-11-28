@@ -7,13 +7,13 @@ module Spree
         text = "#{text}: (#{t(:empty)})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count}) #{order_price(current_order)}"
+        text = "#{text}: (#{current_order.item_count}) #{order_subtotal(current_order)}"
         css_class = 'full'
       end
       link_to text, cart_path, :class => css_class
     end
 
-    def order_price(order, options={})
+    def order_subtotal(order, options={})
       options.assert_valid_keys(:format_as_currency, :show_vat_text, :show_price_inc_vat)
       options.reverse_merge! :format_as_currency => true, :show_vat_text => true
 

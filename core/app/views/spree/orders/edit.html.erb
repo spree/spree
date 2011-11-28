@@ -19,7 +19,7 @@
         </div>
 
         <div id="subtotal" data-hook>
-          <h3><%= "#{t(:subtotal)}: #{order_price(@order)}" %></h3>
+          <h3><%= "#{t(:subtotal)}: #{order_subtotal(@order)}" %></h3>
           <div class="links" data-hook="cart_buttons">
             <%= button_tag :class => 'large primary', :id => 'update-button' do %>
               <%= image_tag('icons/update.png') + t(:update) %>
