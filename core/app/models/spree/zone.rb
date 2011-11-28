@@ -15,6 +15,7 @@ module Spree
     #attr_accessor :type
     def kind
       member = self.members.last
+
       case member && member.zoneable_type
       when 'Spree::State' then 'state'
       when 'Spree::Zone'  then 'zone'
@@ -52,8 +53,17 @@ module Spree
       end
     end
 
+    # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
+    # Returns nil in the case of no matches.
     def self.match(address)
-      all.select { |zone| zone.include?(address) }
+      return unless matches = self.order("created_at").select { |zone| zone.include? address }
+
+      ['state', 'country'].each do |zone_kind|
+        if match = matches.detect { |zone| zone_kind == zone.kind }
+          return match
+        end
+      end
+      matches.first
     end
 
     # convenience method for returning the countries contained within a zone (different then the countries method which only
