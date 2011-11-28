@@ -4,6 +4,7 @@ module Spree
     belongs_to :property
 
     validates :property, :presence => true
+    validates_length_of :value, maximum: 255
 
     # virtual attributes for use with AJAX completion stuff
     def property_name
