@@ -4,6 +4,9 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
+      config.middleware.use "Spree::Core::Middleware::SeoAssist"
+      config.middleware.use "Spree::Core::Middleware::RedirectLegacyProductUrl"
+
       config.autoload_paths += %W(#{config.root}/lib)
 
       def self.activate
