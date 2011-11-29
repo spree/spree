@@ -17,7 +17,6 @@ describe Spree::Product do
     it { should have_and_belong_to_many(:product_groups) }
     it { should have_and_belong_to_many(:taxons) }
     it "should validate price" do
-      p product.master
       product.should be_valid
     end
     # it { should validate_presence_of(:price) }
