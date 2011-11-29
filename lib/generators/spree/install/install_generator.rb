@@ -51,10 +51,6 @@ Disallow: /users
     end
 
     def setup_assets
-      remove_file "app/assets/javascripts/application.js"
-      remove_file "app/assets/stylesheets/application.css"
-      remove_file "app/assets/images/rails.png"
-
       %w{javascripts stylesheets images}.each do |path|
         empty_directory "app/assets/#{path}/store"
         empty_directory "app/assets/#{path}/admin"
