@@ -50,18 +50,6 @@ Disallow: /users
       ROBOTS
     end
 
-    def setup_assets
-      %w{javascripts stylesheets images}.each do |path|
-        empty_directory "app/assets/#{path}/store"
-        empty_directory "app/assets/#{path}/admin"
-      end
-
-      template "app/assets/javascripts/store/all.js"
-      template "app/assets/javascripts/admin/all.js"
-      template "app/assets/stylesheets/store/all.css"
-      template "app/assets/stylesheets/admin/all.css"
-    end
-
     def create_overrides_directory
       empty_directory "app/overrides"
     end
