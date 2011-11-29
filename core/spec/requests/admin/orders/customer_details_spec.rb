@@ -63,7 +63,7 @@ describe "Customer Details" do
     end
 
     it "should show validation errors" do
-      pending
+      pending "Failing with Internal Server Error\nundefined method `special_instructions='. To be attended to later'"
       click_button "Continue"
       page.should have_content("Shipping address first name can't be blank")
     end
