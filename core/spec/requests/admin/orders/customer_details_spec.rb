@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe "Customer Details" do
-  before(:each) do
-    pending
+  before do
     @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
     Spree::Config.set :default_country_id => Factory(:country).id
 
