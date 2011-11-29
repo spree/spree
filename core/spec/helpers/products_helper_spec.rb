@@ -16,7 +16,7 @@ module Spree
 
       it "shows a product's price including tax" do
         product.stub :tax_category => tax_category
-        tax_category.stub :effective_amount => BigDecimal.new(0.05, 2)
+        tax_category.stub :effective_amount => BigDecimal.new("0.05", 2)
         Spree::Config.set :show_price_inc_vat => true
         product_price(product).should == "$20.99 (inc. VAT)"
       end
