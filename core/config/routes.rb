@@ -194,7 +194,6 @@ Spree::Core::Engine.routes.draw do
         post :testmail
       end
     end
-
   end
 
   match '/admin', :to => 'admin/orders#index', :as => :admin
