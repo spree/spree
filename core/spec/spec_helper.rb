@@ -42,6 +42,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.start
+    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
   end
 
   config.after(:each) do
@@ -80,7 +81,6 @@ shared_context "custom products" do
   end
 end
 
-@configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
 
 PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
 SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
