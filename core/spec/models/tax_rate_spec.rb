@@ -8,28 +8,31 @@ describe Spree::TaxRate do
   end
 
   context "match" do
-    let(:rate1) { Spree::TaxRate.new }
-    let(:rate2) { Spree::TaxRate.new }
-    let (:address) { mock_model Spree::Address }
+    let(:zone) { Factory(:zone) }
+    let(:order) { Factory(:order) }
 
-    before { Spree::TaxRate.stub(:all => [rate1, rate2]) }
+    it "should return an empty array when tax_zone is nil" do
+      order.stub :tax_zone => nil
+      Spree::TaxRate.match(order).should == []
+    end
 
-    it "should be nil if none of the zones include the address" do
-      rate1.stub_chain :zone, :include? => false
-      rate2.stub_chain :zone, :include? => false
-      Spree::TaxRate.match(address).should == []
+    it "should return an emtpy array when no rate zones match the tax_zone" do
+      Spree::TaxRate.create :amount => 1, :zone => Factory(:zone, :name => 'other_zone')
+      order.stub :tax_zone => zone
+      Spree::TaxRate.match(order).should == []
     end
-    it "should return a rate if its zone includes the address" do
-      rate1.stub_chain :zone, :include? => false
-      rate2.stub_chain :zone, :include? => true
-      Spree::TaxRate.match(address).should == [rate2]
+
+    it "should return the rate that matches the rate zone" do
+      rate = Spree::TaxRate.create :amount => 1, :zone => zone
+      order.stub :tax_zone => zone
+      Spree::TaxRate.match(order).should == [rate]
     end
-    it "should returnn all matches in the event of multiple matches" do
-      rate1.stub_chain :zone, :include? => true
-      rate2.stub_chain :zone, :include? => true
-      rate1.stub :amount => 10
-      rate2.stub :amount => 5
-      Spree::TaxRate.match(address).should == [rate1, rate2]
+
+    it "should return all rates that match the rate zone" do
+      rate1 = Spree::TaxRate.create :amount => 1, :zone => zone
+      rate2 = Spree::TaxRate.create :amount => 2,:zone => zone
+      order.stub :tax_zone => zone
+      Spree::TaxRate.match(order).should == [rate1, rate2]
     end
   end
 
@@ -43,7 +46,7 @@ describe Spree::TaxRate do
     end
 
     it "should return rate when default category is set" do
-      category.update_attribute(:is_default, true) 
+      category.update_attribute(:is_default, true)
       Spree::TaxCategory.any_instance.should_receive(:effective_amount)
       Spree::TaxRate.default
     end
