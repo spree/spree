@@ -1,3 +1,4 @@
+require File.expand_path('../../base_controller_decorator', __FILE__)
 Spree::Admin::BaseController.class_eval do
   before_filter :authorize_admin
 
