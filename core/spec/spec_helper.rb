@@ -13,10 +13,6 @@ require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
 require 'spree/url_helpers'
 
-# load default data for tests
-require 'active_record/fixtures'
-fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
-ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
 
 RSpec.configure do |config|
   # == Mock Framework
