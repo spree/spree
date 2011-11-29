@@ -366,7 +366,7 @@ describe "product scopes" do
     product.master.update_attribute(:on_hand, 0)
     variant = Factory(:variant, :product => product, :on_hand => 100, :is_master => false, :deleted_at => nil)
     product.save!
-    Spree::Product.on_hand.should include (variant.product)
+    Spree::Product.on_hand.should include(variant.product)
   end
 
   it ".taxons_name_eq" do
