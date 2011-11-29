@@ -756,8 +756,9 @@ describe Spree::Order do
   end
 
   context "#tax_zone" do
-    let(:address) { Factory :address }
-    let(:order) { Spree::Order.create(:ship_address => address, :bill_address => address) }
+    let(:bill_address) { Factory :address }
+    let(:ship_address) { Factory :address }
+    let(:order) { Spree::Order.create(:ship_address => ship_address, :bill_address => bill_address) }
     let(:zone) { Factory :zone }
 
     context "when no zones exist" do
@@ -766,9 +767,25 @@ describe Spree::Order do
       end
     end
 
-    context "when default tax zone specified" do
-      #let(:default_zone) { Factory :zone, :name => "foo_zone" }
+    context "when :tax_using_ship_address => true" do
+      before { Spree::Config.set(:tax_using_ship_address => true) }
 
+      it "should calculate using ship_address" do
+        Spree::Zone.should_receive(:match).with(ship_address)
+        order.tax_zone
+      end
+    end
+
+    context "when :tax_using_ship_address => false" do
+      before { Spree::Config.set(:tax_using_ship_address => false) }
+
+      it "should calculate using bill_address" do
+        Spree::Zone.should_receive(:match).with(bill_address)
+        order.tax_zone
+      end
+    end
+
+    context "when default tax zone specified" do
       before do
         @default_zone = Factory(:zone, :name => "foo_zone")
         Spree::Config.set(:default_tax_zone => "foo_zone")
