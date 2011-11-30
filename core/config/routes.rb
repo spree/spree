@@ -29,9 +29,9 @@ Spree::Core::Engine.routes.draw do
     end
 
   end
-  match '/cart', :to => 'orders#edit', :via => :get, :as => :cart
-  match '/cart', :to => 'orders#update', :via => :put, :as => :update_cart
-  match '/cart/empty', :to => 'orders#empty', :via => :put, :as => :empty_cart
+  get '/cart', :to => 'orders#edit', :as => :cart
+  put '/cart', :to => 'orders#update', :as => :update_cart
+  put '/cart/empty', :to => 'orders#empty', :as => :empty_cart
 
   resources :shipments do
     member do
