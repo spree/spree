@@ -35,7 +35,10 @@ module Spree
       end
 
       initializer "spree.environment" do |app|
+        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
+
         app.config.spree = Spree::Core::Environment.new
+        Spree::Config = app.config.spree.preferences #legacy access
       end
 
       initializer "spree.register.calculators" do |app|

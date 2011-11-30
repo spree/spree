@@ -4,6 +4,10 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_auth'
 
+      initializer "spree.auth.environment", :after => 'spree.environment' do |app|
+        Spree::Auth::Config = Spree::AuthConfiguration.new
+      end
+
       def self.activate
         Dir.glob(File.join(File.dirname(__FILE__), "../../../app/**/*_decorator*.rb")) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)

@@ -25,8 +25,8 @@ module Spree
           @payment_method.update_attribute(:type, payment_method_type)
           @payment_method = PaymentMethod.find(params[:id])
         end
-        payment_method_params = params[ActiveModel::Naming.param_key(@payment_method)] || {}
 
+        payment_method_params = params[ActiveModel::Naming.param_key(@payment_method)] || {}
         if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params))
           invoke_callbacks(:update, :after)
           flash.notice = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))

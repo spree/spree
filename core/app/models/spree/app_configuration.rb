@@ -1,5 +1,22 @@
+# This is the primary location for defining spree preferences
+#
+# The expectation is that this is created once and stored in
+# the spree environment
+#
+# setters:
+# a.color = :blue
+# a[:color] = :blue
+# a.set :color = :blue
+# a.preferred_color = :blue
+#
+# getters:
+# a.color
+# a[:color]
+# a.get :color
+# a.preferred_color
+#
 module Spree
-  class AppConfiguration < Spree::Configuration
+  class AppConfiguration < Preferences::Configuration
 
     preference :site_name, :string, :default => 'Spree Demo Site'
     preference :default_seo_title, :string, :default => ''
@@ -19,6 +36,7 @@ module Spree
     preference :show_only_complete_orders_by_default, :boolean, :default => true
     preference :admin_products_per_page, :integer, :default => 10
     preference :admin_pgroup_preview_size, :integer, :default => 10
+    preference :admin_pgroup_per_page, :integer, :default => 10
     preference :products_per_page, :integer, :default => 12
     preference :logo, :string, :default => 'admin/bg/spree_50.png'
     preference :stylesheets, :string, :default => 'reset, screen' # Comma separate multiple stylesheets, e.g. 'screen,mystyle'
@@ -45,7 +63,15 @@ module Spree
     preference :dismissed_spree_alerts, :string, :default => ''
     preference :last_check_for_spree_alerts, :string, :default => nil
 
-    validates :name, :presence => true, :uniqueness => true
+    # searcher_class allows spree extension writers to provide their own Search class
+    def searcher_class
+      @searcher_class ||= Spree::Core::Search::Base
+    end
+
+    def searcher_class=(sclass)
+      @searcher_class = sclass
+    end
 
   end
+
 end
