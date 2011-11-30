@@ -14,7 +14,10 @@ module Spree
 
       def update
         @config = Spree::Config.instance
-        @config.update_attributes(params[@config.class.name.underscore])
+
+        params_key = ActiveModel::Naming.param_key( @config )
+        @config.update_attributes(params[params_key])
+
         Rails.cache.delete("configuration_#{@config.class.name}".to_sym)
         redirect_to admin_general_settings_path
       end
