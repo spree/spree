@@ -19,7 +19,7 @@
         <%= link_to t(:order_details), edit_admin_order_url(@order) %>
       </li>
       <li<%== ' class="active"' if current == 'Customer Details' %>>
-          <%= link_to t(:customer_details), user_admin_order_url(@order) %>
+          <%= link_to t(:customer_details), admin_order_user_url(@order) %>
       </li>
       <li<%== ' class="active"' if current == 'Shipments' %>>
          <%= link_to t(:shipment), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : edit_admin_order_shipment_url(@order, @order.shipment) %>
@@ -36,7 +36,7 @@
         <%= link_to t(:order_details), admin_order_url(@order) %>
       </li>
       <li<%== ' class="active"' if current == 'Customer Details' %>>
-        <%= link_to t(:customer_details), user_admin_order_url(@order) %>
+        <%= link_to t(:customer_details), admin_order_user_url(@order) %>
       </li>
       <li<%== ' class="active"' if current == 'Adjustments' %>>
          <%= link_to t(:adjustments), admin_order_adjustments_url(@order) %>

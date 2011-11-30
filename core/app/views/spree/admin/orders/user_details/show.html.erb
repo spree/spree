@@ -13,7 +13,7 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 
-<%= form_for @order, :url => admin_order_url(@order), :html => { :method => :put} do |f| %>
-  <%= f.hidden_field :number %>
-  <%= render :partial => 'user_form', :locals => { :f => f } %>
+<%= form_for @order, :url => admin_order_user_url(@order) do |f| %>
+  <%= render 'form', :f => f %>
 <% end %>
+

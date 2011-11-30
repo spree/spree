@@ -111,11 +111,6 @@ module Spree
         respond_with(@order) { |format| format.html { redirect_to :back } }
       end
 
-      def user
-        @order.build_bill_address(:country_id => Spree::Config[:default_country_id]) if @order.bill_address.nil?
-        @order.build_ship_address(:country_id => Spree::Config[:default_country_id]) if @order.ship_address.nil?
-      end
-
       private
 
       def load_order

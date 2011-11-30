@@ -133,8 +133,9 @@ Spree::Core::Engine.routes.draw do
         get :fire
         post :resend
         get :history
-        get :user
       end
+
+      resource :user, :controller => "orders/user_details"
 
       resources :adjustments
       resources :line_items
