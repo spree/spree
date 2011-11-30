@@ -37,7 +37,6 @@ describe Spree::OrderMailer do
     end
 
     context "when intercept_email is provided" do
-      before {  }
       it "should strip the bcc recipients"
       it "should strip the cc recipients"
       it "should replace the receipient with the specified address" do
