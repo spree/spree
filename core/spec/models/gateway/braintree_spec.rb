@@ -182,14 +182,14 @@ describe Spree::Gateway::Braintree do
   end
 
   def with_payment_profiles_off(&block)
-    Gateway::Braintree.class_eval do
+    Spree::Gateway::Braintree.class_eval do
       def payment_profiles_supported?
         false
       end
     end
     yield
   ensure
-    Gateway::Braintree.class_eval do
+    Spree::Gateway::Braintree.class_eval do
       def payment_profiles_supported?
         true
       end
