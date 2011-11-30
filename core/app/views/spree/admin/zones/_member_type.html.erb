@@ -4,7 +4,8 @@
   <fieldset id="">
     <legend><%= t(type) %></legend>
     <ul id="ul-nested-<%= type %>" class="member-list">
-      <%= zone_form.fields_for :zone_members do |member_form| %>
+      <% members_of_type = zone_form.object.zone_members.select{|member| member.zoneable_type && member.zoneable_type.downcase == type} %>
+      <%= zone_form.fields_for :zone_members, members_of_type do |member_form| %>
         <%= render :partial => "#{type}_member", :locals => { :f => member_form } %>
       <% end %>
     </ul>
