@@ -276,21 +276,14 @@ module Spree
       adjustments.tax.map(&:amount).sum
     end
 
-    # Creates a new tax charge if applicable.  Uses the highest possible matching rate and destroys any previous
-    # tax charges if they were created by rates that no longer apply.
-    # for the vat case adjutments according to default country are created
+    # Creates new tax charges if there are any applicable rates
     def create_tax_charge!
+      # destroy any previous tax adjustments (eveything is recalculated from scratch)
       adjustments.tax.each { |e| e.destroy }
-      matching_rates = TaxRate.match(ship_address)
-      if matching_rates.empty? and Spree::Config[:show_price_inc_vat]
-      # somebody may be able to make the search shorter here , some unremember bug caused this
-        matching_rates = Spree::TaxRate.all.select do |rate|
-          # get all rates that apply to default country
-          rate.zone.country_list.collect { |c| c.id }.include?(Spree::Config[:default_country_id])
-        end
-      end
-      matching_rates.each do |rate|
-        rate.create_adjustment("#{rate.calculator.description} #{rate.amount * 100}%", self, self, true)
+
+      rates = TaxRate.match(tax_zone)
+      rates.each do |rate|
+        adj = rate.create_adjustment("#{rate.calculator.description} #{rate.amount * 100}%", self, self, true)
       end
     end
 

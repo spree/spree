@@ -699,59 +699,51 @@ describe Spree::Order do
   end
 
   context "create_tax_charge!" do
-    let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "Money for the man" }
-    let(:rate) { stub_model(Spree::TaxRate, :amount => 0.05) }
-    let(:rate_1) { stub_model(Spree::TaxRate, :amount => 0.15) }
+    let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "foo" }
+    let(:zone) { Factory(:zone) }
+    before do
+      @order = Spree::Order.create!
+    end
 
-    it "should destory all existing tax adjustments" do
+    it "should destroy all previous tax adjustments" do
       adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax)
       adjustment.should_receive :destroy
 
-      order.stub_chain :adjustments, :tax => [adjustment]
-      order.create_tax_charge!
+      @order.stub_chain :adjustments, :tax => [adjustment]
+      @order.create_tax_charge!
     end
 
-    it "should create adjustments with correct labels for matched rates" do
-      [rate, rate_1].each {|r| r.stub :calculator => sales_tax }
-      Spree::TaxRate.stub :match => [rate, rate_1]
+    context "when there are two tax rates" do
+      let(:rate1) { Factory(:tax_rate, :zone => zone) }
+      let(:rate2) { Factory(:tax_rate, :zone => zone) }
 
-      adjustment_1_attributes = {
-        :amount => 3,
-        :source => order,
-        :originator => rate,
-        :label => "Money for the man 5.0%",
-        :mandatory => true
-      }
+      context "when no rates match" do
+        before { Spree::TaxRate.stub :match => [] }
 
-      order.adjustments.should_receive(:create).with(adjustment_1_attributes).once
-
-      adjustment_2_attributes = {
-        :amount => 3,
-        :source => order,
-        :originator => rate_1,
-        :label => "Money for the man 15.0%",
-        :mandatory => true
-      }
-
-      order.adjustments.should_receive(:create).with(adjustment_2_attributes).once
-
-      order.create_tax_charge!
-    end
-
-    context "when :show_price_inc_vat is true" do
-      before { Spree::Config.set :show_price_inc_vat => true }
-
-      it "should use default countries rate when none match address" do
-        pending
-        Spree::TaxRate.stub :match => []
-        rate.stub_chain :zone, :country_list => [mock_model(Spree::Country, :id => Spree::Config[:default_country_id])]
-        rate_1.stub_chain :zone, :country_list => []
-        Spree::TaxRate.stub :all => [rate, rate_1]
-
-        rate.should_receive(:create_adjustment).at_least(:once)
-        rate_1.should_not_receive(:create_adjustment)
-        order.create_tax_charge!
+        it "should not create any tax adjustments" do
+          @order.create_tax_charge!
+          Spree::Adjustment.tax.count.should == 0
+        end
       end
+
+      context "when only one rate matches" do
+        before { Spree::TaxRate.stub :match => [rate1] }
+
+        it "should create exactly one tax adjustment" do
+          @order.create_tax_charge!
+          Spree::Adjustment.tax.count.should == 1
+        end
+      end
+
+      context "when both rates match" do
+        before { Spree::TaxRate.stub :match => [rate1, rate2] }
+
+        it "should create exactly two tax adjustments" do
+          @order.create_tax_charge!
+          Spree::Adjustment.tax.count.should == 2
+        end
+      end
+
     end
   end
 
@@ -771,7 +763,8 @@ describe Spree::Order do
       before { Spree::Config.set(:tax_using_ship_address => true) }
 
       it "should calculate using ship_address" do
-        Spree::Zone.should_receive(:match).with(ship_address)
+        Spree::Zone.should_receive(:match).at_least(:once).with(ship_address)
+        Spree::Zone.should_not_receive(:match).with(bill_address)
         order.tax_zone
       end
     end
@@ -780,7 +773,8 @@ describe Spree::Order do
       before { Spree::Config.set(:tax_using_ship_address => false) }
 
       it "should calculate using bill_address" do
-        Spree::Zone.should_receive(:match).with(bill_address)
+        Spree::Zone.should_receive(:match).at_least(:once).with(bill_address)
+        Spree::Zone.should_not_receive(:match).with(ship_address)
         order.tax_zone
       end
     end
