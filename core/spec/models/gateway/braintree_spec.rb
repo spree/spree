@@ -37,10 +37,6 @@ describe Spree::Gateway::Braintree do
     @gateway.provider_class.should == ::ActiveMerchant::Billing::BraintreeGateway
   end
 
-  pending "should be the Blue Braintree" do
-    @gateway.provider.class.should == ::ActiveMerchant::Billing::BraintreeBlueGateway
-  end
-
   describe "authorize" do
     pending "should return a success response with an authorization code" do
       result = @gateway.authorize(500, @creditcard,      {:server=>"test",
