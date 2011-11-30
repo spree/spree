@@ -1,8 +1,8 @@
 module Spree
   class Calculator::FlexiRate < Calculator
-    preference :first_item,      :decimal, :default => 0
-    preference :additional_item, :decimal, :default => 0
-    preference :max_items,       :decimal, :default => 0
+    preference :first_item,      :decimal, :default => 0.0
+    preference :additional_item, :decimal, :default => 0.0
+    preference :max_items,       :decimal, :default => 0.0
 
     def self.description
       I18n.t(:flexible_rate)

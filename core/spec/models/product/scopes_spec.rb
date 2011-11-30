@@ -360,7 +360,6 @@ describe "product scopes" do
   end
 
   it ".with variant no on hand" do
-    Spree::AppConfiguration.find_or_create_by_name("Default configuration")
     Spree::Config.set :track_inventory_levels => true
     product = Factory(:product)
     product.master.update_attribute(:on_hand, 0)
