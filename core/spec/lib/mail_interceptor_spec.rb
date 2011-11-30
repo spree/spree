@@ -37,8 +37,14 @@ describe Spree::OrderMailer do
     end
 
     context "when intercept_email is provided" do
-      it "should strip the bcc recipients"
-      it "should strip the cc recipients"
+      it "should strip the bcc recipients" do
+        message.bcc.should be_blank
+      end
+
+      it "should strip the cc recipients" do
+        message.cc.should be_blank
+      end
+
       it "should replace the receipient with the specified address" do
         mail_method.stub :preferred_intercept_email => "intercept@foobar.com"
         message.deliver
