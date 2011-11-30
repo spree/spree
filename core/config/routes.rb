@@ -135,7 +135,7 @@ Spree::Core::Engine.routes.draw do
         get :history
       end
 
-      resource :user, :controller => "orders/user_details"
+      resource :customer, :controller => "orders/customer_details"
 
       resources :adjustments
       resources :line_items

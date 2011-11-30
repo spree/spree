@@ -294,7 +294,8 @@ module Spree
       else
         self.shipments << Shipment.create(:order => self,
                                           :shipping_method => shipping_method,
-                                          :address => self.ship_address)
+                                          :address => self.ship_address,
+                                          :inventory_units => self.inventory_units)
       end
 
     end

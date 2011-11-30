@@ -336,6 +336,7 @@ en:
   current: Current
   customer: Customer
   customer_details: "Customer Details"
+  customer_details_updated: "The customer's details have been updated."
   customer_search: "Customer Search"
   date_created: Date created
   date_range: "Date Range"
