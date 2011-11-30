@@ -1001,7 +1001,6 @@ en:
   user: User
   user_account: User Account
   user_created_successfully: "User created successfully"
-  user_details: "User Details"
   users: Users
   validate_on_profile_create: Validate on profile create
   validation:
