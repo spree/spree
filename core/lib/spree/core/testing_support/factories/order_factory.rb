@@ -14,6 +14,9 @@ FactoryGirl.define do
   end
 
   factory :order_with_inventory_unit_shipped, :parent => :order do
-    after_create { |order| Factory(:inventory_unit, :order => order, :state => 'shipped') }
+    after_create do |order|
+      Factory(:line_item, :order => order)
+      Factory(:inventory_unit, :order => order, :state => 'shipped')
+    end
   end
 end

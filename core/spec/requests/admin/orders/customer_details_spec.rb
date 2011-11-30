@@ -1,30 +1,31 @@
 require 'spec_helper'
 
 describe "Customer Details" do
+  let(:shipping_method) { Factory(:shipping_method, :display_on => "front_end") }
+  let(:order) { Factory(:order_with_inventory_unit_shipped, :completed_at => 1.year.ago, :shipping_method => shipping_method) }
+
   before do
     reset_spree_preferences do |config|
       config.default_country_id = Factory(:country).id
     end
+
     Factory(:shipping_method, :display_on => "front_end")
     Factory(:order, :completed_at => "2011-02-01 12:36:15", :ship_address => Factory(:address))
     Factory(:order, :completed_at => "2010-02-01 17:36:42", :ship_address => Factory(:address))
     Factory(:user, :email => 'foobar@example.com', :ship_address => Factory(:address), :bill_address => Factory(:address))
+    order.create_shipment!
 
-    Spree::Order.all.each do |order|
-      product = Factory(:product, :name => 'spree t-shirt')
-      order.add_variant(product.master, 2)
-      Factory(:line_item, :order => order, :quantity => 0)
-    end
+    Factory(:user, :email => 'foobar@example.com', :ship_address => Factory(:address), :bill_address => Factory(:address))
 
     sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Orders"
-    within(:css, 'table#listing_orders tr:nth-child(2)') { click_link "Edit" }
-    click_link "Customer Details"
+    within(:css, 'table#listing_orders') { click_link "Edit" }
   end
 
   context "editing an order", :js => true do
     it "should be able to populate customer details for an existing order" do
+      click_link "Customer Details"
       fill_in "customer_search", :with => "foobar"
       sleep(3)
 
@@ -44,6 +45,9 @@ describe "Customer Details" do
     end
 
     it "should be able to update customer details for an existing order" do
+      order.ship_address = Factory(:address)
+      order.save!
+      click_link "Customer Details"
       fill_in "order_ship_address_attributes_firstname", :with => "John 99"
       fill_in "order_ship_address_attributes_lastname",  :with => "Doe"
       fill_in "order_ship_address_attributes_address1",  :with => "100 first lane"
@@ -56,16 +60,15 @@ describe "Customer Details" do
 
       visit spree.admin_path
       click_link "Orders"
-      within(:css, 'table#listing_orders tr:nth-child(2)') { click_link "Edit" }
+      within(:css, 'table#listing_orders') { click_link "Edit" }
 
       click_link "Customer Details"
       find_field('order_ship_address_attributes_firstname').value.should == "John 99"
     end
+  end
 
-    it "should show validation errors" do
-      pending "Failing with Internal Server Error\nundefined method `special_instructions='. To be attended to later'"
-      click_button "Continue"
-      page.should have_content("Shipping address first name can't be blank")
-    end
+  it "should show validation errors" do
+    click_button "Continue"
+    page.should have_content("Shipping address first name can't be blank")
   end
 end
