@@ -15,10 +15,6 @@ Spree::Core::Engine.routes.draw do
   match '/checkout/:state' => 'checkout#edit', :as => :checkout_state
   match '/checkout' => 'checkout#edit', :state => 'address', :as => :checkout
 
-  # non-restful admin checkout stuff
-  match '/admin/orders/:order_number/checkout' => 'admin/checkout#update', :method => :post, :as => :admin_orders_checkout
-  match '/admin/orders/:order_number/checkout/(:state)' => 'admin/checkout#edit', :method => :get, :as => :admin_orders_checkout
-
   resources :orders do
     post :populate, :on => :collection
 
