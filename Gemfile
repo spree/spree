@@ -17,7 +17,7 @@ group :test do
   gem 'rspec-rails', '~> 2.7.0'
   gem 'factory_girl_rails', '~> 1.4.0'
   gem 'rcov'
-  gem 'faker'
+  gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara'
   gem 'database_cleaner'

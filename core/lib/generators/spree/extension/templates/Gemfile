@@ -14,7 +14,7 @@ group :cucumber do
 end
 
 group :test, :cucumber do
-  gem 'faker'
+  gem 'ffaker'
   gem 'factory_girl'
 end
 
