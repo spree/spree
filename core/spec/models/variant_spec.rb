@@ -27,10 +27,7 @@ describe Spree::Variant do
   end
 
   context "on_hand=" do
-    before { 
-      variant.stub(:inventory_units => mock('inventory-units'))
-      variant.product = Factory(:product) 
-    }
+    before { variant.stub(:inventory_units => mock('inventory-units')) }
 
     context "when :track_inventory_levels is true" do
       before { Spree::Config.set :track_inventory_levels => true }

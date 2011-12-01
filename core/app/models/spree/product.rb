@@ -43,7 +43,6 @@ module Spree
     after_save :update_memberships if ProductGroup.table_exists?
     after_save :set_master_on_hand_to_zero_when_product_has_variants
     after_save :save_master
-    before_validation :validate_master
 
     has_many :variants,
       :class_name => 'Spree::Variant',
@@ -64,7 +63,7 @@ module Spree
       Image.find_by_sql("SELECT #{Asset.quoted_table_name}.* FROM #{Asset.quoted_table_name} LEFT JOIN #{Variant.quoted_table_name} ON (#{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id) WHERE (#{Variant.quoted_table_name}.product_id = #{self.id})")
     end
 
-    validates :name, :permalink, :presence => true
+    validates :name, :price, :permalink, :presence => true
 
     accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? }
 
@@ -209,16 +208,6 @@ module Spree
       # when saving so we force a save using a hook.
       def save_master
         master.save if master && (master.changed? || master.new_record?)
-      end
-
-      def validate_master
-        if master
-          master.valid?
-          master.errors.each do |attribute, msg|
-            self.errors.add(attribute, msg)
-          end
-        end
-        true
       end
 
       def update_memberships

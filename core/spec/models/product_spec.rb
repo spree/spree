@@ -25,7 +25,6 @@ describe Spree::Product do
   end
 
   context "validations" do
-    let(:product) {Factory(:product)}
     context "find_by_param" do
 
       context "permalink should be incremented until the value is not taken" do
@@ -56,80 +55,6 @@ describe Spree::Product do
       end
 
     end
-
-    context "price validations" do
-      it "should not take strings" do
-        product.price = "abc"
-        product.should be_invalid
-      end
-
-      it "price should not be negative" do
-        product.price = -1
-        product.should be_invalid
-      end
-
-      it "price can be 0" do
-        product.price = 0
-        product.should be_valid
-      end
-
-      it "price should not be nil" do
-        product.price = nil
-        lambda {price.valid?}.should raise_error
-      end
-    end
-
-    context "cost price validations" do
-      it "should not take strings" do
-        product.price = "abc"
-        product.should be_invalid
-      end
-
-      it "should not be negative" do
-        product.price = -1
-        product.should be_invalid
-      end
-
-      it "can be 0" do
-        product.price = 0
-        product.should be_valid
-      end
-
-      it "should not be nil" do
-        product.price = nil
-        lambda {price.valid?}.should raise_error
-      end
-    end
-
-    context "on hand validations" do
-      before {Spree::Config.set :track_inventory_levels => true}
-
-      it "should not take on hand unless inventory tracking is on" do
-        Spree::Config.set :track_inventory_levels => false
-        lambda{ product.on_hand = 1 }.should raise_error
-      end
-
-      it "should not take strings" do
-        product.on_hand = "abc"
-        product.should be_invalid
-      end
-
-      it "can be 0" do
-        product.on_hand = 0
-        product.should be_valid
-      end
-
-      it "can be negative" do
-        product.on_hand = -1
-        product.should be_valid
-      end
-
-      it "should not be nil" do
-        product.price = nil
-        lambda {price.valid?}.should raise_error
-      end
-    end
-
   end
 
   context "scopes" do

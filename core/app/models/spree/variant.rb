@@ -11,10 +11,9 @@ module Spree
     validate :check_price
     validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
-    validates :count_on_hand, :numericality => true, :presence => true
+    validates :count_on_hand, :numericality => true
 
     before_save :touch_product
-    before_update :fill_backordered
 
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
@@ -34,25 +33,23 @@ module Spree
     # Adjusts the inventory units to match the given new level.
     def on_hand=(new_level)
       if Spree::Config[:track_inventory_levels]
+        new_level = new_level.to_i
+
+        # increase Inventory when
+        if new_level > on_hand
+          # fill backordered orders before creating new units
+          inventory_units.with_state('backordered').slice(0, new_level).each do |iu|
+            iu.fill_backorder
+            new_level -= 1
+          end
+        end
+
         self.count_on_hand = new_level
       else
         raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
       end
     end
 
-    def fill_backordered
-      if Spree::Config[:track_inventory_levels]
-        if count_on_hand_was < count_on_hand
-          # fill backordered orders before creating new units
-          ius = inventory_units.with_state("backordered")
-          ius.slice(0, count_on_hand).each do |iu|
-            iu.fill_backorder
-            self.count_on_hand = self.count_on_hand - 1
-          end
-        end
-      end
-    end   
- 
     # returns number of units currently on backorder for this variant.
     def on_backorder
       inventory_units.with_state('backordered').size
