@@ -16,6 +16,7 @@ describe Spree::Address do
 
   context "validation" do
     before do
+      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
       Spree::Config.set :address_requires_state => true
     end
 

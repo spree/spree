@@ -42,7 +42,6 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.start
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
   end
 
   config.after(:each) do

@@ -6,6 +6,10 @@ module Spree
     include ProductsHelper
     include BaseHelper
     context "#product_price" do
+      before do
+        @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+      end
+
       let!(:tax_category) { Factory(:tax_category) }
       let!(:product) { Factory(:product, :tax_category => tax_category) }
 
