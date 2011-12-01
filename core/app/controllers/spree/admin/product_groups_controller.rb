@@ -23,7 +23,7 @@ module Spree
           params[:search] ||= {}
           params[:search][:meta_sort] ||= "name.asc"
           @search = super.metasearch(params[:search])
-          @collection = @search.relation.page(params[:page]).per(Spree::Config[:per_page])
+          @collection = @search.relation.page(params[:page]).per(Spree::Config[:admin_pgroup_per_page])
         end
     
       private

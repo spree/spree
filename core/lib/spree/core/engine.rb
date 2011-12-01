@@ -14,6 +14,10 @@ module Spree
 
       config.to_prepare &method(:activate).to_proc
 
+      config.before_initialize do
+        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
+      end
+
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args
@@ -36,6 +40,7 @@ module Spree
 
       initializer "spree.environment" do |app|
         app.config.spree = Spree::Core::Environment.new
+        Spree::Config = app.config.spree.preferences #legacy access
       end
 
       initializer "spree.register.calculators" do |app|

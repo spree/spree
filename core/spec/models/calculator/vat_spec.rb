@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe Spree::Calculator::Vat do
   before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-    Spree::Config.set :allow_backorders => true
+    reset_spree_preferences do |config|
+      config.allow_backorders = true
+    end
   end
 
   let(:tax_category) { Factory(:tax_category, :tax_rates => []) }

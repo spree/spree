@@ -4,7 +4,7 @@ describe Spree::Variant do
   let!(:variant) { Factory(:variant, :count_on_hand => 95) }
 
   before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    reset_spree_preferences
   end
 
   context "validations" do
@@ -111,7 +111,7 @@ describe Spree::Variant do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should return nil" do
-        variant.on_hand.should == 95
+        variant.on_hand.should be_nil
       end
 
     end

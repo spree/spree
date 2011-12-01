@@ -4,8 +4,11 @@ describe "Inventory Settings" do
   context "changing settings" do
     before(:each) do
       sign_in_as!(Factory(:admin_user))
-      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-      Spree::Config.set :allow_backorders => true
+
+      reset_spree_preferences do |config|
+        config.allow_backorders = true
+      end
+
       visit spree.admin_path
       click_link "Configuration"
       click_link "Inventory Settings"
