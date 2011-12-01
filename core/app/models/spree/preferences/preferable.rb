@@ -36,7 +36,7 @@ module Spree::Preferences::Preferable
   def preferences
     prefs = {}
     methods.grep(/^prefers_.*\?$/).each do |pref_method|
-      prefs[pref_method.gsub(/prefers_|\?/, '').to_sym] = send(pref_method)
+      prefs[pref_method.to_s.gsub(/prefers_|\?/, '').to_sym] = send(pref_method)
     end
     prefs
   end
