@@ -71,9 +71,6 @@ module Spree
 
     alias :options :product_option_types
 
-    #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
-    # default product scope only lists available and non-deleted products
-
     def to_param
       return permalink if permalink.present?
       name.to_url
