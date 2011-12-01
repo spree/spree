@@ -22,7 +22,7 @@
 #
 module Spree
   class Adjustment < ActiveRecord::Base
-    belongs_to :order
+    belongs_to :adjustable, :polymorphic => true
     belongs_to :source, :polymorphic => true
     belongs_to :originator, :polymorphic => true
 
@@ -34,8 +34,8 @@ module Spree
     scope :optional, where(:mandatory => false)
     scope :eligible, where(:eligible => true)
 
-    after_save :update_order
-    after_destroy :update_order
+    after_save :update_adjustable
+    after_destroy :update_adjustable
 
     # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
     # adjustment_total.
@@ -63,12 +63,12 @@ module Spree
         originator.update_adjustment(self, source)
       end
     end
-    
+
     private
-    
-    def update_order
-      order.update!
+
+    def update_adjustable
+      adjustable.update! if adjustable.is_a? Order
     end
-    
+
   end
 end

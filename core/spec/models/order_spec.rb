@@ -436,7 +436,7 @@ describe Spree::Order do
 
     it "should call adjustment#update on every adjustment}" do
       # adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true, :update! => true)
-      adjustment = Factory(:adjustment, :order => order, :amount => 5)
+      adjustment = Factory(:adjustment, :adjustable => order, :amount => 5)
       # TODO: Restore this example. Stubbing adjustments doesn't work, need a proper collection
       # so we can use adjustments.eligible
       # order.stub(:adjustments => [adjustment])
@@ -472,9 +472,9 @@ describe Spree::Order do
 
     context "with adjustments" do
       before do
-        Factory(:adjustment, :order => order, :amount => 10)
-        Factory(:adjustment, :order => order, :amount => 5)
-        a = Factory(:adjustment, :order => order, :amount => -2, :eligible => false)
+        Factory(:adjustment, :adjustable => order, :amount => 10)
+        Factory(:adjustment, :adjustable => order, :amount => 5)
+        a = Factory(:adjustment, :adjustable => order, :amount => -2, :eligible => false)
         a.update_attribute_without_callbacks(:eligible, false)
         order.stub(:update_adjustments, nil) # So the last adjustment remains ineligible
         order.adjustments.reload
