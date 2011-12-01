@@ -39,7 +39,6 @@ module Spree
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
     before_save :recalculate_count_on_hand
-    before_update :sanitize_permalink
     after_save :update_memberships if ProductGroup.table_exists?
     after_save :set_master_on_hand_to_zero_when_product_has_variants
     after_save :save_master
@@ -73,7 +72,7 @@ module Spree
 
     def to_param
       return permalink if permalink.present?
-      name.to_url
+      name.parameterize
     end
 
     # returns true if the product has any variants (the master variant is not a member of the variants array)
@@ -179,10 +178,6 @@ module Spree
     end
 
     private
-      def sanitize_permalink
-        self.permalink = self.permalink.to_url
-      end
-
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
           variants.inject(0) { |acc, v| acc + v.count_on_hand } :

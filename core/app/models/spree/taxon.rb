@@ -28,13 +28,13 @@ module Spree
       fs
     end
 
-    # Creates permalink based on .to_url method provided by stringx gem
+    # Creates permalink based on .parameterize method
     def set_permalink
       if parent_id.nil?
-        self.permalink = name.to_url if self.permalink.blank?
+        self.permalink = name.parameterize if self.permalink.blank?
       else
         parent_taxon = Taxon.find(parent_id)
-        self.permalink = [parent_taxon.permalink, (self.permalink.blank? ? name.to_url : self.permalink.split('/').last)].join('/')
+        self.permalink = [parent_taxon.permalink, (self.permalink.blank? ? name.parameterize : self.permalink.split('/').last)].join('/')
       end
     end
 
@@ -47,7 +47,7 @@ module Spree
     private
       # obsolete, kept for backwards compat
       def escape(str)
-        str.blank? ? '' : str.to_url
+        str.blank? ? '' : str.parameterize
       end
   end
 end

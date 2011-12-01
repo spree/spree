@@ -164,12 +164,12 @@ module Spree
 
         result
       else
-        name.to_url
+        name.parameterize
       end
     end
 
     def set_permalink
-      self.permalink = self.name.to_url
+      self.permalink = self.name.parameterize
     end
 
     def update_memberships
