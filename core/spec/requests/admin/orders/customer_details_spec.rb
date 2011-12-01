@@ -25,6 +25,7 @@ describe "Customer Details" do
 
   context "editing an order", :js => true do
     it "should be able to populate customer details for an existing order" do
+      pending "Waiting on Jones Lee to fix customer searching"
       click_link "Customer Details"
       fill_in "customer_search", :with => "foobar"
       sleep(3)
