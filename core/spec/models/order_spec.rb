@@ -869,4 +869,53 @@ describe Spree::Order do
     end
   end
 
+  context "#price_adjustment_totals" do
+    before { @order = Spree::Order.create! }
+
+
+    context "when there are no price adjustments" do
+      before { @order.stub :price_adjustments => [] }
+
+      it "should return an empty hash" do
+        @order.price_adjustment_totals.should == {}
+      end
+    end
+
+    context "when there are two adjustments with different labels" do
+      let(:adj1) { mock_model Spree::Adjustment, :amount => 10, :label => "Foo" }
+      let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
+
+      before do
+        @order.stub :price_adjustments => [adj1, adj2]
+      end
+
+      it "should return exactly two totals" do
+        @order.price_adjustment_totals.size.should == 2
+      end
+
+      it "should return the correct totals" do
+        @order.price_adjustment_totals["Foo"].should == 10
+        @order.price_adjustment_totals["Bar"].should == 20
+      end
+    end
+
+    context "when there are two adjustments with one label and a single adjustment with another" do
+      let(:adj1) { mock_model Spree::Adjustment, :amount => 10, :label => "Foo" }
+      let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
+      let(:adj3) { mock_model Spree::Adjustment, :amount => 40, :label => "Bar" }
+
+      before do
+        @order.stub :price_adjustments => [adj1, adj2, adj3]
+      end
+
+      it "should return exactly two totals" do
+        @order.price_adjustment_totals.size.should == 2
+      end
+      it "should return the correct totals" do
+        @order.price_adjustment_totals["Foo"].should == 10
+        @order.price_adjustment_totals["Bar"].should == 60
+      end
+    end
+  end
+
 end

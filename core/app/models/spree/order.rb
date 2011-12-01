@@ -153,7 +153,7 @@ module Spree
     end
 
     # Array of adjustments that are inclusive in the variant price.  Useful for when prices
-    # include tax (ex. VAT) and you need to show the tax amount separately.
+    # include tax (ex. VAT) and you need to record the tax amount separately.
     def price_adjustments
       adjustments = []
 
@@ -162,6 +162,20 @@ module Spree
       end
 
       adjustments
+    end
+
+    # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
+    # invoice.  For example, you can display tax breakout for cases where tax is included in price.
+    def price_adjustment_totals
+      totals = {}
+
+      price_adjustments.each do |adjustment|
+        label = adjustment.label
+        totals[label] ||= 0
+        totals[label] = totals[label] + adjustment.amount
+      end
+
+      totals
     end
 
     # This is a multi-purpose method for processing logic related to changes in the Order.  It is meant to be called from
