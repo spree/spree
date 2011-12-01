@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Product do
   before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    reset_spree_preferences
   end
 
   context "shoulda validations" do

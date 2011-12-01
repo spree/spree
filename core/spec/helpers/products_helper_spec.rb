@@ -7,14 +7,16 @@ module Spree
     include BaseHelper
     context "#product_price" do
       before do
-        @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+        reset_spree_preferences
       end
 
       let!(:tax_category) { Factory(:tax_category) }
       let!(:product) { Factory(:product, :tax_category => tax_category) }
 
       it "shows a product's price" do
-        Spree::Config.set :show_price_inc_vat => false
+      reset_spree_preferences do |config|
+        config.show_price_inc_vat = false
+      end
         product_price(product).should == "$19.99"
       end
 

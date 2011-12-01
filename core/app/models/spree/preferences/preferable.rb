@@ -13,24 +13,24 @@ module Spree::Preferences::Preferable
 
   def get_preference(name)
     raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
-    send "preferred_#{name}".to_sym
+    send self.class.preference_getter_method(name)
   end
 
   def set_preference(name, value)
     raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
-    send "preferred_#{name}=".to_sym, value
+    send self.class.preference_setter_method(name), value
   end
 
   def preference_type(name)
-    send "preferred_#{name}_type".to_sym
+    send self.class.preference_type_getter_method(name)
   end
 
   def preference_default(name)
-    send "preferred_#{name}_default".to_sym
+    send self.class.preference_default_getter_method(name)
   end
 
   def has_preference?(name)
-    respond_to? "preferred_#{name}"
+    respond_to? self.class.preference_getter_method(name)
   end
 
   def preferences

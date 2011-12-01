@@ -8,51 +8,61 @@ module Spree::Preferences
       value_type = args.first
       default = options[:default]
 
-      preferred_getter = "preferred_#{name}".to_sym
-      preferred_setter = "preferred_#{name}=".to_sym
-      prefers_getter = "prefers_#{name}?".to_sym
-      prefers_setter = "prefers_#{name}=".to_sym
-      default_getter = "preferred_#{name}_default".to_sym
-      type_getter = "preferred_#{name}_type".to_sym
-
-      define_method preferred_getter do
+      define_method preference_getter_method(name) do
         if preference_store.exist? preference_cache_key(name)
           preference_store.get preference_cache_key(name)
         else
-          send default_getter
+          send self.class.preference_default_getter_method(name)
         end
       end
-      alias_method prefers_getter, preferred_getter
+      alias_method prefers_getter_method(name), preference_getter_method(name)
 
-      define_method preferred_setter do |value|
+      define_method preference_setter_method(name) do |value|
         preference_store.set preference_cache_key(name), value
       end
-      alias_method prefers_setter, preferred_setter
+      alias_method prefers_setter_method(name), preference_setter_method(name)
 
-      define_method default_getter do
+      define_method preference_default_getter_method(name) do
         default
       end
 
-      define_method type_getter do
+      define_method preference_type_getter_method(name) do
         value_type
       end
 
     end
 
     def remove_preference(name)
-      preferred_getter = "preferred_#{name}".to_sym
-      preferred_setter = "preferred_#{name}=".to_sym
-      prefers_getter = "prefers_#{name}?".to_sym
-      prefers_setter = "prefers_#{name}=".to_sym
-      default_getter = "preferred_#{name}_default".to_sym
-      type_getter = "preferred_#{name}_type".to_sym
+      remove_method preference_getter_method(name) if method_defined? preference_getter_method(name)
+      remove_method preference_setter_method(name) if method_defined? preference_setter_method(name)
+      remove_method prefers_getter_method(name) if method_defined? prefers_getter_method(name)
+      remove_method prefers_setter_method(name) if method_defined? prefers_setter_method(name)
+      remove_method preference_default_getter_method(name) if method_defined? preference_default_getter_method(name)
+      remove_method preference_type_getter_method(name) if method_defined? preference_type_getter_method(name)
+    end
 
-      remove_method preferred_getter if method_defined? preferred_getter
-      remove_method preferred_setter if method_defined? preferred_setter
-      remove_method prefers_getter if method_defined? prefers_getter
-      remove_method prefers_setter if method_defined? prefers_setter
-      remove_method default_getter if method_defined? default_getter
-      remove_method type_getter if method_defined? type_getter
+    def preference_getter_method(name)
+      "preferred_#{name}".to_sym
+    end
+
+    def preference_setter_method(name)
+       "preferred_#{name}=".to_sym
+    end
+
+    def prefers_getter_method(name)
+      "prefers_#{name}?".to_sym
+    end
+
+    def prefers_setter_method(name)
+       "prefers_#{name}=".to_sym
+    end
+
+    def preference_default_getter_method(name)
+      "preferred_#{name}_default".to_sym
+    end
+
+    def preference_type_getter_method(name)
+      "preferred_#{name}_type".to_sym
     end
 
   end

@@ -32,6 +32,12 @@ module Spree::Preferences
       [self.class.name, name].join('::').underscore
     end
 
+    def reset
+      preferences.each do |name, value|
+        set_preference name, preference_default(name)
+      end
+    end
+
     alias :[] :get_preference
     alias :[]= :set_preference
 
