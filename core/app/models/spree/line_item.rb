@@ -5,6 +5,7 @@ module Spree
     belongs_to :variant
 
     has_one :product, :through => :variant
+    has_many :adjustments, :as => :adjustable
 
     before_validation :copy_price
 
