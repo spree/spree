@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Variant do
-  let(:variant) { Spree::Variant.new(:count_on_hand => 95) }
+  let!(:variant) { Factory(:variant, :count_on_hand => 95) }
 
   before(:each) do
     @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
@@ -38,7 +38,6 @@ describe Spree::Variant do
 
         it "should change count_on_hand to given value" do
           variant.on_hand = 100
-          variant.save!
           variant.count_on_hand.should == 100
         end
 
