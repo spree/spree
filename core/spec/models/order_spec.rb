@@ -713,6 +713,14 @@ describe Spree::Order do
       @order.create_tax_charge!
     end
 
+    it "should destroy all price adjustments" do
+      adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax)
+      adjustment.should_receive :destroy
+
+      @order.stub :price_adjustments => [adjustment]
+      @order.create_tax_charge!
+    end
+
     context "when there are two tax rates" do
       let(:rate1) { Factory(:tax_rate, :zone => zone) }
       let(:rate2) { Factory(:tax_rate, :zone => zone) }
@@ -821,6 +829,44 @@ describe Spree::Order do
         end
       end
     end
-
   end
+
+  context "#price_adjustments" do
+    before do
+      @order = Spree::Order.create!
+      @order.stub :line_items => [line_item1, line_item2]
+    end
+
+    let(:line_item1) { Factory(:line_item, :order => @order) }
+    let(:line_item2) { Factory(:line_item, :order => @order) }
+
+    context "when there are no line item adjustments" do
+      it "should return nothing if line items have no adjustments" do
+        @order.price_adjustments.should be_empty
+      end
+    end
+
+    context "when only one line item has adjustments" do
+      before do
+        @adj1 = line_item1.adjustments.create(:amount => 2, :source => line_item1, :label => "VAT 5%")
+        @adj2 = line_item1.adjustments.create(:amount => 5, :source => line_item1, :label => "VAT 10%")
+      end
+
+      it "should return the adjustments for that line item" do
+         @order.price_adjustments.should == [@adj1, @adj2]
+      end
+    end
+
+    context "when more than one line item has adjustments" do
+      before do
+        @adj1 = line_item1.adjustments.create(:amount => 2, :source => line_item1, :label => "VAT 5%")
+        @adj2 = line_item2.adjustments.create(:amount => 5, :source => line_item2, :label => "VAT 10%")
+      end
+
+      it "should return the adjustments for each line item" do
+        @order.price_adjustments.should == [@adj1, @adj2]
+      end
+    end
+  end
+
 end

@@ -152,6 +152,18 @@ module Spree
       Zone.match(zone_address) || Zone.where(:name => default_tax_zone).first
     end
 
+    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
+    # include tax (ex. VAT) and you need to show the tax amount separately.
+    def price_adjustments
+      adjustments = []
+
+      line_items.each do |line_item|
+        adjustments.concat line_item.adjustments
+      end
+
+      adjustments
+    end
+
     # This is a multi-purpose method for processing logic related to changes in the Order.  It is meant to be called from
     # various observers so that the Order is aware of changes that affect totals and other values stored in the Order.
     # This method should never do anything to the Order that results in a save call on the object (otherwise you will end
@@ -278,8 +290,9 @@ module Spree
 
     # Creates new tax charges if there are any applicable rates
     def create_tax_charge!
-      # destroy any previous tax adjustments (eveything is recalculated from scratch)
+      # destroy any previous adjustments (eveything is recalculated from scratch)
       adjustments.tax.each { |e| e.destroy }
+      price_adjustments.each { |p| p.destroy }
 
       rates = TaxRate.match(tax_zone)
       rates.each do |rate|
