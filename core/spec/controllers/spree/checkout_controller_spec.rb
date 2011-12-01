@@ -151,9 +151,12 @@ describe Spree::CheckoutController do
 
     before do
       order.stub(:line_items => [line_item])
-      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-      Spree::Config.set :track_inventory_levels => true
-      Spree::Config.set :allow_backorders => false
+
+      reset_spree_preferences do |config|
+        config.track_inventory_levels = true
+        config.allow_backorders = false
+      end
+
     end
 
     context "and back orders == false" do

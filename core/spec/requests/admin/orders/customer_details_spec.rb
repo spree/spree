@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe "Customer Details" do
   before do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-    Spree::Config.set :default_country_id => Factory(:country).id
-
+    reset_spree_preferences do |config|
+      config.default_country_id = Factory(:country).id
+    end
     Factory(:shipping_method, :display_on => "front_end")
     Factory(:order, :completed_at => "2011-02-01 12:36:15", :ship_address => Factory(:address))
     Factory(:order, :completed_at => "2010-02-01 17:36:42", :ship_address => Factory(:address))

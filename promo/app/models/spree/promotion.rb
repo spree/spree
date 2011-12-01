@@ -31,7 +31,11 @@ module Spree
 
     class << self
       def advertised
-        includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
+        #TODO this is broken because the new preferences aren't a direct relationship returning
+        #all for now
+        where(true)
+        #includes(:stored_preferences) 
+        #includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
       end
     end
 

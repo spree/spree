@@ -4,7 +4,7 @@ require 'mail'
 SESSION_KEY = '_spree_session_id'
 
 # TODO - Add the lib/plugins stuff maybe?
-        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
+#::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
 
 if Spree::MailMethod.table_exists?
   Spree::Core::MailSettings.init

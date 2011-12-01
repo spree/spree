@@ -81,6 +81,14 @@ describe Spree::Preferences::Preferable do
   it "builds cache keys" do
     @a.preference_cache_key(:color).should match /a\/color\/\d+/
   end
+
+  it "can add and remove preferences" do
+    A.preference :test_temp, :boolean, :default => true
+    @a.preferred_test_temp.should be_true
+    A.remove_preference :test_temp
+    @a.has_preference?(:test_temp).should be_false
+    @a.respond_to?(:prferred_test_temp).should be_false
+  end
 end
 
 
