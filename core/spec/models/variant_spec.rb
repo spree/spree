@@ -111,7 +111,7 @@ describe Spree::Variant do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should return nil" do
-        variant.on_hand.should == nil
+        variant.on_hand.should == 95
       end
 
     end
