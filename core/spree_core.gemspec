@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'jquery-rails', '>= 1.0.18'
   s.add_dependency 'highline', '= 1.6.2'
-  s.add_dependency 'stringex', '= 1.0.3'
   s.add_dependency 'state_machine', '= 1.1.0'
   s.add_dependency 'ffaker', '~> 1.10.1'
   s.add_dependency 'paperclip', '= 2.4.1'
