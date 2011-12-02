@@ -12,7 +12,7 @@ class NewPreferences < ActiveRecord::Migration
 
     OldPrefs.all.each do |old_pref|
       next unless old_pref.owner
-      say old_pref.name
+      say "Migrating prefence #{old_pref.name}..."
       old_pref.owner.set_preference old_pref.name, old_pref.value
     end
 
