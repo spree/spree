@@ -143,10 +143,15 @@ describe Spree::Order do
       end
 
       context "when transitioning to payment state" do
+        before do
+          order.inventory_units << Factory(:inventory_unit)
+          order.shipping_method = Factory(:shipping_method)
+        end
+
         it "should create a shipment" do
+          order.should_receive(:create_shipment!)
           order.next!
           order.state.should == 'payment'
-          order.shipments.size.should == 1
         end
       end
     end

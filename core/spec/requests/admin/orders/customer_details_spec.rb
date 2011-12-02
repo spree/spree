@@ -10,11 +10,7 @@ describe "Customer Details" do
     end
 
     Factory(:shipping_method, :display_on => "front_end")
-    Factory(:order, :completed_at => "2011-02-01 12:36:15", :ship_address => Factory(:address))
-    Factory(:order, :completed_at => "2010-02-01 17:36:42", :ship_address => Factory(:address))
-    Factory(:user, :email => 'foobar@example.com', :ship_address => Factory(:address), :bill_address => Factory(:address))
-    order.create_shipment!
-
+    Factory(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
     Factory(:user, :email => 'foobar@example.com', :ship_address => Factory(:address), :bill_address => Factory(:address))
 
     sign_in_as!(Factory(:admin_user))
@@ -48,14 +44,15 @@ describe "Customer Details" do
     it "should be able to update customer details for an existing order" do
       order.ship_address = Factory(:address)
       order.save!
+
       click_link "Customer Details"
-      fill_in "order_ship_address_attributes_firstname", :with => "John 99"
-      fill_in "order_ship_address_attributes_lastname",  :with => "Doe"
-      fill_in "order_ship_address_attributes_address1",  :with => "100 first lane"
-      fill_in "order_ship_address_attributes_address2",  :with => "#101"
-      fill_in "order_ship_address_attributes_city",      :with => "Bethesda"
-      fill_in "order_ship_address_attributes_zipcode",   :with => "20170"
-      select "Alabama", :from => "order_ship_address_attributes_state_id"
+      fill_in "order_ship_address_attributes_firstname",  :with => "John 99"
+      fill_in "order_ship_address_attributes_lastname",   :with => "Doe"
+      fill_in "order_ship_address_attributes_address1",   :with => "100 first lane"
+      fill_in "order_ship_address_attributes_address2",   :with => "#101"
+      fill_in "order_ship_address_attributes_city",       :with => "Bethesda"
+      fill_in "order_ship_address_attributes_zipcode",    :with => "20170"
+      fill_in "order_ship_address_attributes_state_name", :with => "Alabama"
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
       click_button "Continue"
 
@@ -69,7 +66,6 @@ describe "Customer Details" do
   end
 
   it "should show validation errors" do
-    pending "Waiting cmar's preference updating"
     click_link "Customer Details"
     click_button "Continue"
     page.should have_content("Shipping address first name can't be blank")
