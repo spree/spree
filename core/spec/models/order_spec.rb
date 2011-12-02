@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+class FakeCalculator < Spree::Calculator
+  def compute(computable)
+    5
+  end
+end
+
 describe Spree::Order do
   before(:each) do
     reset_spree_preferences
@@ -699,10 +705,14 @@ describe Spree::Order do
   end
 
   context "create_tax_charge!" do
-    let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :compute => 3, :[]= => nil, :description => "foo" }
+    let(:tax_calc1) { FakeCalculator.new }
+    let(:tax_calc2) { FakeCalculator.new }
     let(:zone) { Factory(:zone) }
+    let(:variant) { Factory(:variant) }
+
     before do
       @order = Spree::Order.create!
+      @order.add_variant(variant) # create a line item
     end
 
     it "should destroy all previous tax adjustments" do
@@ -722,8 +732,8 @@ describe Spree::Order do
     end
 
     context "when there are two tax rates" do
-      let(:rate1) { Factory(:tax_rate, :zone => zone) }
-      let(:rate2) { Factory(:tax_rate, :zone => zone) }
+      let(:rate1) { Factory(:tax_rate, :zone => zone, :calculator => tax_calc1) }
+      let(:rate2) { Factory(:tax_rate, :zone => zone, :calculator => tax_calc2) }
 
       context "when no rates match" do
         before { Spree::TaxRate.stub :match => [] }
@@ -732,23 +742,74 @@ describe Spree::Order do
           @order.create_tax_charge!
           Spree::Adjustment.tax.count.should == 0
         end
+
+        it "should not create any price adjustments" do
+          @order.create_tax_charge!
+          Spree::Adjustment.price.count.should == 0
+        end
       end
 
       context "when only one rate matches" do
         before { Spree::TaxRate.stub :match => [rate1] }
 
-        it "should create exactly one tax adjustment" do
-          @order.create_tax_charge!
-          Spree::Adjustment.tax.count.should == 1
+        context "when prices do not include tax" do
+          before { Spree::Config.set(:prices_inc_tax => false) }
+
+          it "should create exactly one tax adjustment" do
+            @order.create_tax_charge!
+            Spree::Adjustment.tax.count.should == 1
+          end
+
+          it "should not create any price adjustments" do
+            @order.create_tax_charge!
+            Spree::Adjustment.price.count.should == 0
+          end
+        end
+
+        context "when prices include tax" do
+          before { Spree::Config.set(:prices_inc_tax => true) }
+
+          it "should not create any tax adjustments" do
+            @order.create_tax_charge!
+            Spree::Adjustment.tax.count.should == 0
+          end
+
+          it "should create exactly one price adjustment" do
+            @order.create_tax_charge!
+            Spree::Adjustment.price.count.should == 1
+          end
         end
       end
 
       context "when both rates match" do
         before { Spree::TaxRate.stub :match => [rate1, rate2] }
 
-        it "should create exactly two tax adjustments" do
-          @order.create_tax_charge!
-          Spree::Adjustment.tax.count.should == 2
+        context "when prices do not include tax" do
+          before { Spree::Config.set(:prices_inc_tax => false) }
+
+          it "should create exactly two tax adjustments" do
+            @order.create_tax_charge!
+            Spree::Adjustment.tax.count.should == 2
+          end
+
+          it "should not create any price adjustments" do
+            @order.create_tax_charge!
+            Spree::Adjustment.price.count.should == 0
+          end
+        end
+
+        context "when prices incude tax" do
+          before { Spree::Config.set(:prices_inc_tax => true) }
+
+          it "should not create any tax adjustments" do
+            @order.create_tax_charge!
+            Spree::Adjustment.tax.count.should == 0
+          end
+
+          it "should create exactly two price adjustments" do
+            @order.create_tax_charge!
+            Spree::Adjustment.price.count.should == 2
+          end
         end
       end
 

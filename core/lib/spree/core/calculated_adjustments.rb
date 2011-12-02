@@ -5,7 +5,7 @@ module Spree
         def calculated_adjustments
           has_one   :calculator, :as => :calculable, :dependent => :destroy
           accepts_nested_attributes_for :calculator
-          validates :calculator, :presence => true if options[:require]
+          validates :calculator, :presence => true
 
           def self.calculators
             Rails.application.config.spree.calculators.send(self.to_s.tableize.gsub('/', '_').sub('spree_', ''))

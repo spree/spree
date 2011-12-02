@@ -63,6 +63,7 @@ module Spree
     preference :last_check_for_spree_alerts, :string, :default => nil
     preference :default_tax_zone, :string, :default => nil
     preference :tax_using_ship_address, :boolean, :default => true
+    preference :prices_inc_tax, :boolean, :default => false
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class

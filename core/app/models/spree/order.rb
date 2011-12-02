@@ -302,15 +302,21 @@ module Spree
       adjustments.tax.map(&:amount).sum
     end
 
-    # Creates new tax charges if there are any applicable rates
+    # Creates new tax charges if there are any applicable rates. If prices already
+    # include taxes then price adjustments are created instead.
     def create_tax_charge!
       # destroy any previous adjustments (eveything is recalculated from scratch)
       adjustments.tax.each { |e| e.destroy }
       price_adjustments.each { |p| p.destroy }
 
-      rates = TaxRate.match(tax_zone)
+      rates = TaxRate.match(self)
       rates.each do |rate|
-        adj = rate.create_adjustment("#{rate.calculator.description} #{rate.amount * 100}%", self, self, true)
+        label = "#{rate.calculator.description} #{rate.amount * 100}%"
+        if Spree::Config[:prices_inc_tax]
+          line_items.each { |line_item| rate.create_adjustment(label, line_item, line_item, false) }
+        else
+          rate.create_adjustment(label, self, self, true)
+        end
       end
     end
 
