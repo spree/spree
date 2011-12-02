@@ -135,8 +135,8 @@ module Spree
         end
         all_brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
         scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
-                                scoped(:joins      => {:product => :taxons},
-                                       :conditions => ["taxons.id in (?)", [taxon] + taxon.descendants])
+                                       scoped(:joins      => {:product => :taxons},
+                                              :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
         brands = scope.map {|p| p.value}
 
         { :name   => "Applicable Brands",
