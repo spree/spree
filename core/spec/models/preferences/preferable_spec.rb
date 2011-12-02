@@ -88,7 +88,7 @@ describe Spree::Preferences::Preferable do
     @a.preferred_test_temp.should be_true
     A.remove_preference :test_temp
     @a.has_preference?(:test_temp).should be_false
-    @a.respond_to?(:prferred_test_temp).should be_false
+    @a.respond_to?(:preferred_test_temp).should be_false
   end
 end
 
