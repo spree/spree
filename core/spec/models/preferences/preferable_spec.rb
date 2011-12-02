@@ -77,6 +77,17 @@ describe Spree::Preferences::Preferable do
       @b.preferences[:color].should eq :green #default from A
     end
 
+    context "converts boolean preferences to boolean values" do
+      before do
+        A.preference :is_boolean, :boolean, :default => true
+      end
+
+      it "with strings" do
+        @a.set_preference(:is_boolean, '0')
+        @a.preferences[:is_boolean].should be_false
+      end
+    end
+
   end
 
   it "builds cache keys" do

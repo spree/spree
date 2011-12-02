@@ -1,7 +1,7 @@
 module Spree::Preferences
   module PreferableClassMethods
 
-    def preference(name, *args)
+    def preference(name, type, *args)
       options = args.extract_options!
       options.assert_valid_keys(:default)
 
@@ -18,6 +18,11 @@ module Spree::Preferences
       alias_method prefers_getter_method(name), preference_getter_method(name)
 
       define_method preference_setter_method(name) do |value|
+        # Boolean attributes can come back from forms as '0' or '1'
+        # Convert them to their correct values here
+        if type == :boolean && !value.is_a?(TrueClass) && !value.is_a?(FalseClass)
+          value = value.to_i == 1
+        end
         preference_store.set preference_cache_key(name), value
       end
       alias_method prefers_setter_method(name), preference_setter_method(name)
