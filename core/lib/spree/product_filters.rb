@@ -93,7 +93,7 @@ module Spree
       Spree::Product.scope :brand_any,
         lambda {|*opts|
           conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
-          Product.with_property("brand").conditions_any(conds)
+          Spree::Product.with_property("brand").conditions_any(conds)
         }
 
       def ProductFilters.brand_filter
