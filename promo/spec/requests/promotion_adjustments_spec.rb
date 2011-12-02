@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "Promotion Adjustments" do
   context "coupon promotions", :js => true do
     before(:each) do
-      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
       PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
       SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
       ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES

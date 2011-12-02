@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "Checkout" do
   context "visitor makes checkout as guest without registration" do
     before do
-      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
       @product = Factory(:product, :name => "RoR Mug")
       Factory(:zone)
       Factory(:shipping_method)
