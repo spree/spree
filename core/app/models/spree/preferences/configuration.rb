@@ -46,7 +46,7 @@ module Spree::Preferences
     def set(*args)
       options = args.extract_options!
       options.each do |name, value|
-          set_preference name, value
+        set_preference name, value
       end
 
       if args.size == 2
