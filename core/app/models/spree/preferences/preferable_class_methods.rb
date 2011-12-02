@@ -4,8 +4,6 @@ module Spree::Preferences
     def preference(name, type, *args)
       options = args.extract_options!
       options.assert_valid_keys(:default)
-
-      value_type = args.first
       default = options[:default]
 
       define_method preference_getter_method(name) do
@@ -32,7 +30,7 @@ module Spree::Preferences
       end
 
       define_method preference_type_getter_method(name) do
-        value_type
+        type
       end
 
     end

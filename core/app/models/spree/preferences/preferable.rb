@@ -15,6 +15,8 @@ module Spree::Preferences::Preferable
     raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
     send self.class.preference_getter_method(name)
   end
+  alias :preferred :get_preference
+  alias :prefers? :get_preference
 
   def set_preference(name, value)
     raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
