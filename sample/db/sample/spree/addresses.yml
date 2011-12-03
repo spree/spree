@@ -1,5 +1,4 @@
 <%
-require 'ffaker'
 I18n.reload!
 1.upto(100) do |i|
 %>
