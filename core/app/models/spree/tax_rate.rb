@@ -6,7 +6,7 @@ module Spree
     validates :amount, :presence => true, :numericality => true
     validates :tax_category_id, :presence => true
 
-    calculated_adjustments :default => Calculator::SalesTax
+    calculated_adjustments
     scope :by_zone, lambda { |zone| where(:zone_id => zone) }
 
     # Gets the array of TaxRates appropriate for the specified order
