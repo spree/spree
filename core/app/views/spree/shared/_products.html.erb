@@ -15,7 +15,7 @@
       <li id="product_<%= product.id %>" data-hook="products_list_item">
         <%= link_to product.name, product, :class => 'info' %>
         <%= link_to small_image(product), product %>
-        <span class="price selling"><%= product_price(product) %></span>
+        <span class="price selling"><%= number_to_currency product.price %></span>
       </li>
     <% end %>
   <% end %>

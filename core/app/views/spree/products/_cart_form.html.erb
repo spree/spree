@@ -5,7 +5,7 @@
       <div data-hook="product_price">
         <dl id="product-price">
           <dt><%= t(:price) %></dt>
-          <dd><span class="price selling"><%= product_price(@product) %></span></dd>
+          <dd><span class="price selling"><%= number_to_currency @product.price %></span></dd>
         </dl>
       </div>
     <% end %>
