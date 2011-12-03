@@ -29,7 +29,8 @@ module Spree
     validates :label, :presence => true
     validates :amount, :numericality => true
 
-    scope :tax, lambda { where(:originator_type => 'Spree::TaxRate') }
+    scope :tax, lambda { where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order') }
+    scope :price, lambda { where(:adjustable_type => 'Spree::LineItem') }
     scope :shipping, lambda { where(:label => I18n.t(:shipping)) }
     scope :optional, where(:mandatory => false)
     scope :eligible, where(:eligible => true)
