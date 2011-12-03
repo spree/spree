@@ -31,7 +31,7 @@ en:
         phone: Phone
         state: "State"
         zipcode: "Zip Code"
-      spree/country: 
+      spree/country:
         iso: ISO
         iso3: ISO3
         iso_name: "ISO Name"
@@ -895,7 +895,6 @@ en:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
-  show_price_inc_vat: "Show price including VAT"
   showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"

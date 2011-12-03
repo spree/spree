@@ -25,14 +25,6 @@
         <%= f.error_message_on :price %>
       <% end %>
 
-      <%if Spree::Config[:show_price_inc_vat] %>
-        <%= label_tag :price_includes_vat , I18n.t(:price_with_vat_included, :price => I18n.t(:price)) %><br />
-        <%= text_field_tag :price_including_vat, product_price(@product, :format_as_currency => false, :show_vat_text => false), :size => 30 %>
-        <%= javascript_tag do -%>
-          var effective_tax_rate = <%= @product.effective_tax_rate %>;
-        <% end -%>
-      <% end %>
-
       <%= f.field_container :cost_price do %>
         <%= f.label :cost_price, t(:cost_price) %><br />
         <%= f.text_field :cost_price, :value => number_with_precision(@product.cost_price, :precision => 2) %>

@@ -3,13 +3,6 @@
 <h1><%= t(:tax_settings) %></h1>
 
 <%= form_tag admin_tax_settings_path, :method => :put do %>
-
-  <p data-hook="show_vat">
-    <%= label_tag nil, t(:show_price_inc_vat) %>
-    <%= hidden_field_tag 'preferences[show_price_inc_vat]', '0' %>
-    <%= check_box_tag 'preferences[show_price_inc_vat]', '1',  Spree::Config[:show_price_inc_vat] %>
-  </p>
-
   <p data-hook="shipment_vat">
     <%= label_tag nil, t(:shipment_inc_vat) %>
     <%= hidden_field_tag 'preferences[shipment_inc_vat]', '0' %>
@@ -17,7 +10,7 @@
   </p>
 
   <p class="form-buttons" data-hook="buttons">
-    <%= button t(:update) %> 
+    <%= button t(:update) %>
     <%= t(:or) %> <%= link_to t(:cancel), admin_tax_settings_url %>
   </p>
 <% end %>
