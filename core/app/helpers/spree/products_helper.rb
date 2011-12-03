@@ -3,13 +3,12 @@ module Spree
     # returns the formatted change in price (from the master price) for the specified variant (or simply return
     # the variant price if no master price was supplied)
     def variant_price_diff(variant)
-      return product_price(variant) unless variant.product.master.price
-      diff = product_price(variant, :format_as_currency => false) - product_price(variant.product, :format_as_currency => false)
+      diff = variant.price - variant.product.price
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{format_price diff.abs})"
+        "(#{t(:add)}: #{number_to_currency diff.abs})"
       else
-        "(#{t(:subtract)}: #{format_price diff.abs})"
+        "(#{t(:subtract)}: #{number_to_currency diff.abs})"
       end
     end
 
