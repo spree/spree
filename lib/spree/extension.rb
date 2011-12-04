@@ -25,6 +25,7 @@ module Spree
       empty_directory "#{file_name}/app/views"
       empty_directory "#{file_name}/app/overrides"
       empty_directory "#{file_name}/config"
+      empty_directory "#{file_name}/config/locales"
       empty_directory "#{file_name}/db"
 
       directory "lib", "#{file_name}/lib"
@@ -39,6 +40,7 @@ module Spree
       template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
       template "Versionfile", "#{file_name}/Versionfile"
       template "routes.rb", "#{file_name}/config/routes.rb"
+      template "en.yml", "#{file_name}/config/locales/en.yml"
       template "Gemfile", "#{file_name}/Gemfile" unless integrated
       template "spec_helper.rb.tt", "#{file_name}/spec/spec_helper.rb"
       template "rspec", "#{file_name}/.rspec"
