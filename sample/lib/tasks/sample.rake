@@ -1,3 +1,5 @@
+require 'ffaker'
+
 namespace :spree_sample do
   desc "Loads sample data"
   task :load do
