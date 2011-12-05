@@ -11,30 +11,58 @@ endprologue.
 
 h3. Overview
 
-The Spree preference system adds support for easily creating custom preferences for models. It's simply an adoption of the "preferences plugin":http://github.com/pluginaweek/preferences/tree/master, and much of the following material is derived from that plugin's documentation.
+Spree Preferences support general application configuration and perferences per model instance. Spree comes with preferences for your store like site name and description. Additional preferences can be added by your application or included extensions.
 
-This original preferences plugin required another plugin (plugins_plus), which was something like the Spree extensions system. So we just added the preferences functionality to the Spree core, and it can now be used by both the Spree core as well as extensions to store preferences.
+Preferences for models can be added without modifying the database. All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to User for "e-mail notifications". Users would have the ability to modify this value without adding a column to your database table.
+
+Extensions may add to the Spree General Settings or create their own namespaced preferences.
 
 The first several sections of this guide describe preferences in a very general way.  If you're just interested in making modifications to the existing preferences, you can skip ahead to the "Configuring Spree Preferences":#configuring-spree-preferences section.  If you would like a more in-depth understanding of the underlying concepts used by the preference system, please read on.
 
 h3. Motivation
 
-Preferences for models within an application, such as for users, represent a common use case. Although the rule of thumb is to keep the number of preferences available to a minimum, sometimes it's necessary if you want users to be able to disable things like e-mail notifications.
+Preferences for models within an application are very common. Although the rule of thumb is to keep the number of preferences available to a minimum, sometimes it's necessary if you want users to have optional preferences like disabling like e-mail notifications.
 
-Generally, basic preferences can be accomplished through simple designs, such as additional columns or a bit vector such as that described and implemented by "preference_fu":http://agilewebdevelopment.com/plugins/preferencefu.
+General Settings for an application like "site name" are also needed to customize your Spree store.
 
-However, as you find the need for non-binary preferences and the number of preferences becomes unmanageable as individual columns in the database, the next step is often to create a separate +preferences+ table. This is where a more sophisticated preferences system comes in.  Spree encapsulates this design by hiding the fact that preferences are stored in a separate table and making it dead-simple to define and manage preferences.
+Both use cases are handled by the Spree Preferences. They are easy to define, provide quick cached reads, persist across restarts and do not require additional columns to be added to your models.
 
-h3. Persisting Modifications to Preferences
+The system was heavily refactored in Spree 1.0 for performance.
 
-Although you can change settings from +script/console+ or from the admin interface, you should realize
-that these settings will be lost should you decide to rebuild your database. You might also be missing
-these settings in your production server once you promote your code.
+h3. General Settings
 
-IMPORTANT. You should consider using seed data or initializers to configure your application and to enforce important settings.  See the "Extensions guide":extensions.html#extensioninitializers for more details.
+Spree comes with many applicaiton wide preferences. They are defined in core/app/models/spree/app_configuration.rb and made availble to your code through Spree::Config, e.g., *Spree::config.site_name*.
 
+A limited set of the general settings are available in the admin interface (/admin/general_settings). 
 
-h3. Usage
+You can add additional preferences under the spree/app_configuration namespace or create your own subclass of *Preferences::Configuration*.
+
+<shell>
+ # These will be saved with key: spree/app_configuration/hot_salsa
+ Spree::AppConfiguration.class_eval do
+   preference :hot_salsa, :boolean
+   preference :dark_chocolate, :default => true
+   preference :color, :string
+   preference :favorite_number
+   preference :language, :string, :default => 'English'
+ end
+
+ # Spree::Config is an instance of Spree::AppConfiguration
+ Spree::Config.hot_salsa = false
+
+ # Create your own class
+ # These will be saved with key: kona/store_configuration/hot_coffee
+ Kona::StoreConfiguration < Preferences::Configuration
+  preference :hot_coffee, :boolean
+  preference :color, :string, :default => 'black'
+ end
+
+ KONA::STORE_CONFIG = Kona::StoreConfiguration.new
+ puts KONA::STORE_CONFIG.hot_coffee
+
+</shell>
+
+h3. Models
 
 h4. Defining Preferences
 
@@ -42,10 +70,10 @@ You can define preferences for a model within the model itself:
 
 <shell>
  class User < ActiveRecord::Base
-   preference :hot_salsa
+   preference :hot_salsa, :boolean
    preference :dark_chocolate, :default => true
    preference :color, :string
-   preference :favorite_number
+   preference :favorite_number, :integer
    preference :language, :string, :default => 'English'
  end
 </shell>
@@ -58,7 +86,15 @@ In the above model, five preferences have been defined:
 * favorite_number
 * language
 
-For each preference, a data type and default value can be specified. If no data type is given, it's considered a boolean value. If no default value is given, the default is assumed to be nil.
+For each preference, a data type is provided. The types available are:
+
+* boolean
+* string
+* password
+* integer
+* text
+
+An optional default value may be defined.
 
 h3. Accessing preferences
 
@@ -89,6 +125,12 @@ Writer methods:
  user.preferred_language = 'English'   # => "English"
 </shell>
 
+Check if a preference is available
+
+<shell>
+ user.has_preference? :hot_salsa
+</shell>
+
 h4. Generic methods
 
 Each shortcut method is essentially a wrapper for the various generic methods shown below:
@@ -105,6 +147,9 @@ Reader method:
 <shell>
  user.preferred(:color)      # => nil
  user.preferred(:language)   # => "English"
+
+ user.get_preference :color
+ user.get_preference :language
 </shell>
 
 Write method:
@@ -116,13 +161,7 @@ Write method:
 
 h4. Accessing all preferences
 
-To get the collection of all custom, stored preferences for a particular record, you can access the +stored_preferences+ has_many association which is automatically generated:
-
-<shell>
- user.stored_preferences
-</shell>
-
-In addition to this, you can get a hash of all stored preferences *and* default preferences, by accessing the +preferences+ helper:
+You can get a hash of all stored preferences by accessing the +preferences+ helper:
 
 <shell>
  user.preferences  # => {"language"=>"English", "color"=>nil}
@@ -130,59 +169,23 @@ In addition to this, you can get a hash of all stored preferences *and* default 
 
 This hash will contain the value for every preference that has been defined for the model, whether that's the default value or one that has been previously stored.
 
-A short-hand alternative for preferences is also available:
+h4. Type and Default
+
+You can access the default value for a preference:
 
 <shell>
- user.prefs  # => {"language"=>"English", "color"=>nil}
+ user.preferred_color_default     # => 'blue'
 </shell>
 
-h3. Grouping preferences
-
-In addition to defining generic preferences for the owning record, you can also group preferences by ActiveRecord objects or arbitrary names.  This is best shown through an example:
+Types are used to generate forms or display the preference. You can also get the type defined for preference:
 
 <shell>
- user = User.find(:first)
- car = Car.find(:first)
-
- user.preferred_color = 'red', car       # or you can use
- user.set_preference(:color, 'red', car) # the generic way
-</shell>
-
-This will create a preference for the color _red_ for the given _car_. In this way, you can have _color_ preferences for different records.
-
-To access the preference for a particular record, you can use the same accessor methods as before:
-
-<shell>
- user.preferred_color(car)   # or use
- user.preferred(:color, car) # the generic way
-</shell>
-
-In addition to grouping preferences for a particular record, you can also group preferences by name. For example,
-
-<shell>
- user = User.find(:first)
-
- user.preferred_color = 'red', 'automobiles'
- user.preferred_color = 'tan', 'clothing'
-
- user.preferred_color('automobiles')   # => "red"
- user.preferred_color('clothing')      # => "tan"
-
- user.preferences                # => {"color"=>nil, "automobiles"=>{"color"=>"red"}, "clothing=>{"color=>"tan"}}
- user.preferences('automobiles') # => {"color"=>"red"}
+ user.preferred_color_type     # => :string
 </shell>
 
 h3. Saving preferences
 
-Note that preferences are not saved until the owning record is saved. Preferences are treated in a similar fashion to attributes. For example,
-
-<shell>
- user = user.find(:first)
- user.attributes = {:preferred_color => 'red'}
- user.save!
-</shell>
-
-Preferences are stored in a separate table called +preferences+.
+Preferences are saved immediately for models. They are keyed by the id of the model.
 
 h3. Configuring Spree Preferences
 
@@ -190,21 +193,24 @@ Up until now we've been discussing the general preference system that was adapte
 
 h4. Reading the Current Preferences
 
-At the heart of Spree preferences lies the +Spree::Config+ module.  This module provides general access to the configuration settings anywhere in the application.  These settings can be accessed from initializers, models, controllers, views, etc.  The +Spree::Config+ module returns a singleton instance of the +AppConfiguration+ model which is where the default values for all of the general Spree preferences are defined.
+At the heart of Spree preferences lies the +Spree::Config+ constant.  This object provides general access to the configuration settings anywhere in the application.
 
-You can access these preferences using a convenient hash notation.  To see this in action, just fire up +script/console+ and try the following.
+These settings can be accessed from initializers, models, controllers, views, etc.
+
+The +Spree::Config+ constant returns an instance of +Spree::AppConfiguration+ which is where the default values for all of the general Spree preferences are defined.
+
+You can access these preferences directly in code.  To see this in action, just fire up +script/console+ and try the following.
 
 <shell>
-  >> Spree::Config[:site_name]
-  => "Spree Demo Site"
-  >> Spree::Config[:default_locale]
+  >> Spree::Config.site_name  => "Spree Demo Site"
+  >> Spree::Config.default_locale
   => "en-US"
 </shell>
 
-The above examples show the default configuration values for these preferences.  The defaults themselves are coded within the +AppConfiguration+ model.
+The above examples show the default configuration values for these preferences.  The defaults themselves are coded within the +Spree::AppConfiguration+ class.
 
 <shell>
-  class AppConfiguration < Configuration
+  class Spree::AppConfiguration < Configuration
     #... snip ...
     preference :site_name, :string, :default => 'Spree Demo Site'
     #... snip ...
@@ -213,41 +219,26 @@ The above examples show the default configuration values for these preferences. 
   end
 </shell>
 
-If you are using the default preferences without any modifications, then there is actually nothing to store in the +preferences+ table of the database.  Let's verify that it is empty.
-
-<shell>
-  $ script/dbconsole
-  sqlite> SELECT * FROM preferences;
-</shell>
+If you are using the default preferences without any modifications, then nothing will be stored in the database. If you set a value for the preference it will save it to spree_preferences. It will use a memory cached version to maintain performance.
 
 h4. Overriding the Default Preferences
 
-The default Spree preferences in +AppConfiguration+ can be changed using the +set+ method of the +Spree::Config+ module.  For example to set the default locale for Spain we could do the following:
+The default Spree preferences in +Spree::AppConfiguration+ can be changed using the +set+ method of the +Spree::Config+ module.  For example to set the default locale for Spain we could do the following:
 
 <shell>
   $ script/console
-  >> Spree::Config.set(:default_locale => "es")
+  >> Spree::Config.default_locale = "es"
   => nil
-  >> Spree::Config[:default_locale]
+  >> Spree::Config.default_locale
   => "es"
 </shell>
 
-Here we are changing a preference to something other then the default as specified in +AppConfiguration+. In this case the preference system will persist the new value in the +preferences+ table.
-
-<shell>
-  $ script/dbconsole
-  sqlite> SELECT * FROM preferences;
-  1|default_locale|1|Configuration|||es|2009-05-04 22:30:17|2009-05-04 22:30:17
-</shell>
+Here we are changing a preference to something other then the default as specified in +Spree::AppConfiguration+. In this case the preference system will persist the new value in the +spree_preferences+ table.
 
 INFO: Console settings may be lost if the database is rebuilt. See the "advice above":#persisting-modificationsto-preferences about preservation of settings.
 
 h4. Configuration Through the Admin Interface
 
-The Spree admin interface has several different screens where various settings can be configured.  For instance, the +admin/general_settings+ URL in your Spree application can be used to configure the values for the site name and the site URL.  This is basically equivalent to calling +Spree::Config.set(:site_name => "Whatever", :site_url => "http://whatever.com")+ directly in your Ruby code.
-
-Many of the configuration settings are not editable from an admin screen.  This was basically put on hold during the refactoring of the admin interface.  Now that things have stabilized we'll be adding the missing settings in the near future.  However, all of the settings can be changed through Ruby code (e.g. in initializers).
-
-INFO: Admin interface settings may be lost if the database is rebuilt. See the "advice above":#persisting-modifications-to-preferences about preservation of settings. However, you may want to make an exception for sensitive data, i.e. to enter gateway passwords directly and not store them in the code repository.
+The Spree admin interface has several different screens where various settings can be configured.  For instance, the +admin/general_settings+ URL in your Spree application can be used to configure the values for the site name and the site URL.  This is basically equivalent to calling +Spree::Config.set site_name => "Whatever", :site_url => "http://whatever.com")+ directly in your Ruby code.
 
 <!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
