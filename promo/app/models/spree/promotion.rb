@@ -80,7 +80,7 @@ module Spree
     end
 
     def usage_limit_exceeded?(order = nil)
-      preferred_usage_limit.present? && preferred_usage_limit > 0 && adjusted_credits_count(order) >= preferred_usage_limit
+      preferred_usage_limit.present? && preferred_usage_limit.to_i > 0 && adjusted_credits_count(order) >= preferred_usage_limit.to_i
     end
 
     def adjusted_credits_count(order)
