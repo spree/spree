@@ -83,6 +83,13 @@ module Spree
       initializer "spree.asset.pipeline" do |app|
         app.config.assets.debug = false
       end
+
+      initializer "spree.mail.settings" do |app|
+        if Spree::MailMethod.table_exists?
+          Spree::Core::MailSettings.init
+          Mail.register_interceptor(Spree::Core::MailInterceptor)
+        end
+      end
     end
   end
 end
