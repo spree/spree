@@ -1,10 +1,16 @@
 # Use singleton class Spree::Preferences::Store.instance to access
+#
+# StoreInstance has a persistence flag that is on by default,
+# but we disable database persistence in testing to speed up tests
+#
 module Spree::Preferences
 
   class StoreInstance
+    attr_accessor :persistence
 
     def initialize
       @cache = ActiveSupport::Cache::MemoryStore.new
+      @persistence = true
       load_preferences
     end
 
@@ -29,7 +35,7 @@ module Spree::Preferences
     private
 
     def persist(cache_key, value)
-      return unless Spree::Preference.table_exists?
+      return unless should_persist?
 
       preference = Spree::Preference.find_or_initialize_by_key(cache_key)
       preference.value = value
@@ -37,16 +43,22 @@ module Spree::Preferences
     end
 
     def destroy(cache_key)
+      return unless should_persist?
+
       preference = Spree::Preference.find_by_key(cache_key)
       preference.destroy if preference
     end
 
     def load_preferences
-      return unless Spree::Preference.table_exists?
+      return unless should_persist?
 
       Spree::Preference.all.each do |p|
          @cache.write(p.key, p.value)
       end
+    end
+
+    def should_persist?
+      @persistence and Spree::Preference.table_exists?
     end
 
   end

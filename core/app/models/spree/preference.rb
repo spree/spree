@@ -16,7 +16,7 @@ class Spree::Preference < ActiveRecord::Base
     when Fixnum.to_s
       self[:value].to_i
     when Bignum.to_s
-      self[:value].to_i
+      self[:value].to_f.to_i
     when Float.to_s
       self[:value].to_f
     when TrueClass.to_s

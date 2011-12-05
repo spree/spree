@@ -49,12 +49,18 @@ describe Spree::Preferences::Preferable do
 
   describe "preference access" do
     it "handles ghost methods for preferences" do
-      pending("TODO: cmar to look at this test to figure out why it's failing on 1.9")
+      #pending("TODO: cmar to look at this test to figure out why it's failing on 1.9")
       @a.preferred_color = :blue
       @a.preferred_color.should eq :blue
 
       @a.prefers_color = :green
-      @a.prefers_color?(:green).should be_true
+      @a.prefers_color?.should eq :green
+    end
+
+    it "has genric readers" do
+      @a.preferred_color = :red
+      @a.prefers?(:color).should eq :red
+      @a.preferred(:color).should eq :red
     end
 
     it "parent and child instances have their own prefs" do
