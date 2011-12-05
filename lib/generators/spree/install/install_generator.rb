@@ -84,7 +84,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def install_migrations
       puts "Copying migrations..."
       silence_stream(STDOUT) do
-        silence_warnings { run 'bundle exec rake railties:install:migrations' }
+        silence_warnings { rake 'railties:install:migrations' }
       end
     end
 
