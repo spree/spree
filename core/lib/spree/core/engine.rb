@@ -38,7 +38,7 @@ module Spree
         Rails.application.routes_reloader.reload!
       end
 
-      initializer "spree.environment" do |app|
+      initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access
       end
