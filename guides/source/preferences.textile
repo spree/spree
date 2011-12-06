@@ -11,7 +11,7 @@ endprologue.
 
 h3. Overview
 
-Spree Preferences support general application configuration and perferences per model instance. Spree comes with preferences for your store like site name and description. Additional preferences can be added by your application or included extensions.
+Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like site name and description. Additional preferences can be added by your application or included extensions.
 
 Preferences for models can be added without modifying the database. All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to User for "e-mail notifications". Users would have the ability to modify this value without adding a column to your database table.
 
@@ -31,7 +31,7 @@ The system was heavily refactored in Spree 1.0 for performance.
 
 h3. General Settings
 
-Spree comes with many applicaiton wide preferences. They are defined in core/app/models/spree/app_configuration.rb and made availble to your code through Spree::Config, e.g., *Spree::config.site_name*.
+Spree comes with many application wide preferences. They are defined in core/app/models/spree/app_configuration.rb and made available to your code through Spree::Config, e.g., *Spree::Config.site_name*.
 
 A limited set of the general settings are available in the admin interface (/admin/general_settings). 
 
@@ -236,6 +236,31 @@ The default Spree preferences in +Spree::AppConfiguration+ can be changed using 
 Here we are changing a preference to something other then the default as specified in +Spree::AppConfiguration+. In this case the preference system will persist the new value in the +spree_preferences+ table.
 
 INFO: Console settings may be lost if the database is rebuilt. See the "advice above":#persisting-modificationsto-preferences about preservation of settings.
+
+h4. Configuration Through the Spree Initializer
+
+During the Spree installation process an initializer file is created within your applications source code.  The initializer is found under +config/initializers/spree.rb+:
+
+<ruby>
+  Spree.config do |config|
+    # Example:
+    # Uncomment to override the default site name.
+    # config.site_name = "Spree Demo Site"
+  end
+</ruby>
+
+The +Spree.config+ block acts as a shortcut to setting +Spree::Config+ multiple times.  If you have multiple default preferences you would like
+to override within your code you may override them here.  Using the initializer for setting the defaults is a nice shortcut, and helps keep your
+preferences organized in a standard location.
+
+For example if you would like to change the site name and default locale you can accomplish this by doing the following:
+
+<ruby>
+  Spree.config do |config|
+    config.site_name = 'My Awesome Spree Site'
+    config.default_locale = 'es'
+  end
+</ruby>
 
 h4. Configuration Through the Admin Interface
 
