@@ -1,14 +1,11 @@
 $(function() {
   if ($('#country_based').is(':checked')) {
     show_country();
-  } else if ($('#state_based').is(':checked')) {
-    show_state();
   } else {
-    show_zone();
+    show_state();
   }
   $('#country_based').click(function() { show_country();} );
   $('#state_based').click(function() { show_state();} );
-  $('#zone_based').click(function() { show_zone();} );
 })
 
 var show_country = function() {
@@ -30,15 +27,3 @@ var show_state = function() {
   $('#state_members :input').each(function() { $(this).prop("disabled", false); })
   $('#state_members').show();
 };
-
-var show_zone = function() {
-  $('#state_members :input').each(function() { $(this).prop("disabled", true);
- })
-  $('#state_members').hide();
-  $('#country_members :input').each(function() { $(this).prop("disabled", true);
- })
-  $('#country_members').hide();
-  $('#zone_members :input').each(function() { $(this).prop("disabled", false); })
-  $('#zone_members').show();
-};
-

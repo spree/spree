@@ -18,12 +18,7 @@
     <%= zone_form.radio_button('kind', 'state', {:id => 'state_based'}) %>
     <%= t(:state_based) %>
   </label> &nbsp;
-  <label class="sub">
-    <%= zone_form.radio_button('kind', 'zone', {:id => 'zone_based'}) %>
-    <%= t(:zone_based) %>
-  </label>
 </p>
 
 <%= render :partial =>'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
 <%= render :partial =>'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
-<%= render :partial =>'member_type', :locals => { :type => 'zone', :zone_form => zone_form } %>
