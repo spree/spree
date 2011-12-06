@@ -46,9 +46,11 @@ describe Spree::Product do
           @product2 = Factory(:product, :name => 'foo')
           @product2.update_attributes(:permalink => 'foo')
         end
+
         it "should have an error" do
           @product2.errors.size.should == 1
         end
+
         it "should have error message that permalink is already taken" do
           @product2.errors.full_messages.first.should == 'Permalink has already been taken'
         end
