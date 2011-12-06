@@ -2,13 +2,13 @@
   <div class="left" data-hook="admin_product_form_left">
     <%= f.field_container :name do %>
       <%= f.label :name, t(:name) %> <span class="required">*</span><br />
-      <%= f.text_field :name, :class => 'fullwidth title'  %>
+      <%= f.text_field :name, :class => 'fullwidth title' %>
       <%= f.error_message_on :name %>
     <% end %>
 
     <%= f.field_container :permalink do %>
       <%= f.label :permalink, t(:permalink) %> <span class="required">*</span><br />
-      <%= f.text_field :permalink, :class => 'fullwidth title'  %>
+      <%= f.text_field :permalink, :class => 'fullwidth title' %>
       <%= f.error_message_on :permalink %>
     <% end %>
 
@@ -21,7 +21,7 @@
   <div class="right" data-hook="admin_product_form_right">
       <%= f.field_container :price do %>
         <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
-        <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2)  %>
+        <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2) %>
         <%= f.error_message_on :price %>
       <% end %>
 

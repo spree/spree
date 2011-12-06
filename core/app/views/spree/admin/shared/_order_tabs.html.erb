@@ -6,7 +6,7 @@
     <h5 id="order_status" data-hook><%= "#{t(:status)}: #{t("order_state.#{@order.state}")}" %></h5>
     <h5 id="order_total" data-hook><%= "#{t(:total)}: #{number_to_currency @order.total}" %></h5>
     <% if @order.completed? %>
-      <h5 id="shipment_status"><%= "#{t(:shipment)}: #{t("shipment_states.#{@order.shipment_state}")}"  %></h5>
+      <h5 id="shipment_status"><%= "#{t(:shipment)}: #{t("shipment_states.#{@order.shipment_state}")}" %></h5>
       <h5 id="payment_status"><%= "#{t(:payment)}: #{t("payment_states.#{@order.payment_state}")}" %></h5>
     <% end %>
     <br class="clear" />

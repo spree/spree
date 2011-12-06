@@ -1,13 +1,13 @@
 <div data-hook="admin_shipping_method_form_fields">
   <%= f.field_container :name do %>
     <%= f.label :name, t(:name) %><br />
-    <%= f.text_field :name  %>
+    <%= f.text_field :name %>
     <%= error_message_on :shipping_method, :name %>
   <% end %>
 
   <%= f.field_container :zone_id do %>
     <%= f.label :zone_id, t(:zone) %><br />
-    <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {'style' => 'width:200px;'})  %>
+    <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {'style' => 'width:200px;'}) %>
     <%= error_message_on :shipping_method, :zone_id %>
   <% end %>
 

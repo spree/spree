@@ -1,4 +1,4 @@
-<%= form_tag '', :method => :get, :id => 'sidebar_products_search' do  %>
+<%= form_tag '', :method => :get, :id => 'sidebar_products_search' do %>
   <% params[:search] ||= {} %>
   <%= hidden_field_tag 'per_page', params[:per_page] %>
   <% filters = @taxon ? @taxon.applicable_filters : [ProductFilters.all_taxons] %>

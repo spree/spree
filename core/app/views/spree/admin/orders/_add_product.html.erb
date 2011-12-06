@@ -3,12 +3,12 @@
     <legend><%= t(:add_product) %></legend>
     <div style="float:left; width:65%; margin-right:5%;" data-hook="add_product_name">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
-      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth title'  %>
+      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth title' %>
       <%= hidden_field_tag :add_variant_id %>
     </div>
     <div style="float:left; width:10%; margin-right:5%;" data-hook="add_quantity">
       <%= label_tag :add_quantity, t(:qty) %>
-      <%= text_field_tag :add_quantity,  1 , :class => 'fullwidth title'  %>
+      <%= text_field_tag :add_quantity,  1 , :class => 'fullwidth title' %>
     </div>
     <div style="float: left; width: 15%; padding-top: 17px;" data-hook="add_button">
       <%= link_to text_for_button_link(t(:add), :icon => 'add'),
