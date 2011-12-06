@@ -1,7 +1,7 @@
 <div data-hook="admin_user_form_fields">
   <%= f.field_container :email do %>
     <%= f.label :email, t(:email) %><br />
-    <%= f.text_field :email %>
+    <%= f.email_field :email %>
     <%= error_message_on :user, :email %>
   <% end %>
 

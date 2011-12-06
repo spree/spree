@@ -11,9 +11,9 @@
       <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
         <p>
           <%= f.label :email, t(:email) %><br />
-          <%= f.text_field :email, :class => 'title'  %>
+          <%= f.email_field :email, :class => 'title' %>
         </p>
-        <p><%= submit_tag t(:continue), :class => 'button primary' %></p>
+        <p><%= f.submit t(:continue), :class => 'button primary' %></p>
       <% end %>
     </div>
   <% end %>

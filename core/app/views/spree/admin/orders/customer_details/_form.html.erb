@@ -7,7 +7,7 @@
   <tbody>
     <tr data-hook="customer_fields">
       <td class="lbl-col"><%= f.label :email, t(:email) + ':' %></td>
-      <td class="val-col" colspan="3"><%= f.text_field :email, :class => 'fullwidth' %></td>
+      <td class="val-col" colspan="3"><%= f.email_field :email, :class => 'fullwidth' %></td>
       <td class="lbl-col"><%= label_tag nil, t(:guest_checkout) %>:</td>
       <td class="val-col" colspan="3">
         <% if @order.completed? %>

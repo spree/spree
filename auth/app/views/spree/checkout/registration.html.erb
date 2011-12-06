@@ -11,7 +11,7 @@
       <%= form_for @order, :url => spree.update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
         <p>
           <%= f.label :email, t(:email) %><br />
-          <%= f.text_field :email, :class => 'title'  %>
+          <%= f.email_field :email, :class => 'title' %>
         </p>
         <p><%= f.submit t(:continue), :class => 'button primary' %></p>
       <% end %>
