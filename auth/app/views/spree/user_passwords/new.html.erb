@@ -1,4 +1,4 @@
-<h1><%= t(:forgot_password) %></h1>
+<h2><%= t(:forgot_password) %></h2>
 
 <p><%= t(:instructions_to_reset_password) %></p>
 
@@ -8,6 +8,6 @@
     <%= f.email_field :email %>
   </p>
   <p>
-    <%= f.submit t(:reset_password) %>
+    <%= f.submit t(:reset_password), :class => 'button primary' %>
   </p>
 <% end %>
