@@ -39,7 +39,6 @@ module Spree
     preference :admin_pgroup_per_page, :integer, :default => 10
     preference :products_per_page, :integer, :default => 12
     preference :logo, :string, :default => 'admin/bg/spree_50.png'
-    preference :stylesheets, :string, :default => 'reset, screen' # Comma separate multiple stylesheets, e.g. 'screen,mystyle'
     preference :admin_interface_logo, :string, :default => 'admin/bg/spree_50.png'
     preference :allow_ssl_in_production, :boolean, :default => true
     preference :allow_ssl_in_staging, :boolean, :default => true
