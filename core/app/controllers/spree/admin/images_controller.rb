@@ -36,7 +36,7 @@ module Spree
           if params[:image][:viewable_id] == "All"
             @image.viewable = @product
           else
-            @image.viewable_type = 'Variant'
+            @image.viewable_type = 'Spree::Variant'
             @image.viewable_id = params[:image][:viewable_id]
           end
         else
