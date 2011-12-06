@@ -20,7 +20,6 @@ module Spree
     end
 
     # Returns all calculators applicable for kind of work
-    # If passed nil, will return only general calculators
     def self.calculators
       Rails.application.config.spree.calculators.all
     end
