@@ -45,7 +45,7 @@ module Spree
   #
   # Example:
   #
-  #   Spree::Config do |config|
+  #   Spree.config do |config|
   #     config.site_name = "An awesome Spree site"
   #   end
   #
