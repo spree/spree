@@ -199,7 +199,7 @@ module Spree
     end
 
     def self.on_hand
-      where("spree_products.id in (select product_id from spree_variants group by product_id having sum(count_on_hand) > 0)")
+      where("id in (select product_id from spree_variants group by product_id having sum(count_on_hand) > 0)")
     end
 
     def self.taxons_name_eq(name)

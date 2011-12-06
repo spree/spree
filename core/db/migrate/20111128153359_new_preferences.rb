@@ -18,20 +18,9 @@ class NewPreferences < ActiveRecord::Migration
     change_column :spree_preferences, :group_type, :string, :null => true
 
     OldPrefs.all.each do |old_pref|
-      begin
-        begin
-          owner = old_pref.owner
-        rescue => e1
-          # case:
-          # AppConfiguration is no longer an sti derivative of Configuration
-          owner_class = old_pref.owner_type.constantize
-          owner = OldPrefs.connection.select_value("SELECT #{owner_class.inheritance_column} FROM #{owner_class.table_name} WHERE id = #{old_pref.owner_id}").constantize.new
-        end
-        say "Migrating preference #{old_pref.name}..."
-        owner.set_preference old_pref.name, old_pref.value
-      rescue => e
-        say "Skipping setting preference #{old_pref.owner_type}::#{old_pref.name}"
-      end
+      next unless old_pref.owner
+      say "Migrating preference #{old_pref.name}..."
+      old_pref.owner.set_preference old_pref.name, old_pref.value
     end
 
     remove_column :spree_preferences, :name
