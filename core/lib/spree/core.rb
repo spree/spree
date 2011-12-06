@@ -40,6 +40,20 @@ require 'jquery-rails'
 module Spree
   module Core
   end
+
+  # Used to configure Spree.
+  #
+  # Example:
+  #
+  #   Spree::Config do |config|
+  #     config.site_name = "An awesome Spree site"
+  #   end
+  #
+  # This method is defined within the core gem on purpose.
+  # Some people may only wish to use the Core part of Spree.
+  def self.config(&block)
+    yield(Spree::Config)
+  end
 end
 
 require 'spree/core/ext/active_record'
