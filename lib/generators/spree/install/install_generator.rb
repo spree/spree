@@ -21,6 +21,10 @@ module Spree
       paths.flatten
     end
 
+    def add_files
+      template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+    end
+
     def config_spree_yml
       create_file "config/spree.yml" do
         settings = { 'version' => Spree.version }
