@@ -1,0 +1,17 @@
+h2. Spree 1.0 Release Notes
+
+endprologue.
+
+h3. Summary
+
+This is the official 1.0 Release of Spree
+
+h3. Preferences
+
+We have refactored Spree Preferences to improve performance and simplify
+code for applicaitons and extensions. The previous interfaces have been
+maintained so no code changes should be required. The underlying classes
+have been completely rewritten.
+
+Please see the "Spree blog":http://spreecommerce.com/blog/2011/12/04/spree-preferences-refactor for
+notes on this release

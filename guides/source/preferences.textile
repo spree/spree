@@ -262,6 +262,8 @@ For example if you would like to change the site name and default locale you can
   end
 </ruby>
 
+Note if you initialize values for preferences available in the Admin Interface. They will overwrite any changes made through the user interface on when you restart.
+
 h4. Configuration Through the Admin Interface
 
 The Spree admin interface has several different screens where various settings can be configured.  For instance, the +admin/general_settings+ URL in your Spree application can be used to configure the values for the site name and the site URL.  This is basically equivalent to calling +Spree::Config.set site_name => "Whatever", :site_url => "http://whatever.com")+ directly in your Ruby code.
