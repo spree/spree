@@ -70,3 +70,11 @@
     }
   });
 })(jQuery);
+
+function disableSaveOnClick() {
+  $(document).ready(function() {
+    $('form.edit_spree_order').submit(function() {
+      $(this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
+    });
+  })
+}
