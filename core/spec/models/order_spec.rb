@@ -848,10 +848,10 @@ describe Spree::Order do
       end
     end
 
-    context "when default tax zone specified" do
+    context "when there is a default tax zone" do
       before do
         @default_zone = Factory(:zone, :name => "foo_zone")
-        Spree::Config.set(:default_tax_zone => "foo_zone")
+        Spree::Zone.stub :default_tax => @default_zone
       end
 
       context "when there is a matching zone" do
@@ -871,8 +871,8 @@ describe Spree::Order do
       end
     end
 
-    context "when no default tax zone specified" do
-      before { Spree::Config.set(:default_tax_zone => nil) }
+    context "when no default tax zone" do
+      before { Spree::Zone.stub :default_tax => nil }
 
       context "when there is a matching zone" do
         before { Spree::Zone.stub(:match => zone) }

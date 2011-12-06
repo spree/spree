@@ -148,8 +148,7 @@ module Spree
     # unless there is a specific match
     def tax_zone
       zone_address = Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
-      default_tax_zone = Spree::Config[:default_tax_zone]
-      Zone.match(zone_address) || Zone.where(:name => default_tax_zone).first
+      Zone.match(zone_address) || Zone.default_tax
     end
 
     # Array of adjustments that are inclusive in the variant price.  Useful for when prices

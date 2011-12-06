@@ -87,6 +87,11 @@ module Spree
       name <=> other.name
     end
 
+    def self.default_tax
+      default_tax_zone = Spree::Config[:default_tax_zone]
+      Zone.where(:name => default_tax_zone).first
+    end
+
     private
       def remove_defunct_members
         zone_members.each do |zone_member|
