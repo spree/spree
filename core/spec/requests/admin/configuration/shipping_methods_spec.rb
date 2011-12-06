@@ -45,7 +45,6 @@ describe "Shipping Methods" do
       end
       select "Flat Percent", :from => "Calculator"
       click_button "Update"
-      page!
     end
   end
 end
