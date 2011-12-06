@@ -151,6 +151,13 @@ module Spree
       Zone.match(zone_address) || Zone.default_tax
     end
 
+    # Indicates whether tax should be backed out of the price calcualtions in cases where prices
+    # include tax but the customer is not required to pay taxes in that case.
+    def exclude_tax?
+      return false unless Spree::Config[:prices_inc_tax]
+      return tax_zone != Zone.default_tax
+    end
+
     # Array of adjustments that are inclusive in the variant price.  Useful for when prices
     # include tax (ex. VAT) and you need to record the tax amount separately.
     def price_adjustments
