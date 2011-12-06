@@ -33,7 +33,7 @@ module Spree
     end
 
     def available?(object)
-      return true #should be overridden if needed
+      true
     end
   end
 end
