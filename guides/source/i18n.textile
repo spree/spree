@@ -24,7 +24,7 @@ WARNING: You will need to install the "spree_i18n":https://github.com/spree/spre
 
 h4. Translation Files
 
-Each language is stored in a YAML file located in +config/locales*. Each YAML file contains one top level key which is the language code for the translations contained within that file.  The following is a snippet showing the basic layout of a locale file:
+Each language is stored in a YAML file located in +config/locales+. Each YAML file contains one top level key which is the language code for the translations contained within that file.  The following is a snippet showing the basic layout of a locale file:
 
 <shell>
 ---
