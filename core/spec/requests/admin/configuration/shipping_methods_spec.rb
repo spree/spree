@@ -31,20 +31,4 @@ describe "Shipping Methods" do
       page.should have_content("Editing Shipping Method")
     end
   end
-
-  # Regression test for #825
-  context "edit" do
-    before do
-      Factory(:shipping_method)
-    end
-
-    it "should be able to edit an existing shipping method" do
-      click_link "Shipping Methods"
-      within("#listing_shipping_methods") do
-        click_link "Edit"
-      end
-      select "Flat Percent", :from => "Calculator"
-      click_button "Update"
-    end
-  end
 end
