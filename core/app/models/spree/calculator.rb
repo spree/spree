@@ -17,12 +17,6 @@ module Spree
     ###################################################################
 
     def self.register(*klasses)
-      # @@calculators.add(self)
-      # klasses.each do |klass|
-      #   klass = klass.constantize if klass.is_a?(String)
-      #   klass.register_calculator(self)
-      # end
-      # self
     end
 
     # Returns all calculators applicable for kind of work
