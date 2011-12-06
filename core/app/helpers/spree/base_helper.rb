@@ -83,19 +83,6 @@ module Spree
       @body_class
     end
 
-    def stylesheet_tags(paths=stylesheet_paths)
-      paths.blank? ? '' : stylesheet_link_tag(paths, :cache => true)
-    end
-
-    def stylesheet_paths
-      paths = Spree::Config[:stylesheets]
-      if (paths.blank?)
-        []
-      else
-        paths.split(',')
-      end
-    end
-
     def logo(image_path=Spree::Config[:logo])
       link_to image_tag(image_path), root_path
     end
