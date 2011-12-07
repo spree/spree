@@ -49,8 +49,6 @@ You can install the gem dependencies using bundler as follows:
   $ bundle install
 </shell>
 
-The standard +Gemfile.lock+ is also included in the source so you can be sure that you're using the exact same versions of the gem dependencies used by the core team.
-
 h3. Layout and Structure
 
 h4. Collection of Gems
