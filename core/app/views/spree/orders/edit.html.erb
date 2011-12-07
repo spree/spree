@@ -19,14 +19,14 @@
         </div>
 
         <div id="subtotal" data-hook>
-          <h3><%= "#{t(:subtotal)}: #{order_subtotal(@order)}" %></h3>
+          <h3><%= t(:subtotal) %>: <%= order_subtotal(@order) %></h3>
         </div>
 
         <div class="links" data-hook="cart_buttons">
           <%= button_tag :class => 'large primary', :id => 'update-button' do %>
             <%= image_tag('icons/update.png') + t(:update) %>
           <% end %>
-          <%= link_to image_tag('icons/checkout.png') + t(:checkout), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
+         <%= link_to image_tag('icons/checkout.png') + t(:checkout), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
         </div>
 
       </div>
