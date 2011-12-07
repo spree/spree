@@ -57,7 +57,7 @@ h3. Spree SEO Extensions
 The following list shows extensions that can improve search engine performance. Refer to the github README for developer notes.
 * <a href="http://github.com/stephskardal/spree-google-base/tree/master">Google Base Integration</a>
 * <a href="http://github.com/stephskardal/spree-sitemaps/tree/master">Spree Sitemap Generation</a>
-* <a href="http://github.com/PeterBerkenbosch/spree-static-content/tree/master">Static Content Management</a>
+* <a href="https://github.com/spree/spree_static_content">Static Content Management</a>
 * <a href="http://github.com/paulcc/spree-reviews/tree/master">Product Reviews</a>
 * <a href="http://github.com/stephskardal/spree-product-reviews-ratings/tree/master">Product Reviews and Ratings</a>
 
