@@ -81,4 +81,125 @@ describe Spree::Zone do
     end
   end
 
+  context "#contains?" do
+    let(:country1) { Factory(:country) }
+    let(:country2) { Factory(:country) }
+    let(:country3) { Factory(:country) }
+
+    before do
+      @source = Spree::Zone.create(:name => 'source')
+      @target = Spree::Zone.create(:name => 'target')
+    end
+
+    context "when the target has no members" do
+      before { @source.members.create(:zoneable => country1) }
+
+      it "should be false" do
+        @source.contains?(@target).should be_false
+      end
+    end
+
+    context "when the source has no members" do
+      before { @target.members.create(:zoneable => country1) }
+
+      it "should be false" do
+        @source.contains?(@target).should be_false
+      end
+    end
+
+    context "when both zones are of the same type" do
+      before do
+        @source.members.create(:zoneable => country1)
+        @source.members.create(:zoneable => country2)
+      end
+
+      context "when all members are included in the zone we check against" do
+        before do
+          @target.members.create(:zoneable => country1)
+          @target.members.create(:zoneable => country2)
+        end
+
+        it "should be true" do
+          @source.contains?(@target).should be_true
+        end
+      end
+
+      context "when some members are included in the zone we check against" do
+        before do
+          @target.members.create(:zoneable => country1)
+          @target.members.create(:zoneable => country2)
+          @target.members.create(:zoneable => Factory(:country))
+        end
+
+        it "should be false" do
+          @source.contains?(@target).should be_false
+        end
+      end
+
+      context "when none of the members are included in the zone we check against" do
+        before do
+          @target.members.create(:zoneable => Factory(:country))
+          @target.members.create(:zoneable => Factory(:country))
+        end
+
+        it "should be false" do
+          @source.contains?(@target).should be_false
+        end
+      end
+    end
+
+    context "when checking country against state" do
+      before do
+        @source.members.create(:zoneable => Factory(:state))
+        @target.members.create(:zoneable => country1)
+      end
+
+      it "should be false" do
+        @source.contains?(@target).should be_false
+      end
+    end
+
+    context "when checking state against country" do
+      before { @source.members.create(:zoneable => country1) }
+
+      context "when all states contained in one of the countries we check against" do
+
+        before do
+          state1 = Factory(:state, :country => country1)
+          @target.members.create(:zoneable => state1)
+        end
+
+        it "should be true" do
+          @source.contains?(@target).should be_true
+        end
+      end
+
+      context "when some states contained in one of the countries we check against" do
+
+        before do
+          state1 = Factory(:state, :country => country1)
+          @target.members.create(:zoneable => state1)
+          @target.members.create(:zoneable => Factory(:state, :country => country2))
+        end
+
+        it "should be false" do
+          @source.contains?(@target).should be_false
+        end
+      end
+
+      context "when none of the states contained in any of the countries we check against" do
+
+        before do
+          @target.members.create(:zoneable => Factory(:state, :country => country2))
+          @target.members.create(:zoneable => Factory(:state, :country => country2))
+        end
+
+        it "should be false" do
+          @source.contains?(@target).should be_false
+        end
+      end
+    end
+
+  end
+
 end

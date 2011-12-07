@@ -63,8 +63,7 @@ module Spree
       matches.first
     end
 
-    # convenience method for returning the countries contained within a zone (different then the countries method which only
-    # returns the zones children and does not consider the grand children if the children themselves are zones)
+    # convenience method for returning the countries contained within a zone
     def country_list
       members.map { |zone_member|
         case zone_member.zoneable_type
@@ -82,9 +81,33 @@ module Spree
       name <=> other.name
     end
 
+    # All zoneables belonging to the zone members.  Will be a colelction of either
+    # countries or states depending on the zone type.
+    def zoneables
+      members.collect { |m| m.zoneable }
+    end
+
     def self.default_tax
       default_tax_zone = Spree::Config[:default_tax_zone]
       Zone.where(:name => default_tax_zone).first
+    end
+
+    # Indicates whether the specified zone falls entirely within the zone performing
+    # the check.
+    def contains?(target)
+      return false if self.kind == "state" && target.kind == "country"
+      return false if self.zone_members.empty? || target.zone_members.empty?
+
+      if self.kind == target.kind
+        target.zoneables.each do |target_zoneable|
+          return false unless self.zoneables.include?(target_zoneable)
+        end
+      else
+        target.zoneables.each do |target_state|
+          return false unless self.zoneables.include?(target_state.country)
+        end
+      end
+      true
     end
 
     private
