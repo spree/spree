@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 require 'spec_helper'
 
 describe Spree::ProductGroup do
@@ -55,5 +57,13 @@ describe Spree::ProductGroup do
       product_group.products(true).should_not include(product)
     end
 
+  end
+
+  # Regression test for issue raised here: https://github.com/spree/spree/pull/847#issuecomment-3048822
+  context "generates correct permalink" do
+    it "for Chinese" do
+      product_group = Spree::ProductGroup.new(:name => "你好")
+      product_group.set_permalink.should == "ni-hao"
+    end
   end
 end

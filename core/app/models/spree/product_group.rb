@@ -155,21 +155,11 @@ module Spree
 
     # generates ProductGroup url
     def to_url
-      if (new_record? || name.blank?)
-        result = ''
-        result += self.product_scopes.map { |ps|
-          [ps.name, ps.arguments.join(',')]
-        }.flatten.join('/')
-        result += self.order_scope if self.order_scope
-
-        result
-      else
-        name.parameterize
-      end
+      name.to_url
     end
 
     def set_permalink
-      self.permalink = self.name.parameterize
+      self.permalink = self.to_url
     end
 
     def update_memberships
