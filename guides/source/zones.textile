@@ -20,7 +20,7 @@ A Zone consists of one or more members. All of a zone's members must be the same
 Zones have a helpful +include?+ method that can be used to determine whether or not an address falls within a particular zone.  The following is an example in the Rails console:
 
 <shell>
->> z = Zone.first
+>> z = Spree::Zone.first
 => #<Zone id: 1, name: "EU_VAT", description: "Countries that make up the EU VAT zone.", created_at: "2009-04-20 19:08:23", updated_at: "2009-04-20 19:08:23">
 >> z.include?(Address.first)
 => false
@@ -31,7 +31,7 @@ Zones also have a convenient +country_list+ method for returning the Countries c
 The following is an example of this method as visible in the Rails console:
 
 <shell>
->> z = Zone.all[1]
+>> z = Spree::Zone.all[1]
 => #<Zone id: 284254445, name: "Zone with one shipping option", description: "Zone with one shipping option", created_at: "2009-04-20 19:08:26", updated_at: "2009-04-20 19:08:26">
 >> z.country_list
 => [#<Country id: 212, iso_name: "UNITED ARAB EMIRATES", iso: "AE", name: "United Arab Emirates", iso3: "ARE", numcode: 784>, #<Country id: 213, iso_name: "UNITED KINGDOM", iso: "GB", name: "United Kingdom", iso3: "GBR", numcode: 826>]
@@ -89,11 +89,11 @@ A zone can also consist of other zones. The only requirement here is that zone m
 
 h3. Other Possible Uses for Zones
 
-There are some interesting implications with zones as far as reporting goes. As of Rails 2.1 and its support for named scope it should be  cool things with named scope. So with a little bit of tweaking it should be possible to do things like:
+There are some interesting implications with zones as far as reporting goes. It is possible to chain relations using named scopes to do something like:
 
 <shell>
 Customer.in_zone(zone).all
 Customer.recently_logged.spend_more_than_10000_eur.in_zone(zone)
 </shell>
 
-Alternatively, Spree uses the "searchlogic":http://github.com/binarylogic/searchlogic/tree/master gem to pull off much of its dynamic searching functionality.  The "README":http://rdoc.info/projects/binarylogic/searchlogic is quite comprehensive and would give you some idea as the type of searches you could build that would leverage the power of zones.
+Alternatively, Spree uses the "meta_search":https://github.com/ernie/meta_search gem to pull off much of its dynamic searching functionality.  The "README":http://rdoc.info/projects/ernie/meta_search is quite comprehensive and would give you some idea as the type of searches you could build that would leverage the power of zones.
