@@ -25,3 +25,9 @@ h4. Product
 h4. Spree::Config[:stylesheets]
 
 +Spree::Config[:stylesheets]+ and +stylesheet_tags+ are removed in favor for the Rails 3.1 Asset Pipeline. See the "Asset Customization":asset_customization.html for more information.
+
+h3. Testing
+
+h4. The demise of Cucumber testing
+
+Cucumber is a great testing tool however it doesn't bring more values for tesing but overhead. It is decide to opt for a light-weight practice of RSpec + Capybara.

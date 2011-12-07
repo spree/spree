@@ -11,7 +11,7 @@ endprologue.
 
 h3. Overview
 
-The Spree project currently uses "RSpec":http://rspec.info and "Cucumber":http://cukes.info/ for all of its tests.  Each of the gems that makes up Spree has a test suite that can be run to verify the code base.
+The Spree project currently uses "RSpec":http://rspec.info for all of its tests.  Each of the gems that makes up Spree has a test suite that can be run to verify the code base.
 
 The Spree test code is an evolving story.  We started out with RSpec, then switched to Shoulda and now we're back to RSpec.  RSpec has evolved considerably since we first tried it.  When looking to improve the test coverage of Spree we took another look at RSpec and it was the clear winner in terms of strength of community and documentation.
 
@@ -65,7 +65,7 @@ spree uses "factory_girl":https://github.com/thoughtbot/factory_girl to create v
 
 <shell>
   $ rails console
-  $ require 'spree_core/testing_support/factories'
+  $ require 'spree/core/testing_support/factories'
 </shell>
 
 h3. Testing Your Extensions
@@ -110,7 +110,7 @@ There's an extra step needed in the isolated case before we can run our tests.  
 Perform the following one-time step
 
 <shell>
-  $ rake test_app
+  $ bundle exec rake test_app
 </shell>
 
 WARNING: The resulting dummy Rails application should never be committed to your source code respository.  You can always regenerate them with the rake task.
@@ -123,41 +123,14 @@ Once the test app has been created, your specs can run in the manner you're used
 
 h3. Cucumber
 
-"Cucumber":http://cukes.info/ makes it easier to write and maintain tests, and there is strong interest in making more use of it in Spree. The following example specifies a test on cart behavior.
-
-<ruby>
-Scenario: Visitor can work with cart
-  When I add a product with name: "RoR Mug", price: "15" to cart
-  Then I should see "Shopping Cart" within "h1"
-  And I should see "RoR Mug" within "#line_items h4 a"
-  And I should see "$15" within "#line_items td"
-  And I should see "$15" within "#subtotal"
-</ruby>
-
-Some of the gems have cucumber tests. Once your test application has been built, you can then run the cucumber test in the standard cucumber manner:
-
-<shell>
-  $ bundle exec cucumber
-</shell>
-
-If you want to execute cucumber tests for a single feature file then you can do so like this:
-
-<shell>
-  $ bundle exec cucumber features/admin/orders.feature --require features
-</shell>
-
-If you wish to execute only a particular scenario from a feature file then you should pass line number like this:
-
-<shell>
-  $ bundle exec cucumber features/admin/orders.feature:3 --require features
-</shell>
+WARNING: "Cucumber":http://cukes.info/ is dropped in favor for RSpec + Capybara. All cucumbers tests are converted and located inside +spec/requests+ directory.
 
 h4. Factory girl
 
 The spree_core gem has a good number of factories which can be used for testing. If you are writing an extension or just testing spree you can make use of these factories.
 
 <shell>
-  $ require 'spree_core/testing_support/factories'
+  $ require 'spree/core/testing_support/factories'
 </shell>
 
 Above command might result in following message.
