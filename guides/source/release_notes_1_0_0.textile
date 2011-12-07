@@ -18,6 +18,10 @@ notes on this release
 
 h3. Deprecated functions
 
+h4. Product
+
++master_price+, +master_price=+, +variants?+, +variant+ are now officially retired. Please use +Product.price+, +Product.price=+, +Product.has_variants?+ and +Product.master+ consecutively instead.
+
 h4. Spree::Config[:stylesheets]
 
 +Spree::Config[:stylesheets]+ and +stylesheet_tags+ are removed in favor for the Rails 3.1 Asset Pipeline. See the "Asset Customization":asset_customization.html for more information.
