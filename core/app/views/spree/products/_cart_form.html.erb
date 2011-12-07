@@ -35,8 +35,8 @@
       </div>
     <% end%>
     <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
-      <%= text_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
-        1, :class => 'title', :size => 3 %>
+      <%= number_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
+        1, :class => 'title', :in => 1..@product.on_hand %>
       &nbsp;
       <%= button_tag :class => 'large primary', :id => 'add-to-cart-button' do %>
         <%= image_tag('icons/add-to-cart.png') + t(:add_to_cart) %>

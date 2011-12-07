@@ -53,7 +53,7 @@
       <% if Spree::Config[:track_inventory_levels] %>
         <p>
           <%= f.label :on_hand, t(:on_hand) %><br />
-          <%= f.text_field :on_hand, :size => 4 %>
+          <%= f.number_field :on_hand, :min => 0 %>
         </p>
       <% end %>
       <ul id="shipping-specs">
