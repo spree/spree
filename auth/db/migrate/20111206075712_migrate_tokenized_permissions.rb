@@ -14,11 +14,11 @@ class MigrateTokenizedPermissions < ActiveRecord::Migration
 
   def up
     execute "UPDATE spree_tokenized_permissions SET permissable_type = #{concat("'Spree::'", "permissable_type")}" +
-            " where permissable_type NOT LIKE 'Spree::%' AND permissable_type IS NOT NULL"
+            " WHERE permissable_type NOT LIKE 'Spree::%' AND permissable_type IS NOT NULL"
   end
 
   def down
     execute "UPDATE spree_tokenized_permissions SET permissable_type = REPLACE(permissable_type, 'Spree::', '')" + 
-            " where permissable_type LIKE 'Spree::%'"
+            " WHERE permissable_type LIKE 'Spree::%'"
   end
 end
