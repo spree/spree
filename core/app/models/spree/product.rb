@@ -72,7 +72,7 @@ module Spree
 
     def to_param
       return permalink if permalink.present?
-      name.parameterize
+      name.to_url
     end
 
     # returns true if the product has any variants (the master variant is not a member of the variants array)

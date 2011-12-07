@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 require 'spec_helper'
 
 describe Spree::Product do
@@ -56,6 +58,13 @@ describe Spree::Product do
         end
       end
 
+    end
+  end
+
+  context "permalink generation" do
+    it "supports Chinese" do
+      @product = Factory(:product, :name => "你好")
+      @product.permalink.should == "ni-hao"
     end
   end
 
