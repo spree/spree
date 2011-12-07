@@ -15,3 +15,9 @@ have been completely rewritten.
 
 Please see the "Spree blog":http://spreecommerce.com/blog/2011/12/04/spree-preferences-refactor for
 notes on this release
+
+h3. Deprecated functions
+
+h4. Spree::Config[:stylesheets]
+
++Spree::Config[:stylesheets]+ and +stylesheet_tags+ are removed in favor for the Rails 3.1 Asset Pipeline. See the "Asset Customization":asset_customization.html for more information.
