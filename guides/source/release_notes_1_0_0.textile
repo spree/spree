@@ -52,6 +52,10 @@ h4. Spree::Config[:stylesheets]
 
 Extensions looking to add stylesheets to the application should do so through the Asset Pipeline by making the extension an engine.
 
+h4. General deprecations
+
+* Gateway.current is now deprecated. Use order.payment_method.gateway now. "#747":https://github.com/spree/spree/pull/747
+
 h3. Testing
 
 h4. The demise of Cucumber testing
