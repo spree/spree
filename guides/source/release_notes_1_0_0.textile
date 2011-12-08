@@ -10,6 +10,14 @@ The changes to Spree in the 1.0 Release are outlined in this document.
 
 h3. Namespacing
 
+A difficulty in previous versions of Spree was using it with existing applications, as there may have been conflicting class names between the Spree engines and the host application. For example, if the host application had a +Product+ class, then this would cause Spree's +Product+ class to not load and issues would be encountered.
+
+A major change within the 1.0 Release is the namespacing of all classes within Spree. This change remedies the above problem in the cleanest fashion possible.
+
+Classes such as +Product+, +Variant+ and +ProductsController+ are now +Spree::Product+, +Spree::Variant+ and +Spree::ProductsController+. Other classes, such as +RedirectLegacyProductUrl+, have undergone one more level of namespacing to more clearly represent what areas of Spree they are from. This class is now called +Spree::Core::RedirectLegacyProductUrl+.
+
+Constants such as +SpreeCore+ and +SpreeAuth+ are now +Spree::Core+ and +Spree::Auth+ respectively.
+
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
