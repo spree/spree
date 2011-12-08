@@ -30,6 +30,18 @@ notes on this release.
 
 h3. Deprecated functions
 
+h4. Middleware
+
+The lines for middleware in +config/application.rb+ within a host application are now deprecated. When upgrading to Spree 1.0 you must remove these two lines from +config/application.rb+:
+
+<ruby>
+config.middleware.use "SeoAssist"
+config.middleware.use "RedirectLegacyProductUrl"
+</ruby>
+
+These two pieces of middleware are now automatically included by the `Spree::Core::Engine`.
+
+
 h4. Product
 
 +master_price+, +master_price=+, +variants?+, +variant+ are now officially retired. Please use +Product.price+, +Product.price=+, +Product.has_variants?+ and +Product.master+ respectively instead.
