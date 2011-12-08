@@ -26,9 +26,9 @@ module Spree
       self.count(:conditions => { :type => self.to_s, :environment => Rails.env, :active => true }) > 0
     end
 
-    # TODO: Remove this method by 0.90.x
+    # TODO: Remove this method by 1.0
     def self.current
-      ActiveSupport::Deprecation.warn "Gateway.current is deprecated and will be removed in Spree 0.90.x. Use current_order.payment_method instead."
+      ActiveSupport::Deprecation.warn "Gateway.current is deprecated and will be removed in Spree > 1.0. Use current_order.payment_method instead."
       first(:conditions => { :active => true, :environment => Rails.env })
     end
 
