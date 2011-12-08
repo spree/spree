@@ -20,7 +20,7 @@ h3. Deprecated functions
 
 h4. Product
 
-+master_price+, +master_price=+, +variants?+, +variant+ are now officially retired. Please use +Product.price+, +Product.price=+, +Product.has_variants?+ and +Product.master+ consecutively instead.
++master_price+, +master_price=+, +variants?+, +variant+ are now officially retired. Please use +Product.price+, +Product.price=+, +Product.has_variants?+ and +Product.master+ respectively instead.
 
 h4. Spree::Config[:stylesheets]
 
