@@ -31,13 +31,14 @@ module Spree
     validates :name, :presence => true # TODO ensure that this field is defined as not_null
     validates_associated :product_scopes
 
-    before_save :set_permalink
     after_save :update_memberships
 
     has_and_belongs_to_many :cached_products, :class_name => 'Spree::Product',
                                               :join_table => 'spree_product_groups_products'
     has_many :product_scopes
     accepts_nested_attributes_for :product_scopes
+
+    make_permalink
 
     # Testing utility: creates new *ProductGroup* from search permalink url.
     # Follows conventions for accessing PGs from URLs, as decoded in routes
@@ -153,13 +154,11 @@ module Spree
     end
 
     # generates ProductGroup url
-    def to_url
-      name.to_url
+    def permalink
+      name.to_s.to_url
     end
 
-    def set_permalink
-      self.permalink = self.to_url
-    end
+    alias_method :to_url, :permalink
 
     def update_memberships
       # wipe everything directly to avoid expensive in-rails sorting

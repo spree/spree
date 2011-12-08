@@ -63,7 +63,8 @@ describe Spree::ProductGroup do
   context "generates correct permalink" do
     it "for Chinese" do
       product_group = Spree::ProductGroup.new(:name => "你好")
-      product_group.set_permalink.should == "ni-hao"
+      product_group.run_callbacks(:create)
+      product_group.permalink.should == "ni-hao"
     end
   end
 end
