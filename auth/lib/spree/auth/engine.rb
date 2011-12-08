@@ -4,7 +4,7 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_auth'
 
-      initializer "spree.auth.environment", :after => 'spree.environment' do |app|
+      initializer "spree.auth.environment", :before => :load_config_initializers do |app|
         Spree::Auth::Config = Spree::AuthConfiguration.new
       end
 
