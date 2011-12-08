@@ -18,7 +18,7 @@ maintained so no code changes should be required. The underlying classes
 have been completely rewritten.
 
 Please see the "Spree blog":http://spreecommerce.com/blog/2011/12/04/spree-preferences-refactor for
-notes on this release
+notes on this release.
 
 h3. Deprecated functions
 
