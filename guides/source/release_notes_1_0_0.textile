@@ -13,7 +13,7 @@ h3. Namespacing
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
-code for applicaitons and extensions. The previous interfaces have been
+code for applications and extensions. The previous interfaces have been
 maintained so no code changes should be required. The underlying classes
 have been completely rewritten.
 
