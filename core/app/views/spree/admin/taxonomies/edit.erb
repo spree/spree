@@ -10,7 +10,7 @@
   <%= render :partial => 'form', :locals => { :f => f } %>
     <div>
       <%= label_tag nil, t(:tree) %><br />
-      <div id="taxonomy_tree" class="tree"></div>
+      <div id="taxonomy_tree" class="tree" data-url="<%= admin_taxonomy_taxons_path @taxonomy %>"></div>
     </div>
     <p id="progress" style="display:none;">
       <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
