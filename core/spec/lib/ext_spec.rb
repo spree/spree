@@ -26,7 +26,7 @@ describe 'Core extensions' do
 
     end
 
-    context "updte_attributes_without_callbacks" do
+    context "update_attributes_without_callbacks" do
 
       it "sets the attributes" do
         order.update_attributes_without_callbacks :state => 'address', :email => 'spree@example.com'

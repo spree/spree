@@ -1,11 +1,14 @@
+# coding: UTF-8
+
 require 'spec_helper'
 
 describe Spree::Product do
   before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    reset_spree_preferences
   end
 
   context "shoulda validations" do
+    let(:product) {Factory(:product)}
     it { should belong_to(:tax_category) }
     it { should belong_to(:shipping_category) }
     it { should have_many(:product_option_types) }
@@ -15,7 +18,10 @@ describe Spree::Product do
     it { should have_many(:images) }
     it { should have_and_belong_to_many(:product_groups) }
     it { should have_and_belong_to_many(:taxons) }
-    it { should validate_presence_of(:price) }
+    it "should validate price" do
+      product.should be_valid
+    end
+    # it { should validate_presence_of(:price) }
     it { should validate_presence_of(:permalink) }
     it { should have_valid_factory(:product) }
   end
@@ -42,14 +48,23 @@ describe Spree::Product do
           @product2 = Factory(:product, :name => 'foo')
           @product2.update_attributes(:permalink => 'foo')
         end
+
         it "should have an error" do
           @product2.errors.size.should == 1
         end
+
         it "should have error message that permalink is already taken" do
           @product2.errors.full_messages.first.should == 'Permalink has already been taken'
         end
       end
 
+    end
+  end
+
+  context "permalink generation" do
+    it "supports Chinese" do
+      @product = Factory(:product, :name => "你好")
+      @product.permalink.should == "ni-hao"
     end
   end
 

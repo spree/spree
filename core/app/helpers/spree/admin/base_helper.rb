@@ -81,61 +81,75 @@ module Spree
         out.html_safe
       end
 
-      def preference_field(form, field, options)
+      def preference_field_tag(name, value, options)
         case options[:type]
         when :integer
-          form.text_field(field, {
-              :size => 10,
-              :class => 'input_integer',
-              :readonly => options[:readonly],
-              :disabled => options[:disabled]
-            }
-          )
+          text_field_tag(name, value, preference_field_options(options))
         when :boolean
-          form.check_box(field, { :readonly => options[:readonly],
-              :disabled => options[:disabled]})
+          hidden_field_tag(name, 0) +
+          check_box_tag(name, 1, value, preference_field_options(options))
         when :string
-          form.text_field(field, {
-              :size => 10,
-              :class => 'input_string',
-              :readonly => options[:readonly],
-              :disabled => options[:disabled]
-            }
-          )
+          text_field_tag(name, value, preference_field_options(options))
         when :password
-          form.password_field(field, {
-              :size => 10,
-              :class => 'password_string',
-              :readonly => options[:readonly],
-              :disabled => options[:disabled]
-            }
-          )
+          password_field_tag(name, value, preference_field_options(options))
         when :text
-          form.text_area(field,
-            {:rows => 15, :cols => 85, :readonly => options[:readonly],
-              :disabled => options[:disabled]}
-          )
+          text_area_tag(name, value, preference_field_options(options))
         else
-          form.text_field(field, {
-              :size => 10,
-              :class => 'input_string',
-              :readonly => options[:readonly],
-              :disabled => options[:disabled]
-            }
-          )
+          text_field_tag(name, value, preference_field_options(options))
         end
+      end
+
+      def preference_field_for(form, field, options)
+        case options[:type]
+        when :integer
+          form.text_field(field, preference_field_options(options))
+        when :boolean
+          form.check_box(field, preference_field_options(options))
+        when :string
+          form.text_field(field, preference_field_options(options))
+        when :password
+          form.password_field(field, preference_field_options(options))
+        when :text
+          form.text_area(field, preference_field_options(options))
+        else
+          form.text_field(field, preference_field_options(options))
+        end
+      end
+
+      def preference_field_options(options)
+        field_options = case options[:type]
+        when :integer
+          { :size => 10,
+            :class => 'input_integer' }
+        when :boolean
+          {}
+        when :string
+          { :size => 10,
+            :class => 'input_string' }
+        when :password
+          { :size => 10,
+            :class => 'password_string' }
+        when :text
+          { :rows => 15,
+            :cols => 85 }
+        else
+          { :size => 10,
+            :class => 'input_string' }
+        end
+
+        field_options.merge!({
+          :readonly => options[:readonly],
+          :disabled => options[:disabled]
+        })
       end
 
       def preference_fields(object, form)
         return unless object.respond_to?(:preferences)
         object.preferences.keys.map{ |key|
-          next unless object.class.preference_definitions.has_key? key
-
-          definition = object.class.preference_definitions[key]
-          type = definition.instance_eval{@type}.to_sym
 
           form.label("preferred_#{key}", t(key) + ": ") +
-            preference_field(form, "preferred_#{key}", :type => type)
+            preference_field_for(form, "preferred_#{key}", :type => object.preference_type(key))
+
         }.join("<br />").html_safe
       end
 

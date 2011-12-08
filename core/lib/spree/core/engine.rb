@@ -4,12 +4,19 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
+      config.middleware.use "Spree::Core::Middleware::SeoAssist"
+      config.middleware.use "Spree::Core::Middleware::RedirectLegacyProductUrl"
+
       config.autoload_paths += %W(#{config.root}/lib)
 
       def self.activate
       end
 
       config.to_prepare &method(:activate).to_proc
+
+      config.before_initialize do
+        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
+      end
 
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
@@ -31,8 +38,9 @@ module Spree
         Rails.application.routes_reloader.reload!
       end
 
-      initializer "spree.environment" do |app|
+      initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
+        Spree::Config = app.config.spree.preferences #legacy access
       end
 
       initializer "spree.register.calculators" do |app|
@@ -74,6 +82,13 @@ module Spree
 
       initializer "spree.asset.pipeline" do |app|
         app.config.assets.debug = false
+      end
+
+      initializer "spree.mail.settings" do |app|
+        if Spree::MailMethod.table_exists?
+          Spree::Core::MailSettings.init
+          Mail.register_interceptor(Spree::Core::MailInterceptor)
+        end
       end
     end
   end

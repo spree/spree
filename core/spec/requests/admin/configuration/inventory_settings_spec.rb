@@ -4,8 +4,11 @@ describe "Inventory Settings" do
   context "changing settings" do
     before(:each) do
       sign_in_as!(Factory(:admin_user))
-      @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-      Spree::Config.set :allow_backorders => true
+
+      reset_spree_preferences do |config|
+        config.allow_backorders = true
+      end
+
       visit spree.admin_path
       click_link "Configuration"
       click_link "Inventory Settings"
@@ -18,8 +21,6 @@ describe "Inventory Settings" do
     end
 
     it "should be able to toggle displaying zero stock products" do
-      pending "stub config"
-
       click_link "admin_inventory_settings_link"
       uncheck "preferences_show_zero_stock_products"
       click_button "Update"
@@ -28,8 +29,6 @@ describe "Inventory Settings" do
     end
 
     it "should be able to toggle allowing backorders" do
-      pending "stub config"
-
       click_link "admin_inventory_settings_link"
       uncheck "preferences_allow_backorders"
       click_button "Update"

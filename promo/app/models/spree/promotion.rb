@@ -31,7 +31,11 @@ module Spree
 
     class << self
       def advertised
-        includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
+        #TODO this is broken because the new preferences aren't a direct relationship returning
+        #all for now
+        where(true)
+        #includes(:stored_preferences) 
+        #includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
       end
     end
 
@@ -76,7 +80,7 @@ module Spree
     end
 
     def usage_limit_exceeded?(order = nil)
-      preferred_usage_limit.present? && preferred_usage_limit > 0 && adjusted_credits_count(order) >= preferred_usage_limit
+      preferred_usage_limit.present? && preferred_usage_limit.to_i > 0 && adjusted_credits_count(order) >= preferred_usage_limit.to_i
     end
 
     def adjusted_credits_count(order)

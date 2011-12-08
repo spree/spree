@@ -50,25 +50,6 @@ module Spree
         return_path = nil
         if @order.update_attributes(params[:order]) && @order.line_items.present?
           unless @order.complete?
-            if params[:order].key?(:email)
-              shipping_method = @order.available_shipping_methods(:front_end).first
-              if shipping_method
-                @order.shipping_method = shipping_method
-
-                if params[:guest_checkout] == 'false' && params[:user_id].present?
-                  @order.user_id = params[:user_id]
-                  @order.user true
-                end
-                @order.save
-                @order.create_shipment!
-                return_path = edit_admin_order_shipment_path(@order, @order.shipment)
-              else
-                flash[:error] = t('errors.messages.no_shipping_methods_available')
-                return_path = user_admin_order_path(@order)
-              end
-            else
-              return_path = user_admin_order_path(@order)
-            end
 
           else
             return_path = admin_order_path(@order)
@@ -109,11 +90,6 @@ module Spree
         flash.notice = t(:order_email_resent)
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
-      end
-
-      def user
-        @order.build_bill_address(:country_id => Spree::Config[:default_country_id]) if @order.bill_address.nil?
-        @order.build_ship_address(:country_id => Spree::Config[:default_country_id]) if @order.ship_address.nil?
       end
 
       private

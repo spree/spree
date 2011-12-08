@@ -93,12 +93,12 @@ module Spree
       Spree::Product.scope :brand_any,
         lambda {|*opts|
           conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
-          Product.with_property("brand").conditions_any(conds)
+          Spree::Product.with_property("brand").conditions_any(conds)
         }
 
       def ProductFilters.brand_filter
         brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
-        conds  = Hash[*brands.map {|b| [b, "product_properties.value = '#{b}'"]}.flatten]
+        conds  = Hash[*brands.map {|b| [b, "#{Spree::ProductProperty.table_name}.value = '#{b}'"]}.flatten]
         { :name   => "Brands",
           :scope  => :brand_any,
           :conds  => conds,
@@ -135,8 +135,8 @@ module Spree
         end
         all_brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
         scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
-                                scoped(:joins      => {:product => :taxons},
-                                       :conditions => ["taxons.id in (?)", [taxon] + taxon.descendants])
+                                       scoped(:joins      => {:product => :taxons},
+                                              :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
         brands = scope.map {|p| p.value}
 
         { :name   => "Applicable Brands",

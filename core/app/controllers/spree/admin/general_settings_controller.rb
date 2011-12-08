@@ -7,15 +7,17 @@ module Spree
       end
 
       def edit
-        @preferences = ['site_name', 'default_seo_title', 'default_meta_keywords',
-                        'default_meta_description', 'site_url', 'allow_ssl_in_production',
-                        'allow_ssl_in_development_and_test']
+        @preferences = [:site_name, :default_seo_title, :default_meta_keywords,
+                        :default_meta_description, :site_url, :allow_ssl_in_production,
+                        :allow_ssl_in_development_and_test, :check_for_spree_alerts]
       end
 
       def update
-        @config = Spree::Config.instance
-        @config.update_attributes(params[@config.class.name.underscore])
-        Rails.cache.delete("configuration_#{@config.class.name}".to_sym)
+        params.each do |name, value|
+          next unless Spree::Config.has_preference? name
+          Spree::Config[name] = value
+        end
+
         redirect_to admin_general_settings_path
       end
 

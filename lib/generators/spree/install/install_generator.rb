@@ -21,6 +21,10 @@ module Spree
       paths.flatten
     end
 
+    def add_files
+      template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+    end
+
     def config_spree_yml
       create_file "config/spree.yml" do
         settings = { 'version' => Spree.version }
@@ -50,34 +54,21 @@ Disallow: /users
       ROBOTS
     end
 
-    def setup_assets
-      remove_file "app/assets/javascripts/application.js"
-      remove_file "app/assets/stylesheets/application.css"
-      remove_file "app/assets/images/rails.png"
-
-      %w{javascripts stylesheets images}.each do |path|
-        empty_directory "app/assets/#{path}/store"
-        empty_directory "app/assets/#{path}/admin"
-      end
-
-      template "app/assets/javascripts/store/all.js"
-      template "app/assets/javascripts/admin/all.js"
-      template "app/assets/stylesheets/store/all.css"
-      template "app/assets/stylesheets/admin/all.css"
-    end
-
     def create_overrides_directory
       empty_directory "app/overrides"
     end
 
     def configure_application
       application <<-APP
-  config.middleware.use "Spree::Core::Middleware::SeoAssist"
-    config.middleware.use "Spree::Core::Middleware::RedirectLegacyProductUrl"
 
     config.to_prepare do
-      #loads application's model / class decorators
+      # Load application's model / class decorators
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+        Rails.configuration.cache_classes ? require(c) : load(c)
+      end
+
+      # Load application's view overrides
+      Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/*.rb")) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
     end
@@ -97,7 +88,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def install_migrations
       puts "Copying migrations..."
       silence_stream(STDOUT) do
-        silence_warnings { run 'bundle exec rake railties:install:migrations' }
+        silence_warnings { rake 'railties:install:migrations' }
       end
     end
 

@@ -1,5 +1,5 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
-<h1><%= t(:change_my_password) %></h1>
+<h2><%= t(:change_my_password) %></h2>
 
 <%= form_for @user, :url => spree.user_password_path, :html => {:method => :put} do |f| %>
   <p>
@@ -11,5 +11,5 @@
     <%= f.password_field :password_confirmation %><br />
   </p>
   <%= f.hidden_field :reset_password_token %>
-  <%= f.submit t(:update_password) %>
+  <%= f.submit t(:update_password), :class => 'button primary' %>
 <% end %>

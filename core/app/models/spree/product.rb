@@ -39,7 +39,6 @@ module Spree
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
     before_save :recalculate_count_on_hand
-    before_update :sanitize_permalink
     after_save :update_memberships if ProductGroup.table_exists?
     after_save :set_master_on_hand_to_zero_when_product_has_variants
     after_save :save_master
@@ -70,9 +69,6 @@ module Spree
     make_permalink
 
     alias :options :product_option_types
-
-    #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
-    # default product scope only lists available and non-deleted products
 
     def to_param
       return permalink if permalink.present?
@@ -182,10 +178,6 @@ module Spree
     end
 
     private
-      def sanitize_permalink
-        self.permalink = self.permalink.to_url
-      end
-
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
           variants.inject(0) { |acc, v| acc + v.count_on_hand } :

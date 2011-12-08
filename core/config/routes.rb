@@ -15,10 +15,6 @@ Spree::Core::Engine.routes.draw do
   match '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
   match '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
 
-  # non-restful admin checkout stuff
-  post '/admin/orders/:order_number/checkout', :to => 'admin/checkout#update', :as => :admin_orders_checkout
-  get '/admin/orders/:order_number/checkout/(:state)', :to => 'admin/checkout#edit', :as => :admin_orders_checkout
-
   resources :orders do
     post :populate, :on => :collection
 
@@ -57,8 +53,6 @@ Spree::Core::Engine.routes.draw do
   #   #this route maybe removed in the near future (no longer used by core)
   #   map.resources :taxons
   #
-
-
 
   namespace :admin do
     resources :zones
@@ -137,8 +131,9 @@ Spree::Core::Engine.routes.draw do
         get :fire
         post :resend
         get :history
-        get :user
       end
+
+      resource :customer, :controller => "orders/customer_details"
 
       resources :adjustments
       resources :line_items

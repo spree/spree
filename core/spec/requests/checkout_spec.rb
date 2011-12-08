@@ -4,8 +4,9 @@ describe "Checkout" do
   context "visitor makes checkout as guest without registration" do
     context "when backordering is disabled" do
       before(:each) do
-        @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-        Spree::Config.set :allow_backorders => false
+        reset_spree_preferences do |config|
+          config.allow_backorders = false
+        end
         Spree::Product.delete_all
         @product = Factory(:product, :name => "RoR Mug")
         @product.on_hand = 1

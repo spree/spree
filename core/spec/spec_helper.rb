@@ -42,7 +42,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.start
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    reset_spree_preferences
   end
 
   config.after(:each) do
@@ -54,8 +54,9 @@ end
 
 shared_context "custom products" do
   before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
-    Spree::Config.set :allow_backorders => true
+    reset_spree_preferences do |config|
+      config.allow_backorders = true
+    end
 
     taxonomy = Factory(:taxonomy, :name => 'Categories')
     root = taxonomy.root

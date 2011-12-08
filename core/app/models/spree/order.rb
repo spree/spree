@@ -64,7 +64,7 @@ module Spree
     end
 
     def to_param
-      number.to_s.parameterize.upcase
+      number.to_s.to_url.upcase
     end
 
     def completed?
@@ -290,11 +290,12 @@ module Spree
     def create_shipment!
       shipping_method(true)
       if shipment.present?
-        shipment.update_attributes(:shipping_method => shipping_method)
+        shipment.update_attributes!(:shipping_method => shipping_method)
       else
-        self.shipments << Shipment.create(:order => self,
+        self.shipments << Shipment.create!(:order => self,
                                           :shipping_method => shipping_method,
-                                          :address => self.ship_address)
+                                          :address => self.ship_address,
+                                          :inventory_units => self.inventory_units)
       end
 
     end

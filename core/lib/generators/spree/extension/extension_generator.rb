@@ -15,6 +15,7 @@ module Spree
       template "Rakefile", "#{file_name}/Rakefile"
       template "README.md", "#{file_name}/README.md"
       template "config/routes.rb", "#{file_name}/config/routes.rb"
+      template "config/locales/en.yml", "#{file_name}/config/locales/en.yml"
       template "rspec", "#{file_name}/.rspec"
       template "spec/spec_helper.rb.tt", "#{file_name}/spec/spec_helper.rb"
       template "Versionfile", "#{file_name}/Versionfile"

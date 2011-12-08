@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "Shipping Methods" do
   before(:each) do
+    Factory(:global_zone)
     sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Configuration"
@@ -21,7 +22,6 @@ describe "Shipping Methods" do
 
   context "create" do
     it "should be able to create a new shipping method" do
-      Factory(:global_zone)
       click_link "Shipping Methods"
       click_link "admin_new_shipping_method_link"
       page.should have_content("New Shipping Method")

@@ -13,6 +13,7 @@ module Spree
 
           if options[:default]
             default_calculator_class = options[:default]
+            # TODO: Uncomment or remove for Spree 1.0.
             #if default_calculator_class.available?(self.new)
               before_create :default_calculator
               define_method(:default_calculator) do

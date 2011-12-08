@@ -30,7 +30,6 @@ require 'rails/all'
 require 'rails/generators'
 require 'state_machine'
 require 'paperclip'
-require 'stringex'
 require 'kaminari'
 require 'nested_set'
 require 'acts_as_list'
@@ -40,6 +39,20 @@ require 'jquery-rails'
 
 module Spree
   module Core
+  end
+
+  # Used to configure Spree.
+  #
+  # Example:
+  #
+  #   Spree.config do |config|
+  #     config.site_name = "An awesome Spree site"
+  #   end
+  #
+  # This method is defined within the core gem on purpose.
+  # Some people may only wish to use the Core part of Spree.
+  def self.config(&block)
+    yield(Spree::Config)
   end
 end
 
@@ -52,14 +65,10 @@ require 'spree/core/theme_support'
 require 'spree/core/responder'
 require 'spree/core/respond_with'
 require 'spree/core/ssl_requirement'
-require 'spree/core/preferences/model_hooks'
-require 'spree/core/preferences/preference_definition'
 require 'spree/core/store_helpers'
 require 'spree/core/file_utilz'
 require 'spree/core/calculated_adjustments'
 require 'spree/core/current_order'
-require 'spree/preference_access'
-require 'spree/config'
 require 'spree/core/mail_settings'
 require 'spree/core/mail_interceptor'
 require 'spree/core/middleware/redirect_legacy_product_url'

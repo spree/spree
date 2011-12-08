@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Spree::Variant do
-  let(:variant) { Spree::Variant.new(:count_on_hand => 95) }
+  let!(:variant) { Factory(:variant, :count_on_hand => 95) }
 
   before(:each) do
-    @configuration ||= Spree::AppConfiguration.find_or_create_by_name("Default configuration")
+    reset_spree_preferences
   end
 
   context "validations" do
@@ -42,23 +42,29 @@ describe Spree::Variant do
         end
 
         it "should check for backordered units" do
+          variant.save!
           variant.inventory_units.should_receive(:with_state).with("backordered")
           variant.on_hand = 100
+          variant.save!
         end
 
         it "should fill 1 backorder when count_on_hand is zero" do
           variant.count_on_hand = 0
+          variant.save!
           variant.inventory_units.stub(:with_state).and_return([inventory_unit])
           inventory_unit.should_receive(:fill_backorder)
           variant.on_hand = 100
+          variant.save!
           variant.count_on_hand.should == 99
         end
 
         it "should fill multiple backorders when count_on_hand is negative" do
           variant.count_on_hand = -5
+          variant.save!
           variant.inventory_units.stub(:with_state).and_return(Array.new(5, inventory_unit))
           inventory_unit.should_receive(:fill_backorder).exactly(5).times
           variant.on_hand = 100
+          variant.save!
           variant.count_on_hand.should == 95
         end
 
@@ -105,8 +111,7 @@ describe Spree::Variant do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should return nil" do
-        pending
-        variant.on_hand.should == nil
+        variant.on_hand.should be_nil
       end
 
     end

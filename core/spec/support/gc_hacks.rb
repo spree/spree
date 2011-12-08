@@ -2,12 +2,14 @@
 counter = -1
 RSpec.configure do |config|
   config.after(:each) do
-    counter += 1
-    if counter > 9
-      GC.enable
-      GC.start
-      GC.disable
-      counter = 0
+    unless RUBY_VERSION =~ /1\.9\.2/
+      counter += 1
+      if counter > 9
+        GC.enable
+        GC.start
+        GC.disable
+        counter = 0
+      end
     end
   end
 

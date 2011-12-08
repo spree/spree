@@ -28,7 +28,7 @@ module Spree
       fs
     end
 
-    # Creates permalink based on .to_url method provided by stringx gem
+    # Creates permalink based on Stringex's .to_url method
     def set_permalink
       if parent_id.nil?
         self.permalink = name.to_url if self.permalink.blank?
