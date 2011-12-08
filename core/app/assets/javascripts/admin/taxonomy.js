@@ -81,9 +81,9 @@ var taxonomy_id;
 $(document).ready(function(){
   if(taxonomy_id!=undefined){
 
-    base_url = "/admin/taxonomies/" + taxonomy_id + "/taxons/";
-    child_url = "/admin/taxonomies/" + taxonomy_id + "/get_children.json"
-
+    base_url = $("#taxonomy_tree").data("url").split("?")[0] + "/" ;
+    child_url = base_url.replace("/taxons", "/get_children.json");
+    
     is_cut = false;
     last_rollback = null;
 
