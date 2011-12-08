@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 require 'spec_helper'
 
 describe Spree::Taxon do
@@ -12,6 +14,12 @@ describe Spree::Taxon do
     it "should set permalink correctly when no parent present" do
       taxon.set_permalink
       taxon.permalink.should == "ruby-on-rails"
+    end
+
+    it "should support Chinese characters" do
+      taxon.name = "你好"
+      taxon.set_permalink
+      taxon.permalink.should == 'ni-hao'
     end
 
     context "with parent taxon" do
@@ -29,6 +37,12 @@ describe Spree::Taxon do
         taxon.permalink = "b/rubyonrails"
         taxon.set_permalink
         taxon.permalink.should == "brands/rubyonrails"
+      end
+
+      it "should support Chinese characters" do
+        taxon.name = "我"
+        taxon.set_permalink
+        taxon.permalink.should == "brands/wo"
       end
 
     end
