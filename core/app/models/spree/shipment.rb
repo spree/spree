@@ -28,7 +28,7 @@ module Spree
     def to_param
       self.number if self.number
       generate_shipment_number unless self.number
-      self.number.parameterize.to_s.upcase
+      self.number.to_s.to_url.upcase
     end
 
     def shipped=(value)
