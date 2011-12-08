@@ -4,20 +4,20 @@ Spree::Core::Engine.routes.draw do
 
   resources :products
 
-  match '/locale/set' => 'locale#set'
+  match '/locale/set', :to => 'locale#set'
 
   resources :tax_categories
 
   resources :states, :only => :index
 
   # non-restful checkout stuff
-  match '/checkout/update/:state' => 'checkout#update', :as => :update_checkout
-  match '/checkout/:state' => 'checkout#edit', :as => :checkout_state
-  match '/checkout' => 'checkout#edit', :state => 'address', :as => :checkout
+  match '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
+  match '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
+  match '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
 
   # non-restful admin checkout stuff
-  match '/admin/orders/:order_number/checkout' => 'admin/checkout#update', :method => :post, :as => :admin_orders_checkout
-  match '/admin/orders/:order_number/checkout/(:state)' => 'admin/checkout#edit', :method => :get, :as => :admin_orders_checkout
+  post '/admin/orders/:order_number/checkout', :to => 'admin/checkout#update', :as => :admin_orders_checkout
+  get '/admin/orders/:order_number/checkout/(:state)', :to => 'admin/checkout#edit', :as => :admin_orders_checkout
 
   resources :orders do
     post :populate, :on => :collection
@@ -33,9 +33,9 @@ Spree::Core::Engine.routes.draw do
     end
 
   end
-  match '/cart', :to => 'orders#edit', :via => :get, :as => :cart
-  match '/cart', :to => 'orders#update', :via => :put, :as => :update_cart
-  match '/cart/empty', :to => 'orders#empty', :via => :put, :as => :empty_cart
+  get '/cart', :to => 'orders#edit', :as => :cart
+  put '/cart', :to => 'orders#update', :as => :update_cart
+  put '/cart/empty', :to => 'orders#empty', :as => :empty_cart
 
   resources :shipments do
     member do
@@ -45,13 +45,13 @@ Spree::Core::Engine.routes.draw do
   end
 
   #   # Search routes
-  match 's/*product_group_query' => 'products#index', :as => :simple_search
-  match '/pg/:product_group_name' => 'products#index', :as => :pg_search
-  match '/t/*id/s/*product_group_query' => 'taxons#show', :as => :taxons_search
-  match 't/*id/pg/:product_group_name' => 'taxons#show', :as => :taxons_pg_search
+  match 's/*product_group_query', :to => 'products#index', :as => :simple_search
+  match '/pg/:product_group_name', :to => 'products#index', :as => :pg_search
+  match '/t/*id/s/*product_group_query', :to => 'taxons#show', :as => :taxons_search
+  match 't/*id/pg/:product_group_name', :to => 'taxons#show', :as => :taxons_pg_search
 
   #   # route globbing for pretty nested taxon and product paths
-  match '/t/*id' => 'taxons#show', :as => :nested_taxons
+  match '/t/*id', :to => 'taxons#show', :as => :nested_taxons
   #
   #   #moved old taxons route to after nested_taxons so nested_taxons will be default route
   #   #this route maybe removed in the near future (no longer used by core)
@@ -200,7 +200,7 @@ Spree::Core::Engine.routes.draw do
 
   end
 
-  match '/admin' => 'admin/orders#index', :as => :admin
+  match '/admin', :to => 'admin/orders#index', :as => :admin
 
-  match '/content/cvv' => 'content#cvv'
+  match '/content/cvv', :to => 'content#cvv'
 end
