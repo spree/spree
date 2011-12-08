@@ -18,6 +18,24 @@ Classes such as +Product+, +Variant+ and +ProductsController+ are now +Spree::Pr
 
 Constants such as +SpreeCore+ and +SpreeAuth+ are now +Spree::Core+ and +Spree::Auth+ respectively.
 
+h4. Referencing Spree routes
+
+In previous versions of Spree, due to the lack of namespacing, it was possible to reference routing helpers such as +product_url+ as-is in the controllers and views of your application and send them to the +ProductsController+ for Spree.
+
+Due to the namespacing changes, these references must now be called on the +spree+ routing proxy, so that Rails will route to Spree's +product_url+, rather than a _potential_ +product_url+ within an application. Routing helpers referencing Spree parts must now be written like this:
+
+<ruby>
+spree.product_url
+</ruby>
+
+Conversely, to reference routes from the main application within a controller, view or template from Spree, you must use the +main_app+ routing proxy like this:
+
+<ruby>
+main_app.root_url
+</ruby>
+
+If you encounter errors where routing methods you think should be there are not available, ensure that you aren't trying to call a Spree route from the main application within the proxy prefix, or a main application route from Spree without the proxy as well.
+
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
