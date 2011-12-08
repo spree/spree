@@ -51,7 +51,9 @@ You can customize this simply by changing the +:at+ specification in +config/rou
 <ruby>
 mount Spree::Core::Engine, :at => "/shop"
 </ruby>
-  
+
+The different parts of Spree (Auth, API, Dash & Promo) all extend the Core's routes, and so they will be mounted as well if they are available as gems.
+
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
