@@ -57,3 +57,8 @@ h3. Testing
 h4. The demise of Cucumber testing
 
 Cucumber is a great testing tool however it doesn't bring more values for tesing but overhead. It is decide to opt for a light-weight practice of RSpec + Capybara.
+
+h3. Bug fixes
+
+* Fixed issue caused by using +&:upcase+ syntax inside the +tab+ helper provided by +Admin::NavigationHelper+. "#693":https://github.com/spree/spree/pull/693.
+
