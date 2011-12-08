@@ -64,5 +64,9 @@ Cucumber is a great testing tool however it doesn't bring more values for tesing
 
 h3. Bug fixes
 
-* Fixed issue caused by using +&:upcase+ syntax inside the +tab+ helper provided by +Admin::NavigationHelper+. "#693":https://github.com/spree/spree/pull/693.
+* Fixed issue caused by using +&:upcase+ syntax inside the +tab+ helper provided by +Admin::NavigationHelper+. "#693":https://github.com/spree/spree/pull/693 and "#704":https://github.com/spree/spree/pull/704.
+* Fixed issue where non-ASCII characters were not being correctly titleized in the +tab+ helper provided by +Admin::NavigationHelper+. "#722":https://github.com/spree/spree/pull/722"
+* When Thinking Sphinx was being used, a conflict would occur with its +Scopes+ module and the one inside Spree. "#740":https://github.com/spree/spree/pull/740
+* Added +script/rails+ to core to allow things such as +rails generate+ and +rails console+ to be used. "commit b0903ea":https://github.com/spree/spree/commit/b0903ea477b63bd36c9940b5e0386e29e55f6189
+
 
