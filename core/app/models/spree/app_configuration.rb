@@ -54,7 +54,6 @@ module Spree
     preference :checkout_zone, :string, :default => nil # replace with the name of a zone if you would like to limit the countries
     preference :always_put_site_name_in_title, :boolean, :default => true
     preference :cache_static_content, :boolean, :default => true
-    preference :use_content_controller, :boolean, :default => true
     preference :allow_checkout_on_gateway_error, :boolean, :default => false
     preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
     preference :max_level_in_taxons_menu, :integer, :default => 1 # maximum nesting level in taxons menu
