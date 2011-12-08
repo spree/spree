@@ -106,4 +106,4 @@ h3. Bug fixes
 * If an admin user already exists, +rake db:admin:create+ will now ask if you want to override. "#752":https://github.com/spree/spree/pull/752
 * Making a request to a URL such as +/admin/products/non-existant/edit+ no longer shows a status 500 page. "#538":https://github.com/spree/spree/issues/538
 * +rails g spree:install+ output is now not so excessive. "commit ca4db30":https://github.com/spree/spree/commit/ca4db301e773da4ebc9d2a13e24c5d0e86dd0108
-* The +Spree::Core::Engine+ is automatically mounted inside your application when you run +rails g spree:install+. "commit ba67b51":https://github.com/spree/spree/commit/ba67b514af41918bf892323c9fd685689c74667a"
+* The +Spree::Core::Engine+ is automatically mounted inside your application when you run +rails g spree:install+. "commit ba67b51":https://github.com/spree/spree/commit/ba67b514af41918bf892323c9fd685689c74667a
