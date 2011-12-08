@@ -8,6 +8,8 @@ This is the official 1.0 Release of Spree. This is a *major* release for Spree, 
 
 The changes to Spree in the 1.0 Release are outlined in this document.
 
+h3. Namespacing
+
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
