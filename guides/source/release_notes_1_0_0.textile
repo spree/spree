@@ -36,6 +36,22 @@ main_app.root_url
 
 If you encounter errors where routing methods you think should be there are not available, ensure that you aren't trying to call a Spree route from the main application within the proxy prefix, or a main application route from Spree without the proxy as well.
 
+h4. Mounting the Spree engine
+
+When +rails g spree:install+ is run inside an application, it will install Spree, mounting the +Spree::Core::Engine+ component by inserting this line automatically into +config/routes.rb+:
+
+<ruby>
+mount Spree::Core::Engine, :at => "/"
+</ruby>
+
+By default, all Spree routes will be available at the root of your domain. For example, if your domain is http://shop.com, Spree's /products URL will be available at http://shop.com/products.
+
+You can customize this simply by changing the +:at+ specification in +config/routes.rb+ to be something else. For example, if your domain is http://bobsite.com and you would like Spree to be mounted at /shop, you can write this:
+
+<ruby>
+mount Spree::Core::Engine, :at => "/shop"
+</ruby>
+  
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
