@@ -88,13 +88,13 @@ Extensions looking to add stylesheets to the application should do so through th
 
 h4. General deprecations
 
-* Gateway.current is now deprecated. Use order.payment_method.gateway now. "#747":https://github.com/spree/spree/pull/747
+* +Gateway.current+ is now deprecated. Use +order.payment_method.gateway+ now. "#747":https://github.com/spree/spree/pull/747
 
 h3. Testing
 
 h4. The demise of Cucumber testing
 
-Cucumber is a great testing tool however it doesn't bring more values for tesing but overhead. It is decide to opt for a light-weight practice of RSpec + Capybara.
+Cucumber is a great testing tool however it doesn't bring more values for testing but overhead. It is decided to opt for a light-weight practice of RSpec + Capybara.
 
 h3. Bug fixes
 
