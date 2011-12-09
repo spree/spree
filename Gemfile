@@ -20,6 +20,7 @@ group :test do
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara'
+  gem 'selenium-webdriver', '2.14.0'
   gem 'database_cleaner'
   gem 'launchy'
 end
