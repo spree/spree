@@ -8,20 +8,17 @@ module Spree::Preferences
 
       define_method preference_getter_method(name) do
         if preference_store.exist? preference_cache_key(name)
-          preference_store.get preference_cache_key(name)
+          value = preference_store.get preference_cache_key(name)
         else
-          send self.class.preference_default_getter_method(name)
+          value = send self.class.preference_default_getter_method(name)
         end
+        convert_preference(value, type)
       end
+
       alias_method prefers_getter_method(name), preference_getter_method(name)
 
       define_method preference_setter_method(name) do |value|
-        # Boolean attributes can come back from forms as '0' or '1'
-        # Convert them to their correct values here
-        if type == :boolean && !value.is_a?(TrueClass) && !value.is_a?(FalseClass)
-          value = value.to_i == 1
-        end
-        preference_store.set preference_cache_key(name), value
+        preference_store.set preference_cache_key(name), convert_preference(value, type)
       end
       alias_method prefers_setter_method(name), preference_setter_method(name)
 
