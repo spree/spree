@@ -23,21 +23,6 @@ module Spree::Preferences::Preferable
     send self.class.preference_setter_method(name), value
   end
 
-  def convert_preference(value, type)
-    case type
-    when :decimal
-      value.to_f
-    when :integer
-      value.to_i
-    when :boolean
-      if !value.is_a?(TrueClass) && !value.is_a?(FalseClass)
-        value = value.to_i == 1
-      else
-        value
-      end
-    end
-  end
-
   def preference_type(name)
     send self.class.preference_type_getter_method(name)
   end
