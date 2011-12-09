@@ -98,7 +98,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def best_selling_variants
-      li = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity) DESC").sum(:quantity, :group => :variant_id, :limit => 5)	
+      li = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity) DESC").group(:variant_id).limit(5).sum(:quantity)	
       variants = li.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1] ]
@@ -107,7 +107,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def top_grossing_variants
-      total_sold_prices = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC").sum("price * quantity", :group => :variant_id, :limit => 5)	
+      total_sold_prices = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC").group(:variant_id).limit(5).sum("price * quantity")
       variants = total_sold_prices.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1]]
@@ -126,14 +126,15 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     def last_five_orders
       orders = Spree::Order.includes(:line_items).where('completed_at IS NOT NULL').order('completed_at DESC').limit(5)
       orders.map do |o|
-        qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
+        qty = o.line_items.inject(0) { |sum,li| sum + li.quantity }
 
         [o.email, qty, o.total]
       end
     end
 
     def biggest_spenders
-      spenders = Spree::Order.sum(:total, :group => :user_id, :limit => 5, :order => 'sum(total) DESC', :conditions => "completed_at IS NOT NULL AND user_id IS NOT NULL")
+      spenders = Spree::Order.where('completed_at IS NOT NULL AND user_id IS NOT NULL').order('SUM(total) DESC').group(:user_id).limit(5).sum(:total)
+      
       spenders = spenders.map do |o|
         orders = Spree::User.find(o[0]).orders
         qty = orders.size
