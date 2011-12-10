@@ -769,14 +769,37 @@ describe Spree::Order do
         context "when prices include tax" do
           before { Spree::Config.set(:prices_inc_tax => true) }
 
-          it "should not create any tax adjustments" do
-            @order.create_tax_charge!
-            Spree::Adjustment.tax.count.should == 0
+          context "when tax_zone is contained with the default tax zone" do
+            before { Spree::Zone.stub_chain :default_tax, :contains? => true }
+
+            it "should not create any tax adjustments" do
+              @order.create_tax_charge!
+              Spree::Adjustment.tax.count.should == 0
+            end
+
+            it "should create exactly one price adjustment" do
+              @order.create_tax_charge!
+              Spree::Adjustment.price.count.should == 1
+            end
           end
 
-          it "should create exactly one price adjustment" do
-            @order.create_tax_charge!
-            Spree::Adjustment.price.count.should == 1
+          context "when tax_zone is not contained within the default tax zone" do
+            before { Spree::Zone.stub_chain :default_tax, :contains? => false }
+
+            it "should not create any price adjustments" do
+              @order.create_tax_charge!
+              Spree::Adjustment.price.count.should == 0
+            end
+
+            it "should create exactly one tax adjustment" do
+              @order.create_tax_charge!
+              Spree::Adjustment.tax.count.should == 1
+            end
+
+            it "should create a negative tax adjustment" do
+              @order.create_tax_charge!
+              Spree::Adjustment.tax.first.amount.should < 0
+            end
           end
         end
       end
@@ -801,15 +824,34 @@ describe Spree::Order do
         context "when prices incude tax" do
           before { Spree::Config.set(:prices_inc_tax => true) }
 
-          it "should not create any tax adjustments" do
-            @order.create_tax_charge!
-            Spree::Adjustment.tax.count.should == 0
+          context "when tax_zone is contained with the default tax zone" do
+            before { Spree::Zone.stub_chain :default_tax, :contains? => true }
+
+            it "should not create any tax adjustments" do
+              @order.create_tax_charge!
+              Spree::Adjustment.tax.count.should == 0
+            end
+
+            it "should create exactly two price adjustments" do
+              @order.create_tax_charge!
+              Spree::Adjustment.price.count.should == 2
+            end
           end
 
-          it "should create exactly two price adjustments" do
-            @order.create_tax_charge!
-            Spree::Adjustment.price.count.should == 2
+          context "when tax_zone is not contained within the default tax zone" do
+            before { Spree::Zone.stub_chain :default_tax, :contains? => false }
+
+            it "should not create any price adjustments" do
+              @order.create_tax_charge!
+              Spree::Adjustment.price.count.should == 0
+            end
+
+            it "should create exactly two tax adjustments" do
+              @order.create_tax_charge!
+              Spree::Adjustment.tax.count.should == 2
+            end
           end
+
         end
       end
 

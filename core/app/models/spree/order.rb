@@ -319,7 +319,9 @@ module Spree
       rates.each do |rate|
         label = "#{rate.calculator.description} #{rate.amount * 100}%"
         if Spree::Config[:prices_inc_tax]
-          line_items.each { |line_item| rate.create_adjustment(label, line_item, line_item, false) }
+          if Zone.default_tax.contains? tax_zone
+            line_items.each { |line_item| rate.create_adjustment(label, line_item, line_item, false) }
+          end
         else
           rate.create_adjustment(label, self, self, true)
         end
