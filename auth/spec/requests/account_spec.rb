@@ -14,8 +14,8 @@ describe "Accounts" do
     end
 
     it "should be able to edit a new user" do
-      pending
-      visit signup_path
+      Spree::Auth::Config.set(:signout_after_password_change => false)
+      visit spree.signup_path
       fill_in "Email", :with => "email@person.com"
       fill_in "Password", :with => "password"
       fill_in "Password Confirmation", :with => "password"
@@ -23,6 +23,12 @@ describe "Accounts" do
 
       click_link "My Account"
       page.should have_content("email@person.com")
+      click_link "Edit"
+      fill_in "Password", :with => "foobar"
+      fill_in "Password Confirmation", :with => "foobar"
+      click_button "Update"
+      page.should have_content("email@person.com")
+      page.should have_content("Account updated!")
     end
 
     it "should be able to edit an existing user account" do

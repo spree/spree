@@ -14,11 +14,12 @@ describe "Checkout", :js => true do
   let!(:address) { Factory(:address, :state => Spree::State.first) }
 
   it "should allow a visitor to checkout as guest, without registration" do
+    Spree::Auth::Config.set(:registration_step => true)
     click_link "RoR Mug"
     click_button "Add To Cart"
     within('h1') { page.should have_content("Shopping Cart") }
     click_link "Checkout"
-    page.should have_content("Registration")
+    page.should have_content("Checkout as a Guest")
 
     within('#guest_checkout') { fill_in "Email", :with => "spree@test.com" }
     click_button "Continue"
@@ -69,8 +70,6 @@ describe "Checkout", :js => true do
   end
 
   it "should allow a user to register during checkout" do
-    pending
-
     click_link "RoR Mug"
     click_button "Add To Cart"
     click_link "Checkout"
