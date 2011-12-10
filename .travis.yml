@@ -1,6 +1,5 @@
 before_install: gem install bundler --pre
 before_script:
-  - "ruby --version"
   - "sh -e /etc/init.d/xvfb start"
   - "bundle exec rake test_app"
 script: "DISPLAY=:99.0 bundle exec rake"
