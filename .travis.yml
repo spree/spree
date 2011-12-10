@@ -1,3 +1,4 @@
+before_install: gem install bundler --pre
 before_script:
   - "ruby --version"
   - "sh -e /etc/init.d/xvfb start"
