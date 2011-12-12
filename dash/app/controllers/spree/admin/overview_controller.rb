@@ -77,7 +77,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
         orders = Spree::Order.select([:created_at, :total]).where(conditions(params))
         orders = orders.group_by { |o| o.created_at.to_date }
         fill_empty_entries(orders, params)
-        orders.keys.sort.map { |key| [key.strftime('%Y-%m-%d'), orders[key].inject(0){ |s, o| s += o.total }] }
+        orders.keys.sort.map { |key| [key.strftime('%Y-%m-%d'), orders[key].inject(0) { |s, o| s += o.total }] }
       end
     end
 
@@ -124,7 +124,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def last_five_orders
-      orders = Spree::Order.includes(:line_items).where('completed_at IS NOT NULL').order('completed_at DESC').limit(5)
+      orders = Spree::Order.includes(:line_items).where(:state => 'complete').order('completed_at DESC').limit(5)
       orders.map do |o|
         qty = o.line_items.inject(0) { |sum, li| sum + li.quantity }
 
@@ -133,7 +133,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     end
 
     def biggest_spenders
-      spenders = Spree::Order.where('completed_at IS NOT NULL AND user_id IS NOT NULL').order('SUM(total) DESC').group(:user_id).limit(5).sum(:total)
+      spenders = Spree::Order.where(['state = ? AND user_id IS NOT NULL', 'complete']).order('SUM(total) DESC').group(:user_id).limit(5).sum(:total)
 
       spenders = spenders.map do |o|
         orders = Spree::User.find(o[0]).orders
