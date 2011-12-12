@@ -69,10 +69,10 @@ h4. How We Prioritize Issues
 Spree is a very large project with lots of activity.  We try our best to respond to all of the questions and issues our users have.  We use the following criteria to prioritize issues:
 
 * Does this bug effect the latest stable release?
-* Is there a patch associated with the issue?
-* Is ther a test included in the patch?
-* Has someone else verified the bug?
 * Are there details on how to reproduce the problem?
+* Is there a patch associated with the issue?
+* Is there a test included in the patch?
+* Has someone else verified the bug?
 
 We give highest priority to issues where the answer is "yes" to all of these questions.  Next highest priority is for issues that answer "yes" to most of these questions, particularly the first few criteria.
 
