@@ -71,7 +71,7 @@ Spree will process all payments once the checkout is complete by calling +Paymen
 
 INFO: +Payments+ are put in the 'processing' state when the user submits the order.  Once in this state the payment cannot be processed again.  This prevents double authorization for credit cards and other potential problems.
 
-Lets look more closely at the lgoic that results from a call to +process!+ with a credit card payment:
+Lets look more closely at the logic that results from a call to +process!+ with a credit card payment:
 
 <ruby>
   def process!(payment)
