@@ -8,11 +8,11 @@ Spree is an open source project.  Anyone can use the code, but more importantly,
 
 endprologue.
 
-h3. Who can Contribute?
+h3. Who can contribute?
 
 Spree is an open source project and as such contributions are always welcome.  Our community is one which encourages involvement from all developers regardless of their ability level.  We ask that you be patient with the other members of the community and maintain a respectful attitude towards other people's work.  Open source is a great way to learn a new technology so don't be afraid to jump right in, even if you are new to Ruby/Rails.
 
-h3. Before you Contribute
+h3. Before you contribute
 
 Open source projects tend to be a collaborative effort.  Since many people are relying upon Spree for their real world applications, changes to the code can have major implications.  Before you write a bug fix or code a new feature, you should find out if anybody is interested in your proposed change.  You may find that the thing you're trying to "fix" is actually desired behavior.  You might also discover that someone else is working on it.  Either way you can save yourself valuable time by announcing your intentions before starting work.
 
