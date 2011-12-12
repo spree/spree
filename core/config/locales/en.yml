@@ -37,7 +37,7 @@ en:
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
-      spreee/creditcard:
+      spree/creditcard:
         cc_type: Type
         month: Month
         number: Number
