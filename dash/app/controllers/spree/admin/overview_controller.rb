@@ -8,7 +8,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     @show_dashboard = show_dashboard
     return unless @show_dashboard
 
-    p = {:from => (Time.new().to_date  - 1.week).to_s(:db), :value => "Count"}
+    p = { :from => (Time.new().to_date - 1.week).to_s(:db), :value => 'Count' }
     @orders_by_day = orders_by_day(p)
     @orders_line_total = orders_line_total(p)
     @orders_total = orders_total(p)
@@ -22,24 +22,24 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     @out_of_stock_products = out_of_stock_products
     @best_selling_taxons = best_selling_taxons
 
-    @pie_colors = [ '#0093DA', '#FF3500', '#92DB00', '#1AB3FF', '#FFB800']
+    @pie_colors = ['#0093DA', '#FF3500', '#92DB00', '#1AB3FF', '#FFB800']
   end
 
   def get_report_data
     opts = case params[:name]
-      when '7_days' then {:from => (Time.new().to_date - 1.week).to_s(:db)}
-      when '14_days' then {:from => (Time.new().to_date - 2.week).to_s(:db)}
-      when 'this_month' then {:from => Date.new(Time.now.year, Time.now.month, 1).to_s(:db), :to => Date.new(Time.now.year, Time.now.month, -1).to_s(:db)}
-      when 'last_month' then {:from => (Date.new(Time.now.year, Time.now.month, 1) - 1.month).to_s(:db), :to => (Date.new(Time.now.year, Time.now.month, -1) - 1.month).to_s(:db)}
-      when 'this_year' then {:from => Date.new(Time.now.year, 1, 1).to_s(:db)}
-      when 'last_year' then {:from => Date.new(Time.now.year - 1, 1, 1).to_s(:db), :to => Date.new(Time.now.year - 1, 12, -1).to_s(:db)}
+      when '7_days'     then { :from => (Time.new().to_date - 1.week).to_s(:db) }
+      when '14_days'    then { :from => (Time.new().to_date - 2.week).to_s(:db) }
+      when 'this_month' then { :from => Date.new(Time.now.year, Time.now.month, 1).to_s(:db), :to => Date.new(Time.now.year, Time.now.month, -1).to_s(:db) }
+      when 'last_month' then { :from => (Date.new(Time.now.year, Time.now.month, 1) - 1.month).to_s(:db), :to => (Date.new(Time.now.year, Time.now.month, -1) - 1.month).to_s(:db) }
+      when 'this_year'  then { :from => Date.new(Time.now.year, 1, 1).to_s(:db) }
+      when 'last_year'  then { :from => Date.new(Time.now.year - 1, 1, 1).to_s(:db), :to => Date.new(Time.now.year - 1, 12, -1).to_s(:db) }
     end
 
     case params[:report]
       when 'orders_by_day'
         opts[:value] = params[:value]
 
-        render :js => "[[" + orders_by_day(opts).map { |day| "['#{day[0]}',#{day[1]}]" }.join(",") + "]]"
+        render :js => '[[' + orders_by_day(opts).map { |day| "['#{day[0]}',#{day[1]}]" }.join(',') + ']]'
       when 'orders_totals'
         render :js => [:orders_total => orders_total(opts).to_i, :orders_line_total => orders_line_total(opts).to_i,
           :orders_adjustment_total => orders_adjustment_total(opts).to_i, :orders_credit_total => orders_credit_total(opts).to_i ].to_json
@@ -72,12 +72,12 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
         orders = Spree::Order.select(:created_at).where(conditions(params))
         orders = orders.group_by { |o| o.created_at.to_date }
         fill_empty_entries(orders, params)
-        orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].size ]}
+        orders.keys.sort.map { |key| [key.strftime('%Y-%m-%d'), orders[key].size] }
       else
         orders = Spree::Order.select([:created_at, :total]).where(conditions(params))
         orders = orders.group_by { |o| o.created_at.to_date }
         fill_empty_entries(orders, params)
-        orders.keys.sort.map {|key| [key.strftime('%Y-%m-%d'), orders[key].inject(0){|s,o| s += o.total} ]}
+        orders.keys.sort.map { |key| [key.strftime('%Y-%m-%d'), orders[key].inject(0){ |s, o| s += o.total }] }
       end
     end
 
@@ -101,19 +101,19 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
       li = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity) DESC").group(:variant_id).limit(5).sum(:quantity)	
       variants = li.map do |v|
         variant = Spree::Variant.find(v[0])
-        [variant.name, v[1] ]
+        [variant.name, v[1]]
       end
-      variants.sort { |x,y| y[1] <=> x[1] }
+      variants.sort { |x, y| y[1] <=> x[1] }
     end
 
     def top_grossing_variants
-      total_sold_prices = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC").group(:variant_id).limit(5).sum("price * quantity")
+      total_sold_prices = Spree::LineItem.includes(:order).where("#{Spree::Order.table_name}.state = 'complete'").order("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC").group(:variant_id).limit(5).sum('price * quantity')
       variants = total_sold_prices.map do |v|
         variant = Spree::Variant.find(v[0])
         [variant.name, v[1]]
       end
 
-      variants.sort { |x,y| y[1] <=> x[1] }
+      variants.sort { |x, y| y[1] <=> x[1] }
     end
 
     def best_selling_taxons
@@ -126,7 +126,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
     def last_five_orders
       orders = Spree::Order.includes(:line_items).where('completed_at IS NOT NULL').order('completed_at DESC').limit(5)
       orders.map do |o|
-        qty = o.line_items.inject(0) { |sum,li| sum + li.quantity }
+        qty = o.line_items.inject(0) { |sum, li| sum + li.quantity }
 
         [o.email, qty, o.total]
       end
@@ -134,7 +134,7 @@ class Spree::Admin::OverviewController < Spree::Admin::BaseController
 
     def biggest_spenders
       spenders = Spree::Order.where('completed_at IS NOT NULL AND user_id IS NOT NULL').order('SUM(total) DESC').group(:user_id).limit(5).sum(:total)
-      
+
       spenders = spenders.map do |o|
         orders = Spree::User.find(o[0]).orders
         qty = orders.size
