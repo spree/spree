@@ -14,6 +14,41 @@ describe Spree::Address do
     it { should validate_presence_of(:phone) }
   end
 
+  describe "clone" do
+    it "creates a copy of the address with the exception of the id, updated_at and created_at attributes" do
+      original = Factory(:address,
+                         :address1 => 'address1',
+                         :address2 => 'address2',
+                         :alternative_phone => 'alternative_phone',
+                         :city => 'city',
+                         :country_id => 1,
+                         :firstname => 'firstname',
+                         :lastname => 'lastname',
+                         :phone => 'phone',
+                         :state_id => 2,
+                         :state_name => 'state_name',
+                         :zipcode => 'zip_code')
+
+      cloned = original.clone
+
+      cloned.address1.should == original.address1
+      cloned.address2.should == original.address2
+      cloned.alternative_phone.should == original.alternative_phone
+      cloned.city.should == original.city
+      cloned.country_id.should == original.country_id
+      cloned.firstname.should == original.firstname
+      cloned.lastname.should == original.lastname
+      cloned.phone.should == original.phone
+      cloned.state_id.should == original.state_id
+      cloned.state_name.should == original.state_name
+      cloned.zipcode.should == original.zipcode
+
+      cloned.id.should_not == original.id
+      cloned.created_at.should_not == original.created_at
+      cloned.updated_at.should_not == original.updated_at
+    end
+  end
+
   context "validation" do
     before do
       reset_spree_preferences do |config|

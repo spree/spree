@@ -96,7 +96,7 @@ module Spree
     end
 
     def clone
-      new(self.attributes.except('id', 'updated_at', 'created_at'))
+      self.class.new(self.attributes.except('id', 'updated_at', 'created_at'))
     end
 
     def ==(other_address)
