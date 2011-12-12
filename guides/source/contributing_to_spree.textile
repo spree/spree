@@ -22,11 +22,11 @@ One of the best places for communication is the "spree-user mailing list":http:/
 
 h4. IRC
 
-There is a #spree chat room on IRC.  Sometimes the core contributors hang out there and you can get some feedback on your idea.
+There is a #spree chat room on the irc.freenode.net network. Sometimes the core contributors hang out there and you can get some feedback on your idea.
 
-WARNING: The #spree chat room is not monitored as carefully as the mailing list.  Sometimes you'll get lucky and someone will answer your question but we can't provide real time responses to everyone with a question/problem/idea.  The mailing list is a much better way to communicate (and it gives everyone the chance to provide a thoughtful response.)
+WARNING: The #spree chat room is not monitored as carefully as the mailing list.  Sometimes you'll get lucky and someone will answer your question but we can't provide real time responses to everyone with a question/problem/idea.  The mailing list is a much better way to communicate, and it gives everyone the chance to provide a thoughtful response. It's also more permanent than anything discussed on IRC.
 
-h4. Notification via Ticket
+h4. Notification via GitHub Issues
 
 You can also search existing bug reports/issues and file a new one if you do not find an issue relevant to your proposed change.  See "Filing an Issue":#filing-an-issue for more details.
 
