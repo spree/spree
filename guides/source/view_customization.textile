@@ -191,7 +191,7 @@ Sometimes the customization required to a view are so substantial that using a D
 
 To override any of Spree’s default views including those for the admin interface, simply create a file with the same filename in your app/views directory.
 
-For example, to override the main layout, create the file YOUR_SITE_OR_EXTENSION/app/views/layouts/spree_application.html.erb
+For example, to override the main layout, create the file YOUR_SITE_OR_EXTENSION/app/views/spree/layouts/spree_application.html.erb
 
 INFO: It's important to ensure you copy the correct version of a view into your application or extension, as copying a mismatched version could lead to hard to debug issues. We suggest using <tt>bundle show spree</tt> to get location of the Spree code your actually running and then copying the relevant file from there.
 
