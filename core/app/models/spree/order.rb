@@ -189,7 +189,7 @@ module Spree
       end
     end
 
-    before_validation :clone_billing_address, :if => '@use_billing'
+    before_validation :clone_billing_address, :if => :use_billing?
     attr_accessor :use_billing
 
     def clone_billing_address
@@ -533,6 +533,10 @@ module Spree
             Spree::InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
           end
         end
+      end
+
+      def use_billing?
+        @use_billing == true || @use_billing == "true" || @use_billing == "1"
       end
   end
 end
