@@ -795,11 +795,6 @@ describe Spree::Order do
               @order.create_tax_charge!
               Spree::Adjustment.tax.count.should == 1
             end
-
-            it "should create a negative tax adjustment" do
-              @order.create_tax_charge!
-              Spree::Adjustment.tax.first.amount.should < 0
-            end
           end
         end
       end

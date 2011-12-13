@@ -29,11 +29,21 @@ module Spree
         # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
         # By default the adjustment will not be considered mandatory
         def create_adjustment(label, target, calculable, mandatory=false)
-          a = target.adjustments.create(:amount => compute_amount(calculable),
-                                        :source => calculable,
-                                        :originator => self,
-                                        :label => label,
-                                        :mandatory => mandatory)
+          target.adjustments.create(:amount => compute_amount(calculable),
+                                    :source => calculable,
+                                    :originator => self,
+                                    :label => label,
+                                    :mandatory => mandatory)
+        end
+
+        # Creates a "reverse adjustment" using calculable. You can use this to explicitly offset a
+        # previously calculated adjustment.
+        def reverse_adjustment(label, target, calculable)
+          target.adjustments.create(:amount => (-1)*compute_amount(calculable),
+                                    :source => calculable,
+                                    :originator => self,
+                                    :label => label,
+                                    :mandatory => false)
         end
 
         # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
