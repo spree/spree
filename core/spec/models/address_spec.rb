@@ -16,6 +16,7 @@ describe Spree::Address do
 
   describe "clone" do
     it "creates a copy of the address with the exception of the id, updated_at and created_at attributes" do
+      state = Factory(:state)
       original = Factory(:address,
                          :address1 => 'address1',
                          :address2 => 'address2',
@@ -25,8 +26,8 @@ describe Spree::Address do
                          :firstname => 'firstname',
                          :lastname => 'lastname',
                          :phone => 'phone',
-                         :state_id => 2,
-                         :state_name => 'state_name',
+                         :state_id => state.id,
+                         :state_name => state.name,
                          :zipcode => 'zip_code')
 
       cloned = original.clone
