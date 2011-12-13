@@ -4,6 +4,7 @@ describe Spree::TaxRate do
 
   context 'validation' do
     it { should have_valid_factory(:tax_rate) }
+    it { should validate_presence_of(:tax_category_id) }
   end
 
   context "match" do
