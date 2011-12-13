@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.author      = 'Sean Schofield'
   s.email       = 'sean@railsdog.com'
   s.homepage    = 'http://spreecommerce.com'
-  s.rubyforge_project = 'spree_sample'
 
   s.files        = Dir['LICENSE', 'README.md', 'lib/**/*', 'db/**/*']
   s.require_path = 'lib'
