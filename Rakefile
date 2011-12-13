@@ -89,7 +89,8 @@ namespace :gem do
       cmd = "cd #{gem_name} && bundle exec rake gem"; puts cmd; system cmd
       cmd = "cd #{gem_name}/pkg && gem install spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
     end
-    FileUtils.rm_rf("#{gem_name}/pkg")
+    puts "Deleting pkg directory"
+    FileUtils.rm_rf("pkg")
     cmd = "bundle exec rake gem"; puts cmd; system cmd
     cmd = "gem install pkg/spree-#{version}.gem"; puts cmd; system cmd
   end
