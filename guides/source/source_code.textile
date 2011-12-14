@@ -41,13 +41,15 @@ If you would like to keep up to date on changes to the source you can subscribe 
 
 h3. Bundler
 
-Spree uses the very excellent "bundler":http://gembundler.com/ gem to manage its dependencies.  We are assuming you have basic familiarity with bundler.  A detailed explanation of bundler is beyond the scope of this guide.
+Spree uses the very excellent "bundler":http://gembundler.com/ gem to manage its dependencies.  We are assuming you have basic familiarity with bundler.  A detailed explanation of bundler can be found on "Bundler's site":http://gembundler.com/.
 
-You can install the gem dependencies using bundler as follows:
+You can install the gem dependencies for Spree after cloning the repository using this Bundler-provided command:
 
 <shell>
   $ bundle install
 </shell>
+
+This allows you to quickly and painlessly have the exact gem depedencies you need to work with Bundler.
 
 h3. Layout and Structure
 
