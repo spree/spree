@@ -28,7 +28,7 @@ module Spree
             end
           end
 
-          #Remove in 0.80.0
+          #TODO: Remove in 1.0
           def self.register(*args)
             ActiveSupport::Deprecation.warn("Calculator registration has changed, add your calculator to the relevant Rails.application.config.spree.calculators collection.", caller)
           end
