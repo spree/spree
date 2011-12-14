@@ -165,8 +165,6 @@ This will effectively use the latest code from the Git repository at the time yo
   $ bundle update
 </shell>
 
-NOTE: Heroku now supports "git-based" gems.  This means you can work with the latest version of Spree without having to build a gem or use git submodules (which were not supported.)
-
 h4. Developing on the "Edge"
 
 If you plan on using the edge code but also contributing back to Spree, then you may be interested in the following approach.  Create your Rails app that will be using the Spree gem in a directory that has the same parent as a locally cloned version of the Spree source.  Then simply use the following in your Gemfile.
