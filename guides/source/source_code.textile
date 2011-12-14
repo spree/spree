@@ -125,24 +125,24 @@ To run this Rake task, go into the root of the Spree project and run this comman
   $ bundle exec rake sandbox
 </shell>
 
-This will create a barebones rails application configured with the Spree gem.  It runs the migrations for you and sets up the sample data.  The resulting +sandbox+ folder is already ignored by +.gitignore+ and it is deleted and rebuilt from scratch each time the rake task runs.
+This will create a barebones rails application configured with the Spree gem.  It runs the migrations for you and sets up the sample data.  The resulting +sandbox+ folder is already ignored by +.gitignore+ and it is deleted and rebuilt from scratch each time the Rake task runs.
 
 h3. Building the Gem from the Source
 
-The Spree gem can easily be built from the source.
+The Spree gem can easily be built from the source. Run these two commands in the root of the Spree project to do this:
 
 <shell>
   $ bundle exec rake clean
   $ bundle exec rake gem
 </shell>
 
-Most likely you will want to build and install of the related gems.  Fortunately there is a simple rake task for that.
+Most likely you will want to build and install of the related gems.  Fortunately there is a simple Rake task for that.
 
 <shell>
-$bundle exec rake gem:install
+  $ bundle exec rake gem:install
 </shell>
 
-You can also build just one specific gem
+You can also build just one specific gem.
 
 <shell>
   $ cd core
