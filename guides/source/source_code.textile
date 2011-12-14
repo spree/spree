@@ -86,10 +86,10 @@ All of these elements can be overridden in the main Rails application.  Therefor
 
 h5. Simple Distribution and Installation as Gems
 
-Using a Spree gem is as simple as adding it to your +Gemfile+ (ie. very simple)
+Using a Spree gem is as simple as adding it to your +Gemfile+:
 
 <shell>
-  gem 'spree_core', '0.70.2'
+  gem 'spree_core', '0.70.3'
 </shell>
 
 Distribution of Spree (and its extensions) is also consistent with Rails standards and modularity (see next.)
