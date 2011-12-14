@@ -96,7 +96,7 @@ Distribution of Spree (and its extensions) is also consistent with Rails standar
 
 h5. Consistency With a Rails Standard
 
-Prior to version 0.30.0, Spree used a complex custom mechanism for implementing "engine-like" functionality.  While it was difficult to strip this functionality out of Spree the benefits are well worth it.  Spree will now receive all of the massive testing and attention to detail that comes for free when using the Rails core.
+Prior to version 0.30.0, Spree used a complex custom mechanism for implementing "engine-like" functionality.  While it was difficult to strip this functionality out of Spree, the benefits are well worth it.  Spree now receives all of the massive testing and attention to detail that comes for free when using the Rails core engine functionality, rather than a custom solution.
 
 h5. Modularity
 
