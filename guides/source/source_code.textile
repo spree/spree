@@ -32,7 +32,7 @@ There are some well developed Git clients for Windows now. If you are on a Windo
 
 h4. SVN
 
-There are no immediate plans to support SVN clients. Since most of the Rails community is using git SVN support is not really a priority.
+There are no immediate plans to support SVN clients. Since most of the Rails community is using git, SVN support is not really a priority.
 
 h4. Monitoring Changes in the Source
 
