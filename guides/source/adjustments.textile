@@ -100,7 +100,7 @@ The core calculators for Spree are stored in the +app/models/spree/calculator+ d
 
 Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
 
-Spree itself contains a good example of how this can be achieved.  For instance, in the +spree_core+ gem there is logic to register calculators.  The following code can be found in the Rails +spree.register.calculators+ initializer defined in +spree/core/lib/spree_core/railtie.rb+:
+Spree itself contains a good example of how this can be achieved.  For instance, in the +spree_core+ gem there is logic to register calculators.  The following code can be found in the Rails +spree.register.calculators+ initializer defined in +spree/core/lib/spree/core/engine.rb+:
 
 <ruby>
 initializer "spree.register.calculators" do |app|
