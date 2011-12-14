@@ -102,7 +102,18 @@ h5. Modularity
 
 There are differing opinions on what belongs in the "core."  People are often expressing their opinion that Spree is either "getting too fat" or "lacks basic features."  By relying on these engines (and distributing them as gems), developers are free to use only the parts of Spree that they find useful.  For instance, this would allow you to omit promotions functionality or to replace the authentication mechanism.
 
-WARNING: The engine architecture is a work in progress.  Some of the modularity described above is theoretical and yet to be tested in a real world application.  Expect minor difficulties if you decide to use a subset of the Spree gems (although we would gladly work with you to resolve them.)
+For instance, if you were to specify something like this in your application's +Gemfile+:
+
+<ruby>
+  gem 'spree', '0.70.3'
+</ruby>
+
+It would require all the individual parts of Spree. However, if you only wanted to require the "core" and "promo" parts of Spree, you would do this:
+
+<ruby>
+  gem 'spree_core', '0.70.3'
+  gem 'spree_promo', '0.70.3'
+</ruby>
 
 h3. Building a Sandbox Application
 
