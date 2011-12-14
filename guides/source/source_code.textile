@@ -117,7 +117,9 @@ It would require all the individual parts of Spree. However, if you only wanted 
 
 h3. Building a Sandbox Application
 
-When working with the Spree source you may find yourself wanting to see how the code performs in the context of an actual application.  This is due to the fact that Spree is intended to be distributed as a gem and is not designed to be run as a standalone application.  Spree includes a helpful rake task for setting up such a test application.
+When working with the Spree source you may find yourself wanting to see how the code performs in the context of an actual application.  This is due to the fact that Spree is intended to be distributed as a gem and is not designed to be run as a standalone application.  Spree includes a helpful Rake task for setting up such a test application.
+
+To run this Rake task, go into the root of the Spree project and run this command:
 
 <shell>
   $ bundle exec rake sandbox
