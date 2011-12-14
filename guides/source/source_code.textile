@@ -177,9 +177,12 @@ NOTE: See the excellent "bundler documentation":http://gembundler.com for more d
 
 h4. Creating Extensions
 
-Spree provides a convenient generator for helping you to get started with extensions.  Please see the "Creating Extensions":/creating_extensions.html guide for more details.
+Spree provides a convenient generator for helping you to get started with extensions. 
 
 <shell>
 $ spree extension foo
 </shell>
+
+Please see the "Creating Extensions":/creating_extensions.html guide for more details.
+
 <!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
