@@ -18,13 +18,13 @@ The authoritative git repository is hosted by "GitHub":http://github.com/ and is
 $ git clone git://github.com/spree/spree.git
 </shell>
 
-INFO: If you are planning on contributing to Spree you should create a fork through Git Hub and push fixes to clearly labelled branches (see the "Contributors Guide":contributing_to_spree.html for details.)
+INFO: If you are planning on contributing to Spree you should create a fork through GitHub and push fixes to clearly labelled branches (see the "Contributors Guide":contributing_to_spree.html for details.)
 
 NOTE: If the official GitHub repo is down you can try our mirror at "repo.or.cz":http://repo.or.cz
 
 h4. Browsing the Repository and/or Downloading the Source Code
 
-You can easily browse the repository through Git Hub's excellent "visual interface":http://github.com/spree/spree/tree/master. Git Hub also contains a link to download a tarball copy of the latest source code as well as links to "previous versions":http://github.com/spree/spree/downloads.
+You can easily browse the repository through GitHub's excellent "visual interface":http://github.com/spree/spree/tree/master. GitHub also contains a link to download a tarball copy of the latest source code as well as links to "previous versions":http://github.com/spree/spree/downloads.
 
 h4. Git on Windows
 
