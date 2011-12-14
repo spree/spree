@@ -96,7 +96,7 @@ end
 
 h4. Registration
 
-The core calculators for Spree are stored in the +app/models/calculator+ directory.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://spreecommerce.com/extensions written by members of the Spree community.
+The core calculators for Spree are stored in the +app/models/spree/calculator+ directory.  There are several calculators included that meet many of the standard store owner needs.  Developers are encouraged to write their own "extensions":extensions.html to supply additional functionality or to consider using a "third party extension":http://spreecommerce.com/extensions written by members of the Spree community.
 
 Calculators need to be "registered" with Spree in order to be made available in the admin interface for various configuration options.  The recommended approach for doing this is via an extension.  Custom calculators will typically be written as extensions so you need to add some registration logic to the extension containing the calculator.  This will allow the calculator to do a one time registration during the standard extension activation process.
 
