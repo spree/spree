@@ -11,7 +11,7 @@ describe Spree::Preferences::Preferable do
         @id = rand(999)
       end
 
-      preference :color, :string, :default => :green
+      preference :color, :string, :default => :green, :description => "My Favorite Color"
     end
 
     class B < A
@@ -21,7 +21,9 @@ describe Spree::Preferences::Preferable do
 
   before :each do
     @a = A.new
+    @a.stub(:persisted? => true)
     @b = B.new
+    @b.stub(:persisted? => true)
   end
 
   describe "preference definitions" do
@@ -45,6 +47,34 @@ describe Spree::Preferences::Preferable do
       @a.has_preference?(:color).should be_true
       @a.has_preference?(:bad).should be_false
     end
+
+    it "can be asked and raises" do
+      lambda {
+        @a.has_preference! :flavor
+      }.should raise_error(NoMethodError, "flavor preference not defined")
+    end
+
+    it "has a type" do
+      @a.preferred_color_type.should eq :string
+      @a.preference_type(:color).should eq :string
+    end
+
+    it "has a default" do
+      @a.preferred_color_default.should eq :green
+      @a.preference_default(:color).should eq :green
+    end
+
+    it "has a description" do
+      @a.preferred_color_description.should eq "My Favorite Color"
+      @a.preference_description(:color).should eq "My Favorite Color"
+    end
+
+    it "raises if not defined" do
+      lambda {
+        @a.get_preference :flavor
+      }.should raise_error(NoMethodError, "flavor preference not defined")
+    end
+
   end
 
   describe "preference access" do
