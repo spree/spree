@@ -854,6 +854,8 @@ describe Spree::Order do
     let(:zone) { Factory :zone }
 
     context "when no zones exist" do
+      before { Spree::Zone.destroy_all }
+
       it "should return nil" do
         order.tax_zone.should be_nil
       end
