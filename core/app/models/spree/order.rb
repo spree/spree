@@ -17,8 +17,6 @@ module Spree
     has_many :return_authorizations, :dependent => :destroy
     has_many :adjustments, :as => :adjustable, :dependent => :destroy
 
-    users_table_name = Spree::User.table_name
-
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
     accepts_nested_attributes_for :ship_address
@@ -43,7 +41,7 @@ module Spree
 
     scope :by_number, lambda { |number| where(:number => number) }
     scope :between, lambda { |*dates| where('created_at BETWEEN ? AND ?', dates.first.to_date, dates.last.to_date) }
-    scope :by_customer, lambda { |customer| joins(:user).where("#{users_table_name}.email = ?", customer) }
+    scope :by_customer, lambda { |customer| joins(:user).where("#{Spree::User.table_name}.email = ?", customer) }
     scope :by_state, lambda { |state| where(:state => state) }
     scope :complete, where('completed_at IS NOT NULL')
     scope :incomplete, where(:completed_at => nil)
