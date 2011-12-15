@@ -3,8 +3,9 @@ module Spree::Preferences
 
     def preference(name, type, *args)
       options = args.extract_options!
-      options.assert_valid_keys(:default)
+      options.assert_valid_keys(:default, :description)
       default = options[:default]
+      description = options[:description] || name
 
       define_method preference_getter_method(name) do
         if preference_store.exist? preference_cache_key(name)
@@ -33,6 +34,9 @@ module Spree::Preferences
         type
       end
 
+      define_method preference_description_getter_method(name) do
+        description
+      end
     end
 
     def remove_preference(name)
@@ -42,6 +46,7 @@ module Spree::Preferences
       remove_method prefers_setter_method(name) if method_defined? prefers_setter_method(name)
       remove_method preference_default_getter_method(name) if method_defined? preference_default_getter_method(name)
       remove_method preference_type_getter_method(name) if method_defined? preference_type_getter_method(name)
+      remove_method preference_description_getter_method(name) if method_defined? preference_description_getter_method(name)
     end
 
     def preference_getter_method(name)
@@ -66,6 +71,10 @@ module Spree::Preferences
 
     def preference_type_getter_method(name)
       "preferred_#{name}_type".to_sym
+    end
+
+    def preference_description_getter_method(name)
+      "preferred_#{name}_description".to_sym
     end
 
   end
