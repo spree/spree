@@ -14,17 +14,6 @@ describe Spree::TaxCategory do
     end
   end
 
-  context 'before_save' do
-    let!(:tax_category1) { Factory(:tax_category, :is_default => true) }
-    let!(:tax_category2) { Factory(:tax_category, :is_default => true, :name => 'Sports') }
-    it "tax_category1 should not be default" do
-      tax_category1.reload.is_default.should be_false
-    end
-    it "tax_category2 should be default" do
-      tax_category2.reload.is_default.should be_true
-    end
-  end 
- 
   context 'effective_amount' do
     let(:rate) { Factory :tax_rate, :amount => 0.1}
     let(:category) { Factory :tax_category, :tax_rates => [rate] }
