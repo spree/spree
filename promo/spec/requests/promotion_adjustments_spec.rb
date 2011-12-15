@@ -22,9 +22,10 @@ describe "Promotion Adjustments" do
     let!(:address) { Factory(:address, :state => Spree::State.first) }
 
     it "should allow an admin to create a flat rate discount coupon promo" do
+      pending
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "100"
-      select "Coupon code added", :with => "Event"
+      select "Coupon code added", :from => "Event"
       fill_in "Code", :with => "ORDER_38"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -61,6 +62,7 @@ describe "Promotion Adjustments" do
     end
 
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
+      pending
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "1"
       select "Coupon code added", :from => "Event"
