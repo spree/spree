@@ -1,3 +1,4 @@
+# Adjustments represent a change to the +item_total+ of an Order.  Each adjustment has an +amount+ that be either
 # positive or negative.  Adjustments have two useful boolean flags
 #
 # +mandatory+
