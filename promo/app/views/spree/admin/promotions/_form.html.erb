@@ -11,9 +11,9 @@
     <%= f.select :event_name, Spree::Activator.event_names.map{|name| [t("events.#{name}"), name] } %>
   <% end %>
 
-  <%= f.field_container :preferred_code do %>
-    <%= f.label :preferred_code, t(:code) %><br />
-    <%= f.text_field :preferred_code %>
+  <%= f.field_container :code do %>
+    <%= f.label :code, t(:code) %><br />
+    <%= f.text_field :code %>
   <% end %>
 
   <%= f.field_container :description do %>
@@ -21,9 +21,9 @@
     <%= f.text_area :description, :style => 'height:50px;' %>
   <% end %>
 
-  <%= f.field_container :preferred_advertise do %>
-    <%= f.check_box :preferred_advertise %>
-    <%= f.label :preferred_advertise, t(:advertise) %>
+  <%= f.field_container :advertise do %>
+    <%= f.check_box :advertise %>
+    <%= f.label :advertise, t(:advertise) %>
   <% end %>
 
 </fieldset>
@@ -31,8 +31,8 @@
 <fieldset id="expiry_fields">
   <legend><%= t(:expiry) %></legend>
   <p>
-    <%= f.label :preferred_usage_limit, t(:usage_limit) %><br />
-    <%= f.text_field :preferred_usage_limit %>
+    <%= f.label :usage_limit, t(:usage_limit) %><br />
+    <%= f.text_field :usage_limit %>
   </p>
 
   <p id="starts_at_field">

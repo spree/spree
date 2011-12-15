@@ -20,6 +20,8 @@ module Spree
     alias_method :actions, :promotion_actions
     accepts_nested_attributes_for :promotion_actions
 
+    after_create :update_preferences
+
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
     def save_rules_and_actions
@@ -29,12 +31,29 @@ module Spree
     validates :name, :presence => true
     validates :preferred_code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
 
+    %w(usage_limit match_policy code advertise).each do |pref|
+      method_name = pref.to_sym
+      define_method method_name do
+        get_preference(pref.to_sym)
+      end
+
+      method_name = "#{pref}=".to_sym
+      define_method method_name do |value|
+        unless new_record?
+          pref = value
+        else
+          @preferences_hash ||= {}
+          @preferences_hash[pref.to_sym] = value
+        end
+      end
+    end
+
     class << self
       def advertised
         #TODO this is broken because the new preferences aren't a direct relationship returning
         #all for now
         where(true)
-        #includes(:stored_preferences) 
+        #includes(:stored_preferences)
         #includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
       end
     end
@@ -94,6 +113,18 @@ module Spree
 
     def credits_count
       credits.count
+    end
+
+
+    private
+
+    def update_preferences
+      if @preferences_hash.present? && !@preferences_hash.empty?
+        @preferences_hash.each do |key, value|
+          pref_key = "spree/promotion/#{key}/#{self.id}"
+          Spree::Preference.create(:value => value, :key => pref_key)
+        end
+      end
     end
   end
 end
