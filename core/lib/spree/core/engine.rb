@@ -67,6 +67,7 @@ module Spree
             Spree::Gateway::SagePay,
             Spree::Gateway::Beanstream,
             Spree::Gateway::Braintree,
+            Spree::Gateway::Stripe,
             Spree::PaymentMethod::Check ]
       end
 
