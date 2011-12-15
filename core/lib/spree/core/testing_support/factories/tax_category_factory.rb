@@ -4,7 +4,7 @@ FactoryGirl.define do
     description { Faker::Lorem.sentence }
 
     after_create do |tax_category|
-      tax_category.tax_rates.create!(:amount => 0.05, :calculator => Spree::Calculator::Vat.new, :zone => Spree::Zone.global)
+      tax_category.tax_rates.create!(:amount => 0.05, :calculator => Spree::Calculator::DefaultTax.new, :zone => Spree::Zone.global)
     end
   end
 end

@@ -53,8 +53,7 @@ module Spree
             Spree::Calculator::PriceBucket]
 
          app.config.spree.calculators.tax_rates = [
-            Spree::Calculator::SalesTax,
-            Spree::Calculator::Vat]
+            Spree::Calculator::DefaultTax]
       end
 
       initializer "spree.register.payment_methods" do |app|

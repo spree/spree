@@ -148,7 +148,7 @@ describe Spree::Order do
        end
     end
     context "when current state is address" do
-      let(:sales_tax) { mock_model Spree::Calculator::SalesTax, :description => "Sales Tax" }
+      let(:sales_tax) { mock_model Spree::Calculator::DefaultTax, :description => "Sales Tax" }
       let(:rate) { mock_model Spree::TaxRate, :amount => 10, :calculator => sales_tax }
       let(:rate_1) { mock_model Spree::TaxRate, :amount => 15, :calculator => sales_tax }
 
