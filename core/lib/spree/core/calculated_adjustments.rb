@@ -29,7 +29,10 @@ module Spree
         # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
         # By default the adjustment will not be considered mandatory
         def create_adjustment(label, target, calculable, mandatory=false)
-          target.adjustments.create(:amount => compute_amount(calculable),
+          amount = compute_amount(calculable)
+          return if amount == 0 && !mandatory
+
+          target.adjustments.create(:amount => amount,
                                     :source => calculable,
                                     :originator => self,
                                     :label => label,

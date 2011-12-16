@@ -35,6 +35,26 @@ describe Spree::Core::CalculatedAdjustments do
       adjustment.should be_mandatory
     end
 
+    context "when the calculator returns 0" do
+      before { calculator.stub :compute => 0 }
+
+      context "when adjustment is mandatory" do
+        before { tax_rate.create_adjustment("foo", target, order, true) }
+
+        it "should create an adjustment" do
+          Spree::Adjustment.count.should == 1
+        end
+      end
+
+      context "when adjustment is not mandatory" do
+        before { tax_rate.create_adjustment("foo", target, order, false) }
+
+        it "should not create an adjustment" do
+          Spree::Adjustment.count.should == 0
+        end
+      end
+    end
+
   end
 
   context "#update_adjustment" do
