@@ -7,7 +7,7 @@
     <% next if labels.empty? %>
     <div class="navigation" data-hook="navigation">
       <span class="category"> <%= filter[:name] %> </span>
-      <ul style="list-style-type:none; padding-left:0px;" class="filter_choices">
+      <ul class="filter_choices">
         <% labels.each do |nm,val| %>
           <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
           <li class="nowrap">

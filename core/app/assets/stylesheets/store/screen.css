@@ -90,6 +90,11 @@ div#product-images { width: 50%; }
 div#product-images, div#main-image, div#cart-form { float: left; }
 div#product-description { float: none; clear: both; }
 
+ul.filter_choices {
+  list-style-type:none;
+  padding-left:0px;
+}
+
 ul.thumbnails, #breadcrumbs ul {
   margin: 0;
   padding: 0;
