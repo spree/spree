@@ -12,12 +12,17 @@ describe Spree::Zone do
 
   context "#match" do
     let(:country_zone) { Spree::Zone.create :name => "CountryZone" }
-    let(:country) { Factory :country }
+    let(:country) do
+      country = Factory(:country)
+      # Create at least one state for this country
+      state = Factory(:state, :country => country)
+      country
+    end
 
     before { country_zone.members.create(:zoneable => country) }
 
     context "when there is only one qualifying zone" do
-      let(:address) { Factory(:address, :country => country) }
+      let(:address) { Factory(:address, :country => country, :state => country.states.first) }
 
       it "should return the qualifying zone" do
         Spree::Zone.match(address).should == country_zone
@@ -25,7 +30,7 @@ describe Spree::Zone do
     end
 
     context "when there are two qualified zones with same member type" do
-      let(:address) { Factory(:address, :country => country) }
+      let(:address) { Factory(:address, :country => country, :state => country.states.first) }
       let(:second_zone) { Spree::Zone.create :name => "SecondZone" }
 
       before { second_zone.members.create(:zoneable => country) }
@@ -36,10 +41,9 @@ describe Spree::Zone do
 
     context "when there are two qualified zones with different member types" do
       let(:state_zone) { Spree::Zone.create :name => "StateZone" }
-      let(:state) { Factory :state }
-      let(:address) { Factory(:address, :country => country, :state => state) }
+      let(:address) { Factory(:address, :country => country, :state => country.states.first) }
 
-      before { state_zone.members.create(:zoneable => state) }
+      before { state_zone.members.create(:zoneable => country.states.first) }
 
       it "should return the zone with the more specific member type" do
         Spree::Zone.match(address).should == state_zone
