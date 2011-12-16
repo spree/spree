@@ -316,15 +316,15 @@ module Spree
       rates = TaxRate.match(self)
       rates.each do |rate|
         label = "#{rate.calculator.description} #{rate.amount * 100}%"
-        if Spree::Config[:prices_inc_tax]
-          if Zone.default_tax.contains? tax_zone
-            line_items.each { |line_item| rate.create_adjustment(label, line_item, line_item, false) }
-          else
-            # TODO - reverse the tax adjustments included in the price
-          end
-        else
-          rate.create_adjustment(label, self, self, true)
-        end
+        #if Spree::Config[:prices_inc_tax]
+          #if Zone.default_tax.contains? tax_zone
+            #line_items.each { |line_item| rate.create_adjustment(label, line_item, line_item, false) }
+          #else
+            ## TODO - reverse the tax adjustments included in the price
+          #end
+        #else
+          #rate.create_adjustment(label, self, self, true)
+        #end
       end
     end
 

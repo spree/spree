@@ -1,7 +1,7 @@
 module Spree
   class Variant < ActiveRecord::Base
     belongs_to :product
-    delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords
+    delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords, :tax_category
 
     has_many :inventory_units
     has_many :line_items
