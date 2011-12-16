@@ -6,7 +6,7 @@ module Spree
     def eligible?(order, options = {})
       if options.has_key?(:visited_paths)
         options[:visited_paths].to_a.any? do |path|
-          path.gsub(/^\//, '') == preferred_path.gsub(/^\//, '')
+          path == preferred_path
         end
       else
         true
