@@ -6,6 +6,10 @@ describe Spree::Promotion do
   describe "#save" do
     let(:promotion_valid) { Spree::Promotion.new :name => "A promotion", :code => "XXXX" }
 
+    it "should validate the coupon code" do
+      pending "Figure out some form of validation for codes now that this is Promo preference"
+    end
+
     context "when is invalid" do
       before { promotion.name = nil }
       it { promotion.save.should be_false }
@@ -197,13 +201,18 @@ describe Spree::Promotion do
     end
 
     context "with 'any' match policy" do
-      before { promotion.match_policy = 'any' }
+      before(:each) do
+        @promotion = Spree::Promotion.new(:name => "Promo", :match_policy => 'any')
+        @promotion.save
+      end
 
       it "should have eligible rules if any of the rules is eligible" do
-        pending
-        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
-                                     mock_model(Spree::PromotionRule, :eligible? => false)]
-        promotion.rules_are_eligible?(@order).should be_true
+        true_rule = Spree::PromotionRule.create(:promotion => @promotion)
+        true_rule.stub(:eligible?).and_return(true)
+        false_rule = Spree::PromotionRule.create(:promotion => @promotion)
+        false_rule.stub(:eligible?).and_return(false)
+        @promotion.rules << true_rule
+        @promotion.rules_are_eligible?(@order).should be_true
       end
     end
 
