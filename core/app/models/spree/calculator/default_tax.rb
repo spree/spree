@@ -4,29 +4,38 @@ module Spree
       I18n.t(:default_tax)
     end
 
-    def compute(order)
-      #rate = self.calculable
-      #tax = 0
-
-      #if rate.tax_category.is_default
-        #order.adjustments.each do |adjust|
-          #next if adjust.originator_type == 'Spree::TaxRate'
-          #next if adjust.originator_type == 'Spree::ShippingMethod' and not Spree::Config[:shipment_inc_vat]
-
-          #tax += (adjust.amount * rate.amount).round(2, BigDecimal::ROUND_HALF_UP)
-        #end
-      #end
-
-      #order.line_items.each do  | line_item|
-        #if line_item.product.tax_category  #only apply this calculator to products assigned this rates category
-          #next unless line_item.product.tax_category == rate.tax_category
-        #else
-          #next unless rate.tax_category.is_default # and apply to products with no category, if this is the default rate
-        #end
-        #tax += (line_item.price * rate.amount).round(2, BigDecimal::ROUND_HALF_UP) * line_item.quantity
-      #end
-
-      #tax
+    def compute(computable)
+      case computable
+        when Spree::Order
+          compute_order(computable)
+        when Spree::LineItem
+          compute_line_item(computable)
+      end
     end
+
+
+    private
+
+      def rate
+        rate = self.calculable
+      end
+
+      def compute_order(order)
+        matched_line_items = order.line_items.select do |line_item|
+          line_item.product.tax_category == rate.tax_category
+        end
+
+        line_items_total = matched_line_items.sum(&:price)
+        line_items_total + line_items_total * rate.amount
+      end
+
+      def compute_line_item(line_item)
+        if line_item.product.tax_category == rate.tax_category
+          line_item.price + line_item.price * rate.amount
+        else
+          0
+        end
+      end
+
   end
 end
