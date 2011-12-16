@@ -37,24 +37,6 @@ describe Spree::Core::CalculatedAdjustments do
 
   end
 
-  context "#reverse_adjustment" do
-    let(:order) { Spree::Order.create }
-    let(:target) { order }
-
-    it "should be associated with the target" do
-      target.adjustments.should_receive(:create)
-      tax_rate.reverse_adjustment("foo", target, order)
-    end
-
-    it "should have the correct originator and an amount derived from the calculator and supplied calculable" do
-      adjustment = tax_rate.reverse_adjustment("foo", target, order)
-      adjustment.amount.should == -10
-      adjustment.source.should == order
-      adjustment.originator.should == tax_rate
-    end
-
-  end
-
   context "#update_adjustment" do
     it "should update the adjustment using its calculator (and the specified source)" do
       adjustment = mock(:adjustment).as_null_object
