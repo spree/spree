@@ -17,7 +17,7 @@
     <%= truncate(variant.product.description, :length => 100, :omission => "...") %>
   </td>
   <td data-hook="cart_item_price">
-    <%= number_to_currency line_item.variant %>
+    <%= number_to_currency line_item.variant.price %>
   </td>
   <td data-hook="cart_item_quantity">
     <%= item_form.number_field :quantity, :min => 0, :class => "line_item_quantity" %>
