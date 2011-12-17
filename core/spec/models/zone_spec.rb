@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Zone do
   let(:country) { Factory :country }
-  let(:state) { Factory :state }
+  let(:state) { Factory(:state, :country => country) }
   let(:zone) { Factory :zone }
 
   context 'factory' do
@@ -17,6 +17,32 @@ describe Spree::Zone do
     before { zone.destroy }
     it "should destroy all zone members" do
       zone.zone_members.count.should == 0
+    end
+  end
+
+  context "#include?" do
+    let(:address) { Factory(:address, :state => state) }
+
+    context "given a zone of countries" do
+      it 'should include the address' do
+        zone.zone_members = [Spree::ZoneMember.create(:zoneable => country)]
+        zone.include?(address).should be_true
+      end
+    end
+
+    context "given a zone of states" do
+      it 'should include the address' do
+        zone.zone_members = [Spree::ZoneMember.create(:zoneable => state)]
+        zone.include?(address).should be_true
+      end
+    end
+
+    context "given a zone of zones" do
+      it 'should include the address' do
+        sub_zone = Factory.build(:zone, :zone_members => [Spree::ZoneMember.create(:zoneable => country)])
+        zone.zone_members = [Spree::ZoneMember.create(:zoneable => sub_zone)]
+        zone.include?(address).should be_true
+      end
     end
   end
 
