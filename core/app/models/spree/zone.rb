@@ -58,13 +58,13 @@ module Spree
     # convenience method for returning the countries contained within a zone (different then the countries method which only
     # returns the zones children and does not consider the grand children if the children themselves are zones)
     def country_list
-      members.map {|zone_member|
+      members.map { |zone_member|
         case zone_member.zoneable_type
-        when 'Zone'
+        when 'Spree::Zone'
           zone_member.zoneable.country_list
-        when 'Country'
+        when 'Spree::Country'
           zone_member.zoneable
-        when 'State'
+        when 'Spree::State'
           zone_member.zoneable.country
         else
           nil
