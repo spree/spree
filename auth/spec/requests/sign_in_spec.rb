@@ -18,7 +18,7 @@ describe "Sign In" do
     page.should have_content("Logged in successfully")
     page.should_not have_content("Log In")
     page.should have_content("Logout")
-    URI.parse(current_url).path.should == "/products"
+    current_path.should == "/products"
   end
 
   it "should show validation erros" do
@@ -36,6 +36,6 @@ describe "Sign In" do
     fill_in "user_password", :with => user.password
     click_button "Log In"
     page.should have_content("Logged in successfully")
-    URI.parse(current_url).path.should == "/admin"
+    current_path.should == "/admin"
   end
 end
