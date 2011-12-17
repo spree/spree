@@ -20,6 +20,28 @@ describe Spree::Zone do
     end
   end
 
+  context "#kind" do
+    context "given a zone of countries" do
+      it 'should be type of country' do
+        zone.kind.should == 'country'
+      end
+    end
+
+    context "given a zone of states" do
+      it 'should be type of state' do
+        zone.zone_members = [Spree::ZoneMember.create(:zoneable => state)]
+        zone.kind.should == 'state'
+      end
+    end
+
+    context "given a zone of zones" do
+      it 'should be type of zone' do
+        zone.zone_members = [Spree::ZoneMember.create(:zoneable => Factory.build(:zone))]
+        zone.kind.should == 'zone'
+      end
+    end
+  end
+
   context "#country_list" do
     context "given a zone of countries" do
       it 'should return a list of countries' do
@@ -27,7 +49,7 @@ describe Spree::Zone do
         zone.country_list.should == [country]
       end
     end
-    
+
     context "given a zone of states" do
       it 'should return a list of countries that states belongs to' do
         zone.zone_members = [Spree::ZoneMember.create(:zoneable => state)]

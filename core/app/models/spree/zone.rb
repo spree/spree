@@ -16,8 +16,8 @@ module Spree
     def kind
       member = self.members.last
       case member && member.zoneable_type
-      when 'State' then 'state'
-      when 'Zone'  then 'zone'
+      when 'Spree::State' then 'state'
+      when 'Spree::Zone'  then 'zone'
       else
         'country'
       end
