@@ -13,6 +13,7 @@ module Spree
       return unless order = options[:order]
       return if order.promotion_credit_exists?(promotion)
       if amount = calculator.compute(order)
+        amount = BigDecimal.new(amount.to_s)
         amount = order.item_total if amount > order.item_total
         order.adjustments.promotion.reload.clear
         order.update!

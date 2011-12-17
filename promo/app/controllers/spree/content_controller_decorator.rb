@@ -4,6 +4,7 @@ Spree::ContentController.class_eval do
 
   def store_visited_path
     session[:visited_paths] ||= []
-    session[:visited_paths] = (session[:visited_paths]  + [params[:path]]).compact.uniq
+    path = "content/#{params[:action]}"
+    session[:visited_paths] = (session[:visited_paths]  << path).compact.uniq
   end
 end
