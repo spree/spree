@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe Spree::Zone do
   let(:country) { Factory :country }
-  let(:state) { Factory(:state, :country => country) }
-  let(:zone) { Factory :zone }
+  let(:state)   { Factory(:state, :country => country) }
+  let(:zone)    { Factory :zone }
+  let(:address) { Factory(:address, :state => state) }
 
   context 'factory' do
     #let(:zone){ Factory :zone }
@@ -20,9 +21,15 @@ describe Spree::Zone do
     end
   end
 
-  context "#include?" do
-    let(:address) { Factory(:address, :state => state) }
+  context ".match" do
+    it 'should return zones that include the address' do
+      other_zone = Factory(:zone)
+      zone.zone_members = [Spree::ZoneMember.create(:zoneable => state)]
+      Spree::Zone.match(address).should == [zone]
+    end
+  end
 
+  context "#include?" do
     context "given a zone of countries" do
       it 'should include the address' do
         zone.zone_members = [Spree::ZoneMember.create(:zoneable => country)]
