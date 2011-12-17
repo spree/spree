@@ -26,12 +26,12 @@ module Spree
         end
 
         line_items_total = matched_line_items.sum(&:price)
-        line_items_total + line_items_total * rate.amount
+        line_items_total * rate.amount
       end
 
       def compute_line_item(line_item)
         if line_item.product.tax_category == rate.tax_category
-          line_item.price + line_item.price * rate.amount
+          line_item.price * rate.amount
         else
           0
         end

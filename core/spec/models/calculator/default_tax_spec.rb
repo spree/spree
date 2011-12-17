@@ -34,13 +34,13 @@ describe Spree::Calculator::DefaultTax do
         end
 
         it "should be equal to the item total * rate" do
-          calculator.compute(order).should == 10.5
+          calculator.compute(order).should == 0.5
         end
       end
 
       context "when more than one item matches the tax category" do
         it "should be equal to the sum of the item totals * rate" do
-          calculator.compute(order).should == 15.75
+          calculator.compute(order).should == 0.75
         end
       end
     end
@@ -48,7 +48,7 @@ describe Spree::Calculator::DefaultTax do
     context "when given a line item" do
       context "when the variant matches the tax category" do
         it "should be equal to the item total * rate" do
-          calculator.compute(line_item_1).should == 10.5
+          calculator.compute(line_item_1).should == 0.5
         end
       end
 
