@@ -36,7 +36,20 @@ describe Spree::Calculator::DefaultTax do
         it "should be equal to the item total * rate" do
           calculator.compute(order).should == 0.5
         end
+
+        context "correctly rounds to within two decimal places" do
+          before do
+            line_item_1.stub :price => 10.333
+          end
+
+          specify do
+            # Amount is 0.51665, which will be rounded to...
+            calculator.compute(order).should == 0.52
+          end
+
+        end
       end
+
 
       context "when more than one item matches the tax category" do
         it "should be equal to the sum of the item totals * rate" do

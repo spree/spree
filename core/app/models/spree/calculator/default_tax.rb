@@ -26,15 +26,19 @@ module Spree
         end
 
         line_items_total = matched_line_items.sum(&:price)
-        line_items_total * rate.amount
+        round_to_two_places(line_items_total * rate.amount)
       end
 
       def compute_line_item(line_item)
         if line_item.product.tax_category == rate.tax_category
-          line_item.price * rate.amount
+          round_to_two_places(line_item.price * rate.amount)
         else
           0
         end
+      end
+
+      def round_to_two_places(amount)
+        BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
       end
 
   end
