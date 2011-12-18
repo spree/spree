@@ -7,6 +7,10 @@
     <td><%= t(:tax_category) %>:</td>
     <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
   </tr>
+  <tr data-hook="included">
+    <td><%= t(:included_in_price) %></td>
+    <td><%= f.check_box :inc_tax %></td>
+  </tr>
   <tr="rate">
     <td><%= t(:rate) %>:</td>
     <td><%= f.text_field :amount %></td>

@@ -13,6 +13,7 @@
       <th><%= t(:zone) %></th>
       <th><%= t(:category) %></th>
       <th><%= t(:amount) %></th>
+      <th><%= t(:included_in_price) %></th>
       <th><%= t(:calculator) %></th>
       <th><%= t(:action) %></th>
     </tr>
@@ -23,6 +24,7 @@
       <td><%=tax_rate.zone.name %></td>
       <td><%=tax_rate.tax_category.name %></td>
       <td><%=tax_rate.amount %></td>
+      <td><%=tax_rate.inc_tax %></td>
       <td><%=tax_rate.calculator.to_s %></td>
       <td>
         <%= link_to_edit tax_rate %> &nbsp;

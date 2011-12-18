@@ -458,6 +458,7 @@ en:
   in_progress: "In Progress"
   include_in_shipment: Include in Shipment
   included_in_other_shipment: Included in another Shipment
+  included_in_price: Included in Price
   included_in_this_shipment: Included in this Shipment
   instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   insufficient_stock: "Insufficient stock available, only %{on_hand} remaining"
@@ -658,7 +659,6 @@ en:
   previous: Previous
   price: Price
   price_bucket: Price Bucket
-  price_with_vat_included: "%{price} (inc. VAT)"
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
