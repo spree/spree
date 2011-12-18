@@ -15,8 +15,8 @@ flat_rate_coupon_calculator:
   calculable_type: Spree::Promotion
   type: Spree::Calculator::FlatRate
 tax_rate_calculator:
-  calculable: tax_rate_north_america 
+  calculable: tax_rate_north_america
   calculable_type: Spree::TaxRate
-  type: Spree::Calculator::SalesTax
+  type: Spree::Calculator::DefaultTax
 
 
