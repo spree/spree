@@ -206,4 +206,14 @@ describe Spree::Zone do
 
   end
 
+  context "#save" do
+    context "when default_tax is true" do
+      it "should clear previous default tax zone" do
+        zone1 = Spree::Zone.create(:name => "foo", :default_tax => true)
+        zone = Spree::Zone.create(:name => "bar", :default_tax => true)
+        zone1.reload.default_tax.should == false
+      end
+    end
+  end
+
 end

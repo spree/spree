@@ -347,6 +347,7 @@ en:
   default_meta_keywords: Default Meta Keywords
   default_seo_title: Default Seo Title
   default_tax: Default Tax
+  default_tax_zone: Default Tax Zone
   delete: Delete
   delivery: Delivery
   depth: Depth

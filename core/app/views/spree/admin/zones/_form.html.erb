@@ -8,6 +8,12 @@
   <%= zone_form.text_field :description %>
 <% end %>
 
+<p data-hook="default">
+  <td><%= t(:default_tax_zone) %></td>
+  <td><%= zone_form.check_box :default_tax %></td>
+</p>
+
+
 <p data-hook="type">
   <%= label_tag nil, t(:type) %><br />
   <label class="sub">

@@ -6,6 +6,7 @@ module Spree
 
     validates :name, :presence => true, :uniqueness => true
     after_save :remove_defunct_members
+    after_save :remove_previous_default
 
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, :allow_destroy => true, :reject_if => proc { |a| a['zoneable_id'].blank? }
@@ -88,8 +89,7 @@ module Spree
     end
 
     def self.default_tax
-      default_tax_zone = Spree::Config[:default_tax_zone]
-      Zone.where(:name => default_tax_zone).first
+      Zone.where(:default_tax => true).first
     end
 
     # Indicates whether the specified zone falls entirely within the zone performing
@@ -114,6 +114,14 @@ module Spree
     def remove_defunct_members
       zone_members.each do |zone_member|
         zone_member.destroy if zone_member.zoneable_id.nil?
+      end
+    end
+
+    def remove_previous_default
+      return unless self.default_tax
+
+      Zone.all.each do |zone|
+        zone.update_attribute "default_tax", false unless zone == self
       end
     end
   end
