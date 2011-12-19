@@ -113,6 +113,7 @@ en:
         name: Name
       spree/tax_rate:
         amount: Rate
+        included_in_price: Included in Price
       spree/taxon:
         name: Name
         permalink: Permalink
@@ -460,6 +461,7 @@ en:
   included_in_other_shipment: Included in another Shipment
   included_in_price: Included in Price
   included_in_this_shipment: Included in this Shipment
+  included_price_validation: "cannot be selected unless you have set a Default Tax Zone"
   instructions_to_reset_password: "Fill out the form below and instructions to reset your password will be emailed to you:"
   insufficient_stock: "Insufficient stock available, only %{on_hand} remaining"
   integration_settings_warning: "If you are changing the billing integration, you must save first before you can edit the integration settings"

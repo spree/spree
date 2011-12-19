@@ -1,10 +1,21 @@
 module Spree
+  class DefaultTaxZoneValidator < ActiveModel::Validator
+    def validate(record)
+      if record.included_in_price
+        record.errors.add(:included_in_price, I18n.t(:included_price_validation)) unless Zone.default_tax
+      end
+    end
+  end
+end
+
+module Spree
   class TaxRate < ActiveRecord::Base
     belongs_to :zone
     belongs_to :tax_category
 
     validates :amount, :presence => true, :numericality => true
     validates :tax_category_id, :presence => true
+    validates_with DefaultTaxZoneValidator
 
     calculated_adjustments
     scope :by_zone, lambda { |zone| where(:zone_id => zone) }
@@ -48,5 +59,7 @@ module Spree
         create_adjustment(label, order, order)
       end
     end
+
   end
+
 end
