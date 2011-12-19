@@ -74,7 +74,7 @@ describe Spree::TaxRate do
       before { @order.add_variant @taxable.master }
 
       context "when price includes tax" do
-        before { @rate.inc_tax = true }
+        before { @rate.included_in_price = true }
 
         context "when zone is contained by default tax zone" do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
@@ -117,7 +117,7 @@ describe Spree::TaxRate do
       end
 
       context "when price does not include tax" do
-        before { @rate.inc_tax = false }
+        before { @rate.included_in_price = false }
 
         it "should not create price adjustment" do
           @rate.adjust(@order)
@@ -145,7 +145,7 @@ describe Spree::TaxRate do
       end
 
       context "when price includes tax" do
-        before { @rate.inc_tax = true }
+        before { @rate.included_in_price = true }
 
         context "when zone is contained by default tax zone" do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
@@ -188,7 +188,7 @@ describe Spree::TaxRate do
       end
 
       context "when price does not include tax" do
-        before { @rate.inc_tax = false }
+        before { @rate.included_in_price = false }
 
         it "should not create a price adjustment" do
           @rate.adjust(@order)
