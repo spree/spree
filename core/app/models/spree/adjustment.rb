@@ -34,8 +34,8 @@ module Spree
     scope :optional, where(:mandatory => false)
     scope :eligible, where(:eligible => true)
 
-    after_save { order.update! }
-    after_destroy { order.update! }
+    after_save :update_order
+    after_destroy :update_order
 
     # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
     # adjustment_total.
@@ -63,5 +63,12 @@ module Spree
         originator.update_adjustment(self, source)
       end
     end
+    
+    private
+    
+    def update_order
+      order.update!
+    end
+    
   end
 end
