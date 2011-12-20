@@ -60,15 +60,7 @@ module Spree
       initializer "spree.register.payment_methods" do |app|
         app.config.spree.payment_methods = [
             Spree::Gateway::Bogus,
-            Spree::Gateway::AuthorizeNet,
-            Spree::Gateway::AuthorizeNetCim,
-            Spree::Gateway::Eway,
-            Spree::Gateway::Linkpoint,
-            Spree::Gateway::PayPal,
-            Spree::Gateway::SagePay,
-            Spree::Gateway::Beanstream,
-            Spree::Gateway::Braintree,
-            Spree::Gateway::Stripe,
+            Spree::Gateway::BogusSimple,
             Spree::PaymentMethod::Check ]
       end
 
