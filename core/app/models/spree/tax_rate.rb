@@ -46,6 +46,8 @@ module Spree
           label = I18n.t(:refund) + label
           order.adjustments.create(:amount => amount,
                                    :source => order,
+                                   :originator => self,
+                                   :locked => true,
                                    :label => label)
         end
       else

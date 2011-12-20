@@ -56,7 +56,7 @@ describe Spree::TaxRate do
 
       it "should not create a tax adjustment" do
         @rate.adjust(@order)
-        @order.adjustments.tax.count.should == 0
+        @order.adjustments.tax.charge.count.should == 0
       end
 
       it "should not create a price adjustment" do
@@ -91,7 +91,7 @@ describe Spree::TaxRate do
 
           it "should not create a tax adjustment" do
             @rate.adjust(@order)
-            @order.adjustments.tax.count.should == 0
+            @order.adjustments.tax.charge.count.should == 0
           end
         end
 
@@ -110,7 +110,7 @@ describe Spree::TaxRate do
 
           it "should not create a tax adjustment" do
             @rate.adjust(@order)
-            @order.adjustments.tax.count.should == 0
+            @order.adjustments.tax.charge.count.should == 0
           end
         end
 
@@ -131,7 +131,7 @@ describe Spree::TaxRate do
 
         it "should create a tax adjustment" do
           @rate.adjust(@order)
-          @order.adjustments.tax.count.should == 1
+          @order.adjustments.tax.charge.count.should == 1
         end
       end
 
@@ -162,7 +162,7 @@ describe Spree::TaxRate do
 
           it "should not create a tax adjustment" do
             @rate.adjust(@order)
-            @order.adjustments.tax.count.should == 0
+            @order.adjustments.tax.charge.count.should == 0
           end
         end
 
@@ -181,7 +181,7 @@ describe Spree::TaxRate do
 
           it "should not create a tax adjustment" do
             @rate.adjust(@order)
-            @order.adjustments.tax.count.should == 0
+            @order.adjustments.tax.charge.count.should == 0
           end
         end
 
@@ -202,7 +202,7 @@ describe Spree::TaxRate do
 
         it "should create a single tax adjustment" do
           @rate.adjust(@order)
-          @order.adjustments.tax.count.should == 1
+          @order.adjustments.tax.charge.count.should == 1
         end
       end
 

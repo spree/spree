@@ -34,6 +34,7 @@ module Spree
     scope :shipping, lambda { where(:label => I18n.t(:shipping)) }
     scope :optional, where(:mandatory => false)
     scope :eligible, where(:eligible => true)
+    scope :charge, where("amount >= 0")
     scope :credit, where("amount < 0")
 
     after_save :update_adjustable
