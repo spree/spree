@@ -1,4 +1,4 @@
 Spree::Core::Engine.routes.prepend do
   match '/admin' => 'admin/overview#index', :as => :admin
-  match '/admin/overview/get_report_data' => 'admin/overview#get_report_data'
+  match '/admin/dash_preferences' => 'admin/overview#preferences', :as => :admin_dash_preferences
 end
