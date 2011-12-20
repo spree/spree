@@ -57,28 +57,18 @@ describe Spree::Zone do
     end
   end
 
-  context ".default_tax" do
-    context "when :default_tax_zone preference is specified" do
-      before { Spree::Config.set(:default_tax_zone => "foo") }
+  context "default_tax" do
+    context "when there is a default tax zone specified" do
+      before { @foo_zone = Spree::Zone.create(:name => "whatever", :default_tax => true) }
 
-      it "should be the correct zone if a zone exists with that name" do
+      it "should be the correct zone" do
         foo_zone = Factory(:zone, :name => "foo")
-        Spree::Zone.default_tax.should == foo_zone
+        Spree::Zone.default_tax.should == @foo_zone
       end
 
-      it "should be nil if no zone exists with that name" do
-        bar_zone = Factory(:zone, :name => "bar")
-        Spree::Zone.default_tax.should be_nil
-      end
-
-      it "should be nil if no zones exist" do
-        Spree::Zone.default_tax.should be_nil
-      end
     end
 
-    context "when :default_tax_zone preference is nil" do
-      before { Spree::Config.set(:default_tax_zone => nil) }
-
+    context "when there is no default tax zone specified" do
       it "should be_nil" do
         Spree::Zone.default_tax.should be_nil
       end

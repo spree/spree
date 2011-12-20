@@ -60,7 +60,6 @@ module Spree
     preference :check_for_spree_alerts, :boolean, :default => true
     preference :dismissed_spree_alerts, :string, :default => ''
     preference :last_check_for_spree_alerts, :string, :default => nil
-    preference :default_tax_zone, :string, :default => nil
     preference :tax_using_ship_address, :boolean, :default => true
     preference :prices_inc_tax, :boolean, :default => false
 
