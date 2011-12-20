@@ -7,8 +7,8 @@ describe Spree::Calculator::DefaultTax do
   let!(:order) { Factory(:order) }
   let!(:product_1) { Factory(:product) }
   let!(:product_2) { Factory(:product) }
-  let!(:line_item_1) { stub_model(Spree::LineItem, :product => product_1, :price => 10) }
-  let!(:line_item_2) { stub_model(Spree::LineItem, :product => product_2, :price => 5) }
+  let!(:line_item_1) { Factory(:line_item, :product => product_1, :price => 10, :quantity => 3) }
+  let!(:line_item_2) { Factory(:line_item, :product => product_2, :price => 5, :quantity => 1) }
 
   context "#compute" do
     context "when given an order" do
@@ -34,12 +34,13 @@ describe Spree::Calculator::DefaultTax do
         end
 
         it "should be equal to the item total * rate" do
-          calculator.compute(order).should == 0.5
+          calculator.compute(order).should == 1.5
         end
 
         context "correctly rounds to within two decimal places" do
           before do
-            line_item_1.stub :price => 10.333
+            line_item_1.price = 10.333
+            line_item_1.quantity = 1
           end
 
           specify do
@@ -53,7 +54,7 @@ describe Spree::Calculator::DefaultTax do
 
       context "when more than one item matches the tax category" do
         it "should be equal to the sum of the item totals * rate" do
-          calculator.compute(order).should == 0.75
+          calculator.compute(order).should == 1.75
         end
       end
     end
@@ -61,7 +62,7 @@ describe Spree::Calculator::DefaultTax do
     context "when given a line item" do
       context "when the variant matches the tax category" do
         it "should be equal to the item total * rate" do
-          calculator.compute(line_item_1).should == 0.5
+          calculator.compute(line_item_1).should == 1.5
         end
       end
 
