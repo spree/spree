@@ -1,0 +1,12 @@
+<% if Spree::Dash::Config.configured? %>
+  <script type='text/javascript'>
+    var jirafe= <%= raw analytics_tags.to_json %>;
+    (function(){
+    var d=document,g=d.createElement('script'),s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript',g.defer=g.async=true;g.src=d.location.protocol+'//c.jirafe.com/jirafe.js';
+    s.parentNode.insertBefore(g, s);
+    })();
+  </script>
+<% else %>
+  <!-- Spree Analytics has not been initialized correctly -->
+<% end %>
