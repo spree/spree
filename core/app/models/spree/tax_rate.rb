@@ -42,14 +42,7 @@ module Spree
         if Zone.default_tax.contains? order.tax_zone
           order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
         else
-          # create tax refund since price includes tax
-          matched_line_items = order.line_items.select do |line_item|
-            line_item.product.tax_category == self.tax_category
-          end
-          return if matched_line_items.empty?
-
-          line_items_total = matched_line_items.sum(&:price)
-          amount = -1 * line_items_total * self.amount
+          amount = -1 * calculator.compute(order)
           label = I18n.t(:refund) + label
           order.adjustments.create(:amount => amount,
                                    :source => order,
