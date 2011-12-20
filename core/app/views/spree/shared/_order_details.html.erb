@@ -37,4 +37,14 @@
       <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
     </tr>
   </tbody>
+  <% if order.price_adjustment_totals.present? %>
+    <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
+      <% @order.price_adjustment_totals.keys.each do |key| %>
+        <tr class="total">
+          <td colspan="3"><strong><%= key %></strong></td>
+          <td class="total"><span><%= number_to_currency @order.price_adjustment_totals[key] %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  <% end %>
 </table>
