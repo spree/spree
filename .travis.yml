@@ -8,3 +8,4 @@ notifications:
 branches:
   only:
     - master
+    - 0-70-stable
