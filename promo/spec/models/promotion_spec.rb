@@ -134,10 +134,14 @@ describe Spree::Promotion do
   end
 
   context "#eligible?" do
-    let(:promotion) { Factory(:promotion) }
-    before {
+    before do
       @order = Factory(:order)
-    }
+      promotion.preferred_code = 'ABC'
+      promotion.event_name = 'spree.checkout.coupon_code_added'
+      promotion.name = "Foo"
+      calculator = Spree::Calculator::FlatRate.new
+      @action = Spree::Promotion::Actions::CreateAdjustment.create(:promotion => promotion, :calculator => calculator)
+    end
 
     context "when it is expired" do
       before { promotion.stub(:expired? => true) }
@@ -146,7 +150,7 @@ describe Spree::Promotion do
     end
 
     context "when it is not expired" do
-      before { promotion.stub(:expired? => false) }
+      before { promotion.expires_at = Time.now + 1.day }
 
       specify { promotion.should be_eligible(@order) }
     end
@@ -164,15 +168,15 @@ describe Spree::Promotion do
       end
     end
 
-    context "when a coupon code has already resulted in an adustment on the order" do
-      before {
-        promotion.preferred_code = 'ABC'
-        promotion.event_name = 'spree.checkout.coupon_code_added'
-        action = Spree::Promotion::Actions::CreateAdjustment.create!(:promotion => promotion)
-        action.calculator = Spree::Calculator::FlatRate.create!(:calculable => action)
-        action.perform(:order => @order)
-      }
-      specify { promotion.should be_eligible(@order) }
+    context "when a coupon code has already resulted in an adjustment on the order" do
+      before do
+        promotion.save!
+        @order.adjustments.create(:amount => 1, :source => @order, :originator => @action, :label => "Foo")
+      end
+
+      it "should be eligible" do
+        promotion.should be_eligible(@order)
+      end
     end
 
   end

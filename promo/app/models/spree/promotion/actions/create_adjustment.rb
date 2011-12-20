@@ -5,6 +5,7 @@ module Spree
     delegate :eligible?, :to => :promotion
 
     before_create do |a|
+      return if self.calculator
       c = a.build_calculator
       c.type = Promotion::Actions::CreateAdjustment.calculators.first.to_s
     end
