@@ -83,13 +83,22 @@ Disallow: /users
                                      :ref => '07aea41ecae6948573c4830fcd7dbca11a8c220f' }
       end
 
+      if options[:auto_accept] || agree('Would you like to install the default gateway for stores located in the U.S.A? (y/n)')
+        gems['spree_usa_epay'] = { :git => 'git@github.com:spree/spree_usa_epay.git',
+                                 :branch => '1.0-stable' }
+      end
+
+      if options[:auto_accept] || agree('Would you like to install the default gateway for stores located outside the U.S.A? (y/n)')
+        gems['spree_skrill'] = { :git => 'git@github.com:spree/spree_skrill.git',
+                                 :branch => '1.0-stable' }
+      end
+
       unless gems.empty?
         gems.each do |name, options|
           gem name, options
         end
         bundle_command :update
       end
-
     end
 
     def include_seed_data

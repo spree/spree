@@ -11,7 +11,9 @@ FactoryGirl.define do
     #display_on :front_end
   end
 
-  factory :authorize_net_payment_method, :class => Spree::Gateway::AuthorizeNet do
+  # authorize.net was moved to spree_gateway. Leaving this factory
+  # in place with bogus in case anyone is using it
+  factory :authorize_net_payment_method, :class => Spree::Gateway::BogusSimple do
     name 'Credit Card'
     environment 'test'
     #display_on :front_end
