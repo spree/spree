@@ -1,164 +1,37 @@
+<% content_for :head do %>
+  <link type="text/css" rel="stylesheet" href="https://api.jirafe.com/dashboard/css/spree_ui.css" media="all" />
+  <script type="text/javascript" src="https://api.jirafe.com/dashboard/js/spree_ui.js"></script>
+<% end %>
+
 <h1><%= t(:overview) %></h1>
 
-<div data-hook="admin_dashboard">
-  <% if @show_dashboard %>
-    <div class="dashboard">
-      <div class="dashboard_left">
-      <div data-hook="admin_dashboard_left">
-        <div class="dashboard_small_wrapper">
-          <h2><%= t(:best_selling_products) %></h2>
-          <div id="best_selling_products" style="width:50%; height:170px; float:left;"></div>
-          <div id="pie_legend">
-            <% @best_selling_variants.each_with_index do |v,i| %>
-              <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
-              <label><%= truncate v[0], :length => 27 %></label>
-              <div><%= number_with_delimiter v[1] %> <%= t(:units) %></div>
-            <% end %>
-          </div>
-
-          <h2><%= t(:top_grossing_products) %></h2>
-          <div id="top_grossing_products" style="width:50%; height:170px; float:left;"></div>
-          <div id="pie_legend">
-            <% @top_grossing_variants.each_with_index do |v,i| %>
-              <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
-              <label><%= truncate v[0], :length => 27 %></label>
-              <div><%= number_to_currency v[1], :precision => 0 %></div>
-            <% end %>
-          </div>
-
-          <h2><%= t(:best_selling_taxons) %></h2>
-          <div id="best_selling_taxons" style="width:50%; height:170px; float:left;"></div>
-          <div id="pie_legend">
-            <% @best_selling_taxons.each_with_index do |t,i| %>
-              <span style="background-color:<%= @pie_colors[i] %>">&nbsp;</span>
-              <label><%= truncate t[0], :length => 27 %></label>
-              <div><%= number_with_delimiter t[1] %> <%= t(:units) %></div>
-            <% end %>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    <div data-hook="admin_dashboard_center">
-      <div class="dashboard_main">
-        <div class="dashboard_main_wrapper">
-          <h2 id="order_by_day_title"><%= t(:orders) %> <%= t(:count) %> <%= t(:by_day) %> (<%= t(:last_7_days) %>)</h2>
-
-          <table id="order_totals">
-            <tr>
-              <td style="width:23%;">
-                <p><%= t('number.currency.format.unit') %></p>
-                <label id="orders_total"><%= number_with_delimiter @orders_total.to_i %></label>
-                <span><%= t(:order) %> <%= t(:total) %></span>
-              </td>
-              <td class="spacer">|</td>
-              <td style="width:23%;">
-                <p><%= t('number.currency.format.unit') %></p>
-                <label id="orders_line_total"><%= number_with_delimiter @orders_line_total.to_i %></label>
-                <span><%= t(:item) %> <%= t(:total) %></span>
-              </td>
-              <td class="spacer">|</td>
-              <td style="width:23%;">
-                <p><%= t('number.currency.format.unit') %></p>
-                <label id="orders_adjustment_total"><%= number_with_delimiter @orders_adjustment_total.to_i %></label>
-                <span><%= t(:adjustments) %></span>
-              </td>
-              <td class="spacer">|</td>
-              <td style="width:22%;">
-                <p><%= t('number.currency.format.unit') %></p>
-                <label id="orders_adjustment_total"><%= number_with_delimiter @orders_credit_total.to_i %></label>
-                <span><%= t(:credits) %></span>
-              </td>
-            </tr>
-          </table>
-
-          <div id="orders_by_day" style="width:100%; height:240px;"></div>
-
-          <div id="orders_by_day_options">
-            <label><%= t(:range) %>:</label>
-            <%= select_tag 'orders_by_day_reports', options_for_select([[t(:last_7_days), '7_days'], [t(:last_14_days), '14_days'], [t(:this_month), 'this_month'],
-                                                    [t(:last_month), 'last_month'], [t(:this_year), 'this_year'], [t(:last_year), 'last_year'] ], '7_days') %>
-            <label><%= t(:value) %>:</label>
-            <%= select_tag 'orders_by_day_value', options_for_select({t(:count) => 'Count', t(:value) => 'Value'}, 'Count') %>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-hook="admin_dashboard_right">
-      <div class="dashboard_right">
-          <h2><%= t(:last_5_orders) %></h2>
-          <table>
-            <thead>
-              <tr>
-                <th><%= t(:name) %></th>
-                <th class="text-right"><%= t(:items) %></th>
-                <th class="text-right"><%= t(:total) %></th>
-              </tr>
-            </thead>
-            <% @last_five_orders.each do |order| %>
-              <tr>
-                <td><%= truncate order[0], :length => 18 %></td>
-                <td class="text-right"><%= order[1] %></td>
-                <td class="text-right"><%= number_to_currency order[2] %></td>
-              </tr>
-            <% end %>
-          </table>
-
-          <h2><%= t(:five_biggest_spenders) %></h2>
-          <table>
-            <thead>
-              <tr>
-                <th><%= t(:name) %></th>
-                <th class="text-right"><%= t(:ord_qty) %></th>
-                <th class="text-right"><%= t(:ord_total) %></th>
-              </tr>
-            </thead>
-            <% @biggest_spenders.each do |order| %>
-              <tr>
-                <td><%= truncate order[0], :length => 18 %></td>
-                <td class="text-right"><%= order[1] %></td>
-                <td class="text-right"><%= number_to_currency order[2] %></td>
-              </tr>
-            <% end %>
-          </table>
-
-          <h2><%= t(:out_of_stock_products) %></h2>
-          <table>
-            <thead>
-              <tr>
-                <th><%= t(:name) %></th>
-              </tr>
-            </thead>
-            <% @out_of_stock_products.each do |product| %>
-              <tr>
-                <td><%= product.name %></td>
-              </tr>
-            <% end %>
-          </table>
-        </div>
-      </div>
-    </div>
-    <p style="clear:both;">&nbsp;</p>
+<% if params[:dash_edit] %>
+  <%= render 'form' %>
+<% else %>
+  <% if Spree::Dash::Config.configured? %>
+    <div id="jirafe"></div>
+    <script type="text/javascript" defer="defer">
+        if (typeof jQuery != 'undefined') { 
+            (function($) {
+             $('#jirafe').jirafe({
+                api_url:    'https://api.jirafe.com/v1',
+                api_token:  '<%= Spree::Dash::Config.token %>',
+                app_id:     '<%= Spree::Dash::Config.app_id %>',
+                version:    'spree-v0.1.0'
+                });
+             })(jQuery);
+        }
+        setTimeout(function() {
+                if ($('mod-jirafe') == undefined){
+                $('messages').insert ("<ul class=\"messages\"><li class=\"error-msg\">We're unable to connect with the Jirafe service for the moment. Please wait a few minutes and refresh this page later.</li></ul>");
+                }
+                }, 10000);
+    </script>
   <% else %>
-    <div data-hook="admin_dashboard_welcome">
-      <%== t(:overview_welcome) %>
-    </div>
+    <%= image_tag 'analytics_dashboard_preview.png' %>
   <% end %>
-</div>
-
-<% content_for :head do %>
-  <% if @show_dashboard %>
-    <%= javascript_tag do -%>
-      var orders_by_day_points = [[<%== @orders_by_day.map { |day| "[\"#{day[0]}\",#{day[1]}]" }.join(",") %>]];
-      var best_selling_variants_points = [<%== @best_selling_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
-      var top_grossing_variants_points = [<%== @top_grossing_variants.map { |v| "[\"#{h(v[0])}\",#{v[1]}]" }.join(",") %>];
-      var best_selling_taxons_points = [<%== @best_selling_taxons.map { |t| "[\"#{h(t[0])}\",#{t[1]}]" }.join(",") %>];
-
-      var orders = "<%= t(:orders) %>";
-      var by_day = "<%= t(:by_day) %>";
-
-      var pie_colors = [<%== @pie_colors.map{|c| "'#{c}'"}.join(",") %>];
-    <% end -%>
-    <!--[if IE]><%= javascript_include_tag 'jqPlot/excanvas.min.js' %><![endif]-->
-  <% end %>
+  <br>
+  <%= link_to t(:enter_token), admin_path(:dash_edit => true) %>
 <% end %>
+
+
