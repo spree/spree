@@ -54,6 +54,36 @@ Feature: Checkout
     Then I should see "Your order has been processed successfully"
     And I should have 1 order
 
+  # regression test for #890    
+  @selenium @wip @stop
+  Scenario: Uncompleted guest order should be associated with user after password reset log in
+    Given a shipping method exists
+    And a payment method exists
+    And I am signed up as "email@person.com/password"
+    And I am logged out
+
+    When I add a product with name: "RoR Mug" to cart
+    Then 2 users should exist
+
+    When I reset my password
+    Then I should be logged in
+
+    When I follow "Cart"
+    Then I should see "RoR Mug"
+    And I should see "Shopping Cart" within "h1"
+    When I follow "Checkout"
+
+    Then I should see "Billing Address"
+    And I should see "Shipping Address"
+    When I fill billing address with correct data
+    And check "order_use_billing"
+    And press "Save and Continue"
+
+    Then I should see "Shipping Method"
+    When I choose "UPS Ground" as shipping method and "Check" as payment method
+    Then I should see "Your order has been processed successfully"
+    And I should have 1 order                          
+
   @selenium @stop
   Scenario: User registers during checkout
     Given a shipping method exists
