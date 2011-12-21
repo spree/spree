@@ -1,5 +1,7 @@
 require 'rails/generators'
 require 'highline/import'
+require 'bundler'
+require 'bundler/cli'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
@@ -8,10 +10,7 @@ module Spree
     class_option :auto_accept, :type => :boolean, :default => false, :aliases => '-A', :desc => "Answer yes to all prompts"
     class_option :skip_install_data, :type => :boolean, :default => false
     class_option :lib_name, :default => 'spree'
-    attr :lib_name
-    attr :auto_accept
-    attr :skip_install_data
-    attr :test_app
+    class_option :test_app, :type => :boolean, :default => false
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -38,8 +37,6 @@ module Spree
     end
 
     def additional_tweaks
-      @lib_name = options[:lib_name]
-
       return unless File.exists? 'public/robots.txt'
       append_file "public/robots.txt", <<-ROBOTS
 User-agent: *
@@ -75,6 +72,24 @@ Disallow: /users
       APP
 
       append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
+    end
+
+    def install_gems
+      return if options[:test_app]
+      gems = {}
+
+      if options[:auto_accept] || agree('Would you like to install the default blue theme? (y/n)')
+        gems['spree_blue_theme'] = { :git => 'git@github.com:spree/spree_blue_theme.git',
+                                     :ref => '07aea41ecae6948573c4830fcd7dbca11a8c220f' }
+      end
+
+      unless gems.empty?
+        gems.each do |name, options|
+          gem name, options
+        end
+        bundle_command :update
+      end
+
     end
 
     def include_seed_data
@@ -147,5 +162,14 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "    mount Spree::Core::Engine, :at => '/'"
       end
     end
+
+    private
+
+    # Copied from https://github.com/rails/rails/blob/b1ceffd7b224c397d8ba5344b9c1438dd62f8325/railties/lib/rails/generators/app_base.rb#L189
+    def bundle_command(command)
+      say_status :run, "bundle #{command}"
+      Bundler::CLI.new.send(command)
+    end
+
   end
 end
