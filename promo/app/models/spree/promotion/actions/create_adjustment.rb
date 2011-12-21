@@ -4,11 +4,7 @@ module Spree
 
     delegate :eligible?, :to => :promotion
 
-    before_create do |a|
-      return if self.calculator
-      c = a.build_calculator
-      c.type = Promotion::Actions::CreateAdjustment.calculators.first.to_s
-    end
+    before_validation :ensure_action_has_calculator
 
     def perform(options = {})
       return unless order = options[:order]
@@ -25,6 +21,12 @@ module Spree
     # Ensure a negative amount which does not exceed the sum of the order's item_total and ship_total
     def compute_amount(calculable)
       [(calculable.item_total + calculable.ship_total), super.to_f.abs].min * -1
+    end
+
+    private
+    def ensure_action_has_calculator
+      return if self.calculator
+      self.calculator = self.class.calculators.first.new
     end
   end
 end
