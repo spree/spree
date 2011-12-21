@@ -22,7 +22,8 @@ module Spree
 
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order)
-      all.select { |rate| rate.zone == order.tax_zone }
+      return [] unless order.tax_zone
+      all.select { |rate| rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) }
     end
 
     # For Vat the default rate is the rate that is configured for the default category
