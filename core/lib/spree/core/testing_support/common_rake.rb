@@ -8,7 +8,8 @@ namespace :common do
     require "#{ENV['LIB_NAME']}"
 
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--database=#{ENV['DB_NAME']}", "--quiet"]
-    Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--quiet", "--auto-accept", "--skip-install-data"]
+    Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--quiet", "--auto-accept", "--skip-install-data", "--test_app"]
+
     puts "Setting up dummy database..."
     cmd = "bundle exec rake db:drop db:create db:migrate RAILS_ENV=test AUTO_ACCEPT=true"
 
