@@ -101,6 +101,17 @@ describe Spree::Zone do
       end
     end
 
+    context "when both zones are the same zone" do
+      before do
+        @source.members.create(:zoneable => country1)
+        @target = @source
+      end
+
+      it "should be true" do
+        @source.contains?(@target).should be_true
+      end
+    end
+
     context "when both zones are of the same type" do
       before do
         @source.members.create(:zoneable => country1)
