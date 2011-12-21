@@ -2,6 +2,8 @@ class Spree::UserPasswordsController < Devise::PasswordsController
   include Spree::Core::ControllerHelpers
   helper 'spree/users', 'spree/base'
 
+  after_filter :associate_user
+
   def new
     super
   end
@@ -32,4 +34,12 @@ class Spree::UserPasswordsController < Devise::PasswordsController
   def update
     super
   end
+
+  private
+
+    def associate_user
+      return unless current_user and current_order
+      current_order.associate_user!(current_user)
+      session[:guest_token] = nil
+    end
 end

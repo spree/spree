@@ -69,6 +69,37 @@ describe "Checkout", :js => true do
     Spree::Order.count.should == 1
   end
 
+  # Regression test for #890
+  it "should associate an incomplete guest order with user after successful password reset" do
+    user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
+    click_link "RoR Mug"
+    click_button "Add To Cart"
+
+    visit spree.login_path
+    click_link "Forgot Password?"
+    fill_in "Email", :with => "email@person.com"
+    click_button "Reset my password"
+
+    user.reload
+
+    visit spree.edit_user_password_path(:reset_password_token => user.reset_password_token)
+    fill_in "Password", :with => "password"
+    fill_in "Password Confirmation", :with => "password"
+    click_button "Update my password and log me in"
+
+    click_link "Cart"
+    click_link "Checkout"
+    str_addr = "bill_address"
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
+    ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
+    end
+    select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+    check "order_use_billing"
+    click_button "Save and Continue"
+    page.should_not have_content("Email is invalid")
+  end
+
   it "should allow a user to register during checkout" do
     click_link "RoR Mug"
     click_button "Add To Cart"
