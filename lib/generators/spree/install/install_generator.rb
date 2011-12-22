@@ -20,6 +20,26 @@ module Spree
       paths.flatten
     end
 
+    def ask_questions
+      @install_blue_theme = ask_with_default("Would you like to install the default blue theme?")
+      @install_default_gateways = ask_with_default("Would you like to install the default gateways?")
+
+      if options[:skip_install_data]
+        @run_migrations = false
+        @load_seed_data = false
+        @load_sample_data = false
+      else
+        @run_migrations = ask_with_default("Would you like to run the migrations?")
+        if @run_migrations
+          @load_seed_data = ask_with_default("Would you like to load the seed data?")
+          @load_sample_data = ask_with_default("Would you like to load the sample data?")
+        else
+          @load_seed_data = false
+          @load_sample_data = false
+        end
+      end
+    end
+
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
     end
@@ -78,19 +98,17 @@ Disallow: /users
       return if options[:test_app]
       gems = {}
 
-      if options[:auto_accept] || agree('Would you like to install the default blue theme? (y/n)')
+      if @install_blue_theme
         gems['spree_blue_theme'] = { :git => 'git@github.com:spree/spree_blue_theme.git',
                                      :ref => '07aea41ecae6948573c4830fcd7dbca11a8c220f' }
       end
 
-      if options[:auto_accept] || agree('Would you like to install the default gateway for stores located in the U.S.A? (y/n)')
+      if @install_default_gateways
         gems['spree_usa_epay'] = { :git => 'git@github.com:spree/spree_usa_epay.git',
-                                 :branch => '1.0-stable' }
-      end
+                                   :ref => '01db40c31e6933c7744403ce13536a34167165eb' }
 
-      if options[:auto_accept] || agree('Would you like to install the default gateway for stores located outside the U.S.A? (y/n)')
         gems['spree_skrill'] = { :git => 'git@github.com:spree/spree_skrill.git',
-                                 :branch => '1.0-stable' }
+                                 :ref => '6743bcbd0146d1c7145d6befc648005d8d0cf79a' }
       end
 
       unless gems.empty?
@@ -110,52 +128,36 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def install_migrations
-      puts "Copying migrations..."
+      say_status :copying, "migrations"
       silence_stream(STDOUT) do
         silence_warnings { rake 'railties:install:migrations' }
       end
     end
 
     def run_migrations
-      unless options[:skip_install_data]
-        unless options[:auto_accept]
-          res = agree('Would you like to run migrations? (y/n)')
-        end
-        if res || options[:auto_accept]
-          puts "Running migrations"
-          rake('db:migrate')
-        else
-          @migrations_skipped = true
-          puts "Skipping rake db:migrate, don't forget to run it!"
-        end
+      if @run_migrations
+        say_status :running, "migrations"
+        rake('db:migrate')
+      else
+        say_status :skipping, "migrations (don't forget to run rake db:migrate)"
       end
     end
 
     def populate_seed_data
-      unless options[:skip_install_data]
-        unless options[:auto_accept] || @migrations_skipped
-          res = agree('Would you like to load the seed data? (y/n)')
-        end
-        if res || options[:auto_accept]
-          puts "Loading seed data"
-          rake('db:seed AUTO_ACCEPT=true')
-        else
-          puts "Skipping rake db:seed."
-        end
+      if @load_seed_data
+        say_status :loading,  "seed data"
+        rake('db:seed AUTO_ACCEPT=true')
+      else
+        say_status :skipping, "seed data (you can always run rake db:seed)"
       end
     end
 
     def load_sample_data
-      unless options[:skip_install_data]
-        unless options[:auto_accept] || @migrations_skipped
-          res = agree('Would you like to load sample data? (y/n)')
-        end
-        if res || options[:auto_accept]
-          puts "Loading sample data"
-          rake('spree_sample:load')
-        else
-          puts "Skipping loading sample data. You can always run this later with rake spree_sample:load."
-        end
+      if @load_sample_data
+        say_status :loading, "sample data"
+        rake('spree_sample:load')
+      else
+        say_status :skipping, "sample data (you can always run rake spree_sample:load)"
       end
     end
 
@@ -173,6 +175,18 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     private
+
+    def ask_with_default(message, default='yes')
+      return true if options[:auto_accept]
+
+      valid = false
+      until valid
+        response = ask "#{message} (y/n) [#{default}]"
+        response = default if response.empty?
+        valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
+      end
+      response.downcase[0] == ?y
+    end
 
     # Copied from https://github.com/rails/rails/blob/b1ceffd7b224c397d8ba5344b9c1438dd62f8325/railties/lib/rails/generators/app_base.rb#L189
     def bundle_command(command)
