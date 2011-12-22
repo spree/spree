@@ -31,6 +31,7 @@ describe "Customer Details" do
       ["ship_address", "bill_address"].each do |address|
         find_field("order_#{address}_attributes_firstname").value.should == "John"
         find_field("order_#{address}_attributes_lastname").value.should == "Doe"
+        find_field("order_#{address}_attributes_company").value.should == "Company"
         find_field("order_#{address}_attributes_address1").value.should == "10 Lovely Street"
         find_field("order_#{address}_attributes_address2").value.should == "Northwest"
         find_field("order_#{address}_attributes_city").value.should == "Herndon"
@@ -48,6 +49,7 @@ describe "Customer Details" do
       click_link "Customer Details"
       fill_in "order_ship_address_attributes_firstname",  :with => "John 99"
       fill_in "order_ship_address_attributes_lastname",   :with => "Doe"
+      fill_in "order_ship_address_attributes_lastname",   :with => "Company"
       fill_in "order_ship_address_attributes_address1",   :with => "100 first lane"
       fill_in "order_ship_address_attributes_address2",   :with => "#101"
       fill_in "order_ship_address_attributes_city",       :with => "Bethesda"
@@ -55,7 +57,7 @@ describe "Customer Details" do
       fill_in "order_ship_address_attributes_state_name", :with => "Alabama"
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
       click_button "Continue"
-
+      
       visit spree.admin_path
       click_link "Orders"
       within(:css, 'table#listing_orders') { click_link "Edit" }

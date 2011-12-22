@@ -10,6 +10,12 @@
         <%= bill_form.label :lastname, t(:last_name) %><span class="req">*</span><br />
         <%= bill_form.text_field :lastname, :class => 'required' %>
       </p>
+      <% if Spree::Config[:company] %>
+        <p class="field" id="bcompany">
+          <%= bill_form.label :company, t(:company) %><br />
+          <%= bill_form.text_field :company %>
+        </p>
+      <% end %>
       <p class="field" id="baddress1">
         <%= bill_form.label :address1, t(:street_address) %><span class="req">*</span><br />
         <%= bill_form.text_field :address1, :class => 'required' %>
@@ -89,6 +95,12 @@
         <%= ship_form.label :lastname, t(:last_name) %><span class="req">*</span><br />
         <%= ship_form.text_field :lastname, :class => 'required' %>
       </p>
+      <% if Spree::Config[:company] %>
+        <p class="field" id="scompany">
+          <%= ship_form.label :company, t(:company) %><br />
+          <%= ship_form.text_field :company %>
+        </p>
+      <% end %>
       <p class="field" id="saddress1">
         <%= ship_form.label :address1, t(:street_address) %><span class="req">*</span><br />
         <%= ship_form.text_field :address1, :class => 'required' %>
