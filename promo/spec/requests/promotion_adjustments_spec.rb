@@ -21,7 +21,7 @@ describe "Promotion Adjustments" do
 
     let!(:address) { Factory(:address, :state => Spree::State.first) }
 
-    it "should allow an admin to create a flat rate discount coupon promo" do
+    pending "should allow an admin to create a flat rate discount coupon promo" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "100"
       select "Coupon code added", :from => "Event"
@@ -60,7 +60,7 @@ describe "Promotion Adjustments" do
       Spree::Order.first.total.to_f.should == 52.00
     end
 
-    it "should allow an admin to create a single user coupon promo with flat rate discount" do
+    pending "should allow an admin to create a single user coupon promo with flat rate discount" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "1"
       select "Coupon code added", :from => "Event"
@@ -124,7 +124,7 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 52.00
     end
 
-    it "should allow an admin to create an automatic promo with flat percent discount" do
+    pending "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Code", :with => ""
       select "Order contents changed", :from => "Event"
@@ -153,7 +153,7 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 54.00
     end
 
-    it "should allow an admin to create an automatic promotion with free shipping" do
+    pending "should allow an admin to create an automatic promotion with free shipping" do
       fill_in "Name", :with => "Free Shipping"
       fill_in "Code", :with => ""
       click_button "Create"
@@ -206,7 +206,7 @@ describe "Promotion Adjustments" do
       page.should have_content("Free Shipping")
     end
 
-    it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
+    pending "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Deal"
       select "Order contents changed", :from => "Event"
       click_button "Create"
@@ -236,7 +236,7 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 76.00
     end
 
-    it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
+    pending "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Spend over $50 and save $5"
       select "Order contents changed", :from => "Event"
       click_button "Create"
