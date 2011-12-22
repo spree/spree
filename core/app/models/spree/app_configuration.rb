@@ -46,6 +46,7 @@ module Spree
     preference :allow_guest_checkout, :boolean, :default => true
     preference :alternative_billing_phone, :boolean, :default => false # Request extra phone for bill addr
     preference :alternative_shipping_phone, :boolean, :default => false # Request extra phone for ship addr
+    preference :company, :boolean, :default => false # Request company field for billing and shipping addr
     preference :shipping_instructions, :boolean, :default => false # Request instructions/info for shipping
     preference :show_price_inc_vat, :boolean, :default => false
     preference :shipment_inc_vat, :boolean, :default => false
