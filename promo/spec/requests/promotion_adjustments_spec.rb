@@ -6,7 +6,10 @@ describe "Promotion Adjustments" do
       PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
       SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
       ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
+      # creates a default shipping method which is required for checkout
       Factory(:bogus_payment_method, :environment => 'test')
+      # creates a check payment method so we don't need to worry about cc details
+      Factory(:payment_method)
 
       Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
       user = Factory(:admin_user)
