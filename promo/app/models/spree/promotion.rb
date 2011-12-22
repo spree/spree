@@ -67,6 +67,8 @@ module Spree
     end
 
     def activate(payload)
+      # Since multiple promotions could be listening we need to make sure the
+      # event applies to this one.
       if eligible?(payload[:order], payload)
         actions.each do |action|
           action.perform(payload)

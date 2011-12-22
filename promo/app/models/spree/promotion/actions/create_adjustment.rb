@@ -8,6 +8,7 @@ module Spree
 
     def perform(options = {})
       return unless order = options[:order]
+      # Nothing to do if the promotion is already associated with the order
       return if order.promotion_credit_exists?(promotion)
       if amount = calculator.compute(order)
         amount = BigDecimal.new(amount.to_s)
