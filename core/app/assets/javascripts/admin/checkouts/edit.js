@@ -63,6 +63,7 @@ $(document).ready(function(){
           if(addr!=undefined){
             $('#order_' + addr_name + '_address_attributes_firstname').val(addr['firstname']);
             $('#order_' + addr_name + '_address_attributes_lastname').val(addr['lastname']);
+            $('#order_' + addr_name + '_address_attributes_company').val(addr['company']);
             $('#order_' + addr_name + '_address_attributes_address1').val(addr['address1']);
             $('#order_' + addr_name + '_address_attributes_address2').val(addr['address2']);
             $('#order_' + addr_name + '_address_attributes_city').val(addr['city']);
@@ -110,6 +111,7 @@ $(document).ready(function(){
 
     $('#order_bill_address_attributes_firstname').val("");
     $('#order_bill_address_attributes_lastname').val("");
+    $('#order_bill_address_attributes_company').val("");
     $('#order_bill_address_attributes_address1').val("");
     $('#order_bill_address_attributes_address2').val("");
     $('#order_bill_address_attributes_city').val("");
@@ -120,6 +122,7 @@ $(document).ready(function(){
 
     $('#order_ship_address_attributes_firstname').val("");
     $('#order_ship_address_attributes_lastname').val("");
+    $('#order_bill_address_attributes_company').val("");
     $('#order_ship_address_attributes_address1').val("");
     $('#order_ship_address_attributes_address2').val("");
     $('#order_ship_address_attributes_city').val("");

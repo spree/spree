@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :address, :class => Spree::Address do
     firstname 'John'
     lastname 'Doe'
+    company 'Company'
     address1 '10 Lovely Street'
     address2 'Northwest'
     city   'Herndon'

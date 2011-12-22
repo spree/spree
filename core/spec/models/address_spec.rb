@@ -25,6 +25,7 @@ describe Spree::Address do
                          :country_id => 1,
                          :firstname => 'firstname',
                          :lastname => 'lastname',
+                         :company => 'company',
                          :phone => 'phone',
                          :state_id => state.id,
                          :state_name => state.name,
@@ -39,6 +40,7 @@ describe Spree::Address do
       cloned.country_id.should == original.country_id
       cloned.firstname.should == original.firstname
       cloned.lastname.should == original.lastname
+      cloned.company.should == original.company
       cloned.phone.should == original.phone
       cloned.state_id.should == original.state_id
       cloned.state_name.should == original.state_name
