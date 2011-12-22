@@ -23,10 +23,10 @@
       <td class="val-col" colspan="3"><%= f.text_field :lastname %></td>
     </tr>
     <% if Spree::Config[:company] %>
-    <tr class="<%= name == t(:company) ? 'shipping-row' : 'billing-row' %>">
-	    <td class="lbl-col">  <%= f.label :company, t(:company) + ':' %> </td>
-	    <td class=colspan="7"> <%= f.text_field :company %> </td>
-	  </tr>
+      <tr class="<%= name == t(:company) ? 'shipping-row' : 'billing-row' %>">
+        <td class="lbl-col">  <%= f.label :company, t(:company) + ':' %> </td>
+        <td class=colspan="7"> <%= f.text_field :company %> </td>
+      </tr>
     <% end %>
     <tr class="<%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
       <td class="lbl-col">
