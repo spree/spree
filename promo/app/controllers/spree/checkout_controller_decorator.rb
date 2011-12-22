@@ -7,7 +7,7 @@ Spree::CheckoutController.class_eval do
       if @order.coupon_code.present?
         # Promotion codes are stored in the preference table
         # Therefore we need to do a lookup there and find if one exists
-        if Spree::Preference.find_by_owner_type_and_name_and_value('Spree::Activator', 'code', @order.coupon_code)
+        if Spree::Preference.where(:value => @order.coupon_code).where("key LIKE 'spree/promotion/code/%'").present?
           fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
         # If it doesn't exist, raise an error!
         # Giving them another chance to enter a valid coupon code
