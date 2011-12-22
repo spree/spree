@@ -76,8 +76,13 @@ module Spree
       end
     end
 
+    # Whether the promotion is eligible for this particular order.
     def eligible?(order, options = {})
-      !expired? && !usage_limit_exceeded?(order) && rules_are_eligible?(order, options) && coupon_is_eligible?(order, options[:coupon_code])
+      return false if expired? || usage_limit_exceeded?(order)
+      if event_code = options[:coupon_code].to_s.strip.downcase
+        return false unless event_code == self.code.to_s.strip.downcase
+      end
+      rules_are_eligible?(order, options)
     end
 
     def rules_are_eligible?(order, options = {})
@@ -87,12 +92,6 @@ module Spree
       else
         rules.any?{|r| r.eligible?(order, options)}
       end
-    end
-
-    def coupon_is_eligible?(order, code = nil)
-      return true if order && order.promotion_credit_exists?(self)
-      return true if event_name != 'spree.checkout.coupon_code_added'
-      code.to_s.strip.downcase == preferred_code.to_s.strip.downcase
     end
 
     # Products assigned to all product rules
