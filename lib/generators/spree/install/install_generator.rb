@@ -100,7 +100,7 @@ Disallow: /users
 
       if @install_blue_theme
         gems['spree_blue_theme'] = { :git => 'git@github.com:spree/spree_blue_theme.git',
-                                     :ref => '07aea41ecae6948573c4830fcd7dbca11a8c220f' }
+                                     :ref => '10666404ccb3ed4a4cc9cbe41e822ab2bb55112e' }
       end
 
       if @install_default_gateways
