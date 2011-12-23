@@ -221,7 +221,7 @@ es-PE:
     update: #Update
 </shell>
 
-WARNING: Remember that you will also need the corresponding Rails locale information in your applications +Rails.root+ directory.  So in order to get your locale to work with both Spree and Rials you will also need the correct locale file from +rails_i18n+.
+WARNING: Remember that you will also need the corresponding Rails locale information in your applications +Rails.root+ directory.  So in order to get your locale to work with both Spree and Rails you will also need the correct locale file from +rails_i18n+.
 
 h4. Default Values
 
