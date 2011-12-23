@@ -61,7 +61,7 @@ code for applications and extensions. The previous interfaces have been
 maintained so no code changes should be required. The underlying classes
 have been completely rewritten.
 
-Please see the "Spree blog":http://spreecommerce.com/blog/2011/12/04/spree-preferences-refactor for
+Please see the "Spree blog":http://spreecommerce.com/blog/2011/12/08/spree-preferences-refactored for
 notes on this release.
 
 h3. Deprecated functions
