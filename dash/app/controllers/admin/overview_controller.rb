@@ -53,9 +53,9 @@ class Admin::OverviewController < Admin::BaseController
 
   def conditions(params)
       if params.key? :to
-        ["completed_at >= ? AND completed_at <= ?", params[:from], params[:to]]
+        ["completed_at >= ? AND completed_at <= ? AND state <> 'canceled'", params[:from], params[:to]]
       else
-        ["completed_at >= ?", params[:from]]
+        ["completed_at >= ? AND state <> 'canceled'", params[:from]]
       end
   end
 
@@ -126,7 +126,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def last_five_orders
-    orders = Order.includes(:line_items).where("completed_at IS NOT NULL").order("completed_at DESC").limit(5)
+    orders = Order.includes(:line_items).where("completed_at IS NOT NULL AND state <> 'canceled'").order("completed_at DESC").limit(5)
     orders.map do |o|
       qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
 
@@ -135,7 +135,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def biggest_spenders
-    spenders = Order.sum(:total, :group => :user_id, :limit => 5, :order => "sum(total) desc", :conditions => "completed_at is not null and user_id is not null")
+    spenders = Order.sum(:total, :group => :user_id, :limit => 5, :order => "sum(total) desc", :conditions => "completed_at is not null and state <> 'canceled' and user_id is not null")
     spenders = spenders.map do |o|
       orders = User.find(o[0]).orders
       qty = orders.size
