@@ -10,28 +10,19 @@ h3. Upgrade Considerations
 h4. The important commands
 
 +spree --update+
-will copy in any new "infrastructure" files, e.g. new configuration or javascript or
-style files.
+was removed in favor of Bundler.
 
-Before updating, you will want to ensure the installed spree
-gem is up-to-date.  For example, if you are using Spree edge, then get the
-latest edge source, and run +rake spree:gem:install+.
+Before updating, you will want to ensure the installed spree gem is
+up-to-date by modifying +Gemfile+ to match the new spree version and
+run +bundle update+.
 
-Once you have the latest spree gem installed, run +spree --update+ from
-inside RAILS_ROOT (your application directory) and your application will be
-upgraded.
-
-The update process is less “destructive” than in previous versions of Spree.
-Instead of silently replacing crucial files in your application, Spree now checks
-the content of files it needs to replace, and if the old version differs, it
-will be saved with a ~ suffix.
+Thanks to Rails 3.1 Mountable Engine, the update process is "non-destructive"
+than in previous versions of Spree. The core files are encapsulated separately from
+sandbox, thus upgrading to newer files will not override nor replace
+sandbox's customized files.
 
 This makes it easier to see when and how some file has changed – which is often
-useful if you need to update a customized version. The update command will also
-no longer copy the routes.rb file – the original version just loads the core
-Spree routes file, so has no need to change. (Recall that you can define new
-routes in your extensions.)
-
+useful if you need to update a customized version.
 
 h4. Dos and Don'ts
 
@@ -90,13 +81,13 @@ models or controllers.
 
 You could hide these away in your site extension, but they could get mixed up with your real site
 customizations. Your could also fork Spree and run your site on this forked version, but this can
-also be a headache to get right. There's also the hassle of tracking changes to +railsdog/master+ and
+also be a headache to get right. There's also the hassle of tracking changes to +spree/master+ and
 pulling them into your project at the right time.
 
 So here's a compromise: have an extra extension, say +spree-tweaks+, to contain your small collection
 of modified files, which is loaded first in the extension order. The benefits are: it's clear what you
 are overriding, and easier to check against core changes; you can base your project on an official
-gem release or a +railsdog/master+ commit stage; such tweaks can become part of your client site project
+gem release or a +spree/master+ commit stage; such tweaks can become part of your client site project
 and be managed with SCM etc.
 
 If you find yourself wanting extensive changes to core, this technique probably won't work so well.
