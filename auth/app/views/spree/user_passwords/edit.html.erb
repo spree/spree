@@ -3,11 +3,11 @@
 
 <%= form_for @user, :url => spree.user_password_path, :html => {:method => :put} do |f| %>
   <p>
-    <%= f.label :password %><br />
+    <%= f.label :password, t(:password) %><br />
     <%= f.password_field :password %><br />
   </p>
   <p>
-    <%= f.label :password_confirmation %><br />
+    <%= f.label :password_confirmation, t(:password_confirmation) %><br />
     <%= f.password_field :password_confirmation %><br />
   </p>
   <%= f.hidden_field :reset_password_token %>
