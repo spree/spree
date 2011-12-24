@@ -90,14 +90,14 @@ describe "Visiting Products" do
 
   it "should be able to display products priced under 10 dollars" do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_Under_$10"
+    check "Price_Range_Under_$10.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
     page.should have_content("No products found")
   end
 
   it "should be able to display products priced between 15 and 18 dollars" do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_$15_-_$18"
+    check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
     page.all('ul.product-listing li').size.should == 3
@@ -108,8 +108,8 @@ describe "Visiting Products" do
 
   it "should be able to display products priced 18 dollars and above" do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_$18_-_$20"
-    check "Price_Range_$20_or_over"
+    check "Price_Range_$18.00_-_$20.00"
+    check "Price_Range_$20.00_or_over"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
     page.all('ul.product-listing li').size.should == 3
