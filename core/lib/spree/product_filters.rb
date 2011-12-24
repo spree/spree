@@ -70,7 +70,7 @@ module Spree
                 [ "#{format_price(15)} - #{format_price(18)}", "price between 15 and 18" ],
                 [ "#{format_price(18)} - #{format_price(20)}", "price between 18 and 20" ],
                 [ "#{format_price(20)} or over",               "price             >= 20" ] ]
-      { :name   => "Price Range",
+      { :name   => I18n.t(:price_range),
         :scope  => :price_range_any,
         :conds  => Hash[*conds.flatten],
         :labels => conds.map {|k,v| [k,k]}

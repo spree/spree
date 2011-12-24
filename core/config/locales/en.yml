@@ -662,6 +662,7 @@ en:
   previous: Previous
   price: Price
   price_bucket: Price Bucket
+  price_range: Price Range
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
