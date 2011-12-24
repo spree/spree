@@ -46,7 +46,9 @@ module Spree
   # happen until Taxon class is loaded. Ensure that Taxon class is loaded before
   # you try something like Product.price_range_any
   module ProductFilters
-
+    extend ActionView::Helpers::NumberHelper
+    extend Spree::BaseHelper
+    
     # Example: filtering by price
     #   The named scope just maps incoming labels onto their conditions, and builds the conjunction
     #   'price' is in the base scope's context (ie, "select foo from products where ...") so
@@ -63,11 +65,11 @@ module Spree
       }
 
     def ProductFilters.price_filter
-      conds = [ [ "Under $10",    "price             <= 10" ],
-                [ "$10 - $15",    "price between 10 and 15" ],
-                [ "$15 - $18",    "price between 15 and 18" ],
-                [ "$18 - $20",    "price between 18 and 20" ],
-                [ "$20 or over",  "price             >= 20" ] ]
+      conds = [ [ "Under #{format_price(10)}",                 "price             <= 10" ],
+                [ "#{format_price(10)} - #{format_price(15)}", "price between 10 and 15" ],
+                [ "#{format_price(15)} - #{format_price(18)}", "price between 15 and 18" ],
+                [ "#{format_price(18)} - #{format_price(20)}", "price between 18 and 20" ],
+                [ "#{format_price(20)} or over",               "price             >= 20" ] ]
       { :name   => "Price Range",
         :scope  => :price_range_any,
         :conds  => Hash[*conds.flatten],
