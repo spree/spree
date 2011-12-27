@@ -7,7 +7,7 @@ module Spree
     belongs_to :address
     has_many :state_events, :as => :stateful
     has_many :inventory_units, :dependent => :nullify
-    has_one :adjustment, :as => :source
+    has_one :adjustment, :as => :source, :dependent => :destroy
 
     before_create :generate_shipment_number
     after_save :ensure_correct_adjustment, :update_order
