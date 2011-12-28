@@ -44,12 +44,6 @@ class Spree::UserSessionsController < Devise::SessionsController
   end
 
   private
-    def associate_user
-      return unless current_user and current_order
-      current_order.associate_user!(current_user)
-      session[:guest_token] = nil
-    end
-
     def accurate_title
       t(:log_in)
     end

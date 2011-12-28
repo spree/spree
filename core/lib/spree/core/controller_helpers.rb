@@ -111,6 +111,12 @@ module Spree
           ActiveSupport::Deprecation.warn "current_gateway is deprecated and will be removed in Spree > 1.0"
           @current_gateway ||= Gateway.current
         end
+        
+        def associate_user
+          return unless current_user and current_order
+          current_order.associate_user!(current_user)
+          session[:guest_token] = nil
+        end
 
         #RAILS 3 TODO
         # # Load all models using STI to fix associations such as @order.credits giving no results and resulting in incorrect order totals

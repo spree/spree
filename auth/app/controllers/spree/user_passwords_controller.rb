@@ -35,11 +35,4 @@ class Spree::UserPasswordsController < Devise::PasswordsController
     super
   end
 
-  private
-
-    def associate_user
-      return unless current_user and current_order
-      current_order.associate_user!(current_user)
-      session[:guest_token] = nil
-    end
 end
