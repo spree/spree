@@ -55,9 +55,4 @@ class Spree::UserRegistrationsController < Devise::RegistrationsController
       authorize!(:create, resource)
     end
 
-    def associate_user
-      return unless current_user and current_order
-      current_order.associate_user!(current_user)
-      session[:guest_token] = nil
-    end
 end
