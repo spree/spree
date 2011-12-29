@@ -179,9 +179,9 @@ module Spree
 
       def product_picker_field(name, value)
         products = Product.with_ids(value.split(','))
-        product_names_hash = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
+        product_names = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
         product_rules = products.collect{ |p| { :id => p.id, :name => p.name } }
-        %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names_hash.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
+        %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
       end
 
       # renders set of hidden fields and button to add new record using nested_attributes
