@@ -36,11 +36,13 @@ module Spree
     def test_dummy_config
       @lib_name = options[:lib_name]
       @database = options[:database]
-
+      
       template "rails/database.yml", "#{dummy_path}/config/database.yml", :force => true
       template "rails/boot.rb", "#{dummy_path}/config/boot.rb", :force => true
       template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
       template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
+      template "rails/database.yml", "#{dummy_path}/config/database.yml", :force => true
+      template "rails/script/rails", "#{dummy_path/spec/dummy/rails}", :force => true
     end
 
     def test_dummy_clean
