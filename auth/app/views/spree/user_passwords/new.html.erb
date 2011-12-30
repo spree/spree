@@ -4,7 +4,7 @@
 
 <%= form_for Spree::User.new, :as => :user, :url => spree.user_password_path do |f| %>
   <p>
-    <%= f.label :email, t(:email) %>:<br />
+    <%= f.label :email, t(:email) %><br />
     <%= f.email_field :email %>
   </p>
   <p>
