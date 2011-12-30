@@ -8,7 +8,7 @@ module Spree
       directory "lib", "#{file_name}/lib"
       directory "script", "#{file_name}/script"
 
-      template "extension.gemspec", "#{file_name}.gemspec"
+      template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
       template "Gemfile", "#{file_name}/Gemfile"
       template "gitignore", "#{file_name}/.gitignore"
       template "LICENSE", "#{file_name}/LICENSE"
