@@ -32,7 +32,9 @@ module Spree
         @run_migrations = ask_with_default("Would you like to run the migrations?")
         if @run_migrations
           @load_seed_data = ask_with_default("Would you like to load the seed data?")
-          @load_sample_data = ask_with_default("Would you like to load the sample data?")
+          if Rails::Engine::Railties.engines.collect{|c| c.engine_name}.include?('spree_sample')
+            @load_sample_data = ask_with_default("Would you like to load the sample data?")
+          end
         else
           @load_seed_data = false
           @load_sample_data = false
