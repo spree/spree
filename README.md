@@ -80,7 +80,7 @@ Working with the edge source (latest and greatest features)
 The source code is essentially a collection of gems.  Spree is meant to be run within the context of Rails application.  You can easily create a sandbox application inside of your cloned source directory for testing purposes.
 
 
-1. Clone the git repo
+1. Clone the Git repo
 
         git clone git://github.com/spree/spree.git spree
         cd spree
@@ -107,7 +107,7 @@ You can recompile your assets as follows:
 
         $ bundle exec rake assets:precompile RAILS_ENV=development
 
-If you want to remove precompiled assets (recommended before you commit to git and push your changes) use the following rake task:
+If you want to remove precompiled assets (recommended before you commit to Git and push your changes) use the following rake task:
 
         $ bundle exec rake assets:clean
 
@@ -119,7 +119,7 @@ Running Tests
 If you want to run all the tests across all the gems then
 
     $ cd spree
-    $ bundle exec rake          #=> 'this will run rspec tests for all the gems'
+    $ bundle exec rake
 
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time
 creation of a test application and then you can use it to run the tests.  For example, to run the
@@ -128,8 +128,16 @@ tests for the core project.
     $ cd core
     $ bundle exec rake test_app
 
-You can run all of the tests with a single command
+If you're working on multiple facets of Spree, you may want
+to run this command at the root of the Spree project to
+generate test applications for all the facets:
 
+    $ bundle exec rake test_app
+
+You can run all of the tests inside a facet by also running
+this command:
+
+    $ cd core
     $ bundle exec rake
 
 If you want to run specs for only a single spec file
