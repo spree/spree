@@ -18,7 +18,7 @@ module Spree
       end
 
       def destroy_root_taxon
-        self.root.destroy
+        self.root.destroy if self.root
       end
   end
 end
