@@ -89,7 +89,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
         bundle install
 
-3. Create a sandbox rails application for testing purposes (and automatically perform all necessary database setup)
+3. Create a sandbox Rails application for testing purposes (and automatically perform all necessary database setup)
 
         bundle exec rake sandbox
 
