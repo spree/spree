@@ -33,7 +33,7 @@ module Spree
     # is provided
     def save(*)
       if super
-        promotion_rules.each { |p| p.save }
+        promotion_rules.each(&:save)
       end
     end
 

@@ -317,8 +317,8 @@ module Spree
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
       # destroy any previous adjustments (eveything is recalculated from scratch)
-      adjustments.tax.each { |e| e.destroy }
-      price_adjustments.each { |p| p.destroy }
+      adjustments.tax.each(&:destroy)
+      price_adjustments.each(&:destroy)
 
       TaxRate.match(self).each { |rate| rate.adjust(self) }
     end
