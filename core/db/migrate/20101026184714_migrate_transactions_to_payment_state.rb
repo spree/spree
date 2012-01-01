@@ -38,7 +38,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
         :avs_response => tx.avs_response, :response_code => tx.response_code
       )
     end
-    credited.each { |rec| rec.destroy }
+    credited.each(&:destroy)
   end
 
   def migrate_voided_transactions
@@ -49,7 +49,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     unless voided.empty?
       all_but_credited = [AUTHORIZED, COMPLETED, PURCHASED, VOIDED]
       voided_and_subsequent_transactions = Transaction.find_by_sql("SELECT * FROM transactions WHERE payment_id IN (#{voided.map(&:payment_id).join(',')}) AND txn_type IN (#{all_but_credited.join(',')})")
-      voided_and_subsequent_transactions.each { |rec| rec.destroy }
+      voided_and_subsequent_transactions.each(&:destroy)
     end
   end
 
@@ -66,7 +66,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     txs.each do |tx|
       update_payment(tx, PAYMENT_COMPLETE)
     end
-    txs.each { |rec| rec.destroy }
+    txs.each(&:destroy)
   end
 
   def migrate_authorized_only_transactions
@@ -79,7 +79,7 @@ class MigrateTransactionsToPaymentState < ActiveRecord::Migration
     authorized_only.each do |tx|
       update_payment(tx, PAYMENT_PENDING)
     end
-    authorized_only.each { |rec| rec.destroy }
+    authorized_only.each(&:destroy)
   end
 
   def update_payment(tx, state)
