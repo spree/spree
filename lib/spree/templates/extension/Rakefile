@@ -2,6 +2,11 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/packagetask'
 require 'rubygems/package_task'
+# If this extension was generated from inside an application,
+# then you *must* specify the rspec-rails and cucumber-rails gems as dependencies
+# for that application, otherwise these files will not be found.
+#
+# Alternatively, place a Gemfile inside the extension directory which specifies these gems as dependencies
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
 require 'spree_core/testing_support/common_rake'
