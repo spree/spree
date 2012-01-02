@@ -1,7 +1,7 @@
 <fieldset id="action_fields">
   <legend><%= t(:promotion_actions) %></legend>
 
-  <%= form_for @promotion, :url => spree.admin_promotion_path(@promotion), :html => { :method => :put } do |f| %>
+  <%= form_for @promotion, :url => spree.admin_promotion_path(@promotion), :method => :put do |f| %>
     <div id="actions" class="filter_list">
       <% if @promotion.actions.any? %>
         <%#= render :partial => 'promotion_action', :collection => @promotion.actions, :locals => {:f => f} %>

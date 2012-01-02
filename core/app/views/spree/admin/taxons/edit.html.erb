@@ -2,7 +2,7 @@
 
 <h1><%= t(:taxon_edit) %></h1>
 
-<%= form_for [:admin, @taxonomy, @taxon], :html => { :method => :put, :multipart => true} do |f| %>
+<%= form_for [:admin, @taxonomy, @taxon], :method => :put, :html => { :multipart => true } do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
 
   <p class="form-buttons" data-hook="buttons">

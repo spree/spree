@@ -4,7 +4,7 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
-<%= form_for @product, :url => admin_product_url(@product), :html => { :method => :put } do |f| %>
+<%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
   <table class="index">
     <thead>
       <tr data-hook="product_properties_header">

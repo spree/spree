@@ -8,7 +8,7 @@
     <div id="guest_checkout" data-hook>
       <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
       <h2><%= t(:guest_user_account) %></h2>
-      <%= form_for @order, :url => update_checkout_registration_path, :html => { :method => :put, :id => 'checkout_form_registration'} do |f| %>
+      <%= form_for @order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
         <p>
           <%= f.label :email, t(:email) %><br />
           <%= f.email_field :email, :class => 'title' %>

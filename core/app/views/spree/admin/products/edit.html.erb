@@ -3,7 +3,7 @@
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Product Details' } %>
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
-<%= form_for [:admin, @product], :html => { :method => :put, :multipart => true } do |f| %>
+<%= form_for [:admin, @product], :method => :put, :html => { :multipart => true } do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>

@@ -2,7 +2,7 @@
 
 <h1><%= t(:shopping_cart) %></h1>
 
-<%= form_for @order, :url =>'#', :html => {:method => :put} do |order_form| %>
+<%= form_for @order, :url =>'#', :method => :put do |order_form| %>
   <%= render :partial => 'form', :locals => { :order_form => order_form } %>
 <% end %>
 

@@ -1,6 +1,6 @@
 <h1><%= t(:editing_promotion) %></h1>
 
-<%= form_for @promotion, :url => object_url, :html => { :method => :put } do |f| %>
+<%= form_for @promotion, :url => object_url, :method => :put do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>
