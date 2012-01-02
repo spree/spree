@@ -27,7 +27,7 @@ module Spree
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
-      Spree::Config[:track_inventory_levels] ? self.count_on_hand : nil
+      Spree::Config[:track_inventory_levels] ? self.count_on_hand : (1.0/0) # Infinity
     end
 
     # Adjusts the inventory units to match the given new level.
