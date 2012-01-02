@@ -1,5 +1,5 @@
 require 'rails/generators'
-require File.expand_path('../../install/install_generator', __FILE__)
+require 'generators/spree/install/install_generator'
 
 module Spree
   class SiteGenerator < Rails::Generators::Base
