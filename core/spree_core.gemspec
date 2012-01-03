@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'acts_as_list', '= 0.1.4'
   s.add_dependency 'nested_set', '= 1.6.8'
-  s.add_dependency 'rd_find_by_param', '= 0.1.1'
 
   s.add_dependency 'jquery-rails', '>= 1.0.18'
   s.add_dependency 'highline', '= 1.6.8'
