@@ -22,8 +22,7 @@ module Spree
         css_classes = []
 
         selected = if options[:match_path]
-          # TODO: Seems a Rails issue- revisit issue #910
-          request.fullpath.starts_with?("//admin#{options[:match_path]}")
+          request.url.starts_with?(root_url + "admin#{options[:match_path]}")
         else
           args.include?(controller.controller_name.to_sym)
         end
