@@ -1,5 +1,5 @@
 # ++
-# Copyright (c) 2007-2011, Rails Dog LLC and other contributors
+# Copyright (c) 2007-2012, Rails Dog LLC and other contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
