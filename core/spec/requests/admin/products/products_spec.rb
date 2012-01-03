@@ -71,7 +71,7 @@ describe "Products" do
       fill_in "product_name", :with => "Baseball Cap"
       fill_in "product_sku", :with => "B100"
       fill_in "product_price", :with => "100"
-      fill_in "product_available_on", :with => "2011/01/24"
+      fill_in "product_available_on", :with => "2012/01/24"
       click_button "Create"
       page.should have_content("successfully created!")
       fill_in "product_on_hand", :with => "100"

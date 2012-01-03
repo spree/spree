@@ -50,7 +50,7 @@ describe "Orders Listing" do
     end
 
     it "should be able to search orders using only completed at input" do
-      fill_in "search_created_at_greater_than", :with => "2011/02/01"
+      fill_in "search_created_at_greater_than", :with => "2012/02/01"
       click_button "Search"
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R100"
     end
