@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "Orders Listing" do
   before(:each) do
-    Factory(:order, :created_at => "2011-01-01 12:36:15", :completed_at => "2011-02-02 12:36:15", :number => "R100")
-    Factory(:order, :created_at => "2011-02-01 12:36:15", :completed_at => "2011-02-01 12:36:15", :number => "R200")
+    Factory(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
+    Factory(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")
     sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
   end
@@ -50,7 +50,7 @@ describe "Orders Listing" do
     end
 
     it "should be able to search orders using only completed at input" do
-      fill_in "search_created_at_greater_than", :with => "2012/02/01"
+      fill_in "search_created_at_greater_than", :with => Date.today
       click_button "Search"
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R100"
     end
