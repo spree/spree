@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
 
   s.author       = 'Sean Schofield'
-  s.email        = 'sean@railsdog.com'
+  s.email        = 'sean@spreecommerce.com'
   s.homepage     = 'http://spreecommerce.com'
 
   s.add_dependency 'spree_core', version
