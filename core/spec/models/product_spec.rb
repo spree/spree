@@ -6,6 +6,22 @@ describe Spree::Product do
   before(:each) do
     reset_spree_preferences
   end
+  
+  context "#on_hand" do
+    let(:product) do
+      product = stub_model(Spree::Product)
+      product.stub :master => stub_model(Spree::Variant)
+      product
+    end
+
+    context 'returns the correct number of products on hand' do
+      before do
+        Spree::Config.set :track_inventory_levels => true
+        product.master.stub :on_hand => 2
+      end
+      specify { product.on_hand.should == 2 }
+    end
+  end
 
   context "shoulda validations" do
     let(:product) {Factory(:product)}
