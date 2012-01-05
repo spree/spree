@@ -18,6 +18,21 @@
   <% end %>
 </div>
 
+<div data-hook"admin_shipping_method_form_availability_fields">
+  <fieldset class="categories">
+    <legend><%= t(:availability) %></legend>
+    <%= f.field_container :shipping_category do %>
+      <%= f.label :shipping_category, t(:shipping_category_choose) %>
+      <%= select(:shipping_method, :shipping_category_id, Spree::ShippingCategory.all.collect { |s| [s.name, s.id] }, { :include_blank => true }) %>
+    <% end %>
+
+    <b><%= t(:match_rule) %></b>&nbsp;&nbsp;
+    <%= f.check_box :match_none %>&nbsp;<%= f.label :match_none, t('match_choices.none') %>
+    <%= f.check_box :match_one %>&nbsp;<%= f.label :match_one, t('match_choices.one') %>
+    <%= f.check_box :match_all %>&nbsp;<%= f.label :match_all, t('match_choices.all') %>
+  </fieldset>
+</div>
+
 <div data-hook="admin_shipping_method_form_calculator_fields">
   <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
 </div>
