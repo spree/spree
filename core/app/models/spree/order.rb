@@ -547,7 +547,7 @@ module Spree
         shipments.each do |shipment|
           shipment.inventory_units.each do |inventory_unit|
             line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
-            Spree::InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
+            InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
           end
         end
       end
@@ -560,7 +560,7 @@ module Spree
         shipments.each do |shipment|
           shipment.inventory_units.each do |inventory_unit|
             line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
-            Spree::InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
+            InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
           end
         end
       end
