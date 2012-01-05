@@ -117,7 +117,7 @@ Disallow: /users
         gems.each do |name, options|
           gem name, options
         end
-        bundle_command :install
+        bundle_command :update
       end
     end
 
