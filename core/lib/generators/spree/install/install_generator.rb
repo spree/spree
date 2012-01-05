@@ -107,7 +107,7 @@ Disallow: /users
 
       if @install_default_gateways
         gems['spree_usa_epay'] = { :git => 'git@github.com:spree/spree_usa_epay.git',
-                                   :ref => '395b264118b1a47ee2a2ce7544788cd81a4dd6e3' }
+                                   :ref => 'a30661528b47ffebe15a1e3f667c15c314b710a5' }
 
         gems['spree_skrill'] = { :git => 'git@github.com:spree/spree_skrill.git',
                                  :ref => '6743bcbd0146d1c7145d6befc648005d8d0cf79a' }
