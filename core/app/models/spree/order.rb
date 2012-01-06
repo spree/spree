@@ -87,7 +87,7 @@ module Spree
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine :initial => :cart, :use_transactions => false do
+    state_machine :initial => 'cart', :use_transactions => false do
 
       event :next do
         transition :from => 'cart',     :to => 'address'
@@ -547,7 +547,7 @@ module Spree
         shipments.each do |shipment|
           shipment.inventory_units.each do |inventory_unit|
             line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
-            Spree::InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
+            InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
           end
         end
       end
@@ -560,7 +560,7 @@ module Spree
         shipments.each do |shipment|
           shipment.inventory_units.each do |inventory_unit|
             line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
-            Spree::InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
+            InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
           end
         end
       end

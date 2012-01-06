@@ -8,6 +8,11 @@ module Spree::Preferences::Preferable
   def self.included(base)
     base.class_eval do
       extend Spree::Preferences::PreferableClassMethods
+      if respond_to?(:after_destroy)
+        after_destroy do |obj|
+          obj.clear_preferences
+        end
+      end
     end
   end
 
@@ -60,6 +65,10 @@ module Spree::Preferences::Preferable
 
   def preference_cache_key(name)
     [self.class.name, name, (try(:id) || :new)].join('::').underscore
+  end
+
+  def clear_preferences
+    preferences.keys.each {|pref| preference_store.delete preference_cache_key(pref)}
   end
 
   private

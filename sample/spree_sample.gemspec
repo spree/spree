@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Sean Schofield'
-  s.email       = 'sean@railsdog.com'
+  s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
 
   s.files        = Dir['LICENSE', 'README.md', 'lib/**/*', 'db/**/*']

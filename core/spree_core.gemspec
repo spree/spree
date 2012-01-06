@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Sean Schofield'
-  s.email       = 'sean@railsdog.com'
+  s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
   s.rubyforge_project = 'spree_core'
 
@@ -20,15 +20,14 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'acts_as_list', '= 0.1.4'
   s.add_dependency 'nested_set', '= 1.6.8'
-  s.add_dependency 'rd_find_by_param', '= 0.1.1'
 
   s.add_dependency 'jquery-rails', '>= 1.0.18'
-  s.add_dependency 'highline', '= 1.6.2'
-  s.add_dependency 'state_machine', '= 1.1.0'
+  s.add_dependency 'highline', '= 1.6.8'
+  s.add_dependency 'state_machine', '= 1.1.1'
   s.add_dependency 'ffaker', '~> 1.10.1'
   s.add_dependency 'paperclip', '= 2.4.1'
   s.add_dependency 'meta_search', '= 1.1.1'
-  s.add_dependency 'activemerchant', '= 1.17.0'
+  s.add_dependency 'activemerchant', '= 1.20.1'
   s.add_dependency 'rails', '>= 3.1.1', '<= 3.1.3'
   s.add_dependency 'kaminari', '>= 0.13.0'
   s.add_dependency 'deface', '>= 0.7.2'

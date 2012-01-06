@@ -32,7 +32,9 @@ module Spree
         @run_migrations = ask_with_default("Would you like to run the migrations?")
         if @run_migrations
           @load_seed_data = ask_with_default("Would you like to load the seed data?")
-          @load_sample_data = ask_with_default("Would you like to load the sample data?")
+          if Rails::Engine::Railties.engines.collect{|c| c.engine_name}.include?('spree_sample')
+            @load_sample_data = ask_with_default("Would you like to load the sample data?")
+          end
         else
           @load_seed_data = false
           @load_sample_data = false
@@ -105,7 +107,7 @@ Disallow: /users
 
       if @install_default_gateways
         gems['spree_usa_epay'] = { :git => 'git@github.com:spree/spree_usa_epay.git',
-                                   :ref => '01db40c31e6933c7744403ce13536a34167165eb' }
+                                   :ref => '2be3faede9594327b9bb548ad042ef28f2836509' }
 
         gems['spree_skrill'] = { :git => 'git@github.com:spree/spree_skrill.git',
                                  :ref => '6743bcbd0146d1c7145d6befc648005d8d0cf79a' }
@@ -171,6 +173,15 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "We added the following line to your application's config/routes.rb file:"
         puts " "
         puts "    mount Spree::Core::Engine, :at => '/'"
+      end
+    end
+
+    def complete
+      unless options[:quiet]
+        puts "*" * 50
+        puts "Spree has been installed successfully. You're all ready to go!"
+        puts " "
+        puts "Enjoy!"
       end
     end
 

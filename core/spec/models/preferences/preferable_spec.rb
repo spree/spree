@@ -126,6 +126,58 @@ describe Spree::Preferences::Preferable do
 
   end
 
+  describe "persisted preferables" do
+    before(:all) do
+      class CreatePrefTest < ActiveRecord::Migration
+        def self.up
+          create_table :pref_tests do |t|
+            t.string :col
+          end
+        end
+
+        def self.down
+          drop_table :pref_tests
+        end
+      end
+
+      @@migration_verbosity = ActiveRecord::Migration.verbose
+      ActiveRecord::Migration.verbose = false
+      CreatePrefTest.migrate(:up)
+
+      class PrefTest < ActiveRecord::Base  
+        preference :pref_test_pref, :string, :default => 'abc'
+      end
+    end
+
+    after(:all) do
+      CreatePrefTest.migrate(:down)
+      ActiveRecord::Migration.verbose = @@migration_verbosity
+    end
+      
+    before(:each) do
+      @pt = PrefTest.new
+    end
+
+    it "clear preferences" do
+      @pt.set_preference(:pref_test_pref, 'xyz')
+      @pt.preferred_pref_test_pref.should == 'xyz'
+      @pt.clear_preferences
+      @pt.preferred_pref_test_pref.should == 'abc'
+    end      
+
+    it "clear preferences when record is deleted" do
+      @pt.save!
+      @pt.preferred_pref_test_pref = 'lmn'
+      @pt.save!
+      @pt.destroy
+      @pt1 = PrefTest.new(:col => 'aaaa')
+      @pt1.id = @pt.id
+      @pt1.save!
+      @pt1.get_preference(:pref_test_pref).should_not == 'lmn'
+      @pt1.get_preference(:pref_test_pref).should == 'abc'
+    end
+  end
+
   it "builds cache keys" do
     @a.preference_cache_key(:color).should match /a\/color\/\d+/
   end

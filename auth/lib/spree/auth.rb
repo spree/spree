@@ -6,9 +6,9 @@ require 'spree/token_resource'
 
 module Spree
   module Auth
-		def self.config(&block)
-	    yield(Spree::Auth::Config)
-	  end
+    def self.config(&block)
+      yield(Spree::Auth::Config)
+    end
   end
 end
 

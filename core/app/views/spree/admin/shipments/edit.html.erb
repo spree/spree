@@ -21,7 +21,7 @@
 </div>
 
 <div data-hook="admin_shipment_edit_form">
-  <%= form_for @shipment, :url => admin_order_shipment_path(@order, @shipment), :html => { :method => :put } do |shipment_form| %>
+  <%= form_for @shipment, :url => admin_order_shipment_path(@order, @shipment), :method => :put do |shipment_form| %>
       <%= render :partial => 'form', :locals => { :shipment_form => shipment_form } %>
 
       <div data-hook="admin_shipment_edit_form_buttons">

@@ -1,7 +1,7 @@
 <fieldset id="rule_fields">
   <legend><%= t(:rules) %></legend>
 
-  <%= form_for @promotion, :url => object_url, :html => { :method => :put } do |f| %>
+  <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
     <p>
       <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
         <label><%= f.radio_button :preferred_match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label> &nbsp;
