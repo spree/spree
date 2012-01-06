@@ -8,16 +8,38 @@
 
 2. Edit config/database.yml to taste.
 
-3. Run the database migrations, seed data and set up the admin user:
-   
-     $ rake db:bootstrap RAILS_ENV=production 
-   
-   (NOTE: In dev mode you can just run `rake db:bootstrap`.)
+3. Add "spree" gem to Gemfile
 
-4. Start it like a normal Rails application. To test execute:
+    gem 'spree'
+
+4. Update your bundle
+
+    $ bundle install
+
+5. Use the install generator to do the basic setup. The install generator will prompt you to run migrations, setup some
+basic data, and load sample products, orders, etc.
+
+    $ rails g spree:site
+
+To auto accept all prompts while running the install generator, pass -A as an option
+
+  $ rails g spree:site -A
+
+If you chose to ignore the prompts while running the basic install
+generator you can manually run migrations and load basic data with the following
+commands
+
+    $ bundle exec rake db:migrate
+    $ bundle exec rake db:seed
+
+6. To manually load sample products, orders, etc., run the following rake task
+
+    $ bundle exec rake spree_sample:load
+
+7. Start it like a normal Rails application. To test execute:
    
-     $ script/server -e production
+     $ rails server
    
    And open your Web browser on port 3000 (http://localhost:3000). The
-   administrative interface is available at /admin/. By default the bootstrap
-   rake task creates a user called "spree@example.com" with a password of "spree".
+   administrative interface is available at /admin/. By default the sample load
+   rake task creates a user called "spree@example.com" with a password of "spree123".
