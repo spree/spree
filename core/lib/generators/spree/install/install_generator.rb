@@ -176,6 +176,15 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       end
     end
 
+    def complete
+      unless options[:quiet]
+        puts "*" * 50
+        puts "Spree has been installed successfully. You're all ready to go!"
+        puts " "
+        puts "Enjoy!"
+      end
+    end
+
     private
 
     def ask_with_default(message, default='yes')
