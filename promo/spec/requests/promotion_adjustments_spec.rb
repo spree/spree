@@ -103,10 +103,10 @@ describe "Promotion Adjustments" do
 
       user = Factory(:user, :email => "john@test.com", :password => "secret", :password_confirmation => "secret")
       click_link "Logout"
-      click_link "Log In"
+      click_link "Login"
       fill_in "user_email", :with => user.email
       fill_in "user_password", :with => user.password
-      click_button "Log In"
+      click_button "Login"
 
       visit spree.root_path
       click_link "RoR Mug"

@@ -6,7 +6,7 @@ describe "Users" do
    visit spree.admin_path
    fill_in "user_email", :with => user.email
    fill_in "user_password", :with => user.password
-   click_button "Log In"
+   click_button "Login"
    click_link "Users"
    within('table#listing_users td.user_email') { click_link "admin@person.com" }
    click_link "Edit"

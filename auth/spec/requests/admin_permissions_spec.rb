@@ -8,7 +8,7 @@ describe "Admin Permissions" do
       visit spree.login_path
       fill_in "user_email", :with => user.email
       fill_in "user_password", :with => user.password
-      click_button "Log In"
+      click_button "Login"
     end
 
     it "should not be able to list orders" do

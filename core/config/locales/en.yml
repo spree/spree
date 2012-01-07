@@ -493,12 +493,11 @@ en:
   live: "Live"
   loading: Loading
   locale_changed: "Locale Changed"
-  log_in: "Log In"
   logged_in_as: "Logged in as"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out."
   login: Login
-  login_as_existing: "Log In as Existing Customer"
+  login_as_existing: "Login as Existing Customer"
   login_failed: "Login authentication failed."
   login_name: Login
   logout: Logout

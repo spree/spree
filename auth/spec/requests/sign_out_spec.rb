@@ -6,10 +6,10 @@ describe "Sign Out" do
     visit spree.login_path
     fill_in "user_email", :with => user.email
     fill_in "user_password", :with => user.password
-    click_button "Log In"
+    click_button "Login"
     click_link "Logout"
     visit spree.root_path
-    page.should have_content("Log In")
+    page.should have_content("Login")
     page.should_not have_content("Logout")
   end
 end

@@ -39,7 +39,7 @@ describe "Checkout", :js => true do
     page.should have_content("Your order has been processed successfully")
   end
 
-  it "should associate an uncompleted guest order with user after log in" do
+  it "should associate an uncompleted guest order with user after logging in" do
     user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
     click_link "RoR Mug"
     click_button "Add To Cart"
@@ -48,7 +48,7 @@ describe "Checkout", :js => true do
     visit spree.login_path
     fill_in "user_email", :with => user.email
     fill_in "user_password", :with => user.password
-    click_button "Log In"
+    click_button "Login"
 
     click_link "Cart"
     page.should have_content("RoR Mug")

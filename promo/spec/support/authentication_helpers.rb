@@ -3,7 +3,7 @@ module AuthenticationHelpers
     visit '/login'
     fill_in 'Email', :with => user.email
     fill_in 'Password', :with => 'secret'
-    click_button 'Log In'
+    click_button 'Login'
   end
 
 end
