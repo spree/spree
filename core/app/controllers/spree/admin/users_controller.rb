@@ -7,6 +7,7 @@ module Spree
 
       create.after :save_user_roles
       update.before :save_user_roles
+      update.after :sign_in_if_change_own_password
 
       def index
         respond_with(@collection) do |format|
@@ -64,6 +65,12 @@ module Spree
 
         def load_roles
           @roles = Role.all
+        end
+
+        def sign_in_if_change_own_password
+          if current_user == @user && @user.password.present?
+            sign_in(@user, :event => :authentication, :bypass => true)
+          end
         end
     end
   end
