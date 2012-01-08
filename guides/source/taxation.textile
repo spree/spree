@@ -154,12 +154,17 @@ Now lets assume an additional tax rate of 10% on consumer electronics. When we a
 
 !images/taxes/vat_tax_breakout4.png(VAT tax breakout)!
 
-Finally, let's see what happens when we change our order to have an address in the United States and therefore not included in the UK tax zone we have defined.
+Finally, let's see what happens when we change our order to have an address in the United States and therefore not included in the UK tax zone we have defined. In this case Spree will create two negative adjustments for £2.80 and £1.70 which effectively reduces the order total to £68.46.
 
-[TODO: supply missing image]
+!images/taxes/vat_tax_refund.png(VAT tax refund)!
 
 h3. Additional Examples
 
+WARNING: All of the examples in this guide are meant to be used for illustrative purposes. They are not meant to be used as definitive intepretations of tax law. You should consult your accountant or attorney for guidance on how much tax to collect and under what circumstances.
+
 h4. Quebec Sales Tax (QST)
 
-h3. Future Development
+In Quebec, Canada there are two different tax rates to consider. There is the Goods and Services Tax (GST) which iscalculated at 5% of the sales price. There is also the Quebec Sales Tax of 8.5% on the sale price including GST.
+
+Since Spree does not currently support the notion of compound tax rates you can calculated a combined sales tax amount instead. In this case you can create a single sales tax rate of 8.925%. This approach is allowed "according to the Quebec government":http://www.revenuquebec.ca/documents/en/publications/in/in-203-v(2011-05).pdf as long as you label the tax simply as "QST" and do not display the percentage used in the calculation as part of the label.
+
