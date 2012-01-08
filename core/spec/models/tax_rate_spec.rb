@@ -40,7 +40,8 @@ describe Spree::TaxRate do
       rate1 = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
                                     :calculator => calculator
       rate2 = Spree::TaxRate.create :amount => 2, :zone => @zone, :tax_category => tax_category,
-                                    :calculator => calculator
+                                    :calculator => Spree::Calculator::FlatRate.new
+
       order.stub :tax_zone => @zone
       Spree::TaxRate.match(order).should == [rate1, rate2]
     end
