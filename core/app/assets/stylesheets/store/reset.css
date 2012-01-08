@@ -172,4 +172,4 @@ th, td, caption { padding: 4px 10px 4px 5px; }
 tr.even td { background: #e5ecf9; }
 tfoot { font-style: italic; }
 caption { background: #eeeeee; }
-
+input[type="number"] { width: 42px; }
