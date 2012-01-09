@@ -3,7 +3,7 @@ var initProductRuleSourceField = function(){
 
   $products_source_field = jQuery('.products_rule_products_source_field input');
   $products_source_field.click(function() {
-    $rule_container = jQuery(this).parents('.promotion-rule');
+    $rule_container = jQuery(this).parents('.promotion_rule');
     if(this.checked){
       if(this.value == 'manual'){
         $rule_container.find('.products_rule_products').show();
