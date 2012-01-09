@@ -46,11 +46,13 @@ describe Spree::CheckoutController do
       end
 
       it "should assign order" do
+        order.stub :state => "address"
         post :update, {:state => "confirm"}
         assigns[:order].should_not be_nil
       end
 
       it "should change to requested state" do
+        order.stub :state => "address"
         order.should_receive(:state=).with('confirm')
         post :update, {:state => "confirm"}
       end
@@ -59,6 +61,7 @@ describe Spree::CheckoutController do
         before { order.stub :next => true }
 
         it "should advance the state" do
+          order.stub :state => "address"
           order.should_receive(:next).and_return true
           post :update, {:state => "delivery"}
         end
