@@ -13,7 +13,7 @@ h3. Managing  Customizations
 
 Spree supports three methods for managing and organizing your customizations, while they all support exactly the same options for customization they differ in terms of re-usability. So before you get started you need to decide what sort of customizations you are going to make:
 
-h4. Applicaiton Specific 
+h4. Application Specific
 
 Application specific customizations are the most common type of customization applied to Spree, it's generally used by developers and designers to tweak Spree's behaviour or appearance to match a particular business's operating procedures, branding, or provide a unique feature.
 
@@ -22,7 +22,7 @@ All application specific customizations are stored within the host application w
 
 h4. Extension
 
-Extensions enable developers to enhance or add functionality to Spree, and are generally discrete pieces of functionality that are shared and intended to be installed in multiple Spree implementations. 
+Extensions enable developers to enhance or add functionality to Spree, and are generally discrete pieces of functionality that are shared and intended to be installed in multiple Spree implementations.
 
 Extensions are generally distributed as ruby gems and implemented as standard Rails 3 engines so they provide a natural way to bundle all the changes needed to implement larger features.
 
