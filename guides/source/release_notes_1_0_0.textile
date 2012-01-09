@@ -4,9 +4,9 @@ endprologue.
 
 h3. Summary
 
-This is the official 1.0 Release of Spree. This is a *major* release for Spree, and so backwards compatibility with extensions and applications is not maintained.
+This is the official 1.0 Release of Spree. This is a *major* release for Spree, and so backwards compatibility with extensions and applications is not guaranteed. Please consult the "extension registry":http://spreecommerce.com/extensions to see which extensions are compatiable with this release. If your extension is not yet compatible you should check back periodically since the community will be upgrading various extensions over time.
 
-The changes to Spree in the 1.0 Release are outlined in this document.
+WARNING: If you are upgrading from older versions of Spree you should perform a complete backup of your database before attempting. It is also recommended that you perform a test upgrade on a local development or staging server before attempting in your production environment.
 
 h3. Namespacing
 
@@ -91,6 +91,58 @@ Extensions looking to add stylesheets to the application should do so through th
 h4. General deprecations
 
 * +Gateway.current+ is now deprecated. Use +order.payment_method.gateway+ now. "#747":https://github.com/spree/spree/pull/747
+
+h3. Taxation
+
+There have been several major changes to how Spree handles tax calculations. If you are migrating from an older version of Spree your previous tax configurations will not function properly and will need to be reconfigured before you can resume processing orders.
+
+WARNING: Be sure to backup your database before migrating. Your tax configuration will likely break after upgrading.  You have been warned.
+
+h4. Zone#match now only returns the best possible match.
+
+Previously the method would return an array of zones as long as the zone included the address. Now only the narrowest match is returned.
+
+h4. New @Order#tax_zone@ method
+
+Will return the zone to be used for computing tax on the order. Returns the best possible zone match given the order address. In the absence of an order address it will return the default tax zone (if one is specified.)
+
+h4. Adjustments are now polymorphic
+
+Previously the @Adjustment@ class belonged to just @Order@. Now the @LineItem@ class can have adjustments as well.  This allows Spree to store the amount of tax included in the price when prices include tax (such as VAT case.)
+
+h4. New @Order#price_adjustments@ method
+
+Convenience method for listing all of the price adjustments in the order.  Price adjustments are tax calculations equivalent to the amount of tax included in a price. These adjustments are not counted against the order total but are sometimes useful for reporting purposes.
+
+NOTE: You don't need to worry about price adjustments unless your prices include tax (such as the case with Value Added Tax.)
+
+h4. New @Order#price_adjustment_totals@ method
+
+Convenient method for show the price adjustment totals grouped by similar tax categories and rates.
+
+h4. Removed helpers and javascript related to VAT
+
+Prior to this version of Spree there were several helpers designed to show prices including tax before Spree was changed so that prices were expected to already include tax (when applicable.) We've removed a lot of stuff related to the old (more complicated) way of doing things.
+
+WARNING: One unfortunate byproduct of prices now including tax is that you will need to change the prices on your products if you are in a region that requires prices to include tax and you were not already including the tax in your prices.
+
+h4. Removed sales tax and VAT calculators
+
+Both of these calculators have been replaced by the single calculator @Calculator::DefaultTax@.
+
+h4. Tax rates can now be included in a product price
+
+There is now a boolean checkbox for indiciating if a tax rate is included in the product price. The tax rate will only be considered as part of the product price if the product has a matching tax category. You can also have multiple tax rates with this designation.
+
+h4. New @TaxRate#adjust@ method
+
+This method is responsible for calculating the price. This is basically an internal change but some developers may be interested to know this.
+
+INFO: Marking a tax rate as including price is the new way to handle Value Added Tax (VAT) and other similar tax schemes.
+
+h3. Zones
+
+There is one major change related to zones in this release. Zones can no longer have zone members that are themselves a zone. All zone members must now be a either a country or state.
 
 h3. Testing
 
