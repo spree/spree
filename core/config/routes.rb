@@ -57,6 +57,7 @@ Spree::Core::Engine.routes.draw do
 
 
   namespace :admin do
+    resources :adjustments
     resources :zones
     resources :users
     resources :countries do
