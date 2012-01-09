@@ -5,12 +5,10 @@ require 'bundler/cli'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
-    argument :after_bundle_only, :type => :string, :default => "false"
-
-    class_option :auto_accept, :type => :boolean, :default => false, :aliases => '-A', :desc => "Answer yes to all prompts"
-    class_option :skip_install_data, :type => :boolean, :default => false
-    class_option :lib_name, :default => 'spree'
-    class_option :test_app, :type => :boolean, :default => false
+    class_option :migrate, :type => :boolean, :default => true, :banner => 'Run Spree migrations'
+    class_option :seed, :type => :boolean, :default => true, :banner => 'load seed data (migrations must be run)'
+    class_option :sample, :type => :boolean, :default => true, :banner => 'load sample data (migrations must be run)'
+    class_option :auto_accept, :type => :boolean
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -20,25 +18,14 @@ module Spree
       paths.flatten
     end
 
-    def ask_questions
-      @install_blue_theme = ask_with_default("Would you like to install the default blue theme?")
-      @install_default_gateways = ask_with_default("Would you like to install the default gateways?")
+    def prepare_options
+      @run_migrations = options[:migrate]
+      @load_seed_data = options[:seed]
+      @load_sample_data = options[:sample]
 
-      if options[:skip_install_data]
-        @run_migrations = false
-        @load_seed_data = false
-        @load_sample_data = false
-      else
-        @run_migrations = ask_with_default("Would you like to run the migrations?")
-        if @run_migrations
-          @load_seed_data = ask_with_default("Would you like to load the seed data?")
-          if Rails::Engine::Railties.engines.collect{|c| c.engine_name}.include?('spree_sample')
-            @load_sample_data = ask_with_default("Would you like to load the sample data?")
-          end
-        else
-          @load_seed_data = false
-          @load_sample_data = false
-        end
+      unless @run_migrations
+         @load_seed_data = false
+         @load_sample_data = false
       end
     end
 
@@ -96,31 +83,6 @@ Disallow: /users
       append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
     end
 
-    def install_gems
-      return if options[:test_app]
-      gems = {}
-
-      if @install_blue_theme
-        gems['spree_blue_theme'] = { :git => 'git@github.com:spree/spree_blue_theme.git',
-                                     :ref => '10666404ccb3ed4a4cc9cbe41e822ab2bb55112e' }
-      end
-
-      if @install_default_gateways
-        gems['spree_usa_epay'] = { :git => 'git@github.com:spree/spree_usa_epay.git',
-                                   :ref => '2be3faede9594327b9bb548ad042ef28f2836509' }
-
-        gems['spree_skrill'] = { :git => 'git@github.com:spree/spree_skrill.git',
-                                 :ref => '6743bcbd0146d1c7145d6befc648005d8d0cf79a' }
-      end
-
-      unless gems.empty?
-        gems.each do |name, options|
-          gem name, options
-        end
-        bundle_command :update
-      end
-    end
-
     def include_seed_data
       append_file "db/seeds.rb", <<-SEEDS
 \n
@@ -148,7 +110,9 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def populate_seed_data
       if @load_seed_data
         say_status :loading,  "seed data"
-        rake('db:seed AUTO_ACCEPT=true')
+        rake_options=[]
+        rake_options << "AUTO_ACCEPT=1" if options[:auto_accept]
+        rake("db:seed #{rake_options.join(' ')}")
       else
         say_status :skipping, "seed data (you can always run rake db:seed)"
       end
@@ -183,26 +147,6 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts " "
         puts "Enjoy!"
       end
-    end
-
-    private
-
-    def ask_with_default(message, default='yes')
-      return true if options[:auto_accept]
-
-      valid = false
-      until valid
-        response = ask "#{message} (y/n) [#{default}]"
-        response = default if response.empty?
-        valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
-      end
-      response.downcase[0] == ?y
-    end
-
-    # Copied from https://github.com/rails/rails/blob/b1ceffd7b224c397d8ba5344b9c1438dd62f8325/railties/lib/rails/generators/app_base.rb#L189
-    def bundle_command(command)
-      say_status :run, "bundle #{command}"
-      Bundler::CLI.new.send(command)
     end
 
   end
