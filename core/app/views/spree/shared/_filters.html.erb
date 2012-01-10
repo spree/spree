@@ -1,7 +1,7 @@
 <%= form_tag '', :method => :get, :id => 'sidebar_products_search' do %>
   <% params[:search] ||= {} %>
   <%= hidden_field_tag 'per_page', params[:per_page] %>
-  <% filters = @taxon ? @taxon.applicable_filters : [ProductFilters.all_taxons] %>
+  <% filters = @taxon ? @taxon.applicable_filters : [Spree::ProductFilters.all_taxons] %>
   <% filters.each do |filter| %>
     <% labels = filter[:labels] || filter[:conds].map {|m,c| [m,m]} %>
     <% next if labels.empty? %>
