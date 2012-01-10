@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'spree/cli'
-require 'active_support/core_ext'
-
-Spree::CLI.start
