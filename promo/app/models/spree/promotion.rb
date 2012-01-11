@@ -87,10 +87,12 @@ module Spree
 
     def rules_are_eligible?(order, options = {})
       return true if rules.none?
+
+      eligible = lambda { |r| r.eligible?(order, options) }
       if match_policy == 'all'
-        rules.all?{|r| r.eligible?(order, options)}
+        rules.all?(&elegible)
       else
-        rules.any?{|r| r.eligible?(order, options)}
+        rules.any?(&eligible)
       end
     end
 
