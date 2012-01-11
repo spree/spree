@@ -37,11 +37,11 @@ Update your bundle
 Use the install generator to do the basic setup. The install generator will prompt you to run migrations, setup some
 basic data, and load sample products, orders, etc.
 
-    $ rails g spree:site
+    $ rails g spree:install
 
 To auto accept all prompts while running the install generator, pass -A as an option
 
-	$ rails g spree:site -A
+	$ rails g spree:install -A
 
 If you chose to ignore the prompts while running the basic install
 generator you can manually run migrations and load basic data with the following
