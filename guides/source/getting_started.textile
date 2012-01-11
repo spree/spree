@@ -78,7 +78,7 @@ $ gem install rails
 
 h4. Installing Bundler
 
-Bundler is the current standard for maintaining Ruby gem dependencies.  It is recommended that you have a decent working knowledge of bundler and how it used within Rails before attempting to install Spree.  You can install bundler using the following command:
+Bundler is the current standard for maintaining Ruby gem dependencies.  It is recommended that you have a decent working knowledge of Bundler and how it used within Rails before attempting to install Spree.  You can install Bundler using the following command:
 
 <shell>
 $ gem install bundler
@@ -90,7 +90,7 @@ Spree is distributed as a Rubygem.  The Spree gem itself is actually very small 
 
 [TODO: Add note with link to section describing organization of source code, etc.]
 
-If you are following the recommended approach of using bundler there really isn't anything to install since bundler will handle all of this for you.  If you wish, however, you can install Spree manually just like any other gem using the following command:
+If you are following the recommended approach of using Bundler there really isn't anything to install since Bundler will handle all of this for you.  If you wish, however, you can install Spree manually just like any other gem using the following command:
 
 <shell>
 $ gem install spree
@@ -162,7 +162,7 @@ INFO: You can also edit the +Gemfile+ to allow for the installation of various e
 
 h4. Gem Installation
 
-Now its time to install any new gem dependencies we have created.  For instance, if you do not already have the appropriate Spree gem or database driver, bundler will install it for you.
+Now its time to install any new gem dependencies we have created.  For instance, if you do not already have the appropriate Spree gem or database driver, Bundler will install it for you.
 
 <shell>
 $ bundle install
