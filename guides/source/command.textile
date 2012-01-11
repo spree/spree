@@ -2,6 +2,11 @@ h2. Command Line Tool
 
 The Spree command line tool helps you quickly add Spree to your exisiting rails application.
 
+* Adds Spree to your Gemfile
+* Copies migrations
+* Generates sample data including products and orders
+* Also, generates extensions to be used with Spree applications
+
 h3. Installation
 
 The tool comes in its own gem without dependencies on Spree. You can install it with with rubygems.
@@ -11,8 +16,7 @@ The tool comes in its own gem without dependencies on Spree. You can install it 
 </ruby>
 
 Versions of Spree previous to 1.0 included a binary named 'spree' which will conflict with the binary installed by the spree_cmd gem.
-we have included an alternative binary 'spree_cmd'. You can use replace instances of 'spree' with 'spree_cmd' in this guide. The recommended
-solution is to remove previous versions of Spree.
+we have included an alternative binary 'spree_cmd'. You can use replace instances of 'spree' with 'spree_cmd' in this guide. The recommended solution is to remove previous versions of Spree.
 
 h3. New Spree Stores
 
