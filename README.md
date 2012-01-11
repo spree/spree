@@ -23,10 +23,29 @@ and perhaps combine it with your own custom authorization scheme instead of usin
 [![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
 [![Dependency Status](https://gemnasium.com/spree/spree.png)](https://gemnasium.com/spree/spree)
 
+Installation
+------------
+
+The fastest way to get started is by using the spree command line tool
+available in the spree gem. It will add Spree to an existing Rails
+application.
+
+  $ gem install spree
+  $ rails new my_store
+  $ spree install my_store
+
+This will add the Spree gem, create intitializers, copy migrations and
+optionally generate sample products and orders.
+
+To auto accept all prompts while running the install generator, pass -A as an option
+
+	$ spree install my_store -A
+
 Using the Gem
 -------------
 
-Start by adding the gem to your existing Rails 3.x application's Gemfile
+You can manually add Spree to your Rails 3.x application. Add Spree to
+your Gemfile.
 
     gem 'spree'
 
@@ -34,18 +53,16 @@ Update your bundle
 
     $ bundle install
 
-Use the install generator to do the basic setup. The install generator will prompt you to run migrations, setup some
-basic data, and load sample products, orders, etc.
+Use the install generator to copy migrations, intializers and generate
+sample data.
 
     $ rails g spree:install
 
-To auto accept all prompts while running the install generator, pass -A as an option
+You can avoid running migrations or generating seed and sample data
 
-	$ rails g spree:install -A
+    $ rails g spree:install --migrate=false --sample=false --seed=false
 
-If you chose to ignore the prompts while running the basic install
-generator you can manually run migrations and load basic data with the following
-commands
+You can always perform the steps later.
 
     $ bundle exec rake db:migrate
     $ bundle exec rake db:seed
