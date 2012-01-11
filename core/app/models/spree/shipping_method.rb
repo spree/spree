@@ -4,6 +4,7 @@ module Spree
     belongs_to :zone
     has_many :shipments
     validates :name, :calculator, :zone, :presence => true
+    belongs_to :shipping_category
 
     calculated_adjustments
 
@@ -16,7 +17,22 @@ module Spree
     def available_to_order?(order, display_on=nil)
       availability_check = available?(order,display_on)
       zone_check = zone && zone.include?(order.ship_address)
-      availability_check && zone_check
+      category_check = category_match?(order)
+      availability_check && zone_check && category_check
+    end
+
+    # Indicates whether or not the category rules for this shipping method
+    # are satisfied (if applicable)
+    def category_match?(order)
+      return true if shipping_category.nil?
+
+      if match_all
+        order.products.all? { |p| p.shipping_category == shipping_category }
+      elsif match_one
+        order.products.any? { |p| p.shipping_category == shipping_category }
+      elsif match_none
+        order.products.all? { |p| p.shipping_category != shipping_category }
+      end
     end
 
     def self.all_available(order, display_on=nil)

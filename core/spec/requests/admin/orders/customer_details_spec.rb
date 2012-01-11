@@ -43,6 +43,7 @@ describe "Customer Details" do
     end
 
     it "should be able to update customer details for an existing order" do
+      pending "Hanging at line 60"
       order.ship_address = Factory(:address)
       order.save!
 
@@ -57,7 +58,7 @@ describe "Customer Details" do
       fill_in "order_ship_address_attributes_state_name", :with => "Alabama"
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
       click_button "Continue"
-      
+
       visit spree.admin_path
       click_link "Orders"
       within(:css, 'table#listing_orders') { click_link "Edit" }

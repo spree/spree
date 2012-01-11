@@ -263,6 +263,7 @@ en:
   assign_taxons: "Assign Taxons"
   authorization_failure: "Authorization Failure"
   authorized: Authorized
+  availability: "Availability"
   available_on: "Available On"
   available_taxons: "Available Taxons"
   awaiting_return: Awaiting Return
@@ -510,6 +511,11 @@ en:
   make_refund: Make refund
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
+  match_choices:
+    none: "None"
+    one: "One"
+    all: "All"
+  match_rule: "Products That Must Match:"
   max_items: Max Items
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
@@ -884,6 +890,7 @@ en:
   shipping_categories: "Shipping Categories"
   shipping_categories_description: "Manage shipping categories to identify which products can be shipped via which method."
   shipping_category: Shipping Category
+  shipping_category_choose: "Shipping Category"
   shipping_cost: Cost
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"
