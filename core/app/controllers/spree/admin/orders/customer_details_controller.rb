@@ -30,7 +30,7 @@ module Spree
               redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
             else
               flash[:error] = t('errors.messages.no_shipping_methods_available')
-              redirect_to user_admin_order_path(@order)
+              redirect_to admin_order_customer_path(@order)
             end
           else
             render :action => :edit
