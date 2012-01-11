@@ -3,14 +3,13 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *
-<% if lib_name == 'spree' %>
- *= require store/spree_core
- *= require store/spree_auth
- *= require store/spree_api
- *= require store/spree_promo
- *= require store/spree_dash
+<% if options[:lib_name] == 'spree' %>
+ *= require admin/spree_core
+ *= require admin/spree_auth
+ *= require admin/spree_api
+ *= require admin/spree_promo
 <% else %>
- *= require store/<%= lib_name.gsub("/", "_") %>
+ *= require admin/<%= options[:lib_name].gsub("/", "_") %>
 <% end %>
  *= require_self
  *= require_tree .

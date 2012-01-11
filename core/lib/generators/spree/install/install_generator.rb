@@ -9,6 +9,7 @@ module Spree
     class_option :seed, :type => :boolean, :default => true, :banner => 'load seed data (migrations must be run)'
     class_option :sample, :type => :boolean, :default => true, :banner => 'load sample data (migrations must be run)'
     class_option :auto_accept, :type => :boolean
+    class_option :lib_name, :type => :string, :default => 'spree'
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -61,6 +62,7 @@ Disallow: /users
     end
 
     def setup_assets
+      @lib_name = 'spree'
       %w{javascripts stylesheets images}.each do |path|
         empty_directory "app/assets/#{path}/store"
         empty_directory "app/assets/#{path}/admin"
