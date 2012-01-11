@@ -10,13 +10,14 @@ module Spree
         def call(env)
           request = Rack::Request.new(env)
           params = request.params
+
           taxon_id = params['taxon']
 
           #redirect requests using taxon id's to their permalinks
           if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id)
             params.delete('taxon')
 
-            return build_response(params, "/t/#{taxon.permalink}" )
+            return build_response(params, "#{request.script_name}/t/#{taxon.permalink}" )
           elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
             #ensures no trailing / for taxon and product urls
 
