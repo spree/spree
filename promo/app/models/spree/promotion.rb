@@ -90,7 +90,7 @@ module Spree
 
       eligible = lambda { |r| r.eligible?(order, options) }
       if match_policy == 'all'
-        rules.all?(&elegible)
+        rules.all?(&eligible)
       else
         rules.any?(&eligible)
       end
