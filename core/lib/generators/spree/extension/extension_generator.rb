@@ -4,6 +4,8 @@ module Spree
     source_root File.expand_path('../templates', __FILE__)
 
     def generate
+      use_prefix "spree_"
+
       directory "app", "#{file_name}/app"
       directory "lib", "#{file_name}/lib"
       directory "script", "#{file_name}/script"
@@ -19,7 +21,13 @@ module Spree
       template "rspec", "#{file_name}/.rspec"
       template "spec/spec_helper.rb.tt", "#{file_name}/spec/spec_helper.rb"
       template "Versionfile", "#{file_name}/Versionfile"
+    end
 
+    def use_prefix(prefix)
+      unless file_name =~ /^#{prefix}/
+        @file_name = prefix + file_name
+        @singular_name = prefix + singular_name
+      end
     end
   end
 end
