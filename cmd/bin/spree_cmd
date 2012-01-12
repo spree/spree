@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'spree_cmd'
+
+SpreeCmd::Command.start
+

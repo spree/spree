@@ -65,7 +65,7 @@ end
 namespace :gem do
   desc "run rake gem for all gems"
   task :build do
-    %w(core auth api dash promo sample).each do |gem_name|
+    %w(core auth api dash promo sample cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
@@ -82,7 +82,7 @@ namespace :gem do
   task :install do
     version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
 
-    %w(core auth api dash promo sample).each do |gem_name|
+    %w(core auth api dash promo sample cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
@@ -101,7 +101,7 @@ namespace :gem do
   task :release do
     version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
 
-    %w(core auth api dash promo sample).each do |gem_name|
+    %w(core auth api dash promo sample cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       cmd = "cd #{gem_name}/pkg && gem push spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
     end
