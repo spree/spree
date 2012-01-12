@@ -111,7 +111,7 @@ class Admin::OverviewController < Admin::BaseController
     prices = LineItem.includes(:order).where("orders.state = 'complete'").sum(:price, :group => :variant_id, :order => 'sum(price) desc', :limit => 5)
     variants = prices.map do |v|
       variant = Variant.find(v[0])
-      [variant.name, v[1] * prices[v[0]]]
+      [variant.name, v[1]]
     end
 
     variants.sort { |x,y| y[1] <=> x[1] }
