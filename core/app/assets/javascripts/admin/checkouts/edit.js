@@ -40,7 +40,7 @@ $(document).ready(function(){
     });
   }
 
-  $("#customer_search").autocomplete("/admin/users.json?authenticity_token=" + $('meta[name=csrf-token]').attr("content"), {
+  $("#customer_search").autocomplete("/admin/users.json?authenticity_token=" + encodeURIComponent($('meta[name=csrf-token]').attr("content")), {
     minChars: 5,
     delay: 1500,
     parse: prep_user_autocomplete_data,

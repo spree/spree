@@ -60,10 +60,6 @@
         }
       }).triggerHandler('click');
 
-      $('form.edit_order').submit(function() {
-        $(this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
-      });
-
     }
 
     if($('#checkout_form_payment').is('*')){
@@ -75,3 +71,9 @@
     }
   });
 })(jQuery);
+
+function disableSaveOnClick() {
+  $('form.edit_spree_order').submit(function() {
+    $(this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass('disabled');
+  });
+}

@@ -53,9 +53,9 @@ class Admin::OverviewController < Admin::BaseController
 
   def conditions(params)
       if params.key? :to
-        ["completed_at >= ? AND completed_at <= ?", params[:from], params[:to]]
+        ["completed_at >= ? AND completed_at <= ? AND state <> 'canceled'", params[:from], params[:to]]
       else
-        ["completed_at >= ?", params[:from]]
+        ["completed_at >= ? AND state <> 'canceled'", params[:from]]
       end
   end
 
@@ -99,7 +99,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def best_selling_variants
-    li = LineItem.includes(:order).where("orders.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
+    li = LineItem.includes(:order).where("orders.state = 'complete'").sum(:quantity, :group => :variant_id, :order => 'sum(quantity) desc', :limit => 5)
     variants = li.map do |v|
       variant = Variant.find(v[0])
       [variant.name, v[1] ]
@@ -108,9 +108,8 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def top_grossing_variants
-    quantity = LineItem.includes(:order).where("orders.state = 'complete'").sum(:quantity, :group => :variant_id, :limit => 5)
-    prices = LineItem.includes(:order).where("orders.state = 'complete'").sum(:price, :group => :variant_id, :limit => 5)
-    variants = quantity.map do |v|
+    prices = LineItem.includes(:order).where("orders.state = 'complete'").sum(:price, :group => :variant_id, :order => 'sum(price) desc', :limit => 5)
+    variants = prices.map do |v|
       variant = Variant.find(v[0])
       [variant.name, v[1] * prices[v[0]]]
     end
@@ -126,7 +125,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def last_five_orders
-    orders = Order.includes(:line_items).where("completed_at IS NOT NULL").order("completed_at DESC").limit(5)
+    orders = Order.includes(:line_items).where("completed_at IS NOT NULL AND state <> 'canceled'").order("completed_at DESC").limit(5)
     orders.map do |o|
       qty = o.line_items.inject(0) {|sum,li| sum + li.quantity}
 
@@ -135,7 +134,7 @@ class Admin::OverviewController < Admin::BaseController
   end
 
   def biggest_spenders
-    spenders = Order.sum(:total, :group => :user_id, :limit => 5, :order => "sum(total) desc", :conditions => "completed_at is not null and user_id is not null")
+    spenders = Order.sum(:total, :group => :user_id, :limit => 5, :order => "sum(total) desc", :conditions => "completed_at is not null and state <> 'canceled' and user_id is not null")
     spenders = spenders.map do |o|
       orders = User.find(o[0]).orders
       qty = orders.size
