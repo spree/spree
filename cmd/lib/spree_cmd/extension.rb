@@ -9,6 +9,8 @@ module SpreeCmd
     source_root File.expand_path('../templates/extension', __FILE__)
 
     def generate
+      use_prefix "spree_"
+
       empty_directory file_name
 
       directory "app", "#{file_name}/app"
@@ -50,6 +52,12 @@ module SpreeCmd
 
       def spree_version
         '1.0.0'
+      end
+
+      def use_prefix(prefix)
+        unless file_name =~ /^#{prefix}/
+          @file_name = prefix + file_name
+        end
       end
     end
 
