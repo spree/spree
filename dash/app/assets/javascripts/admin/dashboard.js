@@ -50,7 +50,7 @@ function handle_orders_total(r){
 jQuery(document).ready(function(){  
 
   if(typeof(orders_by_day_points)=="object"){
-    var orders_by_day_settings = {
+    orders_by_day_settings = {
       title: {
         textColor: '#476D9B',
         fontSize: '12pt',
