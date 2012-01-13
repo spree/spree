@@ -13,18 +13,17 @@
   <td><%= zone_form.check_box :default_tax %></td>
 </p>
 
-
 <p data-hook="type">
   <%= label_tag nil, t(:type) %><br />
   <label class="sub">
-    <%= zone_form.radio_button('kind', 'country', {:id => 'country_based'}) %>
+    <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
     <%= t(:country_based) %>
   </label> &nbsp;
   <label class="sub">
-    <%= zone_form.radio_button('kind', 'state', {:id => 'state_based'}) %>
+    <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
     <%= t(:state_based) %>
   </label> &nbsp;
 </p>
 
-<%= render :partial =>'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
-<%= render :partial =>'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
+<%= render :partial => 'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
+<%= render :partial => 'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
