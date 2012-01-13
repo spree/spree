@@ -14,7 +14,7 @@ group :test do
   gem 'guard'
   gem 'guard-rspec', '~> 0.5.0'
   gem 'rspec-rails', '~> 2.8.0'
-  gem 'factory_girl_rails', '~> 1.4.0'
+  gem 'factory_girl_rails', '~> 1.5.0'
   gem 'rcov'
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
