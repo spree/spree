@@ -29,7 +29,7 @@ The following events are available currently:
 * *spree.cart.add* - an item is added to the cart
 * **spree.checkout.coupon_code_added**  -a coupon code is entered either from the cart screen or a checkout screen
 * **spree.order.contents_changed** - when contents or quantities in the order changed
-* **spree.user.signup** - after sucessfull user registration
+* **spree.user.signup** - after sucessful user registration
 
 These events are created using "ActiveSupport::Notifications":http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html **instrument** method.
 Spree listens for any events with a name starting with **'spree.'**. Any user defined event name may be used to trigger a promotion as long as they have that prefix. The *Promotion* model is a subclass of *Activator* which is the base for any model which should respond to ActiveSupport::Notifications events. When a 'spree.' event is fired, Spree will find all Activator records that have the matching *event_name* attribute and call *activate* on them passing a hash which includes the current user and order.
@@ -67,7 +67,7 @@ You can specify that either all or any of rules must be satisfied for the promot
 
 h3. Promotion Actions
 
-To configure the outcome of a promotion, Promotion Actions are added in the same manner as rules. This means a promotion could result in mulitple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart. 
+To configure the outcome of a promotion, Promotion Actions are added in the same manner as rules. This means a promotion could result in multiple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart. 
 
 The available actions currently include:
 
