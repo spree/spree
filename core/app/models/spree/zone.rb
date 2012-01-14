@@ -111,18 +111,18 @@ module Spree
     end
 
     private
-    def remove_defunct_members
-      zone_members.each do |zone_member|
-        zone_member.destroy if zone_member.zoneable_id.nil?
+      def remove_defunct_members
+        zone_members.each do |zone_member|
+          zone_member.destroy if zone_member.zoneable_id.nil? || zone_member.zoneable_type != "Spree::#{self.kind.capitalize}"
+        end
       end
-    end
 
-    def remove_previous_default
-      return unless self.default_tax
+      def remove_previous_default
+        return unless self.default_tax
 
-      Zone.all.each do |zone|
-        zone.update_attribute "default_tax", false unless zone == self
+        Zone.all.each do |zone|
+          zone.update_attribute "default_tax", false unless zone == self
+        end
       end
-    end
   end
 end

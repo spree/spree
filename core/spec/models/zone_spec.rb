@@ -215,6 +215,18 @@ describe Spree::Zone do
         zone1.reload.default_tax.should == false
       end
     end
+
+    context "when a zone member country is added to an existing zone consisting of state members" do
+      it "should remove existing state members" do
+        zone = Spree::Zone.create(:name => "foo")
+        state = Factory(:state)
+        country = Factory(:country)
+        zone.members.create(:zoneable => state)
+        country_member = zone.members.create(:zoneable => country)
+        zone.save
+        zone.reload.members.should == [country_member]
+      end
+    end
   end
 
 end
