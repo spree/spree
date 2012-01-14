@@ -56,21 +56,23 @@ The different parts of Spree (Auth, API, Dash & Promo) all extend the Core's rou
 
 h3. Command line tool
 
-We have moved the 'spree' command line tool to its own gem. It will add Spree to an existing Rails application. The tool will add the Spree gem, copy migrations, initializers and generate sample data.
+We have moved the 'spree' command line tool to its own gem. This is the new recommended way for adding Spree to an existing Rails application. The tool will add the Spree gem, copy migrations, initializers and generate sample data.
+
+To add Spree to a Rails application you do the following:
+
+<shell>
+$ gem install spree
+$ rails new my_store
+$ cd mystore
+$ spree install
+</shell>
 
 The extension generator has also been moved to this new tool.
 
-<ruby>
-gem install spree_cmd
-
-rails new my_store
-spree install my_store
-
-#new extensions
-spree extension my_ext
-</ruby>
-
-If you have previous versions of Spree installed, you may have conflicts with the name 'spree'. We have included an alternative binary named 'spree_cmd'. The recomendation is to remove older versions of Spree.
+<shell>
+$ gem install spree
+$ spree extension my_ext
+</shell>
 
 h3. Preferences
 

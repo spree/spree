@@ -64,7 +64,7 @@ h5. Stay Focused
 
 This is perhaps the most important principle behind the design philosophy. We need to stay focused on core functionality (the 90% that everybody needs.) For this reason it is not appropriate for Spree to attempt to become a Content Management System (CMS). There are already some pretty good Rails based CMS projects out there such as "Radiant":http://radiantcms.org. CMS is definitely important but it is a big enough task to warrant its own project. Spree will definitely be looking at ways to integrate with existing CMS platforms, we just won't be attempting to reinvent the CMS concept.
 
-h3. Installation
+h3. Prerequisites
 
 If you follow this guide, you’ll create a Spree project called <tt>mystore</tt>, a (very) simple online store. Before you can start building the application, you need to make sure that you have Rails itself installed.
 
@@ -84,32 +84,25 @@ Bundler is the current standard for maintaining Ruby gem dependencies.  It is re
 $ gem install bundler
 </shell>
 
-h4. Installing Spree
-
-Spree is distributed as a Rubygem.  The Spree gem itself is actually very small and it depends on several other so-called "core gems."
-
-[TODO: Add note with link to section describing organization of source code, etc.]
-
-If you are following the recommended approach of using Bundler there really isn't anything to install since Bundler will handle all of this for you.  If you wish, however, you can install Spree manually just like any other gem using the following command:
-
-<shell>
-$ gem install spree
-</shell>
-
 h4. Installing Image Magick
 
 Spree also uses the Image Magick library for manipulating images.  Using this library allows for automatic resizing of product images and the creation of product image thumbnails.  Image Magick is not a Rubygem and it can be a bit tricky to install.  There are, however, several excellent sources of information on the Web for how to install it.  A basic Google search should help you if you get stuck.
 
 NOTE: If you would like to skip the ImageMagick installation you can get by without it as long as you do not try to add any product images to your store.  You will also have to skip the creation of the sample products (and related images.) This means you cannot run +rake db:bootstrap+ or +rake db:sample+ since those rake tasks require the library.
 
+h4. Installing the Spree Gem
+
+Spree is distributed as a Rubygem. The Spree gem itself is actually very small and it depends on several other so-called "core gems." Most users, however, will never need to worry about these individual gems and can simply install the spree gem.
+
+<shell>
+$ gem install spree
+</shell>
+
+NOTE: If you have trouble installing the spree gem b/c of dependency issues you can install the spree_cmd gem utility which has no gem dependencies.
 
 h3. Creating a New Spree Project
 
 The distribution of Spree as a Rubygem allows it to be used in a new Rails project or added to an existing Rails project.  This guide will assume you are creating a brand new store and will walk you through the process starting with the creation of a new Rails application.
-
-INFO: In versions prior to Spree 0.30.0 you could not simply add Spree to an existing Rails application.  You needed to use a special +spree+ command to setup your project.  This command customized/hacked some of the standard Rails initializers but this approach is no longer necessary due to improvements to Rails that were designed to support frameworks such as Spree.
-
-[TODO: Possible note and link to source section detailing the Rails Engines aspect]
 
 h4. Creating the Rails Application
 
@@ -136,114 +129,49 @@ Here is a complete list of database options
 * frontbase
 * ibm_db
 
+h4. Configuring the Database
+
+Since Spree is a Rails application you can configure your database in the standard way. Please consult the Rails Guide for more information on "database configuration":http://guides.rubyonrails.org/getting_started.html#configuring-a-database.
+
 h4. Adding Spree to a Rails Application
 
-Now that we have a basic Rails application we can add Spree to it.  This approach would also work with existing Rails applications that have been around for a long time (assuming they are using Rails 3.0 or greater and assuming there is no conflict in model names, etc.)
+Now that we have a basic Rails application we can add Spree to it.  This approach would also work with existing Rails applications that have been around for a long time (assuming they are using the correct version of Rails.)
 
 After you create the store application, switch to its folder to continue work directly in that application:
 
 <shell>
-$ cd mystore
+cd mystore
 </shell>
 
-Edit the +Gemfile+ in your Rails application by adding the following:
+Now lets add Spree to our Rails application:
 
 <shell>
-gem 'spree'
+spree install
 </shell>
 
-This will used the latest stable release of Spree.  If you want to require a specific version (for example a "release candidate" or "beta release") then just specify the version as well.
+INFO: This requires that you have the latest Spree gem installed already.
+
+Spree will then ask you a few questions about installing sample data, etc. It is recommended you hit 'Enter' and accept the default answers unless you know what you're doing.
+
+NOTE: You can always the optional @--auto_accept@ argument which will accept the defaults automatically
+
+This will used the latest stable release of Spree.  If you want to use the edge version of Spree or one of the other options consider one of the following commands instead.
 
 <shell>
-gem 'spree', '0.30.0.beta1'
+# Use latest edge version of Spree
+spree install --edge
+
+#Using a local clone
+spree install --path
+
+#Using a github clone
+spree install --git=git@github.com:cmar/spree.git --branch=my_changes
+
+#Answer yes to all questions
+spree install --auto_accept
 </shell>
 
 INFO: You can also edit the +Gemfile+ to allow for the installation of various extensions.  The "Extension Guide":extensions.html#installingan-extension covers installation of extension in detail.
-
-h4. Gem Installation
-
-Now its time to install any new gem dependencies we have created.  For instance, if you do not already have the appropriate Spree gem or database driver, Bundler will install it for you.
-
-<shell>
-$ bundle install
-</shell>
-
-h4. Configuring the Database
-
-Just about every Rails application will interact with a database. The database to use is specified in a configuration file, +config/database.yml+.  The file contains sections for three different environments in which Rails can run by default:
-
-* The +development+ environment is used on your development computer as you interact manually with the application
-* The +test+ environment is used to run automated tests
-* The +production+ environment is used when you deploy your application for the world to use.
-
-NOTE: You may also want to consider creating a +staging+ environment for your application.  See the Rails documentation for help in creating additional environments.
-
-h5. Configuring a SQLite Database
-
-Rails comes with built-in support for "SQLite":http://www.sqlite.org, which is a lightweight serverless database application. While a busy production environment may overload SQLite, it works well for development and testing. Rails defaults to using a SQLite database when creating a new project, but you can always change it later.
-
-Here's the section of the default configuration file with connection information for the development environment:
-
-<shell>
-development:
-adapter: sqlite3
-database: db/development.sqlite3
-pool: 5
-timeout: 5000
-</shell>
-
-h5. Configuring Other Databases
-
-The existing "rails documentation":http://guides.rubyonrails.org provides detailed information on setting up all of the major databases.  Please consult this documentation as Spree does not have any special requirements beyond what a standard Rails application requires.
-
-INFO: When using a database such as PostgreSQL, you will need to create your database before you run any rails generators. Once you've configured your database.yml file, run the following command:
-
-<shell>
-rake db:create
-</shell>
-
-h4. Installing the Migrations and Other Assets
-
-Spree is actually what is known as a Rails Engine.  As of Rails 3.0 Rails Engines do not automatically copy their migrations or public assets into your Rails application.  Once you've added the Spree gem to the +Gemfile+ you can accomplish this by running the following command:
-
-<shell>
-rails g spree:install
-</shell>
-
-The task will also prompt you to migrate the databases, setup some basic data, and load sample products, orders, etc. If you choose to ignore these prompts they can be run manually as described in the *Populating the Database* section of this guide. To automatically accept all prompts, you can pass -A to +rails g spree:install+:
-
-<shell>
-rails g spree:install -A
-</shell>
-
-INFO: If you have an existing Rails application with customizations (as opposed to just the starter app that we've shown here) you will want to make a note of any files that this task changes.  Its possible that it may alter your javascript or stylesheet files in undesirable ways.  You should check the differences via +git diff+ or some other process and manually merge the needed changes if necessary.
-
-Spree also comes with sample data (products, orders, etc.)  If you'd like to install the migrations and assets associated with the sample data then you can run this additional rake task.
-
-<shell>
-$ bundle exec rake spree_sample:load
-</shell>
-
-h4. Populating the Database
-
-Now that you have your database configured, it's time to have Spree populate it with the necessary tables and data.  You can do this by running a rake command:
-
-<shell>
-$ rake db:bootstrap
-</shell>
-
-WARNING: This will effectively drop the existing database and recreate it from scratch with the option of creating sample product data.  It is disabled for production databases for safety reasons.  For a production database you should use +rake db:migrate+ to create the tables and +rake db:admin:create+ to create the admin user.
-
-You can also migrate the database in the more "traditional" rails manner using more familiar rake tasks.  The following series of commands is equivalent to running the bootstrap task described above:
-
-<shell>
-rake db:migrate
-rake db:seed
-rake spree_sample:load
-rake db:admin:create
-</shell>
-
-NOTE: If you skip the sample and admin create tasks there will be no admin user.  In this situation the first user you create in Spree will be given the admin role automatically.
 
 h4. Improving Performance
 

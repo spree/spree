@@ -62,6 +62,7 @@ Within the Spree source, each of the gems is organized into subdirectories as fo
 |_<.Gem|_.Directory|_.Description|
 |spree_api|api|Provides REST API access|
 |spree_auth|auth|Provides authentication and authorization (via authlogic and cancan gems)|
+|spree_cmd|cmd|Command line utility for installing Spree and creating extensions|
 |spree_core|core|Core functionality - all other gems depend on this gem|
 |spree_dash|dash|Simple overview dashboard|
 |spree_promo|promo|Coupons and promotions|
@@ -177,11 +178,13 @@ NOTE: See the excellent "bundler documentation":http://gembundler.com for more d
 
 h4. Creating Extensions
 
-Spree provides a convenient generator for helping you to get started with extensions. 
+Spree provides a convenient generator for helping you to get started with extensions.
 
 <shell>
 $ spree extension foo
 </shell>
+
+INFO: You need to have the Spree gem installed in order to use the @spree@ command.
 
 Please see the "Creating Extensions":/creating_extensions.html guide for more details.
 
