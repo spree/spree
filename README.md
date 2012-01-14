@@ -123,11 +123,11 @@ You may noticed that your Spree store runs slowly in development mode.  This is 
 
 You can recompile your assets as follows:
 
-        $ bundle exec rake assets:precompile RAILS_ENV=development
+    $ bundle exec rake assets:precompile RAILS_ENV=development
 
 If you want to remove precompiled assets (recommended before you commit to Git and push your changes) use the following rake task:
 
-        $ bundle exec rake assets:clean
+    $ bundle exec rake assets:clean
 
 
 
