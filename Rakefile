@@ -49,7 +49,7 @@ task :clean do
   puts "Deleting pkg directory.."
   FileUtils.rm_rf("pkg")
 
-  %w(api auth core dash promo).each do |gem_name|
+  %w(api auth cmd core dash promo).each do |gem_name|
     puts "Cleaning #{gem_name}:"
     puts "  Deleting #{gem_name}/Gemfile"
     FileUtils.rm_f("#{gem_name}/Gemfile")
