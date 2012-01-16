@@ -3,6 +3,9 @@
 # StoreInstance has a persistence flag that is on by default,
 # but we disable database persistence in testing to speed up tests
 #
+
+require 'singleton'
+
 module Spree::Preferences
 
   class StoreInstance
