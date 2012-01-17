@@ -48,6 +48,7 @@ describe Spree::Product do
 
       context "permalink should be incremented until the value is not taken" do
         before do
+          @other_product = Factory(:product, :name => 'zoo')
           @product1 = Factory(:product, :name => 'foo')
           @product2 = Factory(:product, :name => 'foo')
           @product3 = Factory(:product, :name => 'foo')

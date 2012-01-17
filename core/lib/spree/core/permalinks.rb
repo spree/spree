@@ -40,7 +40,7 @@ module Spree
           permalink_value = self.to_param
           field = self.class.permalink_field
           # Do other links exist with this permalink?
-          other = self.class.first(:conditions => "#{field} LIKE '#{self.send(field)}%'", :order => "#{field} DESC")
+          other = self.class.first(:conditions => "#{field} LIKE '#{permalink_value}%'", :order => "#{field} DESC")
           if other
             # Find the number of that permalink and add one.
             if /-(\d+)$/.match(other.send(field))
