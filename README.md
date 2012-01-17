@@ -71,15 +71,6 @@ To manually load sample products, orders, etc., run the following rake task
 
     $ bundle exec rake spree_sample:load
 
-Peformance
-----------
-
-Rails 3.1 introduced a concept known as the asset pipeline.  Unfortunately it results in poor performance when running your site in development mode (production mode is unaffected.)  You may want to run the following command when testing locally in development mode
-
-    $ bundle exec rake assets:precompile:nondigest
-
-Using the precompile rake task in development will prevent any changes to asset files from being automatically included in when you reload the page. You must re-run the precompile task for changes to become available.
-
 Browse Store
 ------------
 
@@ -119,11 +110,11 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 Performance
 -----------
 
-You may noticed that your Spree store runs slowly in development mode.  This is a side-effect of how Rails works in development mode which is to continuous reload your Ruby objects on each request.  The introduction of the asset pipeline in Rails 3.1 made default performance in development mode significantly worse.  There are, however, a few tricks to speeding up performance.
+You may noticed that your Spree store runs slowly in development mode.  This is a side-effect of how Rails works in development mode which is to continuous reload your Ruby objects on each request.  The introduction of the asset pipeline in Rails 3.1 made default performance in development mode significantly worse.  There are, however, a few tricks to speeding up performance in development mode.
 
 You can recompile your assets as follows:
 
-    $ bundle exec rake assets:precompile RAILS_ENV=development
+    $ bundle exec rake assets:precompile:nondigest
 
 If you want to remove precompiled assets (recommended before you commit to Git and push your changes) use the following rake task:
 
