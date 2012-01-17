@@ -5,8 +5,19 @@ module Spree
 
     scope :of_type, lambda {|t| {:conditions => {:type => t}}}
 
+    validate :promotion, :presence => true
+    validate :unique_per_activator, :on => :create
+
     def eligible?(order, options = {})
       raise 'eligible? should be implemented in a sub-class of Promotion::PromotionRule'
     end
+
+    private
+    def unique_per_activator
+      if Spree::PromotionRule.exists?(:activator_id => activator_id, :type => self.class.name)
+        errors[:base] << "Promotion already contains this rule type"
+      end
+    end
+ 
   end
 end
