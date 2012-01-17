@@ -156,13 +156,15 @@ describe Spree::Promotion do
     end
 
     context "when activated by coupon code event and a code is set" do
-      before {
+      before do
         promotion.event_name = 'spree.checkout.coupon_code_added'
         promotion.preferred_code = 'ABC'
-      }
+      end
+
       it "is false when payload doesn't include the matching code" do
         promotion.should_not be_eligible(@order, {})
       end
+
       it "is true when payload includes the matching code" do
         promotion.should be_eligible(@order, {:coupon_code => 'ABC'})
       end
