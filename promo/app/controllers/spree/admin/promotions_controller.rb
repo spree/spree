@@ -2,6 +2,7 @@ module Spree
   module Admin
     class PromotionsController < ResourceController
       before_filter :load_data
+      helper 'spree/promotion_rules'
 
       protected
         def build_resource

@@ -21,10 +21,10 @@
 
   <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), :remote => true,
                                                                  :id => 'new_product_rule_form' do %>
-    <% options = options_for_select( Rails.application.config.spree.promotions.rules.map(&:name).map {|name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] } ) %>
+
     <p>
       <%= label_tag :promotion_rule_type, t(:add_rule_of_type) %>
-      <%= select_tag('promotion_rule[type]', options) %>
+      <%= select_tag('promotion_rule[type]', options_for_promotion_rule_types(@promotion)) %>
       <%= submit_tag t(:add) %>
     </p>
   <% end %>

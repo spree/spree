@@ -1,4 +1,6 @@
 class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
+  helper 'spree/promotion_rules'
+
   def create
     @promotion = Spree::Promotion.find(params[:promotion_id])
     @promotion_rule = params[:promotion_rule][:type].constantize.new(params[:promotion_rule])
