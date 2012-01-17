@@ -12,7 +12,8 @@ module Spree
     # update the order totals, etc.
     after_save :update_order
 
-    accepts_nested_attributes_for :source
+    attr_accessor :source_attributes
+    after_initialize :build_source
 
     scope :from_creditcard, where(:source_type => 'Spree::Creditcard')
     scope :with_state, lambda { |s| where(:state => s) }
@@ -60,11 +61,13 @@ module Spree
       started_processing!
       source.credit(self, amount)
     end
+    
+    # see https://github.com/spree/spree/issues/981
+    def build_source
+      return if source_attributes.nil?
 
-    # With nested attributes, Rails calls build_[association_name] for the nested model which won't work for a polymorphic association
-    def build_source(params, opts)
       if payment_method and payment_method.payment_source_class
-        self.source = payment_method.payment_source_class.new(params)
+        self.source = payment_method.payment_source_class.new(source_attributes)
       end
     end
 

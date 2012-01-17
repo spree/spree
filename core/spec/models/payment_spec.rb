@@ -117,4 +117,30 @@ describe Spree::Payment do
     end
   end
 
+  context "#build_source" do
+    let(:payment_method) { Factory(:bogus_payment_method) }
+
+    it "should build the payment's source" do
+      params = { :amount => 100, :payment_method_id => payment_method.id,
+        :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'}}
+
+      payment = Spree::Payment.new(params)
+      payment.should be_valid
+      payment.source.should_not be_nil
+    end
+
+    context "with the params hash ordered differently" do
+      it "should build the payment's source" do
+        params = {
+          :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'},
+          :amount => 100, :payment_method_id => payment_method.id
+        }
+
+        payment = Spree::Payment.new(params)
+        payment.should be_valid
+        payment.source.should_not be_nil
+      end
+    end
+  end
+
 end
