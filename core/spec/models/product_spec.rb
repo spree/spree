@@ -60,6 +60,17 @@ describe Spree::Product do
         end
       end
 
+      context "permalink should be incremented until the value is not taken when there are more than 10 products" do
+        before do
+          @products = 0.upto(11).map do
+            Factory(:product, :name => 'foo')
+          end
+        end
+        it "should have valid permalink" do
+          @products[11].permalink.should == 'foo-11'
+        end
+      end
+
       context "make_permalink should declare validates_uniqueness_of" do
         before do
           @product1 = Factory(:product, :name => 'foo')
