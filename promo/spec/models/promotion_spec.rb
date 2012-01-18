@@ -136,7 +136,6 @@ describe Spree::Promotion do
   context "#eligible?" do
     before do
       @order = Factory(:order)
-      promotion.preferred_code = 'ABC'
       promotion.event_name = 'spree.checkout.coupon_code_added'
       promotion.name = "Foo"
       calculator = Spree::Calculator::FlatRate.new
@@ -157,7 +156,6 @@ describe Spree::Promotion do
 
     context "when activated by coupon code event and a code is set" do
       before do
-        promotion.event_name = 'spree.checkout.coupon_code_added'
         promotion.preferred_code = 'ABC'
       end
 
@@ -172,7 +170,9 @@ describe Spree::Promotion do
 
     context "when a coupon code has already resulted in an adjustment on the order" do
       before do
+        promotion.preferred_code = nil
         promotion.save!
+
         @order.adjustments.create(:amount => 1,
                                   :source => @order,
                                   :originator => @action,

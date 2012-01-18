@@ -80,17 +80,16 @@ module Spree
     def eligible?(order, options = {})
       return false if expired? || usage_limit_exceeded?(order)
 
-      if preferred_code && options[:coupon_code]
+      if preferred_code
         event_code = options[:coupon_code].to_s.strip.downcase
-        return false unless event_code == self.code.to_s.strip.downcase
+        return event_code == self.code.to_s.strip.downcase
+      else
+        return rules_are_eligible?(order, options)
       end
-
-      rules_are_eligible?(order, options)
     end
 
     def rules_are_eligible?(order, options = {})
       return true if rules.none?
-
       eligible = lambda { |r| r.eligible?(order, options) }
       if match_policy == 'all'
         rules.all?(&eligible)
