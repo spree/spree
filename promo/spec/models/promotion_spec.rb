@@ -173,7 +173,10 @@ describe Spree::Promotion do
     context "when a coupon code has already resulted in an adjustment on the order" do
       before do
         promotion.save!
-        @order.adjustments.create(:amount => 1, :source => @order, :originator => @action, :label => "Foo")
+        @order.adjustments.create(:amount => 1,
+                                  :source => @order,
+                                  :originator => @action,
+                                  :label => "Foo")
       end
 
       it "should be eligible" do
