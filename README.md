@@ -38,7 +38,7 @@ application.
 This will add the Spree gem, create intitializers, copy migrations and
 optionally generate sample products and orders.
 
-To auto accept all prompts while running the install generator, pass -A as an option
+To auto accept all prompts while running the install generator, pass -A as an option:
 
     $ spree install my_store -A
 
@@ -46,29 +46,29 @@ Using the Gem
 -------------
 
 You can manually add Spree to your Rails 3.x application. Add Spree to
-your Gemfile.
+your Gemfile:
 
     gem 'spree', '1.0.0'
 
-Update your bundle
+Update your bundle:
 
     $ bundle install
 
 Use the install generator to copy migrations, intializers and generate
-sample data.
+sample data:
 
     $ rails g spree:install
 
-You can avoid running migrations or generating seed and sample data
+You can avoid running migrations or generating seed and sample data:
 
     $ rails g spree:install --migrate=false --sample=false --seed=false
 
-You can always perform the steps later.
+You can always perform the steps later:
 
     $ bundle exec rake db:migrate
     $ bundle exec rake db:seed
 
-To manually load sample products, orders, etc., run the following rake task
+To manually load sample products, orders, etc., run the following Rake task:
 
     $ bundle exec rake spree_sample:load
 
@@ -90,20 +90,20 @@ Working with the edge source (latest and greatest features)
 The source code is essentially a collection of gems.  Spree is meant to be run within the context of Rails application.  You can easily create a sandbox application inside of your cloned source directory for testing purposes.
 
 
-1. Clone the Git repo
+1. Clone the Git repo:
 
         git clone git://github.com/spree/spree.git spree
         cd spree
 
-2. Install the gem dependencies
+2. Install the gem dependencies:
 
         bundle install
 
-3. Create a sandbox Rails application for testing purposes (and automatically perform all necessary database setup)
+3. Create a sandbox Rails application for testing purposes (and automatically perform all necessary database setup):
 
         bundle exec rake sandbox
 
-6. Start the server
+6. Start the server:
 
         cd sandbox
         rails server
@@ -126,7 +126,7 @@ If you want to remove precompiled assets (recommended before you commit to Git a
 Running Tests
 -------------
 
-If you want to run all the tests across all the gems then
+If you want to run all the tests across all the gems then:
 
     $ cd spree
     $ bundle exec rake
@@ -150,11 +150,11 @@ this command:
     $ cd core
     $ bundle exec rake
 
-If you want to run specs for only a single spec file
+If you want to run specs for only a single spec file:
 
     $ bundle exec rspec spec/models/state_spec.rb
 
-If you want to run a particular line of spec
+If you want to run a particular line of spec:
 
     $ bundle exec rspec spec/models/state_spec.rb:7
 
