@@ -11,6 +11,7 @@ automatically require all of the necessary dependency gems.  Those gems are as f
 
 * spree_api
 * spree_auth
+* spree_cmd
 * spree_core
 * spree_dash
 * spree_promo
