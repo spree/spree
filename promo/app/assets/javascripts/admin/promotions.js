@@ -86,7 +86,7 @@ var initProductActions = function(){
         var newRow = "<tr><td>" + product_name + "</td><td>" + quantity + "</td><td><img src='/assets/admin/icons/cross.png' /></td></tr>";
         $container.find('table').append(newRow);
         // Add to serialized string in hidden text field
-        var $hiddenField = $container.find("input[type='hidden']");
+        var $hiddenField = $container.find(".line_items_string");
         $hiddenField.val($hiddenField.val() + "," + variant_id + "x" + quantity);
         setupRemoveLineItems();
         hideOrShowItemTables();
