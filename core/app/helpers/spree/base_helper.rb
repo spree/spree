@@ -110,7 +110,7 @@ module Spree
         crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
       crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join))
-      content_tag(:div, crumb_list + tag(:br, {:class => 'clear'}, false, true), :id => 'breadcrumbs')
+      content_tag(:div, crumb_list, :id => 'breadcrumbs')
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
