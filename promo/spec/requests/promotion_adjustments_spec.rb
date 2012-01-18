@@ -321,5 +321,32 @@ describe "Promotion Adjustments" do
       click_button "Update"
       Spree::Order.last.total.to_f.should == 54.00
     end
+
+    # Regression test for #836 (#839 included too)
+    it "provides a promotion for the first order for a new user" do
+      fill_in "Name", :with => "Sign up"
+      select "User signup", :from => "Event"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+      select "First order", :from => "Add rule of type"
+      within("#rule_fields") { click_button "Add" }
+      select "Create adjustment", :from => "Add action of type"
+      within("#actions_container") { click_button "Add" }
+      select "Flat Percent", :from => "Calculator"
+      within(".calculator-fields") { fill_in "Flat Percent", :with => "10" }
+      within("#actions_container") { click_button "Update" }
+
+      visit spree.root_path
+      click_link "Logout"
+
+      visit "/signup"
+      fill_in "Email", :with => "user@example.com"
+      fill_in "Password", :with => "Password"
+      fill_in "Password Confirmation", :with => "Password"
+      click_button "Create"
+      # Regression test for #839
+      page.should_not have_content("undefined method `user' for nil:NilClass")
+      pending("First order must have a discount applied!")
+    end
   end
 end
