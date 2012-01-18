@@ -80,8 +80,10 @@ module Spree
     def eligible?(order, options = {})
       return false if expired? || usage_limit_exceeded?(order)
 
-      event_code = options[:coupon_code].to_s.strip.downcase
-      return false unless event_code == self.code.to_s.strip.downcase
+      if preferred_code && options[:coupon_code]
+        event_code = options[:coupon_code].to_s.strip.downcase
+        return false unless event_code == self.code.to_s.strip.downcase
+      end
 
       rules_are_eligible?(order, options)
     end
