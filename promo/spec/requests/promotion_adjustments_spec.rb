@@ -323,30 +323,46 @@ describe "Promotion Adjustments" do
     end
 
     # Regression test for #836 (#839 included too)
-    it "provides a promotion for the first order for a new user" do
-      fill_in "Name", :with => "Sign up"
-      select "User signup", :from => "Event"
-      click_button "Create"
-      page.should have_content("Editing Promotion")
-      select "First order", :from => "Add rule of type"
-      within("#rule_fields") { click_button "Add" }
-      select "Create adjustment", :from => "Add action of type"
-      within("#actions_container") { click_button "Add" }
-      select "Flat Percent", :from => "Calculator"
-      within(".calculator-fields") { fill_in "Flat Percent", :with => "10" }
-      within("#actions_container") { click_button "Update" }
+    context "provides a promotion for the first order for a new user" do
+      before do
+        fill_in "Name", :with => "Sign up"
+        select "User signup", :from => "Event"
+        click_button "Create"
+        page.should have_content("Editing Promotion")
+        select "First order", :from => "Add rule of type"
+        within("#rule_fields") { click_button "Add" }
+        select "Create adjustment", :from => "Add action of type"
+        within("#actions_container") { click_button "Add" }
+        select "Flat Percent", :from => "Calculator"
+        within(".calculator-fields") { fill_in "Flat Percent", :with => "10" }
+        within("#actions_container") { click_button "Update" }
 
-      visit spree.root_path
-      click_link "Logout"
+        visit spree.root_path
+        click_link "Logout"
+      end
 
-      visit "/signup"
-      fill_in "Email", :with => "user@example.com"
-      fill_in "Password", :with => "Password"
-      fill_in "Password Confirmation", :with => "Password"
-      click_button "Create"
       # Regression test for #839
-      page.should_not have_content("undefined method `user' for nil:NilClass")
-      pending("First order must have a discount applied!")
+      it "doesn't blow up the signup page" do
+        visit "/signup"
+        fill_in "Email", :with => "user@example.com"
+        fill_in "Password", :with => "Password"
+        fill_in "Password Confirmation", :with => "Password"
+        click_button "Create"
+        # Regression test for #839
+        page.should_not have_content("undefined method `user' for nil:NilClass")
+      end
+
+      # Test covering scenario in #836
+      it "correctly applies the adjustment" do
+        click_link "RoR Mug"
+        click_button "Add To Cart"
+        visit "/checkout"
+        fill_in "order_email", :with => "user@example.com"
+        click_button "Continue"
+        within("#checkout-summary") do
+          page.should have_content("Promotion (Sign up)")
+        end
+      end
     end
   end
 end
