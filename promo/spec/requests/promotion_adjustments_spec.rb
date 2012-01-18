@@ -352,15 +352,32 @@ describe "Promotion Adjustments" do
         page.should_not have_content("undefined method `user' for nil:NilClass")
       end
 
-      # Test covering scenario in #836
-      it "correctly applies the adjustment" do
-        click_link "RoR Mug"
-        click_button "Add To Cart"
-        visit "/checkout"
-        fill_in "order_email", :with => "user@example.com"
-        click_button "Continue"
-        within("#checkout-summary") do
-          page.should have_content("Promotion (Sign up)")
+      context "with an order" do
+        before do
+          click_link "RoR Mug"
+          click_button "Add To Cart"
+        end
+
+        # Test covering scenario in #836
+        it "correctly applies the adjustment" do
+          visit "/checkout"
+          fill_in "order_email", :with => "user@example.com"
+          click_button "Continue"
+          within("#checkout-summary") do
+            page.should have_content("Promotion (Sign up)")
+          end
+        end
+
+        it "correctly applies the adjustment if a user signs up as a real user" do
+          visit "/signup"
+          fill_in "Email", :with => "user@example.com"
+          fill_in "Password", :with => "password"
+          fill_in "Password Confirmation", :with => "password"
+          click_button "Create"
+          visit "/checkout"
+          within("#checkout-summary") do
+            page.should have_content("Promotion (Sign up)")
+          end
         end
       end
     end
