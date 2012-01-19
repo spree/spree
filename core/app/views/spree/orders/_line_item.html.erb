@@ -20,7 +20,7 @@
     <%= number_to_currency line_item.variant.price %>
   </td>
   <td data-hook="cart_item_quantity">
-    <%= item_form.number_field :quantity, :min => 0, :class => "line_item_quantity" %>
+    <%= item_form.number_field :quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
   </td>
   <td data-hook="cart_item_total">
     <%= number_to_currency(line_item.variant.price * line_item.quantity) unless line_item.quantity.nil? %>

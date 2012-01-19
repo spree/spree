@@ -10,7 +10,7 @@ module Spree
         text = "#{text}: (#{t('empty')})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count}) #{order_subtotal(current_order)}".html_safe
+        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{order_subtotal(current_order)}</span>".html_safe
         css_class = 'full'
       end
 
@@ -109,7 +109,7 @@ module Spree
       else
         crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
-      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join))
+      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), :class => 'inline')
       content_tag(:div, crumb_list, :id => 'breadcrumbs')
     end
 

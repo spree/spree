@@ -18,15 +18,15 @@
           <%= render :partial => 'form', :locals => { :order_form => order_form } %>
         </div>
 
-        <div id="subtotal" data-hook>
-          <h3><%= t(:subtotal) %>: <%= order_subtotal(@order) %></h3>
+        <div class="links columns ten alpha" data-hook="cart_buttons">
+          <%= button_tag :class => 'primary', :id => 'update-button' do %>
+            <%= t(:update) %>
+          <% end %>
+         <%= link_to t(:checkout), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
         </div>
 
-        <div class="links" data-hook="cart_buttons">
-          <%= button_tag :class => 'large primary', :id => 'update-button' do %>
-            <%= image_tag('icons/update.png') + t(:update) %>
-          <% end %>
-         <%= link_to image_tag('icons/checkout.png') + t(:checkout), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
+        <div id="subtotal" data-hook class="columns six omega">
+          <h5><%= t(:subtotal) %>: <span class="order-total"><%= order_subtotal(@order) %></span></h5>
         </div>
 
       </div>
@@ -37,7 +37,7 @@
     <p id="clear_cart_link" data-hook>
       <%= submit_tag t(:empty_cart), :class => 'button' %>
       <%= t(:or) %>
-      <%= link_to t(:continue_shopping), products_path, :class => 'continue' %>
+      <%= link_to t(:continue_shopping), products_path, :class => 'continue button' %>
     </p>
   <% end %>
   </div>

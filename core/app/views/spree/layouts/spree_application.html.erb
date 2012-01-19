@@ -1,38 +1,69 @@
-<!DOCTYPE HTML>
-<html>
+<!doctype html>
+
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
+
+  
   <head data-hook="inside_head">
     <%= render :partial => 'spree/shared/head' %>
   </head>
+
   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
-    <div id="header" data-hook>
-      <ul id="nav-bar" data-hook>
-        <%= render :partial => 'spree/shared/nav_bar' %>
-      </ul>
-      <div id="logo" data-hook>
-        <%= logo %>
-      </div>
-    </div>
+    
+    <div class="container">
 
-    <div id="wrapper" data-hook>
-      <% if content_for?(:sidebar) %>
-        <div id="sidebar" data-hook>
-          <%= yield :sidebar %>
+      <header id="header" class="row" data-hook>
+      
+        <figure id="logo" class="columns alpha six" data-hook>
+          <%= logo %>
+        </figure> 
+
+        <nav id="top-nav-bar" class="columns omega ten">
+          <ul id="nav-bar" class="inline" data-hook>
+            <%= render :partial => 'spree/shared/nav_bar' %>
+          </ul>
+        </nav>
+
+        <% if store_menu? %>
+          <nav class="columns alpha omega sixteen">
+            <ul id="main-nav-bar" class="inline" data-hook>            
+              <%= render :partial => 'spree/shared/store_menu' %>
+            </ul>
+          </nav>
+        <% end %>
+            
+      </header>
+
+      <div id="wrapper" class="row" data-hook>
+        
+        <% if content_for?(:sidebar) %>
+          <aside id="sidebar" class="columns alpha four" data-hook>
+            <%= yield :sidebar %>
+          </aside>
+        <% end %>
+
+        <div id="content" class="columns omega <% if !content_for?(:sidebar) %> sixteen alpha <% else %> twelve <% end %>" data-hook>
+          <%= breadcrumbs(@taxon) %>
+          <%= flash_messages %>
+          <%= yield %>
         </div>
-      <% end %>
 
-      <div id="content" data-hook>
-        <%= breadcrumbs(@taxon) %>
-        <%= flash_messages %>
-        <%= yield %>
       </div>
+
+      <footer id="footer" class="row" data-hook>
+        <div id="footer-left" class="columns alpha eight" data-hook>
+          <p><%= t(:powered_by) %> <%= link_to 'Spree', 'http://spreecommerce.com/' %></p>
+        </div>
+        <div id="footer-right" class="columns omega eight" data-hook></div>
+      </footer>
+
     </div>
 
-    <div id="footer" data-hook>
-      <div id="footer-left" data-hook>
-        <p><%= t(:powered_by) %> <%= link_to 'Spree', 'http://spreecommerce.com/' %></p>
-      </div>
-      <div id="footer-right" data-hook></div>
-    </div>
     <%= render :partial => 'spree/shared/google_analytics' %>
+
   </body>
+
 </html>

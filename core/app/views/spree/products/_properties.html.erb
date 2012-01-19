@@ -1,9 +1,14 @@
-<% unless @product_properties.empty? %>
-<dl id="product-properties" class="table-display" data-hook>
-<% for product_property in @product_properties 
-    css_class = cycle('even', 'odd') %>
-  <dt class="<%= css_class %>"><%= product_property.property.presentation %></dt>
-  <dd class="<%= css_class %>"><%= product_property.value %></dd>
-<% end %>
-</dl>
+<% unless @product_properties.empty? %>  
+  <h6 class="product-section-title"><%= t('properties')%></h6>
+  <table id="product-properties" class="table-display" data-hook width="100%">
+    <tbody>
+      <% for product_property in @product_properties 
+        css_class = cycle('even', 'odd') %>
+        <tr class="<%= css_class %>">
+          <td><strong><%= product_property.property.presentation %></strong></td>
+          <td><%= product_property.value %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>

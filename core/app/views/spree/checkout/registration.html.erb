@@ -1,11 +1,11 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
 <h2><%= t(:registration) %></h2>
-<div id="registration" data-hook>
+<div id="registration" data-hook class="columns alpha eight">
   <div id="account">
     <!-- TODO: add partial with registration form -->
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
-    <div id="guest_checkout" data-hook>
+    <div id="guest_checkout" data-hook class="columns omega eight">
       <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
       <h2><%= t(:guest_user_account) %></h2>
       <%= form_for @order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>

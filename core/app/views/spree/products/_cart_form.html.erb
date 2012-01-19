@@ -1,18 +1,9 @@
 <%= form_for :order, :url => populate_orders_url do |f| %>
-  <div data-hook="inside_product_cart_form">
-
-    <% if @product.price %>
-      <div data-hook="product_price">
-        <dl id="product-price">
-          <dt><%= t(:price) %></dt>
-          <dd><span class="price selling"><%= number_to_currency @product.price %></span></dd>
-        </dl>
-      </div>
-    <% end %>
+  <div data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
     <% if @product.has_variants? %>
-      <div id="product-variants">
-        <h2><%= t(:variants) %></h2>
+      <div id="product-variants" class="columns five alpha">
+        <h6 class="product-section-title"><%= t(:variants) %></h6>
         <ul>
           <% has_checked = false
           @product.variants.active.each_with_index do |v,index|
@@ -34,16 +25,30 @@
         </ul>
       </div>
     <% end%>
-    <% if @product.has_stock? || Spree::Config[:allow_backorders] %>
-      <%= number_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
-        1, :class => 'title', :in => 1..@product.on_hand %>
-      &nbsp;
-      <%= button_tag :class => 'large primary', :id => 'add-to-cart-button' do %>
-        <%= image_tag('icons/add-to-cart.png') + t(:add_to_cart) %>
-      <% end %>
-    <% else %>
-      <%= content_tag('strong', t(:out_of_stock)) %>
-    <% end %>
+
+    <% if @product.price %>
+      <div data-hook="product_price" class="columns five <% if !@product.has_variants? %> alpha <% else %> omega <% end %>">
+        
+        <div id="product-price">
+          <h6 class="product-section-title"><%= t(:price) %></h6>
+          <div><span class="price selling" itemprop="price"><%= number_to_currency @product.price %></span></div>
+        </div>
+
+        <div class="add-to-cart">
+          <% if @product.has_stock? || Spree::Config[:allow_backorders] %>      
+            <%= number_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
+              1, :class => 'title', :in => 1..@product.on_hand %>
+            &nbsp;
+            <%= button_tag :class => 'large primary', :id => 'add-to-cart-button' do %>
+              <%= t(:add_to_cart) %>
+            <% end %>
+          <% else %>
+            <%= content_tag('strong', t(:out_of_stock)) %>
+          <% end %>
+        </div>
+
+      </div>
+    <% end %>    
 
   </div>
 <% end %>

@@ -1,18 +1,17 @@
-<h1><%= accurate_title %></h1>
+<h3><%= accurate_title %></h3>
 
 <div data-hook="account_summary">
   <dl id="user-info">
     <dt><%= t(:email) %></dt>
-    <dd><%= @user.email %></dd>
+    <dd><%= @user.email %> (<%= link_to t(:edit), spree.edit_account_path %>)</dd>
   </dl>
-  <p><%= link_to t(:edit), spree.edit_account_path %></p>
 </div>
 
 <div data-hook="account_my_orders">
 
-  <h2><%= t(:my_orders) %></h2>
+  <h3><%= t(:my_orders) %></h3>
   <% if @orders.present? %>
-    <table class="order-summary" style="width:545px;">
+    <table class="order-summary">
       <thead>
         <tr>
           <th><%= t(:order_number) %></th>

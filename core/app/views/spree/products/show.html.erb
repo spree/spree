@@ -1,26 +1,47 @@
-<div data-hook="product_show">
+<div data-hook="product_show" itemscope itemtype="http://schema.org/Product">
   <% @body_id = 'product-details' %>
-  <h1><%= accurate_title %></h1>
 
-  <div id="product-images" data-hook="product_images">
-    <div id="main-image" data-hook>
-      <%= render :partial => 'image' %>
+  <div class="columns six alpha">
+    <div class="row">
+
+      <div id="product-images" data-hook="product_images">
+        <div id="main-image" data-hook>
+          <%= render :partial => 'image' %>
+        </div>
+        <div id="thumbnails" data-hook>
+          <%= render :partial => 'thumbnails', :locals => { :product => @product } %>
+        </div>
+      </div>
+
+      <div data-hook="product_properties">
+        <%= render :partial => 'properties' %>
+      </div>
+    
     </div>
-    <div id="thumbnails" data-hook>
-      <%= render :partial => 'thumbnails', :locals => { :product => @product } %>
+  </div>
+
+  <div class="columns ten omega">
+    <div class="row">
+
+      <div id="product-description" data-hook="product_description">
+
+        <h1 class="product-title" itemprop="name"><%= accurate_title %></h1>
+
+        <div itemprop="description">
+          <%= product_description(@product) rescue t(:product_has_no_description) %>
+        </div>
+
+        <div id="cart-form" data-hook="cart_form">
+          <%= render :partial => 'cart_form' %>
+        </div>
+
+      </div>  
+
+      
+    
+      <%= render :partial => 'taxons' %>
+
     </div>
   </div>
 
-  <div id="cart-form" data-hook="cart_form">
-    <%= render :partial => 'cart_form' %>
-  </div>
-
-  <div id="product-description" data-hook="product_description">
-    <%= product_description(@product) rescue t(:product_has_no_description) %>
-    <div data-hook="product_properties">
-      <%= render :partial => 'properties' %>
-    </div>
-  </div>
 </div>
-
-<%= render :partial => 'taxons' %>

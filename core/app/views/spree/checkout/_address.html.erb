@@ -1,3 +1,4 @@
+<div class="columns alpha six">
 <fieldset id="billing" data-hook>
   <%= form.fields_for :bill_address do |bill_form| %>
     <legend><%= t(:billing_address) %></legend>
@@ -23,6 +24,11 @@
       <p class="field" id="baddress2">
         <%= bill_form.label :address2, t(:street_address_2) %><br />
         <%= bill_form.text_field :address2 %>
+      </p>
+
+      <p class="field" id="bcity">
+        <%= bill_form.label :city, t(:city) %><span class="req">*</span><br />
+        <%= bill_form.text_field :city, :class => 'required' %>
       </p>
 
       <p class="field" id="bcountry">
@@ -56,11 +62,6 @@
         </p>
       <% end %>
 
-      <p class="field" id="bcity">
-        <%= bill_form.label :city, t(:city) %><span class="req">*</span><br />
-        <%= bill_form.text_field :city, :class => 'required' %>
-      </p>
-
       <p class="field" id="bzipcode">
         <%= bill_form.label :zipcode, t(:zip) %><span class="req">*</span><br />
         <%= bill_form.text_field :zipcode, :class => 'required' %>
@@ -78,7 +79,9 @@
     </div>
   <% end %>
 </fieldset>
+</div>
 
+<div class="columns omega six">
 <fieldset id="shipping" data-hook>
   <%= form.fields_for :ship_address do |ship_form| %>
     <legend><%= t(:shipping_address) %></legend>
@@ -108,6 +111,11 @@
       <p class="field" id="saddress2">
         <%= ship_form.label :address2, t(:street_address_2) %><br />
         <%= ship_form.text_field :address2 %>
+      </p>
+
+      <p class="field" id="scity">
+        <%= ship_form.label :city, t(:city) %><span class="req">*</span><br />
+        <%= ship_form.text_field :city, :class => 'required' %>
       </p>
 
       <p class="field" id="scountry">
@@ -141,12 +149,6 @@
         </p>
       <% end %>
 
-      <p class="field" id="scity">
-        <%= ship_form.label :city, t(:city) %><span class="req">*</span><br />
-        <%= ship_form.text_field :city, :class => 'required' %>
-      </p>
-
-
       <p class="field" id="szipcode">
         <%= ship_form.label :zipcode, t(:zip) %><span class="req">*</span><br />
         <%= ship_form.text_field :zipcode, :class => 'required' %>
@@ -164,8 +166,8 @@
     </div>
   <% end %>
 </fieldset>
-
-<hr class="space" />
+</div>
+<hr class="clear" />
 <div class="form-buttons" data-hook="buttons">
   <%= submit_tag t(:save_and_continue), :class => 'continue button primary' %>
 </div>

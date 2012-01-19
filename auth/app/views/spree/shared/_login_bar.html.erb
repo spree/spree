@@ -2,5 +2,5 @@
   <li><%= link_to t(:my_account), spree.account_path %></li>
   <li><%= link_to t(:logout), spree.destroy_user_session_path %></li>
 <% else %>
-  <li><%= link_to t(:login), spree.login_path %></li>
+  <li id="link-to-login"><%= link_to t(:login), spree.login_path %></li>
 <% end %>

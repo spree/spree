@@ -11,7 +11,7 @@
             <% else %>
             <%= shipping_method[:name] %> <%= number_to_currency shipping_method[:cost] %>
             <% end %>
-          </label><br />
+          </label>
         <% end %>
       </p>
     </div>
@@ -23,6 +23,8 @@
     <% end %>
   </div>
 </fieldset>
+
+<br />
 
 <div class="form-buttons" data-hook="buttons">
   <%= submit_tag t(:save_and_continue), :class => 'continue button primary' %>

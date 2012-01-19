@@ -5,27 +5,28 @@
 <% if products.empty? %>
   <%= t(:no_products_found) %>
 <% elsif params.key?(:keywords) %>
-  <h3><%= t(:search_results, :keywords => h(params[:keywords])) %></h3>
+  <h6 class="search-results-title"><%= t(:search_results, :keywords => h(params[:keywords])) %></h6>
 <% end %>
 
 <% if products.any? %>
-<ul id="products" class="product-listing" data-hook>
+<ul id="products" class="inline product-listing" data-hook>
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
-      <li id="product_<%= product.id %>" data-hook="products_list_item">
-        <%= link_to product.name, product, :class => 'info' %>
-        <%= link_to small_image(product), product %>
-        <span class="price selling"><%= number_to_currency product.price %></span>
+      <li id="product_<%= product.id %>" class="columns three" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+        <div class="product-image">
+          <%= link_to product_image(product, :itemprop => "name"), product %>
+        </div>
+        <%= link_to product.name, product, :class => 'info', :itemprop => "name" %>
+        <span class="price selling" itemprop="price"><%= number_to_currency product.price %></span>
       </li>
     <% end %>
   <% end %>
 </ul>
 <% end %>
 
-<hr class="space" />
+
 
 <% if paginated_products.respond_to?(:num_pages)
       params.delete(:search)
       params.delete(:taxon)
 %><%= paginate paginated_products %><% end %>
-<hr class="space" />
