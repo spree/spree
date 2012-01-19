@@ -114,8 +114,7 @@ task :sandbox do
   require 'spree_core'
 
   Spree::SandboxGenerator.start ["--lib_name=spree", "--database=#{ENV['DB_NAME']}"]
-  Spree::InstallGenerator.start ["--auto-accept", "--test_app", "--skip-install-data"]
+  Spree::InstallGenerator.start ["--auto-accept"]
 
-  cmd = "bundle exec rake db:bootstrap AUTO_ACCEPT=true"; puts cmd; system cmd
   cmd = "bundle exec rake assets:precompile:nondigest"; puts cmd; system cmd
 end

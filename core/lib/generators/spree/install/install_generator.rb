@@ -115,7 +115,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def run_migrations
       if @run_migrations
         say_status :running, "migrations"
-        rake('db:migrate')
+        quietly { rake 'db:migrate' }
       else
         say_status :skipping, "migrations (don't forget to run rake db:migrate)"
       end
@@ -135,7 +135,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def load_sample_data
       if @load_sample_data
         say_status :loading, "sample data"
-        rake('spree_sample:load')
+        quietly { rake 'spree_sample:load' }
       else
         say_status :skipping, "sample data (you can always run rake spree_sample:load)"
       end
