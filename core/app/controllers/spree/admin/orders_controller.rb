@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class OrdersController < BaseController
+    class OrdersController < Spree::Admin::BaseController
       require 'spree/core/gateway_error'
       before_filter :initialize_txn_partials
       before_filter :initialize_order_events
