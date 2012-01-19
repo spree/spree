@@ -64,7 +64,7 @@ module SpreePromo
           # recalculate amount
           self.promotion_credits.each do |credit|
             if credit.source.eligible?(self)
-              amount = -credit.source.calculator.compute(self).abs
+              amount = credit.source.compute(self)
               if credit.amount != amount
                 # avoid infinite callbacks
                 PromotionCredit.update_all("amount = #{amount}", { :id => credit.id })
@@ -81,12 +81,11 @@ module SpreePromo
           new_promotions = eligible_automatic_promotions - current_promotions
           new_promotions.each do |promotion|
             next if current_promotions.present? && !promotion.combine?
-            amount = promotion.calculator.compute(self).abs
-            amount = item_total if amount > item_total
+            amount = credit.source.compute(self)
             if amount > 0
               self.promotion_credits.create(
                   :source => promotion,
-                  :amount => -amount,
+                  :amount => amount,
                   :label  => promotion.name
                 )
             end
