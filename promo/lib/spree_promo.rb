@@ -27,6 +27,14 @@ module SpreePromo
         attr_accessible :coupon_code
         attr_accessor :coupon_code
         before_save :process_coupon_code, :if => "@coupon_code.present?"
+        
+        def finalized?
+          self.class.finalized_states.include?(state)
+        end
+        
+        def self.finalized_states
+          ["complete", "awaiting_return", "returned"]
+        end
 
         def promotion_credit_exists?(credit)
           promotion_credits.reload.detect { |c| c.source_id == credit.id }
@@ -47,7 +55,7 @@ module SpreePromo
           self.payment_total = payments.completed.map(&:amount).sum
           self.item_total = line_items.map(&:amount).sum
 
-          process_automatic_promotions
+          process_automatic_promotions unless finalized?
 
           if force_adjustment_recalculation
             applicable_adjustments, adjustments_to_destroy = adjustments.partition{|a| a.applicable?}
