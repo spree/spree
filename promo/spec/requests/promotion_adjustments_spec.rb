@@ -380,6 +380,28 @@ describe "Promotion Adjustments" do
           end
         end
       end
+
+      # Covering the registration prior to order case for #836
+      context "without an order" do
+        it "signing up, then placing an order" do
+          visit '/signup'
+          fill_in "Email", :with => "user@example.com"
+          fill_in "Password", :with => "password"
+          fill_in "Password Confirmation", :with => "password"
+          click_button "Create"
+
+          click_link "RoR Mug"
+          click_button "Add To Cart"
+
+          visit "/checkout"
+          save_and_open_page
+          within("#checkout-summary") do
+            page.should have_content("Promotion (Sign up)")
+          end
+
+          Spree::User.last.pending_promotions.should be_empty
+        end
+      end
     end
   end
 end

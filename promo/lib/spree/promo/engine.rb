@@ -54,6 +54,20 @@ module Spree
         app.config.spree.promotions.actions = [Spree::Promotion::Actions::CreateAdjustment,
           Spree::Promotion::Actions::CreateLineItems]
       end
+
+      config.after_initialize do
+        ActiveSupport::Notifications.subscribe('spree.user.signup') do |*args|
+          event_name, start_time, end_time, id, payload = args
+
+          # Used for storing promotions before order has been created
+          # Fixes #836
+          Activator.active.event_name_starts_with('spree.user.signup').each do |activator|
+            if activator.eligible?(nil, payload)
+              payload[:user].promotions << activator
+            end
+          end
+        end
+      end
     end
   end
 end

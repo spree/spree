@@ -1,4 +1,6 @@
 Spree::CheckoutController.class_eval do
+  before_filter :apply_pending_promotions
+
   def update
     if @order.update_attributes(object_params)
 
@@ -37,6 +39,16 @@ Spree::CheckoutController.class_eval do
       end
     else
       respond_with(@order) { |format| format.html { render :edit } }
+    end
+  end
+
+  private
+
+  def apply_pending_promotions
+    # Apply all promotions that may have been triggered before theorder had been created
+    current_user.pending_promotions.each do |promotional|
+      promotional.promotion.activate(:order => @order, :user => current_user)
+      promotional.destroy
     end
   end
 end
