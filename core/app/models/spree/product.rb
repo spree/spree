@@ -180,8 +180,7 @@ module Spree
     private
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
-          variants.inject(0) { |acc, v| acc + v.count_on_hand } :
-          (master ? master.count_on_hand : 0)
+          variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
         self.count_on_hand = product_count_on_hand
       end
 
