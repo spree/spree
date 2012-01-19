@@ -1,5 +1,4 @@
-$('#actions').append('<%= escape_javascript( render(:partial => 'spree/admin/promotions/promotion_action', :object => @promotion_action) ) %>');
-
+$('#actions_container').html('<%= escape_javascript( render(:partial => 'spree/admin/promotions/actions') ) %>');
 initProductActions();
 
 $('#<%= dom_id @promotion_action %>').hide();

@@ -4,7 +4,12 @@
   <%= form_for @promotion, :url => spree.admin_promotion_path(@promotion), :method => :put do |f| %>
     <div id="actions" class="filter_list">
       <% if @promotion.actions.any? %>
-        <%= render :partial => 'promotion_action',  :collection => @promotion.actions %>
+        <%#= render :partial => 'promotion_action', :collection => @promotion.actions, :locals => {:f => f} %>
+
+        <%= f.fields_for :promotion_actions do |action_form| %>
+          <%= render :partial => 'spree/admin/promotions/promotion_action', :locals => { :action_form => action_form } %>
+        <% end %>
+
       <% else %>
         <!-- <p><%= t(:no_actions_added) %></p> -->
       <% end %>

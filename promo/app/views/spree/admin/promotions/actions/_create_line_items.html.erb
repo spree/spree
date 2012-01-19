@@ -19,8 +19,7 @@
   <% end %>
 </table>
 
-<%= hidden_field_tag "#{param_prefix}[line_items_string]", promotion_action.line_items_string,
-                     :class => 'line_items_string' %>
+<%= action_form.hidden_field :line_items_string %>
 
 <div class="add-line-item">
   <fieldset>
@@ -39,5 +38,6 @@
       &nbsp;<br />
       <button class="add small"> <%= t(:add) %></button>
     </div>
+
   </fieldset>
 </div>
