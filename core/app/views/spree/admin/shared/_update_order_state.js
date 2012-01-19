@@ -1,6 +1,6 @@
-$('#order_tab_summary h5#order_status').html('<%= j t(:status) %>: <%= j t(@order.state, :scope => :order_state) %>');
-$('#order_tab_summary h5#order_total').html('<%= j t(:total) %>: <%= j number_to_currency @order.total %>');
+$('#order_tab_summary h5#order_status').html('<%= "#{t(:status)}: #{t("order_state.#{@order.state}")}" %>');
+$('#order_tab_summary h5#order_total').html('<%= "#{t(:total)}: #{number_to_currency @order.total}" %>');
 <% if @order.completed? %>
-$('#order_tab_summary h5#payment_status').html('<%= j t(:payment) %>: <%= j t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %>');
-$('#order_tab_summary h5#shipment_status').html('<%= j t(:shipment) %>: <%= j t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %>');
+$('#order_tab_summary h5#payment_status').html('<%= "#{t(:payment)}: #{t("payment_states.#{@order.payment_state}")}" %>');
+$('#order_tab_summary h5#shipment_status').html('<%= "#{t(:shipment)}: #{t("shipment_states.#{@order.shipment_state}")}" %>');
 <% end %>

@@ -1,13 +1,13 @@
-<h1><%= t(:order) %> <%= @order.number %></h1>
+<h1><%= t(:order) + " #{@order.number}" %></h1>
 
 <% content_for :sidebar do %>
   <div id="order_tab_summary" data-hook>
-    <h3 id="order_number" data-hook><%= t(:order) %> #<%= @order.number%></h3>
-    <h5 id="order_status" data-hook><%= t(:status) %>: <%= t(@order.state, :scope => :order_state) %></h5>
-    <h5 id="order_total" data-hook><%= t(:total) %>: <%= number_to_currency @order.total %></h5>
+    <h3 id="order_number" data-hook><%= "#{t(:order)} ##{@order.number} " %></h3>
+    <h5 id="order_status" data-hook><%= "#{t(:status)}: #{t("order_state.#{@order.state}")}" %></h5>
+    <h5 id="order_total" data-hook><%= "#{t(:total)}: #{number_to_currency @order.total}" %></h5>
     <% if @order.completed? %>
-      <h5 id="shipment_status"><%= t(:shipment) %>: <%= t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %></h5>
-      <h5 id="payment_status"><%= t(:payment) %>: <%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></h5>
+      <h5 id="shipment_status"><%= "#{t(:shipment)}: #{t("shipment_states.#{@order.shipment_state}")}" %></h5>
+      <h5 id="payment_status"><%= "#{t(:payment)}: #{t("payment_states.#{@order.payment_state}")}" %></h5>
     <% end %>
     <br class="clear" />
   </div>
