@@ -1,21 +1,17 @@
 Spree::CheckoutController.class_eval do
-  before_filter :apply_pending_promotions
 
+  #TODO 90% of this method is duplicated code. DRY
   def update
     if @order.update_attributes(object_params)
 
       fire_event('spree.checkout.update')
 
       if @order.coupon_code.present?
-        # Promotion codes are stored in the preference table
-        # Therefore we need to do a lookup there and find if one exists
-        #
-        # TODO: The ActiveRecord::Base.connection.quote_column_name stuff is a bit long...
-        # TODO: Is there a better way to do that?
-        if Spree::Preference.where(:value => @order.coupon_code).where("#{ActiveRecord::Base.connection.quote_column_name("key")} LIKE 'spree/promotion/code/%'").present?
+
+        if Spree::Promotion.exists?(:code => @order.coupon_code)
           fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
-        # If it doesn't exist, raise an error!
-        # Giving them another chance to enter a valid coupon code
+          # If it doesn't exist, raise an error!
+          # Giving them another chance to enter a valid coupon code
         else
           flash[:error] = t(:promotion_not_found)
           render :edit and return
@@ -42,15 +38,4 @@ Spree::CheckoutController.class_eval do
     end
   end
 
-  private
-
-  def apply_pending_promotions
-    # Apply all promotions that may have been triggered before theorder had been created
-    if current_user
-      current_user.pending_promotions.each do |promotional|
-        promotional.promotion.activate(:order => @order, :user => current_user)
-        promotional.destroy
-      end
-    end
-  end
 end

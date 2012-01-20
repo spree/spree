@@ -517,7 +517,7 @@ module Spree
       # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
       # towards adjustment_total.
       def update_adjustments
-        self.adjustments.reload.each(&:update!)
+        self.adjustments.reload.each { |adjustment| adjustment.update!(self) }
       end
 
       # Determine if email is required (we don't want validation errors before we hit the checkout)
