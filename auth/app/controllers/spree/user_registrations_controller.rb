@@ -17,7 +17,8 @@ class Spree::UserRegistrationsController < Devise::RegistrationsController
     @user = build_resource(params[:user])
     if resource.save
       set_flash_message(:notice, :signed_up)
-      fire_event('spree.user.signup', :user => @user)
+      sign_in(:user, @user)
+      fire_event('spree.user.signup', :user => @user, :order => current_order(true))
       sign_in_and_redirect(:user, @user)
     else
       clean_up_passwords(resource)

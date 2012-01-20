@@ -59,12 +59,16 @@ module Spree
     # when present, but only if +locked+ is false.  Adjustments that are +locked+ will never change their amount.
     # The new adjustment amount will be set by by the +originator+ and is not automatically saved.  This makes it save
     # to use this method in an after_save hook for other models without causing an infinite recursion problem.
-    def update!
+    #
+    # order#update_adjustments passes self as the src, this is so calculations can be performed on the
+    # current values. If we used source it would load the old record from db for the association
+    def update!(src = nil)
+      src ||= source
       return if locked?
-      set_eligibility
       if originator.present?
-        originator.update_adjustment(self, source)
+        originator.update_adjustment(self, src)
       end
+      set_eligibility
     end
 
     private

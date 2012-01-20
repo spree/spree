@@ -3,27 +3,35 @@ require 'spec_helper'
 describe Spree::Promotion do
   let(:promotion) { Spree::Promotion.new }
 
-  describe "#save" do
-    let(:promotion_valid) { Spree::Promotion.new :name => "A promotion", :code => "XXXX" }
-
-    it "should validate the coupon code" do
-      pending "Figure out some form of validation for codes now that this is Promo preference"
+  describe "validations" do
+    before :each do
+      @valid_promotion = Spree::Promotion.new :name => "A promotion",
+                                              :event_name => 'spree.checkout.coupon_code_added',
+                                              :code => 'XXX'
     end
 
-    context "when is invalid" do
-      before { promotion.name = nil }
-      it { promotion.save.should be_false }
+    it "valid_promotion is valid" do
+      @valid_promotion.should be_valid
     end
 
-    context "when is valid" do
-      it { promotion_valid.save.should be_true }
-
-      it "should have the right key in preferences" do
-        promotion_valid.save.should be_true
-        Spree::Preference.last.key.should_not eql('spree/promotion/code/new')
-        Spree::Preference.last.key.should eql("spree/promotion/code/#{promotion_valid.id}")
-      end
+    it "validates the coupon code" do
+      @valid_promotion.code = nil
+      @valid_promotion.should_not be_valid
     end
+
+    it "validates usage limit" do
+      @valid_promotion.usage_limit = -1
+      @valid_promotion.should_not be_valid
+
+      @valid_promotion.usage_limit = 100
+      @valid_promotion.should be_valid
+    end
+
+    it "validates name" do
+      @valid_promotion.name = nil
+      @valid_promotion.should_not be_valid
+    end
+
   end
 
   describe "#delete" do
@@ -52,30 +60,17 @@ describe Spree::Promotion do
       promotion.promotion_actions = [@action1, @action2]
     end
 
+    it "should check code if present" do
+      promotion.code = 'XXX'
+      payload = { :coupon_code => 'XXX' }
+      @action1.should_receive(:perform).with(payload)
+      @action2.should_receive(:perform).with(payload)
+      promotion.activate(payload)
+    end
+
     context "when checking coupon_is_eligible?" do
       it "should accommodate promotions that are not attached to orders" do
         lambda {promotion.activate(:order => nil, :user => nil)}.should_not raise_error
-      end
-    end
-
-    context "when eligible?" do
-      before do
-        promotion.stub(:eligible? => true)
-      end
-      it "should perform all actions" do
-        @action1.should_receive(:perform)
-        @action2.should_receive(:perform)
-        promotion.activate(:order => nil, :user => nil)
-      end
-    end
-    context "when not eligible?" do
-      before do
-        promotion.stub(:eligible? => false)
-      end
-      it "should not perform any actions" do
-        @action1.should_not_receive(:perform)
-        @action2.should_not_receive(:perform)
-        promotion.activate(:order => nil, :user => nil)
       end
     end
   end
@@ -86,7 +81,7 @@ describe Spree::Promotion do
      end
 
      it "should have its usage limit exceeded" do
-       promotion.preferred_usage_limit = 2
+       promotion.usage_limit = 2
        promotion.stub(:credits_count => 2)
        promotion.usage_limit_exceeded?.should == true
 
@@ -138,6 +133,7 @@ describe Spree::Promotion do
       @order = Factory(:order)
       promotion.event_name = 'spree.checkout.coupon_code_added'
       promotion.name = "Foo"
+      promotion.code = "XXX"
       calculator = Spree::Calculator::FlatRate.new
       @action = Spree::Promotion::Actions::CreateAdjustment.create(:promotion => promotion, :calculator => calculator)
     end
@@ -154,23 +150,8 @@ describe Spree::Promotion do
       specify { promotion.should be_eligible(@order) }
     end
 
-    context "when activated by coupon code event and a code is set" do
-      before do
-        promotion.preferred_code = 'ABC'
-      end
-
-      it "is false when payload doesn't include the matching code" do
-        promotion.should_not be_eligible(@order, {})
-      end
-
-      it "is true when payload includes the matching code" do
-        promotion.should be_eligible(@order, {:coupon_code => 'ABC'})
-      end
-    end
-
     context "when a coupon code has already resulted in an adjustment on the order" do
       before do
-        promotion.preferred_code = nil
         promotion.save!
 
         @order.adjustments.create(:amount => 1,
