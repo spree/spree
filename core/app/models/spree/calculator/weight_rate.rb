@@ -19,14 +19,10 @@ module Spree
           }.sum
         self.preferred_default_rule.split(";").each do |rule|
           weight, price = rule.split(":")
-          if total_weight.to_f < weight.to_f
-            return price.to_f
-          end
+          return price.to_f if total_weight.to_f < weight.to_f
         end
-
-      else
-        return self.preferred_default_price.to_f
       end
+      return self.preferred_default_price.to_f
     end
   end
 end
