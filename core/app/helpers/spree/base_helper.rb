@@ -105,7 +105,7 @@ module Spree
       if taxon
         crumbs << content_tag(:li, link_to(t(:products) , products_path) + separator)
         crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
-        crumbs << content_tag(:li, content_tag(:span, taxon.name))
+        crumbs << content_tag(:li, content_tag(:span, link_to(taxon.name , seo_url(taxon))))
       else
         crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
