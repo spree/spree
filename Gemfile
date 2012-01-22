@@ -15,7 +15,15 @@ group :test do
   gem 'guard-rspec', '~> 0.5.0'
   gem 'rspec-rails', '~> 2.8.0'
   gem 'factory_girl_rails', '~> 1.5.0'
-  gem 'rcov'
+
+  platform :ruby_18 do
+    gem 'rcov'
+  end
+
+  platform :ruby_19 do
+    gem 'simplecov'
+  end
+
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara'
