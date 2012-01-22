@@ -1030,7 +1030,7 @@ en:
   void: Void
   website: Website
   weight: Weight
-  weight_rate: "Weight Rate"
+  weight_scale: "Weight Scale"
   welcome_to_sample_store: "Welcome to the sample store"
   what_is_a_cvv: "What is a (CVV) Credit Card Code?"
   what_is_this: "What's This?"
