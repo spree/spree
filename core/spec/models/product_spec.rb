@@ -6,6 +6,14 @@ describe Spree::Product do
   before(:each) do
     reset_spree_preferences
   end
+  
+  # regression test for GH #1008
+  context "building a new product" do
+    let(:product) { Spree::Product.new(:on_hand => 10) }
+    it "should build the associated master variant" do
+      product.master.should_not be_nil
+    end
+  end
 
   context "#on_hand" do
     let(:product) do

@@ -87,6 +87,7 @@ module Spree
 
     # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
     def on_hand=(new_level)
+      self.master = Variant.new if master.nil?
       raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
       master.on_hand = new_level
     end
