@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'state_machine', '= 1.1.1'
   s.add_dependency 'ffaker', '~> 1.12.0'
   s.add_dependency 'paperclip', '= 2.5.0'
-  s.add_dependency 'meta_search', '= 1.1.1'
+  s.add_dependency 'meta_search', '= 1.1.2'
   s.add_dependency 'activemerchant', '= 1.20.1'
   s.add_dependency 'rails', '>= 3.1.1', '<= 3.1.3'
   s.add_dependency 'kaminari', '>= 0.13.0'
