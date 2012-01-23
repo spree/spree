@@ -56,7 +56,7 @@ module SpreeCore
 
     # sets the manifests / assets to be precompiled
     initializer "spree.assets.precompile" do |app|
-      app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'admin/orders/address_states.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
+      app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/spree_dash.*', 'admin/orders/edit_form.js', 'admin/address_states.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
     end
 
     # turn off asset debugging since that kills performance in development mode
