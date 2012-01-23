@@ -215,3 +215,35 @@ Feature: Promotions which add adjustments to orders
 
     When I update the quantity on the first cart item to "3"
     Then the existing order should have total at "54"
+
+  # Regression test for #836
+  @selenium:
+  Scenario: Applying a promotion for an order placed after a user has signed up
+
+    When I log in as an admin user and go to the new promotion form
+    And I fill in "Name" with "Signup Promo"
+    And I select "User signup" from "Event"
+    And I press "Create"
+    Then I should see "Editing Promotion"
+    When I select "Create adjustment" from "Add action of type"
+    And I press "Add" within "#action_fields"
+    And I select "Flat Percent" from "Calculator"
+    And I press "Update" within "#actions_container"
+    Then show me the page
+    And I fill in "Flat Percent" with "10" within ".calculator-fields"
+    And I press "Update" within "#actions_container"
+
+    When I go to the home page
+    When I follow "Logout"
+
+    When I go to the sign up page
+    And I fill in "Email" with "user@example.com"
+    And I fill in "Password" with "password"
+    And I fill in "Password Confirmation" with "password"
+    And I press "Create"
+
+    When I add a product with name: "RoR Mug", price: "20" to cart
+    When I go to checkout
+    Then I should see "Promotion (Signup Promo)" within "#checkout-summary"
+
+

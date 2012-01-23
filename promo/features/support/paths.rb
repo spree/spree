@@ -16,6 +16,8 @@ module NavigationHelpers
       new_user_session_path
     when /the sign up page/
       new_user_registration_path
+    when /checkout/
+      checkout_path
 
     when /"\/cvv"/
       '/cvv'
