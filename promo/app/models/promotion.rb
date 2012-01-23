@@ -47,8 +47,7 @@ class Promotion < ActiveRecord::Base
 
   def create_discount(order)
     return if order.promotion_credit_exists?(self)
-    if eligible?(order) and amount = calculator.compute(order)
-      amount = order.item_total if amount > order.item_total
+    if eligible?(order) and amount = compute(order)
       order.promotion_credits.reload.clear unless combine? and order.promotion_credits.all? { |credit| credit.source.combine? }
       order.update!
       PromotionCredit.create!({
@@ -60,7 +59,11 @@ class Promotion < ActiveRecord::Base
     end
   end
 
-
+  def compute(order)
+    amount = calculator.compute(order)
+    amount = order.item_total if amount > order.item_total
+    -amount
+  end
 
   # Products assigned to all product rules
   def products
