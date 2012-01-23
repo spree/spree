@@ -8,16 +8,13 @@ module Spree
       end
     end
 
-    module InstanceMethods
-      def create_token
-        create_tokenized_permission(:token => ::SecureRandom::hex(8))
-        token
-      end
+    def create_token
+      create_tokenized_permission(:token => ::SecureRandom::hex(8))
+      token
     end
 
     def self.included(receiver)
       receiver.extend ClassMethods
-      receiver.send :include, InstanceMethods
     end
   end
 end
