@@ -13,6 +13,12 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
 
+        # Include list of visited paths in notification payload hash
+        Spree::Core::ControllerHelpers.class_eval do
+          def default_notification_payload
+            { :user => current_user, :order => current_order, :visited_paths => session[:visited_paths] }
+          end
+        end
       end
 
       config.autoload_paths += %W(#{config.root}/lib)
