@@ -74,13 +74,13 @@ module SslRequirement
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
-      actions = self.class.read_inheritable_attribute(:ssl_required_actions)
+      actions = self.class.ssl_required_actions
       return false if actions.nil?
       actions.empty? || actions.include?(action_name.to_sym)
     end
 
     def ssl_allowed?
-      actions = self.class.read_inheritable_attribute(:ssl_allowed_actions)
+      actions = self.class.ssl_allowed_actions
       return false if actions.nil?
       actions.empty? || actions.include?(action_name.to_sym)
     end
