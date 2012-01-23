@@ -35,29 +35,26 @@ module Spree
 
       end
 
-      module InstanceMethods
-        def save_permalink
-          permalink_value = self.to_param
-          field = self.class.permalink_field
-          # Do other links exist with this permalink?
-          other = self.class.first(
-            :conditions => "#{field} LIKE '#{permalink_value}%'",
-            :order => "LENGTH(#{field}) DESC, #{field} DESC"
-          )
-          if other
-            # Find the number of that permalink and add one.
-            if /-(\d+)$/.match(other.send(field))
-              number = $1.to_i + 1
-            # Otherwise default to suffixing it with a 1.
-            else
-              number = 1
-            end
-
-            permalink_value += "-#{number.to_s}"
+      def save_permalink
+        permalink_value = self.to_param
+        field = self.class.permalink_field
+        # Do other links exist with this permalink?
+        other = self.class.first(
+          :conditions => "#{field} LIKE '#{permalink_value}%'",
+          :order => "LENGTH(#{field}) DESC, #{field} DESC"
+        )
+        if other
+          # Find the number of that permalink and add one.
+          if /-(\d+)$/.match(other.send(field))
+            number = $1.to_i + 1
+          # Otherwise default to suffixing it with a 1.
+          else
+            number = 1
           end
-          write_attribute(field, permalink_value)
-        end
 
+          permalink_value += "-#{number.to_s}"
+        end
+        write_attribute(field, permalink_value)
       end
     end
   end
