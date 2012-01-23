@@ -74,15 +74,21 @@ module SslRequirement
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
-      actions = self.class.ssl_required_actions
-      return false if actions.nil?
-      actions.empty? || actions.include?(action_name.to_sym)
+      if self.class.respond_to?(:ssl_required_actions)
+        actions = self.class.ssl_required_actions
+        actions.empty? || actions.include?(action_name.to_sym)
+      else
+        return false
+      end
     end
 
     def ssl_allowed?
-      actions = self.class.ssl_allowed_actions
-      return false if actions.nil?
-      actions.empty? || actions.include?(action_name.to_sym)
+      if self.class.respond_to?(:ssl_allowed_actions)
+        actions = self.class.ssl_allowed_actions
+        actions.empty? || actions.include?(action_name.to_sym)
+      else
+        return false
+      end
     end
 
   private
