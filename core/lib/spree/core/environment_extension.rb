@@ -9,15 +9,15 @@ module Spree
           instance_variable_set( "@" + name, val)
         }
 
-        create_method( name.to_sym ) {
+        create_method(name.to_sym) do
           instance_variable_get( "@" + name )
-        }
+        end
       end
 
       private
 
-        def create_method( name, &block )
-          self.class.send( :define_method, name, &block )
+        def create_method(name, &block)
+          self.class.send(:define_method, name, &block)
         end
     end
   end
