@@ -200,5 +200,5 @@ Spree::Core::Engine.routes.draw do
   match '/admin', :to => 'admin/orders#index', :as => :admin
 
   match '/content/cvv', :to => 'content#cvv'
-  match '/content/*path', :to => 'content#show', :via => :get
+  match '/content/*path', :to => 'content#show', :via => :get, :as => :content
 end

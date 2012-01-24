@@ -23,9 +23,7 @@
   <%= label_tag nil, t(:card_code) %><br />
   <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:id => 'card_code', :class => 'required', :size => 5) %>
   <span class="req">*</span>
-  <a href="/content/cvv" target="_blank" onclick="window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false" data-hook="ccv_link">
-    (<%= t(:whats_this) %>)
-  </a>
+  <%= link_to "(#{t(:whats_this)})", spree.content_path('cvv'), :target => '_blank', :onclick => "window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false", "data-hook" => "cvv_link" %>
 </p>
 <%= hidden_field param_prefix, 'first_name', :value => @order.billing_firstname %>
 <%= hidden_field param_prefix, 'last_name', :value => @order.billing_lastname %>
