@@ -9,7 +9,8 @@ module Spree
       def edit
         @preferences = [:site_name, :default_seo_title, :default_meta_keywords,
                         :default_meta_description, :site_url, :allow_ssl_in_production,
-                        :allow_ssl_in_development_and_test, :check_for_spree_alerts]
+                        :allow_ssl_in_staging, :allow_ssl_in_development_and_test,
+                        :check_for_spree_alerts]
       end
 
       def update
