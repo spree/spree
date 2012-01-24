@@ -45,7 +45,6 @@ module SpreeCmd
     end
 
     def ask_questions
-      @install_blue_theme = ask_with_default("Would you like to install the default blue theme?")
       @install_default_gateways = ask_with_default("Would you like to install the default gateways?")
 
       if options[:skip_install_data]
@@ -68,11 +67,6 @@ module SpreeCmd
       inside @app_path  do
 
         gem :spree, @spree_gem_options
-
-        if @install_blue_theme
-          gem :spree_blue_theme, { :git => 'git://github.com/spree/spree_blue_theme.git',
-                                   :ref => '10666404ccb3ed4a4cc9cbe41e822ab2bb55112e' }
-        end
 
         if @install_default_gateways
           gem :spree_usa_epay, { :git => 'git://github.com/spree/spree_usa_epay.git',
