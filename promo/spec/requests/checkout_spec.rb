@@ -11,7 +11,6 @@ describe "Checkout" do
     end
 
     it "informs about an invalid coupon code", :js => true do
-      pending("TODO: cmar to look at this test as part of #831")
       visit spree.root_path
       click_link "RoR Mug"
       click_button "add-to-cart-button"
