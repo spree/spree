@@ -61,7 +61,7 @@ module SpreePromo
         # Used for storing promotions before order has been created
         # Fixes #836
         ::Promotion.active.event_name_starts_with('spree.user.signup').each do |activator|
-          if activator.eligible?(nil, payload)
+          if activator.eligible?(nil, payload) && payload[:user]
             payload[:user].promotions << activator
           end
         end

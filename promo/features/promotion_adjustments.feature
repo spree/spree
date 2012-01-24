@@ -245,4 +245,28 @@ Feature: Promotions which add adjustments to orders
     When I go to checkout
     Then I should see "Promotion (Signup Promo)" within "#checkout-summary"
 
+  # Regression test for #836 (https://github.com/spree/spree/issues/836#issuecomment-3627556)
+  @selenium
+  Scenario: Applying a promotion for an order placed before user has signed up
+
+    When I log in as an admin user and go to the new promotion form
+    And I fill in "Name" with "Signup Promo"
+    And I select "User signup" from "Event"
+    And I press "Create"
+    Then I should see "Editing Promotion"
+    When I select "Create adjustment" from "Add action of type"
+    And I press "Add" within "#action_fields"
+    And I select "Flat Percent" from "Calculator"
+    And I press "Update" within "#actions_container"
+    And I fill in "Flat Percent" with "10" within ".calculator-fields"
+    And I press "Update" within "#actions_container"
+
+    When I go to the home page
+    When I follow "Logout"
+
+    When I add a product with name: "RoR Mug", price: "20" to cart
+    When I go to checkout
+    When I fill in "order_email" with "user@example.com"
+    And I press "Continue"
+    Then I should see "Promotion (Signup Promo)" within "#checkout-summary"
 
