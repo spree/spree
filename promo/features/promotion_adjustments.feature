@@ -229,7 +229,6 @@ Feature: Promotions which add adjustments to orders
     And I press "Add" within "#action_fields"
     And I select "Flat Percent" from "Calculator"
     And I press "Update" within "#actions_container"
-    Then show me the page
     And I fill in "Flat Percent" with "10" within ".calculator-fields"
     And I press "Update" within "#actions_container"
 
