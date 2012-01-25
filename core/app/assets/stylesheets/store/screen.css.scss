@@ -136,6 +136,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
     font-size: 12px;
     vertical-align:  text-top;
+    line-height: 21px;
 
     &.large {
       padding: 7px 10px;
@@ -906,3 +907,5 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     text-align: center;
   }
 }
+
+/* IE */
