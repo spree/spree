@@ -12,8 +12,8 @@ end
 def run_all_tests(database_name)
   %w(api auth core dash promo).each do |gem_name|
     puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
-    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
-    sh "cd #{gem_name} && #{$0} spec"
+    sh "cd #{gem_name} && bundle exec rake test_app DB_NAME='#{database_name}'"
+    sh "cd #{gem_name} && bundle exec rake spec"
   end
 end
 
