@@ -22,6 +22,8 @@ var initProductRuleSourceField = function(){
 
 var initProductActions = function(){
 
+  $("#add_product_name").product_autocomplete();
+
   $('.calculator-fields').each(function(){
     var $fields_container = $(this);
     var $type_select = $fields_container.find('.type-select');
@@ -42,7 +44,6 @@ var initProductActions = function(){
       }
     });
   });
-
 
   //
   // CreateLineItems Promotion Action
@@ -76,7 +77,7 @@ var initProductActions = function(){
     };
     setupRemoveLineItems();
     // Add line item to list
-    $(".promotion_action.create_line_items button.add").live('click',function(e){
+    $(".promotion_action.create_line_items button.add").unbind('click').click(function(e){
       var $container = $(this).parents('.promotion_action');
       var product_name = $container.find("input[name='add_product_name']").val();
       var variant_id = $container.find("input[name='add_variant_id']").val();
