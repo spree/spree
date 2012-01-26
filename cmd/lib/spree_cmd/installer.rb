@@ -61,6 +61,11 @@ module SpreeCmd
           @load_sample_data = false
         end
       end
+
+      if @load_seed_data
+        @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
+        @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
+      end
     end
 
     def add_gems
@@ -76,7 +81,7 @@ module SpreeCmd
                                :ref => '6743bcbd0146d1c7145d6befc648005d8d0cf79a' }
         end
 
-        run 'bundle install'
+        run 'bundle install', :capture => true
       end
     end
 
@@ -86,9 +91,11 @@ module SpreeCmd
       spree_options << "--seed=#{@load_seed_data}"
       spree_options << "--sample=#{@load_sample_data}"
       spree_options << "--auto_accept" if options[:auto_accept]
+      spree_options << "--admin_email=#{@admin_email}" if @admin_email
+      spree_options << "--admin_password=#{@admin_password}" if @admin_password
 
       inside @app_path do
-        run "rails generate spree:install #{spree_options.join(' ')}"
+        run "rails generate spree:install #{spree_options.join(' ')}", :verbose => false
       end
     end
 
@@ -111,6 +118,17 @@ module SpreeCmd
         valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
       end
       response.downcase[0] == ?y
+    end
+
+    def ask_string(message, default, valid_regex=/\w/)
+      return default if options[:auto_accept]
+      valid = false
+      until valid
+        response = ask "#{message} [#{default}]"
+        response = default if response.empty?
+        valid = (response  =~ valid_regex)
+      end
+      response
     end
 
     def create_rails_app

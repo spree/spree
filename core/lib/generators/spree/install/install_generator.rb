@@ -9,6 +9,8 @@ module Spree
     class_option :seed, :type => :boolean, :default => true, :banner => 'load seed data (migrations must be run)'
     class_option :sample, :type => :boolean, :default => true, :banner => 'load sample data (migrations must be run)'
     class_option :auto_accept, :type => :boolean
+    class_option :admin_email, :type => :string
+    class_option :admin_password, :type => :string
     class_option :lib_name, :type => :string, :default => 'spree'
 
     def self.source_paths
@@ -126,7 +128,15 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         say_status :loading,  "seed data"
         rake_options=[]
         rake_options << "AUTO_ACCEPT=1" if options[:auto_accept]
-        rake("db:seed #{rake_options.join(' ')}")
+        rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
+        rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
+
+        cmd = lambda { rake("db:seed #{rake_options.join(' ')}") }
+        if options[:auto_accept] || (options[:admin_email] && options[:admin_password])
+          quietly &cmd
+        else
+          cmd.call
+        end
       else
         say_status :skipping, "seed data (you can always run rake db:seed)"
       end
