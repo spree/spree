@@ -2,22 +2,34 @@ require 'highline/import'
 
 # see last line where we create an admin if there is none, asking for email and password
 def prompt_for_admin_password
-  password = ask('Password [spree123]: ') do |q|
-    q.echo = false
-    q.validate = /^(|.{5,40})$/
-    q.responses[:not_valid] = 'Invalid password. Must be at least 5 characters long.'
-    q.whitespace = :strip
+  if ENV['ADMIN_PASSWORD']
+    password = ENV['ADMIN_PASSWORD'].dup
+    say "Admin Password #{password}"
+  else
+    password = ask('Password [spree123]: ') do |q|
+      q.echo = false
+      q.validate = /^(|.{5,40})$/
+      q.responses[:not_valid] = 'Invalid password. Must be at least 5 characters long.'
+      q.whitespace = :strip
+    end
+    password = 'spree123' if password.blank?
   end
-  password = 'spree123' if password.blank?
+
   password
 end
 
 def prompt_for_admin_email
-  email = ask('Email [spree@example.com]: ') do |q|
-    q.echo = true
-    q.whitespace = :strip
+  if ENV['ADMIN_EMAIL']
+    email = ENV['ADMIN_EMAIL'].dup
+    say "Admin User #{email}"
+  else
+    email = ask('Email [spree@example.com]: ') do |q|
+      q.echo = true
+      q.whitespace = :strip
+    end
+    email = 'spree@example.com' if email.blank?
   end
-  email = 'spree@example.com' if email.blank?
+
   email
 end
 
