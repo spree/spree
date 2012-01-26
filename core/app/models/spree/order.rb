@@ -298,6 +298,11 @@ module Spree
       line_items.detect { |line_item| line_item.variant_id == variant.id }
     end
 
+    def quantity_of(variant)
+      line_item = line_items.find { |line_item| line_item.variant_id == variant.id }
+      line_item ? line_item.quantity : 0
+    end
+
     def ship_total
       adjustments.shipping.map(&:amount).sum
     end

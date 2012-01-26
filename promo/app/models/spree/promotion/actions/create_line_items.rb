@@ -7,7 +7,10 @@ module Spree
     def perform(options = {})
       return unless order = options[:order]
       promotion_action_line_items.each do |item|
-        order.add_variant(item.variant, item.quantity)
+        current_quantity = order.quantity_of(item.variant)
+        if current_quantity < item.quantity
+          order.add_variant(item.variant, item.quantity - current_quantity)
+        end
       end
     end
 
