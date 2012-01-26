@@ -555,6 +555,10 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
         }
       }
 
+      tr[data-hook="order_total"] {
+        border-bottom: none;
+      };
+
       #summary-order-total {
         @extend span.price;
         font-size: 14px;
