@@ -70,12 +70,27 @@ describe Spree::Order do
   end
 
   context "#products" do
+    before :each do
+      @variant1 = mock_model(Spree::Variant, :product => "product1")
+      @variant2 = mock_model(Spree::Variant, :product => "product2")
+      @line_items = [mock_model(Spree::LineItem, :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
+                     mock_model(Spree::LineItem, :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
+      order.stub(:line_items => @line_items)
+    end
+
     it "should return ordered products" do
-      variant1 = mock_model(Spree::Variant, :product => "product1")
-      variant2 = mock_model(Spree::Variant, :product => "product2")
-      line_items = [mock_model(Spree::LineItem, :variant => variant1), mock_model(Spree::LineItem, :variant => variant2)]
-      order.stub(:line_items => line_items)
       order.products.should == ['product1', 'product2']
+    end
+
+    it "contains?" do
+      order.contains?(@variant1).should be_true
+    end
+
+    it "gets the quantity of a given variant" do
+      order.quantity_of(@variant1).should == 1
+
+      @variant3 = mock_model(Spree::Variant, :product => "product3")
+      order.quantity_of(@variant3).should == 0
     end
   end
 
