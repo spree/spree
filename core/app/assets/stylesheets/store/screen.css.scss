@@ -796,6 +796,17 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
         width: 100%;
       } 
     }
+
+    #update-cart {
+      #subtotal, .links {
+        width: 50%;
+        float: left;
+        text-align: left;
+      }
+      #subtotal {
+        text-align: right;
+      }
+    }
   }
 
   /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
