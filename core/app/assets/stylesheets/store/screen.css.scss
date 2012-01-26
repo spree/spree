@@ -643,6 +643,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
         font-weight: bold;
         font-size: 14px;
         margin-right: 40px;
+        padding: 5px;
       }
     }
   }
@@ -784,6 +785,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     ul#nav-bar {
       text-align: center;
     }
+
   }
 
   /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
@@ -836,6 +838,13 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
         display: block;
         padding: 10px 20px;
       }
+    }
+
+    #shipping_method p label {
+      float: none;
+      display: block;
+      text-align: center;
+      margin-right: 0;
     }
 
     p[data-hook="use_billing"] {
