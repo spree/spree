@@ -33,7 +33,7 @@ h3. General Settings
 
 Spree comes with many application wide preferences. They are defined in core/app/models/spree/app_configuration.rb and made available to your code through Spree::Config, e.g., *Spree::Config.site_name*.
 
-A limited set of the general settings are available in the admin interface (/admin/general_settings). 
+A limited set of the general settings are available in the admin interface (/admin/general_settings).
 
 You can add additional preferences under the spree/app_configuration namespace or create your own subclass of *Preferences::Configuration*.
 
@@ -267,5 +267,45 @@ INFO: Initializing preferences available within the Admin will overwrite any cha
 h4. Configuration Through the Admin Interface
 
 The Spree admin interface has several different screens where various settings can be configured.  For instance, the +admin/general_settings+ URL in your Spree application can be used to configure the values for the site name and the site URL.  This is basically equivalent to calling +Spree::Config.set site_name => "Whatever", :site_url => "http://whatever.com")+ directly in your Ruby code.
+
+h3. Site-Wide Preferences
+
+h4. Defining Site-Wide Preferences
+
+You can define preferences that are site wide and don't apply to a specific instance of a model by creating a configuration file that inherits from Spree::Preferences::Configuration.
+
+<ruby>
+  class Spree::MyApplicationConfiguration < Spree::Preferences::Configuration
+    preference :theme, :string, :default => 'Default'
+    preference :show_splash_page, :boolean
+    preference :number_of_articles, :integer
+  end
+</ruby>
+
+In the above configuration file, three preferences have been defined:
+
+* theme
+* show_splash_page
+* number_of_articles
+
+It is recommended to create the configuration file in the *lib/* directory.
+
+NOTE: Extensions can also define site-wide preferences. For more information on using preferences like this with extensions, check out the "Creating Extensions Guide":creating_extensions.html.
+
+h4. Configuring Site-Wide Preferences
+
+The recommended way to configure site wide preferences is through an initializer. Let's take a look at configuring the preferences defined in the previous configuration example.
+
+<ruby>
+  module Spree
+    Spree::MyApp::Config = Spree::MyApplicationConfiguration.new
+  end
+
+  Spree::MyApp::Config[:theme] = "blue_theme"
+  Spree::MyApp::Config[:show_spash_page] = true
+  Spree::MyApp::Config[:number_of_articles] = 5
+</ruby>
+
+The above example will configure the preferences we defined earlier. Take note of the second line. In order to set and get preferences using Spree::MyApp::Config, we must first instantiate the configuration object.
 
 <!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
