@@ -786,6 +786,15 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
       text-align: center;
     }
 
+    .steps-data div.columns {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    #order_details table[data-hook="order_details"] {
+      width: 100%;
+    }
+
   }
 
   /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
