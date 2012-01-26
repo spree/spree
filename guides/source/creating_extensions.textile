@@ -421,6 +421,46 @@ h4. Overriding an Existing Spree Class
 
 Please refer to the "Logic Customization":logic_customization.html page.
 
+h4. Defining Extension Preferences
+
+Let's now define a preference for our extension.
+
+<ruby>
+  #lib/spree/flag_promotion_configuration.rb
+  class Spree::FlagPromotionConfiguration < Spree::Preferences::Configuration
+    preference :show_flags, :boolean
+  end
+</ruby>
+
+The above example defines a single boolean preference for our extension, :show_flags.
+
+In order to configure these preferences within the extension, we must first instantiate the configuration object in our engine file.
+
+<ruby>
+  #lib/spree_flag_promotions/engine.rb
+  module Spree::ActiveShipping; end
+
+  ....
+
+  module SpreeFlagPromotions
+    class Engine < Rails::Engine
+      initializer "spree.flag_promotions.preferences", :after => "spree.environment" do |app|
+        Spree::FlagPromotions::Config = Spree::FlagPromotionConfiguration.new
+      end
+
+      ....
+    end
+  end
+</ruby>
+
+Now this preference can be accessed using *Spree::FlagPromotions::Config*
+<ruby>
+  Spree::FlagPromotions::Config[:show_flags] = false
+  Spree::FlagPromotions::Config[:show_flags] #=> false
+</ruby>
+
+INFO: Please refer to the "Preferences":preferences.html#site_wide_preferences guide for more information.
+
 h4. Adding the Extension to Your Application
 
 Lets now add the extension to our application.  We'll create a simple Spree application for this purpose just to illustrate how its done.
