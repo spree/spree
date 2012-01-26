@@ -262,7 +262,7 @@ For example if you would like to change the site name and default locale you can
   end
 </ruby>
 
-Note if you initialize values for preferences available in the Admin Interface. They will overwrite any changes made through the user interface on when you restart.
+INFO: Initializing preferences available within the Admin will overwrite any changes that were made through the user interface when you restart.
 
 h4. Configuration Through the Admin Interface
 
