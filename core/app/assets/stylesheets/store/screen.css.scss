@@ -136,7 +136,6 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
     font-size: 12px;
     vertical-align:  text-top;
-    line-height: 21px;
 
     &.large {
       padding: 7px 10px;
@@ -377,7 +376,6 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     li {
       text-align: center;
       font-weight: bold;
-      height: 230px;
       margin-bottom: 20px;
 
       a {
@@ -394,7 +392,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
       .product-image {
         border: 1px solid $c_border;
         padding: 5px;        
-        height: 150px;
+        min-height: 110px;
 
         &:hover {
           border-color: $c_colored;
@@ -759,153 +757,148 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     }
   }
 
+/* #Media Queries
+================================================== */
 
-/*--------------------------------------*/
-/* Tablet (Portrait)
-/*--------------------------------------*/
-@media only screen and (min-width: 768px) and (max-width: 959px) {
+  /* Smaller than standard 960 (devices and browsers) */
+  @media only screen and (max-width: 959px) {}
 
-}
+  /* Tablet Portrait size to standard 960 (devices and browsers) */
+  @media only screen and (min-width: 768px) and (max-width: 959px) {}
 
-/*--------------------------------------*/
-/* Mobile (Portrait)
-/*--------------------------------------*/
-@media only screen and (max-width: 767px) {
+  /* All Mobile Sizes (devices and browser) */
+  @media only screen and (max-width: 767px) {
+    nav#taxonomies {
+      text-align: center;
 
-}
-
-/*--------------------------------------*/
-/* Mobile (Landscape)
-/*--------------------------------------*/
-@media only screen and (min-width: 480px) and (max-width: 767px) {
-  
-  input, select {
-    vertical-align: baseline !important;
-  }
-
-  figure#logo {
-    text-align: center;
-  }
-
-  #link-to-login {
-    display: block;
-    text-align: center;
-  }
-
-  #search-bar {
-    display: block;
-    text-align: center;
-
-    select {
-      margin-bottom: 10px;
-    }
-  }
-
-  ul#nav-bar {
-    text-align: center;
-  }
-
-  ul#products {
-    li {      
-      height: 360px !important;
-      
-      .product-image {        
-        height: 240px !important;
+      ul {
+        padding-left: 0 !important;
+        list-style: none !important;
       }
     }
   }
 
-}
-
-/*--------------------------------------*/
-/* Mobile (Portrait, Small)
-/*--------------------------------------*/
-@media only screen and (min-width: 320px) and (max-width: 480px) {
-
-  table#cart-detail {
-    tbody {
-      tr {
-        td[data-hook="cart_item_description"] {
-          padding: 0 !important;
-          text-indent: -9999px;
-
-          h4 {
-            display: none;
-          }
-        }
-        td[data-hook="cart_item_image"] {
-          img {
-            width: 70px;
-          }
-        }
-        td[data-hook="cart_item_price"], td[data-hook="cart_item_total"] {
-          font-size: 14px !important; 
-        }
-      }
-    }  
-  }
-
-  table.order-summary {
-    display: block; position: relative; width: 100%;
-
-    thead { display: block; float: left; }
-    tbody { display: block; width: auto; position: relative; overflow-x: auto; white-space: nowrap; }
-    thead tr { display: block; }
-    th { display: block; }
-    tbody tr { display: inline-block; vertical-align: top; }
-    td { display: block; min-height: 1.25em; }
-  }
-  
-
-  figure#logo {
-    text-align: center;
-  }
-
-  #link-to-login {
-    display: block;
-    text-align: center;
-  }
-
-  #search-bar {
-    display: block;
-    text-align: center;
-
-    select {
-      margin-bottom: 10px;
+  /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+  @media only screen and (min-width: 480px) and (max-width: 767px) {
+    
+    input, select {
+      vertical-align: baseline !important;
     }
-  }
 
-  aside#sidebar {
-    text-align: center;
+    figure#logo {
+      text-align: center;
+    }
 
-    ul {
-      padding-left: 0 !important;
+    #link-to-login {
+      display: block;
+      text-align: center;
+    }
+
+    #search-bar {
+      display: block;
+      text-align: center;
+
+      select {
+        margin-bottom: 10px;
+      }
+    }
+
+    ul#nav-bar {
+      text-align: center;
+    }
+
+    ul#products {
+      margin-left: 0;
+      margin-right: -20px;
 
       li {
-        list-style-type: none;
+        width: 133px;
+        margin-right: 10px;
       }
     }
+
   }
 
-  ul#nav-bar {
-    text-align: center;
-  }
 
-  ul#products {
-    margin: 0;
+  /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+  @media only screen and (max-width: 479px) {
+    
+    table#cart-detail {
+      tbody {
+        tr {
+          td[data-hook="cart_item_description"] {
+            padding: 0 !important;
+            text-indent: -9999px;
 
-    li {      
-      height: 360px !important;
-      
-      .product-image {        
-        height: 240px !important;
+            h4 {
+              display: none;
+            }
+          }
+          td[data-hook="cart_item_image"] {
+            img {
+              width: 70px;
+            }
+          }
+          td[data-hook="cart_item_price"], td[data-hook="cart_item_total"] {
+            font-size: 14px !important; 
+          }
+        }
+      }  
+    }
+
+    table.order-summary {
+      display: block; position: relative; width: 100%;
+
+      thead { display: block; float: left; }
+      tbody { display: block; width: auto; position: relative; overflow-x: auto; white-space: nowrap; }
+      thead tr { display: block; }
+      th { display: block; }
+      tbody tr { display: inline-block; vertical-align: top; }
+      td { display: block; min-height: 1.25em; }
+    }
+    
+
+    figure#logo {
+      text-align: center;
+    }
+
+    #link-to-login {
+      display: block;
+      text-align: center;
+    }
+
+    #search-bar {
+      display: block;
+      text-align: center;
+
+      select {
+        margin-bottom: 10px;
       }
     }
-  }
 
-  #content {
-    text-align: center;
-  }
-}
+    aside#sidebar {
+      text-align: center;
 
-/* IE */
+      ul {
+        padding-left: 0 !important;
+
+        li {
+          list-style-type: none;
+        }
+      }
+    }
+
+    ul#products {
+      margin-left: 0;
+
+      li {
+        width: 140px;
+        margin-right: 15px;
+      }
+    }
+
+    #content {
+      text-align: center;
+    }
+        
+  }
