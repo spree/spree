@@ -823,6 +823,17 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
   /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
   @media only screen and (max-width: 479px) {
     
+    .progress-steps li {
+      padding: 0;
+      margin: 0;
+      width: 50%;
+
+      span {
+        display: block;
+        padding: 10px 20px;
+      }
+    }
+
     table#cart-detail {
       tbody {
         tr {
