@@ -127,8 +127,11 @@ module Spree
     end
 
     def available_countries
-      return Country.all unless zone = Zone.find_by_name(Spree::Config[:checkout_zone])
-      zone.country_list
+      countries = Zone.find_by_name(Spree::Config[:checkout_zone]).try(:country_list) || Country.all
+      countries.collect do |c| 
+        c.name = I18n.t(c.name, :scope => 'countries', :default => c.name)
+        c 
+      end.sort{ |a,b| a.name <=> b.name }
     end
 
     def format_price(price, options={})
