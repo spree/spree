@@ -776,6 +776,10 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
         list-style: none !important;
       }
     }
+
+    ul#nav-bar {
+      text-align: center;
+    }
   }
 
   /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
@@ -803,10 +807,6 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
       }
     }
 
-    ul#nav-bar {
-      text-align: center;
-    }
-
     ul#products {
       margin-left: 0;
       margin-right: -20px;
@@ -832,6 +832,11 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
         display: block;
         padding: 10px 20px;
       }
+    }
+
+    p[data-hook="use_billing"] {
+      float: none;
+      margin-top: 0;
     }
 
     table#cart-detail {
