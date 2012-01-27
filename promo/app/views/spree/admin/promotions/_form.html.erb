@@ -16,6 +16,11 @@
     <%= f.text_field :code %>
   <% end %>
 
+  <%= f.field_container :path do %>
+    <%= f.label :path, t(:path) %><br />
+    <%= f.text_field :path %>
+  <% end %>
+
   <%= f.field_container :description do %>
     <%= f.label :description %><br />
     <%= f.text_area :description, :style => 'height:50px;' %>

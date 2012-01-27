@@ -2,6 +2,9 @@ module Spree
   class Promotion < Spree::Activator
     MATCH_POLICIES = %w(all any)
 
+    Activator.event_names << 'spree.checkout.coupon_code_added'
+    Activator.event_names << 'spree.content.visited'
+
     has_many :promotion_rules, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
     alias_method :rules, :promotion_rules
     accepts_nested_attributes_for :promotion_rules
@@ -18,6 +21,7 @@ module Spree
 
     validates :name, :presence => true
     validates :code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
+    validates :path, :presence => true, :if => lambda{|r| r.event_name == 'spree.content.visited' }
     validates :usage_limit, :numericality => { :greater_than => 0, :allow_nil => true }
 
     class << self
@@ -42,6 +46,10 @@ module Spree
       if code.present?
         event_code = payload[:coupon_code].to_s.strip.downcase
         return unless event_code == self.code.to_s.strip.downcase
+      end
+
+      if path.present?
+        return unless path == payload[:path]
       end
 
       actions.each do |action|

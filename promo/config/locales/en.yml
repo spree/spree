@@ -19,6 +19,8 @@ en:
     spree:
       checkout:
         coupon_code_added: Coupon code added
+      content:
+        visited: Visit static content page
   expiry: Expiry
   free_shipping: Free Shipping
   new_promotion: New Promotion
