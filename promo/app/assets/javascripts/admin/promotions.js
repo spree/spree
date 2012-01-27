@@ -102,6 +102,14 @@ var initProductActions = function(){
 $(document).ready(function() {
   initProductRuleSourceField();
   initProductActions();
+
+  // toggle fields for specific events
+  $('#promotion_event_name').change(function() {
+    $('#promotion_code_field').toggle($('#promotion_event_name').val() == 'spree.checkout.coupon_code_added');
+    $('#promotion_path_field').toggle($('#promotion_event_name').val() == 'spree.content.visited');
+  });
+  $('#promotion_event_name').change();
+
 });
 
 

@@ -18,6 +18,7 @@ module Spree
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args
           Activator.active.event_name_starts_with(event_name).each do |activator|
+            payload[:event_name] = event_name
             activator.activate(payload)
           end
         end
