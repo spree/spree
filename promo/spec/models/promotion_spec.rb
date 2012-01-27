@@ -66,28 +66,46 @@ describe Spree::Promotion do
       @action1 = mock_model(Spree::PromotionAction, :perform => true)
       @action2 = mock_model(Spree::PromotionAction, :perform => true)
       promotion.promotion_actions = [@action1, @action2]
+      promotion.created_at = 2.days.ago
+
+      @user = stub_model(Spree::User, :email => "spree@example.com")
+      @order = stub_model(Spree::Order, :user => @user, :created_at => DateTime.now)
+      @payload = { :order => @order, :user => @user }
     end
 
     it "should check code if present" do
       promotion.code = 'XXX'
-      payload = { :coupon_code => 'XXX' }
-      @action1.should_receive(:perform).with(payload)
-      @action2.should_receive(:perform).with(payload)
-      promotion.activate(payload)
+      @payload[:coupon_code] = 'XXX'
+      @action1.should_receive(:perform).with(@payload)
+      @action2.should_receive(:perform).with(@payload)
+      promotion.activate(@payload)
     end
 
     it "should check path if present" do
       promotion.path = 'content/cvv'
-      payload = { :path => 'content/cvv' }
-      @action1.should_receive(:perform).with(payload)
-      @action2.should_receive(:perform).with(payload)
-      promotion.activate(payload)
+      @payload[:path] = 'content/cvv'
+      @action1.should_receive(:perform).with(@payload)
+      @action2.should_receive(:perform).with(@payload)
+      promotion.activate(@payload)
     end
 
-    context "when checking coupon_is_eligible?" do
-      it "should accommodate promotions that are not attached to orders" do
-        lambda {promotion.activate(:order => nil, :user => nil)}.should_not raise_error
-      end
+    it "does not perform actions against an order in a finalized state" do
+      @action1.should_not_receive(:perform).with(@payload)
+
+      @order.state = 'complete'
+      promotion.activate(@payload)
+
+      @order.state = 'awaiting_return'
+      promotion.activate(@payload)
+
+      @order.state = 'returned'
+      promotion.activate(@payload)
+    end
+
+    it "does not activate if newer then order" do
+      @action1.should_not_receive(:perform).with(@payload)
+      promotion.created_at = DateTime.now + 2
+      promotion.activate(@payload)
     end
   end
 

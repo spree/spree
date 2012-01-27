@@ -1,6 +1,7 @@
 module Spree
   class Promotion < Spree::Activator
     MATCH_POLICIES = %w(all any)
+    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
     Activator.event_names << 'spree.checkout.coupon_code_added'
     Activator.event_names << 'spree.content.visited'
@@ -43,6 +44,8 @@ module Spree
     end
 
     def activate(payload)
+      return unless order_activatable? payload[:order]
+
       if code.present?
         event_code = payload[:coupon_code].to_s.strip.downcase
         return unless event_code == self.code.to_s.strip.downcase
@@ -71,6 +74,12 @@ module Spree
       else
         rules.any?(&eligible)
       end
+    end
+
+    def order_activatable?(order)
+      order &&
+      created_at < order.created_at &&
+      !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
     # Products assigned to all product rules
