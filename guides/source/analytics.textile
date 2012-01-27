@@ -1,6 +1,6 @@
 h2. Spree Analytics
 
-Spree Analytics provides deep insight into your store's ecommerce performance and sales conversion funnel. Visitor data is collected to report on visits, orders, abandoned carts, revenue and conversion rates. The data is analyized, rolled up and archived by the service saving valuable compute resources for your store.
+Spree Analytics provides deep insight into your store's ecommerce performance and sales conversion funnel. Visitor data is collected to report on visitor behavior, orders, abandoned carts, revenue and conversion rates. The data is analyized, rolled up and archived by the service saving valuable compute resources for your store.
 
 You will have to register your store with Spree Commerce to obtain your token but the service is free to use.
 
@@ -10,7 +10,7 @@ h3. Registration
 
 You will have to "register your store":http://spreecommerce.com/stores/new with Spree Commerce. This requires a user account.
 
-Configure the Analytics Add On for your store to generate your token. The service requires a strict url in the format "http://www.mystore.com". This does not have to be a live url and may be changed later.
+On "spreecommerce.com":http://spreecommerce.com/stores, configure the Analytics Add On for your store to generate your token. The service requires a strict url in the format "http://www.mystore.com". This does not have to be a live url and may be changed later.
 
 Your will need the App Id, Site Id and Token to configure your Spree Store. The token should be entered on the Overview tab in the admin section. (/admin). See screenshots:
 
