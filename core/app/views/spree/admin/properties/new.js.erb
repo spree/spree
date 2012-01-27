@@ -1,2 +1,2 @@
-$("#new_property").html('<%= escape_javascript(render :template => "spree/admin/properties/new.html.erb") %>');
+$("#new_property").html('<%= escape_javascript(render :template => "spree/admin/properties/new", :handlers => [:erb]) %>');
 $("#new_property_link").parent().hide();
