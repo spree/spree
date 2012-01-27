@@ -1,2 +1,2 @@
-$("#new_prototype").html('<%= escape_javascript(render :template => "spree/admin/prototypes/new.html.erb") %>');
+$("#new_prototype").html('<%= escape_javascript(render :template => "spree/admin/prototypes/new", :handlers => [:erb]) %>');
 $("#new_prototype_link").parent().hide();
