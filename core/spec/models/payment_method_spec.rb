@@ -14,7 +14,7 @@ describe Spree::PaymentMethod do
       Spree::PaymentMethod.delete_all
 
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
-        Spree::PaymentMethod.create(:type => 'Spree::Gateway::Test', :name => 'Display Both', :display_on => display_on,
+        Spree::Gateway::Test.create(:name => 'Display Both', :display_on => display_on,
            :active => true, :environment => 'test', :description => 'foofah')
       end
       Spree::PaymentMethod.all.size.should == 4
