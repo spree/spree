@@ -50,7 +50,7 @@
 <% end %>
 
 <%= javascript_tag do -%>
-  <%= render 'spree/admin/shared/update_order_state.js' %>
+  <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
 <% end -%>
 
 <%= javascript_include_tag 'admin/orders/edit_form' %>

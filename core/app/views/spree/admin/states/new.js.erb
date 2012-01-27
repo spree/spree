@@ -1,2 +1,2 @@
-$("#new_state").html("<%= escape_javascript(render :template => 'spree/admin/states/new.html.erb') %>");
+$("#new_state").html("<%= escape_javascript(render :template => 'spree/admin/states/new', :handlers => [:erb]) %>");
 $("#new_state_link").parent().hide();
