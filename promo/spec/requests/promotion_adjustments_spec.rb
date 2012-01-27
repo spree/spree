@@ -230,16 +230,12 @@ describe "Promotion Adjustments" do
       page.should have_content("Free Shipping")
     end
 
-    pending "should allow an admin to create an automatic promo requiring a landing page to be visited" do
+    it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Deal"
-      select "Order contents changed", :from => "Event"
+      select "Visit static content page", :from => "Event"
+      fill_in "Path", :with => "content/cvv"
       click_button "Create"
       page.should have_content("Editing Promotion")
-
-      select "Landing Page", :from => "Add rule of type"
-      within('#rule_fields') { click_button "Add" }
-      fill_in "Path", :with => "content/cvv"
-      within('#rule_fields') { click_button "Update" }
 
       select "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }

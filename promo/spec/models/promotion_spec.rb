@@ -14,9 +14,17 @@ describe Spree::Promotion do
       @valid_promotion.should be_valid
     end
 
-    it "validates the coupon code" do
+    it "validates the coupon code when event is spree.checkout.coupon_code_added" do
       @valid_promotion.code = nil
       @valid_promotion.should_not be_valid
+    end
+
+    it "validates the path when event is spree.content.visited" do
+      @valid_promotion.event_name = 'spree.content.visited'
+      @valid_promotion.should_not be_valid
+
+      @valid_promotion.path = 'content/cvv'
+      @valid_promotion.should be_valid
     end
 
     it "validates usage limit" do
@@ -63,6 +71,14 @@ describe Spree::Promotion do
     it "should check code if present" do
       promotion.code = 'XXX'
       payload = { :coupon_code => 'XXX' }
+      @action1.should_receive(:perform).with(payload)
+      @action2.should_receive(:perform).with(payload)
+      promotion.activate(payload)
+    end
+
+    it "should check path if present" do
+      promotion.path = 'content/cvv'
+      payload = { :path => 'content/cvv' }
       @action1.should_receive(:perform).with(payload)
       @action2.should_receive(:perform).with(payload)
       promotion.activate(payload)

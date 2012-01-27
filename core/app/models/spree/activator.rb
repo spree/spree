@@ -4,7 +4,6 @@ module Spree
 
     self.event_names = [
       'spree.cart.add',
-      'spree.checkout.coupon_code_added',
       'spree.order.contents_changed',
       'spree.user.signup'
     ]
