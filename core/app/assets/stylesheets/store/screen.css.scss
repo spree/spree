@@ -659,6 +659,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
   /* Cart
   /*--------------------------------------*/
   table#cart-detail {
+		width: 100%;
     tbody#line_items {
       tr {
 
