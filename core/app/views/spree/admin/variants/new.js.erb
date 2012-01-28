@@ -1,2 +1,2 @@
-$("#new_variant").html('<%= escape_javascript(render :template => 'spree/admin/variants/new', :handlers => [:erb]) %>');
+$("#new_variant").html('<%= escape_javascript(render :template => 'spree/admin/variants/new', :formats => [:html], :handlers => [:erb]) %>');
 $("#new_var_link").hide();
