@@ -22,7 +22,6 @@ however, to use only the pieces you are interested in.  So for example, you coul
 and perhaps combine it with your own custom authorization scheme instead of using spree_auth.
 
 [![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
-[![Dependency Status](https://gemnasium.com/spree/spree.png)](https://gemnasium.com/spree/spree)
 
 Installation
 ------------
