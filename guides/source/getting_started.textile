@@ -98,7 +98,13 @@ Spree is distributed as a Rubygem. The Spree gem itself is actually very small a
 $ gem install spree
 </shell>
 
-NOTE: If you have trouble installing the spree gem b/c of dependency issues you can install the spree_cmd gem utility which has no gem dependencies.
+If you get an "Unable to resolve dependencies" error while installing the Spree gem you can try installing just the spree_cmd gem instead (which has minimal dependencies.)
+
+<shell>
+$ gem install spree_cmd
+</shell>
+
+INFO: Rubygems sometimes has trouble resolving so-called circular dependencies (especially with empty gemsets.) This is one of several issues that "Bundler":http://gembundler.com was designed to address. Fortunately the spree_cmd gem has everything you need to install Spree in a new project so you can use this as an alternative.
 
 h3. Creating a New Spree Project
 
