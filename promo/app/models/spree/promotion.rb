@@ -78,7 +78,7 @@ module Spree
 
     def order_activatable?(order)
       order &&
-      created_at < order.created_at &&
+      created_at.to_i < order.created_at.to_i &&
       !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
