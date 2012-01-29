@@ -70,6 +70,13 @@ module Spree
 
     alias :options :product_option_types
 
+    after_initialize :ensure_master
+
+    def ensure_master
+      return unless self.new_record?
+      self.master ||= Variant.new
+    end
+
     def to_param
       return permalink if permalink.present?
       name.to_url

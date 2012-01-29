@@ -7,6 +7,18 @@ describe Spree::Product do
     reset_spree_preferences
   end
 
+  context "#on_hand=" do
+    it "should not complain of a missing master" do
+      product = Spree::Product.new
+      product.on_hand = 5
+    end
+  end
+
+  it "should always have a master variant" do
+    product = Spree::Product.new
+    product.master.should_not be_nil
+  end
+
   context "#on_hand" do
     let(:product) do
       product = stub_model(Spree::Product)
