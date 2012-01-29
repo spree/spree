@@ -112,29 +112,21 @@ describe Spree::Product do
 
   end
 
-  context '#add_properties_and_option_types_from_prototype' do
-    let!(:property) { stub_model(Spree::Property) }
-
-    let!(:prototype) do
-      prototype = stub_model(Spree::Prototype)
-      prototype.stub :properties => [property]
-      prototype.stub :option_types => [stub_model(Spree::OptionType)] 
-      prototype
+  context '#create' do
+    before do
+      @prototype = Factory(:prototype)
+      @product = Spree::Product.new(:name => "Foo", :price => 1.99)
     end
 
-    let(:product) do
-      product = stub_model(Spree::Product, :prototype_id => prototype.id)
-      # The `set_master_variant_defaults` callback requires a master
-      product.stub :master => stub_model(Spree::Variant)
-      product
+    context "when prototype is supplied" do
+      before { @product.prototype_id = @prototype.id }
+
+      it "should create properties based on the prototype" do
+        @product.save
+        @product.properties.count.should == 1
+      end
     end
 
-    it 'should have one property' do
-      Spree::Prototype.stub :find_by_id => prototype
-      product.product_properties.should_receive(:create).with(:property => property)
-      product.should_receive(:option_types=).with(prototype.option_types)
-      product.run_callbacks(:create)
-    end
   end
 
   context '#has_stock?' do
