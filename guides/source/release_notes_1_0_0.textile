@@ -179,6 +179,76 @@ h4. The demise of Cucumber testing
 
 Cucumber is a great testing tool however it doesn't bring more values for testing but overhead. It is decided to opt for a light-weight practice of RSpec + Capybara.
 
+h3. Upgrading
+
+This section aims to walk you through upgrading to the newest version of Spree.
+
+INFO: This steps in this guide were written while upgrading from 0.70.x to 1.0.0. Upgrading older versions of Spree may require some additional steps.
+
+h4. Upgrading the Spree Gem
+
+You will want to begin the update process by updating the Spree gem.
+
+<shell>
+$ bundle update spree
+</shell>
+
+NOTE: If you run `bundle update` instead of `bundle update spree`, you run the risk of having all your application dependencies updated to their latest version. It is recommended to only update spree during the upgrade process.
+
+h4. Extensions
+
+Any Spree extensions being used will also need to be updated to a 1.0.0 compatible version. If there is not a 1.0.0 compatible extensions release yet, you will need to disable that extension in order to continue the upgrade process.
+
+h4. Routes
+
+You will need to update your routes file in order for Spree's routes to be correctly loaded. You will need to add `mount Spree::Core::Engine, :at => '/'` as shown below.
+
+<ruby>
+#config/routes.rb
+YourStore::Application.routes.draw
+  mount Spree::Core::Engine, :at => '/'
+
+  # your application's custom routes
+
+  ...
+end
+</ruby>
+
+It is recommended to place your application's custom routes beneath Spree's mounted routes as shown in the above example. This will ensure you don't override any of Spree's defined routes.
+
+h4. Update config/application.rb
+
+Remove the following two lines from **config/application.rb** in your application:
+
+<shell>
+config.middleware.use "SeoAssist"
+config.middleware.use "RedirectLegacyProductUrl"
+</shell>
+
+
+h4. Migrations
+
+<shell>
+$ bundle exec rake railties:install:migrations
+</shell>
+
+Run the above command to copy over all the migrations from all the engines included in your application. This may also include any migrations from extensions.
+
+Then it is time to run any new migrations copied to your application.
+
+<shell>
+$ bundle exec rake db:migrate
+</shell>
+
+h4. Asset Manifest Files
+
+Remove the line requiring spree_dash from both **app/assets/stylesheets/store/all.css** and **app/assets/stylesheets/admin/all.css**
+
+h4. Other Tips for Upgrading
+
+* If your application defines any class decorators, you will need to update these files to decorate Spree's new namespace classes. This means Product becomes Spree::Product, Country becomes Spree::Country, and so on.
+* Correct the paths to any templates you are overriding to include the Spree namespace.
+
 h3. Bug fixes
 
 * Fixed issue caused by using +&:upcase+ syntax inside the +tab+ helper provided by +Admin::NavigationHelper+. "#693":https://github.com/spree/spree/pull/693 and "#704":https://github.com/spree/spree/pull/704.
