@@ -33,7 +33,7 @@ module SpreeCmd
       @spree_gem_options = {}
 
       if options[:edge]
-        @spree_gem_options[:git] = 'https://github.com/spree/spree.git'
+        @spree_gem_options[:git] = 'git://github.com/spree/spree.git'
       elsif options[:path]
         @spree_gem_options[:path] = options[:path]
       elsif options[:git]
