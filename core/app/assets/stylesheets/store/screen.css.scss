@@ -3,7 +3,6 @@
 /*--------------------------------------*/
 $c_base:        #404042;  /* Dark gray      */
 $c_gray1:       #bbbbbb;  /* Mid light gray */
-$c_gray2:       #bbbbbb;  /* Mid dark gray  */
 $c_colored:     #00ADEE;  /* Light blue     */
 $c_colored_alt: #f0f8ff;  /* Lighter blue   */
 $c_border:      #dedede;  /* Light gray     */
@@ -95,22 +94,33 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
   /*--------------------------------------*/
   /* Forms
   /*--------------------------------------*/
-  input[type="text"], input[type="search"],
-  input[type="email"], input[type="phone"],
-  input[type="url"], input[type="password"],
-  input[type="number"] {
+  textarea, input[type="date"], 
+  input[type="datetime"], input[type="datetime-local"],
+  input[type="email"], input[type="month"], input[type="number"],
+  input[type="password"], input[type="search"], input[type="tel"],
+  input[type="text"], input[type="time"], input[type="url"], 
+  input[type="week"] {
     border: 1px solid $c_border;
-    padding: 5px;
+    padding: 2px 5px;    
     font-family: "Ubuntu", sans-serif;
 
     &:active, &:focus {
       border-color: $c_colored;
       outline: none;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      -o-box-shadow: none;
+      box-shadow: none;
     }
 
     &.error {
       border-color: $c_red;
     }
+  }
+
+  select {
+    border: 1px solid $c_border;
+    font-family: "Ubuntu", sans-serif;
   }
 
   label.error {
@@ -121,20 +131,28 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
   }
 
   input[type="submit"], input[type="button"],
-  button, .button {
+  input[type= "reset"], button, a.button {
     background-color: $c_colored;
-    padding: 4px 5px;
+    background-image: none;
+    text-shadow: none;
     color: white;
     font-weight: bold;
     font-family: "Ubuntu", sans-serif;
     border: 1px solid rgba(0, 138, 189, .75);
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-    -o-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-    -ms-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-    -khtml-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
-    font-size: 12px;
+     -khtml-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+       -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+        -ms-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+         -o-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    -webkit-border-radius: 0px;
+     -khtml-border-radius: 0px;
+       -moz-border-radius: 0px;
+        -ms-border-radius: 0px;
+         -o-border-radius: 0px;
+            border-radius: 0px;
+    
+    // font-size: 13px;
     vertical-align:  text-top;
 
     &.large {
@@ -143,15 +161,30 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     }
 
     &:hover {
+      background-image: none;
       background-color: $c_base;
       border-color: $c_base;
       color: white !important;
     }
   }
 
+  .ie8 {
+    a.button {
+      line-height: 16px;
+    }
+  } 
+
   input[type="checkbox"], input[type="button"],
-  input[type="submit"], button {
+  input[type="submit"], input[type="reset"], 
+  button, label {
     vertical-align: middle;
+  }
+
+  a.button {
+    display: inline-block;
+    line-height: 15px;
+    margin-top: -2px;
+    vertical-align: bottom;
   }
 
   /*--------------------------------------*/

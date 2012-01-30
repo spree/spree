@@ -1,5 +1,6 @@
 /*
- * This is a manifest file that includes stylesheets for spree_core
+* This is a manifest file that includes stylesheets for spree_core 
  *= require store/base
+ *= require jquery.formalize.css
  *= require store/screen 
 */
