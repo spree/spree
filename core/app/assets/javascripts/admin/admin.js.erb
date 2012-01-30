@@ -229,7 +229,7 @@ $(document).ready(function(){
           positions = {};
           type = '';
           $.each($('table.sortable tbody tr'), function(position, obj){
-            reg = /(\w+_?)+_(\d+)/;
+            reg = /spree_(\w+_?)+_(\d+)/;
             parts = reg.exec($(obj).attr('id'));
             if (parts) {
               positions['positions['+parts[2]+']'] = position;
