@@ -2,7 +2,7 @@
 
 <h1><%= t(:edit_general_settings) %></h1>
 
-<%= form_tag admin_general_settings_path, :method => :put  do |form| %>
+<%= form_tag admin_general_settings_path, :method => :put do %>
   <fieldset id="preferences" data-hook>
   <% @preferences.each do |key| 
       type = Spree::Config.preference_type(key) %>
