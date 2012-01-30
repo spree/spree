@@ -222,7 +222,7 @@ There are also third-party extensions for Paypal's "Express Checkout":https://me
 
 h3. Security Alerts
 
-Spree will periodically check for important security and release announcements. You will see them on the admistration console pages. Alerts may be dimissed after you have read them. The automatic checking can be disabled under Configuration | General Settings. Some configuration information is included when checking so the alerts can be customized to your specific installation. Here is an example of the configuration information included in the alert request:
+Spree will periodically check for important security and release announcements. You will see them on the administration console pages. Alerts may be dismissed after you have read them. The automatic checking can be disabled under Configuration | General Settings. Some configuration information is included when checking so the alerts can be customized to your specific installation. Here is an example of the configuration information included in the alert request:
 
 <javascript>
   {"name"=>"Spree Demo Site",
