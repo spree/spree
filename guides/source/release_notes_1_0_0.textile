@@ -54,6 +54,15 @@ mount Spree::Core::Engine, :at => "/shop"
 
 The different parts of Spree (Auth, API, Dash & Promo) all extend the Core's routes, and so they will be mounted as well if they are available as gems.
 
+h3. Spree Analytics
+
+The admin dashboard has been replaced with Spree Analytics. This new service will provide deep insight
+into your store's ecommerce performance and sales conversion funnel.
+
+You will have to "register your store":http://spreecommerce.com/stores/new with Spree Commerce. Then configure the Analytics Add On to generate your token. The token should be entered on the Admin Overview page.
+
+The original dashboard has been extracted into the "spree_dash gem":https://github.com/spree/spree_dash .
+
 h3. Command line tool
 
 We have moved the 'spree' command line tool to its own gem. This is the new recommended way for adding Spree to an existing Rails application. The tool will add the Spree gem, copy migrations, initializers and generate sample data.
