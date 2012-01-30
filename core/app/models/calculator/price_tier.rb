@@ -1,4 +1,4 @@
-class Calculator::PriceBucket < Calculator
+class Calculator::PriceTier < Calculator
   preference :minimal_amount, :decimal, :default => 0
   preference :normal_amount, :decimal, :default => 0
   preference :discount_amount, :decimal, :default => 0
