@@ -35,7 +35,7 @@ You would define an override as follows:
 <ruby>
 Deface::Override.new(:virtual_path  => "checkout/registration",
             :insert_before => "div#registration",
-            :text          => "<p>Registration is the future!</p>"
+            :text          => "<p>Registration is the future!</p>",
             :name          => "registration_future")</ruby>
 </ruby>
 
