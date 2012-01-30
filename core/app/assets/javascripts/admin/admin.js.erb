@@ -239,7 +239,7 @@ $(document).ready(function(){
           $.ajax({
             type: 'POST',
             dataType: 'script',
-            url: type+'s/update_positions',
+            url: Spree.base_path + 'admin/' + type + 's/update_positions',
             data: positions,
             success: function(data){ $("#progress").hide(); }
           });

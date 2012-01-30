@@ -89,6 +89,7 @@ Spree::Core::Engine.routes.draw do
         collection do
           get :available
           get :selected
+          post :update_positions
         end
       end
       resources :taxons do

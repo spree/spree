@@ -1,0 +1,3 @@
+var Spree = {}
+<% #TODO: We're probably going to need to find a cleaner way to do this %>
+Spree.base_path = <%= Spree::Core::Engine.routes.url_helpers.root_url(:host => "example.com").gsub("http://example.com","").inspect %>
