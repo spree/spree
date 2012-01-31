@@ -8,7 +8,7 @@ notifications:
   irc: "irc.freenode.org#spree"
 branches:
   only:
-    - master
+    - 1-0-stable
 rvm:
   - 1.8.7
   - 1.9.3
