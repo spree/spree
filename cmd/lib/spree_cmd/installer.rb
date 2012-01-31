@@ -78,7 +78,7 @@ module SpreeCmd
                                  :ref => '0cb57b4afbf1eef6a0ad67a4a1ea506c6418fde1' }
 
           gem :spree_skrill, { :git => 'git://github.com/spree/spree_skrill.git',
-                               :ref => '6d1192e721865836faf1bb6cecc2f2f402c2a076' }
+                               :ref => '37e6159aa71ec053499e2c7aa9cf799a3b3bdb39' }
         end
 
         run 'bundle install', :capture => true
