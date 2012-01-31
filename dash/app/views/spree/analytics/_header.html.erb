@@ -1,5 +1,5 @@
 <% if Spree::Dash::Config.configured? %>
-  <script type='text/javascript'>
+  <script type='text/javascript' id='analytics'>
     var jirafe= <%= raw analytics_tags.to_json %>;
     (function(){
     var d=document,g=d.createElement('script'),s=d.getElementsByTagName('script')[0];
