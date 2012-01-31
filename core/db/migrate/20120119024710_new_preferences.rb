@@ -1,7 +1,7 @@
 class NewPreferences < ActiveRecord::Migration
 
   class OldPrefs < ActiveRecord::Base
-    self.table_name = "spree_preferences"
+    set_table_name "spree_preferences"
     belongs_to  :owner, :polymorphic => true
   end
 
@@ -27,18 +27,22 @@ class NewPreferences < ActiveRecord::Migration
           owner_class = old_pref.owner_type.constantize
           owner = OldPrefs.connection.select_value("SELECT #{owner_class.inheritance_column} FROM #{owner_class.table_name} WHERE id = #{old_pref.owner_id}").constantize.new
         end
-        say "Migrating preference #{old_pref.name}..."
-        owner.set_preference old_pref.name, old_pref.value
+
+        unless old_pref.owner_type.nil?
+        end
+
+        unless old_pref.owner_type == "Spree::Activator" || old_pref.owner_type == "Spree::PromotionRule"
+          say "Migrating preference #{old_pref.name}"
+          owner.set_preference old_pref.name, old_pref.value
+        end
       rescue => e
         say "Skipping setting preference #{old_pref.owner_type}::#{old_pref.name}"
       end
     end
 
-    remove_column :spree_preferences, :name
-    remove_column :spree_preferences, :owner_id
-    remove_column :spree_preferences, :owner_type
-    remove_column :spree_preferences, :group_id
-    remove_column :spree_preferences, :group_type
+    # Remove old promotion prefs
+    Spree::Preference.where(:key => nil).delete_all
+
   end
 
   def down
@@ -51,6 +55,4 @@ class NewPreferences < ActiveRecord::Migration
     add_column :spree_preferences, :group_id, :integer
     add_column :spree_preferences, :group_type, :string
   end
-
 end
-
