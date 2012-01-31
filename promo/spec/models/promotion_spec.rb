@@ -42,6 +42,17 @@ describe Spree::Promotion do
 
   end
 
+  describe ".advertised" do
+    let(:promotion) { Factory(:promotion) }
+    let(:advertised_promotion) { Factory(:promotion, :advertise => true) }
+
+    it "only shows advertised promotions" do
+      advertised = Spree::Promotion.advertised
+      advertised.should include(advertised_promotion)
+      advertised.should_not include(promotion)
+    end
+  end
+
   describe "#delete" do
     it "deletes actions" do
       p = Spree::Promotion.create(:name => "delete me")
