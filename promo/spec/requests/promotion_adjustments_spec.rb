@@ -417,7 +417,6 @@ describe "Promotion Adjustments" do
           click_button "Add To Cart"
 
           visit "/checkout"
-          save_and_open_page
 
           within("#checkout-summary") do
             page.should have_content("Promotion (Sign up)")
