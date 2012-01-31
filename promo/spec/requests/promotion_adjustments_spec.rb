@@ -105,9 +105,15 @@ describe "Promotion Adjustments" do
       click_button "Save and Continue"
       click_button "Save and Continue"
       fill_in "order_coupon_code", :with => "SINGLE_USE"
+
+      choose('Credit Card')
+      fill_in "card_number", :with => "4111111111111111"
+      fill_in "card_code", :with => "123"
       click_button "Save and Continue"
 
-      Spree::Order.first.total.to_f.should == 50.00
+      Spree::Order.first.total.to_f.should == 45.00
+
+      click_button "Place Order"
 
       user = Factory(:user, :email => "john@test.com", :password => "secret", :password_confirmation => "secret")
       click_link "Logout"
@@ -137,7 +143,7 @@ describe "Promotion Adjustments" do
       fill_in "order_coupon_code", :with => "SINGLE_USE"
       click_button "Save and Continue"
 
-      Spree::Order.last.total.to_f.should == 45.00
+      Spree::Order.last.total.to_f.should == 50.00
     end
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
