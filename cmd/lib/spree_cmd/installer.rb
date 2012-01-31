@@ -99,6 +99,13 @@ module SpreeCmd
       end
     end
 
+    def precompile_assets
+      say_status :precompiling, "assets"
+      inside @app_path do
+        run 'bundle exec rake assets:precompile', :verbose => false
+      end
+    end
+
     private
 
     def gem(name, options={})
