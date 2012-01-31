@@ -34,15 +34,15 @@ There are also some good free resources on the internet for learning Ruby, inclu
 
 h3. What is Spree?
 
-Spree is a full featured commerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application then what is generally possible with traditional open source offerings.
+Spree is a full featured commerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application than what is generally possible with traditional open source offerings.
 
-Spree is "open source":http://en.wikipedia.org/wiki/Open_source.  It is licensed under the very permissive "New BSD License":http://spreecommerce.com/license.  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community.  Spree has hundreds of contributors who have used and improved it while building their own e-commerce solutions.
+Spree is "open source":http://en.wikipedia.org/wiki/Open_source.  It is licensed under the very permissive "New BSD License":http://spreecommerce.com/license.  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community. Spree has hundreds of contributors who have used and improved it while building their own e-commerce solutions.
 
 h4. Motivation
 
 The goal of the project is to build a complete open source commerce solution for Ruby on Rails. At the start of this project, the Rails commerce space was immature and lacking serious solutions for developers with complex business needs. In the past, Rails has suffered from "small project mentality." Most open source projects in Rails are maintained by a single individual and tend to be limited in scope. Spree seeks to create a large and healthy open source community that developers of other languages have come to expect.
 
-The founder of Spree was motivated to start the project after failing to find an existing community in the Rails space dedicated to this vision. In addition, he was motivated by unsuccessful efforts to use other open source solutions in other programming languages, including (but not limited to) the Magento and OSCommerce. These solutions seemed to be unsatisfactory when presented with even the simplest of use cases.  They were also written in PHP which was considered to be a poor choice for long term maintainability.
+The founder of Spree was motivated to start the project after failing to find an existing community in the Rails space dedicated to this vision. In addition, he was motivated by unsuccessful efforts to use other open source solutions in other programming languages, including (but not limited to) the Magento and OSCommerce platforms. These solutions were deemed to be unsatisfactory when challenged with even the simplest practical cases of use. They were also written in PHP which was considered to be a poor choice for long term maintainability.
 
 h4. Opinionated Commerce
 
@@ -50,7 +50,7 @@ David Heinemeier Hansson (the creator of Rails) is well known for saying that Ra
 
 h5. No Solution Will Satisfy Everyone
 
-No solution can possibly solve everyone's needs perfectly. There are simply too many ways that people do business for us to model them all specifically. Rather then come up short (like so many projects before it), Spree's approach is to simply accept this and not even try. Instead Spree tries to focus on solving the 90% portion that most commerce projects face.  The remaining 10% will need to be addressed by the end developer familiar with the client's exact business requirements.
+No solution can possibly solve everyone's needs perfectly. There are simply too many ways in which people do business for us to tailor to each individual need. Rather than come up short (like so many projects before it did), Spree's approach is to simply accept this and not even try. Instead Spree tries to focus on solving 90% of the bulk that most commerce projects face.  The remaining 10% will need to be addressed by the end developer familiar with the client's exact business requirements.
 
 h5. Online Commerce is not for "Noobs"
 
@@ -58,7 +58,7 @@ Rails developers are the target audience for this application - not business own
 
 h5. Developers Need Complete Control
 
-Most business owners will not be satisfied with the generic templates offered by other platforms. Why should they? They want their website to look just like the other professional sites they see on the web. Most businesses also have very specific shipping and taxation rules.  Spree needs to be flexible enough to accommodate most situations.  Sensible defaults should be provided with the eye towards allowing further customization.
+Most business owners will not be satisfied with the generic templates offered by other platforms. Why should they? They want their website to look just like the other professional sites they see on the web. Most businesses have very specific shipping and taxation rules as well. Spree needs to be flexible enough to accommodate most situations. Sensible defaults should be provided with an eye towards allowing further customization.
 
 h5. Stay Focused
 
@@ -112,7 +112,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 
 h4. Creating the Rails Application
 
-Lets start by creating a standard Rails application using the following command:
+Let's start by creating a standard Rails application using the following command:
 
 <shell>
 rails new mystore
@@ -219,7 +219,7 @@ To stop the web server, hit Ctrl-C in the terminal window where it's running. In
 
 h4. Logging into the Backend
 
-The next thing you'll probably want to do is to log into the admin inteface.  User your browser window to navigate to +http://localhost:3000/admin+.  You can login with the username and password you entered during the database setup step.  If you just accepted the defaults, the username is +spree@example.com+ and the password is +spree123+.
+The next thing you'll probably want to do is to log into the admin interface. User your browser window to navigate to +http://localhost:3000/admin+. You can login with the username and password you entered during the database setup step. If you just accepted the defaults, the username is +spree@example.com+ and the password is +spree123+.
 
 Upon successful authentication you should see the admin screen:
 
@@ -229,12 +229,12 @@ Feel free to explore some of the backend features that Spree has to offer and to
 
 h4. Configuring Spree Analytics
 
-Spree Analytics shows your stores ecommerce performance on the admin overview page. It provides deep insight into your visitors behavior and sales conversions. You will have to register your store for this free service.
+Spree Analytics shows your stores ecommerce performance on the admin overview page. It provides deep insight into your visitors' behavior and sales conversions. You will have to register your store for this free service.
 
 You will have to "register your store":http://spreecommerce.com/stores/new with Spree Commerce. This requires a user account.
 
 On "spreecommerce.com":http://spreecommerce.com/stores configure the Analytics Add On for your store to generate your token. The service requires a strict url in the format "http://www.mystore.com". This does not have to be a live url and may be changed later.
 
-Your will need the App Id, Site Id and Token to configure your Spree Store. The token should be entered on the Overview tab in the admin section. (/admin).
+You will need the App Id, Site Id and Token to configure your Spree Store. The token should be entered on the Overview tab in the admin section. (/admin).
 
 !images/analytics/token.png(Admin welcome screenshot)!
