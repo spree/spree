@@ -31,7 +31,12 @@
     <%= image_tag 'analytics_dashboard_preview.png' %>
   <% end %>
   <br>
-  <%= link_to t(:enter_token), admin_path(:dash_edit => true) %>
+  <div class="preview-buttons">
+    <%= link_to t(:enter_token), admin_path(:dash_edit => true), :class => "button green" %>
+    <%= t(:or) %> &nbsp;
+    <%= link_to t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => "button", :target => "_blank" %>
+  </div>
+  
 <% end %>
 
 
