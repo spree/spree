@@ -83,6 +83,28 @@ $ gem install spree
 $ spree extension my_ext
 </shell>
 
+h3. Default Payment Gateways
+
+The new Spree Command Line Tool prompts you to install the default gateways. This adds the "spree_skrill":https://github.com/spree/spree_skrill and "spree_usa_epay":https://github.com/spree/spree_usa_epay gems. These are the Spree Commerce supported gateways for stores in the United States (USA ePay) and Internationally (Skrill formally Moneybookers).
+
+<shell>
+  $ rails new my_store
+  $ spree install my_store
+  Would you like to install the default gateways? (yes/no) [yes]
+</shell>
+
+We have moved all the gateways out of core (except bogus) to the "Spree Gateway Gem":https://github.com/spree/spree_gateway. You can add this gem to your Gemfile if you need one
+of those gateways.
+
+<ruby>
+gem 'spree'
+
+# add to your Gemfile after the Spree gem
+gem 'spree_gateway'
+</ruby>
+
+The gateways available in the "Spree Gateway Gem":https://github.com/spree/spree_gateway are community supported. These include Authorize.net, Stripe and Braintree and many other contributed gateways.
+
 h3. Preferences
 
 We have refactored Spree Preferences to improve performance and simplify
