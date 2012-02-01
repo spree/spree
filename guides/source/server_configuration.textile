@@ -67,26 +67,31 @@ The default behavior for Spree depends on the Rails environment are as follows:
 |Staging|True|
 |Production|True|
 
-NOTE: The "staging" environment is not one of the default environments created by Rails.  Many developers, however, add this environment which is designed to mimic the production environment behavior as much as possible.  You can still, however, make minor changes such as disabling email or sending email to a test account instead of the designated recipient.
+NOTE: The "staging" environment is not one of the default environments created by Rails.  However, many developers use a staging environment, which generally should mimic the production environment as much as possible. You may, however, make minor changes such as disabling email or sending email to a test account instead of the designated recipient.
 
 h5. SSL Preferences
 
-SSL behavior in Spree is determined by two different preferences.
+SSL behavior in Spree is determined by three different preferences.
 
 |_.Preference|_.Default Value|
 |+allow_ssl_in_production+|true|
+|+allow_ssl_in_staging+|true|
 |+allow_ssl_in_development_and_test+|false|
 
 For more information on preferences in general you may wish to read the "Preference Guide":preferences.html.
 
 h5. Changing the Default Settings
 
-If you do not wish to use SSL in production, or if you wish to enable SSL in development mode, you will have to change the
-+:allow_ssl_in_production+ configuration setting.  This can be done via the admin interface (+Configuration | General Settings+) as shown below, but it is usually better to use an initializer.
-
-[TODO: include reference to discussion on initializers/customization]
+If you do not wish to use SSL in production or staging, or if you wish to enable SSL in development mode, you will have to change the
++:allow_ssl_in_production+ configuration setting. This can be done via the admin interface (+Configuration | General Settings+) as shown below:
 
 !images/server_configuration/change_ssl_setting.png(Changing SSL Setting)!
+
+If you need to change any of the above default settings, it is also recommended to fix the setting in an initializer (in case for some reason you cannot bring up the admin preference panel). In +/config/initializers/spree.rb+, add a line such as:
+
+<ruby>
+    config.allow_ssl_in_staging = false
+</ruby>
 
 h5. SSL with Mongrel
 
