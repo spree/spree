@@ -30,9 +30,25 @@ index:
     - title: Working with the Source Code
       url: source_code
       text: An Introduction to Working with the Source Code
-    - title: Server Configuration
+  Server Config & Deployment:
+    - title: Overview & Deployment Options
       url: server_configuration
-      text: Steps to get your Spree application up and running in a production environment.
+      text: Overview of Spree's server requirements and deployment options.
+    - title: Spree Deployment Service
+      url: deployment_service
+      text: Detailed walkthrough of using the Deployment Service to build a production environment.
+    - title: Deploying your application
+      url: deploying_your_application
+      text: Explains how to deploy your application to servers that have been configured by the Deployment Service
+    - title: Server Config. & Customization
+      url: server_configuration_and_customization
+      text: Covers the basic configuration of servers built using the deployment service, and how to customize the configuration.
+    - title: Application Processes
+      url: deployment_application_processes
+      text: Details the use of the Foreman gem to define and manage applications processes.
+    - title: Configuration Tips
+      url: deployment_tips
+      text: General troubleshooting and configuration tips
   Basic Configuration:
     - title: Products and Variants
       url: products_and_variants
