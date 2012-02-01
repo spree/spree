@@ -20,20 +20,20 @@ h3. Creating a new promotion
 
 To create a new promotion, you must go to the admin dashboard for your Spree store. If your application includes the +spree_promo+ gem, you will see the "Promotions" link at the top of the screen:
 
-!images/promotions/tab.png(Promotions tab)
+!images/promotions/tab.png(Promotions tab)!
 
 When you click on this tab, you'll be taken to a list of all the promotions within your system. In this next screenshot, there's only one promotion called "50% off all products":
 
-!images/promomtions/index.png(Promotions listing)
+!images/promotions/index.png(Promotions listing)!
 
 To create click the "New Promotion" button up the top-right of this screen:
 
-!images/promotions/new-button.png(New promotion button)
+!images/promotions/new-button.png(New promotion button)!
 
 
 On the new promotion screen, you can enter the details for the promotion that you wish to create.
 
-!images/promotions/new-screen.png(New promotion screen)
+!images/promotions/new-screen.png(New promotion screen)!
 
 h4. General fields
 
@@ -82,7 +82,7 @@ To control eligibility based on the current order and user, as many rules as req
 
 The Rules area on the promotions screen looks like this:
 
-!images/promotions/rules.png(Rules for a promotion)
+!images/promotions/rules.png(Rules for a promotion)!
 
 In the above screenshot, there is one rule that must be matched in order for the promotion to be eligible.
 
@@ -98,7 +98,7 @@ To create a new rule, select a new type of rule from the "Add rule of type" drop
 
 h3. Promotion Actions
 
-To configure the outcome of a promotion, Promotion Actions are added in the same manner as Promotion Rules. This means a promotion could result in mulitple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart. 
+To configure the outcome of a promotion, Promotion Actions are added in the same manner as Promotion Rules. This means a promotion could result in mulitple actions being performed such as a discount adjustment created on the order, an email being delivered or a predefined set of items being added to the cart.
 
 The default available actions are:
 
@@ -111,7 +111,7 @@ h3. Promotion adjustments
 
 The typical outcome of a promotion is to provide a discount on the order with a negative value adjustment. This is achieved by adding an action to your promotion of the type 'Create Adjustment'.
 
-!images/promotions/actions.png(Promotion actions)
+!images/promotions/actions.png(Promotion actions)!
 
 In the above example, there is a promotion adjustment that decreases the order amount by 10%. The calculators by default are:
 
