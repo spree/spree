@@ -1,5 +1,9 @@
+<% if database != 'mysql' %>
+  <% prefix, suffix = ["db/", ".sqlite3"]  %>
+<% end %>
+
 development: &default
-  database: db/dummy_dev
+  database: <%= "#{prefix}dummy_dev#{suffix}" %>
 <%- if database == 'mysql' -%>
   adapter: mysql2
   encoding: utf8
@@ -15,9 +19,9 @@ development: &default
 <%- end -%>
 
 test:
-  database: db/dummy_test
   <<: *default
+  database: <%= "#{prefix}dummy_test#{suffix}" %>
 
 production:
-  database: db/dummy_prod
   <<: *default
+  database: <%= "#{prefix}dummy_prod#{suffix}" %>
