@@ -1,9 +1,9 @@
 h2. Payment Gateways
 
-This guide covers how to manage and configure payment gateways within 
-Spree, using ActiveMerchant or another gateway solution of your choice. 
-After reading it, you should be familiar with:
+This guide covers how to manage and configure payment gateways within Spree. After reading it, you should be familiar with:
 
+* The Spree Commerce supported default gateways
+* The community supported gateways available in the Spree Gateway gem
 * The functionality provided by payment gateways
 * How to configure an existing gateway
 * How to create a new gateway
@@ -13,16 +13,61 @@ endprologue.
 
 h3. Overview
 
-Payment gateways are web-based services which support secure processing of 
-payment information. Some gateways are already set up in Spree for immediate 
-use and just need to be configured via the administrator interface. 
-A large collection of other gateways can be added easily via Active Merchant.
+Payment gateways are web-based services which support secure processing of
+payment information.
+
+Spree comes with two default payment gateways for stores both inside the United States
+and Internationally. We have partnered with USA ePay and Skrill (Moneybookers) to provide
+low transaction rates for all Spree stores. These solutions are supported by Spree Commerce
+and 100% compatible with Spree.
+
+Additionally, many of the popular payment gateways and provided by the "Spree Gateway Gem":https://github.com/spree/spree_gateway. These are community supported.
+
+The default and community payment gateways are easy to set up in Spree and ready
+for immediate use. They just need to be configured via the administrator interface.
+
+If your gateway is not available, you can easily add it with Active Merchant. We encourage you
+to contribute new gateways to the "Spree Gateway Gem":https://github.com/spree/spree_gateway.
 
 For information on implementing payment methods that don't communicate with a payment gateway, see the "payments guide.":payments.html
 
+h3. Installation
+
+h4. Default Gateways
+
+When you install Spree from the command line, you are prompted to install the default gateways. This will add the USA Epay and Skrill (Moneybookers) gems to your Gemfile.
+
+<shell>
+  $ rails new my_store
+  $ spree install my_store
+  Would you like to install the default gateways? (yes/no) [yes]
+</shell>
+
+h4. Additional Gateways
+
+If you are using one of the payment gateways available in the "Spree Gateway Gem":https://github.com/spree/spree_gateway. You can add it to your Gemfile and install it with bundler.
+
+<ruby>
+gem 'spree'
+
+# add to your Gemfile after the Spree gem
+gem 'spree_gateway'
+</ruby>
+
+<shell>
+$ bundle install
+</shell>
+
+h4. Bogus Gateway
+
+Spree comes with a Bogus Gateway for basic testing purposes, particularly in
+development mode. It returns a successful responses for the main five
+transactions if one of a test set of card numbers is used, else failure
+responses. "See below":#testing-considerations for how to use it in testing.
+
 h3. Basic Gateway Functionality
 
-From a developer's viewpoint, a gateway supports five core operations or 
+From a developer's viewpoint, a gateway supports five core operations or
 transactions:
 
 * +purchase+ - immediate transfer from customer to vendor
@@ -30,16 +75,16 @@ transactions:
 * +void+     - cancellation of transfer
 * +authorize+ and +capture+ - immediate approval of transfer, with actual transfer (capture) of funds occurring at a later date
 
-Note that +authorize+ and +capture+ are the main operations used in Spree at 
+Note that +authorize+ and +capture+ are the main operations used in Spree at
 present.
 
-h3. Configuring an Existing Gateway
+h3. Configuring an Installed Gateway
 
-Spree comes with several gateways ready for use. You can select and 
-configure the default gateway via the Payment Methods section of the Configuration
-menu. You are able to configure several different gateways at once.  The typical
-use case for this is when you would like to use your gateway with different 
-settings in development vs. production mode.  
+You can select and configure the default gateway via the Payment Methods section of the Configuration menu. You are able to configure several different gateways at once. The typical use case for this is when you would like to use your gateway with different settings in development vs. production mode.
+
+You are able to configure several different gateways at once.  The typical
+use case for this is when you would like to use your gateway with different
+settings in development vs. production mode.
 
 Each gateway comes with the following configuration options:
 
@@ -59,24 +104,74 @@ Most gateway providers require additional information to be provided during conf
 
 INFO: After you change the gateway (or assign one for the first time) you will need to save the configuration and click the link to edit it.  Only after a successful save will you see the configuration settings specific to the new gateway.
 
-Gateway configurations can also be temporarily deactivated.  This would allow you to configure a production gateway with all of the live settings and then disable it until you're ready to launch.  Only one gateway can be active per environment.   
+Gateway configurations can also be temporarily deactivated.  This would allow you to configure a production gateway with all of the live settings and then disable it until you're ready to launch.  Only one gateway can be active per environment.
 
-h3. Available Gateways
+h3. Configuring Default Gateways
 
-h4. Bogus Gateway
+h4. USA ePay Configuration
 
-This gateway is provided for basic testing purposes, particularly in 
-development mode. It returns a successful responses for the main five 
-transactions if one of a test set of card numbers is used, else failure
-responses. "See below":#testing-considerations for how to use it in testing. 
-Unsurprisingly, this gateway requires no configuration options.
+"Add a payment gateway":#configuring-an-installed-gateway and select **Spree::Gateway::UsaEpay** as the provider.
+
+You will need a Source Key and Pin from USA ePay. You can create these in your Mechant Console under the settings menu.  Spree requires all Source Keys to have the optional pin.
+
+You can find "test credit card numbers":http://wiki.usaepay.com/developer/testcards in the developer documentation.
+
+!images/payments/usa_epay.png(USA EPay)!
+
+If you are using the "USA ePay Sandbox":https://sandbox.usaepay.com then check the "Test Mode" checkbox.
+
+h4. Skrill Configuration
+
+"Add a payment gateway":#configuring-an-installed-gateway and select **Spree::BillingIntegration::Skrill::QuickCheckout** as the provider.
+
+Skrill will provide you with a Merchant Id. The defaults will let users enter a credit card or login in with their Skrill account.
+
+Some typical Payment Options:
+
+* *ACC* - All Credit Cards
+* *OBT,GIR,DID,SFT,ENT,EBT,SO2,IDL,NPY,PLI,PWY,EPY,MZM* - local payment options
+* *WLT* - Skrill Wallet
+
+You can find additional options for Language, Currency and Payments in the Skrill documentation.
+
+!images/payments/skrill.png(Skrill)!
+
+h5. Skrill Test Credit Card Numbers
+
+* VISA:
+** 4000001234567890 (No BIN country)
+** 4255251234567890 (Bulgaria)
+** 4779271234567890 (Germany)
+** 4042811234567890 (Malta)
+** 4483951234567890 (Sweden)
+** 4544356892455550 (United Kingdom)
+** 4016671298391830 (USA)
+* MASTERCARD:
+** 5463332183823220 (Belgium)
+** 5474381234567890 (Bulgaria)
+** 5232000000123456, 5584011231231330 (Germany)
+** 5422011234567890 (Malta)
+** 5438311234567890 (Sweden)
+** 5485081234567890 (United Kingdom)
+* AMEX: 371234500012340, 377616655655440
+* DISCOVER: 6011123456789000
+* DINERS: 36123456789000
+* LASER: 5612345678900001
+* MAESTRO: 51234567912345670
+* SOLO: 631234567891234560, 6767676767676767671
+* JCB: 3555123456789120
+* CARTEBLEUE: 5817840047112340
 
 h4. Other Gateways
 
-Spree currently supports the following gateways:
+The Spree community currently supports the following gateways:
 
 * Authorize.net
 * Beanstream
+* Braintree
+* eway
+* samurai
+* stripe
 * Linkpoint
 * Paypal - Website Payments Pro
 * Protx (without 3D secure)
@@ -87,13 +182,13 @@ h3. Adding a New Gateway
 
 Spree relies on the "Active Merchant":http://www.activemerchant.org/ plugin to provide the majority of its gateway functionality.  Spree introduces a thin wrapper, around the Active Merchant gateway implementation to assist with configuration and a few other conveniences.
 
-Active Merchant currently supports around 40 payment gateways.  Most of them have not yet been officially implemented in Spree but this is just because the core team generally uses only a few of the popular choices and there's not yet been a need to support more.  It should be trivial to support an existing Active Merchant gateway if your gateway is not yet included.  The following sections will discuss in detail how to implement a gateway.  
+Active Merchant currently supports around 40 payment gateways.  Most of them have not yet been officially implemented in Spree but this is just because the core team generally uses only a few of the popular choices and there's not yet been a need to support more.  It should be trivial to support an existing Active Merchant gateway if your gateway is not yet included.  The following sections will discuss in detail how to implement a gateway.
 
 INFO: If you implement a new gateway, we're interested in including it in the core.  You should read the "contribution guidelines":contributing_to_spree.html for more details on how to contribute code to Spree.
 
 h4. The Gateway Model
 
-All gateway implementations inherit from the common +Gateway+ class which in turn extends +ActiveRecord::Base+.  The primary motivation for this is to take advantage of Spree's standard system for "configuration of preferences":preferences.html. 
+All gateway implementations inherit from the common +Gateway+ class which in turn extends +ActiveRecord::Base+.  The primary motivation for this is to take advantage of Spree's standard system for "configuration of preferences":preferences.html.
 
 The +Gateway+ model provides the following public methods shared by all gateway implementations.
 
@@ -116,7 +211,7 @@ The +provider+ method of +Gateway+ is meant to be used internally.  It will retu
 
 h4. Specifying Configuration Options
 
-Gateway implementations will most likely need to specify configuration options.  Spree provides a standard method for the "configuration of preferences":preferences.html.  
+Gateway implementations will most likely need to specify configuration options.  Spree provides a standard method for the "configuration of preferences":preferences.html.
 
 INFO: It is important that you use the exact spelling of the Active Merchant gateway option value that you are trying to configure.
 
@@ -131,7 +226,7 @@ In this case, you would expose these options as preferences in your +gateway/aut
 <shell>
 preference :login, :string
 preference :password, :string
-</shell>     
+</shell>
 
 As we have already said, implementation of an existing Acitve Merchant gateway is trivial.  In the case of Authorize.net, it is only seven lines of code:
 
@@ -142,8 +237,8 @@ class Gateway::AuthorizeNet < Gateway
 
   def provider_class
     ActiveMerchant::Billing::AuthorizeNetGateway
-  end	
-end  
+  end
+end
 </shell>
 
 h4. Other Architecture Implications
@@ -165,8 +260,8 @@ h5. Gateways supporting payment profiles
 Spree currently supports the Authorize.net CIM gateway or Customer Information Manager through ActiveMerchant.
 CIM allows card details to be stored securely on Authorize.net's servers along with other customer details. See "www.authorize.net/solutions/merchantsolutions/merchantservices/cim/":http://www.authorize.net/solutions/merchantsolutions/merchantservices/cim/
  for details.
- 
-Although CIM makes it possible for customers to not have to re-enter their card details on subsequent visits, this isn't supported in Spree yet. Spree does support taking additional payments from the card the customer used in the admin interface in the event there is an outstanding balance on the order. 
+
+Although CIM makes it possible for customers to not have to re-enter their card details on subsequent visits, this isn't supported in Spree yet. Spree does support taking additional payments from the card the customer used in the admin interface in the event there is an outstanding balance on the order.
 
 The ActiveMerchant class AuthorizeNetCimGateway doesn't support the usual *authorise*, *purchase* and *capture* methods since with this gateway it is a 2 step process. Instead these methods are implemented in the corresponding Spree gateway class. First a customer profile is created and the id strings provided by the gateway are stored on the creditcard in the columns *gateway_customer_profile_id* and *gateway_payment_profile_id*. Then a transaction can be made using those ids rather than the the creditcard details.
 
@@ -205,15 +300,15 @@ h4. Using the Bogus Gateway
 This gateway returns success for the five core operations on the following
 cards, otherwise a failure response is returned. It does not check CVV codes at present.
 
-* +TEST_VISA = 4111111111111111+ 
+* +TEST_VISA = 4111111111111111+
 * +TEST_MC   = 5500000000000004+
 * +TEST_AMEX = 340000000000009+
 * +TEST_DISC = 6011000000000004+
 
 h3. Other Useful Information
 
-Whilst debugging, you may find the following options useful - but they must 
-be turned off in production use to comply with relevant card processing 
+Whilst debugging, you may find the following options useful - but they must
+be turned off in production use to comply with relevant card processing
 requirements, e.g. "PCI":https://www.pcisecuritystandards.org/.
 
 * +Spree::Config[:store_cc]+
