@@ -6,8 +6,6 @@ module Spree
     Activator.event_names << 'spree.checkout.coupon_code_added'
     Activator.event_names << 'spree.content.visited'
 
-    scope :advertised, where(:advertise => true)
-
     has_many :promotion_rules, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
     alias_method :rules, :promotion_rules
     accepts_nested_attributes_for :promotion_rules
@@ -26,6 +24,10 @@ module Spree
     validates :code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
     validates :path, :presence => true, :if => lambda{|r| r.event_name == 'spree.content.visited' }
     validates :usage_limit, :numericality => { :greater_than => 0, :allow_nil => true }
+
+    def self.advertised
+      where(:advertise => true)
+    end
 
     # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
     # is provided
