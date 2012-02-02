@@ -35,7 +35,10 @@ module Spree
       category = TaxCategory.includes(:tax_rates).where(:is_default => true).first
       return 0 unless category
 
-      category.effective_amount || 0
+      address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+      rate = category.tax_rates.detect { |rate| rate.zone.include? address }.try(:amount)
+
+      rate || 0
     end
 
     # Creates necessary tax adjustments for the order.
