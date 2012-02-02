@@ -21,7 +21,7 @@ For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   desc "Loads fixtures from the the dir you specify using rake db:load_dir[loadfrom]"
   task :load_dir , [:dir] => :environment do |t , args|
     dir = args.dir
-    dir = File.join(Rails.root, "db", dir) unless dir =~ /^(\/|[a-zA-Z]:[\/\\])/
+    dir = File.join(Rails.root, "db", dir) if Pathname.new(dir).relative?
 
     fixtures = ActiveSupport::OrderedHash.new
     ruby_files = ActiveSupport::OrderedHash.new
