@@ -140,7 +140,7 @@ describe Spree::Preferences::Preferable do
         end
       end
 
-      @@migration_verbosity = ActiveRecord::Migration.verbose
+      @migration_verbosity = ActiveRecord::Migration.verbose
       ActiveRecord::Migration.verbose = false
       CreatePrefTest.migrate(:up)
 
@@ -151,7 +151,7 @@ describe Spree::Preferences::Preferable do
 
     after(:all) do
       CreatePrefTest.migrate(:down)
-      ActiveRecord::Migration.verbose = @@migration_verbosity
+      ActiveRecord::Migration.verbose = @migration_verbosity
     end
 
     before(:each) do
