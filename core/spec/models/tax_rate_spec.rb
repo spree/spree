@@ -91,6 +91,43 @@ describe Spree::TaxRate do
 
   end
 
+  context "default" do
+    let(:tax_category) { Factory(:tax_category) }
+    let(:country) { Factory(:country) }
+    let(:calculator) { Spree::Calculator::FlatRate.new }
+
+    context "when there is no default tax_category" do
+      before { tax_category.is_default = false }
+
+      it "should return 0" do
+        Spree::TaxRate.default.should == 0
+      end
+    end
+
+    context "when there is a default tax_category" do
+      before { tax_category.update_attribute :is_default, true }
+
+      context "when the default category has tax rates in the default tax zone" do
+        before(:each) do
+          Spree::Config[:default_country_id] = country.id
+          @zone = Spree::Zone.create(:name => "Country Zone", :default_tax => true)
+          @zone.zone_members.create(:zoneable => country)
+          rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category, :calculator => calculator
+        end
+
+        it "should return the correct tax_rate" do
+          Spree::TaxRate.default.to_f.should == 1.0
+        end
+      end
+
+      context "when the default category has no tax rates in the default tax zone" do
+        it "should return 0" do
+          Spree::TaxRate.default.should == 0
+        end
+      end
+    end
+  end
+
   context "#adjust" do
     before do
       @category    = Spree::TaxCategory.create :name => "Taxable Foo"
