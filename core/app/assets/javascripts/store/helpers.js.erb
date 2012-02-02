@@ -1,5 +1,5 @@
 var Spree = {}
-<% path = Rails.application.routes.named_routes[:spree].path %>
-<% # Rails 3.2 returns a Journey::Path::Pattern object, Rails 3.1 an actual path. %>
-<% path = path.respond_to?(:spec) ? path.spec : path %>
+<% path = Rails.application.routes.named_routes[:spree].path -%>
+<% # Rails 3.2 returns a Journey::Path::Pattern object, Rails 3.1 an actual path. -%>
+<% path = path.respond_to?(:spec) ? path.spec : path -%>
 Spree.base_path = <%= path.inspect %>
