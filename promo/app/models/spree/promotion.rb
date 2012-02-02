@@ -25,14 +25,8 @@ module Spree
     validates :path, :presence => true, :if => lambda{|r| r.event_name == 'spree.content.visited' }
     validates :usage_limit, :numericality => { :greater_than => 0, :allow_nil => true }
 
-    class << self
-      def advertised
-        #TODO this is broken because the new preferences aren't a direct relationship returning
-        #all for now
-        scoped
-        #includes(:stored_preferences)
-        #includes(:stored_preferences).where(:spree_preferences => {:name => 'advertise', :value => '1'})
-      end
+    def self.advertised
+      where(:advertise => true)
     end
 
     # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save

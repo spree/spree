@@ -5,7 +5,7 @@ module Spree
       before_filter :load_data
 
       def create
-        @payment_method = params[:payment_method][:type].constantize.new(params[:payment_method])
+        @payment_method = params[:payment_method].delete(:type).constantize.new(params[:payment_method])
         @object = @payment_method
         invoke_callbacks(:create, :before)
         if @payment_method.save
