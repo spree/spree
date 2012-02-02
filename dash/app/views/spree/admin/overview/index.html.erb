@@ -3,12 +3,11 @@
   <script type="text/javascript" src="https://api.jirafe.com/dashboard/js/spree_ui.js"></script>
 <% end %>
 
-<h1><%= t(:overview) %></h1>
-
 <% if params[:dash_edit] %>
   <%= render 'form' %>
 <% else %>
   <% if Spree::Dash::Config.configured? %>
+    <h1><%= t(:overview) %></h1>
     <div id="jirafe"></div>
     <script type="text/javascript" defer="defer">
         if (typeof jQuery != 'undefined') { 
@@ -28,7 +27,9 @@
                 }, 10000);
     </script>
   <% else %>
-    <%= image_tag 'analytics_dashboard_preview.png' %>
+    <div class="analytics_splash">
+      <%= image_tag 'analytics_dashboard_preview.png', :alt => 'Spree Analytics' %>
+    </div>
   <% end %>
   <br>
   <div class="preview-buttons">
