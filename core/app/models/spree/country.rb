@@ -1,6 +1,6 @@
 module Spree
   class Country < ActiveRecord::Base
-    has_many :states
+    has_many :states, :order => "name ASC"
 
     has_one :zone_member, :as => :zoneable
     has_one :zone, :through => :zone_member
