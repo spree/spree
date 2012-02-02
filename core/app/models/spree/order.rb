@@ -120,11 +120,7 @@ module Spree
         begin
           order.process_payments!
         rescue Core::GatewayError
-          if Spree::Config[:allow_checkout_on_gateway_error]
-            true
-          else
-            false
-          end
+          !!Spree::Config[:allow_checkout_on_gateway_error]
         end
       end
 
