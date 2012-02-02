@@ -144,7 +144,7 @@ describe Spree::Preferences::Preferable do
       ActiveRecord::Migration.verbose = false
       CreatePrefTest.migrate(:up)
 
-      class PrefTest < ActiveRecord::Base  
+      class PrefTest < ActiveRecord::Base
         preference :pref_test_pref, :string, :default => 'abc'
       end
     end
@@ -153,9 +153,40 @@ describe Spree::Preferences::Preferable do
       CreatePrefTest.migrate(:down)
       ActiveRecord::Migration.verbose = @@migration_verbosity
     end
-      
+
     before(:each) do
-      @pt = PrefTest.new
+      @pt = PrefTest.create
+    end
+
+    describe "pending preferences for new activerecord objects" do
+      it "saves preferences after record is saved" do
+        pr = PrefTest.new
+        pr.set_preference(:pref_test_pref, 'XXX')
+        pr.get_preference(:pref_test_pref).should == 'XXX'
+        pr.save!
+        pr.get_preference(:pref_test_pref).should == 'XXX'
+      end
+    end
+
+    describe "requires a valid id" do
+      it "for cache_key" do
+        pref_test = PrefTest.new
+        pref_test.preference_cache_key(:pref_test_pref).should be_nil
+
+        pref_test.save
+        pref_test.preference_cache_key(:pref_test_pref).should_not be_nil
+      end
+
+      it "but returns default values" do
+        pref_test = PrefTest.new
+        pref_test.get_preference(:pref_test_pref).should == 'abc'
+      end
+
+      it "adds prefs in a pending hash until after_create" do
+        pref_test = PrefTest.new
+        pref_test.should_receive(:add_pending_preference).with(:pref_test_pref, 'XXX')
+        pref_test.set_preference(:pref_test_pref, 'XXX')
+      end
     end
 
     it "clear preferences" do
@@ -163,7 +194,7 @@ describe Spree::Preferences::Preferable do
       @pt.preferred_pref_test_pref.should == 'xyz'
       @pt.clear_preferences
       @pt.preferred_pref_test_pref.should == 'abc'
-    end      
+    end
 
     it "clear preferences when record is deleted" do
       @pt.save!
