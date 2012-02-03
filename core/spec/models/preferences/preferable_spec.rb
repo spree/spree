@@ -121,6 +121,27 @@ describe Spree::Preferences::Preferable do
       it "with strings" do
         @a.set_preference(:is_boolean, '0')
         @a.preferences[:is_boolean].should be_false
+        @a.set_preference(:is_boolean, 'f')
+        @a.preferences[:is_boolean].should be_false
+        @a.set_preference(:is_boolean, 't')
+        @a.preferences[:is_boolean].should be_true
+      end
+
+      it "with integers" do
+        @a.set_preference(:is_boolean, 0)
+        @a.preferences[:is_boolean].should be_false
+        @a.set_preference(:is_boolean, 1)
+        @a.preferences[:is_boolean].should be_true
+      end
+
+      it "with an empty string" do
+        @a.set_preference(:is_boolean, '')
+        @a.preferences[:is_boolean].should be_false
+      end
+
+      it "with an empty hash" do
+        @a.set_preference(:is_boolean, [])
+        @a.preferences[:is_boolean].should be_false
       end
     end
 
