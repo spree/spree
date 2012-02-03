@@ -54,12 +54,14 @@ Spree::Core::Engine.routes.draw do
   #   map.resources :taxons
   #
 
-
-
   namespace :admin do
     resources :adjustments
     resources :zones
-    resources :users
+    resources :users do
+      member do
+        post :dismiss_banner
+      end
+    end
     resources :countries do
       resources :states
     end

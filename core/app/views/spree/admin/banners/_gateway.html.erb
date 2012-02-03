@@ -1,0 +1,11 @@
+<% if !current_user.dismissed_banner?(:gateway) &&
+      Spree::PaymentMethod.production.where("type != 'Spree::Gateway::Bogus'").empty?  %>
+
+  <div class="alert news">
+    <p>If you need help choosing a payment processor, please visit our payments page</p>
+
+    <%= link_to 'X', dismiss_banner_admin_user_path(current_user, :banner_id => :gateway),
+                :remote => true, :method => :post, :class => 'dismiss' %>
+  </div>
+
+<% end %>
