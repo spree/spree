@@ -1,6 +1,8 @@
 # Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth)
 module Spree
   class User < ActiveRecord::Base
+    include Core::UserBanners
+
     has_many :orders
 
     belongs_to :ship_address, :foreign_key => 'ship_address_id', :class_name => 'Spree::Address'
