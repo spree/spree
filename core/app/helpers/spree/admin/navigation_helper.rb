@@ -64,6 +64,7 @@ module Spree
         options.reverse_merge! :title => t(:confirm_delete)
         options.reverse_merge! :dataType => 'script'
         options.reverse_merge! :success => "function(r){ $('##{dom_id resource}').fadeOut('hide'); }"
+        options.reverse_merge! :error => "function(jqXHR, textStatus, errorThrown){ show_flash_error(jqXHR.responseText); }"
         options.reverse_merge! :name => icon('delete') + ' ' + t(:delete)
 
         link_to_function_delete(options, html_options)
@@ -92,7 +93,8 @@ module Spree
             url: '#{options[:url]}',
             data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
             dataType:'#{options[:dataType]}',
-            success: #{options[:success]}
+            success: #{options[:success]},
+            error: #{options[:error]}
           });
         }
       end
