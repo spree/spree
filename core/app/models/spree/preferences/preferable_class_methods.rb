@@ -26,7 +26,13 @@ module Spree::Preferences
         # Boolean attributes can come back from forms as '0' or '1'
         # Convert them to their correct values here
         if type == :boolean && !value.is_a?(TrueClass) && !value.is_a?(FalseClass)
-          value = value.to_i == 1
+          value = value.downcase if value.respond_to? :downcase
+          case value
+          when 0, '0', 'false', 'f', "", []
+            value = false
+          else
+            value = true
+          end
         end
 
         if preference_cache_key(name)
