@@ -10,6 +10,7 @@ module Spree
 
     before_save :check_admin
     before_validation :set_login
+    before_destroy :check_completed_orders
 
     # Setup accessible (or protected) attributes for your model
     attr_accessible :email, :password, :password_confirmation, :remember_me, :persistence_token, :login
@@ -19,6 +20,8 @@ module Spree
 
     scope :admin, lambda { includes(:roles).where("#{roles_table_name}.name" => "admin") }
     scope :registered, where("#{users_table_name}.email NOT LIKE ?", "%@example.net")
+
+    class DestroyWithOrdersError < StandardError; end
 
     # has_role? simply needs to return true or false whether a user has a role or not.
     def has_role?(role_in_question)
@@ -52,6 +55,11 @@ module Spree
       end
 
     private
+
+      def check_completed_orders
+        raise DestroyWithOrdersError if orders.complete.present?
+      end
+
       def check_admin
         return if self.class.admin_created?
         admin_role = Role.find_or_create_by_name 'admin'

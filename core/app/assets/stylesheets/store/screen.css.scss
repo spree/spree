@@ -121,6 +121,13 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
   select {
     border: 1px solid $c_border;
     font-family: "Ubuntu", sans-serif;
+    background-image: url('select_arrow.gif');
+    background-repeat: no-repeat;
+    background-position: right center;
+
+    &:active, &:focus {
+      @extend input[type="text"]:focus  
+    }
   }
 
   label.error {
@@ -386,7 +393,10 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     margin-top: 15px;
 
     input[type="number"] {
-      width: 40px;
+      width: 60px;
+      vertical-align: middle;
+      padding: 5px;
+      height: 35px;
     }
   }
 

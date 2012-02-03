@@ -39,6 +39,10 @@ describe Spree::Promotion::Actions::CreateAdjustment do
   end
 
   context "#compute_amount" do
+    before do
+      action.calculator = Spree::Calculator::FreeShipping.new
+    end
+
     it "should always return a negative amount" do
       order.stub(:item_total => 1000)
       action.calculator.stub(:compute => -200)

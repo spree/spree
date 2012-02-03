@@ -9,7 +9,7 @@ module Spree
     belongs_to :ship_address, :foreign_key => 'ship_address_id', :class_name => 'Spree::Address'
     belongs_to :shipping_method
 
-    has_many :state_events, :as => :stateful
+    has_many :state_changes, :as => :stateful
     has_many :line_items, :dependent => :destroy
     has_many :inventory_units
     has_many :payments, :dependent => :destroy
@@ -212,8 +212,8 @@ module Spree
 
     def restore_state
       # pop the resume event so we can see what the event before that was
-      state_events.pop if state_events.last.name == 'resume'
-      update_attribute('state', state_events.last.previous_state)
+      state_changes.pop if state_changes.last.name == 'resume'
+      update_attribute('state', state_changes.last.previous_state)
 
       if paid?
         raise 'do something with inventory'
@@ -242,7 +242,7 @@ module Spree
 
     def allow_resume?
       # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
-      return false if state_events.empty? || state_events.last.previous_state.nil?
+      return false if state_changes.empty? || state_changes.last.previous_state.nil?
       true
     end
 
@@ -363,7 +363,7 @@ module Spree
       adjustments.optional.each { |adjustment| adjustment.update_attribute('locked', true) }
       OrderMailer.confirm_email(self).deliver
 
-      self.state_events.create({
+      self.state_changes.create({
         :previous_state => 'cart',
         :next_state     => 'complete',
         :name           => 'order' ,
@@ -458,7 +458,7 @@ module Spree
         self.shipment_state = 'backorder' if backordered?
 
         if old_shipment_state = self.changed_attributes['shipment_state']
-          self.state_events.create({
+          self.state_changes.create({
             :previous_state => old_shipment_state,
             :next_state     => self.shipment_state,
             :name           => 'shipment',
@@ -486,7 +486,7 @@ module Spree
         end
 
         if old_payment_state = self.changed_attributes['payment_state']
-          self.state_events.create({
+          self.state_changes.create({
             :previous_state => old_payment_state,
             :next_state     => self.payment_state,
             :name           => 'payment',

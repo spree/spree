@@ -3,7 +3,11 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
 
   def create
     @promotion = Spree::Promotion.find(params[:promotion_id])
-    @promotion_rule = params[:promotion_rule][:type].constantize.new(params[:promotion_rule])
+    # Remove type key from this hash so that we don't attempt
+    # to set it when creating a new record, as this is raises
+    # an error in ActiveRecord 3.2.
+    promotion_rule_type = params[:promotion_rule].delete(:type)
+    @promotion_rule = promotion_rule_type.constantize.new(params[:promotion_rule])
     @promotion_rule.promotion = @promotion
     if @promotion_rule.save
       flash.notice = I18n.t(:successfully_created, :resource => I18n.t(:promotion_rule))

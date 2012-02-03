@@ -10,7 +10,7 @@
     <th><%= t(:user) %></th>
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
   </tr>
-  <% @order.state_events.sort.each do |event| %>
+  <% @order.state_changes.sort.each do |event| %>
     <tr data-hook="history_row">
       <td><%=t("#{event.name}") if event.name.present? %></td>
       <td><%=t("#{event.name}_state#{'s' unless event.name == 'order'}.#{event.previous_state}") %></td>
@@ -19,7 +19,7 @@
       <td><%=event.created_at.to_s(:date_time24) %></td>
     </tr>
   <% end %>
-  <% if @order.state_events.empty? %>
+  <% if @order.state_changes.empty? %>
     <tr data-hook="history_none">
       <td colspan="5"><%= t(:none_available) %></td>
     </tr>
