@@ -18,6 +18,16 @@ describe Spree::User do
     end
   end
 
+  context '#destroy' do
+    it 'can not delete if it has completed orders' do
+      order = Factory.build(:order, :completed_at => Time.now)
+      order.save
+      user = order.user
+
+      lambda { user.destroy }.should raise_exception(Spree::User::DestroyWithOrdersError)
+    end
+  end
+
   context 'anonymous!' do
     let(:user) { Spree::User.anonymous! }
 
