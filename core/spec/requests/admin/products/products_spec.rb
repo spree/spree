@@ -86,13 +86,27 @@ describe "Products" do
     end
   end
 
-  context "cloning a product" do
+  context "cloning a product", :js => true do
     it "should allow an admin to clone a product" do
       Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
 
       click_link "Products"
       within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
       page.should have_content("Product has been cloned")
+    end
+
+    context "cloning a deleted product" do
+      it "should allow an admin to clone a deleted product" do
+        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100", :deleted_at => '2011-05-01 01:01:01')
+
+        click_link "Products"
+        check "Show Deleted"
+        click_button "Search"
+
+        page.should have_content("apache baseball cap")
+        within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
+        page.should have_content("Product has been cloned")
+      end
     end
   end
 
