@@ -22,7 +22,7 @@ class Spree::UserRegistrationsController < Devise::RegistrationsController
       sign_in_and_redirect(:user, @user)
     else
       clean_up_passwords(resource)
-      render_with_scope(:new)
+      render :new
     end
   end
 
