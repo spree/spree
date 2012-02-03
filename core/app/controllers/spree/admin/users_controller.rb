@@ -18,6 +18,13 @@ module Spree
         end
       end
 
+      def dismiss_banner
+        if request.xhr? and params[:banner_id]
+          current_user.dismiss_banner(params[:banner_id])
+          render :nothing => true
+        end
+      end
+
       protected
       def collection
         return @collection if @collection.present?
