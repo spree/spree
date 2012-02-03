@@ -8,9 +8,7 @@ describe Spree::OrdersController do
   let(:order) { Spree::Order.new }
 
   it 'should understand order routes with token' do
-    pending("Unknown how to make this work within the scope of an engine again")
-    assert_routing('/orders/R123456/token/ABCDEF', {:controller => 'orders', :action => 'show', :id => 'R123456', :token => 'ABCDEF'})
-    token_order_path('R123456', 'ABCDEF').should == '/orders/R123456/token/ABCDEF'
+    spree.token_order_path('R123456', 'ABCDEF').should == '/orders/R123456/token/ABCDEF'
   end
 
   before do

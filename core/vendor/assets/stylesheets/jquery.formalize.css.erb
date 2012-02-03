@@ -72,7 +72,7 @@ a.button {
   -ms-background-clip: padding-box;
   -o-background-clip: padding-box;
   background-clip: padding-box;
-  background: #dddddd url('../images/button.png?1298351022') repeat-x;
+  background: #dddddd url(<%= asset_path("jquery.formalize/button.png") %>) repeat-x;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #dddddd));
   background-image: -webkit-linear-gradient(#ffffff, #dddddd);
   background-image: -moz-linear-gradient(#ffffff, #dddddd);
@@ -257,7 +257,7 @@ select[size="1"] {
   select,
   select[size="0"],
   select[size="1"] {
-    background-image: url('../images/select_arrow.gif?1298351050');
+    background-image: url(<%= asset_path("jquery.formalize/select_arrow.gif") %>);
     background-repeat: no-repeat;
     background-position: right center;
     padding-right: 20px;
@@ -320,7 +320,7 @@ textarea::-moz-focus-inner {
 
 .ie6_button,
 * html button {
-  background: #dddddd url('../images/button.png?1298351022') repeat-x;
+  background: #dddddd url(<%= asset_path("jquery.formalize/button.png") %>) repeat-x;
   border: 1px solid;
   border-color: #dddddd #bbbbbb #999999;
   cursor: pointer;

@@ -23,7 +23,7 @@ class Spree::UserPasswordsController < Devise::PasswordsController
       set_flash_message(:notice, :send_instructions) if is_navigational_format?
       respond_with resource, :location => spree.login_path
     else
-      respond_with_navigational(resource){ render_with_scope :new }
+      respond_with_navigational(resource) { render :new }
     end
   end
 
