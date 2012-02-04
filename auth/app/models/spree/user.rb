@@ -1,5 +1,7 @@
 module Spree
   class User < ActiveRecord::Base
+    include Core::UserBanners
+
     devise :database_authenticatable, :token_authenticatable, :registerable, :recoverable,
            :rememberable, :trackable, :validatable, :encryptable, :encryptor => 'authlogic_sha512'
 
