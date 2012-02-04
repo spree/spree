@@ -399,7 +399,7 @@ en:
   errors_prohibited_this_record_from_being_saved:
     one: "1 error prohibited this record from being saved"
     other: "%{count} errors prohibited this record from being saved"
-  error_user_destroy_with_orders: "Users with with completed orders may not be deleted"
+  error_user_destroy_with_orders: "Users with completed orders may not be deleted"
   event: Event
   events:
     spree:
