@@ -4,6 +4,8 @@ module Spree
     DISPLAY =  [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
+    scope :production, where(:environment => 'production')
+
     def self.providers
       Rails.application.config.spree.payment_methods
     end
