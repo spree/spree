@@ -192,7 +192,7 @@ describe "Promotion Adjustments" do
       select "Flat Rate (per item)", :from => "Calculator"
 
       within('#actions_container') { click_button "Update" }
-      within('.calculator-fields') { fill_in "Amount", :with => "10" }
+      within('.calculator-fields') { fill_in "Amount", :with => "-10" }
       within('#actions_container') { click_button "Update" }
 
       visit spree.root_path
