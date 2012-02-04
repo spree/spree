@@ -209,7 +209,13 @@ INFO: This steps in this guide were written while upgrading from 0.70.x to 1.0.0
 
 h4. Upgrading the Spree Gem
 
-You will want to begin the update process by updating the Spree gem.
+You will want to begin the update process by updating the Spree gem in your Gemfile to reference version 1.0.0.
+
+<ruby>
+gem 'spree', '1.0.0'
+</ruby>
+
+Next, you will need to update this gem using this command:
 
 <shell>
 $ bundle update spree
@@ -227,7 +233,7 @@ You will need to update your routes file in order for Spree's routes to be corre
 
 <ruby>
 #config/routes.rb
-YourStore::Application.routes.draw
+YourStore::Application.routes.draw do
   mount Spree::Core::Engine, :at => '/'
 
   # your application's custom routes
@@ -236,16 +242,25 @@ YourStore::Application.routes.draw
 end
 </ruby>
 
-It is recommended to place your application's custom routes beneath Spree's mounted routes as shown in the above example. This will ensure you don't override any of Spree's defined routes.
+If you're mounting Spree at the default root path, it is recommended to place your application's custom routes beneath Spree's mounted routes as shown in the above example. This will ensure you don't override any of Spree's defined routes.
+
+You may choose to mount Spree at a custom location by changing the +:at+ option to something different, such as +:at => '/shop'+.
 
 h4. Update config/application.rb
 
 Remove the following two lines from **config/application.rb** in your application:
 
-<shell>
+<ruby>
 config.middleware.use "SeoAssist"
 config.middleware.use "RedirectLegacyProductUrl"
-</shell>
+</ruby>
+
+These two pieces of middleware are now automatically included by Spree. If you have no desire to use these pieces of middleware, you can now remove them by placing these two lines into your **config/application.rb**:
+
+<ruby>
+config.middleware.delete "Spree::Core::Middleware::SeoAssist"
+config.middleware.delete "Spree::Core::Middleware::RedirectLegacyProductUrl"
+</ruby>
 
 
 h4. Migrations
@@ -254,7 +269,7 @@ h4. Migrations
 $ bundle exec rake railties:install:migrations
 </shell>
 
-Run the above command to copy over all the migrations from all the engines included in your application. This may also include any migrations from extensions.
+Run the above command to copy over all the migrations from all the engines included in your application. This may also include any migrations from extensions or other engines.
 
 Then it is time to run any new migrations copied to your application.
 
@@ -268,8 +283,8 @@ Remove the line requiring spree_dash from both **app/assets/stylesheets/store/al
 
 h4. Other Tips for Upgrading
 
-* If your application defines any class decorators, you will need to update these files to decorate Spree's new namespace classes. This means Product becomes Spree::Product, Country becomes Spree::Country, and so on.
-* Correct the paths to any templates you are overriding to include the Spree namespace.
+* If your application defines any class decorators, you will need to update these files to decorate Spree's new namespace classes. This means +Product+ becomes +Spree::Product+, +Country+ becomes +Spree::Country+, and so on.
+* Correct the paths to any templates you are overriding to include the Spree namespace. Things such as **app/views/products/show.html.erb** have now become **app/views/spree/products/show.html.erb**.
 
 h3. Bug fixes
 
