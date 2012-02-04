@@ -54,3 +54,4 @@ test_app
 .rvmrc
 **/coverage
 */.sass-cache
+*/**/.sass-cache
