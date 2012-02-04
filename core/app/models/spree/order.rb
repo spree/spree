@@ -476,7 +476,8 @@ module Spree
       #
       # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
       def update_payment_state
-        if round_money(payment_total) < round_money(total)
+        
+        if payment_total == 0 || round_money(payment_total) < round_money(total)
           self.payment_state = 'balance_due'
           self.payment_state = 'failed' if payments.present? and payments.last.state == 'failed'
         elsif round_money(payment_total) > round_money(total)
