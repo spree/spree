@@ -38,7 +38,9 @@ Finally, you can also preview the guides while you work
 $ bundle exec guides preview
 ```
 
-You do not need to fork the spree-guides project in order to contribute.  Just send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.
+If you'd like to make an ocassional contribution to the spree-guides project please fork it and send a pull request when you have changes that you'd like to be pulled into the master branch.
+
+When you feel it is time to become a regular contributer feel free to send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.
 
 Please be considerate when making changes to the spree-guides.  If you wish to make major changes to how the documentation is organized then you should use a GitHub fork and ask people to review your proposed changes instead.
 
