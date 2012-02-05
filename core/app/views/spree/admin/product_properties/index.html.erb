@@ -47,7 +47,7 @@
   $("#product_properties input.autocomplete").live("keydown", function(){
     already_auto_completed = $(this).is('ac_input');
     if (!already_auto_completed) {
-      $(this).autocomplete(properties);
+      $(this).autocomplete({source: properties});
       $(this).focus();
     }
   });
