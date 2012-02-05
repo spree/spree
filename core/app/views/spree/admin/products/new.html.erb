@@ -22,10 +22,10 @@
         <% end %>
       <% end %>
 
-      <p>
+      <%= f.field_container :prototype do %>
         <%= f.label :prototype_id, t(:prototype) %><br />
         <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, :include_blank => true %>
-      </p>
+      <% end %>
 
     </div>
     <div class="right">
