@@ -31,71 +31,74 @@
       <%= f.error_message_on :cost_price %>
     <% end %>
 
-    <p>
+    <%= f.field_container :available_on do %>
       <%= f.label :available_on, t(:available_on) %><br />
       <%= f.error_message_on :available_on %>
       <%= f.text_field :available_on, :class => 'datepicker' %>
-    </p>
+    <% end %>
 
-    <p>
-      <%= f.label :sku, t(:sku) %><br />
-      <%= f.text_field :sku, :size => 16 %>
-    </p>
     <% unless @product.has_variants? %>
+      <%= f.field_container :sku do %>
+        <%= f.label :sku, t(:sku) %><br />
+        <%= f.text_field :sku, :size => 16 %>
+      <% end %>
+
       <% if Spree::Config[:track_inventory_levels] %>
-        <p>
+        <%= f.field_container :on_hand do %>
           <%= f.label :on_hand, t(:on_hand) %><br />
           <%= f.number_field :on_hand, :min => 0 %>
-        </p>
+        <% end %>
       <% end %>
-      <ul id="shipping-specs">
-        <li>
+
+      <ul id="shipping_specs">
+        <li id="shipping_specs_weight_field">
           <%= f.label :weight, t(:weight) %>
           <%= f.text_field :weight, :size => 4 %>
         </li>
-        <li>
+        <li id="shipping_specs_height_field">
           <%= f.label :height, t(:height) %>
           <%= f.text_field :height, :size => 4 %>
         </li>
-        <li>
+        <li id="shipping_specs_width_field">
           <%= f.label :width, t(:width) %>
           <%= f.text_field :width, :size => 4 %>
         </li>
-        <li>
+        <li id="shipping_specs_depth_field">
           <%= f.label :depth, t(:depth) %>
           <%= f.text_field :depth, :size => 4 %>
         </li>
       </ul>
     <% end %>
-    <p>
-      <%= f.label :shipping_category_id, t(:shipping_categories) %><br />
-      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {'style' => 'width:200px'}) %>
-      <%= f.error_message_on :shipping_category %>
-    </p>
 
-    <p>
+    <%= f.field_container :shipping_categories do %>
+      <%= f.label :shipping_category_id, t(:shipping_categories) %><br />
+      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => true }, { 'style' => 'width:200px' }) %>
+      <%= f.error_message_on :shipping_category %>
+    <% end %>
+
+    <%= f.field_container :tax_category do %>
       <%= f.label :tax_category_id, t(:tax_category) %><br />
-      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {'style' => 'width:200px'}) %>
+      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => true }, { 'style' => 'width:200px' }) %>
       <%= f.error_message_on :tax_category %>
-    </p>
+    <% end %>
   </div>
 </div>
 
 <h2><%= t(:metadata) %></h2>
 <div data-hook="admin_product_form_meta">
-  <p>
+  <%= f.field_container :meta_keywords do %>
     <%= f.label :meta_keywords, t(:meta_keywords) %><br />
     <%= f.text_field :meta_keywords, :class => 'fullwidth' %>
-  </p>
-  <p>
+  <% end %>
+
+  <%= f.field_container :meta_description do %>
     <%= f.label :meta_description, t(:meta_description) %><br />
     <%= f.text_field :meta_description, :class => 'fullwidth' %>
-  </p>
+  <% end %>
 </div>
 
-
 <div data-hook="admin_product_form_additional_fields">
-  <% Spree::Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:product) }.each do |field| %>
+  <% Spree::Variant.additional_fields.select { |af| af[:only].nil? || af[:only].include?(:product) }.each do |field| %>
     <%= render :partial => 'spree/admin/shared/additional_field', :locals => { :field => field, :f => f } %>
   <% end %>
 </div>
