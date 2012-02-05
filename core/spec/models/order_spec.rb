@@ -434,7 +434,7 @@ describe Spree::Order do
         order.update!
       end
     end
-
+    
     context "when there is a single checkout payment" do
       before { order.stub(:payment => mock_model(Spree::Payment, :checkout? => true, :amount => 11), :total => 22) }
 
@@ -511,6 +511,51 @@ describe Spree::Order do
       end
     end
 
+  end
+
+  context "#update_payment_state" do
+    
+    it "should set payment_state to balance_due if no line_item" do
+      order.stub(:line_items => [])
+      order.update!
+      order.payment_state.should == "balance_due"
+    end
+    
+    it "should set payment_state to balance_due if payment_total < total" do      
+      line_items = [ mock_model(Spree::LineItem, :amount => 200), mock_model(Spree::LineItem, :amount => 200) ]
+      order.stub(:line_items => line_items)
+      
+      payments = [ mock_model(Spree::Payment, :amount => 100, :checkout? => false), mock_model(Spree::Payment, :amount => 100, :checkout? => false) ]
+      payments.stub(:completed => payments)
+      order.stub(:payments => payments)
+      
+      order.update!
+      order.payment_state.should == "balance_due"
+    end
+    
+    it "should set payment_state to paid if payment_total == total" do      
+      line_items = [ mock_model(Spree::LineItem, :amount => 100), mock_model(Spree::LineItem, :amount => 100) ]
+      order.stub(:line_items => line_items)
+      
+      payments = [ mock_model(Spree::Payment, :amount => 100, :checkout? => false), mock_model(Spree::Payment, :amount => 100, :checkout? => false) ]
+      payments.stub(:completed => payments)
+      order.stub(:payments => payments)
+      
+      order.update!
+      order.payment_state.should == "paid"
+    end
+    
+    it "should set payment_state to credit_owed if payment_total > total" do      
+      line_items = [ mock_model(Spree::LineItem, :amount => 50), mock_model(Spree::LineItem, :amount => 100) ]
+      order.stub(:line_items => line_items)
+      
+      payments = [ mock_model(Spree::Payment, :amount => 100, :checkout? => false), mock_model(Spree::Payment, :amount => 100, :checkout? => false) ]
+      payments.stub(:completed => payments)
+      order.stub(:payments => payments)
+      
+      order.update!
+      order.payment_state.should == "credit_owed"
+    end
   end
 
   context "#payment_method" do
@@ -936,4 +981,5 @@ describe Spree::Order do
       end
     end
   end
+
 end
