@@ -46,8 +46,7 @@
   
   <thead id="line-items" data-hook>
     <tr data-hook="order_details_line_items_headers">
-      <th> </th>
-      <th><%= t(:item_description) %></th>
+      <th colspan="2"><%= t(:item) %></th>
       <th class="price"><%= t(:price) %></th>
       <th class="qty"><%= t(:qty) %></th>
       <th class="total"><span><%= t(:total) %></span></th>
@@ -59,19 +58,19 @@
       <tr data-hook="order_details_line_item_row">
         <td data-hook="order_item_image" width="20%">
           <% if item.variant.images.length == 0 %>
-            <%= small_image(item.variant.product) %>
+            <%= link_to small_image(item.variant.product), item.variant.product %>
           <% else %>
-            <%= image_tag item.variant.images.first.attachment.url(:small) %>
+            <%= link_to image_tag(item.variant.images.first.attachment.url(:small)), item.variant.product %>
           <% end %>
         </td>
-        <td width="80%">
-          <h6><%= item.variant.product.name %></h6>
+        <td data-hook="order_item_description">
+          <h4><%= item.variant.product.name %></h4>
           <%= truncate(item.variant.product.description, :length => 100, :omission => "...") %>
           <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %>
         </td>
-        <td class="price"><span><%= number_to_currency item.price %></span></td>
-        <td class="qty"><%= item.quantity %></td>
-        <td class="total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
+        <td data-hook="order_item_price" class="price"><span><%= number_to_currency item.price %></span></td>
+        <td data-hook="order_item_qty"><%= item.quantity %></td>
+        <td data-hook="order_item_total" class="total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
       </tr>
     <% end %>
   </tbody>

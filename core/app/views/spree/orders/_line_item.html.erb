@@ -1,9 +1,9 @@
 <tr class="<%= cycle('', 'alt') %>">
   <td data-hook="cart_item_image">
     <% if variant.images.length == 0 %>
-      <%= small_image(variant.product) %>
+      <%= link_to small_image(variant.product), variant.product %>
     <% else %>
-      <%= image_tag variant.images.first.attachment.url(:small) %>
+      <%= link_to image_tag(variant.images.first.attachment.url(:small)), variant.product %>
     <% end %>
   </td>
   <td data-hook="cart_item_description">
