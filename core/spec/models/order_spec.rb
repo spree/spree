@@ -533,12 +533,12 @@ describe Spree::Order do
 
   end
 
-  context "#update_payment_state" do    
+  context "#update_payment_state" do
     it "should set payment_state to balance_due if no line_item" do
       order.stub(:line_items => [])
       order.update!
       order.payment_state.should == "balance_due"
-    end    
+    end
   end
 
   context "#payment_method" do
