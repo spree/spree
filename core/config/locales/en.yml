@@ -358,6 +358,7 @@ en:
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
   discount_amount: "Discount Amount"
   display: Display
+  dismiss_banner: "No. Thanks! I'm not interested, do not display this message again"
   edit: Edit
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
@@ -646,6 +647,8 @@ en:
   payment_methods: Payment Methods
   payment_methods_setting_description: Configure methods customers can use to pay.
   payment_processing_failed: "Payment could not be processed, please check the details you entered"
+  payment_processor_choose_banner_text: "If you need help choosing a payment processor, please visit"
+  payment_processor_choose_link: "our payments page"
   payment_state: Payment State
   payment_states:
     balance_due: balance due
