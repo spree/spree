@@ -185,6 +185,17 @@ module Spree
       self.where([where_str, values.map { |value| "%#{value}%" } * fields.size].flatten)
     end
 
+    def empty_option_values?
+      return true if options.empty?
+
+      options.each do |opt|
+        if opt.option_type.option_values.empty?
+          return true
+        end
+      end
+      false
+    end
+
     private
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
