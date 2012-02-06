@@ -106,6 +106,7 @@ Spree::Core::Engine.routes.draw do
         end
       end
     end
+
     resources :option_types do
       collection do
         post :update_positions

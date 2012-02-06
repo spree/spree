@@ -241,19 +241,17 @@ $(document).ready(function(){
         update: function(event, ui) {
           $("#progress").show();
           positions = {};
-          type = '';
           $.each($('table.sortable tbody tr'), function(position, obj){
             reg = /spree_(\w+_?)+_(\d+)/;
             parts = reg.exec($(obj).attr('id'));
             if (parts) {
               positions['positions['+parts[2]+']'] = position;
-              type = parts[1];
             }
           });
           $.ajax({
             type: 'POST',
             dataType: 'script',
-            url: Spree.base_path + 'admin/' + type + 's/update_positions',
+            url: $(ui.item).closest("table.sortable").data("sortable-link"),
             data: positions,
             success: function(data){ $("#progress").hide(); }
           });
