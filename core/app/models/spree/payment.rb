@@ -72,9 +72,13 @@ module Spree
     end
 
     def process!
-      if !processing? and source and source.respond_to?(:process!)
-        started_processing!
-        source.process!(self) # source is responsible for updating the payment state when it's done processing
+      if source
+        if !processing? and source and source.respond_to?(:process!)
+          started_processing!
+          source.process!(self) # source is responsible for updating the payment state when it's done processing
+        end
+      else
+        raise Core::GatewayError.new(I18n.t(:payment_processing_failed))
       end
     end
 

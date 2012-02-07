@@ -43,6 +43,16 @@ describe Spree::Payment do
       end
     end
 
+    context "raises an error if no source is specified" do
+      before do
+        @payment.source = nil
+      end
+
+      specify do
+        lambda { @payment.process! }.should raise_error(Spree::Core::GatewayError, I18n.t(:payment_processing_failed))
+      end
+    end
+
   end
 
   context "#credit_allowed" do
