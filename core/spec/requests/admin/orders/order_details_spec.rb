@@ -30,6 +30,7 @@ describe "Order Details" do
       page.should have_content("$39.98")
       click_link "Edit"
       fill_in "order_line_items_attributes_0_quantity", :with => "1"
+      click_button "Continue"
       page.should have_content("Total: $19.99")
     end
 

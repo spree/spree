@@ -49,6 +49,7 @@ module Spree
       def update
         return_path = nil
         if @order.update_attributes(params[:order]) && @order.line_items.present?
+          @order.update!
           unless @order.complete?
 
           else
