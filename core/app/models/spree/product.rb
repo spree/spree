@@ -186,7 +186,7 @@ module Spree
     end
 
     def empty_option_values?
-      options.any? do |opt|
+      options.empty? || options.any? do |opt|
         opt.option_type.option_values.empty?
       end
     end
