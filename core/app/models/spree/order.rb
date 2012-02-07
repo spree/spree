@@ -124,6 +124,10 @@ module Spree
         end
       end
 
+      before_transition :to => ['delivery'] do |order|
+        order.shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(order) }
+      end
+
       after_transition :to => 'complete', :do => :finalize!
       after_transition :to => 'delivery', :do => :create_tax_charge!
       after_transition :to => 'payment',  :do => :create_shipment!

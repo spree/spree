@@ -254,7 +254,6 @@ describe "Checkout", :js => true do
     click_button "Save and Continue"
     page.should have_content("This field is required")
 
-    str_addr = "bill_address"
     select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
       fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -263,5 +262,47 @@ describe "Checkout", :js => true do
     check "order_use_billing"
     click_button "Save and Continue"
     page.should have_content("Shipping Method")
+  end
+
+  it "changing country to different zone during checkout should reset shipments" do
+    italy = Factory(:country, :iso_name => "ITALY", :iso => "IT", :iso3 => "ITA", :name => "Italy")
+    Spree::Config.set(:default_country_id => italy.id)
+    ita_address = Factory(:address, :country => italy, :state_name => "Roma")
+    eu_shipping = Factory(:shipping_method, :name => "EU", :zone => Spree::Zone.find_by_name("EU_VAT"))
+    user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
+    visit spree.login_path
+    fill_in "user_email", :with => user.email
+    fill_in "user_password", :with => user.password
+    click_button "Login"
+    click_link "RoR Mug"
+    click_button "Add To Cart"
+
+    click_link "Cart"
+    page.should have_content("RoR Mug")
+    within('h1') { page.should have_content("Shopping Cart") }
+
+    click_link "Checkout"
+
+    str_addr = "bill_address"
+    select "United States", :from => "order_#{str_addr}_attributes_country_id"
+    ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
+    end
+    select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+    check "order_use_billing"
+    click_button "Save and Continue"
+    click_button "Save and Continue"
+    page.should have_content("Shipping: $10.00")
+    click_link "Address"
+
+    select "Italy", :from => "order_#{str_addr}_attributes_country_id"
+    ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{ita_address.send(field)}"
+    end
+    fill_in "order_#{str_addr}_attributes_state_name", :with => "#{ita_address.state_name}"
+    check "order_use_billing"
+    click_button "Save and Continue"
+    page.should have_content("EU $10.00")
+    page.should_not have_content("Shipping: $10.00")
   end
 end
