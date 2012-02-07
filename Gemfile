@@ -15,6 +15,7 @@ group :test do
   gem 'guard-rspec', '~> 0.5.0'
   gem 'rspec-rails', '~> 2.8.0'
   gem 'factory_girl_rails', '~> 1.5.0'
+  gem 'email_spec', '~> 1.2.1'
 
   platform :ruby_18 do
     gem 'rcov'

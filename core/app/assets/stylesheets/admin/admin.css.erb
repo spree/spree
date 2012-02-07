@@ -616,17 +616,17 @@ span.handle{
   font-size: 0.8em;
 }
 .alert.release {
-  background: #ccddff url(../images/shadow_top.png) 0px -50px repeat-x;
+  background-color: #ccddff;
   color: #556699;
   border: 1px solid #99aacc;
 }
 .alert.security {
-  background: #f4b4b4 url(../images/shadow_top.png) 0px -50px repeat-x;
+  background-color: #f4b4b4;
   color: #000000;
   border: 1px solid #e75b5b;
 }
 .alert.news {
-  background: #ccffd4 url(../images/shadow_top.png) 0px -50px repeat-x;
+  background-color: #ccffd4;
   color: #000000;
   border: 1px solid #66ff7e;
 }
@@ -644,4 +644,43 @@ span.handle{
   display: inline-block;
   float: none;
   font-size: 14px;
+}
+
+/* Spree admin banners*/
+.banner {
+  overflow: auto;
+}
+.banner p {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.banner .button {
+  float: none !important;
+  display: inline-block;
+}
+
+.banner.payment_banner {
+  width: 739px;
+  height: 135px;
+  background: transparent url(<%= asset_path 'admin/payment_banner.png' %>) no-repeat left top;
+  position: absolute;
+  left: -17px;
+}
+.banner.payment_banner .message {
+  padding-left: 40px;
+  padding-top: 35px;
+  font-size: 16px;
+  width: 500px;
+  color: #5A81B3;
+  line-height: 25px;
+}
+.banner.payment_banner .message a {
+  color: #82a653 !important;
+}
+
+.banner.payment_banner .dismiss {
+  color: #B25B59 !important;
+  font-weight: bold;
+  float: right;
+  margin-right: 25px;
 }

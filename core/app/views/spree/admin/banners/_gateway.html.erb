@@ -1,10 +1,13 @@
 <% if !current_user.dismissed_banner?(:gateway) &&
       Spree::PaymentMethod.production.where("type != 'Spree::Gateway::Bogus'").empty?  %>
 
-  <div class="alert news">
-    <p>If you need help choosing a payment processor, please visit our payments page</p>
+  <div class="banner payment_banner">
+    <p class="message">
+      <%= t(:payment_processor_choose_banner_text)%>
+      <%= link_to t(:payment_processor_choose_link), "http://spreecommerce.com/products/gateway", :target => '_blank' %>
+    </p>
 
-    <%= link_to 'X', dismiss_banner_admin_user_path(current_user, :banner_id => :gateway),
+    <%= link_to t(:dismiss_banner), dismiss_banner_admin_user_path(current_user, :banner_id => :gateway),
                 :remote => true, :method => :post, :class => 'dismiss' %>
   </div>
 
