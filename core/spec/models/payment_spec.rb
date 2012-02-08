@@ -12,6 +12,8 @@ describe Spree::Payment do
 
   before(:each) do
     @payment = Spree::Payment.new(:order => order)
+    @payment.payment_method = stub_model(Spree::PaymentMethod)
+    @payment.payment_method.stub(:source_required? => true)
     @payment.source = mock_model(Spree::Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil, :changed_for_autosave? => false)
     @payment.stub!(:valid?).and_return(true)
     @payment.stub!(:check_payments).and_return(nil)
@@ -43,13 +45,29 @@ describe Spree::Payment do
       end
     end
 
-    context "raises an error if no source is specified" do
-      before do
-        @payment.source = nil
-      end
 
-      specify do
-        lambda { @payment.process! }.should raise_error(Spree::Core::GatewayError, I18n.t(:payment_processing_failed))
+    context "with source required" do
+      context "raises an error if no source is specified" do
+        before do
+          @payment.source = nil
+        end
+
+        specify do
+          lambda { @payment.process! }.should raise_error(Spree::Core::GatewayError, I18n.t(:payment_processing_failed))
+        end
+      end
+    end
+
+    context "with source optional" do
+      context "raises no error if source is not specified" do
+        before do
+          @payment.source = nil
+          @payment.payment_method.stub(:source_required? => false)
+        end
+
+        specify do
+          lambda { @payment.process! }.should_not raise_error(Spree::Core::GatewayError)
+        end
       end
     end
 
