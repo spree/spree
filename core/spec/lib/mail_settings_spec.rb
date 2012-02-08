@@ -46,9 +46,9 @@ describe Spree::Core::MailSettings do
 
         context "mail_port preference" do
           it "should override the application defaults" do
-            mail_method.set_preference(:mail_port, "123")
+            mail_method.set_preference(:mail_port, 123)
             Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:port].should == "123"
+            ActionMailer::Base.smtp_settings[:port].should == 123
           end
         end
 

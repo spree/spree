@@ -17,16 +17,16 @@ module Spree::Preferences
       load_preferences
     end
 
-    def set(key, value)
+    def set(key, value, type)
       @cache.write(key, value)
-      persist(key, value)
+      persist(key, value, type)
     end
 
     def exist?(key)
       @cache.exist? key
     end
 
-    def get(key, default_key=nil)
+    def get(key)
       @cache.read(key)
     end
 
@@ -37,11 +37,12 @@ module Spree::Preferences
 
     private
 
-    def persist(cache_key, value)
+    def persist(cache_key, value, type)
       return unless should_persist?
 
       preference = Spree::Preference.find_or_initialize_by_key(cache_key)
       preference.value = value
+      preference.value_type = type
       preference.save
     end
 
@@ -56,7 +57,8 @@ module Spree::Preferences
       return unless should_persist?
 
       Spree::Preference.all.each do |p|
-         @cache.write(p.key, p.value)
+        Spree::Preference.convert_old_value_types(p) # see comment
+        @cache.write(p.key, p.value)
       end
     end
 
