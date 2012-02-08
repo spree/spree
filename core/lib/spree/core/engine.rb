@@ -51,7 +51,8 @@ module Spree
             Spree::Calculator::FlatRate,
             Spree::Calculator::FlexiRate,
             Spree::Calculator::PerItem,
-            Spree::Calculator::PriceBucket]
+            Spree::Calculator::PriceBucket,
+            Spree::Calculator::WeightScale]
 
          app.config.spree.calculators.tax_rates = [
             Spree::Calculator::DefaultTax]
