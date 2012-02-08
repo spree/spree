@@ -585,6 +585,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     text-align: center;
     border: 1px solid $c_border;
     margin-top: 23px;
+    margin-left: 0;
 
     h3 {
       text-transform: uppercase;
@@ -831,9 +832,6 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     }
     p[data-hook="use_billing"] {
       margin-top: -15px;
-    }
-    #checkout-summary {
-      margin-left: 0px;
     }
   }
 
