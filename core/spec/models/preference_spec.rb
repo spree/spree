@@ -5,75 +5,87 @@ describe Spree::Preference do
   it "should require a key" do
     @preference = Spree::Preference.new
     @preference.key = :test
+    @preference.value_type = :boolean
+    @preference.value = true
     @preference.should be_valid
   end
 
-  it "sets the value type with value" do
-    @preference = Spree::Preference.new
-
-    @preference.value = true
-    @preference.value_type.should eq TrueClass.to_s
-
-    @preference.value = "test"
-    @preference.value_type.should eq String.to_s
-  end
-
   describe "type coversion for values" do
-    def round_trip_preference(key, value)
+    def round_trip_preference(key, value, value_type)
       p = Spree::Preference.new
       p.value = value
+      p.value_type = value_type
       p.key = key
       p.save
 
       Spree::Preference.find_by_key(key)
     end
 
-    it "Symbol" do
-      value = :fbi
-      key = "fox/mulder"
-      pref = round_trip_preference(key, value)
-      pref.value.should eq value
-      pref.value.class.should eq value.class
-    end
-
-    it "Fixnum" do
-      value = 1234
-      key = "hipster"
-      pref = round_trip_preference(key, value)
-      pref.value.should eq value
-      pref.value.class.should eq value.class
-    end
-
-    it "Bignum" do
-      value = 2342341234123409981440 #in db as "2.34234123412341e+21"
-      key = "notorious/b/i/g"
-      pref = round_trip_preference(key, value)
-      pref.value.should eq value
-      pref.value.class.should eq value.class
-    end
-
-    it "Float" do
-      value = 3.14
-      key = "apple/pie"
-      pref = round_trip_preference(key, value)
-      pref.value.should eq value
-      pref.value.class.should eq value.class
-    end
-
-    it "TrueClass" do
+    it ":boolean" do
+      value_type = :boolean
       value = true
-      key = "you/cant/handle"
-      pref = round_trip_preference(key, value)
+      key = "boolean_key"
+      pref = round_trip_preference(key, value, value_type)
       pref.value.should eq value
-      pref.value.class.should eq value.class
+      pref.value_type.should == value_type.to_s
     end
 
-    it "FalseClass" do
-      value = false
-      key = "ll/cool/j"
-      pref = round_trip_preference(key, value)
+    it ":integer" do
+      value_type = :integer
+      value = 10
+      key = "integer_key"
+      pref = round_trip_preference(key, value, value_type)
       pref.value.should eq value
-      pref.value.class.should eq value.class
+      pref.value_type.should == value_type.to_s
+    end
+
+    it ":decimal" do
+      value_type = :decimal
+      value = 1.5
+      key = "decimal_key"
+      pref = round_trip_preference(key, value, value_type)
+      pref.value.should eq value
+      pref.value_type.should == value_type.to_s
+    end
+
+    it ":string" do
+      value_type = :string
+      value = "This is a string"
+      key = "string_key"
+      pref = round_trip_preference(key, value, value_type)
+      pref.value.should eq value
+      pref.value_type.should == value_type.to_s
+    end
+
+    it ":password" do
+      value_type = :password
+      value = "This is a password"
+      key = "password_key"
+      pref = round_trip_preference(key, value, value_type)
+      pref.value.should eq value
+      pref.value_type.should == value_type.to_s
+    end
+
+  end
+
+  describe "converting old values" do
+
+    it "converts true" do
+      p = Spree::Preference.new
+      p.value = 't'
+      p.value_type = TrueClass.to_s
+      Spree::Preference.convert_old_value_types(p)
+      p.value_type.should == 'boolean'
+      p.value.should == true
+    end
+
+    it "converts false" do
+      p = Spree::Preference.new
+      p.value = 'f'
+      p.value_type = FalseClass.to_s
+      Spree::Preference.convert_old_value_types(p)
+      p.value_type.should == 'boolean'
+      p.value.should == false
     end
 
   end
