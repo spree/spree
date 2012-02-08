@@ -155,7 +155,7 @@ module Spree
 
     # generates ProductGroup url
     def permalink
-      name.to_s.to_url
+      self.read_attribute(:permalink) || name.to_s.to_url
     end
 
     alias_method :to_url, :permalink
