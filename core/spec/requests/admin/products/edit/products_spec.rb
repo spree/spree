@@ -25,5 +25,31 @@ describe 'Product Details' do
       end
 
     end
+
+    it "should handle permalink changes" do
+      Factory(:product, :name => 'Bún thịt nướng', :permalink => 'bun-thit-nuong', :sku => 'A100',
+              :description => 'lorem ipsum', :available_on => '2011-01-01 01:01:01', :count_on_hand => 10)
+
+      sign_in_as!(Factory(:admin_user))
+      visit spree.admin_path
+      click_link 'Products'
+      within('table.index tr:nth-child(2)') { click_link 'Edit' }
+
+      fill_in "product_permalink", :with => 'random-permalink-value'
+      click_button "Update"
+      page.should have_content("successfully updated!")
+
+      fill_in "product_permalink", :with => ''
+      click_button "Update"
+      within('#product_permalink_field') { page.should have_content("can't be blank") }
+
+      click_button "Update"
+      within('#product_permalink_field') { page.should have_content("can't be blank") }
+
+      fill_in "product_permalink", :with => 'another-random-permalink-value'
+      click_button "Update"
+      page.should have_content("successfully updated!")
+
+    end
   end
 end
