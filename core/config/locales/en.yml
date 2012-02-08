@@ -9,7 +9,6 @@ en:
   account_updated: "Account updated!"
   action: Action
   actions:
-    cancel: Cancel
     create: Create
     destroy: Destroy
     list: List
