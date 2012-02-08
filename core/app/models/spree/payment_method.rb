@@ -49,5 +49,9 @@ module Spree
     def payment_profiles_supported?
       false
     end
+
+    def source_required?
+      true
+    end
   end
 end
