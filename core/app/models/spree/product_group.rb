@@ -28,7 +28,7 @@
 #
 module Spree
   class ProductGroup < ActiveRecord::Base
-    validates :name, :presence => true # TODO ensure that this field is defined as not_null
+    validates :name, :permalink, :presence => true
     validates_associated :product_scopes
 
     after_save :update_memberships
@@ -153,12 +153,9 @@ module Spree
       result
     end
 
-    # generates ProductGroup url
-    def permalink
-      self.read_attribute(:permalink) || name.to_s.to_url
+    def to_param
+      permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end
-
-    alias_method :to_url, :permalink
 
     def update_memberships
       # wipe everything directly to avoid expensive in-rails sorting
@@ -178,9 +175,6 @@ module Spree
       "<Spree::ProductGroup" + (id && "[#{id}]").to_s + ":'#{to_url}'>"
     end
 
-    def to_param
-      self.permalink
-    end
 
     def order_scope
       if scope = product_scopes.detect {|s| s.is_ordering?}

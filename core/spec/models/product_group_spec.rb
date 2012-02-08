@@ -63,8 +63,7 @@ describe Spree::ProductGroup do
 
     # Regression test for issue raised here: https://github.com/spree/spree/pull/847#issuecomment-3048822
     it "should handle Chinese characters correctly" do
-      product_group = Spree::ProductGroup.new(:name => "你好")
-      product_group.run_callbacks(:create)
+      product_group = Spree::ProductGroup.create(:name => "你好")
       product_group.permalink.should == "ni-hao"
     end
 
