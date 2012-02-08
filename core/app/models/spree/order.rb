@@ -56,7 +56,7 @@ module Spree
       self.update_hooks.add(hook)
     end
 
-    # For compatiblity with Calculator::PriceBucket
+    # For compatiblity with Calculator::PriceSack
     def amount
       line_items.map(&:amount).sum
     end
