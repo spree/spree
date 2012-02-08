@@ -59,12 +59,22 @@ describe Spree::ProductGroup do
 
   end
 
-  # Regression test for issue raised here: https://github.com/spree/spree/pull/847#issuecomment-3048822
-  context "generates correct permalink" do
-    it "for Chinese" do
+  context "correct permalink" do
+
+    # Regression test for issue raised here: https://github.com/spree/spree/pull/847#issuecomment-3048822
+    it "should handle Chinese characters correctly" do
       product_group = Spree::ProductGroup.new(:name => "你好")
       product_group.run_callbacks(:create)
       product_group.permalink.should == "ni-hao"
     end
+
+    it "should return stored value when name changes" do
+      product_group = Spree::ProductGroup.create(:name => 'Pirate Essentials')
+      product_group.name = 'Pirate Specials'
+      product_group.save!
+      product_group.name.should == 'Pirate Specials'
+      product_group.permalink.should == 'pirate-essentials'
+    end
+
   end
 end
