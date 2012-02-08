@@ -104,6 +104,31 @@ module Spree::Preferences::Preferable
     @pending_preferences[name]
   end
 
+  def convert_preference_value(value, type)
+    case type
+    when :string
+      value.to_s
+    when :password
+      value.to_s
+    when :decimal
+      BigDecimal.new(value.to_s).round(2, BigDecimal::ROUND_HALF_UP)
+    when :integer
+      value.to_i
+    when :boolean
+      if value.is_a?(FalseClass) ||
+         value.nil? ||
+         value == 0 ||
+         value =~ /^(f|false|0)$/i ||
+         (value.respond_to? :empty? and value.empty?)
+         false
+      else
+         true
+      end
+    else
+      value
+    end
+  end
+
   def preference_store
     Spree::Preferences::Store.instance
   end
