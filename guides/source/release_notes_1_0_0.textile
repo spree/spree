@@ -143,6 +143,12 @@ h4. General deprecations
 
 * +Gateway.current+ is now deprecated. Use +order.payment_method.gateway+ now. "#747":https://github.com/spree/spree/pull/747
 
+h3. Calculator
+
+h4. Calculator::PriceBucket is now renamed to Calculator::PriceSack
+
+The +PriceBucket+ contains Bucket keyword that conflicts with +AWS::S3+ library which has caused few issues with Heroku deployment. If you used this calculator in your application, then you will need to rename it to +PriceSack+.
+
 h3. Taxation
 
 There have been several major changes to how Spree handles tax calculations. If you are migrating from an older version of Spree your previous tax configurations will not function properly and will need to be reconfigured before you can resume processing orders.
