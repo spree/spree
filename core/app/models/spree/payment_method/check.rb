@@ -25,5 +25,9 @@ module Spree
       payment.void
       true
     end
+
+    def source_required?
+      false
+    end
   end
 end

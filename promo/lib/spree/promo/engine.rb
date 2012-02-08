@@ -9,10 +9,6 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
 
-        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/overrides/*.rb')) do |c|
-          Rails.configuration.cache_classes ? require(c) : load(c)
-        end
-
         # Include list of visited paths in notification payload hash
         Spree::Core::ControllerHelpers.class_eval do
           def default_notification_payload
