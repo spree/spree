@@ -2,12 +2,6 @@ require 'spree/core/preference_rescue'
 
 class NewPreferences < ActiveRecord::Migration
 
-  class OldPrefs < ActiveRecord::Base
-    self.table_name = "spree_preferences"
-    belongs_to  :owner, :polymorphic => true
-    attr_accessor :owner_klass
-  end
-
   def up
     add_column :spree_preferences, :key, :string
     add_column :spree_preferences, :value_type, :string
@@ -22,8 +16,6 @@ class NewPreferences < ActiveRecord::Migration
     change_column :spree_preferences, :group_id, :integer, :null => true
     change_column :spree_preferences, :group_type, :string, :null => true
 
-    spree_config = Spree::AppConfiguration.new
-
     cfgs = execute("select id, type from spree_configurations").to_a
     execute("select id, owner_id, name from spree_preferences where owner_type = 'Spree::Configuration'").each do |pref|
       configuration = cfgs.detect { |c| c[0].to_s == pref[1].to_s }
@@ -33,9 +25,14 @@ class NewPreferences < ActiveRecord::Migration
       execute "UPDATE spree_preferences set `key` = '#{configuration[1].underscore}/#{pref[2]}', `value_type` = '#{value_type}' where id = #{pref[0]}" rescue nil
     end
 
+    # remove orphaned calculator preferences
+    Spree::Preference.where(:owner_type => 'Spree::Calculator').each do |preference|
+      preference.destroy unless Spree::Calculator.exists? preference.owner_id
+    end
+
     Spree::PreferenceRescue.try
 
-    OldPrefs.where(:value_type => nil).update_all(:value_type => 'string')
+    Spree::Preference.where(:value_type => nil).update_all(:value_type => 'string')
   end
 
   def down
