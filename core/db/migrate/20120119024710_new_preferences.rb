@@ -6,7 +6,6 @@ class NewPreferences < ActiveRecord::Migration
     attr_accessor :owner_klass
   end
 
-
   def up
     add_column :spree_preferences, :key, :string
     add_column :spree_preferences, :value_type, :string
@@ -21,18 +20,20 @@ class NewPreferences < ActiveRecord::Migration
     change_column :spree_preferences, :group_id, :integer, :null => true
     change_column :spree_preferences, :group_type, :string, :null => true
 
-    cfgs = execute("select id, type from spree_configurations")
-
-    execute("select id, owner_id, name from spree_preferences where owner_type = 'Spree::Configuration'").each do |pref|
-      configuration = cfgs.detect { |c| c[0] == pref[1] }
-      execute "UPDATE spree_preferences set `key` = '#{configuration[1].underscore}/#{pref[2]}', `owner_type` = null, `owner_id` = null where id = #{pref[0]}"
+    spree_config = Spree::AppConfiguration.new
+    Spree::Preference.where(:owner_type => 'Spree::Configuration').each do |preference|
+      preference.key = spree_config.preference_cache_key(preference.name)
+      preference.value_type = spree_config.preference_type(preference.name)
+      say preference.inspect
+      say preference.save(:validate => false)
+      say preference.errors.inspect
     end
 
     OldPrefs.all.each do |old_pref|
       next unless owner = (old_pref.owner rescue nil)
-
-      unless old_pref.owner_type == "Spree::Activator" || old_pref.owner_type == "Spree::PromotionRule"
+      unless old_pref.owner_type == "Spree::Activator" || old_pref.owner_type == "Spree::Configuration"
         old_pref.key = [owner.class.name, old_pref.name, owner.id].join('::').underscore
+        old_pref.value_type = owner.preference_type(old_pref.name)
         say "Migrating Preference: #{old_pref.key}"
         old_pref.save
       end
