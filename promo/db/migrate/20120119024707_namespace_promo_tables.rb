@@ -1,3 +1,5 @@
+require 'spree/core/preference_rescue'
+
 class NamespacePromoTables < ActiveRecord::Migration
 
   def concat(str1, str2)
@@ -27,12 +29,6 @@ class NamespacePromoTables < ActiveRecord::Migration
       execute "UPDATE #{table} SET #{column_name} = REPLACE(#{column_name}, 'Spree::', '') " +
         " where #{column_name} LIKE 'Spree::%'"
     end
-  end
-
-  class OldPrefs < ActiveRecord::Base
-    set_table_name "spree_preferences"
-    belongs_to  :owner, :polymorphic => true
-    attr_accessor :owner_klass
   end
 
   def self.up
@@ -66,14 +62,7 @@ class NamespacePromoTables < ActiveRecord::Migration
       preference.destroy
     end
 
-    OldPrefs.where(:owner_type => 'Spree::PromotionRule').each do |old_pref|
-      owner = old_pref.owner
-      old_pref.key = [owner.class.name, old_pref.name, owner.id].join('::').underscore
-      old_pref.value_type = owner.preference_type(old_pref.name)
-      say "Migrating Preference: #{old_pref.key}"
-      old_pref.save(:validate => false)
-    end
-
+    Spree::PreferenceRescue.try
 
     # This *should* be in the new_preferences migration inside of Core but...
     # This is migration needs to have these keys around so that
