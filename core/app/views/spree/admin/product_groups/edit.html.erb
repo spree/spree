@@ -4,12 +4,18 @@
 
 <fieldset id="product_group_forms_container" data-hook>
 
-  <%= form_for [:admin, @product_group], :html => { :id => 'product-group-form', :method => :put, :remote => true } do |f| %>
+  <%= form_for [:admin, @product_group], :html => { :id => 'product-group-form', :method => :put } do |f| %>
 
       <%= f.field_container :name do %>
         <%= f.label :name, t(:name) %><br />
         <%= f.text_field :name %>
         <%= f.error_message_on :name %>
+      <% end %>
+
+      <%= f.field_container :permalink do %>
+        <%= f.label :permalink, t(:permalink) %><br />
+        <%= f.text_field :permalink %>
+        <%= f.error_message_on :permalink %>
       <% end %>
 
       <%= f.field_container :order_scope do %>

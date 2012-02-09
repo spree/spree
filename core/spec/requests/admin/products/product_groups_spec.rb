@@ -40,6 +40,28 @@ describe "Product Groups" do
       click_link "Product Groups"
       page.should have_content("most popular rails items 99")
     end
+
+    it "should handle permalink changes" do
+      Factory(:product_group)
+      click_link "Product Groups"
+      within('table#listing_product_groups tbody tr:nth-child(1)') { click_link "Edit" }
+
+      fill_in "product_group_permalink", :with => 'random-permalink-value'
+      click_button "Update"
+      page.should have_content("successfully updated!")
+
+      fill_in "product_group_permalink", :with => ''
+      click_button "Update"
+      within('#product_group_permalink_field') { page.should have_content("can't be blank") }
+
+      click_button "Update"
+      within('#product_group_permalink_field') { page.should have_content("can't be blank") }
+
+      fill_in "product_group_permalink", :with => 'another-random-permalink-value'
+      click_button "Update"
+      page.should have_content("successfully updated!")
+
+    end
   end
 
   context "scoping", :js => true do

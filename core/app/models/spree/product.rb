@@ -78,8 +78,7 @@ module Spree
     end
 
     def to_param
-      return permalink if permalink.present?
-      name.to_url
+      permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end
 
     # returns true if the product has any variants (the master variant is not a member of the variants array)

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Spree::Calculator::PriceBucket do
-  let(:calculator) { Spree::Calculator::PriceBucket.new }
+describe Spree::Calculator::PriceSack do
+  let(:calculator) { Spree::Calculator::PriceSack.new }
   let(:order) { stub_model(Spree::Order) }
 
   # Regression test for #714 and #739

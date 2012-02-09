@@ -44,7 +44,7 @@
 
   <p class="form-buttons" data-hook="admin_order_form_buttons">
     <%= button @order.complete? ? t(:update) : t(:continue) %>
-    <%= t(:or) %> <%= link_to t('actions.cancel'), admin_orders_url %>
+    <%= t(:or) %> <%= link_to t(:back), admin_orders_url %>
   </p>
 
 <% end %>

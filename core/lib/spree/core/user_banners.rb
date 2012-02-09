@@ -5,7 +5,7 @@ module Spree
   module Core
     module UserBanners
       def self.included(base)
-        base.preference :dismissed_banners, :text, :default => ''
+        base.preference :dismissed_banners, :string, :default => ''
       end
 
       def dismissed_banner_ids
