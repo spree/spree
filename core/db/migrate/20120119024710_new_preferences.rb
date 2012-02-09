@@ -1,3 +1,5 @@
+require 'spree/core/preference_rescue'
+
 class NewPreferences < ActiveRecord::Migration
 
   class OldPrefs < ActiveRecord::Base
@@ -21,21 +23,19 @@ class NewPreferences < ActiveRecord::Migration
     change_column :spree_preferences, :group_type, :string, :null => true
 
     spree_config = Spree::AppConfiguration.new
-    Spree::Preference.where(:owner_type => 'Spree::Configuration').each do |preference|
-      preference.key = spree_config.preference_cache_key(preference.name)
-      preference.value_type = spree_config.preference_type(preference.name)
-      preference.save(:validate => false)
+
+    cfgs = execute("select id, type from spree_configurations").to_a
+    execute("select id, owner_id, name from spree_preferences where owner_type = 'Spree::Configuration'").each do |pref|
+      configuration = cfgs.detect { |c| c[0].to_s == pref[1].to_s }
+
+      value_type = configuration[1].constantize.new.send "preferred_#{pref[2]}_type" rescue 'string'
+
+      execute "UPDATE spree_preferences set `key` = '#{configuration[1].underscore}/#{pref[2]}', `value_type` = '#{value_type}' where id = #{pref[0]}" rescue nil
     end
 
-    OldPrefs.all.each do |old_pref|
-      next unless owner = (old_pref.owner rescue nil)
-      unless old_pref.owner_type == "Spree::Activator" || old_pref.owner_type == "Spree::Configuration"
-        old_pref.key = [owner.class.name, old_pref.name, owner.id].join('::').underscore
-        old_pref.value_type = owner.preference_type(old_pref.name)
-        say "Migrating Preference: #{old_pref.key}"
-        old_pref.save
-      end
-    end
+    Spree::PreferenceRescue.try
+
+    OldPrefs.where(:value_type => nil).update_all(:value_type => 'string')
   end
 
   def down
