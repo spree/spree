@@ -48,6 +48,8 @@ class NamespacePromoTables < ActiveRecord::Migration
     add_column :spree_activators, :code, :string
     add_column :spree_activators, :advertise, :boolean, :default => false
 
+    Spree::Activator.reset_column_information
+
     Spree::Preference.where(:owner_type => 'Spree::Activator').each do |preference|
       unless Spree::Activator.exists? preference.owner_id
         preference.destroy
