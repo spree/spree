@@ -4,6 +4,8 @@ class Spree::Preference < ActiveRecord::Base
   validates :value, :presence => true
   validates :value_type, :presence => true
 
+  scope :valid, where("key IS NOT NULL").where("value_type IS NOT NULL")
+
   # The type conversions here should match
   # the ones in spree::preferences::preferrable#convert_preference_value
   def value
@@ -19,6 +21,10 @@ class Spree::Preference < ActiveRecord::Base
     when :boolean
       (self[:value].to_s =~ /^t/i) != nil
     end
+  end
+
+  def raw_value
+    self[:value]
   end
 
   # For the rc releases of 1.0, we stored the object class names, this converts

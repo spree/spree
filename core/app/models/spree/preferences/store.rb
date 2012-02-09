@@ -56,7 +56,7 @@ module Spree::Preferences
     def load_preferences
       return unless should_persist?
 
-      Spree::Preference.all.each do |p|
+      Spree::Preference.valid.each do |p|
         Spree::Preference.convert_old_value_types(p) # see comment
         @cache.write(p.key, p.value)
       end
