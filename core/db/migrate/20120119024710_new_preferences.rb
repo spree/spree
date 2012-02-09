@@ -24,9 +24,7 @@ class NewPreferences < ActiveRecord::Migration
     Spree::Preference.where(:owner_type => 'Spree::Configuration').each do |preference|
       preference.key = spree_config.preference_cache_key(preference.name)
       preference.value_type = spree_config.preference_type(preference.name)
-      say preference.inspect
-      say preference.save(:validate => false)
-      say preference.errors.inspect
+      preference.save(:validate => false)
     end
 
     OldPrefs.all.each do |old_pref|
