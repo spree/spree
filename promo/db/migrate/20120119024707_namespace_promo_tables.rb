@@ -48,22 +48,16 @@ class NamespacePromoTables < ActiveRecord::Migration
     add_column :spree_activators, :code, :string
     add_column :spree_activators, :advertise, :boolean, :default => false
 
+    Spree::Activator.reset_column_information
+
     Spree::Preference.where(:owner_type => 'Spree::Activator').each do |preference|
       unless Spree::Activator.exists? preference.owner_id
         preference.destroy
         next
       end
 
-      preference.value_type = case preference.name
-                              when 'usage_limit'
-                                :integer
-                              when 'advertise'
-                                :boolean
-                              else
-                                :string
-                              end
       @activator = Spree::Activator.find(preference.owner_id)
-      @activator.update_attribute(preference.name, preference.value)
+      @activator.update_attribute(preference.name, preference.raw_value)
       preference.destroy
     end
 
