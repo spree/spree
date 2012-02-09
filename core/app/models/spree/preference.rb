@@ -9,17 +9,21 @@ class Spree::Preference < ActiveRecord::Base
   # The type conversions here should match
   # the ones in spree::preferences::preferrable#convert_preference_value
   def value
-    case self[:value_type].to_sym
-    when :string
-      self[:value].to_s
-    when :password
-      self[:value].to_s
-    when :decimal
-      BigDecimal.new(self[:value].to_s).round(2, BigDecimal::ROUND_HALF_UP)
-    when :integer
-      self[:value].to_i
-    when :boolean
-      (self[:value].to_s =~ /^t/i) != nil
+    if self[:value_type].present?
+      case self[:value_type].to_sym
+      when :string
+        self[:value].to_s
+      when :password
+        self[:value].to_s
+      when :decimal
+        BigDecimal.new(self[:value].to_s).round(2, BigDecimal::ROUND_HALF_UP)
+      when :integer
+        self[:value].to_i
+      when :boolean
+        (self[:value].to_s =~ /^t/i) != nil
+      end
+    else
+      self[:value]
     end
   end
 
