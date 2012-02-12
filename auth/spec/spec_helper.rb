@@ -10,12 +10,9 @@ require 'spree/url_helpers'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
+require 'spree/core/testing_support/fixtures'
 require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
-
-require 'active_record/fixtures'
-fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
-ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
 
 RSpec.configure do |config|
   # == Mock Framework
