@@ -1,5 +1,10 @@
-login: &login
-<% if database == 'mysql' %>
+<% if database != 'mysql' %>
+  <% prefix, suffix = ["db/", ".sqlite3"]  %>
+<% end %>
+
+development: &default
+  database: <%= "#{prefix}dummy_dev#{suffix}" %>
+<%- if database == 'mysql' -%>
   adapter: mysql2
   encoding: utf8
   reconnect: false
@@ -7,20 +12,16 @@ login: &login
   username: root
   password:
   #socket: /tmp/mysql.sock
-<% else %>
+<%- else -%>
   adapter: sqlite3
   pool: 5
   timeout: 5000
-<% end %>
-
-development:
-  <<: *login
-  database: db/dummy_dev
+<%- end -%>
 
 test:
-  <<: *login
-  database: db/dummy_test
+  <<: *default
+  database: <%= "#{prefix}dummy_test#{suffix}" %>
 
 production:
-  <<: *login
-  database: db/dummy_prod
+  <<: *default
+  database: <%= "#{prefix}dummy_prod#{suffix}" %>
