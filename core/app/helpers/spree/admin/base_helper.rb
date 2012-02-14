@@ -94,6 +94,8 @@ module Spree
           password_field_tag(name, value, preference_field_options(options))
         when :text
           text_area_tag(name, value, preference_field_options(options))
+        when :product
+          product_picker_field name, value.to_s, :limit => 1
         else
           text_field_tag(name, value, preference_field_options(options))
         end
@@ -177,11 +179,12 @@ module Spree
          end # case
        end
 
-      def product_picker_field(name, value)
+      def product_picker_field(name, value, options={})
         products = Product.with_ids(value.split(','))
         product_names = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
         product_rules = products.collect{ |p| { :id => p.id, :name => p.name } }
-        %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
+        option_limit = " token-limit='#{options[:limit]}'" if options[:limit]
+        %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'#{option_limit}/>).html_safe
       end
 
       # renders set of hidden fields and button to add new record using nested_attributes

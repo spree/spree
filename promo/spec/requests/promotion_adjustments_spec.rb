@@ -13,8 +13,8 @@ describe "Promotion Adjustments" do
 
       Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
       user = Factory(:admin_user)
-      Factory(:product, :name => "RoR Mug", :price => "40")
-      Factory(:product, :name => "RoR Bag", :price => "20")
+      @mug = Factory(:product, :name => "RoR Mug", :price => "40")
+      @bag = Factory(:product, :name => "RoR Bag", :price => "20")
 
       sign_in_as!(user)
       visit spree.admin_path
@@ -148,7 +148,6 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Order's total > $30"
-      fill_in "Code", :with => ""
       select "Order contents changed", :from => "Event"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -175,9 +174,56 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 54.00
     end
 
+    it "should allow an admin to create an automatic promo with flat rate discount" do
+      fill_in "Name", :with => "RoR Mug"
+      select "Order contents changed", :from => "Event"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select "Product(s)", :from => "Add rule of type"
+      within('#rule_fields') { click_button "Add" }
+      choose "Manually choose"
+      page.execute_script %Q{$('input[name$="[product_ids_string]"]').val('#{@mug.id}').focus();}
+      within('#rule_fields') { click_button "Update" }
+
+      select "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select "Flat Rate (per item)", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+      page.execute_script %Q{$('input[name$="[calculator_attributes][preferred_product]"]').val('#{@mug.id}').focus();}
+      within('.calculator-fields') { fill_in "Amount", :with => "-10" }
+      within('#actions_container') { click_button "Update" }
+
+      # Add a discounted product
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "Add To Cart"
+
+      Spree::Order.last.total.to_f.should == 30.00
+
+      # Add a standard product
+      visit spree.root_path
+      click_link "RoR Bag"
+      click_button "Add To Cart"
+
+      Spree::Order.last.total.to_f.should == 50.00
+
+      # Add the same discounted product
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "Add To Cart"
+
+      Spree::Order.last.total.to_f.should == 80.00
+
+      # Change discount product quantity
+      visit spree.cart_path
+      fill_in "order_line_items_attributes_0_quantity", :with => 1
+      click_button "Update"
+      Spree::Order.last.total.to_f.should == 50.00
+    end
+
     it "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Free Shipping"
-      fill_in "Code", :with => ""
       click_button "Create"
       page.should have_content("Editing Promotion")
 
