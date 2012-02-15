@@ -20,14 +20,27 @@ describe Spree::Preference do
 
       Spree::Preference.find_by_key(key)
     end
-
-    it ":boolean" do
-      value_type = :boolean
-      value = true
-      key = "boolean_key"
-      pref = round_trip_preference(key, value, value_type)
-      pref.value.should eq value
-      pref.value_type.should == value_type.to_s
+    
+    context ":boolean" do
+      
+      it "true" do
+        value_type = :boolean
+        value = true
+        key = "boolean_key"
+        pref = round_trip_preference(key, value, value_type)
+        pref.value.should eq value
+        pref.value_type.should == value_type.to_s
+      end
+      
+      it "false" do
+        value_type = :boolean
+        value = false
+        key = "boolean_key"
+        pref = round_trip_preference(key, value, value_type)
+        pref.value.should eq value
+        pref.value_type.should == value_type.to_s
+      end
+      
     end
 
     it ":integer" do
