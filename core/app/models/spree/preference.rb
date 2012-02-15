@@ -1,7 +1,7 @@
 class Spree::Preference < ActiveRecord::Base
 
   validates :key, :presence => true
-  validates :value, :presence => true
+  validates :value, :presence => true, :unless => Proc.new { |pref| pref.value_type.to_sym == :boolean && pref.value == false }
   validates :value_type, :presence => true
 
   # The type conversions here should match
