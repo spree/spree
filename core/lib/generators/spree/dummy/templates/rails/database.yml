@@ -11,3 +11,4 @@ postgres:
   adapter: postgresql
   database: spree_test
   username: postgres
+  min_messages: warning
