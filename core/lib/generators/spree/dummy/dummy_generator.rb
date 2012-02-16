@@ -59,25 +59,6 @@ module Spree
       end
     end
 
-    def setup_multiple_database_support
-      puts "Setting up multi-database support"
-      inside dummy_path do
-        insert_into_file "Rakefile", :after => "Dummy::Application.load_tasks" do
-          %Q{
-  # Tell Rake commands to use whatever ENV['DB'] is specified as.
-  # Hack to get database_configuration to work with different databases
-  class << Rails.application.config
-    def database_configuration
-      configs = YAML.load_file(File.expand_path('config/database.yml', File.dirname(__FILE__)))
-      configs['development'] = configs['test'] = configs['production'] = configs[ENV['DB'] || 'sqlite']
-      configs
-    end
-  end}
-        end
-      end
-    end
-
-
     attr :lib_name
     attr :database
 
