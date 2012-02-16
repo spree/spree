@@ -13,6 +13,11 @@ require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
 require 'spree/url_helpers'
 
+configs = YAML.load_file(File.expand_path('dummy/config/database.yml', File.dirname(__FILE__)))
+ActiveRecord::Base.configurations = configs
+db = ENV['DB'] || 'sqlite'
+ActiveRecord::Base.establish_connection(db_name)
+
 
 RSpec.configure do |config|
   # == Mock Framework
