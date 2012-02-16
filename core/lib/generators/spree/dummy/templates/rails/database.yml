@@ -1,11 +1,19 @@
 <% case ENV['DB']
   when 'sqlite' %>
-development: &login
+development:
   adapter: sqlite3
   database: "db/spree_test.sqlite3"
   timeout: 5000
+test:
+  adapter: sqlite3
+  database: "db/spree_test.sqlite3"
 <% when 'mysql' %>
 development:
+  adapter: mysql2
+  database: spree_test
+  username:
+  encoding: utf8
+test:
   adapter: mysql2
   database: spree_test
   username:
@@ -16,9 +24,9 @@ development:
   database: spree_test
   username: postgres
   min_messages: warning
-<% end %>
-
 test:
-  <<: *login
-production:
-  <<: *login
+  adapter: postgresql
+  database: spree_test
+  username: postgres
+  min_messages: warning
+<% end %>
