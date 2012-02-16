@@ -36,12 +36,12 @@ describe "Analytics Tracker" do
     it "should be able to create a new analytics tracker" do
       click_link "admin_new_tracker_link"
       fill_in "tracker_analytics_id", :with => "A100"
-      select "Production", :from => "tracker-env"
+      select "Test", :from => "tracker-env"
       click_button "Create"
 
       page.should have_content("successfully created!")
       find('table.index tr:nth-child(1) td:nth-child(1)').text.should == "A100"
-      find('table.index tr:nth-child(1) td:nth-child(2)').text.should == "Production"
+      find('table.index tr:nth-child(1) td:nth-child(2)').text.should == "Test"
       find('table.index tr:nth-child(1) td:nth-child(3)').text.should == "Yes"
     end
   end
