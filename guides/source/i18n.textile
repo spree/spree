@@ -95,14 +95,7 @@ h3. Deploying the Translations
 
 h4. Including the +spree_i18n+ Gem
 
-The +spree_i18n+ gem is configured in the same manner as any Rubygem in a Rails application.  Simply add it to the +Gemfile.+
-
-<ruby>
-#Gemfile.rb
-gem 'spree_i18n'
-</ruby>
-
-If you don't want to limit yourself to a specific released version of +spree_i18n+ gem then you can tell bundler to use the "edge" version and point it at the Github repository.
+The +spree_i18n+ gem is configured in the same manner as any Rubygem in a Rails application.  Simply add it to the +Gemfile.+ using the git url. 
 
 <ruby>
 #Gemfile.rb
