@@ -9,14 +9,6 @@ Gem::PackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
-def run_all_tests(database_name)
-  %w(api auth core dash promo).each do |gem_name|
-    puts "########################### #{gem_name}|#{database_name} (spec) ###########################"
-    sh "cd #{gem_name} && #{$0} test_app DB_NAME='#{database_name}'"
-    sh "cd #{gem_name} && #{$0} spec"
-  end
-end
-
 desc "Generates a dummy app for testing for every Spree engine"
 task :test_app do
   %w(api auth core dash promo).each do |engine|
@@ -30,7 +22,10 @@ task :default => :all_tests
 
 desc "Run all tests for sqlite3 only"
 task :all_tests do
-  run_all_tests("sqlite3")
+  %w(api auth core dash promo).each do |gem_name|
+    puts "########################### #{gem_name} (spec) ###########################"
+    sh "cd #{gem_name} && #{$0} spec"
+  end
 end
 
 desc "Run all tests for all supported databases"
