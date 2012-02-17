@@ -192,7 +192,7 @@ h4. Extensions
 
 There are a few Spree extensions which provides additional shipping methods, including
 special support for the fees for common carriers, or support for bulk orders.
-See the "Spree Extension Registry":http://ext.spreecommerce.com for the latest
+See the "Spree Extension Registry":http://spreecommerce.com/extensions for the latest
 information.
 
 h4. Writing your own
