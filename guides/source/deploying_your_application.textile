@@ -7,7 +7,7 @@ endprologue.
 
 INFO: This guide presumes you are running a Spree version of 0.60.x or later, and that your servers have be built using the "Spree Deployment Service":deployment_service.html
 
-h3. Spree Deploymemnt Dependencies
+h3. Spree Deployment Dependencies
 
 In order to deploy your application to the standard Deployment Service configuration you will need to add the following to your Gemfile:
 
