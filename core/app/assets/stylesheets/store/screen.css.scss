@@ -275,9 +275,16 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     padding-bottom: 6px;
 
     li {
+      
       a {
         font-size: 16px;
         padding: 5px;
+      }
+
+      &:first-child {
+        a {
+          padding-left: 0
+        }
       }
 
       &#link-to-cart {
@@ -419,9 +426,6 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
   }
   
   ul#products {
-    margin-left: -10px;
-    margin-right: -10px;    
-
     li {
       text-align: center;
       font-weight: bold;
@@ -677,7 +681,14 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     }
 
     .steps-data {
-      padding: 10px;
+      div.columns {
+        padding: 5px;
+        margin: 0;
+
+        &:first-child {
+          margin-left: 10px;
+        }
+      }
 
       h6 {
         border-bottom: 1px solid $c_border;
@@ -700,7 +711,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
 
   p[data-hook="use_billing"] {
     float: right;
-    margin-top: -38px;
+    margin-top: -18px;
     background-color: white;
     padding: 5px;
   }
@@ -832,7 +843,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     }
     p[data-hook="use_billing"] {
       margin-top: -15px;
-    }
+    }    
   }
 
   /* All Mobile Sizes (devices and browser) */
@@ -840,6 +851,16 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
 
     html {
       -webkit-text-size-adjust: none;
+    }
+
+    #order_details .steps-data div.columns, 
+    #order_summary .steps-data div.columns {
+      padding: 0;
+      margin: 0;
+
+      &:first-child {
+        margin: 0
+      }
     }
 
     nav#taxonomies {
@@ -1039,12 +1060,17 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
     }
 
     ul#products {
-      margin-left: 0;
 
       li {
-        width: 140px;
+        width: 142px;
         margin-right: 15px;
+
+        &.secondary, &.omega {
+          margin-right: 0;
+        }
       }
+
+
     }
 
     #content {
