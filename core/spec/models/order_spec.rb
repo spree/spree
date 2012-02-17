@@ -853,7 +853,7 @@ describe Spree::Order do
       end
 
       it "should return the adjustments for that line item" do
-         @order.price_adjustments.should == [@adj1, @adj2]
+         @order.price_adjustments.should =~ [@adj1, @adj2]
       end
     end
 
