@@ -43,7 +43,12 @@
 <hr />
 
 <table class="index columns alpha omega sixteen" data-hook="order_details">
-  
+  <col width="15%" valign="middle" halign="center">
+  <col width="70%" valign="middle">
+  <col width="5%" valign="middle" halign="center">
+  <col width="5%" valign="middle" halign="center">
+  <col width="5%" valign="middle" halign="center">
+
   <thead id="line-items" data-hook>
     <tr data-hook="order_details_line_items_headers">
       <th colspan="2"><%= t(:item) %></th>
@@ -56,7 +61,7 @@
   <tbody id="line-items" data-hook>
     <% @order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
-        <td data-hook="order_item_image" width="20%">
+        <td data-hook="order_item_image">
           <% if item.variant.images.length == 0 %>
             <%= link_to small_image(item.variant.product), item.variant.product %>
           <% else %>
