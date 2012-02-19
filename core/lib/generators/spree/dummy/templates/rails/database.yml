@@ -1,5 +1,5 @@
 <% case ENV['DB']
-  when 'sqlite' %>
+  when 'sqlite' || nil %>
 development:
   adapter: sqlite3
   database: "db/spree_test.sqlite3"
