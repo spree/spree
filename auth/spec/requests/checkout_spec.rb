@@ -270,7 +270,6 @@ describe "Checkout", :js => true do
   it "changing country to different zone during checkout should reset shipments" do
     eu_vat_zone = Spree::Zone.find_by_name("EU_VAT")
     italy = Factory(:country, :iso_name => "ITALY", :iso => "IT", :iso3 => "ITA", :name => "Italy", :zone => eu_vat_zone)
-    Spree::Config.set(:default_country_id => italy.id)
     ita_address = Factory(:address, :country => italy, :state_name => "Roma")
     eu_shipping = Factory(:shipping_method, :name => "EU", :zone => eu_vat_zone)
     # TODO: Figure why calculator after_create is not firing to set this
