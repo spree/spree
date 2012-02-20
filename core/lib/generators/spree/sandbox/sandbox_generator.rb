@@ -4,8 +4,6 @@ module Spree
   class SandboxGenerator < Spree::DummyGenerator
     desc "Creates blank Rails application, installs Spree and all sample data"
 
-    class_option :database, :default => ''
-
     def self.source_paths
       paths = self.superclass.source_paths
       paths.unshift File.expand_path('../templates', __FILE__)
