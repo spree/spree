@@ -1,6 +1,6 @@
 module Spree
   class OldPrefs < ActiveRecord::Base
-    set_table_name "spree_preferences"
+    self.table_name = "spree_preferences"
     belongs_to  :owner, :polymorphic => true
     attr_accessor :owner_klass
   end
