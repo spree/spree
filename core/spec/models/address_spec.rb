@@ -22,7 +22,7 @@ describe Spree::Address do
                          :address2 => 'address2',
                          :alternative_phone => 'alternative_phone',
                          :city => 'city',
-                         :country_id => 1,
+                         :country => Spree::Country.first,
                          :firstname => 'firstname',
                          :lastname => 'lastname',
                          :company => 'company',
