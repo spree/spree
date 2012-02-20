@@ -20,7 +20,7 @@ class Spree::Preference < ActiveRecord::Base
       when :integer
         self[:value].to_i
       when :boolean
-        (self[:value].to_s =~ /^t/i) != nil
+        (self[:value].to_s =~ /^[t|1]/i) != nil
       end
     else
       self[:value]
