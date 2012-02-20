@@ -266,10 +266,13 @@ describe "Checkout", :js => true do
   end
 
   it "changing country to different zone during checkout should reset shipments" do
-    italy = Factory(:country, :iso_name => "ITALY", :iso => "IT", :iso3 => "ITA", :name => "Italy")
+    eu_vat_zone = Spree::Zone.find_by_name("EU_VAT")
+    italy = Factory(:country, :iso_name => "ITALY", :iso => "IT", :iso3 => "ITA", :name => "Italy", :zone => eu_vat_zone)
     Spree::Config.set(:default_country_id => italy.id)
     ita_address = Factory(:address, :country => italy, :state_name => "Roma")
-    eu_shipping = Factory(:shipping_method, :name => "EU", :zone => Spree::Zone.find_by_name("EU_VAT"))
+    eu_shipping = Factory(:shipping_method, :name => "EU", :zone => eu_vat_zone)
+    # TODO: Figure why calculator after_create is not firing to set this
+    eu_shipping.calculator.set_preference(:amount, 10)
     user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
     visit spree.login_path
     fill_in "user_email", :with => user.email
@@ -287,9 +290,9 @@ describe "Checkout", :js => true do
     str_addr = "bill_address"
     select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{ita_address.send(field)}"
     end
-    select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+    select "Alabama", :from => "order_#{str_addr}_attributes_state_id"
     check "order_use_billing"
     click_button "Save and Continue"
     click_button "Save and Continue"
