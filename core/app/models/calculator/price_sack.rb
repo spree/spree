@@ -1,10 +1,10 @@
-class Calculator::PriceBucket < Calculator
+class Calculator::PriceSack < Calculator
   preference :minimal_amount, :decimal, :default => 0
   preference :normal_amount, :decimal, :default => 0
   preference :discount_amount, :decimal, :default => 0
 
   def self.description
-    I18n.t("price_bucket")
+    I18n.t("price_sack")
   end
 
   # as object we always get line items, as calculable we have Coupon, ShippingMethod
