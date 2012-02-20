@@ -59,7 +59,8 @@ module Spree
     end
 
     def self.default
-      new :country_id => Spree::Config[:default_country_id]
+      country = Spree::Country.find_by_id(Spree::Config[:default_country_id])
+      new :country_id => country.try(:id) || Country.first.id
     end
 
     # can modify an address if it's not been used in an order (but checkouts controller has finer control)
