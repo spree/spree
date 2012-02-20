@@ -46,6 +46,9 @@ index:
     - title: Application Processes
       url: deployment_application_processes
       text: Details the use of the Foreman gem to define and manage applications processes.
+    - title: Requesting and configuring SSL
+      url: requesting_and_configuring_ssl
+      text: How to generate a certificate request and private key, and install an SSL certificate.
     - title: Configuration Tips
       url: deployment_tips
       text: General troubleshooting and configuration tips
