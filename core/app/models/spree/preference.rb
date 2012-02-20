@@ -1,7 +1,7 @@
 class Spree::Preference < ActiveRecord::Base
 
   validates :key, :presence => true
-  validates :value, :presence => true
+  validates :value, :presence => true, :unless => Proc.new { |pref| pref.value_type.to_sym == :boolean && pref.value == false }
   validates :value_type, :presence => true
 
   scope :valid, where(Spree::Preference.arel_table[:key].not_eq(nil)).where(Spree::Preference.arel_table[:value_type].not_eq(nil))
