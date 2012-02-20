@@ -272,7 +272,7 @@ describe "Checkout", :js => true do
     ita_address = Factory(:address, :country => italy, :state_name => "Roma")
     eu_shipping = Factory(:shipping_method, :name => "EU", :zone => eu_vat_zone)
     # TODO: Figure why calculator after_create is not firing to set this
-    eu_shipping.calculator.set_preference(:amount, 10)
+    eu_shipping.calculator.set_preference(:amount, 20)
     user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
     visit spree.login_path
     fill_in "user_email", :with => user.email
@@ -306,7 +306,8 @@ describe "Checkout", :js => true do
     fill_in "order_#{str_addr}_attributes_state_name", :with => "#{ita_address.state_name}"
     check "order_use_billing"
     click_button "Save and Continue"
-    page.should have_content("EU $10.00")
-    page.should_not have_content("Shipping: $10.00")
+    choose "EU $20.00"
+    click_button "Save and Continue"
+    page.should have_content("Shipping: $20.00")
   end
 end
