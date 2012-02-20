@@ -10,6 +10,15 @@ module Spree
       paths.flatten
     end
 
+    def drop_database
+      say "dropping database"
+      inside dummy_path do
+        quietly do
+          rake 'db:drop -f sandbox/Rakefile'
+        end
+      end
+    end
+
     protected
     def dummy_path
       'sandbox'
