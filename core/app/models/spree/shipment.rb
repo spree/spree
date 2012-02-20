@@ -41,6 +41,7 @@ module Spree
     def cost
       adjustment ? adjustment.amount : 0
     end
+    alias_method :amount, :cost
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'pending', :use_transactions => false do
