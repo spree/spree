@@ -367,7 +367,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       text-transform: uppercase;
       border-bottom: 1px solid lighten($body_text_color, 60);
       margin-bottom: 5px;
-      // color: $link_text_color;
       font-size: $main_navigation_header_font_size;
     }
 
@@ -554,7 +553,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       text-transform: uppercase;
       border-bottom: 1px solid #ededed;
       margin-bottom: 5px;
-      color: #00adee;
+      color: $link_text_color;
       font-size: $base_font_size + 2;
       line-height: 24px;
     }
@@ -849,14 +848,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #existing-customer, #new-customer, #forgot-password {
     h6 {
       text-transform: uppercase;
-      // color: $link_text_color;
     }
   }
 
   #registration {
     h6 {
-      text-transform: uppercase;
-      // color: $link_text_color;
+      text-transform: uppercase;      
     }
 
     #existing-customer {
