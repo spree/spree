@@ -17,7 +17,7 @@ module Spree
     private
 
       def rate
-        rate = self.calculable
+        self.calculable
       end
 
       def compute_order(order)
