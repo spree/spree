@@ -1,0 +1,91 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<h1><%= t(:image_settings) %></h1>
+
+<p><span class="warning"><%= t(:image_settings_warning) %></span></p>
+
+<%= form_tag admin_image_settings_path, :method => :put do %>
+
+  <p data-hook="attachment_path">
+    <label>
+      <%= label_tag 'preferences[attachment_path]', t(:attachment_path) %>
+      <%= preference_field_tag 'preferences[attachment_path]', Spree::Config[:attachment_path], :type => :string %>
+    </label>
+  </p>
+
+  <p data-hook="attachment_default_url">
+    <label>
+      <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
+      <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string %>
+    </label>
+  </p>
+
+  <p data-hook="attachment_default_style">
+    <label>
+      <%= label_tag 'preferences[attachment_default_style]', t(:attachment_default_style) %>
+      <%= collection_select 'preferences', 'attachment_default_style', @styles, :first, :first, {:selected => Spree::Config[:attachment_default_style] } %> 
+    </label>
+  </p>
+
+  <div id="attachment_styles" data-hook="attachment_styles">
+    <h2><%= t(:attachment_styles) %></h2>
+    <ul id="styles_list">
+      <% @styles.each do |style_name, style_value| %>
+        <li>
+          <%= label_tag "attachment_styles[#{style_name}]", style_name %>
+          <%= text_field_tag "attachment_styles[#{style_name}]", style_value %>
+          <a href="#" alt="Destroy" class="destroy_style">x</a>
+        </li>
+      <% end %>
+    </ul>
+    <p><a href="#" alt="Add Style" class="add_style"><%= t(:add_new_style) %></a></p>
+  </div>
+
+  <p data-hook="use_s3">
+    <label>
+      <%= label_tag 'preferences[use_s3]', t(:use_s3) %>
+      <%= preference_field_tag 'preferences[use_s3]', Spree::Config[:use_s3], :type => :boolean %>
+    </label>
+  </p>
+
+  <div id="s3_settings" data-hook="s3_settings">
+    <h2><%= t(:configure_s3) %></h1>
+    <p data-hook="s3_access_key">
+      <label>
+        <%= label_tag 'preferences[s3_access_key]', t(:s3_access_key) %>
+        <%= preference_field_tag 'preferences[s3_access_key]', Spree::Config[:s3_access_key], :type => :string %>
+      </label>
+    </p>
+
+    <p data-hook="s3_secret">
+      <label>
+        <%= label_tag 'preferences[s3_secret]', t(:s3_secret) %>
+        <%= preference_field_tag 'preferences[s3_secret]', Spree::Config[:s3_secret], :type => :string %>
+      </label>
+    </p>
+
+    <p data-hook="s3_bucket">
+      <label>
+        <%= label_tag 'preferences[s3_bucket]', t(:s3_bucket) %>
+        <%= preference_field_tag 'preferences[s3_bucket]', Spree::Config[:s3_bucket], :type => :string %>
+      </label>
+    </p>
+
+    <h2><%= t(:s3_headers) %></h2>
+    <ul id="headers_list">
+      <% @headers.each do |header_name, header_value| %>
+        <li>
+          <%= label_tag "s3_headers[#{header_name}]", header_name %>
+          <%= text_field_tag "s3_headers[#{header_name}]", header_value %>
+          <a href="#" alt="Destroy" class="destroy_header">x</a>
+        </li>
+      <% end %>
+    </ul>
+    <p><a href="#" alt="Add Header" class="add_header"><%= t(:add_new_header) %></a></p>
+  </div>
+
+  <p class="form-buttons" data-hook="buttons">
+    <%= button t(:update) %>
+  </p>
+
+<% end %>

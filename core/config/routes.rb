@@ -130,6 +130,7 @@ Spree::Core::Engine.routes.draw do
     end
 
     resource :inventory_settings
+    resource :image_settings
     resources :google_analytics
 
     resources :orders do

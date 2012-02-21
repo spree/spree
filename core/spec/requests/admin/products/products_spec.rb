@@ -157,6 +157,7 @@ describe "Products" do
 
   context "uploading a product image" do
     it "should allow an admin to upload an image and edit it for a product" do
+      Spree::Image.attachment_definitions[:attachment].delete :storage
       Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
       Factory(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
       Factory(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")

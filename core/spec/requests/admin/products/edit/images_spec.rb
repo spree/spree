@@ -1,8 +1,10 @@
 require 'spec_helper'
 
 describe "Product Images" do
-  context "uploading and editing an image" do
+  context "uploading and editing an image", :js => true do
     it "should allow an admin to upload and edit an image for a product" do
+      Spree::Image.attachment_definitions[:attachment].delete :storage
+
       Factory(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01", :count_on_hand => 10)
 
       sign_in_as!(Factory(:admin_user))
