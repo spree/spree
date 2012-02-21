@@ -220,6 +220,8 @@ en:
   add: Add
   add_category: "Add Category"
   add_country: "Add Country"
+  add_new_header: "Add New Header"
+  add_new_style: "Add New Style"
   add_option_type: "Add Option Type"
   add_option_types: "Add Option Types"
   add_option_value: "Add Option Value"
@@ -265,6 +267,9 @@ en:
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
+  attachment_default_url: "Attachments URL"
+  attachment_path: "Attachments Path"
+  attachment_styles: "Paperclip Styles"
   authorization_failure: "Authorization Failure"
   authorized: Authorized
   availability: "Availability"
@@ -465,6 +470,9 @@ en:
   image: Image
   images: Images
   images_for: "Images for"
+  image_settings: "Image Settings"
+  image_settings_updated: "Image Settings successfully updated."
+  image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails to do this."
   in_progress: "In Progress"
   include_in_shipment: Include in Shipment
   included_in_other_shipment: Included in another Shipment
@@ -859,6 +867,12 @@ en:
   rma_number: RMA Number
   rma_value: RMA Value
   roles: Roles
+  s3_access_key: "Access Key"
+  s3_bucket: "Bucket"
+  s3_headers: "S3 Headers"
+  s3_secret: "Secret Key"
+  s3_used_for_product_images: "S3 is being used for product images"
+  s3_not_used_for_product_images: "S3 is not being used for product images"
   sales_tax: "Sales Tax"
   sales_total: "Sales Total"
   sales_total_description: "Sales Total For All Orders"
@@ -1026,6 +1040,7 @@ en:
   use_billing_address: Use Billing Address
   use_different_shipping_address: "Use Different Shipping Address"
   use_new_cc: "Use a new card"
+  use_s3: "Use Amazon S3 For Images"
   user: User
   user_account: User Account
   user_created_successfully: "User created successfully"

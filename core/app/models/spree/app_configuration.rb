@@ -64,6 +64,17 @@ module Spree
     preference :tax_using_ship_address, :boolean, :default => true
     preference :track_inventory_levels, :boolean, :default => true # will not track on_hand values for variants /products
 
+    # Preferences related to image settings
+    preference :attachment_default_url, :string, :default => '/spree/products/:id/:style/:basename.:extension'
+    preference :attachment_path, :string, :default => ':rails_root/public/spree/products/:id/:style/:basename.:extension'
+    preference :attachment_styles, :string, :default => "{\"mini\":\"48x48>\",\"small\":\"100x100>\",\"product\":\"240x240>\",\"large\":\"600x600>\"}"
+    preference :attachment_default_style, :string, :default => 'product'
+    preference :s3_access_key, :string
+    preference :s3_bucket, :string
+    preference :s3_secret, :string
+    preference :s3_headers, :string, :default => "{\"Cache-Control\":\"max-age=31557600\"}"
+    preference :use_s3, :boolean, :default => false # Use S3 for images rather than the file system
+
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base

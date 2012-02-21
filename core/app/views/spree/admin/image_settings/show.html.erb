@@ -1,0 +1,11 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<h1><%= t(:image_settings) %></h1>
+
+<h4><%= t(:attachment_path) %>: <%= Spree::Config[:attachment_path] %></h4>
+<h4><%= t(:attachment_default_url) %>: <%= Spree::Config[:attachment_default_url] %></h4>
+<h4><%= t(:attachment_default_style) %>: <%= Spree::Config[:attachment_default_style] %></h4>
+<h4><%= t(:defined_paperclip_styles) %>: <%= @styles_list %></h4>
+<h4><%= Spree::Config[:use_s3] ? t(:s3_used_for_product_images) : t(:s3_not_used_for_product_images) %></h4>
+
+<%= link_to_with_icon 'edit', t(:edit), edit_admin_image_settings_path, :id => 'admin_image_settings_link' %>
