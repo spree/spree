@@ -11,7 +11,9 @@ describe "Promotion Adjustments" do
       # creates a check payment method so we don't need to worry about cc details
       Factory(:payment_method)
 
-      Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+      sm = Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+      sm.calculator.set_preference(:amount, 10)
+
       user = Factory(:admin_user)
       Factory(:product, :name => "RoR Mug", :price => "40")
       Factory(:product, :name => "RoR Bag", :price => "20")

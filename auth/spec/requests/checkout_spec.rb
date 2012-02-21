@@ -5,7 +5,9 @@ describe "Checkout", :js => true do
     PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
     SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
     ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
-    Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+    sm =Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+    sm.calculator.set_preference(:amount, 10)
+
     Factory(:payment_method, :environment => 'test')
     Factory(:product, :name => "RoR Mug")
     visit spree.root_path
@@ -266,10 +268,12 @@ describe "Checkout", :js => true do
   end
 
   it "changing country to different zone during checkout should reset shipments" do
-    italy = Factory(:country, :iso_name => "ITALY", :iso => "IT", :iso3 => "ITA", :name => "Italy")
-    Spree::Config.set(:default_country_id => italy.id)
+    eu_vat_zone = Spree::Zone.find_by_name("EU_VAT")
+    italy = Factory(:country, :iso_name => "ITALY", :iso => "IT", :iso3 => "ITA", :name => "Italy", :zone => eu_vat_zone)
     ita_address = Factory(:address, :country => italy, :state_name => "Roma")
-    eu_shipping = Factory(:shipping_method, :name => "EU", :zone => Spree::Zone.find_by_name("EU_VAT"))
+    eu_shipping = Factory(:shipping_method, :name => "EU", :zone => eu_vat_zone)
+    # TODO: Figure why calculator after_create is not firing to set this
+    eu_shipping.calculator.set_preference(:amount, 20)
     user = Factory(:user, :email => "email@person.com", :password => "password", :password_confirmation => "password")
     visit spree.login_path
     fill_in "user_email", :with => user.email
@@ -287,9 +291,9 @@ describe "Checkout", :js => true do
     str_addr = "bill_address"
     select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{ita_address.send(field)}"
     end
-    select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+    select "Alabama", :from => "order_#{str_addr}_attributes_state_id"
     check "order_use_billing"
     click_button "Save and Continue"
     click_button "Save and Continue"
@@ -303,7 +307,8 @@ describe "Checkout", :js => true do
     fill_in "order_#{str_addr}_attributes_state_name", :with => "#{ita_address.state_name}"
     check "order_use_billing"
     click_button "Save and Continue"
-    page.should have_content("EU $10.00")
-    page.should_not have_content("Shipping: $10.00")
+    choose "EU $20.00"
+    click_button "Save and Continue"
+    page.should have_content("Shipping: $20.00")
   end
 end

@@ -13,7 +13,6 @@ require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
 require 'spree/url_helpers'
 
-
 RSpec.configure do |config|
   # == Mock Framework
   #

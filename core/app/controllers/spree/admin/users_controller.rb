@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class UsersController < ResourceController
-      rescue_from User::DestroyWithOrdersError, :with => :user_destroy_with_orders_error
 
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
       before_filter :check_json_authenticity, :only => :index

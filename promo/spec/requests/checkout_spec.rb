@@ -25,6 +25,7 @@ describe "Checkout" do
       fill_in "City", :with => "City of John"
       fill_in "Zip", :with => "01337"
       select "United States", :from => "Country"
+      sleep(2)
       select "Alaska", :from => "order[bill_address_attributes][state_id]"
       fill_in "Phone", :with => "555-555-5555"
       check "Use Billing Address"

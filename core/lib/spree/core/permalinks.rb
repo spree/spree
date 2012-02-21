@@ -11,10 +11,10 @@ module Spree
 
       module ClassMethods
         def make_permalink(options={})
-          options[:field] ||= "permalink"
+          options[:field] ||= :permalink
           self.permalink_options = options
 
-          validates_uniqueness_of permalink_options[:field]
+          validates permalink_options[:field], :uniqueness => true
 
           if self.table_exists? && self.column_names.include?(permalink_options[:field].to_s)
             before_validation(:on => :create) { save_permalink }
