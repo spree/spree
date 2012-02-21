@@ -31,7 +31,7 @@ module Spree
 
       def compute_line_item(line_item)
         if line_item.product.tax_category == rate.tax_category
-          round_to_two_places(line_item.total * rate.amount)
+          deduced_total_by_rate(line_item.total, rate)
         else
           0
         end
@@ -39,6 +39,10 @@ module Spree
 
       def round_to_two_places(amount)
         BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
+      end
+      
+      def deduced_total_by_rate(total, rate)
+        round_to_two_places(total - ( total / (1 + rate.amount) ) )
       end
 
   end
