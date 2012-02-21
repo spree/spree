@@ -344,7 +344,7 @@ mark {background-color: $c_colored; color: white; font-style: italic; font-weigh
           color: $c_colored;
 
           .amount {
-            font-size: $base_font_size + 6;
+            font-size: $horizontal_navigation_font_size + 2;
             font-weight: bold;
             border-left: 1px solid $c_border;
             padding-left: 5px;
