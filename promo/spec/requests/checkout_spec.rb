@@ -25,9 +25,6 @@ describe "Checkout" do
       fill_in "City", :with => "City of John"
       fill_in "Zip", :with => "01337"
       select "United States", :from => "Country"
-      Capybara.wait_until(10) do
-        page.should have_css("#order_bill_address_attributes_state_id", :visible => true)
-      end
       select "Alaska", :from => "order[bill_address_attributes][state_id]"
       fill_in "Phone", :with => "555-555-5555"
       check "Use Billing Address"
