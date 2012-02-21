@@ -6,10 +6,23 @@ module Spree
                       :default_style => :product,
                       :url => '/spree/products/:id/:style/:basename.:extension',
                       :path => ':rails_root/public/spree/products/:id/:style/:basename.:extension'
-
     # save the w,h of the original image (from which others can be calculated)
     # we need to look at the write-queue for images which have not been saved yet
     after_post_process :find_dimensions
+
+    # Load user defined paperclip settings
+    if Spree::Config[:use_s3]
+      s3_creds = { :access_key_id => Spree::Config[:s3_access_key], :secret_access_key => Spree::Config[:s3_secret], :bucket => Spree::Config[:s3_bucket] }
+      Spree::Image.attachment_definitions[:attachment][:storage] = :s3
+      Spree::Image.attachment_definitions[:attachment][:s3_credentials] = s3_creds
+      Spree::Image.attachment_definitions[:attachment][:s3_headers] = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
+      Spree::Image.attachment_definitions[:attachment][:bucket] = Spree::Config[:s3_bucket]
+    end
+
+    Spree::Image.attachment_definitions[:attachment][:styles] = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
+    Spree::Image.attachment_definitions[:attachment][:path] = Spree::Config[:attachment_path]
+    Spree::Image.attachment_definitions[:attachment][:default_url] = Spree::Config[:attachment_default_url]
+    Spree::Image.attachment_definitions[:attachment][:default_style] = Spree::Config[:attachment_default_style]
 
     #used by admin products autocomplete
     def mini_url
