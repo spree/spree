@@ -490,6 +490,15 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   ul#products {
+		&:after {
+	  	content: " ";
+    	display: block;
+	  	clear: both;
+	  	visibility: hidden;
+	  	line-height: 0;
+	  	height: 0;
+		}
+
     li {
       text-align: center;
       font-weight: bold;
