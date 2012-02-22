@@ -57,7 +57,7 @@ module Spree
       end
 
       def link_to_delete(resource, options = {}, html_options={})
-        options.assert_valid_keys(:url, :caption, :title, :dataType, :success, :name)
+        options.assert_valid_keys(:url, :caption, :title, :dataType, :success, :error, :name)
 
         options.reverse_merge! :url => object_url(resource) unless options.key? :url
         options.reverse_merge! :caption => t(:are_you_sure)
