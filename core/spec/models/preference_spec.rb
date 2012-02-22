@@ -30,6 +30,15 @@ describe Spree::Preference do
       pref.value_type.should == value_type.to_s
     end
 
+    it "false :boolean" do
+      value_type = :boolean
+      value = false
+      key = "boolean_key"
+      pref = round_trip_preference(key, value, value_type)
+      pref.value.should eq value
+      pref.value_type.should == value_type.to_s
+    end
+
     it ":integer" do
       value_type = :integer
       value = 10
