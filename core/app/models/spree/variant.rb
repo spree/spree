@@ -50,6 +50,12 @@ module Spree
       end
     end
 
+    # strips all non-price-like characters from the price.
+    def price=(price)
+      self[:price] = price.to_s.gsub(/[^0-9\.]/,'').to_f
+    end
+
+
     # returns number of units currently on backorder for this variant.
     def on_backorder
       inventory_units.with_state('backordered').size

@@ -19,20 +19,30 @@ describe Spree::Product do
     product.master.should_not be_nil
   end
 
-  context "#on_hand" do
+  context "product instance" do
     let(:product) do
       product = stub_model(Spree::Product)
       product.stub :master => stub_model(Spree::Variant)
       product
     end
 
-    # Regression test for #898
-    context 'returns the correct number of products on hand' do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        product.master.stub :on_hand => 2
+    context "#on_hand" do
+      # Regression test for #898
+      context 'returns the correct number of products on hand' do
+        before do
+          Spree::Config.set :track_inventory_levels => true
+          product.master.stub :on_hand => 2
+        end
+        specify { product.on_hand.should == 2 }
       end
-      specify { product.on_hand.should == 2 }
+    end
+
+    context "#price" do
+      # Regression test for #1173
+      it 'strips non-price characters' do
+        product.price = "$10"
+        product.price.should == 10.0
+      end
     end
   end
 
