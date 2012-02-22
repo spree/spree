@@ -52,7 +52,9 @@ module Spree
 
     # strips all non-price-like characters from the price.
     def price=(price)
-      self[:price] = price.to_s.gsub(/[^0-9\.]/,'').to_f
+      if price.present?
+        self[:price] = price.to_s.gsub(/[^0-9\.-]/,'').to_f
+      end
     end
 
 
