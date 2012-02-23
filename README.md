@@ -34,7 +34,7 @@ application.
     $ rails new my_store
     $ spree install my_store
 
-This will add the Spree gem, create intitializers, copy migrations and
+This will add the Spree gem, create initializers, copy migrations and
 optionally generate sample products and orders.
 
 If you get an "Unable to resolve dependencies" error when installing the Spree gem then you can try installing just the spree_cmd gem which should avoid any circular dependency issues.
@@ -57,7 +57,7 @@ Update your bundle
 
     $ bundle install
 
-Use the install generator to copy migrations, intializers and generate
+Use the install generator to copy migrations, initializers and generate
 sample data.
 
     $ rails g spree:install
