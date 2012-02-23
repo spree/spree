@@ -49,25 +49,6 @@ module Spree
         Spree::Config[:default_seo_title]
       end
 
-      # def reject_unknown_object
-      #   # workaround to catch problems with loading errors for permalink ids (reconsider RC permalink hack elsewhere?)
-      #   begin
-      #     load_object
-      #   rescue Exception => e
-      #     @object = nil
-      #   end
-      #   the_object = instance_variable_get "@#{object_name}"
-      #   the_object = nil if (the_object.respond_to?(:deleted?) && the_object.deleted?)
-      #   unless params[:id].blank? || the_object
-      #     if self.respond_to? :object_missing
-      #       self.object_missing(params[:id])
-      #     else
-      #       render_404(Exception.new("missing object in #{self.class.to_s}"))
-      #     end
-      #   end
-      #   true
-      # end
-
       def render_404(exception = nil)
         respond_to do |type|
           type.html { render :status => :not_found, :file    => "#{::Rails.root}/public/404", :formats => [:html], :layout => nil}
@@ -113,14 +94,6 @@ module Spree
         current_order.associate_user!(current_user)
         session[:guest_token] = nil
       end
-
-      #RAILS 3 TODO
-      # # Load all models using STI to fix associations such as @order.credits giving no results and resulting in incorrect order totals
-      # def touch_sti_subclasses
-      #   if Rails.env == 'development'
-      #     load(File.join(SPREE_ROOT,'config/initializers/touch.rb'))
-      #   end
-      # end
 
       def set_user_language
         locale = session[:locale] || Rails.application.config.i18n.default_locale || Spree::Config[:default_locale]
