@@ -10,24 +10,6 @@ describe Spree::Preference do
     @preference.should be_valid
   end
 
-  describe "validates value is present" do
-    it "string is valid" do
-      @preference = Spree::Preference.new
-      @preference.key = :test
-      @preference.value_type = :string
-      @preference.value = "test value"
-      @preference.should be_valid
-    end
-
-    it "nil string is invalid" do
-      @preference = Spree::Preference.new
-      @preference.key = :test
-      @preference.value_type = :string
-      @preference.value = nil
-      @preference.should_not be_valid
-    end
-  end
-
   describe "type coversion for values" do
     def round_trip_preference(key, value, value_type)
       p = Spree::Preference.new
