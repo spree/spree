@@ -3,12 +3,6 @@ class Spree::Preference < ActiveRecord::Base
   validates :key, :presence => true
   validates :value_type, :presence => true
 
-  validate do |preference|
-    unless preference.value.present? || preference.value.kind_of?(FalseClass)
-      preference.errors.add(:value, "Value must be present")
-    end
-  end
-
   scope :valid, where(Spree::Preference.arel_table[:key].not_eq(nil)).where(Spree::Preference.arel_table[:value_type].not_eq(nil))
 
   # The type conversions here should match
