@@ -103,6 +103,7 @@ module Spree
           locale = I18n.default_locale unless locale && I18n.available_locales.include?(locale.to_sym)
           I18n.locale = locale.to_sym
         end
+      end
     end
   end
 end
