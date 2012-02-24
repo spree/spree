@@ -74,11 +74,8 @@ module SpreeCmd
         gem :spree, @spree_gem_options
 
         if @install_default_gateways
-          gem :spree_usa_epay, { :git => 'git://github.com/spree/spree_usa_epay.git',
-                                 :ref => '6576a0ac6b998bd6efa4dd053ba57120511bee9c' }
-
-          gem :spree_skrill, { :git => 'git://github.com/spree/spree_skrill.git',
-                               :ref => '93cd573addeff26fbbd8c5855d35df659cf5bf1f' }
+          gem :spree_usa_epay
+          gem :spree_skrill
         end
 
         run 'bundle install', :capture => true
