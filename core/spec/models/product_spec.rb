@@ -151,27 +151,8 @@ describe Spree::Product do
     end
     
     context "when prototype with option types is supplied" do
-           
-      def build_option_type_with_values(name, values)
-        ot = Factory(:option_type, :name => name)
-        values.each do |val|
-          ot.option_values.create(:name => val.downcase, :presentation => val)
-        end
-        ot
-      end
-            
-      let(:prototype) do
-        size = build_option_type_with_values("size", %w(Small Medium Large))
-        Factory(:prototype, :option_types => [ size ])
-      end
       
-      let(:option_values_hash) do
-        hash = {}
-        prototype.option_types.each do |i|
-          hash[i.id.to_s] = i.option_value_ids
-        end
-        hash
-      end
+      include_context "product prototype"
       
       before { @product.prototype_id = prototype.id }
       

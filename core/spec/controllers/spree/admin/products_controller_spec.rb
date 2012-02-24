@@ -50,34 +50,9 @@ describe Spree::Admin::ProductsController do
   
 
   context "creating a product" do
-
-    def build_option_type_with_values(name, values)
-      ot = Factory(:option_type, :name => name)
-      values.each do |val|
-        ot.option_values.create(:name => val.downcase, :presentation => val)
-      end
-      ot
-    end
-
-    let(:product_attributes) do
-      # Factory.attributes_for is un-deprecated!
-      #   https://github.com/thoughtbot/factory_girl/issues/274#issuecomment-3592054
-      Factory.attributes_for(:product)
-    end
-              
-    let(:prototype) do
-      size = build_option_type_with_values("size", %w(Small Medium Large))
-      Factory(:prototype, :option_types => [ size ])
-    end
     
-    let(:option_values_hash) do
-      hash = {}
-      prototype.option_types.each do |i|
-        hash[i.id.to_s] = i.option_value_ids
-      end
-      hash
-    end
-    
+    include_context "product prototype"
+  
     it "should create product" do
       get :new
       response.should render_template("admin/products/new")
