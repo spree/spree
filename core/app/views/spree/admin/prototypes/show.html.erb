@@ -11,7 +11,7 @@
       <% ot.option_values.each do |ov| %>
         <li>
           <%= check_box_tag "product[option_values_hash[#{ot.id}]][]", ov.id, params[:product] && (params[:product][:option_values_hash] || {}).values.flatten.include?(ov.id.to_s), :id => "option_value_#{ov.id}", :class => "option-value" %>
-          <%= label_tag "option_value_#{ov.id}", ov.name %>
+          <%= label_tag "option_value_#{ov.id}", ov.presentation %>
         </li>
       <% end %>
       </ul>
