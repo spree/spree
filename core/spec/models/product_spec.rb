@@ -147,6 +147,72 @@ describe Spree::Product do
         @product.save
         @product.properties.count.should == 1
       end
+      
+    end
+    
+    context "when prototype with option types is supplied" do
+           
+      def build_option_type_with_values(name, values)
+        ot = Factory(:option_type, :name => name)
+        values.each do |val|
+          ot.option_values.create(:name => val.downcase, :presentation => val)
+        end
+        ot
+      end
+            
+      let(:prototype) do
+        size = build_option_type_with_values("size", %w(Small Medium Large))
+        Factory(:prototype, :option_types => [ size ])
+      end
+      
+      let(:option_values_hash) do
+        hash = {}
+        prototype.option_types.each do |i|
+          hash[i.id.to_s] = i.option_value_ids
+        end
+        hash
+      end
+      
+      before { @product.prototype_id = prototype.id }
+      
+      it "should create option types based on the prototype" do
+        @product.save
+        @product.option_type_ids.length.should == 1
+        @product.option_type_ids.should == prototype.option_type_ids
+      end
+      
+      it "should create product option types based on the prototype" do  
+        @product.save
+        @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
+      end
+      
+      it "should create variants from an option values hash with one option type" do
+        @product.option_values_hash = option_values_hash
+        @product.save
+        @product.variants.length.should == 3
+      end
+      
+      it "should still create variants when option_values_hash is given but prototype id is nil" do
+        @product.option_values_hash = option_values_hash
+        @product.prototype_id = nil
+        @product.save
+        @product.option_type_ids.length.should == 1
+        @product.option_type_ids.should == prototype.option_type_ids
+        @product.variants.length.should == 3
+      end
+      
+      it "should create variants from an option values hash with multiple option types" do
+        color = build_option_type_with_values("color", %w(Red Green Blue))
+        logo  = build_option_type_with_values("logo", %w(Ruby Rails Nginx))
+        option_values_hash[color.id.to_s] = color.option_value_ids
+        option_values_hash[logo.id.to_s] = logo.option_value_ids
+        @product.option_values_hash = option_values_hash
+        @product.save
+        @product = @product.reload
+        @product.option_type_ids.length.should == 3
+        @product.variants.length.should == 27
+      end
+      
     end
 
   end
