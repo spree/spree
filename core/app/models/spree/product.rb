@@ -38,6 +38,7 @@ module Spree
 
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
+    after_create :build_varaints_from_option_values_hash, :if => :option_values_hash
     before_save :recalculate_count_on_hand
     after_save :update_memberships if ProductGroup.table_exists?
     after_save :save_master
@@ -64,6 +65,7 @@ module Spree
 
     validates :name, :price, :permalink, :presence => true
 
+    attr_accessor :option_values_hash
     accepts_nested_attributes_for :product_properties, :allow_destroy => true, :reject_if => lambda { |pp| pp[:property_name].blank? }
 
     make_permalink
@@ -124,6 +126,26 @@ module Spree
         self.option_types = prototype.option_types
       end
     end
+    
+    # Ensures option_types and product_option_types exist for keys in option_values_hash
+    def ensure_option_types_exist_for_values_hash
+      return if option_values_hash.nil?
+      option_values_hash.keys.map(&:to_i).each do |id|
+        self.option_type_ids << id unless self.option_type_ids.include?(id)
+        self.product_option_types.create(:option_type_id => id) unless product_option_types.map(&:option_type_id).include?(id)
+      end
+    end
+    
+    # Builds variants from a hash of option types & values
+    def build_varaints_from_option_values_hash
+      ensure_option_types_exist_for_values_hash
+      opts = Spree::Core::CartesianArray.new(*option_values_hash.values).product
+      opts.each do |ids|
+        variant = self.variants.create(:option_value_ids => ids, :price => self.master.price)
+      end
+      save
+    end
+    
 
     # for adding products which are closely related to existing ones
     # define "duplicate_extra" for site-specific actions, eg for additional fields
@@ -191,6 +213,7 @@ module Spree
     end
 
     private
+    
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
           variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
