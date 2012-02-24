@@ -5,6 +5,7 @@ module Spree
 
       before_filter :check_json_authenticity, :only => :index
       before_filter :load_data, :except => :index
+      create.before :create_before
       update.before :update_before
 
       def index
@@ -97,6 +98,11 @@ module Spree
           @collection.uniq
         end
 
+      end
+
+      def create_before
+        return if params[:product][:prototype_id].blank?
+        @prototype = Spree::Prototype.find(params[:product][:prototype_id])
       end
 
       def update_before
