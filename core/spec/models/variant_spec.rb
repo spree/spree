@@ -10,11 +10,6 @@ describe Spree::Variant do
   context "validations" do
     it { should have_valid_factory(:variant) }
 
-    it "should validate price is numeric" do
-      variant.price = "aaa"
-      variant.should be_invalid
-    end
-
     it "should validate price is greater than 0" do
       variant.price = -1
       variant.should be_invalid

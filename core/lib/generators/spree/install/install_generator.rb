@@ -114,6 +114,15 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       end
     end
 
+    def create_database
+      say_status :creating, "database"
+      silence_stream(STDOUT) do
+        silence_stream(STDERR) do
+          silence_warnings { rake 'db:create' }
+        end
+      end
+    end
+
     def run_migrations
       if @run_migrations
         say_status :running, "migrations"

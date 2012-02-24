@@ -2,6 +2,9 @@ source 'http://rubygems.org'
 
 gem 'json'
 gem 'sqlite3'
+gem 'mysql2'
+gem 'pg'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -31,10 +34,6 @@ group :test do
   gem 'selenium-webdriver', '2.16.0'
   gem 'database_cleaner', '0.7.1'
   gem 'launchy'
-end
-
-group :ci do
-  gem 'mysql2', '~> 0.3.6'
 end
 
 # platform :ruby_18 do
