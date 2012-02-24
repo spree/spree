@@ -4,7 +4,7 @@
 
 <%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
 <fieldset data-hook="new_product">
-
+  
   <%= f.field_container :name do %>
     <%= f.label :name, t(:name) %> <span class="required">*</span><br />
     <%= f.text_field :name, :class => 'fullwidth title' %>
@@ -45,8 +45,32 @@
 
     </div>
   </div>
+  
+  <div class="clearfix" data-hook="product-from-prototype" id="product-from-prototype">
+    <%= render :file => 'spree/admin/prototypes/show' if @prototype %>
+  </div>
 
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-
+  
 </fieldset>
 <% end %>
+
+<script type="text/javascript">
+//<![CDATA[
+  (function($){
+    var base_url = "<%= admin_prototypes_url %>";
+    var prototype_select = $('#product_prototype_id');    
+    prototype_select.change(function() {
+      var id = prototype_select.val();
+      if (id.length) {
+        $('#product-from-prototype').load([ base_url, id ].join("/"));
+      } else {
+        $('#product-from-prototype').empty();
+      }
+    })
+    if (prototype_select.html() == "") {
+      prototype_select.change();
+    }
+  })(jQuery);
+//]]>
+</script>

@@ -5,6 +5,14 @@ module Spree
 
       helper 'spree/admin/product_properties'
 
+      def show
+        if request.xhr?
+          render :layout => false
+        else
+          redirect_to admin_prototypes_path
+        end
+      end
+
       def available
         @prototypes = Prototype.order('name asc')
         respond_with(@prototypes) do |format|
