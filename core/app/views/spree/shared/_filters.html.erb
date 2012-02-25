@@ -1,26 +1,28 @@
-<%= form_tag '', :method => :get, :id => 'sidebar_products_search' do %>
-  <% params[:search] ||= {} %>
-  <%= hidden_field_tag 'per_page', params[:per_page] %>
-  <% filters = @taxon ? @taxon.applicable_filters : [Spree::ProductFilters.all_taxons] %>
-  <% filters.each do |filter| %>
-    <% labels = filter[:labels] || filter[:conds].map {|m,c| [m,m]} %>
-    <% next if labels.empty? %>
-    <div class="navigation" data-hook="navigation">
-      <span class="category"> <%= filter[:name] %> </span>
-      <ul class="filter_choices">
-        <% labels.each do |nm,val| %>
-          <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
-          <li class="nowrap">
-            <input type="checkbox"
-                   id="<%= label %>"
-                   name="search[<%= filter[:scope].to_s %>][]"
-                   value="<%= val %>"
-                   <%= params[:search][filter[:scope]] && params[:search][filter[:scope]].include?(val.to_s) ? "checked" : "" %> />
-            <label class="nowrap" for="<%= label %>"> <%= nm %> </label>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+<% filters = @taxon ? @taxon.applicable_filters : [Spree::ProductFilters.all_taxons] %>
+<% unless filters.empty? %>
+  <%= form_tag '', :method => :get, :id => 'sidebar_products_search' do %>
+    <% params[:search] ||= {} %>
+    <%= hidden_field_tag 'per_page', params[:per_page] %>
+    <% filters.each do |filter| %>
+      <% labels = filter[:labels] || filter[:conds].map {|m,c| [m,m]} %>
+      <% next if labels.empty? %>
+      <div class="navigation" data-hook="navigation">
+        <span class="category"> <%= filter[:name] %> </span>
+        <ul class="filter_choices">
+          <% labels.each do |nm,val| %>
+            <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
+            <li class="nowrap">
+              <input type="checkbox"
+                     id="<%= label %>"
+                     name="search[<%= filter[:scope].to_s %>][]"
+                     value="<%= val %>"
+                     <%= params[:search][filter[:scope]] && params[:search][filter[:scope]].include?(val.to_s) ? "checked" : "" %> />
+              <label class="nowrap" for="<%= label %>"> <%= nm %> </label>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <%= submit_tag t(:search), :name => nil %>
   <% end %>
-  <%= submit_tag t(:search), :name => nil %>
 <% end %>
