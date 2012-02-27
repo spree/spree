@@ -90,15 +90,6 @@ en:
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
-      spree/product_group:
-        name: Name
-        product_count: "Product count"
-        product_scopes: "Product scopes"
-        products: "Products"
-        url: URL
-      spree/product_scope:
-        arguments: "Arguments"
-        description: "Description"
       spree/property:
         name: Name
         presentation: Presentation
@@ -172,9 +163,6 @@ en:
       spree/product:
         one: Product
         other: Products
-      spree/product_group:
-        one: "Product group"
-        other: "Product groups"
       spree/property:
         one: Property
         other: Properties
@@ -332,7 +320,6 @@ en:
   country_based: "Country Based"
   create: Create
   create_a_new_account: "Create a new account"
-  create_product_group_from_products: Create a new product group from these products
   create_user_account: Create User Account
   created_successfully: "Created Successfully"
   credit: Credit
@@ -720,18 +707,12 @@ en:
         description: "Scopes for selecting products based on option and property values"
         name: Values
     scopes:
-      ascend_by_master_price:
-        name: Ascend by product master price
       ascend_by_name:
         name: Ascend by product name
       ascend_by_updated_at:
         name: Ascend by actualization date
-      descend_by_master_price:
-        name: Descend by product master price
       descend_by_name:
         name: Descend by product name
-      descend_by_popularity:
-        name: Sort by popularity(most popular first)
       descend_by_updated_at:
         name: Descend by actualization date
       in_name:
