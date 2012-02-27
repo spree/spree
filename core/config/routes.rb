@@ -40,12 +40,6 @@ Spree::Core::Engine.routes.draw do
     end
   end
 
-  #   # Search routes
-  match 's/*product_group_query', :to => 'products#index', :as => :simple_search
-  match '/pg/:product_group_name', :to => 'products#index', :as => :pg_search
-  match '/t/*id/s/*product_group_query', :to => 'taxons#show', :as => :taxons_search
-  match 't/*id/pg/:product_group_name', :to => 'taxons#show', :as => :taxons_pg_search
-
   #   # route globbing for pretty nested taxon and product paths
   match '/t/*id', :to => 'taxons#show', :as => :nested_taxons
   #
@@ -188,10 +182,6 @@ Spree::Core::Engine.routes.draw do
     resources :tax_rates
     resource  :tax_settings
     resources :calculators
-    resources :product_groups do
-      resources :product_scopes
-    end
-
 
     resources :trackers
     resources :payment_methods

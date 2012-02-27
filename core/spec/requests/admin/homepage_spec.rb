@@ -58,9 +58,6 @@ describe "Homepage" do
       within(:css, '#sub-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
     end
 
-    it "should have a link to product groups" do
-      within(:css, '#sub-menu') { page.find_link("Product Groups")['/admin/product_groups'] }
-    end
   end
 
   context "visiting the users tab" do

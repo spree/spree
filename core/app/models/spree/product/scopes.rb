@@ -5,12 +5,7 @@ module Spree
         :ascend_by_updated_at,
         :descend_by_updated_at,
         :ascend_by_name,
-        :descend_by_name,
-        # Need to have master price scopes here
-        # This makes them appear in admin/product_groups/edit
-        :ascend_by_master_price,
-        :descend_by_master_price,
-        :descend_by_popularity
+        :descend_by_name
       ]
     end
 
@@ -74,9 +69,9 @@ module Spree
       taxons.first ? prepare_taxon_conditions(taxons) : scoped
     end
 
-    def self.in_cached_group(product_group)
-      joins(:product_groups).where('spree_product_groups_products.product_group_id' => product_group)
-    end
+    # def self.in_cached_group(product_group)
+    #   joins(:product_groups).where('spree_product_groups_products.product_group_id' => product_group)
+    # end
 
     # a scope that finds all products having property specified by name, object or id
     def self.with_property(property)
