@@ -22,11 +22,8 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_table :payment_methods,         :spree_payment_methods
     rename_table :preferences,             :spree_preferences
     rename_table :products,                :spree_products
-    rename_table :product_groups,          :spree_product_groups
-    rename_table :product_groups_products, :spree_product_groups_products
     rename_table :product_option_types,    :spree_product_option_types
     rename_table :product_properties,      :spree_product_properties
-    rename_table :product_scopes,          :spree_product_scopes
     rename_table :products_taxons,         :spree_products_taxons
     rename_table :properties,              :spree_properties
     rename_table :prototypes,              :spree_prototypes

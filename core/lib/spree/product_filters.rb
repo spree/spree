@@ -6,7 +6,7 @@ module Spree
   # To override this file...
   #   1) Make a copy of it in your sites local /lib folder
   #   2) Add it to the config load path, or require it in an initializer, e.g...
-  #      
+  #
   #      # config/initializers/spree.rb
   #      require 'product_filters'
   #
@@ -48,7 +48,7 @@ module Spree
   module ProductFilters
     extend ActionView::Helpers::NumberHelper
     extend Spree::BaseHelper
-    
+
     # Example: filtering by price
     #   The named scope just maps incoming labels onto their conditions, and builds the conjunction
     #   'price' is in the base scope's context (ie, "select foo from products where ...") so
