@@ -285,7 +285,7 @@ $ bundle exec rake db:migrate
 
 h4. Asset Manifest Files
 
-Remove the line requiring spree_dash from both **app/assets/stylesheets/store/all.css** and **app/assets/stylesheets/admin/all.css**
+Remove the line requiring spree_dash from **app/assets/stylesheets/store/all.css**, **app/assets/stylesheets/admin/all.css**, **app/assets/javascripts/store/all.js**, and **app/assets/javascripts/store/all.js**
 
 h4. Other Tips for Upgrading
 
