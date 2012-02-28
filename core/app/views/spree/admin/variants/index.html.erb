@@ -18,7 +18,7 @@
     <% next if variant.option_values.empty? %>
     <tr id="spree_variant_<%= variant.id %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
       <td><span class="handle"></span> <%= variant.options_text %></td>
-      <td><%= variant.price %></td>
+      <td><%= number_to_currency variant.price %></td>
       <td><%= variant.sku %></td>
       <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
         <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
