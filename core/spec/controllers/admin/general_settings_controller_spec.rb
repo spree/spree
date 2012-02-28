@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Admin::GeneralSettingsController do
   before :each do 
-    controller.stub :current_user => mock
+    controller.stub :current_user => mock_model(User, :has_role? => true)
   end
 
   it "saves dismissed alerts in a preference" do

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CheckoutController do
   let(:order) { Order.new }
-  let(:user) { mock_model User }
+  let(:user) { mock_model User, :pending_promotions => [] }
   let(:token) { "some_token" }
 
   before do
@@ -115,7 +115,7 @@ describe CheckoutController do
         context "with a registered user" do
           before do
             user.stub :has_role? => true
-            controller.stub :current_user => mock_model(User, :has_role? => true)
+            controller.stub :current_user => mock_model(User, :has_role? => true, :pending_promotions => [])
           end
 
           it "should redirect to the standard order view" do
@@ -146,7 +146,7 @@ describe CheckoutController do
   end
 
   context "#update_registration" do
-    let(:user) { user = mock_model User }
+    let(:user) { user = mock_model User, :pending_promotions => [] }
 
     it "should not check registration" do
       controller.stub :check_authorization
