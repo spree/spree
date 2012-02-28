@@ -20,10 +20,10 @@
     <%= f.text_field :sku %></p>
 
     <p data-hook="price"><%= f.label :price, t(:price) %>:<br />
-    <%= f.text_field :price, :value => number_with_precision(@variant.price, :precision => 2) %></p>
+    <%= f.text_field :price %></p>
 
     <p data-hook="cost_price"><%= f.label :cost_price, t(:cost_price) %>:<br />
-    <%= f.text_field :cost_price, :value => number_with_precision(@variant.cost_price, :precision => 2) %></p>
+    <%= f.text_field :cost_price %></p>
 
     <% if Spree::Config[:track_inventory_levels] %>
       <p data-hook="on_hand"><%= f.label :on_hand, t(:on_hand) %>: <br />

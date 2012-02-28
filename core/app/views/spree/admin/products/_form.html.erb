@@ -21,13 +21,13 @@
   <div class="right" data-hook="admin_product_form_right">
       <%= f.field_container :price do %>
         <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
-        <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2) %>
+        <%= f.text_field :price %>
         <%= f.error_message_on :price %>
       <% end %>
 
       <%= f.field_container :cost_price do %>
         <%= f.label :cost_price, t(:cost_price) %><br />
-        <%= f.text_field :cost_price, :value => number_with_precision(@product.cost_price, :precision => 2) %>
+        <%= f.text_field :cost_price %>
       <%= f.error_message_on :cost_price %>
     <% end %>
 
