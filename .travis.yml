@@ -7,4 +7,4 @@ notifications:
   irc: "irc.freenode.org#spree"
 branches:
   only:
-    - master
+    - 0-70-stable
