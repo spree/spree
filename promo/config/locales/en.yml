@@ -1,8 +1,8 @@
 ---
 en:
-  activemodel:
+  activerecord:
     attributes:
-      promotion:
+      spree/promotion:
         name: Name
         description: Description
         code: Code

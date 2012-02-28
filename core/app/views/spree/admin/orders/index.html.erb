@@ -10,16 +10,16 @@
   <thead>
     <tr data-hook="admin_orders_index_headers">
       <% if @show_only_completed %>
-        <th><%= sort_link @search, :completed_at, t('activerecord.attributes.order.completed_at') %></th>
+        <th><%= sort_link @search, :completed_at, t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
       <% else %>
-        <th><%= sort_link @search, :created_at,   t(:order_date) %></th>
+        <th><%= sort_link @search, :created_at,   t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
       <% end %>
-      <th><%= sort_link @search, :number,         t(:order_number) %></th>
-      <th><%= sort_link @search, :state,          t(:status) %></th>
-      <th><%= sort_link @search, :payment_state,  t(:payment_state) %></th>
-      <th><%= sort_link @search, :shipment_state, t(:shipment_state) %></th>
-      <th><%= sort_link @search, :email,          t(:customer) %></th>
-      <th><%= sort_link @search, :total,          t(:total) %></th>
+      <th><%= sort_link @search, :number,         t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
+      <th><%= sort_link @search, :state,          t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
+      <th><%= sort_link @search, :payment_state,  t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+      <th><%= sort_link @search, :shipment_state, t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+      <th><%= sort_link @search, :email,          t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
+      <th><%= sort_link @search, :total,          t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
       <th data-hook="admin_orders_index_header_actions"></th>
     </tr>
   </thead>

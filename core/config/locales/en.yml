@@ -56,6 +56,10 @@ en:
         special_instructions: "Special Instructions"
         state: State
         total: Total
+        created_at: Order Date
+        payment_state: Payment State
+        shipment_state: Shipment State
+        email: Customer E-Mail
       spree/order/bill_address:
           address1: "Billing address street"
           city: "Billing address city"
@@ -625,11 +629,17 @@ en:
   order_total: "Order Total"
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
+  orders: Orders
   other_payment_options: Other Payment Options
   out_of_stock: "Out of Stock"
   over_paid: "Over Paid"
+  overview: Overview
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
+  pagination:
+    previous_page: "&laquo; previous page"
+    next_page: "next page &raquo;"
+    truncate: "&hellip;"
   paid: Paid
   parent_category: "Parent Category"
   password: Password
@@ -906,6 +916,7 @@ en:
   shipping_total: "Shipping Total"
   shop_by_taxonomy: "Shop by %{taxonomy}"
   shopping_cart: "Shopping Cart"
+  short_description: "Short description"
   show: Show
   show_active: "Show Active"
   show_deleted: "Show Deleted"
