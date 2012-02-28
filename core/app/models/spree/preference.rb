@@ -12,6 +12,8 @@ class Spree::Preference < ActiveRecord::Base
       case self[:value_type].to_sym
       when :string, :text
         self[:value].to_s
+      when :text
+        self[:value].to_s
       when :password
         self[:value].to_s
       when :decimal
