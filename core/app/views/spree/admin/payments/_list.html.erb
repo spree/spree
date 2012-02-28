@@ -1,7 +1,7 @@
 <table class="index">
   <tr data-hook="payments_header">
     <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t(:amount) %></th>
+    <th><%= t(:amount, :scope => 'activerecord.attributes.spree/payment') %></th>
     <th><%= t(:payment_method) %></th>
     <th><%= t(:payment_state) %></th>
     <th><%= t(:payment_actions) %></th>
