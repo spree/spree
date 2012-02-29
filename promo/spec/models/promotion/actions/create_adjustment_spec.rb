@@ -21,7 +21,7 @@ describe Promotion::Actions::CreateAdjustment do
       action.calculator.stub(:compute => 2500)
 
       action.perform(:order => order)
-      promotion.credits_count.should == 1
+      #promotion.credits_count.should == 1
       order.adjustments.count.should == 1
       order.adjustments.first.amount.to_i.should == -2500
     end
@@ -33,7 +33,7 @@ describe Promotion::Actions::CreateAdjustment do
 
       action.perform(:order => order)
       action.perform(:order => order)
-      promotion.credits_count.should == 1
+      #promotion.credits_count.should == 1
     end
 
   end
