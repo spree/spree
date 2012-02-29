@@ -106,7 +106,7 @@ module Spree::Preferences::Preferable
 
   def convert_preference_value(value, type)
     case type
-    when :string
+    when :string, :text
       value.to_s
     when :password
       value.to_s
