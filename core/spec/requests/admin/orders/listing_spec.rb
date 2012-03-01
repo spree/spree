@@ -30,7 +30,7 @@ describe "Orders Listing" do
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R200"
       find('table#listing_orders tbody tr:nth-child(2) td:nth-child(2)').text.should == "R100"
 
-      within(:css, 'table#listing_orders thead') { click_link "Order" }
+      within(:css, 'table#listing_orders thead') { click_link "Number" }
 
       # number asc
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R100"
