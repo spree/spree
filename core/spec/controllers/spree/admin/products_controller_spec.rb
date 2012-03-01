@@ -46,6 +46,48 @@ describe Spree::Admin::ProductsController do
       flash[:error].should eql("Product is not found")
     end
   end
+  
+  
+
+  context "creating a product" do
+    
+    include_context "product prototype"
+  
+    it "should create product" do
+      get :new
+      response.should render_template("admin/products/new")
+    end
+    
+    it "should create product" do
+      post :create, :product => product_attributes      
+      response.should redirect_to(spree.edit_admin_product_path(Spree::Product.last))
+    end
+    
+    it "should create product from prototype" do
+      post :create, :product => product_attributes.merge(:prototype_id => prototype.id)
+      product = Spree::Product.last
+      response.should redirect_to(spree.edit_admin_product_path(product))
+      prototype.properties.each do |property|
+        product.properties.should include(property)
+      end
+      prototype.option_types.each do |ot|
+        product.option_types.should include(ot)
+      end
+      product.variants_including_master.length.should == 1
+    end
+    
+    it "should create product from prototype with option values hash" do
+      post :create, :product => product_attributes.merge(:prototype_id => prototype.id, :option_values_hash => option_values_hash)
+      product = Spree::Product.last
+      response.should redirect_to(spree.edit_admin_product_path(product))
+      option_values_hash.each do |option_type_id, option_value_ids|
+        Spree::ProductOptionType.where(:product_id => product.id, :option_type_id => option_type_id).first.should_not be_nil
+      end
+      product.variants.length.should == 3
+    end
+    
+  end
+  
 
   # regression test for #801
   context "destroying a product" do
