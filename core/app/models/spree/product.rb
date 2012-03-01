@@ -38,12 +38,12 @@ module Spree
 
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
-    after_create :build_varaints_from_option_values_hash, :if => :option_values_hash
+    after_create :build_variants_from_option_values_hash, :if => :option_values_hash
     before_save :recalculate_count_on_hand
     after_save :update_memberships if ProductGroup.table_exists?
     after_save :save_master
     after_save :set_master_on_hand_to_zero_when_product_has_variants
-    
+
     has_many :variants,
       :class_name => 'Spree::Variant',
       :conditions => ["#{::Spree::Variant.quoted_table_name}.is_master = ? AND #{::Spree::Variant.quoted_table_name}.deleted_at IS NULL", false],
@@ -126,7 +126,7 @@ module Spree
         self.option_types = prototype.option_types
       end
     end
-    
+
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
@@ -135,9 +135,9 @@ module Spree
         self.product_option_types.create(:option_type_id => id) unless product_option_types.map(&:option_type_id).include?(id)
       end
     end
-    
+
     # Builds variants from a hash of option types & values
-    def build_varaints_from_option_values_hash
+    def build_variants_from_option_values_hash
       ensure_option_types_exist_for_values_hash
       opts = Spree::Core::CartesianArray.new(*option_values_hash.values).product
       opts.each do |ids|
@@ -145,7 +145,6 @@ module Spree
       end
       save
     end
-    
 
     # for adding products which are closely related to existing ones
     # define "duplicate_extra" for site-specific actions, eg for additional fields
@@ -213,7 +212,7 @@ module Spree
     end
 
     private
-    
+
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
           variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
