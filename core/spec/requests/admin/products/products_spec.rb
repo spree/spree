@@ -78,26 +78,27 @@ describe "Products" do
       click_button "Update"
       page.should have_content("successfully updated!")
     end
-    
+
     it "should show validation errors", :js => true do
       click_button "Create"
       page.should have_content("Name can't be blank")
       page.should have_content("Price can't be blank")
     end
-  
+
   end
-  
+
   context "creating a new product from a prototype" do
-    
+
     include_context "product prototype"
 
     before(:each) do
-      @prototype = prototype
+      @option_type_prototype = prototype
+      @property_prototype = Factory(:prototype, :name => "Random") 
       click_link "Products"
       click_link "admin_new_product"
       within('#new_product') { page.should have_content("SKU") }
     end
-  
+
     it "should allow an admin to create a new product and variants from a prototype", :js => true do
       fill_in "product_name", :with => "Baseball Cap"
       fill_in "product_sku", :with => "B100"
@@ -109,7 +110,15 @@ describe "Products" do
       page.should have_content("successfully created!")
       Spree::Product.last.variants.length.should == 1
     end
-    
+
+    it "should not display variants when prototype does not contain option types", :js => true do
+      select "Random", :from => "Prototype"
+
+      fill_in "product_name", :with => "Baseball Cap"
+
+      page.should_not have_content("Variants")
+    end
+
     it "should keep option values selected if validation fails", :js => true do
       select "Size", :from => "Prototype"
       check "Large"
@@ -119,7 +128,7 @@ describe "Products" do
       field_labeled("Large").should be_checked
       field_labeled("Small").should_not be_checked
     end
-    
+
   end
 
   context "cloning a product", :js => true do
