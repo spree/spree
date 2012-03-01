@@ -90,10 +90,8 @@ module Spree
         end
 
         def set_user_language
-          locale = session[:locale]
-          locale ||= Spree::Config[:default_locale] unless Spree::Config[:default_locale].blank?
-          locale ||= Rails.application.config.i18n.default_locale
-          locale ||= I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
+          locale = session[:locale] || Spree::Config[:default_locale] || Rails.application.config.i18n.default_locale
+          locale = I18n.default_locale unless locale && I18n.available_locales.include?(locale.to_sym)
           I18n.locale = locale.to_sym
         end
     end
