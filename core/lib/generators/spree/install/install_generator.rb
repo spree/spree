@@ -46,6 +46,7 @@ module Spree
 
     def remove_unneeded_files
       remove_file "public/index.html"
+      remove_file "app/views/layouts/application.html.erb" unless ask("Would you like to use the default spree application layout and delete rails default application.html.erb file? (yes/no) [yes]") =~ /\Ano?\Z/i
     end
 
     def additional_tweaks
