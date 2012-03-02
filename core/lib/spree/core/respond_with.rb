@@ -4,7 +4,7 @@ module ActionController
       raise "In order to use respond_with, first you need to declare the formats your " <<
             "controller responds to in the class level" if self.class.mimes_for_respond_to.empty?
 
-      if response = retrieve_response_from_mimes(&block)
+      if response = retrieve_collector_from_mimes(&block)
         options = resources.size == 1 ? {} : resources.extract_options!
         options.merge!(:default_response => response)
 
