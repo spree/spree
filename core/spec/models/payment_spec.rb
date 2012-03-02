@@ -169,6 +169,17 @@ describe Spree::Payment do
         payment.source.should_not be_nil
       end
     end
+
+    it "errors when payment source not valid" do
+      params = { :amount => 100, :payment_method_id => payment_method.id,
+                 :source_attributes => {:year=>"2012", :month =>"1" }}
+
+      payment = Spree::Payment.new(params)
+      payment.should_not be_valid
+      payment.source.should_not be_nil
+      payment.source.should have(1).error_on(:number)
+      payment.source.should have(1).error_on(:verification_value)
+    end
   end
 
 end

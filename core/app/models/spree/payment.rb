@@ -1,7 +1,7 @@
 module Spree
   class Payment < ActiveRecord::Base
     belongs_to :order
-    belongs_to :source, :polymorphic => true
+    belongs_to :source, :polymorphic => true, :validate => true
     belongs_to :payment_method
 
     has_many :offsets, :class_name => 'Spree::Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
