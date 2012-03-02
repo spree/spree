@@ -46,6 +46,7 @@ module Spree
 
     def remove_unneeded_files
       remove_file "public/index.html"
+      remove_file "app/views/layouts/application.html.erb" if yes?("Would you like to remove the default application layout? (yes/no) [yes]")
     end
 
     def additional_tweaks
