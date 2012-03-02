@@ -23,7 +23,7 @@ FactoryGirl.define do
   factory :custom_product, :class => Spree::Product do
     name "Custom Product"
     price "17.99"
-    description { Faker::Lorem.paragraphs(1+Kernel.rand(5)).join("\n") }
+    description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
 
     # associations:
     tax_category { |r| Spree::TaxCategory.find(:first) || r.association(:tax_category) }
