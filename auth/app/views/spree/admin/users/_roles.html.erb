@@ -3,7 +3,7 @@
     <%= label_tag nil, t(:roles) %><br />
     <% @roles.each do |role| %>
       <label class="sub">
-        <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role) %>
+        <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role), :id => "user_role_#{role.name}" %>
         <%= role.name %>
       </label> &nbsp;
     <% end %>
