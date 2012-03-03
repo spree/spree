@@ -65,11 +65,11 @@ module Spree
       }
 
     def ProductFilters.price_filter
-      conds = [ [ "Under #{format_price(10)}",                 "price             <= 10" ],
-                [ "#{format_price(10)} - #{format_price(15)}", "price between 10 and 15" ],
-                [ "#{format_price(15)} - #{format_price(18)}", "price between 15 and 18" ],
-                [ "#{format_price(18)} - #{format_price(20)}", "price between 18 and 20" ],
-                [ "#{format_price(20)} or over",               "price             >= 20" ] ]
+      conds = [ [ I18n.t(:under_price, :price => format_price(10))   , "price             <= 10" ],
+                [ "#{format_price(10)} - #{format_price(15)}"        , "price between 10 and 15" ],
+                [ "#{format_price(15)} - #{format_price(18)}"        , "price between 15 and 18" ],
+                [ "#{format_price(18)} - #{format_price(20)}"        , "price between 18 and 20" ],
+                [ I18n.t(:or_over_price, :price => format_price(20)) , "price             >= 20" ] ]
       { :name   => I18n.t(:price_range),
         :scope  => :price_range_any,
         :conds  => Hash[*conds.flatten],
