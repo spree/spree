@@ -25,10 +25,11 @@
       <%= label_tag nil, t(:roles) %><br />
       <% @roles.each do |role| %>
         <label class="sub">
-          <%= check_box_tag "user[role][#{role.name}]", 1, @user.has_role?(role.name) %>
+          <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role) %>
           <%= role.name %>
         </label> &nbsp;
       <% end %>
+      <%= hidden_field_tag 'user[role_ids][]', '' %>
     </p>
   </div>
 <% end %>
