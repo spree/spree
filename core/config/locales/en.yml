@@ -603,6 +603,7 @@ en:
   option_values: "Option Values"
   options: Options
   or: or
+  or_over_price: "%{price} or over"
   order: Order
   order_confirmation_note: ""
   order_date: "Order Date"
@@ -1029,6 +1030,7 @@ en:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Unable to Save Order"
+  under_price: "Under %{price}"
   under_paid: "Under Paid"
   unrecognized_card_type: Unrecognized card type
   update: Update
