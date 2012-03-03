@@ -24,4 +24,8 @@ class PaymentMethod::Check < PaymentMethod
     payment.void
     true
   end
+  
+  def source_required?
+    false
+  end
 end
