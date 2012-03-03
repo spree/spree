@@ -2,7 +2,7 @@ module Spree
   module Core
     module ControllerHelpers
       def self.included(receiver)
-        receiver.send :layout, :get_layout
+        receiver.send :layout, '/spree/layouts/spree_application'
         receiver.send :helper, 'spree/hook'
         receiver.send :before_filter, 'instantiate_controller_and_action_names'
         receiver.send :before_filter, 'set_user_language'
@@ -100,17 +100,6 @@ module Spree
           locale = I18n.default_locale unless locale && I18n.available_locales.include?(locale.to_sym)
           I18n.locale = locale.to_sym
         end
-
-        # Renders the default +app/views/layouts/application.html.erb+ layout if present.
-        # Otherwise +app/views/spree/layouts/spree_application+
-        def get_layout
-          if File.exist?(::Rails.root.join('app/views/layouts', 'application.html.erb'))
-            'application'
-          else
-            '/spree/layouts/spree_application'
-          end
-        end
-
     end
   end
 end
