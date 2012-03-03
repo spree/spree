@@ -52,29 +52,29 @@ module DelegateBelongsTo
 
     protected
 
-    def get_association_column_names(association, without_default_rejected_delegate_columns=true)
-      begin
-        association_klass = reflect_on_association(association).klass
-        methods = association_klass.column_names
-        methods.reject!{|x|default_rejected_delegate_columns.include?(x.to_s)} if without_default_rejected_delegate_columns
-        return methods
-      rescue
-        return []
+      def get_association_column_names(association, without_default_rejected_delegate_columns=true)
+        begin
+          association_klass = reflect_on_association(association).klass
+          methods = association_klass.column_names
+          methods.reject!{|x|default_rejected_delegate_columns.include?(x.to_s)} if without_default_rejected_delegate_columns
+          return methods
+        rescue
+          return []
+        end
       end
-    end
 
-    ##
-    # initialize_association :belongs_to, :contact
-    def initialize_association(type, association, opts={})
-      raise 'Illegal or unimplemented association type.' unless [:belongs_to].include?(type.to_s.to_sym)
-      send type, association, opts if reflect_on_association(association).nil?
-    end
+      ##
+      # initialize_association :belongs_to, :contact
+      def initialize_association(type, association, opts={})
+        raise 'Illegal or unimplemented association type.' unless [:belongs_to].include?(type.to_s.to_sym)
+        send type, association, opts if reflect_on_association(association).nil?
+      end
 
     private
 
-    def class_def(name, method=nil, &blk)
-      class_eval { method.nil? ? define_method(name, &blk) : define_method(name, method) }
-    end
+      def class_def(name, method=nil, &blk)
+        class_eval { method.nil? ? define_method(name, &blk) : define_method(name, method) }
+      end
 
   end
 

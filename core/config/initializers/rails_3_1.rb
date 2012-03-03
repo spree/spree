@@ -4,9 +4,9 @@ module ActiveRecord
     module ClassMethods
       protected
 
-      def valid_scope_name?(name)
-        respond_to?(name, true)
-      end
+        def valid_scope_name?(name)
+          respond_to?(name, true)
+        end
     end
   end
 end

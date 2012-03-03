@@ -25,24 +25,25 @@ module Spree
       end
 
       protected
-      def collection
-        return @collection if @collection.present?
-        unless request.xhr?
-          @search = Spree::User.registered.metasearch(params[:search])
-          @collection = @search.relation.page(params[:page]).per(Spree::Config[:admin_products_per_page])
-        else
-          #disabling proper nested include here due to rails 3.1 bug
-          #@collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).
-          @collection = Spree::User.includes(:bill_address, :ship_address).
-                            where("spree_users.email #{LIKE} :search
-                                   OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
-                                   OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
-                                   OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)
-                                   OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)",
-            { :search => "#{params[:q].strip}%" }).
-              limit(params[:limit] || 100)
+
+        def collection
+          return @collection if @collection.present?
+          unless request.xhr?
+            @search = Spree::User.registered.metasearch(params[:search])
+            @collection = @search.relation.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+          else
+            #disabling proper nested include here due to rails 3.1 bug
+            #@collection = User.includes(:bill_address => [:state, :country], :ship_address => [:state, :country]).
+            @collection = Spree::User.includes(:bill_address, :ship_address).
+                              where("spree_users.email #{LIKE} :search
+                                     OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
+                                     OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
+                                     OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)
+                                     OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)",
+              { :search => "#{params[:q].strip}%" }).
+                limit(params[:limit] || 100)
+            end
           end
-        end
 
         def save_user_roles
           return unless params[:user]
