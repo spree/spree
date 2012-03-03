@@ -45,71 +45,71 @@ module Spree
 
       protected
 
-      def find_resource
-        Product.find_by_permalink!(params[:id])
-      end
-
-      def location_after_save
-        edit_admin_product_url(@product)
-      end
-
-      # Allow different formats of json data to suit different ajax calls
-      def json_data
-        json_format = params[:json_format] or 'default'
-        case json_format
-        when 'basic'
-          collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
-        else
-          collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, 
-                                                        :images => {:only => [:id], :methods => :mini_url}}}, 
-                                                        :images => {:only => [:id], :methods => :mini_url}, :master => {}})
+        def find_resource
+          Product.find_by_permalink!(params[:id])
         end
-      end
 
-      def load_data
-        @tax_categories = TaxCategory.order(:name)
-        @shipping_categories = ShippingCategory.order(:name)
-      end
+        def location_after_save
+          edit_admin_product_url(@product)
+        end
 
-      def collection
-        return @collection if @collection.present?
+        # Allow different formats of json data to suit different ajax calls
+        def json_data
+          json_format = params[:json_format] or 'default'
+          case json_format
+          when 'basic'
+            collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
+          else
+            collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, 
+                                                          :images => {:only => [:id], :methods => :mini_url}}}, 
+                                                          :images => {:only => [:id], :methods => :mini_url}, :master => {}})
+          end
+        end
 
-        unless request.xhr?
-          params[:search] ||= {}
-          # Note: the MetaSearch scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
-          if params[:search][:deleted_at_is_null].nil?
-            params[:search][:deleted_at_is_null] = "1"
+        def load_data
+          @tax_categories = TaxCategory.order(:name)
+          @shipping_categories = ShippingCategory.order(:name)
+        end
+
+        def collection
+          return @collection if @collection.present?
+
+          unless request.xhr?
+            params[:search] ||= {}
+            # Note: the MetaSearch scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
+            if params[:search][:deleted_at_is_null].nil?
+              params[:search][:deleted_at_is_null] = "1"
+            end
+
+            params[:search][:meta_sort] ||= "name.asc"
+            @search = super.metasearch(params[:search])
+
+            @collection = @search.relation.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
+          else
+            includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
+
+            @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
+            @collection = @collection.includes(includes).limit(params[:limit] || 10)
+
+            tmp = super.where(["#{Variant.table_name}.sku #{LIKE} ?", "%#{params[:q]}%"])
+            tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
+            @collection.concat(tmp)
+
+            @collection.uniq
           end
 
-          params[:search][:meta_sort] ||= "name.asc"
-          @search = super.metasearch(params[:search])
-
-          @collection = @search.relation.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
-        else
-          includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
-
-          @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
-          @collection = @collection.includes(includes).limit(params[:limit] || 10)
-
-          tmp = super.where(["#{Variant.table_name}.sku #{LIKE} ?", "%#{params[:q]}%"])
-          tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
-          @collection.concat(tmp)
-
-          @collection.uniq
         end
 
-      end
+        def create_before
+          return if params[:product][:prototype_id].blank?
+          @prototype = Spree::Prototype.find(params[:product][:prototype_id])
+        end
 
-      def create_before
-        return if params[:product][:prototype_id].blank?
-        @prototype = Spree::Prototype.find(params[:product][:prototype_id])
-      end
-
-      def update_before
-        # note: we only reset the product properties if we're receiving a post from the form on that tab
-        return unless params[:clear_product_properties]
-        params[:product] ||= {}
-      end
+        def update_before
+          # note: we only reset the product properties if we're receiving a post from the form on that tab
+          return unless params[:clear_product_properties]
+          params[:product] ||= {}
+        end
 
     end
   end

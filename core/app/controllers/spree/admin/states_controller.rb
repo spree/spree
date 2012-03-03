@@ -13,17 +13,17 @@ module Spree
 
       protected
 
-      def location_after_save
-        admin_country_states_url(@country)
-      end
+        def location_after_save
+          admin_country_states_url(@country)
+        end
 
-      def collection
-        super.order(:name)
-      end
+        def collection
+          super.order(:name)
+        end
 
-      def load_data
-        @countries = Country.order(:name)
-      end
+        def load_data
+          @countries = Country.order(:name)
+        end
     end
   end
 end

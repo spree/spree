@@ -42,34 +42,35 @@ module Spree
       end
 
       protected
-      def create_before
-        option_values = params[:new_variant]
-        option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
-        @object.save
-      end
 
-
-      def new_before
-        @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
-                                                                      'sku', 'is_master', 'count_on_hand')
-      end
-
-      def collection
-        @deleted = (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
-
-        if @deleted.blank?
-          @collection ||= super
-        else
-          @collection ||= Variant.where(:product_id => parent.id).deleted
+        def create_before
+          option_values = params[:new_variant]
+          option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
+          @object.save
         end
-        @collection
-      end
 
-      def json_data
-        ( parent.variants.presence || [parent.master] ).map do |v|
-          { :label => v.options_text.presence || v.name, :id => v.id }
+
+        def new_before
+          @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
+                                                                        'sku', 'is_master', 'count_on_hand')
         end
-      end
+
+        def collection
+          @deleted = (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
+
+          if @deleted.blank?
+            @collection ||= super
+          else
+            @collection ||= Variant.where(:product_id => parent.id).deleted
+          end
+          @collection
+        end
+
+        def json_data
+          ( parent.variants.presence || [parent.master] ).map do |v|
+            { :label => v.options_text.presence || v.name, :id => v.id }
+          end
+        end
 
     end
   end
