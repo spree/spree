@@ -131,7 +131,7 @@ These two pieces of middleware are now automatically included by the `Spree::Cor
 
 h4. Product
 
-+master_price+, +master_price=+, +variants?+, +variant+ are now officially retired. Please use +Spree::Product.price+, +Spree::Product.price=+, +Spree::Product.has_variants?+ and +Spree::Product.master+ respectively instead.
++master_price+, +master_price=+, +variants?+, +variant+ are now officially retired. Please use +Spree::Product#price+, +Spree::Product#price=+, +Spree::Product#has_variants?+ and +Spree::Product#master+ respectively instead.
 
 h4. Spree::Config[:stylesheets]
 
