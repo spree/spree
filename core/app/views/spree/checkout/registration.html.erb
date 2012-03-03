@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
 <h2><%= t(:registration) %></h2>
-<div id="registration" data-hook class="columns alpha eight">
-  <div id="account">
+<div id="registration" data-hook>
+  <div id="account" class="columns alpha eight">
     <!-- TODO: add partial with registration form -->
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
