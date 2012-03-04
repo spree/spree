@@ -1,5 +1,5 @@
 <%= form_for :order, :url => populate_orders_url do |f| %>
-  <div data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+  <div id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
     <% if @product.has_variants? %>
       <div id="product-variants" class="columns five alpha">

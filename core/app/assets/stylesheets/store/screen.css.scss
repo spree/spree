@@ -474,13 +474,13 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     color: $link_text_color;
 
     &.selling {
-      font-size: $product_detail_price_font_size;      
+      font-size: $product_detail_price_font_size;
     }
     &.diff {
       font-weight: bold;
     }  
   }
-  
+
   .taxon-title {
     font-size: $product_list_header_font_size;
   }
@@ -490,14 +490,14 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   ul#products {
-		&:after {
-	  	content: " ";
-    	display: block;
-	  	clear: both;
-	  	visibility: hidden;
-	  	line-height: 0;
-	  	height: 0;
-		}
+    &:after {
+      content: " ";
+      display: block;
+      clear: both;
+      visibility: hidden;
+      line-height: 0;
+      height: 0;
+    }
 
     li {
       text-align: center;
@@ -567,7 +567,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       line-height: 24px;
     }
   }
-  
+
   .taxon {
     overflow: hidden;
   }
@@ -626,6 +626,17 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       li {
         padding: 5px;
       }
+    }
+  }
+
+  #cart-form {
+    #inside-product-cart-form:after {
+      content: " ";
+      display: block;
+      clear: both;
+      visibility: hidden;
+      line-height: 0;
+      height: 0;
     }
   }
 
@@ -807,7 +818,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   /* Cart
   /*--------------------------------------*/
   table#cart-detail {
-		width: 100%;
+    width: 100%;
     tbody#line_items {
       tr {
 
