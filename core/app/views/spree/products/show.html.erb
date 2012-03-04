@@ -27,7 +27,7 @@
 
         <h1 class="product-title" itemprop="name"><%= accurate_title %></h1>
 
-        <div itemprop="description" data-hook="product_description">
+        <div itemprop="description" data-hook="description">
           <%= product_description(@product) rescue t(:product_has_no_description) %>
         </div>
 
@@ -36,7 +36,7 @@
         </div>
 
       </div>
-    
+
       <%= render :partial => 'taxons' %>
 
     </div>
