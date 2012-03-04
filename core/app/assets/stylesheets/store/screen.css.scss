@@ -630,7 +630,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #cart-form {
-    [data-hook='inside_product_cart_form']:after {
+    #inside_product_cart_form:after {
       content: " ";
       display: block;
       clear: both;
