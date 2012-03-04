@@ -58,13 +58,13 @@ Now that you have one single CRT file you are ready to install it on your server
 Copy the CRT file onto the server and save it to following location:
 
 <shell>
-/data/config/ssl/spree.crt
+/etc/ssl/spree.crt
 </shell>
 
 Move the private key (KEY file) to the following location:
 
 <shell>
-/data/config/ssl/spree.key
+/etc/ssl/spree.key
 </shell>
 
 Execute the following command to have Puppet automatically install and restart your webserver:
