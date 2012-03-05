@@ -649,6 +649,22 @@ describe Spree::Order do
     it "should change shipment status (unless shipped)"
   end
 
+  context "#merge!" do
+    let(:guest_user) { stub_model(Spree::User, :email => "guest@example.com") }
+    let!(:variant) { stub_model(Spree::Variant, :on_hand => 3) }
+    let!(:variant1) { stub_model(Spree::Variant, :on_hand => 3) }
+    let(:session_order) { stub_model(Spree::Order, :user => guest_user) }
+
+    before(:each) do
+      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 1)]
+      session_order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant1, :quantity => 1)]
+    end
+
+    it "should merge line_items" do
+      order.merge!(session_order)
+      order.line_items.length.should == 2
+    end
+  end
 
   # Another regression test for #729
   context "#resume" do

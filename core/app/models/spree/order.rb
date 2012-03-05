@@ -454,6 +454,13 @@ module Spree
       line_items.select &:insufficient_stock?
     end
 
+    # Copies the +line_items+ from passed order
+    def merge!(order)
+      order.line_items.each do |li|
+        self.add_variant(li.variant, li.quantity)
+      end
+    end
+
     private
       def create_user
         self.email = user.email if self.user and not user.anonymous?

@@ -83,8 +83,16 @@ module Spree
         end
 
         def associate_user
-          return unless current_user and current_order
-          current_order.associate_user!(current_user)
+          return unless current_user && current_order && current_user != current_order.user
+          # get the last incompleted order
+          order = current_user.incompleted_orders.last
+
+          if order
+            order.merge!(current_order)
+            session[:order_id] = order.id
+          else
+            current_order.associate_user!(current_user)
+          end
           session[:guest_token] = nil
         end
 

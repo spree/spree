@@ -42,6 +42,10 @@ module Spree
       User.admin.count > 0
     end
 
+    def incompleted_orders
+      orders.incomplete.order('updated_at')
+    end
+
     def anonymous?
       email =~ /@example.net$/
     end
@@ -51,10 +55,13 @@ module Spree
       UserMailer.reset_password_instructions(self).deliver
     end
 
+
     protected
+
       def password_required?
         !persisted? || password.present? || password_confirmation.present?
       end
+
 
     private
 
