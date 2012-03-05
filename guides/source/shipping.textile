@@ -233,7 +233,13 @@ h3. The Active Shipping Extension
 
 The popular active_shipping extension harnesses the active_shipping gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
 
-NOTE: To install the spree-active-shipping extension run this command at the root of your project: +$ script/extension install http://github.com/railsdog/spree-active-shipping.git+
+NOTE: To install the spree-active-shipping extension add the following to your Gemfile: 
+<ruby filename='Gemfile'>
+gem 'spree_active_shipping'
+gem 'active_shipping', :git => 'git://github.com/Shopify/active_shipping.git'
+</ruby>
+
+and run +$ bundle install+
 
 As an example of how to use the active_shipping extension we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
 
