@@ -1,3 +1,5 @@
+require 'spree/core/validators/email'
+
 module Spree
   class Order < ActiveRecord::Base
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
@@ -30,7 +32,7 @@ module Spree
     after_create :create_tax_charge!
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
-    validates :email, :presence => true, :format => /^([\w\.%\+\-']+)@([\w\-]+\.)+([\w]{2,})$/i, :if => :require_email
+    validates :email, :presence => true, :email => true, :if => :require_email
     validate :has_available_shipment
     validate :has_available_payment
 
