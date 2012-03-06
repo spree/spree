@@ -7,6 +7,10 @@ module Spree
       before_filter :load_data, :except => :index
       update.before :update_before
 
+      def show
+        redirect_to( :action => :edit )
+      end
+
       def index
         respond_with(@collection) do |format|
           format.html
