@@ -2,7 +2,7 @@ FactoryGirl.define do
   sequence(:product_sequence) { |n| "Product ##{n} - #{rand(9999)}" }
 
   factory :product, :class => Spree::Product do
-    name { Factory.next :product_sequence }
+    name { FactoryGirl.generate :product_sequence }
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
 
     # associations:
