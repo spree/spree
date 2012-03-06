@@ -57,6 +57,15 @@ describe Spree::Order do
         end
       end
     end
+
+    context "email validation" do
+      # Regression test for #1238
+      it "o'brien@gmail.com is a valid email address" do
+        order.state = 'address'
+        order.email = "o'brien@gmail.com"
+        order.should be_valid
+      end
+    end
   end
 
   let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
