@@ -8,6 +8,10 @@ module Spree
       create.before :create_before
       update.before :update_before
 
+      def show
+        redirect_to( :action => :edit )
+      end
+
       def index
         respond_with(@collection) do |format|
           format.html
