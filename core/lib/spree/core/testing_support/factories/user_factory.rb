@@ -8,7 +8,7 @@ FactoryGirl.define do
     login { email }
     password 'secret'
     password_confirmation 'secret'
-    authentication_token { Factory.next(:user_authentication_token) } if Spree::User.attribute_method? :authentication_token
+    authentication_token { FactoryGirl.generate(:user_authentication_token) } if Spree::User.attribute_method? :authentication_token
   end
 
   factory :admin_user, :parent => :user do
