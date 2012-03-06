@@ -9,7 +9,7 @@ end
 describe Spree::Order do
   before(:each) do
     reset_spree_preferences
-    Spree::Gateway::Test.create(:name => 'Test', :active => true, :environment => 'test', :description => 'foofah')
+    Spree::Gateway.create(:name => 'Test', :active => true, :environment => 'test', :description => 'foofah')
   end
 
   context 'validation' do
