@@ -173,6 +173,23 @@ describe Spree::Promotion do
     end
   end
 
+  context "#products" do
+    context "when it has product rules with products associated" do
+      let(:p) { Factory.create(:promotion) }
+
+      before do
+        pr = Spree::Promotion::Rules::Product.new
+        pr.promotion = p
+        pr.products << Factory.create(:product)
+        pr.save
+      end
+
+      it "should have products" do
+        p.products.size.should eq 1
+      end
+    end
+  end
+
   context "#eligible?" do
     before do
       @order = Factory(:order)
