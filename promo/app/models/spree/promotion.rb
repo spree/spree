@@ -78,7 +78,7 @@ module Spree
 
     # Products assigned to all product rules
     def products
-      @products ||= rules.of_type('Promotion::Rules::Product').map(&:products).flatten.uniq
+      @products ||= rules.of_type('Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(order = nil)
