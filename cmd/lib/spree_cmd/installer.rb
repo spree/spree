@@ -24,7 +24,7 @@ module SpreeCmd
 
     def verify_rails
       unless is_rails_project?
-        say "#{@app_path} rails project not found"
+        say "#{@app_path} is not a rails project."
         exit(1)
       end
     end
