@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Checkout" do
+describe "Checkout", :js => true do
   before(:each) do
     PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
     SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
