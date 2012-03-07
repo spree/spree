@@ -1,0 +1,15 @@
+h2. Spree 1.1.0 Release Notes
+
+endprologue.
+
+h3. Summary
+
+
+
+h3. spree_product_groups now as standalone extension
+
+Product Groups component is extracted to a standalone spree extension. It is
+now could be added to your application by appending to Gemfile:
+
+    gem 'spree_product_groups', :git => 'git@github.com:spree/spree_product_groups.git'
+
