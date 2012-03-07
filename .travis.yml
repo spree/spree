@@ -6,7 +6,6 @@ script: "export DISPLAY=:99.0; cd auth; bundle exec rake test_app; bundle exec r
 notifications:
   email:
     - ryan@spreecommerce.com
-  irc: "irc.freenode.org#spree"
 branches:
   only:
     - 1-0-stable
