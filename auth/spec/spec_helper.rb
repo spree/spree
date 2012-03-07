@@ -40,6 +40,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.start
+    reset_spree_preferences
   end
 
   config.after(:each) do
