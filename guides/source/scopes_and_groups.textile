@@ -83,6 +83,9 @@ items appear in the list.
 
 h3. Product Groups
 
+NOTE: Product Groups is longer a part of Spree core, it has been extracted to
+a standalone extension, which can be found at "spree_product_groups":https://github.com/spree/spree_product_groups
+
 Product groups are named lists of products which are selected via a defined combination of criteria.
 They can be created, edited, destroyed by administrators; and viewed by the user via appropriate
 permalinks or developers can write code to display them as they wish.
