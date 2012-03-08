@@ -9,7 +9,7 @@ end
 describe Spree::Order do
   before(:each) do
     reset_spree_preferences
-    Spree::Gateway::Test.create(:name => 'Test', :active => true, :environment => 'test', :description => 'foofah')
+    Spree::Gateway.create(:name => 'Test', :active => true, :environment => 'test', :description => 'foofah')
   end
 
   context 'validation' do
@@ -55,6 +55,15 @@ describe Spree::Order do
           order.valid?
           order.ship_address.should be_nil
         end
+      end
+    end
+
+    context "email validation" do
+      # Regression test for #1238
+      it "o'brien@gmail.com is a valid email address" do
+        order.state = 'address'
+        order.email = "o'brien@gmail.com"
+        order.should be_valid
       end
     end
   end

@@ -25,11 +25,11 @@ module Spree
 
       end
 
-      # We need to reload the routes here due to how Spree sets them up
-      # The different facets of Spree, (auth, promo, etc.) appends/prepends routes to Core
+      # We need to reload the routes here due to how Spree sets them up.
+      # The different facets of Spree (auth, promo, etc.) append/prepend routes to Core
       # *after* Core has been loaded.
       #
-      # So we wait until after initialization is complete to do one final reload
+      # So we wait until after initialization is complete to do one final reload.
       # This then makes the appended/prepended routes available to the application.
       config.after_initialize do
         Rails.application.routes_reloader.reload!
