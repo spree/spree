@@ -15,6 +15,7 @@ describe Spree::ProductsController do
   after do
     Spree::Config[:default_locale] = :en
     Rails.application.config.i18n.default_locale = :en
+    I18n.locale = :en
   end
 
   # Regression test for #1184
