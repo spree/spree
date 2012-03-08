@@ -10,6 +10,7 @@ describe "Checkout", :js => true do
 
     Factory(:payment_method, :environment => 'test')
     Factory(:product, :name => "RoR Mug")
+    visit spree.login_path
     visit spree.root_path
   end
 
