@@ -31,8 +31,6 @@ describe "Checkout" do
     end
     
     it "should not autofill the billing address" do
-
-      Spree::Product.delete_all
       product = Factory(:product, :name => "RoR Mug")
       visit spree.root_path
       click_link "RoR Mug"
@@ -57,7 +55,6 @@ describe "Checkout" do
   
   context "visitor makes checkout as logged in user" do
     before(:each) do
-      Spree::Product.delete_all
       @last_order = Factory(:order_complete)
       Factory(:product, :name => "RoR Mug")
     end

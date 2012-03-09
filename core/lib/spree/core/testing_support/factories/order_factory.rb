@@ -20,7 +20,7 @@ FactoryGirl.define do
     end
   end
   
-  factory :order_complete, :parent => :order_with_totals do
+  factory :complete_order, :parent => :order_with_totals do
     state "confirm"
     association(:bill_address, :factory => :address)
     association(:ship_address, :factory => :address)
