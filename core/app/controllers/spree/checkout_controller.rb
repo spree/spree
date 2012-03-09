@@ -74,6 +74,11 @@ module Spree
       end
 
       def before_address
+        past_order = @order.user.orders.complete.order("id desc").first
+        if past_order
+          @order.bill_address = past_order.bill_address.clone if past_order.bill_address
+        end
+        @order.bill_address ||= current_user.bill_address if current_user
         @order.bill_address ||= Address.default
         @order.ship_address ||= Address.default
       end
