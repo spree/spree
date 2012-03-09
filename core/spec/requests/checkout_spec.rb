@@ -55,7 +55,7 @@ describe "Checkout" do
   
   context "visitor makes checkout as logged in user" do
     before(:each) do
-      @last_order = Factory(:order_complete)
+      @last_order = Factory(:complete_order)
       Factory(:product, :name => "RoR Mug")
     end
     
