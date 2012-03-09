@@ -72,6 +72,7 @@ describe Spree::OrdersController do
 
   context 'when an order exists in the session' do
     let(:token) { 'some_token' }
+    let(:specified_order) { Factory(:order) }
 
     before do
       controller.stub :current_order => order
@@ -83,12 +84,20 @@ describe Spree::OrdersController do
         controller.should_receive(:authorize!).with(:edit, order, token)
         post :populate, :token => token
       end
+      it "should check against the specified order" do
+        controller.should_receive(:authorize!).with(:edit, specified_order, token)
+        post :populate, :id => specified_order.number, :token => token
+      end
     end
 
     context '#edit' do
       it 'should check if user is authorized for :edit' do
         controller.should_receive(:authorize!).with(:edit, order, token)
         get :edit, :token => token
+      end
+      it "should check against the specified order" do
+        controller.should_receive(:authorize!).with(:edit, specified_order, token)
+        get :edit, :id => specified_order.number, :token => token
       end
     end
 
@@ -98,12 +107,28 @@ describe Spree::OrdersController do
         controller.should_receive(:authorize!).with(:edit, order, token)
         post :update, :token => token
       end
+      it "should check against the specified order" do
+        order.stub :update_attributes
+        controller.should_receive(:authorize!).with(:edit, specified_order, token)
+        post :update, :id => specified_order.number, :token => token
+      end
     end
 
     context '#empty' do
       it 'should check if user is authorized for :edit' do
         controller.should_receive(:authorize!).with(:edit, order, token)
         post :empty, :token => token
+      end
+      it "should check against the specified order" do
+        controller.should_receive(:authorize!).with(:edit, specified_order, token)
+        post :empty, :id => specified_order.number, :token => token
+      end
+    end
+
+    context "#show" do
+      it "should check against the specified order" do
+        controller.should_receive(:authorize!).with(:edit, specified_order, token)
+        get :show, :id => specified_order.number, :token => token
       end
     end
   end
