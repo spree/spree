@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "Checkout" do
   context "visitor makes checkout as guest without registration" do
+    
     context "when backordering is disabled" do
       before(:each) do
         reset_spree_preferences do |config|
@@ -28,6 +29,30 @@ describe "Checkout" do
         within(:css, "span.out-of-stock") { page.should have_content("Out of Stock") }
       end
     end
+    
+    it "should not autofill the billing address" do
+
+      Spree::Product.delete_all
+      product = Factory(:product, :name => "RoR Mug")
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "add-to-cart-button"
+      click_link "Checkout"
+      
+      fill_in "order_email",  :with => "john.doe@example.com"
+      click_button "Continue"
+      
+      find_field("order_bill_address_attributes_firstname").value.should be_nil
+      find_field("order_bill_address_attributes_lastname").value.should be_nil
+      find_field("order_bill_address_attributes_address1").value.should be_nil
+      find_field("order_bill_address_attributes_address2").value.should be_nil
+      find_field("order_bill_address_attributes_city").value.should be_nil
+      find_field("order_bill_address_attributes_zipcode").value.should be_nil
+      find_field("order_bill_address_attributes_country_id").find('option[selected]').text.should == Spree::Address.default.country.name
+      find_field("order_bill_address_attributes_phone").value.should be_nil
+    
+    end
+    
   end
   
   context "visitor makes checkout again" do
