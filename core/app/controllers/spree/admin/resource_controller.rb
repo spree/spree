@@ -4,6 +4,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   prepend_before_filter :load_resource
   rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
+  rescue_from CanCan::AccessDenied, :with => :unauthorized
 
   respond_to :html
   respond_to :js, :except => [:show, :index]
