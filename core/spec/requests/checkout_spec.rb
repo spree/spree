@@ -29,4 +29,29 @@ describe "Checkout" do
       end
     end
   end
+  
+  context "visitor makes checkout again" do
+    it "should auto fill the billing address with the previous used one" do
+      Spree::Product.delete_all
+      last_order = Factory(:order_complete)
+      Factory(:product, :name => "RoR Mug")
+      
+      sign_in_as!(last_order.user)
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "add-to-cart-button"
+      click_link "Checkout"
+      
+      find_field("order_bill_address_attributes_firstname").value.should == last_order.bill_address.firstname
+      find_field("order_bill_address_attributes_lastname").value.should == last_order.bill_address.lastname
+      find_field("order_bill_address_attributes_address1").value.should == last_order.bill_address.address1
+      find_field("order_bill_address_attributes_address2").value.should == last_order.bill_address.address2
+      find_field("order_bill_address_attributes_city").value.should == last_order.bill_address.city
+      find_field("order_bill_address_attributes_zipcode").value.should == last_order.bill_address.zipcode
+      find_field("order_bill_address_attributes_country_id").find('option[selected]').text.should == last_order.bill_address.country.name
+      find_field("order_bill_address_attributes_phone").value.should == last_order.bill_address.phone
+      
+    end
+  end
+
 end
