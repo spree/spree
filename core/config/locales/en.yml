@@ -280,7 +280,7 @@ en:
   cancel_my_account: Cancel my account
   cancel_my_account_description: "Unhappy?"
   canceled: Canceled
-  cannot_create_returns: Cannot create returns as this order no shipped units.
+  cannot_create_returns: Cannot create returns as this order has no shipped units.
   cannot_perform_operation: "Cannot perform requested operation"
   capture: Capture
   card_code: "Card Code"
