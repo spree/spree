@@ -19,4 +19,15 @@ FactoryGirl.define do
       Factory(:inventory_unit, :order => order, :state => 'shipped')
     end
   end
+  
+  factory :complete_order, :parent => :order_with_totals do
+    state "confirm"
+    association(:bill_address, :factory => :address)
+    association(:ship_address, :factory => :address)
+    association(:shipping_method, :factory => :shipping_method)
+    after_create do |order|
+      order.next!
+    end
+  end
+  
 end
