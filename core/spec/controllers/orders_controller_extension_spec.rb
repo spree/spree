@@ -3,7 +3,7 @@ require 'spec_helper'
 describe OrdersController do
 
   before do
-    controller.stub :current_user => nil
+    controller.stub :current_user => Factory(:user)
   end
 
   context "extension testing" do

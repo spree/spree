@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe OrdersController do
-
-  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :coupon_code => nil) }
+  let(:user) { Factory(:user) }
+  let(:order) { mock_model(Order, :number => "R123", :reload => nil, :save! => true, :coupon_code= => nil, :user => user) }
   before do
     Order.stub(:find).with(1).and_return(order)
-    controller.stub :current_user => nil
+    controller.stub :current_user => user
     #ensure no respond_overrides are in effect
     if Spree::BaseController.spree_responders[:OrdersController].present?
       Spree::BaseController.spree_responders[:OrdersController].clear
@@ -46,6 +46,7 @@ describe OrdersController do
 
   context "#update" do
     before {
+      order.stub(:coupon_code).and_return("")
       order.stub(:update_attributes).and_return true
       order.stub(:line_items).and_return([])
       order.stub(:line_items=).with([])

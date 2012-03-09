@@ -19,7 +19,7 @@ describe Admin::BaseController do
     end
 
     it "checks alerts if preference is true" do
-      controller.stub(:current_user => true)
+      controller.stub(:current_user => Factory(:user))
       Spree::Config.set :check_for_spree_alerts => true
       alerts = []
       Spree::Alert.should_receive(:current).and_return(alerts)
