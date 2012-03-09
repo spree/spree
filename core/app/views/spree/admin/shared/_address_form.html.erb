@@ -5,7 +5,8 @@
         <%= name %>
         <span class="right">
           <% if use_billing %>
-            <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> <%= t(:use_billing_address) %>
+            <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> 
+            <%= label_tag 'order[use_billing]', t(:use_billing_address) %>
           <% end %>
         </span>
       </th>
