@@ -4,7 +4,7 @@ Spree::OrdersController.class_eval do
   private
     def check_authorization
       session[:access_token] ||= params[:token]
-      order = current_order || Spree::Order.find_by_number(params[:id])
+      order = Spree::Order.find_by_number(params[:id]) || current_order
 
       if order
         authorize! :edit, order, session[:access_token]
