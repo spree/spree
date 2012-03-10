@@ -44,10 +44,5 @@ module Spree
       scope
     end
 
-    private
-      # obsolete, kept for backwards compat
-      def escape(str)
-        str.blank? ? '' : str.to_url
-      end
   end
 end
