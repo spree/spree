@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe Spree::CheckoutController do
   let(:order) { mock_model(Spree::Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false, :insufficient_stock_lines => [], :coupon_code => nil).as_null_object }
-  before { controller.stub :current_order => order, :current_user => Factory(:user) }
+
+  before do
+    controller.stub :current_order => order, :current_user => Factory(:user)
+    Factory(:country)
+  end
 
   it "should understand checkout routes" do
     pending("assert_routing tests are now broken, is this relevant any more?")
