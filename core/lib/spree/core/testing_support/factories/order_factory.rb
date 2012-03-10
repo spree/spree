@@ -19,4 +19,14 @@ FactoryGirl.define do
       Factory(:inventory_unit, :order => order, :state => 'shipped')
     end
   end
+
+  factory :completed_order_with_totals, :parent => :order_with_totals do
+    bill_address { Factory(:address) }
+    ship_address { Factory(:address) }
+    after_create do |order|
+      Factory(:inventory_unit, :order => order, :state => 'shipped')
+    end
+    state 'complete'
+    completed_at Time.now
+  end
 end
