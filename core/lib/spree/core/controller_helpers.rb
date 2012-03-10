@@ -88,10 +88,17 @@ module Spree
           ActiveSupport::Deprecation.warn "current_gateway is deprecated and will be removed in Spree > 1.0"
           @current_gateway ||= Gateway.current
         end
-        
+    
         def associate_user
-          return unless current_user and current_order
-          current_order.associate_user!(current_user)
+          return unless current_user and current_order and not current_user == current_order.user
+          # get the last incompleted order
+          order = current_user.orders(:order => "updated_at").select { |item| item.completed_at.nil? }.last
+          if order
+            order.merge!(current_order)
+            session[:order_id] = order.id
+          else
+            current_order.associate_user!(current_user)
+          end
           session[:guest_token] = nil
         end
 
