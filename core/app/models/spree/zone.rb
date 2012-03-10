@@ -28,13 +28,6 @@ module Spree
       # do nothing - just here to satisfy the form
     end
 
-    # TODO: Remove this method after 1.0
-    # alias to the new include? method
-    def in_zone?(address)
-      ActiveSupport::Deprecation.warn '#in_zone? is deprecated and will be removed in Spree > 1.0. Use #include? instead.'
-      include?(address)
-    end
-
     def include?(address)
       return false unless address
 
