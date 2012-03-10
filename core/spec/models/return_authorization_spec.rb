@@ -85,7 +85,7 @@ describe Spree::ReturnAuthorization do
     end
 
     it "should add credit for specified amount" do
-      Spree::Adjustment.should_receive(:create).with(:source => return_authorization, :order_id => order.id, :amount => -20, :label => I18n.t(:rma_credit))
+      Spree::Adjustment.should_receive(:create).with(:source => return_authorization, :adjustable => order, :amount => -20, :label => I18n.t(:rma_credit))
       return_authorization.receive!
     end
 
