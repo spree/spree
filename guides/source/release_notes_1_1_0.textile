@@ -13,3 +13,8 @@ now could be added to your application by appending to Gemfile:
 
     gem 'spree_product_groups', :git => 'git@github.com:spree/spree_product_groups.git'
 
+h3. Deprecated functions
+
+h4. Spree::Zone
+
++Spree::Zone#in_zone?+ is retired, please use +Spree::Zone#include?+ instead.
