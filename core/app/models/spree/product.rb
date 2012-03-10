@@ -116,15 +116,6 @@ module Spree
       @prototype_id = value.to_i
     end
 
-    def add_properties_and_option_types_from_prototype
-      if prototype_id && prototype = Spree::Prototype.find_by_id(prototype_id)
-        prototype.properties.each do |property|
-          product_properties.create(:property => property)
-        end
-        self.option_types = prototype.option_types
-      end
-    end
-
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
@@ -132,16 +123,6 @@ module Spree
         self.option_type_ids << id unless self.option_type_ids.include?(id)
         self.product_option_types.create(:option_type_id => id) unless product_option_types.map(&:option_type_id).include?(id)
       end
-    end
-
-    # Builds variants from a hash of option types & values
-    def build_variants_from_option_values_hash
-      ensure_option_types_exist_for_values_hash
-      opts = Spree::Core::CartesianArray.new(*option_values_hash.values).product
-      opts.each do |ids|
-        variant = self.variants.create(:option_value_ids => ids, :price => self.master.price)
-      end
-      save
     end
 
     # for adding products which are closely related to existing ones
@@ -210,6 +191,25 @@ module Spree
     end
 
     private
+
+      # Builds variants from a hash of option types & values
+      def build_variants_from_option_values_hash
+        ensure_option_types_exist_for_values_hash
+        opts = Spree::Core::CartesianArray.new(*option_values_hash.values).product
+        opts.each do |ids|
+          variant = self.variants.create(:option_value_ids => ids, :price => self.master.price)
+        end
+        save
+      end
+
+      def add_properties_and_option_types_from_prototype
+        if prototype_id && prototype = Spree::Prototype.find_by_id(prototype_id)
+          prototype.properties.each do |property|
+            product_properties.create(:property => property)
+          end
+          self.option_types = prototype.option_types
+        end
+      end
 
       def recalculate_count_on_hand
         product_count_on_hand = has_variants? ?
