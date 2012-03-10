@@ -3,10 +3,10 @@ module Spree
     validates :name, :presence => true
 
     has_many :taxons
-    has_one :root, :conditions => { :parent_id => nil }, :class_name => 'Spree::Taxon'
+    has_one :root, :conditions => { :parent_id => nil }, :class_name => 'Spree::Taxon',
+                   :dependent => :destroy
 
     after_save :set_name
-    after_destroy :destroy_root_taxon
 
     private
       def set_name
@@ -17,8 +17,5 @@ module Spree
         end
       end
 
-      def destroy_root_taxon
-        self.root.destroy
-      end
   end
 end

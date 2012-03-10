@@ -7,7 +7,7 @@ describe Spree::Taxonomy do
   end
 
   context "shoulda validations" do
-    it {should validate_presence_of(:name) }
+    it { should validate_presence_of(:name) }
   end
 
   context "#destroy" do
