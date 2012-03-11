@@ -18,3 +18,9 @@ h3. Deprecated functions
 h4. Spree::Zone
 
 +Spree::Zone#in_zone?+ is retired, please use +Spree::Zone#include?+ instead.
+
+h4. Spree::PaymentMethod
+
++Spree::PaymentMethod.current+ is retired, please use +current_order.payment_method+ instead.
+
+Additionally, +current_gateway+ is also removed.
