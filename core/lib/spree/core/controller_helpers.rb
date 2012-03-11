@@ -11,7 +11,6 @@ module Spree
         receiver.send :helper_method, 'title='
         receiver.send :helper_method, 'accurate_title'
         receiver.send :helper_method, 'get_taxonomies'
-        receiver.send :helper_method, 'current_gateway'
         receiver.send :helper_method, 'current_order'
         receiver.send :include, SslRequirement
         receiver.send :include, Spree::Core::CurrentOrder
@@ -82,11 +81,6 @@ module Spree
 
         def get_taxonomies
           @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
-        end
-
-        def current_gateway
-          ActiveSupport::Deprecation.warn "current_gateway is deprecated and will be removed in Spree > 1.0"
-          @current_gateway ||= Gateway.current
         end
         
         def associate_user
