@@ -36,6 +36,7 @@ require 'acts_as_list'
 require 'active_merchant'
 require 'meta_search'
 require 'jquery-rails'
+require 'deface'
 
 module Spree
   module Core
