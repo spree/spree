@@ -82,7 +82,7 @@ module Spree
         def get_taxonomies
           @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
         end
-        
+
         def associate_user
           return unless current_user and current_order
           current_order.associate_user!(current_user)
