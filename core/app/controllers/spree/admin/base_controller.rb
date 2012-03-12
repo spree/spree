@@ -5,6 +5,8 @@ module Spree
       helper 'spree/admin/navigation'
       layout '/spree/layouts/admin'
 
+      before_filter :check_alerts unless Rails.env.development?
+
       protected
         def check_alerts
           return unless current_user and should_check_alerts?
