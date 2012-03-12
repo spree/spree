@@ -99,7 +99,7 @@ module Spree
             tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
             @collection.concat(tmp)
 
-            @collection.uniq
+            @collection
           end
 
         end
