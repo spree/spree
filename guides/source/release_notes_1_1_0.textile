@@ -24,3 +24,8 @@ h4. Spree::PaymentMethod
 +Spree::PaymentMethod.current+ is retired, please use +current_order.payment_method+ instead.
 
 Additionally, +current_gateway+ is also removed.
+
+h4. Old Theme Hook
+
+`theme_support` files are now deprecated in favor of Deface. Make sure you port
+all your old style hooks to Deface.
