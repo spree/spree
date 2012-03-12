@@ -1,13 +1,6 @@
 require 'spec_helper'
 
 describe "Products" do
-  context "as anonymous user" do
-    # regression test for #1250
-    it "is redirected to login page when attempting to access product listing" do
-      lambda { visit spree.admin_products_path }.should_not raise_error
-    end
-  end
-
   context "as admin user" do
     before(:each) do
       sign_in_as!(Factory(:admin_user))
