@@ -45,6 +45,14 @@ describe Spree::Admin::ProductsController do
       response.should redirect_to(spree.admin_products_path)
       flash[:error].should eql("Product is not found")
     end
+
+    # Regression test for #1259
+    it "can find a product by SKU" do
+      product = Factory(:product, :sku => "ABC123")
+      get :index, :q => "ABC123"
+      assigns[:collection].should_not be_empty
+      assigns[:collection].should include(product)
+    end
   end
   
   
