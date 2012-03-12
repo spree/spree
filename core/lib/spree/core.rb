@@ -61,7 +61,6 @@ require 'spree/core/ext/hash'
 
 require 'spree/core/delegate_belongs_to'
 
-require 'spree/core/theme_support'
 require 'spree/core/responder'
 require 'spree/core/respond_with'
 require 'spree/core/ssl_requirement'
