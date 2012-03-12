@@ -36,6 +36,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include Spree::UrlHelpers
+  config.include Spree::Core::UrlHelpers
   config.include Rack::Test::Methods
 end

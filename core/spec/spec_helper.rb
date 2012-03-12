@@ -48,7 +48,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include Spree::UrlHelpers
+  config.include Spree::Core::UrlHelpers
 end
 
 shared_context "custom products" do
