@@ -1,15 +1,16 @@
 <% if tracker = Spree::Tracker.current %>
 
   <%= javascript_tag do -%>
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  <% end -%>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', '<%= tracker.analytics_id -%>']);
+    _gaq.push(['_trackPageview']);
 
-  <%= javascript_tag do -%>
-    var pageTracker = _gat._getTracker("<%= tracker.analytics_id %>");
-    pageTracker._initData();
-    pageTracker._trackPageview();
-  <% end -%>
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    <% end -%>
 
   <% if flash[:commerce_tracking] %>
 
