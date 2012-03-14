@@ -30,14 +30,13 @@
     <div class="analytics_splash">
       <%= image_tag 'analytics_dashboard_preview.png', :alt => 'Spree Analytics' %>
     </div>
+    <br>
+    <div class="preview-buttons">
+      <%= link_to content_tag(:span, t(:enter_token)), admin_path(:dash_edit => true), :class => "button green" %>
+      <%= t(:or) %> &nbsp;
+      <%= link_to content_tag(:span, t(:learn_more)), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => "button", :target => "_blank" %>
+    </div>
+    
   <% end %>
-  <br>
-  <div class="preview-buttons">
-    <%= link_to t(:enter_token), admin_path(:dash_edit => true), :class => "button green" %>
-    <%= t(:or) %> &nbsp;
-    <%= link_to t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => "button", :target => "_blank" %>
-  </div>
-  
+
 <% end %>
-
-
