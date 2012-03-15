@@ -25,7 +25,7 @@
       <td class="actions">
         <%= link_to_with_icon 'edit', t(:edit), edit_admin_product_image_url(@product, image), :class => 'edit' %>
         &nbsp;
-        <%= link_to_delete image, {:url => admin_product_image_url(@product, image) }%>
+        <%= link_to_delete image, { :url => admin_product_image_url(@product, image) }%>
       </td>
     </tr>
   <% end %>

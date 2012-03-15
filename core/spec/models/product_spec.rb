@@ -54,7 +54,6 @@ describe Spree::Product do
     it { should have_many(:option_types) }
     it { should have_many(:product_properties) }
     it { should have_many(:properties) }
-    it { should have_many(:images) }
     it { should have_and_belong_to_many(:taxons) }
     it "should validate price" do
       product.should be_valid

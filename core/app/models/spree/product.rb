@@ -23,7 +23,6 @@ module Spree
     has_many :option_types, :through => :product_option_types
     has_many :product_properties, :dependent => :destroy
     has_many :properties, :through => :product_properties
-    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
     belongs_to :tax_category
     has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
     belongs_to :shipping_category
@@ -34,6 +33,7 @@ module Spree
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
+    delegate_belongs_to :master, :images
 
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype

@@ -68,7 +68,7 @@ xlarge-green-baseball:
   price: 21.99
   cost_price: 20.00
   count_on_hand: 10
-ror_baseball_jersey:
+ror_baseball_jersey_v:
   product: ror_baseball_jersey
   sku: ROR-001
   price: 19.99
@@ -117,14 +117,14 @@ ror_stein_v:
   cost_price: 15.00
   is_master: true
   count_on_hand: 10
-apache_baseball_v:
+apache_baseball_jersey_v:
   product: apache_baseball_jersey
   sku: APC-00001
   price: 19.99
   cost_price: 17.00
   is_master: true
   count_on_hand: 10
-ruby_baseball_v:
+ruby_baseball_jersey_v:
   product: ruby_baseball_jersey
   sku: RUB-00001
   price: 19.99

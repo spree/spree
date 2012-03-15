@@ -1,7 +1,7 @@
 img_tote:
   id: 1
-  viewable: ror_tote
-  viewable_type: Spree::Product
+  viewable: ror_tote_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_tote.jpeg
   attachment_width: 360
@@ -10,8 +10,8 @@ img_tote:
   position: 1
 img_tote_back:
   id: 2
-  viewable: ror_tote
-  viewable_type: Spree::Product
+  viewable: ror_tote_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_tote_back.jpeg
   attachment_width: 360
@@ -20,8 +20,8 @@ img_tote_back:
   position: 2
 img_bag:
   id: 3
-  viewable: ror_bag
-  viewable_type: Spree::Product
+  viewable: ror_bag_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_bag.jpeg
   attachment_width: 360
@@ -30,8 +30,8 @@ img_bag:
   position: 1 
 img_baseball:
   id: 4
-  viewable: ror_baseball_jersey
-  viewable_type: Spree::Product
+  viewable: ror_baseball_jersey_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_baseball.jpeg
   attachment_width: 360
@@ -40,8 +40,8 @@ img_baseball:
   position: 1
 img_baseball_back:
   id: 5
-  viewable: ror_baseball_jersey
-  viewable_type: Spree::Product
+  viewable: ror_baseball_jersey_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_baseball_back.jpeg
   attachment_width: 360
@@ -50,8 +50,8 @@ img_baseball_back:
   position: 2
 img_jr_spaghetti:
   id: 6
-  viewable: ror_jr_spaghetti
-  viewable_type: Spree::Product
+  viewable: ror_jr_spaghetti_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_jr_spaghetti.jpeg
   attachment_width: 360
@@ -60,8 +60,8 @@ img_jr_spaghetti:
   position: 1
 img_mug:
   id: 7
-  viewable: ror_mug
-  viewable_type: Spree::Product
+  viewable: ror_mug_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_mug.jpeg
   attachment_width: 360
@@ -70,8 +70,8 @@ img_mug:
   position: 1
 img_mug_back:
   id: 8
-  viewable: ror_mug
-  viewable_type: Spree::Product
+  viewable: ror_mug_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_mug_back.jpeg
   attachment_width: 360
@@ -80,8 +80,8 @@ img_mug_back:
   position: 2
 img_ringer:
   id: 9
-  viewable: ror_ringer
-  viewable_type: Spree::Product
+  viewable: ror_ringer_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_ringer.jpeg
   attachment_width: 360
@@ -90,8 +90,8 @@ img_ringer:
   position: 1
 img_ringer_back:
   id: 10
-  viewable: ror_ringer
-  viewable_type: Spree::Product
+  viewable: ror_ringer_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_ringer_back.jpeg
   attachment_width: 360
@@ -100,8 +100,8 @@ img_ringer_back:
   position: 2 
 img_stein:
   id: 11
-  viewable: ror_stein
-  viewable_type: Spree::Product
+  viewable: ror_stein_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_stein.jpeg
   attachment_width: 360
@@ -110,8 +110,8 @@ img_stein:
   position: 1
 img_stein_back:
   id: 12
-  viewable: ror_stein
-  viewable_type: Spree::Product
+  viewable: ror_stein_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/jpg
   attachment_file_name: ror_stein_back.jpeg
   attachment_width: 360
@@ -120,8 +120,8 @@ img_stein_back:
   position: 2
 img_apache_baseball:
   id: 1004
-  viewable: apache_baseball_jersey
-  viewable_type: Spree::Product
+  viewable: apache_baseball_jersey_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/png
   attachment_file_name: apache_baseball.png
   attachment_width: 504
@@ -130,8 +130,8 @@ img_apache_baseball:
   position: 1
 img_ruby_baseball:
   id: 1008
-  viewable: ruby_baseball_jersey
-  viewable_type: Spree::Product
+  viewable: ruby_baseball_jersey_v
+  viewable_type: Spree::Variant
   attachment_content_type: image/png
   attachment_file_name: ruby_baseball.png
   attachment_width: 495
