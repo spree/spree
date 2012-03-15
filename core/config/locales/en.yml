@@ -386,6 +386,7 @@ en:
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   enter_at_least_five_letters: Enter at least five letters of customer name
   enter_password_to_confirm: "(we need your current password to confirm your changes)"
+  enter_token: Enter Token
   environment: "Environment"
   error: error
   errors:
@@ -483,6 +484,7 @@ en:
   item_total: "Item Total"
   last_name: "Last Name"
   last_name_begins_with: "Last Name Begins With"
+  learn_more: Learn More
   leave_blank_to_not_change: "(leave blank if you don't want to change it)"
   list: List
   listing_categories: "Listing Categories"
