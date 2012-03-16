@@ -13,6 +13,11 @@ now could be added to your application by appending to Gemfile:
 
     gem 'spree_product_groups', :git => 'git@github.com:spree/spree_product_groups.git'
 
+h3. Removed images association of +Spree::Product+
+
++Spree::Product+ association with +viewable+ has been moved +master+ variant of
+the product. The change is backward compatible and require no upgrade modification.
+
 h3. Deprecated functions
 
 h4. Spree::Zone
