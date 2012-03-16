@@ -2,11 +2,11 @@
 <table id="cart-detail" data-hook>
   <thead>
     <tr data-hook="cart_items_headers">
-      <th colspan="2"><%= t(:item) %></th>
-      <th><%= t(:price) %></th>
-      <th><%= t(:qty) %></th>
-      <th><%= t(:total) %></th>
-      <th></th>
+      <th class="cart-item-description-header" colspan="2"><%= t(:item) %></th>
+      <th class="cart-item-price-header"><%= t(:price) %></th>
+      <th class="cart-item-quantity-header"><%= t(:qty) %></th>
+      <th class="cart-item-total-header"><%= t(:total) %></th>
+      <th class="cart-item-delete-header"></th>
     </tr>
   </thead>
   <tbody id="line_items" data-hook>
