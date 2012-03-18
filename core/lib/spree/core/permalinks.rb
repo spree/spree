@@ -40,7 +40,7 @@ module Spree
         field = self.class.permalink_field
         # Do other links exist with this permalink?
         other = self.class.first(
-          :conditions => "#{field} LIKE '#{permalink_value}%'",
+          :conditions => "#{field} LIKE '#{permalink_value}%' AND #{field} NOT LIKE '#{permalink_value}-%-%'",
           :order => "LENGTH(#{field}) DESC, #{field} DESC"
         )
         if other
