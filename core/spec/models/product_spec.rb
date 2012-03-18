@@ -97,7 +97,6 @@ describe Spree::Product do
           @product1 = Factory(:product, :name => 'foo')
           @product2 = Factory(:product, :name => 'foo')
           @product3 = Factory(:product, :name => 'foo')
-          end
         end
         it "should have valid permalink" do
           @product1.permalink.should == 'foo'
