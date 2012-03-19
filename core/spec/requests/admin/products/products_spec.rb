@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "Products" do
   context "as admin user" do
     before(:each) do
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
     end
 

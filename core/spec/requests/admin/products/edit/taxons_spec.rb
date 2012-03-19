@@ -10,7 +10,6 @@ describe "Product Taxons" do
       Factory(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
       Spree::Product.update_all :count_on_hand => 10
 
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }

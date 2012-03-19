@@ -4,9 +4,6 @@ module Spree
 
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
       before_filter :check_json_authenticity, :only => :index
-      before_filter :load_roles, :only => [:edit, :new, :update, :create]
-
-      update.after :sign_in_if_change_own_password
 
       def index
         respond_with(@collection) do |format|
@@ -66,15 +63,6 @@ module Spree
           end
         end
 
-        def load_roles
-          @roles = Role.all
-        end
-
-        def sign_in_if_change_own_password
-          if current_user == @user && @user.password.present?
-            sign_in(@user, :event => :authentication, :bypass => true)
-          end
-        end
     end
   end
 end

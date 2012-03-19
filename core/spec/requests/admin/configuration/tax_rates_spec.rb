@@ -4,7 +4,6 @@ describe "Tax Rates" do
   let!(:tax_rate) { Factory(:tax_rate, :calculator => stub_model(Spree::Calculator)) }
 
   before do
-    sign_in_as! Factory(:admin_user)
     visit spree.admin_path
     click_link "Configuration"
   end

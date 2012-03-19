@@ -5,7 +5,6 @@ describe Spree::Admin::OrdersController do
   let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100) }
 
   before do
-    controller.stub :current_user => Factory(:admin_user)
     Spree::Order.stub :find_by_number => order
     request.env["HTTP_REFERER"] = "http://localhost:3000"
   end

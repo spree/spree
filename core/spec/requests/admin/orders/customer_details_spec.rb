@@ -13,7 +13,6 @@ describe "Customer Details" do
     Factory(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
     Factory(:user, :email => 'foobar@example.com', :ship_address => Factory(:address), :bill_address => Factory(:address))
 
-    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Orders"
     within(:css, 'table#listing_orders') { click_link "Edit" }
