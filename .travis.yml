@@ -7,11 +7,11 @@ env:
   - DB=postgres
 script:
   - "export DISPLAY=:99.0"
-  - "cd api; bundle install; bundle exec rspec spec"
-  - "cd ../auth; bundle install; bundle exec rspec spec"
-  - "cd ../core; bundle install; bundle exec rspec spec"
-  - "cd ../dash; bundle install; bundle exec rspec spec"
-  - "cd ../promo; bundle install; bundle exec rspec spec"
+  - "cd api; bundle install --quiet; bundle exec rspec spec"
+  - "cd ../auth; bundle install --quiet; bundle exec rspec spec"
+  - "cd ../core; bundle install --quiet; bundle exec rspec spec"
+  - "cd ../dash; bundle install --quiet; bundle exec rspec spec"
+  - "cd ../promo; bundle install --quiet; bundle exec rspec spec"
 
 notifications:
   email:
