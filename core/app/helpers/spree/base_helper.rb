@@ -9,6 +9,7 @@ module Spree
       elsif url.is_a?(Hash)
         return path == spree.url_for(url)
       end
+      return false
     end
 
     def link_to_cart(text = nil)
