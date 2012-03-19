@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe "Users" do
   before(:each) do
-    sign_in_as!(Factory(:admin_user, :email => "c@example.com"))
     Factory(:user, :email => "a@example.com")
     Factory(:user, :email => "b@example.com")
     visit spree.admin_path
@@ -57,21 +56,6 @@ describe "Users" do
     end
 
     it "should let me edit the user password" do
-      fill_in "user_password", :with => "welcome"
-      fill_in "user_password_confirmation", :with => "welcome"
-      click_button "Update"
-
-      page.should have_content("successfully updated!")
-    end
-  end
-
-  context "editing own user" do
-    before(:each) do
-      click_link("c@example.com")
-      click_link("Edit")
-    end
-
-    it "should let me edit own password" do
       fill_in "user_password", :with => "welcome"
       fill_in "user_password_confirmation", :with => "welcome"
       click_button "Update"

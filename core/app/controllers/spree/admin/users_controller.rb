@@ -4,11 +4,6 @@ module Spree
 
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
       before_filter :check_json_authenticity, :only => :index
-      before_filter :load_roles, :only => [:edit, :new, :update, :create]
-
-      create.after :save_user_roles
-      update.before :save_user_roles
-      update.after :sign_in_if_change_own_password
 
       def index
         respond_with(@collection) do |format|
@@ -45,17 +40,6 @@ module Spree
             end
           end
 
-        def save_user_roles
-          return unless params[:user]
-          return unless @user.respond_to?(:roles) # since roles are technically added by the auth module
-          @user.roles.delete_all
-          params[:user][:role] ||= {}
-          Role.all.each { |role|
-            @user.roles << role unless params[:user][:role][role.name].blank?
-          }
-          params[:user].delete(:role)
-        end
-
       private
 
         # handling raise from Admin::ResourceController#destroy
@@ -79,15 +63,6 @@ module Spree
           end
         end
 
-        def load_roles
-          @roles = Role.all
-        end
-
-        def sign_in_if_change_own_password
-          if current_user == @user && @user.password.present?
-            sign_in(@user, :event => :authentication, :bypass => true)
-          end
-        end
     end
   end
 end

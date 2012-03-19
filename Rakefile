@@ -20,14 +20,6 @@ end
 
 task :default => :all_tests
 
-desc "Run all tests for sqlite3 only"
-task :all_tests do
-  %w(api auth core dash promo).each do |gem_name|
-    puts "########################### #{gem_name} (spec) ###########################"
-    sh "cd #{gem_name} && #{$0} spec"
-  end
-end
-
 desc "Run all tests for all supported databases"
 task :ci do
   cmd = "bundle update"; puts cmd; system cmd;

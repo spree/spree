@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::OrdersController do
-
-  before do
-    controller.stub :current_user => Factory(:user)
-  end
-
   after do
     Spree::OrdersController.clear_overrides!
   end

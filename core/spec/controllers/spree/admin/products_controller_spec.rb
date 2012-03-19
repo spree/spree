@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Admin::ProductsController do
-  before do
-    controller.stub :current_user => Factory(:admin_user)
-  end
-
   context "#index" do
     it "should not allow JSON request without a valid token" do
       controller.should_receive(:protect_against_forgery?).at_least(:once).and_return(true)
@@ -65,12 +61,7 @@ describe Spree::Admin::ProductsController do
       get :new
       response.should render_template("admin/products/new")
     end
-    
-    it "should create product" do
-      post :create, :product => product_attributes      
-      response.should redirect_to(spree.edit_admin_product_path(Spree::Product.last))
-    end
-    
+
     it "should create product from prototype" do
       post :create, :product => product_attributes.merge(:prototype_id => prototype.id)
       product = Spree::Product.last

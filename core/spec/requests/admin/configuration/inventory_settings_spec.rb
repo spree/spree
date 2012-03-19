@@ -3,8 +3,6 @@ require 'spec_helper'
 describe "Inventory Settings" do
   context "changing settings" do
     before(:each) do
-      sign_in_as!(Factory(:admin_user))
-
       reset_spree_preferences do |config|
         config.allow_backorders = true
       end

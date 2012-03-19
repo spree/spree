@@ -4,7 +4,6 @@ describe "return authorizations" do
   let!(:order) { Factory(:completed_order_with_totals) }
 
   before do
-    sign_in_as!(Factory(:admin_user))
     order.inventory_units.update_all("state = 'shipped'")
     Factory(:return_authorization,
             :order => order,

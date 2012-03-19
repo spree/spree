@@ -5,9 +5,9 @@ describe Spree::Admin::MailMethodsController do
   let(:mail_method) { mock_model(Spree::MailMethod).as_null_object }
 
   before do
-    controller.stub :current_user => Factory(:admin_user)
     Spree::Order.stub :find => order
     Spree::MailMethod.stub :find => mail_method
+    request.env["HTTP_REFERER"] = "/"
   end
 
   context "#create" do
@@ -22,5 +22,10 @@ describe Spree::Admin::MailMethodsController do
       Spree::Core::MailSettings.should_receive :init
       put :update, {:order_id => "123", :id => "456", :mail_method_parmas => {:environment => "foo"}}
     end
+  end
+
+  it "can trigger testmail without current_user" do
+    post :testmail, :id => Factory(:mail_method).id
+    flash[:error].should_not include("undefined local variable or method `current_user'")
   end
 end

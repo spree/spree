@@ -11,10 +11,6 @@ describe Spree::Admin::BaseController do
     end
   end
 
-  before do
-    controller.stub :current_user => Factory(:admin_user)
-  end
-
   describe "check alerts" do
     it "checks alerts with before_filter" do
       controller.should_receive :check_alerts

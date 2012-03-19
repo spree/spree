@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Core::Search::Base do
 
-  before :each do
+  before do
     include ::Spree::ProductFilters
     @product1 = Factory(:product, :name => "RoR Mug", :price => 9.00, :on_hand => 1)
     @product2 = Factory(:product, :name => "RoR Shirt", :price => 11.00, :on_hand => 1)
