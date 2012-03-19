@@ -12,7 +12,7 @@ describe Spree::Admin::BaseController do
   end
 
   before do
-    controller.stub :current_user => Factory(:admin_user)
+    controller.stub :current_user => stub_model(Spree::User)
   end
 
   describe "check alerts" do
