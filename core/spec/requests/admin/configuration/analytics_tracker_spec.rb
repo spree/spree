@@ -4,7 +4,6 @@ describe "Analytics Tracker" do
   context "index" do
     before(:each) do
       2.times { Factory(:tracker, :environment => "test") }
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"

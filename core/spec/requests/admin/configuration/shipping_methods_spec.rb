@@ -15,7 +15,6 @@ describe "Shipping Methods" do
     Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
     @product = Factory(:product, :name => "Mug")
 
-    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Configuration"
   end
