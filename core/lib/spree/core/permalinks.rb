@@ -33,15 +33,24 @@ module Spree
           permalink_options[:field]
         end
 
+        def permalink_order
+          order = permalink_options[:order]
+
+          if order
+            "#{order} ASC,"
+          end
+        end
+
       end
 
       def save_permalink
         permalink_value = self.to_param
         field = self.class.permalink_field
+        order = self.class.permalink_order
         # Do other links exist with this permalink?
         other = self.class.first(
           :conditions => "#{field} LIKE '#{permalink_value}%'",
-          :order => "name ASC, LENGTH(#{field}) DESC, #{field} DESC"
+          :order => "#{order} LENGTH(#{field}) DESC, #{field} DESC"
         )
         if other
           # Find existence of that permalink or the number of that permalink and add one.
