@@ -91,32 +91,6 @@ describe Spree::Product do
         end
       end
 
-      context "permalink should be incremented until the value is not taken for similar names" do
-        before do
-          @other_product = Factory(:product, :name => 'foo bar')
-          @product1 = Factory(:product, :name => 'foo')
-          @product2 = Factory(:product, :name => 'foo')
-          @product3 = Factory(:product, :name => 'foo')
-        end
-        it "should have valid permalink" do
-          @product1.permalink.should == 'foo'
-          @product2.permalink.should == 'foo-1'
-          @product3.permalink.should == 'foo-2'
-        end
-      end
-
-      context "permalink should be incremented until the value is not taken for similar names when there are more than 10 products" do
-        before do
-          @other_product = Factory(:product, :name => 'foo a')
-          @products = 0.upto(11).map do
-            Factory(:product, :name => 'foo')
-          end
-        end
-        it "should have valid permalink" do
-          @products[11].permalink.should == 'foo-11'
-        end
-      end
-
       context "make_permalink should declare validates_uniqueness_of" do
         before do
           @product1 = Factory(:product, :name => 'foo')
