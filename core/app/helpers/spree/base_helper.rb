@@ -1,5 +1,9 @@
 module Spree
   module BaseHelper
+    def spree_extension_installed?(ext)
+      Rails.application.railties.all.map(&:railtie_name).include? ext  
+    end
+    
     def link_to_cart(text = nil)
       return "" if current_page?(cart_path)
 
