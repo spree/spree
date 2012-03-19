@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Admin::ImageSettingsController do
-  before do
-    controller.stub :current_user => Factory(:admin_user)
-  end
 
   context "updating image settings" do
     it "should be able to update paperclip settings" do
