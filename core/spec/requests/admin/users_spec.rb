@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe "Users" do
   before(:each) do
-    sign_in_as!(Factory(:admin_user, :email => "c@example.com"))
     Factory(:user, :email => "a@example.com")
     Factory(:user, :email => "b@example.com")
     visit spree.admin_path
