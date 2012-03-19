@@ -282,7 +282,6 @@ describe "Checkout", :js => true do
     click_link "RoR Mug"
     click_button "Add To Cart"
 
-    click_link "Cart"
     page.should have_content("RoR Mug")
     within('h1') { page.should have_content("Shopping Cart") }
 
