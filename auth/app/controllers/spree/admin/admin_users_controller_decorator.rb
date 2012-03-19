@@ -15,7 +15,7 @@ Spree::Admin::UsersController.class_eval do
     end
 
     def load_roles
-      @roles = Role.all
+      @roles = Spree::Role.scoped
     end
 end
 
