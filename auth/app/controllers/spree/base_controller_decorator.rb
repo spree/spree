@@ -1,5 +1,3 @@
-puts "*" * 500
-puts caller.join("\n")
 Spree::BaseController.class_eval do
   before_filter :set_current_user
 
