@@ -34,8 +34,6 @@ describe "Order Details" do
     end
 
     it "should render details properly" do
-      sign_in_as!(Factory(:user))
-
       order.state = :complete
       order.save!
 
