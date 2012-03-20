@@ -5,10 +5,9 @@ module Spree
       before_filter :find_properties
 
       private
-
-      def find_properties
-        @properties = Spree::Property.all.map(&:name)
-      end
+        def find_properties
+          @properties = Spree::Property.pluck(:name)
+        end
     end
   end
 end
