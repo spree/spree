@@ -1,22 +1,23 @@
-# encoding: UTF-8
+# -*- encoding: utf-8 -*-
 version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
 
-Gem::Specification.new do |s|
-  s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_api'
-  s.version     = version
-  s.summary     = 'Provides RESTful access for Spree.'
-  s.description = 'Required dependency for Spree'
+Gem::Specification.new do |gem|
+  gem.authors       = ["Ryan Bigg"]
+  gem.email         = ["ryan@spreecommerce.com"]
+  gem.description   = %q{Spree's API}
+  gem.summary       = %q{Spree's API}
+  gem.homepage      = ""
 
-  s.required_ruby_version = '>= 1.8.7'
-  s.author      = 'David North'
-  s.email       = 'david@spreecommerce.com'
-  s.homepage    = 'http://spreecommerce.com'
+  gem.files         = `git ls-files`.split($\)
+  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.name          = "spree_api"
+  gem.require_paths = ["lib"]
+  gem.version       = version
 
-  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*']
-  s.require_path = 'lib'
-  s.requirements << 'none'
+  gem.add_dependency 'spree_core', version
+  gem.add_dependency 'rabl', '0.6.2'
 
-  s.add_dependency 'spree_core', version
-  s.add_dependency 'spree_auth', version
+  gem.add_development_dependency 'rspec-rails', '2.9.0'
+  gem.add_development_dependency 'database_cleaner'
 end
