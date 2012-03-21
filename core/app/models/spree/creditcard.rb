@@ -258,7 +258,7 @@ module Spree
     end
 
     def spree_cc_type
-      return 'visa' if Rails.env == 'development'
+      return 'visa' if Rails.env.development?
       self.cc_type
     end
 
