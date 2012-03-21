@@ -12,6 +12,7 @@ require 'spree/core/testing_support/factories'
 
 RSpec.configure do |config|
   config.backtrace_clean_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
+
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
