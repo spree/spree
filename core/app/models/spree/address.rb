@@ -69,7 +69,7 @@ module Spree
     # end
 
     def full_name
-      self.firstname + ' ' + self.lastname
+      "#{firstname} #{lastname}"
     end
 
     def state_text
