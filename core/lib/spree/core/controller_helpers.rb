@@ -92,7 +92,7 @@ module Spree
         def associate_user
           return unless current_user and current_order and not current_user == current_order.user
           # get the last incompleted order
-          order = current_user.orders(:order => "updated_at").select { |item| item.completed_at.nil? }.last
+          order = current_user.orders.where("completed_at IS NULL").order("updated_at").last
           if order
             order.merge!(current_order)
             session[:order_id] = order.id

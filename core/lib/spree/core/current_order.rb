@@ -19,7 +19,7 @@ module Spree
           @current_order = Spree::Order.find_by_id(session[:order_id], :include => :adjustments)
         elsif current_user
           # get the last incompleted order
-          @current_order = current_user.orders(:order => "updated_at").select { |item| item.completed_at.nil? }.last
+          @current_order = current_user.orders.where("completed_at IS NULL").order("updated_at").last
         end
         if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
           @current_order = Spree::Order.new
