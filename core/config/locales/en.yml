@@ -280,6 +280,7 @@ en:
   cancel_my_account: Cancel my account
   cancel_my_account_description: "Unhappy?"
   canceled: Canceled
+  cannot_create_payment_without_payment_methods: You cannot create a payment for an order without any payment methods defined.
   cannot_create_returns: Cannot create returns as this order has no shipped units.
   cannot_perform_operation: "Cannot perform requested operation"
   capture: Capture
@@ -675,6 +676,7 @@ en:
   phone: Phone
   place_order: Place Order
   please_create_user: "Please create a user account"
+  please_define_payment_methods: "Please define some payment methods first."
   powered_by: "Powered by"
   presentation: Presentation
   preview: Preview

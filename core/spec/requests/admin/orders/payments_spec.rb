@@ -58,5 +58,15 @@ describe "Payments" do
       click_button "Create"
       page.should have_content("successfully created!")
     end
+
+    # Regression test for #1269
+    it "cannot create a payment for an order with no payment methods" do
+      Spree::PaymentMethod.delete_all
+      @order.payments.delete_all
+
+      visit spree.new_admin_order_payment_path(@order)
+      page.should have_content("You cannot create a payment for an order without any payment methods defined.")
+      page.should have_content("Please define some payment methods first.")
+    end
   end
 end

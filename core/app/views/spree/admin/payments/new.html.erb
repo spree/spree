@@ -2,16 +2,21 @@
 
 <h2><%= t(:new) %> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment } %>
+<% if @payment_methods.any? %>
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment } %>
 
-<%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
+  <%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
 
-  <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'form', :locals => { :f => f } %>
 
-  <p class="form-buttons" data-hook="buttons">
-    <%= button @order.cart? ? t(:continue) : t(:update) %>
-  </p>
+    <p class="form-buttons" data-hook="buttons">
+      <%= button @order.cart? ? t(:continue) : t(:update) %>
+    </p>
 
+  <% end %>
+<% else %>
+  <%= t(:cannot_create_payment_without_payment_methods) %>
+  <%= link_to t(:please_define_payment_methods), admin_payment_methods_url %>
 <% end %>
 
 <% content_for :head do %>
