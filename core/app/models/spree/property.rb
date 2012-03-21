@@ -16,8 +16,5 @@ module Spree
       end
       joins("LEFT JOIN properties_prototypes ON property_id = #{self.table_name}.id").where(:prototype_id => id)
     end
-
-    private
-
   end
 end
