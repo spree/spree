@@ -21,7 +21,7 @@ module Spree
       end
 
       it "cannot create a new product if not an admin" do
-        api_post :create, :name => "Brand new product!"
+        api_post :create, :product => { :name => "Brand new product!" }
         json_response.should == { "error" => "You are not authorized to perform that action." }
       end
     end
