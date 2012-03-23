@@ -22,7 +22,7 @@ module Spree
 
       it "can learn how to create a new product" do
         api_get :new
-        json_response["attributes"].should == attributes
+        json_response["attributes"].should == attributes.map(&:to_s)
         required_attributes = json_response["required_attributes"]
         required_attributes.should include("name")
         required_attributes.should include("price")
@@ -30,8 +30,17 @@ module Spree
 
       it "cannot create a new product if not an admin" do
         api_post :create, :product => { :name => "Brand new product!" }
-        json_response.should == { "error" => "You are not authorized to perform that action." }
-        response.status.should == 401
+        assert_unauthorized!
+      end
+
+      it "cannot update a product" do
+        api_put :update, :id => product.to_param, :product => { :name => "I hacked your store!" }
+        assert_unauthorized!
+      end
+
+      it "cannot delete a product" do
+        api_delete :destroy, :id => product.to_param
+        assert_unauthorized!
       end
     end
 
@@ -54,6 +63,23 @@ module Spree
         response.status.should == 422
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
         json_response["errors"].keys.should == ["name", "price"]
+      end
+
+      it "can update a product" do
+        api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!" }
+        response.status.should == 200
+      end
+
+      it "cannot update a product with an invalid attribute" do
+        api_put :update, :id => product.to_param, :product => { :name => "" }
+        response.status.should == 422
+        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        json_response["errors"]["name"].should == ["can't be blank"]
+      end
+
+      it "can delete a product" do
+        api_delete :destroy, :id => product.to_param
+        response.status.should == 200
       end
     end
   end

@@ -22,6 +22,23 @@ module Spree
             render "spree/api/v1/errors/invalid_resource", :resource => @product, :status => 422
           end
         end
+
+        def update
+          authorize! :update, Product
+          @product = Product.find_by_permalink!(params[:id])
+          if @product.update_attributes(params[:product])
+            render :show, :status => 200
+          else
+            render "spree/api/v1/errors/invalid_resource", :resource => @product, :status => 422
+          end
+        end
+
+        def destroy
+          authorize! :delete, Product
+          @product = Product.find_by_permalink!(params[:id])
+          @product.destroy
+          render :text => nil, :status => 200
+        end
       end
     end
   end

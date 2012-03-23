@@ -3,6 +3,11 @@ module ApiHelpers
     JSON.parse(response.body)
   end
 
+  def assert_unauthorized!
+    json_response.should == { "error" => "You are not authorized to perform that action." }
+    response.status.should == 401
+  end
+
 
   def stub_authentication!
     Spree::User.stub :find_by_api_key => current_user

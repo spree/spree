@@ -3,12 +3,15 @@ module Spree
     module ControllerSetup
       def self.included(klass)
         klass.class_eval do
-          include ActionController::ImplicitRender
-          include ActionController::Rendering
+          include AbstractController::Rendering
           include AbstractController::ViewPaths
           include AbstractController::Callbacks
           include AbstractController::Helpers
+
           include ActiveSupport::Rescuable
+
+          include ActionController::Rendering
+          include ActionController::ImplicitRender
           include ActionController::Rescue
           include ActionController::MimeResponds
 
