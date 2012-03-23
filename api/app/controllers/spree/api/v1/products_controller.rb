@@ -19,7 +19,7 @@ module Spree
           if @product.save
             render :show, :status => 201
           else
-            render "spree/api/v1/errors/invalid_resource", :resource => @product, :status => 422
+            invalid_resource!
           end
         end
 
@@ -29,7 +29,7 @@ module Spree
           if @product.update_attributes(params[:product])
             render :show, :status => 200
           else
-            render "spree/api/v1/errors/invalid_resource", :resource => @product, :status => 422
+            invalid_resource!
           end
         end
 
