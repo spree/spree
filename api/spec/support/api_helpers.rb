@@ -6,6 +6,10 @@ module ApiHelpers
   def api_get(action, params={})
     get action, params.reverse_merge!(:use_route => :spree, :format => :json, :key => "fake_key")
   end
+
+  def stub_authentication!
+    Spree::User.stub :authenticate_for_api => true
+  end
 end
 
 RSpec.configure do |config|
