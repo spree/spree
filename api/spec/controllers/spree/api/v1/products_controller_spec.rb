@@ -23,6 +23,29 @@ module Spree
       it "cannot create a new product if not an admin" do
         api_post :create, :product => { :name => "Brand new product!" }
         json_response.should == { "error" => "You are not authorized to perform that action." }
+        response.status.should == 401
+      end
+    end
+
+    context "as an admin" do
+      let!(:current_user) do
+        user = stub_model(User)
+        user.should_receive(:has_role?).with("admin").and_return(true)
+        user
+      end
+
+      it "can create a new product" do
+        api_post :create, :product => { :name => "The Other Product",
+                                        :price => 19.99 }
+        json_response.should have_attributes(attributes)
+        response.status.should == 201
+      end
+
+      it "cannot create a new product with invalid attributes" do
+        api_post :create, :product => {}
+        response.status.should == 422
+        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        json_response["errors"].keys.should == ["name", "price"]
       end
     end
   end
