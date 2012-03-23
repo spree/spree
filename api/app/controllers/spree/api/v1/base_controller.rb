@@ -16,7 +16,6 @@ module Spree
         private
 
         def check_for_api_key
-          # TODO: Work out why we can't use straight render :json here.
           render "spree/api/v1/errors/must_specify_api_key" and return if params[:key].blank?
         end
 
