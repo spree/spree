@@ -10,6 +10,9 @@ module Spree
           @product = Product.find_by_permalink!(params[:id])
         end
 
+        def new
+        end
+
         def create
           authorize! :create, Product
           @product = Product.new(params[:product])

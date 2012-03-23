@@ -20,6 +20,14 @@ module Spree
         json_response.should have_attributes(attributes)
       end
 
+      it "can learn how to create a new product" do
+        api_get :new
+        json_response["attributes"].should == attributes
+        required_attributes = json_response["required_attributes"]
+        required_attributes.should include("name")
+        required_attributes.should include("price")
+      end
+
       it "cannot create a new product if not an admin" do
         api_post :create, :product => { :name => "Brand new product!" }
         json_response.should == { "error" => "You are not authorized to perform that action." }

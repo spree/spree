@@ -11,6 +11,8 @@ module Spree
 
         rescue_from CanCan::AccessDenied, :with => :unauthorized
 
+        helper Spree::Api::ApiHelpers
+
         private
 
         def check_for_api_key
