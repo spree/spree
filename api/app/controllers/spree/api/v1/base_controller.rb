@@ -10,6 +10,7 @@ module Spree
         before_filter :authenticate_user
 
         rescue_from CanCan::AccessDenied, :with => :unauthorized
+        rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
         helper Spree::Api::ApiHelpers
 
@@ -27,6 +28,10 @@ module Spree
 
         def unauthorized
           render "spree/api/v1/errors/unauthorized", :status => 401 and return
+        end
+
+        def not_found
+          render "spree/api/v1/errors/not_found", :status => 404 and return
         end
 
         def current_ability
