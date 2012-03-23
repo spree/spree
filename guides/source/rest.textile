@@ -19,137 +19,22 @@ INFO: The API currently only supports a limited number of resources.  The curren
 
 Spree currently supports RESTful access to the following resources:
 
-* +Orders+
-* +LineItems+
-* +Shipments+
-* +InventoryUnits+
 * +Products+
-* +Countries+
-* +States+
 
 h3. JSON Data
 
 Developers communicate with the Spree API using the "JSON":http://www.json.org/ data format.  Requests for data are communicated in the standard manner using the HTTP protocol.
 
-For example, the request +GET /api/orders/R664048424.json+ will produce output similar to the following:
+For example, the request +GET /api/products/a-product.json+ will produce output similar to the following:
 
 <plain>
 {
-  "order": {
-    "number": "R664048424",
-    "completed_at": "2010-01-11T02:07:43-05:00",
-    "adjustment_total": 11.37,
-    "created_at": "2010-01-11T02:07:43-05:00",
-    "shipments": [
-      {
-        "number": "1284318100104",
-        "created_at": "2010-01-11T12:07:40-05:00",
-        "shipping_method": {
-          "name": "UPS Ground",
-          "created_at": "2010-01-11T12:07:30-05:00",
-          "updated_at": "2010-01-11T12:07:30-05:00",
-          "zone_id": 2,
-          "id": 574015644
-        },
-        "shipped_at": null,
-        "cost": 5.0,
-        "updated_at": "2010-01-11T12:07:40-05:00",
-        "tracking": null,
-        "order_id": 1035625630,
-        "id": 1002961742,
-        "address_id": 607887544,
-        "shipping_method_id": 574015644,
-        "address": {
-          "city": "North Serenahaven",
-          "address1": "6957 Alyce Wells",
-          "created_at": "2010-01-11T12:07:39-05:00",
-          "address2": "Apt. 741",
-          "zipcode": "16804",
-          "updated_at": "2010-01-11T12:07:39-05:00",
-          "country_id": 214,
-          "state_name": null,
-          "lastname": "Nikolaus",
-          "id": 607887544,
-          "phone": "502-510-7481 x3973",
-          "firstname": "Vallie",
-          "state_id": 889445952,
-          "alternative_phone": null
-        },
-        "state": "pending"
-      }
-    ],
-    "updated_at": "2010-01-11T12:07:43-05:00",
-    "token": null,
-    "total": 153.68,
-    "item_total": 142.31,
-    "id": 1035625630,
-    "bill_address": {
-      "city": "Goyettebury",
-      "address1": "628 Eleanora Ferry",
-      "created_at": "2010-01-11T12:07:39-05:00",
-      "address2": "Apt. 655",
-      "zipcode": "16804",
-      "updated_at": "2010-01-11T12:07:39-05:00",
-      "country_id": 214,
-      "state_name": null,
-      "lastname": "Hammes",
-      "id": 1046447419,
-      "phone": "1-160-338-6820",
-      "firstname": "Kathlyn",
-      "state_id": 889445952,
-      "alternative_phone": null
-    },
-    "user_id": 607882993,
-    "line_items": [
-      {
-        "price": 22.99,
-        "variant": {
-          "price": 22.99,
-          "count_on_hand": 10,
-          "product_id": 723959550,
-          "is_master": true,
-          "depth": null,
-          "deleted_at": null,
-          "cost_price": 21.0,
-          "weight": null,
-          "id": 504220342,
-          "sku": "ROR-00012",
-          "height": null,
-          "width": null
-        },
-        "created_at": "2010-01-11T12:07:30-05:00",
-        "quantity": 1,
-        "updated_at": "2010-01-11T12:07:30-05:00",
-        "order_id": 1035625630,
-        "id": 648459260,
-        "variant_id": 504220342
-      },
-      {
-        "price": 15.99,
-        "variant": {
-          "price": 15.99,
-          "count_on_hand": 10,
-          "product_id": 459084718,
-          "is_master": true,
-          "depth": null,
-          "deleted_at": null,
-          "cost_price": 13.0,
-          "weight": null,
-          "id": 215054540,
-          "sku": "ROR-00011",
-          "height": null,
-          "width": null
-        },
-        "created_at": "2010-01-11T12:07:30-05:00",
-        "quantity": 2,
-        "updated_at": "2010-01-11T12:07:30-05:00",
-        "order_id": 1035625630,
-        "id": 995042986,
-        "variant_id": 215054540
-      }
-    ],
-    "state": "new",
-    "credit_total": 0
+  "product": {
+    "id": 1,
+    "name": "A product",
+    "price": "19.99",
+    "available_on": "2011-03-23T21:11:50Z",
+    "permalink", "a-product"
   }
 }
 </plain>
@@ -159,49 +44,13 @@ h3. Making an API Call
 
 h4. Authentication
 
-You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. When using the authentication token, you will not need your password. Spree now uses "HTTP Basic Authentication":http://www.ietf.org/rfc/rfc2617.txt, and most implementations assume that you'll want to have a password, if you are required or prompted for one just pass a dummy like "X".
+You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a key parameter along with your request:
 
 <shell>
-curl -u bb51d44e:x http://example.com/api/orders.json
+curl http://example.com/api/products.json?key=YOUR_KEY_HERE
 </shell>
 
 The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
-
-NOTE: The admin role is fairly "powerful" by default.  Consider creating a new role and assign a more limited set of permissions.  This way you can create a user and corresponding token that has more narrow permissions (ex. read only access to orders.)
-
-h4. HTTP Methods
-
-Your requests must use the correct HTTP method.
-
-* GET for listing and viewing individual resources
-
-<shell>
-curl -u V8WPYgRdSZN1mSQG17sK:x \
-http://example.com/api/orders.json
-</shell>
-
-<shell>
-curl -u V8WPYgRdSZN1mSQG17sK:x \
-http://example.com/api/orders/R123123.json
-</shell>
-
-* POST for creating resources
-
-<shell>
-curl -X POST -u DBBgEG6ko38ChCSA6ZJM:x \
--d '{"product":{"name":"foo","description":"foo","price":"12"}}' \
-http://localhost:3000/api/products.json \
--H "Content-Type:application/json"
-</shell>
-
-* PUT for updating existing resources
-
-<shell>
-curl -X PUT -u V8WPYgRdSZN1mSQG17sK:x \
--d '{"shipment":{"shipping_...},...}' \
-http://localhost:3000/api/orders/R123123/shipments.json \
--H "Content-Type:application/json"
-</shell>
 
 h4. Other Supported Formats
 
@@ -209,374 +58,132 @@ Currently the API supports only the "JSON":http://www.json.org/ format.
 
 INFO: Supporting the XML format should not be difficult since Rails supports it out of the box.  Volunteers who are willing to provide a patch (and tests) for XML support are encouraged to do so.
 
-h4. Searching
-
-All list actions support filtering using Search Logic parameters. For example, to view all shipments that are ready to ship and that were created since the date 2010-01-01:
-
-<shell>
-GET api/shipments.json?search[state]=ready_to_ship\
-&search[created_at_greater_than]=2010-01-01
-</shell>
-
-NOTE: Use +--globoff+ when passing SL params through Curl to avoid syntax issues.
-
-For more details on parameters syntax please see the Search Logic "README":http://github.com/binarylogic/searchlogic.
-
-h4. Creating and Updating Resources
-
-Parameters should be supplied in the request body as a JSON encoded hash of attributes.
-
-Successfully creating a resource will result in a +201 Created+ response code while updating will result in +200 OK+.
-If creating or updating a resource fails the result will be a +500  Server Error+ response.  You can then consult the Rails logs to see more details on why the request resulted in a failure.
-
 h3. API Reference
 
-h4. Orders
+h4. API Rules
 
-Orders support the following operations
+1. All successful requests for the API will return a status of 200.
+2. Successful create and update requests will result in a status of 201 and 200 respectively.
+3. Both create and update requests will return Spree's representation of the data upon success.
+4. If a create or update request fails, a status code of 422 will be returned, with a hash containing an "error" key, and an "errors" key. The errors value will contain all ActiveRecord validation errors encounterd when saving this record.
+5. Delete requests will return status of 200, and no content.
+6. Requests that list collections, such as +/api/v1/products+ will return a limited result set back.
+7. Requests that list collections can be paginated through by passing a +page+ parameter that is a number greater than 0.
+8. If a resource can not be found, the API will return a status of 404.
+9. Unauthorized requests will be met with a 401 response.
+
+h4. Products
+
+Products support the following operations:
 
 * Index
 * Show
+* New
+* Create
+* Update
+* Destroy
 
-NOTE: The following examples demonstrate the API using +Order#id+.  You can also perform the same operations using +Order#number+.
+Product data is returned like this:
 
-h5. List Orders
-
-*Request:*
-
-<shell>GET /api/orders.json</shell>
-
-*Response:*
-
-<shell>
-[
-  { order: { ... } },
-  { order: { ... } },
-  ...
-]
-</shell>
-
-h5. View Order
-
-*Request:*
-
-<shell>
-GET /api/orders/{order_id}.json
-</shell>
-
-*Response:*
-
-<shell>
+<json>
 {
-  order: {
-    ...
+  "product": {
+    "id": 1,
+    "name": "A product",
+    "price": "19.99",
+    "available_on": "2011-03-23T21:11:50Z",
+    "permalink", "a-product"
   }
 }
-</shell>
+</json>
 
-h5. Line Items for an Order
+h5. Listing products
 
-*Request:*
+Products are displayed 25 at a time through this endpoint. To retrieve these products make a request to this endpoint:
 
-<shell>
-GET /api/orders/{order_id}/line_items.json
-</shell>
+<plain>
+GET /api/v1/products.json
+</plain>
 
-*Response:*
+This request will return the first 25 products that are active (have an +available_on+ timestamp prior to now) if the user is not an admin, or the first 25 of all products if the user is an admin.
 
-<shell>
-[
-  { line_item: { ... } },
-  { line_item: { ... } },
-  ...
-]
-</shell>
+This request can be paginated, which is done simply by passing through a +page+ parameter on the request:
 
-h5. Create a Line Item on an Order
+<plain>
+GET /api/v1/products.json?page=1
+</plain>
 
-*Request:*
+The page size is not currently customizable.
 
-<shell>
-POST /api/orders/{order_id}/line_items.json
-...
-</shell>
+h5. A single product
 
-*Response:*
+To view the details for a single product, make a request using that product's permalink:
 
-<shell>
-HTTP Status: 201 Created
-Location: http://example.com/api/orders/{order_id}/line_items/{new_line_item_id}.json
-</shell>
+<plain>
+GET /api/v1/products/a-product.json
+</plain>
 
-h5. Update a Line Item
+This will return a single product's details. For the attributes contained in this output, please see the top of this section.
 
-*Request:*
+h5. Pre-creation of a product
 
-<shell>
-PUT /api/orders/{order_id}/line_items/{line_item_id}.json
-...
-</shell>
+To query the API to find out what attributes are required to create a product, make a request like this:
 
-*Response:*
+<plain>
+GET /api/v1/products/new.json
+</plain>
 
-<shell>
-HTTP Status: 200 OK
-</shell>
+This request will inform the client of the fields that are required, so that the API client can indicate it to the user. Along with this are also the accepted parameters that the API will use in the creation of a product.
 
-h5. Shipments for an Order
+h5. Creating a new product
 
-*Request:*
+NOTE: This route is only accessible by admins.
 
-<shell>
-GET /api/orders/{order_id}/shipments.json
-</shell>
+To create a new product through the API, make this request with the necessary parameters:
 
-*Response:*
+<plain>
+POST /api/v1/products/create.json
+</plain>
 
-<shell>
-[
-  { shipment: { ... } },
-  { shipment: { ... } },
-  ...
-]
-</shell>
+For instance, a request to create a new product called "Headphones" with a price of $100 would look like this:
 
-h5. Create a Shipment for an Order
+<plain>
+POST /api/v1/products/create.json?product[name]=Headphones&product[price]=100
+</plain>
 
-*Request:*
+If this request succeeds, the API will return status 201.
 
-<shell>
-POST /api/orders/{order_id}/shipments.json
-...
-</shell>
+If it fails, a 422 status will be returned, along with error data that can be used to determine what needs correcting.
 
-*Response:*
+h5. Updating a product
 
-<shell>
-HTTP Status: 201 Created
-Location: http://example.com/api/orders/{order_id}/shipments/{new_shipment_id}.json
-</shell>
+NOTE: This route is only accessible by admins.
 
-h5. Fire State Event
+To update a product's details, make this request with the necessary parameters:
 
-*Request:*
+<plain>
+PUT /api/v1/products/a-product.json
+</plain>
 
-<shell>
-PUT /api/orders/{order_id}/event.json?e={event_name}
-</shell>
+For instance, to update a product's name, send it through like this:
 
-*Response (success):*
+<plain>
+PUT /api/v1/products/a-product.json?product[name]=Headphones
+</plain>
 
-<shell>
-HTTP Status: 200 OK
-</shell>
+If this request succeeds, the API will return status 200.
 
-*Response (failure):*
+If it fails, a 422 status will be returned, along with error data that can be used to determine what needs correcting.
 
-<shell>
-HTTP Status: 422
-</shell>
+h5. Deleting a product
 
-h4. Shipments
+NOTE: This route is only accessible by admins.
 
-h5. List Shipments
+To delete a product, make this request:
 
-*Request:*
+<plain>
+DELETE /api/v1/products/a-product.json
+</plain>
 
-<shell>
-GET /api/shipments.json
-</shell>
+The response for this request will be empty, with a 200 status.
 
-*Response:*
-
-<shell>
-[
-  { shipment: { ... } },
-  { shipment: { ... } },
-  ...
-]
-</shell>
-
-h5. View Shipment
-
-*Request:*
-
-<shell>
-GET /api/shipments/{shipment_id}.json
-</shell>
-
-*Response:*
-
-<shell>
-{
-  shipment: { ... }
-}
-</shell>
-
-h5. Update Shipment
-
-*Request:*
-
-<shell>
-PUT /api/shipments/{shipment_id}.json
-...
-</shell>
-
-*Response:*
-
-<shell>
-HTTP Status: 200 OK
-</shell>
-
-h5. Fire State Event
-
-*Request:*
-
-<shell>
-PUT /api/shipments/{shipment_id}/event.json?e={event_name}
-</shell>
-
-*Response (Success):*
-
-<shell>
-HTTP Status: 200 OK
-</shell>
-
-*Response (Failure):*
-
-<shell>
-HTTP Status: 422
-</shell>
-
-h4. Inventory Units
-
-h5. List Inventory Units
-
-Inventory units can be accessed by association to order or shipment. They can also be accessed independently.
-
-*Request:*
-
-<shell>
-GET /inventory_units.json
-GET /orders/{order_id}/inventory_units.json
-GET /shipments/{shipment_id}/inventory_units.json
-</shell>
-
-*Response:*
-
-<shell>
-[
-  { inventory_unit_: { ... } },
-  { inventory_unit: { ... } },
-  ...
-]
-</shell>
-
-h5. View Inventory Unit
-
-*Request:*
-
-<shell>
-GET /inventory_units/{inventory_unit_id}.json
-</shell>
-
-*Response:*
-
-<shell>
-{
-  inventory_unit: { ... }
-}
-</shell>
-
-h5. Update an Inventory Unit
-
-*Request:*
-
-<shell>
-PUT /inventory_units/{inventory_unit_id}.json
-...
-</shell>
-
-*Response:*
-
-<shell>
-HTTP Status: 200 OK
-</shell>
-
-h5. Fire State Event
-
-*Request:*
-
-<shell>
-PUT /inventory_units/{inventory_unit_id}/event.json?e={event_name}
-...
-</shell>
-
-*Response (success):*
-
-<shell>
-HTTP Status: 200 OK
-</shell>
-
-*Response (failure):*
-
-<shell>
-HTTP Status: 422
-</shell>
-
-
-h3. Tools and Suggestions
-
-h4. Curl
-
-Users on a Unix-based system may want to use the well known "curl":http://curl.haxx.se/ library.  This is a great way to test out your API calls on the command line.  Here are some additional hints for using curl to test your API.
-
-h5. Use +Accept+ Headers
-
-Instead of using the +.json+ suffix for your URL's you can use +-H "Accept:application/json"+ instead.  For example:
-
-<shell>
-curl -u V8WPYgRdSZN1mSQG17sK:x \
-http://example.com/api/orders \
--H "Accept:application/json"
-</shell>
-
-h5. Use +--globoff+ to Solve Syntax Issues
-
-<shell>
-curl -u V8WPYgRdSZN1mSQG17sK:x --globoff \
-http://example.com/api/orders.json
-</shell>
-
-h5. Use +-i+ Option to Inspect Headers
-
-You may find yourself wanting to know the exact header returned as a result of your call.  In this situation use the +-i+ directive.
-
-<shell>
-curl -u V8WPYgRdSZN1mSQG17sK:x -i \
-http://example.com/api/orders.json
-</shell>
-
-NOTE: Use +-I+ option instead if you're only interested in returning the header information.
-
-h5. Use +Content-Type+ Headers when Submitting JSON
-
-When using +POST+/+PUT+ to create/update a resource, you should also specify that you are passing JSON with a +Content-Type+ header.  This ensures that Rails interprets the params correctly.
-
-<shell>
--H "Content-Type:application/json"
-</shell>
-
-h5. Use the +-d+ Option to Pass Params
-
-Make sure you are passing parameters properly with curl.  For instance, the URL of http://localhost:3000/api/orders/1035625630/event.json?e=cancel can be expressed as follows:
-
-<shell>
-curl -X PUT -u DBBgEG6ko38ChCSA6ZJM:x \
-http://localhost:3000/api/orders/1035625630/event.json \
--d 'e=cancel'
-</shell>
-
-NOTE: The above approach may solve unexplained "HTTP/1.1 411 Length Required" errors when using the REST API with curl and webrick.
-
-<!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
