@@ -33,7 +33,7 @@ group :test do
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara'
-  gem 'selenium-webdriver', '2.16.0'
+  gem 'selenium-webdriver', '2.20.0'
   gem 'database_cleaner', '0.7.1'
   gem 'launchy'
 end
