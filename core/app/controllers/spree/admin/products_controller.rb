@@ -90,7 +90,7 @@ module Spree
 
             @collection = @search.relation.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
           else
-            includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
+            includes = [{:variants => [:images,  {:option_values => :option_type}]}, {:master => :images}]
 
             @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
             @collection = @collection.includes(includes).limit(params[:limit] || 10)
