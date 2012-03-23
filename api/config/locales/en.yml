@@ -3,3 +3,4 @@ en:
     api:
       must_specify_api_key: "You must specify an API key."
       invalid_api_key: "Invalid API key (%{key}) specified."
+      unauthorized: "You are not authorized to perform that action."

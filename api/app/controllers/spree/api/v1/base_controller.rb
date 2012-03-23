@@ -6,10 +6,19 @@ module Spree
         include ActionController::Rendering
         include AbstractController::ViewPaths
         include AbstractController::Callbacks
+        include AbstractController::Helpers
+        include ActiveSupport::Rescuable
+        include ActionController::Rescue
         append_view_path "app/views"
+
+        include CanCan::ControllerAdditions
+
+        attr_accessor :current_user
 
         before_filter :check_for_api_key
         before_filter :authenticate_user
+
+        rescue_from CanCan::AccessDenied, :with => :unauthorized
 
         private
 
@@ -19,9 +28,17 @@ module Spree
         end
 
         def authenticate_user
-          unless User.authenticate_for_api(params[:key])
+          unless @current_user = User.find_by_api_key(params[:key])
             render "spree/api/v1/errors/invalid_api_key" and return
           end
+        end
+
+        def unauthorized
+          render "spree/api/v1/errors/unauthorized" and return
+        end
+
+        def current_ability
+          Spree::Ability.new(current_user)
         end
       end
     end

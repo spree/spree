@@ -3,12 +3,15 @@ module ApiHelpers
     JSON.parse(response.body)
   end
 
-  def api_get(action, params={})
-    get action, params.reverse_merge!(:use_route => :spree, :format => :json, :key => "fake_key")
-  end
 
   def stub_authentication!
-    Spree::User.stub :authenticate_for_api => true
+    Spree::User.stub :find_by_api_key => current_user
+  end
+
+  # This method can be overriden (with a let block) inside a context
+  # For instance, if you wanted to have an admin user instead.
+  def current_user
+    stub_model(Spree::User)
   end
 end
 
