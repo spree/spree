@@ -11,7 +11,7 @@ Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 require 'spree/core/testing_support/factories'
 
 RSpec.configure do |config|
-  config.backtrace_clean_patterns = [/gems\/rspec/]
+  config.backtrace_clean_patterns = [/gems/]
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
