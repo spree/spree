@@ -33,6 +33,10 @@ module Spree
         def current_ability
           Spree::Ability.new(current_user)
         end
+
+        def invalid_resource!(resource)
+          render "spree/api/v1/errors/invalid_resource", :resource => resource, :status => 422
+        end
       end
     end
   end
