@@ -4,7 +4,7 @@ module ApiHelpers
   end
 
   def api_get(action, params={})
-    get action, params.merge!(:use_route => :spree, :format => :json)
+    get action, params.reverse_merge!(:use_route => :spree, :format => :json, :key => "fake_key")
   end
 end
 
