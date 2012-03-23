@@ -32,6 +32,18 @@ module Spree
         json_response.should have_attributes(attributes)
       end
 
+      it "cannot see inactive products" do
+        api_get :show, :id => inactive_product.to_param
+        json_response["error"].should == "The resource you were looking for could not be found."
+        response.status.should == 404
+      end
+
+      it "returns a 404 error when it cannot find a product" do
+        api_get :show, :id => "non-existant"
+        json_response["error"].should == "The resource you were looking for could not be found."
+        response.status.should == 404
+      end
+
       it "can learn how to create a new product" do
         api_get :new
         json_response["attributes"].should == attributes.map(&:to_s)

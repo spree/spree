@@ -5,3 +5,4 @@ en:
       invalid_api_key: "Invalid API key (%{key}) specified."
       unauthorized: "You are not authorized to perform that action."
       invalid_resource: "Invalid resource. Please fix errors and try again."
+      resource_not_found: "The resource you were looking for could not be found."
