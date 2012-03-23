@@ -8,6 +8,14 @@ module ControllerHacks
     api_process(action, params, session, flash, "POST")
   end
 
+  def api_put(action, params={}, session=nil, flash=nil)
+    api_process(action, params, session, flash, "PUT")
+  end
+
+  def api_delete(action, params={}, session=nil, flash=nil)
+    api_process(action, params, session, flash, "DELETE")
+  end
+
   def api_process(action, params={}, session=nil, flash=nil, method="get")
     process(action, params.reverse_merge!(:use_route => :spree, :format => :json, :key => "fake_key"), session, flash, method)
   end
