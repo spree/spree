@@ -10,9 +10,12 @@ module Spree
           include AbstractController::Helpers
           include ActiveSupport::Rescuable
           include ActionController::Rescue
-          append_view_path "app/views"
+          include ActionController::MimeResponds
 
           include CanCan::ControllerAdditions
+
+          append_view_path "app/views"
+          respond_to :json
         end
       end
     end

@@ -12,7 +12,12 @@ module Spree
 
         def create
           authorize! :create, Product
-          render :json => { :status => "OK" }
+          @product = Product.new(params[:product])
+          if @product.save
+            render :show, :status => 201
+          else
+            render "spree/api/v1/errors/invalid_resource", :resource => @product, :status => 422
+          end
         end
       end
     end

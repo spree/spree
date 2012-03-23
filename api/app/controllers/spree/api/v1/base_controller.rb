@@ -25,7 +25,7 @@ module Spree
         end
 
         def unauthorized
-          render "spree/api/v1/errors/unauthorized" and return
+          render "spree/api/v1/errors/unauthorized", :status => 401 and return
         end
 
         def current_ability
