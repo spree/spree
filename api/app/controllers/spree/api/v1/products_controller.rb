@@ -3,11 +3,11 @@ module Spree
     module V1
       class ProductsController < BaseController
         def index
-          @products = Product.page(params[:page])
+          @products = scope.page(params[:page])
         end
 
         def show
-          @product = Product.find_by_permalink!(params[:id])
+          @product = scope.find_by_permalink!(params[:id])
         end
 
         def new
@@ -38,6 +38,15 @@ module Spree
           @product = Product.find_by_permalink!(params[:id])
           @product.destroy
           render :text => nil, :status => 200
+        end
+
+        private
+        def scope
+          if current_user.has_role?("admin")
+            Product
+          else
+            Product.active
+          end
         end
       end
     end

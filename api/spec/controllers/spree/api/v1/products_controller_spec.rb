@@ -3,6 +3,7 @@ require 'spec_helper'
 module Spree
   describe Spree::Api::V1::ProductsController do
     let!(:product) { Factory(:product) }
+    let!(:inactive_product) { Factory(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
     let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink] }
 
     before do
@@ -13,6 +14,12 @@ module Spree
       it "retrieves a list of products" do
         api_get :index
         json_response.first.should have_attributes(attributes)
+      end
+
+      it "does not list unavailable products" do
+        api_get :index
+        json_response.count.should == 1
+        json_response.first["name"].should_not eq("inactive")
       end
 
       it "can select the next page of products" do
