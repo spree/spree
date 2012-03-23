@@ -63,6 +63,11 @@ module Spree
         user
       end
 
+      it "can see all products" do
+        api_get :index
+        json_response.count.should == 2
+      end
+
       it "can create a new product" do
         api_post :create, :product => { :name => "The Other Product",
                                         :price => 19.99 }
