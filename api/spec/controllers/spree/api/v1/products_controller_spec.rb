@@ -15,6 +15,11 @@ module Spree
         json_response.first.should have_attributes(attributes)
       end
 
+      it "can select the next page of products" do
+        Product.should_receive(:page).with("1").and_return([])
+        api_get :index, :page => 1
+      end
+
       it "gets a single product" do
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
