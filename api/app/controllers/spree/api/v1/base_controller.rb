@@ -14,7 +14,7 @@ module Spree
 
         def authenticate_user
           # TODO: Work out why we can't use straight render :json here.
-          render "spree/api/v1/errors/must_specify_api_key" if params[:key].blank?
+          render "spree/api/v1/errors/must_specify_api_key" and return if params[:key].blank?
         end
 
       end
