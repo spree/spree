@@ -2,16 +2,7 @@ module Spree
   module Api
     module V1
       class BaseController < ActionController::Metal
-        include ActionController::ImplicitRender
-        include ActionController::Rendering
-        include AbstractController::ViewPaths
-        include AbstractController::Callbacks
-        include AbstractController::Helpers
-        include ActiveSupport::Rescuable
-        include ActionController::Rescue
-        append_view_path "app/views"
-
-        include CanCan::ControllerAdditions
+        include Spree::Api::ControllerSetup
 
         attr_accessor :current_user
 
