@@ -2,6 +2,8 @@ module Spree
   class StatesController < BaseController
     ssl_allowed :index
 
+    respond_to :js
+
     def index
       # table of {country.id => [ state.id , state.name ]}, arrays sorted by name
       # blank is added elsewhere, if needed
@@ -11,6 +13,8 @@ module Spree
       Spree::State.order('name ASC').each { |state|
         @state_info[state.country_id.to_s].push [state.id, state.name]
       }
+
+      respond_with(@state_info)
     end
   end
 end
