@@ -86,7 +86,7 @@
   <%= form.fields_for :ship_address do |ship_form| %>
     <legend><%= t(:shipping_address) %></legend>
     <p class="field checkbox" data-hook="use_billing">
-      <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address)) %> 
+      <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %> 
       <%= label_tag :order_use_billing, t(:use_billing_address), :id => 'use_billing' %>
     </p>
     <div class="inner" data-hook="shipping_inner">
