@@ -109,15 +109,15 @@ module Spree
       end
 
       def button(text, icon_name = nil, button_type = 'submit', options={})
-        content_tag('button', content_tag('span', icon(icon_name) + ' ' + text), options.merge(:type => button_type))
+        button_tag(content_tag('span', icon(icon_name) + ' ' + text), options.merge(:type => button_type))
       end
 
       def button_link_to(text, url, html_options = {})
         if (html_options[:method] &&
             html_options[:method].to_s.downcase != 'get' &&
             !html_options[:remote])
-          form_tag(url, :method => html_options[:method]) do
-            button(text, html_options[:icon])
+          form_tag(url, :method => html_options.delete(:method)) do
+            button(text, html_options.delete(:icon), nil, html_options)
           end
         else
           if html_options['data-update'].nil? && html_options[:remote]
