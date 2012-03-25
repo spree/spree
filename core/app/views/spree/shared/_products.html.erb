@@ -14,7 +14,7 @@
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
       <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
         <div class="product-image">
-          <%= link_to small_image(product, :itemprop => "name"), product %>
+          <%= link_to small_image(product, :itemprop => "image"), product, :itemprop => 'url' %>
         </div>
         <%= link_to truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name %>
         <span class="price selling" itemprop="price"><%= number_to_currency product.price %></span>
