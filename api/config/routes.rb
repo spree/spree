@@ -1,6 +1,6 @@
 Spree::Core::Engine.routes.prepend do
   namespace :api do
-    namespace :v1 do
+    scope :module => :v1 do
       resources :products
     end
   end
