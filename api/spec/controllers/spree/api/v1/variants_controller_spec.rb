@@ -5,8 +5,7 @@ module Spree
     let!(:variant) { Factory(:variant, :option_values => [Factory(:option_value)]) }
     let!(:attributes) { [:id, :name, :count_on_hand,
                          :sku, :price, :weight, :height,
-                         :width, :depth, :is_master, :cost_price,
-                         :option_values] }
+                         :width, :depth, :is_master, :cost_price] }
 
     before do
       stub_authentication!
@@ -15,21 +14,22 @@ module Spree
     it "can see a list of all variants" do
       api_get :index
       json_response.first.should have_attributes(attributes)
-      option_values = json_response.first["option_values"]
-      option_values.first.should have_attributes(:name,
+      p json_response.first["variant"]
+      option_values = json_response.first["variant"]["option_values"]
+      option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
-                                                 :option_type_id)
+                                                 :option_type_id])
     end
 
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
       json_response.should have_attributes(attributes)
-      option_values = json_response["option_values"]
-      option_values.first.should have_attributes(:name,
+      option_values = json_response["variant"]["option_values"]
+      option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
-                                                 :option_type_id)
+                                                 :option_type_id])
     end
 
     it "can learn how to create a new product" do
