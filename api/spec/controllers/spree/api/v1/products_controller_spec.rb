@@ -69,11 +69,7 @@ module Spree
     end
 
     context "as an admin" do
-      let!(:current_user) do
-        user = stub_model(User)
-        user.should_receive(:has_role?).with("admin").and_return(true)
-        user
-      end
+      sign_in_as_admin!
 
       it "can see all products" do
         api_get :index
