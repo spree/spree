@@ -10,6 +10,11 @@ module Spree
         required_fields.delete(:permalink)
         required_fields
       end
+
+      def product_attributes
+        [:id, :name, :description, :price,
+         :available_on, :permalink, :count_on_hand]
+      end
     end
   end
 end
