@@ -1,4 +1,4 @@
-Spree::Api::Engine.routes.draw do
+Spree::Core::Engine.routes.prepend do
   namespace :api do
     namespace :v1 do
       resources :products
