@@ -19,7 +19,7 @@ INFO: The API currently only supports a limited number of resources.  The curren
 
 Spree currently supports RESTful access to the following resources:
 
-* +Products+
+* Products
 
 h3. JSON Data
 
@@ -44,10 +44,10 @@ h3. Making an API Call
 
 h4. Authentication
 
-You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a key parameter along with your request:
+You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a +X-Spree-Token+ header along with the request:
 
 <shell>
-curl http://example.com/api/products.json?key=YOUR_KEY_HERE
+curl --header "X-Spree-Token: YOUR_KEY_HERE" http://example.com/api/products.json
 </shell>
 
 The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
@@ -67,7 +67,7 @@ h4. API Rules
 3. Both create and update requests will return Spree's representation of the data upon success.
 4. If a create or update request fails, a status code of 422 will be returned, with a hash containing an "error" key, and an "errors" key. The errors value will contain all ActiveRecord validation errors encounterd when saving this record.
 5. Delete requests will return status of 200, and no content.
-6. Requests that list collections, such as +/api/v1/products+ will return a limited result set back.
+6. Requests that list collections, such as +/api/products+ will return a limited result set back.
 7. Requests that list collections can be paginated through by passing a +page+ parameter that is a number greater than 0.
 8. If a resource can not be found, the API will return a status of 404.
 9. Unauthorized requests will be met with a 401 response.
@@ -102,7 +102,7 @@ h5. Listing products
 Products are displayed 25 at a time through this endpoint. To retrieve these products make a request to this endpoint:
 
 <plain>
-GET /api/v1/products.json
+GET /api/products.json
 </plain>
 
 This request will return the first 25 products that are active (have an +available_on+ timestamp prior to now) if the user is not an admin, or the first 25 of all products if the user is an admin.
@@ -110,7 +110,7 @@ This request will return the first 25 products that are active (have an +availab
 This request can be paginated, which is done simply by passing through a +page+ parameter on the request:
 
 <plain>
-GET /api/v1/products.json?page=1
+GET /api/products.json?page=1
 </plain>
 
 The page size is not currently customizable.
@@ -120,7 +120,7 @@ h5. A single product
 To view the details for a single product, make a request using that product's permalink:
 
 <plain>
-GET /api/v1/products/a-product.json
+GET /api/products/a-product.json
 </plain>
 
 This will return a single product's details. For the attributes contained in this output, please see the top of this section.
@@ -130,7 +130,7 @@ h5. Pre-creation of a product
 To query the API to find out what attributes are required to create a product, make a request like this:
 
 <plain>
-GET /api/v1/products/new.json
+GET /api/products/new.json
 </plain>
 
 This request will inform the client of the fields that are required, so that the API client can indicate it to the user. Along with this are also the accepted parameters that the API will use in the creation of a product.
@@ -142,13 +142,13 @@ NOTE: This route is only accessible by admins.
 To create a new product through the API, make this request with the necessary parameters:
 
 <plain>
-POST /api/v1/products/create.json
+POST /api/products/create.json
 </plain>
 
 For instance, a request to create a new product called "Headphones" with a price of $100 would look like this:
 
 <plain>
-POST /api/v1/products/create.json?product[name]=Headphones&product[price]=100
+POST /api/products/create.json?product[name]=Headphones&product[price]=100
 </plain>
 
 If this request succeeds, the API will return status 201.
@@ -162,13 +162,13 @@ NOTE: This route is only accessible by admins.
 To update a product's details, make this request with the necessary parameters:
 
 <plain>
-PUT /api/v1/products/a-product.json
+PUT /api/products/a-product.json
 </plain>
 
 For instance, to update a product's name, send it through like this:
 
 <plain>
-PUT /api/v1/products/a-product.json?product[name]=Headphones
+PUT /api/products/a-product.json?product[name]=Headphones
 </plain>
 
 If this request succeeds, the API will return status 200.
@@ -182,7 +182,7 @@ NOTE: This route is only accessible by admins.
 To delete a product, make this request:
 
 <plain>
-DELETE /api/v1/products/a-product.json
+DELETE /api/products/a-product.json
 </plain>
 
 The response for this request will be empty, with a 200 status.
