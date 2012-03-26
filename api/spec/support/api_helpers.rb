@@ -20,8 +20,19 @@ module ApiHelpers
   end
 end
 
+module ApiTestSetup
+  def sign_in_as_admin!
+    let!(:current_user) do
+      user = stub_model(Spree::User)
+      user.should_receive(:has_role?).with("admin").and_return(true)
+      user
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.include ApiHelpers, :type => :controller
+  config.extend ApiTestSetup, :type => :controller
 end
 
 RSpec::Matchers.define :have_attributes do |expected_attributes|
