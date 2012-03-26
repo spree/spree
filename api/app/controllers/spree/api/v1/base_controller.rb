@@ -17,8 +17,6 @@ module Spree
         private
 
         def check_for_api_key
-          p env
-          p headers
           render "spree/api/v1/errors/must_specify_api_key" and return if api_key.blank?
         end
 
@@ -45,8 +43,9 @@ module Spree
         end
 
         def api_key
-          env["X-Spree-Token"]
+          request.headers["X-Spree-Token"]
         end
+        helper_method :api_key
       end
     end
   end

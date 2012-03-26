@@ -17,7 +17,7 @@ module ControllerHacks
   end
 
   def api_process(action, params={}, session=nil, flash=nil, method="get")
-    process(action, params.reverse_merge!(:use_route => :spree, :format => :json, :key => "fake_key"), session, flash, method)
+    process(action, params.reverse_merge!(:use_route => :spree, :format => :json), session, { :foo => "bar" }, method)
   end
 end
 
