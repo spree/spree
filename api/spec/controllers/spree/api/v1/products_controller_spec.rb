@@ -105,6 +105,7 @@ module Spree
       it "can delete a product" do
         api_delete :destroy, :id => product.to_param
         response.status.should == 200
+        lambda { product.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
