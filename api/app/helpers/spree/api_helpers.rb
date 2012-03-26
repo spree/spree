@@ -13,7 +13,7 @@ module Spree
 
       def product_attributes
         [:id, :name, :description, :price,
-         :available_on, :permalink, :count_on_hand]
+         :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords]
       end
 
       def variant_attributes
