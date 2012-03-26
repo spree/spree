@@ -5,11 +5,11 @@ module Spree
         before_filter :product
 
         def index
-          @variants = scope.scoped
+          @variants = scope.includes(:option_values).scoped
         end
 
         def show
-          @variant = scope.find(params[:id])
+          @variant = scope.includes(:option_values).find(params[:id])
         end
 
         def new
