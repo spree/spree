@@ -1,2 +1,2 @@
 object @product
-attributes :id, :name, :description, :price, :available_on, :permalink
+attributes :id, :name, :description, :price, :available_on, :permalink, :count_on_hand
