@@ -8,8 +8,8 @@ module ApiHelpers
     response.status.should == 401
   end
 
-
   def stub_authentication!
+    controller.stub :check_for_api_key
     Spree::User.stub :find_by_api_key => current_user
   end
 
