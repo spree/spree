@@ -4,7 +4,7 @@ module Spree
   describe Spree::Api::V1::ProductsController do
     let!(:product) { Factory(:product) }
     let!(:inactive_product) { Factory(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink] }
+    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand] }
 
     before do
       stub_authentication!
