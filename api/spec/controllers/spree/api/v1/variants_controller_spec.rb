@@ -14,8 +14,7 @@ module Spree
     it "can see a list of all variants" do
       api_get :index
       json_response.first.should have_attributes(attributes)
-      p json_response.first["variant"]
-      option_values = json_response.first["variant"]["option_values"]
+      option_values = json_response.last["variant"]["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
