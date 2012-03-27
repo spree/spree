@@ -1,2 +1,2 @@
 collection @products
-attributes *product_attributes
+extends "spree/api/v1/products/show"

@@ -2,7 +2,12 @@ require 'spec_helper'
 
 module Spree
   describe Api::V1::VariantsController do
-    let!(:variant) { Factory(:variant, :option_values => [Factory(:option_value)]) }
+    let!(:product) { Factory(:product) }
+    let!(:variant) do
+      variant = product.master
+      variant.option_values << Factory(:option_value)
+      variant
+    end
     let!(:attributes) { [:id, :name, :count_on_hand,
                          :sku, :price, :weight, :height,
                          :width, :depth, :is_master, :cost_price] }
@@ -62,7 +67,7 @@ module Spree
         json_response.should have_attributes(attributes)
         response.status.should == 201
 
-        variant.product.variants.count.should == 2
+        variant.product.variants.count.should == 1
       end
 
       it "can update a variant" do
