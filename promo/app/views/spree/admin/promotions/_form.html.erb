@@ -2,7 +2,7 @@
 <fieldset id="general_fields">
   <legend><%= t(:general) %></legend>
   <%= f.field_container :name do %>
-    <%= f.label :name %><br />
+    <%= f.label :name, t(:name) %><br />
     <%= f.text_field :name %>
   <% end %>
 
@@ -22,7 +22,7 @@
   <% end %>
 
   <%= f.field_container :description do %>
-    <%= f.label :description %><br />
+    <%= f.label :description, t(:description) %><br />
     <%= f.text_area :description, :style => 'height:50px;' %>
   <% end %>
 
@@ -41,11 +41,11 @@
   </p>
 
   <p id="starts_at_field">
-    <%= f.label :starts_at %>
+    <%= f.label :starts_at, t(:starts_at) %>
     <%= f.text_field :starts_at, :class => 'datepicker' %>
   </p>
   <p id="expires_at_field">
-    <%= f.label :expires_at %>
+    <%= f.label :expires_at, t(:expires_at) %>
     <%= f.text_field :expires_at, :class => 'datepicker' %>
   </p>
 </fieldset>
