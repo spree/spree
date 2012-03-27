@@ -4,8 +4,7 @@ module Spree
   describe Api::V1::LineItemsController do
     let!(:order) { Factory(:order) }
     let(:product) { Factory(:product) }
-    let(:attributes) { [:quantity, :variant_id] }
-
+    let(:attributes) { [:quantity, :price, :variant] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 
     before do
