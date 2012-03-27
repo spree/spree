@@ -4,6 +4,6 @@ gem 'spree_core', :path => "../core"
 gem 'spree_auth', :path => "../auth"
 
 # Until rabl issue #199 is merged...
-gem 'rabl', :git => "git://github.com/radar/rabl"
+gem 'rabl', :git => "git://github.com/nesquena/rabl"
 
 gemspec
