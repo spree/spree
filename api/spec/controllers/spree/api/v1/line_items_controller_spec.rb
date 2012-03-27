@@ -17,6 +17,7 @@ module Spree
       api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
       response.status.should == 201
       json_response.should have_attributes(attributes)
+      json_response["line_item"]["variant"]["name"].should_not be_blank
     end
 
     it "cannot add a new line item to an order that doesn't belong to them"
