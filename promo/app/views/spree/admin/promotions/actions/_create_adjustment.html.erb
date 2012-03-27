@@ -15,7 +15,7 @@
     <div class="settings">
       <% promotion_action.calculator.preferences.keys.map do |key| %>
         <% field_name = "#{param_prefix}[calculator_attributes][preferred_#{key}]" %>
-        <%= label_tag field_name, key.to_s.titleize %>
+        <%= label_tag field_name, t(key.to_s) %>
         <%= preference_field_tag(field_name,
                                  promotion_action.calculator.get_preference(key),
                                  :type => promotion_action.calculator.preference_type(key)) %>
