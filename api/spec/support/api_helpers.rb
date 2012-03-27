@@ -16,7 +16,7 @@ module ApiHelpers
   # This method can be overriden (with a let block) inside a context
   # For instance, if you wanted to have an admin user instead.
   def current_api_user
-    stub_model(Spree::User)
+    @current_api_user ||= stub_model(Spree::User)
   end
 end
 
