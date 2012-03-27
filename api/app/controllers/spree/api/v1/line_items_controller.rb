@@ -8,7 +8,17 @@ module Spree
           if @line_item.save
             render :show, :status => 201
           else
-            invalid_resource!(@product)
+            invalid_resource!(@line_item)
+          end
+        end
+
+        def update
+          authorize! :read, order
+          @line_item = order.line_items.find(params[:id])
+          if @line_item.update_attributes(params[:line_item])
+            render :show
+          else
+            invalid_resource!(@line_item)
           end
         end
 
