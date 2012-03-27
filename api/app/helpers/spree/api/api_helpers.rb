@@ -27,6 +27,10 @@ module Spree
       def order_attributes
         [:number, :item_total, :total, :state, :adjustment_total, :credit_total, :user_id, :created_at, :updated_at, :completed_at, :payment_total, :shipment_state, :payment_state, :email, :special_instructions]
       end
+
+      def line_item_attributes
+        [:quantity, :price, :variant_id]
+      end
     end
   end
 end
