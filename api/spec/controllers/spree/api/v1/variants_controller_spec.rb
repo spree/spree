@@ -6,6 +6,7 @@ module Spree
     let!(:attributes) { [:id, :name, :count_on_hand,
                          :sku, :price, :weight, :height,
                          :width, :depth, :is_master, :cost_price] }
+    render_views
 
     before do
       stub_authentication!
@@ -13,9 +14,9 @@ module Spree
 
     it "can see a list of all variants" do
       api_get :index
-      json_response.first.should have_attributes(attributes)
-      p json_response.first["variant"]
-      option_values = json_response.first["variant"]["option_values"]
+      variant_response = json_response.find { |r| r["variant"]["id"] == variant.id }
+      variant_response.should have_attributes(attributes)
+      option_values = variant_response["variant"]["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
