@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class ProductsController < BaseController
+      class ProductsController < Spree::Api::V1::BaseController
         def index
           @products = scope.page(params[:page])
         end
@@ -42,7 +42,7 @@ module Spree
 
         private
         def scope
-          if current_user.has_role?("admin")
+          if current_api_user.has_role?("admin")
             Product
           else
             Product.active
