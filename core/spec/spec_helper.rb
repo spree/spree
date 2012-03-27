@@ -12,6 +12,7 @@ require 'database_cleaner'
 require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
 require 'spree/core/url_helpers'
+require 'paperclip/matchers'
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -49,6 +50,7 @@ RSpec.configure do |config|
   end
 
   config.include Spree::Core::UrlHelpers
+  config.include Paperclip::Shoulda::Matchers
 end
 
 shared_context "custom products" do
@@ -92,7 +94,7 @@ shared_context "product prototype" do
     end
     ot
   end
-  
+
   let(:product_attributes) do
     # Factory.attributes_for is un-deprecated!
     #   https://github.com/thoughtbot/factory_girl/issues/274#issuecomment-3592054
@@ -103,7 +105,7 @@ shared_context "product prototype" do
     size = build_option_type_with_values("size", %w(Small Medium Large))
     Factory(:prototype, :name => "Size", :option_types => [ size ])
   end
-  
+
   let(:option_values_hash) do
     hash = {}
     prototype.option_types.each do |i|
@@ -111,8 +113,8 @@ shared_context "product prototype" do
     end
     hash
   end
-  
-end  
+
+end
 
 
 
