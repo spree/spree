@@ -43,10 +43,11 @@ module Spree
         private
         def scope
           if current_api_user.has_role?("admin")
-            Product
+            scope = Product
           else
-            Product.active
+            scope = Product.active
           end
+          scope.includes(:master)
         end
       end
     end
