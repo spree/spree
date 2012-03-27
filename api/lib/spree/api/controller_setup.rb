@@ -16,8 +16,8 @@ module Spree
           include ActionController::MimeResponds
 
           include CanCan::ControllerAdditions
+          append_view_path File.expand_path("../../../app/views", File.dirname(__FILE__))
 
-          append_view_path "app/views"
           respond_to :json
         end
       end
