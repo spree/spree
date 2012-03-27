@@ -1,4 +1,5 @@
+object @line_item
 attributes :quantity, :price
 child :variant do
-  extends "variants/show"
+  extends "variants/variant"
 end
