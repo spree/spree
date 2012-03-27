@@ -48,7 +48,7 @@ module Spree
           end
 
           def scope
-            @product ? @product.variants : Variant
+            @product ? @product.variants_including_master : Variant
           end
       end
     end
