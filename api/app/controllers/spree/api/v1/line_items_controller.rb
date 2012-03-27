@@ -3,6 +3,7 @@ module Spree
     module V1
       class LineItemsController < Spree::Api::V1::BaseController
         def create
+          authorize! :read, order
           @line_item = order.line_items.build(params[:line_item], :as => :api)
           if @line_item.save
             render :show, :status => 201
