@@ -1,0 +1,45 @@
+<%= form_tag admin_analytics_register_path do %>
+  <fieldset id="analytics_signup" data-hook>
+    <legend><%= t(:analytics_sign_up) %></legend>
+    <p>
+      <%= check_box_tag 'store[terms_of_service]', @store[:terms_of_service], @store.has_key?(:terms_of_service), :size => 50 %>
+      <%= label_tag t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/terms" target="_new"><%= t(:review) %></a>)
+    </p>
+    <p>
+      <%= check_box_tag 'store[privacy_policy]', @store[:privacy_policy], @store.has_key?(:privacy_policy), :size => 50 %>
+      <%= label_tag t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/privacy" target="_new"><%= t(:review) %></a>)
+    </p>
+    <p>
+      <%= label_tag :first_name %><br>
+      <%= text_field_tag 'store[first_name]', @store[:first_name], :size => 50 %>
+    </p>
+    <p>
+      <%= label_tag :last_name %><br>
+      <%= text_field_tag 'store[last_name]', @store[:last_name], :size => 50 %>
+    </p>
+    <p>
+      <%= label_tag :email %><br>
+      <%= email_field_tag 'store[email]', @store[:email], :size => 50 %>
+    </p>
+    <p>
+      <%= label_tag :store_name %><br>
+      <%= text_field_tag 'store[name]', @store[:name], :size => 50 %>
+    </p>
+    <p>
+      <%= label_tag :store_url %><br>
+      <%= url_field_tag 'store[url]', @store[:url], :size => 50 %>
+    </p>
+    <p>
+      <%= label_tag :currency %><br>
+      <%= select_tag 'store[currency]', options_for_select(Spree::AnalyticsHelper::CURRENCIES, @store[:currency]) %>
+    </p>
+    <p>
+      <%= label_tag :time_zone %><br>
+      <%= select_tag 'store[time_zone]', time_zone_options_for_select(@store[:time_zone]) %>
+    </p>
+  </fieldset>
+  <p class="form-buttons" data-hook="buttons">
+    <%= button t(:sign_up) %>
+    <%= t(:or) %> <%= link_to t(:cancel), admin_path %>
+  </p>
+<% end %>
