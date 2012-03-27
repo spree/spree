@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Api::V1::OrdersController do
-    let!(:current_user) { stub_model(User) }
+    let!(:current_api_user) { stub_model(User) }
     let!(:order) { Factory(:order) }
     let(:attributes) { [:number, :item_total, :total,
                         :state, :adjustment_total, :credit_total,
@@ -22,7 +22,7 @@ module Spree
     end
 
     it "can view their own order" do
-      Order.any_instance.stub :user => current_user
+      Order.any_instance.stub :user => current_api_user
       api_get :show, :id => order.to_param
       response.status.should == 200
       json_response.should have_attributes(attributes)

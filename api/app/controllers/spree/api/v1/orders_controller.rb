@@ -3,7 +3,7 @@ module Spree
     module V1
       class OrdersController < BaseController
         def index
-          raise CanCan::AccessDenied unless current_user.has_role?("admin")
+          raise CanCan::AccessDenied unless current_api_user.has_role?("admin")
         end
 
         def show
