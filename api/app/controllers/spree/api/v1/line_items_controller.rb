@@ -22,6 +22,13 @@ module Spree
           end
         end
 
+        def destroy
+          authorize! :read, order
+          @line_item = order.line_items.find(params[:id])
+          @line_item.destroy
+          render :text => nil, :status => 200
+        end
+
         private
 
         def order
