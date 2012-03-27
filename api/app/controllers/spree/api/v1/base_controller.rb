@@ -4,7 +4,7 @@ module Spree
       class BaseController < ActionController::Metal
         include Spree::Api::ControllerSetup
 
-        attr_accessor :current_user
+        attr_accessor :current_api_user
 
         before_filter :check_for_api_key
         before_filter :authenticate_user
@@ -21,7 +21,7 @@ module Spree
         end
 
         def authenticate_user
-          unless @current_user = User.find_by_api_key(api_key)
+          unless @current_api_user = User.find_by_api_key(api_key)
             render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
           end
         end
@@ -35,7 +35,7 @@ module Spree
         end
 
         def current_ability
-          Spree::Ability.new(current_user)
+          Spree::Ability.new(current_api_user)
         end
 
         def invalid_resource!(resource)
