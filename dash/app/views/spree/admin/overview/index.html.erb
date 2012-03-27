@@ -3,39 +3,34 @@
   <%= javascript_include_tag 'https://api.jirafe.com/dashboard/js/spree_ui.js' %>
 <% end %>
 
-<% if params[:dash_edit] %>
-  <%= render 'form' %>
-<% else %>
-  <% if Spree::Dash::Config.configured? %>
-    <h1><%= t(:overview) %></h1>
-    <div id="jirafe"></div>
-    <%= javascript_tag :defer => 'defer' do %>
-      if (typeof jQuery != 'undefined') { 
-          (function($) {
-           $('#jirafe').jirafe({
-              api_url:    'https://api.jirafe.com/v1',
-              api_token:  '<%= Spree::Dash::Config.token %>',
-              app_id:     '<%= Spree::Dash::Config.app_id %>',
-              version:    'spree-v0.1.0'
-              });
-           })(jQuery);
-      }
-      setTimeout(function() {
-        if ($('mod-jirafe') == undefined) {
-          $('messages').insert ("<ul class=\"messages\"><li class=\"error-msg\">We're unable to connect with the Jirafe service for the moment. Please wait a few minutes and refresh this page later.</li></ul>");
-          }
-      }, 10000);
-    <% end %>
-  <% else %>
-    <div class="analytics_splash">
-      <%= image_tag 'analytics_dashboard_preview.png', :alt => 'Spree Analytics' %>
-    </div>
-    <br/>
-    <div class="preview-buttons">
-      <%= link_to content_tag(:span, t(:enter_token)), admin_path(:dash_edit => true), :class => 'button green' %>
-      <%= t(:or) %> &nbsp;
-      <%= link_to content_tag(:span, t(:learn_more)), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => 'button', :target => '_blank' %>
-    </div>
+<% if Spree::Dash::Config.configured? %>
+  <h1><%= t(:overview) %></h1>
+  <div id="jirafe"></div>
+  <%= javascript_tag :defer => 'defer' do %>
+    if (typeof jQuery != 'undefined') {
+        (function($) {
+         $('#jirafe').jirafe({
+            api_url:    'https://api.jirafe.com/v1',
+            api_token:  '<%= Spree::Dash::Config.token %>',
+            app_id:     '<%= Spree::Dash::Config.app_id %>',
+            version:    'spree-v0.1.0'
+            });
+         })(jQuery);
+    }
+    setTimeout(function() {
+      if ($('mod-jirafe') == undefined) {
+        $('messages').insert ("<ul class=\"messages\"><li class=\"error-msg\">We're unable to connect with the Jirafe service for the moment. Please wait a few minutes and refresh this page later.</li></ul>");
+        }
+    }, 10000);
   <% end %>
-
+<% else %>
+  <div class="analytics_splash">
+    <%= image_tag 'analytics_dashboard_preview.png', :alt => 'Spree Analytics' %>
+  </div>
+  <br/>
+  <div class="preview-buttons">
+    <%= link_to content_tag(:span, t(:sign_up)), admin_analytics_sign_up_path, :class => 'button green' %>
+    <%= t(:or) %> &nbsp;
+    <%= link_to content_tag(:span, t(:learn_more)), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => 'button', :target => '_blank' %>
+  </div>
 <% end %>
