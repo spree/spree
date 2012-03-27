@@ -17,12 +17,12 @@ module Spree
         private
 
         def check_for_api_key
-          render "spree/api/v1/errors/must_specify_api_key" and return if api_key.blank?
+          render "spree/api/v1/errors/must_specify_api_key", :status => 401 and return if api_key.blank?
         end
 
         def authenticate_user
           unless @current_user = User.find_by_api_key(api_key)
-            render "spree/api/v1/errors/invalid_api_key" and return
+            render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
           end
         end
 
