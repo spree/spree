@@ -38,6 +38,15 @@ module Spree
       it "can update a line item on the order" do
         line_item = order.line_items.first
         api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
+        response.status.should == 200
+        json_response.should have_attributes(attributes)
+      end
+
+      it "can delete a line item on the order" do
+        line_item = order.line_items.first
+        api_delete :destroy, :id => line_item.id
+        response.status.should == 200
+        lambda { line_item.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -52,6 +61,13 @@ module Spree
         api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
         assert_unauthorized!
         line_item.reload.quantity.should_not == 1000
+      end
+
+      it "cannot delete a line item on the order" do
+        line_item = order.line_items.first
+        api_delete :destroy, :id => line_item.id
+        assert_unauthorized!
+        lambda { line_item.reload }.should_not raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
