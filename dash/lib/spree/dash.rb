@@ -1,4 +1,5 @@
 require 'spree_core'
+require 'httparty'
 
 module Spree
   module Dash
@@ -7,6 +8,7 @@ module Spree
 end
 
 require 'spree/dash/engine'
+require 'spree/dash/jirafe'
 
 # add helper to all the base controllers
 # Spree::BaseController includes Spree::Core::ControllerHelpers
