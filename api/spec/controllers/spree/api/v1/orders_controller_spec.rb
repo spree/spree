@@ -10,6 +10,7 @@ module Spree
                         :completed_at, :payment_total, :shipment_state,
                         :payment_state, :email, :special_instructions] }
 
+    render_views
 
     before do
       stub_authentication!
@@ -24,7 +25,7 @@ module Spree
       Order.any_instance.stub :user => current_user
       api_get :show, :id => order.to_param
       response.status.should == 200
-      json_response.first.should have_attributes(attributes)
+      json_response.should have_attributes(attributes)
     end
 
     it "can not view someone else's order" do
