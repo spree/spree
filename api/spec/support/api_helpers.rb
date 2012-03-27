@@ -10,19 +10,19 @@ module ApiHelpers
 
   def stub_authentication!
     controller.stub :check_for_api_key
-    Spree::User.stub :find_by_api_key => current_user
+    Spree::User.stub :find_by_api_key => current_api_user
   end
 
   # This method can be overriden (with a let block) inside a context
   # For instance, if you wanted to have an admin user instead.
-  def current_user
+  def current_api_user
     stub_model(Spree::User)
   end
 end
 
 module ApiTestSetup
   def sign_in_as_admin!
-    let!(:current_user) do
+    let!(:current_api_user) do
       user = stub_model(Spree::User)
       user.should_receive(:has_role?).with("admin").and_return(true)
       user
