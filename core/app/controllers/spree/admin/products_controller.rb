@@ -79,16 +79,15 @@ module Spree
           return @collection if @collection.present?
 
           unless request.xhr?
-            params[:search] ||= {}
-            # Note: the MetaSearch scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
-            if params[:search][:deleted_at_is_null].nil?
-              params[:search][:deleted_at_is_null] = "1"
+            params[:q] ||= {}
+            # Note: the Ransack scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
+            if params[:q][:deleted_at_is_null].nil?
+              params[:q][:deleted_at_is_null] = "1"
             end
 
-            params[:search][:meta_sort] ||= "name.asc"
-            @search = super.metasearch(params[:search])
-
-            @collection = @search.relation.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
+            params[:q][:meta_sort] ||= "name.asc"
+            @search = super.search(params[:q])
+            @collection = @search.result.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
           else
             includes = [{:variants => [:images,  {:option_values => :option_type}]}, {:master => :images}]
 

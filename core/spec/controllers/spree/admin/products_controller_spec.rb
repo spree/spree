@@ -45,13 +45,11 @@ describe Spree::Admin::ProductsController do
     # Regression test for #1259
     it "can find a product by SKU" do
       product = Factory(:product, :sku => "ABC123")
-      get :index, :q => "ABC123"
+      get :index, :q => { :sku_start => "ABC123" }
       assigns[:collection].should_not be_empty
       assigns[:collection].should include(product)
     end
   end
-  
-  
 
   context "creating a product" do
     

@@ -39,7 +39,7 @@
 
 <% content_for :sidebar do %>
   <div data-hook="admin_products_sidebar">
-    <%= form_for [:admin, @search] do |f| %>
+    <%= search_form_for @search do |f| %>
       <div class="box">
         <h3><%= t(:search) %></h3>
 
