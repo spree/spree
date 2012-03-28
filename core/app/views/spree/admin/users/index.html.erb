@@ -35,10 +35,10 @@
 <% content_for :sidebar do %>
   <div class="box" data-hook="admin_users_index_search">
     <h3><%= t(:search) %></h3>
-    <%= search_form_for @search do |f| %>
+    <%= search_form_for [:admin, @search] do |f| %>
       <p>
         <%= t(:email) %><br />
-        <%= f.text_field :email_contains, :size =>18 %>
+        <%= f.text_field :email_matches, :size =>18 %>
       </p>
       <div data-hook="admin_users_index_search_buttons">
         <p><%= button t(:search) %></p>
