@@ -35,7 +35,7 @@ module Spree
 
         params[:search][:meta_sort] ||= "created_at.desc"
 
-        @search = Order.metasearch(params[:search])
+        @search = Order.complete.metasearch(params[:search])
         @orders = @search
         @item_total = @search.sum(:item_total)
         @adjustment_total = @search.sum(:adjustment_total)
