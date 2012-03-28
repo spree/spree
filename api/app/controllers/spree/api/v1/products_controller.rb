@@ -7,11 +7,7 @@ module Spree
         end
 
         def show
-          begin
-            @product = scope.find_by_permalink!(params[:id])
-          rescue ActiveRecord::RecordNotFound
-            @product = scope.find(params[:id])
-          end
+          find_product
         end
 
         def new
@@ -29,7 +25,7 @@ module Spree
 
         def update
           authorize! :update, Product
-          @product = Product.find_by_permalink!(params[:id])
+          find_product
           if @product.update_attributes(params[:product])
             render :show, :status => 200
           else
@@ -39,7 +35,7 @@ module Spree
 
         def destroy
           authorize! :delete, Product
-          @product = Product.find_by_permalink!(params[:id])
+          find_product
           @product.destroy
           render :text => nil, :status => 200
         end
@@ -52,6 +48,15 @@ module Spree
             scope = Product.active
           end
           scope.includes(:master)
+
+        end
+
+        def find_product
+          begin
+            @product = scope.find_by_permalink!(params[:id])
+          rescue ActiveRecord::RecordNotFound
+            @product = scope.find(params[:id])
+          end
         end
       end
     end
