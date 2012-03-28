@@ -46,13 +46,13 @@ describe "Products" do
         Spree::Product.update_all :count_on_hand => 10
 
         click_link "Products"
-        fill_in "search_name_contains", :with => "ap"
+        fill_in "q_name_matches", :with => "ap"
         click_button "Search"
         page.should have_content("apache baseball cap")
         page.should have_content("apache baseball cap2")
         page.should_not have_content("zomg shirt")
 
-        fill_in "search_variants_including_master_sku_contains", :with => "A1"
+        fill_in "q_variants_including_master_sku_matches", :with => "A1"
         click_button "Search"
         page.should have_content("apache baseball cap")
         page.should_not have_content("apache baseball cap2")

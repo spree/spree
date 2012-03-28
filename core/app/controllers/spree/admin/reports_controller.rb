@@ -26,10 +26,10 @@ module Spree
           params[:q][:created_at_lt] = Time.zone.parse(params[:q][:created_at_lt]).end_of_day rescue ""
         end
 
-        if params[:q].delete(:completed_at_is_not_null) == "1"
-          params[:q][:completed_at_is_not_null] = true
+        if params[:q].delete(:completed_at_not_null) == "1"
+          params[:q][:completed_at_not_null] = true
         else
-          params[:q][:completed_at_is_not_null] = false
+          params[:q][:completed_at_not_null] = false
         end
 
         params[:q][:meta_sort] ||= "created_at.desc"

@@ -80,12 +80,15 @@ module Spree
 
           unless request.xhr?
             params[:q] ||= {}
-            # Note: the Ransack scopes are on/off switches, so we need to select "not_deleted" explicitly if the switch is off
-            if params[:q][:deleted_at_is_null].nil?
-              params[:q][:deleted_at_is_null] = "1"
-            end
+            params[:q][:deleted_at_null] ||= "1"
 
             params[:q][:s] ||= "name_asc"
+
+            # Temporary work around until the ransack gem
+            # includes wildcard characters for matches queries
+            wildcard(:name_matches)
+            wildcard(:variants_including_master_sku_matches)
+
             @search = super.search(params[:q])
             @collection = @search.result.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
           else
@@ -112,6 +115,13 @@ module Spree
           # note: we only reset the product properties if we're receiving a post from the form on that tab
           return unless params[:clear_product_properties]
           params[:product] ||= {}
+        end
+
+        def wildcard(key)
+          param = params[:q][key]
+          if !param.blank? && !/^%/.match(param)
+            params[:q][key] = "%#{param}%"
+          end
         end
 
     end
