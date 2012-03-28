@@ -42,7 +42,7 @@ module Spree
               if base_scope.respond_to? scope_name
                 base_scope = base_scope.send(scope_name, *scope_attribute)
               else
-                base_scope = base_scope.merge(Spree::Product.metasearch({scope_name => scope_attribute}).relation)
+                base_scope = base_scope.merge(Spree::Product.search({scope_name => scope_attribute}).result)
               end
             end if search
             base_scope
