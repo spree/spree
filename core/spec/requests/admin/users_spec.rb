@@ -32,7 +32,7 @@ describe "Users" do
 
   context "searching users" do
     it "should display the correct results for a user search" do
-      fill_in "q_email_matches", :with => "a@example.com"
+      fill_in "q_email_cont", :with => "a@example.com"
       click_button "Search"
       within("table#listing_users") do
         page.should have_content("a@example.com")
