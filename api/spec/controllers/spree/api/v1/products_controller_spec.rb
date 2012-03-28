@@ -29,8 +29,19 @@ module Spree
       end
 
       it "gets a single product" do
+        product.images.create!
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
+        product_json = json_response["product"]
+        product_json["variants"].first.should have_attributes([:name,
+                                                              :is_master,
+                                                              :count_on_hand,
+                                                              :price])
+
+        product_json["images"].first.should have_attributes([:attachment_file_name,
+                                                            :attachment_width,
+                                                            :attachment_height,
+                                                            :attachment_content_type])
       end
 
       it "cannot see inactive products" do
