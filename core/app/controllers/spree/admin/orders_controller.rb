@@ -10,30 +10,24 @@ module Spree
 
       def index
         params[:q] ||= {}
-        params[:q][:completed_at_is_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
-        @show_only_completed = params[:q][:completed_at_is_not_null].present?
+        params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
+        @show_only_completed = params[:q][:completed_at_not_null].present?
         params[:q][:meta_sort] ||= @show_only_completed ? 'completed_at.desc' : 'created_at.desc'
 
-        if !params[:q][:created_at_greater_than].blank?
-          params[:q][:created_at_greater_than] = Time.zone.parse(params[:q][:created_at_greater_than]).beginning_of_day rescue ""
+        if !params[:q][:created_at_gt].blank?
+          params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
         end
 
-        if !params[:q][:created_at_less_than].blank?
-          params[:q][:created_at_less_than] = Time.zone.parse(params[:q][:created_at_less_than]).end_of_day rescue ""
+        if !params[:q][:created_at_lt].blank?
+          params[:q][:created_at_lt] = Time.zone.parse(params[:q][:created_at_lt]).end_of_day rescue ""
         end
 
         if @show_only_completed
-          params[:q][:completed_at_greater_than] = params[:q].delete(:created_at_greater_than)
-          params[:q][:completed_at_less_than] = params[:q].delete(:created_at_less_than)
+          params[:q][:completed_at_gt] = params[:q].delete(:created_at_gt)
+          params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        if params[:q][:completed_at_is_not_null] == '1'
-          scope = Order.complete
-        else
-          scope = Order
-        end
-
-        @search = scope.search(params[:q])
+        @search = Order.search(params[:q])
         @orders = @search.result.includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
         respond_with(@orders)
       end
