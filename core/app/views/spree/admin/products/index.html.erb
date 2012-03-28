@@ -46,12 +46,12 @@
         <%- locals = {:f => f} %>
         <div data-hook="admin_products_index_search">
           <p>
-            <%= f.label :name_matches, t(:name) %><br />
-            <%= f.text_field :name_matches, :size => 15 %>
+            <%= f.label :name_cont, t(:name) %><br />
+            <%= f.text_field :name_cont, :size => 15 %>
           </p>
           <p>
-            <%= f.label :variants_including_master_sku_matches, t(:sku) %><br />
-            <%= f.text_field :variants_including_master_sku_matches, :size => 15 %>
+            <%= f.label :variants_including_master_sku_cont, t(:sku) %><br />
+            <%= f.text_field :variants_including_master_sku_cont, :size => 15 %>
           </p>
           <p>
             <%= f.label :deleted_at_null, t(:show_deleted) %><br />

@@ -38,7 +38,7 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <p>
         <%= t(:email) %><br />
-        <%= f.text_field :email_matches, :size =>18 %>
+        <%= f.text_field :email_cont, :size =>18 %>
       </p>
       <div data-hook="admin_users_index_search_buttons">
         <p><%= button t(:search) %></p>
