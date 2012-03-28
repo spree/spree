@@ -39,7 +39,7 @@
 
 <% content_for :sidebar do %>
   <div data-hook="admin_products_sidebar">
-    <%= search_form_for @search do |f| %>
+    <%= search_form_for [:admin, @search] do |f| %>
       <div class="box">
         <h3><%= t(:search) %></h3>
 
@@ -54,8 +54,8 @@
             <%= f.text_field :variants_including_master_sku_matches, :size => 15 %>
           </p>
           <p>
-            <%= f.label :deleted_at_is_null, t(:show_deleted) %><br />
-            <%= f.check_box :deleted_at_is_null, {:checked => params[:q][:deleted_at_is_null].blank?}, '', '1' %>
+            <%= f.label :deleted_at_null, t(:show_deleted) %><br />
+            <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null].blank?}, '', '1' %>
           </p>
         </div>
 

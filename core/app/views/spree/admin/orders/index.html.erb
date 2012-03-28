@@ -79,7 +79,7 @@
         <%= f.text_field :bill_address_lastname_start, :size => 25 %>
       </p>
       <p>
-        <%= f.check_box :completed_at_is_not_null, {:checked => @show_only_completed}, '1', '' %>
+        <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '' %>
         <%= label_tag nil, t(:show_only_complete_orders) %>
       </p>
       <div data-hook="admin_orders_index_search_buttons">

@@ -173,6 +173,7 @@ Spree::Core::Engine.routes.draw do
     resources :reports, :only => [:index, :show] do
       collection do
         get :sales_total
+        post :sales_total
       end
     end
 
