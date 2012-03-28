@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'ffaker', '~> 1.12.0'
   s.add_dependency 'paperclip', '~> 2.7.0'
   s.add_dependency 'aws-sdk', '~> 1.3.4'
-  s.add_dependency 'meta_search', '= 1.1.2'
+  s.add_dependency 'ransack', '~> 0.6.0'
   s.add_dependency 'activemerchant', '= 1.20.1'
   s.add_dependency 'rails', '3.2.2'
   s.add_dependency 'kaminari', '>= 0.13.0'

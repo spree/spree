@@ -209,7 +209,6 @@ module Spree
     else
       scope :group_by_products_id, { :group => "#{self.quoted_table_name}.id" }
     end
-    search_methods :group_by_products_id
 
     private
       def self.variant_table_name

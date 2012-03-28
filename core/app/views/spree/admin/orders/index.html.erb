@@ -46,7 +46,7 @@
 <% content_for :sidebar do %>
   <div class="box" data-hook="admin_orders_index_search">
     <h3><%= t(:search) %></h3>
-    <%= form_for [:admin, @search] do |f| %>
+    <%= search_form_for [:admin, @search] do |f| %>
       <%= label_tag nil, t(:date_range) %><br />
       <div class="date-range-filter">
         <div class="left sub-field">
