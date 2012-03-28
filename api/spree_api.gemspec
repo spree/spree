@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'spree_core', version
   gem.add_dependency 'spree_auth', version
-  gem.add_dependency 'rabl', '0.6.3'
+  gem.add_dependency 'rabl', '0.6.5'
 
   gem.add_development_dependency 'rspec-rails', '2.9.0'
   gem.add_development_dependency 'database_cleaner'
