@@ -10,7 +10,7 @@ module ApiHelpers
 
   def stub_authentication!
     controller.stub :check_for_api_key
-    controller.stub :current_api_user => current_api_user
+    Spree::User.stub :find_by_api_key => current_api_user
   end
 
   # This method can be overriden (with a let block) inside a context

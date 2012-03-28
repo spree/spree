@@ -7,7 +7,11 @@ module Spree
         end
 
         def show
-          @product = scope.find_by_permalink!(params[:id])
+          begin
+            @product = scope.find_by_permalink!(params[:id])
+          rescue ActiveRecord::RecordNotFound
+            @product = scope.find(params[:id])
+          end
         end
 
         def new
