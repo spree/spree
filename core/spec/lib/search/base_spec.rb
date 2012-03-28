@@ -31,9 +31,9 @@ describe Spree::Core::Search::Base do
     searcher.retrieve_products.count.should eq 2
   end
 
-  it "uses metasearch if scope not found" do
+  it "uses ransack if scope not found" do
     params = { :per_page => "",
-               :search => { "name_does_not_contain" => "Shirt" }}
+               :search => { "name_not_cont" => "Shirt" }}
     searcher = Spree::Core::Search::Base.new(params)
     searcher.retrieve_products.count.should eq 1
   end
