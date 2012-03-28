@@ -43,7 +43,7 @@ describe "Orders Listing" do
     end
 
     it "should be able to search orders" do
-      fill_in "q_number_matches", :with => "R200"
+      fill_in "q_number_cont", :with => "R200"
       click_button "Search"
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R200"
     end
