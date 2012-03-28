@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Api::V1::LineItemsController do
+    render_views
+
     let!(:order) do
      order = Factory(:order)
      order.line_items << Factory(:line_item)
@@ -16,12 +18,12 @@ module Spree
       stub_authentication!
     end
 
-    it "can learn how to create a new line item" do
-      api_get :new
-      json_response["attributes"].should == ["quantity", "price", "variant_id"]
-      required_attributes = json_response["required_attributes"]
-      required_attributes.should include("quantity", "variant_id")
-    end
+    # it "can learn how to create a new line item" do
+    #   api_get :new
+    #   json_response["attributes"].should == ["quantity", "price", "variant_id"]
+    #   required_attributes = json_response["required_attributes"]
+    #   required_attributes.should include("quantity", "variant_id")
+    # end
 
     context "as the order owner" do
       before do
