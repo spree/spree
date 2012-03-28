@@ -43,13 +43,13 @@ describe "Orders Listing" do
     end
 
     it "should be able to search orders" do
-      fill_in "search_number_like", :with => "R200"
+      fill_in "q_number_matches", :with => "R200"
       click_button "Search"
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R200"
     end
 
     it "should be able to search orders using only completed at input" do
-      fill_in "search_created_at_greater_than", :with => Date.today
+      fill_in "q_created_at_gt", :with => Date.today
       click_button "Search"
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R100"
     end
