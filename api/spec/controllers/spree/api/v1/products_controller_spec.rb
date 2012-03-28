@@ -2,10 +2,11 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Api::V1::ProductsController do
+    render_views
+
     let!(:product) { Factory(:product) }
     let!(:inactive_product) { Factory(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
     let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords] }
-    render_views
 
     before do
       stub_authentication!
