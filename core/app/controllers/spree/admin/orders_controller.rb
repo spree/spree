@@ -27,7 +27,13 @@ module Spree
           params[:q][:completed_at_less_than] = params[:q].delete(:created_at_less_than)
         end
 
-        @search = Order.search(params[:q])
+        if params[:q][:completed_at_is_not_null] == '1'
+          scope = Order.complete
+        else
+          scope = Order
+        end
+
+        @search = scope.search(params[:q])
         @orders = @search.result.includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
         respond_with(@orders)
       end
