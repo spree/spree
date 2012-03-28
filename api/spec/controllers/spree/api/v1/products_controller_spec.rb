@@ -44,6 +44,24 @@ module Spree
                                                             :attachment_content_type])
       end
 
+
+      context "finds a product by permalink first then by id" do
+        let!(:other_product) { Factory(:product, :permalink => "these-are-not-the-droids-you-are-looking-for") }
+
+        before do
+          product.update_attribute(:permalink, "#{other_product.id}-and-1-ways")
+        end
+
+        specify do
+          api_get :show, :id => product.to_param
+          json_response["product"]["permalink"].should =~ /and-1-ways/
+          product.destroy
+
+          api_get :show, :id => other_product.id
+          json_response["product"]["permalink"].should =~ /droids/
+        end
+      end
+
       it "cannot see inactive products" do
         api_get :show, :id => inactive_product.to_param
         json_response["error"].should == "The resource you were looking for could not be found."
