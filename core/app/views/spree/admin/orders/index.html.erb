@@ -50,33 +50,33 @@
       <%= label_tag nil, t(:date_range) %><br />
       <div class="date-range-filter">
         <div class="left sub-field">
-          <%= f.text_field :created_at_greater_than, :class => 'datepicker' %><br />
+          <%= f.text_field :created_at_gt, :class => 'datepicker' %><br />
           <%= label_tag nil, t(:start), :class => 'sub' %>
         </div>
         <div class="right sub-field">
-          <%= f.text_field :created_at_less_than, :class => 'datepicker' %><br />
+          <%= f.text_field :created_at_lt, :class => 'datepicker' %><br />
           <%= label_tag nil, t(:stop), :class => 'sub' %>
         </div>
       </div>
 
       <p><%= label_tag nil, t(:status) %><br />
-      <%= f.select :state_equals, Spree::Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true} %></p>
+      <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true} %></p>
 
       <p>
         <%= label_tag nil, t(:order_number) %><br />
-        <%= f.text_field :number_like, :size => 25 %>
+        <%= f.text_field :number_matches, :size => 25 %>
       </p>
       <p>
         <%= label_tag nil, t(:email) %><br />
-        <%= f.text_field :email_like, :size => 25 %>
+        <%= f.text_field :email_matches, :size => 25 %>
       </p>
       <p>
-        <%= label_tag nil, t(:first_name_begins_with) %><br />
-        <%= f.text_field :bill_address_firstname_starts_with, :size => 25 %>
+        <%= label_tag nil, t(:first_name_start) %><br />
+        <%= f.text_field :bill_address_firstname_start, :size => 25 %>
       </p>
       <p>
-        <%= label_tag nil, t(:last_name_begins_with) %><br />
-        <%= f.text_field :bill_address_lastname_starts_with, :size => 25 %>
+        <%= label_tag nil, t(:last_name_start) %><br />
+        <%= f.text_field :bill_address_lastname_start, :size => 25 %>
       </p>
       <p>
         <%= f.check_box :completed_at_is_not_null, {:checked => @show_only_completed}, '1', '' %>
