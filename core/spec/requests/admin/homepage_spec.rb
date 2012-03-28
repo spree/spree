@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "Homepage" do
   context "visiting the homepage" do
     before(:each) do
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
     end
 
@@ -38,7 +37,6 @@ describe "Homepage" do
 
   context "visiting the products tab" do
     before(:each) do
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_products_path
     end
 
@@ -62,7 +60,6 @@ describe "Homepage" do
 
   context "visiting the users tab" do
     before(:each) do
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_users_path
     end
 

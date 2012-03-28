@@ -1,13 +1,17 @@
 module Spree
   module Admin
     class BaseController < Spree::BaseController
+      ssl_required
+
       helper 'spree/search'
       helper 'spree/admin/navigation'
       layout '/spree/layouts/admin'
 
+      before_filter :check_alerts
+
       protected
         def check_alerts
-          return unless current_user and should_check_alerts?
+          return unless should_check_alerts?
 
           unless session.has_key? :alerts
             begin
@@ -21,7 +25,7 @@ module Spree
         end
 
         def should_check_alerts?
-          return false if not Spree::Config[:check_for_spree_alerts]
+          return false if !Rails.env.production? || !Spree::Config[:check_for_spree_alerts]
 
           last_check = Spree::Config[:last_check_for_spree_alerts]
           return true if last_check.blank?

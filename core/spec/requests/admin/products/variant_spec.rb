@@ -9,7 +9,6 @@ describe "Variants" do
         Factory(:option_value, :option_type => option.option_type)
       end
 
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }

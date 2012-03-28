@@ -11,7 +11,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 require 'database_cleaner'
 require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
-require 'spree/url_helpers'
+require 'spree/core/url_helpers'
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -48,7 +48,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include Spree::UrlHelpers
+  config.include Spree::Core::UrlHelpers
 end
 
 shared_context "custom products" do
@@ -96,9 +96,9 @@ shared_context "product prototype" do
   let(:product_attributes) do
     # Factory.attributes_for is un-deprecated!
     #   https://github.com/thoughtbot/factory_girl/issues/274#issuecomment-3592054
-    Factory.attributes_for(:product)
+    Factory.attributes_for(:simple_product)
   end
-            
+
   let(:prototype) do
     size = build_option_type_with_values("size", %w(Small Medium Large))
     Factory(:prototype, :name => "Size", :option_types => [ size ])

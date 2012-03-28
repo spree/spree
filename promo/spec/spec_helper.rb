@@ -4,7 +4,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
-require 'spree/url_helpers'
+require 'spree/core/url_helpers'
 require 'ffaker'
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -38,6 +38,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include Spree::UrlHelpers
+  config.include Spree::Core::UrlHelpers
   config.include Rack::Test::Methods, :type => :requests
 end

@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-class Spree::Gateway::Test < Spree::Gateway
-end
-
 describe Spree::PaymentMethod do
 
   context 'validation' do

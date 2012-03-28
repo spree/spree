@@ -21,7 +21,6 @@ describe "Order Details" do
         iu.update_attribute_without_callbacks('state', 'sold')
       end
 
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
       click_link "Orders"
 
@@ -30,13 +29,11 @@ describe "Order Details" do
       page.should have_content("$39.98")
       click_link "Edit"
       fill_in "order_line_items_attributes_0_quantity", :with => "1"
-      click_button "Continue"
+      click_button "Update"
       page.should have_content("Total: $19.99")
     end
 
     it "should render details properly" do
-      sign_in_as!(Factory(:admin_user))
-
       order.state = :complete
       order.save!
 

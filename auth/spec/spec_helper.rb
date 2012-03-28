@@ -4,7 +4,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../dummy/config/environment', __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
-require 'spree/url_helpers'
+require 'spree/core/url_helpers'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -47,7 +47,7 @@ RSpec.configure do |config|
     Spree::Ability.abilities.delete(AbilityDecorator) if Spree::Ability.abilities.include?(AbilityDecorator)
   end
 
-  config.include Spree::UrlHelpers
+  config.include Spree::Core::UrlHelpers
   config.include Devise::TestHelpers, :type => :controller
   config.include Rack::Test::Methods, :type => :requests
 end
