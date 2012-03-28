@@ -3,7 +3,9 @@ module Spree
     module V1
       class OrdersController < BaseController
         def index
+          # should probably look at turning this into a CanCan step
           raise CanCan::AccessDenied unless current_api_user.has_role?("admin")
+          @orders = Order.page(params[:page])
         end
 
         def show

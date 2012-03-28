@@ -2,7 +2,6 @@ require 'spec_helper'
 
 module Spree
   describe Api::V1::OrdersController do
-    let!(:current_api_user) { stub_model(User) }
     let!(:order) { Factory(:order) }
     let(:attributes) { [:number, :item_total, :total,
                         :state, :adjustment_total, :credit_total,
@@ -32,6 +31,15 @@ module Spree
       Order.any_instance.stub :user => stub_model(User)
       api_get :show, :id => order.to_param
       assert_unauthorized!
+    end
+
+    context "as an admin" do
+      sign_in_as_admin!
+
+      it "can view all orders" do
+        api_get :index
+        json_response.first.should have_attributes(attributes)
+      end
     end
   end
 end
