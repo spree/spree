@@ -596,17 +596,18 @@ describe Spree::Order do
 
   context "#cancel" do
     let!(:variant) { stub_model(Spree::Variant, :on_hand => 0) }
-    let!(:inventory_unit) { stub_model(Spree::InventoryUnit, :variant => variant) }
+    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, :variant => variant),
+                              stub_model(Spree::InventoryUnit, :variant => variant) ]}
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
-      shipment.stub :inventory_units => [inventory_unit]
+      shipment.stub :inventory_units => inventory_units
       order.stub :shipments => [shipment]
       shipment
     end
 
     before do
       order.email = user.email
-      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 1)]
+      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 2)]
       order.line_items.stub :find_by_variant_id => order.line_items.first
 
       order.stub :completed? => true
@@ -631,7 +632,7 @@ describe Spree::Order do
 
       # Regression fix for #729
       specify do
-        Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 1)
+        Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2).once
         order.cancel!
       end
 
@@ -660,16 +661,17 @@ describe Spree::Order do
 
       before do
         shipment = stub_model(Spree::Shipment)
-        line_item = stub_model(Spree::LineItem, :variant => variant, :quantity => 1)
+        line_item = stub_model(Spree::LineItem, :variant => variant, :quantity => 2)
         order.stub :line_items => [line_item]
         order.line_items.stub :find_by_variant_id => line_item
 
         order.stub :shipments => [shipment]
-        shipment.stub :inventory_units => [stub_model(Spree::InventoryUnit, :variant => variant)]
+        shipment.stub :inventory_units => [stub_model(Spree::InventoryUnit, :variant => variant),
+                                           stub_model(Spree::InventoryUnit, :variant => variant) ]
       end
 
       specify do
-        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 1)
+        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 2).once
         order.resume!
       end
     end
