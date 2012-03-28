@@ -34,7 +34,7 @@ require 'kaminari'
 require 'nested_set'
 require 'acts_as_list'
 require 'active_merchant'
-require 'meta_search'
+require 'ransack'
 require 'jquery-rails'
 require 'deface'
 

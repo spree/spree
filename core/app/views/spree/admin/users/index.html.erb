@@ -35,8 +35,7 @@
 <% content_for :sidebar do %>
   <div class="box" data-hook="admin_users_index_search">
     <h3><%= t(:search) %></h3>
-    <% @search = Spree::User.search %>
-    <%= form_for [:admin, @search] do |f| %>
+    <%= search_form_for @search do |f| %>
       <p>
         <%= t(:email) %><br />
         <%= f.text_field :email_contains, :size =>18 %>
