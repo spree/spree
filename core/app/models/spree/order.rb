@@ -553,11 +553,8 @@ module Spree
       end
 
       def restock_items!
-        shipments.each do |shipment|
-          shipment.inventory_units.each do |inventory_unit|
-            line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
-            InventoryUnit.decrease(self, inventory_unit.variant, line_item.quantity)
-          end
+        line_items.each do |line_item|
+          InventoryUnit.decrease(self, line_item.variant, line_item.quantity)
         end
       end
 
@@ -566,11 +563,8 @@ module Spree
       end
 
       def unstock_items!
-        shipments.each do |shipment|
-          shipment.inventory_units.each do |inventory_unit|
-            line_item = line_items.find_by_variant_id(inventory_unit.variant_id)
-            InventoryUnit.increase(self, inventory_unit.variant, line_item.quantity)
-          end
+        line_items.each do |line_item|
+          InventoryUnit.increase(self, line_item.variant, line_item.quantity)
         end
       end
 
