@@ -39,10 +39,7 @@ module Spree
         if new_level > on_hand
           # fill backordered orders before creating new units
           backordered_units = inventory_units.with_state('backordered')
-          backordered_units.slice(0, new_level).each do
-            backordered_units.shift.fill_backorder
-            new_level -= 1
-          end
+          backordered_units.slice(0, new_level).each &:fill_backorder
           new_level -= backordered_units.count
         end
 
