@@ -15,7 +15,6 @@ module Spree
       it "retrieves a list of products" do
         api_get :index
         json_response["products"].first.should have_attributes(attributes)
-        json_response.count.should == 1
         json_response["count"].should == 1
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
@@ -26,9 +25,22 @@ module Spree
         json_response["products"].first["name"].should_not eq("inactive")
       end
 
-      it "can select the next page of products" do
-        Product.should_receive(:page).with("1").and_return([])
-        api_get :index, :page => 1
+      context "pagination" do
+        default_per_page(1)
+
+        it "can select the next page of products" do
+          second_product = Factory(:product)
+          api_get :index, :page => 1
+          product = json_response["products"].first
+          product.should have_attributes(attributes)
+
+          # Product attributes are actually nested...
+          product = product["product"]
+          product["name"].should == second_product.name
+          json_response["count"].should == 1
+          json_response["current_page"].should == 1
+          json_response["pages"].should == 2
+        end
       end
 
       it "gets a single product" do
