@@ -3,18 +3,19 @@ en:
   activerecord:
     attributes:
       spree/promotion:
-        name: Name
-        description: Description
+        advertise: Advertise
         code: Code
-        usage_limit: Usage limit
-        starts_at: Starts at
-        expires_at: Expires at
+        description: Description
+        event_name: Event Name
+        expires_at: Expires At
+        name: Name
+        path: Path
+        starts_at: Starts At
+        usage_limit: Usage Limit
   add_action_of_type: Add action of type
   add_rule_of_type: Add rule of type
-  advertise: Advertise
   coupon: Coupon
   coupon_code: Coupon code
-  description: Description
   editing_promotion: Editing Promotion
   events:
     spree:
@@ -22,21 +23,28 @@ en:
         coupon_code_added: Coupon code added
       content:
         visited: Visit static content page
-  expires_at: Expires at
   expiry: Expiry
   free_shipping: Free Shipping
-  name: Name
+  item_total_rule:
+    operators:
+      gt: greater than
+      gte: greater than or equal to
+  landing_page_rule:
+    path: Path
   new_promotion: New Promotion
   no_rules_added: No rules added
+  product_rule:
+    choose_products: Choose products
+    label: "Order must contain %{select} of these products"
+    match_any: at least one
+    match_all: all
+    product_source:
+      group: From product group
+      manual: Manually choose
   promotion_not_found: The coupon code you entered doesn't exist. Please try again.
   promotion: Promotion
+  promotion_action: Promotion Action
   promotion_actions: Actions
-  promotions: Promotions
-  promotion_form:
-    match_policies:
-      all: Match all of these rules
-      any: Match any of these rules
-  promotions_description: Manage offers and coupons with promotions
   promotion_action_types:
     create_adjustment:
       name: Create adjustment
@@ -47,45 +55,35 @@ en:
     give_store_credit:
       name: Give store credit
       description: Gives the user store credit of the amount specified
+  promotion_form:
+    match_policies:
+      all: Match all of these rules
+      any: Match any of these rules
+  promotions: Promotions
+  promotions_description: Manage offers and coupons with promotions
+  promotion_rule: Promotion Rule
   promotion_rule_types:
-    user:
-      name: User
-      description: Available only to the specified users
-    product:
-      name: Product(s)
-      description: Order includes specified product(s)
-    item_total:
-      name: Item total
-      description: Order total meets these criteria
     first_order:
       name: First order
       description: "Must be the customer's first order"
+    item_total:
+      name: Item total
+      description: Order total meets these criteria
     landing_page:
       name: Landing Page
       description: Customer must have visited the specified page
+    product:
+      name: Product(s)
+      description: Order includes specified product(s)
+    user:
+      name: User
+      description: Available only to the specified users
     user_logged_in:
       name: User Logged In
       description: Available only to logged in users
-  product_rule:
-    choose_products: Choose products
-    label: "Order must contain %{select} of these products"
-    match_any: at least one
-    match_all: all
-    product_source:
-      group: From product group
-      manual: Manually choose
   rules: Rules
   spree/order:
     coupon_code: Coupon Code
-  starts_at: Starts at
   user_rule:
     choose_users: Choose users
-  item_total_rule:
-    operators:
-      gt: greater than
-      gte: greater than or equal to
-  landing_page_rule:
-    path: Path
-  promotion_action: Promotion Action
-  promotion_rule: Promotion Rule
-  usage_limit: Usage Limit
+
