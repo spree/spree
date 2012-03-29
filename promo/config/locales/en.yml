@@ -4,15 +4,14 @@ en:
     attributes:
       spree/promotion:
         advertise: Advertise
-        name: Name
+        code: Code
         description: Description
-        expires_at: Expires at
         event_name: Event Name
-        code: Code
-        usage_limit: Usage Limit
+        expires_at: Expires At
+        name: Name
         path: Path
-        starts_at: Starts at
-        code: Code
+        starts_at: Starts At
+        usage_limit: Usage Limit
   add_action_of_type: Add action of type
   add_rule_of_type: Add rule of type
   coupon: Coupon
@@ -26,17 +25,26 @@ en:
         visited: Visit static content page
   expiry: Expiry
   free_shipping: Free Shipping
+  item_total_rule:
+    operators:
+      gt: greater than
+      gte: greater than or equal to
+  landing_page_rule:
+    path: Path
   new_promotion: New Promotion
   no_rules_added: No rules added
+  product_rule:
+    choose_products: Choose products
+    label: "Order must contain %{select} of these products"
+    match_any: at least one
+    match_all: all
+    product_source:
+      group: From product group
+      manual: Manually choose
   promotion_not_found: The coupon code you entered doesn't exist. Please try again.
   promotion: Promotion
+  promotion_action: Promotion Action
   promotion_actions: Actions
-  promotions: Promotions
-  promotion_form:
-    match_policies:
-      all: Match all of these rules
-      any: Match any of these rules
-  promotions_description: Manage offers and coupons with promotions
   promotion_action_types:
     create_adjustment:
       name: Create adjustment
@@ -47,43 +55,35 @@ en:
     give_store_credit:
       name: Give store credit
       description: Gives the user store credit of the amount specified
+  promotion_form:
+    match_policies:
+      all: Match all of these rules
+      any: Match any of these rules
+  promotions: Promotions
+  promotions_description: Manage offers and coupons with promotions
+  promotion_rule: Promotion Rule
   promotion_rule_types:
-    user:
-      name: User
-      description: Available only to the specified users
-    product:
-      name: Product(s)
-      description: Order includes specified product(s)
-    item_total:
-      name: Item total
-      description: Order total meets these criteria
     first_order:
       name: First order
       description: "Must be the customer's first order"
+    item_total:
+      name: Item total
+      description: Order total meets these criteria
     landing_page:
       name: Landing Page
       description: Customer must have visited the specified page
+    product:
+      name: Product(s)
+      description: Order includes specified product(s)
+    user:
+      name: User
+      description: Available only to the specified users
     user_logged_in:
       name: User Logged In
       description: Available only to logged in users
-  product_rule:
-    choose_products: Choose products
-    label: "Order must contain %{select} of these products"
-    match_any: at least one
-    match_all: all
-    product_source:
-      group: From product group
-      manual: Manually choose
   rules: Rules
   spree/order:
     coupon_code: Coupon Code
   user_rule:
     choose_users: Choose users
-  item_total_rule:
-    operators:
-      gt: greater than
-      gte: greater than or equal to
-  landing_page_rule:
-    path: Path
-  promotion_action: Promotion Action
-  promotion_rule: Promotion Rule
+
