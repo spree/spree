@@ -63,6 +63,16 @@ describe Spree::Variant do
           variant.count_on_hand.should == 95
         end
 
+        it "should keep count_on_hand negative when count is not enough to fill backorders" do
+          variant.count_on_hand = -10
+          variant.save!
+          variant.inventory_units.stub(:with_state).and_return(Array.new(10, inventory_unit))
+          inventory_unit.should_receive(:fill_backorder).exactly(5).times
+          variant.on_hand = 5
+          variant.save!
+          variant.count_on_hand.should == -5
+        end
+
       end
 
       context "and count is decreased" do
