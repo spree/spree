@@ -8,7 +8,7 @@
   <div data-hook="signup">
 
     <%= form_for :user, :url => spree.user_registration_path(@user) do |f| %>
-      <div data-hook="signup_inside_form"%>
+      <div data-hook="signup_inside_form">
         <%= render :partial => 'spree/shared/user_form', :locals => { :f => f } %>
         <p><%= f.submit t(:create), :class => 'button primary' %></p>
       </div>
