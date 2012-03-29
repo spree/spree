@@ -14,13 +14,16 @@ module Spree
     context "as a normal user" do
       it "retrieves a list of products" do
         api_get :index
-        json_response.first.should have_attributes(attributes)
+        json_response["products"].first.should have_attributes(attributes)
+        json_response.count.should == 1
+        json_response["count"].should == 1
+        json_response["current_page"].should == 1
+        json_response["pages"].should == 1
       end
 
       it "does not list unavailable products" do
         api_get :index
-        json_response.count.should == 1
-        json_response.first["name"].should_not eq("inactive")
+        json_response["products"].first["name"].should_not eq("inactive")
       end
 
       it "can select the next page of products" do
@@ -103,7 +106,10 @@ module Spree
 
       it "can see all products" do
         api_get :index
-        json_response.count.should == 2
+        json_response["products"].count.should == 2
+        json_response["count"].should == 2
+        json_response["current_page"].should == 1
+        json_response["pages"].should == 1
       end
 
       it "can create a new product" do
