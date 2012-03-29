@@ -1,8 +1,9 @@
 $(function() {
-  var original_calc_type = $('#calc-type').attr('value');
+  var calculator_select = $('select#shipping_method_calculator_type')
+  var original_calc_type = calculator_select.attr('value');
   $('div#calculator-settings-warning').hide();
-  $('#calc-type').change(function() {
-    if ($('#calc-type').attr('value') == original_calc_type) {
+  calculator_select.change(function() {
+    if (calculator_select.attr('value') == original_calc_type) {
       $('div.calculator-settings').show();
       $('div#calculator-settings-warning').hide();
       $('.calculator-settings input').prop("disabled", false);
