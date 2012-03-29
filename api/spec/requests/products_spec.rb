@@ -48,7 +48,7 @@ describe "Products" do
           Factory(:product, :name => "zomg shirt")
           @user = Factory(:admin_user)
           api_login(@user)
-          get "/api/products.json?search[name_like]=shirt", :format => :json
+          get "/api/products.json?search[name_cont]=shirt", :format => :json
         end
 
         it_should_behave_like "status ok"

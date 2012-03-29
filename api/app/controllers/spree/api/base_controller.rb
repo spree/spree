@@ -118,11 +118,14 @@ class Spree::Api::BaseController < Spree::BaseController
     def collection
       return @search unless @search.nil?
       params[:search] = {} if params[:search].blank?
+      params[:q] = {} if params[:q].blank?
+      # Backwards compatibility, to be removed in the next version of API
       params[:search][:meta_sort] = 'created_at.desc' if params[:search][:meta_sort].blank?
+      params[:q][:s] = params[:search][:meta_sort]
 
       scope = parent.present? ? parent.send(controller_name) : model_class.scoped
 
-      @search = scope.metasearch(params[:search]).relation.limit(100)
+      @search = scope.search(params[:q]).result.limit(100)
       @search
     end
 
