@@ -3,18 +3,20 @@ en:
   activerecord:
     attributes:
       spree/promotion:
+        advertise: Advertise
         name: Name
         description: Description
-        code: Code
-        usage_limit: Usage limit
-        starts_at: Starts at
         expires_at: Expires at
+        event_name: Event Name
+        code: Code
+        usage_limit: Usage Limit
+        path: Path
+        starts_at: Starts at
+        code: Code
   add_action_of_type: Add action of type
   add_rule_of_type: Add rule of type
-  advertise: Advertise
   coupon: Coupon
   coupon_code: Coupon code
-  description: Description
   editing_promotion: Editing Promotion
   events:
     spree:
@@ -22,10 +24,8 @@ en:
         coupon_code_added: Coupon code added
       content:
         visited: Visit static content page
-  expires_at: Expires at
   expiry: Expiry
   free_shipping: Free Shipping
-  name: Name
   new_promotion: New Promotion
   no_rules_added: No rules added
   promotion_not_found: The coupon code you entered doesn't exist. Please try again.
@@ -77,7 +77,6 @@ en:
   rules: Rules
   spree/order:
     coupon_code: Coupon Code
-  starts_at: Starts at
   user_rule:
     choose_users: Choose users
   item_total_rule:
@@ -88,4 +87,3 @@ en:
     path: Path
   promotion_action: Promotion Action
   promotion_rule: Promotion Rule
-  usage_limit: Usage Limit
