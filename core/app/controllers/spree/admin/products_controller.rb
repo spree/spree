@@ -82,7 +82,7 @@ module Spree
             params[:q] ||= {}
             params[:q][:deleted_at_null] ||= "1"
 
-            params[:q][:s] ||= "name_asc"
+            params[:q][:s] ||= "name asc"
 
             @search = super.search(params[:q])
             @collection = @search.result.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
