@@ -2,8 +2,8 @@
   <legend><%= t(:calculator) %></legend>
   <div id="preference-settings" data-hook>
     <p>
-      <%= f.label(:calc_type, t(:calculator), :for => 'calc-type') %>
-      <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {:id => 'calc-type'}) %>
+      <%= f.label(:calculator_type, t(:calculator), :for => 'calc_type') %>
+      <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {}, :id => 'calc_type') %>
     </p>
     <% if !@object.new_record? %>
       <div class="calculator-settings">

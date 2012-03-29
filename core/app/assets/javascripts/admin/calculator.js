@@ -1,5 +1,5 @@
 $(function() {
-  var calculator_select = $('select#shipping_method_calculator_type')
+  var calculator_select = $('select#calc_type')
   var original_calc_type = calculator_select.attr('value');
   $('div#calculator-settings-warning').hide();
   calculator_select.change(function() {
