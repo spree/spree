@@ -31,6 +31,8 @@ describe "Shipments" do
     page.should have_content("successfully created!")
     order.reload
     order.shipments.count.should == 1
+
+
     
     click_link "Shipments"
     find('table.index tbody tr:nth-child(2) td:nth-child(1)').text.should == order.shipment.number
