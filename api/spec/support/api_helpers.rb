@@ -28,6 +28,19 @@ module ApiTestSetup
       user
     end
   end
+
+  # Default kaminari's pagination to a certain range
+  # Means that you don't need to create 25 objects to test pagination
+  def default_per_page(count)
+    before do
+      @current_default_per_page = Kaminari.config.default_per_page
+      Kaminari.config.default_per_page = 1
+    end
+
+    after do
+      Kaminari.config.default_per_page = @current_default_per_page
+    end
+  end
 end
 
 RSpec.configure do |config|
