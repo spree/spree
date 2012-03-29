@@ -11,7 +11,7 @@
          @edit_url = admin_country_state_path(@country, state)
          @delete_url = admin_country_state_path(@country, state)
     %>
-      <tr id="<%= dom_id state %>" data-hook="states_row">
+      <tr id="<%= spree_dom_id state %>" data-hook="states_row">
         <td><%= state.name %></td>
         <td><%= state.abbr %></td>
         <td class="actions">

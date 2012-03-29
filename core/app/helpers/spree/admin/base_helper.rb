@@ -198,6 +198,10 @@ module Spree
         f.hidden_field(:_destroy) + link_to_with_icon(:delete, name, '#', :class => 'remove_fields')
       end
 
+      def spree_dom_id(record)
+        dom_id(record, 'spree')
+      end
+
       private
         def attribute_name_for(field_name)
           field_name.gsub(' ', '_').downcase
