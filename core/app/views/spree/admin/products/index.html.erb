@@ -21,7 +21,7 @@
     <th data-hook="admin_products_index_header_actions"></th>
   </tr>
 <% @collection.each do |product| %>
-  <tr <%= "style='color: red;'" if product.deleted? %> id="<%= dom_id product %>" data-hook="admin_products_index_rows">
+  <tr <%= "style='color: red;'" if product.deleted? %> id="spree_<%= dom_id product %>" data-hook="admin_products_index_rows">
     <td><%= product.sku rescue '' %></td>
     <td><%= product.name rescue '' %></td>
     <td><%= number_to_currency product.price rescue '' %></td>

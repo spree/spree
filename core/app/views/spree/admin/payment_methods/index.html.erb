@@ -22,7 +22,7 @@
   </tr>
   <tbody>
     <% @payment_methods.each do |method|%>
-      <tr id="<%= dom_id method %>" data-hook="admin_payment_methods_index_rows">
+      <tr id="spree_<%= dom_id method %>" data-hook="admin_payment_methods_index_rows">
         <td width="120px"><%= method.name %></td>
         <td width="140px"><%= method.type %></td>
         <td width="100px"><%= method.environment.to_s.titleize %></td>
