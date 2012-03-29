@@ -47,6 +47,19 @@ describe "Shipping Methods" do
     end
   end
 
+  # Regression test for #1331
+  context "update" do
+    it "can change the calculator", :js => true do
+      click_link "Shipping Methods"
+      within("#listing_shipping_methods") do
+        click_link "Edit"
+      end
+
+      click_button "Update"
+      page.should_not have_content("Shipping method is not found")
+    end
+  end
+
   context "availability", :js => true do
     before(:each) do
       @shipping_category = Factory(:shipping_category, :name => "Default")
