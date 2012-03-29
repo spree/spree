@@ -63,7 +63,7 @@ module Spree
         options.reverse_merge! :caption => t(:are_you_sure)
         options.reverse_merge! :title => t(:confirm_delete)
         options.reverse_merge! :dataType => 'script'
-        options.reverse_merge! :success => "function(r){ $('##{dom_id resource}').fadeOut('hide'); }"
+        options.reverse_merge! :success => "function(r){ $('#spree_#{dom_id resource}').fadeOut('hide'); }"
         options.reverse_merge! :error => "function(jqXHR, textStatus, errorThrown){ show_flash_error(jqXHR.responseText); }"
         options.reverse_merge! :name => icon('delete') + ' ' + t(:delete)
 
