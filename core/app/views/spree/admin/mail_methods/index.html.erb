@@ -20,7 +20,7 @@
   </thead>
   <tbody>
     <% @mail_methods.each do |method|%>
-      <tr id="spree_<%= dom_id method %>" data-hook="admin_mail_methods_index_rows">
+      <tr id="<%= spree_dom_id method %>" data-hook="admin_mail_methods_index_rows">
         <td width="100px"><%= method.environment.to_s.titleize %></td>
         <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
         <td width="140px" data-hook="admin_mail_methods_index_row_actions">

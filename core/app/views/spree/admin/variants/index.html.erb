@@ -16,7 +16,7 @@
   <% @variants.each do |variant| %>
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
-    <tr id="spree_variant_<%= variant.id %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
+    <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
       <td><span class="handle"></span> <%= variant.options_text %></td>
       <td><%= number_to_currency variant.price %></td>
       <td><%= variant.sku %></td>

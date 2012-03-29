@@ -25,7 +25,7 @@
   </thead>
   <tbody>
     <% @properties.each do |property| %>
-      <tr id="spree_<%= dom_id property %>" data-hook="listing_properties_row">
+      <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
         <td><%= property.name %></td>
         <td><%= property.presentation %></td>
         <td class="actions">

@@ -4,7 +4,7 @@
     <th></th>
   </tr>
 <% @taxonomies.each do |taxonomy| %>
-  <tr id="spree_<%= dom_id taxonomy %>" data-hook="taxonomies_row">
+  <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
     <td>
       <%= taxonomy.name %>
     </td>

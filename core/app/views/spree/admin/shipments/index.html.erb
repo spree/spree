@@ -20,7 +20,7 @@
     </th>
   </tr>
   <% @shipments.each do |shipment| %>
-    <tr id="<%= dom_id shipment %>" data-hook="admin_shipments_index_rows">
+    <tr id="<%= spree_dom_id shipment %>" data-hook="admin_shipments_index_rows">
       <td><%= shipment.number %></td>
       <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
       <td><%= number_to_currency shipment.cost %></td>

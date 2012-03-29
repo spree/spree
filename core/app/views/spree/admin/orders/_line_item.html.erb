@@ -1,4 +1,4 @@
-<tr id="spree_<%= dom_id(f.object) %>" data-hook="admin_order_form_line_item_row">
+<tr id="<%= spree_dom_id(f.object) %>" data-hook="admin_order_form_line_item_row">
   <td width="300">
     <%=f.object.variant.product.name%> <%= "(#{f.object.variant.options_text}))" unless f.object.variant.option_values.empty? %>
   </td>
