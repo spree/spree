@@ -18,7 +18,7 @@
   </thead>
   <tbody>
     <% @users.each do |user|%>
-      <tr id="<%= dom_id user %>" data-hook="admin_users_index_rows">
+      <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
         <td width="350px" class='user_email'><%=link_to user.email, object_url(user) %></td>
         <td data-hook="admin_users_index_row_actions">
           <%= link_to_edit user, :class => 'edit' %> &nbsp;

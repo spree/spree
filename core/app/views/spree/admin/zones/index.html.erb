@@ -24,7 +24,7 @@
   </thead>
   <tbody>
     <% @zones.each do |zone| %>
-      <tr id="<%= dom_id zone %>" data-hook="zones_row">
+      <tr id="<%= spree_dom_id zone %>" data-hook="zones_row">
         <td><%=zone.name %></td>
         <td><%=zone.description %></td>
         <td><%=zone.default_tax %></td>

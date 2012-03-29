@@ -22,7 +22,7 @@
   </thead>
   <tbody>
     <% @trackers.each do |tracker|%>
-      <tr id="<%= dom_id tracker %>" data-hook="admin_trackers_index_rows">
+      <tr id="<%= spree_dom_id tracker %>" data-hook="admin_trackers_index_rows">
         <td><%= tracker.analytics_id %></td>
         <td><%= tracker.environment.to_s.titleize %></td>
         <td><%= tracker.active ? t(:yes) : t(:no) %></td>
