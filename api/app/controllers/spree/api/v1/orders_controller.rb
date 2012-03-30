@@ -15,8 +15,10 @@ module Spree
 
         def create
           @order = Order.build_from_api(current_api_user, params[:order])
-          if @order.save
+          if @order.next
             render :show, :status => 200
+          else
+            p @order.errors
           end
         end
       end
