@@ -56,7 +56,7 @@ module SpreeCmd
 
       def use_prefix(prefix)
         unless file_name =~ /^#{prefix}/
-          @file_name = prefix + file_name
+          @file_name = prefix + Thor::Util.snake_case(file_name)
         end
       end
     end
