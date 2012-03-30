@@ -12,13 +12,13 @@ h3. Overview
 
 Adjustments play a crucial role in Spree.  They are the means by which an order total changes to reflect any type of change that is necessary after calculating the +item_total+.  They are the building blocks for creating shipping and tax-related charges as well as for applying discounts for promotions and coupons.
 
-Adjustments can be either positive or negative.  Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits."  These are just terms of convenience since there is only one +Adjustment+ model in Spree which handles this by allowing either positive or negative values.
+Adjustments can be either positive or negative.  Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits."  These are just terms of convenience since there is only one +Spree::Adjustment+ model in Spree which handles this by allowing either positive or negative values.
 
 INFO: Prior to Spree 0.30.x there were separate +Credit+ and +Charge+ models.  This distinction has been abandoned since it made things unnecessarily complicated.
 
 h3. Totals
 
-Spree has several important total values that are recorded at the +Order+ level.  The following table represents a list of attributes which are available to the Spree application and stored in the database for reporting purposes.
+Spree has several important total values that are recorded at the +Spree::Order+ level.  The following table represents a list of attributes which are available to the Spree application and stored in the database for reporting purposes.
 
 |_<.Name|_.Description|
 |+item_total+|The sum total of all line items (+price+ * +quantity+ for all line items) |
@@ -26,7 +26,7 @@ Spree has several important total values that are recorded at the +Order+ level.
 |+total+|This represents the final total of the order (+item_total+ &#43; +adjustment_total+).|
 |+payment_total+|The sum total of all valid payments (including possible negative payments due to credit card refunds.)  This total automatically excludes payments in the +processing+, +pending+ and +failed+ states.|
 
-There are also a few interesting "calculated totals."  These totals are not stored in the database (and thus not easily searchable) but they can be displayed on a per record basis through the Ruby methods provided by +Order+.
+There are also a few interesting "calculated totals."  These totals are not stored in the database (and thus not easily searchable) but they can be displayed on a per record basis through the Ruby methods provided by +Spree::Order+.
 
 |_<.Name|_.Description|
 |+ship_total+|The sum total of all adjustments where the adjustment label = 'shipping'|
@@ -34,18 +34,13 @@ There are also a few interesting "calculated totals."  These totals are not stor
 
 h3. Types of Adjustments
 
-Spree supports several types of adjustments - in fact, it supports an open-ended number of adjustment types to handle pretty much any type of situation.  From a programming standpoint these are all represented by a single +Adjustment+ class with a +label+ attribute used to identify what type of adjustment it is.
+Spree supports several types of adjustments - in fact, it supports an open-ended number of adjustment types to handle pretty much any type of situation.  From a programming standpoint these are all represented by a single +Spree::Adjustment+ class with a +label+ attribute used to identify what type of adjustment it is.
 
 The following Ruby console output helps to illustrate this fact.
 
 <shell>
->> Adjustment.last
-=> #<Adjustment id: 1073088110, order_id: 52160, amount:
-#<BigDecimal:2b38e1c62dd0,'0.0',9(18)>, label: "Shipping",
-created_at: "2010-11-30 20:22:35", updated_at: "2010-11-30
-20:22:35", source_id: 43065, source_type: "Shipment",
-mandatory: true, locked: nil, originator_id: 445378512,
-originator_type: "ShippingMethod">
+>> Spree::Adjustment.last
+=> #<Spree::Adjustment id: 684130, source_id: 968652773, amount: #<BigDecimal:7fff25851228,'0.5E1',9(36)>, label: "Shipping", source_type: "Spree::Shipment", adjustable_id: 0, created_at: "2012-03-25 04:12:08", updated_at: "2012-03-25 04:12:08", mandatory: true, locked: true, originator_id: 574015644, originator_type: "Spree::ShippingMethod", eligible: true, adjustable_type: "Spree::Order">
 </shell>
 
 This may seem somewhat simplistic at first but our experience has shown that most scenarios can be handled with adequate labels and a few other tricks (including providing some handy "scopes":http://api.rubyonrails.org/classes/ActiveRecord/NamedScope/ClassMethods.html#method-i-scope at the model level.)
@@ -55,7 +50,7 @@ h4. Taxation
 Tax adjustments are any adjustments with a label of "Tax."  This is just a naming convention but its a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's tax adjustments:
 
 <shell>
->> Order.last.adjustments.tax
+>> Spree::Order.last.adjustments.tax
 => [ ... ]
 </shell>
 
@@ -66,7 +61,7 @@ h4. Shipping
 Shipping adjustments are any adjustments with a label of "Shipping."  This is just a naming convention but its a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's shipping adjustments:
 
 <shell>
->> Order.last.adjustments.shipping
+>> Spree::Order.last.adjustments.shipping
 => [ ... ]
 </shell>
 
@@ -78,11 +73,11 @@ h4. Coupons and Promotions
 
 h3. Calculating Adjustments
 
-Adjustments are typically calculated according to a specified set of rules (although it is possible to create adjustments with a fixed, arbitrary amount.)  The following sections will detail the use of +Calculators+ as well as the rules for when calculations are performed.
+Adjustments are typically calculated according to a specified set of rules (although it is possible to create adjustments with a fixed, arbitrary amount.)  The following sections will detail the use of +Spree::Calculators+ as well as the rules for when calculations are performed.
 
 h4. Calculators
 
-Spree makes extensive use of the +Calculator+ model and there are several subclasses provided to deal with various types of calculations (flat rate, percentage discount, sales tax, VAT, etc.)  All calculators extend the +Calculator+ class and must provide the following methods
+Spree makes extensive use of the +Spree::Calculator+ model and there are several subclasses provided to deal with various types of calculations (flat rate, percentage discount, sales tax, VAT, etc.)  All calculators extend the +Spree::Calculator+ class and must provide the following methods
 
 <ruby>
 def self.description
@@ -103,7 +98,7 @@ Calculators need to be "registered" with Spree in order to be made available in 
 Spree itself contains a good example of how this can be achieved.  For instance, in the +spree_core+ gem there is logic to register calculators.  The following code can be found in the Rails +spree.register.calculators+ initializer defined in +spree/core/lib/spree/core/engine.rb+:
 
 <ruby>
-initializer "spree.register.calculators" do |app|
+initializer 'spree.register.calculators' do |app|
   app.config.spree.calculators.shipping_methods = [
       Calculator::FlatPercentItemTotal,
       Calculator::FlatRate,
@@ -117,21 +112,34 @@ initializer "spree.register.calculators" do |app|
 end
 </ruby>
 
-This registers calculators to the +Rails.application.config.spree.calculators+ array.  Extension authors should be sure to register any new calculators within the +Rails.application.config.spree.calculators+ array defined in +lib/extension_name/engine.rb+.  If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer +spree.register.calculators+ or the +Rails.application.config.spree.calculators+ method of the default SpreeSite engine.
+This registers calculators to the +Rails.application.config.spree.calculators+ array.  Extension authors should be sure to register any new calculators within the +Rails.application.config.spree.calculators+ by defining new class of aray in +lib/extension_name/engine.rb+.
+
+<ruby>
+app.config.spree.calculators.add_class('product_customization_types') 
+
+app.config.spree.calculators.product_customization_types = [ 
+  Calculator::CustomCalculatorOne, 
+  Calculator::CustomCalculatorTwo 
+] 
+</ruby>
+
+If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer +spree.register.calculators+ or the +Rails.application.config.spree.calculators+ method of the default site engine.
 
 INFO: Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
 
-NOTE: The +register+ method is removed. Calculators are now registered by appending to +Rails.application.config.spree.calculators+.
+NOTE: The +register+ method is removed. Calculators are now registered by appending custom array to +Rails.application.config.spree.calculators+.
 
 h4. +Spree::CalculatedAdjustments+ Module
 
 Spree includes a helpful +Spree::CalculatedAdjustments+ module that can be used to introduce calculator-like functionality into a Rails model.  Classes that require this type of functionality simply need to declare +calculated_adjustments+ in their class definition.
 
 <ruby>
-class ShippingMethod < ActiveRecord::Base
-  ...
-  calculated_adjustments
-  ...
+module Spree
+  class ShippingMethod < ActiveRecord::Base
+    ...
+    calculated_adjustments
+    ...
+  end
 end
 </ruby>
 
@@ -141,28 +149,29 @@ When a Spree class uses this helper method it automatically adds the following c
 
 * The ability to associate a calculator with an instance of that class (through a +has_one :calculator+ association)
 * Validation rules and the ability to accept configuration params through Rails +accepts_nested_attributes_for+
-* The ability to register +Calculators+ with the class itself (this is different from registering with Spree at large)
 
-Lets look at how this works with a specific example taken from the Spree source code itself.  Specifically we'll be looking at +ShippingMethod+.
+Lets look at how this works with a specific example taken from the Spree source code itself.  Specifically we'll be looking at +Spree::ShippingMethod+.
 
 <ruby>
-class ShippingMethod < ActiveRecord::Base
-  ...
-  calculated_adjustments
-  ...
+module Spree
+  class ShippingMethod < ActiveRecord::Base
+    ...
+    calculated_adjustments
+    ...
+  end
 end
 </ruby>
 
-Here we see that +ShippingMethod+ declares that its going to be involved in calculations by declaring +calculated_adjustments+ in the class definition.  What does that give us exactly?
+Here we see that +Spree::ShippingMethod+ declares that its going to be involved in calculations by declaring +calculated_adjustments+ in the class definition.  What does that give us exactly?
 
-Lets start by firing up the Ruby console and creating a new instance of +ShippingMethod+.
+Lets start by firing up the Ruby console and creating a new instance of +Spree::ShippingMethod+.
 
 <shell>
->> s = ShippingMethod.new
-=> #<ShippingMethod id: nil, zone_id: nil, name: nil, created_at: nil, updated_at: nil, display_on: nil>
+>> s = Spree::ShippingMethod.new
+=> #<Spree::ShippingMethod id: nil, name: nil, zone_id: nil, created_at: nil, updated_at: nil, display_on: nil, shipping_category_id: nil, match_none: nil, match_all: nil, match_one: nil>
 </shell>
 
-Now we can verify that this instance of +ShippingMethod+ in fact has a +Calculator+ association (although its currently nil because we haven't assigned anything to it.)
+Now we can verify that this instance of +Spree::ShippingMethod+ in fact has a +Spree::Calculator+ association (although its currently nil because we haven't assigned anything to it.)
 
 <shell>
 >> s.calculator
@@ -171,29 +180,30 @@ Now we can verify that this instance of +ShippingMethod+ in fact has a +Calculat
 
 NOTE:  If you are creating new Rails models you should never declare +has_one :calculator+ in order to take advantage of calculators.  Just use +calculated_adjustments+ instead since you get this association and several other goodies for free.  You'll also be doing things the standard Spree way which will make it easier to maintain over the long run.
 
-We can also register classes that extend +Calculator+ with a class that declares +calculated_adjustments+.  Lets look at +Calculator::FlatRate+ to see what this means.
+Prior to Spree 1.0, classes that extend +Spree::Calculator+ that declares +calculated_adjustments+ can be registered  with +self.register+ method. This method is removed in favor of registering classes by via +Rails.application.config.spree.calculators+. Let's look at how +spree_core+ engine define the registration in +lib/extension_name/engine.rb+:
 
 <ruby>
-class Calculator::FlatRate < Calculator
-  ...
+initializer 'spree.register.calculators' do |app|
+  app.config.spree.calculators.shipping_methods = [
+      Spree::Calculator::FlatPercentItemTotal,
+      Spree::Calculator::FlatRate,
+      Spree::Calculator::FlexiRate,
+      Spree::Calculator::PerItem,
+      Spree::Calculator::PriceSack
+  ]
 
-  def self.register
-    super
-    ShippingMethod.register_calculator(self)
-  end
-
-  ...
+  ....
 end
 </ruby>
 
-Like any +Calculator+ there is a +self.register+ method.  If you look inside the implementation of that method, however, you see that we call +super+ and which calls the implementation that is automatically provided when you extend +Calculator+.  This registers the calculator with Spree but the following line registers the calculator with +ShippingMethod+ as well.
+You see that the initializer define a class +shipping_methods+ for +app.config.spree.calculators+. The +shipping_method+ is an array enlist all shipping calculators classes. This registers the calculator with Spree but the following line registers the calculator with +Spree::ShippingMethod+ as well.
 
 You may wonder to yourself "why is that important?"  The answer is that you can perform operations such as the following:
 
 <shell>
->> ShippingMethod.calculators
+>> Spree::ShippingMethod.calculators
 => { ... }
->> ShippingMethod.calculators.size
+>> Spree::ShippingMethod.calculators.size
 => 5
 </shell>
 
@@ -211,61 +221,67 @@ Use of the +calculated_adjustments+ helper also provides additional methods to i
 |+update_adjustment+|Updates the amount of the adjustment using the instance's +Calculator+|
 |+calculator_type+|Utility method to help with admin screens that need to set the +Calculator+ for a particular instance of the class.|
 
-The +create_adjustment+ is the process by which all adjustments should be created.  Lets take a look at how this mechanism works inside the +Order+ class.
+The +create_adjustment+ is the process by which all adjustments should be created.  Lets take a look at how this mechanism works inside the +Spree::Order+ class.
 
 <ruby>
 def create_tax_charge!
+  # destroy any previous adjustments (eveything is recalculated from scratch)
   adjustments.tax.each { |e| e.destroy }
-  matching_rates = TaxRate.match(ship_address)
+  price_adjustments.each { |p| p.destroy }
 
-  if matching_rates.empty? and Spree::Config[:show_price_inc_vat]
-    matching_rates = Spree::TaxRate.all.select do |rate|
-      # get all rates that apply to default country
-      rate.zone.country_list.collect { |c| c.id }.include?(Spree::Config[:default_country_id])
-    end
-  end
-
-  matching_rates.each do |rate|
-    rate.create_adjustment("#{rate.calculator.description} #{rate.amount * 100}%", self, self, true)
-  end
-
-  return unless rate = TaxRate.match(bill_address) or adjustments.tax.present?
-  if old_charge = adjustments.tax.first
-    old_charge.destroy unless old_charge.originator == rate
-    return
-  end
-  rate.create_adjustment(I18n.t(:tax), self, self, true)
+  Spree::TaxRate.match(self).each { |rate| rate.adjust(self) }
 end
-
 </ruby>
 
-Here we see that an instance of +TaxRate+ is being used to create the adjustment for the order.  +TaxRate+ declares +calculated_adjustments+ in its class definition which makes this all possible.
+Here we see that an instance of +Spree::TaxRate+ is being used to create the adjustment for the order.  +Spree::TaxRate+ declares +calculated_adjustments+ in its class definition which makes this all possible.
 
 INFO: You do not need to understand this process to make use of adjustments in Spree.  The detailed information provided here for those who wish to understand the inner workings of Spree a little better.  If you are interested in creating a new Spree extension that will create or affect adjustments in some way, this understanding is crucial.
 
 h4. Computation
 
-Computation for adjustments comes down to a very straightforward +compute+ method that is provided by an instance of +Calculator+.  In some cases the calculation can be quite straight forward.  Take a look at +Calculator::FlatRate+ to see such a simple case.
+Computation for adjustments comes down to a very straightforward +compute+ method that is provided by an instance of +Spree::Calculator+.  In some cases the calculation can be quite straight forward.  Take a look at +Spree::Calculator::FlatRate+ to see such a simple case.
 
 <ruby>
-def compute(object=nil)
+def compute(object = nil)
   self.preferred_amount
 end
 </ruby>
 
-This calculator basically just returns the same amount every time its called (note the amount is configurable of course.)  Other calculators (such as +Calculator::SalesTax+) are a bit more interesting.
+This calculator basically just returns the same amount every time its called (note the amount is configurable of course.)  Other calculators (such as +Spree::Calculator::DefaultTax+) are a bit more interesting.
 
 <ruby>
-def compute(order)
-  rate = self.calculable
-  line_items = order.line_items.select { |i| i.product.tax_category == rate.tax_category }
-  line_items.inject(0) {|sum, line_item|
-    sum += line_item.total * rate.amount
-  }
+def compute(computable)
+  case computable
+    when Spree::Order
+      compute_order(computable)
+    when Spree::LineItem
+      compute_line_item(computable)
+  end
 end
+
+private
+
+  def compute_order(order)
+    matched_line_items = order.line_items.select do |line_item|
+      line_item.product.tax_category == rate.tax_category
+    end
+
+    line_items_total = matched_line_items.sum(&:total)
+    round_to_two_places(line_items_total * rate.amount)
+  end
+
+  def compute_line_item(line_item)
+    if line_item.product.tax_category == rate.tax_category
+      deduced_total_by_rate(line_item.total, rate)
+    else
+      0
+    end
+  end
 </ruby>
 
-INFO: Calculators should never return a value of +nil+ in their +compute+ method.  Return 0 in these situations instead.
+You see the +compute+ is more complex with polymorphic handler.  
+
+INFO: Calculators should never return a value of +nil+ in their +compute+ method.  Return +0+ in these situations instead.
 
 h4. Locked Adjustments
 
@@ -275,15 +291,17 @@ WARNING: Locked adjustments are currently considered experimental.  We're curren
 
 h3. Configuration
 
-Since calculators are an instances of +ActiveRecord::Base+ they can be configured with preferences. Each instance of +ShippingMethod+ is now stored in the database along with the configured values for its preferences. This allows the same calculator (ex. +Calculator::FlatRate+) to be used with multiple +ShippingMethods+, and yet each can be configured with different values (ex. different amounts per calculator.)
+Since calculators are an instances of +ActiveRecord::Base+ they can be configured with preferences. Each instance of +Spree::ShippingMethod+ is now stored in the database along with the configured values for its preferences. This allows the same calculator (ex. +Spree::Calculator::FlatRate+) to be used with multiple +Spree::ShippingMethods+, and yet each can be configured with different values (ex. different amounts per calculator.)
 
 Calculators are configured using Spree's flexible "preference system":preferences.html.  Default values for the preferences are configured through the class definition.  For example, the flat rate calculator class definition specifies an amount with a default value of 0.
 
 <ruby>
+module Spree
   class Calculator::FlatRate < Calculator
     preference :amount, :decimal, :default => 0
     ...
   end
+end
 </ruby>
 
 Spree now contains a standard mechanism by which calculator preferences can be edited.  The screenshot below shows how the amounts for the flat rate calculator are editable directly in the admin interface.
