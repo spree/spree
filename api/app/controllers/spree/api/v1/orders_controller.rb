@@ -12,6 +12,13 @@ module Spree
           @order = Order.find_by_number(params[:id])
           authorize! :read, @order
         end
+
+        def create
+          @order = Order.build_from_api(current_api_user, params[:order])
+          if @order.save
+            render :show, :status => 200
+          end
+        end
       end
     end
   end

@@ -34,6 +34,16 @@ module Spree
       assert_unauthorized!
     end
 
+    it "can create an order" do
+      variant = Factory(:variant)
+      api_post :create, :order => { :line_items => { variant.to_param => 5 } }
+      response.status.should == 200
+      order = Order.last
+      order.line_items.count.should == 1
+      order.line_items.first.variant.should == variant
+      order.line_items.first.quantity.should == 5
+    end
+
     context "as an admin" do
       sign_in_as_admin!
 
