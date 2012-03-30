@@ -42,6 +42,7 @@ module Spree
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
+      json_response["order"]["state"].should == "address"
     end
 
     context "as an admin" do
