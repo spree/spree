@@ -15,6 +15,20 @@ module Spree
 
         def create
           @order = Order.build_from_api(current_api_user, params[:order])
+          next!
+        end
+
+        def address
+          @order = Order.find_by_number!(params[:id])
+          @order.build_ship_address(params[:shipping_address])
+          @order.build_bill_address(params[:billing_address])
+          next!
+        end
+
+
+        private
+
+        def next!
           if @order.next
             render :show, :status => 200
           else

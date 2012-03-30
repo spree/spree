@@ -45,6 +45,29 @@ module Spree
       json_response["order"]["state"].should == "address"
     end
 
+    context "working with an order" do
+      it "can add address information to an order" do
+        Factory(:payment_method)
+        order.next # Switch from cart to address
+        order.ship_address.should be_nil
+        order.state.should == "address"
+
+        address_params = { :country_id => Country.first.id, :state_id => State.first.id }
+        shipping_address = Factory.attributes_for(:address).merge!(address_params)
+        billing_address = Factory.attributes_for(:address).merge!(address_params)
+        api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
+
+        response.status.should == 200
+        order.reload
+        order.shipping_address.reload
+        order.billing_address.reload
+        # We can assume the rest of the parameters are set if these two are
+        order.shipping_address.firstname.should == shipping_address[:firstname]
+        order.billing_address.firstname.should == billing_address[:firstname]
+        order.state.should == "delivery"
+      end
+    end
+
     context "as an admin" do
       sign_in_as_admin!
 
