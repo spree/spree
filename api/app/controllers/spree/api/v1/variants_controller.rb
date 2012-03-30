@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class VariantsController < BaseController
+      class VariantsController < Spree::Api::V1::BaseController
         before_filter :product
 
         def index

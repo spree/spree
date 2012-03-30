@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class OrdersController < BaseController
+      class OrdersController < Spree::Api::V1::BaseController
         def index
           # should probably look at turning this into a CanCan step
           raise CanCan::AccessDenied unless current_api_user.has_role?("admin")
