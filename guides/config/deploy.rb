@@ -2,7 +2,7 @@ $:.unshift(File.expand_path('./lib', ENV['rvm_path'])) # Add RVM's lib directory
 require "rvm/capistrano"                  # Load RVM's capistrano plugin.
 require "bundler/capistrano"
 
-set :application, (exists?(:edge) ? "edge-guides" : "guides")
+set :application, "#{'edge-' if exists?(:edge)}guides"
 set :user, 'spree'
 set :group, 'www-data'
 set :domain, 'www.spreecommerce.com'
@@ -34,9 +34,7 @@ namespace :deploy do
   desc "Builds static html for guides"
   task :build_guides do
     cmd = "cd #{release_path} && bundle exec guides build --clean --ga"
-    if exists?(:edge)
-      cmd << " --edge"
-    end
+    cmd << " --edge" if exists?(:edge)
     run cmd
   end
 
