@@ -3,10 +3,11 @@ module SpreeCmd
   class Installer < Thor::Group
     include Thor::Actions
 
-    desc "Creates a new rails project with a spree store"
+    desc 'Creates a new rails project with a spree store'
     argument :app_path, :type => :string, :desc => 'rails app_path', :default => '.'
 
-    class_option :auto_accept, :type => :boolean, :aliases => '-A', :desc => "Answer yes to all prompts"
+    class_option :auto_accept, :type => :boolean, :aliases => '-A',
+                               :desc => 'Answer yes to all prompts'
 
     class_option :skip_install_data, :type => :boolean, :default => false,
                  :desc => 'Skip running migrations and loading seed and sample data'
@@ -45,17 +46,17 @@ module SpreeCmd
     end
 
     def ask_questions
-      @install_default_gateways = ask_with_default("Would you like to install the default gateways?")
+      @install_default_gateways = ask_with_default('Would you like to install the default gateways?')
 
       if options[:skip_install_data]
         @run_migrations = false
         @load_seed_data = false
         @load_sample_data = false
       else
-        @run_migrations = ask_with_default("Would you like to run the migrations?")
+        @run_migrations = ask_with_default('Would you like to run the migrations?')
         if @run_migrations
-          @load_seed_data = ask_with_default("Would you like to load the seed data?")
-          @load_sample_data = ask_with_default("Would you like to load the sample data?")
+          @load_seed_data = ask_with_default('Would you like to load the seed data?')
+          @load_sample_data = ask_with_default('Would you like to load the sample data?')
         else
           @load_seed_data = false
           @load_sample_data = false
@@ -97,7 +98,7 @@ module SpreeCmd
     end
 
     def precompile_assets
-      say_status :precompiling, "assets"
+      say_status :precompiling, 'assets'
       inside @app_path do
         run 'bundle exec rake assets:precompile', :verbose => false
       end
@@ -105,51 +106,51 @@ module SpreeCmd
 
     private
 
-    def gem(name, options={})
-      say_status :gemfile, name
-      parts = ["'#{name}'"]
-      options.each {|key, value| parts << ":#{key} => '#{value}'" }
-      append_file "Gemfile", "gem #{parts.join(', ')}\n", :verbose => false
-    end
-
-    def ask_with_default(message, default='yes')
-      return true if options[:auto_accept]
-
-      valid = false
-      until valid
-        response = ask "#{message} (yes/no) [#{default}]"
-        response = default if response.empty?
-        valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
+      def gem(name, options={})
+        say_status :gemfile, name
+        parts = ["'#{name}'"]
+        options.each { |key, value| parts << ":#{key} => '#{value}'" }
+        append_file 'Gemfile', "gem #{parts.join(', ')}\n", :verbose => false
       end
-      response.downcase[0] == ?y
-    end
 
-    def ask_string(message, default, valid_regex=/\w/)
-      return default if options[:auto_accept]
-      valid = false
-      until valid
-        response = ask "#{message} [#{default}]"
-        response = default if response.empty?
-        valid = (response  =~ valid_regex)
+      def ask_with_default(message, default = 'yes')
+        return true if options[:auto_accept]
+
+        valid = false
+        until valid
+          response = ask "#{message} (yes/no) [#{default}]"
+          response = default if response.empty?
+          valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
+        end
+        response.downcase[0] == ?y
       end
-      response
-    end
 
-    def create_rails_app
-      say :create, @app_path
-
-      rails_cmd = "rails new #{@app_path} --skip-bundle"
-      if options[:template]
-        rails_cmd += " -m #{options[:template]}"
+      def ask_string(message, default, valid_regex = /\w/)
+        return default if options[:auto_accept]
+        valid = false
+        until valid
+          response = ask "#{message} [#{default}]"
+          response = default if response.empty?
+          valid = (response  =~ valid_regex)
+        end
+        response
       end
-      if options[:database]
-        rails_cmd += " -d #{options[:database]}"
-      end
-      run(rails_cmd)
-    end
 
-    def is_rails_project?
-      File.exists? File.join(@app_path, 'script', 'rails')
-    end
+      def create_rails_app
+        say :create, @app_path
+
+        rails_cmd = "rails new #{@app_path} --skip-bundle"
+        if options[:template]
+          rails_cmd += " -m #{options[:template]}"
+        end
+        if options[:database]
+          rails_cmd += " -d #{options[:database]}"
+        end
+        run(rails_cmd)
+      end
+
+      def is_rails_project?
+        File.exists? File.join(@app_path, 'script', 'rails')
+      end
   end
 end
