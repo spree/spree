@@ -2,10 +2,11 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Api::V1::ProductsController do
+    render_views
+
     let!(:product) { Factory(:product) }
     let!(:inactive_product) { Factory(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
     let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords] }
-    render_views
 
     before do
       stub_authentication!
@@ -30,15 +31,15 @@ module Spree
 
         it "can select the next page of products" do
           second_product = Factory(:product)
-          api_get :index, :page => 1
-          product = json_response["products"].first
+          api_get :index, :page => 2
+          product = json_response["products"].find { |p| p["product"]["id"] == second_product.id }
           product.should have_attributes(attributes)
 
           # Product attributes are actually nested...
           product = product["product"]
           product["name"].should == second_product.name
           json_response["count"].should == 1
-          json_response["current_page"].should == 1
+          json_response["current_page"].should == 2
           json_response["pages"].should == 2
         end
       end

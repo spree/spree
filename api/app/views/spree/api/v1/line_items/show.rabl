@@ -1,5 +1,5 @@
 object @line_item
 attributes :quantity, :price
 child :variant do
-  attributes *variant_attributes
+  extends "spree/api/v1/variants/variant"
 end
