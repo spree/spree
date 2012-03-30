@@ -152,7 +152,7 @@ Spree ships with 4 default calculators:
 
 bq. Flexible rate: Flat rate for the first product + Flat rate for each additional product.
 
-You can define your own calculator if you have more complex needs. In that case, check out the section on "Calculators ":adjustments.html#calculators
+You can define your own calculator if you have more complex needs. In that case, check out the section on "Calculators":adjustments.html#calculators
 
 h3. UI
 
