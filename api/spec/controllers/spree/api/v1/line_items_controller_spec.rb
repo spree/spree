@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Api::V1::LineItemsController do
+    render_views
+
     let!(:order) do
      order = Factory(:order)
      order.line_items << Factory(:line_item)

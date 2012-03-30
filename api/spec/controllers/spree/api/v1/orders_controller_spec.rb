@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Api::V1::OrdersController do
+    render_views
+
     let!(:order) { Factory(:order) }
     let(:attributes) { [:number, :item_total, :total,
                         :state, :adjustment_total, :credit_total,
@@ -9,7 +11,6 @@ module Spree
                         :completed_at, :payment_total, :shipment_state,
                         :payment_state, :email, :special_instructions] }
 
-    render_views
 
     before do
       stub_authentication!
