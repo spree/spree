@@ -17,6 +17,7 @@ module Spree
 
           include CanCan::ControllerAdditions
           append_view_path File.expand_path("../../../app/views", File.dirname(__FILE__))
+          append_view_path Rails.root + "app/views"
 
           respond_to :json
         end
