@@ -21,7 +21,7 @@ The first several sections of this guide describe preferences in a very general 
 
 h3. Motivation
 
-Preferences for models within an application are very common. Although the rule of thumb is to keep the number of preferences available to a minimum, sometimes it's necessary if you want users to have optional preferences like disabling like e-mail notifications.
+Preferences for models within an application are very common. Although the rule of thumb is to keep the number of preferences available to a minimum, sometimes it's necessary if you want users to have optional preferences like disabling e-mail notifications.
 
 General Settings for an application like "site name" are also needed to customize your Spree store.
 
