@@ -136,7 +136,7 @@ module Spree
         api_post :create, :product => {}
         response.status.should == 422
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        json_response["errors"].keys.should == ["name", "price"]
+        json_response["errors"].keys.should =~ ["name", "price"]
       end
 
       it "can update a product" do
