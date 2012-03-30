@@ -34,7 +34,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:update, :fails)
-      respond_with(@object, :location => [:admin, @object])
+      respond_with(@object)
     end
   end
 
