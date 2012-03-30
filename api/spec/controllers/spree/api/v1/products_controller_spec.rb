@@ -32,12 +32,7 @@ module Spree
         it "can select the next page of products" do
           second_product = Factory(:product)
           api_get :index, :page => 2
-          product = json_response["products"].find { |p| p["product"]["id"] == second_product.id }
-          product.should have_attributes(attributes)
-
-          # Product attributes are actually nested...
-          product = product["product"]
-          product["name"].should == second_product.name
+          json_response["products"].first.should have_attributes(attributes)
           json_response["count"].should == 1
           json_response["current_page"].should == 2
           json_response["pages"].should == 2
