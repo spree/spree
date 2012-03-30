@@ -20,5 +20,10 @@ describe Spree::Api::V1::BaseController do
       json_response.should == { "error" => "Invalid API key (fake_key) specified." }
       response.status.should == 401
     end
+
+    it "using an invalid token param" do
+      get :index, :token => "fake_key"
+      json_response.should == { "error" => "Invalid API key (fake_key) specified." }
+    end
   end
 end
