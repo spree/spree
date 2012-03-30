@@ -6,6 +6,7 @@ Spree::Order.class_eval do
       line_item = order.add_variant(Spree::Variant.find(variant_id), quantity)
     end
     order.user = user
+    order.email = user.email
     order
   end
 end
