@@ -5,6 +5,19 @@ endprologue.
 h3. Summary
 
 
+h3. Support for Rails 3.2.x only
+
+Support for Rails 3.1.x is dropped. Rails 3.2.x offers performance boost in development
+mode and is the first-class supported platform for 1.1.x release cycles. It is recommended
+that you use the latest version 3.2.3. Please upgrade your Rails before bumping Spree gem by modifying your Gemfile:
+
+    gem 'rails', '3.2.3'
+    group :assets do
+      gem 'sass-rails',   '~> 3.2.3'
+      gem 'coffee-rails', '~> 3.2.1'
+      gem 'uglifier', '>= 1.0.3'
+      gem 'jquery-rails'
+    end
 
 h3. spree_product_groups now as standalone extension
 
