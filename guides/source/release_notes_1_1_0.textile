@@ -18,6 +18,12 @@ h3. Removed images association of +Spree::Product+
 +Spree::Product+ association with +viewable+ has been moved +master+ variant of
 the product. The change is backward compatible and require no upgrade modification.
 
+h3. ransack replaced meta_search
+
+`ransack` replaced `meta_search` as the primary object-based searching mechanism.
+Be warned that `ransack` is not fully backward-compatible with `meta_search` query.
+Make sure you port and test all `meta_search` queries to `ransack` after upgrade.
+
 h3. Deprecated functions
 
 h4. Spree::Zone
