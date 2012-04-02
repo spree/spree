@@ -99,6 +99,21 @@ Product data is returned like this:
     "price": "19.99",
     "available_on": "2011-03-23T21:11:50Z",
     "permalink", "a-product"
+    "variants": {
+      # Variant attributes
+      "option_values": { 
+        # Option value attributes
+      } 
+    }
+    "images": {
+      # image attributes"
+    }
+    "option_types": {
+      # option type attributes
+      "option_values": {
+        # option value attributes
+      }
+    }
   }
 }
 </json>
