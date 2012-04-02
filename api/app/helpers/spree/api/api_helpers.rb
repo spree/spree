@@ -25,7 +25,7 @@ module Spree
       end
 
       def option_value_attributes
-        [:name, :presentation, :option_type_name, :option_type_id]
+        [:id, :name, :presentation, :option_type_name, :option_type_id]
       end
 
       def order_attributes
@@ -34,6 +34,10 @@ module Spree
 
       def line_item_attributes
         [:quantity, :price, :variant_id]
+      end
+
+      def option_type_attributes
+        [:id, :name, :presentation, :position]
       end
     end
   end
