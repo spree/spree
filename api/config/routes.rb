@@ -5,6 +5,8 @@ Spree::Core::Engine.routes.prepend do
         resources :variants
       end
 
+      resources :variants, :only => [:index]
+
       resources :orders do
         member do
           put :address
