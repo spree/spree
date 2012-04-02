@@ -36,7 +36,8 @@ module Spree
         def destroy
           authorize! :delete, Product
           find_product
-          @product.destroy
+          @product.update_attribute(:deleted_at, Time.now)
+          @product.variants_including_master.update_all(:deleted_at => Time.now)
           render :text => nil, :status => 200
         end
 

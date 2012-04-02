@@ -147,9 +147,10 @@ module Spree
       end
 
       it "can delete a product" do
+        product.deleted_at.should be_nil
         api_delete :destroy, :id => product.to_param
         response.status.should == 200
-        lambda { product.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        product.reload.deleted_at.should_not be_nil
       end
     end
   end
