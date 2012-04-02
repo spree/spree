@@ -22,7 +22,7 @@ module Spree
           @order = Order.find_by_number!(params[:id])
           @order.build_ship_address(params[:shipping_address])
           @order.build_bill_address(params[:billing_address])
-            next!
+          next!
         end
 
 
