@@ -59,7 +59,6 @@ module Spree
       let!(:shipping_method) { Factory(:shipping_method) }
 
       it "can add address information to an order" do
-        order.state = "address"
         api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
 
         response.status.should == 200
