@@ -32,7 +32,7 @@ module Spree
           if @order.next
             render :show, :status => 200
           else
-            p @order.errors
+            render :could_not_transition, :status => 422
           end
         end
       end

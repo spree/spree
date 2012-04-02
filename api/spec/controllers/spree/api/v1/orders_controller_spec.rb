@@ -46,15 +46,18 @@ module Spree
     end
 
     context "working with an order" do
-      it "can add address information to an order" do
+      before do
         Factory(:payment_method)
         order.next # Switch from cart to address
         order.ship_address.should be_nil
         order.state.should == "address"
+      end
 
-        address_params = { :country_id => Country.first.id, :state_id => State.first.id }
-        shipping_address = Factory.attributes_for(:address).merge!(address_params)
-        billing_address = Factory.attributes_for(:address).merge!(address_params)
+      let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
+      let(:shipping_address) {  Factory.attributes_for(:address).merge!(address_params) }
+      let(:billing_address) { Factory.attributes_for(:address).merge!(address_params) }
+
+      it "can add address information to an order" do
         api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
 
         response.status.should == 200
@@ -65,6 +68,22 @@ module Spree
         order.shipping_address.firstname.should == shipping_address[:firstname]
         order.billing_address.firstname.should == billing_address[:firstname]
         order.state.should == "delivery"
+      end
+
+      it "can not add invalid ship address information to an order" do
+        shipping_address[:firstname] = ""
+        api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
+
+        response.status.should == 422
+        json_response["errors"]["ship_address.firstname"].should_not be_blank
+      end
+
+      it "can not add invalid ship address information to an order" do
+        billing_address[:firstname] = ""
+        api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
+
+        response.status.should == 422
+        json_response["errors"]["bill_address.firstname"].should_not be_blank
       end
     end
 
