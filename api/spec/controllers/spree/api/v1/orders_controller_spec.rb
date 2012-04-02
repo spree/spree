@@ -96,18 +96,35 @@ module Spree
         json_response["errors"]["bill_address.firstname"].should_not be_blank
       end
 
-      it "can select a shipping method for an order" do
-        order.line_items << Factory(:line_item)
-        order.update_attribute(:state, "delivery")
-        order.shipping_method.should be_nil
+      context "with a line item" do
+        before do
+          order.line_items << Factory(:line_item)
+        end
 
-        api_put :delivery, :id => order.to_param, :shipping_method_id => shipping_method.id
+        context "for delivery" do
+          before do
+            order.update_attribute(:state, "delivery")
+          end
 
-        response.status.should == 200
-        order.reload
-        order.state.should == "payment"
-        order.shipping_method.should == shipping_method
+          it "can select a shipping method for an order" do
+            order.shipping_method.should be_nil
+            api_put :delivery, :id => order.to_param, :shipping_method_id => shipping_method.id
+            response.status.should == 200
+            order.reload
+            order.state.should == "payment"
+            order.shipping_method.should == shipping_method
+          end
+
+          it "cannot select an invalid shipping method for an order" do
+            order.shipping_method.should be_nil
+            api_put :delivery, :id => order.to_param, :shipping_method_id => '1234567890'
+            response.status.should == 422
+            json_response["errors"].should include("Invalid shipping method specified.")
+          end
+        end
       end
+
+
     end
 
     context "as an admin" do

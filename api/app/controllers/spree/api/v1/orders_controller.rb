@@ -24,8 +24,14 @@ module Spree
         end
 
         def delivery
-          order.update_attribute(:shipping_method_id, params[:shipping_method_id])
-          next!
+          begin
+            ShippingMethod.find(params[:shipping_method_id])
+          rescue ActiveRecord::RecordNotFound
+            render :invalid_shipping_method, :status => 422
+          else
+            order.update_attribute(:shipping_method_id, params[:shipping_method_id])
+            next!
+          end
         end
 
         private
