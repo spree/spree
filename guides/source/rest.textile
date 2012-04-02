@@ -222,3 +222,83 @@ NOTE: This request, much like a typical product "deletion", will not actually re
 
 The response for this request will be empty, with a 200 status.
 
+h4. Variants
+
+Variants support the following operations:
+
+* Index
+* Show
+* New
+* Create
+* Update
+* Destroy
+
+Variant data is returned like this:
+
+<json>
+{
+  "product": {
+    "id": 1,
+    "name": "A product",
+    "count_on_hand": 1,
+    "price": 19.99,
+    "weight": 0.0,
+    "height": 0.0,
+    "width": 0.0,
+    "depth": 0.0,
+    "is_master": true,
+    "cost_price": 9.99,
+    "option_values": {
+      # option value attributes
+    }
+  }
+}
+</json>
+
+h5. Listing variants
+
+To see all variants, make this request:
+
+<plain>
+GET /api/variants.json
+</plain>
+
+h5. Listing variants of a product
+
+To see all variants (including the master variant) for a product, make either of these two requests:
+
+<plain>
+GET /api/products/1/variants
+# or
+GET /api/variants?product_id=1
+</plain>
+
+h5. Pre-creation of a variant
+
+To learn how to create a variant, make this request:
+
+<plain>
+GET /api/variants/new
+</plain>
+
+This request will inform the client of the fields that are required, so that the API client can indicate it to the user.
+
+There are no required attributes for a variant.
+
+h5. Creating a variant
+
+To create a new variant for a product, make one of these two requests with the correct parameters:
+
+<plain>
+POST /api/products/1/variants
+# or
+POST /api/variants?product_id=1
+</plain>
+
+
+or instance, a request to create a new product called "Headphones" with a price of $100 would look like this:
+
+<plain>
+POST /api/products/create.json?product[name]=Headphones&product[price]=100
+</plain>
+
