@@ -203,5 +203,7 @@ To delete a product, make this request:
 DELETE /api/products/a-product.json
 </plain>
 
+NOTE: This request, much like a typical product "deletion", will not actually remove the record from the database. It simply sets the +deleted_at+ field to the current time on the product, as well as all of that product's descendants.
+
 The response for this request will be empty, with a 200 status.
 
