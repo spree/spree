@@ -22,14 +22,14 @@ module Spree
           @order = Order.find_by_number!(params[:id])
           @order.build_ship_address(params[:shipping_address])
           @order.build_bill_address(params[:billing_address])
-          next!
+            next!
         end
 
 
         private
 
         def next!
-          if @order.next
+          if @order.valid? && @order.next
             render :show, :status => 200
           else
             render :could_not_transition, :status => 422

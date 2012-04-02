@@ -56,8 +56,10 @@ module Spree
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
       let(:shipping_address) {  Factory.attributes_for(:address).merge!(address_params) }
       let(:billing_address) { Factory.attributes_for(:address).merge!(address_params) }
+      let!(:shipping_method) { Factory(:shipping_method) }
 
       it "can add address information to an order" do
+        order.state = "address"
         api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
 
         response.status.should == 200
@@ -68,6 +70,13 @@ module Spree
         order.shipping_address.firstname.should == shipping_address[:firstname]
         order.billing_address.firstname.should == billing_address[:firstname]
         order.state.should == "delivery"
+      end
+
+      it "cannot use an address that has no valid shipping methods" do
+        shipping_method.destroy
+        api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
+        response.status.should == 422
+        json_response["errors"]["base"].should == ["No shipping methods available for selected location, please change your address and try again."]
       end
 
       it "can not add invalid ship address information to an order" do
