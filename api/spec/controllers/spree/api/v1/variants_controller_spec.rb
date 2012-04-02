@@ -39,7 +39,7 @@ module Spree
                                                  :option_type_id])
     end
 
-    it "can learn how to create a new product" do
+    it "can learn how to create a new variant" do
       api_get :new
       json_response["attributes"].should == attributes.map(&:to_s)
       json_response["required_attributes"].should be_empty
