@@ -57,6 +57,7 @@ module Spree
       let(:shipping_address) {  Factory.attributes_for(:address).merge!(address_params) }
       let(:billing_address) { Factory.attributes_for(:address).merge!(address_params) }
       let!(:shipping_method) { Factory(:shipping_method) }
+      let!(:payment_method) { Factory(:payment_method) }
 
       it "can add address information to an order" do
         api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
@@ -96,6 +97,7 @@ module Spree
       end
 
       it "can select a shipping method for an order" do
+        order.line_items << Factory(:line_item)
         order.update_attribute(:state, "delivery")
         order.shipping_method.should be_nil
 

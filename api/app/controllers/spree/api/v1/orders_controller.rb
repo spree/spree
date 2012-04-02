@@ -23,6 +23,11 @@ module Spree
           next!
         end
 
+        def delivery
+          order.update_attribute(:shipping_method_id, params[:shipping_method_id])
+          next!
+        end
+
         private
 
         def order
