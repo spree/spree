@@ -60,41 +60,6 @@ module Spree
     class_attribute :update_hooks
     self.update_hooks = Set.new
 
-    # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
-    def self.register_update_hook(hook)
-      self.update_hooks.add(hook)
-    end
-
-    # For compatiblity with Calculator::PriceSack
-    def amount
-      line_items.map(&:amount).sum
-    end
-
-    def to_param
-      number.to_s.to_url.upcase
-    end
-
-    def completed?
-      !! completed_at
-    end
-
-    # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
-    # check for whether or not there is at least one LineItem in the Order.  Feel free to override this logic
-    # in your own application if you require additional steps before allowing a checkout.
-    def checkout_allowed?
-      line_items.count > 0
-    end
-
-    # Is this a free order in which case the payment step should be skipped
-    def payment_required?
-      total.to_f > 0.0
-    end
-
-    # Indicates the number of items in the order
-    def item_count
-      line_items.map(&:quantity).sum
-    end
-
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'cart', :use_transactions => false do
 
@@ -143,6 +108,41 @@ module Spree
       after_transition :to => 'resumed',  :do => :after_resume
       after_transition :to => 'canceled', :do => :after_cancel
 
+    end
+
+    # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
+    def self.register_update_hook(hook)
+      self.update_hooks.add(hook)
+    end
+
+    # For compatiblity with Calculator::PriceSack
+    def amount
+      line_items.map(&:amount).sum
+    end
+
+    def to_param
+      number.to_s.to_url.upcase
+    end
+
+    def completed?
+      !! completed_at
+    end
+
+    # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
+    # check for whether or not there is at least one LineItem in the Order.  Feel free to override this logic
+    # in your own application if you require additional steps before allowing a checkout.
+    def checkout_allowed?
+      line_items.count > 0
+    end
+
+    # Is this a free order in which case the payment step should be skipped
+    def payment_required?
+      total.to_f > 0.0
+    end
+
+    # Indicates the number of items in the order
+    def item_count
+      line_items.map(&:quantity).sum
     end
 
     # Indicates whether there are any backordered InventoryUnits associated with the Order.
