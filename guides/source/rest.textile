@@ -129,7 +129,19 @@ To view the details for a single product, make a request using that product's pe
 GET /api/products/a-product.json
 </plain>
 
-This will return a single product's details. For the attributes contained in this output, please see the top of this section.
+This will return a single product's details.
+
+You may also query by the product's id attribute:
+
+<plain>
+GET /api/products/1.json
+</plain>
+
+Note that the API will attempt a permalink lookup before an ID lookup.
+
+For the attributes contained in this output, please see the top of this section.
+
+If a product cannot be found, a 404 response will be returned.
 
 h5. Pre-creation of a product
 
