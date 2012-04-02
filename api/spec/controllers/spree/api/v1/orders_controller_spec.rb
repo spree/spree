@@ -94,6 +94,18 @@ module Spree
         response.status.should == 422
         json_response["errors"]["bill_address.firstname"].should_not be_blank
       end
+
+      it "can select a shipping method for an order" do
+        order.update_attribute(:state, "delivery")
+        order.shipping_method.should be_nil
+
+        api_put :delivery, :id => order.to_param, :shipping_method_id => shipping_method.id
+
+        response.status.should == 200
+        order.reload
+        order.state.should == "payment"
+        order.shipping_method.should == shipping_method
+      end
     end
 
     context "as an admin" do

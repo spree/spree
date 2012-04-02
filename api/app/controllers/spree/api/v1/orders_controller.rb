@@ -9,8 +9,7 @@ module Spree
         end
 
         def show
-          @order = Order.find_by_number(params[:id])
-          authorize! :read, @order
+          authorize! :read, order
         end
 
         def create
@@ -19,14 +18,16 @@ module Spree
         end
 
         def address
-          @order = Order.find_by_number!(params[:id])
-          @order.build_ship_address(params[:shipping_address])
-          @order.build_bill_address(params[:billing_address])
+          order.build_ship_address(params[:shipping_address])
+          order.build_bill_address(params[:billing_address])
           next!
         end
 
-
         private
+
+        def order
+          @order ||= Order.find_by_number!(params[:id])
+        end
 
         def next!
           if @order.valid? && @order.next
