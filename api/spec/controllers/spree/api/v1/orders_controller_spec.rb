@@ -70,6 +70,7 @@ module Spree
         order.shipping_address.firstname.should == shipping_address[:firstname]
         order.billing_address.firstname.should == billing_address[:firstname]
         order.state.should == "delivery"
+        json_response["order"]["shipping_methods"].should_not be_empty
       end
 
       it "cannot use an address that has no valid shipping methods" do
