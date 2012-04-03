@@ -139,7 +139,6 @@ module Spree
       image_dup = lambda { |i| j = i.dup; j.attachment = i.attachment.clone; j }
       p.images = self.images.map { |i| image_dup.call i }
 
-      master = Spree::Variant.find_by_product_id_and_is_master(self.id, true)
       variant = master.dup
       variant.sku = 'COPY OF ' + master.sku
       variant.deleted_at = nil
