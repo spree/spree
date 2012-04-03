@@ -3,7 +3,8 @@ module Spree
 
     JIRAFE_LOCALES = { :english => 'en_US',
                        :french => 'fr_FR',
-                       :german => 'de_DE' }
+                       :german => 'de_DE',
+                       :japanese => 'ja_JA' }
 
     def index
       if JIRAFE_LOCALES.values.include? params[:locale]
