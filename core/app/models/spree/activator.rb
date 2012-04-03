@@ -1,5 +1,7 @@
 module Spree
   class Activator < ActiveRecord::Base
+    attr_accessible :event_name, :as => :internal
+
     cattr_accessor :event_names
 
     self.event_names = [
