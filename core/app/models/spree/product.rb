@@ -57,6 +57,8 @@ module Spree
       :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL AND #{::Spree::Variant.quoted_table_name}.is_master = ?", true],
       :dependent => :destroy
 
+    accepts_nested_attributes_for :variants, :allow_destroy => true
+
     def variant_images
       Image.find_by_sql("SELECT #{Asset.quoted_table_name}.* FROM #{Asset.quoted_table_name} LEFT JOIN #{Variant.quoted_table_name} ON (#{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id) WHERE (#{Variant.quoted_table_name}.product_id = #{self.id})")
     end
