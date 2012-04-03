@@ -9,7 +9,16 @@ end
 describe Spree::Order do
   before(:each) do
     reset_spree_preferences
-    Spree::Gateway.create(:name => 'Test', :active => true, :environment => 'test', :description => 'foofah')
+    Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :as => :internal)
+  end
+
+  let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
+  let(:order) { stub_model(Spree::Order, :user => user) }
+  let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :as => :internal) }
+
+  before do
+    Spree::Gateway.stub :current => gateway
+    Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
   context 'validation' do
@@ -66,15 +75,6 @@ describe Spree::Order do
         order.should be_valid
       end
     end
-  end
-
-  let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
-  let(:order) { stub_model(Spree::Order, :user => user) }
-  let(:gateway) { Spree::Gateway::Bogus.new(:name => "Credit Card", :active => true) }
-
-  before do
-    Spree::Gateway.stub :current => gateway
-    Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
   context "#products" do
