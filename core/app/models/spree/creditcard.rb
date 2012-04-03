@@ -11,6 +11,8 @@ module Spree
     validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
     validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
 
+    attr_accessible :number, :verification_value, :year, :month
+
     def process!(payment)
       if Spree::Config[:auto_capture]
         purchase(payment.amount.to_f, payment)
@@ -171,12 +173,12 @@ module Spree
       record_log payment, response
 
       if response.success?
-        Payment.create(:order => payment.order,
-                              :source => payment,
-                              :payment_method => payment.payment_method,
-                              :amount => amount.abs * -1,
-                              :response_code => response.authorization,
-                              :state => 'completed')
+        Payment.create({:order => payment.order,
+                       :source => payment,
+                       :payment_method => payment.payment_method,
+                       :amount => amount.abs * -1,
+                       :response_code => response.authorization,
+                       :state => 'completed'}, :as => :internal)
       else
         gateway_error(response)
       end
@@ -211,7 +213,7 @@ module Spree
     end
 
     def record_log(payment, response)
-      payment.log_entries.create(:details => response.to_yaml)
+      payment.log_entries.create({:details => response.to_yaml}, :as => :internal)
     end
 
     def gateway_error(error)

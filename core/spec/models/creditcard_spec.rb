@@ -8,11 +8,15 @@ describe Spree::Creditcard do
 
   let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
 
+  def stub_rails_env(environment)
+    Rails.stub(:env => ActiveSupport::StringInquirer.new(environment))
+  end
+
   before(:each) do
 
     @order = Factory(:order)
     @creditcard = Spree::Creditcard.new
-    @payment = Spree::Payment.create(:amount => 100, :order => @order)
+    @payment = Spree::Payment.create({:amount => 100, :order => @order}, :as => :internal)
 
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
@@ -49,10 +53,8 @@ describe Spree::Creditcard do
       @creditcard.authorize(100, @payment)
     end
 
-
-
     it "should log the response" do
-      @payment.log_entries.should_receive(:create).with(:details => anything)
+      @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
       @creditcard.authorize(100, @payment)
     end
 
@@ -92,7 +94,7 @@ describe Spree::Creditcard do
      @creditcard.purchase(100, @payment)
     end
     it "should log the response" do
-     @payment.log_entries.should_receive(:create).with(:details => anything)
+     @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
      @creditcard.purchase(100, @payment)
     end
     context "when gateway does not match the environment" do
@@ -158,7 +160,7 @@ describe Spree::Creditcard do
         @creditcard.capture(@payment)
       end
       it "should log the response" do
-        @payment.log_entries.should_receive(:create).with(:details => anything)
+        @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
         @creditcard.capture(@payment)
       end
       context "when gateway does not match the environment" do
@@ -224,7 +226,7 @@ describe Spree::Creditcard do
       @creditcard.void(@payment)
     end
     it "should log the response" do
-      @payment.log_entries.should_receive(:create).with(:details => anything)
+      @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
       @creditcard.void(@payment)
     end
     context "when gateway does not match the environment" do
@@ -308,7 +310,7 @@ describe Spree::Creditcard do
     end
 
     it "should log the response" do
-      @payment.log_entries.should_receive(:create).with(:details => anything)
+      @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
       @creditcard.credit(@payment)
     end
 
@@ -481,22 +483,18 @@ describe Spree::Creditcard do
 
     context "in development mode" do
       before do
-        Rails.env = "development"
+        stub_rails_env("production")
       end
 
       it "should return visa" do
         @creditcard.save
         @creditcard.spree_cc_type.should == "visa"
       end
-
-      after do 
-        Rails.env = "test"
-      end
     end
 
     context "in production mode" do
       before do
-        Rails.env = "production"
+        stub_rails_env("production")
       end
 
       it "should return the actual cc_type for a valid number" do
@@ -504,16 +502,12 @@ describe Spree::Creditcard do
         @creditcard.save
         @creditcard.spree_cc_type.should == "american_express"
       end
-
-      after do
-        Rails.env = "test"
-      end
     end
   end
 
   context "#set_card_type" do
     before :each do
-      Rails.env = "production"
+      stub_rails_env("production")
       @creditcard.attributes = valid_creditcard_attributes
     end
 
@@ -529,10 +523,6 @@ describe Spree::Creditcard do
       @creditcard.number = "XXXXXXXXXXXX5100"
       @creditcard.save
       @creditcard.spree_cc_type.should == "master"
-    end
-
-    after do
-      Rails.env = "test"
     end
   end
 end
