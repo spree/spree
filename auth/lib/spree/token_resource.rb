@@ -9,7 +9,9 @@ module Spree
     end
 
     def create_token
-      create_tokenized_permission(:token => ::SecureRandom::hex(8))
+      permission = build_tokenized_permission
+      permission.token = token = ::SecureRandom::hex(8)
+      permission.save!
       token
     end
 
