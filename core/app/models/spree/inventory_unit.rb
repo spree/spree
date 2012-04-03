@@ -101,6 +101,8 @@ module Spree
 
         shipment = order.shipments.detect { |shipment| !shipment.shipped? }
 
+        attr_accessible :shipment
+
         sold.times { order.inventory_units.create(:variant => variant, :state => 'sold', :shipment => shipment) }
         back_order.times { order.inventory_units.create(:variant => variant, :state => 'backordered', :shipment => shipment) }
       end
