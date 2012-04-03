@@ -8,6 +8,9 @@ module Spree
 
     calculated_adjustments
 
+    attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
+                    :match_none, :match_one, :match_all, :calculator_type
+
     def available?(order, display_on=nil)
       display_check = (self.display_on == display_on.to_s || self.display_on.blank?)
       calculator_check = calculator.available?(order)

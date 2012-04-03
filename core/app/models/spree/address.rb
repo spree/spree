@@ -8,6 +8,9 @@ module Spree
     validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
     validate :state_validate
 
+    attr_accessible :firstname, :lastname, :address1, :address2, :city, :state_id,
+                    :zipcode, :phone, :country_id, :state_name, :company, :alternative_phone
+
     # disconnected since there's no code to display error messages yet OR matching client-side validation
     def phone_validate
       return if phone.blank?

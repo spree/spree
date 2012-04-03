@@ -160,7 +160,7 @@ describe Spree::Payment do
     context "with the params hash ordered differently" do
       it "should build the payment's source" do
         params = {
-          :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'},
+          :source_attributes => { :year=> '2012', :month => '1', :number => '1234567890123', :verification_value => '123' },
           :amount => 100, :payment_method_id => payment_method.id
         }
 

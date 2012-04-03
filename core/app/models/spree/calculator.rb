@@ -2,6 +2,8 @@ module Spree
   class Calculator < ActiveRecord::Base
     belongs_to :calculable, :polymorphic => true
 
+    attr_accessible :calculable
+
     # This method must be overriden in concrete calculator.
     #
     # It should return amount computed based on #calculable and/or optional parameter

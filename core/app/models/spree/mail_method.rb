@@ -16,6 +16,8 @@ module Spree
     preference :mail_bcc, :string, :default => 'spree@example.com'
     preference :intercept_email, :string, :default => nil
 
+    attr_accessible :environment
+
     validates :environment, :presence => true
 
     def self.current

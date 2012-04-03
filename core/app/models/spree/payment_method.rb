@@ -4,6 +4,8 @@ module Spree
     DISPLAY =  [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
+    attr_accessible :name, :description, :environment, :display_on, :active
+
     scope :production, where(:environment => 'production')
 
     def self.providers

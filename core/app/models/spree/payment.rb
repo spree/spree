@@ -13,6 +13,9 @@ module Spree
     after_save :update_order
 
     attr_accessor :source_attributes
+    attr_accessible :amount, :order, :source, :payment_method, :response_code,
+                    :state, :payment_method_id, :source_attributes
+
     after_initialize :build_source
 
     scope :from_creditcard, where(:source_type => 'Spree::Creditcard')

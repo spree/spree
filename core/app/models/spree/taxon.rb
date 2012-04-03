@@ -6,7 +6,10 @@ module Spree
     has_and_belongs_to_many :products, :join_table => 'spree_products_taxons'
     before_create :set_permalink
 
+    attr_accessible :taxonomy_id, :name
+
     validates :name, :presence => true
+
     has_attached_file :icon,
       :styles => { :mini => '32x32>', :normal => '128x128>' },
       :default_style => :mini,

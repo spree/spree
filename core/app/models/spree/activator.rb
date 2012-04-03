@@ -1,6 +1,7 @@
 module Spree
   class Activator < ActiveRecord::Base
     cattr_accessor :event_names
+    attr_accessible :event_name
 
     self.event_names = [
       'spree.cart.add',

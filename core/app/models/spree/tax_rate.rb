@@ -13,6 +13,8 @@ module Spree
     belongs_to :zone
     belongs_to :tax_category
 
+    attr_accessible :amount, :zone, :tax_category, :calculator
+
     validates :amount, :presence => true, :numericality => true
     validates :tax_category_id, :presence => true
     validates_with DefaultTaxZoneValidator

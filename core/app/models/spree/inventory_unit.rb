@@ -5,6 +5,8 @@ module Spree
     belongs_to :shipment
     belongs_to :return_authorization
 
+    attr_accessible :state, :variant
+
     scope :backorder, where(:state => 'backordered')
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)

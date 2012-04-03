@@ -26,6 +26,8 @@ module Spree
     belongs_to :source, :polymorphic => true
     belongs_to :originator, :polymorphic => true
 
+    attr_accessible :amount, :source, :originator, :label, :mandatory, :adjustable, :locked
+
     validates :label, :presence => true
     validates :amount, :numericality => true
 

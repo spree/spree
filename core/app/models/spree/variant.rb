@@ -1,5 +1,7 @@
 module Spree
   class Variant < ActiveRecord::Base
+    attr_accessible :sku, :price, :weight, :height, :width, :depth
+
     belongs_to :product
     delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords, :tax_category
 
@@ -18,6 +20,8 @@ module Spree
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
     scope :deleted, where('deleted_at IS NOT NULL')
+
+    attr_accessible :option_value_ids, :product_id
 
     # default extra fields for shipping purposes
     @fields = [{ :name => 'Weight', :only => [:variant], :format => '%.2f' },

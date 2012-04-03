@@ -6,6 +6,7 @@ module Spree
     after_validation :set_card_type
 
     attr_accessor :number, :verification_value
+    attr_accessible :number, :verification_value, :month, :year, :gateway_customer_profile_id
 
     validates :month, :year, :numericality => { :only_integer => true }
     validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
