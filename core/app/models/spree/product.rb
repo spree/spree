@@ -137,7 +137,6 @@ module Spree
       p.product_properties = self.product_properties.map { |q| r = q.dup; r.created_at = r.updated_at = nil; r }
 
       image_dup = lambda { |i| j = i.dup; j.attachment = i.attachment.clone; j }
-      p.images = self.images.map { |i| image_dup.call i }
 
       variant = master.dup
       variant.sku = 'COPY OF ' + master.sku
@@ -145,11 +144,9 @@ module Spree
       variant.images = master.images.map { |i| image_dup.call i }
       p.master = variant
 
-      if self.has_variants?
-        # don't dup the actual variants, just the characterising types
-        p.option_types = self.option_types
-      else
-      end
+      # don't dup the actual variants, just the characterising types
+      p.option_types = self.option_types if self.has_variants?
+        
       # allow site to do some customization
       p.send(:duplicate_extra, self) if p.respond_to?(:duplicate_extra)
       p.save!
