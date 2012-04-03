@@ -19,11 +19,21 @@ describe Spree::Product do
     product.master.should_not be_nil
   end
 
-  context "product instance" do
-    let(:product) do
-      product = stub_model(Spree::Product)
-      product.stub :master => stub_model(Spree::Variant)
-      product
+  context 'product instance' do
+    let(:product) { Factory(:product) }
+
+    context '#duplicate' do
+      before do
+        product.stub :taxons => [Factory(:taxon)]
+      end
+
+      it 'duplicates product' do
+        clone = product.duplicate
+        clone.name.should == 'COPY OF ' + product.name
+        clone.master.sku.should == 'COPY OF ' + product.master.sku
+        clone.taxons.should == product.taxons
+        clone.images.size.should == product.images.size
+      end
     end
 
     context "#on_hand" do
