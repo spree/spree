@@ -2,6 +2,9 @@ module Spree
   class Image < Asset
     validates_attachment_presence :attachment
     validate :no_attachment_errors
+
+    attr_accessible :attachment, :alt
+
     has_attached_file :attachment,
                       :styles => { :mini => '48x48>', :small => '100x100>', :product => '240x240>', :large => '600x600>' },
                       :default_style => :product,
