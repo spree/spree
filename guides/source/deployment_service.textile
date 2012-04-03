@@ -116,5 +116,5 @@ It's important to substitute YOUR_DB_PASSWORD with the actual password you requi
 
 If you choose to deploy a "Sample Application" then you should be able to browser to your Application Servers IP address to view the store running.
 
-If you are deploying your own application, please refer to the "Deploying you application":deploying_your_application.html Guide for more.
+If you are deploying your own application, please refer to the "Deploying your application":deploying_your_application.html Guide for more.
 
