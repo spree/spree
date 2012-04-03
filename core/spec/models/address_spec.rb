@@ -138,7 +138,7 @@ describe Spree::Address do
       Spree::Config[:default_country_id] = @default_country_id
     end
     it "sets up a new record with Spree::Config[:default_country_id]" do
-      Spree::Address.default.country.should == Spree::Country.find_by_id(Spree::Config[:default_country_id])
+      Spree::Address.default.country.should == Spree::Country.find(Spree::Config[:default_country_id])
     end
 
     # Regression test for #1142

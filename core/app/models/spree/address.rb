@@ -18,49 +18,9 @@ module Spree
       end
     end
 
-    def state_validate
-      #skip state validation without country (also required)
-      #or when disabled by perfernce
-      return if self.country_id.blank? || !Spree::Config[:address_requires_state]
-
-      #ensure associated state belongs to country
-      if self.state_id.present?
-        if self.state.country_id == self.country_id
-          self.state_name = nil #not required as we have a valid state and country combo
-        else
-          if self.state_name.present?
-
-            self.state_id = nil
-          else
-            errors.add(:state, :invalid)
-          end
-        end
-      end
-
-      #ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
-      if self.state_name.present?
-        if country.states.present?
-          states = country.states.find_all_by_name_or_abbr(self.state_name)
-
-          if states.size == 1
-            self.state = states.first
-            self.state_name = nil
-          else
-            errors.add(:state, :invalid)
-          end
-        end
-      end
-
-      #ensure at least one state field is populated
-      if self.state_id.blank? && self.state_name.blank?
-        errors.add(:state, :blank)
-      end
-
-    end
-
     def self.default
-      country = Spree::Country.find_by_id(Spree::Config[:default_country_id])
-      new :country_id => country.try(:id) || Country.first.try(:id)
+      country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
+      new(:country => country)
     end
 
     # can modify an address if it's not been used in an order (but checkouts controller has finer control)
@@ -77,8 +37,7 @@ module Spree
     end
 
     def zone
-      (state && state.zone) ||
-      (country && country.zone)
+      (state && state.zone) || (country && country.zone)
     end
 
     def zones
@@ -112,5 +71,46 @@ module Spree
     def empty?
       attributes.except('id', 'created_at', 'updated_at', 'order_id', 'country_id').all? { |_, v| v.nil? }
     end
+
+    private
+
+      def state_validate
+        #skip state validation without country (also required)
+        #or when disabled by perfernce
+        return if !country.present? || !Spree::Config[:address_requires_state]
+
+        #ensure associated state belongs to country
+        if state.present?
+          if state.country == country
+            self.state_name = nil #not required as we have a valid state and country combo
+          else
+            if state_name.present?
+              self.state = nil
+            else
+              errors.add(:state, :invalid)
+            end
+          end
+        end
+
+        #ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
+        if state_name.present?
+          if country.states.present?
+            states = country.states.find_all_by_name_or_abbr(state_name)
+
+            if states.size == 1
+              self.state = states.first
+              self.state_name = nil
+            else
+              errors.add(:state, :invalid)
+            end
+          end
+        end
+
+        #ensure at least one state field is populated
+        if !state.present? && state_name.blank?
+          errors.add(:state, :blank)
+        end
+      end
+
   end
 end
