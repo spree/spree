@@ -10,7 +10,7 @@ module Spree
 
     attr_accessible :country, :as => :internal
 
-    attr_accessible :firstname, :lastname, :address1, :address2, :city, :zipcode, :country_id, :state_id, :phone
+    attr_accessible :firstname, :lastname, :address1, :address2, :city, :zipcode, :country_id, :state_id, :phone, :state_name, :company, :alternative_phone
 
     # disconnected since there's no code to display error messages yet OR matching client-side validation
     def phone_validate
