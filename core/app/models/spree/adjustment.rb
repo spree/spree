@@ -40,6 +40,8 @@ module Spree
     after_save :update_adjustable
     after_destroy :update_adjustable
 
+    attr_accessible :amount, :source, :originator, :label, :mandatory, :as => :internal
+
     # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
     # adjustment_total.
     def set_eligibility
