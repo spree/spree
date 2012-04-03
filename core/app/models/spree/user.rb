@@ -3,9 +3,7 @@ module Spree
   class User < ActiveRecord::Base
     include Core::UserBanners
 
-    attr_accessible :email
-    attr_accessible :password
-    attr_accessible :password_confirmation
+    attr_accessible :email, :password, :password_confirmation
 
     has_many :orders
 
