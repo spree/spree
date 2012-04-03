@@ -5,6 +5,8 @@ module Spree
     has_many :product_properties, :dependent => :destroy
     has_many :products, :through => :product_properties
 
+    attr_accessible :name, :presentation
+
     validates :name, :presentation, :presence => true
 
     scope :sorted, lambda { order(:name) }

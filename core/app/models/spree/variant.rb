@@ -3,10 +3,14 @@ module Spree
     belongs_to :product
     delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords, :tax_category
 
+    attr_accessible :name, :presentation
+
     has_many :inventory_units
     has_many :line_items
     has_and_belongs_to_many :option_values, :join_table => 'spree_option_values_variants'
     has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+
+    attr_accessible :cost_price, :position, :on_hand
 
     validate :check_price
     validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true
@@ -18,6 +22,8 @@ module Spree
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
     scope :deleted, where('deleted_at IS NOT NULL')
+
+    attr_accessible :option_value_ids, :product_id, :option_values_attributes
 
     # default extra fields for shipping purposes
     @fields = [{ :name => 'Weight', :only => [:variant], :format => '%.2f' },
