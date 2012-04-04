@@ -6,7 +6,7 @@ module Spree
     attr_accessible :name, :presentation, :cost_price,
                     :position, :on_hand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
-                    :weight, :height, :width, :depth
+                    :weight, :height, :width, :depth, :sku
 
     has_many :inventory_units
     has_many :line_items
