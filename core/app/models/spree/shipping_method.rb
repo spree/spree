@@ -6,6 +6,8 @@ module Spree
     validates :name, :calculator, :zone, :presence => true
     belongs_to :shipping_category
 
+    attr_accessible :name, :zone_id, :display_on, :shipping_category_id, :match_none, :match_one, :match_all
+
     calculated_adjustments
 
     def available?(order, display_on=nil)
