@@ -9,12 +9,12 @@ end
 describe Spree::Order do
   before(:each) do
     reset_spree_preferences
-    Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :as => :internal)
+    Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :without_protection => true)
   end
 
   let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
-  let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :as => :internal) }
+  let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :without_protection => true) }
 
   before do
     Spree::Gateway.stub :current => gateway
@@ -859,8 +859,8 @@ describe Spree::Order do
 
     context "when only one line item has adjustments" do
       before do
-        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :as => :internal)
-        @adj2 = line_item1.adjustments.create({:amount => 5, :source => line_item1, :label => "VAT 10%"}, :as => :internal)
+        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :without_protection => true)
+        @adj2 = line_item1.adjustments.create({:amount => 5, :source => line_item1, :label => "VAT 10%"}, :without_protection => true)
       end
 
       it "should return the adjustments for that line item" do
@@ -870,8 +870,8 @@ describe Spree::Order do
 
     context "when more than one line item has adjustments" do
       before do
-        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :as => :internal)
-        @adj2 = line_item2.adjustments.create({:amount => 5, :source => line_item2, :label => "VAT 10%"}, :as => :internal)
+        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :without_protection => true)
+        @adj2 = line_item2.adjustments.create({:amount => 5, :source => line_item2, :label => "VAT 10%"}, :without_protection => true)
       end
 
       it "should return the adjustments for each line item" do

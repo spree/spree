@@ -178,7 +178,7 @@ module Spree
                        :payment_method => payment.payment_method,
                        :amount => amount.abs * -1,
                        :response_code => response.authorization,
-                       :state => 'completed'}, :as => :internal)
+                       :state => 'completed'}, :without_protection => true)
       else
         gateway_error(response)
       end
@@ -213,7 +213,7 @@ module Spree
     end
 
     def record_log(payment, response)
-      payment.log_entries.create({:details => response.to_yaml}, :as => :internal)
+      payment.log_entries.create({:details => response.to_yaml}, :without_protection => true)
     end
 
     def gateway_error(error)

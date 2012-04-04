@@ -90,7 +90,7 @@ shared_context "product prototype" do
   def build_option_type_with_values(name, values)
     ot = Factory(:option_type, :name => name)
     values.each do |val|
-      ot.option_values.create(:name => val.downcase, :presentation => val)
+      ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
     end
     ot
   end
