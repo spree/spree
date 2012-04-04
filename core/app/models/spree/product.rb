@@ -130,7 +130,7 @@ module Spree
       return if option_values_hash.nil?
       option_values_hash.keys.map(&:to_i).each do |id|
         self.option_type_ids << id unless self.option_type_ids.include?(id)
-        self.product_option_types.create(:option_type_id => id) unless product_option_types.map(&:option_type_id).include?(id)
+        self.product_option_types.create({:option_type_id => id}, :without_protection => true) unless product_option_types.map(&:option_type_id).include?(id)
       end
     end
 
