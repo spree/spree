@@ -43,13 +43,13 @@ describe Spree::Promotion::Actions::CreateLineItems do
 
   context "#line_items_string" do
     before do
-      action.promotion_action_line_items.create!(
+      action.promotion_action_line_items.create!({
         :variant_id => 10,
-        :quantity => 1
+        :quantity => 1}, :without_protection => true
       )
-      action.promotion_action_line_items.create!(
+      action.promotion_action_line_items.create!({
         :variant_id => 20,
-        :quantity => 2
+        :quantity => 2}, :without_protection => true
       )
     end
     it "is a string of comma separated pairs of {variant_id}x{quantity}" do
