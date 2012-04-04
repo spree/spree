@@ -20,7 +20,7 @@ describe Spree::Admin::MailMethodsController do
   context "#update" do
     it "should reinitialize the mail settings" do
       Spree::Core::MailSettings.should_receive :init
-      put :update, {:order_id => "123", :id => "456", :mail_method_parmas => {:environment => "foo"}}
+      put :update, {:order_id => "123", :id => "456", :mail_method_params => {:environment => "foo"}}
     end
   end
 
