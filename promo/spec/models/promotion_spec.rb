@@ -217,10 +217,10 @@ describe Spree::Promotion do
       before do
         promotion.save!
 
-        @order.adjustments.create(:amount => 1,
+        @order.adjustments.create({:amount => 1,
                                   :source => @order,
                                   :originator => @action,
-                                  :label => "Foo")
+                                  :label => "Foo"}, :without_protection => true)
       end
 
       it "should be eligible" do
