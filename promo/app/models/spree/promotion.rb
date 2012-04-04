@@ -16,7 +16,8 @@ module Spree
 
     attr_accessible :name, :event_name, :code, :match_policy,
                     :path, :advertise, :description, :usage_limit,
-                    :starts_at, :expires_at
+                    :starts_at, :expires_at, :promotion_rules_attributes,
+                    :promotion_actions_attributes
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
