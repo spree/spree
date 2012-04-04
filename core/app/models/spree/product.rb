@@ -204,7 +204,7 @@ module Spree
         values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
         values.each do |ids|
-          variant = self.variants.create(:option_value_ids => ids, :price => self.master.price)
+          variant = self.variants.create({:option_value_ids => ids, :price => self.master.price}, :without_protection => true)
         end
         save
       end
