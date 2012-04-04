@@ -469,7 +469,7 @@ module Spree
             :next_state     => self.shipment_state,
             :name           => 'shipment',
             :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
-          })
+          }, :without_protection => true)
         end
       end
 
@@ -499,7 +499,7 @@ module Spree
             :next_state     => self.payment_state,
             :name           => 'payment',
             :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
-          })
+          }, :without_protection => true)
         end
       end
 
