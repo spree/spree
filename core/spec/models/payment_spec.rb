@@ -164,7 +164,7 @@ describe Spree::Payment do
           :amount => 100, :payment_method_id => payment_method.id
         }
 
-        payment = Spree::Payment.new(params)
+        payment = Spree::Payment.new(params, :without_protection => true)
         payment.should be_valid
         payment.source.should_not be_nil
       end
