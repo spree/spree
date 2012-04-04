@@ -22,6 +22,8 @@
 #
 module Spree
   class Adjustment < ActiveRecord::Base
+    attr_accessible :amount, :label
+
     belongs_to :adjustable, :polymorphic => true
     belongs_to :source, :polymorphic => true
     belongs_to :originator, :polymorphic => true
