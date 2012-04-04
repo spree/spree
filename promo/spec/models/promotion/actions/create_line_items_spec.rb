@@ -9,13 +9,13 @@ describe Spree::Promotion::Actions::CreateLineItems do
     before do
       @v1 = Factory(:variant)
       @v2 = Factory(:variant)
-      action.promotion_action_line_items.create!(
+      action.promotion_action_line_items.create!({
         :variant => @v1,
-        :quantity => 1
+        :quantity => 1}, :without_protection => true
       )
-      action.promotion_action_line_items.create!(
+      action.promotion_action_line_items.create!({
         :variant => @v2,
-        :quantity => 2
+        :quantity => 2}, :without_protection => true
       )
     end
 
