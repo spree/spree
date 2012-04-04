@@ -260,9 +260,9 @@ describe Spree::Promotion do
       end
 
       it "should have eligible rules if any of the rules is eligible" do
-        true_rule = Spree::PromotionRule.create(:promotion => @promotion)
+        true_rule = Spree::PromotionRule.create({:promotion => @promotion}, :without_protection => true)
         true_rule.stub(:eligible?).and_return(true)
-        false_rule = Spree::PromotionRule.create(:promotion => @promotion)
+        false_rule = Spree::PromotionRule.create({:promotion => @promotion}, :without_protection => true)
         false_rule.stub(:eligible?).and_return(false)
         @promotion.rules << true_rule
         @promotion.rules_are_eligible?(@order).should be_true
