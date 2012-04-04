@@ -57,8 +57,8 @@ describe Spree::TaxRate do
             sub_zone = Spree::Zone.create(:name => "State Zone")
             sub_zone.zone_members.create(:zoneable => Factory(:state, :country => country))
             order.stub :tax_zone => sub_zone
-            @rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                          :calculator => calculator
+            @rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
+                                          :calculator => calculator}, :without_protection => true)
           end
 
           it "should return the rate zone" do
@@ -78,8 +78,8 @@ describe Spree::TaxRate do
           before { order.stub :tax_zone => Spree::Zone.create(:name => "Other Zone") }
 
           it "should return the rates associated with the default tax zone" do
-            rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                         :calculator => calculator
+            rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
+                                         :calculator => calculator}, :without_protection => true)
 
             Spree::TaxRate.match(order).should == [rate]
           end
@@ -112,7 +112,7 @@ describe Spree::TaxRate do
           Spree::Config[:default_country_id] = country.id
           @zone = Spree::Zone.create(:name => "Country Zone", :default_tax => true)
           @zone.zone_members.create(:zoneable => country)
-          rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category, :calculator => calculator
+          rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category, :calculator => calculator}, :without_protection => true)
         end
 
         it "should return the correct tax_rate" do
