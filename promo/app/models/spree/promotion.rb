@@ -14,7 +14,9 @@ module Spree
     alias_method :actions, :promotion_actions
     accepts_nested_attributes_for :promotion_actions
 
-    attr_accessible :name, :event_name, :code
+    attr_accessible :name, :event_name, :code, :match_policy,
+                    :path, :advertise, :description, :usage_limit,
+                    :starts_at, :expires_at
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
