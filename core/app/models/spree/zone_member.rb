@@ -3,7 +3,7 @@ module Spree
     belongs_to :zone
     belongs_to :zoneable, :polymorphic => true
 
-    attr_accessible :zone, :zoneable
+    attr_accessible :zone, :zone_id, :zoneable
 
     def name
       return nil if zoneable.nil?
