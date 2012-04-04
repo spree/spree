@@ -256,7 +256,7 @@ describe Spree::Preferences::Preferable do
       @pt.preferred_pref_test_pref = 'lmn'
       @pt.save!
       @pt.destroy
-      @pt1 = PrefTest.new(:col => 'aaaa')
+      @pt1 = PrefTest.new({:col => 'aaaa'}, :without_protection => true)
       @pt1.id = @pt.id
       @pt1.save!
       @pt1.get_preference(:pref_test_pref).should_not == 'lmn'

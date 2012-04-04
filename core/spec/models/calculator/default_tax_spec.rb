@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Calculator::DefaultTax do
   let!(:tax_category) { Factory(:tax_category, :tax_rates => []) }
   let!(:rate) { mock_model(Spree::TaxRate, :tax_category => tax_category, :amount => 0.05) }
-  let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate) }
+  let!(:calculator) { Spree::Calculator::DefaultTax.new({:calculable => rate}, :without_protection => true) }
   let!(:order) { Factory(:order) }
   let!(:product_1) { Factory(:product) }
   let!(:product_2) { Factory(:product) }
