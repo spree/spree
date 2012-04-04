@@ -112,7 +112,7 @@ h4. Other fixes
 * Fix issue where under certain circumstances users were able to view other people's order information. "#1243":https://github.com/spree/spree/issues/1243
 * Fix issue where searching for orders by SKU was broken in admin backend. "#1259":https://github.com/spree/spree/issues/1259
 * Logout when "Remember me" was checked for login now will actually log a user out. "#1257":https://github.com/spree/spree/issues/1257
-* +Spree::UrlHelpers+ has moved to +Spree::Core::UrlHelpers+ "3bf5df":https://github.com/spree/spree/commit/3bf5df57e3474322dc484eb57ca5ee9098bd9454"
+* +Spree::UrlHelpers+ has moved to +Spree::Core::UrlHelpers+ "3bf5df":https://github.com/spree/spree/commit/3bf5df57e3474322dc484eb57ca5ee9098bd9454
 * Preview buttons on the admin dashboard are now hidden once the dashboard has been configured. "#1271":https://github.com/spree/spree/issues/1271
 * Slightly alter permalink code so that it does not conflict on similar names. Current permalinks will not be affected. "#1254":https://github.com/spree/spree/issues/1254
 * Don't allow payments to be created in admin backend unless payment methods have been defined. "#1269":https://github.com/spree/spree/issues/1269
