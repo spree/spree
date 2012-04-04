@@ -15,6 +15,7 @@ require 'spree/core/url_helpers'
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
+  config.backtrace_clean_patterns = [/gems\/active*/, /gems\/action*/, /gems\/rspec/]
   # == Mock Framework
   #
   # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
