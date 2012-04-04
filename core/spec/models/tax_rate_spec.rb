@@ -35,18 +35,18 @@ describe Spree::TaxRate do
         end
 
         it "should return the rate that matches the rate zone" do
-          rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                       :calculator => calculator
+          rate = Spree::TaxRate.create({ :amount => 1, :zone => @zone, :tax_category => tax_category,
+                                       :calculator => calculator }, :without_protection => true)
 
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == [rate]
         end
 
         it "should return all rates that match the rate zone" do
-          rate1 = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                        :calculator => calculator
-          rate2 = Spree::TaxRate.create :amount => 2, :zone => @zone, :tax_category => tax_category,
-                                        :calculator => Spree::Calculator::FlatRate.new
+          rate1 = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
+                                        :calculator => calculator}, :without_protection => true)
+          rate2 = Spree::TaxRate.create({:amount => 2, :zone => @zone, :tax_category => tax_category,
+                                        :calculator => Spree::Calculator::FlatRate.new}, :without_protection => true)
 
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == [rate1, rate2]
