@@ -202,8 +202,8 @@ describe Spree::InventoryUnit do
       before { Spree::Config.set :allow_backorders => true }
 
       it "should create both sold and backordered units" do
-        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
-        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "backordered", :shipment => shipment).exactly(3).times
+        order.inventory_units.should_receive(:create).with({:variant => variant, :state => "sold", :shipment => shipment}, :without_protection => true).exactly(2).times
+        order.inventory_units.should_receive(:create).with({:variant => variant, :state => "backordered", :shipment => shipment}, :without_protection => true).exactly(3).times
         Spree::InventoryUnit.create_units(order, variant, 2, 3)
       end
 
@@ -213,7 +213,7 @@ describe Spree::InventoryUnit do
       before { Spree::Config.set :allow_backorders => false }
 
       it "should create sold items" do
-        order.inventory_units.should_receive(:create).with(:variant => variant, :state => "sold", :shipment => shipment).exactly(2).times
+        order.inventory_units.should_receive(:create).with({:variant => variant, :state => "sold", :shipment => shipment}, :without_protection => true).exactly(2).times
         Spree::InventoryUnit.create_units(order, variant, 2, 0)
       end
 
