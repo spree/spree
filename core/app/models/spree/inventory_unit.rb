@@ -102,7 +102,7 @@ module Spree
         attr_accessible :shipment
 
         sold.times { order.inventory_units.create({:variant => variant, :state => 'sold', :shipment => shipment}, :without_protection => true) }
-        back_order.times { order.inventory_units.create(:variant => variant, :state => 'backordered', :shipment => shipment) }
+        back_order.times { order.inventory_units.create({:variant => variant, :state => 'backordered', :shipment => shipment}, :without_protection => true) }
       end
 
       def update_order
