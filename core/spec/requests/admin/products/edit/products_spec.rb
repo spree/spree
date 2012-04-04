@@ -17,7 +17,7 @@ describe 'Product Details' do
         find('h1').text.should == 'Editing Product “Bún thịt nướng”'
         find('input#product_name').value.should == 'Bún thịt nướng'
         find('input#product_permalink').value.should == 'bun-thit-nuong'
-        find('textarea#product_description').text.should == 'lorem ipsum'
+        find('textarea#product_description').text.strip.should == 'lorem ipsum'
         find('input#product_price').value.should == '19.99'
         find('input#product_cost_price').value.should == '17.00'
         find('input#product_available_on').value.should_not be_blank
