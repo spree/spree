@@ -131,7 +131,7 @@ describe Spree::Payment do
 
       it "should create a payment profile" do
         gateway.should_receive :create_profile
-        payment = Spree::Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+        payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
       end
     end
 
@@ -140,7 +140,7 @@ describe Spree::Payment do
 
       it "should not create a payment profile" do
         gateway.should_not_receive :create_profile
-        payment = Spree::Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+        payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
       end
     end
   end
