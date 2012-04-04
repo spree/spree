@@ -20,7 +20,7 @@ describe Spree::TaxRate do
 
     context "when no rate zones match the tax zone" do
       before do
-        Spree::TaxRate.create :amount => 1, :zone => Factory(:zone, :name => 'other_zone')
+        Spree::TaxRate.create({:amount => 1, :zone => Factory(:zone, :name => 'other_zone')}, :without_protection => true)
       end
 
       context "when there is no default tax zone" do
@@ -133,7 +133,7 @@ describe Spree::TaxRate do
       @category    = Spree::TaxCategory.create :name => "Taxable Foo"
       @category2   = Spree::TaxCategory.create(:name => "Non Taxable")
       @calculator  = Spree::Calculator::DefaultTax.new
-      @rate        = Spree::TaxRate.create(:amount => 0.10, :calculator => @calculator, :tax_category => @category)
+      @rate        = Spree::TaxRate.create({:amount => 0.10, :calculator => @calculator, :tax_category => @category}, :without_protection => true)
       @order       = Spree::Order.create!
       @taxable     = Factory(:product, :tax_category => @category)
       @nontaxable  = Factory(:product, :tax_category => @category2)

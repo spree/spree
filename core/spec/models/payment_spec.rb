@@ -11,7 +11,7 @@ describe Spree::Payment do
   let(:card) { Factory(:creditcard) }
 
   before(:each) do
-    @payment = Spree::Payment.new(:order => order)
+    @payment = Spree::Payment.new({:order => order}, :without_protection => true)
     @payment.payment_method = stub_model(Spree::PaymentMethod)
     @payment.payment_method.stub(:source_required? => true)
     @payment.source = mock_model(Spree::Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil, :changed_for_autosave? => false)
