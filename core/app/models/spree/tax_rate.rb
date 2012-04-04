@@ -50,11 +50,11 @@ module Spree
         else
           amount = -1 * calculator.compute(order)
           label = I18n.t(:refund) + label
-          order.adjustments.create(:amount => amount,
+          order.adjustments.create({:amount => amount,
                                    :source => order,
                                    :originator => self,
                                    :locked => true,
-                                   :label => label)
+                                   :label => label}, :without_protection => true)
         end
       else
         create_adjustment(label, order, order)
