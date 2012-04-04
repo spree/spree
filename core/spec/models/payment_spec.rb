@@ -121,7 +121,7 @@ describe Spree::Payment do
 
   context "#save" do
     it "should call order#update!" do
-      payment = Spree::Payment.create(:amount => 100, :order => order)
+      payment = Spree::Payment.create({:amount => 100, :order => order}, :without_protection => true)
       order.should_receive(:update!)
       payment.save
     end
@@ -152,7 +152,7 @@ describe Spree::Payment do
       params = { :amount => 100, :payment_method_id => payment_method.id,
         :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'}}
 
-      payment = Spree::Payment.new(params)
+      payment = Spree::Payment.new(params, :without_protection => true)
       payment.should be_valid
       payment.source.should_not be_nil
     end
