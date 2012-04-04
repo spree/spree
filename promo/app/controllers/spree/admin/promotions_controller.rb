@@ -6,9 +6,10 @@ module Spree
 
       protected
         def build_resource
+          calculator_type = params[:promotion].delete(:calculator_type)
           @promotion = Promotion.new(params[:promotion])
-          if params[:promotion] && params[:promotion][:calculator_type]
-            @promotion.calculator = params[:promotion][:calculator_type].constantize.new
+          if params[:promotion] && calculator_type
+            @promotion.calculator = calculator_type.constantize.new
           end
           @promotion
         end
