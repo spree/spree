@@ -11,7 +11,7 @@ module Spree
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, :allow_destroy => true, :reject_if => proc { |a| a['zoneable_id'].blank? }
 
-    attr_accessible :name, :description, :default_tax, :kind
+    attr_accessible :name, :description, :default_tax, :kind, :zone_members
 
     def kind
       member = self.members.last
