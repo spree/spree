@@ -4,7 +4,7 @@ endprologue.
 
 h3. Summary
 
-This is the official 1.1 Release of Spree. This is a minor release, and so backwards compatibility with extensions and applications is mostly guaranteed. There may still be some changes required for your extensions or applications, and so please read the changelog below to know if you are effected.
+This is the official 1.1 Release of Spree. This is a minor release, and so backwards compatibility with extensions and applications is mostly guaranteed. There may still be some changes required for your extensions or applications, and so please read the changelog below to know if you are affected.
 
 If any particular extension your store uses is not yet compatible you are encouraged to alert the Spree team about it by filing an issue on that extension project if it's an official extension, or to submit a patch to that project to upgrade compatibility.
 
