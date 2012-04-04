@@ -7,7 +7,7 @@ describe Spree::Payment do
   end
 
   let(:order) { mock_model(Spree::Order, :update! => nil, :payments => []) }
-  let(:gateway) { Spree::Gateway::Bogus.new(:environment => 'test', :active => true) }
+  let(:gateway) { Spree::Gateway::Bogus.new({:environment => 'test', :active => true}, :without_protection => true) }
   let(:card) { Factory(:creditcard) }
 
   before(:each) do
