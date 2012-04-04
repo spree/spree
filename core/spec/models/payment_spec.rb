@@ -174,7 +174,7 @@ describe Spree::Payment do
       params = { :amount => 100, :payment_method_id => payment_method.id,
                  :source_attributes => {:year=>"2012", :month =>"1" }}
 
-      payment = Spree::Payment.new(params)
+      payment = Spree::Payment.new(params, :without_protection => true)
       payment.should_not be_valid
       payment.source.should_not be_nil
       payment.source.should have(1).error_on(:number)
