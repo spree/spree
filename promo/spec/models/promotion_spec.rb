@@ -197,7 +197,8 @@ describe Spree::Promotion do
       promotion.name = "Foo"
       promotion.code = "XXX"
       calculator = Spree::Calculator::FlatRate.new
-      @action = Spree::Promotion::Actions::CreateAdjustment.create(:promotion => promotion, :calculator => calculator)
+      action_params = { :promotion => promotion, :calculator => calculator }
+      @action = Spree::Promotion::Actions::CreateAdjustment.create(action_params, :without_protection => true)
     end
 
     context "when it is expired" do
