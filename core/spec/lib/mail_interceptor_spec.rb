@@ -8,6 +8,7 @@ describe Spree::OrderMailer do
   #let(:email) { mock "email" }
 
   before(:all) do
+    ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries.clear
   end
 
