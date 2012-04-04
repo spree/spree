@@ -8,8 +8,6 @@ module Spree
     validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
     validate :state_validate
 
-    attr_accessible :country, :as => :internal
-
     attr_accessible :firstname, :lastname, :address1, :address2, :city, :zipcode, :country_id, :state_id, :phone, :state_name, :company, :alternative_phone
 
     # disconnected since there's no code to display error messages yet OR matching client-side validation
@@ -24,7 +22,7 @@ module Spree
 
     def self.default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
-      new({:country => country}, :as => :internal)
+      new({:country => country}, :without_protection => true)
     end
 
     # can modify an address if it's not been used in an order (but checkouts controller has finer control)

@@ -374,7 +374,7 @@ module Spree
         :next_state     => 'complete',
         :name           => 'order' ,
         :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
-      }, :as => :internal)
+      }, :without_protection => true)
     end
 
     # Helper methods for checkout steps

@@ -16,7 +16,7 @@ describe Spree::Creditcard do
 
     @order = Factory(:order)
     @creditcard = Spree::Creditcard.new
-    @payment = Spree::Payment.create({:amount => 100, :order => @order}, :as => :internal)
+    @payment = Spree::Payment.create({:amount => 100, :order => @order}, :without_protection => true)
 
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
@@ -54,7 +54,7 @@ describe Spree::Creditcard do
     end
 
     it "should log the response" do
-      @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
+      @payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
       @creditcard.authorize(100, @payment)
     end
 
@@ -94,7 +94,7 @@ describe Spree::Creditcard do
      @creditcard.purchase(100, @payment)
     end
     it "should log the response" do
-     @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
+     @payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
      @creditcard.purchase(100, @payment)
     end
     context "when gateway does not match the environment" do
@@ -160,7 +160,7 @@ describe Spree::Creditcard do
         @creditcard.capture(@payment)
       end
       it "should log the response" do
-        @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
+        @payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
         @creditcard.capture(@payment)
       end
       context "when gateway does not match the environment" do
@@ -226,7 +226,7 @@ describe Spree::Creditcard do
       @creditcard.void(@payment)
     end
     it "should log the response" do
-      @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
+      @payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
       @creditcard.void(@payment)
     end
     context "when gateway does not match the environment" do
@@ -310,7 +310,7 @@ describe Spree::Creditcard do
     end
 
     it "should log the response" do
-      @payment.log_entries.should_receive(:create).with({:details => anything}, {:as => :internal})
+      @payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
       @creditcard.credit(@payment)
     end
 

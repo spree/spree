@@ -1,8 +1,5 @@
 module Spree
   class PaymentMethod < ActiveRecord::Base
-
-    attr_accessible :name, :active, :environment, :description, :as => :internal
-
     DISPLAY =  [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
