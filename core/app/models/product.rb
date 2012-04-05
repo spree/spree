@@ -90,7 +90,7 @@ class Product < ActiveRecord::Base
     end
 
     def on_hand
-      where(Product.arel_table[:count_on_hand].gteq(0))
+      where(Product.arel_table[:count_on_hand].gt(0))
     end
 
     def id_equals(input_id)
