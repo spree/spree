@@ -120,4 +120,6 @@ h4. Other fixes
 * Ensure +StatesController+ always returns JS response. "#1304":https://github.com/spree/spree/issues/1304
 * Fix issue where checkbox for "Use Billing Address" was not being checked for an order in admin backend when it was in the frontend. "#1290":https://github.com/spree/spree/issues/1290
 * Fix issue where a shipping method could not be updated. "#1331":https://github.com/spree/spree/issues/1331
-
+* Allow layout to be customized based on a configuration setting. "#1355":https://github.com/spree/spree/issues/1355
+* +Rails.application.config.assets.debug+ is no longer hardcoded to +false+ in Spree. Set this variable at your discretion inside your +config/application.rb+ from now on. "#1356":https://github.com/spree/spree/issues/1356
+* Added +gem_available?+ method to +BaseHelper+ to be able to check if an extension is available. "#1241":https://github.com/spree/spree/issues/1241
