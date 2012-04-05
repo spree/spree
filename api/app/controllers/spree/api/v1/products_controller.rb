@@ -7,7 +7,7 @@ module Spree
         end
 
         def show
-          find_product
+          find_product(params[:id])
         end
 
         def new
@@ -25,7 +25,7 @@ module Spree
 
         def update
           authorize! :update, Product
-          find_product
+          find_product(params[:id])
           if @product.update_attributes(params[:product])
             render :show, :status => 200
           else
@@ -35,29 +35,10 @@ module Spree
 
         def destroy
           authorize! :delete, Product
-          find_product
+          find_product(params[:id])
           @product.update_attribute(:deleted_at, Time.now)
           @product.variants_including_master.update_all(:deleted_at => Time.now)
           render :text => nil, :status => 200
-        end
-
-        private
-        def scope
-          if current_api_user.has_role?("admin")
-            scope = Product
-          else
-            scope = Product.active
-          end
-          scope.includes(:master)
-
-        end
-
-        def find_product
-          begin
-            @product = scope.find_by_permalink!(params[:id])
-          rescue ActiveRecord::RecordNotFound
-            @product = scope.find(params[:id])
-          end
         end
       end
     end

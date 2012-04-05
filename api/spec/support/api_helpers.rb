@@ -18,6 +18,11 @@ module ApiHelpers
   def current_api_user
     @current_api_user ||= stub_model(Spree::User, :email => "spree@example.com")
   end
+
+  def file(filename)
+    path = Pathname.new(__FILE__) + "../../../spec/fixtures" + filename
+    File.open(path)
+  end
 end
 
 module ApiTestSetup

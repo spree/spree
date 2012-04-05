@@ -46,6 +46,22 @@ module Spree
           request.headers["X-Spree-Token"] || params[:token]
         end
         helper_method :api_key
+
+        def find_product(id)
+          if current_api_user.has_role?("admin")
+            scope = Product
+          else
+            scope = Product.active
+          end
+
+          scope = scope.includes(:master)
+
+          @product ||= begin
+            scope.find_by_permalink!(id)
+          rescue ActiveRecord::RecordNotFound
+            scope.find(id)
+          end
+        end
       end
     end
   end

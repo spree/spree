@@ -3,9 +3,12 @@ Spree::Core::Engine.routes.prepend do
     scope :module => :v1 do
       resources :products do
         resources :variants
+        resources :images
       end
 
-      resources :variants, :only => [:index]
+      resources :variants, :only => [:index] do
+        resources :images
+      end
 
       resources :orders do
         member do
