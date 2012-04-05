@@ -123,3 +123,4 @@ h4. Other fixes
 * Allow layout to be customized based on a configuration setting. "#1355":https://github.com/spree/spree/issues/1355
 * +Rails.application.config.assets.debug+ is no longer hardcoded to +false+ in Spree. Set this variable at your discretion inside your +config/application.rb+ from now on. "#1356":https://github.com/spree/spree/issues/1356
 * Added +gem_available?+ method to +BaseHelper+ to be able to check if an extension is available. "#1241":https://github.com/spree/spree/issues/1241
+* Fixed potential bug where +Activator.active+ scope may have not been returning activators that were currently active. "#1343":https://github.com/spree/spree/issues/1343
