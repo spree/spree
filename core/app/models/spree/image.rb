@@ -14,6 +14,8 @@ module Spree
     # we need to look at the write-queue for images which have not been saved yet
     after_post_process :find_dimensions
 
+    attr_accessible :attachment, :position
+
     # Load user defined paperclip settings
     if Spree::Config[:use_s3]
       s3_creds = { :access_key_id => Spree::Config[:s3_access_key], :secret_access_key => Spree::Config[:s3_secret], :bucket => Spree::Config[:s3_bucket] }
