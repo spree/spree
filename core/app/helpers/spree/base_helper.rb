@@ -170,5 +170,13 @@ module Spree
         return current_order.item_count
       end
     end
+
+    def gem_available?(name)
+       Gem::Specification.find_by_name(name)
+    rescue Gem::LoadError
+       false
+    rescue
+       Gem.available?(name)
+    end
   end
 end
