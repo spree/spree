@@ -74,10 +74,6 @@ module Spree
         app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/orders/edit_form.js', 'admin/address_states.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
       end
 
-      initializer "spree.asset.pipeline" do |app|
-        app.config.assets.debug = false
-      end
-
       initializer "spree.mail.settings" do |app|
         if Spree::MailMethod.table_exists?
           Spree::Core::MailSettings.init

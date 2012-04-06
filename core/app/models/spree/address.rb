@@ -8,7 +8,10 @@ module Spree
     validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
     validate :state_validate
 
-    attr_accessible :firstname, :lastname, :address1, :address2, :city, :zipcode, :country_id, :state_id, :phone, :state_name, :company, :alternative_phone
+    attr_accessible :firstname, :lastname, :address1, :address2,
+                    :city, :zipcode, :country_id, :state_id,
+                    :country, :state, :phone, :state_name,
+                    :company, :alternative_phone
 
     # disconnected since there's no code to display error messages yet OR matching client-side validation
     def phone_validate

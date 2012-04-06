@@ -13,7 +13,10 @@ module Spree
     end
 
     scope :event_name_starts_with, lambda{ |name| where('event_name LIKE ?', "#{name}%") }
-    scope :active, where('(starts_at IS NULL OR starts_at < ?) AND (expires_at IS NULL OR expires_at > ?)', Time.now, Time.now)
+
+    def self.active
+      where('(starts_at IS NULL OR starts_at < ?) AND (expires_at IS NULL OR expires_at > ?)', Time.now, Time.now)
+    end
 
     def activate(payload)
     end

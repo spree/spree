@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Analytics Sign Up" do
+describe "Analytics Activation" do
   before(:each) do
     @user = Factory(:admin_user)
     sign_in_as!(@user)
@@ -11,7 +11,7 @@ describe "Analytics Sign Up" do
     Spree::Dash::Config.token = nil
   end
 
-  it "user can sign up for spree_analytics" do
+  it "user can activate spree_analytics" do
       Spree::Dash::Jirafe.should_receive(:register).
                           with(hash_including(:url => 'http://test.com')).
                           and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
@@ -23,7 +23,7 @@ describe "Analytics Sign Up" do
       fill_in 'store[last_name]', :with => "test_last_name"
       fill_in 'store[url]', :with => "test.com"
       select '(GMT+00:00) Casablanca', :from => 'store[time_zone]'
-      click_button 'Sign up'
+      click_button 'Activate'
 
       Spree::Dash::Config.app_id.should eq '1'
       Spree::Dash::Config.app_token.should eq '2'
