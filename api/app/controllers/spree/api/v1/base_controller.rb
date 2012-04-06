@@ -48,7 +48,7 @@ module Spree
         helper_method :api_key
 
         def find_product(id)
-          @product ||= begin
+          begin
             product_scope.find_by_permalink!(id)
           rescue ActiveRecord::RecordNotFound
             product_scope.find(id)
@@ -61,7 +61,6 @@ module Spree
           else
             scope = Product.active
           end
-
           scope.includes(:master)
         end
 
