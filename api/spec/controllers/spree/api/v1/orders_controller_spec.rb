@@ -53,9 +53,15 @@ module Spree
         order.state.should == "address"
       end
 
+      def clean_address(address)
+        address.delete(:state)
+        address.delete(:country)
+        address
+      end
+
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
-      let(:shipping_address) {  Factory.attributes_for(:address).merge!(address_params) }
-      let(:billing_address) { Factory.attributes_for(:address).merge!(address_params) }
+      let(:shipping_address) { clean_address(Factory.attributes_for(:address).merge!(address_params)) }
+      let(:billing_address) { clean_address(Factory.attributes_for(:address).merge!(address_params)) }
       let!(:shipping_method) { Factory(:shipping_method) }
       let!(:payment_method) { Factory(:payment_method) }
 
