@@ -33,7 +33,6 @@ module Spree
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
-    delegate_belongs_to :master, :images
 
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
@@ -62,6 +61,8 @@ module Spree
     def variant_images
       Image.find_by_sql("SELECT #{Asset.quoted_table_name}.* FROM #{Asset.quoted_table_name} LEFT JOIN #{Variant.quoted_table_name} ON (#{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id) WHERE (#{Variant.quoted_table_name}.product_id = #{self.id})")
     end
+
+    alias_method :images, :variant_images
 
     validates :name, :price, :permalink, :presence => true
 
