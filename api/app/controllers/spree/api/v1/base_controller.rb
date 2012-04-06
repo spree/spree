@@ -48,20 +48,23 @@ module Spree
         helper_method :api_key
 
         def find_product(id)
+          @product ||= begin
+            product_scope.find_by_permalink!(id)
+          rescue ActiveRecord::RecordNotFound
+            product_scope.find(id)
+          end
+        end
+
+        def product_scope
           if current_api_user.has_role?("admin")
             scope = Product
           else
             scope = Product.active
           end
 
-          scope = scope.includes(:master)
-
-          @product ||= begin
-            scope.find_by_permalink!(id)
-          rescue ActiveRecord::RecordNotFound
-            scope.find(id)
-          end
+          scope.includes(:master)
         end
+
       end
     end
   end

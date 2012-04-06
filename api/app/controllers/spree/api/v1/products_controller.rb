@@ -3,7 +3,7 @@ module Spree
     module V1
       class ProductsController < Spree::Api::V1::BaseController
         def index
-          @products = scope.page(params[:page])
+          @products = product_scope.page(params[:page])
         end
 
         def show
