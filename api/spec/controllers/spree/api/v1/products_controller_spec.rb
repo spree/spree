@@ -131,7 +131,8 @@ module Spree
         api_post :create, :product => {}
         response.status.should == 422
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        p json_response
+        errors = json_response["errors"]
+        errors.delete(:permalink) # Don't care about this one.
         json_response["errors"].keys.should =~ ["name", "price"]
       end
 
