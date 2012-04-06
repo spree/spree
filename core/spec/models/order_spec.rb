@@ -717,13 +717,28 @@ describe Spree::Order do
     end
 
     it "should return shipping methods sorted by cost" do
-      order.rate_hash.should == [{:shipping_method => shipping_method_2, :cost => 0.0, :name => "Ground Shipping", :id => 2},
-                                  {:shipping_method => shipping_method_1, :cost => 10.0, :name => "Air Shipping", :id => 1}]
+      rate_1, rate_2 = order.rate_hash
+
+      rate_1.shipping_method.should == shipping_method_2
+      rate_1.cost.should == 0.0
+      rate_1.name.should == "Ground Shipping"
+      rate_1.id.should == 2
+
+      rate_2.shipping_method.should == shipping_method_1
+      rate_1.cost.should == 10.0
+      rate_1.name.should == "Air Shipping"
+      rate_1.id.should == 1
     end
 
     it "should not return shipping methods with nil cost" do
       shipping_method_1.calculator.stub(:compute).and_return(nil)
-      order.rate_hash.should == [{:shipping_method => shipping_method_2, :cost => 0.0, :name => "Ground Shipping", :id => 2}]
+      order.rate_hash.count.should == 1
+      rate_1 = order.rate_hash.first
+
+      rate_1.shipping_method.should == shipping_method_2
+      rate_1.cost.should == 0
+      rate_1.name.should == "Ground Shipping"
+      rate_1.id.should == 1
     end
 
   end
