@@ -38,7 +38,7 @@ Product Groups component has been extracted to a standalone spree extension. It 
 
 h4. Old Theme Hook
 
-`theme_support` files are now deprecated in favor of Deface. Make sure you port
++theme_support+ files are now deprecated in favor of Deface. Make sure you port
 all your old style hooks to Deface.
 
 h3. Minor changes
