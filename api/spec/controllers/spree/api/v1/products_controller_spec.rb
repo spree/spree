@@ -40,7 +40,7 @@ module Spree
       end
 
       it "gets a single product" do
-        product.images.create!(:attachment => file("thinking-cat.jpg"))
+        product.images.create!(:attachment => image("thinking-cat.jpg"))
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
         product_json = json_response["product"]

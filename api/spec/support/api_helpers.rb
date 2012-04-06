@@ -19,9 +19,13 @@ module ApiHelpers
     @current_api_user ||= stub_model(Spree::User, :email => "spree@example.com")
   end
 
-  def file(filename)
+  def image(filename)
     path = Pathname.new(__FILE__) + "../../../spec/fixtures" + filename
     File.open(path)
+  end
+
+  def upload_image(filename)
+    fixture_file_upload(image(filename).path)
   end
 end
 
