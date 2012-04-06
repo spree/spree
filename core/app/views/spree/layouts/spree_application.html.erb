@@ -15,28 +15,7 @@
     
     <div class="container">
 
-      <header id="header" class="row" data-hook>
-      
-        <figure id="logo" class="columns alpha six" data-hook>
-          <%= logo %>
-        </figure> 
-
-        <nav id="top-nav-bar" class="columns omega ten">
-          <ul id="nav-bar" class="inline" data-hook>
-            <%= render :partial => 'spree/shared/nav_bar' %>
-          </ul>
-        </nav>
-
-        <% if store_menu? %>
-          <nav class="columns alpha omega sixteen">
-            <ul id="main-nav-bar" class="inline" data-hook>            
-              <%= render :partial => 'spree/shared/store_menu' %>
-            </ul>
-          </nav>
-        <% end %>
-            
-      </header>
-
+      <%= render :partial => 'spree/shared/header' %>
       <div id="wrapper" class="row" data-hook>
         
         <% if content_for?(:sidebar) %>
