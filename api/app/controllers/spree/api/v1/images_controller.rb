@@ -37,11 +37,7 @@ module Spree
         end
 
         def product
-          begin
-            find_product(params[:product_id])
-          rescue ActiveRecord::RecordNotFound
-            nil
-          end
+          find_product(params[:product_id]).master
         end
 
       end
