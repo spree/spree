@@ -725,9 +725,9 @@ describe Spree::Order do
       rate_1.id.should == 2
 
       rate_2.shipping_method.should == shipping_method_1
-      rate_1.cost.should == 10.0
-      rate_1.name.should == "Air Shipping"
-      rate_1.id.should == 1
+      rate_2.cost.should == 10.0
+      rate_2.name.should == "Air Shipping"
+      rate_2.id.should == 1
     end
 
     it "should not return shipping methods with nil cost" do
@@ -738,7 +738,7 @@ describe Spree::Order do
       rate_1.shipping_method.should == shipping_method_2
       rate_1.cost.should == 0
       rate_1.name.should == "Ground Shipping"
-      rate_1.id.should == 1
+      rate_1.id.should == 2
     end
 
   end
