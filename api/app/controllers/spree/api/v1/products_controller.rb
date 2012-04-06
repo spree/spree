@@ -7,7 +7,7 @@ module Spree
         end
 
         def show
-          find_product(params[:id])
+          @product = find_product(params[:id])
         end
 
         def new
@@ -25,7 +25,7 @@ module Spree
 
         def update
           authorize! :update, Product
-          find_product(params[:id])
+          @product = find_product(params[:id])
           if @product.update_attributes(params[:product])
             render :show, :status => 200
           else
@@ -35,7 +35,7 @@ module Spree
 
         def destroy
           authorize! :delete, Product
-          find_product(params[:id])
+          @product = find_product(params[:id])
           @product.update_attribute(:deleted_at, Time.now)
           @product.variants_including_master.update_all(:deleted_at => Time.now)
           render :text => nil, :status => 200
