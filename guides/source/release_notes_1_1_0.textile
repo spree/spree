@@ -52,6 +52,8 @@ h4. Removed images association of +Spree::Product+
 +Spree::Product+ association with +viewable+ has been moved +master+ variant of
 the product. The change is backward compatible and require no upgrade modification.
 
+A call to the +images+ method on a +Spree::Product+ will return all the images associated with all the variants of this product. If you want just the +master+ variant's images, use +product.master.images+.
+
 The version of Paperclip required by Spree 1.1 is now any version of the 2.7.x branch of Paperclip.
 
 h4. Clearer separation of Spree components
