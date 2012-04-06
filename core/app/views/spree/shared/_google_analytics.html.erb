@@ -13,7 +13,6 @@
   <% end -%>
 
   <% if flash[:commerce_tracking] %>
-
     <%= javascript_tag do %>
       // report e-commerce transaction information when applicable
       pageTracker._addTrans(
@@ -31,8 +30,6 @@
           "" /*Product Category*/, "<%= line_item.price %>", "<%= line_item.quantity %>");
       <% end %>
       pageTracker._trackTrans();
-
     <% end %>
   <% end %>
-
 <% end %>
