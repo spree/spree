@@ -132,7 +132,7 @@ module Spree
         response.status.should == 422
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
         errors = json_response["errors"]
-        errors.delete(:permalink) # Don't care about this one.
+        errors.delete("permalink") # Don't care about this one.
         errors.keys.should =~ ["name", "price"]
       end
 
