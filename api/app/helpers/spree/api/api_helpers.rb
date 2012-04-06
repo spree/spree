@@ -7,7 +7,7 @@ module Spree
         end.map(&:first) # get fields that are invalid
         # Permalinks presence is validated, but are really automatically generated
         # Therefore we shouldn't tell API clients that they MUST send one through
-        required_fields.delete(:permalink)
+        required_fields.map!(&:to_s).delete("permalink")
         required_fields
       end
 
