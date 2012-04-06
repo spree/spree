@@ -11,9 +11,9 @@
     <div class="container">
       <%= render :partial => 'spree/shared/header' %>
       <div id="wrapper" class="row" data-hook>
-        <div id="content" class="columns omega <% if !content_for?(:sidebar) %> sixteen alpha <% else %> twelve <% end %>" data-hook>
           <%= breadcrumbs(@taxon) %>
         <%= render :partial => 'spree/shared/sidebar' if content_for? :sidebar %>
+        <div id="content" class="columns omega <%= !content_for(:sidebar) ? "sixteen alpha" : "twelve" %>" data-hook>
           <%= flash_messages %>
           <%= yield %>
         </div>
