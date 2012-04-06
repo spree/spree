@@ -7,7 +7,21 @@ module Spree
           render :show, :status => 201
         end
 
+        def update
+          image.update_attributes(params[:image])
+          render :show, :status => 200
+        end
+
+        def destroy
+          image.destroy
+          render :text => nil
+        end
+
         private
+
+        def image
+          @image = product_or_variant.images.find(params[:id])
+        end
 
         def product_or_variant
           return @product_or_variant if @product_or_variant

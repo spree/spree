@@ -28,5 +28,23 @@ module Spree
       json_response.should have_attributes(attributes)
       product.images.count.should == 1
     end
+
+    context "working with an existing image" do
+      let!(:product_image) { product.master.images.create!(:attachment => image("thinking-cat.jpg")) }
+
+      it "can update image data" do
+        product_image.position.should == 1
+        api_post :update, :variant_id => product.master.to_param, :image => { :position => 2 }, :id => product_image.id
+        response.status.should == 200
+        json_response.should have_attributes(attributes)
+        product_image.reload.position.should == 2
+      end
+
+      it "can delete an image" do
+        api_delete :destroy, :variant_id => product.master.to_param, :id => product_image.id
+        response.status.should == 200
+        lambda { product_image.reload }.should raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end
