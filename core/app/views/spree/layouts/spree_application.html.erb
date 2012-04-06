@@ -1,38 +1,25 @@
 <!doctype html>
-
 <!--[if lt IE 7 ]> <html class="ie ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]>    <html class="ie ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]>    <html class="ie ie8" lang="en"> <![endif]-->
 <!--[if IE 9 ]>    <html class="ie ie9" lang="en"> <![endif]-->
 <!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
-
-  
   <head data-hook="inside_head">
     <%= render :partial => 'spree/shared/head' %>
   </head>
-
   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
-    
     <div class="container">
-
       <%= render :partial => 'spree/shared/header' %>
       <div id="wrapper" class="row" data-hook>
-        
-
         <div id="content" class="columns omega <% if !content_for?(:sidebar) %> sixteen alpha <% else %> twelve <% end %>" data-hook>
           <%= breadcrumbs(@taxon) %>
         <%= render :partial => 'spree/shared/sidebar' if content_for? :sidebar %>
           <%= flash_messages %>
           <%= yield %>
         </div>
-
       </div>
-
       <%= render :partial => 'spree/shared/footer' %>
     </div>
-
     <%= render :partial => 'spree/shared/google_analytics' %>
-
   </body>
-
 </html>
