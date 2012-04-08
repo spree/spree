@@ -6,7 +6,7 @@ module Spree
     has_and_belongs_to_many :products, :join_table => 'spree_products_taxons'
     before_create :set_permalink
 
-    attr_accessible :name, :parent_id, :position
+    attr_accessible :name, :parent_id, :position, :description, :permalink
 
     validates :name, :presence => true
     has_attached_file :icon,
