@@ -84,6 +84,17 @@ describe Spree::Admin::ProductsController do
     end
     
   end
+
+  # regression test for #1370
+  context "adding properties to a product" do
+    let!(:product) { Factory(:product) }
+    specify do
+      put :update, :id => product.to_param, :product => { :product_properties_attributes => { "1" => { :property_name => "Foo", :value => "bar" } } }
+      p response.body
+      response.should be_success
+    end
+
+  end
   
 
   # regression test for #801
