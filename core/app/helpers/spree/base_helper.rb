@@ -103,6 +103,7 @@ module Spree
       flash.each do |msg_type, text|
         concat(content_tag :div, text, :class => "flash #{msg_type}")
       end
+      nil
     end
 
     def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
