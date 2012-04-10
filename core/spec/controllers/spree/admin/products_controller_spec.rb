@@ -90,7 +90,6 @@ describe Spree::Admin::ProductsController do
     let!(:product) { Factory(:product) }
     specify do
       put :update, :id => product.to_param, :product => { :product_properties_attributes => { "1" => { :property_name => "Foo", :value => "bar" } } }
-      p response.body
       response.should be_success
     end
 
