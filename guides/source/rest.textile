@@ -20,6 +20,9 @@ INFO: The API currently only supports a limited number of resources.  The curren
 Spree currently supports RESTful access to the following resources:
 
 * Products
+* Variants
+* Orders
+* Line Items
 
 h3. JSON Data
 
