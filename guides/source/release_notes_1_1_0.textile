@@ -41,6 +41,14 @@ h4. Old Theme Hook
 +theme_support+ files are now deprecated in favor of Deface. Make sure you port
 all your old style hooks to Deface.
 
+h4. API rewrite
+
+The API component of Spree has undergone a major rewrite in order to provide better support for applications wishing to interact with it using tools such as Backbone, or for people wishing to just generally access the individual components of Spree.
+
+This is currently a work-in-progress and we would appreciate feedback on the API on the "mailing list":https://groups.google.com/group/spree-user.
+
+As a part of this, the +spree/spree_api+ assets are no longer available, and so these should be removed from the +store/all.css+, +store/all.js+, +store/admin/all.css+ and +store/admin/all.js+ assets located in your application.
+
 h3. Minor changes
 
 h4. Stronger mass assignment protection
