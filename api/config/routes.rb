@@ -13,6 +13,7 @@ Spree::Core::Engine.routes.prepend do
       resources :orders do
         member do
           put :address
+          put :delivery
         end
 
         resources :line_items
