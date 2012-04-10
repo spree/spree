@@ -100,13 +100,9 @@ module Spree
     end
 
     def flash_messages
-      [:notice, :error].map do |msg_type|
-        if flash[msg_type]
-          content_tag :div, flash[msg_type], :class => "flash #{msg_type}"
-        else
-          ''
-        end
-      end.join("\n").html_safe
+      flash.each do |msg_type, text|
+        concat(content_tag :div, text, :class => "flash #{msg_type}")
+      end
     end
 
     def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
