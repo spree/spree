@@ -299,9 +299,36 @@ POST /api/variants?product_id=1
 </plain>
 
 
-or instance, a request to create a new variant with a price of $100 would look like this:
+For instance, a request to create a new variant with a price of $100 would look like this:
 
 <plain>
 POST /api/variants/create.json?variant[price]=100&product_id=1
 </plain>
 
+h5. Updating a variant
+
+To update a variant's information, make one of these two requests with the correct parameters:
+
+<plain>
+PUT /api/products/1/variants/2
+# or
+PUT /api/variants/2?product_id=1
+</plain>
+
+For instance, a request to update an existing variant with a price of $100 would look like this:
+
+<plain>
+PUT /api/variants/2?variant[price]=100?product=1
+</plain>
+
+h5. Deleting a variant
+
+To delete a variant, make one of these two requests:
+
+<plain>
+DELETE /api/products/1/variants/2
+# or
+DELETE /api/variants/2?product_id=1
+</plain>
+
+Upon completion of this request the API will return a 200 status code.
