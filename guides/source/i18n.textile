@@ -58,8 +58,6 @@ Each locale that you wish to support will require both a Rails and Spree transla
 
 So for example, if you wanted to provide a Russian translation, you would install the spree_i18n extension and then copy the +ru-Ru.yml+ file from "rails-i18n":https://github.com/svenfuchs/rails-i18n into  +#{Rails.root}/ config/locales+.
 
-NOTE: If you do not need all of the localizations for your project you can skip installation of the spree_i18n gem and just copy the needed Spree translations to +#{Rails.root}/ config/locales+.
-
 
 h4. Translating Views
 
