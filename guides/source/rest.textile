@@ -240,9 +240,9 @@ Variant data is returned like this:
 
 <json>
 {
-  "product": {
+  "variant": {
     "id": 1,
-    "name": "A product",
+    "name": "A variant",
     "count_on_hand": 1,
     "price": 19.99,
     "weight": 0.0,
