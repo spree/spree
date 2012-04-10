@@ -6,6 +6,8 @@ module Spree
     validates :property, :presence => true
     validates_length_of :value, :maximum => 255
 
+    attr_accessible :property_name, :value
+
     # virtual attributes for use with AJAX completion stuff
     def property_name
       property.name if property
