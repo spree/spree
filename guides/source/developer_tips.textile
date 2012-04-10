@@ -38,9 +38,6 @@ If you can help us to generalise the core code so that your preferred effect is 
 a few parameters, then this is more useful than duplicating several files. Ideas and suggestions always
 welcome.
 
-INFO: The "Spree Wiki":http://wiki.github.com/spree/spree/developers-tricks-and-tips contains a few scripts to automate some of the checking.
-
-
 h4. Initializers
 
 Initializers are run during startup, and are the recommended way to execute certain settings. You can
