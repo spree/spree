@@ -18,7 +18,7 @@ class MigrateImagesFromProductsToVariants < ActiveRecord::Migration
     images = select_all("SELECT spree_assets.* FROM spree_assets
                          JOIN spree_variants
                          ON spree_variants.id = spree_assets.viewable_id
-                         AND spree_variants.is_master = #{quote_true}
+                         AND spree_variants.is_master = #{quoted_true}
                          WHERE spree_assets.type IN ('Spree::Image')
                          AND spree_assets.viewable_type = 'Spree::Variant'")
 
