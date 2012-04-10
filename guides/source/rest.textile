@@ -332,3 +332,160 @@ DELETE /api/variants/2?product_id=1
 </plain>
 
 Upon completion of this request the API will return a 200 status code.
+
+h4. Orders
+
+Orders support the following operations:
+
+* Index
+* Show
+* New
+* Create
+* Adding address information
+* Adding shipping information
+
+Order data is returned like this:
+
+<json>
+{
+  "order": {
+    "id": 1,
+    "number": "R1234567",
+    "item_total": 100.0,
+    "total": 100.0,
+    "adjustment_total": 0.0,
+    "credit_total": 0.0,
+    "payment_total": 0.0,
+    "user_id": 1,
+    "created_at": <timestamp>,
+    "updated_at": <timestamp>,
+    "completed_at": <timestamp>,
+    "state": <one of: 'cart', 'address', 'delivery', 'payment', 'confirm' or 'complete'>,
+    "shipment_state": <one of: 'shipped', 'ready', 'pending', 'partial' or 'backorder'>,
+    "payment_state": <one of: 'balance_due', 'failed', 'credit_owed' or 'paid'>,
+    "email": user@spreecommerce.com,
+    "special_instructions": "Ring the bell"
+    "option_values": {
+      # option value attributes
+    }
+  }
+}
+</json>
+
+In addition to this, the JSON response will also contain the following additional information if the order is in the "delivery" state:
+
+<json>
+{
+  "order": {
+    ...
+    "shipping_methods": {
+      "shipping_method": {
+        "id": 1,
+        "name": "UPS Ground",
+        "cost", 10.00
+      }
+    }
+  }
+}
+</json>
+
+h5. Viewing all orders
+
+NOTE: This resource is only accessible by admins.
+
+To view all orders for a request, make this request:
+
+<plain>
+GET /api/orders
+</plain>
+
+This will return 25 orders at a time. You can page through the orders by passing through the +page+ parameter:
+
+<plain>
+GET /api/orders?page=2
+</plain>
+
+h5. Viewing an order
+
+To view an order, make this request:
+
+<plain>
+GET /api/orders/R1234567
+</plain>
+
+NOTE: Only admins or users that the order belongs to can make this request.
+
+h5. Creating an order
+
+To create an order, make this request with the correct parameters:
+
+<plain>
+POST /api/orders
+</plain>
+
+For instance, to create an order containing a line item for a single variant who's ID is "1" and quantity is 5, make this request:
+
+<plain>
+POST /api/orders?order[line_items][0][variant_id]=1&order[line_items[0][quantity]=5
+</plain>
+
+h5. Adding address information to an order
+
+To add address information to an order, make this request with the correct parameters:
+
+<plain>
+PUT /api/orders/R1234567/address
+</plain>
+
+This endpoint requires you to pass through both shipping address and billing address information at the same time. This would be done like this:
+
+<plain>
+PUT /api/orders/R1234567/address?shipping_address[firstname]...
+</plain>
+
+The address parameters are:
+
+* firstname
+* lastname
+* company
+* address1
+* address2
+* city
+* zipcode
+* phone
+* alternative_phone
+* country_id
+* state_id
+
+Once valid address information has been submitted, the shipping methods available for this order will be returned inside a "shipping_methods" key inside the order:
+
+<json>
+{
+  "order": {
+    ...
+    "shipping_methods": {
+      "shipping_method": {
+        "id": 1,
+        "name": "UPS Ground",
+        "cost", 10.00
+      }
+    }
+  }
+}
+</json>
+
+The order will also transition to being in the "delivery" state.
+
+NOTE: If you submit a shipping address to this action that does not have a corresponding shipping method associated with it, the response will return a status of 422 and a message of "No shipping methods available for selected location, please change your address and try again."
+
+h5. Selecting a delivery method for an order
+
+To choose a delivery method for the order, pass along one ID from the "shipping_methods" response that you would receive from making a request to update the order's address, or by making another request to +/api/orders/R1234567+ while the order is in the "delivery" state.
+
+Make a request like this:
+
+<plain>
+PUT /api/orders/R1234567?shipping_method_id=1
+</plain>
+
+Upon a successful request, the order will transition to being in the "payment" state.
