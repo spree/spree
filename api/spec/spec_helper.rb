@@ -10,19 +10,12 @@ Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 
 require 'spree/core/testing_support/factories'
 
+require 'spree/api/testing_support/helpers'
+require 'spree/api/testing_support/setup'
+
 RSpec.configure do |config|
   config.backtrace_clean_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
 
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
+  config.include Spree::Api::TestingSupport::Helpers, :type => :controller
+  config.extend Spree::Api::TestingSupport::Setup, :type => :controller
 end

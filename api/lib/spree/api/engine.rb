@@ -13,6 +13,10 @@ module Spree
       end
       config.to_prepare &method(:activate).to_proc
 
+      def self.root
+        @root ||= Pathname.new(File.expand_path('../../../../', __FILE__))
+      end
+
     end
   end
 end
