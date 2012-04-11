@@ -6,7 +6,7 @@ describe Spree::StatesController do
   end
 
   it 'should display state mapper' do
-    get :index, { :format => :js }
+    spree_get :index, { :format => :js }
     assigns[:state_info].should_not be_empty
   end
 end

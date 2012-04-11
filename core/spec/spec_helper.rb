@@ -11,6 +11,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 require 'database_cleaner'
 require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
+require 'spree/core/testing_support/controller_requests'
 require 'spree/core/url_helpers'
 require 'paperclip/matchers'
 
@@ -50,6 +51,9 @@ RSpec.configure do |config|
   end
 
   config.include Spree::Core::UrlHelpers
+  config.include Spree::Core::TestingSupport::ControllerRequests
+
+
   config.include Paperclip::Shoulda::Matchers
 end
 
