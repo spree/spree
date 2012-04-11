@@ -36,6 +36,8 @@ h3. Filing an Issue
 
 If you would like to file a bug report, please create an issue in our "Github Issues Tracker":https://github.com/spree/spree/issues.  You should do a basic search of the issues database before creating a new issue to ensure that you are not creating a duplicate issue.
 
+When filing an issue, please include steps to reproduce the issue along with details about what version of Rails and Spree that you're using.
+
 INFO: Please do not assign labels or create new labels to your issue.  We will assign the appropriate labels to ensure your ticket is handled in the appropriate manner.
 
 h4. When to File an Issue
