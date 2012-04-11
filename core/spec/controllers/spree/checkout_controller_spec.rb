@@ -8,24 +8,24 @@ describe Spree::CheckoutController do
 
     it "should redirect to the cart path unless checkout_allowed?" do
       order.stub :checkout_allowed? => false
-      get :edit, { :state => "delivery" }
+      spree_get :edit, { :state => "delivery" }
       response.should redirect_to(spree.cart_path)
     end
 
     it "should redirect to the cart path if current_order is nil" do
       controller.stub!(:current_order).and_return(nil)
-      get :edit, { :state => "delivery" }
+      spree_get :edit, { :state => "delivery" }
       response.should redirect_to(spree.cart_path)
     end
 
     it "should change to the requested state" do
       order.should_receive(:state=).with("payment").and_return true
-      get :edit, { :state => "payment" }
+      spree_get :edit, { :state => "payment" }
     end
 
     it "should redirect to cart if order is completed" do
       order.stub(:completed? => true)
-      get :edit, {:state => "address"}
+      spree_get :edit, {:state => "address"}
       response.should redirect_to(spree.cart_path)
     end
 
@@ -41,14 +41,14 @@ describe Spree::CheckoutController do
 
       it "should assign order" do
         order.stub :state => "address"
-        post :update, {:state => "confirm"}
+        spree_post :update, {:state => "confirm"}
         assigns[:order].should_not be_nil
       end
 
       it "should change to requested state" do
         order.stub :state => "address"
         order.should_receive(:state=).with('confirm')
-        post :update, {:state => "confirm"}
+        spree_post :update, {:state => "confirm"}
       end
 
       context "with next state" do
@@ -57,12 +57,12 @@ describe Spree::CheckoutController do
         it "should advance the state" do
           order.stub :state => "address"
           order.should_receive(:next).and_return true
-          post :update, {:state => "delivery"}
+          spree_post :update, {:state => "delivery"}
         end
 
         it "should redirect the next state" do
           order.stub :state => "payment"
-          post :update, {:state => "delivery"}
+          spree_post :update, {:state => "delivery"}
           response.should redirect_to spree.checkout_state_path("payment")
         end
 
@@ -70,17 +70,17 @@ describe Spree::CheckoutController do
           before { order.stub :state => "complete" }
 
           it "should redirect to the order view" do
-            post :update, {:state => "confirm"}
+            spree_post :update, {:state => "confirm"}
             response.should redirect_to spree.order_path(order)
           end
 
           it "should populate the flash message" do
-            post :update, {:state => "confirm"}
+            spree_post :update, {:state => "confirm"}
             flash.notice.should == I18n.t(:order_processed_successfully)
           end
 
           it "should remove completed order from the session" do
-            post :update, {:state => "confirm"}, {:order_id => "foofah"}
+            spree_post :update, {:state => "confirm"}, {:order_id => "foofah"}
             session[:order_id].should be_nil
           end
 
@@ -93,17 +93,17 @@ describe Spree::CheckoutController do
       before { order.should_receive(:update_attributes).and_return false }
 
       it "should assign order" do
-        post :update, {:state => "confirm"}
+        spree_post :update, {:state => "confirm"}
         assigns[:order].should_not be_nil
       end
 
       it "should not change the order state" do
         order.should_not_receive(:update_attribute)
-        post :update, { :state => 'confirm' }
+        spree_post :update, { :state => 'confirm' }
       end
 
       it "should render the edit template" do
-        post :update, { :state => 'confirm' }
+        spree_post :update, { :state => 'confirm' }
         response.should render_template :edit
       end
     end
@@ -112,11 +112,11 @@ describe Spree::CheckoutController do
       before { controller.stub! :current_order => nil }
       it "should not change the state if order is completed" do
         order.should_not_receive(:update_attribute)
-        post :update, {:state => "confirm"}
+        spree_post :update, {:state => "confirm"}
       end
 
       it "should redirect to the cart_path" do
-        post :update, {:state => "confirm"}
+        spree_post :update, {:state => "confirm"}
         response.should redirect_to spree.cart_path
       end
     end
@@ -125,7 +125,7 @@ describe Spree::CheckoutController do
 
       before do
         order.stub(:update_attributes).and_raise(Spree::Core::GatewayError)
-        post :update, {:state => "whatever"}
+        spree_post :update, {:state => "whatever"}
       end
 
       it "should render the edit template" do
@@ -158,7 +158,7 @@ describe Spree::CheckoutController do
 
     context "and back orders == false" do
       before do
-        post :update, {:state => "payment"}
+        spree_post :update, {:state => "payment"}
       end
 
       it "should render edit template" do

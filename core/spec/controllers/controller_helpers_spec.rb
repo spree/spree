@@ -20,7 +20,7 @@ describe Spree::ProductsController do
   # Regression test for #1184
   it "sets the default locale based off config.i18n.default_locale" do
     I18n.locale.should == :en
-    get :index
+    spree_get :index
     I18n.locale.should == :de
   end
 end
