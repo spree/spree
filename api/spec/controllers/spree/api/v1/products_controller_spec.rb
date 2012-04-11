@@ -39,6 +39,13 @@ module Spree
         end
       end
 
+      it "can search for products" do
+        Factory(:product, :name => "The best product in the world")
+        api_get :search, :q => { :name_cont => "best" }
+        json_response["products"].first.should have_attributes(attributes)
+        json_response["count"].should == 1
+      end
+
       it "gets a single product" do
         product.master.images.create!(:attachment => image("thinking-cat.jpg"))
         api_get :show, :id => product.to_param
