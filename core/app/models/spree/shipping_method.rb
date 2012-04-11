@@ -1,22 +1,23 @@
 module Spree
   class ShippingMethod < ActiveRecord::Base
-    DISPLAY =  [:both, :front_end, :back_end]
+    DISPLAY = [:both, :front_end, :back_end]
     belongs_to :zone
     has_many :shipments
     validates :name, :calculator, :zone, :presence => true
     belongs_to :shipping_category
 
-    attr_accessible :name, :zone_id, :display_on, :shipping_category_id, :match_none, :match_one, :match_all, :calculator_type
+    attr_accessible :name, :zone_id, :display_on, :shipping_category_id, 
+                    :match_none, :match_one, :match_all, :calculator_type
 
     calculated_adjustments
 
-    def available?(order, display_on=nil)
+    def available?(order, display_on = nil)
       display_check = (self.display_on == display_on.to_s || self.display_on.blank?)
       calculator_check = calculator.available?(order)
       display_check && calculator_check
     end
 
-    def available_to_order?(order, display_on=nil)
+    def available_to_order?(order, display_on = nil)
       availability_check = available?(order,display_on)
       zone_check = zone && zone.include?(order.ship_address)
       category_check = category_match?(order)
@@ -37,7 +38,7 @@ module Spree
       end
     end
 
-    def self.all_available(order, display_on=nil)
+    def self.all_available(order, display_on = nil)
       all.select { |method| method.available_to_order?(order,display_on) }
     end
   end

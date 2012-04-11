@@ -20,7 +20,7 @@ module Spree
 
     def mark_deleted!
       self.deleted_at = Time.now
-      self.save
+      save
     end
   end
 end
