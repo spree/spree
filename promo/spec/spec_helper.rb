@@ -39,5 +39,6 @@ RSpec.configure do |config|
   end
 
   config.include Spree::Core::UrlHelpers
+  config.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
   config.include Rack::Test::Methods, :type => :requests
 end

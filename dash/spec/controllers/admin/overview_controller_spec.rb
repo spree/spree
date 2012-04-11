@@ -9,7 +9,7 @@ describe Spree::Admin::OverviewController do
 
   it "sets the locale preference" do
     Spree::Dash::Config.locale = 'en_EN'
-    get :index, :locale => 'fr_FR'
+    spree_get :index, :locale => 'fr_FR'
     Spree::Dash::Config.locale.should eq 'fr_FR'
   end
 
