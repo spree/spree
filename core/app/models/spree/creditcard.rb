@@ -14,6 +14,8 @@ module Spree
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
                     :month, :gateway_customer_profile_id
 
+    scope :with_payment_profile, where('gateway_customer_profile_id IS NOT NULL')
+
     def set_last_digits
       number.to_s.gsub!(/\s/,'')
       verification_value.to_s.gsub!(/\s/,'')
@@ -62,8 +64,6 @@ module Spree
     def brand
       cc_type
     end
-
-    scope :with_payment_profile, where('gateway_customer_profile_id IS NOT NULL')
 
     def actions
       %w{capture void credit}
