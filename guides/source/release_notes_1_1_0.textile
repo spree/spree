@@ -70,6 +70,10 @@ It was "brought to our attention":https://github.com/spree/spree/issues/1292 tha
 
 From 1.1 onwards, you will once again be able to use the Core component of Spree in isolation from the other components if you choose so.
 
+h4. Allow for easier Spree controller spec testing
+
+We have added a +Spree::Core::TestingSupport::ControllerRequests+ module to aid in the testing of Spree controllers within not only the Spree components, but also within your application. "The documentation at the top of this module":https://github.com/spree/spree/blob/1-1-stable/core/lib/spree/core/testing_support/controller_requests.rb should adequately describe how this works.
+
 h4. Deprecated functions
 
 h5. Spree::Zone
