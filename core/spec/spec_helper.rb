@@ -51,7 +51,7 @@ RSpec.configure do |config|
   end
 
   config.include Spree::Core::UrlHelpers
-  config.include Spree::Core::TestingSupport::ControllerRequests
+  config.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
 
 
   config.include Paperclip::Shoulda::Matchers
