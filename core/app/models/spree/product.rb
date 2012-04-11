@@ -85,7 +85,7 @@ module Spree
     after_initialize :ensure_master
 
     def ensure_master
-      return unless self.new_record?
+      return unless new_record?
       self.master ||= Variant.new
     end
 
@@ -132,8 +132,8 @@ module Spree
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
       option_values_hash.keys.map(&:to_i).each do |id|
-        self.option_type_ids << id unless self.option_type_ids.include?(id)
-        self.product_option_types.create({:option_type_id => id}, :without_protection => true) unless product_option_types.map(&:option_type_id).include?(id)
+        self.option_type_ids << id unless option_type_ids.include?(id)
+        product_option_types.create({:option_type_id => id}, :without_protection => true) unless product_option_types.map(&:option_type_id).include?(id)
       end
     end
 
@@ -141,12 +141,12 @@ module Spree
     # define "duplicate_extra" for site-specific actions, eg for additional fields
     def duplicate
       p = self.dup
-      p.name = 'COPY OF ' + self.name
+      p.name = 'COPY OF ' + name
       p.deleted_at = nil
       p.created_at = p.updated_at = nil
-      p.taxons = self.taxons
+      p.taxons = taxons
 
-      p.product_properties = self.product_properties.map { |q| r = q.dup; r.created_at = r.updated_at = nil; r }
+      p.product_properties = product_properties.map { |q| r = q.dup; r.created_at = r.updated_at = nil; r }
 
       image_dup = lambda { |i| j = i.dup; j.attachment = i.attachment.clone; j }
 
@@ -157,7 +157,7 @@ module Spree
       p.master = variant
 
       # don't dup the actual variants, just the characterising types
-      p.option_types = self.option_types if self.has_variants?
+      p.option_types = option_types if has_variants?
         
       # allow site to do some customization
       p.send(:duplicate_extra, self) if p.respond_to?(:duplicate_extra)
@@ -180,7 +180,7 @@ module Spree
     end
 
     def effective_tax_rate
-      if self.tax_category
+      if tax_category
         tax_category.effective_amount
       else
         TaxRate.default
@@ -207,7 +207,7 @@ module Spree
         values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
         values.each do |ids|
-          variant = self.variants.create({:option_value_ids => ids, :price => self.master.price}, :without_protection => true)
+          variant = variants.create({ :option_value_ids => ids, :price => master.price }, :without_protection => true)
         end
         save
       end

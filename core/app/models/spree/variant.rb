@@ -1,7 +1,9 @@
 module Spree
   class Variant < ActiveRecord::Base
     belongs_to :product
-    delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords, :tax_category
+    delegate_belongs_to :product, :name, :description, :permalink, :available_on,
+                        :tax_category_id, :shipping_category_id, :meta_description,
+                        :meta_keywords, :tax_category
 
     attr_accessible :name, :presentation, :cost_price,
                     :position, :on_hand, :option_value_ids,
@@ -32,7 +34,7 @@ module Spree
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
-      Spree::Config[:track_inventory_levels] ? self.count_on_hand : (1.0/0) # Infinity
+      Spree::Config[:track_inventory_levels] ? count_on_hand : (1.0 / 0) # Infinity
     end
 
     # Adjusts the inventory units to match the given new level.
@@ -44,7 +46,7 @@ module Spree
         if new_level > on_hand
           # fill backordered orders before creating new units
           backordered_units = inventory_units.with_state('backordered')
-          backordered_units.slice(0, new_level).each &:fill_backorder
+          backordered_units.slice(0, new_level).each(&:fill_backorder)
           new_level -= backordered_units.length
         end
 
@@ -57,7 +59,7 @@ module Spree
     # strips all non-price-like characters from the price.
     def price=(price)
       if price.present?
-        self[:price] = price.to_s.gsub(/[^0-9\.-]/,'').to_f
+        self[:price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
       end
     end
 
@@ -83,7 +85,7 @@ module Spree
 
     # returns true if this variant is allowed to be placed on a new order
     def available?
-      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || self.in_stock?) : true
+      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock?) : true
     end
 
     def options_text
@@ -97,7 +99,7 @@ module Spree
     end
 
     def gross_profit
-      self.cost_price.nil? ? 0 : (self.price - self.cost_price)
+      cost_price.nil? ? 0 : (price - cost_price)
     end
 
     # use deleted? rather than checking the attribute directly. this
@@ -110,7 +112,7 @@ module Spree
     private
       # Ensures a new variant takes the product master price when price is not supplied
       def check_price
-        if self.price.nil?
+        if price.nil?
           raise 'Must supply price for variant or master.price for product.' if self == product.master
           self.price = product.master.price
         end

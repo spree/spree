@@ -11,7 +11,8 @@ module Spree
     validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
     validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
 
-    attr_accessible :first_name, :last_name, :number, :verification_value, :year, :month, :gateway_customer_profile_id
+    attr_accessible :first_name, :last_name, :number, :verification_value, :year,
+                    :month, :gateway_customer_profile_id
 
     def process!(payment)
       if Spree::Config[:auto_capture]
@@ -37,7 +38,7 @@ module Spree
 
     # sets self.cc_type while we still have the card number
     def set_card_type
-      self.cc_type ||= CardDetector.type?(self.number)
+      self.cc_type ||= CardDetector.type?(number)
     end
 
     def name?
@@ -173,12 +174,12 @@ module Spree
       record_log payment, response
 
       if response.success?
-        Payment.create({:order => payment.order,
-                       :source => payment,
-                       :payment_method => payment.payment_method,
-                       :amount => amount.abs * -1,
-                       :response_code => response.authorization,
-                       :state => 'completed'}, :without_protection => true)
+        Payment.create({ :order => payment.order,
+                         :source => payment,
+                         :payment_method => payment.payment_method,
+                         :amount => amount.abs * -1,
+                         :response_code => response.authorization,
+                         :state => 'completed' }, :without_protection => true)
       else
         gateway_error(response)
       end
@@ -245,7 +246,7 @@ module Spree
     # Generates a minimal set of gateway options.  There appears to be some issues with passing in
     # a billing address when authorizing/voiding a previously captured transaction.  So omits these
     # options in this case since they aren't necessary.
-    def minimal_gateway_options(payment, totals=true)
+    def minimal_gateway_options(payment, totals = true)
 
       options = { :email    => payment.order.email,
                   :customer => payment.order.email,
@@ -261,7 +262,7 @@ module Spree
 
     def spree_cc_type
       return 'visa' if Rails.env.development?
-      self.cc_type
+      cc_type
     end
 
     # Saftey check to make sure we're not accidentally performing operations on a live gateway.

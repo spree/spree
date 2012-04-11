@@ -1,6 +1,6 @@
 module Spree
   class PaymentMethod < ActiveRecord::Base
-    DISPLAY =  [:both, :front_end, :back_end]
+    DISPLAY = [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
     scope :production, where(:environment => 'production')
@@ -22,7 +22,7 @@ module Spree
       raise 'You must implement payment_source_class method for this gateway.'
     end
 
-    def self.available(display_on='both')
+    def self.available(display_on = 'both')
       all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) && (p.environment == Rails.env || p.environment.blank?) }
     end
 

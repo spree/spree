@@ -8,7 +8,7 @@ module Spree
     validates :country, :name, :presence => true
 
     def self.find_all_by_name_or_abbr(name_or_abbr)
-      where("name = ? OR abbr = ?", name_or_abbr, name_or_abbr)
+      where('name = ? OR abbr = ?', name_or_abbr, name_or_abbr)
     end
 
     # table of { country.id => [ state.id , state.name ] }, arrays sorted by name

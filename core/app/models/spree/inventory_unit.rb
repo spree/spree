@@ -106,12 +106,12 @@ module Spree
       end
 
       def update_order
-        self.order.update!
+        order.update!
       end
 
       def restock_variant
-        self.variant.on_hand = (self.variant.on_hand + 1)
-        self.variant.save
+        variant.on_hand = (variant.on_hand + 1)
+        variant.save
       end
   end
 end

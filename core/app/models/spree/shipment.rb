@@ -14,7 +14,8 @@ module Spree
 
     attr_accessor :special_instructions
 
-    attr_accessible :order, :state, :shipping_method, :special_instructions, :shipping_method_id, :tracking
+    attr_accessible :order, :state, :shipping_method, :special_instructions,
+                    :shipping_method_id, :tracking
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
@@ -29,9 +30,9 @@ module Spree
     scope :pending, where(:state => 'pending')
 
     def to_param
-      self.number if self.number
-      generate_shipment_number unless self.number
-      self.number.to_s.to_url.upcase
+      number if number
+      generate_shipment_number unless number
+      number.to_s.to_url.upcase
     end
 
     def shipped=(value)
@@ -83,7 +84,7 @@ module Spree
     # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
     # yield the correct results.
     def update!(order)
-      old_state = self.state
+      old_state = state
       new_state = determine_state(order)
       update_attribute_without_callbacks 'state', determine_state(order)
       after_ship if new_state == 'shipped' and old_state != 'shipped'
@@ -91,7 +92,7 @@ module Spree
 
     private
       def generate_shipment_number
-        return self.number unless self.number.blank?
+        return number unless number.blank?
         record = true
         while record
           random = "H#{Array.new(11){rand(9)}.join}"
