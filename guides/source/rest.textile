@@ -139,6 +139,16 @@ GET /api/products.json?page=1
 
 The page size is not currently customizable.
 
+h5. Searching for a product
+
+To search for a particular product, make a request like this:
+
+<plain>
+GET /api/products/search.json?q[name_cont]=Spree
+</plain>
+
+The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a *predicate*, and you can learn more about them by reading about "Predicates on the Ransack wiki":https://github.com/ernie/ransack/wiki/Predicates
+
 h5. A single product
 
 To view the details for a single product, make a request using that product's permalink:
