@@ -942,6 +942,7 @@ en:
   special_instructions: "Special Instructions"
   spree:
     date: Date
+    tax_adjustment_label: "%{name} %{amount}"
     time: Time
   spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
   spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."
