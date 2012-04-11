@@ -13,6 +13,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 require 'spree/core/testing_support/fixtures'
 require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/env'
+require 'spree/core/testing_support/controller_requests'
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -48,6 +49,7 @@ RSpec.configure do |config|
   end
 
   config.include Spree::Core::UrlHelpers
+  config.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
   config.include Devise::TestHelpers, :type => :controller
   config.include Rack::Test::Methods, :type => :requests
 end
