@@ -24,9 +24,9 @@ en:
         city: City
         country: "Country"
         firstname: "First Name"
-        first_name_begins_with: "First Name Begins With"
+        first_name_start: "First Name Begins With"
         lastname: "Last Name"
-        last_name_begins_with: "Last Name Begins With"
+        last_name_start: "Last Name Begins With"
         phone: Phone
         state: "State"
         zipcode: "Zip Code"
