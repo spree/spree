@@ -3,7 +3,6 @@ module Spree
     module ControllerHelpers
       def self.included(receiver)
         receiver.send :layout, :get_layout
-        receiver.send :helper, 'spree/hook'
         receiver.send :before_filter, 'instantiate_controller_and_action_names'
         receiver.send :before_filter, 'set_user_language'
 
