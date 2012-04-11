@@ -22,7 +22,6 @@ class RenameColumnsForDevise < ActiveRecord::Migration
     remove_column :spree_users, :authentication_token
     remove_column :spree_users, :locked_at
     remove_column :spree_users, :unlock_token
-    rename_column :table_name, :new_column_name, :column_name
     rename_column :spree_users, :last_sign_in_ip, :last_login_ip
     rename_column :spree_users, :current_sign_in_ip, :current_login_ip
     rename_column :spree_users, :last_sign_in_at, :last_login_at
