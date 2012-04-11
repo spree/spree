@@ -10,6 +10,8 @@ end
 
 module Spree
   class TaxRate < ActiveRecord::Base
+    include ActionView::Helpers::NumberHelper
+    
     belongs_to :zone
     belongs_to :tax_category
 
