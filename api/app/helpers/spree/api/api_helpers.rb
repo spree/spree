@@ -33,7 +33,7 @@ module Spree
       end
 
       def line_item_attributes
-        [:quantity, :price, :variant_id]
+        [:id, :quantity, :price, :variant_id]
       end
 
       def option_type_attributes
