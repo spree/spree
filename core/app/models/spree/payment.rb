@@ -112,7 +112,7 @@ module Spree
         return unless source.is_a?(Creditcard) && source.number && !source.has_payment_profile?
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
-        gateway_error e
+        source.gateway_error e
       end
 
       def update_order

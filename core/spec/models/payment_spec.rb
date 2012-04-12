@@ -128,11 +128,23 @@ describe Spree::Payment do
 
     context "when profiles are supported" do
       before { gateway.stub :payment_profiles_supported? => true }
-
-      it "should create a payment profile" do
-        gateway.should_receive :create_profile
-        payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
+      
+      context "when there is an error connecting to the gateway" do
+        it "should call source.gateway_error " do
+          gateway.should_receive(:create_profile).and_raise(ActiveMerchant::ConnectionError)
+          card.should_receive(:gateway_error)
+          payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
+        end
       end
+      
+      context "when successfully connecting to the gateway" do
+        it "should create a payment profile" do
+          gateway.should_receive :create_profile
+          payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
+        end
+      end
+      
+      
     end
 
     context "when profiles are not supported" do
