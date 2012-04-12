@@ -147,7 +147,7 @@ To search for a particular product, make a request like this:
 GET /api/products/search.json?q[name_cont]=Spree
 </plain>
 
-The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a *predicate*, and you can learn more about them by reading about "Predicates on the Ransack wiki":https://github.com/ernie/ransack/wiki/Predicates
+The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a *predicate*, and you can learn more about them by reading about "Predicates on the Ransack wiki":https://github.com/ernie/ransack/wiki/Basic-Searching
 
 h5. A single product
 
