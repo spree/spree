@@ -55,13 +55,12 @@ module Spree
           @product = Product.find_by_param!(params[:product_id])
         end
   
-        def set_available_option_types
-          @available_option_types = OptionType.all
-          selected_option_types = []
-          @product.options.each do |option|
-            selected_option_types << option.option_type
+        def set_available_option_types     
+          @available_option_types = if @product.option_type_ids.any?
+            OptionType.where('id NOT IN (?)', @product.option_type_ids)
+          else
+            OptionType.all
           end
-          @available_option_types.delete_if {|ot| selected_option_types.include? ot}
         end
     end
   end
