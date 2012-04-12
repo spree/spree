@@ -12,31 +12,39 @@ h3. Using Deface
 
 Deface is a standalone Rails 3 library that enables you to customize Erb templates without needing to directly edit the underlying view file. Deface allows you to use standard CSS3 style selectors to target any element (including Ruby blocks), and perform an action against all the matching elements.
 
-For example if you wanted to add some content to the Checkout Registration template, which looks like:
+For example, take the Checkout Registration template, which looks like this:
 
 <ruby>
-# app/views/checkout/registration.html.erb
+# app/views/spree/checkout/registration.html.erb
 
-<%= render "shared/error_messages", :target => @user %>
-<h2><%= t("registration")%></h2>
-<div id="registration">
-  <div id="account">
-    <%= render :file => 'user_sessions/new' %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
+<h2><%= t(:registration) %></h2>
+<div id="registration" data-hook>
+  <div id="account" class="columns alpha eight">
+    <!-- TODO: add partial with registration form -->
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
-    <div id="guest_checkout">
-      ... content removed for brevity ..
+    <div id="guest_checkout" data-hook class="columns omega eight">
+      <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
+      <h2><%= t(:guest_user_account) %></h2>
+      <%= form_for @order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
+        <p>
+          <%= f.label :email, t(:email) %><br />
+          <%= f.email_field :email, :class => 'title' %>
+        </p>
+        <p><%= f.submit t(:continue), :class => 'button primary' %></p>
+      <% end %>
     </div>
   <% end %>
 </div></ruby>
 
-You would define an override as follows:
+If you wanted to insert some code just before the +#registration+ div on the page you would define an override as follows:
   
 <ruby>
-Deface::Override.new(:virtual_path  => "checkout/registration",
-            :insert_before => "div#registration",
-            :text          => "<p>Registration is the future!</p>",
-            :name          => "registration_future")</ruby>
+Deface::Override.new(:virtual_path  => "spree/checkout/registration",
+                     :insert_before => "div#registration",
+                     :text          => "<p>Registration is the future!</p>",
+                     :name          => "registration_future")</ruby>
 </ruby>
 
 This override **inserts** <code><p>Registration is the future!</p></code> **before** the div with the id of "registration".
@@ -81,26 +89,55 @@ While Deface allows you to use a large subset of CSS3 style selectors (as provid
 
 As Spree views are changed over coming versions, the original html elements maybe edited or be removed. We will endeavour to ensure that data-hook / id combination will remain consistent within any single view file (where possible), thus making your overrides more robust and upgrade proof.
 
-For example products/show.html.erb looks as follows:
+For example spree/products/show.html.erb looks as follows:
 
 <ruby>
-<div data-hook="product_show">
+<div data-hook="product_show" itemscope itemtype="http://schema.org/Product">
   <% @body_id = 'product-details' %>
-  <h1><%= accurate_title %></h1>
 
-  <div id="product-images" data-hook="product_images">
-    <div id="main-image" data-hook>
-      <%= render 'image' %>
-    </div>
-    <div id="thumbnails" data-hook>
-      <%= render 'thumbnails', :product => @product %>
+  <div class="columns six alpha" data-hook="product_left_part">
+    <div class="row" data-hook="product_left_part_wrap">
+
+      <div id="product-images" data-hook="product_images">
+        <div id="main-image" data-hook>
+          <%= render :partial => 'image' %>
+        </div>
+        <div id="thumbnails" data-hook>
+          <%= render :partial => 'thumbnails', :locals => { :product => @product } %>
+        </div>
+      </div>
+
+      <div data-hook="product_properties">
+        <%= render :partial => 'properties' %>
+      </div>
+    
     </div>
   </div>
 
-  <div id="cart-form" data-hook="cart_form">
-    <%= render 'cart_form' %>
+  <div class="columns ten omega" data-hook="product_right_part">
+    <div class="row" data-hook="product_right_part_wrap">
+
+      <div id="product-description" data-hook="product_description">
+
+        <h1 class="product-title" itemprop="name"><%= accurate_title %></h1>
+
+        <div itemprop="description" data-hook="description">
+          <%= product_description(@product) rescue t(:product_has_no_description) %>
+        </div>
+
+        <div id="cart-form" data-hook="cart_form">
+          <%= render :partial => 'cart_form' %>
+        </div>
+
+      </div>
+
+      <%= render :partial => 'taxons' %>
+
+    </div>
   </div>
+
 </div>
+
 </ruby>
 
 As you can see from the example above the <tt>data-hook</tt> can be present in a number of ways:
