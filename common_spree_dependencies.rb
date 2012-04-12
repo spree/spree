@@ -22,14 +22,6 @@ group :test do
   gem 'factory_girl_rails', '~> 1.7.0'
   gem 'email_spec', '~> 1.2.1'
 
-  platform :ruby_18 do
-    gem 'rcov'
-  end
-
-  platform :ruby_19 do
-    gem 'simplecov'
-  end
-
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara'
