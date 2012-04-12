@@ -13,7 +13,7 @@
       <div id="wrapper" class="row" data-hook>
           <%= breadcrumbs(@taxon) %>
         <%= render :partial => 'spree/shared/sidebar' if content_for? :sidebar %>
-        <div id="content" class="columns omega <%= !content_for(:sidebar) ? "sixteen alpha" : "twelve" %>" data-hook>
+        <div id="content" class="columns omega <%= !content_for?(:sidebar) ? "sixteen alpha" : "twelve" %>" data-hook>
           <%= flash_messages %>
           <%= yield %>
         </div>
