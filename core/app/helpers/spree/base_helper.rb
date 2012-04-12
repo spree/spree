@@ -64,6 +64,11 @@ module Spree
     end
 
     Spree::Image.attachment_definitions[:attachment][:styles].each do |style, v|
+      # Defines these methods by default:
+      # def mini_image
+      # def small_image
+      # def product_image
+      # def large_image
       define_method "#{style}_image" do |product, *options|
         options = options.first || {}
         if product.images.empty?
