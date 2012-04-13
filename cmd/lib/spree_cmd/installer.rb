@@ -42,6 +42,8 @@ module SpreeCmd
         @spree_gem_options[:ref] = options[:ref] if options[:ref]
         @spree_gem_options[:branch] = options[:branch] if options[:branch]
         @spree_gem_options[:tag] = options[:tag] if options[:tag]
+      elsif options[:version]
+        @spree_gem_options[:version] = options[:version]
       end
     end
 
@@ -106,10 +108,11 @@ module SpreeCmd
 
     private
 
-      def gem(name, options={})
+      def gem(name, gem_options={})
         say_status :gemfile, name
         parts = ["'#{name}'"]
-        options.each { |key, value| parts << ":#{key} => '#{value}'" }
+        parts << ["'#{gem_options.delete(:version)}'"] if gem_options[:version]
+        gem_options.each { |key, value| parts << ":#{key} => '#{value}'" }
         append_file 'Gemfile', "gem #{parts.join(', ')}\n", :verbose => false
       end
 
