@@ -7,7 +7,6 @@ end
 require 'factory_girl'
 
 Dir["#{File.dirname(__FILE__)}/factories/**"].each do |f|
-  fp =  File.expand_path(f)
-  require fp
+  require File.expand_path(f)
 end
 
