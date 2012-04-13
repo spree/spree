@@ -58,8 +58,9 @@ module Spree
 
     # strips all non-price-like characters from the price.
     def price=(price)
+      separator = I18n.translate 'number.format.separator'
       if price.present?
-        self[:price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
+        self[:price] = price.to_s.gsub(/[^0-9#{separator}-]/, '').to_f
       end
     end
 
