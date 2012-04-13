@@ -39,6 +39,14 @@ module Spree
       def option_type_attributes
         [:id, :name, :presentation, :position]
       end
+
+      def payment_attributes
+        [:id, :source_type, :source_id, :amount, :payment_method_id, :response_code, :state, :avs_response, :created_at, :updated_at]
+      end
+
+      def payment_method_attributes
+        [:id, :name, :description]
+      end
     end
   end
 end
