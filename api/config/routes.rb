@@ -17,6 +17,8 @@ Spree::Core::Engine.routes.prepend do
 
         resources :line_items
       end
+
+      resources :countries, :only => [:index, :show]
     end
   end
 end
