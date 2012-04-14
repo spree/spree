@@ -1,14 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Zone do
-  context "#destroy" do
-    let(:zone) { Factory(:zone) }
-
-    it "should destroy all zone members" do
-      zone.destroy
-      zone.zone_members.count.should == 0
-    end
-  end
+  it { should have_many(:zone_members).dependent(:destroy) }
 
   context "#match" do
     let(:country_zone) { Factory(:zone, :name => "CountryZone") }
