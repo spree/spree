@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Zone do
   context "#destroy" do
-    let(:zone) { Spree::Zone.create :name => "FooZone" }
+    let(:zone) { Factory(:zone) }
 
     it "should destroy all zone members" do
       zone.destroy
@@ -11,7 +11,7 @@ describe Spree::Zone do
   end
 
   context "#match" do
-    let(:country_zone) { Spree::Zone.create :name => "CountryZone" }
+    let(:country_zone) { Factory(:zone, :name => "CountryZone") }
     let(:country) do
       country = Factory(:country)
       # Create at least one state for this country
@@ -31,7 +31,7 @@ describe Spree::Zone do
 
     context "when there are two qualified zones with same member type" do
       let(:address) { Factory(:address, :country => country, :state => country.states.first) }
-      let(:second_zone) { Spree::Zone.create :name => "SecondZone" }
+      let(:second_zone) { Factory(:zone, :name => "SecondZone") }
 
       before { second_zone.members.create(:zoneable => country) }
       it "should return the zone that was created first" do
@@ -40,7 +40,7 @@ describe Spree::Zone do
     end
 
     context "when there are two qualified zones with different member types" do
-      let(:state_zone) { Spree::Zone.create :name => "StateZone" }
+      let(:state_zone) { Factory(:zone, :name => "StateZone") }
       let(:address) { Factory(:address, :country => country, :state => country.states.first) }
 
       before { state_zone.members.create(:zoneable => country.states.first) }
@@ -59,13 +59,12 @@ describe Spree::Zone do
 
   context "default_tax" do
     context "when there is a default tax zone specified" do
-      before { @foo_zone = Spree::Zone.create(:name => "whatever", :default_tax => true) }
+      before { @foo_zone = Factory(:zone, :name => "whatever", :default_tax => true) }
 
       it "should be the correct zone" do
         foo_zone = Factory(:zone, :name => "foo")
         Spree::Zone.default_tax.should == @foo_zone
       end
-
     end
 
     context "when there is no default tax zone specified" do
@@ -81,8 +80,8 @@ describe Spree::Zone do
     let(:country3) { Factory(:country) }
 
     before do
-      @source = Spree::Zone.create(:name => 'source')
-      @target = Spree::Zone.create(:name => 'target')
+      @source = Factory(:zone, :name => "source")
+      @target = Factory(:zone, :name => "target")
     end
 
     context "when the target has no members" do
@@ -210,15 +209,15 @@ describe Spree::Zone do
   context "#save" do
     context "when default_tax is true" do
       it "should clear previous default tax zone" do
-        zone1 = Spree::Zone.create(:name => "foo", :default_tax => true)
-        zone = Spree::Zone.create(:name => "bar", :default_tax => true)
+        zone1 = Factory(:zone, :name => "foo", :default_tax => true)
+        zone = Factory(:zone, :name => "bar", :default_tax => true)
         zone1.reload.default_tax.should == false
       end
     end
 
     context "when a zone member country is added to an existing zone consisting of state members" do
       it "should remove existing state members" do
-        zone = Spree::Zone.create(:name => "foo")
+        zone = Factory(:zone, :name => "foo")
         state = Factory(:state)
         country = Factory(:country)
         zone.members.create(:zoneable => state)

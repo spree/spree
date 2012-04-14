@@ -13,6 +13,5 @@ FactoryGirl.define do
   factory :zone, :class => Spree::Zone do
     name { Faker::Lorem.words }
     description { Faker::Lorem.sentence }
-    zone_members { [Spree::ZoneMember.create(:zoneable => Factory(:country))] }
   end
 end
