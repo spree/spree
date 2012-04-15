@@ -21,6 +21,6 @@
 <div id="option-types" data-hook></div>
 <% if @product.variants.empty? %>
   <span id="new_opt_link" data-hook="links">
-    <%= link_to icon('add') + ' ' + t(:add_option_type), available_admin_product_option_types_url(@product), :remote => :true, :class => 'iconlink' %>
+    <%= link_to_with_icon 'add', t(:add_option_type), available_admin_product_option_types_url(@product), :remote => :true %>
   </span>
 <% end %>
