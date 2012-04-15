@@ -1,28 +1,32 @@
 <h4><%= t(:add_option_types) %></h4>
 <table class="index">
-  <tr data-hook="option_type_header">
-    <th><%= t(:name) %></th>
-    <th><%= t(:presentation) %></th>
-    <th></th>
-  </tr>
-  <% @available_option_types.each do |ot| %>
-  <tr data-hook="option_type_row">
-    <td><%= ot.name %></td>
-    <td><%= ot.presentation %></td>
-    <td class="actions"><%= link_to icon('add') + ' ' + t(:select),
-                            url_for(:controller => 'admin/option_types',
-                                    :id => ot,
-                                    :product_id => @product.permalink,
-                                    :action => 'select',
-                                    :option_type_id =>  ot),
-                                    :remote => true,
-                                    :class => 'iconlink' %>
-    </td>
-  </tr>
-  <% end %>
-  <% if @available_option_types.empty? %>
-  <tr data-hook="option_type_empty">
-    <td colspan="3"><%= t(:none_available) %></td>
-  </tr>
-  <% end %>
+  <thead>
+    <tr data-hook="option_type_header">
+      <th><%= t(:name) %></th>
+      <th><%= t(:presentation) %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @available_option_types.each do |ot| %>
+      <tr data-hook="option_type_row">
+        <td><%= ot.name %></td>
+        <td><%= ot.presentation %></td>
+        <td class="actions"><%= link_to icon('add') + ' ' + t(:select),
+                                url_for(:controller => 'admin/option_types',
+                                        :id => ot,
+                                        :product_id => @product.permalink,
+                                        :action => 'select',
+                                        :option_type_id =>  ot),
+                                        :remote => true,
+                                        :class => 'iconlink' %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @available_option_types.empty? %>
+      <tr data-hook="option_type_empty">
+        <td colspan="3"><%= t(:none_available) %></td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
