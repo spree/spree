@@ -75,8 +75,7 @@ In most cases, the easiest way to install Rails is to take advantage of RubyGems
 <shell>
 $ gem install rails -v 3.2.3
 </shell>
-
-You must install Rails 3.1.3 for Spree 1.0. Rails 3.2 is not yet supported, but will be in the next minor release.
+Support for Rails 3.1.x is dropped. Rails 3.2.x offers performance boost in development mode and is the first-class supported platform for 1.1.x release cycles. It is recommended that you use the latest version 3.2.3.
 
 h4. Installing Bundler
 
