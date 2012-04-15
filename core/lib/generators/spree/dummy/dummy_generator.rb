@@ -51,11 +51,13 @@ module Spree
         remove_file "Gemfile"
         remove_file "lib/tasks"
         remove_file "app/assets/images/rails.png"
+        remove_file "app/assets/javascripts/application.js"
         remove_file "public/index.html"
         remove_file "public/robots.txt"
         remove_file "README"
         remove_file "test"
         remove_file "vendor"
+        remove_file "spec"
       end
     end
 
