@@ -67,7 +67,7 @@ module Spree
         options.reverse_merge! :error => "function(jqXHR, textStatus, errorThrown){ show_flash_error(jqXHR.responseText); }"
         options.reverse_merge! :name => icon('delete') + ' ' + t(:delete)
 
-        link_to_function_delete(options, html_options)
+        link_to_function_delete(options, html_options.merge!(:href => options[:url]))
         #link_to_function_delete_native(options, html_options)
       end
 

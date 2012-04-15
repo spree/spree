@@ -81,6 +81,7 @@ Spree::Core::Engine.routes.draw do
         member do
           get :select
           get :remove
+          delete :remove
         end
         collection do
           get :available

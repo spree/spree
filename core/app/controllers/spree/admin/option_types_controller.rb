@@ -15,8 +15,14 @@ module Spree
       def remove
         @product.option_types.delete(@option_type)
         @product.save
-        flash.notice = I18n.t('notice_messages.option_type_removed')
-        redirect_to selected_admin_product_option_types_url(@product)
+        @option_types = @product.option_types
+
+        respond_with(@option_types) do |format|
+          flash.notice = I18n.t('notice_messages.option_type_removed')
+
+          format.js { render_js_for_destroy }
+          format.html { redirect_to selected_admin_product_option_types_url(@product) }
+        end
       end
 
       def update_positions
