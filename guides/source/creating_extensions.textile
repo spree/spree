@@ -217,13 +217,13 @@ h3. Testing Against a Release Candidate
 
 The Spree core team will often announce a so-called "release candidate":http://en.wikipedia.org/wiki/Software_release_life_cycle#Release_candidate shortly before an official release.  This is to allow Spree developers to test their sites and extensions against the upcoming release code.
 
-In order to test your extension against the release candidate you will need to first update your gemspec file.  Lets look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.RC1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
+In order to test your extension against the release candidate you will need to first update your gemspec file.  Lets look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.rc1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
 
 <ruby>
 Gem::Specification.new do |s|
   ...
-  s.add_dependency('spree_core', '>= 0.60.0.RC1')
-  s.add_dependency('spree_auth', '>= 0.60.0.RC1')
+  s.add_dependency('spree_core', '>= 0.60.0.rc1')
+  s.add_dependency('spree_auth', '>= 0.60.0.rc1')
   ...
 end
 </ruby>
@@ -231,7 +231,7 @@ end
 You'll also want to update your +Gemfile+ that belongs to the Spree application using the extension.
 
 <ruby>
-  gem 'spree', '0.60.0.RC1'
+  gem 'spree', '0.60.0.rc1'
 </ruby>
 
 Next, you'll need to update the dependencies locally using bundler and commit the resulting +Gemfile.lock+ to your source code respository.
