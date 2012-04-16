@@ -76,10 +76,13 @@ module Spree
     alias in_stock in_stock?
 
     def self.additional_fields
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Variant.additional_fields will be deprecated in Spree 1.2. Please use Deface and decorators as an alternative to this functionality now.")
       @fields
     end
 
     def self.additional_fields=(new_fields)
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Variant.additional_fields= will be deprecated in Spree 1.2. Please use Deface and decorators as an alternative to this functionality now.")
+      attr_accessible *new_fields
       @fields = new_fields
     end
 
