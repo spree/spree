@@ -6,10 +6,6 @@ describe Spree::Taxonomy do
     it { should have_valid_factory(:taxonomy) }
   end
 
-  context "shoulda validations" do
-    it { should validate_presence_of(:name) }
-  end
-
   context "#destroy" do
     before do
        @taxonomy = Factory(:taxonomy)

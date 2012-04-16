@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::TaxRate do
-
-  context 'validation' do
-    it { should validate_presence_of(:tax_category_id) }
-  end
-
   context "match" do
     let(:order) { Factory(:order) }
     let(:country) { Factory(:country) }
