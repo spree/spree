@@ -23,13 +23,11 @@ module Spree
     end
 
     def set_last_digits
-      unless number.nil?
-        number.to_s.gsub!(/\s/,'')
-        verification_value.to_s.gsub!(/\s/,'')
-      end
-
       # Last four digits
       self.last_digits ||= number.to_s[-4, 4]
+
+      self.number = nil
+      self.verification_value = nil
     end
 
     # cheap hack to get to the type? method from deep within ActiveMerchant without stomping on
