@@ -36,12 +36,12 @@ describe Spree::Creditcard do
 
   context "#process!" do
     it "should purchase if with auto_capture" do
-      Spree::Config.stub("[]").and_return(true)
+      Spree::Config[:auto_capture] = true
       @creditcard.should_receive(:purchase)
       @creditcard.process!(@payment)
     end
     it "should authorize without auto_capture" do
-      Spree::Config.stub("[]").and_return(false)
+      Spree::Config[:auto_capture] = false
       @creditcard.should_receive(:authorize)
       @creditcard.process!(@payment)
     end
