@@ -53,17 +53,6 @@ describe Spree::Product do
         product.price = "$10"
         product.price.should == 10.0
       end
-
-      it 'does not mess up localized prices' do
-        I18n.backend.store_translations :en, :number => {
-          :format => {
-            :delimiter =>  '.',
-            :separator =>  ','
-          }
-        }
-        product.price = "1.000,00"
-        product.price.should == 1000.0
-      end
     end
   end
 
