@@ -65,7 +65,7 @@ describe Spree::Creditcard do
       end
     end
 
-    context "if sucesssfull" do
+    context "if sucesssful" do
       it "should store the response_code and avs_response" do
         @creditcard.authorize(100, @payment)
         @payment.response_code.should == '123'
