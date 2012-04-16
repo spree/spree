@@ -9,10 +9,6 @@ describe Spree::ShippingMethod do
     end
   end
 
-  context 'validations' do
-    it { should have_valid_factory(:shipping_method) }
-  end
-
   context 'available?' do
     before(:each) do
       @shipping_method = Factory(:shipping_method)

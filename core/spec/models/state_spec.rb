@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Spree::State do
-  context "shoulda validations" do
-    it { should have_valid_factory(:state) }
-  end
-
   before(:all) do
     Spree::State.destroy_all
   end

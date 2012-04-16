@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod do
-
-  context 'validation' do
-    it { should have_valid_factory(:payment_method) }
-  end
-
   describe "#available" do
     before(:all) do
       Spree::PaymentMethod.delete_all

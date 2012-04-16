@@ -22,8 +22,6 @@ describe Spree::Order do
   end
 
   context 'validation' do
-    it { should have_valid_factory(:order) }
-
     context "when @use_billing is populated" do
       before do
         order.bill_address = Factory(:address)

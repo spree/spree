@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Payment do
-
-  context 'validation' do
-    it { should have_valid_factory(:payment) }
-  end
-
   let(:order) { mock_model(Spree::Order, :update! => nil, :payments => []) }
   let(:gateway) { Spree::Gateway::Bogus.new({:environment => 'test', :active => true}, :without_protection => true) }
   let(:card) { Factory(:creditcard) }

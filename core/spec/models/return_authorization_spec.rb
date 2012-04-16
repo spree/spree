@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
-
-  context 'validation' do
-    it  { should have_valid_factory(:return_authorization) }
-  end
-
   let(:inventory_unit) { Spree::InventoryUnit.create({:variant => mock_model(Spree::Variant)}, :without_protection => true) }
   let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
   let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order}, :without_protection => true) }

@@ -5,10 +5,6 @@ require 'spec_helper'
 describe Spree::Taxon do
   let(:taxon) { Spree::Taxon.new(:name => "Ruby on Rails") }
 
-  context "validation" do
-    it { should have_valid_factory(:taxon) }
-  end
-
   context "set_permalink" do
 
     it "should set permalink correctly when no parent present" do

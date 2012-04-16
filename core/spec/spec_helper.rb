@@ -125,14 +125,3 @@ end
 PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
 SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
 ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
-
-# Usage:
-#
-# context "factory" do
-#   it { should have_valid_factory(:address) }
-# end
-RSpec::Matchers.define :have_valid_factory do |factory_name|
-  match do |model|
-    Factory(factory_name).new_record?.should be_false
-  end
-end

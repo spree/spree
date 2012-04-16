@@ -8,8 +8,6 @@ describe Spree::Variant do
   end
 
   context "validations" do
-    it { should have_valid_factory(:variant) }
-
     it "should validate price is greater than 0" do
       variant.price = -1
       variant.should be_invalid

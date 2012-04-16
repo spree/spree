@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Taxonomy do
-
-  context "validation" do
-    it { should have_valid_factory(:taxonomy) }
-  end
-
   context "#destroy" do
     before do
        @taxonomy = Factory(:taxonomy)

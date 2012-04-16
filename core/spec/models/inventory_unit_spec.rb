@@ -5,10 +5,6 @@ describe Spree::InventoryUnit do
     reset_spree_preferences
   end
 
-  context 'validation' do
-    it { should have_valid_factory(:inventory_unit) }
-  end
-
   let(:variant) { mock_model(Spree::Variant, :on_hand => 95) }
   let(:line_item) { mock_model(Spree::LineItem, :variant => variant, :quantity => 5) }
   let(:order) { mock_model(Spree::Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }

@@ -67,10 +67,6 @@ describe Spree::Product do
     end
   end
 
-  context "shoulda validations" do
-    it { should have_valid_factory(:product) }
-  end
-
   context "validations" do
     context "find_by_param" do
 

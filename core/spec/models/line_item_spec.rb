@@ -5,10 +5,6 @@ describe Spree::LineItem do
     reset_spree_preferences
   end
 
-  context 'validation' do
-    it { should have_valid_factory(:line_item) }
-  end
-
   let(:variant) { mock_model(Spree::Variant, :count_on_hand => 95, :price => 9.99) }
   let(:line_item) { Spree::LineItem.new(:quantity => 5) }
   let(:order) do
