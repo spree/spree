@@ -80,7 +80,7 @@ module Spree
     # Generates an ActiveMerchant compatible address hash
     def active_merchant_hash
       { :name => full_name, :address1 => address1, :address2 => address2, :city => city,
-        :state => state_text, :zip => zipcode, :country => country.iso, :phone => phone }
+        :state => state_text, :zip => zipcode, :country => country.try(:iso), :phone => phone }
     end
 
     private
