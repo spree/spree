@@ -17,6 +17,16 @@ module Spree
           next!
         end
 
+        def update
+          authorize! :update, Order
+          Rails.logger.debug params.inspect
+          if order.update_attributes(params[:order])
+            render :show, :status => 200
+          else
+            invalid_resource!(order)
+          end
+        end
+
         def address
           order.build_ship_address(params[:shipping_address])
           order.build_bill_address(params[:billing_address])
