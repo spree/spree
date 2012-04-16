@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Zone do
-  it { should have_many(:zone_members).dependent(:destroy) }
-
   context "#match" do
     let(:country_zone) { Factory(:zone, :name => "CountryZone") }
     let(:country) do
