@@ -19,7 +19,6 @@ module Spree
 
         def update
           authorize! :update, Order
-          Rails.logger.debug params.inspect
           if order.update_attributes(params[:order])
             render :show, :status => 200
           else
