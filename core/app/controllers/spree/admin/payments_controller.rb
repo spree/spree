@@ -51,7 +51,6 @@ module Spree
       end
 
       def fire
-        # TODO: consider finer-grained control for this type of action (right now anyone in admin role can perform)
         return unless event = params[:e] and @payment.payment_source
         if @payment.send("#{event}!")
           flash.notice = t(:payment_updated)
