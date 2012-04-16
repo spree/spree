@@ -75,14 +75,6 @@ module Spree
     end
     alias in_stock in_stock?
 
-    def self.additional_fields
-      @fields
-    end
-
-    def self.additional_fields=(new_fields)
-      @fields = new_fields
-    end
-
     # returns true if this variant is allowed to be placed on a new order
     def available?
       Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock?) : true

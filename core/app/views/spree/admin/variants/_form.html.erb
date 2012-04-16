@@ -30,11 +30,6 @@
       <%= f.text_field :on_hand %></p>
     <% end %>
   </div>
-  <div class="right">
-
-    <% Spree::Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:variant) }.each do |field| %>
-      <%= render :partial => 'spree/admin/shared/additional_field', :locals => { :field => field, :f => f } %>
-    <% end %>
-
+  <div class="right" data-hook="admin_variant_form_additional_fields">
   </div>
 </div>

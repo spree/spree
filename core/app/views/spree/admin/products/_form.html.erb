@@ -98,7 +98,4 @@
 </div>
 
 <div data-hook="admin_product_form_additional_fields">
-  <% Spree::Variant.additional_fields.select { |af| af[:only].nil? || af[:only].include?(:product) }.each do |field| %>
-    <%= render :partial => 'spree/admin/shared/additional_field', :locals => { :field => field, :f => f } %>
-  <% end %>
 </div>

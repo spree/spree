@@ -7,9 +7,6 @@
     <th><%= t(:options) %></th>
     <th><%= t(:price) %></th>
     <th><%= t(:sku) %></th>
-    <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-      <th><%= t('activerecord.attributes.variant.' + field[:name].downcase, :default => field[:name].titleize) %></th>
-    <% end %>
     <th><%= t(:on_hand) %></th>
     <th><%= t(:action) %></th>
   </tr>
@@ -20,9 +17,6 @@
       <td><span class="handle"></span> <%= variant.options_text %></td>
       <td><%= number_to_currency variant.price %></td>
       <td><%= variant.sku %></td>
-      <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-        <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
-      <% end %>
       <td><%= variant.on_hand %></td>
       <td valign="top">
         <%= link_to_edit(variant) unless variant.deleted? %>
