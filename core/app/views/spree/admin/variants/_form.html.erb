@@ -31,5 +31,10 @@
     <% end %>
   </div>
   <div class="right" data-hook="admin_variant_form_additional_fields">
+    <% [:weight, :height, :width, :depth].each do |field| %>
+      <p data-hook="<%= field %>"><%= f.label field, t(field) %>:<br />
+      <% value = number_with_precision(@variant.send(field), :precision => 2) %>
+      <%= f.text_field field, :value => value %></p>
+    <% end %>
   </div>
 </div>
