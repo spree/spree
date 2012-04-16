@@ -147,7 +147,7 @@ INFO: All Spree extensions should have a version.  This version number has nothi
 
 h4. Syntax
 
-A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
+A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
 
 There are four different ways of specifying an extension's compatibilty information.
 
