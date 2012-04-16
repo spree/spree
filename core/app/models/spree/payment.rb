@@ -1,5 +1,6 @@
 module Spree
   class Payment < ActiveRecord::Base
+    include Spree::Payment::Processing
     belongs_to :order
     belongs_to :source, :polymorphic => true, :validate => true
     belongs_to :payment_method
