@@ -107,7 +107,7 @@ module Spree
         payment.complete
       else
         payment.failure
-        gateway_error(response) unless response.success?
+        gateway_error(response)
       end
     rescue ActiveMerchant::ConnectionError => e
       gateway_error e
