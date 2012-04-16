@@ -86,6 +86,14 @@ h5. Spree::PaymentMethod
 
 Additionally, +current_gateway+ is also removed.
 
+h5. Spree::ProductsHelper
+
++product_price+ is retired, please use +number_to_currency+ instead.
+
+h5. Spree::HookHelper
+
++hook+ is retired, please use Deface instead.
+
 h3. Patches
 
 h4. Version bumps
