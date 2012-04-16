@@ -12,12 +12,6 @@ module Spree
       end
     end
 
-    # returns the price of the product to show for display purposes
-    def product_price(product_or_variant, options={})
-       ActiveSupport::Deprecation.warn('product_price is deprecated and no longer calculates
-                                        tax.  Use number_to_currency instead.', caller)
-    end
-
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
       raw(product.description.gsub(/^(.*)$/, '<p>\1</p>'))
