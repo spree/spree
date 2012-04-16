@@ -77,6 +77,12 @@ module Spree
       attributes.except('id', 'created_at', 'updated_at', 'order_id', 'country_id').all? { |_, v| v.nil? }
     end
 
+    # Generates an ActiveMerchant compatible address hash
+    def active_merchant_hash
+      { :name => full_name, :address1 => address1, :address2 => address2, :city => city,
+        :state => state_text, :zip => zipcode, :country => country.try(:iso), :phone => phone }
+    end
+
     private
 
       def state_validate
