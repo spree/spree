@@ -1,40 +1,57 @@
 module Spree
   class Payment < ActiveRecord::Base
     module Processing
-      def authorize!(credit_card)
-        gateway_action(credit_card, :authorize, :pend)
+      def process!
+        if payment_method && payment_method.source_required?
+          if source
+            if !processing?
+              started_processing!
+              if Spree::Config[:auto_capture]
+                purchase!
+              else
+                authorize!
+              end
+            end
+          else
+            raise Core::GatewayError.new(I18n.t(:payment_processing_failed))
+          end
+        end
       end
 
-      def purchase!(credit_card)
-        gateway_action(credit_card, :purchase, :success)
+      def authorize!
+        gateway_action(source, :authorize, :pend)
       end
 
-      def capture!(credit_card)
+      def purchase!
+        gateway_action(source, :purchase, :complete)
+      end
+
+      def capture!
         return unless pending?
         protect_from_connection_error do
-          check_environment(payment_method)
+          check_environment
 
           if payment_method.payment_profiles_supported?
             # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
             # so supply the authorization itself as well as the creditcard, rather than just the authorization code
-            response = payment_method.capture(payment, credit_card, options)
+            response = payment_method.capture(self, source, gateway_options)
           else
             # Standard ActiveMerchant capture usage
             response = payment_method.capture((amount * 100).round,
                                               response_code,
-                                              options)
+                                              gateway_options)
           end
 
           handle_response(response, :complete, :failure)
         end
       end
 
-      def void!
+      def void_transaction!
         protect_from_connection_error do
-          check_environment(payment_method)
+          check_environment
 
           response = payment_method.void(self.response_code, gateway_options)
-          record_log payment, response
+          record_response(response)
 
           if response.success?
             self.response_code = response.authorization
@@ -46,15 +63,15 @@ module Spree
       end
     end
 
-    def credit!
+    def credit!(credit_amount=nil)
       protect_from_connection_error do
-        check_environment(payment_method)
+        check_environment
 
-        amount = credit_allowed >= order.outstanding_balance.abs ? order.outstanding_balance.abs : credit_allowed.abs
+        credit_amount ||= credit_allowed >= order.outstanding_balance.abs ? order.outstanding_balance.abs : credit_allowed.abs
         if payment_method.payment_profiles_supported?
-          response = payment_method.credit((amount * 100).round, self, response_code, minimal_gateway_options(payment, false))
+          response = payment_method.credit((credit_amount * 100).round, source, response_code, gateway_options)
         else
-          response = payment_method.credit((amount * 100).round, response_code, minimal_gateway_options(payment, false))
+          response = payment_method.credit((credit_amount * 100).round, response_code, gateway_options)
         end
 
         record_response(response)
@@ -63,7 +80,7 @@ module Spree
           self.class.create({ :order => order,
                               :source => self,
                               :payment_method => payment_method,
-                              :amount => amount.abs * -1,
+                              :amount => credit_amount.abs * -1,
                               :response_code => response.authorization,
                               :state => 'completed' }, :without_protection => true)
         else
@@ -72,14 +89,20 @@ module Spree
       end
     end
 
+    def partial_credit(amount)
+      return if amount > credit_allowed
+      started_processing!
+      credit!(amount)
+    end
+
     private
 
-    def gateway_action(credit_card, action, success_state)
+    def gateway_action(source, action, success_state)
       protect_from_connection_error do
-        check_environment(payment_method)
+        check_environment
 
         response = payment_method.send(action, (amount * 100).round,
-                                       credit_card,
+                                       source,
                                        gateway_options)
         handle_response(response, success_state, :failure)
       end
@@ -90,6 +113,7 @@ module Spree
 
       if response.success?
         self.response_code = response.authorization
+        self.avs_response = response.avs_result['code']
         self.send(success_state)
       else
         self.send(failure_state)
@@ -97,20 +121,22 @@ module Spree
       end
     end
 
+    def record_response(response)
+      log_entries.create({:details => response.to_yaml}, :without_protection => true)
+    end
+
     def gateway_options
       options = { :email    => order.email,
-        :customer => order.email,
-        :ip       => order.ip_address,
-        :order_id => order.number }
+                  :customer => order.email,
+                  :ip       => order.ip_address,
+                  :order_id => order.number }
 
-      if totals
-        options.merge!({ :shipping => order.ship_total * 100,
+      options.merge!({ :shipping => order.ship_total * 100,
                        :tax      => order.tax_total * 100,
                        :subtotal => order.item_total * 100 })
-      end
 
       options.merge({ :billing_address  => order.bill_address.try(:active_merchant_hash),
-                    :shipping_address => order.ship_address.try(:active_merchant_hash) })
+                      :shipping_address => order.ship_address.try(:active_merchant_hash) })
     end
 
     def protect_from_connection_error
@@ -140,8 +166,8 @@ module Spree
 
     # Saftey check to make sure we're not accidentally performing operations on a live gateway.
     # Ex. When testing in staging environment with a copy of production data.
-    def check_environment(gateway)
-      return if gateway.environment == Rails.env
+    def check_environment
+      return if payment_method.environment == Rails.env
       message = I18n.t(:gateway_config_unavailable) + " - #{Rails.env}"
       raise Core::GatewayError.new(message)
     end

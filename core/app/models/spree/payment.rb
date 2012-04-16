@@ -59,31 +59,11 @@ module Spree
       credit_allowed > 0
     end
 
-    def credit(amount)
-      return if amount > credit_allowed
-      started_processing!
-      source.credit(self, amount)
-    end
-    
     # see https://github.com/spree/spree/issues/981
     def build_source
       return if source_attributes.nil?
-
       if payment_method and payment_method.payment_source_class
         self.source = payment_method.payment_source_class.new(source_attributes)
-      end
-    end
-
-    def process!
-      if payment_method && payment_method.source_required?
-        if source
-          if !processing? && source.respond_to?(:process!)
-            started_processing!
-            source.process!(self) # source is responsible for updating the payment state when it's done processing
-          end
-        else
-          raise Core::GatewayError.new(I18n.t(:payment_processing_failed))
-        end
       end
     end
 
@@ -113,7 +93,7 @@ module Spree
         return unless source.is_a?(Creditcard) && source.number && !source.has_payment_profile?
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
-        source.gateway_error e
+        gateway_error e
       end
 
       def update_order
