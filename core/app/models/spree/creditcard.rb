@@ -14,14 +14,6 @@ module Spree
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
                     :month, :gateway_customer_profile_id
 
-    def process!(payment)
-      if Spree::Config[:auto_capture]
-        payment.purchase!
-      else
-        payment.authorize!
-      end
-    end
-
     def set_last_digits
       number.to_s.gsub!(/\s/,'') unless number.nil?
       verification_value.to_s.gsub!(/\s/,'') unless number.nil?
