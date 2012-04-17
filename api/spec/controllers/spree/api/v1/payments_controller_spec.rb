@@ -123,6 +123,37 @@ module Spree
           payment.reload
           payment.state.should == "pending"
         end
+
+        context "crediting" do
+          before do
+            payment.purchase!
+          end
+
+          it "can credit" do
+            api_put :credit, :id => payment.to_param
+            response.status.should == 200
+            payment.reload
+            payment.state.should == "completed"
+
+            # Ensur that a credit payment was created, and it has correct credit amount
+            credit_payment = Payment.where(:source_type => 'Spree::Payment', :source_id => payment.id).last
+            credit_payment.amount.to_f.should == -45.75
+          end
+
+          it "returns a 422 status when crediting fails" do
+            fake_response = stub(:success? => false, :to_s => "NO CREDIT FOR YOU")
+            Spree::Gateway::Bogus.any_instance.should_receive(:credit).and_return(fake_response)
+            api_put :credit, :id => payment.to_param
+            response.status.should == 422
+            json_response["error"].should == "There was a problem with the payment gateway: NO CREDIT FOR YOU"
+          end
+
+          it "cannot credit over credit_allowed limit" do
+            api_put :credit, :id => payment.to_param, :amount => 1000000
+            response.status.should == 422
+            json_response["error"].should == "This payment can only be credited up to 45.75. Please specify an amount less than or equal to this number."
+          end
+        end
       end
 
     end
