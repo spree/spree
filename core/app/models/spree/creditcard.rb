@@ -15,8 +15,8 @@ module Spree
                     :month, :gateway_customer_profile_id
 
     def set_last_digits
-      number.to_s.gsub!(/\s/,'') unless number.nil?
-      verification_value.to_s.gsub!(/\s/,'') unless number.nil?
+      number.to_s.gsub!(/\s/,'')
+      verification_value.to_s.gsub!(/\s/,'')
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 

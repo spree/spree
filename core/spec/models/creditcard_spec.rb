@@ -140,6 +140,7 @@ describe Spree::Creditcard do
     before do
       creditcard.attributes = valid_creditcard_attributes
       creditcard.save
+      creditcard.reload
     end
 
     it "should not actually store the number" do
