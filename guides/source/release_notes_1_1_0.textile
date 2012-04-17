@@ -41,6 +41,10 @@ h4. Old Theme Hook
 +theme_support+ files are now deprecated in favor of Deface. Make sure you port
 all your old style hooks to Deface.
 
+h4. Major rewrite of Creditcard model
+
+Prior to 1.1, the +Creditcard+ model contained a lot of payment processing code. This has "since been moved":https://github.com/spree/spree/commit/0e684e01b5a15ec21b34263699004ebd78692f0d into the +Payment+ model. If you have customized the +Spree::Admin::PaymentsController+ or depend on any of the payment processing methods inside the +CreditCard+ model such as +authorize+, +credit+, or +void+, this change may effect you.
+
 h4. API rewrite
 
 The API component of Spree has undergone a major rewrite in order to provide better support for applications wishing to interact with it using tools such as Backbone, or for people wishing to just generally access the individual components of Spree.
