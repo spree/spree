@@ -36,7 +36,7 @@ module Spree
 
     it "can create an order" do
       variant = Factory(:variant)
-      api_post :create, :order => { :line_items => { variant.to_param => 5 } }
+      api_post :create, :order => { :line_items => [{ :variant_id => variant.to_param, :quantity => 5 }] }
       response.status.should == 200
       order = Order.last
       order.line_items.count.should == 1

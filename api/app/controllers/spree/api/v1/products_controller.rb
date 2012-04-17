@@ -6,6 +6,11 @@ module Spree
           @products = product_scope.page(params[:page])
         end
 
+        def search
+          @products = product_scope.search(params[:q]).result.page(params[:page])
+          render :index
+        end
+
         def show
           @product = find_product(params[:id])
         end
