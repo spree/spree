@@ -98,6 +98,10 @@ h5. Spree::HookHelper
 
 +hook+ is retired, please use Deface instead.
 
+h5. Spree::Variant
+
++Spree::Variant.additional_fields+ has been deprecated in favour of using decorators and Deface. Please see "#1406":https://github.com/spree/spree/issues/1406 for more information.
+
 h3. Patches
 
 h4. Version bumps
