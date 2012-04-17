@@ -124,9 +124,7 @@ module Spree
         end
 
         # ensure at least one state field is populated
-        if state.blank? && state_name.blank?
-          errors.add(:state, :blank)
-        end
+        errors.add :state, :blank if state.blank? && state_name.blank?
       end
 
   end
