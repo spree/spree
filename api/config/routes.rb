@@ -21,6 +21,14 @@ Spree::Core::Engine.routes.prepend do
         end
 
         resources :line_items
+        resources :payments do
+          member do
+            put :authorize
+            put :purchase
+            put :void
+            put :credit
+          end
+        end
       end
 
       resources :countries, :only => [:index, :show]
