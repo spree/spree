@@ -5,7 +5,6 @@ module Spree
         if payment_method && payment_method.source_required?
           if source
             if !processing?
-              started_processing!
               if Spree::Config[:auto_capture]
                 purchase!
               else
@@ -19,10 +18,12 @@ module Spree
       end
 
       def authorize!
+        started_processing!
         gateway_action(source, :authorize, :pend)
       end
 
       def purchase!
+        started_processing!
         gateway_action(source, :purchase, :complete)
       end
 
