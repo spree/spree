@@ -74,6 +74,8 @@ module Spree
         it "can authorize" do
           api_put :authorize, :id => payment.to_param
           response.status.should == 200
+          payment.reload
+          payment.state.should == "pending"
         end
 
         it "returns a 422 status when authorization fails" do
@@ -81,6 +83,45 @@ module Spree
           Spree::Gateway::Bogus.any_instance.should_receive(:authorize).and_return(fake_response)
           api_put :authorize, :id => payment.to_param
           response.status.should == 422
+          json_response["error"].should == "There was a problem with the payment gateway: Could not authorize card"
+          payment.reload
+          payment.state.should == "failed"
+        end
+
+        it "can purchase" do
+          api_put :purchase, :id => payment.to_param
+          response.status.should == 200
+          payment.reload
+          payment.state.should == "completed"
+        end
+
+        it "returns a 422 status when purchasing fails" do
+          fake_response = stub(:success? => false, :to_s => "Insufficient funds")
+          Spree::Gateway::Bogus.any_instance.should_receive(:purchase).and_return(fake_response)
+          api_put :purchase, :id => payment.to_param
+          response.status.should == 422
+          json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
+
+          payment.reload
+          payment.state.should == "failed"
+        end
+
+        it "can void" do
+          api_put :void, :id => payment.to_param
+          response.status.should == 200
+          payment.reload
+          payment.state.should == "void"
+        end
+
+        it "returns a 422 status when voiding fails" do
+          fake_response = stub(:success? => false, :to_s => "NO REFUNDS")
+          Spree::Gateway::Bogus.any_instance.should_receive(:void).and_return(fake_response)
+          api_put :void, :id => payment.to_param
+          response.status.should == 422
+          json_response["error"].should == "There was a problem with the payment gateway: NO REFUNDS"
+
+          payment.reload
+          payment.state.should == "pending"
         end
       end
 

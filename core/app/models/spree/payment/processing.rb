@@ -5,7 +5,6 @@ module Spree
         if payment_method && payment_method.source_required?
           if source
             if !processing?
-              started_processing!
               if Spree::Config[:auto_capture]
                 purchase!
               else
@@ -19,10 +18,12 @@ module Spree
       end
 
       def authorize!
+        started_processing!
         gateway_action(source, :authorize, :pend)
       end
 
       def purchase!
+        started_processing!
         gateway_action(source, :purchase, :complete)
       end
 
@@ -116,7 +117,7 @@ module Spree
         self.avs_response = response.avs_result['code']
         self.send(success_state)
       else
-        self.send(failure_state)
+        self.send("#{failure_state}!")
         gateway_error(response)
       end
     end

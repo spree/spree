@@ -6,6 +6,7 @@ en:
       unauthorized: "You are not authorized to perform that action."
       invalid_resource: "Invalid resource. Please fix errors and try again."
       resource_not_found: "The resource you were looking for could not be found."
+      gateway_error: "There was a problem with the payment gateway: %{text}"
 
       order:
         could_not_transition: "The order could not be transitioned. Please fix the errors and try again."
