@@ -9,3 +9,7 @@ end
 child :shipping_address => :shipping_address do
   extends "spree/api/v1/orders/address"
 end
+
+child :line_items => :line_items do
+  extends "spree/api/v1/line_items/show"
+end

@@ -18,9 +18,10 @@ module Spree
         end
 
         def update
+          Rails.logger.debug(params.inspect)
           authorize! :update, Order
           if order.update_attributes(params[:order])
-            render :show, :status => 200
+            render :show
           else
             invalid_resource!(order)
           end
