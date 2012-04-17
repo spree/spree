@@ -69,6 +69,8 @@ module Spree
         check_environment
 
         credit_amount ||= credit_allowed >= order.outstanding_balance.abs ? order.outstanding_balance.abs : credit_allowed.abs
+        credit_amount = credit_amount.to_f
+
         if payment_method.payment_profiles_supported?
           response = payment_method.credit((credit_amount * 100).round, source, response_code, gateway_options)
         else
