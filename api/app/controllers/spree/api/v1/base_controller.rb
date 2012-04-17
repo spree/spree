@@ -39,7 +39,8 @@ module Spree
         end
 
         def invalid_resource!(resource)
-          render "spree/api/v1/errors/invalid_resource", :resource => resource, :status => 422
+          render :partial =>"spree/api/v1/errors/invalid_resource",
+            :locals => { :resource => resource }, :status => 422
         end
 
         def api_key
