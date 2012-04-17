@@ -95,7 +95,7 @@ module Spree
 
     # returns true if the product has any variants (the master variant is not a member of the variants array)
     def has_variants?
-      variants.any?
+      variants.exists?
     end
 
     # returns the number of inventory units "on_hand" for this product
@@ -112,7 +112,7 @@ module Spree
     # Returns true if there are inventory units (any variant) with "on_hand" state for this product
     # Variants take precedence over master
     def has_stock?
-      variants.any? ? variants.any?(&:in_stock?) : master.in_stock?
+      has_variants? ? variants.any?(&:in_stock?) : master.in_stock?
     end
 
     def tax_category
