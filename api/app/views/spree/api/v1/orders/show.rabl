@@ -23,7 +23,7 @@ end
 
 child :shipments => :shipments do
   attributes :id, :special_instructions, :shipping_method_id,
-             :tracking
+             :tracking, :state
   child :shipping_method => :shipping_method do
     attributes :name, :zone_id, :shipping_category_id
   end
