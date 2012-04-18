@@ -47,6 +47,10 @@ module Spree
       def payment_method_attributes
         [:id, :name, :description]
       end
+
+      def shipment_attributes
+        [:id, :tracking, :number, :cost, :shipped_at, :state]
+      end
     end
   end
 end
