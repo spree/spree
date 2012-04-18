@@ -39,7 +39,7 @@ describe Spree::OrdersController do
       it "should handle multiple variant/quantity pairs with specific quantity" do
         @variant.stub(:product_id).and_return(10)
         order.should_receive(:add_variant).with(@variant, 3)
-        post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => {@variant.id => 3}}
+        post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => {@variant.id.to_s => 3}}
       end
     end
   end
