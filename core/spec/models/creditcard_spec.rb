@@ -139,16 +139,17 @@ describe Spree::Creditcard do
   context "#save" do
     before do
       creditcard.attributes = valid_creditcard_attributes
-      creditcard.save
-      creditcard.reload
+      creditcard.save!
     end
 
+    let!(:persisted_card) { Spree::Creditcard.find(creditcard.id) }
+
     it "should not actually store the number" do
-      creditcard.number.should be_blank
+      persisted_card.number.should be_blank
     end
 
     it "should not actually store the security code" do
-      creditcard.verification_value.should be_blank
+      persisted_card.verification_value.should be_blank
     end
   end
 
