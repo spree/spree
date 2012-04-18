@@ -87,6 +87,7 @@ module Spree
             @search = super.search(params[:q])
             @collection = @search.result.
               group_by_products_id.
+              group("spree_variants.price").
               includes([:master, {:variants => [:images, :option_values]}]).
               page(params[:page]).
               per(Spree::Config[:admin_products_per_page])
