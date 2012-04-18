@@ -14,6 +14,15 @@ module Spree
 
         helper Spree::Api::ApiHelpers
 
+        def map_nested_attributes_keys(klass, attributes)
+          nested_keys = klass.nested_attributes_options.keys
+          attributes.inject({}) do |h, (k,v)|
+            key = nested_keys.include?(k) ? "#{k}_attributes".to_sym : k
+            h[key] = v
+            h
+          end
+        end
+
         private
 
         def check_for_api_key

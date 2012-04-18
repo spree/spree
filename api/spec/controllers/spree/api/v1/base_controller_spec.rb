@@ -26,4 +26,16 @@ describe Spree::Api::V1::BaseController do
       json_response.should == { "error" => "Invalid API key (fake_key) specified." }
     end
   end
+
+  it "maps symantec keys to nested_attributes keys" do
+    klass = stub(:nested_attributes_options => { :line_items => {},
+                                                  :bill_address => {} })
+    attributes = { :line_items => { :id => 1 },
+                   :bill_address => { :id => 2 },
+                   :name => 'test order' }
+
+    mapped = subject.map_nested_attributes_keys(klass, attributes)
+    mapped.has_key?(:line_items_attributes).should be_true
+    mapped.has_key?(:name).should be_true
+  end
 end
