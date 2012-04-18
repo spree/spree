@@ -157,3 +157,4 @@ h4. Other fixes
 * Fix incorrect route issue when updating a return authorization. "#1343":https://github.com/spree/spree/issues/1343
 * Fixed issue where "Add to Cart" button may not work on IE7. "#1397":https://github.com/spree/spree/issues/1397
 * Fixed issue where non-price characters were being stripped from prices. "#1392":https://github.com/spree/spree/issues/1392 "#1400":https://github.com/spree/spree/issues/1400
+* Limit ProductsController#show to only show active products. "#1390":https://github.com/spree/spree/issues/1390
