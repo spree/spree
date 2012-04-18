@@ -17,7 +17,7 @@
   <tr data-hook="admin_products_index_headers">
     <th><%= t(:sku) %></th>
     <th><%= sort_link @search,:name, t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
-    <th><%= sort_link @search,:master_price, t(:master_price) %></th>
+    <th><%= sort_link @search,:master_price, t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
     <th data-hook="admin_products_index_header_actions"></th>
   </tr>
 <% @collection.each do |product| %>
