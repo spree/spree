@@ -16,12 +16,18 @@ class PaymentMethod::Check < PaymentMethod
   def capture(payment)
     payment.update_attribute(:state, 'pending') if payment.state == 'checkout'
     payment.complete
+    payment.save!
+    payment.order.payments.reload
+    payment.order.update!
     true
   end
   
   def void(payment)
     payment.update_attribute(:state, 'pending') if payment.state == 'checkout'
     payment.void
+    payment.save!
+    payment.order.payments.reload
+    payment.order.update!
     true
   end
   
