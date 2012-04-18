@@ -71,7 +71,7 @@ module Spree
 
       # sets the manifests / assets to be precompiled
       initializer "spree.assets.precompile" do |app|
-        app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/orders/edit_form.js', 'admin/address_states.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
+        Spree::Core::Engine.precompile_assets!(app)
       end
 
       initializer "spree.mail.settings" do |app|
@@ -79,6 +79,10 @@ module Spree
           Spree::Core::MailSettings.init
           Mail.register_interceptor(Spree::Core::MailInterceptor)
         end
+      end
+
+      def self.precompile_assets!(app)
+        app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/orders/edit_form.js', 'admin/address_states.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
       end
     end
   end
