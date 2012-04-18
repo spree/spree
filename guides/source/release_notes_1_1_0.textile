@@ -55,6 +55,14 @@ As a part of this, the +spree/spree_api+ assets are no longer available, and so 
 
 h3. Minor changes
 
+h4. New option for Heroku deploys
+
+When deploying to Heroku, you may have encountered "an issue":https://github.com/spree/spree/issues/1159 where, by setting +config.assets.initialize_on_precompile = false+ in your +config/application.rb+, the Spree assets were no longer being compiled. This has now been "fixed". Underneath the +config.assets.initialize_on_precompile+ line, you will need to put this additional line to tell the asset pipeline to include all of Spree's assets:
+
+<ruby>
+Spree::Core::Engine.add_assets_to_precompile_list!(self)
+</ruby>
+
 h4. Stronger mass assignment protection
 
 As per the "Rails 3.2.3 release notes":https://groups.google.com/forum/?fromgroups#!topic/rubyonrails-core/X-zNKaPOVJw , there is a stronger enforcement of attribute protection within Rails. This *may* effect your Spree application, and if it does we would advise "filing an issue":https://github.com/spree/spree/issues so that it can be promptly fixed. While the tests for Spree itself are extensive, there may still be edge cases where your application goes that we do not have covered.
