@@ -7,7 +7,10 @@ module Spree
     end
 
     def compute(object=nil)
-      self.preferred_amount * object.line_items.length
+      return 0 if object.nil?
+      self.preferred_amount * object.line_items.reduce(0) do |sum, value|
+        sum + value.quantity
+      end
     end
   end
 end
