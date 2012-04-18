@@ -11,7 +11,7 @@ module Spree
     end
 
     let(:product) { Factory(:product) }
-    let(:attributes) { [:quantity, :price, :variant] }
+    let(:attributes) { [:id, :quantity, :price, :variant] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 
     before do

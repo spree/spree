@@ -3,9 +3,10 @@ $(document).ready(function() {
     $('input[type=checkbox]:not(:checked)').attr('disabled', true);
   }
 
-  $('.categories input[type=checkbox]').change(function(){
+  categoryCheckboxes = '.categories input[type=checkbox]';
+  $(categoryCheckboxes).change(function(){
     if($(this).is(':checked')) {
-      $('input[type=checkbox]').attr('disabled', true);
+      $(categoryCheckboxes + ':not(:checked)').attr('disabled', true);
       $(this).removeAttr('disabled');
     } else {
       $('input[type=checkbox]').removeAttr('disabled');

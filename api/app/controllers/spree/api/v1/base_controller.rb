@@ -14,6 +14,15 @@ module Spree
 
         helper Spree::Api::ApiHelpers
 
+        def map_nested_attributes_keys(klass, attributes)
+          nested_keys = klass.nested_attributes_options.keys
+          attributes.inject({}) do |h, (k,v)|
+            key = nested_keys.include?(k.to_sym) ? "#{k}_attributes" : k
+            h[key] = v
+            h
+          end
+        end
+
         private
 
         def check_for_api_key
@@ -39,7 +48,8 @@ module Spree
         end
 
         def invalid_resource!(resource)
-          render "spree/api/v1/errors/invalid_resource", :resource => resource, :status => 422
+          @resource = resource
+          render "spree/api/v1/errors/invalid_resource", :status => 422
         end
 
         def api_key

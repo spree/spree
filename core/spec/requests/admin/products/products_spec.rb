@@ -7,17 +7,32 @@ describe "Products" do
     end
 
     context "listing products" do
-      it "should list existing products with correct sorting" do
-        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :count_on_hand => '0')
-        Factory(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13', :count_on_hand => '5')
+      context "sorting" do
+        before do
+          Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :count_on_hand => '0', :price => 10)
+          Factory(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13', :count_on_hand => '5', :price => 5)
+        end
 
-        click_link "Products"
-        within('table.index tr:nth-child(2)') { page.should have_content("apache baseball cap") }
-        within('table.index tr:nth-child(3)') { page.should have_content("zomg shirt") }
+        it "should list existing products with correct sorting by name" do
+          click_link "Products"
+          within('table.index tr:nth-child(2)') { page.should have_content("apache baseball cap") }
+          within('table.index tr:nth-child(3)') { page.should have_content("zomg shirt") }
 
-        click_link "admin_products_listing_name_title"
-        within('table.index tr:nth-child(2)') { page.should have_content("zomg shirt") }
-        within('table.index tr:nth-child(3)') { page.should have_content("apache baseball cap") }
+          click_link "admin_products_listing_name_title"
+          within('table.index tr:nth-child(2)') { page.should have_content("zomg shirt") }
+          within('table.index tr:nth-child(3)') { page.should have_content("apache baseball cap") }
+        end
+
+        it "should list existing products with correct sorting by price" do
+          click_link "Products"
+
+          within('table.index tr:nth-child(2)') { page.should have_content("apache baseball cap") }
+          within('table.index tr:nth-child(3)') { page.should have_content("zomg shirt") }
+
+          click_link "admin_products_listing_price_title"
+          within('table.index tr:nth-child(2)') { page.should have_content("zomg shirt") }
+          within('table.index tr:nth-child(3)') { page.should have_content("apache baseball cap") }
+        end
       end
     end
 

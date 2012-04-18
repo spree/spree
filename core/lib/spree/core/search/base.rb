@@ -11,7 +11,7 @@ module Spree
 
         def retrieve_products
           @products_scope = get_base_scope
-          curr_page = keywords ? 1 : page
+          curr_page = page || 1
 
           @products = @products_scope.includes([:master]).page(curr_page).per(per_page)
         end
