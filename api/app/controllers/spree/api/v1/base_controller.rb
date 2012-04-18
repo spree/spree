@@ -17,7 +17,7 @@ module Spree
         def map_nested_attributes_keys(klass, attributes)
           nested_keys = klass.nested_attributes_options.keys
           attributes.inject({}) do |h, (k,v)|
-            key = nested_keys.include?(k) ? "#{k}_attributes".to_sym : k
+            key = nested_keys.include?(k.to_sym) ? "#{k}_attributes" : k
             h[key] = v
             h
           end
