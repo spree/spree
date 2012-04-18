@@ -13,7 +13,7 @@ module Spree
     end
 
     def show
-      @product = Product.find_by_permalink!(params[:id])
+      @product = Product.active.find_by_permalink!(params[:id])
       return unless @product
 
       @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
