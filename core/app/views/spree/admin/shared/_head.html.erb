@@ -2,7 +2,7 @@
 <%= csrf_meta_tags %>
 <title><%= "Spree #{t('administration')}: " %>
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
-
+<%= javascript_include_tag "jquery", "jquery_ujs" %>
 <%= javascript_tag do %>
   ajax_urls = <%== {
     :product_search_json       => spree.admin_products_url(:format => 'json'),
