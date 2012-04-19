@@ -241,7 +241,8 @@ describe Spree::Product do
       before do
         Spree::Config.set :track_inventory_levels => true
         product.master.stub :on_hand => 0
-        product.stub :variants => [stub_model(Spree::Variant, :on_hand => 100)]
+        product.variants.build(:on_hand => 100)
+        product.stub :has_variants? => true
       end
       specify { product.has_stock?.should be_true }
     end
