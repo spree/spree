@@ -19,6 +19,9 @@ describe Spree::Payment do
 
   let(:card) do
     mock_model(Spree::Creditcard, :number => "4111111111111111",
+                                  :month => 1.month.from_now.month,
+                                  :year => 1.month.from_now.year,
+                                  :verification_value => "123",
                                   :has_payment_profile? => true)
   end
 
