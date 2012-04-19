@@ -139,7 +139,7 @@ describe Spree::Payment do
       context "when gateway does not match the environment" do
         it "should raise an exception" do
           gateway.stub :environment => "foo"
-          lambda { payment.purchase!  }.should raise_error(Spree::Core::GatewayError)
+          lambda { payment.purchase! }.should raise_error(Spree::Core::GatewayError)
         end
       end
 
@@ -261,7 +261,7 @@ describe Spree::Payment do
       context "if unsucesful" do
         it "should not void the payment" do
           gateway.stub :void => failed_response
-          payment.should_not_receive(:void)
+          payment.should_not_receive(:void!)
           lambda { payment.void_transaction! }.should raise_error(Spree::Core::GatewayError)
         end
       end
