@@ -1,13 +1,13 @@
 SUMMARY
 -------
 
-Spree is a complete open source commerce solution for Ruby on Rails.  It was originally developed by Sean Schofield
-and is now maintained by a dedicated [core team](http://spreecommerce.com/core-team).  You can find out more about
+Spree is a complete open source e-commerce solution built with Ruby on Rails.  It was originally developed by Sean Schofield
+and is now maintained by a dedicated [core team](http://spreecommerce.com/core-team).  You can find out more
 by visiting the [Spree e-commerce project page](http://spreecommerce.com).
 
 Spree actually consists of several different gems, each of which are maintained in a single repository and documented
 in a single set of [online documentation](http://spreecommerce.com/documentation).  By requiring the Spree gem you
-automatically require all of the necessary dependency gems.  Those gems are as follows:
+automatically require all of the necessary gem dependencies which are:
 
 * spree_api
 * spree_auth
@@ -27,15 +27,14 @@ Installation
 ------------
 
 The fastest way to get started is by using the spree command line tool
-available in the spree gem. It will add Spree to an existing Rails
-application.
+available in the spree gem which will add Spree to an existing Rails application.
 
     $ gem install rails -v 3.2.3
     $ gem install spree
     $ rails new my_store
     $ spree install my_store
 
-This will add the Spree gem, create initializers, copy migrations and
+This will add the Spree gem to your Gemfile, create initializers, copy migrations and
 optionally generate sample products and orders.
 
 If you get an "Unable to resolve dependencies" error when installing the Spree gem then you can try installing just the spree_cmd gem which should avoid any circular dependency issues.
@@ -52,7 +51,9 @@ Using the Gem
 You can manually add Spree to your Rails 3.x application. Add Spree to
 your Gemfile.
 
-    gem 'spree', '1.1.0'
+```ruby
+gem 'spree', '1.1.0'
+```
 
 Update your bundle
 
@@ -96,7 +97,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 1. Clone the Git repo
 
-        git clone git://github.com/spree/spree.git spree
+        git clone git://github.com/spree/spree.git
         cd spree
 
 2. Install the gem dependencies
@@ -166,4 +167,4 @@ If you want to run a particular line of spec
 Contributing
 ------------
 
-Spree is an open source project.  We encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.
+Spree is an open source project and we encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.
