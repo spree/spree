@@ -116,11 +116,11 @@ describe Spree::Payment do
       context "if unsucessful" do
         it "should mark payment as failed" do
           gateway.stub(:authorize).and_return(failed_response)
-          payment.should_receive(:failure)
           payment.should_not_receive(:pend)
           lambda {
             payment.authorize!
           }.should raise_error(Spree::Core::GatewayError)
+          payment.state.should == 'failed'
         end
       end
     end
@@ -165,9 +165,9 @@ describe Spree::Payment do
       context "if unsucessfull" do
         it "should make payment failed" do
           gateway.stub(:purchase).and_return(failed_response)
-          payment.should_receive(:failure)
           payment.should_not_receive(:pend)
           lambda { payment.purchase! }.should raise_error(Spree::Core::GatewayError)
+          payment.state.should == 'failed'
         end
       end
     end
@@ -207,9 +207,9 @@ describe Spree::Payment do
         context "if unsucessful" do
           it "should not make payment complete" do
             gateway.stub :capture => failed_response
-            payment.should_receive(:failure)
             payment.should_not_receive(:complete)
             lambda { payment.capture! }.should raise_error(Spree::Core::GatewayError)
+            payment.state.should == 'failed'
           end
         end
       end
