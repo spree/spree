@@ -16,4 +16,13 @@ describe "Tax Rates" do
       page.should have_content("N/A")
     end
   end
+
+  # Regression test for #1422
+  it "can create a new tax rate" do
+    click_link "Tax Rates"
+    click_link "New Tax Rate"
+    fill_in "Rate", :with => "0.05"
+    click_button "Create"
+    page.should have_content("Tax Rate has been successfully created!")
+  end
 end
