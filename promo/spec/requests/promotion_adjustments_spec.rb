@@ -264,6 +264,21 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 76.00
     end
 
+    # Regression test for #1416
+    it "should allow an admin to create an automatic promo requiring a specific product to be bought" do
+      fill_in "Name", :with => "Bundle"
+      select "Add to cart", :from => "Event"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select "Product(s)", :from => "Add rule of type"
+      within('#rule_fields') do
+        click_button "Add"
+        click_button "Update"
+      end
+      page.should_not have_content("Can't mass-assign protected attributes: product_ids_string, preferred_match_policy")
+    end
+
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Spend over $50 and save $5"
       select "Order contents changed", :from => "Event"
