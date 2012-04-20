@@ -1,1 +1,1 @@
-attributes *variant_attributes, :permalink
+attributes *variant_attributes
