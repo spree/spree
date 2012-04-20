@@ -45,6 +45,11 @@ module Spree
           end
         end
 
+        def cancel
+          order.cancel!
+          render :show
+        end
+
         private
 
         def map_nested_attributes

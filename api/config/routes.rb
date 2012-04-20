@@ -18,6 +18,7 @@ Spree::Core::Engine.routes.prepend do
         member do
           put :address
           put :delivery
+          put :cancel
         end
 
         resources :line_items

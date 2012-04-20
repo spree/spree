@@ -129,8 +129,6 @@ module Spree
           end
         end
       end
-
-
     end
 
     context "as an admin" do
@@ -142,6 +140,20 @@ module Spree
         json_response["count"].should == 1
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
+      end
+
+      context "can cancel an order" do
+        before do
+          order.completed_at = Time.now
+          order.state = 'complete'
+          order.shipment_state = 'ready'
+          order.save!
+        end
+
+        specify do
+          api_put :cancel, :id => order.to_param
+          json_response["order"]["state"].should == "canceled"
+        end
       end
     end
   end
