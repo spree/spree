@@ -1,4 +1,3 @@
-puts "Loading Spree Core Engine"
 module Spree
   module Core
     class Engine < ::Rails::Engine
