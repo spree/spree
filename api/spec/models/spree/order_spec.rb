@@ -7,7 +7,7 @@ module Spree
     it 'can build an order from API parameters' do
 
       Spree::Variant.should_receive(:find).and_return(stub_model(Variant, :id => 1))
-      order = Order.build_from_api(user, { :line_items => [{ :variant_id => 1, :quantity => 5 }]})
+      order = Order.build_from_api(user, { :line_items_attributes => [{ :variant_id => 1, :quantity => 5 }]})
 
       order.user.should == user
       line_item = order.line_items.first
