@@ -20,7 +20,6 @@ module Spree
         end
 
         def update
-          Rails.logger.debug(@nested_params.inspect)
           authorize! :update, Order
           if order.update_attributes(@nested_params)
             render :show
