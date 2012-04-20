@@ -1,18 +1,18 @@
 <table data-hook="tax_rates">
   <tr data-hook="zone">
-    <td><%= t(:zone) %>:</td>
+    <td><%= f.label :zone, t(:zone) %></td>
     <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
   </tr>
   <tr data-hook="category">
-    <td><%= t(:tax_category) %>:</td>
+    <td><%= f.label :tax_category_id, t(:tax_category) %></td>
     <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
   </tr>
   <tr data-hook="included">
-    <td><%= t(:included_in_price) %></td>
+    <td><%= f.label :included_in_price, t(:included_in_price) %></td>
     <td><%= f.check_box :included_in_price %></td>
   </tr>
-  <tr="rate">
-    <td><%= t(:rate) %>:</td>
+  <tr data-hook="rate">
+    <td><%= f.label :amount, t(:rate) %></td>
     <td><%= f.text_field :amount %></td>
   </tr>
 </table>
