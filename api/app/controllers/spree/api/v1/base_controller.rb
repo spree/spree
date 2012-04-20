@@ -20,7 +20,7 @@ module Spree
             key = nested_keys.include?(k.to_sym) ? "#{k}_attributes" : k
             h[key] = v
             h
-          end
+          end.with_indifferent_access
         end
 
         private
