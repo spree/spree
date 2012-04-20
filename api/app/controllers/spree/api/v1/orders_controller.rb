@@ -2,6 +2,8 @@ module Spree
   module Api
     module V1
       class OrdersController < Spree::Api::V1::BaseController
+        before_filter :map_nested_attributes, :only => [:create, :update]
+
         def index
           # should probably look at turning this into a CanCan step
           raise CanCan::AccessDenied unless current_api_user.has_role?("admin")
@@ -13,13 +15,13 @@ module Spree
         end
 
         def create
-          @order = Order.build_from_api(current_api_user, params[:order])
+          @order = Order.build_from_api(current_api_user, @nested_params)
           next!
         end
 
         def update
           authorize! :update, Order
-          if order.update_attributes(params[:order])
+          if order.update_attributes(@nested_params)
             render :show
           else
             invalid_resource!(order)
@@ -44,6 +46,10 @@ module Spree
         end
 
         private
+
+        def map_nested_attributes
+          @nested_params = map_nested_attributes_keys Order, params[:order]
+        end
 
         def order
           @order ||= Order.find_by_number!(params[:id])

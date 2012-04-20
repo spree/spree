@@ -17,7 +17,7 @@ module Spree
       end
 
       def variant_attributes
-        [:id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price]
+        [:id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink]
       end
 
       def image_attributes
@@ -46,6 +46,10 @@ module Spree
 
       def payment_method_attributes
         [:id, :name, :description]
+      end
+
+      def shipment_attributes
+        [:id, :tracking, :number, :cost, :shipped_at, :state]
       end
     end
   end

@@ -13,7 +13,8 @@ module Spree
     end
     let!(:attributes) { [:id, :name, :count_on_hand,
                          :sku, :price, :weight, :height,
-                         :width, :depth, :is_master, :cost_price] }
+                         :width, :depth, :is_master, :cost_price,
+                         :permalink] }
 
     before do
       stub_authentication!
