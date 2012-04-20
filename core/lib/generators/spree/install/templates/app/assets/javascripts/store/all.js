@@ -4,6 +4,8 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
+//= require jquery
+//= require jquery_ujs
 <% if options[:lib_name] == 'spree' %>
 //= require store/spree_core
 //= require store/spree_auth
