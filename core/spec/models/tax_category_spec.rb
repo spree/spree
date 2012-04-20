@@ -22,5 +22,27 @@ describe Spree::TaxCategory do
       end
     end
   end
+  context 'default tax category' do
+    let(:tax_category) { Factory(:tax_category) }
+    let(:new_tax_category) { Factory(:tax_category) }
 
+    before do
+      tax_category.update_attribute(:is_default, true)
+    end
+
+    it "should undefault the previous default tax category" do
+      new_tax_category.update_attribute(:is_default, true)
+      new_tax_category.is_default.should be_true
+
+      tax_category.reload
+      tax_category.is_default.should be_false
+    end
+
+    it "should undefault the previous default tax category except when updating the existing default tax category" do
+      tax_category.update_attribute(:description, "Updated description")
+
+      tax_category.reload
+      tax_category.is_default.should be_true
+    end
+  end
 end
