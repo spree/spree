@@ -18,12 +18,18 @@ describe Spree::Api::V1::ShipmentsController do
       json_response["shipment"]["state"].should == "ready"
     end
 
-    it "can transition a shipment from ready to ship" do
-      shipment.ready!
-      shipment.save!
-      api_put :ship, :order_id => shipment.order.to_param, :id => shipment.to_param, :shipment => { :tracking => "123123" }
-      json_response.should have_attributes(attributes)
-      json_response["shipment"]["state"].should == "ship"
+    context "can transition a shipment from ready to ship" do
+      before do
+        shipment.order.update_attribute(:payment_state, 'paid')
+        shipment.update!(shipment.order)
+      end
+
+      it "can transition a shipment from ready to ship" do
+        shipment.reload
+        api_put :ship, :order_id => shipment.order.to_param, :id => shipment.to_param, :shipment => { :tracking => "123123" }
+        json_response.should have_attributes(attributes)
+        json_response["shipment"]["state"].should == "shipped"
+      end
     end
   end
 end
