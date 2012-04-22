@@ -10,6 +10,7 @@
 
 <% if products.any? %>
 <ul id="products" class="inline product-listing" data-hook>
+  <% reset_cycle('default') %>
   <% products.each do |product| %>
     <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
       <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
