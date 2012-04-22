@@ -106,7 +106,7 @@ module Spree
 
     def flash_messages
       flash.each do |msg_type, text|
-        concat(content_tag :div, text, :class => "flash #{msg_type}")
+        concat(content_tag :div, text, :class => "flash #{msg_type}") unless msg_type == :commerce_tracking
       end
       nil
     end
