@@ -4,7 +4,7 @@ module Spree
     preference :additional_item, :decimal, :default => 0.0
     preference :max_items,       :integer, :default => 0
 
-    attr_accessible :preferred_first_item, :preferred_additional_tiem, :preferred_max_items
+    attr_accessible :preferred_first_item, :preferred_additional_item, :preferred_max_items
 
     def self.description
       I18n.t(:flexible_rate)
