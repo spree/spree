@@ -138,7 +138,7 @@ module Spree
         scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
                                        scoped(:joins      => {:product => :taxons},
                                               :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
-        brands = scope.map {|p| p.value}
+        brands = scope.map {|p| p.value}.uniq
 
         { :name   => "Applicable Brands",
           :scope  => :selective_brand_any,
