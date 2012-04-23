@@ -28,5 +28,9 @@ describe Spree::Calculator::FlexiRate do
       calculator.stub :preferred_first_item => 5.0, :preferred_additional_item => 1.0, :preferred_max_items => 3
       calculator.compute(order).round(2).should == 26.0
     end
+    
+    it "should allow creation of new object with all the attributes" do
+      Spree::Calculator::FlexiRate.new(:preferred_first_item => 1, :preferred_additional_item => 1, :preferred_max_items => 1)
+    end
   end
 end
