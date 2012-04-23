@@ -129,21 +129,19 @@ module Spree
     #   The brand-finding code can be simplified if a few more named scopes were added to
     #   the product properties model.
     if Spree::Property.table_exists? && @@brand_property
-      Spree::Product.scope :selective_brand_any, lambda {|opts| Spree::Product.brand_any(opts) }
+      Spree::Product.scope :selective_brand_any, lambda {|*opts| Spree::Product.brand_any(*opts) }
 
       def ProductFilters.selective_brand_filter(taxon = nil)
         if taxon.nil?
           taxon = Spree::Taxonomy.first.root
         end
-        all_brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
         scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
                                        scoped(:joins      => {:product => :taxons},
                                               :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
-        brands = scope.map {|p| p.value}
+        brands = scope.map {|p| p.value}.uniq
 
         { :name   => "Applicable Brands",
           :scope  => :selective_brand_any,
-          :conds  => Hash[*all_brands.map {|m| [m, "p_colour.value like '%#{m}%'"]}.flatten],
           :labels => brands.sort.map {|k| [k,k]}
         }
       end
