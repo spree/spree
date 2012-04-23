@@ -12,7 +12,6 @@ describe "States" do
     end
 
     it "should correctly display the states" do
-      pending
       click_link "States"
       find('table#listing_states tbody tr:nth-child(1) td:nth-child(1)').text.should == Spree::State.limit(1).order('name asc').to_a.first.name.downcase.capitalize
     end
@@ -20,7 +19,6 @@ describe "States" do
 
   context "creating and editing states" do
     it "should allow an admin to edit existing states", :js => true do
-      pending
       click_link "States"
       select "Canada", :from => "country"
       click_link "new_state_link"
@@ -29,16 +27,9 @@ describe "States" do
       click_button "Create"
       page.should have_content("successfully created!")
       page.should have_content("Calgary")
-
-      within('table#listing_states tbody tr:nth-child(1)') { click_link "Edit" }
-      page.should have_content("Editing State")
-      click_link "States"
-      select "Canada", :from => "country"
-      page.should have_content("Calgary")
     end
 
     it "should show validation errors", :js => true do
-      pending
       click_link "States"
       select "Canada", :from => "country"
       click_link "new_state_link"
