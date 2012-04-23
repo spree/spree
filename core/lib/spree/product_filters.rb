@@ -135,7 +135,6 @@ module Spree
         if taxon.nil?
           taxon = Spree::Taxonomy.first.root
         end
-        all_brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).uniq
         scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
                                        scoped(:joins      => {:product => :taxons},
                                               :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
@@ -143,7 +142,6 @@ module Spree
 
         { :name   => "Applicable Brands",
           :scope  => :selective_brand_any,
-          :conds  => Hash[*all_brands.map {|m| [m, "p_colour.value like '%#{m}%'"]}.flatten],
           :labels => brands.sort.map {|k| [k,k]}
         }
       end
