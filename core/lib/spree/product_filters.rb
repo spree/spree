@@ -129,7 +129,7 @@ module Spree
     #   The brand-finding code can be simplified if a few more named scopes were added to
     #   the product properties model.
     if Spree::Property.table_exists? && @@brand_property
-      Spree::Product.scope :selective_brand_any, lambda {|opts| Spree::Product.brand_any(opts) }
+      Spree::Product.scope :selective_brand_any, lambda {|*opts| Spree::Product.brand_any(*opts) }
 
       def ProductFilters.selective_brand_filter(taxon = nil)
         if taxon.nil?
