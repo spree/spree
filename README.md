@@ -1,5 +1,9 @@
+**THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
+SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
+
 SUMMARY
 -------
+
 
 Spree is a complete open source e-commerce solution built with Ruby on Rails.  It was originally developed by Sean Schofield
 and is now maintained by a dedicated [core team](http://spreecommerce.com/core-team).  You can find out more
