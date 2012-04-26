@@ -1,3 +1,13 @@
+<div id="new_state" data-hook></div>
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
+    <li id="new_state_link">
+      <%= button_link_to t(:new_state), new_admin_country_state_url(@country), {:remote => true, :icon => 'add', :id => 'new_state_link'} %>
+    </li>
+  </ul>
+  <br class="clear" />
+</div>
+
 <table class="index" id='listing_states' data-hook>
   <thead>
     <tr data-hook="states_header">
@@ -7,10 +17,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @states.each do |state|
-         @edit_url = admin_country_state_path(@country, state)
-         @delete_url = admin_country_state_path(@country, state)
-    %>
+    <% @states.each do |state| %>
       <tr id="<%= spree_dom_id state %>" data-hook="states_row">
         <td><%= state.name %></td>
         <td><%= state.abbr %></td>
@@ -26,7 +33,3 @@
     <% end %>
   </tbody>
 </table>
-<div id="new_state" data-hook></div>
-<p data-hook="buttons">
-  <%= button_link_to t(:new_state), new_admin_country_state_url(@country), {:remote => true, :icon => 'add', :id => 'new_state_link'} %>
-</p>
