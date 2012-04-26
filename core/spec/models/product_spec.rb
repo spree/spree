@@ -179,6 +179,8 @@ describe Spree::Product do
     end
 
     it "should not create duplicate properties when set_property is called" do
+      product = FactoryGirl.create :product
+      
       lambda {
         product.set_property('the_prop', 'value2')
         product.save
