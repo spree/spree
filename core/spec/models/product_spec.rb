@@ -168,6 +168,34 @@ describe Spree::Product do
 
   end
 
+  context "properties" do
+    it "should properly assign properties" do
+      product = FactoryGirl.create :product
+      product.set_property('the_prop', 'value1')
+      product.property('the_prop').should == 'value1'
+
+      product.set_property('the_prop', 'value2')
+      product.property('the_prop').should == 'value2'      
+    end
+
+    it "should not create duplicate properties when set_property is called" do
+      product = FactoryGirl.create :product
+      
+      lambda {
+        product.set_property('the_prop', 'value2')
+        product.save
+        product.reload
+      }.should_not change(product.properties, :length)
+
+      lambda {
+        product.set_property('the_prop_new', 'value')
+        product.save
+        product.reload
+        product.property('the_prop_new').should == 'value'
+      }.should change { product.properties.length }.by(1)
+    end
+  end
+
   context '#create' do
     before do
       @prototype = Factory(:prototype)
