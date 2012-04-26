@@ -199,6 +199,22 @@ module Spree
       end
     end
 
+    def property(property_name)
+      return nil unless prop = properties.find_by_name(property_name)
+      product_properties.find_by_property_id(prop.id).try(:value)
+    end
+
+    def set_property(property_name, property_value)
+      prop = Spree::Property.find_or_initialize_by_name(property_name) do |p|
+        p.presentation = property_name
+        p.save!
+      end
+
+      prod_prop = Spree::ProductProperty.find_or_initialize_by_product_id_and_property_id(self.id, prop.id)
+      prod_prop.value = property_value
+      prod_prop.save!
+    end
+
     private
 
       # Builds variants from a hash of option types & values
