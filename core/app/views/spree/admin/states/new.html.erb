@@ -2,6 +2,7 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @state } %>
 
+<h3><%= t(:new_state) %></h3>
 <%= form_for [:admin, @country, @state] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
