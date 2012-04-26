@@ -314,8 +314,8 @@ describe Spree::Product do
     let(:product) { Factory(:product) }
 
     before do
-      Image.create!(:viewable => product, :alt => "position 2", :position => 2)
-      Image.create!(:viewable => product, :alt => "position 1", :position => 1)
+      Spree::Image.create!(:viewable => product, :alt => "position 2", :position => 2)
+      Image::Image.create!(:viewable => product, :alt => "position 1", :position => 1)
     end
 
     it "should be sorted by position" do
