@@ -23,7 +23,7 @@
 <% @collection.each do |product| %>
   <tr <%= "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows">
     <td><%= product.sku rescue '' %></td>
-    <td><%= product.name rescue '' %></td>
+    <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
     <td><%= number_to_currency product.price rescue '' %></td>
     <td class="actions" data-hook="admin_products_index_row_actions">
       <%= link_to_edit product, :class => 'edit' unless product.deleted? %>
