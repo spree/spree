@@ -59,7 +59,7 @@ module Spree
     accepts_nested_attributes_for :variants, :allow_destroy => true
 
     def variant_images
-      Image.find_by_sql("SELECT #{Asset.quoted_table_name}.* FROM #{Asset.quoted_table_name} LEFT JOIN #{Variant.quoted_table_name} ON (#{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id) WHERE (#{Variant.quoted_table_name}.product_id = #{self.id})")
+      Image.find_by_sql("SELECT #{Asset.quoted_table_name}.* FROM #{Asset.quoted_table_name} LEFT JOIN #{Variant.quoted_table_name} ON (#{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id) WHERE (#{Variant.quoted_table_name}.product_id = #{self.id}) ORDER BY #{Asset.quoted_table_name}.position")
     end
 
     alias_method :images, :variant_images
@@ -159,7 +159,7 @@ module Spree
 
       # don't dup the actual variants, just the characterising types
       p.option_types = option_types if has_variants?
-        
+
       # allow site to do some customization
       p.send(:duplicate_extra, self) if p.respond_to?(:duplicate_extra)
       p.save!

@@ -265,4 +265,17 @@ describe Spree::Product do
 
   end
 
+  context "#images" do
+    let(:product) { Factory(:product) }
+
+    before do
+      Factory(:image, :viewable => product, :alt => "position 2", :position => 2)
+      Factory(:image, :viewable => product, :alt => "position 1", :position => 1)
+    end
+
+    it "should be sorted by position" do
+      product.images.map(&:alt).should eq(["position 1", "position 2"])
+    end
+  end
+
 end
