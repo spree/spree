@@ -7,6 +7,7 @@ module Spree
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
+      before_filter :remove_negative_on_hand_from_params, :only => :update
 
       def show
         redirect_to( :action => :edit )
@@ -120,6 +121,13 @@ module Spree
           return unless params[:clear_product_properties]
           params[:product] ||= {}
         end
+
+        def remove_negative_on_hand_from_params
+          if params[:product] && params[:product][:on_hand] && params[:product][:on_hand].to_i < 0
+            params[:product].delete :on_hand
+          end
+        end
+
     end
   end
 end

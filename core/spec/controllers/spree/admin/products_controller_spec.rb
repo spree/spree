@@ -112,4 +112,18 @@ describe Spree::Admin::ProductsController do
       end
     end
   end
+
+  # regression test for #1447
+  context "update" do
+    let(:product) { Factory(:product, :on_hand => 5, :name => "old name") }
+
+    it "should remove negative on hand values from params" do
+      put :update, :id => product, :product => { :on_hand => -5, :name => "have changed" }, :use_route => :spree
+      product.reload
+
+      product.name.should    eq("have changed")
+      product.on_hand.should eq(5)
+    end
+  end
+
 end
