@@ -1,26 +1,28 @@
 require 'spec_helper'
 
 describe "States" do
+  let!(:country) { Factory.create(:country) }
+
   before(:each) do
+    Spree::Config[:default_country_id] = country.id
+
     visit spree.admin_path
     click_link "Configuration"
   end
 
   context "admin visiting states listing" do
-    before(:each) do
-      Factory(:zone)
-    end
+    let!(:state) { Factory.create(:state, :country => country) }
 
     it "should correctly display the states" do
       click_link "States"
-      find('table#listing_states tbody tr:nth-child(1) td:nth-child(1)').text.should == Spree::State.limit(1).order('name asc').to_a.first.name.downcase.capitalize
+      page.should have_content(state.name)
     end
   end
 
   context "creating and editing states" do
     it "should allow an admin to edit existing states", :js => true do
       click_link "States"
-      select "Canada", :from => "country"
+      select country.name, :from => "country"
       click_link "new_state_link"
       fill_in "state_name", :with => "Calgary"
       fill_in "Abbreviation", :with => "CL"
@@ -31,7 +33,7 @@ describe "States" do
 
     it "should show validation errors", :js => true do
       click_link "States"
-      select "Canada", :from => "country"
+      select country.name, :from => "country"
       click_link "new_state_link"
       fill_in "state_name", :with => ""
       fill_in "Abbreviation", :with => ""
