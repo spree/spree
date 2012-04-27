@@ -40,13 +40,6 @@ describe Spree::Creditcard do
       payment = mock_model(Spree::Payment, :state => 'pending', :created_at => Time.now)
       creditcard.can_capture?(payment).should be_true
     end
-
-    (PAYMENT_STATES - ['pending']).each do |state|
-      it "should be false if payment state is #{state}" do
-        payment = mock_model(Spree::Payment, :state => state, :created_at => Time.now)
-        creditcard.can_capture?(payment).should be_false
-      end
-    end
   end
 
   context "when transaction is more than 12 hours old" do

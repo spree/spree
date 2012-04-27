@@ -36,7 +36,7 @@ module Spree
       end
       # With card payments this represents authorizing the payment
       event :pend do
-        transition :from => 'processing', :to => 'pending'
+        transition :from => ['checkout', 'processing'], :to => 'pending'
       end
       # With card payments this represents completing a purchase or capture transaction
       event :complete do
