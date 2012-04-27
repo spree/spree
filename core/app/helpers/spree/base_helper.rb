@@ -142,7 +142,7 @@ module Spree
     def available_countries
       countries = Zone.find_by_name(Spree::Config[:checkout_zone]).try(:country_list) || Country.all
       countries.collect do |c| 
-        c.name = I18n.t(c.name, :scope => 'countries', :default => c.name)
+        c.name = I18n.t(c.iso, :scope => 'countries', :default => c.name)
         c 
       end.sort{ |a,b| a.name <=> b.name }
     end
