@@ -10,6 +10,8 @@ end
 
 module Spree
   class TaxRate < ActiveRecord::Base
+    include ActionView::Helpers::NumberHelper
+    
     belongs_to :zone
     belongs_to :tax_category
 
@@ -44,8 +46,29 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
+    # 
+    # The label is translatable.
+    # 
+    # === Example:
+    # 
+    #   de:
+    #     spree:
+    #       tax_adjustment_label: "%{name} (%{amount})"
+    # 
+    # Would be translated to: U-St. (19%)
+    # 
+    # The +amount+ interpolation is localized through +number_to_percentage+ helper.
+    # 
+    # So you can adjust the output with your +number.percentage+ localization inside your locale file.
+    # 
     def adjust(order)
-      label = "#{tax_category.name} #{amount * 100}%"
+      label = I18n.t(
+                :tax_adjustment_label,
+                :scope => 'spree',
+              ) % {
+                :name => tax_category.name,
+                :amount => number_to_percentage(amount * 100)
+              }
       if included_in_price
         if Zone.default_tax.contains? order.tax_zone
           order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
