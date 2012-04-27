@@ -297,8 +297,9 @@ describe Spree::Product do
     let(:product) { Factory(:product) }
 
     before do
-      Spree::Image.create!(:viewable => product, :alt => "position 2", :position => 2)
-      Spree::Image.create!(:viewable => product, :alt => "position 1", :position => 1)
+      image = File.open(File.expand_path('../../../app/assets/images/noimage/product.png', __FILE__))
+      Spree::Image.create!(:viewable_id => product.id, :alt => "position 2", :attachment => image, :position => 2)
+      Spree::Image.create!(:viewable_id => product.id, :alt => "position 1", :attachment => image, :position => 1)
     end
 
     it "should be sorted by position" do
