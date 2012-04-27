@@ -5,6 +5,8 @@ module Spree
 
     scope :production, where(:environment => 'production')
 
+    attr_accessible :name, :description, :environment, :display_on, :active
+
     def self.providers
       Rails.application.config.spree.payment_methods
     end
