@@ -102,3 +102,18 @@
     <%= render :partial => 'spree/admin/shared/additional_field', :locals => { :field => field, :f => f } %>
   <% end %>
 </div>
+
+<% content_for :head do %>
+  <%= javascript_tag do -%>
+  $(document).ready(
+    function() {
+	$('#product_on_hand').focus(function() {
+            var oldValue = $(this).val();
+            $(this).data('oldValue', oldValue);
+        });
+	$('#product_on_hand').change(function() {
+            if ($(this).val() < 0) $(this).val($(this).data('oldValue'));
+        });
+    });
+  <% end %>
+<% end %>
