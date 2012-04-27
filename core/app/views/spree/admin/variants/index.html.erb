@@ -10,7 +10,6 @@
     <th><%= t(:on_hand) %></th>
     <th><%= t(:action) %></th>
   </tr>
-  <tbody>
   <% @variants.each do |variant| %>
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
@@ -29,7 +28,6 @@
   <% unless @product.has_variants? %>
     <tr><td colspan="9"><%= t(:none) %></td></tr>
   <% end %>
-  </tbody>
 </table>
 
 <% if @product.empty_option_values? %>

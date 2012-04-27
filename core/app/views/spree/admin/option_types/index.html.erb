@@ -19,7 +19,6 @@
     <th><%= t(:presentation) %></th>
     <th></th>
   </tr>
-  <tbody>
   <% @option_types.each do |option_type| %>
     <tr class="spree_option_type" id="<%= spree_dom_id option_type %>" data-hook="option_row">
       <td><span class="handle"></span> <%= option_type.name %></td>
@@ -31,5 +30,4 @@
       </td>
     </tr>
   <% end %>
-  </tbody>
 </table>
