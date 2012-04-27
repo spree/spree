@@ -100,7 +100,7 @@ describe Spree::Payment do
         end
 
         it "should make payment pending" do
-          payment.should_receive(:pend)
+          payment.should_receive(:pend!)
           payment.authorize!
         end
       end
@@ -149,7 +149,7 @@ describe Spree::Payment do
         end
 
         it "should make payment complete" do
-          payment.should_receive(:complete)
+          payment.should_receive(:complete!)
           payment.purchase!
         end
       end
@@ -203,17 +203,6 @@ describe Spree::Payment do
             payment.should_not_receive(:complete)
             lambda { payment.capture! }.should raise_error(Spree::Core::GatewayError)
           end
-        end
-      end
-
-      context "when payment is not pending" do
-        before do
-          payment.state = 'checkout'
-        end
-
-        it "should not call capture on the gateway" do
-          gateway.should_not_receive(:capture).with(payment, card, anything)
-          payment.capture!
         end
       end
     end
