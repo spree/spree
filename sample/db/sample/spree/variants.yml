@@ -131,3 +131,73 @@ ruby_baseball_jersey_v:
   cost_price: 17.00
   is_master: true
   count_on_hand: 10
+spree_baseball_jersey_v:
+  product: spree_baseball_jersey
+  sku: SPR-00001
+  price: 19.99
+  cost_price: 17.00
+  is_master: true
+  count_on_hand: 10
+spree_stein_v:
+  product: spree_stein
+  sku: SPR-00016
+  price: 16.99
+  cost_price: 15.00
+  is_master: true
+  count_on_hand: 10
+spree_jr_spaghetti_v:
+  product: spree_jr_spaghetti
+  sku: SPR-00013
+  price: 19.99
+  cost_price: 17.00
+  is_master: true
+  count_on_hand: 10
+spree_mug_v:
+  product: spree_mug
+  sku: SPR-00014
+  price: 13.99
+  cost_price: 11.00
+  is_master: true
+  count_on_hand: 10
+spree_ringer_v:
+  product: spree_ringer
+  sku: SPR-00015
+  price: 17.99
+  cost_price: 17.00
+  is_master: true
+  count_on_hand: 10
+spree_tote_v:
+  product: spree_tote
+  sku: SPR-00011
+  price: 15.99
+  cost_price: 13.00
+  is_master: true
+  count_on_hand: 10
+spree_bag_v:
+  product: spree_bag
+  sku: SPR-00012
+  price: 22.99
+  cost_price: 21.00
+  is_master: true
+  count_on_hand: 10
+small-spree-baseball:
+  product: spree_baseball_jersey
+  option_values: s
+  sku: SPR-00002
+  price: 19.99
+  cost_price: 17.00
+  count_on_hand: 10
+med-spree-baseball:
+  product: spree_baseball_jersey
+  option_values: m
+  sku: SPR-00005
+  price: 19.99
+  cost_price: 17.00
+  count_on_hand: 10
+large-spree-baseball:
+  product: spree_baseball_jersey
+  option_values: l
+  sku: SPR-00008
+  price: 19.99
+  cost_price: 17.00
+  count_on_hand: 10
