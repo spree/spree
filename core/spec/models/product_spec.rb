@@ -315,8 +315,8 @@ describe Spree::Product do
 
     before do
       image = File.open(File.expand_path('../../../app/assets/images/noimage/product.png', __FILE__))
-      Spree::Image.create!({:viewable_id => product.id, :alt => "position 2", :attachment => image, :position => 2, :bucket_name => "foo"}, :without_protection => true)
-      Spree::Image.create!({:viewable_id => product.id, :alt => "position 1", :attachment => image, :position => 1, :bucket_name => "foo"}, :without_protection => true)
+      Spree::Image.create!({:viewable_id => product.id, :alt => "position 2", :attachment => image, :position => 2}, :without_protection => true)
+      Spree::Image.create!({:viewable_id => product.id, :alt => "position 1", :attachment => image, :position => 1}, :without_protection => true)
     end
 
     it "should be sorted by position" do
