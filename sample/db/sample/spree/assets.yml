@@ -318,3 +318,123 @@ img_baseball_small_red_back:
   attachment_height: 240
   type: Spree::Image  
   position: 2
+img_spree_bag:
+  id: 1027
+  viewable: spree_bag_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_bag.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 1 
+img_spree_tote:
+  id: 1028
+  viewable: spree_tote_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_tote_front.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 1
+img_tote_back:
+  id: 1029
+  viewable: spree_tote_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_tote_back.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 2
+img_spree_ringer:
+  id: 1030
+  viewable: spree_ringer_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_ringer_t.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 1
+img_spree_ringer_back:
+  id: 1031
+  viewable: spree_ringer_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_ringer_t_back.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 2 
+img_spree_jr_spaghetti:
+  id: 1032
+  viewable: spree_jr_spaghetti_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_spaghetti.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 1
+img_spree_stein:
+  id: 1033
+  viewable: spree_stein_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_stein.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image
+  position: 1
+img_spree_stein_back:
+  id: 1034
+  viewable: spree_stein_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_stein_back.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image
+  position: 2
+img_spree_mug:
+  id: 1035
+  viewable: spree_mug_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_mug.jpeg
+  attachment_width: 360
+  attachment_height: 360
+  type: Spree::Image  
+  position: 1
+img_spree_mug_back:
+  id: 1036
+  viewable: spree_mug_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_mug_back.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 2
+img_spree_baseball:
+  id: 1037
+  viewable: spree_baseball_jersey_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_jersey.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 1
+img_spree_baseball_back:
+  id: 1038
+  viewable: spree_baseball_jersey_v
+  viewable_type: Spree::Variant
+  attachment_content_type: image/jpg
+  attachment_file_name: spree_jersey_back.jpeg
+  attachment_width: 480
+  attachment_height: 480
+  type: Spree::Image  
+  position: 2
