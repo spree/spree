@@ -12,10 +12,12 @@ describe "Option Types" do
       create(:option_type, :name => "tshirt-size", :presentation => "Size")
 
       click_link "Option Types"
-      find('table#listing_option_types tr:nth-child(2) td:nth-child(1)').text.should == " tshirt-color"
-      find('table#listing_option_types tr:nth-child(2) td:nth-child(2)').text.should == "Color"
-      find('table#listing_option_types tr:nth-child(3) td:nth-child(1)').text.should == " tshirt-size"
-      find('table#listing_option_types tr:nth-child(3) td:nth-child(2)').text.should == "Size"
+      within("table#listing_option_types") do
+        page.should have_content("Color")
+        page.should have_content("tshirt-color")
+        page.should have_content("Size")
+        page.should have_content("tshirt-size")
+      end
     end
   end
 
@@ -42,7 +44,7 @@ describe "Option Types" do
       create(:option_type, :name => "tshirt-color", :presentation => "Color")
       create(:option_type, :name => "tshirt-size", :presentation => "Size")
       click_link "Option Types"
-      within('table#listing_option_types tr:nth-child(2)') { click_link "Edit" }
+      within('table#listing_option_types') { click_link "Edit" }
       fill_in "option_type_name", :with => "foo-size 99"
       click_button "Update"
       page.should have_content("successfully updated!")
