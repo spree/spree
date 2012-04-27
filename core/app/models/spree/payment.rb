@@ -40,10 +40,10 @@ module Spree
       end
       # With card payments this represents completing a purchase or capture transaction
       event :complete do
-        transition :from => ['processing', 'pending'], :to => 'completed'
+        transition :from => ['processing', 'pending', 'checkout'], :to => 'completed'
       end
       event :void do
-        transition :from => ['pending', 'completed'], :to => 'void'
+        transition :from => ['pending', 'completed', 'checkout'], :to => 'void'
       end
     end
 

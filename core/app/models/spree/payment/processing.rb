@@ -28,7 +28,6 @@ module Spree
       end
 
       def capture!
-        return unless pending?
         protect_from_connection_error do
           check_environment
 
@@ -117,7 +116,7 @@ module Spree
       if response.success?
         self.response_code = response.authorization
         self.avs_response = response.avs_result['code']
-        self.send(success_state)
+        self.send("#{success_state}!")
       else
         self.send(failure_state)
         gateway_error(response)

@@ -67,5 +67,29 @@ describe "Payments" do
       page.should have_content("Please define some payment methods first.")
     end
 
+    # Regression tests for #1453
+    context "with a check payment" do
+      before do
+        @order.payments.delete_all
+        Factory(:payment, :order => @order,
+                        :state => "checkout",
+                        :amount => @order.outstanding_balance,
+                        :payment_method => Factory(:bogus_payment_method, :environment => 'test'))
+      end
+
+      it "capturing a check payment from a new order" do
+        visit spree.admin_order_payments_path(@order)
+        click_button 'Capture'
+        page.should_not have_content("Cannot perform requested operation")
+        page.should have_content("Payment Updated")
+      end
+
+      it "voids a check payment from a new order" do
+        visit spree.admin_order_payments_path(@order)
+        click_button 'Void'
+        page.should have_content("Payment Updated")
+      end
+    end
+
   end
 end
