@@ -61,7 +61,7 @@ brand_root:
   taxonomy: brand
   permalink: brands
   lft: 13
-  rgt: 20
+  rgt: 22
 ruby:
   name: Ruby
   taxonomy: brand
