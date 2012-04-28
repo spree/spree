@@ -112,6 +112,41 @@ module Spree
       deleted_at
     end
 
+    def set_option_value(opt_name, opt_value)
+      # no option values on master
+      return if self.is_master
+
+      option_type = Spree::OptionType.find_or_initialize_by_name(opt_name) do |o|
+        o.presentation = opt_name
+        o.save!
+      end
+
+      current_value = self.option_values.detect { |o| o.option_type.name == opt_name }
+
+      unless current_value.nil?
+        return if current_value.name == opt_value
+        self.option_values.delete(current_value)
+      else
+        # then we have to check to make sure that the product has the option type
+        unless self.product.option_types.include? option_type
+          self.product.option_types << option_type
+          self.product.save
+        end
+      end
+
+      option_value = Spree::OptionValue.find_or_initialize_by_option_type_id_and_name(option_type.id, opt_value) do |o|
+        o.presentation = opt_value
+        o.save!
+      end
+
+      self.option_values << option_value
+      self.save
+    end
+
+    def option_value(opt_name)
+      self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
+    end
+
     private
       # Ensures a new variant takes the product master price when price is not supplied
       def check_price

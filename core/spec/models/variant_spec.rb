@@ -151,5 +151,38 @@ describe Spree::Variant do
 
     end
 
+    context "product has other variants" do
+      describe "option value accessors" do
+        before {
+          @multi_variant = FactoryGirl.create :variant, :product => variant.product
+          variant.product.reload
+        }
+
+        let(:multi_variant) { @multi_variant }
+
+        it "should set option value" do
+          multi_variant.option_value('media_type').should be_nil
+
+          multi_variant.set_option_value('media_type', 'DVD')
+          multi_variant.option_value('media_type').should == 'DVD'
+
+          multi_variant.set_option_value('media_type', 'CD')
+          multi_variant.option_value('media_type').should == 'CD'
+        end
+
+        it "should not duplicate associated option values when set multiple times" do
+          multi_variant.set_option_value('media_type', 'CD')      
+
+          expect {
+           multi_variant.set_option_value('media_type', 'DVD')
+          }.to_not change(multi_variant.option_values, :count)
+
+          expect {
+            multi_variant.set_option_value('coolness_type', 'awesome')
+          }.to change(multi_variant.option_values, :count).by(1)
+        end
+      end
+    end
+
   end
 end
