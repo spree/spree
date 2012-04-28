@@ -16,6 +16,7 @@ en:
     new: New
     update: Update
   active: "Active"
+  activate: "Activate"
   activerecord:
     attributes:
       spree/address:
