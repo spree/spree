@@ -4,7 +4,10 @@
 .DS_Store
 .idea
 .project
+coverage
+Gemfile.lock
 tmp
 nbproject
+pkg
 *.swp
 spec/dummy
