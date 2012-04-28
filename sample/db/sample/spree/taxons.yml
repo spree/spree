@@ -89,3 +89,12 @@ apache:
   permalink: brands/apache
   lft: 18
   rgt: 19
+spree:
+  name: Spree
+  taxonomy: brand
+  parent_id: 20000
+  position: 3
+  products: spree_baseball_jersey, spree_stein, spree_jr_spaghetti, spree_mug, spree_ringer, spree_tote, spree_bag
+  permalink: brands/spree
+  lft: 20
+  rgt: 21
