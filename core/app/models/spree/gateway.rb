@@ -6,8 +6,6 @@ module Spree
 
     preference :server, :string, :default => 'test'
     preference :test_mode, :boolean, :default => true
-    
-    attr_accessible :preferred_server, :preferred_test_mode
 
     attr_accessible :preferred_server, :preferred_test_mode
 
