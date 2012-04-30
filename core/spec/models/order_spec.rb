@@ -98,6 +98,11 @@ describe Spree::Order do
       @variant3 = mock_model(Spree::Variant, :product => "product3")
       order.quantity_of(@variant3).should == 0
     end
+
+    it "can find a line item matching a given variant" do
+      order.find_line_item_by_variant(@variant1).should_not be_nil
+      order.find_line_item_by_variant(mock_model(Spree::Variant)).should be_nil
+    end
   end
 
   context "#save" do
