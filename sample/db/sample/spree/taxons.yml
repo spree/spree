@@ -12,7 +12,7 @@ mc_l1_n1:
   taxonomy: master_categories
   parent_id: 1000
   position: 1
-  products: ror_tote, ror_bag
+  products: ror_tote, ror_bag, spree_tote, spree_bag
   permalink: categories/bags
   lft: 8
   rgt: 9
@@ -22,7 +22,7 @@ mc_l1_n2:
   taxonomy: master_categories
   parent_id: 1000
   position: 2
-  products: ror_mug, ror_stein
+  products: ror_mug, ror_stein, spree_stein, spree_mug
   permalink: categories/mugs
   lft: 10
   rgt: 11
@@ -41,7 +41,7 @@ shirts:
   taxonomy: master_categories
   parent_id: 1001
   position: 0
-  products: ror_jr_spaghetti
+  products: ror_jr_spaghetti, spree_jr_spaghetti
   permalink: categories/clothing/shirts
   lft: 3
   rgt: 6
@@ -50,7 +50,7 @@ t_shirts:
   name: T-Shirts
   taxonomy: master_categories
   parent_id: 2000
-  products: ror_baseball_jersey, ror_ringer, apache_baseball_jersey, ruby_baseball_jersey
+  products: ror_baseball_jersey, ror_ringer, apache_baseball_jersey, ruby_baseball_jersey, spree_baseball_jersey, spree_ringer
   position: 0
   permalink: categories/clothing/shirts/t-shirts
   lft: 4
