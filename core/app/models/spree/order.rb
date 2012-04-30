@@ -255,7 +255,7 @@ module Spree
     end
 
     def add_variant(variant, quantity = 1)
-      current_item = contains?(variant)
+      current_item = find_line_item_by_variant(variant)
       if current_item
         current_item.quantity += quantity
         current_item.save
@@ -285,12 +285,16 @@ module Spree
     end
 
     def contains?(variant)
-      line_items.detect { |line_item| line_item.variant_id == variant.id }
+      find_line_item_by_variant(variant).present?
     end
 
     def quantity_of(variant)
-      line_item = line_items.find { |line_item| line_item.variant_id == variant.id }
+      line_item = find_line_item_by_variant(variant)
       line_item ? line_item.quantity : 0
+    end
+
+    def find_line_item_by_variant(variant)
+      line_items.detect { |line_item| line_item.variant_id == variant.id }
     end
 
     def ship_total
