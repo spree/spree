@@ -14,16 +14,12 @@ module Spree
       payment.state != 'void'
     end
 
-    def capture(payment)
-      payment.update_attribute(:state, 'pending') if payment.state == 'checkout'
-      payment.complete
-      true
+    def capture(*args)
+      ActiveMerchant::Billing::Response.new(true, "", {}, {})
     end
 
-    def void(payment)
-      payment.update_attribute(:state, 'pending') if payment.state == 'checkout'
-      payment.void
-      true
+    def void(*args)
+      ActiveMerchant::Billing::Response.new(true, "", {}, {})
     end
 
     def source_required?
