@@ -3,11 +3,11 @@ attributes *order_attributes
 extends "spree/api/v1/orders/#{@order.state}"
 
 child :billing_address => :bill_address do
-  extends "spree/api/v1/orders/address"
+  extends "spree/api/v1/addresses/show"
 end
 
 child :shipping_address => :ship_address do
-  extends "spree/api/v1/orders/address"
+  extends "spree/api/v1/addresses/show"
 end
 
 child :line_items => :line_items do
