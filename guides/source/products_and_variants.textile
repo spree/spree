@@ -157,6 +157,15 @@ Spree automatically handles creation and storage of several size versions of eac
   }
 </shell>
 
+h5. Configuration
+
+From the admin there are a variety of configuration options that can be set relating to images:
+
+* Attachment Path - Where the images are stored on the filesystem
+* Attachment URL - Where the images are accessible through the site
+* Paperclip Styles - Override the styles above with your own sizes or names
+* Amazon S3 Configuration
+
 
 h3. Going Deeper
 
