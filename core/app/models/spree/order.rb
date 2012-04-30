@@ -43,11 +43,6 @@ module Spree
     validate :has_available_shipment
     validate :has_available_payment
 
-    #delegate :ip_address, :to => :checkout
-    def ip_address
-      '192.168.1.100'
-    end
-
     scope :by_number, lambda { |number| where(:number => number) }
     scope :between, lambda { |*dates| where('created_at BETWEEN ? AND ?', dates.first.to_date, dates.last.to_date) }
     scope :by_customer, lambda { |customer| joins(:user).where("#{Spree::User.table_name}.email = ?", customer) }
