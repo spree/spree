@@ -40,6 +40,7 @@ Spree::Core::Engine.routes.prepend do
       end
 
       resources :countries, :only => [:index, :show]
+      resources :addresses, :only => [:show, :update]
     end
   end
 end
