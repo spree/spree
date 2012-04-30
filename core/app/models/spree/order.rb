@@ -270,6 +270,7 @@ module Spree
         current_item.price   = variant.price
         self.line_items << current_item
       end
+      current_item
     end
 
     # FIXME refactor this method and implement validation using validates_* utilities
