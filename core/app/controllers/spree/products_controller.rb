@@ -13,7 +13,17 @@ module Spree
     end
 
     def show
-      @product = Product.active.find_by_permalink!(params[:id])
+      begin
+        @product = Spree::Product.active.find_by_permalink!(params[:id])
+      rescue ActiveRecord::RecordNotFound => e
+        # Allow admins to view any yet to be available products
+        if current_user && current_user.has_role?('admin')
+          @product = Spree::Product.find_by_permalink!(params[:id])
+        else
+          raise
+        end
+      end
+
       return unless @product
 
       @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
