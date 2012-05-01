@@ -1,6 +1,7 @@
 module Spree
   class ProductsController < BaseController
     HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+)$/
+    before_filter :load_product, :only => :show
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/taxons'
 
@@ -13,7 +14,6 @@ module Spree
     end
 
     def show
-      @product = Product.active.find_by_permalink!(params[:id])
       return unless @product
 
       @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
@@ -31,6 +31,10 @@ module Spree
     private
       def accurate_title
         @product ? @product.name : super
+      end
+
+      def load_product
+        @product = Product.active.find_by_permalink!(params[:id])
       end
   end
 end
