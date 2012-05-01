@@ -1,4 +1,13 @@
 Spree::Core::Engine.routes.prepend do
+  namespace :admin do
+    resources :users do
+      member do
+        put :generate_api_key
+        put :clear_api_key
+      end
+    end
+  end
+
   namespace :api do
     scope :module => :v1 do
       resources :products do
