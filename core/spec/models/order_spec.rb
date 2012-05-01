@@ -273,6 +273,11 @@ describe Spree::Order do
       order.finalize!
     end
 
+    it "should continue even if confirmation email delivery fails" do
+      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_raise 'send failed!'
+      order.finalize!
+    end
+
     it "should freeze optional adjustments" do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustment = mock_model(Spree::Adjustment)
