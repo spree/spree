@@ -374,7 +374,7 @@ module Spree
       InventoryUnit.assign_opening_inventory(self)
       # lock any optional adjustments (coupon promotions, etc.)
       adjustments.optional.each { |adjustment| adjustment.update_attribute('locked', true) }
-      OrderMailer.confirm_email(self).deliver
+      deliver_order_confirmation_email
 
       self.state_changes.create({
         :previous_state => 'cart',
@@ -382,6 +382,15 @@ module Spree
         :name           => 'order' ,
         :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
       }, :without_protection => true)
+    end
+
+    def deliver_order_confirmation_email
+      begin
+        OrderMailer.confirm_email(self).deliver
+      rescue Exception => e
+        logger.error("#{e.class.name}: #{e.message}")
+        logger.error(e.backtrace * "\n")
+      end
     end
 
     # Helper methods for checkout steps
