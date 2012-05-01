@@ -15,8 +15,8 @@ module Spree
     end
 
     it "updates an address" do
-      api_put :update, id: @address.id,
-                       address: { address1: "123 Test Lane" } 
+      api_put :update, :id => @address.id,
+                       :address => { :address1 => "123 Test Lane" }
       json_response['address']['address1'].should eq '123 Test Lane'
     end
   end
