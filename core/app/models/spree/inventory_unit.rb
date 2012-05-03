@@ -62,11 +62,6 @@ module Spree
       end
     end
 
-    # find the specified quantity of units with the specified status
-    def self.find_by_status(variant, quantity, status)
-      variant.inventory_units.where(:status => status).limit(quantity)
-    end
-
     private
       def allow_ship?
         Spree::Config[:allow_backorder_shipping] || self.sold?
