@@ -100,15 +100,15 @@ Spree itself contains a good example of how this can be achieved.  For instance,
 <ruby>
 initializer 'spree.register.calculators' do |app|
   app.config.spree.calculators.shipping_methods = [
-      Calculator::FlatPercentItemTotal,
-      Calculator::FlatRate,
-      Calculator::FlexiRate,
-      Calculator::PerItem,
-      Calculator::PriceBucket]
+      Spree::Calculator::FlatPercentItemTotal,
+      Spree::Calculator::FlatRate,
+      Spree::Calculator::FlexiRate,
+      Spree::Calculator::PerItem,
+      Spree::Calculator::PriceBucket]
 
    app.config.spree.calculators.tax_rates = [
-      Calculator::SalesTax,
-      Calculator::Vat]
+      Spree::Calculator::SalesTax,
+      Spree::Calculator::Vat]
 end
 </ruby>
 
@@ -118,8 +118,8 @@ This registers calculators to the +Rails.application.config.spree.calculators+ a
 app.config.spree.calculators.add_class('product_customization_types') 
 
 app.config.spree.calculators.product_customization_types = [ 
-  Calculator::CustomCalculatorOne, 
-  Calculator::CustomCalculatorTwo 
+  Spree::Calculator::CustomCalculatorOne, 
+  Spree::Calculator::CustomCalculatorTwo 
 ] 
 </ruby>
 
