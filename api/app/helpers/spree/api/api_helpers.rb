@@ -12,8 +12,8 @@ module Spree
       end
 
       def product_attributes
-        [:id, :name, :description, :price,
-         :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords]
+        [:id, :name, :description, :price, :available_on, :permalink, 
+          :count_on_hand, :meta_description, :meta_keywords, :taxon_ids]
       end
 
       def variant_attributes
@@ -50,6 +50,14 @@ module Spree
 
       def shipment_attributes
         [:id, :tracking, :number, :cost, :shipped_at, :state]
+      end
+
+      def taxonomy_attributes
+        [:id, :name]
+      end
+
+      def taxon_attributes
+        [:id, :name, :permalink, :position, :parent_id]
       end
     end
   end

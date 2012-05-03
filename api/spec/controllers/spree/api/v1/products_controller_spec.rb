@@ -6,7 +6,7 @@ module Spree
 
     let!(:product) { Factory(:product) }
     let!(:inactive_product) { Factory(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords] }
+    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords, :taxon_ids] }
 
     before do
       stub_authentication!
