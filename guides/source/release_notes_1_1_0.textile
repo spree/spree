@@ -43,7 +43,7 @@ all your old style hooks to Deface.
 
 h4. Major rewrite of Creditcard model
 
-Prior to 1.1, the +Creditcard+ model contained a lot of payment processing code. This has "since been moved":https://github.com/spree/spree/commit/0e684e01b5a15ec21b34263699004ebd78692f0d into the +Payment+ model. If you have customized the +Spree::Admin::PaymentsController+ or depend on any of the payment processing methods inside the +CreditCard+ model such as +authorize+, +credit+, or +void+, this change may effect you.
+Prior to 1.1, the +Creditcard+ model contained a lot of payment processing code. This has "since been moved":https://github.com/spree/spree/commit/0e684e01b5a15ec21b34263699004ebd78692f0d into the +Payment+ model. If you have customized the +Spree::Admin::PaymentsController+ or depend on any of the payment processing methods inside the +CreditCard+ model such as +authorize+, +credit+, or +void+, this change may affect you.
 
 h4. API rewrite
 
@@ -65,7 +65,7 @@ Spree::Core::Engine.add_assets_to_precompile_list!(self)
 
 h4. Stronger mass assignment protection
 
-As per the "Rails 3.2.3 release notes":https://groups.google.com/forum/?fromgroups#!topic/rubyonrails-core/X-zNKaPOVJw , there is a stronger enforcement of attribute protection within Rails. This *may* effect your Spree application, and if it does we would advise "filing an issue":https://github.com/spree/spree/issues so that it can be promptly fixed. While the tests for Spree itself are extensive, there may still be edge cases where your application goes that we do not have covered.
+As per the "Rails 3.2.3 release notes":https://groups.google.com/forum/?fromgroups#!topic/rubyonrails-core/X-zNKaPOVJw , there is a stronger enforcement of attribute protection within Rails. This *may* affect your Spree application, and if it does we would advise "filing an issue":https://github.com/spree/spree/issues so that it can be promptly fixed. While the tests for Spree itself are extensive, there may still be edge cases where your application goes that we do not have covered.
 
 h4. Removed images association of +Spree::Product+
 
