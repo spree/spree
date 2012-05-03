@@ -3,11 +3,11 @@ module Spree
     DISPLAY = [:both, :front_end, :back_end]
     belongs_to :zone
     has_many :shipments
-    validates :name, :calculator, :zone, :presence => true
+    validates :name, :zone, :presence => true
     belongs_to :shipping_category
 
-    attr_accessible :name, :zone_id, :display_on, :shipping_category_id, 
-                    :match_none, :match_one, :match_all, :calculator_type
+    attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
+                    :match_none, :match_one, :match_all
 
     calculated_adjustments
 
