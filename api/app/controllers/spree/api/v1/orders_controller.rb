@@ -14,6 +14,11 @@ module Spree
           authorize! :read, order
         end
 
+        def search
+          @orders = Order.search(params[:q]).result.page(params[:page])
+          render :index
+        end
+
         def create
           @order = Order.build_from_api(current_api_user, @nested_params)
           next!
