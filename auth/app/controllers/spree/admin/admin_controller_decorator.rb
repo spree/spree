@@ -4,12 +4,12 @@ Spree::Admin::BaseController.class_eval do
 
   def authorize_admin
     begin
-      model = model_class
+      record = model_class.new
     rescue
-      model = Object
+      record = Object.new
     end
-    authorize! :admin, model
-    authorize! params[:action].to_sym, model
+    authorize! :admin, record
+    authorize! params[:action].to_sym, record
   end
 
   protected

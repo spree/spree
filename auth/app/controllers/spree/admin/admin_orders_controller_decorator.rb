@@ -6,7 +6,7 @@ Spree::Admin::OrdersController.class_eval do
       load_order
       session[:access_token] ||= params[:token]
 
-      resource = @order || Spree::Order
+      resource = @order || Spree::Order.new
       action = params[:action].to_sym
 
       authorize! action, resource, session[:access_token]
