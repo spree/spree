@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment do
-  let(:order) { Factory(:order) }
-  let(:promotion) { Factory(:promotion) }
+  let(:order) { create(:order) }
+  let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
 
   # From promotion spec:

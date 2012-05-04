@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Sign In" do
   before(:each) do
-    @user = Factory(:user, :email => "email@person.com", :password => "secret", :password_confirmation => "secret")
+    @user = create(:user, :email => "email@person.com", :password => "secret", :password_confirmation => "secret")
     visit spree.login_path
   end
 
@@ -30,7 +30,7 @@ describe "Sign In" do
   end
 
   it "should allow a user to access a restricted page after logging in" do
-    user = Factory(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
+    user = create(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
     visit spree.admin_path
     fill_in "user_email", :with => user.email
     fill_in "user_password", :with => user.password

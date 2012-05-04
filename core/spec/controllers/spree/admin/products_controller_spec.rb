@@ -44,7 +44,7 @@ describe Spree::Admin::ProductsController do
 
     # Regression test for #1259
     it "can find a product by SKU" do
-      product = Factory(:product, :sku => "ABC123")
+      product = create(:product, :sku => "ABC123")
       spree_get :index, :q => { :sku_start => "ABC123" }
       assigns[:collection].should_not be_empty
       assigns[:collection].should include(product)
@@ -87,7 +87,7 @@ describe Spree::Admin::ProductsController do
 
   # regression test for #1370
   context "adding properties to a product" do
-    let!(:product) { Factory(:product) }
+    let!(:product) { create(:product) }
     specify do
       spree_put :update, :id => product.to_param, :product => { :product_properties_attributes => { "1" => { :property_name => "Foo", :value => "bar" } } }
       response.should be_success
@@ -99,8 +99,8 @@ describe Spree::Admin::ProductsController do
   # regression test for #801
   context "destroying a product" do
     let(:product) do
-      product = Factory(:product)
-      Factory(:variant, :product => product)
+      product = create(:product)
+      create(:variant, :product => product)
       product
     end
 

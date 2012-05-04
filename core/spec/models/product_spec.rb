@@ -20,11 +20,11 @@ describe Spree::Product do
   end
 
   context 'product instance' do
-    let(:product) { Factory(:product) }
+    let(:product) { create(:product) }
 
     context '#duplicate' do
       before do
-        product.stub :taxons => [Factory(:taxon)]
+        product.stub :taxons => [create(:taxon)]
       end
 
       it 'duplicates product' do
@@ -61,10 +61,10 @@ describe Spree::Product do
 
       context "permalink should be incremented until the value is not taken" do
         before do
-          @other_product = Factory(:product, :name => 'zoo')
-          @product1 = Factory(:product, :name => 'foo')
-          @product2 = Factory(:product, :name => 'foo')
-          @product3 = Factory(:product, :name => 'foo')
+          @other_product = create(:product, :name => 'zoo')
+          @product1 = create(:product, :name => 'foo')
+          @product2 = create(:product, :name => 'foo')
+          @product3 = create(:product, :name => 'foo')
         end
         it "should have valid permalink" do
           @product1.permalink.should == 'foo'
@@ -76,7 +76,7 @@ describe Spree::Product do
       context "permalink should be incremented until the value is not taken when there are more than 10 products" do
         before do
           @products = 0.upto(11).map do
-            Factory(:product, :name => 'foo')
+            create(:product, :name => 'foo')
           end
         end
         it "should have valid permalink" do
@@ -86,10 +86,10 @@ describe Spree::Product do
 
       context "permalink should be incremented until the value is not taken for similar names" do
         before do
-          @other_product = Factory(:product, :name => 'foo bar')
-          @product1 = Factory(:product, :name => 'foo')
-          @product2 = Factory(:product, :name => 'foo')
-          @product3 = Factory(:product, :name => 'foo')
+          @other_product = create(:product, :name => 'foo bar')
+          @product1 = create(:product, :name => 'foo')
+          @product2 = create(:product, :name => 'foo')
+          @product3 = create(:product, :name => 'foo')
         end
         it "should have valid permalink" do
           @product1.permalink.should == 'foo'
@@ -100,9 +100,9 @@ describe Spree::Product do
 
       context "permalink should be incremented until the value is not taken for similar names when there are more than 10 products" do
         before do
-          @other_product = Factory(:product, :name => 'foo a')
+          @other_product = create(:product, :name => 'foo a')
           @products = 0.upto(11).map do
-            Factory(:product, :name => 'foo')
+            create(:product, :name => 'foo')
           end
         end
         it "should have valid permalink" do
@@ -112,8 +112,8 @@ describe Spree::Product do
 
       context "make_permalink should declare validates_uniqueness_of" do
         before do
-          @product1 = Factory(:product, :name => 'foo')
-          @product2 = Factory(:product, :name => 'foo')
+          @product1 = create(:product, :name => 'foo')
+          @product2 = create(:product, :name => 'foo')
           @product2.update_attributes(:permalink => 'foo')
         end
 
@@ -131,14 +131,14 @@ describe Spree::Product do
 
   context "permalink generation" do
     it "supports Chinese" do
-      @product = Factory(:product, :name => "你好")
+      @product = create(:product, :name => "你好")
       @product.permalink.should == "ni-hao"
     end
   end
 
   context "scopes" do
     context ".group_by_products_id.count" do
-      let(:product) { Factory(:product) }
+      let(:product) { create(:product) }
       it 'produces a properly formed ordered-hash key' do
         expected_key = (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL') ?
           Spree::Product.column_names.map{|col_name| product.send(col_name)} :
@@ -181,7 +181,7 @@ describe Spree::Product do
 
   context '#create' do
     before do
-      @prototype = Factory(:prototype)
+      @prototype = create(:prototype)
       @product = Spree::Product.new(:name => "Foo", :price => 1.99)
     end
 
@@ -294,7 +294,7 @@ describe Spree::Product do
   end
 
   context "#images" do
-    let(:product) { Factory(:product) }
+    let(:product) { create(:product) }
 
     before do
       pending "This is more trouble than it's worth. Expects bucket_name for some stupid reason."

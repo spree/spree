@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::UsersController do
-  let(:admin_user) { Factory(:user) }
-  let(:user) { Factory(:user) }
+  let(:admin_user) { create(:user) }
+  let(:user) { create(:user) }
 
   before do
     sign_in user
@@ -36,7 +36,7 @@ describe Spree::UsersController do
 
     context 'when attempting to update other account' do
       it 'should not allow update' do
-        put :update, { :user => Factory(:user) }, { :user => { :email => 'mynew@email-address.com' } }
+        put :update, { :user => create(:user) }, { :user => { :email => 'mynew@email-address.com' } }
         response.should redirect_to(spree.login_url(:only_path => true))
       end
     end

@@ -7,9 +7,9 @@ describe "Product Variants" do
 
   context "editing variant option types", :js => true do
     it "should allow an admin to create option types for a variant" do
-      Factory(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
-      Factory(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
-      Factory(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
+      create(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
+      create(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
+      create(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
       Spree::Product.update_all :count_on_hand => 10
 
       click_link "Products"
@@ -37,9 +37,9 @@ describe "Product Variants" do
       click_button "Update"
       page.should have_content("successfully updated!")
 
-      Factory(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
-      Factory(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
-      Factory(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
+      create(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
+      create(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
+      create(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
       Spree::Product.update_all :count_on_hand => 10
 
       visit spree.admin_path

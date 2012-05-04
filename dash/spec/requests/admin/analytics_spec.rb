@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Analytics Activation" do
   before(:each) do
-    @user = Factory(:admin_user)
+    @user = create(:admin_user)
     sign_in_as!(@user)
 
     Spree::Dash::Config.app_id = nil

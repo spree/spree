@@ -6,7 +6,7 @@ module Spree
 
     before do
       stub_authentication!
-      @state = Factory(:state)
+      @state = create(:state)
       @country = @state.country
     end
 

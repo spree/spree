@@ -13,19 +13,19 @@ describe "Shipping Methods" do
     PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
     SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
     ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
-    Factory(:payment_method, :environment => 'test')
-    Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
-    @product = Factory(:product, :name => "Mug")
+    create(:payment_method, :environment => 'test')
+    create(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+    @product = create(:product, :name => "Mug")
 
     visit spree.admin_path
     click_link "Configuration"
   end
 
-  let!(:address) { Factory(:address, :state => Spree::State.first) }
+  let!(:address) { create(:address, :state => Spree::State.first) }
 
   context "show" do
     it "should display exisiting shipping methods" do
-      2.times { Factory(:shipping_method) }
+      2.times { create(:shipping_method) }
       click_link "Shipping Methods"
 
       find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(1)').text.should == "UPS Ground"
@@ -62,7 +62,7 @@ describe "Shipping Methods" do
 
   context "availability", :js => true do
     before(:each) do
-      @shipping_category = Factory(:shipping_category, :name => "Default")
+      @shipping_category = create(:shipping_category, :name => "Default")
       click_link "Shipping Methods"
       click_link "admin_new_shipping_method_link"
     end
@@ -177,7 +177,7 @@ describe "Shipping Methods" do
 
     context "when rule is at least one products match" do
       before(:each) do
-        Factory(:product, :name => "Shirt")
+        create(:product, :name => "Shirt")
       end
 
       context "when match rules are satisfied" do

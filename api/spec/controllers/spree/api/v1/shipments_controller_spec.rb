@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Api::V1::ShipmentsController do
-  let!(:shipment) { Factory(:shipment) }
+  let!(:shipment) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at] }
 
   before do

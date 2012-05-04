@@ -8,8 +8,8 @@ describe "Taxonomies" do
 
   context "show" do
     it "should display existing taxonomies" do
-      Factory(:taxonomy, :name => 'Brand')
-      Factory(:taxonomy, :name => 'Categories')
+      create(:taxonomy, :name => 'Brand')
+      create(:taxonomy, :name => 'Categories')
       click_link "Taxonomies"
       find('table#listing_taxonomies tr:nth-child(2) td:nth-child(1)').text.should include("Brand")
       find('table#listing_taxonomies tr:nth-child(3) td:nth-child(1)').text.should include("Categories")
@@ -38,7 +38,7 @@ describe "Taxonomies" do
 
   context "edit" do
     it "should allow an admin to update an existing taxonomy" do
-      Factory(:taxonomy)
+      create(:taxonomy)
       click_link "Taxonomies"
       within(:css, 'table#listing_taxonomies tr:nth-child(2)') { click_link "Edit" }
       page.should have_content("Edit taxonomy")

@@ -43,8 +43,8 @@ describe Spree::Promotion do
   end
 
   describe ".advertised" do
-    let(:promotion) { Factory(:promotion) }
-    let(:advertised_promotion) { Factory(:promotion, :advertise => true) }
+    let(:promotion) { create(:promotion) }
+    let(:advertised_promotion) { create(:promotion, :advertise => true) }
 
     it "only shows advertised promotions" do
       advertised = Spree::Promotion.advertised
@@ -175,12 +175,12 @@ describe Spree::Promotion do
 
   context "#products" do
     context "when it has product rules with products associated" do
-      let(:promotion) { Factory.create(:promotion) }
+      let(:promotion) { create(:promotion) }
 
       before do
         promotion_rule = Spree::Promotion::Rules::Product.new
         promotion_rule.promotion = promotion
-        promotion_rule.products << Factory.create(:product)
+        promotion_rule.products << create(:product)
         promotion_rule.save
       end
 
@@ -192,7 +192,7 @@ describe Spree::Promotion do
 
   context "#eligible?" do
     before do
-      @order = Factory(:order)
+      @order = create(:order)
       promotion.event_name = 'spree.checkout.coupon_code_added'
       promotion.name = "Foo"
       promotion.code = "XXX"

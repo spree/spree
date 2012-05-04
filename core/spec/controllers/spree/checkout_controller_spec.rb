@@ -144,7 +144,7 @@ describe Spree::CheckoutController do
     let(:product) { mock_model(Spree::Product, :name => "Amazing Object") }
     let(:variant) { mock_model(Spree::Variant, :on_hand => 0) }
     let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
-    let(:order) { Factory(:order) }
+    let(:order) { create(:order) }
 
     before do
       order.stub(:line_items => [line_item])

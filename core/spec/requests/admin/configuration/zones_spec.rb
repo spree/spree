@@ -9,8 +9,8 @@ describe "Zones" do
 
   context "show" do
     it "should display existing zones" do
-      Factory(:zone, :name => "eastern", :description => "zone is eastern")
-      Factory(:zone, :name => "western", :description => "cool san fran")
+      create(:zone, :name => "eastern", :description => "zone is eastern")
+      create(:zone, :name => "western", :description => "cool san fran")
       click_link "Zones"
 
       find('table#listing_zones tbody tr:nth-child(1) td:nth-child(1)').text.should == "eastern"

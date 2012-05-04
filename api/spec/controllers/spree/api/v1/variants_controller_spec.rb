@@ -5,10 +5,10 @@ module Spree
     render_views
 
 
-    let!(:product) { Factory(:product) }
+    let!(:product) { create(:product) }
     let!(:variant) do
       variant = product.master
-      variant.option_values << Factory(:option_value)
+      variant.option_values << create(:option_value)
       variant
     end
     let!(:attributes) { [:id, :name, :count_on_hand,

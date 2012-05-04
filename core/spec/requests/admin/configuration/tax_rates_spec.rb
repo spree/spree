@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Tax Rates" do
-  let!(:tax_rate) { Factory(:tax_rate, :calculator => stub_model(Spree::Calculator)) }
+  let!(:tax_rate) { create(:tax_rate, :calculator => stub_model(Spree::Calculator)) }
 
   before do
     visit spree.admin_path

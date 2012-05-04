@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :payment, :class => Spree::Payment do
     amount 45.75
-    payment_method { Factory(:bogus_payment_method) }
-    source { Factory.build(:creditcard) }
-    order { Factory(:order) }
+    payment_method { FactoryGirl.create(:bogus_payment_method) }
+    source { FactoryGirl.build(:creditcard) }
+    order { FactoryGirl.create(:order) }
     state 'pending'
     response_code '12345'
 

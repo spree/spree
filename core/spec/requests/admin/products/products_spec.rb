@@ -9,8 +9,8 @@ describe "Products" do
     context "listing products" do
       context "sorting" do
         before do
-          Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :count_on_hand => '0', :price => 10)
-          Factory(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13', :count_on_hand => '5', :price => 5)
+          create(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :count_on_hand => '0', :price => 10)
+          create(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13', :count_on_hand => '5', :price => 5)
         end
 
         it "should list existing products with correct sorting by name" do
@@ -38,8 +38,8 @@ describe "Products" do
 
     context "searching products" do
       it "should be able to search deleted products", :js => true do
-        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :deleted_at => "2011-01-06 18:21:13")
-        Factory(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13')
+        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :deleted_at => "2011-01-06 18:21:13")
+        create(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13')
 
         click_link "Products"
         page.should have_content("zomg shirt")
@@ -55,9 +55,9 @@ describe "Products" do
       end
 
       it "should be able to search products by their properties" do
-        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
-        Factory(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
-        Factory(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
+        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
+        create(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
+        create(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
         Spree::Product.update_all :count_on_hand => 10
 
         click_link "Products"
@@ -80,7 +80,7 @@ describe "Products" do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = Factory(:prototype, :name => "Random") 
+        @property_prototype = create(:prototype, :name => "Random") 
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') { page.should have_content("SKU") }
@@ -146,7 +146,7 @@ describe "Products" do
 
     context "cloning a product", :js => true do
       it "should allow an admin to clone a product" do
-        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
+        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
 
         click_link "Products"
         within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
@@ -155,7 +155,7 @@ describe "Products" do
 
       context "cloning a deleted product" do
         it "should allow an admin to clone a deleted product" do
-          Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100", :deleted_at => '2011-05-01 01:01:01')
+          create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100", :deleted_at => '2011-05-01 01:01:01')
 
           click_link "Products"
           check "Show Deleted"
@@ -171,9 +171,9 @@ describe "Products" do
     context "uploading a product image" do
       it "should allow an admin to upload an image and edit it for a product" do
         Spree::Image.attachment_definitions[:attachment].delete :storage
-        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
-        Factory(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
-        Factory(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
+        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
+        create(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
+        create(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
         Spree::Product.update_all :count_on_hand => 10
 
         click_link "Products"
@@ -194,9 +194,9 @@ describe "Products" do
 
     context "uploading a product image" do
       it "should allow an admin to upload an image and edit it for a product" do
-        Factory(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
-        Factory(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
-        Factory(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
+        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
+        create(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
+        create(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
         Spree::Product.update_all :count_on_hand => 10
 
         click_link "Products"

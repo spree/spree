@@ -11,6 +11,6 @@ FactoryGirl.define do
 
     # associations:
     product { |p| p.association(:product) }
-    option_values { [Factory(:option_value)] }
+    option_values { [FactoryGirl.create(:option_value)] }
   end
 end

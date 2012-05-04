@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe "Customer Details" do
-  let(:shipping_method) { Factory(:shipping_method, :display_on => "front_end") }
-  let(:order) { Factory(:order_with_inventory_unit_shipped, :completed_at => 1.year.ago, :shipping_method => shipping_method) }
+  let(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
+  let(:order) { create(:order_with_inventory_unit_shipped, :completed_at => 1.year.ago, :shipping_method => shipping_method) }
 
   before do
     reset_spree_preferences do |config|
-      config.default_country_id = Factory(:country).id
+      config.default_country_id = create(:country).id
     end
 
-    Factory(:shipping_method, :display_on => "front_end")
-    Factory(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
-    Factory(:user, :email => 'foobar@example.com', :ship_address => Factory(:address), :bill_address => Factory(:address))
+    create(:shipping_method, :display_on => "front_end")
+    create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
+    create(:user, :email => 'foobar@example.com', :ship_address => create(:address), :bill_address => create(:address))
 
     visit spree.admin_path
     click_link "Orders"
@@ -43,7 +43,7 @@ describe "Customer Details" do
 
     it "should be able to update customer details for an existing order" do
       pending "Hanging at line 60"
-      order.ship_address = Factory(:address)
+      order.ship_address = create(:address)
       order.save!
 
       click_link "Customer Details"
