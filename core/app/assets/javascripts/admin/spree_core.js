@@ -6,5 +6,7 @@
 //= require jquery.delayedobserver
 //= require jquery.jstree/jquery.jstree
 //= require jquery.alerts/jquery.alerts
-//= require ajax_utils
 //= require_tree .
+function ajax_root_prefix(){
+  return $('body').data('ajax-root-path');
+}
