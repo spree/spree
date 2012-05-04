@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe "return authorizations" do
-  let!(:order) { Factory(:completed_order_with_totals) }
+  let!(:order) { create(:completed_order_with_totals) }
 
   before do
     order.inventory_units.update_all("state = 'shipped'")
-    Factory(:return_authorization,
+    create(:return_authorization,
             :order => order,
             :state => 'authorized',
             :inventory_units => order.inventory_units)

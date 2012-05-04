@@ -8,8 +8,8 @@ describe "Option Types" do
 
   context "listing option types" do
     it "should list existing option types" do
-      Factory(:option_type, :name => "tshirt-color", :presentation => "Color")
-      Factory(:option_type, :name => "tshirt-size", :presentation => "Size")
+      create(:option_type, :name => "tshirt-color", :presentation => "Color")
+      create(:option_type, :name => "tshirt-size", :presentation => "Size")
 
       click_link "Option Types"
       find('table#listing_option_types tr:nth-child(2) td:nth-child(1)').text.should == " tshirt-color"
@@ -39,8 +39,8 @@ describe "Option Types" do
 
   context "editing an existing option type" do
     it "should allow an admin to update an existing option type" do
-      Factory(:option_type, :name => "tshirt-color", :presentation => "Color")
-      Factory(:option_type, :name => "tshirt-size", :presentation => "Size")
+      create(:option_type, :name => "tshirt-color", :presentation => "Color")
+      create(:option_type, :name => "tshirt-size", :presentation => "Size")
       click_link "Option Types"
       within('table#listing_option_types tr:nth-child(2)') { click_link "Edit" }
       fill_in "option_type_name", :with => "foo-size 99"

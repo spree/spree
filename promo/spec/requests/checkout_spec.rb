@@ -3,11 +3,11 @@ require 'spec_helper'
 describe "Checkout" do
   context "visitor makes checkout as guest without registration" do
     before do
-      @product = Factory(:product, :name => "RoR Mug")
-      Factory(:zone)
-      Factory(:shipping_method)
-      Factory(:payment_method)
-      Factory(:promotion)
+      @product = create(:product, :name => "RoR Mug")
+      create(:zone)
+      create(:shipping_method)
+      create(:payment_method)
+      create(:promotion)
     end
 
     it "informs about an invalid coupon code", :js => true do

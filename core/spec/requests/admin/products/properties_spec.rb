@@ -8,8 +8,8 @@ describe "Properties" do
 
   context "listing product properties" do
     it "should list the existing product properties" do
-      Factory(:property, :name => 'shirt size', :presentation => 'size')
-      Factory(:property, :name => 'shirt fit', :presentation => 'fit')
+      create(:property, :name => 'shirt size', :presentation => 'size')
+      create(:property, :name => 'shirt fit', :presentation => 'fit')
 
       click_link "Properties"
       find('table#listing_properties tbody tr:nth-child(1) td:nth-child(1)').text.should == "shirt size"
@@ -34,7 +34,7 @@ describe "Properties" do
 
   context "editing a property" do
     before(:each) do
-      Factory(:property)
+      create(:property)
       click_link "Properties"
       within('table#listing_properties tbody tr:nth-child(1)') { click_link "Edit" }
     end

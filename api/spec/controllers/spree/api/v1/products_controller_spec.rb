@@ -4,8 +4,8 @@ module Spree
   describe Spree::Api::V1::ProductsController do
     render_views
 
-    let!(:product) { Factory(:product) }
-    let!(:inactive_product) { Factory(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
+    let!(:product) { create(:product) }
+    let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
     let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords, :taxon_ids] }
 
     before do
@@ -30,7 +30,7 @@ module Spree
         default_per_page(1)
 
         it "can select the next page of products" do
-          second_product = Factory(:product)
+          second_product = create(:product)
           api_get :index, :page => 2
           json_response["products"].first.should have_attributes(attributes)
           json_response["count"].should == 2
@@ -40,7 +40,7 @@ module Spree
       end
 
       it "can search for products" do
-        Factory(:product, :name => "The best product in the world")
+        create(:product, :name => "The best product in the world")
         api_get :search, :q => { :name_cont => "best" }
         json_response["products"].first.should have_attributes(attributes)
         json_response["count"].should == 1
@@ -64,7 +64,7 @@ module Spree
 
 
       context "finds a product by permalink first then by id" do
-        let!(:other_product) { Factory(:product, :permalink => "these-are-not-the-droids-you-are-looking-for") }
+        let!(:other_product) { create(:product, :permalink => "these-are-not-the-droids-you-are-looking-for") }
 
         before do
           product.update_attribute(:permalink, "#{other_product.id}-and-1-ways")

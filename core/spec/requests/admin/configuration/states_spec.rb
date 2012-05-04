@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "States" do
-  let!(:country) { Factory.create(:country) }
+  let!(:country) { create(:country) }
 
   before(:each) do
     Spree::Config[:default_country_id] = country.id
@@ -11,7 +11,7 @@ describe "States" do
   end
 
   context "admin visiting states listing" do
-    let!(:state) { Factory.create(:state, :country => country) }
+    let!(:state) { create(:state, :country => country) }
 
     it "should correctly display the states" do
       click_link "States"

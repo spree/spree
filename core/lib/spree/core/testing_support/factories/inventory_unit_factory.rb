@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :inventory_unit, :class => Spree::InventoryUnit do
-    variant { Factory(:variant) }
-    order { Factory(:order) }
+    variant { FactoryGirl.create(:variant) }
+    order { FactoryGirl.create(:order) }
     state 'sold'
-    shipment { Factory(:shipment, :state => 'pending') }
-    #return_authorization { Factory(:return_authorization) }
+    shipment { FactoryGirl.create(:shipment, :state => 'pending') }
+    #return_authorization { FactoryGirl.create(:return_authorization) }
   end
 end

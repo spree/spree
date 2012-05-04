@@ -8,7 +8,7 @@ describe "Mail Methods" do
 
   context "index" do
     before(:each) do
-      Factory(:mail_method)
+      create(:mail_method)
       click_link "Mail Methods"
     end
 
@@ -30,7 +30,7 @@ describe "Mail Methods" do
 
   context "edit" do
     before(:each) do
-      Factory(:mail_method)
+      create(:mail_method)
       click_link "Mail Methods"
     end
 

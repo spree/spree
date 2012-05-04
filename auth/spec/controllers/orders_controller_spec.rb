@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Spree::OrdersController do
   ORDER_TOKEN = 'ORDER_TOKEN'
 
-  let(:user) { Factory(:user) }
-  let(:guest_user) { Factory(:user) }
+  let(:user) { create(:user) }
+  let(:guest_user) { create(:user) }
   let(:order) { Spree::Order.new }
 
   it 'should understand order routes with token' do
@@ -72,7 +72,7 @@ describe Spree::OrdersController do
 
   context 'when an order exists in the session' do
     let(:token) { 'some_token' }
-    let(:specified_order) { Factory(:order) }
+    let(:specified_order) { create(:order) }
 
     before do
       controller.stub :current_order => order
@@ -134,7 +134,7 @@ describe Spree::OrdersController do
   end
 
   context 'when no authenticated user' do
-    let(:order) { Factory(:order, :number => 'R123') }
+    let(:order) { create(:order, :number => 'R123') }
 
     context '#show' do
       context 'when token parameter present' do

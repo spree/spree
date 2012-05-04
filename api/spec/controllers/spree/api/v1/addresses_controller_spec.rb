@@ -6,7 +6,7 @@ module Spree
 
     before do
       stub_authentication!
-      @address = Factory(:address)
+      @address = create(:address)
     end
 
     it "gets an address" do

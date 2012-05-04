@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::TaxCategory do
   context '#mark_deleted!' do
-    let(:tax_category) { Factory(:tax_category) }
+    let(:tax_category) { create(:tax_category) }
 
     it "should set the deleted at column to the current time" do
       tax_category.mark_deleted!
@@ -11,8 +11,8 @@ describe Spree::TaxCategory do
   end
 
   context 'default tax category' do
-    let(:tax_category) { Factory(:tax_category) }
-    let(:new_tax_category) { Factory(:tax_category) }
+    let(:tax_category) { create(:tax_category) }
+    let(:new_tax_category) { create(:tax_category) }
 
     before do
       tax_category.update_attribute(:is_default, true)

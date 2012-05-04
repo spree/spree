@@ -4,14 +4,14 @@ module Spree
   describe Api::V1::TaxonomiesController do
     render_views
 
-    let(:taxonomy) { Factory(:taxonomy) }
-    let(:taxon) { Factory(:taxon, :name => "Ruby", :taxonomy => taxonomy) }
-    let(:taxon2) { Factory(:taxon, :name => "Rails", :taxonomy => taxonomy) }
+    let(:taxonomy) { create(:taxonomy) }
+    let(:taxon) { create(:taxon, :name => "Ruby", :taxonomy => taxonomy) }
+    let(:taxon2) { create(:taxon, :name => "Rails", :taxonomy => taxonomy) }
     let(:attributes) { [:id, :name] }
 
     before do
       stub_authentication!
-      taxon2.children << Factory(:taxon, :name => "3.2.2", :taxonomy => taxonomy)
+      taxon2.children << create(:taxon, :name => "3.2.2", :taxonomy => taxonomy)
       taxon.children << taxon2
       taxonomy.root.children << taxon
     end

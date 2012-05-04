@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::StatesController do
   before(:each) do
-    state = Factory(:state)
+    state = create(:state)
   end
 
   it 'should display state mapper' do

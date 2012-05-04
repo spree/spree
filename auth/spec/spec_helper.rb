@@ -48,6 +48,7 @@ RSpec.configure do |config|
     Spree::Ability.abilities.delete(AbilityDecorator) if Spree::Ability.abilities.include?(AbilityDecorator)
   end
 
+  config.include FactoryGirl::Syntax::Methods
   config.include Spree::Core::UrlHelpers
   config.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
   config.include Devise::TestHelpers, :type => :controller

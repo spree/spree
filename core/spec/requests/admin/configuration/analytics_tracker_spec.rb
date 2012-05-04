@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Analytics Tracker" do
   context "index" do
     before(:each) do
-      2.times { Factory(:tracker, :environment => "test") }
+      2.times { create(:tracker, :environment => "test") }
       visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"

@@ -2,8 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Api::V1::PaymentsController do
-    let!(:order) { Factory(:order) }
-    let!(:payment) { Factory(:payment, :order => order) }
+    let!(:order) { create(:order) }
+    let!(:payment) { create(:payment, :order => order) }
     let!(:attributes) { [:id, :source_type, :source_id, :amount,
                          :payment_method_id, :response_code, :state, :avs_response, 
                          :created_at, :updated_at] }

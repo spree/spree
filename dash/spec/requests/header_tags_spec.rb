@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Header Tags" do
   before do
-    @product = Factory(:product, :name => "RoR Mug")
+    @product = create(:product, :name => "RoR Mug")
 
     Spree::DashConfiguration.new.app_id = 1111
     Spree::DashConfiguration.new.site_id = 2222

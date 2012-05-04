@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :product_property, :class => Spree::ProductProperty do
-    product { Factory(:product) }
-    property { Factory(:property) }
+    product { FactoryGirl.create(:product) }
+    property { FactoryGirl.create(:property) }
   end
 end

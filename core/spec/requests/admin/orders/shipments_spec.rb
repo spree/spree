@@ -3,8 +3,8 @@ require 'spec_helper'
 describe "Shipments" do
   
   Spree::Zone.delete_all
-  let(:shipping_method) { Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America') || Factory(:zone, :name => 'North America')) }
-  let(:order) { Factory(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method) }
+  let(:shipping_method) { create(:shipping_method, :zone => Spree::Zone.find_by_name('North America') || create(:zone, :name => 'North America')) }
+  let(:order) { create(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method) }
 
   before(:each) do
     reset_spree_preferences do |config|

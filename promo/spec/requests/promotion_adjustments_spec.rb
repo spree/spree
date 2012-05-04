@@ -7,16 +7,16 @@ describe "Promotion Adjustments" do
       SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
       ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
       # creates a default shipping method which is required for checkout
-      Factory(:bogus_payment_method, :environment => 'test')
+      create(:bogus_payment_method, :environment => 'test')
       # creates a check payment method so we don't need to worry about cc details
-      Factory(:payment_method)
+      create(:payment_method)
 
-      sm = Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+      sm = create(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
       sm.calculator.set_preference(:amount, 10)
 
-      user = Factory(:admin_user)
-      Factory(:product, :name => "RoR Mug", :price => "40")
-      Factory(:product, :name => "RoR Bag", :price => "20")
+      user = create(:admin_user)
+      create(:product, :name => "RoR Mug", :price => "40")
+      create(:product, :name => "RoR Bag", :price => "20")
 
       sign_in_as!(user)
       visit spree.admin_path
@@ -24,7 +24,7 @@ describe "Promotion Adjustments" do
       click_link "New Promotion"
     end
 
-    let!(:address) { Factory(:address, :state => Spree::State.first) }
+    let!(:address) { create(:address, :state => Spree::State.first) }
 
     it "should allow an admin to create a flat rate discount coupon promo" do
       fill_in "Name", :with => "Order's total > $30"
@@ -117,7 +117,7 @@ describe "Promotion Adjustments" do
 
       click_button "Place Order"
 
-      user = Factory(:user, :email => "john@test.com", :password => "secret", :password_confirmation => "secret")
+      user = create(:user, :email => "john@test.com", :password => "secret", :password_confirmation => "secret")
       click_link "Logout"
       click_link "Login"
       fill_in "user_email", :with => user.email

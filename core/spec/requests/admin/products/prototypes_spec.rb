@@ -3,28 +3,28 @@ require 'spec_helper'
 describe "Prototypes" do
   context "listing prototypes" do
     it "should be able to list existing prototypes" do
-      Factory(:property, :name => "model", :presentation => "Model")
-      Factory(:property, :name => "brand", :presentation => "Brand")
-      Factory(:property, :name => "shirt_fabric", :presentation => "Fabric")
-      Factory(:property, :name => "shirt_sleeve_length", :presentation => "Sleeve")
-      Factory(:property, :name => "mug_type", :presentation => "Type")
-      Factory(:property, :name => "bag_type", :presentation => "Type")
-      Factory(:property, :name => "manufacturer", :presentation => "Manufacturer")
-      Factory(:property, :name => "bag_size", :presentation => "Size")
-      Factory(:property, :name => "mug_size", :presentation => "Size")
-      Factory(:property, :name => "gender", :presentation => "Gender")
-      Factory(:property, :name => "shirt_fit", :presentation => "Fit")
-      Factory(:property, :name => "bag_material", :presentation => "Material")
-      Factory(:property, :name => "shirt_type", :presentation => "Type")
-      p = Factory(:prototype, :name => "Shirt")
+      create(:property, :name => "model", :presentation => "Model")
+      create(:property, :name => "brand", :presentation => "Brand")
+      create(:property, :name => "shirt_fabric", :presentation => "Fabric")
+      create(:property, :name => "shirt_sleeve_length", :presentation => "Sleeve")
+      create(:property, :name => "mug_type", :presentation => "Type")
+      create(:property, :name => "bag_type", :presentation => "Type")
+      create(:property, :name => "manufacturer", :presentation => "Manufacturer")
+      create(:property, :name => "bag_size", :presentation => "Size")
+      create(:property, :name => "mug_size", :presentation => "Size")
+      create(:property, :name => "gender", :presentation => "Gender")
+      create(:property, :name => "shirt_fit", :presentation => "Fit")
+      create(:property, :name => "bag_material", :presentation => "Material")
+      create(:property, :name => "shirt_type", :presentation => "Type")
+      p = create(:prototype, :name => "Shirt")
       %w( brand gender manufacturer model shirt_fabric shirt_fit shirt_sleeve_length shirt_type ).each do |prop|
         p.properties << Spree::Property.find_by_name(prop)
       end
-      p = Factory(:prototype, :name => "Mug")
+      p = create(:prototype, :name => "Mug")
       %w( mug_size mug_type ).each do |prop|
         p.properties << Spree::Property.find_by_name(prop)
       end
-      p = Factory(:prototype, :name => "Bag")
+      p = create(:prototype, :name => "Bag")
       %w( bag_type bag_material ).each do |prop|
         p.properties << Spree::Property.find_by_name(prop)
       end

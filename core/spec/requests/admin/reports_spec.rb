@@ -16,28 +16,28 @@ describe "Reports" do
 
   context "searching the admin reports page" do
     before do
-      order = Factory(:order)
+      order = create(:order)
       order.update_attributes_without_callbacks({:adjustment_total => 100})
       order.completed_at = Time.now
       order.save!
 
-      order = Factory(:order)
+      order = create(:order)
       order.update_attributes_without_callbacks({:adjustment_total => 200})
       order.completed_at = Time.now
       order.save!
 
       #incomplete order
-      order = Factory(:order)
+      order = create(:order)
       order.update_attributes_without_callbacks({:adjustment_total => 50})
       order.save!
 
-      order = Factory(:order)
+      order = create(:order)
       order.update_attributes_without_callbacks({:adjustment_total => 200})
       order.completed_at = 3.years.ago
       order.created_at = 3.years.ago
       order.save!
 
-      order = Factory(:order)
+      order = create(:order)
       order.update_attributes_without_callbacks({:adjustment_total => 200})
       order.completed_at = 3.years.from_now
       order.created_at = 3.years.from_now

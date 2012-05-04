@@ -24,7 +24,7 @@ describe Spree::Order do
   context 'validation' do
     context "when @use_billing is populated" do
       before do
-        order.bill_address = Factory(:address)
+        order.bill_address = create(:address)
         order.ship_address = nil
       end
 
@@ -219,8 +219,8 @@ describe Spree::Order do
 
       context "when transitioning to payment state" do
         before do
-          order.inventory_units << Factory(:inventory_unit)
-          order.shipping_method = Factory(:shipping_method)
+          order.inventory_units << create(:inventory_unit)
+          order.shipping_method = create(:shipping_method)
         end
 
         it "should create a shipment" do
@@ -476,7 +476,7 @@ describe Spree::Order do
 
     it "should call adjustment#update on every adjustment}" do
       # adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true, :update! => true)
-      adjustment = Factory(:adjustment, :adjustable => order, :amount => 5)
+      adjustment = create(:adjustment, :adjustable => order, :amount => 5)
       # TODO: Restore this example. Stubbing adjustments doesn't work, need a proper collection
       # so we can use adjustments.eligible
       # order.stub(:adjustments => [adjustment])
@@ -512,9 +512,9 @@ describe Spree::Order do
 
     context "with adjustments" do
       before do
-        Factory(:adjustment, :adjustable => order, :amount => 10)
-        Factory(:adjustment, :adjustable => order, :amount => 5)
-        a = Factory(:adjustment, :adjustable => order, :amount => -2, :eligible => false)
+        create(:adjustment, :adjustable => order, :amount => 10)
+        create(:adjustment, :adjustable => order, :amount => 5)
+        a = create(:adjustment, :adjustable => order, :amount => -2, :eligible => false)
         a.update_attribute_without_callbacks(:eligible, false)
         order.stub(:update_adjustments, nil) # So the last adjustment remains ineligible
         order.adjustments.reload
@@ -543,14 +543,14 @@ describe Spree::Order do
 
   context "#payment_method" do
     it "should return payment.payment_method if payment is present" do
-      payments = [Factory(:payment)]
+      payments = [create(:payment)]
       payments.stub(:completed => payments)
       order.stub(:payments => payments)
       order.payment_method.should == order.payments.first.payment_method
     end
 
     it "should return the first payment method from available_payment_methods if payment is not present" do
-      Factory(:payment_method, :environment => 'test')
+      create(:payment_method, :environment => 'test')
       order.payment_method.should == order.available_payment_methods.first
     end
   end
@@ -823,7 +823,7 @@ describe Spree::Order do
 
     context "when there is a default tax zone" do
       before do
-        @default_zone = Factory(:zone, :name => "foo_zone")
+        @default_zone = create(:zone, :name => "foo_zone")
         Spree::Zone.stub :default_tax => @default_zone
       end
 
@@ -871,8 +871,8 @@ describe Spree::Order do
       @order.stub :line_items => [line_item1, line_item2]
     end
 
-    let(:line_item1) { Factory(:line_item, :order => @order) }
-    let(:line_item2) { Factory(:line_item, :order => @order) }
+    let(:line_item1) { create(:line_item, :order => @order) }
+    let(:line_item2) { create(:line_item, :order => @order) }
 
     context "when there are no line item adjustments" do
       it "should return nothing if line items have no adjustments" do
@@ -954,8 +954,8 @@ describe Spree::Order do
 
   context "#exclude_tax?" do
     before do
-      @order = Factory(:order)
-      @default_zone = Factory(:zone)
+      @order = create(:order)
+      @default_zone = create(:zone)
       Spree::Zone.stub :default_tax => @default_zone
     end
 
@@ -963,7 +963,7 @@ describe Spree::Order do
       before { Spree::Config.set(:prices_inc_tax => true) }
 
       it "should be true when tax_zone is not the same as the default" do
-        @order.stub :tax_zone => Factory(:zone, :name => "other_zone")
+        @order.stub :tax_zone => create(:zone, :name => "other_zone")
         @order.exclude_tax?.should be_true
       end
 

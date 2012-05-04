@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Accounts" do
   context "editing" do
     it "should be able to edit an admin user" do
-      user = Factory(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
+      user = create(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
       visit spree.login_path
       fill_in "user_email", :with => user.email
       fill_in "user_password", :with => user.password
@@ -33,7 +33,7 @@ describe "Accounts" do
 
     it "should be able to edit an existing user account" do
       Spree::Auth::Config.set(:signout_after_password_change => false)
-      user = Factory(:user, :email => "email@person.com", :password => "secret", :password_confirmation => "secret")
+      user = create(:user, :email => "email@person.com", :password => "secret", :password_confirmation => "secret")
       visit spree.login_path
       fill_in "user_email", :with => user.email
       fill_in "user_password", :with => user.password

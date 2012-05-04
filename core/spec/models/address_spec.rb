@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Spree::Address do
   describe "clone" do
     it "creates a copy of the address with the exception of the id, updated_at and created_at attributes" do
-      state = Factory(:state)
-      original = Factory(:address,
+      state = create(:state)
+      original = create(:address,
                          :address1 => 'address1',
                          :address2 => 'address2',
                          :alternative_phone => 'alternative_phone',
@@ -117,7 +117,7 @@ describe Spree::Address do
   context ".default" do
     before do
       @default_country_id = Spree::Config[:default_country_id]
-      new_country = Factory(:country)
+      new_country = create(:country)
       Spree::Config[:default_country_id] = new_country.id
     end
 
