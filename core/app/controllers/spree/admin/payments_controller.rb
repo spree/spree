@@ -46,7 +46,7 @@ module Spree
 
         rescue Spree::Core::GatewayError => e
           flash[:error] = "#{e.message}"
-          respond_with(@payment) { |format| format.html { redirect_to new_admin_payment_path(@order) } }
+          respond_with(@payment) { |format| format.html { redirect_to new_admin_order_payment_path(@order) } }
         end
       end
 
