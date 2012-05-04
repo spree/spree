@@ -63,24 +63,6 @@ module Spree
       list
     end
 
-    Spree::Image.attachment_definitions[:attachment][:styles].each do |style, v|
-      # Defines these methods by default:
-      # def mini_image
-      # def small_image
-      # def product_image
-      # def large_image
-      define_method "#{style}_image" do |product, *options|
-        options = options.first || {}
-        if product.images.empty?
-          image_tag "noimage/#{style}.png", options
-        else
-          image = product.images.first
-          options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
-          image_tag image.attachment.url(style), options
-        end
-      end
-    end
-
     def meta_data_tags
       object = instance_variable_get('@'+controller_name.singularize)
       meta = { :keywords => Spree::Config[:default_meta_keywords], :description => Spree::Config[:default_meta_description] }
@@ -141,9 +123,9 @@ module Spree
 
     def available_countries
       countries = Zone.find_by_name(Spree::Config[:checkout_zone]).try(:country_list) || Country.all
-      countries.collect do |c| 
+      countries.collect do |c|
         c.name = I18n.t(c.iso, :scope => 'countries', :default => c.name)
-        c 
+        c
       end.sort{ |a,b| a.name <=> b.name }
     end
 
@@ -180,5 +162,38 @@ module Spree
     rescue
        Gem.available?(name)
     end
+
+    def method_missing(method_name, *args, &block)
+      if image_style = image_style_from_method_name(method_name)
+        define_image_method(image_style)
+        self.send(method_name, *args)
+      else
+        super
+      end
+    end
+
+    private
+
+    # Returns style of image or nil
+    def image_style_from_method_name(method_name)
+      if style = method_name.to_s.sub(/_image$/, '')
+        possible_styles = Spree::Image.attachment_definitions[:attachment][:styles]
+        style if style.in? possible_styles.with_indifferent_access
+      end
+    end
+
+    def define_image_method(style)
+      self.class.send :define_method, "#{style}_image" do |product, *options|
+        options = options.first || {}
+        if product.images.empty?
+          image_tag "noimage/#{style}.png", options
+        else
+          image = product.images.first
+          options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
+          image_tag image.attachment.url(style), options
+        end
+      end
+    end
+
   end
 end
