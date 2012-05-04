@@ -15,7 +15,7 @@ module Spree
     attr_accessor :special_instructions
 
     attr_accessible :order, :state, :shipping_method, :special_instructions,
-                    :shipping_method_id, :tracking
+                    :shipping_method_id, :tracking, :address, :inventory_units
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
