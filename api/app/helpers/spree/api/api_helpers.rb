@@ -57,7 +57,7 @@ module Spree
       end
 
       def taxon_attributes
-        [:id, :name, :permalink, :position, :parent_id]
+        [:id, :name, :permalink, :position, :parent_id, :taxonomy_id]
       end
     end
   end

@@ -42,7 +42,7 @@ module Spree
         end
 
         def taxon
-          @taxon || taxonomy.taxons.find(params[:id])
+          @taxon ||= taxonomy.taxons.find(params[:id])
         end
 
       end
