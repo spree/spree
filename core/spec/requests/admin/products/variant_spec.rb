@@ -3,10 +3,10 @@ require 'spec_helper'
 describe "Variants" do
   context "creating a new variant" do
     it "should allow an admin to create a new variant" do
-      product = Factory(:product_with_option_types, :price => "1.99", :cost_price => "1.00", :weight => "2.5", :height => "3.0", :width => "1.0", :depth => "1.5")
+      product = create(:product_with_option_types, :price => "1.99", :cost_price => "1.00", :weight => "2.5", :height => "3.0", :width => "1.0", :depth => "1.5")
 
       product.options.each do |option|
-        Factory(:option_value, :option_type => option.option_type)
+        create(:option_value, :option_type => option.option_type)
       end
 
       visit spree.admin_path

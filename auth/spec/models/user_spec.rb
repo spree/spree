@@ -4,14 +4,14 @@ describe Spree::User do
   before(:all) { Spree::Role.create :name => 'admin' }
 
   it 'should generate the reset password token' do
-    user = Factory.build(:user)
+    user = build(:user)
     Spree::UserMailer.should_receive(:reset_password_instructions).with(user).and_return(double(:deliver => true))
     user.send_reset_password_instructions
     user.reset_password_token.should_not be_nil
   end
 
   context '#create' do
-    let(:user) { Factory.build(:user) }
+    let(:user) { build(:user) }
 
     it 'should not be anonymous' do
       user.should_not be_anonymous
@@ -20,7 +20,7 @@ describe Spree::User do
 
   context '#destroy' do
     it 'can not delete if it has completed orders' do
-      order = Factory.build(:order, :completed_at => Time.now)
+      order = build(:order, :completed_at => Time.now)
       order.save
       user = order.user
 
@@ -45,7 +45,7 @@ describe Spree::User do
   end
 
   context '#save' do
-    let(:user) { Factory.build(:user) }
+    let(:user) { build(:user) }
 
     context 'when there are no admin users' do
       it 'should assign the user an admin role' do
@@ -55,7 +55,7 @@ describe Spree::User do
     end
 
     context 'when there are existing admin users' do
-      before { Factory(:admin_user) }
+      before { create(:admin_user) }
 
       it 'should not assign the user an admin role' do
         user.save

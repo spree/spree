@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Admin::OverviewController do
 
   before :each do
-    @user = Factory(:admin_user)
+    @user = create(:admin_user)
     controller.stub :current_user => @user
   end
 

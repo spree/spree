@@ -4,7 +4,7 @@ module Spree
   describe Api::V1::OrdersController do
     render_views
 
-    let!(:order) { Factory(:order) }
+    let!(:order) { create(:order) }
     let(:attributes) { [:number, :item_total, :total,
                         :state, :adjustment_total, :credit_total,
                         :user_id, :created_at, :updated_at,
@@ -35,7 +35,7 @@ module Spree
     end
 
     it "can create an order" do
-      variant = Factory(:variant)
+      variant = create(:variant)
       api_post :create, :order => { :line_items => [{ :variant_id => variant.to_param, :quantity => 5 }] }
       response.status.should == 200
       order = Order.last
@@ -47,7 +47,7 @@ module Spree
 
     context "working with an order" do
       before do
-        Factory(:payment_method)
+        create(:payment_method)
         order.next # Switch from cart to address
         order.ship_address.should be_nil
         order.state.should == "address"
@@ -60,10 +60,10 @@ module Spree
       end
 
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
-      let(:shipping_address) { clean_address(Factory.attributes_for(:address).merge!(address_params)) }
-      let(:billing_address) { clean_address(Factory.attributes_for(:address).merge!(address_params)) }
-      let!(:shipping_method) { Factory(:shipping_method) }
-      let!(:payment_method) { Factory(:payment_method) }
+      let(:shipping_address) { clean_address(attributes_for(:address).merge!(address_params)) }
+      let(:billing_address) { clean_address(attributes_for(:address).merge!(address_params)) }
+      let!(:shipping_method) { create(:shipping_method) }
+      let!(:payment_method) { create(:payment_method) }
 
       it "can add address information to an order" do
         api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address
@@ -104,7 +104,7 @@ module Spree
 
       context "with a line item" do
         before do
-          order.line_items << Factory(:line_item)
+          order.line_items << create(:line_item)
         end
 
         context "for delivery" do

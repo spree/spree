@@ -1,11 +1,11 @@
 FactoryGirl.define do
   factory :shipment, :class => Spree::Shipment do
-    order { Factory(:order) }
-    shipping_method { Factory(:shipping_method) }
+    order { FactoryGirl.create(:order) }
+    shipping_method { FactoryGirl.create(:shipping_method) }
     tracking 'U10000'
     number '100'
     cost 100.00
-    address { Factory(:address) }
+    address { FactoryGirl.create(:address) }
     state 'pending'
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'orders' do
-  let(:order) { Factory(:order, :shipping_method => Factory(:shipping_method)) }
+  let(:order) { create(:order, :shipping_method => create(:shipping_method)) }
 
   it "can visit an order" do
     # Regression test for current_user call on orders/show

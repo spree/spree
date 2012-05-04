@@ -5,7 +5,7 @@ describe 'Product Details' do
   context 'editing a product' do
     let(:available_on) { Time.now }
     it 'should list the product details' do
-      Factory(:product, :name => 'Bún thịt nướng', :permalink => 'bun-thit-nuong', :sku => 'A100',
+      create(:product, :name => 'Bún thịt nướng', :permalink => 'bun-thit-nuong', :sku => 'A100',
               :description => 'lorem ipsum', :available_on => available_on, :count_on_hand => 10)
 
       visit spree.admin_path
@@ -27,7 +27,7 @@ describe 'Product Details' do
     end
 
     it "should handle permalink changes" do
-      Factory(:product, :name => 'Bún thịt nướng', :permalink => 'bun-thit-nuong', :sku => 'A100',
+      create(:product, :name => 'Bún thịt nướng', :permalink => 'bun-thit-nuong', :sku => 'A100',
               :description => 'lorem ipsum', :available_on => '2011-01-01 01:01:01', :count_on_hand => 10)
 
       visit spree.admin_path

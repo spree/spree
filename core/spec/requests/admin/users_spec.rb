@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "Users" do
   before(:each) do
-    Factory(:user, :email => "a@example.com")
-    Factory(:user, :email => "b@example.com")
+    create(:user, :email => "a@example.com")
+    create(:user, :email => "b@example.com")
     visit spree.admin_path
     click_link "Users"
   end

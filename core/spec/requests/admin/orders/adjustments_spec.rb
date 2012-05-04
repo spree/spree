@@ -3,8 +3,8 @@ require 'spec_helper'
 describe "Adjustments" do
   before(:each) do
     visit spree.admin_path
-    order = Factory(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
-    Factory(:adjustment, :adjustable => order)
+    order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
+    create(:adjustment, :adjustable => order)
     click_link "Orders"
     within(:css, 'table#listing_orders tbody tr:nth-child(1)') { click_link "Edit" }
     click_link "Adjustments"

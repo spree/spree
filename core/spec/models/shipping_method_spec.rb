@@ -15,9 +15,9 @@ describe Spree::ShippingMethod do
 
   context 'available?' do
     before(:each) do
-      @shipping_method = Factory(:shipping_method)
-      variant = Factory(:variant, :product => Factory(:product))
-      @order = Factory(:order, :line_items => [Factory(:line_item, :variant => variant)])
+      @shipping_method = create(:shipping_method)
+      variant = create(:variant, :product => create(:product))
+      @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
     end
 
     context "when the calculator is not available" do
@@ -39,11 +39,11 @@ describe Spree::ShippingMethod do
 
   context 'available_to_order?' do
     before(:each) do
-      @shipping_method = Factory(:shipping_method)
+      @shipping_method = create(:shipping_method)
       @shipping_method.zone.stub(:include? => true)
       @shipping_method.stub(:available? => true)
-      variant = Factory(:variant, :product => Factory(:product))
-      @order = Factory(:order, :line_items => [Factory(:line_item, :variant => variant)])
+      variant = create(:variant, :product => create(:product))
+      @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
     end
 
     context "when availability_check is false" do
@@ -80,21 +80,21 @@ describe Spree::ShippingMethod do
   context "#category_match?" do
     context "when no category is specified" do
       before(:each) do
-        @shipping_method = Factory(:shipping_method)
+        @shipping_method = create(:shipping_method)
       end
 
       it "should return true" do
-        @shipping_method.category_match?(Factory(:order)).should be_true
+        @shipping_method.category_match?(create(:order)).should be_true
       end
     end
 
     context "when a category is specified" do
-      before { @shipping_method = Factory(:shipping_method_with_category) }
+      before { @shipping_method = create(:shipping_method_with_category) }
 
       context "when all products match" do
         before(:each) do
-          variant = Factory(:variant, :product => Factory(:product, :shipping_category => @shipping_method.shipping_category))
-          @order = Factory(:order, :line_items => [Factory(:line_item, :variant => variant)])
+          variant = create(:variant, :product => create(:product, :shipping_category => @shipping_method.shipping_category))
+          @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
         end
 
         context "when rule is every match" do
@@ -124,8 +124,8 @@ describe Spree::ShippingMethod do
 
       context "when no products match" do
         before(:each) do
-          variant = Factory(:variant, :product => Factory(:product, :shipping_category => Factory(:shipping_category)))
-          @order = Factory(:order, :line_items => [Factory(:line_item, :variant => variant)])
+          variant = create(:variant, :product => create(:product, :shipping_category => create(:shipping_category)))
+          @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
         end
 
         context "when rule is every match" do
@@ -155,9 +155,9 @@ describe Spree::ShippingMethod do
 
       context "when some products match" do
         before(:each) do
-          variant1 = Factory(:variant, :product => Factory(:product, :shipping_category => @shipping_method.shipping_category))
-          variant2 = Factory(:variant, :product => Factory(:product, :shipping_category => Factory(:shipping_category)))
-          @order = Factory(:order, :line_items => [Factory(:line_item, :variant => variant1), Factory(:line_item, :variant => variant2)])
+          variant1 = create(:variant, :product => create(:product, :shipping_category => @shipping_method.shipping_category))
+          variant2 = create(:variant, :product => create(:product, :shipping_category => create(:shipping_category)))
+          @order = create(:order, :line_items => [create(:line_item, :variant => variant1), create(:line_item, :variant => variant2)])
         end
 
         context "when rule is every match" do

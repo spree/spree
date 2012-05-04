@@ -114,7 +114,7 @@ describe Spree::Shipment do
       end
 
       it "should validate with inventory" do
-        shipment.inventory_units = [Factory(:inventory_unit)]
+        shipment.inventory_units = [create(:inventory_unit)]
         shipment.valid?.should be_true
       end
 

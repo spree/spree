@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Users' do
   before do
-    user = Factory(:admin_user, :email => "c@example.com")
+    user = create(:admin_user, :email => "c@example.com")
     sign_in_as!(user)
     visit spree.admin_users_path
   end

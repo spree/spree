@@ -38,6 +38,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  config.include FactoryGirl::Syntax::Methods
   config.include Spree::Core::UrlHelpers
   config.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
 

@@ -5,12 +5,12 @@ module Spree
     render_views
 
     let!(:order) do
-     order = Factory(:order)
-     order.line_items << Factory(:line_item)
+     order = create(:order)
+     order.line_items << create(:line_item)
      order
     end
 
-    let(:product) { Factory(:product) }
+    let(:product) { create(:product) }
     let(:attributes) { [:id, :quantity, :price, :variant] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 

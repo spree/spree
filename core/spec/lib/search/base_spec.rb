@@ -4,8 +4,8 @@ describe Spree::Core::Search::Base do
 
   before do
     include ::Spree::ProductFilters
-    @product1 = Factory(:product, :name => "RoR Mug", :price => 9.00, :on_hand => 1)
-    @product2 = Factory(:product, :name => "RoR Shirt", :price => 11.00, :on_hand => 1)
+    @product1 = create(:product, :name => "RoR Mug", :price => 9.00, :on_hand => 1)
+    @product2 = create(:product, :name => "RoR Shirt", :price => 11.00, :on_hand => 1)
   end
 
   it "returns all products by default" do
@@ -15,7 +15,7 @@ describe Spree::Core::Search::Base do
   end
 
   it "switches to next page according to the page parameter" do
-    @product3 = Factory(:product, :name => "RoR Pants", :price => 14.00, :on_hand => 1)
+    @product3 = create(:product, :name => "RoR Pants", :price => 14.00, :on_hand => 1)
 
     params = { :per_page => "2" }
     searcher = Spree::Core::Search::Base.new(params)

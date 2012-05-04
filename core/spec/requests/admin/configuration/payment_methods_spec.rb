@@ -8,7 +8,7 @@ describe "Payment Methods" do
 
   context "admin visiting payment methods listing page" do
     it "should display existing payment methods" do
-      2.times { Factory(:payment_method) }
+      2.times { create(:payment_method) }
       click_link "Payment Methods"
 
       find('table#listing_payment_methods th:nth-child(1)').text.should == "Name"
@@ -39,7 +39,7 @@ describe "Payment Methods" do
 
   context "admin editing a payment method" do
     before(:each) do
-      2.times { Factory(:payment_method) }
+      2.times { create(:payment_method) }
       click_link "Payment Methods"
       within(:css, 'table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1)') { click_link "Edit" }
     end

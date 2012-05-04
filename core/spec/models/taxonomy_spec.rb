@@ -12,9 +12,9 @@ describe Spree::Taxonomy do
 
   context "#destroy" do
     before do
-       @taxonomy = Factory(:taxonomy)
+       @taxonomy = create(:taxonomy)
        @root_taxon = @taxonomy.root
-       @child_taxon = Factory(:taxon, :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
+       @child_taxon = create(:taxon, :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
     end
 
     it "should destroy all associated taxons" do

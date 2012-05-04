@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Sign Out" do
   let!(:user) do
-   Factory(:user,
+   create(:user,
           :email => "email@person.com",
           :password => "secret",
           :password_confirmation => "secret")

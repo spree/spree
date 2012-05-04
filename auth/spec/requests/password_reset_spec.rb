@@ -8,7 +8,7 @@ describe "Reset Password" do
   end
 
   it "should allow a user to supply an email for the password reset" do
-    user = Factory(:user, :email => "foobar@example.com", :password => "secret", :password_confirmation => "secret")
+    user = create(:user, :email => "foobar@example.com", :password => "secret", :password_confirmation => "secret")
     visit spree.login_path
     click_link "Forgot Password?"
     fill_in "user_email", :with => "foobar@example.com"

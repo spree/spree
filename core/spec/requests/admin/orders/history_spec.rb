@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Admin visiting history" do
   it "should display order history", :js => true do
-    order = Factory(:order)
+    order = create(:order)
     order.finalize!
 
     visit spree.admin_path

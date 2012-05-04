@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Admin Permissions" do
   context "admin is restricted from accessing orders" do
     before(:each) do
-      user = Factory(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
+      user = create(:admin_user, :email => "admin@person.com", :password => "password", :password_confirmation => "password")
       Spree::Ability.register_ability(AbilityDecorator)
       visit spree.login_path
       fill_in "user_email", :with => user.email
@@ -17,13 +17,13 @@ describe "Admin Permissions" do
     end
 
     it "should not be able to edit orders" do
-      Factory(:order, :number => "R123")
+      create(:order, :number => "R123")
       visit spree.edit_admin_order_path("R123")
       page.should have_content("Authorization Failure")
     end
 
     it "should not be able to view an order" do
-      Factory(:order, :number => "R123")
+      create(:order, :number => "R123")
       visit spree.admin_order_path("R123")
       page.should have_content("Authorization Failure")
     end

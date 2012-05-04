@@ -8,10 +8,10 @@ describe "Checkout" do
           config.allow_backorders = false
         end
         Spree::Product.delete_all
-        @product = Factory(:product, :name => "RoR Mug")
+        @product = create(:product, :name => "RoR Mug")
         @product.on_hand = 1
         @product.save
-        Factory(:zone)
+        create(:zone)
       end
 
       it "should warn the user about out of stock items" do

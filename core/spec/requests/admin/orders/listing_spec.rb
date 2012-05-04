@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "Orders Listing" do
   before(:each) do
-    Factory(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
-    Factory(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")
+    create(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
+    create(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")
     visit spree.admin_path
   end
 

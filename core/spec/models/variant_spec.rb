@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Variant do
-  let!(:variant) { Factory(:variant, :count_on_hand => 95) }
+  let!(:variant) { create(:variant, :count_on_hand => 95) }
 
   before(:each) do
     reset_spree_preferences

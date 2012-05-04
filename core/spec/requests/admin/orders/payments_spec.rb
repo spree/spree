@@ -8,9 +8,9 @@ describe "Payments" do
     end
 
     Spree::Zone.delete_all
-    shipping_method = Factory(:shipping_method, :zone => Factory(:zone, :name => 'North America')) 
-    @order = Factory(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method) 
-    product = Factory(:product, :name => 'spree t-shirt', :on_hand => 5)
+    shipping_method = create(:shipping_method, :zone => create(:zone, :name => 'North America')) 
+    @order = create(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method) 
+    product = create(:product, :name => 'spree t-shirt', :on_hand => 5)
     product.master.count_on_hand = 5
     product.master.save
     @order.add_variant(product.master, 2)
@@ -26,7 +26,7 @@ describe "Payments" do
   context "payment methods" do
 
     before(:each) do
-      Factory(:payment, :order => @order, :amount => @order.outstanding_balance, :payment_method => Factory(:bogus_payment_method, :environment => 'test'))
+      create(:payment, :order => @order, :amount => @order.outstanding_balance, :payment_method => create(:bogus_payment_method, :environment => 'test'))
       visit spree.admin_path
       click_link "Orders"
       within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }
@@ -71,10 +71,10 @@ describe "Payments" do
     context "with a check payment" do
       before do
         @order.payments.delete_all
-        Factory(:payment, :order => @order,
+        create(:payment, :order => @order,
                         :state => "checkout",
                         :amount => @order.outstanding_balance,
-                        :payment_method => Factory(:bogus_payment_method, :environment => 'test'))
+                        :payment_method => create(:bogus_payment_method, :environment => 'test'))
       end
 
       it "capturing a check payment from a new order" do

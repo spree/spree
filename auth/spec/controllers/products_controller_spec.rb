@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::ProductsController do
-  let!(:product) { Factory(:product, :available_on => 1.year.from_now) }
+  let!(:product) { create(:product, :available_on => 1.year.from_now) }
 
   it "allows admins to view non-active products" do
     controller.stub :current_user => stub(:admin? => true)

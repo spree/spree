@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Calculator::DefaultTax do
-  let!(:tax_category) { Factory(:tax_category, :tax_rates => []) }
+  let!(:tax_category) { create(:tax_category, :tax_rates => []) }
   let!(:rate) { mock_model(Spree::TaxRate, :tax_category => tax_category, :amount => 0.05) }
   let!(:calculator) { Spree::Calculator::DefaultTax.new({:calculable => rate}, :without_protection => true) }
-  let!(:order) { Factory(:order) }
-  let!(:product_1) { Factory(:product) }
-  let!(:product_2) { Factory(:product) }
-  let!(:line_item_1) { Factory(:line_item, :product => product_1, :price => 10, :quantity => 3) }
-  let!(:line_item_2) { Factory(:line_item, :product => product_2, :price => 5, :quantity => 1) }
+  let!(:order) { create(:order) }
+  let!(:product_1) { create(:product) }
+  let!(:product_2) { create(:product) }
+  let!(:line_item_1) { create(:line_item, :product => product_1, :price => 10, :quantity => 3) }
+  let!(:line_item_2) { create(:line_item, :product => product_2, :price => 5, :quantity => 1) }
 
   context "#compute" do
     context "when given an order" do

@@ -6,8 +6,8 @@ module Spree
 
     context "#variant_price_diff" do
       before do
-        @product = Factory(:product)
-        @variant = Factory(:variant, :product => @product)
+        @product = create(:product)
+        @variant = create(:variant, :product => @product)
       end
 
       it "should be correct positive value when variant is more than master" do
