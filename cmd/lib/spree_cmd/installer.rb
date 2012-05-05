@@ -22,6 +22,9 @@ module SpreeCmd
     class_option :branch, :type => :string, :desc => 'Spree gem git branch'
     class_option :tag, :type => :string, :desc => 'Spree gem git tag'
 
+    class_option :precompile_assets, :type => :boolean, :default => true,
+                 :desc => 'Precompile spree assets to public/assets'
+
     def verify_rails
       unless is_rails_project?
         say "#{@app_path} is not a rails project."
@@ -68,6 +71,7 @@ module SpreeCmd
         @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
         @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
       end
+      @precompile_assets = options[:precompile_assets] ? ask_with_default('Would you like to precompile assets?') : false
     end
 
     def add_gems
@@ -99,9 +103,11 @@ module SpreeCmd
     end
 
     def precompile_assets
-      say_status :precompiling, 'assets'
-      inside @app_path do
-        run 'bundle exec rake assets:precompile', :verbose => false
+      if @precompile_assets
+        say_status :precompiling, 'assets'
+        inside @app_path do
+          run 'bundle exec rake assets:precompile', :verbose => false
+        end
       end
     end
 
