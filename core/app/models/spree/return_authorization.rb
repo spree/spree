@@ -67,8 +67,10 @@ module Spree
 
       def process_return
         inventory_units.each &:return!
-        credit = Adjustment.create(:source => self, :adjustable => order, :amount => amount.abs * -1, :label => I18n.t(:rma_credit))
-        order.update!
+        credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
+        credit.source = self
+        credit.adjustable = order
+        credit.save
       end
 
       def allow_receive?
