@@ -71,8 +71,8 @@ describe Spree::Zone do
     let(:country3) { create(:country) }
 
     before do
-      @source = create(:zone, :name => "source")
-      @target = create(:zone, :name => "target")
+      @source = create(:zone, :name => "source", :zone_members => [])
+      @target = create(:zone, :name => "target", :zone_members => [])
     end
 
     context "when the target has no members" do
@@ -208,7 +208,7 @@ describe Spree::Zone do
 
     context "when a zone member country is added to an existing zone consisting of state members" do
       it "should remove existing state members" do
-        zone = create(:zone, :name => "foo")
+        zone = create(:zone, :name => "foo", :zone_members => [])
         state = create(:state)
         country = create(:country)
         zone.members.create(:zoneable => state)
