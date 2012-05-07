@@ -321,7 +321,7 @@ class SpreeZeroNineZero < ActiveRecord::Migration
     end
 
     create_table :tax_rates, :force => true do |t|
-      t.decimal  :amount, :precision => 8, :scale => 4
+      t.decimal  :amount, :precision => 8, :scale => 6
       t.references :zone
       t.references :tax_category
 
