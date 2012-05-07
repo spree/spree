@@ -46,25 +46,14 @@ module Spree
       def save_permalink
         permalink_value = self.to_param
         field = self.class.permalink_field
-        order = self.class.permalink_order
-        # Do other links exist with this permalink?
-        other = self.class.first(
-          :conditions => "#{field} LIKE '#{permalink_value}%'",
-          :order => "#{order} LENGTH(#{field}) DESC, #{field} DESC"
-        )
-        if other
-          # Find existence of that permalink or the number of that permalink and add one.
-          if ( permalink_value == other.send(field) || /-(\d+)$/.match(other.send(field)) )
-            if $1
-              number = $1.to_i + 1
-            # Otherwise default to suffixing it with a 1.
-            else
-              number = 1
-            end
-
+          # Do other links exist with this permalink?
+          other = self.class.all(:conditions => "#{field} LIKE '#{permalink_value}%'")
+          unless other.empty?
+            # Find the existing permalink with the highest number, and increment that number.
+            # (If none of the existing permalinks have a number, this will evaluate to 1.)
+            number = other.map { |o| o.send(field)[/-(\d+)$/, 1].to_i }.max + 1
             permalink_value += "-#{number.to_s}"
           end
-        end
         write_attribute(field, permalink_value)
       end
     end
