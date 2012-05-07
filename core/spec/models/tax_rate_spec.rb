@@ -25,7 +25,7 @@ describe Spree::TaxRate do
 
       context "when there is no default tax zone" do
         before do
-          @zone = create(:zone, :name => "Country Zone", :default_tax => false)
+          @zone = create(:zone, :name => "Country Zone", :default_tax => false, :zone_members => [])
           @zone.zone_members.create(:zoneable => country)
         end
 
@@ -54,7 +54,7 @@ describe Spree::TaxRate do
 
         context "when the tax_zone is contained within a rate zone" do
           before do
-            sub_zone = create(:zone, :name => "State Zone")
+            sub_zone = create(:zone, :name => "State Zone", :zone_members => [])
             sub_zone.zone_members.create(:zoneable => create(:state, :country => country))
             order.stub :tax_zone => sub_zone
             @rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
@@ -70,7 +70,7 @@ describe Spree::TaxRate do
 
       context "when there is a default tax zone" do
         before do
-          @zone = create(:zone, :name => "Country Zone", :default_tax => true)
+          @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
           @zone.zone_members.create(:zoneable => country)
         end
 
