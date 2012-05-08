@@ -14,7 +14,7 @@ module Spree
 
       def dismiss_banner
         if request.xhr? and params[:banner_id]
-          current_user.dismiss_banner(params[:banner_id])
+          current_spree_user.dismiss_banner(params[:banner_id])
           render :nothing => true
         end
       end

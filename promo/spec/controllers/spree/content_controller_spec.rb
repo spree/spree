@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::ContentController do
   before :each do
-    controller.stub :current_user => create(:user)
+    controller.stub :current_spree_user => create(:user)
   end
 
   it "fires event for #show" do

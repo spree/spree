@@ -6,7 +6,7 @@ module Spree
       @store = {
         :first_name => '',
         :last_name => '',
-        :email => current_user.email,
+        :email => current_spree_user.email,
         :currency => 'USD',
         :time_zone => Time.zone,
         :name => Spree::Config.site_name,
