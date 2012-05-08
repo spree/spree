@@ -1,0 +1,40 @@
+h2. Custom Authentication
+
+This guide covers using a custom authentication setup with Spree, such as one provided by your own application. This is ideal in situations where you want to handle the sign-in or sign-up flow of your application uniquely, outside the realms of what would be possibly with Spree. After reading this guide, you will be familiar with:
+
+* Setting up Spree to work with your custom authentication
+
+endprologue.
+
+h3. Background
+
+Traditionally, applications that use Spree have needed to use the +Spree::User+ model that came with the +spree_auth+ component of Spree. With the advent of 1.2, this is no longer a restriction. The +spree_auth+ component of Spree has been removed and is now purely opt-in. If you have an application that has used the +spree_auth+ component in the past and you wish to continue doing so, you will need to add this extra line to your +Gemfile+:
+
+<ruby>
+gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
+</ruby>
+
+By having this authentication component outside of Spree, applications that wish to use their own authentication may do so, and applications that have previously used +spree_auth+'s functionality may continue doing so by using this gem.
+
+h4. The User Model
+
+This guide assumes that you have a pre-existing model inside your application that represents the users of your application already. This model could be provided by gems such as "Devise":http://github.com/plataformatec/devise or "Sorcery":https://github.com/NoamB/sorcery. This guide also assumes that the application that this +User+ model exists in is already a Spree application.
+
+This model *does not* need to be called +User+, but for the purposes of this guide the model we will be referring to *will* be called +User+. If your model is called something else, do some mental substitution wherever you see +User+.
+
+h3. Setup
+
+To begin using your custom +User+ class, you must first generate an initializer and a migration by using the +spree:custom_user+ generator, like this:
+
+<shell>
+rails g spree:custom_user User
+</shell>
+
+This will tell the generator that you want to use the +User+ class as the class that represents users in Spree. The initializer that will be generated from this command will be placed at +config/initializers/spree_custom_user.rb+ and looks like this:
+
+<ruby>
+Spree.user_class = "User"
+Spree.current_user_method = "current_user"
+</ruby>
+
+The first line here tells Spree that the user class for your application is called "User". This *must* be a +String+, so that it works in development as well as production. The second line tells Spree how you refer to the current user within your application. Ensure that these values are correct before moving on.
