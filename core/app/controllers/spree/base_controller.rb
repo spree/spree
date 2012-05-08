@@ -19,6 +19,8 @@ class Spree::BaseController < ApplicationController
       end
     end
 
+    helper_method :current_spree_user
+
     # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
     def current_ability
       @current_ability ||= Spree::Ability.new(current_spree_user)
