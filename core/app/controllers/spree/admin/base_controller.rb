@@ -8,8 +8,19 @@ module Spree
       layout '/spree/layouts/admin'
 
       before_filter :check_alerts
+      before_filter :authorize_admin
 
       protected
+        def authorize_admin
+          begin
+            record = model_class.new
+          rescue
+            record = Object.new
+          end
+          authorize! :admin, record
+          authorize! params[:action].to_sym, record
+        end
+
         def check_alerts
           return unless should_check_alerts?
 
