@@ -18,6 +18,5 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', version
-  s.add_dependency 'spree_auth', version
   s.add_dependency 'httparty', '~> 0.8.1'
 end
