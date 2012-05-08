@@ -15,7 +15,7 @@ class Spree::BaseController < ApplicationController
       if Spree.user_class && Spree.current_user_method
         send(Spree.current_user_method)
       else
-        Object.new
+        nil
       end
     end
 
