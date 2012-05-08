@@ -81,6 +81,22 @@ describe Spree::OrdersController do
         end
       end
 
+      context 'A different controllers respond_override. Regression test for #1301' do
+        before do
+          @order = create(:order)
+          Spree::Admin::OrdersController.instance_eval do
+            respond_override({:update => {:html => {:success => lambda { render(:text => 'success!!!') }}}})
+          end
+        end
+        describe "POST" do
+          it "should not effect the wrong controller" do
+            Spree::Responder.should_not_receive(:call)
+            put :update, {}, {:order_id => @order.id}
+            response.should redirect_to(spree.cart_path)
+          end
+        end
+      end
+
     end
   end
 
