@@ -2,6 +2,7 @@
 # using the special +register_ability+ method which allows extensions to add their own abilities.
 #
 # See http://github.com/ryanb/cancan for more details on cancan.
+require 'cancan'
 module Spree
   class Ability
     include CanCan::Ability
@@ -26,7 +27,7 @@ module Spree
       alias_action :new_action, :to => :create
       alias_action :show, :to => :read
 
-      user ||= Spree::User.new
+      user ||= Spree.user_class.new
       if user.has_role? 'admin'
         can :manage, :all
       else

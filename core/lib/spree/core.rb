@@ -39,6 +39,17 @@ require 'jquery-rails'
 require 'deface'
 
 module Spree
+
+  mattr_accessor :user_class, :current_user_method
+
+  def user_class
+    if @@user_class.is_a?(Class)
+      raise "Spree.user_class MUST be a String object, not a Class object."
+    elsif @@user_class.is_a?(String)
+      @@user_class.constantize
+    end
+  end
+
   module Core
   end
 
