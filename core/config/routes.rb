@@ -193,6 +193,8 @@ Spree::Core::Engine.routes.draw do
       end
     end
   end
+  
+  match '/content/cvv' => 'content#cvv'
 
   match '/admin', :to => 'admin/orders#index', :as => :admin
 
