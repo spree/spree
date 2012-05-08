@@ -29,7 +29,7 @@ class Spree::BaseController < ApplicationController
     def unauthorized
       respond_to do |format|
         format.html do
-          if current_user
+          if current_spree_user
             flash.now[:error] = t(:authorization_failure)
             render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
           else

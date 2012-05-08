@@ -4,7 +4,7 @@ describe Spree::Admin::OverviewController do
 
   before :each do
     @user = create(:admin_user)
-    controller.stub :current_user => @user
+    controller.stub :current_spree_user => @user
   end
 
   it "sets the locale preference" do

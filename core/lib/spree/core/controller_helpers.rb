@@ -63,7 +63,7 @@ module Spree
         # add additional keys as appropriate. Override this method if you need additional data when
         # responding to a notification
         def default_notification_payload
-          {:user => (respond_to?(:current_user) && current_user), :order => current_order}
+          {:user => current_spree_user, :order => current_order}
         end
 
       private
@@ -83,8 +83,8 @@ module Spree
         end
 
         def associate_user
-          return unless current_user and current_order
-          current_order.associate_user!(current_user)
+          return unless current_spree_user and current_order
+          current_order.associate_user!(current_spree_user)
           session[:guest_token] = nil
         end
 
