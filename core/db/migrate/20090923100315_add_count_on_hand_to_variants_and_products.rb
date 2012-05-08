@@ -1,3 +1,13 @@
+# Redefine Product model to just what is needed in order to solve problems with
+# rake test_app in Postgres
+class Product < ActiveRecord::Base
+  has_many :variants
+
+  def has_variants?
+    !variants.empty?
+  end
+end
+
 class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
   def up
     add_column :variants, :count_on_hand, :integer, :default => 0, :null => false
