@@ -34,7 +34,7 @@ class Spree::BaseController < ApplicationController
             render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
           else
             store_location
-            redirect_to spree.login_path and return
+            redirect_to spree_login_path and return
           end
         end
         format.xml do
@@ -44,5 +44,9 @@ class Spree::BaseController < ApplicationController
           render :text => "Not Authorized \n", :status => 401
         end
       end
+    end
+
+    def spree_login_path
+      spree.login_path
     end
 end
