@@ -13,7 +13,7 @@
   <p data-hook="links">
     <%= link_to t(:back_to_store), spree.root_path, :class => "button" %>
     <% unless params.has_key? :checkout_complete %>
-      <% if current_spree_user %>
+      <% if spree_current_user %>
         <%= link_to t(:my_account), spree.account_path, :class => "button" %>
       <% end %>
     <% end %>
