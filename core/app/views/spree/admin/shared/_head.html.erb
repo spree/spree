@@ -4,9 +4,9 @@
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 <%= javascript_tag do %>
   ajax_urls = <%== {
-    :product_search_json       => spree.admin_products_url(:format => 'json'),
-    :product_search_basic_json => spree.admin_products_url(:format => 'json', :json_format => 'basic', :limit => 10),
-    :user_search_basic_json    => spree.admin_users_url(:format => 'json', :json_format => 'basic', :limit => 10)
+    :product_search_json       => spree.admin_products_path(:format => 'json'),
+    :product_search_basic_json => spree.admin_products_path(:format => 'json', :json_format => 'basic', :limit => 10),
+    :user_search_basic_json    => spree.admin_users_path(:format => 'json', :json_format => 'basic', :limit => 10)
   }.to_json %>;
 
   strings = <%==
