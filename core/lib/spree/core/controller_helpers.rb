@@ -55,6 +55,15 @@ module Spree
         @current_ability ||= Spree::Ability.new(current_spree_user)
       end
 
+      def store_location
+        # disallow return to login, logout, signup pages
+        disallowed_urls = [spree_signup_path, spree_login_path, spree_logout_path]
+        disallowed_urls.map!{ |url| url[/\/\w+$/] }
+        unless disallowed_urls.include?(request.fullpath)
+          session['user_return_to'] = request.fullpath.gsub('//', '/')
+        end
+      end
+
       # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
       # Override this method in your controllers if you want to have special behavior in case the user is not authorized
       # to access the requested action.  For example, a popup window might simply close itself.
@@ -80,6 +89,14 @@ module Spree
 
       def spree_login_path
         spree.login_path
+      end
+
+      def spree_signup_path
+        spree.signup_path
+      end
+
+      def spree_logout_path
+        spree.destroy_user_session_path
       end
 
 
