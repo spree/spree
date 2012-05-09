@@ -109,9 +109,9 @@ describe Spree::Product do
           @product3 = create(:product, :name => 'foo')
         end
         it "should have valid permalink" do
-          @product1.permalink.should == 'foo'
-          @product2.permalink.should == 'foo-1'
-          @product3.permalink.should == 'foo-2'
+          @product1.permalink.should == 'foo-1'
+          @product2.permalink.should == 'foo-2'
+          @product3.permalink.should == 'foo-3'
         end
       end
 
@@ -123,7 +123,7 @@ describe Spree::Product do
           end
         end
         it "should have valid permalink" do
-          @products[11].permalink.should == 'foo-11'
+          @products[11].permalink.should == 'foo-12'
         end
       end
 
