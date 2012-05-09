@@ -3,7 +3,6 @@ module Spree
     module ControllerHelpers
       def self.included(receiver)
         receiver.send :layout, :get_layout
-        receiver.send :before_filter, 'instantiate_controller_and_action_names'
         receiver.send :before_filter, 'set_user_language'
 
         receiver.send :helper_method, 'title'
@@ -117,11 +116,6 @@ module Spree
       def redirect_back_or_default(default)
         redirect_to(session["user_return_to"] || default)
         session["user_return_to"] = nil
-      end
-
-      def instantiate_controller_and_action_names
-        @current_action = action_name
-        @current_controller = controller_name
       end
 
       def get_taxonomies
