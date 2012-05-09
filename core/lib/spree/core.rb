@@ -40,7 +40,7 @@ require 'deface'
 
 module Spree
 
-  mattr_accessor :user_class, :current_user_method
+  mattr_accessor :user_class
 
   def self.user_class
     if @@user_class.is_a?(Class)
