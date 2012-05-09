@@ -66,7 +66,7 @@ module Spree
         end
 
         def product_scope
-          if current_api_user.has_role?("admin")
+          if current_api_user.has_spree_role?("admin")
             scope = Product
           else
             scope = Product.active
