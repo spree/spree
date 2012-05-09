@@ -2,6 +2,8 @@ require 'spree/core/validators/email'
 
 module Spree
   class Order < ActiveRecord::Base
+    token_resource
+
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :line_items_attributes, :number,
                     :shipping_method_id, :email, :use_billing, :special_instructions
