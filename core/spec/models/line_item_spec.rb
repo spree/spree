@@ -145,6 +145,31 @@ describe Spree::LineItem do
         line_item.insufficient_stock?.should be_false
         line_item.sufficient_stock?.should be_true
       end
+
+      context 'when line item has been saved' do
+        before { line_item.stub(:new_record? => false) }
+
+        it 'should report sufficient stock when reducing purchased quantity' do
+          line_item.stub(:changed_attributes => {'quantity' => 6}, :quantity => 5)
+          line_item.stub_chain :variant, :on_hand => 0
+          line_item.insufficient_stock?.should be_false
+          line_item.sufficient_stock?.should be_true
+        end
+
+        it 'should report sufficient stock when increasing purchased quantity and variant has enough on_hand' do
+          line_item.stub(:changed_attributes => {'quantity' => 5}, :quantity => 6)
+          line_item.stub_chain :variant, :on_hand => 1
+          line_item.insufficient_stock?.should be_false
+          line_item.sufficient_stock?.should be_true
+        end
+
+        it 'should report insufficient stock when increasing purchased quantity and new units is more than variant on_hand' do
+          line_item.stub(:changed_attributes => {'quantity' => 5}, :quantity => 7)
+          line_item.stub_chain :variant, :on_hand => 1
+          line_item.insufficient_stock?.should be_true
+          line_item.sufficient_stock?.should be_false
+        end
+      end
     end
 
     context 'when backordering is enabled' do
