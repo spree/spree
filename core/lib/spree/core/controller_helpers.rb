@@ -10,7 +10,7 @@ module Spree
         receiver.send :helper_method, 'accurate_title'
         receiver.send :helper_method, 'get_taxonomies'
         receiver.send :helper_method, 'current_order'
-        receiver.send :helper_method, 'current_spree_user'
+        receiver.send :helper_method, 'spree_current_user'
         receiver.send :include, SslRequirement
         receiver.send :include, Spree::Core::CurrentOrder
 
@@ -40,19 +40,16 @@ module Spree
         end
       end
 
-      def current_spree_user
-        if Spree.user_class && Spree.current_user_method
-          send(Spree.current_user_method)
-        else
-          nil
-        end
+      # To be overriden by authentication extensions
+      def spree_current_user
+        nil
       end
 
       protected
 
       # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
       def current_ability
-        @current_ability ||= Spree::Ability.new(current_spree_user)
+        @current_ability ||= Spree::Ability.new(spree_current_user)
       end
 
       def store_location
@@ -70,7 +67,7 @@ module Spree
       def unauthorized
         respond_to do |format|
           format.html do
-            if current_spree_user
+            if spree_current_user
               flash.now[:error] = t(:authorization_failure)
               render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
             else
@@ -112,7 +109,7 @@ module Spree
       # add additional keys as appropriate. Override this method if you need additional data when
       # responding to a notification
       def default_notification_payload
-        {:user => current_spree_user, :order => current_order}
+        {:user => spree_current_user, :order => current_order}
       end
 
       private
@@ -127,8 +124,8 @@ module Spree
       end
 
       def associate_user
-        return unless current_spree_user and current_order
-        current_order.associate_user!(current_spree_user)
+        return unless spree_current_user and current_order
+        current_order.associate_user!(spree_current_user)
         session[:guest_token] = nil
       end
 

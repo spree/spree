@@ -4,7 +4,7 @@ require 'spec_helper'
 describe Spree::Admin::AnalyticsController do
   before :each do
     @user = create(:admin_user)
-    controller.stub :current_spree_user => @user
+    controller.stub :spree_current_user => @user
   end
 
   it "redirects if previously registered" do
