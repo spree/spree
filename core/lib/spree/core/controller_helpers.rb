@@ -87,19 +87,6 @@ module Spree
         end
       end
 
-      def spree_login_path
-        spree.login_path
-      end
-
-      def spree_signup_path
-        spree.signup_path
-      end
-
-      def spree_logout_path
-        spree.destroy_user_session_path
-      end
-
-
       def default_title
         Spree::Config[:site_name]
       end
