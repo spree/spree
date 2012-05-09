@@ -11,6 +11,7 @@ module Spree
         receiver.send :helper_method, 'accurate_title'
         receiver.send :helper_method, 'get_taxonomies'
         receiver.send :helper_method, 'current_order'
+        receiver.send :helper_method, 'current_spree_user'
         receiver.send :include, SslRequirement
         receiver.send :include, Spree::Core::CurrentOrder
 
@@ -47,8 +48,6 @@ module Spree
           nil
         end
       end
-
-      helper_method :current_spree_user
 
       protected
 
