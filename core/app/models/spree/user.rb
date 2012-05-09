@@ -21,6 +21,10 @@ module Spree
       create
     end
 
+    def has_spree_role?(role)
+      true
+    end
+
     attr_accessor :password
     attr_accessor :password_confirmation
   end
