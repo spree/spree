@@ -6,7 +6,7 @@ module Spree
 
         def index
           # should probably look at turning this into a CanCan step
-          raise CanCan::AccessDenied unless current_api_user.has_role?("admin")
+          raise CanCan::AccessDenied unless current_api_user.has_spree_role?("admin")
           @orders = Order.page(params[:page])
         end
 
