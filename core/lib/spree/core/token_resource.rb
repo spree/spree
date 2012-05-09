@@ -23,5 +23,5 @@ module Spree
   end
 end
 
-ActiveRecord::Base.class_eval { include Spree::TokenResource }
+ActiveRecord::Base.class_eval { include Spree::Core::TokenResource }
 
