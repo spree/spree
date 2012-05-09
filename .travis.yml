@@ -21,6 +21,7 @@ notifications:
 branches:
   only:
     - 1-0-stable
+    - auth-take-two
     - master
 rvm:
   - 1.8.7
