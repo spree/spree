@@ -11,8 +11,14 @@ module Spree
     def compute(object=nil)
       return 0 if object.nil?
       self.preferred_amount * object.line_items.reduce(0) do |sum, value|
-        sum + value.quantity
+        value_to_add = (target_products().include?(value.product) ? value.quantity : 0)
+        sum + value_to_add
       end
+    end
+
+    def target_products
+      #TODO: product groups?
+      self.calculable.promotion.rules.map(&:products).flatten
     end
   end
 end
