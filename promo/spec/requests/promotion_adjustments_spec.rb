@@ -18,7 +18,6 @@ describe "Promotion Adjustments" do
       create(:product, :name => "RoR Mug", :price => "40")
       create(:product, :name => "RoR Bag", :price => "20")
 
-      sign_in_as!(user)
       visit spree.admin_path
       click_link "Promotions"
       click_link "New Promotion"
@@ -52,6 +51,7 @@ describe "Promotion Adjustments" do
       click_button "Add To Cart"
       click_link "Checkout"
 
+      fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
@@ -97,6 +97,7 @@ describe "Promotion Adjustments" do
       click_button "Add To Cart"
       click_link "Checkout"
 
+      fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
@@ -117,18 +118,12 @@ describe "Promotion Adjustments" do
 
       click_button "Place Order"
 
-      user = create(:user, :email => "john@test.com", :password => "secret", :password_confirmation => "secret")
-      click_link "Logout"
-      click_link "Login"
-      fill_in "user_email", :with => user.email
-      fill_in "user_password", :with => user.password
-      click_button "Login"
-
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
       click_link "Checkout"
 
+      fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
@@ -198,6 +193,7 @@ describe "Promotion Adjustments" do
       click_button "Add To Cart"
       click_link "Checkout"
 
+      fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
@@ -430,86 +426,6 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 49.00
     end
 
-    # Regression test for #836 (#839 included too)
-    context "provides a promotion for the first order for a new user" do
-      before do
-        fill_in "Name", :with => "Sign up"
-        select "User signup", :from => "Event"
-        click_button "Create"
-        page.should have_content("Editing Promotion")
-        select "First order", :from => "Add rule of type"
-        within("#rule_fields") { click_button "Add" }
-        select "Create adjustment", :from => "Add action of type"
-        within("#actions_container") { click_button "Add" }
-        select "Flat Percent", :from => "Calculator"
-        within(".calculator-fields") { fill_in "Flat Percent", :with => "10" }
-        within("#actions_container") { click_button "Update" }
-
-        visit spree.root_path
-        click_link "Logout"
-      end
-
-      # Regression test for #839
-      it "doesn't blow up the signup page" do
-        visit "/signup"
-        fill_in "Email", :with => "user@example.com"
-        fill_in "Password", :with => "Password"
-        fill_in "Password Confirmation", :with => "Password"
-        click_button "Create"
-        # Regression test for #839
-        page.should_not have_content("undefined method `user' for nil:NilClass")
-      end
-
-      context "with an order" do
-        before do
-          click_link "RoR Mug"
-          click_button "Add To Cart"
-        end
-
-        # Test covering scenario in #836
-        it "correctly applies the adjustment" do
-          visit "/checkout"
-          fill_in "order_email", :with => "user@example.com"
-          click_button "Continue"
-          within("#checkout-summary") do
-            page.should have_content("Promotion (Sign up)")
-          end
-        end
-
-        it "correctly applies the adjustment if a user signs up as a real user" do
-          visit "/signup"
-          fill_in "Email", :with => "user@example.com"
-          fill_in "Password", :with => "password"
-          fill_in "Password Confirmation", :with => "password"
-          click_button "Create"
-          visit "/checkout"
-          within("#checkout-summary") do
-            page.should have_content("Promotion (Sign up)")
-          end
-        end
-      end
-
-      # Covering the registration prior to order case for #836
-      context "without an order" do
-        it "signing up, then placing an order" do
-          visit '/signup'
-          fill_in "Email", :with => "user@example.com"
-          fill_in "Password", :with => "password"
-          fill_in "Password Confirmation", :with => "password"
-          click_button "Create"
-
-          click_link "RoR Mug"
-          click_button "Add To Cart"
-
-          visit "/checkout"
-
-          within("#checkout-summary") do
-            page.should have_content("Promotion (Sign up)")
-          end
-        end
-      end
-    end
-
     def create_per_product_promotion product_name, discount_amount
       visit spree.admin_path
       click_link "Promotions"
@@ -561,6 +477,5 @@ describe "Promotion Adjustments" do
       fill_in "card_code", :with => "123"
       click_button "Save and Continue"
     end
-
   end
 end
