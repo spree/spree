@@ -21,6 +21,7 @@ module Spree
                            :viewable_id => product.id  }
       response.status.should == 201
       json_response.should have_attributes(attributes)
+      product.images.reload
       product.images.count.should == 1
     end
 
