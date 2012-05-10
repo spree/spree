@@ -22,19 +22,103 @@ This guide assumes that you have a pre-existing model inside your application th
 
 This model *does not* need to be called +User+, but for the purposes of this guide the model we will be referring to *will* be called +User+. If your model is called something else, do some mental substitution wherever you see +User+.
 
-h3. Setup
+h3. Initial Setup
 
-To begin using your custom +User+ class, you must first generate an initializer and a migration by using the +spree:custom_user+ generator, like this:
+To begin using your custom +User+ class, you must first edit Spree's initializer located at +config/initializers/spree.rb+ by changing this line:
+
+<ruby>
+Spree.user_class = "Spree::User"
+</ruby>
+
+To this:
+
+<ruby>
+Spree.user_class = "User"
+</ruby>
+
+Next, you need to run the custom user generator for Spree which will create two files. The first is a migration that will add the necessary Spree fields to your users table, and the second is an extension that lives at +lib/spree/core/controller_helpers_ext.rb+ to the +Spree::Core::ControllerHelpers+ module inside of Spree. 
+
+Run this generator with this command:
 
 <shell>
 rails g spree:custom_user User
 </shell>
 
-This will tell the generator that you want to use the +User+ class as the class that represents users in Spree. The initializer that will be generated from this command will be placed at +config/initializers/spree_custom_user.rb+ and looks like this:
+This will tell the generator that you want to use the +User+ class as the class that represents users in Spree. Run the new migration by running this:
+
+<shell>
+rake db:migrate
+</shell>
+
+Next you will need to define some methods to tell Spree where to find your application's authentication routes.
+
+h3. Controller Helpers
+
+There are some controller helpers of Spree's that you will need to possibly override. The file at +lib/spree/core/controller_helpers_ext.rb+ contains the following code to help you do that:
 
 <ruby>
-Spree.user_class = "User"
-Spree.current_user_method = "current_user"
+module Spree
+  module Core
+    module ControllerHelpers
+
+      def spree_current_user
+        current_user
+      end
+
+      def spree_login_path
+        main_app.login_path
+      end
+
+      def spree_signup_path
+        main_app.signup_path
+      end
+
+      def spree_logout_path
+        main_app.logout_path
+      end
+    end
+  end
+end
 </ruby>
 
-The first line here tells Spree that the user class for your application is called "User". This *must* be a +String+, so that it works in development as well as production. The second line tells Spree how you refer to the current user within your application. Ensure that these values are correct before moving on.
+Each of the methods defined in this module return values that are the most common in Rails applications today, but you may need to customize them. In order, they are:
+
+* +**spree_current_user**+: Used to tell Spree what the current user of a request is.
+* +**spree_login_path**+: The location of the login/sign in form in your application.
+* +**spree_signup_path**+: The location of the sign up form in your application.
+* +**spree_logout_path**+: The location of the logout feature of your application.
+
+NOTE: URLs inside the +spree_login_path+, +spree_signup_path+ and +spree_logout_path+ methods *must* have +main_app+ prefixed if they are inside your application. This is because Spree will otherwise attempt to route to a +login_path+, +signup_path+ or +logout_path+ inside of itself, which does not exist. By prefixing with +main_app+, you tell it to look at the application's routes.
+
+h3. The User Model
+
+Inside your +User+ model, you will need to define a few things as well. The first of these is the association to the +spree_roles+ table inside of Spree, which you can do by putting this code inside the class definition of your +User+ model:
+
+<ruby>
+has_and_belongs_to_many :spree_roles, :class_name => "Spree::Role", :join_table => "spree_roles_users"
+</ruby>
+
+In addition to this association, you will also need to define a +has_spree_role?+ method, like this:
+
+<ruby>
+  def has_spree_role?(role_in_question)
+    spree_roles.any? { |role| role.name == role_in_question.to_s }
+  end
+</ruby>
+
+This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
+
+<ruby>
+user = User.find_by_email("master@example.com")
+user.spree_roles << Spree::Role.find_or_create_by_name("admin")
+</ruby>
+
+h3. Signup promotion
+
+In Spree, there is a promotion that acts on the user signup which will not work correctly automatically when you're not using the standard authentication method with Spree. To fix this, you will need to trigger this event after a user has successfully signed up in your application:
+
+<ruby>
+fire_event('spree.user.signup', :user => @user, :order => current_order(true))
+</ruby>
+
+This line will cause the Spree event notifiers to be notified of this event and to apply any promotions to an order that are triggered once a user signs up.
