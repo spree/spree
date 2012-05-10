@@ -1,4 +1,10 @@
 <div class="columns alpha six" data-hook="billing_fieldset_wrapper">
+<% unless @order.email? %>
+  <p class="field" style='clear: both'>
+    <%= form.label :email %><br />
+    <%= form.text_field :email %>
+  </p>
+<% end %>
 <fieldset id="billing" data-hook>
   <%= form.fields_for :bill_address do |bill_form| %>
     <legend><%= t(:billing_address) %></legend>
