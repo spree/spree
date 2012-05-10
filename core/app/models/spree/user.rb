@@ -1,4 +1,4 @@
-# Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth)
+# Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth_devise)
 module Spree
   class User < ActiveRecord::Base
     include Core::UserBanners
