@@ -51,6 +51,7 @@ module SpreeCmd
 
     def ask_questions
       @install_default_gateways = ask_with_default('Would you like to install the default gateways?')
+      @install_default_auth = ask_with_default('Would you like to install the default authentication system?')
 
       if options[:skip_install_data]
         @run_migrations = false
@@ -67,7 +68,7 @@ module SpreeCmd
         end
       end
 
-      if @load_seed_data
+      if @load_seed_data && @install_default_auth
         @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
         @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
       end
@@ -82,6 +83,10 @@ module SpreeCmd
         if @install_default_gateways
           gem :spree_usa_epay
           gem :spree_skrill
+        end
+
+        if @install_default_auth
+          gem :spree_auth_devise, :git => "git://github.com/spree/spree_auth_devise"
         end
 
         run 'bundle install', :capture => true
