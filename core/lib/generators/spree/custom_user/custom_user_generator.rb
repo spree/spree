@@ -11,7 +11,6 @@ module Spree
     end
 
     def generate
-      template 'initializer.rb.tt', "config/initializers/spree_custom_user.rb"
       template 'migration.rb.tt', "db/migrate/#{Time.now.strftime("%Y%m%d%H%m%S")}_add_spree_fields_to_custom_user_table.rb"
     end
 
