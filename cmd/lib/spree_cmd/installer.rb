@@ -85,7 +85,7 @@ module SpreeCmd
     end
 
     def add_gems
-      inside @app_path  do
+      inside @app_path do
 
         gem :spree, @spree_gem_options
 
