@@ -16,11 +16,11 @@ Spree::Core::Engine.routes.prepend do
         end
 
         resources :variants
-        resources :images
       end
 
+      resources :images
+
       resources :variants, :only => [:index] do
-        resources :images
       end
 
       resources :orders do
