@@ -1,2 +1,2 @@
 object @image
-attributes *image_attributes
+attributes *image_attributes, :viewable_type, :viewable_id

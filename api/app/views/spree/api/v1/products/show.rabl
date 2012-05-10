@@ -9,7 +9,7 @@ child :variants_including_master => :variants do
 end
 
 child :images => :images do
-  attributes *image_attributes
+  extends "spree/api/v1/images/show"
 end
 
 child :option_types => :option_types do

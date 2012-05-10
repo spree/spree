@@ -5,8 +5,8 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let!(:attributes) { [:id, :position, :attachment_content_type, 
-                         :attachment_file_name, :type, :attachment_updated_at, :attachment_width, 
+    let!(:attributes) { [:id, :position, :attachment_content_type,
+                         :attachment_file_name, :type, :attachment_updated_at, :attachment_width,
                          :attachment_height, :alt] }
 
     before do
@@ -15,7 +15,10 @@ module Spree
 
     it "can upload a new image for a product" do
       product.images.count.should == 0
-      api_post :create, :product_id => product.to_param, :image => { :attachment => upload_image("thinking-cat.jpg")  }
+      api_post :create,
+               :image => { :attachment => upload_image("thinking-cat.jpg"),
+                           :viewable_type => 'Spree::Product',
+                           :viewable_id => product.id  }
       response.status.should == 201
       json_response.should have_attributes(attributes)
       product.images.count.should == 1
@@ -23,7 +26,10 @@ module Spree
 
     it "can upload a new image for a variant" do
       product.master.images.count.should == 0
-      api_post :create, :variant_id => product.master.to_param, :image => { :attachment => upload_image("thinking-cat.jpg") }
+      api_post :create,
+               :image => { :attachment => upload_image("thinking-cat.jpg"),
+                           :viewable_type => 'Spree::Variant',
+                           :viewable_id => product.master.to_param  }
       response.status.should == 201
       json_response.should have_attributes(attributes)
       product.images.count.should == 1
@@ -34,14 +40,14 @@ module Spree
 
       it "can update image data" do
         product_image.position.should == 1
-        api_post :update, :variant_id => product.master.to_param, :image => { :position => 2 }, :id => product_image.id
+        api_post :update, :image => { :position => 2 }, :id => product_image.id
         response.status.should == 200
         json_response.should have_attributes(attributes)
         product_image.reload.position.should == 2
       end
 
       it "can delete an image" do
-        api_delete :destroy, :variant_id => product.master.to_param, :id => product_image.id
+        api_delete :destroy, :id => product_image.id
         response.status.should == 200
         lambda { product_image.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
