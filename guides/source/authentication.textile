@@ -113,6 +113,31 @@ user = User.find_by_email("master@example.com")
 user.spree_roles << Spree::Role.find_or_create_by_name("admin")
 </ruby>
 
+h3. Login link
+
+To make the login link appear on Spree pages, you will need to use a Deface override. Create a new file at +app/overrides/auth_login_bar.rb+ and put this content inside it:
+
+<ruby>
+Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
+                     :name => "auth_shared_login_bar",
+                     :insert_before => "li#search-bar",
+                     :partial => "spree/shared/login_bar",
+                     :disabled => false, 
+                     :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
+</ruby>
+
+This override references a partial called "spree/shared/login_bar". This will live in a new file called +app/views/spree/shared/login_bar.html.erb+ in your application. You may choose to call this file something different, the name is not important. This file will then contain this code:
+
+<erb>
+<% if spree_current_user %>
+  <li><%= link_to t(:logout), spree_logout_path %></li>
+<% else %>
+  <li><%= link_to t(:login), spree_login_path %></li>
+<% end %>
+</erb>
+
+This will then use the URL helpers you have defined in +lib/spree/core/controller_helpers_ext.rb+ to define two links, one to allow users to logout and one to allow them to login from Spree. You may choose to also add a signup route here if you wish.
+
 h3. Signup promotion
 
 In Spree, there is a promotion that acts on the user signup which will not work correctly automatically when you're not using the standard authentication method with Spree. To fix this, you will need to trigger this event after a user has successfully signed up in your application:
