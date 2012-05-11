@@ -264,6 +264,20 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 76.00
     end
 
+    #it "should allow an admin to create an automatic promo requiring a specific product to be bought" do
+      #fill_in "Name", :with => "Bundle"
+      #select "Add to cart", :from => "Event"
+      #click_button "Create"
+      #page.should have_content("Editing Promotion")
+
+      #select "Product(s)", :from => "Add rule of type"
+      #within('#rule_fields') do
+        #click_button "Add"
+        #click_button "Update"
+      #end
+      #page.should_not have_content("Can't mass-assign protected attributes: product_ids_string, preferred_match_policy")
+    #end
+
     # Regression test for #1416
     it "should allow an admin to create an automatic promo requiring a specific product to be bought" do
       fill_in "Name", :with => "Bundle"
@@ -271,12 +285,43 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Product(s)", :from => "Add rule of type"
-      within('#rule_fields') do
-        click_button "Add"
-        click_button "Update"
+      # add RoR Mug to last promotion
+      promotion = Spree::Promotion.last
+      promotion.rules << Spree::Promotion::Rules::Product.new()
+      promotion.rules.last.products << Spree::Product.find_by_name("RoR Mug")
+      rails_mug = Spree::Product.find_by_name("RoR Mug")
+
+      select "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select "Flat Rate (per item)", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+      within('.calculator-fields') { fill_in "Amount", :with => "5" }
+      within('#actions_container') { click_button "Update" }
+
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "Add To Cart"
+      click_link "Checkout"
+
+      # promotion should be effective on last order
+      promotion.actions.first.calculator.compute(Spree::Order.last).should == 5.0
+
+      str_addr = "bill_address"
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
+      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
+        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
       end
-      page.should_not have_content("Can't mass-assign protected attributes: product_ids_string, preferred_match_policy")
+      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+      check "order_use_billing"
+      click_button "Save and Continue"
+      click_button "Save and Continue"
+      fill_in "order_coupon_code", :with => "SINGLE_USE"
+
+      choose('Credit Card')
+      fill_in "card_number", :with => "4111111111111111"
+      fill_in "card_code", :with => "123"
+      click_button "Save and Continue"
+      Spree::Order.last.total.to_f.should == 45.00 # mug(40) - discount(5) + shipping(10)
     end
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
