@@ -285,62 +285,7 @@ describe "Promotion Adjustments" do
 
       do_checkout()
 
-      # Mug discount ($5) is not taken into account due to #1526
-      # Only "best" discount is taken into account
-      Spree::Order.last.total.to_f.should == 60.0 # mug(40) + bag(20) - bag_discount(10) + shipping(10)
-
-    end
-
-    it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
-      fill_in "Name", :with => "Bundle"
-      select "Coupon code added", :from => "Event"
-      fill_in "Code", :with => "5ZHED2DH"
-      click_button "Create"
-      page.should have_content("Editing Promotion")
-
-      select "Create line items", :from => "Add action of type"
-      within('#action_fields') { click_button "Add" }
-      fill_in "Name or SKU", :with => "RoR Mug"
-      find(:xpath, '//div/h4[contains(.,"RoR Mug")]').click
-      within('.add-line-item') { click_button "Add" }
-
-      within('#actions_container') { click_button "Update" }
-
-      select "Create adjustment", :from => "Add action of type"
-      within('#new_promotion_action_form') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
-      within('#actions_container') { click_button "Update" }
-      within('.calculator-fields') { fill_in "Amount", :with => "40.00" }
-      within('#actions_container') { click_button "Update" }
-
-      visit spree.root_path
-      click_link "RoR Bag"
-      click_button "Add To Cart"
-      click_link "Checkout"
-
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-
-      fill_in "order_coupon_code", :with => "5ZHED2DH"
-      click_button "Save and Continue"
-
-      last_order = Spree::Order.last
-      last_order.line_items.count.should == 2
-      last_order.line_items.map(&:price).should =~ [20.00, 40.00]
-      last_order.item_total.to_f.should == 60.00
-      last_order.adjustments.promotion.map(&:amount).sum.to_f.should == -40.00
-      last_order.total.to_f.should == 30.00
+      Spree::Order.last.total.to_f.should == 55.00 # mug(40) - mug_discount(5) + bag(20) - bag_discount(10) + shipping(10)
     end
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
@@ -415,7 +360,6 @@ describe "Promotion Adjustments" do
       click_link "RoR Bag"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 13.00
-      #Spree::Order.last.adjustments.promotion.count.should == 2
 
       fill_in "order[line_items_attributes][0][quantity]", :with => "2"
       click_button "Update"
