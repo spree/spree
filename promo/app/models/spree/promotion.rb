@@ -14,6 +14,8 @@ module Spree
     alias_method :actions, :promotion_actions
     accepts_nested_attributes_for :promotion_actions
 
+    validates_associated :rules
+
     attr_accessible :name, :event_name, :code, :match_policy,
                     :path, :advertise, :description, :usage_limit,
                     :starts_at, :expires_at, :promotion_rules_attributes,
