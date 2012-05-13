@@ -32,6 +32,13 @@ module SpreeCmd
       end
     end
 
+    def verify_image_magick
+      unless image_magick_installed?
+        say "Image magick must be installed."
+        exit(1)
+      end
+    end
+
     def prepare_options
       @spree_gem_options = {}
 
@@ -164,6 +171,24 @@ module SpreeCmd
 
       def is_rails_project?
         File.exists? File.join(@app_path, 'script', 'rails')
+      end
+
+      def is_mac?
+        Object::RUBY_PLATFORM =~ /(darwin)/i ? true: false
+      end
+
+      def image_magick_installed?
+        if is_mac?
+          begin
+            %x(identify -version)
+          rescue
+          end
+
+          $?.success?
+        else
+          # not sure how to check on windows so assume installed
+          true
+        end
       end
   end
 end
