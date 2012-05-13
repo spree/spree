@@ -15,7 +15,7 @@ module Spree
         end
 
         def search
-          @orders = Order.search(params[:q]).result.page(params[:page])
+          @orders = Order.ransack(params[:q]).result.page(params[:page])
           render :index
         end
 
