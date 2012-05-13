@@ -64,8 +64,8 @@ module Spree
           when 'basic'
             collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
           else
-            collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type}, 
-                                                          :images => {:only => [:id], :methods => :mini_url}}}, 
+            collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type},
+                                                          :images => {:only => [:id], :methods => :mini_url}}},
                                                           :images => {:only => [:id], :methods => :mini_url}, :master => {}})
           end
         end
@@ -84,7 +84,7 @@ module Spree
 
             params[:q][:s] ||= "name asc"
 
-            @search = super.search(params[:q])
+            @search = super.ransack(params[:q])
             @collection = @search.result.
               group_by_products_id.
               includes([:master, {:variants => [:images, :option_values]}]).
