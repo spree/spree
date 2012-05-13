@@ -27,7 +27,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = Order.search(params[:q])
+        @search = Order.ransack(params[:q])
         @orders = @search.result.includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
         respond_with(@orders)
       end
