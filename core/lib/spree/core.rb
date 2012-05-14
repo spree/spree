@@ -39,6 +39,17 @@ require 'jquery-rails'
 require 'deface'
 
 module Spree
+
+  mattr_accessor :user_class
+
+  def self.user_class
+    if @@user_class.is_a?(Class)
+      raise "Spree.user_class MUST be a String object, not a Class object."
+    elsif @@user_class.is_a?(String)
+      @@user_class.constantize
+    end
+  end
+
   module Core
   end
 
@@ -74,6 +85,7 @@ require 'spree/core/mail_interceptor'
 require 'spree/core/middleware/redirect_legacy_product_url'
 require 'spree/core/middleware/seo_assist'
 require 'spree/core/permalinks'
+require 'spree/core/token_resource'
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'

@@ -8,7 +8,6 @@
 //= require jquery_ujs
 <% if options[:lib_name] == 'spree' %>
 //= require admin/spree_core
-//= require admin/spree_auth
 //= require admin/spree_promo
 <% else %>
 //= require admin/<%= options[:lib_name].gsub("/", "_") %>

@@ -42,6 +42,7 @@ module Spree
       template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
       template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
       template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
+      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
     end
 
     def test_dummy_clean

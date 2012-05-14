@@ -1,5 +1,4 @@
 require 'spree/core'
-require 'spree/auth'
 
 module Spree
   module Promo

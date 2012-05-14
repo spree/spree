@@ -2,11 +2,17 @@ require 'spree/core/validators/email'
 
 module Spree
   class Order < ActiveRecord::Base
+    token_resource
+
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :line_items_attributes, :number,
                     :shipping_method_id, :email, :use_billing, :special_instructions
 
-    belongs_to :user
+    if Spree.user_class
+      belongs_to :user, :class_name => Spree.user_class.to_s
+    else
+      belongs_to :user
+    end
 
     belongs_to :bill_address, :foreign_key => 'bill_address_id', :class_name => 'Spree::Address'
     alias_method :billing_address, :bill_address
@@ -35,7 +41,7 @@ module Spree
     # Needs to happen before save_permalink is called
     before_validation :generate_order_number, :on => :create
 
-    before_create :create_user
+    before_create :link_by_email
     after_create :create_tax_charge!
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
@@ -432,9 +438,8 @@ module Spree
     end
 
     private
-      def create_user
+      def link_by_email
         self.email = user.email if self.user and not user.anonymous?
-        self.user ||= User.anonymous!
       end
 
       # Updates the +shipment_state+ attribute according to the following logic:

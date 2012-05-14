@@ -1,4 +1,4 @@
-# Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth)
+# Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth_devise)
 module Spree
   class User < ActiveRecord::Base
     include Core::UserBanners
@@ -19,6 +19,10 @@ module Spree
     # Creates an anonymous user
     def self.anonymous!
       create
+    end
+
+    def has_spree_role?(role)
+      true
     end
 
     attr_accessor :password

@@ -12,7 +12,7 @@ module Spree
         # Include list of visited paths in notification payload hash
         Spree::Core::ControllerHelpers.class_eval do
           def default_notification_payload
-            { :user => current_user, :order => current_order, :visited_paths => session[:visited_paths] }
+            { :user => spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
           end
         end
       end

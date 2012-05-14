@@ -1,5 +1,4 @@
 require 'spree/core'
-require 'spree/auth'
 
 require 'spree/api/controller_setup'
 

@@ -1,5 +1,4 @@
 require 'spec_helper'
-
 describe Spree::ContentController do
 
   it "should not display a local file" do
