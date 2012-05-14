@@ -4,6 +4,7 @@
 module Spree
   class Promotion::Rules::Product < PromotionRule
     has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => 'spree_products_promotion_rules', :foreign_key => 'promotion_rule_id'
+    validate :only_one_promotion_per_product
 
     MATCH_POLICIES = %w(any all)
     preference :match_policy, :string, :default => MATCH_POLICIES.first
@@ -11,6 +12,12 @@ module Spree
     # scope/association that is used to test eligibility
     def eligible_products
       products
+    end
+
+    def only_one_promotion_per_product
+      if Spree::Promotion::Rules::Product.all.map(&:products).flatten.uniq!
+        errors[:base] << "You can't create two promotions for the same product"
+      end
     end
 
     def eligible?(order, options = {})
