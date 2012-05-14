@@ -14,6 +14,8 @@ module Spree
     alias_method :actions, :promotion_actions
     accepts_nested_attributes_for :promotion_actions
 
+    validate :only_one_promotion_per_product
+
     attr_accessible :name, :event_name, :code, :match_policy,
                     :path, :advertise, :description, :usage_limit,
                     :starts_at, :expires_at, :promotion_rules_attributes,
@@ -23,6 +25,12 @@ module Spree
     after_save :save_rules_and_actions
     def save_rules_and_actions
       (rules + actions).each &:save
+    end
+
+    def only_one_promotion_per_product
+      if Spree::Promotion::Rules::Product.all.map(&:products).flatten.uniq!
+        errors[:base] << "You can't create two promotions for the same product"
+      end
     end
 
     validates :name, :presence => true
