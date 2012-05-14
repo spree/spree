@@ -14,26 +14,25 @@ module Spree
     end
 
     it "can upload a new image for a product" do
-      product.images.count.should == 0
-      api_post :create,
-               :image => { :attachment => upload_image("thinking-cat.jpg"),
-                           :viewable_type => 'Spree::Product',
-                           :viewable_id => product.id  }
-      response.status.should == 201
-      json_response.should have_attributes(attributes)
-      product.images.reload
-      product.images.count.should == 1
+      lambda do
+        api_post :create,
+                 :image => { :attachment => upload_image("thinking-cat.jpg"),
+                             :viewable_type => 'Spree::Product',
+                             :viewable_id => product.id  }
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+      end.should change(Image, :count).by(1)
     end
 
     it "can upload a new image for a variant" do
-      product.master.images.count.should == 0
-      api_post :create,
-               :image => { :attachment => upload_image("thinking-cat.jpg"),
-                           :viewable_type => 'Spree::Variant',
-                           :viewable_id => product.master.to_param  }
-      response.status.should == 201
-      json_response.should have_attributes(attributes)
-      product.images.count.should == 1
+      lambda do
+        api_post :create,
+                 :image => { :attachment => upload_image("thinking-cat.jpg"),
+                             :viewable_type => 'Spree::Variant',
+                             :viewable_id => product.master.to_param  }
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+      end.should change(Image, :count).by(1)
     end
 
     context "working with an existing image" do
