@@ -13,7 +13,6 @@
     <div class="columns <%= if @order.state != 'confirm' then 'alpha twelve' else 'alpha omega sixteen' end %>" data-hook="checkout_form_wrapper">
       <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
         <%= render @order.state, :form => form %>
-        <%= submit_tag nil, :id => 'post-final', :style => 'display:none;' %>
       <% end %>
     </div>    
     <% if @order.state != 'confirm' %>
