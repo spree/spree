@@ -110,6 +110,24 @@ describe Spree::Product do
         end
       end
 
+      context "permalink with quotes" do
+        it "should be saved correctly" do
+          product = create(:product, :name => "Joe's", :permalink => "joe's")
+          product.permalink.should == "joe's"
+        end
+
+        context "existing" do
+          before do
+            create(:product, :name => "Joe's", :permalink => "joe's")
+          end
+
+          it "should be detected" do
+            product = create(:product, :name => "Joe's", :permalink => "joe's")
+            product.permalink.should == "joe's-1"
+          end
+        end
+      end
+
       context "make_permalink should declare validates_uniqueness_of" do
         before do
           @product1 = create(:product, :name => 'foo')
