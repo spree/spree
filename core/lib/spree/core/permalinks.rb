@@ -47,7 +47,7 @@ module Spree
         permalink_value = self.to_param
         field = self.class.permalink_field
           # Do other links exist with this permalink?
-          other = self.class.all(:conditions => "#{field} LIKE '#{permalink_value}%'")
+          other = self.class.all(:conditions => ["#{field} LIKE ?", "#{permalink_value}%"])
           unless other.empty?
             # Find the existing permalink with the highest number, and increment that number.
             # (If none of the existing permalinks have a number, this will evaluate to 1.)
