@@ -2,7 +2,7 @@
   <ul id="login-nav">
     <li><%= t(:logged_in_as) %>: <%= current_user.email %></li>
     <li><%= link_to t(:account), spree.edit_user_path(current_user) %></li>
-    <li><%= link_to t(:logout), spree.destroy_user_session_path %></li>
+    <li><%= link_to t(:logout), spree.destroy_user_session_path, :method => :delete %></li>
     <li><%= link_to t(:store), spree.products_path %></li>
   </ul>
 <% end %>
