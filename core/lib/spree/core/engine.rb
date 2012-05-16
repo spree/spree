@@ -70,7 +70,7 @@ module Spree
       end
 
       # sets the manifests / assets to be precompiled
-      initializer "spree.assets.precompile", :group => :asset do |app|
+      initializer "spree.assets.precompile", :group => :assets do |app|
         Spree::Core::Engine.add_assets_to_precompile_list!(app)
       end
 
