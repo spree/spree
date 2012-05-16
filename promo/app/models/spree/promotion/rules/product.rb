@@ -5,7 +5,7 @@ module Spree
   class Promotion
     module Rules
       class Product < PromotionRule
-        has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => :spree_products_promotion_rules, :foreign_key => :promotion_rule_id
+        has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => 'spree_products_promotion_rules', :foreign_key => 'promotion_rule_id'
         validate :only_one_promotion_per_product
 
         MATCH_POLICIES = %w(any all)
