@@ -229,9 +229,20 @@ describe Spree::Payment do
         payment.state = 'pending'
       end
 
-      it "should call payment_gateway.void with the payment's response_code" do
-        gateway.should_receive(:void).with('123', anything).and_return(success_response)
-        payment.void_transaction!
+      context "when profiles are supported" do
+        it "should call payment_gateway.void with the payment's response_code" do
+          gateway.stub :payment_profiles_supported? => true
+          gateway.should_receive(:void).with('123', card, anything).and_return(success_response)
+          payment.void_transaction!
+        end
+      end
+
+      context "when profiles are not supported" do
+        it "should call payment_gateway.void with the payment's response_code" do
+          gateway.stub :payment_profiles_supported? => false
+          gateway.should_receive(:void).with('123', anything).and_return(success_response)
+          payment.void_transaction!
+        end
       end
 
       it "should log the response" do
