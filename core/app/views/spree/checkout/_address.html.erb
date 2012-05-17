@@ -74,12 +74,12 @@
       </p>
       <p class="field" id="bphone">
         <%= bill_form.label :phone, t(:phone) %><span class="req">*</span><br />
-        <%= bill_form.text_field :phone, :class => 'required' %>
+        <%= bill_form.phone_field :phone, :class => 'required' %>
       </p>
       <% if Spree::Config[:alternative_billing_phone] %>
         <p class="field" id="baltphone">
           <%= bill_form.label :alternative_phone, t(:alternative_phone) %><br />
-          <%= bill_form.text_field :alternative_phone %>
+          <%= bill_form.phone_field :alternative_phone %>
         </p>
       <% end %>
     </div>
@@ -161,12 +161,12 @@
       </p>
       <p class="field" id="sphone">
         <%= ship_form.label :phone, t(:phone) %><span class="req">*</span><br />
-        <%= ship_form.text_field :phone, :class => 'required' %>
+        <%= ship_form.phone_field :phone, :class => 'required' %>
       </p>
       <% if Spree::Config[:alternative_shipping_phone] %>
         <p class="field" id="saltphone">
           <%= ship_form.label :alternative_phone, t(:alternative_phone) %><br />
-          <%= ship_form.text_field :alternative_phone %>
+          <%= ship_form.phone_field :alternative_phone %>
         </p>
       <% end %>
     </div>
