@@ -190,6 +190,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     margin-top: 3px;
   }
 
+  span.required {
+    color: $c_red;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
   input[type="submit"], input[type="button"],
   input[type= "reset"], button, a.button {
     background-color: $link_text_color;;
