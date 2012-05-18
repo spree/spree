@@ -16,6 +16,10 @@ module Spree
          :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords]
       end
 
+      def product_property_attributes
+        [:id, :product_id, :property_id, :value]
+      end
+
       def variant_attributes
         [:id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price]
       end
