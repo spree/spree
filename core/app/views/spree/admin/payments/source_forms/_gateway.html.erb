@@ -12,7 +12,7 @@
     <div data-hook="card_number">
       <%= label_tag nil, t(:card_number) %><br />
       <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required', :size => 19, :maxlength => 19 %>
-      <span class="req">*</span>
+      <span class="required">*</span>
       &nbsp;
       <span id="card_type" style="display:none;">
         ( <span id="looks_like" ><%= t(:card_type_is) %> <span id="type"></span></span>
@@ -24,12 +24,12 @@
       <%= label_tag nil, t(:expiration) %><br />
       <%= select_month(Date.today, :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true, :class => 'required') %>
       <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') %>
-      <span class="req">*</span>
+      <span class="required">*</span>
     </div>
     <div data-hook="card_code">
       <%= label_tag nil, t(:card_code) %><br />
       <%= text_field_tag "#{param_prefix}[verification_value]", '', :class => 'required', :size => 5 %>
-      <span class="req">*</span>
+      <span class="required">*</span>
       <a href="/content/cvv" target="_blank" onclick="window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false">
         (<%= t(:whats_this) %>)
       </a>
