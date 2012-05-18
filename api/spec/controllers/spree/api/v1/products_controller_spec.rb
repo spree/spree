@@ -53,6 +53,10 @@ module Spree
                                                             :attachment_width,
                                                             :attachment_height,
                                                             :attachment_content_type])
+
+        product_json["product_property"].first.should have_attributes([:value,
+                                                                      :property_id
+                                                                          ])
       end
 
 
