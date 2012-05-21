@@ -41,11 +41,7 @@ module Spree
 
       it "gets a single product" do
         product.master.images.create!(:attachment => image("thinking-cat.jpg"))
-
-        # ProductProperty requires a property_id for association; cannot mass-assign this attribute
-        # This stub is currently failing due to mass-assignment error. I'll defer to you guys for proper procedure...
-        product.property.create!(:name => 'rocks!', :presentation => 'rocks!')
-        product.product_property.create!(:property_name => 'spree', :value => 'rocks!', :property_id => product.property.id)
+        product.properties << Factory(:product_property)
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
         product_json = json_response["product"]
@@ -59,8 +55,7 @@ module Spree
                                                             :attachment_height,
                                                             :attachment_content_type])
 
-        product_json["product_property"].first.should have_attributes([:value,
-                                                                      :product_id,
+        product_json["product_properties"].first.should have_attributes([:value,
                                                                       :property_name])
       end
 
