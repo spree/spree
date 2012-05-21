@@ -19,4 +19,27 @@ describe Spree::OrderMailer do
     confirmation_email.body.should_not include("&quot;")
   end
 
+  context "only shows eligible adjustments in emails" do
+    before do
+      order.adjustments.create({:label    => "Eligible Adjustment",
+                                :amount   => 10,
+                                :eligible => true}, :without_protection => true)
+
+      order.adjustments.create!({:label    => "Ineligible Adjustment",
+                                 :amount   => -10,
+                                 :eligible => false}, :without_protection => true)
+    end
+
+    let!(:confirmation_email) { Spree::OrderMailer.confirm_email(order) }
+    let!(:cancel_email) { Spree::OrderMailer.confirm_email(order) }
+
+    specify do
+      confirmation_email.body.should_not include("Ineligible Adjustment")
+    end
+
+    specify do
+      cancel_email.body.should_not include("Ineligible Adjustment")
+    end
+  end
+
 end
