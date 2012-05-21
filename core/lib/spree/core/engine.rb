@@ -82,7 +82,15 @@ module Spree
       end
 
       def self.add_assets_to_precompile_list!(app)
-        app.config.assets.precompile += ['store/all.*', 'admin/all.*', 'admin/orders/edit_form.js', 'admin/address_states.js', 'jqPlot/excanvas.min.js', 'admin/images/new.js', 'jquery.jstree/themes/apple/*']
+        app.config.assets.precompile += %w[
+          store/all.* 
+          admin/all.*
+          admin/orders/edit_form.js
+          admin/address_states.js
+          jqPlot/excanvas.min.js
+          admin/images/new.js
+          jquery.jstree/themes/apple/*
+        ]
       end
     end
   end
