@@ -94,7 +94,7 @@ Products support the following operations:
 
 Product data is returned like this:
 
-<json>
+<plain>
 {
   "product": {
     "id": 1,
@@ -119,7 +119,7 @@ Product data is returned like this:
     }
   }
 }
-</json>
+</plain>
 
 h5. Listing products
 
@@ -248,7 +248,7 @@ Variants support the following operations:
 
 Variant data is returned like this:
 
-<json>
+<plain>
 {
   "variant": {
     "id": 1,
@@ -266,7 +266,7 @@ Variant data is returned like this:
     }
   }
 }
-</json>
+</plain>
 
 h5. Listing variants
 
@@ -356,7 +356,7 @@ Orders support the following operations:
 
 Order data is returned like this:
 
-<json>
+<plain>
 {
   "order": {
     "id": 1,
@@ -380,11 +380,11 @@ Order data is returned like this:
     }
   }
 }
-</json>
+</plain>
 
 In addition to this, the JSON response will also contain the following additional information if the order is in the "delivery" state:
 
-<json>
+<plain>
 {
   "order": {
     ...
@@ -397,7 +397,7 @@ In addition to this, the JSON response will also contain the following additiona
     }
   }
 }
-</json>
+</plain>
 
 h5. Viewing all orders
 
@@ -469,7 +469,7 @@ The address parameters are:
 
 Once valid address information has been submitted, the shipping methods available for this order will be returned inside a "shipping_methods" key inside the order:
 
-<json>
+<plain>
 {
   "order": {
     ...
@@ -482,7 +482,7 @@ Once valid address information has been submitted, the shipping methods availabl
     }
   }
 }
-</json>
+</plain>
 
 The order will also transition to being in the "delivery" state.
 
