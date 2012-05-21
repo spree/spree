@@ -18,7 +18,12 @@ Spree::Order.class_eval do
       update_adjustments_without_promotion_limiting
       return if adjustments.promotion.eligible.none?
       most_valuable_adjustment = adjustments.promotion.eligible.max{|a,b| a.amount.abs <=> b.amount.abs}
-      ( adjustments.promotion.eligible - [most_valuable_adjustment] ).each{|adjustment| adjustment.update_attribute_without_callbacks(:eligible, false) unless adjustment.originator.calculator.is_a? Spree::Calculator::PerItem }
+      current_adjustments = (adjustments.promotion.eligible - [most_valuable_adjustment])
+      current_adjustments.each do |adjustment|
+        if adjustment.originator.calculator.is_a?(Spree::Calculator::PerItem)
+          adjustment.update_attribute_without_callbacks(:eligible, false)
+        end
+      end
     end
     alias_method_chain :update_adjustments, :promotion_limiting
   end
