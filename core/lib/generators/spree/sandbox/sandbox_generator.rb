@@ -19,6 +19,15 @@ module Spree
       end
     end
 
+    def use_spree_auth_devise
+      inside dummy_path do
+        File.open("Gemfile", "a+") do |f|
+          f.write %Q{gem 'spree_auth_devise', :git => "git://github.com/radar/spree_auth_devise"}
+        end
+      end
+      run 'bundle install'
+    end
+
     protected
     def dummy_path
       'sandbox'
