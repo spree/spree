@@ -20,7 +20,8 @@ Spree::Order.class_eval do
       most_valuable_adjustment = adjustments.promotion.eligible.max{|a,b| a.amount.abs <=> b.amount.abs}
       current_adjustments = (adjustments.promotion.eligible - [most_valuable_adjustment])
       current_adjustments.each do |adjustment|
-        unless adjustment.originator.calculator.is_a?(Spree::Calculator::PerItem)
+        calculator = adjustment.originator.try(:calculator)
+        if calculator && !calculator.is_a?(Spree::Calculator::PerItem)
           adjustment.update_attribute_without_callbacks(:eligible, false)
         end
       end
