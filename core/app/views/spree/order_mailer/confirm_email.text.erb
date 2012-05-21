@@ -10,7 +10,7 @@ Order Summary
 <% end %>
 ============================================================
 Subtotal: <%= number_to_currency @order.item_total %>
-<% @order.adjustments.each do |adjustment| %>
+<% @order.adjustments.eligible.each do |adjustment| %>
   <%= raw(adjustment.label) %> <%= number_to_currency(adjustment.amount) %>
 <% end %>
 Order Total: <%= number_to_currency(@order.total) %>
