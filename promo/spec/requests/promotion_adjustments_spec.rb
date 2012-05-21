@@ -285,7 +285,10 @@ describe "Promotion Adjustments" do
 
       do_checkout()
 
-      Spree::Order.last.total.to_f.should == 55.00 # mug(40) - mug_discount(5) + bag(20) - bag_discount(10) + shipping(10)
+      # Mug discount ($5) is not taken into account due to #1526
+      # Only "best" discount is taken into account
+      Spree::Order.last.total.to_f.should == 55.00 # mug(40) + bag(20) - bag_discount(10) + shipping(10)
+
     end
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
