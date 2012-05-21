@@ -9,11 +9,6 @@ class Spree::UserSessionsController < Devise::SessionsController
   ssl_required :new, :create, :destroy, :update
   ssl_allowed :login_bar
 
-  # GET /resource/sign_in
-  def new
-    super
-  end
-
   def create
     authenticate_user!
 
@@ -32,12 +27,6 @@ class Spree::UserSessionsController < Devise::SessionsController
       flash.now[:error] = t('devise.failure.invalid')
       render :new
     end
-  end
-
-  def destroy
-    cookies.clear
-    session.clear
-    super
   end
 
   def nav_bar
