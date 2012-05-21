@@ -287,7 +287,7 @@ describe "Promotion Adjustments" do
 
       # Mug discount ($5) is not taken into account due to #1526
       # Only "best" discount is taken into account
-      Spree::Order.last.total.to_f.should == 55.00 # mug(40) + bag(20) - bag_discount(10) + shipping(10)
+      Spree::Order.last.total.to_f.should == 60.0 # mug(40) + bag(20) - bag_discount(10) + shipping(10)
 
     end
 
