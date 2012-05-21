@@ -117,6 +117,9 @@ Product data is returned like this:
         # option value attributes
       }
     }
+    "product_properties": {
+      # product property attributes
+    }
   }
 }
 </plain>
