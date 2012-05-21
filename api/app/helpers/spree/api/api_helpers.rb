@@ -17,7 +17,7 @@ module Spree
       end
 
       def product_property_attributes
-        [:id, :product_id, :property_id, :value]
+        [:id, :product_id, :property_id, :value, :property_name]
       end
 
       def variant_attributes
