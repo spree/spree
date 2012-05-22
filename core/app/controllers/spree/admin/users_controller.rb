@@ -24,7 +24,7 @@ module Spree
         def collection
           return @collection if @collection.present?
           unless request.xhr?
-            @search = Spree::User.registered.search(params[:q])
+            @search = Spree::User.registered.ransack(params[:q])
             @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_products_per_page])
           else
             #disabling proper nested include here due to rails 3.1 bug

@@ -48,6 +48,7 @@ module Spree
 
       it "gets a single product" do
         product.master.images.create!(:attachment => image("thinking-cat.jpg"))
+        product.set_property("spree", "rocks")
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
         product_json = json_response["product"]
@@ -60,6 +61,10 @@ module Spree
                                                             :attachment_width,
                                                             :attachment_height,
                                                             :attachment_content_type])
+
+        product_json["product_properties"].first.should have_attributes([:value,
+                                                                         :product_id,
+                                                                         :property_name])
       end
 
 

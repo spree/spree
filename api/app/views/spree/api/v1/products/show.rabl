@@ -19,3 +19,7 @@ child :option_types => :option_types do
     attributes *option_value_attributes
   end
 end
+
+child :product_properties => :product_properties do
+  attributes *product_property_attributes
+end

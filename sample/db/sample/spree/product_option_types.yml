@@ -6,3 +6,11 @@ baseball_color:
   product: ror_baseball_jersey
   option_type: color
   position: 2
+baseball_size:
+  product: spree_baseball_jersey
+  option_type: size
+  position: 1
+baseball_color:
+  product: spree_baseball_jersey
+  option_type: color
+  position: 2
