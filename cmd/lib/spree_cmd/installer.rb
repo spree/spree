@@ -1,3 +1,5 @@
+require 'rbconfig'
+
 module SpreeCmd
 
   class Installer < Thor::Group
@@ -26,7 +28,7 @@ module SpreeCmd
                  :desc => 'Precompile spree assets to public/assets'
 
     def verify_rails
-      unless is_rails_project?
+      unless rails_project?
         say "#{@app_path} is not a rails project."
         exit(1)
       end
@@ -164,23 +166,31 @@ module SpreeCmd
         run(rails_cmd)
       end
 
-      def is_rails_project?
+      def rails_project?
         File.exists? File.join(@app_path, 'script', 'rails')
       end
+      
+      def linux?
+        /linux/i === RbConfig::CONFIG['host_os']
+      end
 
-      def is_mac?
-        Object::RUBY_PLATFORM =~ /(darwin)/i ? true: false
+      def mac?
+        /darwin/i === RbConfig::CONFIG['host_os']
+      end
+      
+      def windows?
+        %r{msdos|mswin|djgpp|mingw} === RbConfig::CONFIG['host_os']
       end
 
       def image_magick_installed?
-        if is_mac?
+        if mac? || linux?
           begin
             %x(identify -version)
           rescue
           end
 
           $?.success?
-        else
+        elsif windows?
           # not sure how to check on windows so assume installed
           true
         end
