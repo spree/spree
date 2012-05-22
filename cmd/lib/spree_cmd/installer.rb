@@ -80,7 +80,7 @@ module SpreeCmd
         @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
         @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
       end
-      @precompile_assets = options[:precompile_assets] ? ask_with_default('Would you like to precompile assets?') : false
+      @precompile_assets = options[:precompile_assets] && ask_with_default('Would you like to precompile assets?')
     end
 
     def add_gems
