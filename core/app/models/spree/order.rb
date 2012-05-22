@@ -51,13 +51,6 @@ module Spree
     validate :has_available_shipment
     validate :has_available_payment
 
-    scope :by_number, lambda { |number| where(:number => number) }
-    scope :between, lambda { |*dates| where(:created_at => [dates.first.to_date, dates.last.to_date]) }
-    scope :by_customer, lambda { |customer| joins(:user).where("#{Spree::User.table_name}.email = ?", customer) }
-    scope :by_state, lambda { |state| where(:state => state) }
-    scope :complete, where('completed_at IS NOT NULL')
-    scope :incomplete, where(:completed_at => nil)
-
     make_permalink :field => :number
 
     class_attribute :update_hooks
@@ -111,6 +104,30 @@ module Spree
       after_transition :to => 'resumed',  :do => :after_resume
       after_transition :to => 'canceled', :do => :after_cancel
 
+    end
+
+    def self.by_number(number)
+      where(:number => number)
+    end
+
+    def self.between(start_date, end_date)
+      where(:created_at => start_date..end_date)
+    end
+
+    def self.by_customer(customer)
+      joins(:user).where("#{Spree::User.table_name}.email" => customer)
+    end
+
+    def self.by_state(state)
+      where(:state => state)
+    end
+
+    def self.complete
+      where('completed_at IS NOT NULL')
+    end
+
+    def self.incomplete
+      where(:completed_at => nil)
     end
 
     # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
