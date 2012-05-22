@@ -157,12 +157,8 @@ module SpreeCmd
         say :create, @app_path
 
         rails_cmd = "rails new #{@app_path} --skip-bundle"
-        if options[:template]
-          rails_cmd += " -m #{options[:template]}"
-        end
-        if options[:database]
-          rails_cmd += " -d #{options[:database]}"
-        end
+        rails_cmd += " -m #{options[:template]}" if options[:template]
+        rails_cmd += " -d #{options[:database]}" if options[:database]
         run(rails_cmd)
       end
 
