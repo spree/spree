@@ -7,7 +7,7 @@ module Spree
         end
 
         def search
-          @products = product_scope.search(params[:q]).result.page(params[:page])
+          @products = product_scope.ransack(params[:q]).result.page(params[:page])
           render :index
         end
 
