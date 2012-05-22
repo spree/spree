@@ -30,14 +30,14 @@ module SpreeCmd
     def verify_rails
       unless rails_project?
         say "#{@app_path} is not a rails project."
-        exit(1)
+        exit 1
       end
     end
 
     def verify_image_magick
       unless image_magick_installed?
         say "Image magick must be installed."
-        exit(1)
+        exit 1
       end
     end
 
