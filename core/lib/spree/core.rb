@@ -95,7 +95,6 @@ require 'spree/core/version'
 
 require 'spree/core/engine'
 require 'generators/spree/dummy/dummy_generator'
-require 'generators/spree/sandbox/sandbox_generator'
 
 ActiveRecord::Base.class_eval do
   include Spree::Core::CalculatedAdjustments

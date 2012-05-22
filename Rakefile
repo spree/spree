@@ -96,10 +96,7 @@ end
 
 desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  require 'spree_core'
-
-  Spree::SandboxGenerator.start ["--lib_name=spree"]
-  Spree::InstallGenerator.start ["--auto-accept"]
-
-  cmd = "bundle exec rake assets:precompile:nondigest"; puts cmd; system cmd
+  FileUtils.rm_r("sandbox")
+  puts "Running Sandbox generator..."
+  exec("rails new sandbox -m sandbox.rb")
 end
