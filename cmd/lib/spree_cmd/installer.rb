@@ -148,7 +148,7 @@ module SpreeCmd
         until valid
           response = ask "#{message} [#{default}]"
           response = default if response.empty?
-          valid = (response  =~ valid_regex)
+          valid = (valid_regex === response)
         end
         response
       end
@@ -165,7 +165,7 @@ module SpreeCmd
       def rails_project?
         File.exists? File.join(@app_path, 'script', 'rails')
       end
-      
+
       def linux?
         /linux/i === RbConfig::CONFIG['host_os']
       end
@@ -173,7 +173,7 @@ module SpreeCmd
       def mac?
         /darwin/i === RbConfig::CONFIG['host_os']
       end
-      
+
       def windows?
         %r{msdos|mswin|djgpp|mingw} === RbConfig::CONFIG['host_os']
       end
