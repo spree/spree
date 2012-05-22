@@ -30,14 +30,14 @@ module SpreeCmd
     def verify_rails
       unless rails_project?
         say "#{@app_path} is not a rails project."
-        exit(1)
+        exit 1
       end
     end
 
     def verify_image_magick
       unless image_magick_installed?
         say "Image magick must be installed."
-        exit(1)
+        exit 1
       end
     end
 
@@ -80,7 +80,7 @@ module SpreeCmd
         @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
         @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
       end
-      @precompile_assets = options[:precompile_assets] ? ask_with_default('Would you like to precompile assets?') : false
+      @precompile_assets = options[:precompile_assets] && ask_with_default('Would you like to precompile assets?')
     end
 
     def add_gems
@@ -148,7 +148,7 @@ module SpreeCmd
         until valid
           response = ask "#{message} [#{default}]"
           response = default if response.empty?
-          valid = (response  =~ valid_regex)
+          valid = (valid_regex === response)
         end
         response
       end
@@ -157,19 +157,15 @@ module SpreeCmd
         say :create, @app_path
 
         rails_cmd = "rails new #{@app_path} --skip-bundle"
-        if options[:template]
-          rails_cmd += " -m #{options[:template]}"
-        end
-        if options[:database]
-          rails_cmd += " -d #{options[:database]}"
-        end
+        rails_cmd << " -m #{options[:template]}" if options[:template]
+        rails_cmd << " -d #{options[:database]}" if options[:database]
         run(rails_cmd)
       end
 
       def rails_project?
         File.exists? File.join(@app_path, 'script', 'rails')
       end
-      
+
       def linux?
         /linux/i === RbConfig::CONFIG['host_os']
       end
@@ -177,7 +173,7 @@ module SpreeCmd
       def mac?
         /darwin/i === RbConfig::CONFIG['host_os']
       end
-      
+
       def windows?
         %r{msdos|mswin|djgpp|mingw} === RbConfig::CONFIG['host_os']
       end
