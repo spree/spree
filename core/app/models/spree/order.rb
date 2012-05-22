@@ -49,7 +49,7 @@ module Spree
     end
 
     scope :by_number, lambda { |number| where(:number => number) }
-    scope :between, lambda { |*dates| where('created_at BETWEEN ? AND ?', dates.first.to_date, dates.last.to_date) }
+    scope :between, lambda { |*dates| where(:created_at => [dates.first.to_date, dates.last.to_date]) }
     scope :by_customer, lambda { |customer| joins(:user).where("#{Spree::User.table_name}.email = ?", customer) }
     scope :by_state, lambda { |state| where(:state => state) }
     scope :complete, where('completed_at IS NOT NULL')
