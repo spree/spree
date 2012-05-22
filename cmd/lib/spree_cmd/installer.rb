@@ -183,17 +183,15 @@ module SpreeCmd
       end
 
       def image_magick_installed?
-        if mac? || linux?
-          begin
-            %x(identify -version)
-          rescue
-          end
-
-          $?.success?
-        elsif windows?
-          # not sure how to check on windows so assume installed
-          true
+        begin
+          %x(identify -version)
+        # The Errno::ENOENT exception is raised on all OSes when it cannot find a command
+        rescue Errno::ENOENT
+          return false
+        rescue # Silence any other exception
         end
+        # If program *did* execute, check to see if it executed successfully
+        $?.success?
       end
   end
 end
