@@ -10,7 +10,7 @@ describe "Visiting Products" do
   it "should be able to show the shopping cart after adding a product to it" do
     click_link "Ruby on Rails Ringer T-Shirt"
 
-    page.should have_content("$17.99")
+    page.should have_content("$19.99")
 
     click_button 'add-to-cart-button'
     page.should have_content("Shopping Cart")
@@ -100,10 +100,26 @@ describe "Visiting Products" do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 3
+    page.all('ul.product-listing li').size.should == 2
     tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
     tmp.delete("")
     tmp.sort!.should == ["Ruby on Rails Ringer T-Shirt", "Ruby on Rails Stein", "Ruby on Rails Tote"]
+  end
+
+  it "should be able to display products priced between 15 and 18 dollars across multiple pages" do
+    Spree::Config.products_per_page = 2
+    within(:css, '#taxonomies') { click_link "Ruby on Rails" }
+    check "Price_Range_$15.00_-_$18.00"
+    within(:css, '#sidebar_products_search') { click_button "Search" }
+
+    page.all('ul.product-listing li').size.should == 4
+    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+    tmp.delete("")
+    tmp.sort!.should == ["Ruby on Rails Ringer T-Shirt", "Ruby on Rails Tote"]
+    find('nav.pagination .next a').click
+    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+    tmp.delete("")
+    tmp.sort!.should == ["Ruby on Rails Stein"]
   end
 
   it "should be able to display products priced 18 dollars and above" do
