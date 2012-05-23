@@ -74,7 +74,7 @@ Each of the gems in Spree makes use of Rails Engines.  This functionality was in
 
 h5. An Intuitive Mechanism for Customization
 
-Default Spree functionality is provided via the Rails engine gems.  Engines can provides several aspects traditionally associated with a Rails application including (but not limited to):
+Default Spree functionality is provided via the Rails engine gems.  Engines can provide several aspects traditionally associated with a Rails application including (but not limited to):
 
 * Models, views and controllers
 * Routes
