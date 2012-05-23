@@ -46,6 +46,12 @@ module Spree
           process_spree_action(action, parameters, session, flash, "DELETE")
         end
 
+        def spree_xhr_get(action, parameters = nil, session = nil, flash = nil)
+          parameters ||= {}
+          parameters.merge!(:use_route => :spree)
+          xml_http_request(:get, action, parameters, session, flash)
+        end
+
         private
 
         def process_spree_action(action, parameters = nil, session = nil, flash = nil, method = "GET")
