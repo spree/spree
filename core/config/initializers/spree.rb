@@ -11,8 +11,4 @@ SESSION_KEY = '_spree_session_id'
 #  include Spree::Support::CoreExtensions::Array
 #end
 
-String.class_eval do
-  include Spree::Core::Ext::String
-end
-
 LIKE = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
