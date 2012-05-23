@@ -6,6 +6,8 @@ module Spree
 
     scope :of_type, lambda {|t| {:conditions => {:type => t}}}
 
+    attr_accessible :line_items_string
+
     # This method should be overriden in subclass
     # Updates the state of the order or performs some other action depending on the subclass
     # options will contain the payload from the event that activated the promotion. This will include
