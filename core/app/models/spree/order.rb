@@ -127,10 +127,6 @@ module Spree
       self.update_hooks.add(hook)
     end
 
-     def ip_address
-       '192.168.1.100'
-     end
-
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.map(&:amount).sum

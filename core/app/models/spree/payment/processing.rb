@@ -152,7 +152,7 @@ module Spree
     def gateway_options
       options = { :email    => order.email,
                   :customer => order.email,
-                  :ip       => order.ip_address,
+                  :ip       => '192.168.1.100', # TODO: Use real IP address
                   :order_id => order.number }
 
       options.merge!({ :shipping => order.ship_total * 100,
