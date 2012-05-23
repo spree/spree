@@ -49,6 +49,13 @@ describe Spree::Admin::ProductsController do
       assigns[:collection].should_not be_empty
       assigns[:collection].should include(product)
     end
+
+    it "JSON request can find a product" do
+      product = create(:product, :sku => "ABC123", :name => "Alpha")
+      spree_xhr_get :index, { :q => "Alpha", :format => :json }
+      assigns[:collection].should_not be_empty
+      assigns[:collection].should include(product)
+    end
   end
 
   context "creating a product" do
