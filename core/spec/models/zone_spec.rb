@@ -48,7 +48,7 @@ describe Spree::Zone do
     end
   end
 
-  context "default_tax" do
+  context ".default_tax" do
     context "when there is a default tax zone specified" do
       before { @foo_zone = create(:zone, :name => "whatever", :default_tax => true) }
 
