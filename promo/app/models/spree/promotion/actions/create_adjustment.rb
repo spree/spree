@@ -16,6 +16,7 @@ module Spree
           order.adjustments.promotion.reload.clear
           order.update!
           create_adjustment("#{I18n.t(:promotion)} (#{promotion.name})", order, order)
+          order.update!
         end
 
         # override of CalculatedAdjustments#create_adjustment so promotional

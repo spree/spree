@@ -12,6 +12,7 @@ module Spree
             current_quantity = order.quantity_of(item.variant)
             if current_quantity < item.quantity
               order.add_variant(item.variant, item.quantity - current_quantity)
+              order.update!
             end
           end
         end
