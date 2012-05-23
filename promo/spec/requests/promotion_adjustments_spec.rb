@@ -291,6 +291,21 @@ describe "Promotion Adjustments" do
 
     end
 
+    it "should allow an admin to create a promotion that adds an item to the cart" do
+      fill_in "Name", :with => "Bundle"
+      select "Coupon code added", :from => "Event"
+      fill_in "Code", :with => "5ZHED2DH"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select "Create line items", :from => "Add action of type"
+      within('#action_fields') do
+        click_button "Add"
+        click_button "Update"
+      end
+      page.should_not have_content("Can't mass-assign protected attributes: line_items_string")
+    end
+
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Spend over $50 and save $5"
       select "Order contents changed", :from => "Event"
