@@ -296,6 +296,7 @@ module Spree
         current_item.update_attribute(field[:name].gsub(' ', '_').downcase, value)
       end
 
+      self.reload
       current_item
     end
 
