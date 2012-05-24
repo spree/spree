@@ -31,14 +31,6 @@ module Spree
     validates :label, :presence => true
     validates :amount, :numericality => true
 
-    scope :tax, lambda { where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order') }
-    scope :price, lambda { where(:adjustable_type => 'Spree::LineItem') }
-    scope :shipping, lambda { where(:originator_type => 'Spree::ShippingMethod') }
-    scope :optional, where(:mandatory => false)
-    scope :eligible, where(:eligible => true)
-    scope :charge, where("amount >= 0")
-    scope :credit, where("amount < 0")
-
     after_save :update_adjustable
     after_destroy :update_adjustable
 
@@ -77,6 +69,36 @@ module Spree
 
       def update_adjustable
         adjustable.update! if adjustable.is_a? Order
+      end
+
+      class << self
+        def tax
+          where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
+        end
+
+        def price
+          where(:adjustable_type => 'Spree::LineItem')
+        end
+
+        def shipping
+          where(:originator_type => 'Spree::ShippingMethod')
+        end
+
+        def optional
+          where(:mandatory => false)
+        end
+
+        def eligible
+          where(:eligible => true)
+        end
+
+        def charge
+          where('amount >= 0')
+        end
+
+        def credit
+          where('amount < 0')
+        end
       end
 
   end
