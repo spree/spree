@@ -18,6 +18,16 @@ Spree::CheckoutController.class_eval do
         end
       end
 
+      # In an instance the coupon code is entered from the cart, if the adjustment is higher than
+      # the order total before shipping (e.g: order total: 10 and adjustment is 10.01), order gets
+      # completed without shipping cost calculations, thus skipping the payment screen. Checks for
+      # such instances and updates the adjustment totals after creating shipment. May not be the
+      # best solution and might need a different approach. Yet, this takes care of the issue.
+      if params[:order][:shipping_method_id] && @order.payment_state == 'paid' && @order.state == 'delivery'
+        @order.create_shipment!
+        @order.update!
+      end
+
       if @order.next
         state_callback(:after)
       else
