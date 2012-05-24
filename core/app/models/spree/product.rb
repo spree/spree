@@ -184,14 +184,6 @@ module Spree
       variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type} }
     end
 
-    def effective_tax_rate
-      if tax_category
-        tax_category.effective_amount
-      else
-        TaxRate.default
-      end
-    end
-
     def self.like_any(fields, values)
       where_str = fields.map { |field| Array.new(values.size, "#{self.quoted_table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
       self.where([where_str, values.map { |value| "%#{value}%" } * fields.size].flatten)
