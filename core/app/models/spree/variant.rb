@@ -1,6 +1,6 @@
 module Spree
   class Variant < ActiveRecord::Base
-    belongs_to :product
+    belongs_to :product, :touch => true
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
                         :tax_category_id, :shipping_category_id, :meta_description,
                         :meta_keywords, :tax_category
@@ -19,8 +19,6 @@ module Spree
     validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
-
-    before_save :touch_product
 
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
@@ -142,17 +140,15 @@ module Spree
       self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
     end
 
+
     private
+
       # Ensures a new variant takes the product master price when price is not supplied
       def check_price
         if price.nil?
           raise 'Must supply price for variant or master.price for product.' if self == product.master
           self.price = product.master.price
         end
-      end
-
-      def touch_product
-        product.touch unless is_master?
       end
   end
 end
