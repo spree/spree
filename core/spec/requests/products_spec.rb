@@ -100,10 +100,10 @@ describe "Visiting Products" do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 2
+    page.all('ul.product-listing li').size.should == 3
     tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
     tmp.delete("")
-    tmp.sort!.should == ["Ruby on Rails Ringer T-Shirt", "Ruby on Rails Stein", "Ruby on Rails Tote"]
+    tmp.sort!.should == ["Ruby on Rails Mug", "Ruby on Rails Stein", "Ruby on Rails Tote"]
   end
 
   it "should be able to display products priced between 15 and 18 dollars across multiple pages" do
@@ -112,10 +112,10 @@ describe "Visiting Products" do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 4
+    page.all('ul.product-listing li').size.should == 2
     tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
     tmp.delete("")
-    tmp.sort!.should == ["Ruby on Rails Ringer T-Shirt", "Ruby on Rails Tote"]
+    tmp.sort!.should == ["Ruby on Rails Mug", "Ruby on Rails Tote"]
     find('nav.pagination .next a').click
     tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
     tmp.delete("")
@@ -128,11 +128,12 @@ describe "Visiting Products" do
     check "Price_Range_$20.00_or_over"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 3
+    page.all('ul.product-listing li').size.should == 4
     tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
     tmp.delete("")
     tmp.sort!.should == ["Ruby on Rails Bag",
                          "Ruby on Rails Baseball Jersey",
-                         "Ruby on Rails Jr. Spaghetti"]
+                         "Ruby on Rails Jr. Spaghetti",
+                         "Ruby on Rails Ringer T-Shirt"]
   end
 end

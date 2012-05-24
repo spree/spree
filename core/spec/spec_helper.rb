@@ -76,7 +76,7 @@ shared_context "custom products" do
     ruby_taxon = FactoryGirl.create(:taxon, :name => 'Ruby', :parent_id => root.id)
 
     FactoryGirl.create(:custom_product, :name => 'Ruby on Rails Ringer T-Shirt', :price => '19.99', :taxons => [rails_taxon, clothing_taxon])
-    FactoryGirl.create(:custom_product, :name => 'Ruby on Rails Mug', :price => '13.99', :taxons => [rails_taxon, mugs_taxon])
+    FactoryGirl.create(:custom_product, :name => 'Ruby on Rails Mug', :price => '15.99', :taxons => [rails_taxon, mugs_taxon])
     FactoryGirl.create(:custom_product, :name => 'Ruby on Rails Tote', :price => '15.99', :taxons => [rails_taxon, bags_taxon])
     FactoryGirl.create(:custom_product, :name => 'Ruby on Rails Bag', :price => '22.99', :taxons => [rails_taxon, bags_taxon])
     FactoryGirl.create(:custom_product, :name => 'Ruby on Rails Baseball Jersey', :price => '19.99', :taxons => [rails_taxon, clothing_taxon])
