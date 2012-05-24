@@ -992,18 +992,4 @@ describe Spree::Order do
     end
   end
 
-  context "#add_variant" do
-    it "should update order totals" do
-      order = Spree::Order.create!
-
-      order.item_total.to_f.should == 0.00
-      order.total.to_f.should == 0.00
-
-      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
-      order.add_variant(product.master)
-
-      order.item_total.to_f.should == 22.25
-      order.total.to_f.should == 22.25
-    end
-  end
 end

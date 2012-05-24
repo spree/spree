@@ -287,8 +287,6 @@ module Spree
         current_item.price   = variant.price
         self.line_items << current_item
       end
-
-      self.reload
       current_item
     end
 
