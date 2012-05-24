@@ -63,6 +63,12 @@ module Spree
       end
     end
 
+    # and cost_price
+    def cost_price=(price)
+      if price.present?
+        self[:cost_price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
+      end
+    end
 
     # returns number of units currently on backorder for this variant.
     def on_backorder
