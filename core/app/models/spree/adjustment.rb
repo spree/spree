@@ -34,34 +34,6 @@ module Spree
     after_save :update_adjustable
     after_destroy :update_adjustable
 
-    def self.tax
-      where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
-    end
-
-    def self.price
-      where(:adjustable_type => 'Spree::LineItem')
-    end
-
-    def self.shipping
-      where(:originator_type => 'Spree::ShippingMethod')
-    end
-
-    def self.optional
-      where(:mandatory => false)
-    end
-
-    def self.eligible
-      where(:eligible => true)
-    end
-
-    def self.charge
-      where("amount >= 0")
-    end
-
-    def self.credit
-      where("amount < 0")
-    end
-
     # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
     # adjustment_total.
     def set_eligibility
@@ -97,6 +69,36 @@ module Spree
 
       def update_adjustable
         adjustable.update! if adjustable.is_a? Order
+      end
+
+      class << self
+        def tax
+          where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
+        end
+
+        def price
+          where(:adjustable_type => 'Spree::LineItem')
+        end
+
+        def shipping
+          where(:originator_type => 'Spree::ShippingMethod')
+        end
+
+        def optional
+          where(:mandatory => false)
+        end
+
+        def eligible
+          where(:eligible => true)
+        end
+
+        def charge
+          where("amount >= 0")
+        end
+
+        def credit
+          where("amount < 0")
+        end
       end
 
   end
