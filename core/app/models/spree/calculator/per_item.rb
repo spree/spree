@@ -11,7 +11,11 @@ module Spree
     def compute(object=nil)
       return 0 if object.nil?
       self.preferred_amount * object.line_items.reduce(0) do |sum, value|
-        value_to_add = matching_products.include?(value.product) ? value.quantity : 0
+        if matching_products && matching_products.include?(value.product)
+          value_to_add = value.quantity
+        else
+          value_to_add = 0
+        end
         sum + value_to_add
       end
     end
