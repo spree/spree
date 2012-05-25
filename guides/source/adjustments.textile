@@ -123,7 +123,16 @@ app.config.spree.calculators.product_customization_types = [
 ] 
 </ruby>
 
-If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer +spree.register.calculators+ or the +Rails.application.config.spree.calculators+ method of the default site engine.
+If you do not intend to distribute your calculator as an extension you can simply register it inside a Rails initializer +spree.register.calculators+ within the +application.rb+ Application class.
+
+<ruby>
+initializer 'spree.register.calculators' do |app|
+  app.config.spree.calculators.shipping_methods << Spree::Calculator::CustomCalculator
+  app.config.spree.calculators.tax_rates << Spree::Calculator::CustomTaxCalculator
+end
+</ruby>
+
+You can also register it using the +Rails.application.config.spree.calculators+ method of the default site engine.
 
 INFO: Spree automatically configures your calculators for you when using the basic install and/or third party extensions.  This discussion is intended to help developers and others interested in understanding the design decisions surrounding calculators.
 
