@@ -1,0 +1,15 @@
+h2. Spree 1.2.0 Release Notes
+
+endprologue.
+
+h3. Summary
+
+
+h3. Major changes (backwards incompatibility)
+
+
+h3. Minor changes
+
+h4. Spree::Zone#country_list renamed to #zone_member_list
+
+Please be noted that the underlying logics remain intact.
