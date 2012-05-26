@@ -98,7 +98,7 @@ end
 
 desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  FileUtils.rm_r("sandbox")
+  FileUtils.rm_rf("sandbox")
   puts "Running Sandbox generator..."
   exec("rails new sandbox -m lib/sandbox.rb")
 end
