@@ -56,8 +56,8 @@ module Spree
       matches.first
     end
 
-    # convenience method for returning the countries contained within a zone
-    def country_list
+    # convenience method for returning the countries or states contained within a zone
+    def zone_member_list
       members.map { |zone_member|
         case zone_member.zoneable_type
         when 'Spree::Country'
