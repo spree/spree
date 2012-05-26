@@ -11,6 +11,7 @@
 
     <p class="form-buttons" data-hook="buttons">
       <%= button @order.cart? ? t(:continue) : t(:update) %>
+      <%= t(:or) %> <%= link_to t(:back), admin_order_payments_url(@order) %>
     </p>
 
   <% end %>
@@ -20,5 +21,5 @@
 <% end %>
 
 <% content_for :head do %>
-  <%= javascript_include_tag '/admin/javascripts/payments/new.js' %>
+  <%= javascript_include_tag '/assets/admin/payments/new.js' %>
 <% end %>
