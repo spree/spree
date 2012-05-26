@@ -26,7 +26,6 @@
 </ul>
 <% end %>
 
-<% if paginated_products.respond_to?(:num_pages)
-      params.delete(:search)
-      params.delete(:taxon)
-%><%= paginate paginated_products %><% end %>
+<% if paginated_products.respond_to?(:num_pages) %>
+  <%= paginate paginated_products %>
+<% end %>
