@@ -113,13 +113,12 @@ describe "Visiting Products" do
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
     page.all('ul.product-listing li').size.should == 2
-    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
-    tmp.delete("")
-    tmp.sort!.should == ["Ruby on Rails Mug", "Ruby on Rails Tote"]
+    products = page.all('ul.product-listing li a[itemprop=name]')
+    products.count.should == 2
+
     find('nav.pagination .next a').click
-    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
-    tmp.delete("")
-    tmp.sort!.should == ["Ruby on Rails Stein"]
+    products = page.all('ul.product-listing li a[itemprop=name]')
+    products.count.should == 1
   end
 
   it "should be able to display products priced 18 dollars and above" do
