@@ -12,16 +12,25 @@ module Spree
     calculated_adjustments
 
     def available?(order, display_on = nil)
-      display_check = (self.display_on == display_on.to_s || self.display_on.blank?)
-      calculator_check = calculator.available?(order)
-      display_check && calculator_check
+      displayable? && calculator.available?(order)
     end
 
-    def available_to_order?(order, display_on = nil)
-      availability_check = available?(order,display_on)
-      zone_check = zone && zone.include?(order.ship_address)
-      category_check = category_match?(order)
-      availability_check && zone_check && category_check
+    def displayable?
+      (self.display_on == display_on.to_s || self.display_on.blank?)
+    end
+
+    def calculator_available?(order)
+      caluclator.available?(order)
+    end
+
+    def within_zone?(order)
+      zone && zone.include?(order.ship_address)
+    end
+
+    def available_to_order?(order, display_on= nil)
+      available?(order, display_on) &&
+      within_zone?(order) &&
+      category_match?(order)
     end
 
     # Indicates whether or not the category rules for this shipping method

@@ -290,7 +290,7 @@ describe "Checkout", :js => true do
     str_addr = "bill_address"
     select "United States", :from => "order_#{str_addr}_attributes_country_id"
     ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{ita_address.send(field)}"
+      fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
     end
     select "Alabama", :from => "order_#{str_addr}_attributes_state_id"
     check "order_use_billing"

@@ -294,23 +294,6 @@ describe Spree::Product do
     end
   end
 
-  context '#effective_tax_rate' do
-    let(:product) { stub_model(Spree::Product) }
-
-    it 'should check tax category for applicable rates' do
-      tax_category = double("Tax Category")
-      product.stub :tax_category => tax_category
-      tax_category.should_receive(:effective_amount)
-      product.effective_tax_rate
-    end
-
-    it 'should return default tax rate when no tax category is defined' do
-      product.stub :tax_category => nil
-      product.effective_tax_rate.should == Spree::TaxRate.default
-    end
-
-  end
-
   context "#images" do
     let(:product) { create(:product) }
 

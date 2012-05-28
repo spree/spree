@@ -61,7 +61,8 @@ module Spree
     def variant_images
       Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id").
       where("#{Variant.quoted_table_name}.product_id = #{self.id}").
-      order("#{Asset.quoted_table_name}.position")
+      order("#{Asset.quoted_table_name}.position").
+      extend(Spree::Core::RelationSerialization)
     end
 
     alias_method :images, :variant_images
@@ -181,14 +182,6 @@ module Spree
     def categorise_variants_from_option(opt_type)
       return {} unless option_types.include?(opt_type)
       variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type} }
-    end
-
-    def effective_tax_rate
-      if tax_category
-        tax_category.effective_amount
-      else
-        TaxRate.default
-      end
     end
 
     def self.like_any(fields, values)

@@ -18,7 +18,3 @@
   <%= t(:cannot_create_payment_without_payment_methods) %>
   <%= link_to t(:please_define_payment_methods), admin_payment_methods_url %>
 <% end %>
-
-<% content_for :head do %>
-  <%= javascript_include_tag '/admin/javascripts/payments/new.js' %>
-<% end %>

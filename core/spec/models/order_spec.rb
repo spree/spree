@@ -533,12 +533,12 @@ describe Spree::Order do
 
   end
 
-  context "#update_payment_state" do    
+  context "#update_payment_state" do
     it "should set payment_state to balance_due if no line_item" do
       order.stub(:line_items => [])
       order.update!
       order.payment_state.should == "balance_due"
-    end    
+    end
   end
 
   context "#payment_method" do
@@ -982,4 +982,18 @@ describe Spree::Order do
     end
   end
 
+  context "#add_variant" do
+    it "should update order totals" do
+      order = Spree::Order.create!
+
+      order.item_total.to_f.should == 0.00
+      order.total.to_f.should == 0.00
+
+      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
+      order.add_variant(product.master)
+
+      order.item_total.to_f.should == 22.25
+      order.total.to_f.should == 22.25
+    end
+  end
 end
