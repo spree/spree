@@ -71,8 +71,8 @@ module Spree
               flash.now[:error] = t(:authorization_failure)
               render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
             else
-              store_location
-              redirect_to spree_login_path and return
+              url = respond_to?(:spree_login_path) ? spree_login_path : root_path
+              redirect_to url
             end
           end
           format.xml do
