@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Admin::OrdersController do
+  stub_authorization!
 
   let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100) }
 
