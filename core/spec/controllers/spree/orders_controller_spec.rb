@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe Spree::OrdersController do
-  stub_authorization!
-
   let(:user) { create(:user) }
   let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code => nil, :user => user, :completed? => false)}
   before do
