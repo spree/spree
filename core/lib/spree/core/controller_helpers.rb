@@ -123,12 +123,6 @@ module Spree
         @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
       end
 
-      def associate_user
-        return unless spree_current_user and current_order
-        current_order.associate_user!(spree_current_user)
-        session[:guest_token] = nil
-      end
-
       def set_user_language
         locale = session[:locale]
         locale ||= Spree::Config[:default_locale] unless Spree::Config[:default_locale].blank?

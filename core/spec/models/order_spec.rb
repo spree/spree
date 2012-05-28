@@ -240,6 +240,16 @@ describe Spree::Order do
     end
   end
 
+  context "#associate_user!" do
+    it "should associate a user with this order" do
+      order.user = nil
+      order.email = nil
+      order.associate_user!(user)
+      order.user.should == user
+      order.email.should == user.email
+    end
+  end
+
   context "#create" do
     it "should assign an order number" do
       order = Spree::Order.create

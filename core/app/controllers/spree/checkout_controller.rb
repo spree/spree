@@ -6,6 +6,7 @@ module Spree
     ssl_required
 
     before_filter :load_order
+    before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     respond_to :html
@@ -36,6 +37,27 @@ module Spree
     end
 
     private
+      def load_order
+        @order = current_order
+        redirect_to cart_path and return unless @order and @order.checkout_allowed?
+        raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
+        redirect_to cart_path and return if @order.completed?
+        @order.state = params[:state] if params[:state]
+        state_callback(:before)
+      end
+
+      def associate_user
+        puts "CALLING ASSOCIATE USER"
+        debugger
+        if spree_current_user && @order
+          if @order.user.blank? || @order.email.blank?
+            puts "OMG"
+            @order.associate_user!(current_user)
+          end
+        end
+        session[:guest_token] = nil
+      end
+
       # Provides a route to redirect after order completion
       def completion_route
         order_path(@order)
@@ -52,15 +74,6 @@ module Spree
           end
         end
         params[:order]
-      end
-
-      def load_order
-        @order = current_order
-        redirect_to cart_path and return unless @order and @order.checkout_allowed?
-        raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
-        redirect_to cart_path and return if @order.completed?
-        @order.state = params[:state] if params[:state]
-        state_callback(:before)
       end
 
       def raise_insufficient_quantity

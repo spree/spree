@@ -274,6 +274,15 @@ module Spree
       current_item
     end
 
+    # Associates the specified user with the order.
+    def associate_user!(user)
+      self.user = user
+      self.email = user.email
+      # disable validations since they can cause issues when associating
+      # an incomplete address during the address step
+      save(:validate => false)
+    end
+
     # FIXME refactor this method and implement validation using validates_* utilities
     def generate_order_number
       record = true
