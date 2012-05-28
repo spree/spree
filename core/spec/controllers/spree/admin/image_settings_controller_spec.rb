@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Admin::ImageSettingsController do
+  stub_authorization!
 
   context "updating image settings" do
     it "should be able to update paperclip settings" do
