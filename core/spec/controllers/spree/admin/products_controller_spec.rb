@@ -37,13 +37,6 @@ describe Spree::Admin::ProductsController do
       response.should be_success
     end
 
-    # Regression test for GH #538
-    it "cannot find a non-existent product" do
-      spree_get :edit, :id => "non-existent-product"
-      response.should redirect_to(spree.admin_products_path)
-      flash[:error].should eql("Product is not found")
-    end
-
     # Regression test for #1259
     it "can find a product by SKU" do
       product = create(:product, :sku => "ABC123")
