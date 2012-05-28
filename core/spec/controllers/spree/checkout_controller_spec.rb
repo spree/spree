@@ -9,7 +9,7 @@ describe Spree::CheckoutController do
                              :update_attributes => true,
                              :payment? => false,
                              :insufficient_stock_lines => [],
-                             :coupon_code => nil)
+                             :coupon_code => nil).as_null_object
   end
 
   before { controller.stub :current_order => order }
