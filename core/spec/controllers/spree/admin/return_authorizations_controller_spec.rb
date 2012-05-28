@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Admin::ReturnAuthorizationsController do
+  stub_authorization!
+
   # Regression test for #1370 #3
   let!(:order) { create(:order) }
   it "can create a return authorization" do
