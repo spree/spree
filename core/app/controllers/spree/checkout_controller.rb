@@ -47,12 +47,9 @@ module Spree
       end
 
       def associate_user
-        puts "CALLING ASSOCIATE USER"
-        debugger
         if spree_current_user && @order
           if @order.user.blank? || @order.email.blank?
-            puts "OMG"
-            @order.associate_user!(current_user)
+            @order.associate_user!(spree_current_user)
           end
         end
         session[:guest_token] = nil
