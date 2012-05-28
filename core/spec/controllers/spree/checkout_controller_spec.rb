@@ -1,7 +1,17 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController do
-  let(:order) { mock_model(Spree::Order, :checkout_allowed? => true, :completed? => false, :update_attributes => true, :payment? => false, :insufficient_stock_lines => [], :coupon_code => nil).as_null_object }
+  let(:order) do 
+    mock_model(Spree::Order, :checkout_allowed? => true,
+                             :user => nil,
+                             :email => nil,
+                             :completed? => false,
+                             :update_attributes => true,
+                             :payment? => false,
+                             :insufficient_stock_lines => [],
+                             :coupon_code => nil)
+  end
+
   before { controller.stub :current_order => order }
 
   context "#edit" do
@@ -27,6 +37,13 @@ describe Spree::CheckoutController do
       order.stub(:completed? => true)
       spree_get :edit, {:state => "address"}
       response.should redirect_to(spree.cart_path)
+    end
+
+    it "should associate the order with a user" do
+      user = double("User")
+      controller.stub(:spree_current_user => user)
+      order.should_receive(:associate_user!).with(user)
+      spree_get :edit, {}, :order_id => 1
     end
 
   end
