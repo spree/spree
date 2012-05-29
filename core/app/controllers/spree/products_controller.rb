@@ -34,7 +34,7 @@ module Spree
       end
 
       def load_product
-        if respond_to?(:spree_current_user) && spree_current_user.has_spree_role?("admin")
+        if respond_to?(:spree_current_user) && spree_current_user.try(:has_spree_role?, "admin")
           @product = Product.find_by_permalink!(params[:id])
         else
           @product = Product.active.find_by_permalink!(params[:id])
