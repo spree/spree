@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Promotion Adjustments" do
+  stub_authorization!
+
   context "coupon promotions", :js => true do
     before(:each) do
       PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
@@ -319,6 +321,7 @@ describe "Promotion Adjustments" do
       click_link "Checkout"
 
       str_addr = "bill_address"
+      fill_in "order_email", :with => "buyer@spreecommerce.com"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
         fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
@@ -425,6 +428,60 @@ describe "Promotion Adjustments" do
       fill_in "order[line_items_attributes][0][quantity]", :with => "3"
       click_button "Update"
       Spree::Order.last.total.to_f.should == 49.00
+    end
+
+
+    def create_per_product_promotion product_name, discount_amount
+      visit spree.admin_path
+      click_link "Promotions"
+      click_link "New Promotion"
+      fill_in "Name", :with => "Bundle"
+      select "Add to cart", :from => "Event"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      # add product_name to last promotion
+      promotion = Spree::Promotion.last
+      promotion.rules << Spree::Promotion::Rules::Product.new()
+      product = Spree::Product.find_by_name(product_name)
+      rule = promotion.rules.last
+      rule.products << product
+      if rule.save
+        puts "Created promotion: new price for #{product_name} is #{product.price - discount_amount} (was #{product.price})"
+      else
+        puts "Failed to create promotion: price for #{product_name} is still #{product.price}"
+      end
+
+      select "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select "Flat Rate (per item)", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+      within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
+      within('#actions_container') { click_button "Update" }
+    end
+
+    def add_to_cart product_name
+      visit spree.root_path
+      click_link product_name
+      click_button "Add To Cart"
+    end
+
+    def do_checkout
+      click_link "Checkout"
+      str_addr = "bill_address"
+      fill_in "order_email", :with => "buyer@spreecommerce.com"
+      select "United States", :from => "order_#{str_addr}_attributes_country_id"
+      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
+        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
+      end
+      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
+      check "order_use_billing"
+      click_button "Save and Continue"
+      click_button "Save and Continue"
+      choose('Credit Card')
+      fill_in "card_number", :with => "4111111111111111"
+      fill_in "card_code", :with => "123"
+      click_button "Save and Continue"
     end
   end
 end
