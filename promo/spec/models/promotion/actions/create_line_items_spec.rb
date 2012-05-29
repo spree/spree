@@ -22,22 +22,25 @@ describe Spree::Promotion::Actions::CreateLineItems do
     it "adds line items to order with correct variant and quantity" do
       action.perform(:order => order)
       order.line_items.count.should == 2
-      order.line_items.first.variant.should == @v1
-      order.line_items.first.quantity.should == 1
+      line_item = order.line_items.find_by_variant_id(@v1.id)
+      line_item.should_not be_nil
+      line_item.quantity.should == 1
     end
 
     it "only adds the delta of quantity to an order" do
       order.add_variant(@v2, 1)
       action.perform(:order => order)
-      order.line_items.first.variant.should == @v2
-      order.line_items.first.quantity.should == 2
+      line_item = order.line_items.find_by_variant_id(@v2.id)
+      line_item.should_not be_nil
+      line_item.quantity.should == 2
     end
 
     it "doesn't add if the quantity is greater" do
       order.add_variant(@v2, 3)
       action.perform(:order => order)
-      order.line_items.first.variant.should == @v2
-      order.line_items.first.quantity.should == 3
+      line_item = order.line_items.find_by_variant_id(@v2.id)
+      line_item.should_not be_nil
+      line_item.quantity.should == 3
     end
   end
 
