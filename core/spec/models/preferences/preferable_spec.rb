@@ -179,6 +179,25 @@ describe Spree::Preferences::Preferable do
       end
     end
 
+    context "converts any preferences to any values" do
+      before do
+        A.preference :product_ids, :any, :default => []
+        A.preference :product_attributes, :any, :default => {}
+      end
+
+      it "with array" do
+        @a.preferences[:product_ids].should == []
+        @a.set_preference(:product_ids, [1, 2])
+        @a.preferences[:product_ids].should == [1, 2]
+      end
+
+      it "with hash" do
+        @a.preferences[:product_attributes].should == {}
+        @a.set_preference(:product_attributes, {:id => 1, :name => 2})
+        @a.preferences[:product_attributes].should == {:id => 1, :name => 2}
+      end
+    end
+
   end
 
   describe "persisted preferables" do
@@ -201,6 +220,7 @@ describe Spree::Preferences::Preferable do
 
       class PrefTest < ActiveRecord::Base
         preference :pref_test_pref, :string, :default => 'abc'
+        preference :pref_test_any, :any, :default => []
       end
     end
 
@@ -220,6 +240,14 @@ describe Spree::Preferences::Preferable do
         pr.get_preference(:pref_test_pref).should == 'XXX'
         pr.save!
         pr.get_preference(:pref_test_pref).should == 'XXX'
+      end
+
+      it "saves preferences for serialized object" do
+        pr = PrefTest.new
+        pr[:pref_test_any] = [1, 2]
+        pr[:pref_test_any].should == [1, 2]
+        pr.save!
+        pr[:pref_test_any].should == [1, 2]
       end
     end
 
@@ -275,6 +303,7 @@ describe Spree::Preferences::Preferable do
     @a.has_preference?(:test_temp).should be_false
     @a.respond_to?(:preferred_test_temp).should be_false
   end
+
 end
 
 
