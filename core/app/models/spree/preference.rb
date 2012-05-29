@@ -21,6 +21,8 @@ class Spree::Preference < ActiveRecord::Base
         self[:value].to_i
       when :boolean
         (self[:value].to_s =~ /^[t|1]/i) != nil
+      else
+        self[:value].is_a?(String) ? YAML.load(self[:value]) : self[:value]
       end
     else
       self[:value]
