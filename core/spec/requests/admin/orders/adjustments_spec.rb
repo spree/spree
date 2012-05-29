@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Adjustments" do
+  stub_authorization!
+
   before(:each) do
     visit spree.admin_path
     order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")

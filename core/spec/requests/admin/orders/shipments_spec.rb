@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe "Shipments" do
-  
+  stub_authorization!
+
   Spree::Zone.delete_all
   let(:shipping_method) { create(:shipping_method, :zone => Spree::Zone.find_by_name('North America') || create(:zone, :name => 'North America')) }
   let(:order) { create(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method) }

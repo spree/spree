@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Products" do
+  stub_authorization!
+
   context "as admin user" do
     before(:each) do
       visit spree.admin_path

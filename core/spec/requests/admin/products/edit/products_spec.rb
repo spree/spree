@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe 'Product Details' do
+  stub_authorization!
+
   context 'editing a product' do
     let(:available_on) { Time.now }
     it 'should list the product details' do

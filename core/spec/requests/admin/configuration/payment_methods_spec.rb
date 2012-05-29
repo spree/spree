@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Payment Methods" do
+  stub_authorization!
+
   before(:each) do
     visit spree.admin_path
     click_link "Configuration"

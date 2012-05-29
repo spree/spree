@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Product Variants" do
+  stub_authorization!
+
   before(:each) do
     visit spree.admin_path
   end

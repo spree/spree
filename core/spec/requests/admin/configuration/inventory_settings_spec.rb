@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Inventory Settings" do
+  stub_authorization!
+
   context "changing settings" do
     before(:each) do
       reset_spree_preferences do |config|

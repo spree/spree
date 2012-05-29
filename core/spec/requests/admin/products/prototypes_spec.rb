@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Prototypes" do
+  stub_authorization!
+
   context "listing prototypes" do
     it "should be able to list existing prototypes" do
       create(:property, :name => "model", :presentation => "Model")

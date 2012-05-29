@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Homepage" do
+  stub_authorization!
+
   context "visiting the homepage" do
     before(:each) do
       visit spree.admin_path

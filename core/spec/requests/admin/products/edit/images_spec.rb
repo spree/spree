@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Product Images" do
+  stub_authorization!
+
   context "uploading and editing an image", :js => true do
     it "should allow an admin to upload and edit an image for a product" do
       Spree::Image.attachment_definitions[:attachment].delete :storage

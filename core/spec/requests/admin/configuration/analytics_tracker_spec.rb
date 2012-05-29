@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Analytics Tracker" do
+  stub_authorization!
+
   context "index" do
     before(:each) do
       2.times { create(:tracker, :environment => "test") }
@@ -22,7 +24,7 @@ describe "Analytics Tracker" do
       find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Test"
       find('table.index tr:nth-child(2) td:nth-child(3)').text.should == "Yes"
     end
-  end
+   end
 
   context "create" do
     before(:each) do
