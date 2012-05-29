@@ -47,13 +47,14 @@ Spree::Core::Engine.routes.draw do
   #   #this route maybe removed in the near future (no longer used by core)
   #   map.resources :taxons
   #
+  #
 
   namespace :admin do
     resources :adjustments
     resources :zones
-    resources :users do
+    resources :banners do
       member do
-        post :dismiss_banner
+        post :dismiss
       end
     end
     resources :countries do
