@@ -341,8 +341,7 @@ describe "Promotion Adjustments" do
 
       last_order = Spree::Order.last
       last_order.line_items.count.should == 2
-      last_order.line_items.first.price.to_f.should == 20.00
-      last_order.line_items.last.price.to_f.should == 40.00
+      last_order.line_items.map(&:price).should =~ [20.00, 40.00]
       last_order.item_total.to_f.should == 60.00
       last_order.adjustments.promotion.map(&:amount).sum.to_f.should == -40.00
       last_order.total.to_f.should == 30.00
