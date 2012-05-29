@@ -84,10 +84,10 @@ describe Spree::Preference do
       pref.value_type.should == value_type.to_s
     end
 
-    it ":array" do
-      value_type = :array
+    it ":any" do
+      value_type = :any
       value = [1, 2]
-      key = "array_key"
+      key = "any_key"
       pref = round_trip_preference(key, value, value_type)
       pref.value.should eq value
       pref.value_type.should == value_type.to_s
