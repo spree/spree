@@ -7,7 +7,6 @@
   ajax_urls = <%== {
     :product_search_json       => spree.admin_products_path(:format => 'json'),
     :product_search_basic_json => spree.admin_products_path(:format => 'json', :json_format => 'basic', :limit => 10),
-    :user_search_basic_json    => spree.admin_users_path(:format => 'json', :json_format => 'basic', :limit => 10)
   }.to_json %>;
 
   strings = <%==
