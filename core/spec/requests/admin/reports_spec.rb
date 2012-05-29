@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Reports" do
+  stub_authorization!
+
   context "visiting the admin reports page" do
     it "should have the right content" do
       visit spree.admin_path

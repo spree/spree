@@ -18,6 +18,10 @@ module Spree
       self.abilities.add(ability)
     end
 
+    def self.remove_ability(ability)
+      self.abilities.delete(ability)
+    end
+
     def initialize(user)
       self.clear_aliased_actions
 

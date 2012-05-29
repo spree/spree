@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Orders Listing" do
+  stub_authorization!
+
   before(:each) do
     create(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
     create(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")

@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'active_record/fixtures'
 
 describe "Shipping Methods" do
+  stub_authorization!
+
   before(:all) do
     fixtures_dir = File.expand_path('../../../../../db/default', __FILE__)
     ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])

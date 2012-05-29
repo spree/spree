@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Admin visiting history" do
+  stub_authorization!
+
   it "should display order history", :js => true do
     order = create(:order)
     order.finalize!

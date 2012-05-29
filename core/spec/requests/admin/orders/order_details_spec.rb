@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe "Order Details" do
+  stub_authorization!
+
   context "edit order page" do
 
     before do

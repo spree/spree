@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Payments" do
+  stub_authorization!
+
   before(:each) do
 
     reset_spree_preferences do |config|

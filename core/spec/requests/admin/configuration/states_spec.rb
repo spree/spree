@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "States" do
+  stub_authorization!
+
   let!(:country) { create(:country) }
 
   before(:each) do

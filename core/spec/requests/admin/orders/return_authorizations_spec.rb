@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "return authorizations" do
+  stub_authorization!
+
   let!(:order) { create(:completed_order_with_totals) }
 
   before do

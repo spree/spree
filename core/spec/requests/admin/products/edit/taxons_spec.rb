@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Product Taxons" do
+  stub_authorization!
+
   context "managing taxons" do
     it "should allow an admin to manage taxons", :js => true do
       taxon = create(:taxon, :name => 'Brands')
