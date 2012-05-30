@@ -1,7 +1,7 @@
 <h2><%= t('access', :scope => 'spree.api') %></h2>
 
-<% if @user.api_key.present? %>
-  <p><strong><%= t('key', :scope => 'spree.api') %></strong> <%= @user.api_key %></p>
+<% if @user.spree_api_key.present? %>
+  <p><strong><%= t('key', :scope => 'spree.api') %></strong> <%= @user.spree_api_key %></p>
 
   <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
     <%= button t('clear_key', :scope => 'spree.api') %>
