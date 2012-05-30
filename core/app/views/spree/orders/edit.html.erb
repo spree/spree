@@ -18,27 +18,29 @@
           <%= render :partial => 'form', :locals => { :order_form => order_form } %>
         </div>
 
-        <div class="links columns ten alpha" data-hook="cart_buttons">
+        <div id="subtotal" data-hook class="columns sixteen alpha omega">
+          <h5><%= t(:subtotal) %>: <span class="order-total"><%= order_subtotal(@order) %></span></h5>
+        </div>
+
+        <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
             <%= t(:update) %>
           <% end %>
          <%= link_to t(:checkout), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
         </div>
 
-        <div id="subtotal" data-hook class="columns six omega">
-          <h5><%= t(:subtotal) %>: <span class="order-total"><%= order_subtotal(@order) %></span></h5>
-        </div>
-
       </div>
     <% end %>
   </div>
+
   <div id="empty-cart" data-hook>
-  <%= form_tag empty_cart_path, :method => :put do %>
-    <p id="clear_cart_link" data-hook>
-      <%= submit_tag t(:empty_cart), :class => 'button' %>
-      <%= t(:or) %>
-      <%= link_to t(:continue_shopping), products_path, :class => 'continue button' %>
-    </p>
-  <% end %>
+    <%= form_tag empty_cart_path, :method => :put do %>
+      <p id="clear_cart_link" data-hook>
+        <%= submit_tag t(:empty_cart), :class => 'button gray' %>
+        <%= t(:or) %>
+        <%= link_to t(:continue_shopping), products_path, :class => 'continue button gray' %>
+      </p>
+    <% end %>
   </div>
+
 <% end %>
