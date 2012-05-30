@@ -61,6 +61,7 @@ module Spree
         end
 
         session[:guest_token] = nil
+        session[:spree_user_signup] = nil
       end
 
       # Provides a route to redirect after order completion
