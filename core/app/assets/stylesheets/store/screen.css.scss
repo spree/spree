@@ -220,6 +220,11 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       font-size: $button_font_size + 2;
     }
 
+    &.gray {
+      background-color: lighten($body_text_color, 20);
+      border-color: lighten($body_text_color, 10);
+    }
+
     &:hover {
       background-image: none;
       background-color: $body_text_color;
@@ -848,6 +853,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   div[data-hook="inside_cart_form"] {
     .links {
       margin-top: 15px;
+      text-align: right;
     }
     
     #subtotal {
@@ -862,8 +868,8 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #empty-cart {
-    margin-top: 15px;
-    float: right;
+    margin-top: -75px !important;
+    float: left !important;
   }
 
   /*--------------------------------------*/
