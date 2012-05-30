@@ -90,28 +90,44 @@ Each of the methods defined in this module return values that are the most commo
 
 NOTE: URLs inside the +spree_login_path+, +spree_signup_path+ and +spree_logout_path+ methods *must* have +main_app+ prefixed if they are inside your application. This is because Spree will otherwise attempt to route to a +login_path+, +signup_path+ or +logout_path+ inside of itself, which does not exist. By prefixing with +main_app+, you tell it to look at the application's routes.
 
+You will need to define the +login_path+, +signup_path+ and +logout_path+ routes yourself, by using code like this inside your application's +config/routes.rb+ if you're using Devise:
+
+<ruby>
+devise_scope :person do
+  get '/login', :to => "devise/sessions#new"
+  get '/signup', :to => "devise/registrations#new"
+  delete '/logout', :to => "devise/sessions#destroy"
+end
+</ruby>
+
+Of course, this code will be different if you're not using Devise. Simply do not use the +devise_scope+ method and change the controllers and actions for these routes.
+
+You can also customize the +spree_login_path+, +spree_signup_path+ and +spree_logout_path+ methods inside +lib/spree/core/controller_helpers_ext.rb+ to use the routing helper methods already provided by the authentication setup you have, if you wish.
+
+NOTE: Any modifications made to +lib/spree/core/controller_helpers_ext.rb+ while the server is running will require a restart, as wth any other modification to other files in +lib+.
+
 h3. The User Model
 
-Inside your +User+ model, you will need to define a few things as well. The first of these is the association to the +spree_roles+ table inside of Spree, which you can do by putting this code inside the class definition of your +User+ model:
+Once you have specified +Spree.user_class+ correctly, there will be some new methods added to your +User+ class. The first of these methods are the ones added for the +has_and_belongs_to_many+ association called "spree_roles". This association will retreive all the roles that a user has for Spree.
 
-<ruby>
-has_and_belongs_to_many :spree_roles, :class_name => "Spree::Role", :join_table => "spree_roles_users"
-</ruby>
+The second of these is the +spree_orders+ association. This will return all orders associated with the user in Spree.
 
-In addition to this association, you will also need to define a +has_spree_role?+ method, like this:
-
-<ruby>
-  def has_spree_role?(role_in_question)
-    spree_roles.any? { |role| role.name == role_in_question.to_s }
-  end
-</ruby>
-
-This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
+The next method is one called +has_spree_role?+ which can be used to check if a user has a specific role. This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
 
 <ruby>
 user = User.find_by_email("master@example.com")
 user.spree_roles << Spree::Role.find_or_create_by_name("admin")
 </ruby>
+
+To test that this has worked, use the +has_spree_role?+ method, like this:
+
+<ruby>
+user.has_spree_role?("admin")
+</ruby>
+
+If this returns +true+, then the user has admin permissions within Spree.
+
+Finally, if you are using the API component of Spree, there are more methods added. The first is the +spree_api_key+ getter and setter methods, used for the API key that is used with Spree. The next two methods are +generate_spree_api_key!+ and +clear_spree_api_key!+ which will both generate and clear the Spree API key respectively.
 
 h3. Login link
 
@@ -126,24 +142,25 @@ Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
                      :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
 </ruby>
 
-This override references a partial called "spree/shared/login_bar". This will live in a new file called +app/views/spree/shared/login_bar.html.erb+ in your application. You may choose to call this file something different, the name is not important. This file will then contain this code:
+This override references a partial called "spree/shared/login_bar". This will live in a new partial called +app/views/spree/shared/_login_bar.html.erb+ in your application. You may choose to call this file something different, the name is not important. This file will then contain this code:
 
 <erb>
 <% if spree_current_user %>
   <li><%= link_to t(:logout), spree_logout_path %></li>
 <% else %>
   <li><%= link_to t(:login), spree_login_path %></li>
+  <li><%= link_to t(:signup), spree_signup_path %></li>
 <% end %>
 </erb>
 
-This will then use the URL helpers you have defined in +lib/spree/core/controller_helpers_ext.rb+ to define two links, one to allow users to logout and one to allow them to login from Spree. You may choose to also add a signup route here if you wish.
+This will then use the URL helpers you have defined in +lib/spree/core/controller_helpers_ext.rb+ to define three links, one to allow users to logout, one to allow them to login, and one to allow them to signup. These links will be visible on all customer-facing pages of Spree.
 
 h3. Signup promotion
 
-In Spree, there is a promotion that acts on the user signup which will not work correctly automatically when you're not using the standard authentication method with Spree. To fix this, you will need to trigger this event after a user has successfully signed up in your application:
+In Spree, there is a promotion that acts on the user signup which will not work correctly automatically when you're not using the standard authentication method with Spree. To fix this, you will need to trigger this event after a user has successfully signed up in your application by setting a session variable after successful signup in whatever controller deals with user signup:
 
 <ruby>
-fire_event('spree.user.signup', :user => @user, :order => current_order(true))
+session[:spree_user_signup] = true
 </ruby>
 
 This line will cause the Spree event notifiers to be notified of this event and to apply any promotions to an order that are triggered once a user signs up.
