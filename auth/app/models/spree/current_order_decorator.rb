@@ -9,4 +9,8 @@ Spree::Core::CurrentOrder.module_eval do
     return if current_user
     session[:access_token] = @current_order.token
   end
+
+  def last_incomplete_order_of_current_user
+    return current_user.incompleted_orders.last if current_user
+  end
 end

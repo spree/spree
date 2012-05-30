@@ -12,15 +12,20 @@ module Spree
       def after_save_new_order
       end
 
+      def last_incomplete_order_of_current_user
+      end
+
       # The current incomplete order from the session for use in cart and during checkout
       def current_order(create_order_if_necessary = false)
         return @current_order if @current_order
         if session[:order_id]
           @current_order = Spree::Order.find_by_id(session[:order_id], :include => :adjustments)
-        elsif current_user
-          # get the last incompleted order
-          @current_order = current_user.incompleted_orders.last
         end
+
+        if @current_order.nil?
+          @current_order = last_incomplete_order_of_current_user
+        end
+
         if create_order_if_necessary && (@current_order.nil? || @current_order.completed?)
           @current_order = Spree::Order.new
           before_save_new_order
