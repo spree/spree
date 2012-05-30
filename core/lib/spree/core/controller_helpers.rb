@@ -55,7 +55,14 @@ module Spree
 
       def store_location
         # disallow return to login, logout, signup pages
-        disallowed_urls = [spree_signup_path, spree_login_path, spree_logout_path]
+        authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]
+        disallowed_urls = []
+        authenticated_routes.each do |route|
+          if respond_to?(route)
+            disallowed_urls << send(route)
+          end
+        end
+
         disallowed_urls.map!{ |url| url[/\/\w+$/] }
         unless disallowed_urls.include?(request.fullpath)
           session['user_return_to'] = request.fullpath.gsub('//', '/')
