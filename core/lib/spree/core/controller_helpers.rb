@@ -57,7 +57,7 @@ module Spree
         # disallow return to login, logout, signup pages
         authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]
         disallowed_urls = []
-        authenticated_routes.each do |route|
+        authentication_routes.each do |route|
           if respond_to?(route)
             disallowed_urls << send(route)
           end
