@@ -29,7 +29,7 @@ describe "Checkout" do
       end
 
       # Regression test for #1596
-      context "does not break the per-item shipping method calculator", :js => true do
+      context "full checkout" do
         before do
           Factory(:payment_method)
           Spree::ShippingMethod.delete_all
@@ -42,7 +42,7 @@ describe "Checkout" do
           @product.save!
         end
 
-        specify do
+        it "does not break the per-item shipping method calculator", :js => true do
           visit spree.root_path
           click_link "RoR Mug"
           click_button "add-to-cart-button"
@@ -62,9 +62,7 @@ describe "Checkout" do
           check "Use Billing Address"
           click_button "Save and Continue"
           page.should_not have_content("undefined method `promotion'")
-          page!
         end
-
       end
     end
   end
