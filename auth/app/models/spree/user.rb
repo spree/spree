@@ -51,6 +51,10 @@ module Spree
       UserMailer.reset_password_instructions(self).deliver
     end
 
+    def last_incomplete_order
+      orders.incomplete.order("created_at desc").last
+    end
+
     protected
       def password_required?
         !persisted? || password.present? || password_confirmation.present?
