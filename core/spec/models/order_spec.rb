@@ -650,17 +650,17 @@ describe Spree::Order do
   end
 
   context "#merge!" do
-    let(:guest_user) { stub_model(Spree::User, :email => "guest@example.com") }
-    let!(:variant) { stub_model(Spree::Variant, :on_hand => 3) }
-    let!(:variant1) { stub_model(Spree::Variant, :on_hand => 3) }
-    let(:session_order) { stub_model(Spree::Order, :user => guest_user) }
-
-    before(:each) do
-      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 1)]
-      session_order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant1, :quantity => 1)]
-    end
 
     it "should merge line_items" do
+      order = Spree::Order.create!
+
+      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
+      order.add_variant(product.master)
+
+      session_order = Spree::Order.create!
+      product1 = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
+      session_order.add_variant(product1.master)
+
       order.merge!(session_order)
       order.line_items.length.should == 2
     end
