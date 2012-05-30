@@ -1,5 +1,6 @@
 Spree::BaseController.class_eval do
   before_filter :set_current_user
+  before_filter :set_current_order
 
   # graceful error handling for cancan authorization exceptions
   rescue_from CanCan::AccessDenied do |exception|
@@ -45,5 +46,16 @@ Spree::BaseController.class_eval do
 
     def set_current_user
       Spree::User.current = current_user
+    end
+
+    def set_current_order
+      if current_user
+        last_incomplete_order = current_user.last_incomplete_order
+        if session[:order_id].nil?
+          session[:order_id] = last_incomplete_order.id
+        elsif current_order
+          current_order.merge!(last_incomplete_order)
+        end
+      end
     end
 end

@@ -102,6 +102,37 @@ describe "Checkout", :js => true do
     page.should_not have_content("Email is invalid")
   end
 
+  it "should retain order data through logout and login" do
+    user = create(:user, :password => "password", :password_confirmation => "password")
+    shirt = create(:product, :name => "RoR Shirt")
+    click_link "RoR Mug"
+    click_button "Add To Cart"
+
+    visit spree.login_path
+    fill_in "user_email", :with => user.email
+    fill_in "user_password", :with => user.password
+    click_button "Login"
+
+    click_link "Cart"
+    page.should have_content("RoR Mug")
+    within('h1') { page.should have_content("Shopping Cart") }
+
+    click_link "Logout"
+
+    click_link "RoR Shirt"
+    click_button "Add To Cart"
+
+    visit spree.login_path
+    fill_in "user_email", :with => user.email
+    fill_in "user_password", :with => user.password
+    click_button "Login"
+
+    click_link "Cart"
+    page.should have_content("RoR Mug")
+    page.should have_content("RoR Shirt")
+    within('h1') { page.should have_content("Shopping Cart") }
+  end
+
   it "should allow a user to register during checkout" do
     click_link "RoR Mug"
     click_button "Add To Cart"
