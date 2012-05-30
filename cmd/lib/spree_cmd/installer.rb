@@ -77,10 +77,6 @@ module SpreeCmd
         end
       end
 
-      if @load_seed_data && @install_default_auth
-        @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
-        @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
-      end
       @precompile_assets = options[:precompile_assets] && ask_with_default('Would you like to precompile assets?')
     end
 
@@ -108,8 +104,6 @@ module SpreeCmd
       spree_options << "--seed=#{@load_seed_data}"
       spree_options << "--sample=#{@load_sample_data}"
       spree_options << "--auto_accept" if options[:auto_accept]
-      spree_options << "--admin_email=#{@admin_email}" if @admin_email
-      spree_options << "--admin_password=#{@admin_password}" if @admin_password
 
       inside @app_path do
         run "rails generate spree:install #{spree_options.join(' ')}", :verbose => false
