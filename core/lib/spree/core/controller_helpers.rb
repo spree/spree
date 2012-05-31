@@ -5,6 +5,7 @@ module Spree
       def self.included(receiver)
         receiver.send :layout, :get_layout
         receiver.send :before_filter, 'set_user_language'
+        receiver.send :before_filter, 'set_current_order'
 
         receiver.send :helper_method, 'title'
         receiver.send :helper_method, 'title='
@@ -46,7 +47,19 @@ module Spree
         nil
       end
 
+
       protected
+
+      def set_current_order
+        if spree_current_user
+          last_incomplete_order = spree_current_user.last_incomplete_spree_order
+          if session[:order_id].nil?
+            session[:order_id] = last_incomplete_order.id
+          elsif current_order && last_incomplete_order && current_order != last_incomplete_order
+            current_order.merge!(last_incomplete_order)
+          end
+        end
+      end
 
       # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
       def current_ability
