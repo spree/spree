@@ -7,14 +7,15 @@ module Spree
       def self.activate
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
-        end
 
-        # Include list of visited paths in notification payload hash
-        Spree::Core::ControllerHelpers.class_eval do
-          def default_notification_payload
-            { :user => spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
+          Spree::BaseController.class_eval do
+            # Include list of visited paths in notification payload hash
+            def default_notification_payload
+              { :user => spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
+            end
           end
         end
+
       end
 
       config.autoload_paths += %W(#{config.root}/lib)
