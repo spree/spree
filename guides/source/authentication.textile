@@ -36,7 +36,7 @@ To this:
 Spree.user_class = "User"
 </ruby>
 
-Next, you need to run the custom user generator for Spree which will create two files. The first is a migration that will add the necessary Spree fields to your users table, and the second is an extension that lives at +lib/spree/core/controller_helpers_ext.rb+ to the +Spree::Core::ControllerHelpers+ module inside of Spree. 
+Next, you need to run the custom user generator for Spree which will create two files. The first is a migration that will add the necessary Spree fields to your users table, and the second is an extension that lives at +lib/spree/authentication_helpers.rb+ to the +Spree::Core::AuthenticationHelpers+ module inside of Spree.
 
 Run this generator with this command:
 
@@ -52,14 +52,14 @@ rake db:migrate
 
 Next you will need to define some methods to tell Spree where to find your application's authentication routes.
 
-h3. Controller Helpers
+h3. Authentication Helpers
 
-There are some controller helpers of Spree's that you will need to possibly override. The file at +lib/spree/core/controller_helpers_ext.rb+ contains the following code to help you do that:
+There are some authentication helpers of Spree's that you will need to possibly override. The file at +lib/spree/authentication_helpers.rb+ contains the following code to help you do that:
 
 <ruby>
 module Spree
   module Core
-    module ControllerHelpers
+    module AuthenticationHelpers
 
       def spree_current_user
         current_user
@@ -102,9 +102,9 @@ end
 
 Of course, this code will be different if you're not using Devise. Simply do not use the +devise_scope+ method and change the controllers and actions for these routes.
 
-You can also customize the +spree_login_path+, +spree_signup_path+ and +spree_logout_path+ methods inside +lib/spree/core/controller_helpers_ext.rb+ to use the routing helper methods already provided by the authentication setup you have, if you wish.
+You can also customize the +spree_login_path+, +spree_signup_path+ and +spree_logout_path+ methods inside +lib/spree/authentication_helpers.rb+ to use the routing helper methods already provided by the authentication setup you have, if you wish.
 
-NOTE: Any modifications made to +lib/spree/core/controller_helpers_ext.rb+ while the server is running will require a restart, as wth any other modification to other files in +lib+.
+NOTE: Any modifications made to +lib/spree/authentication_helpers.rb+ while the server is running will require a restart, as wth any other modification to other files in +lib+.
 
 h3. The User Model
 
@@ -153,7 +153,7 @@ This override references a partial called "spree/shared/login_bar". This will li
 <% end %>
 </erb>
 
-This will then use the URL helpers you have defined in +lib/spree/core/controller_helpers_ext.rb+ to define three links, one to allow users to logout, one to allow them to login, and one to allow them to signup. These links will be visible on all customer-facing pages of Spree.
+This will then use the URL helpers you have defined in +lib/spree/authentication_helpers.rb+ to define three links, one to allow users to logout, one to allow them to login, and one to allow them to signup. These links will be visible on all customer-facing pages of Spree.
 
 h3. Signup promotion
 
