@@ -32,8 +32,8 @@ module Spree
           check_environment
 
           if payment_method.payment_profiles_supported?
-            # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
-            # so supply the authorization itself as well as the creditcard, rather than just the authorization code
+            # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
+            # so supply the authorization itself as well as the credit card, rather than just the authorization code
             response = payment_method.capture(self, source, gateway_options)
           else
             # Standard ActiveMerchant capture usage
@@ -51,8 +51,8 @@ module Spree
           check_environment
 
           if payment_method.payment_profiles_supported?
-            # Gateways supporting payment profiles will need access to creditcard object because this stores the payment profile information
-            # so supply the authorization itself as well as the creditcard, rather than just the authorization code
+            # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
+            # so supply the authorization itself as well as the credit card, rather than just the authorization code
             response = payment_method.void(self.response_code, source, gateway_options)
           else
             # Standard ActiveMerchant void usage

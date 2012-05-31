@@ -37,7 +37,7 @@ en:
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
-      spree/creditcard:
+      spree/credit_card:
         cc_type: Type
         month: Month
         number: Number
@@ -140,7 +140,7 @@ en:
       spree/country:
         one: Country
         other: Countries
-      spree/creditcard:
+      spree/credit_card:
         one: "Credit Card"
         other: "Credit Cards"
       spree/creditcard_payment:
@@ -330,8 +330,8 @@ en:
   credit_card_payment: "Credit Card Payment"
   credit_owed: "Credit Owed"
   credit_total: Credit Total
-  creditcard: Creditcard
-  creditcards: Creditcards
+  credit_card: Credit Card
+  credit_cards: Credit Cards
   credits: Credits
   current: Current
   customer: Customer
@@ -871,7 +871,7 @@ en:
   search_results: "Search results for '%{keywords}'"
   searching: Searching
   secure_connection_type: Secure Connection Type
-  secure_creditcard: Secure Creditcard
+  secure_credit_card: Secure Credit Card
   select: Select
   select_from_prototype: "Select From Prototype"
   select_preferred_shipping_option: "Select preferred shipping option"

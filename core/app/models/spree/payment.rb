@@ -18,7 +18,7 @@ module Spree
 
     attr_accessible :amount, :payment_method_id, :source_attributes
 
-    scope :from_creditcard, where(:source_type => 'Spree::Creditcard')
+    scope :from_credit_card, where(:source_type => 'Spree::CreditCard')
     scope :with_state, lambda { |s| where(:state => s) }
     scope :completed, with_state('completed')
     scope :pending, with_state('pending')
@@ -90,7 +90,7 @@ module Spree
       end
 
       def create_payment_profile
-        return unless source.is_a?(Creditcard) && source.number && !source.has_payment_profile?
+        return unless source.is_a?(CreditCard) && source.number && !source.has_payment_profile?
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e

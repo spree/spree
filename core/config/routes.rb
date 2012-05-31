@@ -19,7 +19,7 @@ Spree::Core::Engine.routes.draw do
     post :populate, :on => :collection
 
     resources :line_items
-    resources :creditcards
+    resources :credit_cards
     resources :creditcard_payments
 
     resources :shipments do

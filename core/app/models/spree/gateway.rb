@@ -10,7 +10,7 @@ module Spree
     attr_accessible :preferred_server, :preferred_test_mode
 
     def payment_source_class
-      Creditcard
+      CreditCard
     end
 
     # instantiates the selected gateway and configures with the options stored in the database

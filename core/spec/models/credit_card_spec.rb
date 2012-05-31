@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Spree::Creditcard do
+describe Spree::CreditCard do
 
-  let(:valid_creditcard_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
+  let(:valid_credit_card_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
 
   def stub_rails_env(environment)
     Rails.stub(:env => ActiveSupport::StringInquirer.new(environment))
   end
 
-  let(:creditcard) { Spree::Creditcard.new }
+  let(:credit_card) { Spree::CreditCard.new }
 
   before(:each) do
 
@@ -34,7 +34,7 @@ describe Spree::Creditcard do
   context "#can_capture?" do
     it "should be true if payment state is pending" do
       payment = mock_model(Spree::Payment, :state => 'pending', :created_at => Time.now)
-      creditcard.can_capture?(payment).should be_true
+      credit_card.can_capture?(payment).should be_true
     end
   end
 
@@ -48,23 +48,23 @@ describe Spree::Creditcard do
     context "#can_credit?" do
 
       it "should be true when payment state is 'completed' and order payment_state is 'credit_owed' and credit_allowed is greater than amount" do
-        creditcard.can_credit?(payment).should be_true
+        credit_card.can_credit?(payment).should be_true
       end
 
       it "should be false when order payment_state is not 'credit_owed'" do
         payment.order.stub(:payment_state => 'paid')
-        creditcard.can_credit?(payment).should be_false
+        credit_card.can_credit?(payment).should be_false
       end
 
       it "should be false when credit_allowed is zero" do
         payment.stub(:credit_allowed => 0)
-        creditcard.can_credit?(payment).should be_false
+        credit_card.can_credit?(payment).should be_false
       end
 
       (PAYMENT_STATES - ['completed']).each do |state|
         it "should be false if payment state is #{state}" do
           payment.stub :state => state
-          creditcard.can_credit?(payment).should be_false
+          credit_card.can_credit?(payment).should be_false
         end
       end
 
@@ -75,13 +75,13 @@ describe Spree::Creditcard do
         it "should be true if payment state is #{state}" do
           payment.stub :state => state
           payment.stub :void? => false
-          creditcard.can_void?(payment).should be_true
+          credit_card.can_void?(payment).should be_true
         end
       end
 
       it "should be valse if payment state is void" do
         payment.stub :state => 'void'
-        creditcard.can_void?(payment).should be_false
+        credit_card.can_void?(payment).should be_false
       end
     end
   end
@@ -93,13 +93,13 @@ describe Spree::Creditcard do
       (PAYMENT_STATES - ['void']).each do |state|
         it "should be true if payment state is #{state}" do
           payment.stub :state => state
-          creditcard.can_void?(payment).should be_true
+          credit_card.can_void?(payment).should be_true
         end
       end
 
       it "should be false if payment state is void" do
         payment.stub :state => 'void'
-        creditcard.can_void?(payment).should be_false
+        credit_card.can_void?(payment).should be_false
       end
 
     end
@@ -107,31 +107,31 @@ describe Spree::Creditcard do
 
   context "#valid?" do
     it "should validate presence of number" do
-      creditcard.attributes = valid_creditcard_attributes.except(:number)
-      creditcard.should_not be_valid
-      creditcard.errors[:number].should == ["can't be blank"]
+      credit_card.attributes = valid_credit_card_attributes.except(:number)
+      credit_card.should_not be_valid
+      credit_card.errors[:number].should == ["can't be blank"]
     end
 
     it "should validate presence of security code" do
-      creditcard.attributes = valid_creditcard_attributes.except(:verification_value)
-      creditcard.should_not be_valid
-      creditcard.errors[:verification_value].should == ["can't be blank"]
+      credit_card.attributes = valid_credit_card_attributes.except(:verification_value)
+      credit_card.should_not be_valid
+      credit_card.errors[:verification_value].should == ["can't be blank"]
     end
 
     it "should only validate on create" do
-      creditcard.attributes = valid_creditcard_attributes
-      creditcard.save
-      creditcard.should be_valid
+      credit_card.attributes = valid_credit_card_attributes
+      credit_card.save
+      credit_card.should be_valid
     end
   end
 
   context "#save" do
     before do
-      creditcard.attributes = valid_creditcard_attributes
-      creditcard.save!
+      credit_card.attributes = valid_credit_card_attributes
+      credit_card.save!
     end
 
-    let!(:persisted_card) { Spree::Creditcard.find(creditcard.id) }
+    let!(:persisted_card) { Spree::CreditCard.find(credit_card.id) }
 
     it "should not actually store the number" do
       persisted_card.number.should be_blank
@@ -144,7 +144,7 @@ describe Spree::Creditcard do
 
   context "#spree_cc_type" do
     before do
-      creditcard.attributes = valid_creditcard_attributes
+      credit_card.attributes = valid_credit_card_attributes
     end
 
     context "in development mode" do
@@ -153,8 +153,8 @@ describe Spree::Creditcard do
       end
 
       it "should return visa" do
-        creditcard.save
-        creditcard.spree_cc_type.should == "visa"
+        credit_card.save
+        credit_card.spree_cc_type.should == "visa"
       end
     end
 
@@ -164,9 +164,9 @@ describe Spree::Creditcard do
       end
 
       it "should return the actual cc_type for a valid number" do
-        creditcard.number = "378282246310005"
-        creditcard.save
-        creditcard.spree_cc_type.should == "american_express"
+        credit_card.number = "378282246310005"
+        credit_card.save
+        credit_card.spree_cc_type.should == "american_express"
       end
     end
   end
@@ -174,21 +174,21 @@ describe Spree::Creditcard do
   context "#set_card_type" do
     before :each do
       stub_rails_env("production")
-      creditcard.attributes = valid_creditcard_attributes
+      credit_card.attributes = valid_credit_card_attributes
     end
 
-    it "stores the creditcard type after validation" do
-      creditcard.number = "6011000990139424"
-      creditcard.save
-      creditcard.spree_cc_type.should == "discover"
+    it "stores the credit card type after validation" do
+      credit_card.number = "6011000990139424"
+      credit_card.save
+      credit_card.spree_cc_type.should == "discover"
     end
 
-    it "does not overwrite the creditcard type when loaded and saved" do
-      creditcard.number = "5105105105105100"
-      creditcard.save
-      creditcard.number = "XXXXXXXXXXXX5100"
-      creditcard.save
-      creditcard.spree_cc_type.should == "master"
+    it "does not overwrite the credit card type when loaded and saved" do
+      credit_card.number = "5105105105105100"
+      credit_card.save
+      credit_card.number = "XXXXXXXXXXXX5100"
+      credit_card.save
+      credit_card.spree_cc_type.should == "master"
     end
   end
 end

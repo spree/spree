@@ -1,10 +1,10 @@
-# allows creditcard info to be saved to the datbase which is needed for factories to work properly
-class TestCard < Spree::Creditcard
+# allows credit card info to be saved to the database which is needed for factories to work properly
+class TestCard < Spree::CreditCard
   def remove_readonly_attributes(attributes) attributes; end
 end
 
 FactoryGirl.define do
-  factory :creditcard, :class => TestCard do
+  factory :credit_card, :class => TestCard do
     verification_value 123
     month 12
     year 2013

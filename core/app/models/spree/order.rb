@@ -380,9 +380,9 @@ module Spree
       end
     end
 
-    def creditcards
-      creditcard_ids = payments.from_creditcard.map(&:source_id).uniq
-      Creditcard.scoped(:conditions => { :id => creditcard_ids })
+    def credit_cards
+      credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
+      CreditCard.scoped(:conditions => { :id => credit_card_ids })
     end
 
     def process_payments!
