@@ -1,9 +1,9 @@
 module Spree
   class InventoryUnit < ActiveRecord::Base
-    belongs_to :variant, :class_name => Spree::Variant
-    belongs_to :order, :class_name => Spree::Order
-    belongs_to :shipment, :class_name => Spree::Shipment
-    belongs_to :return_authorization, :class_name => Spree::ReturnAuthorization
+    belongs_to :variant, :class_name => "Spree::Variant"
+    belongs_to :order, :class_name => "Spree::Order"
+    belongs_to :shipment, :class_name => "Spree::Shipment"
+    belongs_to :return_authorization, :class_name => "Spree::ReturnAuthorization"
 
     scope :backorder, where(:state => 'backordered')
 

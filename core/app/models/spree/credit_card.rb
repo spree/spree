@@ -1,6 +1,6 @@
 module Spree
-  class CreditCard < ActiveRecord::Base
-    has_many :payments, :as => :source, :class_name => Spree::Payment
+  class Creditcard < ActiveRecord::Base
+    has_many :payments, :as => :source, :class_name => "Spree::Payment"
 
     before_save :set_last_digits
     after_validation :set_card_type
