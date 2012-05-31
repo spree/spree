@@ -40,14 +40,14 @@ describe Spree::CheckoutController do
     end
 
     it "should associate the order with a user" do
-      user = double("User")
+      user = double("User", :last_incomplete_spree_order => nil)
       controller.stub(:spree_current_user => user)
       order.should_receive(:associate_user!).with(user)
       spree_get :edit, {}, :order_id => 1
     end
 
     it "should fire the spree.user.signup event if user has just signed up" do
-      user = double("User")
+      user = double("User", :last_incomplete_spree_order => nil)
       controller.stub(:spree_current_user => user)
       controller.should_receive(:fire_event).with("spree.user.signup", :user => user, :order => order)
       spree_get :edit, {}, :spree_user_signup => true
