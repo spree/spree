@@ -110,7 +110,7 @@ h3. The User Model
 
 Once you have specified +Spree.user_class+ correctly, there will be some new methods added to your +User+ class. The first of these methods are the ones added for the +has_and_belongs_to_many+ association called "spree_roles". This association will retreive all the roles that a user has for Spree.
 
-The second of these is the +spree_orders+ association. This will return all orders associated with the user in Spree.
+The second of these is the +spree_orders+ association. This will return all orders associated with the user in Spree. There's also a +last_incomplete_spree_order+ method which will return the last incomplete spree order for the user. This is used internal to Spree to persist order data across a user's login sessions.
 
 The next method is one called +has_spree_role?+ which can be used to check if a user has a specific role. This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
 
