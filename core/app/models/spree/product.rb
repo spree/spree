@@ -23,9 +23,9 @@ module Spree
     has_many :option_types, :through => :product_option_types
     has_many :product_properties, :dependent => :destroy
     has_many :properties, :through => :product_properties
-    belongs_to :tax_category
+    belongs_to :tax_category, :class_name => "Spree::TaxCategory"
     has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
-    belongs_to :shipping_category
+    belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
 
     has_one :master,
       :class_name => 'Spree::Variant',
