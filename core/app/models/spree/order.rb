@@ -458,6 +458,7 @@ module Spree
       order.line_items.each do |line_item|
         self.add_variant(line_item.variant, line_item.quantity)
       end
+      order.destroy
     end
 
     private
