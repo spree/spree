@@ -62,7 +62,6 @@ describe "Checkout" do
           check "Use Billing Address"
           click_button "Save and Continue"
           page.should_not have_content("undefined method `promotion'")
-          page!
         end
 
       end
