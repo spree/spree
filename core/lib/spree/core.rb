@@ -37,6 +37,7 @@ require 'active_merchant'
 require 'ransack'
 require 'jquery-rails'
 require 'deface'
+require 'cancan'
 
 module Spree
 
