@@ -16,7 +16,7 @@ module Spree
     alias_method :shipping_address, :ship_address
     alias_method :shipping_address=, :ship_address=
 
-    belongs_to :shipping_method, :class_name => "Spree::User"
+    belongs_to :shipping_method, :class_name => "Spree::ShippingMethod"
 
     has_many :state_changes, :as => :stateful
     has_many :line_items, :dependent => :destroy
