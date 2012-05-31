@@ -53,7 +53,7 @@ Spree::BaseController.class_eval do
         last_incomplete_order = current_user.last_incomplete_order
         if session[:order_id].nil?
           session[:order_id] = last_incomplete_order.id
-        elsif current_order
+        elsif current_order && last_incomplete_order && current_order != last_incomplete_order
           current_order.merge!(last_incomplete_order)
         end
       end

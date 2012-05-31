@@ -130,6 +130,7 @@ describe "Checkout", :js => true do
     click_link "Cart"
     page.should have_content("RoR Mug")
     page.should have_content("RoR Shirt")
+    page.should have_content("Subtotal: $39.98")
     within('h1') { page.should have_content("Shopping Cart") }
   end
 
