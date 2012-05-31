@@ -14,7 +14,7 @@ module Spree
 
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
-      raw(product.description.gsub(/^(.*)$/, '<p>\1</p>'))
+      raw(product.description.gsub(/(.*?)\n\n/m, '<p>\1</p>\n\n'))
     end
 
     def variant_images_hash(product)
