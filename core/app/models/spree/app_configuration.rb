@@ -35,7 +35,7 @@ module Spree
     preference :alternative_billing_phone, :boolean, :default => false # Request extra phone for bill addr
     preference :alternative_shipping_phone, :boolean, :default => false # Request extra phone for ship addr
     preference :always_put_site_name_in_title, :boolean, :default => true
-    preference :auto_capture, :boolean, :default => false # automatically capture the creditcard (as opposed to just authorize and capture later)
+    preference :auto_capture, :boolean, :default => false # automatically capture the credit card (as opposed to just authorize and capture later)
     preference :cache_static_content, :boolean, :default => true
     preference :check_for_spree_alerts, :boolean, :default => true
     preference :checkout_zone, :string, :default => nil # replace with the name of a zone if you would like to limit the countries

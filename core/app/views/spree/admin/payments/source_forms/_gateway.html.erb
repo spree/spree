@@ -6,7 +6,7 @@
     <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> <%= t(:use_new_cc) %></label>
   </p>
   <div id="card_form" data-hook>
-    <%= image_tag 'creditcards/creditcard.gif', :id => 'creditcard-image' %>
+    <%= image_tag 'credit_cards/credit_card.gif', :id => 'credit-card-image' %>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
     <div data-hook="card_number">

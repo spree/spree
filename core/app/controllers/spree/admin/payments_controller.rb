@@ -21,7 +21,7 @@ module Spree
       def create
         @payment = @order.payments.build(object_params)
         if @payment.payment_method.is_a?(Spree::Gateway) && @payment.payment_method.payment_profiles_supported? && params[:card].present? and params[:card] != 'new'
-          @payment.source = Creditcard.find_by_id(params[:card])
+          @payment.source = CreditCard.find_by_id(params[:card])
         end
 
         begin
@@ -83,7 +83,7 @@ module Spree
         else
           @payment_method = @payment_methods.first
         end
-        @previous_cards = @order.creditcards.with_payment_profile
+        @previous_cards = @order.credit_cards.with_payment_profile
       end
 
       def load_order
