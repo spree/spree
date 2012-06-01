@@ -133,7 +133,7 @@ class Spree::BaseController < ApplicationController
   end
 
   def get_taxonomies
-    @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
+    @taxonomies ||= Spree::Taxonomy.includes(:root => :children).joins(:root)
   end
 
   def set_user_language
