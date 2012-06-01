@@ -22,6 +22,7 @@ class Spree::BaseController < ApplicationController
   def spree_current_user
     nil
   end
+  helper_method :spree_current_user
 
   def access_forbidden
     render :text => 'Access Forbidden', :layout => true, :status => 401
