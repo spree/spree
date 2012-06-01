@@ -47,9 +47,9 @@ module Spree
       end
 
       def associate_user
-        if spree_current_user && @order
+        if current_user && @order
           if @order.user.blank? || @order.email.blank?
-            @order.associate_user!(spree_current_user)
+            @order.associate_user!(current_user)
           end
         end
 
@@ -57,7 +57,7 @@ module Spree
         # Assuming of course that this session variable was set correctly in
         # the authentication provider's registrations controller
         if session[:spree_user_signup]
-          fire_event('spree.user.signup', :user => spree_current_user, :order => current_order(true))
+          fire_event('spree.user.signup', :user => current_user, :order => current_order(true))
         end
 
         session[:guest_token] = nil
