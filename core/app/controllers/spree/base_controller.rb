@@ -18,6 +18,11 @@ class Spree::BaseController < ApplicationController
     return unauthorized
   end
 
+  # To be overriden by authentication providers
+  def spree_current_user
+    nil
+  end
+
   def access_forbidden
     render :text => 'Access Forbidden', :layout => true, :status => 401
   end
