@@ -6,11 +6,11 @@ Your order has been CANCELED.  Please retain this cancellation information for y
 Order Summary [CANCELED]
 ============================================================
 <% @order.line_items.each do |item| %>
-<%= item.variant.sku %> <%= item.variant.product.name %> <%= variant_options(item.variant) %> (<%= item.quantity %>) @ <%= number_to_currency item.price %> = <%= number_to_currency(item.price * item.quantity) %>
+  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= number_to_currency item.price %> = <%= number_to_currency(item.price * item.quantity) %>
 <% end %>
 ============================================================
 Subtotal: <%= number_to_currency @order.item_total %>
 <% @order.adjustments.eligible.each do |adjustment| %>
-<%= "#{adjustment.label}: #{number_to_currency adjustment.amount}"%>
+  <%= raw(adjustment.label) %> <%= number_to_currency(adjustment.amount) %>
 <% end %>
-Order Total: <%= number_to_currency @order.total %>
+Order Total: <%= number_to_currency(@order.total) %>
