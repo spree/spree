@@ -14,7 +14,8 @@ module Spree
       template 'migration.rb.tt', "db/migrate/#{Time.now.strftime("%Y%m%d%H%m%S")}_add_spree_fields_to_custom_user_table.rb"
       template 'authentication_helpers.rb.tt', "lib/spree/authentication_helpers.rb"
 
-      append_file 'config/initializers/spree.rb' do
+      file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
+      send(file_action, 'config/initializers/spree.rb') do
         %Q{require 'spree/authentication_helpers'\n}
       end
     end
