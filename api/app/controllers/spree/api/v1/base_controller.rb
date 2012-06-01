@@ -59,7 +59,7 @@ module Spree
 
         def find_product(id)
           begin
-            product_scope.find_by_permalink!(id)
+            product_scope.find_by_permalink!(id.to_s)
           rescue ActiveRecord::RecordNotFound
             product_scope.find(id)
           end
