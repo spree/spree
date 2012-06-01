@@ -41,16 +41,16 @@ class Spree::BaseController < ApplicationController
 
   # proxy method to *possible* spree_current_user method
   # Authentication extensions (such as spree_auth_devise) are meant to provide spree_current_user
-  def current_user
+  def try_spree_current_user
     respond_to?(:spree_current_user) ? spree_current_user : nil
   end
-  helper_method :current_user
+  helper_method :try_spree_current_user
 
   protected
 
   def set_current_order
-    if current_user
-      last_incomplete_order = current_user.last_incomplete_spree_order
+    if user = try_spree_current_user
+      last_incomplete_order = user.last_incomplete_spree_order
       if session[:order_id].nil? && last_incomplete_order
         session[:order_id] = last_incomplete_order.id
       elsif current_order && last_incomplete_order && current_order != last_incomplete_order
@@ -61,7 +61,7 @@ class Spree::BaseController < ApplicationController
 
   # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
   def current_ability
-    @current_ability ||= Spree::Ability.new(current_user)
+    @current_ability ||= Spree::Ability.new(try_spree_current_user)
   end
 
   def store_location
@@ -86,7 +86,7 @@ class Spree::BaseController < ApplicationController
   def unauthorized
     respond_to do |format|
       format.html do
-        if current_user
+        if try_spree_current_user
           flash.now[:error] = t(:authorization_failure)
           render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
         else
@@ -129,7 +129,7 @@ class Spree::BaseController < ApplicationController
   # add additional keys as appropriate. Override this method if you need additional data when
   # responding to a notification
   def default_notification_payload
-    {:user => current_user, :order => current_order}
+    {:user => try_spree_current_user, :order => current_order}
   end
 
   private
