@@ -44,6 +44,7 @@ class Spree::BaseController < ApplicationController
   def current_user
     respond_to?(:spree_current_user) ? spree_current_user : nil
   end
+  helper_method :current_user
 
   protected
 
