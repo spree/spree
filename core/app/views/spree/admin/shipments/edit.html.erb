@@ -26,7 +26,7 @@
 
       <div data-hook="admin_shipment_edit_form_buttons">
         <p class="form-buttons">
-          <% if @shipment.editable_by?(current_user) %>
+          <% if @shipment.editable_by?(try_spree_current_user) %>
             <%= button @order.cart? ? t(:continue) : t(:update) %>
             <%= t(:or) %> <%= link_to t(:cancel), admin_order_shipments_path(@order) %>
           <% else %>
