@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class InventorySettingsController < BaseController
+    class InventorySettingsController < Spree::Admin::BaseController
 
       def update
         Spree::Config.set(params[:preferences])

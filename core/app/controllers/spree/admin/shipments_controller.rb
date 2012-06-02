@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class ShipmentsController < BaseController
+    class ShipmentsController < Spree::Admin::BaseController
       before_filter :load_order
       before_filter :load_shipment, :only => [:destroy, :edit, :update, :fire]
       before_filter :load_shipping_methods, :except => [:country_changed, :index]

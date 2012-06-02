@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class ImageSettingsController < BaseController
+    class ImageSettingsController < Spree::Admin::BaseController
       def show
         styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
         @styles_list = styles.collect { |k, v| k }.join(", ")

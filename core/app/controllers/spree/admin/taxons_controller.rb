@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class TaxonsController < BaseController
+    class TaxonsController < Spree::Admin::BaseController
 
       respond_to :html, :json, :js
 
