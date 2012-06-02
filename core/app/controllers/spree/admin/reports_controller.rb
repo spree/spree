@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class ReportsController < BaseController
+    class ReportsController < Spree::Admin::BaseController
       before_filter :load_data
       respond_to :html
 

@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class ConfigurationsController < BaseController
+    class ConfigurationsController < Spree::Admin::BaseController
 
     end
   end

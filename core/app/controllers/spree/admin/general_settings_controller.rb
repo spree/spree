@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class GeneralSettingsController < BaseController
+    class GeneralSettingsController < Spree::Admin::BaseController
       def show
         @preferences = ['site_name', 'default_seo_title', 'default_meta_keywords',
                         'default_meta_description', 'site_url']

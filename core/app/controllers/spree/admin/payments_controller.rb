@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class PaymentsController < BaseController
+    class PaymentsController < Spree::Admin::BaseController
       before_filter :load_order, :only => [:create, :new, :index, :fire]
       before_filter :load_payment, :except => [:create, :new, :index]
       before_filter :load_data

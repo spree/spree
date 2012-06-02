@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class LineItemsController < BaseController
+    class LineItemsController < Spree::Admin::BaseController
 
       before_filter :load_order
       before_filter :load_line_item, :only => [:destroy, :update]

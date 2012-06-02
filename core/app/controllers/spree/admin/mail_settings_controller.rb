@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class MailSettingsController < BaseController
+    class MailSettingsController < Spree::Admin::BaseController
 
       def update
         Spree::Config.set(params[:preferences])
