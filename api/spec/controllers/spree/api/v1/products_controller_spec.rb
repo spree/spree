@@ -132,6 +132,23 @@ module Spree
         json_response["pages"].should == 1
       end
 
+      # Regression test for #1626
+      context "deleted products" do
+        before do
+          create(:product, :deleted_at => Time.now)
+        end
+
+        it "does not include deleted products" do
+          api_get :index
+          json_response["products"].count.should == 2
+        end
+
+        it "can include deleted products" do
+          api_get :index, :show_deleted => 1
+          json_response["products"].count.should == 3
+        end
+      end
+
       it "can create a new product" do
         api_post :create, :product => { :name => "The Other Product",
                                         :price => 19.99 }
