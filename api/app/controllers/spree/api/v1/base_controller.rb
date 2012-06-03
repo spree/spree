@@ -68,11 +68,11 @@ module Spree
         def product_scope
           if current_api_user.has_spree_role?("admin")
             scope = Product
+            unless params[:show_deleted]
+              scope = scope.not_deleted
+            end
           else
             scope = Product.active
-          end
-          unless params[:show_deleted]
-            scope = scope.not_deleted
           end
 
           scope.includes(:master)
