@@ -71,6 +71,10 @@ module Spree
           else
             scope = Product.active
           end
+          unless params[:show_deleted]
+            scope = scope.not_deleted
+          end
+
           scope.includes(:master)
         end
 
