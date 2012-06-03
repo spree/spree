@@ -142,6 +142,12 @@ GET /api/products.json?page=1
 
 The page size is not currently customizable.
 
+If you are authenticating as an admin, you may tell the API to display deleted products as well:
+
+<plain>
+GET /api/products.json?show_deleted=1
+</plain>
+
 h5. Searching for a product
 
 To search for a particular product, make a request like this:
