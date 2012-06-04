@@ -1,8 +1,8 @@
 module <%= class_name %>
   class Engine < Rails::Engine
     require 'spree/core'
-    engine_name '<%= file_name %>'
     isolate_namespace Spree
+    engine_name '<%= file_name %>'
 
     config.autoload_paths += %W(#{config.root}/lib)
 
