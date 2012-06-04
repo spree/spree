@@ -13,7 +13,7 @@
         <%= item.quantity %>
       </td>
       <td>
-        <%= image_tag 'admin/icons/cross.png' %>
+        <%= image_tag 'admin/icons/cross.png', :class => "remove_promotion_line_item", :data => { :variant_id => item.variant_id } %>
       </td>
     </tr>
   <% end %>
