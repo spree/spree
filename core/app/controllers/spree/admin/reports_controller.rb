@@ -32,7 +32,7 @@ module Spree
           params[:q][:completed_at_not_null] = false
         end
 
-        params[:q][:meta_sort] ||= "created_at.desc"
+        params[:q][:s] ||= "created_at desc"
 
         @search = Order.complete.ransack(params[:q])
         @orders = @search.result
