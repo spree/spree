@@ -25,5 +25,4 @@ module Spree
   end
 end
 
-Spree::BaseController.send :include, Spree::AuthenticationHelpers
 ApplicationController.send :include, Spree::AuthenticationHelpers
