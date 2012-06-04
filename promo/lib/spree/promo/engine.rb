@@ -32,6 +32,7 @@ module Spree
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
           Spree::Calculator::PerItem,
+          Spree::Calculator::PercentPerItem,
           Spree::Calculator::FreeShipping
         ]
       end
