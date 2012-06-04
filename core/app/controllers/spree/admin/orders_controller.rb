@@ -12,7 +12,7 @@ module Spree
         params[:q] ||= {}
         params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
         @show_only_completed = params[:q][:completed_at_not_null].present?
-        params[:q][:meta_sort] ||= @show_only_completed ? 'completed_at.desc' : 'created_at.desc'
+        params[:q][:s] ||= @show_only_completed ? 'completed_at desc' : 'created_at desc'
 
         if !params[:q][:created_at_gt].blank?
           params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
