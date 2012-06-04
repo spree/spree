@@ -40,19 +40,15 @@ var initProductActions = function(){
 
     // Remove line item
     var setupRemoveLineItems = function(){
-      $(".promotion_action.create_line_items table img").unbind('click').click(function(){
-        var $container = $(this).parents('.promotion_action');
-        var $hiddenField = $container.find("input[type='hidden']");
-        var $row = $(this).parents('tr');
-        var index = $row.parents('table').find('tr').index($row.get(0));
-        // Remove variant_id quantity pair from the string
-        var items = _($hiddenField.val().split(',')).compact();
-        items.splice(index - 1, 1);
-        $hiddenField.val(items.join(','));
+      $(".remove_promotion_line_item").click(function(){
+        line_items_el = $($('.line_items_string')[0])
+        finder = RegExp($(this).data("variant-id") + "x\\d+")
+        line_items_el.val(line_items_el.val().replace(finder, ""))
         $(this).parents('tr').remove();
         hideOrShowItemTables();
       });
     };
+
     setupRemoveLineItems();
     // Add line item to list
     $(".promotion_action.create_line_items button.add").unbind('click').click(function(e){
