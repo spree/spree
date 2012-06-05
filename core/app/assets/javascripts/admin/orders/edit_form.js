@@ -1,7 +1,7 @@
 $(document).ready(function() {
   $.each($('td.qty input'), function(i, input) {
 
-    $(input).live('change', function() {
+    $(input).on('change', function() {
 
       var id = "#" + $(this).attr('id').replace("_quantity", "_id");
       console.log($(this))

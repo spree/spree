@@ -8,11 +8,11 @@ $(document).ready(function() {
     $('#s3_settings').toggle();
   });
 
-  $('.destroy_style').live("click", function() {
+  $('.destroy_style').on("click", function() {
    $(this).parent().remove();
   });
 
-  $('.destroy_header').live("click", function() {
+  $('.destroy_header').on("click", function() {
     $(this).parent().remove();
   });
 
