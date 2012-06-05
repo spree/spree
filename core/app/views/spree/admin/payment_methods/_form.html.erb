@@ -10,7 +10,7 @@
   <tr data-hook="environment">
     <td><%= label_tag nil, t(:environment) %></td>
     <td>
-      <%= collection_select(:payment_method, :environment, Spree::Configuration.configurations.keys, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
+      <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
     </td>
   </tr>
   <tr data-hook="display">
