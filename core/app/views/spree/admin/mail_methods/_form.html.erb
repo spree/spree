@@ -5,7 +5,7 @@
       <p>
         <%= f.label :environment, t(:environment) %><br />
         <%= f.collection_select(:environment,
-                                Spree::Configuration.configurations.keys.sort,
+                                Rails.configuration.database_configuration.keys.sort,
                                 :to_s, :titleize,
                                 {}, {:id => 'gtwy-env'}) %>
       </p>
