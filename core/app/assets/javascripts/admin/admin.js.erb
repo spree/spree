@@ -183,7 +183,7 @@ add_fields = function(target, association, content) {
   $(target).append(content.replace(regexp, new_id));
 }
 
-$('a.remove_fields').live('click', function() {
+$('a.remove_fields').on('click', function() {
   $(this).prev("input[type=hidden]").val("1");
   $(this).closest(".fields").hide();
   return false;
