@@ -344,18 +344,20 @@ class SpreeZeroNineZero < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :users, :force => true do |t|
-      t.string   :crypted_password, :limit => 128, :default => '', :null => false
-      t.string   :salt,             :limit => 128, :default => '', :null => false
-      t.string   :email, :remember_token, :remember_token_expires_at, 
-                 :persistence_token, :single_access_token, :perishable_token
-      t.integer  :login_count,        :default => 0, :null => false
-      t.integer  :failed_login_count, :default => 0, :null => false
-      t.datetime :last_request_at, :current_login_at, :last_login_at
-      t.string   :current_login_ip, :last_login_ip, :login
-      t.integer  :ship_address_id, :bill_address_id
+    unless defined?(User)
+      create_table :users, :force => true do |t|
+        t.string   :crypted_password, :limit => 128, :default => '', :null => false
+        t.string   :salt,             :limit => 128, :default => '', :null => false
+        t.string   :email, :remember_token, :remember_token_expires_at, 
+                   :persistence_token, :single_access_token, :perishable_token
+        t.integer  :login_count,        :default => 0, :null => false
+        t.integer  :failed_login_count, :default => 0, :null => false
+        t.datetime :last_request_at, :current_login_at, :last_login_at
+        t.string   :current_login_ip, :last_login_ip, :login
+        t.integer  :ship_address_id, :bill_address_id
 
-      t.timestamps
+        t.timestamps
+      end
     end
 
     create_table :variants, :force => true do |t|

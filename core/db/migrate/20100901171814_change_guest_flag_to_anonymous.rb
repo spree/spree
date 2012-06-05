@@ -1,5 +1,7 @@
 class ChangeGuestFlagToAnonymous < ActiveRecord::Migration
   def change
-    rename_column :users, :guest, :anonymous
+    unless defined?(User)
+      rename_column :users, :guest, :anonymous
+    end
   end
 end
