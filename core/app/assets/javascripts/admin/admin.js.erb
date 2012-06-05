@@ -189,7 +189,7 @@ $('a.remove_fields').live('click', function() {
   return false;
 });
 
-$(".observe_field").live('change', function() {
+$(".observe_field").on('change', function() {
   target = $(this).attr("data-update");
   ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
   $(target).hide();
