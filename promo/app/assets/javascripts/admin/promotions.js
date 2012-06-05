@@ -35,7 +35,6 @@ $(document).ready(function () {
     finder = RegExp($(this).data("variant-id") + "x\\d+")
     line_items_el.val(line_items_el.val().replace(finder, ""))
     $(this).parents('tr').remove();
-    hideOrShowItemTables();
   });
 
   $(".promotion_action.create_line_items button.add").on("click", function(){
