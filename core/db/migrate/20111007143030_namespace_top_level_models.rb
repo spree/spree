@@ -41,7 +41,9 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_table :taxons,                  :spree_taxons
     rename_table :taxonomies,              :spree_taxonomies
     rename_table :trackers,                :spree_trackers
-    rename_table :users,                   :spree_users
+    unless defined?(User)
+      rename_table :users,                   :spree_users
+    end
     rename_table :variants,                :spree_variants
     rename_table :zones,                   :spree_zones
     rename_table :zone_members,            :spree_zone_members
