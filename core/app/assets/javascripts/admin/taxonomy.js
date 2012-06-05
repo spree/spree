@@ -190,7 +190,7 @@ $(document).ready(function(){
       .bind("create.jstree", handle_create)
       .bind("rename.jstree", handle_rename);
 
-    $("#taxonomy_tree").delegate("a", "dblclick", function (e) {
+    $("#taxonomy_tree a").on("dblclick", function (e) {
      $("#taxonomy_tree").jstree("rename", this)
     });
 

@@ -226,7 +226,7 @@ $(document).ready(function(){
 
   handle_date_picker_fields();
 
-  $(".select_properties_from_prototype").live("click", function(){
+  $(".select_properties_from_prototype").on("click", function(){
     $("#busy_indicator").show();
     var clicked_link = $(this);
     $.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
