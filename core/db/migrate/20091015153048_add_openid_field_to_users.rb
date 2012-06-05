@@ -1,11 +1,13 @@
 class AddOpenidFieldToUsers < ActiveRecord::Migration
   def up
-    add_column :users, :openid_identifier, :string
-    add_index :users, :openid_identifier
+    unless defined?(User)
+      add_column :users, :openid_identifier, :string
+      add_index :users, :openid_identifier
 
-    change_column :users, :login, :string, :default => nil, :null => true
-    change_column :users, :crypted_password, :string, :default => nil, :null => true
-    change_column :users, :salt, :string, :default => nil, :null => true
+      change_column :users, :login, :string, :default => nil, :null => true
+      change_column :users, :crypted_password, :string, :default => nil, :null => true
+      change_column :users, :salt, :string, :default => nil, :null => true
+    end
   end
 
   def down
