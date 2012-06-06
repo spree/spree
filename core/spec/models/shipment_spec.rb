@@ -7,7 +7,11 @@ describe Spree::Shipment do
 
   let(:order) { mock_model Spree::Order, :backordered? => false }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
-  let(:shipment) { Spree::Shipment.new :order => order, :state => 'pending', :shipping_method => shipping_method }
+  let(:shipment) do
+    shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
+    shipment.state = 'pending'
+    shipment
+  end
 
   let(:charge) { mock_model Spree::Adjustment, :amount => 10, :source => shipment }
 
