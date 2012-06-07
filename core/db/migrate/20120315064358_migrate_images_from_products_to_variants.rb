@@ -1,3 +1,4 @@
+# This migration comes from spree (originally 20120315064358)
 class MigrateImagesFromProductsToVariants < ActiveRecord::Migration
   def up
     images = select_all("SELECT spree_assets.* FROM spree_assets
@@ -5,12 +6,15 @@ class MigrateImagesFromProductsToVariants < ActiveRecord::Migration
                          AND spree_assets.viewable_type = 'Spree::Product'")
 
     images.each do |image|
+      begin
       master_variant_id = select_value("SELECT id FROM spree_variants
                                         WHERE product_id = #{image['viewable_id']}
                                         AND is_master = #{quoted_true}")
 
       execute("UPDATE spree_assets SET viewable_type = 'Spree::Variant', viewable_id = #{master_variant_id}
                WHERE id = #{image['id']}") if master_variant_id
+      rescue
+      end
     end
   end
 
