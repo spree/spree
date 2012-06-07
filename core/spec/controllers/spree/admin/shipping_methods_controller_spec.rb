@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Admin::ShippingMethodsController do
+  stub_authorization!
   
   # Regression test for #1240
   it "should not hard-delete shipping methods" do
