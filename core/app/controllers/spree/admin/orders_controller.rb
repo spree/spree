@@ -50,8 +50,10 @@ module Spree
         if @order.update_attributes(params[:order]) && @order.line_items.present?
           @order.update!
           unless @order.complete?
-
+            # Jump to next step if order is not complete.
+            return_path = admin_order_customer_path(@order)
           else
+            # Otherwise, go back to first page since all necessary information has been filled out.
             return_path = admin_order_path(@order)
           end
         else
