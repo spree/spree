@@ -9,7 +9,6 @@ script:
   - "export DISPLAY=:99.0"
   - "alias set_gemfile='export BUNDLE_GEMFILE=\"`pwd`/Gemfile\"'"
   - "cd api; set_gemfile; bundle install --quiet; bundle exec rspec spec"
-  - "cd ../cmd; set_gemfile; bundle install --quiet; bundle exec cucumber features"
   - "cd ../core; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../dash; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../promo; set_gemfile; bundle install --quiet; bundle exec rspec spec"
