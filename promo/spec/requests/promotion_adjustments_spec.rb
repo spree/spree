@@ -344,7 +344,6 @@ describe "Promotion Adjustments" do
       last_order.item_total.to_f.should == 60.00
       last_order.adjustments.promotion.map(&:amount).sum.to_f.should == -40.00
       last_order.total.to_f.should == 30.00
-      Spree::Order.last.total.to_f.should == 55.00 # mug(40) - mug_discount(5) + bag(20) - bag_discount(10) + shipping(10)
     end
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
