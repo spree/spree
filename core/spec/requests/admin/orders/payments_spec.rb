@@ -64,6 +64,7 @@ describe "Payments" do
       Spree::PaymentMethod.delete_all
       @order.payments.delete_all
 
+      sign_in_as!(Factory(:admin_user))
       visit spree.new_admin_order_payment_path(@order)
       page.should have_content("You cannot create a payment for an order without any payment methods defined.")
       page.should have_content("Please define some payment methods first.")
