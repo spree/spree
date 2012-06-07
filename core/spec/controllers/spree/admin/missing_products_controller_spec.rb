@@ -5,6 +5,8 @@ require 'spec_helper'
 # this means this call is triggered before the authorize_admin call and in this case
 # the load_resource filter halts the request meaning authorize_admin is not called at all.
 describe Spree::Admin::ProductsController do
+  stub_authorization!
+
   # Regression test for GH #538
   it "cannot find a non-existent product" do
     spree_get :edit, :id => "non-existent-product"
