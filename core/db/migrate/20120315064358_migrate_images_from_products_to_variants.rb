@@ -1,8 +1,9 @@
 class MigrateImagesFromProductsToVariants < ActiveRecord::Migration
   def up
     images = select_all("SELECT spree_assets.* FROM spree_assets
-                         WHERE spree_assets.type IN ('Spree::Image')
-                         AND spree_assets.viewable_type = 'Spree::Product'")
+                         WHERE spree_assets.type = 'Spree::Image'
+                         AND spree_assets.viewable_type = 'Spree::Product'
+                         AND spree_assets.viewable_id IS NOT NULL")
 
     images.each do |image|
       master_variant_id = select_value("SELECT id FROM spree_variants
@@ -19,8 +20,9 @@ class MigrateImagesFromProductsToVariants < ActiveRecord::Migration
                          JOIN spree_variants
                          ON spree_variants.id = spree_assets.viewable_id
                          AND spree_variants.is_master = #{quoted_true}
-                         WHERE spree_assets.type IN ('Spree::Image')
-                         AND spree_assets.viewable_type = 'Spree::Variant'")
+                         WHERE spree_assets.type = 'Spree::Image'
+                         AND spree_assets.viewable_type = 'Spree::Variant'
+                         AND spree_assets.viewable_id IS NOT NULL")
 
     images.each do |image|
       product_id = select_value("SELECT spree_products.id FROM spree_products
