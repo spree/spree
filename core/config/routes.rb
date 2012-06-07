@@ -11,9 +11,9 @@ Spree::Core::Engine.routes.draw do
   resources :states, :only => :index
 
   # non-restful checkout stuff
-  match '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
-  match '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
-  match '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
+  put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
+  get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
+  get '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
 
   resources :orders do
     post :populate, :on => :collection
