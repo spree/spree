@@ -24,6 +24,7 @@ module Spree
         def find_and_update_shipment
           @shipment = @order.shipments.find_by_number!(params[:id])
           @shipment.update_attributes(params[:shipment])
+          @shipment.reload
         end
       end
     end
