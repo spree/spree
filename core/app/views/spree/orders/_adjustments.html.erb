@@ -1,0 +1,14 @@
+<thead>
+  <tr data-hook="cart_adjustments_headers">
+    <th class="cart-adjustment-header" colspan="6">Order Adjustments</th>
+  </tr>
+</thead>
+<tbody id="cart_adjustments" data-hook>
+  <% @order.adjustments.eligible.each do |adjustment| %>
+    <tr>
+      <td colspan="4"><%= adjustment.label %></td>
+      <td><%= number_to_currency(adjustment.amount) %></td>
+      <td></td>
+    </tr>
+  <% end %>
+</tbody>

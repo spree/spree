@@ -16,6 +16,7 @@ en:
   add_rule_of_type: Add rule of type
   coupon: Coupon
   coupon_code: Coupon code
+  coupon_code_applied: The coupon code was successfully applied to your order.
   editing_promotion: Editing Promotion
   events:
     spree:
