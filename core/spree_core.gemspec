@@ -31,6 +31,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activemerchant', '= 1.20.4'
   s.add_dependency 'rails', '~> 3.2.5'
   s.add_dependency 'kaminari', '>= 0.13.0'
-  s.add_dependency 'deface', '>= 0.8.0'
+  s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.3.2'
 end
