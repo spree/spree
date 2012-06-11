@@ -153,7 +153,7 @@ This override references a partial called "spree/shared/login_bar". This will li
 
 <erb>
 <% if spree_current_user %>
-  <li><%= link_to t(:logout), spree_logout_path %></li>
+  <li><%= link_to t(:logout), spree_logout_path, :method => :delete %></li>
 <% else %>
   <li><%= link_to t(:login), spree_login_path %></li>
   <li><%= link_to t(:signup), spree_signup_path %></li>
