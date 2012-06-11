@@ -10,6 +10,15 @@ module Spree
       paths.flatten
     end
 
+    def check_for_constant
+      begin
+        klass
+      rescue NameError
+        @shell.say "Couldn't find #{class_name}. Are you sure that this class exists within your application and is loaded?", :red
+        exit(1)
+      end
+    end
+
     def generate
       template 'migration.rb.tt', "db/migrate/#{Time.now.strftime("%Y%m%d%H%m%S")}_add_spree_fields_to_custom_user_table.rb"
       template 'authentication_helpers.rb.tt', "lib/spree/authentication_helpers.rb"
