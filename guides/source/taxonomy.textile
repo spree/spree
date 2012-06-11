@@ -75,10 +75,3 @@ You can also move taxonomy nodes within their hierachies via drag and drop.
 h3. Displaying Taxonomies in the Store
 
 Briefly: Spree's default sidebar allows navigation by taxons, and when viewing products or taxons you will see breadcrumbs near the top of the page which indicate the 'position' of the item in the taxon hierarchy.
-
-
-
-h3. Beyond Taxonomies 
-
-We're planning to move to a more flexible system soon, which will give a lot more power and efficiency. Look out for updates.
-
