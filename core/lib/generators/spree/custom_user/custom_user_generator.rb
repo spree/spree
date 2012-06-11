@@ -1,6 +1,8 @@
 module Spree
   class CustomUserGenerator < Rails::Generators::NamedBase
     include Rails::Generators::ResourceHelpers
+    include Rails::Generators::Migration
+    
 
     desc "Set up a Spree installation with a custom User class"
 
@@ -20,12 +22,21 @@ module Spree
     end
 
     def generate
-      template 'migration.rb.tt', "db/migrate/#{Time.now.strftime("%Y%m%d%H%m%S")}_add_spree_fields_to_custom_user_table.rb"
+      migration_template 'migration.rb.tt', "db/migrate/add_spree_auth_fields_to_#{table_name}_table.rb"
       template 'authentication_helpers.rb.tt', "lib/spree/authentication_helpers.rb"
 
       file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
       send(file_action, 'config/initializers/spree.rb') do
         %Q{require 'spree/authentication_helpers'\n}
+      end
+    end
+
+    def self.next_migration_number(dirname)
+      if ActiveRecord::Base.timestamped_migrations
+        sleep 1 # make sure to get a different migration every time
+        Time.new.utc.strftime("%Y%m%d%H%M%S")
+      else
+        "%.3d" % (current_migration_number(dirname) + 1)
       end
     end
 
