@@ -68,6 +68,7 @@ module Spree
     # Preferences related to image settings
     preference :attachment_default_url, :string, :default => '/spree/products/:id/:style/:basename.:extension'
     preference :attachment_path, :string, :default => ':rails_root/public/spree/products/:id/:style/:basename.:extension'
+    preference :attachment_url, :string, :default => '/spree/products/:id/:style/:basename.:extension'
     preference :attachment_styles, :string, :default => "{\"mini\":\"48x48>\",\"small\":\"100x100>\",\"product\":\"240x240>\",\"large\":\"600x600>\"}"
     preference :attachment_default_style, :string, :default => 'product'
     preference :s3_access_key, :string
