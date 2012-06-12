@@ -178,15 +178,10 @@ module SpreeCmd
       end
 
       def image_magick_installed?
-        begin
-          %x(identify -version)
-        # The Errno::ENOENT exception is raised on all OSes when it cannot find a command
-        rescue Errno::ENOENT
-          return false
-        rescue # Silence any other exception
-        end
-        # If program *did* execute, check to see if it executed successfully
-        $?.success?
+        # true if command executed succesfully
+        # false for non zero exit status
+        # nil if command execution fails
+        system('identify -version')
       end
   end
 end
