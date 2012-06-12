@@ -422,6 +422,10 @@ module Spree
       end.compact.sort_by { |r| r.cost }
     end
 
+    def paid?
+      payment_status == 'paid'
+    end
+
     def payment
       payments.first
     end
