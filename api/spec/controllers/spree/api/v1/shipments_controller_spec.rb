@@ -5,7 +5,7 @@ describe Spree::Api::V1::ShipmentsController do
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at] }
 
   before do
-    shipment.order.payment_state == 'paid'
+    Spree::Order.any_instance.stub(:paid? => true)
     stub_authentication!
   end
 
@@ -16,12 +16,13 @@ describe Spree::Api::V1::ShipmentsController do
       api_put :ready
       json_response.should have_attributes(attributes)
       json_response["shipment"]["state"].should == "ready"
+      shipment.reload.state.should == "ready"
     end
 
     context "can transition a shipment from ready to ship" do
       before do
-        shipment.order.update_attribute(:payment_state, 'paid')
         shipment.update!(shipment.order)
+        shipment.state.should == "ready"
       end
 
       it "can transition a shipment from ready to ship" do
