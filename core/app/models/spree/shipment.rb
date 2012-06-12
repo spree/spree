@@ -125,7 +125,7 @@ module Spree
       def determine_state(order)
         return 'pending' if inventory_units.any? &:backordered?
         return 'shipped' if state == 'shipped'
-        order.payment_state == 'balance_due' ? 'pending' : 'ready'
+        order.paid? ? 'ready' : 'pending'
       end
 
       # Determines whether or not inventory units should be associated with the shipment.  This is always +false+ when
