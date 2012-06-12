@@ -113,8 +113,9 @@ INFO: It is convention to use the +spree-+ naming convention for your Github rep
 
 h4. Publishing Your Gem
 
-If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, its already a gem and ready to be published.  You'll just want to edit a few details before you proceed.
+If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, its already a gem and ready to be published.  You'll just want to edit a few details in your gemspec file before you proceed.
 
+<ruby>
 s.name        = 'foofah'
 s.version     = '1.0.0'
 s.summary     = 'Add gem summary here'
@@ -125,6 +126,11 @@ s.required_ruby_version = '>= 1.8.7'
 # s.email             = 'david@loudthinking.com'
 # s.homepage          = 'http://www.rubyonrails.org'
 # s.rubyforge_project = 'actionmailer'
+</ruby>
+
+h4. Registering Your Extension
+
+In order for your extension to show up in the "Extension Registry":http://spreecommerce.com/extensions you need to register it. To do so, sign into your spreecommerce.com account and navigate to the "My Extensions":http://spreecommerce.com/account/extensions page. You may have to create an account first, or you can log-in with GitHub.
 
 h3. Versionfile
 
