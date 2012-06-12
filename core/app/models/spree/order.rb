@@ -423,7 +423,7 @@ module Spree
     end
 
     def paid?
-      payment_status == 'paid'
+      payment_state == 'paid'
     end
 
     def payment
