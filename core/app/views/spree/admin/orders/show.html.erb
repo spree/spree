@@ -1,5 +1,5 @@
 <div class="toolbar order-links" data-hook="admin_order_show_buttons">
-  <%= button_link_to t(:cancel), fire_admin_order_url(@order.number, {:e => "cancel"}), :icon => 'delete', :confirm => t(:are_you_sure) if @order.can_cancel? %>
+  <%= button_link_to t(:cancel), fire_admin_order_url(@order.number, { :e => 'cancel' }), :icon => 'delete', :data => { :confirm => t(:are_you_sure) } if @order.can_cancel? %>
   <%= button_link_to t(:edit), edit_admin_order_url(@order.number), :icon => 'edit' %>
 </div>
 

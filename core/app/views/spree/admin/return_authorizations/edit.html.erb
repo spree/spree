@@ -2,10 +2,10 @@
   <ul class="actions">
     <li>
       <% if @return_authorization.can_receive? %>
-        <%= button_link_to t(:receive), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :confirm => t(:are_you_sure) %>
+        <%= button_link_to t(:receive), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
       <% end %>
       <% if @return_authorization.can_cancel? %>
-        <%= button_link_to t(:cancel), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :confirm => t(:are_you_sure) %>
+        <%= button_link_to t(:cancel), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
       <% end %>
     </li>
   </ul>
