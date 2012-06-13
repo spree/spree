@@ -56,7 +56,7 @@ You can manually add Spree to your Rails 3.x application. Add Spree to
 your Gemfile.
 
 ```ruby
-gem 'spree', '1.1.0'
+gem 'spree', :git => 'git://github.com/spree/spree.git'
 ```
 
 Update your bundle
