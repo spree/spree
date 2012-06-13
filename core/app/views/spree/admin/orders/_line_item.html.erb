@@ -6,9 +6,6 @@
   <td valign="top" class="qty"><%= f.number_field :quantity, :min => 0, :style => "width:30px;", :class => "qty" %></td>
   <td valign="top" class="total"><%= number_to_currency (f.object.price * f.object.quantity) %></td>
   <td data-hook="admin_order_form_line_item_actions">
-    <%= link_to_delete f.object, {:url => admin_order_line_item_url(@order.number, f.object),
-                                  :dataType => 'html',
-                                  :success => "function(r){ $('#order-form-wrapper').html(r);}"},
-                                  :title => "admin_delete_#{dom_id(@order)}" %>
+    <%= link_to_delete f.object, {:url => admin_order_line_item_url(@order.number, f.object) } %>
   </td>
 </tr>

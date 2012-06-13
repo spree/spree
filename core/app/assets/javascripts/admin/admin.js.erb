@@ -233,7 +233,7 @@ $(document).ready(function(){
     $(target).append(new_table_row);
   })
 
-  $('.delete-resource').click(function() {
+  $('body').on('click', '.delete-resource', function() {
     var el = $(this);
     if (confirm(el.data("confirm"))) {
       $.ajax({
