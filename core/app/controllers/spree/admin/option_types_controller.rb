@@ -2,6 +2,7 @@ module Spree
   module Admin
     class OptionTypesController < ResourceController
       before_filter :load_product, :only => [:select, :selected, :available, :remove]
+      before_filter :setup_new_option_value, :only => [:edit]
 
       def available
         set_available_option_types
@@ -52,6 +53,10 @@ module Spree
       private
         def load_product
           @product = Product.find_by_param!(params[:product_id])
+        end
+
+        def setup_new_option_value
+          @option_type.option_values.build if @option_type.option_values.empty?
         end
   
         def set_available_option_types     
