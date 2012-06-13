@@ -94,10 +94,6 @@ module Spree
         end
       end
 
-      def button_link_to_function(text, function, html_options = {})
-        link_to_function(text_for_button_link(text, html_options), function, html_options_for_button_link(html_options))
-      end
-
       def text_for_button_link(text, html_options)
         s = ''
         if html_options[:icon]
