@@ -14,7 +14,12 @@ module Spree
     end
 
     def property_name=(name)
-      self.property = Property.find_by_name(name) unless name.blank?
+      unless name.blank?
+        unless property = Property.find_by_name(name)
+          property = Property.create(:name => name, :presentation => name)
+        end
+        self.property = property
+      end
     end
   end
 end
