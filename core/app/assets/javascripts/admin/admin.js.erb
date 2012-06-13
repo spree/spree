@@ -220,6 +220,46 @@ handle_date_picker_fields = function(){
 }
 
 $(document).ready(function(){
+  $('.add_fields').click(function() {
+    var target = $(this).data("target");
+    var new_table_row = $(target + ' tr:visible:last').clone();
+    new_table_row.find("input").each(function () {
+      var el = $(this);
+      var new_id = new Date().getTime();
+      el.val("");
+      el.attr("id", el.attr("id").replace(/\d+/, new_id))
+      el.attr("name", el.attr("name").replace(/\d+/, new_id))
+    })
+    $(target).append(new_table_row);
+  })
+
+  $('.delete-resource').click(function() {
+    var el = $(this);
+    if (confirm(el.data("confirm"))) {
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr("href"),
+        data: {
+          _method: 'delete',
+          authenticity_token: AUTH_TOKEN
+        },
+        dataType: 'script',
+        success: function(response) {
+          el.parents("tr").fadeOut('hide');
+        },
+        error: function(response, textStatus, errorThrown) {
+          show_flash_error(response.responseText);
+        }
+      });
+    }
+    return false;
+  });
+
+  $('body').on('click', 'a.remove_fields', function() {
+    $(this).prev("input[type=hidden]").val("1");
+    $(this).closest(".fields").hide();
+    return false;
+  });
 
   $('.tokeninput.products').productPicker();
   $('.tokeninput.users').userPicker();
