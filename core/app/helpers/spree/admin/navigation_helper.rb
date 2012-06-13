@@ -56,47 +56,12 @@ module Spree
         link_to_with_icon('exclamation', t(:clone), clone_admin_product_url(resource), options)
       end
 
-      def link_to_delete(resource, options = {}, html_options={})
-        options.assert_valid_keys(:url, :caption, :title, :dataType, :success, :error, :name)
-
-        options.reverse_merge! :url => object_url(resource) unless options.key? :url
-        options.reverse_merge! :caption => t(:are_you_sure)
-        options.reverse_merge! :title => t(:confirm_delete)
-        options.reverse_merge! :dataType => 'script'
-        options.reverse_merge! :success => "function(r){ $('##{spree_dom_id resource}').fadeOut('hide'); }"
-        options.reverse_merge! :error => "function(jqXHR, textStatus, errorThrown){ show_flash_error(jqXHR.responseText); }"
-        options.reverse_merge! :name => icon('delete') + ' ' + t(:delete)
-
-        link_to_function_delete(options, html_options.merge!(:href => options[:url]))
-        #link_to_function_delete_native(options, html_options)
-      end
-
-      # this function does not use jConfirm
-      def link_to_function_delete_native(options, html_options)
-        fn = %Q{
-          var answer = confirm("#{t(:are_you_sure)}");
-          if (!!answer) { #{link_to_function_delete_ajax(options)} };
-        }
-        link_to_function options[:name], fn, html_options
-      end
-
-      def link_to_function_delete(options, html_options)
-        link_to_function options[:name], "jConfirm('#{options[:caption]}', '#{options[:title]}', function(r) {
-          if(r){ #{link_to_function_delete_ajax(options)} }
-        });", html_options
-      end
-
-      def link_to_function_delete_ajax(options)
-        %Q{
-          $.ajax({
-            type: 'POST',
-            url: '#{options[:url]}',
-            data: ({_method: 'delete', authenticity_token: AUTH_TOKEN}),
-            dataType:'#{options[:dataType]}',
-            success: #{options[:success]},
-            error: #{options[:error]}
-          });
-        }
+      def link_to_delete(resource, options={})
+        url = options[:url] || object_url(resource)
+        name = options[:name] || icon('delete') + ' ' + t(:delete)
+        link_to name, url,
+          :class => "delete-resource",
+          :data => { :confirm => t(:are_you_sure) }
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
