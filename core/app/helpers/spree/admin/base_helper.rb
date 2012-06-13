@@ -184,15 +184,6 @@ module Spree
         %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
       end
 
-      # renders set of hidden fields and button to add new record using nested_attributes
-      def link_to_add_fields(name, append_to_selector, f, association)
-        new_object = f.object.class.reflect_on_association(association).klass.new
-        fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
-          render(association.to_s.singularize + "_fields", :f => builder)
-        end
-        link_to_function(name, raw("add_fields(\"#{append_to_selector}\", \"#{association}\", \"#{escape_javascript(fields)}\")"), :class => 'add_fields')
-      end
-
       # renders hidden field and link to remove record using nested_attributes
       def link_to_remove_fields(name, f)
         f.hidden_field(:_destroy) + link_to_with_icon(:delete, name, '#', :class => 'remove_fields')
