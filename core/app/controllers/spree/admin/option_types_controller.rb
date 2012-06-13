@@ -2,6 +2,7 @@ module Spree
   module Admin
     class OptionTypesController < ResourceController
       before_filter :load_product, :only => [:select, :selected, :available, :remove]
+      before_filter :setup_new_option_value, :only => [:edit]
 
       def available
         set_available_option_types
@@ -66,6 +67,10 @@ module Spree
           else
             OptionType.all
           end
+        end
+
+        def setup_new_option_value
+          @option_type.option_values.build if @option_type.option_values.blank?
         end
     end
   end

@@ -23,10 +23,7 @@
   <%= hidden_field_tag 'clear_product_properties', 'true' %>
 
   <p class="add_product_properties" data-hook="add_product_properties">
-    <%= link_to_add_fields  icon('add') + ' ' + t(:add_product_properties),
-                            'tbody#product_properties',
-                            f,
-                            :product_properties %>
+    <%= link_to icon('add') + ' ' + t(:add_product_properties), 'javascript:', :data => { :target => "tbody#product_properties" }, :class => "add_fields" %>
 
     &nbsp;&nbsp;
 
