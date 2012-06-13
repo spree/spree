@@ -176,6 +176,19 @@ $.fn.userPicker = function(){
   $(this).objectPicker(ajax_urls.user_search_basic_json);
 }
 
+// Possible defunct
+add_fields = function(target, association, content) {
+  var new_id = new Date().getTime();
+  var regexp = new RegExp("new_" + association, "g");
+  $(target).append(content.replace(regexp, new_id));
+}
+
+$('a.remove_fields').on('click', function() {
+  $(this).prev("input[type=hidden]").val("1");
+  $(this).closest(".fields").hide();
+  return false;
+});
+
 $(".observe_field").on('change', function() {
   target = $(this).attr("data-update");
   ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
@@ -207,25 +220,6 @@ handle_date_picker_fields = function(){
 }
 
 $(document).ready(function(){
-  $('.add_fields').click(function() {
-    var target = $(this).data("target");
-    var new_table_row = $(target + ' tr:visible:last').clone();
-    new_table_row.find("input").each(function () {
-      var el = $(this);
-      var new_id = new Date().getTime();
-      el.val("");
-      el.attr("id", el.attr("id").replace(/\d+/, new_id))
-      el.attr("name", el.attr("name").replace(/\d+/, new_id))
-    })
-    $(target).append(new_table_row);
-  })
-
-  $('body').on('click', 'a.remove_fields', function() {
-    console.log("clicking")
-    $(this).prev("input[type=hidden]").val("1");
-    $(this).closest(".fields").hide();
-    return false;
-  });
 
   $('.tokeninput.products').productPicker();
   $('.tokeninput.users').userPicker();
