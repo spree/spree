@@ -72,8 +72,6 @@ describe Spree::OrderMailer do
         @email = ActionMailer::Base.deliveries.first
         @email.to.should == ["customer@example.com"]
       end
-      it "should bcc the address specified in the preference"
-      it "should not change the recipient"
     end
   end
 end
