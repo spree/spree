@@ -7,36 +7,26 @@ Please stick to the established format and feel free to ask questions on [spree-
 
 To build the entire set of guides simply run the following command
 
-<pre><code>
-  $ git clone git://github.com/spree/spree-guides.git
-  $ cd spree-guides
-  $ bundle install
-  $ bundle exec guides build
-</code></pre>
+    $ git clone git://github.com/spree/spree-guides.git
+    $ cd spree-guides
+    $ bundle install
+    $ bundle exec guides build
 
 You can force a rebuild of all of the guides using
 
-```
-$ bundle exec guides build --clean
-```
+    $ bundle exec guides build --clean
 
 You can also specify that you want to rebuild just a few of the guides
 
-```
-$ bundle exec guides build --only=checkout adjustments
-```
+    $ bundle exec guides build --only=checkout adjustments
 
 To build edge guides including GA trakcking
 
-```
-$ bundle exec guides build --clean --edge --ga
-```
+    $ bundle exec guides build --clean --edge --ga
 
 Finally, you can also preview the guides while you work
 
-```
-$ bundle exec guides preview
-```
+    $ bundle exec guides preview
 
 If you'd like to make an ocassional contribution to the spree-guides project please fork it and send a pull request when you have changes that you'd like to be pulled into the master branch.
 
@@ -50,15 +40,8 @@ Deploying
 
 To deploy the normal guides:
 
-```
-$ cap deploy
-
-```
+    $ cap deploy
 
 To deploy edge guides:
 
-```
-$ cap deploy -S edge=true
-
-```
-
+    $ cap deploy -S edge=true
