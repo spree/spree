@@ -73,6 +73,22 @@ module Spree
         def load_data
           @tax_categories = TaxCategory.order(:name)
           @shipping_categories = ShippingCategory.order(:name)
+
+          params[:search][:meta_sort] ||= "name.asc"
+          @search = super.metasearch(params[:search])
+
+          @collection = @search.relation.group_by_products_id.includes([:master, {:variants => [:images, :option_values]}]).page(params[:page]).per(Spree::Config[:admin_products_per_page])
+        else
+          includes = [{:variants => [:images,  {:option_values => :option_type}]}, :master, :images]
+
+          @collection = super.where(["LOWER(name) #{LIKE} ?", "%#{params[:q].downcase}%"])
+          @collection = @collection.includes(includes).limit(params[:limit] || 10)
+
+          tmp = super.where(["#{Variant.table_name}.sku #{LIKE} ?", "%#{params[:q]}%"])
+          tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
+          @collection.concat(tmp)
+
+          @collection.uniq
         end
 
         def collection
