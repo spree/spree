@@ -37,18 +37,18 @@ module Spree
     # Ryan Bates - http://railscasts.com/episodes/112
     # general merging of conditions, names following the searchlogic pattern
     add_search_scope :conditions do |*args|
-      { :conditions => args }
+      where(args)
     end
 
     # conditions_all is a more descriptively named enhancement of the above
     add_search_scope :conditions_all do |*args|
-      { :conditions => [args].flatten }
+      where([args].flatten)
     end
 
     add_search_scope :conditions_any do |*args|
       args = [args].flatten
       raise "non-strings in conditions_any" unless args.all? { |s| s.is_a? String }
-      { :conditions => args.map { |c| "(#{c})"}.join(" OR ") }
+      where(args.map { |c| "(#{c})"}.join(" OR "))
     end
 
     add_search_scope :price_between do |low, high|
