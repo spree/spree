@@ -4,7 +4,7 @@
 </p>
 <p class="field products_rule_product_group">
   <label><%= t(:product_group) %><br />
-    <%= select_tag "#{param_prefix}[product_group_id]", options_from_collection_for_select(Spree::ProductGroup.all, :id, :name, promotion_rule.product_group_id) %></label>
+    <%= select_tag "#{param_prefix}[product_group_id]", options_from_collection_for_select(Spree::ProductGroup.all, :id, :name, promotion_rule.product_group_id), { :include_blank => true } %></label>
 </p>
 <p class="field products_rule_products">
   <label>
