@@ -45,7 +45,7 @@ module Spree
 
     # Creates necessary tax adjustments for the order.
     def adjust(order)
-      label = "#{tax_category.name} #{amount * 100}%"
+      label = create_label
       if included_in_price
         if Zone.default_tax.contains? order.tax_zone
           order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
@@ -63,6 +63,10 @@ module Spree
       end
     end
 
+    private
+      def create_label
+        "#{tax_category.name} #{amount * 100}%"
+      end
   end
 
 end
