@@ -59,8 +59,10 @@ format_product_autocomplete = function(item){
     }
 
     html += "<div><h4>" + product['name'] + "</h4>";
-    html += "<span><strong>Sku: </strong>" + product['master']['sku'] + "</span>";
-    html += "<span><strong>On Hand: </strong>" + product['count_on_hand'] + "</span></div>";
+    if (product['master']) {
+      html += "<span><strong><%= ::I18n.t(:sku) %>: </strong>" + product['master']['sku'] + "</span>";
+    }
+    html += "<span><strong><%= ::I18n.t(:on_hand) %>: </strong>" + product['count_on_hand'] + "</span></div>";
   }else{
     // variant
     var variant = item.data['variant'];
@@ -75,12 +77,12 @@ format_product_autocomplete = function(item){
     }
 
     name += " - " + $.map(variant['option_values'], function(option_value){
-      return option_value["option_type"]["presentation"] + ": " + option_value['name'];
+      return option_value["option_type"]["presentation"] + ": " + option_value['presentation'];
     }).join(", ")
 
     html += "<div><h4>" + name + "</h4>";
-    html += "<span><strong>Sku: </strong>" + variant['sku'] + "</span>";
-    html += "<span><strong>On Hand: </strong>" + variant['count_on_hand'] + "</span></div>";
+    html += "<span><strong><%= ::I18n.t(:sku) %>: </strong>" + variant['sku'] + "</span>";
+    html += "<span><strong><%= ::I18n.t(:on_hand) %>: </strong>" + variant['count_on_hand'] + "</span></div>";
   }
 
   return html
@@ -97,7 +99,7 @@ prep_product_autocomplete_data = function(data){
 
         var name = product['name'];
         name += " - " + $.map(variant['option_values'], function(option_value){
-          return option_value["option_type"]["presentation"] + ": " + option_value['name'];
+          return option_value["option_type"]["presentation"] + ": " + option_value['presentation'];
         }).join(", ");
 
         return {
