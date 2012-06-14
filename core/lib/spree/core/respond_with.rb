@@ -59,7 +59,7 @@ module Spree
               options = {action_name.to_sym => {format_name.to_sym => {:success => format_value}}}
             end
 
-            self.spree_responders.rmerge!(self.name.intern => options)
+            self.spree_responders.rmerge!(self.name.to_sym => options)
           end
         end
       end
