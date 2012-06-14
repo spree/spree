@@ -8,6 +8,7 @@ describe "Order Details" do
       reset_spree_preferences do |config|
         config.allow_backorders = true
       end
+      create(:country)
     end
 
     after(:each) { I18n.reload! }
