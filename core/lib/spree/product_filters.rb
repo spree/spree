@@ -92,11 +92,10 @@ module Spree
     #   rather than an inner join.
 
     if Spree::Property.table_exists? && @@brand_property = Spree::Property.find_by_name("brand")
-      Spree::Product.scope :brand_any,
-        lambda {|*opts|
-          conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
-          Spree::Product.with_property("brand").conditions_any(conds)
-        }
+      Spree::Product.add_search_scope :brand_any do |*opts|
+        conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
+        Spree::Product.with_property("brand").conditions_any(conds)
+      end
 
       def ProductFilters.brand_filter
         brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
@@ -129,7 +128,9 @@ module Spree
     #   The brand-finding code can be simplified if a few more named scopes were added to
     #   the product properties model.
     if Spree::Property.table_exists? && @@brand_property
-      Spree::Product.scope :selective_brand_any, lambda {|*opts| Spree::Product.brand_any(*opts) }
+      Spree::Product.add_search_scope :selective_brand_any do |*opts|
+        Spree::Product.brand_any(*opts)
+      end
 
       def ProductFilters.selective_brand_filter(taxon = nil)
         if taxon.nil?
