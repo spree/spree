@@ -35,7 +35,7 @@ available in the spree gem which will add Spree to an existing Rails application
 
     $ gem install rails -v 3.2.6
     $ gem install spree
-    $ rails new my_store
+    $ rails _3.2.6_ new my_store
     $ spree install my_store
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations and
@@ -52,7 +52,7 @@ To auto accept all prompts while running the install generator, pass -A as an op
 Using the Gem
 -------------
 
-You can manually add Spree to your Rails 3.x application. Add Spree to
+You can manually add Spree to your Rails 3.2.x application. Add Spree to
 your Gemfile.
 
 ```ruby
