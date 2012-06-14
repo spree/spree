@@ -58,11 +58,10 @@ module Spree
     # If user checks off three different price ranges then the argument passed to
     # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
     #
-    Spree::Product.scope :price_range_any,
-      lambda {|*opts|
-        conds = opts.map {|o| Spree::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
-        Spree::Product.scoped(:joins => :master).conditions_any(conds)
-      }
+    Spree::Product.add_search_scope :price_range_any do |*opts|
+      conds = opts.map {|o| Spree::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
+      Spree::Product.joins(:master).conditions_any(conds)
+    end
 
     def ProductFilters.price_filter
       conds = [ [ I18n.t(:under_price, :price => format_price(10))   , "price             <= 10" ],
