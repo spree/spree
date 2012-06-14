@@ -71,36 +71,37 @@ class Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
+  cattr_accessor :search_scopes do
+    []
+  end
+
+  def self.add_search_scope(name, &block)
+    define_singleton_method name.intern, &block
+    search_scopes << name.intern
+  end
+
   include ::Scopes::Product
 
-  #RAILS3 TODO -  scopes are duplicated here and in scopes/product.rb - can we DRY it up?
-  # default product scope only lists available and non-deleted products
-  class << self
-    def not_deleted
-      where(Product.arel_table[:deleted_at].eq(nil))
-    end
-
-    def available(available_on = nil)
-      where(Product.arel_table[:available_on].lteq(available_on || Time.zone.now ))
-    end
-
-    #RAILS 3 TODO - this scope doesn't match the original 2.3.x version, needs attention (but it works)
-    def active
-      not_deleted.available
-    end
-
-    def on_hand
-      where(Product.arel_table[:count_on_hand].gteq(0))
-    end
-
-    def id_equals(input_id)
-      where(Product.arel_table[:id].eq(input_id))
-    end
-
-    def taxons_name_eq(name)
-      joins(:taxons).where(Taxon.arel_table[:name].eq(name))
-    end
+  add_search_scope :not_deleted do
+    where("products.deleted_at is NULL")
   end
+
+  add_search_scope :available do |*on|
+    where("products.available_on <= ?", on.first || Time.zone.now)
+  end
+
+  add_search_scope :active do
+    not_deleted.available
+  end
+
+  add_search_scope :on_hand do
+    where("products.count_on_hand > 0")
+  end
+
+  add_search_scope :taxons_name_eq do |name|
+    joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+  end
+
   if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
     if Product.table_exists?
       scope :group_by_products_id, { :group => Product.column_names.map{|col_name| "#{Product.table_name}.#{col_name}"} }
@@ -108,7 +109,16 @@ class Product < ActiveRecord::Base
   else
     scope :group_by_products_id, { :group => "#{Product.table_name}.id" }
   end
+  search_scopes << :group_by_products_id
   search_methods :group_by_products_id
+
+  add_search_scope :id_equals do |input_id|
+    where("products.id = ?", input_id)
+  end
+
+  add_search_scope :taxons_name_eq do |name|
+    joins(:taxons).where("taxons.name = ?", name)
+  end
 
   # ----------------------------------------------------------------------------------------------------------
   #
