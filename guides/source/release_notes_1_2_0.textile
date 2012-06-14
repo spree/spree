@@ -13,3 +13,7 @@ h3. Minor changes
 h4. Spree::Zone#country_list renamed to #zone_member_list
 
 Please be noted that the underlying logics remain intact.
+
+h4. Spree::Creditcard renamed to Spree::CreditCard
+
+All occurences of Creditcard word are changed to CreditCard.
