@@ -90,7 +90,7 @@ class ProductGroup < ActiveRecord::Base
   end
 
   def add_scope(scope_name, arguments=[])
-    if scope_name.to_s !~ /eval|send|system|[^a-z0-9_!?]/
+    if Product.search_scopes.include?(scope_name.intern)
       self.product_scopes << ProductScope.new({
           :name => scope_name.to_s,
           :arguments => [*arguments]

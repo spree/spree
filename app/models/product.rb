@@ -60,6 +60,15 @@ class Product < ActiveRecord::Base
 
   alias :options :product_option_types
 
+  cattr_accessor :search_scopes do
+    []
+  end
+
+  def self.add_search_scope(name, &block)
+    self.named_scope name.intern, &block
+    search_scopes << name.intern
+  end
+
   include ::Scopes::Product
 
   # default product scope only lists available and non-deleted products
