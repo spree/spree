@@ -4,8 +4,8 @@ module Spree
     has_many :shipments
     validates :name, :zone, :presence => true
 
-    belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
-    belongs_to :zone, :class_name => "Spree::Zone"
+    belongs_to :shipping_category, :class_name => Spree::ShippingCategory
+    belongs_to :zone, :class_name => Spree::Zone
 
     attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
                     :match_none, :match_one, :match_all

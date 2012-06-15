@@ -4,7 +4,7 @@ module Spree
   class Shipment < ActiveRecord::Base
     belongs_to :order, :class_name => "Spree::Order"
     belongs_to :shipping_method, :class_name => "Spree::ShippingMethod"
-    belongs_to :address, :class_name => "Spree::AddresS"
+    belongs_to :address, :class_name => "Spree::Address"
 
     has_many :state_changes, :as => :stateful
     has_many :inventory_units, :dependent => :nullify
