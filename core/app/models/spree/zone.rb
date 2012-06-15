@@ -74,10 +74,10 @@ module Spree
       name <=> other.name
     end
 
-    # All zoneables belonging to the zone members.  Will be a colelction of either
+    # All zoneables belonging to the zone members.  Will be a collection of either
     # countries or states depending on the zone type.
     def zoneables
-      members.collect { |m| m.zoneable }
+      members.collect(&:zoneable)
     end
 
     def self.default_tax
