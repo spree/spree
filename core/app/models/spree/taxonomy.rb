@@ -5,7 +5,7 @@ module Spree
     attr_accessible :name
 
     has_many :taxons
-    has_one :root, :conditions => { :parent_id => nil }, :class_name => 'Spree::Taxon',
+    has_one :root, :conditions => { :parent_id => nil }, :class_name => Spree::Taxon,
                    :dependent => :destroy
 
     after_save :set_name

@@ -1,11 +1,11 @@
 module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
-    belongs_to :order, :class_name => "Spree::Order"
-    belongs_to :variant, :class_name => "Spree::Variant"
+    belongs_to :order, :class_name => Spree::Order
+    belongs_to :variant, :class_name => Spree::Variant
 
     has_one :product, :through => :variant
-    has_many :adjustments, :as => :adjustable, :class_name => "Spree::Adjustment"
+    has_many :adjustments, :as => :adjustable, :class_name => Spree::Adjustment
 
     before_validation :copy_price
 
