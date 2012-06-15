@@ -3,7 +3,7 @@ module Spree
     attr_accessible :analytics_id, :environment, :active
 
     def self.current
-      first(:conditions => { :active => true, :environment => Rails.env })
+      where(:active => true, :environment => Rails.env).first
     end
   end
 end
