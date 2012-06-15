@@ -104,7 +104,7 @@ module Spree
 
     # returns the number of inventory units "on_hand" for this product
     def on_hand
-      has_variants? ? variants.inject(0) { |sum, v| sum + v.on_hand } : master.on_hand
+      has_variants? ? variants.sum(&:on_hand) : master.on_hand
     end
 
     # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
