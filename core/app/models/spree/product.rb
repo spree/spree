@@ -29,7 +29,7 @@ module Spree
 
     has_one :master,
       :class_name => 'Spree::Variant',
-      :conditions => ["#{Variant.quoted_table_name}.is_master = ?", true]
+      :conditions => { :is_master => true }
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
@@ -43,17 +43,17 @@ module Spree
 
     has_many :variants,
       :class_name => 'Spree::Variant',
-      :conditions => ["#{::Spree::Variant.quoted_table_name}.is_master = ? AND #{::Spree::Variant.quoted_table_name}.deleted_at IS NULL", false],
-      :order => "#{::Spree::Variant.quoted_table_name}.position ASC"
+      :conditions => { :is_master => false, :deleted_at => nil },
+      :order => 'position ASC'
 
     has_many :variants_including_master,
       :class_name => 'Spree::Variant',
-      :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL"],
+      :conditions => { :deleted_at => nil },
       :dependent => :destroy
 
     has_many :variants_with_only_master,
       :class_name => 'Spree::Variant',
-      :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL AND #{::Spree::Variant.quoted_table_name}.is_master = ?", true],
+      :conditions => { :is_master => true, :deleted_at => nil },
       :dependent => :destroy
 
     accepts_nested_attributes_for :variants, :allow_destroy => true
