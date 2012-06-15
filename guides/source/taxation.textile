@@ -72,8 +72,6 @@ For reference, this is how Spree currently performs the registration:
   end
 </ruby>
 
-INFO: See the "Calculator Guide":calculators.html for more information on Calculators.
-
 h4. Tax Rates
 
 Tax rates are set up through the admin interface (Configurations | Tax Rates). A tax rate is essentially a percentage amount charged based on the sales price. Tax rates also contain other important information.
