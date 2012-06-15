@@ -121,8 +121,10 @@ module Spree
       record_response(response)
 
       if response.success?
-        self.response_code = response.authorization
-        self.avs_response = response.avs_result['code']
+        unless response.authorization.nil?
+          self.response_code = response.authorization
+          self.avs_response = response.avs_result['code']
+        end
         self.send("#{success_state}!")
       else
         self.send(failure_state)
