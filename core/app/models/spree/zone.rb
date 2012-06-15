@@ -103,6 +103,7 @@ module Spree
     end
 
     private
+
       def remove_defunct_members
         zone_members.each do |zone_member|
           zone_member.destroy if zone_member.zoneable_id.nil? || zone_member.zoneable_type != "Spree::#{kind.capitalize}"
@@ -112,7 +113,7 @@ module Spree
       def remove_previous_default
         return unless default_tax
 
-        Zone.all.each do |zone|
+        self.class.all.each do |zone|
           zone.update_attribute 'default_tax', false unless zone == self
         end
       end
