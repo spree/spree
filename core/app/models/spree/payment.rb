@@ -5,7 +5,7 @@ module Spree
     belongs_to :source, :polymorphic => true, :validate => true
     belongs_to :payment_method, :class_name => "Spree::PaymentMethod"
 
-    has_many :offsets, :class_name => 'Spree::Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
+    has_many :offsets, :class_name => 'Spree::Payment', :foreign_key => :source_id, :conditions => "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
     has_many :log_entries, :as => :source
 
     after_save :create_payment_profile, :if => :profiles_supported?

@@ -2,7 +2,7 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < ActiveRecord::Base
-    belongs_to :promotion, :foreign_key => 'activator_id', :class_name => Spree::Promotion
+    belongs_to :promotion, :foreign_key => :activator_id, :class_name => Spree::Promotion
 
     scope :of_type, lambda {|t| {:conditions => {:type => t}}}
 

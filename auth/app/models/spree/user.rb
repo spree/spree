@@ -6,7 +6,7 @@ module Spree
            :rememberable, :trackable, :validatable, :encryptable, :encryptor => 'authlogic_sha512'
 
     has_many :orders, :class_name => Spree::Order
-    has_and_belongs_to_many :roles, :join_table => 'spree_roles_users', :class_name => Spree::Role
+    has_and_belongs_to_many :roles, :join_table => :spree_roles_users, :class_name => Spree::Role
     belongs_to :ship_address, :class_name => Spree::Address
     belongs_to :bill_address, :class_name => Spree::Address
 

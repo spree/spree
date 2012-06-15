@@ -3,7 +3,7 @@ module Spree
     acts_as_nested_set :dependent => :destroy
 
     belongs_to :taxonomy, :class_name => Spree::Taxonomy
-    has_and_belongs_to_many :products, :join_table => 'spree_products_taxons'
+    has_and_belongs_to_many :products, :join_table => :spree_products_taxons
     before_create :set_permalink
 
     attr_accessible :name, :parent_id, :position, :icon, :description, :permalink, :taxonomy_id

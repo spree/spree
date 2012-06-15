@@ -6,11 +6,11 @@ module Spree
     Activator.event_names << 'spree.checkout.coupon_code_added'
     Activator.event_names << 'spree.content.visited'
 
-    has_many :promotion_rules, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
+    has_many :promotion_rules, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
     alias_method :rules, :promotion_rules
     accepts_nested_attributes_for :promotion_rules
 
-    has_many :promotion_actions, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
+    has_many :promotion_actions, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
     alias_method :actions, :promotion_actions
     accepts_nested_attributes_for :promotion_actions
 
