@@ -32,6 +32,6 @@ Gem::Specification.new do |s|
   s.add_dependency('meta_search', '= 1.0.5')
   s.add_dependency('activemerchant', '= 1.15.0')
   s.add_dependency('will_paginate', '= 3.0.2')
-  s.add_dependency('rails', '>= 3.0.10', '<= 3.0.12')
+  s.add_dependency('rails', '>= 3.0.10', '<= 3.0.14')
   s.add_dependency('jquery-rails', '= 0.2.6')
 end
