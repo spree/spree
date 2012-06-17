@@ -9,12 +9,10 @@ module Spree
     belongs_to :user, :class_name => Spree::User
 
     belongs_to :bill_address, :foreign_key => :bill_address_id, :class_name => Spree::Address
-    alias_method :billing_address, :bill_address
-    alias_method :billing_address=, :bill_address=
+    alias_attribute :billing_address, :bill_address
 
     belongs_to :ship_address, :foreign_key => :ship_address_id, :class_name => Spree::Address
-    alias_method :shipping_address, :ship_address
-    alias_method :shipping_address=, :ship_address=
+    alias_attribute :shipping_address, :ship_address
 
     belongs_to :shipping_method, :class_name => Spree::ShippingMethod
 
