@@ -27,7 +27,7 @@ module Spree
     end
 
     def self.active?
-      self.count(:conditions => { :type => self.to_s, :environment => Rails.env, :active => true }) > 0
+      where(:type => self.to_s, :environment => Rails.env, :active => true).count > 0
     end
 
     def method_type

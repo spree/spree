@@ -86,7 +86,7 @@ module Spree
       def self.generate_token(column)
         loop do
           token = friendly_token
-          break token unless find(:first, :conditions => { column => token })
+          break token unless where(column => token).first
         end
       end
 
