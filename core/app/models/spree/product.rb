@@ -201,14 +201,15 @@ module Spree
     end
 
     def set_property(property_name, property_value)
-      prop = Spree::Property.find_or_initialize_by_name(property_name) do |p|
-        p.presentation = property_name
-        p.save!
-      end
+      ActiveRecord::Base.transaction do
+        property = Property.where(:name => property_name).first_or_initialize
+        property.presentation = property_name
+        property.save!
 
-      prod_prop = Spree::ProductProperty.find_or_initialize_by_product_id_and_property_id(self.id, prop.id)
-      prod_prop.value = property_value
-      prod_prop.save!
+        product_property = ProductProperty.where(:product_id => id, :property_id => property.id).first_or_initialize
+        product_property.value = property_value
+        product_property.save!
+      end
     end
 
     private
