@@ -76,7 +76,7 @@ module Spree
     end
 
     def self.default_tax
-      Zone.where(:default_tax => true).first
+      where(:default_tax => true).first
     end
 
     # Indicates whether the specified zone falls entirely within the zone performing
