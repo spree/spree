@@ -10,7 +10,7 @@ Chapter 1 contains a description of the work that has been completed to address 
 
 h4. Relevant, Meaningful URLs
 
-Several improvements have been made to improve the urls used for products and taxonomies since the release of Spree 0.4.0. The helper method <tt>seo_url(taxon, product)</tt> yields SEO friendly urls such as <a href="http://demo.spreecommerce.com/products/ruby-on-rails-ringer-t-shirt">http://demo.spreecommerce.com/products/ruby-on-rails-ringer-t-shirt</a>, <a href="http://demo.spreecommerce.com/t/brands/ruby/">http://demo.spreecommerce.com/t/brands/ruby/</a>. Rails config/routes.rb is configured to serve the content using these keyword relevant, meaningful URLs.
+Several improvements have been made to improve the urls used for products and taxonomies since the release of Spree 0.4.0. The helper method <tt>seo_url(taxon, product)</tt> yields SEO friendly urls such as <a href="http://demo.spreecommerce.com/products/xm-direct2-interface-adapter">http://demo.spreecommerce.com/products/xm-direct2-interface-adapter</a>, <a href="http://demo.spreecommerce.com/t/categories/headphones/">http://demo.spreecommerce.com/t/categories/headphones</a>. Rails config/routes.rb is configured to serve the content using these keyword relevant, meaningful URLs.
 
 h4. On Page Keyword Targeting
 
@@ -42,7 +42,7 @@ The alt attribute on product images currently pulls data from product titles or 
 
 h4. Known Duplicate Content Issues
 
-In the Spree demo, it is a known issue that <a href="http://demo.spreecommerce.com">http://demo.spreecommerce.com/</a> contains duplicate content to <a href="http://demo.spreecommerce.com/products">http://demo.spreecommerce.com/products</a>. Another source of duplicate content is derived from product navigation via different taxonomy paths. For example, <a href="http://demo.spreecommerce.com/t/brands/ruby-on-rails/p/ruby-on-rails-mug">http://demo.spreecommerce.com/t/brands/ruby-on-rails/p/ruby-on-rails-mug</a> is considered a duplicate of <a href="http://demo.spreecommerce.com/products/ruby-on-rails-mug">http://demo.spreecommerce.com/products/ruby-on-rails-mug</a>. Duplicate content can be a detriment to search engine performance as external links are divided among duplicate content pages. As a result, duplicate content pages may not only not be excluded from the main search engine index, but pages may also rank poorly in comparison to other sites where all external links go to one non-duplicated page.
+In the Spree demo, it is a known issue that <a href="http://demo.spreecommerce.com">http://demo.spreecommerce.com/</a> contains duplicate content to <a href="http://demo.spreecommerce.com/products">http://demo.spreecommerce.com/products</a>. Duplicate content can be a detriment to search engine performance as external links are divided among duplicate content pages. As a result, duplicate content pages may not only not be excluded from the main search engine index, but pages may also rank poorly in comparison to other sites where all external links go to one non-duplicated page.
 
 h4. Integration of Content Management System or Content
 

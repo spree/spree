@@ -64,7 +64,7 @@ We're interested in hearing your ideas for new features but creating feature req
 
 INFO: Feature requests that are accompanied by source code are always welcome.  In this case you should read the next section on "Creating a Pull Request":#creating-a-pull-request.
 
-WARNING: Feature requests without accompanying code will be closed.  We simply cannot respond efficiently to feature requests through our Issue Tracker.  If you want to suggest a feature, please use the "mailing list"::http://groups.google.com/group/spree-user or the "user voice":http://spree.uservoice.com/ forum.
+WARNING: Feature requests without accompanying code will be closed.  We simply cannot respond efficiently to feature requests through our Issue Tracker.  If you want to suggest a feature, please use the "mailing list":http://groups.google.com/group/spree-user or the "user voice":http://spree.uservoice.com/ forum.
 
 h4. How We Prioritize Issues
 

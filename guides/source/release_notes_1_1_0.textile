@@ -128,7 +128,7 @@ h4. Other fixes
 * Added initializer to warn about orphaned preferences. "commit 4f2669":https://github.com/spree/spree/commit/4f2669
 * Address.default will no longer provide a nil value if the default country is deleted. "#1142":https://github.com/spree/spree/issues/1142 + "#997":https://github.com/spree/spree/issues/997
 * Fix undefined_method to_d for PriceSack Shipping. "#1156":https://github.com/spree/spree/issues/1156
-* Fixed rounding calculation bug for VAT. "#1128":https://github.com/spree/spree/issues/1128 + "#1172":https://github.com/spree/spree/1172
+* Fixed rounding calculation bug for VAT. "#1128":https://github.com/spree/spree/issues/1128 + "#1172":https://github.com/spree/spree/issues/1172
 * Allow +:error+ key to be passed to +link_to_delete". "#1169":https://github.com/spree/spree/issues/1169
 * Fix issue where assigning a price such as "$5" (rather than just '5') to a variant caused it to set the price to 0. "#1173":https://github.com/spree/spree/issues/1173
 * Product names longer than 50 characters are now truncated. "#1171":https://github.com/spree/spree/issues/1171

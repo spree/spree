@@ -61,7 +61,7 @@ into your store's ecommerce performance and sales conversion funnel.
 
 You will have to "register your store":http://spreecommerce.com/stores/new with Spree Commerce. Then configure the Analytics Add On to generate your token. The token should be entered on the Admin Overview page.
 
-The original dashboard has been extracted into the "spree_dash gem":https://github.com/spree/spree_dash .
+The original dashboard has been extracted into the "spree_dash gem":https://github.com/spree/spree_simple_dash .
 
 h3. Command line tool
 
@@ -305,13 +305,13 @@ h3. Bug fixes
 * The +Spree::Core::Engine+ is automatically mounted inside your application when you run +rails g spree:install+. "commit ba67b51":https://github.com/spree/spree/commit/ba67b514af41918bf892323c9fd685689c74667a
 * Product +on_hand+ now takes all variants into account. "#772":https://github.com/spree/spree/issues/772
 * The translation for "Listing Products" in admin/products now is more easily translatable into different languages. "commit c0d5cb5":https://github.com/spree/spree/commit/c0d5cb5316715ec8aa886fab5bc0820be616d302
-* Removed POSIX-only system calls, replaced with Ruby calls instead to enable Windows compatibility. "#711":http://github.com/spree/spree/711 and "commit ce00172":https://github.com/spree/spree/commit/ce001721a32dd84523d9504feec074db72ef3efb"
+* Removed POSIX-only system calls, replaced with Ruby calls instead to enable Windows compatibility. "#711":http://github.com/spree/spree/issues/711 and "commit ce00172":https://github.com/spree/spree/commit/ce001721a32dd84523d9504feec074db72ef3efb"
 * Improved +bundle exec rake test_app+ performance. "commit 6a2d367":https://github.com/spree/spree/commit/ce001721a32dd84523d9504feec074db72ef3efb
-* Improved permalink code, removed reliance on the +rd-find_by_param+ gem. "#444":https://github.com/spree/issues/444 and "#847":https://github.com/spree/issues/847
+* Improved permalink code, removed reliance on the +rd-find_by_param+ gem. "#444":https://github.com/spree/spree/issues/444 and "#847":https://github.com/spree/spree/issues/847
 * Master variant is now deleted when a product is deleted. Performance with this action has also been improved. "#801":https://github.com/spree/spree/issues/801
 * An invalid coupon code on the payment screen will now show an error. "#717":https://github.com/spree/spree/issues/717
 * Products are now restocked when an order is canceled, and unstocked when the order is resumed. "#729":https://github.com/spree/spree/issues/729
 * The +ffaker+ gem is now used in favor of the +faker+ gem. "#826":https://github.com/spree/spree/issues/826
-* +Spree::Config.set+ should no longer be used, please use +Spree.config+ with a block: "commit 5590fb3":https://github.com/spree/spree/commit/https://github.com/spree/spree/issues/801
+* +Spree::Config.set+ should no longer be used, please use +Spree.config+ with a block: "commit 5590fb3":https://github.com/spree/spree/commit/5590fb3 "#801":https://github.com/spree/spree/issues/801
 * Fix calculator dropdown bug for creating a shipping method in the admin interface. "#825":https://github.com/spree/spree/issues/825
-* Fix escaping of +order_subtotal+ in view. "#852":https:://github.com/spree/spree/issues/852
+* Fix escaping of +order_subtotal+ in view. "#852":https://github.com/spree/spree/issues/852
