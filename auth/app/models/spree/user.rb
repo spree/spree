@@ -27,19 +27,19 @@ module Spree
 
     # has_role? simply needs to return true or false whether a user has a role or not.
     def has_role?(role_in_question)
-      roles.any? { |role| role.name == role_in_question.to_s }
+      roles.where(:name => role_in_question.to_s).any?
     end
 
     # Creates an anonymous user.  An anonymous user is basically an auto-generated +User+ account that is created for the customer
     # behind the scenes and its completely transparently to the customer.  All +Orders+ must have a +User+ so this is necessary
     # when adding to the "cart" (which is really an order) and before the customer has a chance to provide an email or to register.
     def self.anonymous!
-      token = User.generate_token(:persistence_token)
-      User.create(:email => "#{token}@example.net", :password => token, :password_confirmation => token, :persistence_token => token)
+      token = generate_token(:persistence_token)
+      create(:email => "#{token}@example.net", :password => token, :password_confirmation => token, :persistence_token => token)
     end
 
     def self.admin_created?
-      User.admin.count > 0
+      admin.count > 0
     end
 
     def anonymous?
@@ -52,10 +52,11 @@ module Spree
     end
 
     def last_incomplete_order
-      orders.incomplete.order("created_at desc").last
+      orders.incomplete.order('created_at DESC').last
     end
 
     protected
+
       def password_required?
         !persisted? || password.present? || password_confirmation.present?
       end
@@ -68,7 +69,7 @@ module Spree
 
       def check_admin
         return if self.class.admin_created?
-        admin_role = Role.find_or_create_by_name 'admin'
+        admin_role = Role.where(:name => 'admin').first_or_create
         self.roles << admin_role
       end
 
