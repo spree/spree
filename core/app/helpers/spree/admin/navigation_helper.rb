@@ -22,9 +22,7 @@ module Spree
         css_classes = []
 
         selected = if options[:match_path]
-          # TODO: `request.fullpath` for engines mounted at '/' returns '//'
-          # which seems an issue with Rails routing.- revisit issue #910
-          request.fullpath.gsub('//', '/').starts_with?("#{root_path}admin#{options[:match_path]}")
+          request.fullpath.starts_with?("#{root_path}admin#{options[:match_path]}")
         else
           args.include?(controller.controller_name.to_sym)
         end
