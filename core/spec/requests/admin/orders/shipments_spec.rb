@@ -33,15 +33,11 @@ describe "Shipments" do
     order.shipments.count.should == 1
     
     click_link "Shipments"
-    find('table.index tbody tr:nth-child(2) td:nth-child(1)').text.should == order.shipment.number
-    find('table.index tbody tr:nth-child(2) td:nth-child(5)').text.should == "Pending"
+    find('table.index tr:nth-child(2) td:nth-child(1)').text.should == order.shipment.number
+    find('table.index tr:nth-child(2) td:nth-child(5)').text.should == "Pending"
     
-    within('table.index tbody tr:nth-child(2) td:nth-child(7)') { click_link "Edit" }
+    within('table.index tr:nth-child(2) td:nth-child(7)') { click_link "Edit" }
     page.should have_content("Shipment ##{order.shipment.number}")
-    #save_and_open_page
-    #click_button "Update"
-    #page.should have_content("successfully updated!")
-    
   end
 
 end
