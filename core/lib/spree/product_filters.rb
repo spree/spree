@@ -60,15 +60,20 @@ module Spree
     #
     Spree::Product.add_search_scope :price_range_any do |*opts|
       conds = opts.map {|o| Spree::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
-      Spree::Product.joins(:master).conditions_any(conds)
+      scope = conds.shift
+      conds.each do |new_scope|
+        scope = scope.or(new_scope)
+      end
+      Spree::Product.joins(:master).where(scope)
     end
 
     def ProductFilters.price_filter
-      conds = [ [ I18n.t(:under_price, :price => format_price(10))   , "price             <= 10" ],
-                [ "#{format_price(10)} - #{format_price(15)}"        , "price between 10 and 15" ],
-                [ "#{format_price(15)} - #{format_price(18)}"        , "price between 15 and 18" ],
-                [ "#{format_price(18)} - #{format_price(20)}"        , "price between 18 and 20" ],
-                [ I18n.t(:or_over_price, :price => format_price(20)) , "price             >= 20" ] ]
+      v = Spree::Variant.arel_table
+      conds = [ [ I18n.t(:under_price, :price => format_price(10))   , v[:price].lteq(10)],
+                [ "#{format_price(10)} - #{format_price(15)}"        , v[:price].in(10..15)],
+                [ "#{format_price(15)} - #{format_price(18)}"        , v[:price].in(15..18)],
+                [ "#{format_price(18)} - #{format_price(20)}"        , v[:price].in(18..20)],
+                [ I18n.t(:or_over_price, :price => format_price(20)) , v[:price].gteq(20)]]
       { :name   => I18n.t(:price_range),
         :scope  => :price_range_any,
         :conds  => Hash[*conds.flatten],
@@ -93,12 +98,17 @@ module Spree
     if Spree::Property.table_exists? && @@brand_property = Spree::Property.find_by_name("brand")
       Spree::Product.add_search_scope :brand_any do |*opts|
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
-        Spree::Product.with_property("brand").conditions_any(conds)
+        scope = conds.shift
+        conds.each do |new_scope|
+          scope = scope.or(new_scope)
+        end
+        Spree::Product.with_property("brand").where(scope)
       end
 
       def ProductFilters.brand_filter
         brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
-        conds  = Hash[*brands.map {|b| [b, "#{Spree::ProductProperty.table_name}.value = '#{b}'"]}.flatten]
+        pp = Spree::ProductProperty.arel_table
+        conds  = Hash[*brands.map {|b| [b, pp.value.eq(b)]}.flatten]
         { :name   => "Brands",
           :scope  => :brand_any,
           :conds  => conds,
