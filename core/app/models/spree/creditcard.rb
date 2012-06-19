@@ -12,7 +12,7 @@ module Spree
     validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
 
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
-                    :month, :gateway_customer_profile_id
+                    :month, :gateway_customer_profile_id, :gateway_payment_profile_id
 
     scope :with_payment_profile, where('gateway_customer_profile_id IS NOT NULL')
 
