@@ -25,13 +25,13 @@ describe Spree::Admin::OrdersController do
 
     it 'should grant access to users with an admin role' do
       #user.stub :has_role? => true
-      user.roles = [Spree::Role.find_or_create_by_name('admin')]
+      user.roles = [stub_model(Spree::Role, :name => 'admin')]
       spree_post :index
       response.should render_template :index
     end
 
     it 'should grant access to users with an bar role' do
-      user.roles = [Spree::Role.find_or_create_by_name('bar')]
+      user.roles = [stub_model(Spree::Role, :name => 'bar')]
       Spree::Ability.register_ability(BarAbility)
       spree_post :index
       response.should render_template :index

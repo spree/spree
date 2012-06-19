@@ -27,7 +27,7 @@ module Spree
 
     # has_role? simply needs to return true or false whether a user has a role or not.
     def has_role?(role_in_question)
-      roles.where(:name => role_in_question.to_s).any?
+      roles.any? { |role| role.name == role_in_question.to_s }
     end
 
     # Creates an anonymous user.  An anonymous user is basically an auto-generated +User+ account that is created for the customer
