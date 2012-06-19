@@ -164,12 +164,13 @@ If you want to run a particular line of spec
 
 Travis, the continuous integration service, runs the test suite for each gem one at a time.
 
+    $ alias set_gemfile='export BUNDLE_GEMFILE="`pwd`/Gemfile"'
     $ bundle exec rake test_app
-    $ cd api; bundle install; bundle exec rspec spec
-    $ cd ../auth; bundle install; bundle exec rspec spec
-    $ cd ../core; bundle install; bundle exec rspec spec
-    $ cd ../dash; bundle install; bundle exec rspec spec
-    $ cd ../promo; bundle install; bundle exec rspec spec
+    $ cd api; set_gemfile; bundle install; bundle exec rspec spec
+    $ cd ../auth; set_gemfile; bundle install; bundle exec rspec spec
+    $ cd ../core; set_gemfile; bundle install; bundle exec rspec spec
+    $ cd ../dash; set_gemfile; bundle install; bundle exec rspec spec
+    $ cd ../promo; set_gemfile; bundle install; bundle exec rspec spec
 
 
 Contributing
