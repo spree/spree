@@ -26,14 +26,14 @@ describe Spree::Admin::OrdersController do
     it 'should grant access to users with an admin role' do
       #user.stub :has_role? => true
       user.roles = [Spree::Role.find_or_create_by_name('admin')]
-      post :index
+      spree_post :index
       response.should render_template :index
     end
 
     it 'should grant access to users with an bar role' do
       user.roles = [Spree::Role.find_or_create_by_name('bar')]
       Spree::Ability.register_ability(BarAbility)
-      post :index
+      spree_post :index
       response.should render_template :index
     end
 
@@ -43,13 +43,13 @@ describe Spree::Admin::OrdersController do
       order.stub(:token).and_return nil
       user.roles = [Spree::Role.find_or_create_by_name('bar')]
       Spree::Ability.register_ability(BarAbility)
-      post :update, { :id => 'R123' }
+      spree_post :update, { :id => 'R123' }
       response.should render_template 'spree/shared/unauthorized'
     end
 
     it 'should deny access to users without an admin role' do
       user.stub :has_role? => false
-      post :index
+      spree_post :index
       response.should render_template 'spree/shared/unauthorized'
     end
   end
