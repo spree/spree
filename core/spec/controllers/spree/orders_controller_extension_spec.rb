@@ -23,7 +23,7 @@ describe Spree::OrdersController do
         end
         describe "POST" do
           it "has value success" do
-            put :update, {}, {:order_id => @order.id}
+            spree_put :update, {}, {:order_id => @order.id}
             response.should be_success
             assert (response.body =~ /success!!!/)
           end
@@ -40,7 +40,7 @@ describe Spree::OrdersController do
         end
         describe "POST" do
           it "has value success" do
-            put :update, {}, {:order_id => @order.id}
+            spree_put :update, {}, {:order_id => @order.id}
             response.should be_success
             assert (response.body =~ /success!!!/)
           end
@@ -57,7 +57,7 @@ describe Spree::OrdersController do
         end
         describe "POST" do
           it "has value success" do
-            put :update, {}, {:order_id => @order.id}
+            spree_put :update, {}, {:order_id => @order.id}
             response.should be_redirect
           end
         end
@@ -74,7 +74,7 @@ describe Spree::OrdersController do
         end
         describe "POST" do
           it "has value success" do
-            put :update, {:order => {:email => ''}}, {:order_id => @order.id}
+            spree_put :update, {:order => {:email => ''}}, {:order_id => @order.id}
             response.should be_success
             assert (response.body =~ /failure!!!/)
           end
@@ -91,7 +91,7 @@ describe Spree::OrdersController do
         describe "POST" do
           it "should not effect the wrong controller" do
             Spree::Responder.should_not_receive(:call)
-            put :update, {}, {:order_id => @order.id}
+            spree_put :update, {}, {:order_id => @order.id}
             response.should redirect_to(spree.cart_path)
           end
         end

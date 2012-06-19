@@ -4,7 +4,7 @@ describe Spree::Admin::ImageSettingsController do
 
   context "updating image settings" do
     it "should be able to update paperclip settings" do
-      put :update, { :preferences => {
+      spree_put :update, { :preferences => {
         "attachment_path"        => "foo/bar",
         "attachment_default_url" => "baz/bar"
         }
@@ -15,13 +15,13 @@ describe Spree::Admin::ImageSettingsController do
 
     context "paperclip styles" do
       it "should be able to update the paperclip styles" do
-        put :update, {  "attachment_styles" => { "thumb" => "25x25>" } }
+        spree_put :update, {  "attachment_styles" => { "thumb" => "25x25>" } }
         updated_styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
         updated_styles["thumb"].should == "25x25>"
       end
 
       it "should be able to add a new style" do
-        put :update, { "attachment_styles" => { }, "new_attachment_styles" => { "1" => { "name" => "jumbo", "value" => "2000x2000>" } } }
+        spree_put :update, { "attachment_styles" => { }, "new_attachment_styles" => { "1" => { "name" => "jumbo", "value" => "2000x2000>" } } }
         styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
         styles["jumbo"].should == "2000x2000>"
       end
@@ -29,7 +29,7 @@ describe Spree::Admin::ImageSettingsController do
 
     context "amazon s3" do
       it "should be able to update s3 settings" do
-        put :update, { :preferences => {
+        spree_put :update, { :preferences => {
           "use_s3"        => "1",
           "s3_access_key" => "a_valid_key",
           "s3_secret"     => "a_secret",
@@ -46,13 +46,13 @@ describe Spree::Admin::ImageSettingsController do
         before(:each) { Spree::Config[:use_s3] = true }
 
         it "should be able to update the s3 headers" do
-          put :update, { :preferences => { "use_s3" => "1" }, "s3_headers" => { "Cache-Control" => "max-age=1111" } }
+          spree_put :update, { :preferences => { "use_s3" => "1" }, "s3_headers" => { "Cache-Control" => "max-age=1111" } }
           headers = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
           headers["Cache-Control"].should == "max-age=1111"
         end
 
         it "should be able to add a new header" do
-          put :update, { "s3_headers" => { }, "new_s3_headers" => { "1" => { "name" => "Charset", "value" => "utf-8" } } }
+          spree_put :update, { "s3_headers" => { }, "new_s3_headers" => { "1" => { "name" => "Charset", "value" => "utf-8" } } }
           headers = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
           headers["Charset"].should == "utf-8"
         end
