@@ -9,4 +9,9 @@ describe Spree::ProductsController do
     get :show, :id => product.to_param
     response.status.should == 200
   end
+
+  it "cannot view non-active products" do
+    spree_get :show, :id => product.to_param
+    response.status.should == 404
+  end
 end
