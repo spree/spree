@@ -17,12 +17,12 @@ describe Spree::UserSessionsController do
 
       it 'should associate the order with the newly authenticated user' do
         order.should_receive(:associate_user!).with(user)
-        post :create, {}, { :order_id => 1 }
+        spree_post :create, {}, { :order_id => 1 }
       end
 
       it 'should destroy the session token for guest_user' do
         order.stub(:associate_user!)
-        post :create, {}, { :order_id => 1, :guest_token => 'foo' }
+        spree_post :create, {}, { :order_id => 1, :guest_token => 'foo' }
         session[:guest_token].should be_nil
       end
     end
