@@ -50,12 +50,6 @@ module Spree
       { :conditions => [args].flatten }
     end
 
-    add_search_scope :conditions_any do |*args|
-      args = [args].flatten
-      raise "non-strings in conditions_any" unless args.all? { |s| s.is_a? String }
-      { :conditions => args.map { |c| "(#{c})"}.join(" OR ") }
-    end
-
     add_search_scope :price_between do |low, high|
       joins(:master).where(Variant.table_name => { :price => low..high })
     end

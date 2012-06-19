@@ -61,7 +61,11 @@ module Spree
     Spree::Product.scope :price_range_any,
       lambda {|*opts|
         conds = opts.map {|o| Spree::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
-        Spree::Product.scoped(:joins => :master).conditions_any(conds)
+        scope = conds.shift
+        conds.each do |new_scope|
+          scope = scope.or(new_scope)
+        end
+        Spree::Product.scoped(:joins => :master).where(scope)
       }
 
     def ProductFilters.price_filter
@@ -95,7 +99,11 @@ module Spree
       Spree::Product.scope :brand_any,
         lambda {|*opts|
           conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
-          Spree::Product.with_property("brand").conditions_any(conds)
+          scope = conds.shift
+          conds.each do |new_scope|
+            scope = scope.or(new_scope)
+          end
+          Spree::Product.with_property("brand").where(scope)
         }
 
       def ProductFilters.brand_filter
