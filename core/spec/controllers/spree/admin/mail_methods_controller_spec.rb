@@ -13,19 +13,19 @@ describe Spree::Admin::MailMethodsController do
   context "#create" do
     it "should reinitialize the mail settings" do
       Spree::Core::MailSettings.should_receive :init
-      put :create, {:order_id => "123", :id => "456", :mail_method_parmas => {:environment => "foo"}}
+      spree_put :create, {:order_id => "123", :id => "456", :mail_method_parmas => {:environment => "foo"}}
     end
   end
 
   context "#update" do
     it "should reinitialize the mail settings" do
       Spree::Core::MailSettings.should_receive :init
-      put :update, {:order_id => "123", :id => "456", :mail_method_params => {:environment => "foo"}}
+      spree_put :update, {:order_id => "123", :id => "456", :mail_method_params => {:environment => "foo"}}
     end
   end
 
   it "can trigger testmail without current_user" do
-    post :testmail, :id => create(:mail_method).id
+    spree_post :testmail, :id => create(:mail_method).id
     flash[:error].should_not include("undefined local variable or method `current_user'")
   end
 end

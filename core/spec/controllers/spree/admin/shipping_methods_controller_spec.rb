@@ -7,6 +7,6 @@ describe Spree::Admin::ShippingMethodsController do
     Spree::ShippingMethod.should_receive(:find).and_return(shipping_method = stub_model(Spree::ShippingMethod))
     shipping_method.should_not_receive(:destroy)
     shipping_method.should_receive(:update_attribute)
-    delete :destroy, :id => 1
+    spree_delete :destroy, :id => 1
   end
 end
