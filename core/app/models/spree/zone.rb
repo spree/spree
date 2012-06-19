@@ -14,7 +14,7 @@ module Spree
     attr_accessible :name, :description, :default_tax, :kind, :zone_members, :zone_members_attributes
 
     def kind
-      return nil if members.any? { |member| member.try(:zoneable_type).nil? }
+      return nil if members.empty? || members.any? { |member| member.try(:zoneable_type).nil? }
       members.last.zoneable_type.demodulize.downcase
     end
 
