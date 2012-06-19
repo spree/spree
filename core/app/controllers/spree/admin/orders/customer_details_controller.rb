@@ -20,7 +20,7 @@ module Spree
             if shipping_method
               @order.shipping_method = shipping_method
 
-              if params[:guest_checkout] == 'false' && params[:user_id].present?
+              if params[:user_id].present?
                 @order.user_id = params[:user_id]
                 @order.user true
               end
