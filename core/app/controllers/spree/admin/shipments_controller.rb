@@ -6,8 +6,8 @@ module Spree
       respond_to :html
 
       def index
-        shipments = order.shipments
-        respond_with(shipments)
+        @shipments = order.shipments
+        respond_with(@shipments)
       end
 
       def new
@@ -86,11 +86,11 @@ module Spree
       end
 
       def build_shipment
-        shipment = order.shipments.build
-        shipment.address ||= order.ship_address
-        shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
-        shipment.shipping_method ||= order.shipping_method
-        shipment.attributes = params[:shipment]
+        @shipment = order.shipments.build
+        @shipment.address ||= order.ship_address
+        @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
+        @shipment.shipping_method ||= order.shipping_method
+        @shipment.attributes = params[:shipment]
       end
     end
   end
