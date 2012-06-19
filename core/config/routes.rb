@@ -178,7 +178,6 @@ Spree::Core::Engine.routes.draw do
       end
     end
 
-    resources :shipments
     resources :shipping_methods
     resources :shipping_categories
     resources :tax_rates
