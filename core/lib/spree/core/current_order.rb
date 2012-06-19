@@ -17,7 +17,7 @@ module Spree
         return @current_order if @current_order
         if session[:order_id]
           current_order = Spree::Order.find_by_id(session[:order_id], :include => :adjustments)
-          @current_order = current_order unless current_order.completed?
+          @current_order = current_order unless current_order.try(:completed?)
         end
         if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
           @current_order = Spree::Order.new
