@@ -5,13 +5,13 @@ describe Spree::ProductsController do
 
   it "allows admins to view non-active products" do
     controller.stub :current_user => stub(:has_role? => true)
-    get :show, :id => product.to_param
+    spree_get :show, :id => product.to_param
     response.status.should == 200
   end
 
   it "cannot view non-active products" do
     controller.stub :current_user => stub(:has_role? => false)
-    get :show, :id => product.to_param
+    spree_get :show, :id => product.to_param
     response.status.should == 404
   end
 end

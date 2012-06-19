@@ -10,7 +10,7 @@ describe Spree::UserRegistrationsController do
 
       request.env['devise.mapping'] = Devise.mappings[:user]
 
-      post :create, { :commit=>'Create', :user => { 'password' => new_user.password, 'password_confirmation' => new_user.password, 'email' => new_user.email } }
+      spree_post :create, { :commit=>'Create', :user => { 'password' => new_user.password, 'password_confirmation' => new_user.password, 'email' => new_user.email } }
     end
   end
 
