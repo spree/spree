@@ -39,7 +39,7 @@ describe Spree::Core::Search::Base do
                :search => { "price_range_any" => ["Under $10.00", "$10.00 - $15.00"] }}
     searcher = Spree::Core::Search::Base.new(params)
     searcher.send(:get_base_scope).to_sql.should match /<= 10/
-    searcher.send(:get_base_scope).to_sql.should match /between 10 and 15/
+    searcher.send(:get_base_scope).to_sql.should match /between 10 and 15/i
     searcher.retrieve_products.count.should == 2
   end
 
