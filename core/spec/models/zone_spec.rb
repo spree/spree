@@ -48,6 +48,32 @@ describe Spree::Zone do
     end
   end
 
+  context "#include?" do
+    before do
+      @state = create(:state)
+      @country = @state.country
+      @address = create(:address, :state => @state)
+    end
+    context "when zone is country type" do
+      before do
+        @zone = create(:zone, :name => "country", :zone_members => [])
+        @zone.members.create(:zoneable => @country)
+      end
+      it "should be true" do
+        @zone.include?(@address).should be_true
+      end
+    end
+    context "when zone is state type" do
+      before do
+        @zone = create(:zone, :name => "state", :zone_members => [])
+        @zone.members.create(:zoneable => @state)
+      end
+      it "should be true" do
+        @zone.include?(@address).should be_true
+      end
+    end
+  end
+
   context ".default_tax" do
     context "when there is a default tax zone specified" do
       before { @foo_zone = create(:zone, :name => "whatever", :default_tax => true) }
