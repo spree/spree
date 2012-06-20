@@ -29,7 +29,7 @@ module Spree
         # It'd be nice to have separate classes but combining them with a dash helps out for IE6 which only sees the last class
         content_tag('li', content_tag('span', text), :class => css_classes.join('-'))
       end
-      content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@order.state}")
+      content_tag('ol', raw(items.join("\n")), :class => 'progress-steps steps-amount-%s' % [items.count], :id => "checkout-step-#{@order.state}")
     end
   end
 end
