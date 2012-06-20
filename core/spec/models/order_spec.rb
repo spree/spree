@@ -586,6 +586,16 @@ describe Spree::Order do
     end
   end
 
+  context "#amount" do
+    before do
+      @order = create(:order, :user => user)
+      @order.line_items = [ create(:line_item, :price => 1.0, :quantity => 2), create(:line_item, :price => 1.0, :quantity => 1) ]
+    end
+    it "should return the correct lum sum of items" do
+      @order.amount.should == 3.0
+    end
+  end
+
   context "in the cart state" do
     it "should not validate email address" do
       order.state = "cart"

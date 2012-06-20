@@ -133,7 +133,7 @@ module Spree
 
     # For compatiblity with Calculator::PriceSack
     def amount
-      line_items.map(&:amount).sum
+      line_items.sum(&:amount)
     end
 
     def to_param
