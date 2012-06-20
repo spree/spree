@@ -1,3 +1,5 @@
+require_dependency 'spree/calculator'
+
 module Spree
   class Calculator::FlexiRate < Calculator
     preference :first_item,      :decimal, :default => 0.0
