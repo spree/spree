@@ -158,7 +158,7 @@ module Spree
 
     # Indicates the number of items in the order
     def item_count
-      line_items.map(&:quantity).sum
+      line_items.sum(:quantity)
     end
 
     # Indicates whether there are any backordered InventoryUnits associated with the Order.
