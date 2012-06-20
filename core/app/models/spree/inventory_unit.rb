@@ -81,7 +81,9 @@ module Spree
         variant_units = order.inventory_units.group_by(&:variant_id)
         return unless variant_units.include? variant.id
 
-        variant_units = variant_units[variant.id].sort_by(&:state)
+        variant_units = variant_units[variant.id].reject do |variant_unit|
+          variant_unit.state == 'shipped'
+        end.sort_by(&:state)
 
         quantity.times do
           inventory_unit = variant_units.shift
