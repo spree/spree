@@ -285,7 +285,7 @@ describe "Promotion Adjustments" do
       second_promotion = Spree::Promotion.last
       second_promotion.actions.first.calculator.compute(Spree::Order.last).should == 10.0
 
-      do_checkout()
+      do_checkout
 
       # Mug discount ($5) is not taken into account due to #1526
       # Only "best" discount is taken into account
@@ -563,29 +563,5 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
       within('#actions_container') { click_button "Update" }
     end
-  
-    def add_to_cart product_name
-      visit spree.root_path
-      click_link product_name
-      click_button "Add To Cart"
-    end
-
-    def do_checkout
-      click_link "Checkout"
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-      click_button "Save and Continue"
-    end
-
   end
 end
