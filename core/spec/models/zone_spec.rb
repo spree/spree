@@ -48,6 +48,30 @@ describe Spree::Zone do
     end
   end
 
+  context "#country_list" do
+    context "when zone consists of countries" do
+      before do
+        @zone = create(:zone, :name => "country", :zone_members => [])
+        @country = create(:country)
+        @zone.members.create(:zoneable => @country)
+      end
+      it 'should return a list of countries' do
+        @zone.country_list.should == [@country]
+      end
+    end
+
+    context "when zone consists of states" do
+      before do
+        @zone = create(:zone, :name => "state", :zone_members => [])
+        @state = create(:state)
+        @zone.members.create(:zoneable => @state)
+      end
+      it 'should return a list of countries' do
+        @zone.country_list.should == [@state.country]
+      end
+    end
+  end
+
   context "#include?" do
     before do
       @state = create(:state)

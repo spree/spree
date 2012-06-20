@@ -125,7 +125,7 @@ module Spree
       checkout_zone = Zone.find_by_name(Spree::Config[:checkout_zone])
 
       if checkout_zone && checkout_zone.kind == 'country'
-        countries = checkout_zone.zone_member_list
+        countries = checkout_zone.country_list
       else
         countries = Country.all
       end
