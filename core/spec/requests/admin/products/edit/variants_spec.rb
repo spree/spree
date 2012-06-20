@@ -56,7 +56,7 @@ describe "Product Variants" do
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       within('#sidebar') { click_link "Variants" }
-      within('#new_var_link') { click_link "New Variant" }
+      click_link "New Variant"
       fill_in "variant_sku", :with => "A100"
       click_button "Create"
       page.should have_content("successfully created!")
