@@ -74,7 +74,7 @@
           <%= truncate(item.variant.product.description, :length => 100, :omission => "...") %>
         </td>
         <td data-hook="order_item_price" class="price"><span><%= number_to_currency item.price %></span></td>
-        <td data-hook="order_item_qty"><%= item.quantity %></td>
+        <td data-hook="order_item_quantity"><%= item.quantity %></td>
         <td data-hook="order_item_total" class="total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
       </tr>
     <% end %>
