@@ -9,13 +9,13 @@ describe Spree::ContentController do
     # we are using cvv because the file exists in core/views/content
     controller.should_receive(:fire_event).
                with('spree.content.visited', hash_including(:path => "content/cvv"))
-    get :show, :path => "cvv"
+    spree_get :show, :path => "cvv"
  end
 
   it "fires event for content actions like #cvv" do
     controller.should_receive(:fire_event).
                with('spree.content.visited', hash_including(:path => "content/cvv"))
-    get :cvv
+    spree_get :cvv
   end
 
 end
