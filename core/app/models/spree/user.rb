@@ -5,8 +5,8 @@ module Spree
 
     has_many :orders
 
-    belongs_to :ship_address, :class_name => Spree::Address
-    belongs_to :bill_address, :class_name => Spree::Address
+    belongs_to :ship_address, :class_name => 'Spree::Address'
+    belongs_to :bill_address, :class_name => 'Spree::Address'
 
     scope :registered
 
