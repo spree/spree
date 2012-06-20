@@ -238,6 +238,16 @@ describe Spree::InventoryUnit do
       end
     end
 
+    context "when inventory_units contains sold and shipped" do
+      before { order.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
+                                                mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold') ]) }
+      # Regression test for #1652
+      it "should not destroy shipped" do
+        order.inventory_units[0].should_not_receive(:destroy)
+        order.inventory_units[1].should_receive(:destroy)
+        Spree::InventoryUnit.destroy_units(order, variant, 1)
+      end
+    end
   end
 
   context "return!" do
