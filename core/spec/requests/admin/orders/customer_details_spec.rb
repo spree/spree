@@ -14,6 +14,7 @@ describe "Customer Details" do
     create(:shipping_method, :display_on => "front_end")
     create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
     create(:user, :email => 'foobar@example.com', :ship_address => create(:address), :bill_address => create(:address))
+    create(:country)
 
     visit spree.admin_path
     click_link "Orders"
