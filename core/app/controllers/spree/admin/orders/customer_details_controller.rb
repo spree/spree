@@ -10,8 +10,9 @@ module Spree
         end
 
         def edit
-          @order.build_bill_address(:country_id => Spree::Config[:default_country_id]) if @order.bill_address.nil?
-          @order.build_ship_address(:country_id => Spree::Config[:default_country_id]) if @order.ship_address.nil?
+          country_id = Address.default.country
+          @order.build_bill_address(:country_id => country_id) if @order.bill_address.nil?
+          @order.build_ship_address(:country_id => country_id) if @order.ship_address.nil?
         end
 
         def update
