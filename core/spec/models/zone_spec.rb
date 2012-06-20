@@ -219,4 +219,25 @@ describe Spree::Zone do
     end
   end
 
+  context "#kind" do
+    context "when the zone consists of country zone members" do
+      before do
+        @zone = create(:zone, :name => "country", :zone_members => [])
+        @zone.members.create(:zoneable => create(:country))
+      end
+      it "should return the kind of zone member" do
+        @zone.kind.should == "country"
+      end
+    end
+
+    context "when the zone consists of state zone members" do
+      before do
+        @zone = create(:zone, :name => "state", :zone_members => [])
+        @zone.members.create(:zoneable => create(:state))
+      end
+      it "should return the kind of zone member" do
+        @zone.kind.should == "state"
+      end
+    end
+  end
 end
