@@ -223,9 +223,9 @@ $(document).ready(function(){
   $('.add_fields').click(function() {
     var target = $(this).data("target");
     var new_table_row = $(target + ' tr:visible:last').clone();
+    var new_id = new Date().getTime();
     new_table_row.find("input").each(function () {
       var el = $(this);
-      var new_id = new Date().getTime();
       el.val("");
       el.attr("id", el.attr("id").replace(/\d+/, new_id))
       el.attr("name", el.attr("name").replace(/\d+/, new_id))
