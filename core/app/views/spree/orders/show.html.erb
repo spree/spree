@@ -8,8 +8,6 @@
   <% end %>
   <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
 
-  <br class="clear" />
-
   <p data-hook="links">
     <%= link_to t(:back_to_store), spree.root_path, :class => "button" %>
     <% unless params.has_key? :checkout_complete %>
