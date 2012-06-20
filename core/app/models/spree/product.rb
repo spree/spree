@@ -30,7 +30,7 @@ module Spree
     belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
 
     has_one :master,
-      :class_name => Spree::Variant,
+      :class_name => "Spree::Variant",
       :conditions => { :is_master => true }
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
@@ -44,17 +44,17 @@ module Spree
     after_save :set_master_on_hand_to_zero_when_product_has_variants
 
     has_many :variants,
-      :class_name => Spree::Variant,
+      :class_name => "Spree::Variant",
       :conditions => { :is_master => false, :deleted_at => nil },
       :order => 'position ASC'
 
     has_many :variants_including_master,
-      :class_name => Spree::Variant,
+      :class_name => "Spree::Variant",
       :conditions => { :deleted_at => nil },
       :dependent => :destroy
 
     has_many :variants_with_only_master,
-      :class_name => Spree::Variant,
+      :class_name => "Spree::Variant",
       :conditions => { :is_master => true, :deleted_at => nil },
       :dependent => :destroy
 
