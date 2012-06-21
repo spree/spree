@@ -8,7 +8,7 @@
       <% next if labels.empty? %>
       <div class="navigation" data-hook="navigation">
         <h6 class="filter-title"> <%= filter[:name] %> </h6>
-        <ul class="filter_choices">
+        <ul class="filter-choices">
           <% labels.each do |nm,val| %>
             <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
             <li class="nowrap">
