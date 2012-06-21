@@ -1,0 +1,30 @@
+// This object provides dynamically generated Rails routes in Javascript.
+// Since Rails does not provide url_helpers in js.erb files, we have to use this little neat hack.
+// Found via https://github.com/magiclabs/alchemy_cms
+
+<% self.class.instance_eval { include Spree::Core::Engine.routes.url_helpers } %>
+
+if (typeof(Spree) === 'undefined') {
+  var Spree = {};
+}
+
+(function($) {
+
+  var routes = {};
+  $.extend(Spree, routes);
+
+  Spree.routes = {
+
+    admin_users_path: function(options) {
+      if (typeof(options) === 'undefined') options = {format: 'html'};
+      return '<%= admin_users_path %>' + '.' + options.format;
+    },
+
+    admin_products_path: function(options) {
+      if (typeof(options) === 'undefined') options = {format: 'html'};
+      return '<%= admin_products_path %>' + '.' + options.format;
+    }
+
+  }
+
+})(jQuery);
