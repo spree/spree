@@ -14,12 +14,6 @@ if (typeof(Spree) === 'undefined') {
   $.extend(Spree, routes);
 
   Spree.routes = {
-
-    admin_users_path: function(options) {
-      if (typeof(options) === 'undefined') options = {format: 'html'};
-      return '<%= admin_users_path %>' + '.' + options.format;
-    },
-
     admin_products_path: function(options) {
       if (typeof(options) === 'undefined') options = {format: 'html'};
       return '<%= admin_products_path %>' + '.' + options.format;
