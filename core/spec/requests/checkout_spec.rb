@@ -12,6 +12,7 @@ describe "Checkout" do
         @product.on_hand = 1
         @product.save
         create(:zone)
+        create(:country)
       end
 
       it "should warn the user about out of stock items" do
