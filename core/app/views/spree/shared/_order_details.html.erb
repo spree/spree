@@ -2,14 +2,14 @@
   
   <div class="columns alpha four">
     <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
+    <div class="address shipping-address">
       <%= order.ship_address %>
     </div>
   </div>
 
   <div class="columns alpha four">
     <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
+    <div class="address billing-address">
       <%= order.bill_address %>
     </div>
   </div>
@@ -40,8 +40,6 @@
 
 </div>
 
-<hr />
-
 <table class="index columns alpha omega sixteen" data-hook="order_details">
   <col width="15%" valign="middle" halign="center">
   <col width="70%" valign="middle">
@@ -51,7 +49,7 @@
 
   <thead id="line-items" data-hook>
     <tr data-hook="order_details_line_items_headers">
-      <th colspan="2"><%= t(:item) %></th>
+      <th class="item" colspan="2"><%= t(:item) %></th>
       <th class="price"><%= t(:price) %></th>
       <th class="qty"><%= t(:qty) %></th>
       <th class="total"><span><%= t(:total) %></span></th>
@@ -61,21 +59,21 @@
   <tbody id="line-items" data-hook>
     <% @order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
-        <td data-hook="order_item_image">
+        <td data-hook="order_item_image" class="order-item-image">
           <% if item.variant.images.length == 0 %>
             <%= link_to small_image(item.variant.product), item.variant.product %>
           <% else %>
             <%= link_to image_tag(item.variant.images.first.attachment.url(:small)), item.variant.product %>
           <% end %>
         </td>
-        <td data-hook="order_item_description">
+        <td data-hook="order_item_description" class="order-item-description">
           <h4><%= item.variant.product.name %></h4>
+          <%= variant_options(item.variant) unless item.variant .option_values.empty? %>
           <%= truncate(item.variant.product.description, :length => 100, :omission => "...") %>
-          <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %>
         </td>
-        <td data-hook="order_item_price" class="price"><span><%= number_to_currency item.price %></span></td>
-        <td data-hook="order_item_qty"><%= item.quantity %></td>
-        <td data-hook="order_item_total" class="total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
+        <td data-hook="order_item_price" class="order-item-price"><span><%= number_to_currency item.price %></span></td>
+        <td data-hook="order_item_quantity" class="order-item-quantity"><%= item.quantity %></td>
+        <td data-hook="order_item_total" class="order-item-total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
       </tr>
     <% end %>
   </tbody>

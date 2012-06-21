@@ -2,20 +2,20 @@
 
 <table data-hook="order_summary">
   <tbody>
-    <tr data-hook="item_total">
+    <tr data-hook="item_total" class="item-total">
       <td><strong><%= t(:item_total) %>:</strong></td>
       <td><strong><%= number_to_currency order.item_total %></strong></td>
     </tr>
     <tbody id="summary-order-charges" data-hook>
       <% order.adjustments.eligible.each do |adjustment| %>
       <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
-        <tr>
+        <tr class="summary-order-charges">
           <td><%= adjustment.label %>: </td>
           <td><%= number_to_currency adjustment.amount %></td>
         </tr>
       <% end %>
     </tbody>
-    <tr data-hook="order_total">
+    <tr data-hook="order_total" class="order-total">
       <td><strong><%= t(:order_total) %>:</strong></td>
       <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
     </tr>
