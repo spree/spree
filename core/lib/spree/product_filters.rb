@@ -106,14 +106,14 @@ module Spree
       end
 
       def ProductFilters.brand_filter
-        brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
+        brands = Spree::ProductProperty.where(:property_id => @@brand_property).pluck(:value).uniq
         pp = Spree::ProductProperty.arel_table
         conds = Hash[*brands.map { |b| [b, pp[:value].eq(b)] }.flatten]
         {
           :name   => "Brands",
           :scope  => :brand_any,
           :conds  => conds,
-          :labels => (brands.sort).map { |k| [k,k] }
+          :labels => (brands.sort).map { |k| [k, k] }
         }
       end
     end
