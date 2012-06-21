@@ -143,17 +143,17 @@ module Spree
       end
 
       def ProductFilters.selective_brand_filter(taxon = nil)
-        if taxon.nil?
-          taxon = Spree::Taxonomy.first.root
-        end
-        scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
-                                       scoped(:joins      => {:product => :taxons},
-                                              :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
-        brands = scope.map {|p| p.value}.uniq
+        taxon = Spree::Taxonomy.first.root if taxon.nil?
+        scope = Spree::ProductProperty.where(:property_id => @@brand_property).
+                                       joins(:product => :taxons).
+                                       where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants).
+                                       scoped
 
-        { :name   => "Applicable Brands",
+        brands = scope.pluck(:value).uniq
+        {
+          :name   => "Applicable Brands",
           :scope  => :selective_brand_any,
-          :labels => brands.sort.map {|k| [k,k]}
+          :labels => brands.sort.map { |k| [k,k] }
         }
       end
     end
