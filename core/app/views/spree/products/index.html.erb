@@ -13,7 +13,7 @@
 
   <div data-hook="search_results">
     <% if @products.empty? %>
-      <h6 class="search-results-title"><%= t(:no_products_found) %></h6>
+      <h1 class="search-results-title"><%= t(:no_products_found) %></h1>
     <% else %>
       <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
     <% end %>
