@@ -70,7 +70,6 @@ module Spree
 end
 
 require 'spree/core/ext/active_record'
-require 'spree/core/ext/hash'
 
 require 'spree/core/delegate_belongs_to'
 
