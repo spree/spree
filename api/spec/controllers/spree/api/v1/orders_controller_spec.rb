@@ -64,6 +64,7 @@ module Spree
 
     context "working with an order" do
       before do
+        Order.any_instance.stub :user => current_api_user
         create(:payment_method)
         order.next # Switch from cart to address
         order.ship_address.should be_nil
@@ -144,6 +145,12 @@ module Spree
             response.status.should == 422
             json_response["errors"].should include("Invalid shipping method specified.")
           end
+        end
+
+        it "can empty an order" do
+          api_put :empty, :id => order.to_param
+          response.status.should == 200
+          order.reload.line_items.should be_empty
         end
       end
     end
