@@ -8,8 +8,6 @@ describe "Product Taxons" do
       taxon = create(:taxon, :name => 'Brands')
       taxon2 = create(:taxon, :taxonomy => taxon.taxonomy, :parent_id => taxon.id, :name => 'Apache')
       create(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
-      create(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
-      create(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
       Spree::Product.update_all :count_on_hand => 10
 
       visit spree.admin_path
