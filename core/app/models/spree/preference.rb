@@ -35,7 +35,6 @@ class Spree::Preference < ActiveRecord::Base
   # to preferences definition types. This code should eventually be removed.
   # it is called during the load_preferences of the Preferences::Store
   def self.convert_old_value_types(preference)
-    p preference.value_type.downcase
     classes =  [Symbol.to_s, Fixnum.to_s, Bignum.to_s,
                 Float.to_s, TrueClass.to_s, FalseClass.to_s]
     return unless classes.map(&:downcase).include? preference.value_type.downcase
