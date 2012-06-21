@@ -5,8 +5,8 @@ module Spree
     end
 
     def self.add_search_scope(name, &block)
-      define_singleton_method name.intern, &block
-      search_scopes << name.intern
+      self.singleton_class.send(:define_method, name.to_sym, &block)
+      search_scopes << name.to_sym
     end
 
     def self.simple_scopes
