@@ -20,10 +20,6 @@ class Spree::BaseController < ApplicationController
     return unauthorized
   end
 
-  def access_forbidden
-    render :text => 'Access Forbidden', :layout => true, :status => 401
-  end
-
   # can be used in views as well as controllers.
   # e.g. <% title = 'This is a custom title for this view' %>
   attr_writer :title
