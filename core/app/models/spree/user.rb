@@ -3,8 +3,6 @@ module Spree
   class User < ActiveRecord::Base
     attr_accessible :email, :password, :password_confirmation
 
-    has_many :orders
-
     belongs_to :ship_address, :class_name => 'Spree::Address'
     belongs_to :bill_address, :class_name => 'Spree::Address'
 
