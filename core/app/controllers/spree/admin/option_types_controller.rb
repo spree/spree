@@ -37,6 +37,17 @@ module Spree
         end
       end
 
+      def update_values_positions
+        params[:positions].each do |id, index|
+          OptionValue.where(:id => id).update_all(:position => index)
+        end
+
+        respond_to do |format|
+          format.html { redirect_to admin_product_variants_url(params[:product_id]) }
+          format.js  { render :text => 'Ok' }
+        end
+      end
+
       # AJAX method for selecting an existing option type and associating with the current product
       def select
         @product.option_types << OptionType.find(params[:id])
