@@ -3,9 +3,15 @@
   paginated_products ||= products
 %>
 <% if products.empty? %>
-  <%= t(:no_products_found) %>
+  <p class="empty">
+    <%= t(:no_products_found) %>
+  </p>
 <% elsif params.key?(:keywords) %>
-  <h6 class="search-results-title"><%= t(:search_results, :keywords => h(params[:keywords])) %></h6>
+  <% if taxon %>
+    <h2 class="search-results-title active-taxon"><%= t(:search_results, :keywords => h(params[:keywords])) %></h2>
+  <% else %>
+    <h1 class="search-results-title"><%= t(:search_results, :keywords => h(params[:keywords])) %></h1>
+  <% end %>
 <% end %>
 
 <% if products.any? %>
