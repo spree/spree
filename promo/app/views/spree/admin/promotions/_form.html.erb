@@ -1,4 +1,17 @@
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @promotion } %>
+<% if @promotion && (@promotion.errors.any? || @promotion.rules.any? { |r| r.errors.any? }) %>
+  <% error_group = [@promotion.errors, @promotion.rules.map(&:errors)].flatten %>
+  <div id="errorExplanation" class="errorExplanation" data-hook>
+    <h2><%= t(:errors_prohibited_this_record_from_being_saved, :count => error_group.count) %>:</h2>
+    <p><%= t(:there_were_problems_with_the_following_fields) %>:</p>
+     <ul>
+     <% error_group.each do |errors| %>
+       <% errors.full_messages.each do |msg| %>
+         <li><%= msg %></li>
+       <% end %>
+      <% end %>
+     </ul>
+  </div>
+<% end %>
 <fieldset id="general_fields">
   <legend><%= t(:general) %></legend>
   <%= f.field_container :name do %>
