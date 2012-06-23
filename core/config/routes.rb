@@ -135,7 +135,6 @@ Spree::Core::Engine.routes.draw do
         put :fire
         get :fire
         post :resend
-        get :history
       end
 
       resource :customer, :controller => "orders/customer_details"

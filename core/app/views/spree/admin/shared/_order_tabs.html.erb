@@ -50,9 +50,6 @@
       <li<%== ' class="active"' if current == 'Return Authorizations' %>>
          <%= link_to t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
       </li>
-      <li<%== ' class="active"' if current == 'History' %>>
-         <%= link_to t(:history), history_admin_order_url(@order) %>
-      </li>
     <% end %>
   </ul>
 

@@ -4,7 +4,7 @@ module Spree
       require 'spree/core/gateway_error'
       before_filter :initialize_txn_partials
       before_filter :initialize_order_events
-      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend, :history, :user]
+      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend, :user]
 
       respond_to :html
 
