@@ -53,13 +53,15 @@ module Spree
         end
       end
 
-      def load_order
-        @order = Order.find_by_number! params[:order_id]
-      end
+      private
 
-      def load_line_item
-        @line_item = @order.line_items.find params[:id]
-      end
+        def load_order
+          @order = Order.find_by_number!(params[:order_id])
+        end
+
+        def load_line_item
+          @line_item = @order.line_items.find(params[:id])
+        end
     end
   end
 end
