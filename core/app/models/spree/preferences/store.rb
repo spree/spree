@@ -40,7 +40,7 @@ module Spree::Preferences
     def persist(cache_key, value, type)
       return unless should_persist?
 
-      preference = Spree::Preference.find_or_initialize_by_key(cache_key)
+      preference = Spree::Preference.where(:key => cache_key).first_or_initialize
       preference.value = value
       preference.value_type = type
       preference.save
