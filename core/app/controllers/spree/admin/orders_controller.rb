@@ -96,20 +96,20 @@ module Spree
 
       private
 
-      def load_order
-        @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-        @order
-      end
+        def load_order
+          @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+          @order
+        end
 
-      # Allows extensions to add new forms of payment to provide their own display of transactions
-      def initialize_txn_partials
-        @txn_partials = []
-      end
+        # Allows extensions to add new forms of payment to provide their own display of transactions
+        def initialize_txn_partials
+          @txn_partials = []
+        end
 
-      # Used for extensions which need to provide their own custom event links on the order details view.
-      def initialize_order_events
-        @order_events = %w{cancel resume}
-      end
+        # Used for extensions which need to provide their own custom event links on the order details view.
+        def initialize_order_events
+          @order_events = %w{cancel resume}
+        end
 
     end
   end
