@@ -98,7 +98,6 @@ module Spree
 
         def load_order
           @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-          @order
         end
 
         # Allows extensions to add new forms of payment to provide their own display of transactions
