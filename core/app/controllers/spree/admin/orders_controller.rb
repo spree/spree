@@ -71,7 +71,6 @@ module Spree
         end
       end
 
-
       def fire
         # TODO - possible security check here but right now any admin can before any transition (and the state machine
         # itself will make sure transitions are not applied in the wrong state)
@@ -97,7 +96,7 @@ module Spree
       private
 
         def load_order
-          @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
+          @order = Order.find_by_number!(params[:id], :include => :adjustments) if params[:id]
         end
 
         # Allows extensions to add new forms of payment to provide their own display of transactions

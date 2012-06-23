@@ -87,7 +87,7 @@ module Spree
       end
 
       def load_order
-        @order ||= Order.find_by_number! params[:order_id]
+        @order = Order.find_by_number!(params[:order_id])
       end
 
       def load_payment
