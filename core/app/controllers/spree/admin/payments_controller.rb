@@ -91,7 +91,7 @@ module Spree
       end
 
       def load_payment
-        @payment ||= Payment.find params[:id]
+        @payment = Payment.find(params[:id])
       end
 
     end
