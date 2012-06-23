@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class LineItemsController < Spree::Admin::BaseController
-      layout nil, :only => [:create, :destroy, :new, :update]
+      layout nil, :only => [:create, :destroy, :update]
 
       before_filter :load_order
       before_filter :load_line_item, :only => [:destroy, :update]
@@ -33,12 +33,6 @@ module Spree
           respond_with(@line_item) do |format|
             format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order } }
           end
-        end
-      end
-
-      def new
-        respond_with do |format|
-          format.html { render :action => :new }
         end
       end
 
