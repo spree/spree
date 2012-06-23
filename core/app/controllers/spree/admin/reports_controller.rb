@@ -1,11 +1,10 @@
 module Spree
   module Admin
     class ReportsController < Spree::Admin::BaseController
-      before_filter :load_data
       respond_to :html
 
       AVAILABLE_REPORTS = {
-        :sales_total => {:name => I18n.t(:sales_total), :description => I18n.t(:sales_total_description)}
+        :sales_total => { :name => I18n.t(:sales_total), :description => I18n.t(:sales_total_description) }
       }
 
       def index
@@ -41,11 +40,6 @@ module Spree
         @sales_total = @orders.sum(:total)
 
         respond_with
-      end
-
-      private
-      def load_data
-
       end
 
     end
