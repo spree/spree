@@ -24,15 +24,9 @@ module Spree
       end
 
       def destroy
-        if @line_item.destroy
-          @order.reload
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order } }
-          end
-        else
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order } }
-          end
+        @line_item.destroy
+        respond_with(@line_item) do |format|
+          format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
         end
       end
 
