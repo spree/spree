@@ -15,7 +15,7 @@ Spree::Core::Engine.config.to_prepare do
       end
 
       def last_incomplete_spree_order
-        spree_orders.incomplete.order("created_at desc").last
+        spree_orders.incomplete.order('created_at DESC').last
       end
     end
   end
