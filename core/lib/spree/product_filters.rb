@@ -8,7 +8,7 @@ module Spree
   #   2) Add it to the config load path, or require it in an initializer, e.g...
   #
   #      # config/initializers/spree.rb
-  #      require 'product_filters'
+  #      require 'spree/product_filters'
   #
 
   # set up some basic filters for use with products
@@ -109,8 +109,7 @@ module Spree
         brands = Spree::ProductProperty.where(:property_id => brand_property).pluck(:value).uniq
         pp = Spree::ProductProperty.arel_table
         conds = Hash[*brands.map { |b| [b, pp[:value].eq(b)] }.flatten]
-        {
-          :name   => "Brands",
+        { :name   => "Brands",
           :scope  => :brand_any,
           :conds  => conds,
           :labels => (brands.sort).map { |k| [k, k] }
