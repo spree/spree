@@ -127,6 +127,8 @@ INFO: Please be sure to read the section on "calculators":adjustments.html#calcu
 
 Spree will only allow an order to have one promotion adjustment active at a time. Each time the order is updated, e.g. when adding to the card or updating quantities, the eligibility of all the promotion created adjustments is re-checked and only the most valuable promotion adjustment that is still eligible will be counted.
 
+In a similar vein, you can only have one active promotion for a product as well.
+
 Any other adjustments are preserved but have their *eligible* attribute set to +false+ so they are not displayed or counted in any totals. This allows a previously de-activated adjustment to become active again if it becomes eligible or its value changes.
 
 
