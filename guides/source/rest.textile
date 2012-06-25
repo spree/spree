@@ -508,3 +508,13 @@ PUT /api/orders/R1234567?shipping_method_id=1
 </plain>
 
 Upon a successful request, the order will transition to being in the "payment" state.
+
+h5. Emptying an order cart
+
+To empty an order's cart, make this request:
+
+<plain>
+PUT /api/orders/:number/empty
+</plain>
+
+All line items will be removed from the cart and the order's information will be updated. Inventory that was previously depleted by this order will be repleted.
