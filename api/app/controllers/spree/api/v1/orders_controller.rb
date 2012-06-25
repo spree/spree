@@ -51,6 +51,7 @@ module Spree
         end
 
         def cancel
+          authorize! :read, order
           order.cancel!
           render :show
         end
