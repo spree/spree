@@ -3,6 +3,7 @@ module Spree
     module V1
       class OrdersController < Spree::Api::V1::BaseController
         before_filter :map_nested_attributes, :only => [:create, :update]
+        before_filter :authorize_read!, :except => [:index, :search, :create]
 
         def index
           # should probably look at turning this into a CanCan step
@@ -11,7 +12,6 @@ module Spree
         end
 
         def show
-          authorize! :read, order
         end
 
         def search
@@ -51,13 +51,11 @@ module Spree
         end
 
         def cancel
-          authorize! :read, order
           order.cancel!
           render :show
         end
 
         def empty
-          authorize! :read, order
           order.line_items.destroy_all
           order.update!
           render :text => nil, :status => 200
@@ -79,6 +77,10 @@ module Spree
           else
             render :could_not_transition, :status => 422
           end
+        end
+
+        def authorize_read!
+          authorize! :read, order
         end
       end
     end

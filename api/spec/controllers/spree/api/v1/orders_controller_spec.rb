@@ -41,6 +41,16 @@ module Spree
       assert_unauthorized!
     end
 
+    it "cannot add address information to an order that doesn't belong to them" do
+      api_put :address, :id => order.to_param
+      assert_unauthorized!
+    end
+
+    it "cannot change delivery information on an order that doesn't belong to them" do
+      api_put :delivery, :id => order.to_param
+      assert_unauthorized!
+    end
+
     it "can create an order" do
       variant = create(:variant)
       api_post :create, :order => { :line_items => [{ :variant_id => variant.to_param, :quantity => 5 }] }
