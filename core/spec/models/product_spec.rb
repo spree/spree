@@ -161,12 +161,12 @@ describe Spree::Product do
       product.property('the_prop').should == 'value1'
 
       product.set_property('the_prop', 'value2')
-      product.property('the_prop').should == 'value2'      
+      product.property('the_prop').should == 'value2'
     end
 
     it "should not create duplicate properties when set_property is called" do
       product = FactoryGirl.create :product
-      
+
       lambda {
         product.set_property('the_prop', 'value2')
         product.save
