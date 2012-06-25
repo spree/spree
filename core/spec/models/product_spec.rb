@@ -153,21 +153,6 @@ describe Spree::Product do
     end
   end
 
-  context "scopes" do
-    context ".group_by_products_id.count" do
-      let(:product) { create(:product) }
-      it 'produces a properly formed ordered-hash key' do
-        expected_key = (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL') ?
-          Spree::Product.column_names.map{|col_name| product.send(col_name)} :
-          product.id
-        count_key = Spree::Product.group_by_products_id.count.keys.first
-        [expected_key, count_key].each{|val| val.map!{|e| e.is_a?(Time) ? e.strftime("%Y-%m-%d %H:%M:%S") : e} if val.respond_to?(:map!)}
-        count_key.should == expected_key
-      end
-    end
-
-  end
-
   context "properties" do
     it "should properly assign properties" do
       product = FactoryGirl.create :product
