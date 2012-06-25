@@ -94,8 +94,7 @@ module Spree
     #   the (uniquely named) field "p_brand.value". There's also a test for brand info
     #   being blank: note that this relies on with_property doing a left outer join
     #   rather than an inner join.
-
-    if Spree::Property.table_exists? && @@brand_property = Spree::Property.find_by_name("brand")
+    if Spree::Property.table_exists?
       Spree::Product.add_search_scope :brand_any do |*opts|
         conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject {|c| c.nil?}
         scope = conds.shift
@@ -106,7 +105,8 @@ module Spree
       end
 
       def ProductFilters.brand_filter
-        brands = Spree::ProductProperty.where(:property_id => @@brand_property).map(&:value).compact.uniq
+        brand_property = Spree::Property.find_by_name("brand")
+        brands = Spree::ProductProperty.where(:property_id => brand_property).map(&:value).compact.uniq
         pp = Spree::ProductProperty.arel_table
         conds  = Hash[*brands.map {|b| [b, pp[:value].eq(b)]}.flatten]
         { :name   => "Brands",
@@ -136,7 +136,7 @@ module Spree
     #
     #   The brand-finding code can be simplified if a few more named scopes were added to
     #   the product properties model.
-    if Spree::Property.table_exists? && @@brand_property
+    if Spree::Property.table_exists?
       Spree::Product.add_search_scope :selective_brand_any do |*opts|
         Spree::Product.brand_any(*opts)
       end
@@ -145,7 +145,8 @@ module Spree
         if taxon.nil?
           taxon = Spree::Taxonomy.first.root
         end
-        scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", @@brand_property]).
+        brand_property = Spree::Property.find_by_name("brand")
+        scope = Spree::ProductProperty.scoped(:conditions => ["property_id = ?", brand_property]).
                                        scoped(:joins      => {:product => :taxons},
                                               :conditions => ["#{Spree::Taxon.table_name}.id in (?)", [taxon] + taxon.descendants])
         brands = scope.map {|p| p.value}.uniq
