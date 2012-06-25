@@ -453,10 +453,10 @@ h5. Adding address information to an order
 To add address information to an order, make this request with the correct parameters:
 
 <plain>
-PUT /api/orders/R1234567/address
+PUT /api/orders/:number/address
 </plain>
 
-This endpoint requires you to pass through both shipping address and billing address information at the same time. This would be done like this:
+This endpoint requires you to pass through both shipping address and billing address information at the same time. With an order number of R1234567, it would be done like this:
 
 <plain>
 PUT /api/orders/R1234567/address?shipping_address[firstname]...
