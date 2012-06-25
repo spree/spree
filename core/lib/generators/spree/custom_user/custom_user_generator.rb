@@ -22,7 +22,7 @@ module Spree
     end
 
     def generate
-      migration_template 'migration.rb.tt', "db/migrate/add_spree_auth_fields_to_#{table_name}_table.rb"
+      migration_template 'migration.rb.tt', "db/migrate/add_spree_fields_to_custom_user_table.rb"
       template 'authentication_helpers.rb.tt', "lib/spree/authentication_helpers.rb"
 
       file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
