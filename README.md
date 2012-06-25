@@ -14,7 +14,6 @@ in a single set of [online documentation](http://spreecommerce.com/documentation
 automatically require all of the necessary gem dependencies which are:
 
 * spree_api
-* spree_auth
 * spree_cmd
 * spree_core
 * spree_dash
@@ -23,7 +22,7 @@ automatically require all of the necessary gem dependencies which are:
 
 All of the gems are designed to work together to provide a fully functional e-commerce platform.  It is also possible,
 however, to use only the pieces you are interested in.  So for example, you could use just the barebones spree\_core gem
-and perhaps combine it with your own custom authorization scheme instead of using spree_auth.
+and perhaps combine it with your own custom promotion scheme instead of using spree_promo.
 
 [![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
 
@@ -112,7 +111,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
         bundle exec rake sandbox
 
-6. Start the server
+4. Start the server
 
         cd sandbox
         rails server
@@ -129,6 +128,19 @@ You can recompile your assets as follows:
 If you want to remove precompiled assets (recommended before you commit to Git and push your changes) use the following rake task:
 
     $ bundle exec rake assets:clean
+
+Use Dedicated Spree Devise Authentication
+-------------
+Add the following to your Gemfile
+    $ gem "spree_auth_devise", :git => "git://github.com/spree/spree_auth_devise"
+    
+Then run bundle install. Authentication will then work exactly as it did in previous versions of Spree.
+
+If you're installing this in a new Spree 1.2+ application, you'll need to install and run the migrations with
+
+    $ bundle exec rake spree_auth:install:migrations
+    $ bundle exec rake db:migrate
+and then, run bundle exec rake spree_auth:admin:create in order to set up the admin user for the application.
 
 
 
@@ -167,7 +179,6 @@ Travis, the continuous integration service, runs the test suite for each gem one
     $ alias set_gemfile='export BUNDLE_GEMFILE="`pwd`/Gemfile"'
     $ bundle exec rake test_app
     $ cd api; set_gemfile; bundle install; bundle exec rspec spec
-    $ cd ../auth; set_gemfile; bundle install; bundle exec rspec spec
     $ cd ../core; set_gemfile; bundle install; bundle exec rspec spec
     $ cd ../dash; set_gemfile; bundle install; bundle exec rspec spec
     $ cd ../promo; set_gemfile; bundle install; bundle exec rspec spec
