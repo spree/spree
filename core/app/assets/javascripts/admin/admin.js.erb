@@ -123,7 +123,7 @@ $.fn.product_autocomplete = function(){
   return this.each(function() {
     $(this).autocomplete({
       source: function(request, response) {
-        $.get(Spree.routes.admin_products_path({format: 'json'}) + "?q=" + $('#add_product_name').val() + "&authenticity_token=" + encodeURIComponent($('meta[name=csrf-token]').attr("content")), function(data) {
+        $.get(ajax_root_prefix() + "admin/products.json?q=" + $('#add_product_name').val() + "&authenticity_token=" + encodeURIComponent($('meta[name=csrf-token]').attr("content")), function(data) {
           result = prep_product_autocomplete_data(data)
           response(result);
         });
