@@ -68,7 +68,7 @@ h4. Installing an Extension or Theme
 
 Since extensions/themes are created as engines in Rails, using them is as simple as working with standard plugin gems.  A standard Rails application running Spree will have a +Gemfile+.  This is a special file which is used by "bundler":http://gembundler.com to manage the gem dependencies for your application.
 
-WARNING: The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions and then the required theme(s) at the very end of +Gemfile+.
+WARNING: The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions and then the required theme(s) at the very end of +Gemfile+.  This is to ensure the proper classes are defined for extensions, and also so Deface Overrides are loaded in the proper order.
 
 WARNING: Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
 
