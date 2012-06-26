@@ -2,7 +2,7 @@
 <%= csrf_meta_tags %>
 
 <% if @order.cart? %>
-  <div id="add-line-item" data-hook>
+  <div id="customer-search" data-hook>
     <fieldset>
       <legend><%= t(:customer_search) %></legend>
       <%= label_tag :customer_search, t(:enter_at_least_five_letters) %>
