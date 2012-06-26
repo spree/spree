@@ -178,19 +178,6 @@ $.fn.userPicker = function(){
   $(this).objectPicker(ajax_urls.user_search_basic_json);
 }
 
-// Possible defunct
-add_fields = function(target, association, content) {
-  var new_id = new Date().getTime();
-  var regexp = new RegExp("new_" + association, "g");
-  $(target).append(content.replace(regexp, new_id));
-}
-
-$('a.remove_fields').on('click', function() {
-  $(this).prev("input[type=hidden]").val("1");
-  $(this).closest(".fields").hide();
-  return false;
-});
-
 $(".observe_field").on('change', function() {
   target = $(this).attr("data-update");
   ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
