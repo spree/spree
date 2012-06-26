@@ -413,10 +413,6 @@ module Spree
       ShippingMethod.all_available(self, display_on)
     end
 
-    def available_payment_methods(display_on = nil)
-      PaymentMethod.all(display_on)
-    end
-
     def rate_hash
       @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
         next unless cost = ship_method.calculator.compute(self)
