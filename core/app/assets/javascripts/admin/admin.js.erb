@@ -174,9 +174,6 @@ $.fn.objectPicker = function(url){
 $.fn.productPicker = function(){
   $(this).objectPicker(Spree.routes.product_search_basic);
 }
-$.fn.userPicker = function(){
-  $(this).objectPicker(Spree.routes.user_search);
-}
 
 $(".observe_field").on('change', function() {
   target = $(this).attr("data-update");
