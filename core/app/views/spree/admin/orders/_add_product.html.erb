@@ -12,8 +12,11 @@
     </div>
     <div style="float: left; width: 15%; padding-top: 17px;" data-hook="add_button">
       <%= link_to text_for_button_link(t(:add), :icon => 'add'),
-            admin_order_line_items_url(@order),
-            {:id => 'add_line_item_to_order', :class => 'button', 'data-update' => 'order-form-wrapper'} %>
+                  admin_order_line_items_url(@order),
+                  :method => :post,
+                  :id => 'add_line_item_to_order',
+                  :class => 'button',
+                  'data-update' => 'order-form-wrapper' %>
     </div>
 
   </fieldset>
