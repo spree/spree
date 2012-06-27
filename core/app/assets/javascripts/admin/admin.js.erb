@@ -76,6 +76,7 @@ $(".observe_field").on('change', function() {
   });
 });
 
+// Defined as a function to be re-used in admin/products/new.js.erb
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
     dateFormat: "<%= ::I18n.t(:format, :scope => 'spree.date_picker', :default => 'yy/mm/dd') %>",
