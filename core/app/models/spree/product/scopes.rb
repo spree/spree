@@ -124,7 +124,7 @@ module Spree
       end
 
       conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-      joins(:variants_including_master => :option_values).where(conditions)
+      select("DISTINCT spree_products.id").joins(:variants_including_master => :option_values).where(conditions)
     end
 
     # Finds all products which have either:
@@ -203,7 +203,7 @@ module Spree
     end
 
     add_search_scope :taxons_name_eq do |name|
-      joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      select("DISTINCT spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
