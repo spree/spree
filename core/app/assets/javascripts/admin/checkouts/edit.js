@@ -22,7 +22,7 @@ $(document).ready(function(){
 
     $('#order_ship_address_attributes_firstname').val("");
     $('#order_ship_address_attributes_lastname').val("");
-    $('#order_bill_address_attributes_company').val("");
+    $('#order_ship_address_attributes_company').val("");
     $('#order_ship_address_attributes_address1').val("");
     $('#order_ship_address_attributes_address2').val("");
     $('#order_ship_address_attributes_city').val("");
