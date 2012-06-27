@@ -1,0 +1,116 @@
+// Product autocompletion
+image_html = function(item){
+  return "<img src='" + item['images'][0]["mini_url"] + "'/>";
+}
+
+format_product_autocomplete = function(item){
+  var html = "";
+
+  var product = item.data['product'];
+
+  if(item.data['variant']==undefined){
+    if(product['images'].length!=0){
+      html = image_html(product);
+    }
+
+    html += "<div><h4>" + product['name'] + "</h4>";
+    if (product['master']) {
+      html += "<span><strong><%= ::I18n.t(:sku) %>: </strong>" + product['master']['sku'] + "</span>";
+    }
+    html += "<span><strong><%= ::I18n.t(:on_hand) %>: </strong>" + product['count_on_hand'] + "</span></div>";
+  }else{
+    // variant
+    var variant = item.data['variant'];
+    var name = item.data.product['name'];
+
+    if(variant['images'].length!=0){
+      html = image_html(variant);
+    }else{
+      if(product['images'].length!=0){
+        html = image_html(product);
+      }
+    }
+
+    name += " - " + $.map(variant['option_values'], function(option_value){
+      return option_value["option_type"]["presentation"] + ": " + option_value['presentation'];
+    }).join(", ")
+
+    html += "<div><h4>" + name + "</h4>";
+    html += "<span><strong><%= ::I18n.t(:sku) %>: </strong>" + variant['sku'] + "</span>";
+    html += "<span><strong><%= ::I18n.t(:on_hand) %>: </strong>" + variant['count_on_hand'] + "</span></div>";
+  }
+
+  return html
+}
+
+prep_product_autocomplete_data = function(data){
+  return $.map(eval(data), function(row) {
+
+    var product = row['product'];
+
+    if(product['variants'].length>0 && ['expand_variants']){
+      //variants
+      return $.map(product['variants'], function(variant){
+
+        var name = product['name'];
+        name += " - " + $.map(variant['option_values'], function(option_value){
+          return option_value["option_type"]["presentation"] + ": " + option_value['presentation'];
+        }).join(", ");
+
+        return {
+            data: {product: product, variant: variant},
+            value: name,
+            result: name
+        }
+      });
+    }else{
+      return {
+          data: {product: product},
+          value: product['name'],
+          result: product['name']
+      }
+    }
+  });
+}
+
+$.fn.product_autocomplete = function(){
+  return this.each(function() {
+    $(this).autocomplete({
+      source: function(request, response) {
+        $.get(Spree.routes.product_search + '?' + jQuery.param({ q: $('#add_product_name').val(), authenticity_token: encodeURIComponent($('meta[name=csrf-token]').attr("content"))}), function(data) {
+          result = prep_product_autocomplete_data(data)
+          response(result);
+        });
+      },
+      minLength: 4,
+      focus: function(event, ui) {
+        $('#add_product_name').val(ui.item.label);
+        return false;
+      },
+      select: function(event, ui) {
+        $('#add_product_name').val(ui.item.label);
+        product = ui.item.data;
+        if (product['variant'] == undefined) {
+          // product
+          $('#add_variant_id').val(product['product']['master']['id']);
+        } else {
+          // variant
+          $('#add_variant_id').val(product['variant']['id']);
+        }
+        return false;
+      }
+    }).data("autocomplete")._renderItem = function(ul, item) {
+      $(ul).addClass('ac_results');
+      html = format_product_autocomplete(item);
+      return $("<li></li>")
+              .data("item.autocomplete", item)
+              .append("<a>" + html + "</a>")
+              .appendTo(ul);
+    }
+
+    $(this).data("autocomplete")._resizeMenu = function() {
+      var ul = this.menu.element;
+      ul.outerWidth(this.element.outerWidth());
+    }
+  });
+}
