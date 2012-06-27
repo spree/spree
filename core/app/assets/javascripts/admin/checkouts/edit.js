@@ -1,4 +1,16 @@
 $(document).ready(function(){
+  var show_billing = function(show) {
+    if(show) {
+      $('#shipping').show();
+      $('#shipping input').prop("disabled", false);
+      $('#shipping select').prop("disabled", false);
+    } else {
+      $('#shipping').hide();
+      $('#shipping input').prop("disabled", true);
+      $('#shipping select').prop("disabled", true);
+    }
+  }
+
   $('input#order_use_billing').click(function() {
     show_billing(!$(this).is(':checked'));
   });
@@ -16,19 +28,6 @@ $(document).ready(function(){
       $('#order_ship_address_attributes' + field).val("");
     })
   });
-
-  var show_billing = function(show) {
-    if(show) {
-      $('#shipping').show();
-      $('#shipping input').prop("disabled", false);
-      $('#shipping select').prop("disabled", false);
-    } else {
-      $('#shipping').hide();
-      $('#shipping input').prop("disabled", true);
-      $('#shipping select').prop("disabled", true);
-    }
-  }
-
 });
 
 
