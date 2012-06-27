@@ -90,6 +90,12 @@ module Spree
 
     after_initialize :ensure_master
 
+    # patch per https://github.com/schof/spree/commit/b5df2ef4a3fd9bc2295ff845cb122267982878cf
+    def initialize
+      super
+      self.master ||= Variant.new
+    end
+
     def ensure_master
       return unless new_record?
       self.master ||= Variant.new
