@@ -92,6 +92,8 @@ handle_date_picker_fields = function(){
 }
 
 $(document).ready(function(){
+  handle_date_picker_fields();
+
   $('.add_fields').click(function() {
     var target = $(this).data("target");
     var new_table_row = $(target + ' tr:visible:last').clone();
@@ -134,8 +136,6 @@ $(document).ready(function(){
   });
 
   $('.tokeninput.products').productPicker();
-
-  handle_date_picker_fields();
 
   $(".select_properties_from_prototype").on("click", function(){
     $("#busy_indicator").show();
