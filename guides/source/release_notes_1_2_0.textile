@@ -16,4 +16,4 @@ Please be noted that the underlying logics remain intact.
 
 h4. Spree::Creditcard renamed to Spree::CreditCard
 
-All occurences of Creditcard word are changed to CreditCard.
+All occurences of Creditcard are changed to CreditCard to better follow Rails naming conventions.
