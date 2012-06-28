@@ -104,6 +104,9 @@ module Spree
       line_items.count > 0
     end
 
+    # This method should be overriden to be false if some of your orders have items
+    # that are "undeliverable", i.e. there is no shipping address. This is for things
+    # such as online-only goods, and the like.
     def deliverable?
       true
     end
