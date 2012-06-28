@@ -13,7 +13,7 @@ h3. How Spree i18n works
 
 Spree uses the standard Rails approach to internationalization so we suggest take some time to review the "official Rails i18n guide":http://guides.rubyonrails.org/i18n.html and the "rails-i18n.org wiki":http://rails-i18n.org/wiki to help you get started.
 
-h4. The spree-i18n project
+h4. The spree_i18n project
 
 Spree now stores all of the translation information in a separate Github project known as "spree_i18n":http://github.com/spree/spree_i18n.  This is a stand alone project with a large number of volunteer committers who maintain the locale files.  This is basically the same approach
 followed by the Rails project which keeps their localizations in "rails-i18n":http://github.com/svenfuchs/i18n.
