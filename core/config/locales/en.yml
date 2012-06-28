@@ -15,6 +15,7 @@ en:
     listing: Listing
     new: New
     update: Update
+    cancel: Cancel
   active: "Active"
   activate: "Activate"
   activerecord:
