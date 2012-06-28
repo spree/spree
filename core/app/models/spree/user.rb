@@ -1,19 +1,22 @@
 # Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth_devise)
 module Spree
-  if Spree.user_class 
+  class User < ActiveRecord::Base
+  end
+
+  if Spree.user_class.to_s != "Spree::User"
     class User < Spree.user_class
     end
   else
-    class User < ActiveRecord::Base
-      attr_accessible :email, :password, :password_confirmation
-      scope :registered
+    class User
+     attr_accessible :email, :password, :password_confirmation
+     scope :registered
 
-      def anonymous?
-        false
-      end
+     def anonymous?
+       false
+     end
 
-      attr_accessor :password
-      attr_accessor :password_confirmation
+     attr_accessor :password
+     attr_accessor :password_confirmation
     end
   end
 
