@@ -4,7 +4,7 @@
 <p class="field" data-hook="card_number">
   <%= label_tag nil, t(:card_number) %><br />
   <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
-  <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:id => 'card_number', :class => 'required', :size => 19, :maxlength => 19) %>
+  <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:id => 'card_number', :class => 'required', :size => 19, :maxlength => 19, :autocomplete => "off") %>
   <span class="required">*</span>
   &nbsp;
   <span id="card_type" style="display:none;">
