@@ -43,10 +43,37 @@ Spree::Order.class_eval do
 
   end
 
+  def steps
+    steps = []
+    steps << "address" if needs_address?
+    steps << "delivery" if needs_delivery?
+    steps << "payment" if needs_payment?
+    steps << "confirm" if needs_confirmation?
+    steps << "complete"
+    steps
+  end
+
+  # Override this method if some of your orders do not
+  # need either a billing or a shipping address.
+  def needs_address?
+    true
+  end
+
   # This method should be overriden to be false if some of your orders have items
   # that are all "undeliverable", i.e. there is no need for a shipping address
   # This is for things such as online-only goods, and the like.
   def needs_delivery?
+    true
+  end
+
+  # Override this method if your orders do not need to be paid for.
+  def needs_payment?
+    true
+  end
+
+  # Override this method if you do not wish for orders to be confirmed
+  # before order is completed.
+  def needs_confirmation?
     true
   end
 end
