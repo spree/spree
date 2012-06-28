@@ -30,22 +30,20 @@ module Spree
         %Q{require 'spree/authentication_helpers'\n}
       end
 
-      send(:create_file, 'config/initializers/spree_custom_user.rb') do
+      send(:append_file, 'app/models/spree/user.rb') do
         %Q{
-unless Spree.user_class == Spree::User
-  module Spree
-    class User < Spree.user_class
-      belongs_to :ship_address, :class_name => 'Spree::Address'
-      belongs_to :bill_address, :class_name => 'Spree::Address'
+module Spree
+  class User < Spree.user_class
+    belongs_to :ship_address, :class_name => 'Spree::Address'
+    belongs_to :bill_address, :class_name => 'Spree::Address'
 
-      # Creates an anonymous user
-      def self.anonymous!
-        create
-      end
+    # Creates an anonymous user
+    def self.anonymous!
+      create
+    end
 
-      def has_spree_role?(role)
-        true
-      end
+    def has_spree_role?(role)
+      true
     end
   end
 end
