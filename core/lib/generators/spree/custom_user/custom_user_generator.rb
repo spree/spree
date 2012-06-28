@@ -27,7 +27,26 @@ module Spree
 
       file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
       send(file_action, 'config/initializers/spree.rb') do
-        %Q{require 'spree/authentication_helpers'\n}
+        %Q{
+require 'spree/authentication_helpers'
+unless Spree.user_class == Spree::User
+  module Spree
+    class User < Spree.user_class
+      belongs_to :ship_address, :class_name => 'Spree::Address'
+      belongs_to :bill_address, :class_name => 'Spree::Address'
+
+      # Creates an anonymous user
+      def self.anonymous!
+        create
+      end
+
+      def has_spree_role?(role)
+        true
+      end
+    end
+  end
+end
+}
       end
     end
 
