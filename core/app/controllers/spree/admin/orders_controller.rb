@@ -14,6 +14,12 @@ module Spree
         @show_only_completed = params[:q][:completed_at_not_null].present?
         params[:q][:s] ||= @show_only_completed ? 'completed_at desc' : 'created_at desc'
 
+        # As date params are deleted if @show_only_completed, store
+        # the original date so we can restore them into the params
+        # after the search
+        created_at_gt = params[:q][:created_at_gt]
+        created_at_lt = params[:q][:created_at_lt]
+
         if !params[:q][:created_at_gt].blank?
           params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
         end
@@ -29,6 +35,11 @@ module Spree
 
         @search = Order.ransack(params[:q])
         @orders = @search.result.includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
+
+        # Restore dates
+        params[:q][:created_at_gt] = created_at_gt
+        params[:q][:created_at_lt] = created_at_lt
+
         respond_with(@orders)
       end
 
