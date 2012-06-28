@@ -173,20 +173,27 @@ module Spree
       update_payment_state
 
       # give each of the shipments a chance to update themselves
-      shipments.each { |shipment| shipment.update!(self) }#(&:update!)
-      update_shipment_state
+      if deliverable?
+        shipments.each { |shipment| shipment.update!(self) }#(&:update!)
+        update_shipment_state
+      end
       update_adjustments
       # update totals a second time in case updated adjustments have an effect on the total
       update_totals
 
-      update_attributes_without_callbacks({
+      new_attributes = {
         :payment_state => payment_state,
-        :shipment_state => shipment_state,
         :item_total => item_total,
         :adjustment_total => adjustment_total,
         :payment_total => payment_total,
         :total => total
-      })
+      }
+
+      if deliverable?
+        new_attributes.merge!(:shipment_state => shipment_state)
+      end
+
+      update_attributes_without_callbacks(attributes)
 
       #ensure checkout payment always matches order total
       if payment and payment.checkout? and payment.amount != total
@@ -537,6 +544,7 @@ module Spree
       end
 
       def has_available_shipment
+        return unless deliverable?
         return unless :address == state_name.to_sym
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
