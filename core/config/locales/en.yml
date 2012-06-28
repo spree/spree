@@ -462,6 +462,7 @@ en:
   images: Images
   images_for: "Images for"
   image_settings: "Image Settings"
+  image_settings_description: "Image Settings Description"
   image_settings_updated: "Image Settings successfully updated."
   image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails to do this."
   in_progress: "In Progress"
