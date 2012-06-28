@@ -130,19 +130,19 @@ If you want to remove precompiled assets (recommended before you commit to Git a
     $ bundle exec rake assets:clean
 
 Use Dedicated Spree Devise Authentication
--------------
+-----------------------------------------
 Add the following to your Gemfile
-    $ gem "spree_auth_devise", :git => "git://github.com/spree/spree_auth_devise"
+
+    $ gem 'spree_auth_devise', :git => 'git://github.com/spree/spree_auth_devise'
     
-Then run bundle install. Authentication will then work exactly as it did in previous versions of Spree.
+Then run `bundle install`. Authentication will then work exactly as it did in previous versions of Spree.
 
 If you're installing this in a new Spree 1.2+ application, you'll need to install and run the migrations with
 
     $ bundle exec rake spree_auth:install:migrations
     $ bundle exec rake db:migrate
-and then, run bundle exec rake spree_auth:admin:create in order to set up the admin user for the application.
 
-
+and then run `bundle exec rake spree_auth:admin:create` in order to set up the admin user for the application.
 
 Running Tests
 -------------
