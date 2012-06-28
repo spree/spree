@@ -27,8 +27,11 @@ module Spree
 
       file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
       send(file_action, 'config/initializers/spree.rb') do
+        %Q{require 'spree/authentication_helpers'\n}
+      end
+
+      send(:create_file, 'config/initializers/spree_custom_user.rb') do
         %Q{
-require 'spree/authentication_helpers'
 unless Spree.user_class == Spree::User
   module Spree
     class User < Spree.user_class
