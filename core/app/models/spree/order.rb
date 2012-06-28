@@ -111,7 +111,7 @@ module Spree
     end
 
     def self.by_customer(customer)
-      joins(:user).where("#{Spree::User.table_name}.email" => customer)
+      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
     end
 
     def self.by_state(state)
@@ -400,7 +400,7 @@ module Spree
         :previous_state => 'cart',
         :next_state     => 'complete',
         :name           => 'order' ,
-        :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
+        :user_id        => (Spree.user_class.respond_to?(:current) && Spree.user_class.current.try(:id)) || self.user_id
       }, :without_protection => true)
     end
 
@@ -509,7 +509,7 @@ module Spree
             :previous_state => old_shipment_state,
             :next_state     => self.shipment_state,
             :name           => 'shipment',
-            :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
+            :user_id        => (Spree.user_class.respond_to?(:current) && Spree.user_class.current && Spree.user_class.current.id) || self.user_id
           }, :without_protection => true)
         end
       end
@@ -539,7 +539,7 @@ module Spree
             :previous_state => old_payment_state,
             :next_state     => self.payment_state,
             :name           => 'payment',
-            :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
+            :user_id        => (Spree.user_class.respond_to?(:current) && Spree.user_class.current && Spree.user_class.current.id) || self.user_id
           }, :without_protection => true)
         end
       end
