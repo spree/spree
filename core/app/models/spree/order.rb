@@ -102,6 +102,14 @@ module Spree
 
     end
 
+    def self.user_class
+      if Spree.user_class
+        constantize(Spree.user_class.to_s)
+      else
+        Spree::User
+      end
+    end
+
     def self.by_number(number)
       where(:number => number)
     end
@@ -111,7 +119,7 @@ module Spree
     end
 
     def self.by_customer(customer)
-      joins(:user).where("#{Spree::User.table_name}.email" => customer)
+      joins(:user).where("#{self.user_class.table_name}.email" => customer)
     end
 
     def self.by_state(state)
