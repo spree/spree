@@ -16,7 +16,7 @@ The Spree checkout process has been designed for maximum flexibility.  Its been 
 
 h3. Default Checkout Steps
 
-The Spree checkout process consists of the following steps (With the exception of the Registration step, each of these steps corresponds to a state of the +Order+ object):
+The Spree checkout process consists of the following steps (With the exception of the Registration step, each of these steps corresponds to a state of the +Spree::Order+ object):
 
 * Registration (Optional - can be changed through configuration setting)
 * Address Information
@@ -30,7 +30,7 @@ h4. Registration
 
 Prior to beginning the checkout process, the customer will be prompted to create a new account or to login to their existing account. By default, there is also a "guest checkout" option which allows users to specify only their email address if they do not wish to create an account.
 
-Technically, the registration step is not an actual state in the +Order+ state machine.  The spree_auth gem, adds the +check_registration+ before filter to the all actions of +CheckoutController+ (except for obvious reasons the +registration+ and +update_registration+ actions), which redirects to a registration page unless one of the following is true:
+Technically, the registration step is not an actual state in the +Spree::Order+ state machine.  The spree_auth gem, adds the +check_registration+ before filter to the all actions of +Spree::CheckoutController+ (except for obvious reasons the +registration+ and +update_registration+ actions), which redirects to a registration page unless one of the following is true:
 * +registration_step+ preference is not true
 * user is already logged in
 * the current order has an email address associated with it
@@ -78,7 +78,7 @@ INFO: The advantage of using a credit card profile is that you can ask for confi
 
 NOTE: Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a credit card "profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
 
-NOTE: If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the +Order+ is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.
+NOTE: If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the order is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.
 
 
 h4. Confirmation
@@ -94,16 +94,16 @@ h4. Checkout Routes
 Three custom routes in spree_core handle all of the routing for a checkout:
 
 <ruby>
-   match '/checkout/update/:state' => 'checkout#update', :as => :update_checkout
-   match '/checkout/:state' => 'checkout#edit', :as => :checkout_state
-   match '/checkout' => 'checkout#edit', :state => 'address', :as => :checkout
+  put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
+  get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
+  get '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
 </ruby>
 
-The '/checkout' route maps to the +edit+ action of the +CheckoutController+ and provides the default state of 'address'.  The '/checkout/:state' route also maps to the +edit+ action of +CheckoutController+, however the state is supplied in the url.  The '/checkout/update/:state' route maps to the +CheckoutController#update+ action
+The '/checkout' route maps to the +edit+ action of the +Spree::CheckoutController+ and provides the default state of 'address'.  The '/checkout/:state' route also maps to the +edit+ action of +Spree::CheckoutController+, however the state is supplied in the url.  The '/checkout/update/:state' route maps to the +Spree::CheckoutController#update+ action
 
-h4. CheckoutController
+h4. Spree::CheckoutController
 
-The +CheckoutController+ drives the state of an +Order+ object during checkout. Since there is no "checkout" model, the +CheckoutController+ is not a typical RESTful controller. The spree_core and spree_auth gems expose a few different actions for the +CheckoutController+.
+The +Spree::CheckoutController+ drives the state of an order during checkout. Since there is no "checkout" model, the +Spree::CheckoutController+ is not a typical RESTful controller. The spree_core and spree_auth gems expose a few different actions for the +Spree::CheckoutController+.
 
 The +edit+ action renders the checkout/edit.html.erb template. The +update+ action performs the following:
 
@@ -112,11 +112,11 @@ The +edit+ action renders the checkout/edit.html.erb template. The +update+ acti
 * Executes callbacks based on the new state after successfully transitioning.
 * Redirects to the next checkout step if the +current_order.state+ is anything other than +complete+, else redirect to the +order_path+ for +current_order+
 
-INFO: For security reasons, the +CheckoutController+ will not update the +Order+ once the checkout process is complete.  It is therefore impossible for an order to be tampered with (ex. changing the quantity) after checkout.
+INFO: For security reasons, the +Spree::CheckoutController+ will not update the order once the checkout process is complete.  It is therefore impossible for an order to be tampered with (ex. changing the quantity) after checkout.
 
 h5. Filters
 
-The +spree_core+ and +spree_auth+ gems define several +before_filters+ for the +CheckoutController+:
+The +spree_core+ and the default authentication gem (+spree_auth_devise+) gems define several +before_filters+ for the +Spree::CheckoutController+:
 
 |_<.Name|_.Gem|_.Description|
 |+load_order+|+spree_core+| Assigns the +@order+ instance variable and set the +@order.state+ to the +params[:state]+ value. This filter also runs the "before" callbacks for +@order.state+.|
@@ -125,11 +125,11 @@ The +spree_core+ and +spree_auth+ gems define several +before_filters+ for the +
 
 h4. The Order Model and State Machine
 
- The +Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Order+ model as well as in several other places (such as +Shipment+ and +InventoryUnit+.)
+ The +Spree::Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Spree::Order+ model as well as in several other places (such as +Spree::Shipment+ and +Spree::InventoryUnit+.)
 
-An +Order+ object has an initial state of 'cart'.  From there any number of events transition the +Order+ to different states.  Spree does not have a separate model or database table for the shopping cart.  We reached this decision when taking a REST approach to modeling our resources.  What the user considers a "shopping cart" is actually an in-progress +Order+.  An order is considered in-progress, or incomplete when its completed_at attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
+An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart.  We reached this decision when taking a REST approach to modeling our resources.  What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
 
-The default state machine for the +Order+ model is defined in +order.rb+ of spree_core as follows:
+The default state machine for the +Spree::Order+ model is defined in +app/models/spree/order.rb+ of spree_core as follows:
 
 <ruby>
 state_machine :initial => 'cart', :use_transactions => false do
@@ -199,7 +199,7 @@ This callback would prevent transitioning to the +delivery+ step if +valid_zip_c
 
 h5. Customizing the View for a Particular Step
 
-Each of the default checkout steps has its own partial defined in the spree_core.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  Its also possible the default partial in question defines a usable theme hook, in which case you could add your functionality via +hooks.rb+.
+Each of the default checkout steps has its own partial defined in the spree_core's +app/views/spree/checkout+ directory.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  Its also possible the default partial in question defines a usable theme hook, in which case you could add your functionality by using "Deface":https://github.com/railsdog/deface.html
 
 [TODO - Add link to hook theming writeup once complete]
 
@@ -207,73 +207,78 @@ INFO: See also the brief discussion in "checkout partials":#checkout-partials fo
 
 h4. Adding or Removing Steps
 
-Spree allows you to easily add or remove checkout steps.  We will outline the basic instructions for doing so here.  If you require more information, please read the detailed overview of "checkout architecture":#checkout-architecture.  Spree comes with a predefined series of checkout steps.  To make changes to this default flow you will need to alter the state machine for +Order+.  State machines are tricky to modify - the recommended approach is to simply define an entirely new state machine as shown in the following two examples:
+Spree allows you to easily add or remove checkout steps.  We will outline the basic instructions for doing so here.  If you require more information, please read the detailed overview of "checkout architecture":#checkout-architecture.  Spree comes with a predefined series of checkout steps.  To make changes to this default flow you will need to alter the state machine for +Spree::Order+.  State machines are tricky to modify - the recommended approach is to simply define an entirely new state machine as shown in the following two examples:
 
 h5. Removing a checkout step
 
 Here we are removing the address step from the checkout workflow:
 
 <ruby>
-module SpreeCustomExtension
-  class Engine < Rails::Engine
-    def self.activate
-      Order.class_eval do
+module Spree
+  module CustomExtension
+    class Engine < Rails::Engine
+      def self.activate
+        Spree::Order.class_eval do
 
-        # customize the checkout state machine
-        Order.state_machines[:state] = StateMachine::Machine.new(Order, :initial => 'cart') do
-          after_transition :to => 'complete', :do => :complete_order
-          before_transition :to => 'complete', :do => :process_payment
-          event :next do
-            transition :from => 'cart', :to => 'delivery'
-            transition :from => 'delivery', :to => 'payment'
-            transition :from => 'payment', :to => 'confirm'
-            transition :from => 'confirm', :to => 'complete'
+          # customize the checkout state machine
+          Spree::Order.state_machines.clear
+          Spree::Order.state_machines[:state] = StateMachine::Machine.new(Spree::Order, :initial => 'cart') do
+            after_transition :to => 'complete', :do => :complete_order
+            before_transition :to => 'complete', :do => :process_payment
+            event :next do
+              transition :from => 'cart', :to => 'delivery'
+              transition :from => 'delivery', :to => 'payment'
+              transition :from => 'payment', :to => 'confirm'
+              transition :from => 'confirm', :to => 'complete'
+            end
+
+             #
+             # YOU MUST ALSO DEFINE OTHER EVENTS, TRANSITIONS AND CALLBACKS
+             #
+
           end
 
-           #
-           # YOU MUST ALSO DEFINE OTHER EVENTS, TRANSITIONS AND CALLBACKS
-           #
-
         end
-
       end
     end
   end
 end
 </ruby>
 
-INFO: This completely overwrites the default +Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
+INFO: This completely overwrites the default +Spree::Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Spree::Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
 
 h5. Registering new checkout steps
 
 You can also easily modify the state machine in your extension in order to add a new checkout step.  For instance, maybe you want to ask your user to select a calling plan if they are purchasing a cell phone:
 
 <ruby>
-module SpreeCustomExtension
-  class Engine < Rails::Engine
-    def self.activate
-      Order.class_eval do
+module Spree
+  module CustomExtension
+    class Engine < Rails::Engine
+      def self.activate
+        Spree::Order.class_eval do
 
-        Order.state_machines[:state] = StateMachine::Machine.new(Order, :initial => 'cart') do
+          Spree::Order.state_machines[:state] = StateMachine::Machine.new(Spree::Order, :initial => 'cart') do
 
-          after_transition :to => 'complete', :do => :complete_order
-          before_transition :to => 'complete', :do => :process_payment
+            after_transition :to => 'complete', :do => :complete_order
+            before_transition :to => 'complete', :do => :process_payment
 
-          event :next do
-            transition :from => 'cart', :to => 'address'
-            transition :from => 'address', :to => 'delivery'
-            transition :from => 'delivery', :to => 'calling_plan'
-            transition :from => 'calling_plan', :to => 'payment'
-            transition :from => 'payment', :to => 'confirm'
-            transition :from => 'confirm', :to => 'complete'
+            event :next do
+              transition :from => 'cart', :to => 'address'
+              transition :from => 'address', :to => 'delivery'
+              transition :from => 'delivery', :to => 'calling_plan'
+              transition :from => 'calling_plan', :to => 'payment'
+              transition :from => 'payment', :to => 'confirm'
+              transition :from => 'confirm', :to => 'complete'
+            end
+
+             #
+             # YOU MUST ALSO DEFINE OTHER EVENTS, TRANSITIONS AND CALLBACKS
+             #
+
           end
 
-           #
-           # YOU MUST ALSO DEFINE OTHER EVENTS, TRANSITIONS AND CALLBACKS
-           #
-
         end
-
       end
     end
   end
@@ -282,7 +287,7 @@ end
 
 INFO: You also need a custom +_calling_plan.html.erb+ partial and a migration to create any custom db fields required for the new step.
 
-INFO: This completely overwrites the default +Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
+INFO: This completely overwrites the default +Spree::Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Spree::Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
 
 h4. The Checkout "Breadcrumb"
 
