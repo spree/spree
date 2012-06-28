@@ -42,4 +42,11 @@ Spree::Order.class_eval do
     after_transition :to => 'canceled', :do => :after_cancel
 
   end
+
+  # This method should be overriden to be false if some of your orders have items
+  # that are all "undeliverable", i.e. there is no need for a shipping address
+  # This is for things such as online-only goods, and the like.
+  def needs_delivery?
+    true
+  end
 end

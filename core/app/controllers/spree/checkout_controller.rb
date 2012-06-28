@@ -94,7 +94,7 @@ module Spree
 
       def before_address
         @order.bill_address ||= Address.default
-        if @order.deliverable?
+        if @order.needs_delivery?
           @order.ship_address ||= Address.default
         end
       end

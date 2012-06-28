@@ -104,13 +104,6 @@ module Spree
       line_items.count > 0
     end
 
-    # This method should be overriden to be false if some of your orders have items
-    # that are "undeliverable", i.e. there is no shipping address. This is for things
-    # such as online-only goods, and the like.
-    def deliverable?
-      true
-    end
-
     # Is this a free order in which case the payment step should be skipped
     def payment_required?
       total.to_f > 0.0
@@ -176,7 +169,7 @@ module Spree
       update_payment_state
 
       # give each of the shipments a chance to update themselves
-      if deliverable?
+      if needs_delivery?
         shipments.each { |shipment| shipment.update!(self) }#(&:update!)
         update_shipment_state
       end
@@ -192,7 +185,7 @@ module Spree
         :total => total
       }
 
-      if deliverable?
+      if needs_delivery?
         new_attributes.merge!(:shipment_state => shipment_state)
       end
 
@@ -547,7 +540,7 @@ module Spree
       end
 
       def has_available_shipment
-        return unless deliverable?
+        return unless needs_delivery?
         return unless :address == state_name.to_sym
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?

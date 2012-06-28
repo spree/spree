@@ -86,7 +86,7 @@
   <% end %>
 </fieldset>
 </div>
-<% if @order.deliverable? %>
+<% if @order.needs_delivery? %>
   <div class="columns omega six" data-hook="shipping_fieldset_wrapper">
   <fieldset id="shipping" data-hook>
     <%= form.fields_for :ship_address do |ship_form| %>
