@@ -1,2 +1,21 @@
 Spree.user_class = "<%= class_name %>"
 Spree.current_user_method = "current_<%= class_name.downcase %>"
+
+unless Spree.user_class == Spree::User
+  module Spree
+    class User < Spree.user_class
+      belongs_to :ship_address, :class_name => 'Spree::Address'
+      belongs_to :bill_address, :class_name => 'Spree::Address'
+
+      # Creates an anonymous user
+      def self.anonymous!
+        create
+      end
+
+      def has_spree_role?(role)
+        true
+      end
+    end
+  end
+end
+
