@@ -1,5 +1,5 @@
 <div class="row steps-data">
-  <% if order.delivery_required? %>
+  <% if order.address_required? %>
     <% if order.delivery_required? %>
       <div class="columns alpha four">
         <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
