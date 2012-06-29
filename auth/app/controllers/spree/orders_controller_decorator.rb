@@ -1,3 +1,5 @@
+require File.expand_path('../base_controller_decorator', __FILE__)
+
 Spree::OrdersController.class_eval do
   before_filter :check_authorization
 
