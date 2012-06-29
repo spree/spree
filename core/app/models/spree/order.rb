@@ -433,6 +433,11 @@ module Spree
       order.destroy
     end
 
+    # Determine if email is required (we don't want validation errors before we hit the checkout)
+    def email_required?
+      return true unless new_record? or state == 'cart'
+    end
+
     private
       def link_by_email
         self.email = user.email if self.user and not user.anonymous?
@@ -528,11 +533,6 @@ module Spree
       # towards adjustment_total.
       def update_adjustments
         self.adjustments.reload.each { |adjustment| adjustment.update!(self) }
-      end
-
-      # Determine if email is required (we don't want validation errors before we hit the checkout)
-      def email_required?
-        return true unless new_record? or state == 'cart'
       end
 
       def has_available_shipment
