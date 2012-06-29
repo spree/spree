@@ -127,40 +127,9 @@ h4. The Order Model and State Machine
 
  The +Spree::Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Spree::Order+ model as well as in several other places (such as +Spree::Shipment+ and +Spree::InventoryUnit+.)
 
+The default state machine and state methods for the +Spree::Order+ model are defined in +app/models/spree/order/state_machine.rb+ of spree_core.
+
 An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart.  We reached this decision when taking a REST approach to modeling our resources.  What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
-
-The default state machine for the +Spree::Order+ model is defined in +app/models/spree/order.rb+ of spree_core as follows:
-
-<ruby>
-state_machine :initial => 'cart', :use_transactions => false do
-
-  event :next do
-    transition :from => 'cart', :to => 'address'
-    transition :from => 'address', :to => 'delivery'
-    transition :from => 'delivery', :to => 'payment'
-    transition :from => 'payment', :to => 'confirm'
-    transition :from => 'confirm', :to => 'complete'
-  end
-
-  before_transition :to => 'complete' do |order|
-    begin
-      order.process_payments!
-    rescue Spree::GatewayError
-      if Spree::Config[:allow_checkout_on_gateway_error]
-        true
-      else
-        false
-      end
-    end
-  end
-
-  after_transition :to => 'complete', :do => :finalize!
-  after_transition :to => 'delivery', :do => :create_tax_charge!
-  after_transition :to => 'payment', :do => :create_shipment!
-end
-</ruby>
-
-NOTE: There are a few other events and transitions omitted for clarity.  For example the 'cancel' event transitions the state to the 'canceled' state.
 
 INFO: For more information on the state machine gem please see the "README":http://github.com/pluginaweek/state_machine
 
@@ -195,13 +164,18 @@ So, for example, if you wanted to verify that the user provides a valid zip code
   before_transition :to => 'delivery', :do => :valid_zip_code?
 </ruby>
 
+You can do this without overriding the entire state machine by calling this method directly on the `state_machine` object itself:
+
+<ruby>
+  Spree::Order.before_transition :to => 'delivery',
+                                 :do => :valid_zip_code?
+</ruby>
+
 This callback would prevent transitioning to the +delivery+ step if +valid_zip_code?+ returns false.
 
 h5. Customizing the View for a Particular Step
 
 Each of the default checkout steps has its own partial defined in the spree_core's +app/views/spree/checkout+ directory.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  Its also possible the default partial in question defines a usable theme hook, in which case you could add your functionality by using "Deface":https://github.com/railsdog/deface.html
-
-[TODO - Add link to hook theming writeup once complete]
 
 INFO: See also the brief discussion in "checkout partials":#checkout-partials for additional information.
 
@@ -211,83 +185,51 @@ Spree allows you to easily add or remove checkout steps.  We will outline the ba
 
 h5. Removing a checkout step
 
-Here we are removing the address step from the checkout workflow:
+All of the states of the default Spree cart, aside from the default "cart" and the final "complete" state can easily be disabled by re-defining their relative method. The list below lists the states and the method that would need to return false so that state is disabled:
 
-<ruby>
-module Spree
-  module CustomExtension
-    class Engine < Rails::Engine
-      def self.activate
-        Spree::Order.class_eval do
+* Address - +address_required?+ (will also trigger delivery step to not appear if disabeld)
+* Delivery - +delivery_required?+
+* Payment - +payment_required?+
+* Confirm - +confirmation_required?+
 
-          # customize the checkout state machine
-          Spree::Order.state_machines.clear
-          Spree::Order.state_machines[:state] = StateMachine::Machine.new(Spree::Order, :initial => 'cart') do
-            after_transition :to => 'complete', :do => :complete_order
-            before_transition :to => 'complete', :do => :process_payment
-            event :next do
-              transition :from => 'cart', :to => 'delivery'
-              transition :from => 'delivery', :to => 'payment'
-              transition :from => 'payment', :to => 'confirm'
-              transition :from => 'confirm', :to => 'complete'
-            end
-
-             #
-             # YOU MUST ALSO DEFINE OTHER EVENTS, TRANSITIONS AND CALLBACKS
-             #
-
-          end
-
-        end
-      end
-    end
-  end
-end
-</ruby>
-
-INFO: This completely overwrites the default +Spree::Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Spree::Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
+You can choose to remove multiple steps if you wish. The breadcrumbs on top of the checkout will automatically adjust depending on what steps you have disabled. You may also put in some conditional logic into an order to determine whether or not to show some steps.
 
 h5. Registering new checkout steps
 
-You can also easily modify the state machine in your extension in order to add a new checkout step.  For instance, maybe you want to ask your user to select a calling plan if they are purchasing a cell phone:
+Registering new steps with the order state machine requires a complete override of it. This is made easier recently with the extraction of the state machine and its related methods into a file located inside spree_core called +app/models/spree/order/state_machine.rb+.
+
+To override the default state machine for Spree, run this generator:
+
+<plain>
+rails g spree:state_machine
+</plain>
+
+This will copy over the state machine from Spree into your application's models directory, placing it into +app/models/spree/order/state_machine.rb+.
+
+Let's say, for instance, you want to have all the default steps enabled plus another one to ask your user to select a calling plan if they are purchasing a cell phone:
 
 <ruby>
-module Spree
-  module CustomExtension
-    class Engine < Rails::Engine
-      def self.activate
-        Spree::Order.class_eval do
-
-          Spree::Order.state_machines[:state] = StateMachine::Machine.new(Spree::Order, :initial => 'cart') do
-
-            after_transition :to => 'complete', :do => :complete_order
-            before_transition :to => 'complete', :do => :process_payment
-
-            event :next do
-              transition :from => 'cart', :to => 'address'
-              transition :from => 'address', :to => 'delivery'
-              transition :from => 'delivery', :to => 'calling_plan'
-              transition :from => 'calling_plan', :to => 'payment'
-              transition :from => 'payment', :to => 'confirm'
-              transition :from => 'confirm', :to => 'complete'
-            end
-
-             #
-             # YOU MUST ALSO DEFINE OTHER EVENTS, TRANSITIONS AND CALLBACKS
-             #
-
-          end
-
-        end
-      end
+Spree::Order.class_eval do
+  state_machine :initial => 'cart', :use_transactions => false do
+    event :next do
+      transition :from => 'cart',     :to => 'address'
+      transition :from => 'address',  :to => 'delivery'
+      transition :from => 'delivery',  :to => 'calling_plan', :if => :cell_phone_included?
+      transition :from => 'delivery', :to => 'confirm'
+      transition :from => 'calling_plan',  :to => 'confirm'
+      transition :from => 'confirm',  :to => 'complete'
     end
+
+    ...
   end
 end
 </ruby>
 
-INFO: You also need a custom +_calling_plan.html.erb+ partial and a migration to create any custom db fields required for the new step.
+In this example, the order will now transition from cart to address, then from address to delivery. After that, if your custom +cell_phone_included?+ method returns `true`, then the order will go to the +calling_plan+ step. If it does not, then it will skip that step and go straight to the +confirm+ step instead. This is why in the above example that there's two possible transitions for delivery: it can go either to the calling_plan state *or* the confirm state. It all will depend on t he +cell_phone_included?+ method.
 
-INFO: This completely overwrites the default +Spree::Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Spree::Order+ +state_machine+. In this example we ommited everything except the definition of the +next+ event.
+INFO: You will also need a custom +app/views/spree/checkout/_calling_plan.html.erb+ partial and a migration to create any custom db fields required for the new step.
+
+INFO: This completely overwrites the default +Spree::Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Spree::Order+ +state_machine+ that you want to keep around. In this example we ommited everything except the definition of the +next+ event for brevity's sake.
 
 h4. The Checkout "Breadcrumb"
 
