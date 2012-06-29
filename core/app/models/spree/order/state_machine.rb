@@ -39,13 +39,7 @@ Spree::Order.class_eval do
       transition :to => 'awaiting_return'
     end
 
-    before_transition :to => 'complete' do |order|
-      begin
-        order.payments.each(&:process)
-      rescue Spree::Core::GatewayError
-        !!Spree::Config[:allow_checkout_on_gateway_error]
-      end
-    end
+    before_transition :to => 'complete', :do => :before_complete
 
     before_transition :to => 'delivery', :do => :remove_invalid_shipments!
 
@@ -55,6 +49,14 @@ Spree::Order.class_eval do
     after_transition :to => 'resumed',  :do => :after_resume
     after_transition :to => 'canceled', :do => :after_cancel
 
+  end
+
+  def before_complete
+    begin
+      payments.each(&:process)
+    rescue Spree::Core::GatewayError
+      !!Spree::Config[:allow_checkout_on_gateway_error]
+    end
   end
 
   def steps
