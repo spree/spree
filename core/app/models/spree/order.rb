@@ -164,7 +164,7 @@ module Spree
       update_payment_state
 
       # give each of the shipments a chance to update themselves
-      if needs_delivery?
+      if delivery_required?
         shipments.each { |shipment| shipment.update!(self) }#(&:update!)
         update_shipment_state
       end
@@ -180,7 +180,7 @@ module Spree
         :total => total
       }
 
-      if needs_delivery?
+      if delivery_required?
         new_attributes.merge!(:shipment_state => shipment_state)
       end
 
@@ -535,7 +535,7 @@ module Spree
       end
 
       def has_available_shipment
-        return unless needs_delivery?
+        return unless delivery_required?
         return unless :address == state_name.to_sym
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?

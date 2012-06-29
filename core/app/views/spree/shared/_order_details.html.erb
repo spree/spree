@@ -1,6 +1,6 @@
 <div class="row steps-data">
-  <% if order.needs_address? %>
-    <% if order.needs_delivery? %>
+  <% if order.delivery_required? %>
+    <% if order.delivery_required? %>
       <div class="columns alpha four">
         <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
         <div class="address">
@@ -17,7 +17,7 @@
     </div>
   <% end %>
 
-  <% if order.needs_delivery? %>
+  <% if order.delivery_required? %>
     <div class="columns alpha four">
       <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
       <div class="delivery">
@@ -26,7 +26,7 @@
     </div>
   <% end %>
 
-  <% if order.needs_payment? %>
+  <% if order.payment_required? %>
     <div class="columns omega four">
       <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
       <div class="payment-info">
