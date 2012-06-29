@@ -84,6 +84,6 @@ Spree::Order.class_eval do
   # Override this method if you do not wish for orders to be confirmed
   # before order is completed.
   def confirmation_required?
-    order.payment_method && order.payment_method.payment_profiles_supported?
+    payment_method && payment_method.payment_profiles_supported?
   end
 end
