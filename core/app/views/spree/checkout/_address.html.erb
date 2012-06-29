@@ -1,5 +1,5 @@
 <div class="columns alpha six" data-hook="billing_fieldset_wrapper">
-<% unless @order.email? %>
+<% if @order.require_email? && @order.email.blank? %>
   <p class="field" style='clear: both'>
     <%= form.label :email %><br />
     <%= form.text_field :email %>
