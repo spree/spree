@@ -47,8 +47,8 @@ module Spree
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :email => true, :if => :require_email
-    validate :has_available_shipment
-    validate :has_available_payment
+    validate :has_available_shipment, :unless => :delivery_required?
+    validate :has_available_payment, :unless => :payment_required?
 
     make_permalink :field => :number
 
@@ -307,16 +307,17 @@ module Spree
 
     # Creates a new shipment (adjustment is created by shipment model)
     def create_shipment!
-      shipping_method(true)
-      if shipment.present?
-        shipment.update_attributes!(:shipping_method => shipping_method)
-      else
-        self.shipments << Shipment.create!({ :order => self,
-                                          :shipping_method => shipping_method,
-                                          :address => self.ship_address,
-                                          :inventory_units => self.inventory_units}, :without_protection => true)
+      if delivery_required?
+        shipping_method(true)
+        if shipment.present?
+          shipment.update_attributes!(:shipping_method => shipping_method)
+        else
+          self.shipments << Shipment.create!({ :order => self,
+                                            :shipping_method => shipping_method,
+                                            :address => self.ship_address,
+                                            :inventory_units => self.inventory_units}, :without_protection => true)
+        end
       end
-
     end
 
     def outstanding_balance
@@ -535,7 +536,6 @@ module Spree
       end
 
       def has_available_shipment
-        return unless delivery_required?
         return unless :address == state_name.to_sym
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
