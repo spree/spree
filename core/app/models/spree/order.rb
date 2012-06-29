@@ -47,8 +47,8 @@ module Spree
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :email => true, :if => :email_required?
-    validate :has_available_shipment, :unless => :delivery_required?
-    validate :has_available_payment, :unless => :payment_required?
+    validate :has_available_shipment
+    validate :has_available_payment
 
     make_permalink :field => :number
 
@@ -536,12 +536,14 @@ module Spree
       end
 
       def has_available_shipment
+        return true unless delivery_required?
         return unless :address == state_name.to_sym
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
 
       def has_available_payment
+        return true unless payment_required?
         return unless :delivery == state_name.to_sym
         errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
