@@ -53,7 +53,7 @@ Spree::Order.class_eval do
 
   def before_complete
     begin
-      payments.each(&:process)
+      payments.each(&:process!)
     rescue Spree::Core::GatewayError
       !!Spree::Config[:allow_checkout_on_gateway_error]
     end
