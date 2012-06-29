@@ -79,7 +79,7 @@ Spree::Order.class_eval do
   # that are all "undeliverable", i.e. there is no need for a shipping address
   # This is for things such as online-only goods, and the like.
   def delivery_required?
-    true
+    address_required? && true
   end
 
   # Override this method if your orders do not need to be paid for.
