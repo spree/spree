@@ -339,14 +339,6 @@ module Spree
       CreditCard.scoped(:conditions => { :id => credit_card_ids })
     end
 
-    def process_payments!
-      begin
-        ret = payments.each(&:process!)
-      rescue Core::GatewayError
-        !!Spree::Config[:allow_checkout_on_gateway_error]
-      end
-    end
-
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!

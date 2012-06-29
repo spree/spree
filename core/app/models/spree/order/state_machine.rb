@@ -40,7 +40,11 @@ Spree::Order.class_eval do
     end
 
     before_transition :to => 'complete' do |order|
-      order.process_payments!
+      begin
+        order.payments.each(&:process)
+      rescue Spree::Core::GatewayError
+        !!Spree::Config[:allow_checkout_on_gateway_error]
+      end
     end
 
     before_transition :to => 'delivery', :do => :remove_invalid_shipments!
