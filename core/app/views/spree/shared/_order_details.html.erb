@@ -1,19 +1,21 @@
 <div class="row steps-data">
-  <% if order.needs_delivery? %>
+  <% if order.needs_address? %>
+    <% if order.needs_delivery? %>
+      <div class="columns alpha four">
+        <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+        <div class="address">
+          <%= order.ship_address %>
+        </div>
+      </div>
+    <% end %>
+
     <div class="columns alpha four">
-      <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+      <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
       <div class="address">
-        <%= order.ship_address %>
+        <%= order.bill_address %>
       </div>
     </div>
   <% end %>
-
-  <div class="columns alpha four">
-    <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
-      <%= order.bill_address %>
-    </div>
-  </div>
 
   <% if order.needs_delivery? %>
     <div class="columns alpha four">
@@ -24,22 +26,24 @@
     </div>
   <% end %>
 
-  <div class="columns omega four">
-    <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
-    <div class="payment-info">
-      <% unless order.credit_cards.empty? %>
-        <span class="cc-type">
-          <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
-          <%= t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
-        </span>
-        <br />
-        <span class="full-name">
-          <%= order.credit_cards.first.first_name %>
-          <%= order.credit_cards.first.last_name %>
-        </span>
-      <% end %>
+  <% if order.needs_payment? %>
+    <div class="columns omega four">
+      <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
+      <div class="payment-info">
+        <% unless order.credit_cards.empty? %>
+          <span class="cc-type">
+            <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
+            <%= t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
+          </span>
+          <br />
+          <span class="full-name">
+            <%= order.credit_cards.first.first_name %>
+            <%= order.credit_cards.first.last_name %>
+          </span>
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
 </div>
 

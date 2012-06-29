@@ -104,11 +104,6 @@ module Spree
       line_items.count > 0
     end
 
-    # Is this a free order in which case the payment step should be skipped
-    def payment_required?
-      total.to_f > 0.0
-    end
-
     # Indicates the number of items in the order
     def item_count
       line_items.sum(:quantity)
