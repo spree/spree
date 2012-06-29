@@ -2,6 +2,7 @@ require 'spree/core/validators/email'
 
 module Spree
   class Order < ActiveRecord::Base
+    require_dependency 'spree/order/state_machine'
     token_resource
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
@@ -45,7 +46,7 @@ module Spree
     after_create :create_tax_charge!
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
-    validates :email, :presence => true, :email => true, :if => :require_email
+    validates :email, :presence => true, :email => true, :if => :email_required?
     validate :has_available_shipment
     validate :has_available_payment
 
@@ -53,54 +54,6 @@ module Spree
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
-
-    # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine :initial => 'cart', :use_transactions => false do
-
-      event :next do
-        transition :from => 'cart',     :to => 'address'
-        transition :from => 'address',  :to => 'delivery'
-        transition :from => 'delivery', :to => 'payment', :if => :payment_required?
-        transition :from => 'delivery', :to => 'complete'
-        transition :from => 'confirm',  :to => 'complete'
-
-        # note: some payment methods will not support a confirm step
-        transition :from => 'payment',  :to => 'confirm',
-                                        :if => Proc.new { |order| order.payment_method && order.payment_method.payment_profiles_supported? }
-
-        transition :from => 'payment', :to => 'complete'
-      end
-
-      event :cancel do
-        transition :to => 'canceled', :if => :allow_cancel?
-      end
-      event :return do
-        transition :to => 'returned', :from => 'awaiting_return'
-      end
-      event :resume do
-        transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
-      end
-      event :authorize_return do
-        transition :to => 'awaiting_return'
-      end
-
-      before_transition :to => 'complete' do |order|
-        begin
-          order.process_payments!
-        rescue Core::GatewayError
-          !!Spree::Config[:allow_checkout_on_gateway_error]
-        end
-      end
-
-      before_transition :to => 'delivery', :do => :remove_invalid_shipments!
-
-      after_transition :to => 'complete', :do => :finalize!
-      after_transition :to => 'delivery', :do => :create_tax_charge!
-      after_transition :to => 'payment',  :do => :create_shipment!
-      after_transition :to => 'resumed',  :do => :after_resume
-      after_transition :to => 'canceled', :do => :after_cancel
-
-    end
 
     def self.by_number(number)
       where(:number => number)
@@ -149,11 +102,6 @@ module Spree
     # in your own application if you require additional steps before allowing a checkout.
     def checkout_allowed?
       line_items.count > 0
-    end
-
-    # Is this a free order in which case the payment step should be skipped
-    def payment_required?
-      total.to_f > 0.0
     end
 
     # Indicates the number of items in the order
@@ -216,20 +164,27 @@ module Spree
       update_payment_state
 
       # give each of the shipments a chance to update themselves
-      shipments.each { |shipment| shipment.update!(self) }#(&:update!)
-      update_shipment_state
+      if delivery_required?
+        shipments.each { |shipment| shipment.update!(self) }#(&:update!)
+        update_shipment_state
+      end
       update_adjustments
       # update totals a second time in case updated adjustments have an effect on the total
       update_totals
 
-      update_attributes_without_callbacks({
+      new_attributes = {
         :payment_state => payment_state,
-        :shipment_state => shipment_state,
         :item_total => item_total,
         :adjustment_total => adjustment_total,
         :payment_total => payment_total,
         :total => total
-      })
+      }
+
+      if delivery_required?
+        new_attributes.merge!(:shipment_state => shipment_state)
+      end
+
+      update_attributes_without_callbacks(attributes)
 
       #ensure checkout payment always matches order total
       if payment and payment.checkout? and payment.amount != total
@@ -352,16 +307,17 @@ module Spree
 
     # Creates a new shipment (adjustment is created by shipment model)
     def create_shipment!
-      shipping_method(true)
-      if shipment.present?
-        shipment.update_attributes!(:shipping_method => shipping_method)
-      else
-        self.shipments << Shipment.create!({ :order => self,
-                                          :shipping_method => shipping_method,
-                                          :address => self.ship_address,
-                                          :inventory_units => self.inventory_units}, :without_protection => true)
+      if delivery_required?
+        shipping_method(true)
+        if shipment.present?
+          shipment.update_attributes!(:shipping_method => shipping_method)
+        else
+          self.shipments << Shipment.create!({ :order => self,
+                                            :shipping_method => shipping_method,
+                                            :address => self.ship_address,
+                                            :inventory_units => self.inventory_units}, :without_protection => true)
+        end
       end
-
     end
 
     def outstanding_balance
@@ -381,10 +337,6 @@ module Spree
     def credit_cards
       credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
       CreditCard.scoped(:conditions => { :id => credit_card_ids })
-    end
-
-    def process_payments!
-      ret = payments.each(&:process!)
     end
 
     # Finalizes an in progress order after checkout is complete.
@@ -471,6 +423,11 @@ module Spree
         self.add_variant(line_item.variant, line_item.quantity)
       end
       order.destroy
+    end
+
+    # Determine if email is required (we don't want validation errors before we hit the checkout)
+    def email_required?
+      return true unless new_record? or state == 'cart'
     end
 
     private
@@ -570,18 +527,15 @@ module Spree
         self.adjustments.reload.each { |adjustment| adjustment.update!(self) }
       end
 
-      # Determine if email is required (we don't want validation errors before we hit the checkout)
-      def require_email
-        return true unless new_record? or state == 'cart'
-      end
-
       def has_available_shipment
+        return true unless delivery_required?
         return unless :address == state_name.to_sym
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
 
       def has_available_payment
+        return true unless payment_required?
         return unless :delivery == state_name.to_sym
         errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end

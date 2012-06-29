@@ -144,7 +144,7 @@ describe Spree::Order do
 
        context "when credit card payment fails" do
          before do
-           order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
+           Spree::Payment.any_instance.stub(:process).and_raise(Spree::Core::GatewayError)
          end
 
          context "when not configured to allow failed payments" do
@@ -299,14 +299,6 @@ describe Spree::Order do
     it "should log state event" do
       order.state_changes.should_receive(:create)
       order.finalize!
-    end
-  end
-
-  context "#process_payments!" do
-    it "should process the payments" do
-      order.stub!(:payments).and_return([mock(Spree::Payment)])
-      order.payment.should_receive(:process!)
-      order.process_payments!
     end
   end
 

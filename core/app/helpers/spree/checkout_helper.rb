@@ -1,15 +1,7 @@
 module Spree
   module CheckoutHelper
-    def checkout_states
-      if @order.payment and @order.payment.payment_method.payment_profiles_supported?
-        %w(address delivery payment confirm complete)
-      else
-        %w(address delivery payment complete)
-      end
-    end
-
     def checkout_progress
-      states = checkout_states
+      states = @order.steps
       items = states.map do |state|
         text = t("order_state.#{state}").titleize
 
