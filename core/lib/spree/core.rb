@@ -29,6 +29,7 @@
 require 'rails/all'
 require 'rails/generators'
 require 'state_machine'
+require 'aasm'
 require 'paperclip'
 require 'kaminari'
 require 'nested_set'
