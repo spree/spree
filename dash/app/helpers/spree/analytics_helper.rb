@@ -19,7 +19,7 @@ module Spree
       { :product => { :name => @product.name,
                       :price => @product.price,
                       :sku => @product.sku,
-                      :categories => @product.taxons.map { |t| t.permalink }
+                      :categories => @product.taxons.map(&:permalink)
                     }
       }
     end
@@ -56,11 +56,12 @@ module Spree
     def products_for_order
       @order.line_items.map do |line_item|
         variant = line_item.variant
-        { :name => variant.name,
+        {
+          :name => variant.name,
           :qty => line_item.quantity,
           :price => variant.price,
           :sku => variant.sku,
-          :categories => variant.product.taxons.map { |t| t.permalink }
+          :categories => variant.product.taxons.map(&:permalink)
         }
       end
     end
