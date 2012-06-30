@@ -4,7 +4,7 @@ module Spree
     belongs_to :property
 
     validates :property, :presence => true
-    validates_length_of :value, :maximum => 255
+    validates :value, :length => { :maximum => 255 }
 
     attr_accessible :property_name, :value
 
