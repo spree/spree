@@ -12,6 +12,6 @@ FactoryGirl.define do
   end
 
   factory :admin_user, :parent => :user do
-    spree_roles { [Spree::Role.find_by_name('admin') || FactoryGirl.create(:role, :name => 'admin')]}
+    spree_roles { [Spree::Role.find_by_name('admin') || FactoryGirl.create(:role, :name => 'admin')] }
   end
 end
