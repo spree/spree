@@ -31,7 +31,7 @@ h3. Searcher API
 h4. Configuration
 
 You can set the current search implementation by assigning a suitable object to
-+Spree::Config.searcher+.
++Spree::Config.searcher_class+.
 If it is not set, the searcher defaults to an instance of the base implementation.
 
 h4. Integration with Spree
