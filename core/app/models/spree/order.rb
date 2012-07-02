@@ -111,7 +111,7 @@ module Spree
     end
 
     def self.by_customer(customer)
-      joins(:user).where("#{Spree::User.table_name}.email" => customer)
+      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
     end
 
     def self.by_state(state)
