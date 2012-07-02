@@ -2,7 +2,7 @@ module Spree
   module AnalyticsHelper
 
     def spree_analytics
-      render :partial => 'analytics/header'
+      render :partial => 'spree/analytics/header'
     end
 
     def analytics_tags
@@ -31,7 +31,7 @@ module Spree
 
     def keywords_analytics_tags
       return {} unless params[:keywords]
-      { :search => { :keyword => params[:keywords] } }
+      { :search => { :keyword => u(params[:keywords]) } }
     end
 
     def cart_analytics_tags
