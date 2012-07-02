@@ -31,7 +31,9 @@ module Spree
                         :ship_total => "22.99",
                         :tax_total => "4.99",
                         :adjustment_total => "0.00",
-                        :item_total => "1.99")
+                        :item_total => "1.99",
+                        :cart? => false,
+                        :complete? => false)
 
       end
 
@@ -54,6 +56,16 @@ module Spree
         params[:keywords] = "rails"
         tags = helper.keywords_analytics_tags
         tags[:search][:keyword].should eq "rails"
+      end
+
+      it "escapes keywords" do
+        Spree::Dash::Config.app_id = "test"
+        Spree::Dash::Config.token = "test"
+        Spree::Dash::Config.site_id " test"
+        params[:keywords] = "\"funny><looking><keywords"
+        tags = helper.spree_analytics
+        tags.should_not include("funny><looking><keywords")
+        tags.should include("%22funny%3E%3Clooking%3E%3Ckeywords")
       end
 
       it "for cart" do
