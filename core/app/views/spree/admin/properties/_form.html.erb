@@ -1,5 +1,4 @@
-<div data-hook="admin_property_form">
-
+<div data-hook="admin_property_form_fields">
   <%= f.field_container :name do %>
     <%= f.label :name, t(:name) %> <span class="required">*</span><br />
     <%= f.text_field :name %>
@@ -11,5 +10,4 @@
     <%= f.text_field :presentation %>
     <%= f.error_message_on :presentation %>
   <% end %>
-
 </div>

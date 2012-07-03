@@ -1,15 +1,17 @@
-<p>
-  <%= f.label :amount, t(:amount) %>
-  <%= f.text_field :amount, :size => 8, :value => @order.outstanding_balance %>
-</p>
+<div data-hook="admin_payment_form_fields">
+  <p>
+    <%= f.label :amount, t(:amount) %>
+    <%= f.text_field :amount, :size => 8, :value => @order.outstanding_balance %>
+  </p>
 
-<% @payment_methods.each do |method| %>
+  <% @payment_methods.each do |method| %>
 
-  <label data-hook="payment_method">
-    <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method %>
-    <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
-  </label>
+    <label data-hook="payment_method">
+      <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method %>
+      <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
+    </label>
 
-  <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
+    <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
 
-<% end %>
+  <% end %>
+</div>
