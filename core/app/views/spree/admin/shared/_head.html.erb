@@ -7,16 +7,19 @@
 <%= javascript_include_tag 'admin/all' %>
 
 <%= javascript_tag do %>
-  Spree.routes = <%== {
+  var Spree = {
+    routes: <%== {
     :product_search       => spree.admin_products_path(:format => 'json'),
     :product_search_basic => spree.admin_products_path(:format => 'json', :json_format => 'basic', :limit => 10),
     :user_search          => spree.admin_users_path(:format => 'json', :limit => 10)
-  }.to_json %>;
+  }.to_json %>,
 
-  strings = <%==
-    [:no_results, :type_to_search, :searching].
-    inject({}){|memo, item| {item => t(item) }}.to_json
-  %>
+    strings: {
+      no_results: '<%== t(:no_results) %>',
+      type_to_search: '<%== t(:type_to_search) %>',
+      searching: '<%== t(:searching) %>'
+    }
+  }
 <% end %>
 
 <%= javascript_tag do -%>

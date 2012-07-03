@@ -164,9 +164,9 @@ $.fn.product_autocomplete = function(){
 $.fn.objectPicker = function(url){
   $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
     searchDelay          : 600,
-    hintText             : strings.type_to_search,
-    noResultsText        : strings.no_results,
-    searchingText        : strings.searching,
+    hintText             : Spree.strings.type_to_search,
+    noResultsText        : Spree.strings.no_results,
+    searchingText        : Spree.strings.searching,
     prePopulateFromInput : true
   });
 };
