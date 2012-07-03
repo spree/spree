@@ -1,12 +1,16 @@
-<%= f.field_container :name do %>
-  <%= f.label :name, t(:name) %><br />
-  <%= f.text_field :name %>
-<% end %>
-<%= f.field_container :description do %>
-  <%= f.label :description, t(:description) %><br />
-  <%= f.text_field :description %>
-<% end %>
-<%= f.field_container :is_default do %>
-  <%= f.label :is_default, t(:default) %><br />
-  <%= f.check_box :is_default %>
-<% end %>
+<div data-hook="admin_tax_category_form_fields">
+  <%= f.field_container :name do %>
+    <%= f.label :name, t(:name) %><br />
+    <%= f.text_field :name %>
+  <% end %>
+
+  <%= f.field_container :description do %>
+    <%= f.label :description, t(:description) %><br />
+    <%= f.text_field :description %>
+  <% end %>
+
+  <%= f.field_container :is_default do %>
+    <%= f.label :is_default, t(:default) %><br />
+    <%= f.check_box :is_default %>
+  <% end %>
+</div>

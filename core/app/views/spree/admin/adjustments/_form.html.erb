@@ -1,12 +1,13 @@
-<%= f.field_container :amount do %>
-  <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
-  <%= text_field :adjustment, :amount, {:style => 'width:80px;'} %>
-  <%= f.error_message_on :amount %>
-<% end %>
+<div data-hook="admin_adjustment_form_fields">
+  <%= f.field_container :amount do %>
+    <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
+    <%= text_field :adjustment, :amount, {:style => 'width:80px;'} %>
+    <%= f.error_message_on :amount %>
+  <% end %>
 
-<%= f.field_container :label do %>
-  <%= f.label :label, t(:description) %> <span class="required">*</span><br />
-  <%= text_field :adjustment, :label, {:style => 'width:180px;'} %>
-  <%= f.error_message_on :label %>
-<% end %>
-
+  <%= f.field_container :label do %>
+    <%= f.label :label, t(:description) %> <span class="required">*</span><br />
+    <%= text_field :adjustment, :label, {:style => 'width:180px;'} %>
+    <%= f.error_message_on :label %>
+  <% end %>
+</div>

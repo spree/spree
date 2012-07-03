@@ -1,29 +1,31 @@
-<%= zone_form.field_container :name do %>
-  <%= zone_form.label :name, t(:name) %><br />
-  <%= zone_form.text_field :name %>
-<% end %>
+<div data-hook="admin_zone_form_fields">
+  <%= zone_form.field_container :name do %>
+    <%= zone_form.label :name, t(:name) %><br />
+    <%= zone_form.text_field :name %>
+  <% end %>
 
-<%= zone_form.field_container :description do %>
-  <%= zone_form.label :description, t(:description) %><br />
-  <%= zone_form.text_field :description %>
-<% end %>
+  <%= zone_form.field_container :description do %>
+    <%= zone_form.label :description, t(:description) %><br />
+    <%= zone_form.text_field :description %>
+  <% end %>
 
-<p data-hook="default">
-  <td><%= t(:default_tax_zone) %></td>
-  <td><%= zone_form.check_box :default_tax %></td>
-</p>
+  <p data-hook="default">
+    <td><%= t(:default_tax_zone) %></td>
+    <td><%= zone_form.check_box :default_tax %></td>
+  </p>
 
-<p data-hook="type">
-  <%= label_tag nil, t(:type) %><br />
-  <label class="sub">
-    <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
-    <%= t(:country_based) %>
-  </label> &nbsp;
-  <label class="sub">
-    <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
-    <%= t(:state_based) %>
-  </label> &nbsp;
-</p>
+  <p data-hook="type">
+    <%= label_tag nil, t(:type) %><br />
+    <label class="sub">
+      <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
+      <%= t(:country_based) %>
+    </label> &nbsp;
+    <label class="sub">
+      <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
+      <%= t(:state_based) %>
+    </label> &nbsp;
+  </p>
 
-<%= render :partial => 'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
-<%= render :partial => 'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
+  <%= render :partial => 'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
+  <%= render :partial => 'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
+</div>
