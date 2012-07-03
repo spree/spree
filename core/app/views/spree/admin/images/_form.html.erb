@@ -1,16 +1,18 @@
-<tr data-hook="file">
-  <td><%= t(:filename) %>:</td>
-  <td><%= f.file_field :attachment %></td>
-</tr>
-<% if @product.has_variants? %>
-  <tr data-hook="variant">
-    <td><%= Spree::Variant.model_name.human %>:</td>
-    <td><%= f.select :viewable_id, @variants %></td>
+<div data-hook="admin_image_form_fields">
+  <tr data-hook="file">
+    <td><%= t(:filename) %>:</td>
+    <td><%= f.file_field :attachment %></td>
   </tr>
-<% else %>
-  <%= hidden_field_tag :product_id, @product.id %>
-<% end %>
-<tr data-hook="alt_text">
-  <td><%= t(:alt_text) %>:</td>
-  <td><%= f.text_area :alt %></td>
-</tr>
+  <% if @product.has_variants? %>
+    <tr data-hook="variant">
+      <td><%= Spree::Variant.model_name.human %>:</td>
+      <td><%= f.select :viewable_id, @variants %></td>
+    </tr>
+  <% else %>
+    <%= hidden_field_tag :product_id, @product.id %>
+  <% end %>
+  <tr data-hook="alt_text">
+    <td><%= t(:alt_text) %>:</td>
+    <td><%= f.text_area :alt %></td>
+  </tr>
+</div>

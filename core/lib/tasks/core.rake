@@ -63,7 +63,7 @@ For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     end
   end
 
-  desc "Bootstrap is: migrating, loading defaults, sample data and seeding (for all extensions) invoking create_admin and load_products tasks"
+  desc "Bootstrap is: migrating, loading defaults, sample data and seeding (for all extensions) and load_products tasks"
   task :bootstrap  do
     require 'highline/import'
 

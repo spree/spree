@@ -1,54 +1,56 @@
-<% if @line_item.try(:errors).present? %>
-  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
-<% end %>
+ <div data-hook="admin_order_form_fields">
+  <% if @line_item.try(:errors).present? %>
+    <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
+  <% end %>
 
-<%= form_for @order, :url => admin_order_url(@order), :method => :put do |f| %>
-  <%= f.hidden_field :number %>
-  <table class="index">
-    <tbody id="line-items">
-      <tr data-hook="admin_order_form_line_items_headers">
-        <th><%= t(:item_description) %></th>
-        <th class="price"><%= t(:price) %></th>
-        <th class="qty"><%= t(:qty) %></th>
-        <th class="total"><span><%= t(:total) %></span></th>
-        <th class="orders-actions" data-hook="admin_order_form_line_items_header_actions"></th>
-      </tr>
-      <%= f.fields_for :line_items do |li_form| %>
-        <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
-      <% end %>
-    </tbody>
-    <tbody id="subtotal" data-hook="admin_order_form_subtotal">
-      <tr id="subtotal-row">
-        <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-        <td class="total"><span><%= number_to_currency @order.item_total %></span></td>
-        <td></td>
-      </tr>
-    </tbody>
-    <tbody id="order-charges" data-hook="admin_order_form_adjustments">
-      <% @order.adjustments.each do |adjustment| %>
-        <tr>
-          <td colspan="3"><strong><%= adjustment.label %></strong></td>
-          <td class="total"><span><%= number_to_currency adjustment.amount %></span></td>
+  <%= form_for @order, :url => admin_order_url(@order), :method => :put do |f| %>
+    <%= f.hidden_field :number %>
+    <table class="index">
+      <tbody id="line-items">
+        <tr data-hook="admin_order_form_line_items_headers">
+          <th><%= t(:item_description) %></th>
+          <th class="price"><%= t(:price) %></th>
+          <th class="qty"><%= t(:qty) %></th>
+          <th class="total"><span><%= t(:total) %></span></th>
+          <th class="orders-actions" data-hook="admin_order_form_line_items_header_actions"></th>
+        </tr>
+        <%= f.fields_for :line_items do |li_form| %>
+          <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
+        <% end %>
+      </tbody>
+      <tbody id="subtotal" data-hook="admin_order_form_subtotal">
+        <tr id="subtotal-row">
+          <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
+          <td class="total"><span><%= number_to_currency @order.item_total %></span></td>
           <td></td>
         </tr>
-      <% end %>
-    </tbody>
-    <tbody id="order-total" data-hook="admin_order_form_total">
-      <tr>
-        <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-        <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+      </tbody>
+      <tbody id="order-charges" data-hook="admin_order_form_adjustments">
+        <% @order.adjustments.each do |adjustment| %>
+          <tr>
+            <td colspan="3"><strong><%= adjustment.label %></strong></td>
+            <td class="total"><span><%= number_to_currency adjustment.amount %></span></td>
+            <td></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tbody id="order-total" data-hook="admin_order_form_total">
+        <tr>
+          <td colspan="3"><b><%= t(:order_total) %>:</b></td>
+          <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
 
-  <p class="form-buttons" data-hook="admin_order_form_buttons">
-    <%= button t(:update) %>
-    <%= t(:or) %> <%= link_to t(:back), admin_orders_url %>
-  </p>
+    <p class="form-buttons" data-hook="admin_order_form_buttons">
+      <%= button t(:update) %>
+      <%= t(:or) %> <%= link_to t(:back), admin_orders_url %>
+    </p>
 
-<% end %>
+  <% end %>
 
-<%= javascript_tag do -%>
-  <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
-<% end -%>
+  <%= javascript_tag do -%>
+    <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
+  <% end -%>
+</div>

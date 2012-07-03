@@ -1,4 +1,4 @@
-<div data-hook="admin_inside_taxon_form">
+<div data-hook="admin_taxon_form_fields">
   <%= f.field_container :name do %>
     <%= f.label :name, t(:name) %> <span class="required">*</span><br />
     <%= error_message_on :taxon, :name, :class => 'fullwidth title' %>
@@ -19,5 +19,4 @@
     <%= f.label :description, t(:description) %><br />
     <%= f.text_area :description %>
   <% end %>
-
 </div>

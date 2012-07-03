@@ -1,9 +1,9 @@
 module Spree
   class Address < ActiveRecord::Base
-    belongs_to :country, :class_name => "Spree::Country"
-    belongs_to :state, :class_name => "Spree::State"
+    belongs_to :country
+    belongs_to :state
 
-    has_many :shipments, :class_name => "Spree::Shipment"
+    has_many :shipments
 
     validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
     validate :state_validate

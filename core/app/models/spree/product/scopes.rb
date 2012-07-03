@@ -216,6 +216,7 @@ module Spree
     search_scopes << :group_by_products_id
 
     private
+
       def self.variant_table_name
         Variant.quoted_table_name
       end
@@ -235,16 +236,14 @@ module Spree
       end
 
       def self.get_taxons(*ids_or_records_or_names)
-        taxons = Spree::Taxon.table_name
+        taxons = Taxon.table_name
         ids_or_records_or_names.flatten.map { |t|
           case t
           when Integer then Taxon.find_by_id(t)
           when ActiveRecord::Base then t
           when String
             Taxon.find_by_name(t) ||
-            Taxon.find(:first, :conditions => [
-              "#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/"
-            ])
+            Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
           end
         }.compact.flatten.uniq
       end

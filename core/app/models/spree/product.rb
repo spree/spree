@@ -26,8 +26,8 @@ module Spree
 
     has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
 
-    belongs_to :tax_category, :class_name => "Spree::TaxCategory"
-    belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
+    belongs_to :tax_category
+    belongs_to :shipping_category
 
     has_one :master,
       :class_name => "Spree::Variant",
