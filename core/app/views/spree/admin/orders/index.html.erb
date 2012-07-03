@@ -50,11 +50,11 @@
       <%= label_tag nil, t(:date_range) %><br />
       <div class="date-range-filter">
         <div class="left sub-field">
-          <%= f.text_field :created_at_gt, :class => 'datepicker' %><br />
+          <%= f.text_field :created_at_gt, :class => 'datepicker', :value => params[:q][:created_at_gt] %><br />
           <%= label_tag nil, t(:start), :class => 'sub' %>
         </div>
         <div class="right sub-field">
-          <%= f.text_field :created_at_lt, :class => 'datepicker' %><br />
+          <%= f.text_field :created_at_lt, :class => 'datepicker', :value => params[:q][:created_at_lt] %><br />
           <%= label_tag nil, t(:stop), :class => 'sub' %>
         </div>
       </div>
