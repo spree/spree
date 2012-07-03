@@ -71,6 +71,13 @@
       </label>
     </p>
 
+    <p data-hook="s3_protocol">
+      <label>
+        <%= label_tag 'preferences[s3_protocol]', t(:s3_protocol) %>
+        <%= preference_field_tag 'preferences[s3_protocol]', Spree::Config[:s3_protocol], :type => :string %>
+      </label>
+    </p>
+
     <h2><%= t(:s3_headers) %></h2>
     <ul id="headers_list">
       <% @headers.each do |header_name, header_value| %>

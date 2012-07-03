@@ -858,6 +858,7 @@ en:
   s3_bucket: "Bucket"
   s3_headers: "S3 Headers"
   s3_secret: "Secret Key"
+  s3_protocol: "S3 Protocol"
   s3_used_for_product_images: "S3 is being used for product images"
   s3_not_used_for_product_images: "S3 is not being used for product images"
   sales_tax: "Sales Tax"
