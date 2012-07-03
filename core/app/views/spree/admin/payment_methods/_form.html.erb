@@ -1,50 +1,52 @@
-<table data-hook="payment_method">
-  <tr data-hook="name">
-    <td><%= label_tag nil, t(:name) %></td>
-    <td><%= text_field :payment_method, :name, {'style' => 'width:200px;'} %></td>
-  </tr>
-  <tr data-hook="description">
-    <td><%= label_tag nil, t(:description) %></td>
-    <td><%= text_area :payment_method, :description, {:cols => 60, :rows => 4} %></td>
-  </tr>
-  <tr data-hook="environment">
-    <td><%= label_tag nil, t(:environment) %></td>
-    <td>
-      <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
-    </td>
-  </tr>
-  <tr data-hook="display">
-    <td><%= label_tag nil, t(:display) %></td>
-    <td>
-      <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }) %>
-    </td>
-  </tr>
-  <tr data-hook="active">
-    <td><%= label_tag nil, t(:active) %></td>
-    <td>
-      <label class="sub">
-        <%= radio_button :payment_method, :active, true %>
-        <%= t(:yes) %>
-      </label> &nbsp;
-      <label class="sub">
-        <%= radio_button :payment_method, :active, false %>
-        <%= t(:no) %>
-      </label>
-    </td>
-  </tr>
-</table>
+<div data-hook="admin_payment_method_form_fields">
+  <table data-hook="payment_method">
+    <tr data-hook="name">
+      <td><%= label_tag nil, t(:name) %></td>
+      <td><%= text_field :payment_method, :name, {'style' => 'width:200px;'} %></td>
+    </tr>
+    <tr data-hook="description">
+      <td><%= label_tag nil, t(:description) %></td>
+      <td><%= text_area :payment_method, :description, {:cols => 60, :rows => 4} %></td>
+    </tr>
+    <tr data-hook="environment">
+      <td><%= label_tag nil, t(:environment) %></td>
+      <td>
+        <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
+      </td>
+    </tr>
+    <tr data-hook="display">
+      <td><%= label_tag nil, t(:display) %></td>
+      <td>
+        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }) %>
+      </td>
+    </tr>
+    <tr data-hook="active">
+      <td><%= label_tag nil, t(:active) %></td>
+      <td>
+        <label class="sub">
+          <%= radio_button :payment_method, :active, true %>
+          <%= t(:yes) %>
+        </label> &nbsp;
+        <label class="sub">
+          <%= radio_button :payment_method, :active, false %>
+          <%= t(:no) %>
+        </label>
+      </td>
+    </tr>
+  </table>
 
-<h2><%= t(:settings) %></h2>
+  <h2><%= t(:settings) %></h2>
 
-<div id="preference-settings" data-hook>
-  <%= f.label :type, t(:provider) %>
-  <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type'}) %>
+  <div id="preference-settings" data-hook>
+    <%= f.label :type, t(:provider) %>
+    <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type'}) %>
 
-  <% unless @object.new_record? %>
-    <%= preference_fields(@object, f) %>
+    <% unless @object.new_record? %>
+      <%= preference_fields(@object, f) %>
 
-    <% if @object.respond_to?(:preferences) %>
-      <div id="gateway-settings-warning" style="color:#FF0000;"><%= t(:provider_settings_warning) %></div>
+      <% if @object.respond_to?(:preferences) %>
+        <div id="gateway-settings-warning" style="color:#FF0000;"><%= t(:provider_settings_warning) %></div>
+      <% end %>
     <% end %>
-  <% end %>
+  </div>
 </div>
