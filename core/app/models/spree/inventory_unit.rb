@@ -7,6 +7,8 @@ module Spree
 
     scope :backorder, where(:state => 'backordered')
 
+    attr_accessible :shipment
+
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'on_hand' do
       event :fill_backorder do
@@ -95,8 +97,6 @@ module Spree
         return if back_order > 0 && !Spree::Config[:allow_backorders]
 
         shipment = order.shipments.detect { |shipment| !shipment.shipped? }
-
-        attr_accessible :shipment
 
         sold.times { order.inventory_units.create({:variant => variant, :state => 'sold', :shipment => shipment}, :without_protection => true) }
         back_order.times { order.inventory_units.create({:variant => variant, :state => 'backordered', :shipment => shipment}, :without_protection => true) }
