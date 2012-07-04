@@ -4,6 +4,8 @@ module Spree
     has_many :product_option_types, :dependent => :destroy
     has_and_belongs_to_many :prototypes, :join_table => 'spree_option_types_prototypes'
 
+    attr_accessible :name, :presentation, :option_values_attributes
+
     validates :name, :presentation, :presence => true
     default_scope :order => "#{self.table_name}.position"
 

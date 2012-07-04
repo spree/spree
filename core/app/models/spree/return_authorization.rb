@@ -9,6 +9,8 @@ module Spree
     validates :amount, :numericality => true
     validate :must_have_shipped_units
 
+    attr_accessible :amount, :reason
+
     state_machine :initial => 'authorized' do
       after_transition :to => 'received', :do => :process_return
 

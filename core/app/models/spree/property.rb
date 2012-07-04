@@ -7,6 +7,8 @@ module Spree
 
     after_destroy :recalculate_product_group_products
 
+    attr_accessible :name, :presentation
+
     validates :name, :presentation, :presence => true
 
     scope :sorted, lambda { order(:name) }

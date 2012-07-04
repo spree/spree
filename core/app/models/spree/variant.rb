@@ -3,6 +3,11 @@ module Spree
     belongs_to :product
     delegate_belongs_to :product, :name, :description, :permalink, :available_on, :tax_category_id, :shipping_category_id, :meta_description, :meta_keywords, :tax_category
 
+    attr_accessible :name, :presentation, :cost_price,
+                    :position, :on_hand, :option_value_ids,
+                    :product_id, :option_values_attributes, :price,
+                    :weight, :height, :width, :depth, :sku
+
     has_many :inventory_units
     has_many :line_items
     has_and_belongs_to_many :option_values, :join_table => 'spree_option_values_variants'
