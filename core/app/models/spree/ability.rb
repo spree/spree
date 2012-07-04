@@ -31,7 +31,7 @@ module Spree
       alias_action :new_action, :to => :create
       alias_action :show, :to => :read
 
-      user ||= Spree::User.new
+      user ||= Spree.user_class.new
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
