@@ -78,6 +78,7 @@ $(document).ready(function(){
         $('#user_id').val(ui.item.data['id']);
         $('#guest_checkout_true').prop("checked", false);
         $('#guest_checkout_false').prop("checked", true);
+        $('#guest_checkout_false').prop("disabled", false);
         return true;
       }
     }).data("autocomplete")._renderItem = function(ul, item) {
@@ -107,7 +108,6 @@ $(document).ready(function(){
     $('#customer_search').val("");
     $('#user_id').val("");
     $('#checkout_email').val("");
-    $('#guest_checkout_false').prop("disabled", true);
 
     $('#order_bill_address_attributes_firstname').val("");
     $('#order_bill_address_attributes_lastname').val("");
