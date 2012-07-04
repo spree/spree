@@ -8,11 +8,7 @@ module Spree
                     :ship_address, :bill_address, :line_items_attributes, :number,
                     :shipping_method_id, :email, :use_billing, :special_instructions
 
-    if Spree.user_class
-      belongs_to :user, :class_name => Spree.user_class.to_s
-    else
-      belongs_to :user
-    end
+    belongs_to :user, :class_name => "Spree::User"
 
     belongs_to :bill_address, :foreign_key => :bill_address_id, :class_name => "Spree::Address"
     alias_attribute :billing_address, :bill_address
@@ -111,7 +107,7 @@ module Spree
     end
 
     def self.by_customer(customer)
-      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
+      joins(:user).where("#{Spree::User.table_name}.email" => customer)
     end
 
     def self.by_state(state)
