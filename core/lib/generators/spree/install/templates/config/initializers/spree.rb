@@ -11,5 +11,4 @@ Spree.config do |config|
   # config.site_name = "Spree Demo Site"
 end
 
-SPREE_USER_CLASS = "Spree::User"
-Spree.user_class = SPREE_USER_CLASS
+Spree.user_class = "Spree::User"
