@@ -8,6 +8,8 @@ module Spree
     validate :promotion, :presence => true
     validate :unique_per_activator, :on => :create
 
+    attr_accessible :preferred_operator, :preferred_amount, :product, :product_ids_string, :preferred_match_policy
+
     def eligible?(order, options = {})
       raise 'eligible? should be implemented in a sub-class of Promotion::PromotionRule'
     end
