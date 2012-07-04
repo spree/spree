@@ -19,7 +19,6 @@ $(document).ready(function(){
     $('#customer_search').val("");
     $('#user_id').val("");
     $('#checkout_email').val("");
-    $('#guest_checkout_false').prop("disabled", true);
 
     var fields = ["firstname", "lastname", "company", "address1", "address2",
               "city", "zipcode", "state_id", "country_id", "phone"]
