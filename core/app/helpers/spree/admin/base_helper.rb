@@ -120,7 +120,8 @@ module Spree
 
         field_options.merge!({
           :readonly => options[:readonly],
-          :disabled => options[:disabled]
+          :disabled => options[:disabled],
+          :size     => options[:size]
         })
       end
 

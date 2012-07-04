@@ -9,14 +9,14 @@
   <p data-hook="attachment_path">
     <label>
       <%= label_tag 'preferences[attachment_path]', t(:attachment_path) %>
-      <%= preference_field_tag 'preferences[attachment_path]', Spree::Config[:attachment_path], :type => :string %>
+      <%= preference_field_tag 'preferences[attachment_path]', Spree::Config[:attachment_path], :type => :string, :size => 70 %>
     </label>
   </p>
 
   <p data-hook="attachment_default_url">
     <label>
       <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
-      <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string %>
+      <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string, :size => 60 %>
     </label>
   </p>
 
