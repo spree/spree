@@ -35,7 +35,7 @@ end
 # end
 
 # platform :ruby_19 do
-#   gem "ruby-debug19"
+#   gem "debugger"
 # end
 
 gemspec
