@@ -18,6 +18,16 @@ module Spree
       :path => ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
       :default_url => '/assets/default_taxon.png'
 
+    # Load user defined paperclip settings
+    if Spree::Config[:use_s3]
+      s3_creds = { :access_key_id => Spree::Config[:s3_access_key], :secret_access_key => Spree::Config[:s3_secret], :bucket => Spree::Config[:s3_bucket] }
+      Spree::Taxon.attachment_definitions[:icon][:storage] = :s3
+      Spree::Taxon.attachment_definitions[:icon][:s3_credentials] = s3_creds
+      Spree::Taxon.attachment_definitions[:icon][:s3_headers] = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
+      Spree::Taxon.attachment_definitions[:icon][:bucket] = Spree::Config[:s3_bucket]
+      Spree::Taxon.attachment_definitions[:icon][:s3_protocol] = Spree::Config[:s3_protocol] unless Spree::Config[:s3_protocol].blank?
+    end
+
     include ::Spree::ProductFilters  # for detailed defs of filters
 
     # indicate which filters should be used for a taxon
