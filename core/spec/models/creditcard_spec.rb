@@ -12,7 +12,7 @@ describe Spree::Creditcard do
 
     @order = Factory(:order)
     @creditcard = Spree::Creditcard.new
-    @payment = Spree::Payment.create(:amount => 100, :order => @order)
+    @payment = Spree::Payment.create({:amount => 100, :order => @order}, :without_protection => true)
 
     @success_response = mock('gateway_response', :success? => true, :authorization => '123', :avs_result => {'code' => 'avs-code'})
     @fail_response = mock('gateway_response', :success? => false)
