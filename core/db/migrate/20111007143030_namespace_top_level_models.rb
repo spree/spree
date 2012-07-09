@@ -53,7 +53,6 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_index :spree_line_items, 'index_line_items_on_variant_id', 'index_spree_line_items_on_variant_id'
     rename_index :spree_option_values_variants, 'index_option_values_variants_on_variant_id', 'index_spree_option_values_variants_on_variant_id'
     rename_index :spree_orders, 'index_orders_on_number', 'index_spree_orders_on_number'
-    rename_index :spree_preferences, 'index_preferences_on_owner_and_attribute_and_preference', 'index_spree_preferences_on_owner_and_attribute_and_preference'
     rename_index :spree_products, 'index_products_on_available_on', 'index_spree_products_on_available_on'
     rename_index :spree_products, 'index_products_on_deleted_at', 'index_spree_products_on_deleted_at'
     rename_index :spree_products, 'index_products_on_name', 'index_spree_products_on_name'
