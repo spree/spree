@@ -7,7 +7,7 @@ module Spree
     belongs_to :shipping_category
 
     attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
-                    :match_none, :match_one, :match_all
+                    :match_none, :match_one, :match_all, :calculator_type
 
     calculated_adjustments
 
