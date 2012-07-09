@@ -127,7 +127,7 @@ module Spree
     def add_properties_and_option_types_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by_id(prototype_id)
         prototype.properties.each do |property|
-          product_properties.create(:property => property)
+          product_properties.create({:property => property}, :without_protection => true)
         end
         self.option_types = prototype.option_types
       end
