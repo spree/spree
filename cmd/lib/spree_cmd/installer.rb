@@ -55,6 +55,9 @@ module SpreeCmd
         @spree_gem_options[:tag] = options[:tag] if options[:tag]
       elsif options[:version]
         @spree_gem_options[:version] = options[:version]
+      else
+        require 'spree/core/version'
+        @spree_gem_options[:version] = Spree.version
       end
     end
 
