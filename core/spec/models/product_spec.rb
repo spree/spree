@@ -195,32 +195,32 @@ describe Spree::Product do
         @product.save
         @product.properties.count.should == 1
       end
-      
+
     end
-    
+
     context "when prototype with option types is supplied" do
-      
+
       include_context "product prototype"
-      
+
       before { @product.prototype_id = prototype.id }
-      
+
       it "should create option types based on the prototype" do
         @product.save
         @product.option_type_ids.length.should == 1
         @product.option_type_ids.should == prototype.option_type_ids
       end
-      
+
       it "should create product option types based on the prototype" do  
         @product.save
         @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
       end
-      
+
       it "should create variants from an option values hash with one option type" do
         @product.option_values_hash = option_values_hash
         @product.save
         @product.variants.length.should == 3
       end
-      
+
       it "should still create variants when option_values_hash is given but prototype id is nil" do
         @product.option_values_hash = option_values_hash
         @product.prototype_id = nil
@@ -229,7 +229,7 @@ describe Spree::Product do
         @product.option_type_ids.should == prototype.option_type_ids
         @product.variants.length.should == 3
       end
-      
+
       it "should create variants from an option values hash with multiple option types" do
         color = build_option_type_with_values("color", %w(Red Green Blue))
         logo  = build_option_type_with_values("logo", %w(Ruby Rails Nginx))
@@ -241,7 +241,6 @@ describe Spree::Product do
         @product.option_type_ids.length.should == 3
         @product.variants.length.should == 27
       end
-      
     end
 
   end
@@ -283,15 +282,20 @@ describe Spree::Product do
     let(:product) { create(:product) }
 
     before do
-      pending "This is more trouble than it's worth. Expects bucket_name for some stupid reason."
       image = File.open(File.expand_path('../../../app/assets/images/noimage/product.png', __FILE__))
-      Spree::Image.create!({:viewable_id => product.id, :alt => "position 2", :attachment => image, :position => 2, :bucket_name => "foo"}, :without_protection => true)
-      Spree::Image.create!({:viewable_id => product.id, :alt => "position 1", :attachment => image, :position => 1, :bucket_name => "foo"}, :without_protection => true)
+      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
+      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
+      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
+    end
+
+    it "should only look for variant images to support third-party extensions" do
+      product.images.size.should == 2
     end
 
     it "should be sorted by position" do
       product.images.map(&:alt).should eq(["position 1", "position 2"])
     end
+
   end
 
 end
