@@ -245,7 +245,12 @@ describe Spree::InventoryUnit do
   end
 
   context "return!" do
-    let(:inventory_unit) { Spree::InventoryUnit.create(:state => "shipped", :variant => mock_model(Spree::Variant, :on_hand => 95)) }
+    let(:inventory_unit) do
+      Spree::InventoryUnit.create(
+        { :state => "shipped",
+          :variant => mock_model(Spree::Variant, :on_hand => 95)
+        }, :without_protection => true)
+    end
 
     it "should update on_hand for variant" do
       inventory_unit.variant.should_receive(:on_hand=).with(96)
