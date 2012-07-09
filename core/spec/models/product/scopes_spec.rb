@@ -202,7 +202,11 @@ describe "product scopes" do
     let!(:product) { Factory(:product) }
 
     before do
-      Spree::ProductProperty.create!(:product => product, :property => property, :value => "bar")
+      Spree::ProductProperty.create!({
+        :product => product,
+        :property => property,
+        :value => "bar"},
+      :without_protection => true)
     end
 
     let!(:other_product) { Factory(:product) }
@@ -232,7 +236,11 @@ describe "product scopes" do
 
     it "property value" do
       property = Factory(:property)
-      Spree::ProductProperty.create!(:product => product, :property => property, :value => "foo")
+      Spree::ProductProperty.create!({
+        :product => product,
+        :property => property,
+        :value => "foo"},
+        :without_protection => true)
 
       products = Spree::Product.with("foo")
       products.should include(product)
