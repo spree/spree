@@ -630,6 +630,7 @@ en:
   other_payment_options: Other Payment Options
   out_of_stock: "Out of Stock"
   over_paid: "Over Paid"
+  over_price: "Over %{price}"
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Paid
@@ -1010,6 +1011,7 @@ en:
   unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Unable to Save Order"
   under_paid: "Under Paid"
+  under_price: "Under %{price}"
   unrecognized_card_type: Unrecognized card type
   update: Update
   update_password: "Update my password and log me in"
