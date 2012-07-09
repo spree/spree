@@ -174,12 +174,12 @@ module Spree
       record_log payment, response
 
       if response.success?
-        Payment.create(:order => payment.order,
-                              :source => payment,
-                              :payment_method => payment.payment_method,
-                              :amount => amount.abs * -1,
-                              :response_code => response.authorization,
-                              :state => 'completed')
+        Payment.create({ :order => payment.order,
+                         :source => payment,
+                         :payment_method => payment.payment_method,
+                         :amount => amount.abs * -1,
+                         :response_code => response.authorization,
+                         :state => 'completed'}, :without_protection => true)
       else
         gateway_error(response)
       end
