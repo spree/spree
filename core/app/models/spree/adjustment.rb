@@ -76,7 +76,7 @@ module Spree
     private
 
     def update_adjustable
-      adjustable.update! if adjustable.is_a? Order
+      adjustable.update! if adjustable.is_a? Spree::Order
     end
 
   end
