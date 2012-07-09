@@ -11,7 +11,7 @@ describe Spree::Payment do
   let(:card) { Factory(:creditcard) }
 
   before(:each) do
-    @payment = Spree::Payment.new(:order => order)
+    @payment = Spree::Payment.new({:order => order}, :without_protection => true)
     @payment.payment_method = stub_model(Spree::PaymentMethod)
     @payment.payment_method.stub(:source_required? => true)
     @payment.source = mock_model(Spree::Creditcard, :save => true, :payment_gateway => nil, :process => nil, :credit => nil, :changed_for_autosave? => false)
@@ -121,7 +121,10 @@ describe Spree::Payment do
 
   context "#save" do
     it "should call order#update!" do
-      payment = Spree::Payment.create(:amount => 100, :order => order)
+      payment = Spree::Payment.create({
+        :amount => 100,
+        :order => order},
+        :without_protection => true)
       order.should_receive(:update!)
       payment.save
     end
@@ -131,7 +134,13 @@ describe Spree::Payment do
 
       it "should create a payment profile" do
         gateway.should_receive :create_profile
-        payment = Spree::Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+        payment = Spree::Payment.create({
+          :amount => 100,
+          :order => order,
+          :source => card,
+          :payment_method => gateway},
+          :without_protection => true
+        )
       end
     end
 
@@ -140,7 +149,12 @@ describe Spree::Payment do
 
       it "should not create a payment profile" do
         gateway.should_not_receive :create_profile
-        payment = Spree::Payment.create(:amount => 100, :order => order, :source => card, :payment_method => gateway)
+        payment = Spree::Payment.create({
+          :amount => 100,
+          :order => order,
+          :source => card,
+          :payment_method => gateway
+        }, :without_protection => true)
       end
     end
   end
