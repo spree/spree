@@ -627,10 +627,10 @@ en:
   order_total: "Order Total"
   order_total_message: "The total amount charged to your card will be"
   order_updated: "Order Updated"
+  or_over_price: "Over %{price}"
   other_payment_options: Other Payment Options
   out_of_stock: "Out of Stock"
   over_paid: "Over Paid"
-  over_price: "Over %{price}"
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   paid: Paid
