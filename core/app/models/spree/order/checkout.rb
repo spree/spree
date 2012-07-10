@@ -6,6 +6,7 @@ module Spree
           cattr_accessor :next_event_transitions
           cattr_accessor :previous_states
           cattr_accessor :checkout_flow
+          cattr_accessor :checkout_steps
 
           def self.checkout_flow(&block)
             if block_given?
@@ -66,6 +67,7 @@ module Spree
           end
 
           def self.go_to_state(name, options={})
+            self.checkout_steps[name] = options
             if options[:if]
               previous_states.each do |state|
                 add_transition({:from => state, :to => name}.merge(options))
@@ -95,8 +97,24 @@ module Spree
             @next_event_transitions ||= []
           end
 
+          def self.checkout_steps
+            @checkout_steps ||= ActiveSupport::OrderedHash.new
+          end
+
           def self.add_transition(options)
             self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
+          end
+
+          def checkout_steps
+            checkout_steps = []
+            # TODO: replace this with each_with_object once Ruby 1.9 is standard
+            self.class.checkout_steps.each do |step, options|
+              if options[:if]
+                next unless options[:if].call(self)
+              end
+              checkout_steps << step
+            end
+            checkout_steps
           end
         end
       end

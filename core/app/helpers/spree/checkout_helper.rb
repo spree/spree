@@ -1,11 +1,7 @@
 module Spree
   module CheckoutHelper
     def checkout_states
-      if @order.payment and @order.payment.payment_method.payment_profiles_supported?
-        %w(address delivery payment confirm complete)
-      else
-        %w(address delivery payment complete)
-      end
+      @order.checkout_steps
     end
 
     def checkout_progress
