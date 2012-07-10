@@ -23,7 +23,10 @@ module Spree
       value.to_s.split(',').each do |str|
         variant_id, quantity = str.split('x')
         if variant_id && quantity && variant = Variant.find_by_id(variant_id)
-          promotion_action_line_items.create(:variant => variant, :quantity => quantity.to_i)
+          promotion_action_line_items.create({
+            :variant => variant,
+            :quantity => quantity.to_i,
+          }, :without_protection => true)
         end
       end
     end
