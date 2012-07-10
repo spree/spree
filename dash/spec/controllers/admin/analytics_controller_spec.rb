@@ -4,12 +4,12 @@ require 'spec_helper'
 describe Spree::Admin::AnalyticsController do
   before :each do
     @user = create(:admin_user)
-    controller.stub :spree_current_user => @user
+    controller.stub :current_user => @user
   end
 
   it "redirects if previously registered" do
     Spree::Dash::Config.should_receive(:configured?).and_return(true)
-    spree_get :sign_up
+    get :sign_up
     response.should redirect_to(spree.admin_path)
   end
 
@@ -24,7 +24,7 @@ describe Spree::Admin::AnalyticsController do
     it "sets the defaults to preferences" do
       Spree::Config.site_name = "test_site"
       Spree::Config.site_url = "http://test_site.com"
-      spree_get :sign_up
+      get :sign_up
       response.should render_template("sign_up")
       assigns(:store)[:url].should eq 'http://test_site.com'
       assigns(:store)[:email].should eq @user.email
@@ -32,13 +32,13 @@ describe Spree::Admin::AnalyticsController do
 
     it "must agree to terms of service" do
       params = { :store => {:url => 'http://test.com' } }
-      spree_post :register, params
+      post :register, params
       flash[:error].should match /Terms of Service/
     end
 
     it "must agree to privacy policy" do
       params = { :store => {:terms_of_service => 'on', :url => 'http://test.com' } }
-      spree_post :register, params
+      post :register, params
       flash[:error].should match /Privacy Policy/
     end
 

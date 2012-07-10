@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Analytics Activation" do
   before(:each) do
     @user = create(:admin_user)
-    Spree::Admin::AnalyticsController.any_instance.stub :spree_current_user => @user
+    Spree::Admin::AnalyticsController.any_instance.stub :current_user => @user
 
     Spree::Dash::Config.app_id = nil
     Spree::Dash::Config.app_token = nil
