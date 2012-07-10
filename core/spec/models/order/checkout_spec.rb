@@ -38,6 +38,7 @@ describe Spree::Order do
       end
 
       it "transitions to delivery" do
+        order.stub(:has_available_payment)
         order.next!
         order.state.should == "delivery"
       end
