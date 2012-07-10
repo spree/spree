@@ -8,6 +8,7 @@ describe Spree::OrderMailer do
   #let(:email) { mock "email" }
 
   before do
+    ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries.clear
   end
 
@@ -16,7 +17,6 @@ describe Spree::OrderMailer do
       ActionMailer::Base.delivery_method = :test
       Spree::MailMethod.stub :current => mail_method
     end
-    after { ActionMailer::Base.deliveries.clear }
 
     it "should use the from address specified in the preference" do
       mail_method.stub :preferred_mails_from => "no-reply@foobar.com"
