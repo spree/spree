@@ -120,6 +120,13 @@ module Spree
         json_response["errors"]["bill_address.firstname"].should_not be_blank
       end
 
+      it "can add line items" do
+        api_put :update, :id => order.to_param, :order => { :line_items => [{:variant_id => create(:variant).id, :quantity => 2}] }
+
+        response.status.should == 200
+        json_response['order']['item_total'].to_f.should_not == order.item_total.to_f
+      end
+
       context "with a line item" do
         before do
           order.line_items << create(:line_item)
