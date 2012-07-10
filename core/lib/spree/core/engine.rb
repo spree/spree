@@ -14,6 +14,11 @@ module Spree
 
       config.to_prepare &method(:activate).to_proc
 
+      # Defines the initial state machine for orders
+      config.to_prepare do
+        Spree::Order.define_state_machine!
+      end
+
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args
@@ -22,7 +27,6 @@ module Spree
             activator.activate(payload)
           end
         end
-
       end
 
       # We need to reload the routes here due to how Spree sets them up.
