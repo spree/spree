@@ -27,6 +27,7 @@ module Spree
         def update
           authorize! :update, Order
           if order.update_attributes(@nested_params)
+            order.update!
             render :show
           else
             invalid_resource!(order)

@@ -15,7 +15,7 @@ module Spree
     validate :stock_availability
     validate :quantity_no_less_than_shipped
 
-    attr_accessible :quantity
+    attr_accessible :quantity, :variant_id
 
     before_save :update_inventory
     before_destroy :ensure_not_shipped, :remove_inventory
