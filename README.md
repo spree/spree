@@ -31,7 +31,7 @@ available in the spree gem. It will add Spree to an existing Rails
 application.
 
     $ gem install rails -v 3.1.6
-    $ gem install spree -v 1.0.4
+    $ gem install spree -v 1.0.5
     $ rails _3.1.6_ new my_store
     $ spree install my_store
 
@@ -52,7 +52,7 @@ Using the Gem
 You can manually add Spree to your Rails 3.1.x application. Add Spree to
 your Gemfile.
 
-    gem 'spree', '1.0.4'
+    gem 'spree', '1.0.5'
 
 Update your bundle
 
