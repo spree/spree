@@ -6,6 +6,7 @@ module Spree
     ssl_required
 
     before_filter :load_order
+    before_filter :ensure_valid_state
     before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
@@ -37,6 +38,15 @@ module Spree
     end
 
     private
+      def ensure_valid_state
+        if params[:state] && params[:state] != 'cart' &&
+           !@order.checkout_steps.include?(params[:state])
+          params[:state] == 'cart'
+          @order.state = 'cart'
+          redirect_to checkout_path
+        end
+      end
+
       def load_order
         @order = current_order
         redirect_to cart_path and return unless @order and @order.checkout_allowed?

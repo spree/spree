@@ -10,11 +10,14 @@ module Spree
       config.autoload_paths += %W(#{config.root}/lib)
 
       def self.activate
+        Spree::Order.define_state_machine!
       end
 
       config.to_prepare &method(:activate).to_proc
 
       config.after_initialize do
+        Spree::Order.define_state_machine!
+
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args
           Activator.active.event_name_starts_with(event_name).each do |activator|
@@ -22,7 +25,6 @@ module Spree
             activator.activate(payload)
           end
         end
-
       end
 
       # We need to reload the routes here due to how Spree sets them up.

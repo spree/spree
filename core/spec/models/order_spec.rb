@@ -530,7 +530,7 @@ describe Spree::Order do
 
   context "#add_variant" do
     it "should update order totals" do
-      order = Spree::Order.create!
+      order = Spree::Order.create
 
       order.item_total.to_f.should == 0.00
       order.total.to_f.should == 0.00
