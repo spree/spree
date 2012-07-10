@@ -6,7 +6,7 @@ module Spree
 
     scope :of_type, lambda {|t| {:conditions => {:type => t}}}
 
-    attr_accessible :line_items_string
+    attr_accessible :line_items_string, :calculator_type, :calculator_attributes
 
     # This method should be overriden in subclass
     # Updates the state of the order or performs some other action depending on the subclass
