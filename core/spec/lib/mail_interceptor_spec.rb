@@ -7,7 +7,7 @@ describe Spree::OrderMailer do
   let(:message) { Spree::OrderMailer.confirm_email(order) }
   #let(:email) { mock "email" }
 
-  before(:all) do
+  before do
     ActionMailer::Base.deliveries.clear
   end
 
