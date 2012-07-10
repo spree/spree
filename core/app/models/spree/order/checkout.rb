@@ -114,7 +114,7 @@ module Spree
               end
               checkout_steps << step
             end
-            checkout_steps
+            checkout_steps.map(&:to_s)
           end
         end
       end
