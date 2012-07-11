@@ -6,7 +6,7 @@
 
   <% @payment_methods.each do |method| %>
 
-    <label data-hook="payment_method">
+    <label data-hook="payment_method_field">
       <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method %>
       <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
     </label>
