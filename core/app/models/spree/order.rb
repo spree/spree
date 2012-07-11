@@ -4,21 +4,13 @@ module Spree
   class Order < ActiveRecord::Base
     token_resource
 
-    attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
-                    :ship_address, :bill_address, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions
+    attr_accessible :line_items, :payments_attributes, :line_items_attributes, :number, :shipping_method_id, :email, :use_billing, :special_instructions
 
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
     else
       belongs_to :user
     end
-
-    belongs_to :bill_address, :foreign_key => :bill_address_id, :class_name => "Spree::Address"
-    alias_attribute :billing_address, :bill_address
-
-    belongs_to :ship_address, :foreign_key => :ship_address_id, :class_name => "Spree::Address"
-    alias_attribute :shipping_address, :ship_address
 
     belongs_to :shipping_method
 
@@ -31,15 +23,11 @@ module Spree
     has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
 
     accepts_nested_attributes_for :line_items
-    accepts_nested_attributes_for :bill_address
-    accepts_nested_attributes_for :ship_address
     accepts_nested_attributes_for :payments
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
     before_validation :generate_order_number, :on => :create
-    before_validation :clone_billing_address, :if => :use_billing?
-    attr_accessor :use_billing
 
     before_create :link_by_email
     after_create :create_tax_charge!
@@ -239,13 +227,17 @@ module Spree
       update_hooks.each { |hook| self.send hook }
     end
 
-    def clone_billing_address
-      if bill_address and self.ship_address.nil?
-        self.ship_address = bill_address.clone
-      else
-        self.ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
+    def restore_state
+      # pop the resume event so we can see what the event before that was
+      state_changes.pop if state_changes.last.name == 'resume'
+      update_attribute('state', state_changes.last.previous_state)
+
+      if paid?
+        raise 'do something with inventory'
+        #Spree::InventoryUnit.assign_opening_inventory(self) if inventory_units.empty?
+        #shipment.inventory_units = inventory_units
+        #shipment.ready!
       end
-      true
     end
 
     def allow_cancel?
@@ -602,10 +594,6 @@ module Spree
         line_items.each do |line_item|
           InventoryUnit.increase(self, line_item.variant, line_item.quantity)
         end
-      end
-
-      def use_billing?
-        @use_billing == true || @use_billing == "true" || @use_billing == "1"
       end
   end
 end
