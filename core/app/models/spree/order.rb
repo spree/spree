@@ -137,11 +137,6 @@ module Spree
       total.to_f > 0.0
     end
 
-    # Indicates the number of items in the order
-    def item_count
-      line_items.sum(:quantity)
-    end
-
     # Indicates whether there are any backordered InventoryUnits associated with the Order.
     def backordered?
       return false unless Spree::Config[:track_inventory_levels]

@@ -78,6 +78,17 @@ describe Spree::OrderComponents::LineItems do
       line_item.quantity.should == 2
     end
   end
+
+  context "#item_count" do
+    before do
+      order.stub :line_items => [stub(:quantity => 5), stub(:quantity => 1)]
+    end
+
+    specify do
+      order.item_count.should == 6
+    end
+
+  end
 end
 
 

@@ -50,6 +50,11 @@ module Spree
         self.reload
         current_item
       end
+
+      # Indicates the number of items in the order
+      def item_count
+        line_items.sum(&:quantity)
+      end
     end
   end
 end
