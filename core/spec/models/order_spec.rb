@@ -134,6 +134,7 @@ describe Spree::Order do
   end
 
   context "#next!" do
+    before { order.stub(:require_email => false) }
     context "when current state is confirm" do
       before { order.state = "confirm" }
       it "should finalize order when transitioning to complete state" do
@@ -164,13 +165,10 @@ describe Spree::Order do
            end
 
            it "should complete the order" do
-             pending
-              order.next
-              order.state.should == "complete"
-            end
-
+             order.next
+             order.state.should == "complete"
+           end
          end
-
        end
     end
     context "when current state is address" do
@@ -1006,7 +1004,7 @@ describe Spree::Order do
 
   context "#add_variant" do
     it "should update order totals" do
-      order = Spree::Order.create!
+      order = Spree::Order.create
 
       order.item_total.to_f.should == 0.00
       order.total.to_f.should == 0.00
