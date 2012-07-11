@@ -21,34 +21,43 @@ describe Spree::Order do
     Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
-  context "#products" do
-    before :each do
-      @variant1 = mock_model(Spree::Variant, :product => "product1")
-      @variant2 = mock_model(Spree::Variant, :product => "product2")
-      @line_items = [mock_model(Spree::LineItem, :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
-                     mock_model(Spree::LineItem, :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
-      order.stub(:line_items => @line_items)
+  context "validation" do
+    context "email validation" do
+      # Regression test for #1238
+      it "o'brien@gmail.com is a valid email address" do
+        order.state = 'address'
+        order.email = "o'brien@gmail.com"
+        order.should be_valid
+      end
+    end
+  end
+
+  context "#save" do
+    it "should create guest user (when no user assigned)" do
+      order.run_callbacks(:create)
+      order.user.should_not be_nil
     end
 
-    it "should return ordered products" do
-      order.products.should == ['product1', 'product2']
+    context "when associated with a registered user" do
+      it "should assign the email address of the user" do
+        order.run_callbacks(:create)
+        order.email.should == user.email
+      end
+
+      it "should accept the sample admin email address" do
+        user.stub :email => "spree@example.com"
+        order.run_callbacks(:create)
+        order.email.should == user.email
+      end
+
+      it "should reject the automatic email for anonymous users" do
+        user.stub :anonymous? => true
+        order.email.should be_blank
+      end
+
     end
 
-    it "contains?" do
-      order.contains?(@variant1).should be_true
-    end
-
-    it "gets the quantity of a given variant" do
-      order.quantity_of(@variant1).should == 1
-
-      @variant3 = mock_model(Spree::Variant, :product => "product3")
-      order.quantity_of(@variant3).should == 0
-    end
-
-    it "can find a line item matching a given variant" do
-      order.find_line_item_by_variant(@variant1).should_not be_nil
-      order.find_line_item_by_variant(mock_model(Spree::Variant)).should be_nil
-    end
+    it "should destroy any line_items with zero quantity"
   end
 
   context "#generate_order_number" do
@@ -224,13 +233,114 @@ describe Spree::Order do
     end
   end
 
-  context "#amount" do
-    before do
-      @order = create(:order, :user => user)
-      @order.line_items = [ create(:line_item, :price => 1.0, :quantity => 2), create(:line_item, :price => 1.0, :quantity => 1) ]
+  context "in the cart state" do
+    it "should not validate email address" do
+      order.state = "cart"
+      order.email = nil
+      order.should be_valid
     end
-    it "should return the correct lum sum of items" do
-      @order.amount.should == 3.0
+  end
+
+  context "#can_cancel?" do
+
+    %w(pending backorder ready).each do |shipment_state|
+      it "should be true if shipment_state is #{shipment_state}" do
+        order.stub :completed? => true
+        order.shipment_state = shipment_state
+        order.can_cancel?.should be_true
+      end
+    end
+
+    (SHIPMENT_STATES - %w(pending backorder ready)).each do |shipment_state|
+      it "should be false if shipment_state is #{shipment_state}" do
+        order.stub :completed? => true
+        order.shipment_state = shipment_state
+        order.can_cancel?.should be_false
+      end
+    end
+
+  end
+
+  context "#cancel" do
+    let!(:variant) { stub_model(Spree::Variant, :on_hand => 0) }
+    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, :variant => variant),
+                              stub_model(Spree::InventoryUnit, :variant => variant) ]}
+    let!(:shipment) do
+      shipment = stub_model(Spree::Shipment)
+      shipment.stub :inventory_units => inventory_units
+      order.stub :shipments => [shipment]
+      shipment
+    end
+
+    before do
+      order.email = user.email
+      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 2)]
+      order.line_items.stub :find_by_variant_id => order.line_items.first
+
+      order.stub :completed? => true
+      order.stub :allow_cancel? => true
+    end
+
+    it "should send a cancel email" do
+      order.stub :restock_items!
+      mail_message = mock "Mail::Message"
+      Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
+      mail_message.should_receive :deliver
+      order.cancel!
+    end
+
+    context "restocking inventory" do
+      before do
+        shipment.stub(:ensure_correct_adjustment)
+        shipment.stub(:update_order)
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        mail_message.stub :deliver
+      end
+
+      # Regression fix for #729
+      specify do
+        Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2).once
+        order.cancel!
+      end
+
+    end
+
+    it "should change shipment status (unless shipped)"
+  end
+
+
+  # Another regression test for #729
+  context "#resume" do
+    before do
+      order.stub :email => "user@spreecommerce.com"
+      order.stub :state => "canceled"
+      order.stub :allow_resume? => true
+    end
+
+    it "should send a resume email" do
+      pending "Pending test for #818"
+      order.stub :unstock_items!
+      order.resume!
+    end
+
+    context "unstocks inventory" do
+      let(:variant) { stub_model(Spree::Variant) }
+
+      before do
+        shipment = stub_model(Spree::Shipment)
+        line_item = stub_model(Spree::LineItem, :variant => variant, :quantity => 2)
+        order.stub :line_items => [line_item]
+        order.line_items.stub :find_by_variant_id => line_item
+
+        order.stub :shipments => [shipment]
+        shipment.stub :inventory_units => [stub_model(Spree::InventoryUnit, :variant => variant),
+                                           stub_model(Spree::InventoryUnit, :variant => variant) ]
+      end
+
+      specify do
+        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 2).once
+        order.resume!
+      end
     end
   end
 
@@ -525,21 +635,6 @@ describe Spree::Order do
       it "should be false" do
         @order.exclude_tax?.should be_false
       end
-    end
-  end
-
-  context "#add_variant" do
-    it "should update order totals" do
-      order = Spree::Order.create!
-
-      order.item_total.to_f.should == 0.00
-      order.total.to_f.should == 0.00
-
-      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
-      order.add_variant(product.master)
-
-      order.item_total.to_f.should == 22.25
-      order.total.to_f.should == 22.25
     end
   end
 

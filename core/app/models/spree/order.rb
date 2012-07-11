@@ -4,7 +4,7 @@ module Spree
   class Order < ActiveRecord::Base
     token_resource
 
-    attr_accessible :line_items, :payments_attributes, :line_items_attributes, :number, :shipping_method_id, :email, :use_billing, :special_instructions
+    attr_accessible :payments_attributes, :number, :shipping_method_id, :email, :use_billing, :special_instructions
 
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
@@ -15,14 +15,12 @@ module Spree
     belongs_to :shipping_method
 
     has_many :state_changes, :as => :stateful
-    has_many :line_items, :dependent => :destroy
     has_many :inventory_units
     has_many :payments, :dependent => :destroy
     has_many :shipments, :dependent => :destroy
     has_many :return_authorizations, :dependent => :destroy
     has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
 
-    accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :payments
     accepts_nested_attributes_for :shipments
 
@@ -117,11 +115,6 @@ module Spree
     # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
     def self.register_update_hook(hook)
       self.update_hooks.add(hook)
-    end
-
-    # For compatiblity with Calculator::PriceSack
-    def amount
-      line_items.sum(&:amount)
     end
 
     def to_param
@@ -251,22 +244,6 @@ module Spree
       true
     end
 
-    def add_variant(variant, quantity = 1)
-      current_item = find_line_item_by_variant(variant)
-      if current_item
-        current_item.quantity += quantity
-        current_item.save
-      else
-        current_item = LineItem.new(:quantity => quantity)
-        current_item.variant = variant
-        current_item.price   = variant.price
-        self.line_items << current_item
-      end
-
-      self.reload
-      current_item
-    end
-
     # Associates the specified user with the order.
     def associate_user!(user)
       self.user = user
@@ -290,19 +267,6 @@ module Spree
     # convenience method since many stores will not allow user to create multiple shipments
     def shipment
       @shipment ||= shipments.last
-    end
-
-    def contains?(variant)
-      find_line_item_by_variant(variant).present?
-    end
-
-    def quantity_of(variant)
-      line_item = find_line_item_by_variant(variant)
-      line_item ? line_item.quantity : 0
-    end
-
-    def find_line_item_by_variant(variant)
-      line_items.detect { |line_item| line_item.variant_id == variant.id }
     end
 
     def ship_total
@@ -431,10 +395,6 @@ module Spree
 
     def billing_lastname
       bill_address.try(:lastname)
-    end
-
-    def products
-      line_items.map { |li| li.variant.product }
     end
 
     def insufficient_stock_lines
