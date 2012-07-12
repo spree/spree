@@ -28,4 +28,12 @@ describe Spree::Order do
       end
     end
   end
+
+  context "in the cart state" do
+    it "should not validate email address" do
+      order.state = "cart"
+      order.email = nil
+      order.should be_valid
+    end
+  end
 end
