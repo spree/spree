@@ -30,6 +30,13 @@ module Spree
       end
     end
 
+    def self.adjust(order)
+      order.clear_adjustments!
+      self.match(order).each do |rate|
+        rate.adjust(order)
+      end
+    end
+
     # For Vat the default rate is the rate that is configured for the default category
     # It is needed for every price calculation (as all customer facing prices include vat )
     # The function returns the actual amount, which may be 0 in case of wrong setup, but is never nil

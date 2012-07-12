@@ -79,11 +79,24 @@ describe Spree::TaxRate do
             Spree::TaxRate.match(order).should == [rate]
           end
         end
-
       end
+    end
+  end
 
+  context "adjust" do
+    let(:order) { stub_model(Spree::Order) }
+    let(:rate_1) { stub_model(Spree::TaxRate) }
+    let(:rate_2) { stub_model(Spree::TaxRate) }
+
+    before do
+      Spree::TaxRate.stub :match => [rate_1, rate_2]
     end
 
+    it "should apply adjustments for two tax rates to the order" do
+      rate_1.should_receive(:adjust)
+      rate_2.should_receive(:adjust)
+      Spree::TaxRate.adjust(order)
+    end
   end
 
   context "default" do

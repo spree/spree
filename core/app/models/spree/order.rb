@@ -330,11 +330,7 @@ module Spree
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      # destroy any previous adjustments (eveything is recalculated from scratch)
-      adjustments.tax.each(&:destroy)
-      price_adjustments.each(&:destroy)
-
-      TaxRate.match(self).each { |rate| rate.adjust(self) }
+      TaxRate.adjust(self)
     end
 
     # Creates a new shipment (adjustment is created by shipment model)
@@ -458,6 +454,13 @@ module Spree
         self.add_variant(line_item.variant, line_item.quantity)
       end
       order.destroy
+    end
+
+    # destroy any previous adjustments.
+    # Adjustments will be recalculated during order update.
+    def clear_adjustments!
+      adjustments.each(&:destroy)
+      price_adjustments.each(&:destroy)
     end
 
     private

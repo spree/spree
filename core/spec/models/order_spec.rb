@@ -774,8 +774,7 @@ describe Spree::Order do
 
   end
 
-  context "create_tax_charge!" do
-
+  context "clear_adjustments" do
     before do
       @order = Spree::Order.new
     end
@@ -785,7 +784,7 @@ describe Spree::Order do
       adjustment.should_receive :destroy
 
       @order.stub_chain :adjustments, :tax => [adjustment]
-      @order.create_tax_charge!
+      @order.clear_adjustments
     end
 
     it "should destroy all price adjustments" do
@@ -793,9 +792,8 @@ describe Spree::Order do
       adjustment.should_receive :destroy
 
       @order.stub :price_adjustments => [adjustment]
-      @order.create_tax_charge!
+      @order.clear_adjustments
     end
-
   end
 
   context "#tax_zone" do
