@@ -424,6 +424,12 @@ This will return 25 orders at a time. You can page through the orders by passing
 GET /api/orders?page=2
 </plain>
 
+If you wish to limit the number of orders returned you may pass through the +per_page+ attribute:
+
+<plain>
+GET /api/orders?per_page=100
+</plain>
+
 h5. Viewing an order
 
 To view an order, make this request:
