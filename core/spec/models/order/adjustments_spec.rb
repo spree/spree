@@ -7,7 +7,7 @@ describe Spree::Order do
       adjustment = stub
       adjustment.should_receive :destroy
 
-      order.stub :adjustments => [adjustment]
+      order.stub_chain :adjustments, :tax => [adjustment]
       order.clear_adjustments!
     end
 
