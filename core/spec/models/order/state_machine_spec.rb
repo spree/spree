@@ -55,7 +55,9 @@ describe Spree::Order do
       end
 
       it "adjusts tax rates when transitioning to delivery" do
-        Spree::TaxRate.should_receive :adjust
+        # Once because the record is being saved
+        # Twice because it is transitioning to the delivery state
+        Spree::TaxRate.should_receive(:adjust).twice
         order.next!
       end
     end
