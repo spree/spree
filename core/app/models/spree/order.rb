@@ -462,7 +462,7 @@ module Spree
 
     private
       def link_by_email
-        self.email = user.email if self.user and not user.anonymous?
+        self.email = user.email if self.user
       end
 
       # Updates the +shipment_state+ attribute according to the following logic:
