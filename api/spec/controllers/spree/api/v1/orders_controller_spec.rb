@@ -183,7 +183,7 @@ module Spree
           json_response["orders"].first.should have_attributes(attributes)
           json_response["count"].should == 1
           json_response["current_page"].should == 1
-          json_response["pages"].should == 1
+          json_response["pages"].should == 2
         end
       end
 
