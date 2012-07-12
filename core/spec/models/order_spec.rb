@@ -598,19 +598,19 @@ describe Spree::Order do
     end
 
     it "should destroy all previous tax adjustments" do
-      adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax)
+      adjustment = mock_model(Spree::Adjustment)
       adjustment.should_receive :destroy
 
       @order.stub_chain :adjustments, :tax => [adjustment]
-      @order.clear_adjustments
+      @order.clear_adjustments!
     end
 
     it "should destroy all price adjustments" do
-      adjustment = mock_model(Spree::Adjustment, :amount => 5, :calculator => :sales_tax)
+      adjustment = mock_model(Spree::Adjustment)
       adjustment.should_receive :destroy
 
       @order.stub :price_adjustments => [adjustment]
-      @order.clear_adjustments
+      @order.clear_adjustments!
     end
   end
 
