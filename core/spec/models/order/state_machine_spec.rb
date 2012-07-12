@@ -112,7 +112,6 @@ describe Spree::Order do
     end
 
     before do
-      order.email = user.email
       order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 2)]
       order.line_items.stub :find_by_variant_id => order.line_items.first
 
