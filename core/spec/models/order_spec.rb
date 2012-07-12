@@ -189,52 +189,6 @@ describe Spree::Order do
     end
   end
 
-  context "#update_totals" do
-    it "should set item_total to the sum of line_item amounts" do
-      line_items = [ mock_model(Spree::LineItem, :amount => 100), mock_model(Spree::LineItem, :amount => 50) ]
-      order.stub(:line_items => line_items)
-      order.update!
-      order.item_total.should == 150
-    end
-    it "should set payments_total to the sum of completed payment amounts" do
-      payments = [ mock_model(Spree::Payment, :amount => 100, :checkout? => false), mock_model(Spree::Payment, :amount => -10, :checkout? => false) ]
-      payments.stub(:completed => payments)
-      order.stub(:payments => payments)
-      order.update!
-      order.payment_total.should == 90
-    end
-
-    context "with adjustments" do
-      before do
-        create(:adjustment, :adjustable => order, :amount => 10)
-        create(:adjustment, :adjustable => order, :amount => 5)
-        a = create(:adjustment, :adjustable => order, :amount => -2, :eligible => false)
-        a.update_attribute_without_callbacks(:eligible, false)
-        order.stub(:update_adjustments, nil) # So the last adjustment remains ineligible
-        order.adjustments.reload
-      end
-      it "should set adjustment_total to the sum of the eligible adjustment amounts" do
-        order.update!
-        order.adjustment_total.to_i.should == 15
-      end
-      it "should set the total to the sum of item and adjustment totals" do
-        line_items = [ mock_model(Spree::LineItem, :amount => 100), mock_model(Spree::LineItem, :amount => 50) ]
-        order.stub(:line_items => line_items)
-        order.update!
-        order.total.to_i.should == 165
-      end
-    end
-
-  end
-
-  context "#update_payment_state" do
-    it "should set payment_state to balance_due if no line_item" do
-      order.stub(:line_items => [])
-      order.update!
-      order.payment_state.should == "balance_due"
-    end
-  end
-
   context "#payment_method" do
     it "should return payment.payment_method if payment is present" do
       payments = [create(:payment)]
