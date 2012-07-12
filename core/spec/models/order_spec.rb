@@ -484,17 +484,6 @@ describe Spree::Order do
       order.update!
     end
 
-    it "should call adjustment#update on every adjustment}" do
-      # adjustment = mock_model(Adjustment, :amount => 5, :applicable? => true, :update! => true)
-      adjustment = create(:adjustment, :adjustable => order, :amount => 5)
-      # TODO: Restore this example. Stubbing adjustments doesn't work, need a proper collection
-      # so we can use adjustments.eligible
-      # order.stub(:adjustments => [adjustment])
-      # order.adjustments.stub(:reload).and_return([adjustment])
-      # adjustment.should_receive(:update!)
-      # order.update!
-    end
-
     it "should call update! on every shipment when Order#update!" do
       shipment = stub_model(Spree::Shipment, :order => order)
       order.stub :shipments => [shipment]
