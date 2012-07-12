@@ -34,8 +34,21 @@ describe Spree::Zone do
       let(:second_zone) { create(:zone, :name => "SecondZone") }
 
       before { second_zone.members.create(:zoneable => country) }
-      it "should return the zone that was created first" do
-        Spree::Zone.match(address).should == country_zone
+
+      context "when both zones have the same number of members" do
+        it "should return the zone that was created first" do
+          Spree::Zone.match(address).should == country_zone
+        end
+      end
+
+      context "when one of the zones has fewer members" do
+        let(:country2) { create(:country) }
+
+        before { country_zone.members.create(:zoneable => country2) }
+
+        it "should return the zone with fewer members" do
+          Spree::Zone.match(address).should == second_zone
+        end
       end
     end
 
