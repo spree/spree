@@ -158,12 +158,26 @@ module Spree
     context "as an admin" do
       sign_in_as_admin!
 
-      it "can view all orders" do
-        api_get :index
-        json_response["orders"].first.should have_attributes(attributes)
-        json_response["count"].should == 1
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
+      context "with two orders" do
+        before { create(:order) }
+
+        it "can view all orders" do
+          api_get :index
+          json_response["orders"].first.should have_attributes(attributes)
+          json_response["count"].should == 2
+          json_response["current_page"].should == 1
+          json_response["pages"].should == 1
+        end
+
+        # Test for #1763
+        it "can control the page size through a parameter" do
+          api_get :index, :per_page => 1
+          json_response["orders"].count.should == 1
+          json_response["orders"].first.should have_attributes(attributes)
+          json_response["count"].should == 1
+          json_response["current_page"].should == 1
+          json_response["pages"].should == 1
+        end
       end
 
       context "can cancel an order" do
