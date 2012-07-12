@@ -6,6 +6,10 @@ module Spree
     preference :normal_amount, :decimal, :default => 0
     preference :discount_amount, :decimal, :default => 0
 
+    attr_accessible :preferred_minimal_amount,
+                    :preferred_normal_amount,
+                    :preferred_discount_amount
+
     def self.description
       I18n.t(:price_sack)
     end

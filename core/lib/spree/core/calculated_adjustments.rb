@@ -5,6 +5,7 @@ module Spree
         def calculated_adjustments
           has_one   :calculator, :as => :calculable, :dependent => :destroy
           accepts_nested_attributes_for :calculator
+          attr_accessible :calculator_attributes
           validates :calculator, :presence => true
 
           def self.calculators
