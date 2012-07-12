@@ -137,7 +137,7 @@ $(document).ready(function(){
 
   $('.tokeninput.products').productPicker();
 
-  $(".select_properties_from_prototype").on("click", function(){
+  $('body').on('click', '.select_properties_from_prototype', function(){
     $("#busy_indicator").show();
     var clicked_link = $(this);
     $.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
