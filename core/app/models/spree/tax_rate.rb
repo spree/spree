@@ -20,7 +20,7 @@ module Spree
     calculated_adjustments
     scope :by_zone, lambda { |zone| where(:zone_id => zone) }
 
-    attr_accessible :amount, :tax_category_id, :calculator, :zone_id, :included_in_price
+    attr_accessible :amount, :tax_category_id, :calculator, :zone_id, :included_in_price, :calculator_type
 
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order)
