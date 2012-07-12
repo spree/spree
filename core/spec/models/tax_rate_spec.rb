@@ -24,7 +24,7 @@ describe Spree::TaxRate do
           @zone.zone_members.create(:zoneable => country)
         end
 
-        it "should return an emtpy array" do
+        it "should return an empty array" do
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == []
         end
