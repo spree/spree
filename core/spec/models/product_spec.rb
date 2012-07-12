@@ -13,20 +13,20 @@ describe Spree::Product do
       product.on_hand = 5
     end
   end
-
+  
   it "should always have a master variant" do
     product = Spree::Product.new
     product.master.should_not be_nil
   end
-
+  
   context 'product instance' do
     let(:product) { create(:product) }
-
+  
     context '#duplicate' do
       before do
         product.stub :taxons => [create(:taxon)]
       end
-
+  
       it 'duplicates product' do
         clone = product.duplicate
         clone.name.should == 'COPY OF ' + product.name
@@ -35,7 +35,7 @@ describe Spree::Product do
         clone.images.size.should == product.images.size
       end
     end
-
+  
     context "#on_hand" do
       # Regression test for #898
       context 'returns the correct number of products on hand' do
@@ -46,7 +46,7 @@ describe Spree::Product do
         specify { product.on_hand.should == 2 }
       end
     end
-
+  
     context "#price" do
       # Regression test for #1173
       it 'strips non-price characters' do
@@ -55,10 +55,10 @@ describe Spree::Product do
       end
     end
   end
-
+  
   context "validations" do
     context "find_by_param" do
-
+  
       context "permalink should be incremented until the value is not taken" do
         before do
           @other_product = create(:product, :name => 'zoo')
@@ -72,7 +72,7 @@ describe Spree::Product do
           @product3.permalink.should == 'foo-2'
         end
       end
-
+  
       context "permalink should be incremented until the value is not taken when there are more than 10 products" do
         before do
           @products = 0.upto(11).map do
@@ -83,7 +83,7 @@ describe Spree::Product do
           @products[11].permalink.should == 'foo-11'
         end
       end
-
+  
       context "permalink should be incremented until the value is not taken for similar names" do
         before do
           @other_product = create(:product, :name => 'foo bar')
@@ -97,7 +97,7 @@ describe Spree::Product do
           @product3.permalink.should == 'foo-3'
         end
       end
-
+  
       context "permalink should be incremented until the value is not taken for similar names when there are more than 10 products" do
         before do
           @other_product = create(:product, :name => 'foo a')
@@ -109,70 +109,70 @@ describe Spree::Product do
           @products[11].permalink.should == 'foo-12'
         end
       end
-
+  
       context "permalink with quotes" do
         it "should be saved correctly" do
           product = create(:product, :name => "Joe's", :permalink => "joe's")
           product.permalink.should == "joe's"
         end
-
+  
         context "existing" do
           before do
             create(:product, :name => "Joe's", :permalink => "joe's")
           end
-
+  
           it "should be detected" do
             product = create(:product, :name => "Joe's", :permalink => "joe's")
             product.permalink.should == "joe's-1"
           end
         end
       end
-
+  
       context "make_permalink should declare validates_uniqueness_of" do
         before do
           @product1 = create(:product, :name => 'foo')
           @product2 = create(:product, :name => 'foo')
           @product2.update_attributes(:permalink => 'foo')
         end
-
+  
         it "should have an error" do
           @product2.errors.size.should == 1
         end
-
+  
         it "should have error message that permalink is already taken" do
           @product2.errors.full_messages.first.should == 'Permalink has already been taken'
         end
       end
-
+  
     end
   end
-
+  
   context "permalink generation" do
     it "supports Chinese" do
       @product = create(:product, :name => "你好")
       @product.permalink.should == "ni-hao"
     end
   end
-
+  
   context "properties" do
     it "should properly assign properties" do
       product = FactoryGirl.create :product
       product.set_property('the_prop', 'value1')
       product.property('the_prop').should == 'value1'
-
+  
       product.set_property('the_prop', 'value2')
       product.property('the_prop').should == 'value2'
     end
-
+  
     it "should not create duplicate properties when set_property is called" do
       product = FactoryGirl.create :product
-
+  
       lambda {
         product.set_property('the_prop', 'value2')
         product.save
         product.reload
       }.should_not change(product.properties, :length)
-
+  
       lambda {
         product.set_property('the_prop_new', 'value')
         product.save
@@ -181,16 +181,16 @@ describe Spree::Product do
       }.should change { product.properties.length }.by(1)
     end
   end
-
+  
   context '#create' do
     before do
       @prototype = create(:prototype)
       @product = Spree::Product.new(:name => "Foo", :price => 1.99)
     end
-
+  
     context "when prototype is supplied" do
       before { @product.prototype_id = @prototype.id }
-
+  
       it "should create properties based on the prototype" do
         @product.save
         @product.properties.count.should == 1
@@ -243,16 +243,16 @@ describe Spree::Product do
       end
       
     end
-
+  
   end
-
+  
   context '#has_stock?' do
     let(:product) do
       product = stub_model(Spree::Product)
       product.stub :master => stub_model(Spree::Variant)
       product
     end
-
+  
     context 'nothing in stock' do
       before do
         Spree::Config.set :track_inventory_levels => true
@@ -260,14 +260,14 @@ describe Spree::Product do
       end
       specify { product.has_stock?.should be_false }
     end
-
+  
     context 'master variant has items in stock' do
       before do
         product.master.on_hand = 100
       end
       specify { product.has_stock?.should be_true }
     end
-
+  
     context 'variant has items in stock' do
       before do
         Spree::Config.set :track_inventory_levels => true
@@ -283,15 +283,20 @@ describe Spree::Product do
     let(:product) { create(:product) }
 
     before do
-      pending "This is more trouble than it's worth. Expects bucket_name for some stupid reason."
       image = File.open(File.expand_path('../../../app/assets/images/noimage/product.png', __FILE__))
-      Spree::Image.create!({:viewable_id => product.id, :alt => "position 2", :attachment => image, :position => 2, :bucket_name => "foo"}, :without_protection => true)
-      Spree::Image.create!({:viewable_id => product.id, :alt => "position 1", :attachment => image, :position => 1, :bucket_name => "foo"}, :without_protection => true)
+      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
+      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
+      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
     end
 
+    it "should only look for variant images to support third-party extensions" do
+      product.images.size.should == 2
+    end
+  
     it "should be sorted by position" do
       product.images.map(&:alt).should eq(["position 1", "position 2"])
     end
+    
   end
 
 end
