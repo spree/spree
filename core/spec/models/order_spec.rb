@@ -190,7 +190,6 @@ describe Spree::Order do
   end
 
   context "#update!" do
-    # before { Order.should_receive :update_all }
     let(:line_items) { [mock_model(Spree::LineItem, :amount => 5) ]}
     
     context "when payments are sufficient" do
