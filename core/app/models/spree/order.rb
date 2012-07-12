@@ -459,7 +459,7 @@ module Spree
     # destroy any previous adjustments.
     # Adjustments will be recalculated during order update.
     def clear_adjustments!
-      adjustments.each(&:destroy)
+      adjustments.tax.each(&:destroy)
       price_adjustments.each(&:destroy)
     end
 
