@@ -52,7 +52,7 @@ Using the Gem
 You can manually add Spree to your Rails 3.1.x application. Add Spree to
 your Gemfile.
 
-    gem 'spree', '1.0.5'
+    gem 'spree', '1.0.6'
 
 Update your bundle
 
