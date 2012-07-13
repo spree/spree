@@ -14,12 +14,9 @@ module Spree
 
       config.to_prepare &method(:activate).to_proc
 
-      # Defines the initial state machine for orders
-      config.to_prepare do
-        Spree::Order.define_state_machine!
-      end
-
       config.after_initialize do
+        Spree::Order.define_state_machine!
+
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args
           Activator.active.event_name_starts_with(event_name).each do |activator|
