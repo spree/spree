@@ -17,52 +17,52 @@ module Spree
           end
 
           def self.define_state_machine!
-            @machine ||= begin
-              self.previous_states = [:cart]
-              instance_eval(&checkout_flow)
-              klass = self
+            self.checkout_steps = []
+            self.next_event_transitions = []
+            self.previous_states = [:cart]
+            instance_eval(&checkout_flow)
+            klass = self
 
-              state_machine :state, :initial => :cart do
-                klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
+            state_machine :state, :initial => :cart do
+              klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
 
-                # Persist the state on the order
-                after_transition do |order|
-                  order.state = order.state
-                  order.save
-                end
-
-                event :cancel do
-                  transition :to => :canceled, :if => :allow_cancel?
-                end
-
-                event :return do
-                  transition :to => :returned, :from => :awaiting_return
-                end
-
-                event :resume do
-                  transition :to => :resumed, :from => :canceled, :if => :allow_resume?
-                end
-
-                event :authorize_return do
-                  transition :to => :awaiting_return
-                end
-
-                before_transition :to => :complete do |order|
-                  begin
-                    order.process_payments!
-                  rescue Spree::Core::GatewayError
-                    !!Spree::Config[:allow_checkout_on_gateway_error]
-                  end
-                end
-
-                before_transition :to => :delivery, :do => :remove_invalid_shipments!
-
-                after_transition :to => :complete, :do => :finalize!
-                after_transition :to => :delivery, :do => :create_tax_charge!
-                after_transition :to => :payment,  :do => :create_shipment!
-                after_transition :to => :resumed,  :do => :after_resume
-                after_transition :to => :canceled, :do => :after_cancel
+              # Persist the state on the order
+              after_transition do |order|
+                order.state = order.state
+                order.save
               end
+
+              event :cancel do
+                transition :to => :canceled, :if => :allow_cancel?
+              end
+
+              event :return do
+                transition :to => :returned, :from => :awaiting_return
+              end
+
+              event :resume do
+                transition :to => :resumed, :from => :canceled, :if => :allow_resume?
+              end
+
+              event :authorize_return do
+                transition :to => :awaiting_return
+              end
+
+              before_transition :to => :complete do |order|
+                begin
+                  order.process_payments!
+                rescue Spree::Core::GatewayError
+                  !!Spree::Config[:allow_checkout_on_gateway_error]
+                end
+              end
+
+              before_transition :to => :delivery, :do => :remove_invalid_shipments!
+
+              after_transition :to => :complete, :do => :finalize!
+              after_transition :to => :delivery, :do => :create_tax_charge!
+              after_transition :to => :payment,  :do => :create_shipment!
+              after_transition :to => :resumed,  :do => :after_resume
+              after_transition :to => :canceled, :do => :after_cancel
             end
           end
 
