@@ -22,18 +22,18 @@ module Spree
 
     belongs_to :shipping_method
 
-    has_many :state_changes, :as => :stateful
-    has_many :line_items, :dependent => :destroy
-    has_many :inventory_units
-    has_many :payments, :dependent => :destroy
-    has_many :shipments, :dependent => :destroy
-    has_many :return_authorizations, :dependent => :destroy
     has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
+    has_many :inventory_units
+    has_many :line_items, :dependent => :destroy
+    has_many :payments, :dependent => :destroy
+    has_many :return_authorizations, :dependent => :destroy
+    has_many :shipments, :dependent => :destroy
+    has_many :state_changes, :as => :stateful
 
-    accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
-    accepts_nested_attributes_for :ship_address
+    accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :payments
+    accepts_nested_attributes_for :ship_address
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
@@ -102,16 +102,16 @@ module Spree
 
     end
 
-    def self.by_number(number)
-      where(:number => number)
-    end
-
     def self.between(start_date, end_date)
       where(:created_at => start_date..end_date)
     end
 
     def self.by_customer(customer)
       joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
+    end
+
+    def self.by_number(number)
+      where(:number => number)
     end
 
     def self.by_state(state)
@@ -131,17 +131,70 @@ module Spree
       self.update_hooks.add(hook)
     end
 
+    def add_variant(variant, quantity = 1)
+      current_item = find_line_item_by_variant(variant)
+      if current_item
+        current_item.quantity += quantity
+        current_item.save
+      else
+        current_item = LineItem.new(:quantity => quantity)
+        current_item.variant = variant
+        current_item.price   = variant.price
+        self.line_items << current_item
+      end
+
+      self.reload
+      current_item
+    end
+
+
+    def allow_cancel?
+      return false unless completed? and state != 'canceled'
+      %w{ready backorder pending}.include? shipment_state
+    end
+
+    def allow_resume?
+      # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
+      return false if state_changes.empty? || state_changes.last.previous_state.nil?
+      true
+    end
+
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.sum(&:amount)
     end
 
-    def to_param
-      number.to_s.to_url.upcase
+    # Associates the specified user with the order.
+    def associate_user!(user)
+      self.user = user
+      self.email = user.email
+      # disable validations since they can cause issues when associating
+      # an incomplete address during the address step
+      save(:validate => false)
     end
 
-    def completed?
-      !! completed_at
+    def available_payment_methods
+      @available_payment_methods ||= PaymentMethod.available(:front_end)
+    end
+
+    # Helper methods for checkout steps
+    def available_shipping_methods(display_on = nil)
+      return [] unless ship_address
+      ShippingMethod.all_available(self, display_on)
+    end
+
+    # Indicates whether there are any backordered InventoryUnits associated with the Order.
+    def backordered?
+      return false unless Spree::Config[:track_inventory_levels]
+      inventory_units.backorder.present?
+    end
+
+    def billing_firstname
+      bill_address.try(:firstname)
+    end
+
+    def billing_lastname
+      bill_address.try(:lastname)
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
@@ -151,27 +204,62 @@ module Spree
       line_items.count > 0
     end
 
-    # Is this a free order in which case the payment step should be skipped
-    def payment_required?
-      total.to_f > 0.0
+    # destroy any previous adjustments.
+    # Adjustments will be recalculated during order update.
+    def clear_adjustments!
+      adjustments.tax.each(&:destroy)
+      price_adjustments.each(&:destroy)
     end
 
-    # Indicates the number of items in the order
-    def item_count
-      line_items.sum(:quantity)
+    def clone_billing_address
+      if bill_address and self.ship_address.nil?
+        self.ship_address = bill_address.clone
+      else
+        self.ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
+      end
+      true
     end
 
-    # Indicates whether there are any backordered InventoryUnits associated with the Order.
-    def backordered?
-      return false unless Spree::Config[:track_inventory_levels]
-      inventory_units.backorder.present?
+    def completed?
+      !! completed_at
     end
 
-    # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
-    # unless there is a specific match
-    def tax_zone
-      zone_address = Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
-      Zone.match(zone_address) || Zone.default_tax
+    def contains?(variant)
+      find_line_item_by_variant(variant).present?
+    end
+
+    # Creates new tax charges if there are any applicable rates. If prices already
+    # include taxes then price adjustments are created instead.
+    def create_tax_charge!
+      Spree::TaxRate.adjust(self)
+    end
+
+    # Creates a new shipment (adjustment is created by shipment model)
+    def create_shipment!
+      shipping_method(true)
+      if shipment.present?
+        shipment.update_attributes!(:shipping_method => shipping_method)
+      else
+        self.shipments << Shipment.create!({ :order => self,
+                                          :shipping_method => shipping_method,
+                                          :address => self.ship_address,
+                                          :inventory_units => self.inventory_units}, :without_protection => true)
+      end
+
+    end
+
+    def credit_cards
+      credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
+      CreditCard.scoped(:conditions => { :id => credit_card_ids })
+    end
+
+    def deliver_order_confirmation_email
+      begin
+        OrderMailer.confirm_email(self).deliver
+      rescue Exception => e
+        logger.error("#{e.class.name}: #{e.message}")
+        logger.error(e.backtrace * "\n")
+      end
     end
 
     # Indicates whether tax should be backed out of the price calcualtions in cases where prices
@@ -181,16 +269,87 @@ module Spree
       return tax_zone != Zone.default_tax
     end
 
-    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
-    # include tax (ex. VAT) and you need to record the tax amount separately.
-    def price_adjustments
-      adjustments = []
+    # Finalizes an in progress order after checkout is complete.
+    # Called after transition to complete state when payments will have been processed
+    def finalize!
+      update_attribute(:completed_at, Time.now)
+      InventoryUnit.assign_opening_inventory(self)
+      # lock any optional adjustments (coupon promotions, etc.)
+      adjustments.optional.each { |adjustment| adjustment.update_attribute('locked', true) }
+      deliver_order_confirmation_email
 
-      line_items.each do |line_item|
-        adjustments.concat line_item.adjustments
+      self.state_changes.create({
+        :previous_state => 'cart',
+        :next_state     => 'complete',
+        :name           => 'order' ,
+        :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
+      }, :without_protection => true)
+    end
+
+    def find_line_item_by_variant(variant)
+      line_items.detect { |line_item| line_item.variant_id == variant.id }
+    end
+
+    # TODO refactor this method and implement validation using validates_* utilities
+    def generate_order_number
+      record = true
+      while record
+        random = "R#{Array.new(9){rand(9)}.join}"
+        record = self.class.where(:number => random).first
       end
+      self.number = random if self.number.blank?
+      self.number
+    end
 
-      adjustments
+    def insufficient_stock_lines
+      line_items.select &:insufficient_stock?
+    end
+
+    # Indicates the number of items in the order
+    def item_count
+      line_items.sum(:quantity)
+    end
+
+    def merge!(order)
+      order.line_items.each do |line_item|
+        self.add_variant(line_item.variant, line_item.quantity)
+      end
+      order.destroy
+    end
+
+    def name
+      if (address = bill_address || ship_address)
+        "#{address.firstname} #{address.lastname}"
+      end
+    end
+
+    def outstanding_balance
+      total - payment_total
+    end
+
+    def outstanding_balance?
+     self.outstanding_balance != 0
+    end
+
+    def paid?
+      payment_state == 'paid'
+    end
+
+    def payment
+      payments.first
+    end
+
+    def payment_method
+      if payment and payment.payment_method
+        payment.payment_method
+      else
+        available_payment_methods.first
+      end
+    end
+
+    # Is this a free order in which case the payment step should be skipped
+    def payment_required?
+      total.to_f > 0.0
     end
 
     # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
@@ -205,6 +364,71 @@ module Spree
       end
 
       totals
+    end
+
+    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
+    # include tax (ex. VAT) and you need to record the tax amount separately.
+    def price_adjustments
+      adjustments = []
+
+      line_items.each do |line_item|
+        adjustments.concat line_item.adjustments
+      end
+
+      adjustments
+    end
+
+    def process_payments!
+      ret = payments.each(&:process!)
+    end
+
+    def products
+      line_items.map { |li| li.variant.product }
+    end
+
+    def quantity_of(variant)
+      line_item = find_line_item_by_variant(variant)
+      line_item ? line_item.quantity : 0
+    end
+
+    def rate_hash
+      @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
+        next unless cost = ship_method.calculator.compute(self)
+        ShippingRate.new( :id => ship_method.id,
+                          :shipping_method => ship_method,
+                          :name => ship_method.name,
+                          :cost => cost)
+      end.compact.sort_by { |r| r.cost }
+    end
+
+    # Clear shipment when transitioning to delivery step of checkout if the
+    # current shipping address is not eligible for the existing shipping method
+    def remove_invalid_shipments!
+      shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
+    end
+
+    def ship_total
+      adjustments.shipping.map(&:amount).sum
+    end
+
+    # convenience method since many stores will not allow user to create multiple shipments
+    def shipment
+      @shipment ||= shipments.last
+    end
+
+    def tax_total
+      adjustments.tax.map(&:amount).sum
+    end
+
+    # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
+    # unless there is a specific match
+    def tax_zone
+      zone_address = Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
+      Zone.match(zone_address) || Zone.default_tax
+    end
+
+    def to_param
+      number.to_s.to_url.upcase
     end
 
     # This is a multi-purpose method for processing logic related to changes in the Order.  It is meant to be called from
@@ -239,233 +463,91 @@ module Spree
       update_hooks.each { |hook| self.send hook }
     end
 
-    def clone_billing_address
-      if bill_address and self.ship_address.nil?
-        self.ship_address = bill_address.clone
-      else
-        self.ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
-      end
-      true
-    end
-
-    def allow_cancel?
-      return false unless completed? and state != 'canceled'
-      %w{ready backorder pending}.include? shipment_state
-    end
-
-    def allow_resume?
-      # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
-      return false if state_changes.empty? || state_changes.last.previous_state.nil?
-      true
-    end
-
-    def add_variant(variant, quantity = 1)
-      current_item = find_line_item_by_variant(variant)
-      if current_item
-        current_item.quantity += quantity
-        current_item.save
-      else
-        current_item = LineItem.new(:quantity => quantity)
-        current_item.variant = variant
-        current_item.price   = variant.price
-        self.line_items << current_item
-      end
-
-      self.reload
-      current_item
-    end
-
-    # Associates the specified user with the order.
-    def associate_user!(user)
-      self.user = user
-      self.email = user.email
-      # disable validations since they can cause issues when associating
-      # an incomplete address during the address step
-      save(:validate => false)
-    end
-
-    # FIXME refactor this method and implement validation using validates_* utilities
-    def generate_order_number
-      record = true
-      while record
-        random = "R#{Array.new(9){rand(9)}.join}"
-        record = self.class.where(:number => random).first
-      end
-      self.number = random if self.number.blank?
-      self.number
-    end
-
-    # convenience method since many stores will not allow user to create multiple shipments
-    def shipment
-      @shipment ||= shipments.last
-    end
-
-    def contains?(variant)
-      find_line_item_by_variant(variant).present?
-    end
-
-    def quantity_of(variant)
-      line_item = find_line_item_by_variant(variant)
-      line_item ? line_item.quantity : 0
-    end
-
-    def find_line_item_by_variant(variant)
-      line_items.detect { |line_item| line_item.variant_id == variant.id }
-    end
-
-    def ship_total
-      adjustments.shipping.map(&:amount).sum
-    end
-
-    def tax_total
-      adjustments.tax.map(&:amount).sum
-    end
-
-    # Clear shipment when transitioning to delivery step of checkout if the
-    # current shipping address is not eligible for the existing shipping method
-    def remove_invalid_shipments!
-      shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
-    end
-
-    # Creates new tax charges if there are any applicable rates. If prices already
-    # include taxes then price adjustments are created instead.
-    def create_tax_charge!
-      Spree::TaxRate.adjust(self)
-    end
-
-    # Creates a new shipment (adjustment is created by shipment model)
-    def create_shipment!
-      shipping_method(true)
-      if shipment.present?
-        shipment.update_attributes!(:shipping_method => shipping_method)
-      else
-        self.shipments << Shipment.create!({ :order => self,
-                                          :shipping_method => shipping_method,
-                                          :address => self.ship_address,
-                                          :inventory_units => self.inventory_units}, :without_protection => true)
-      end
-
-    end
-
-    def outstanding_balance
-      total - payment_total
-    end
-
-    def outstanding_balance?
-     self.outstanding_balance != 0
-    end
-
-    def name
-      if (address = bill_address || ship_address)
-        "#{address.firstname} #{address.lastname}"
-      end
-    end
-
-    def credit_cards
-      credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
-      CreditCard.scoped(:conditions => { :id => credit_card_ids })
-    end
-
-    def process_payments!
-      ret = payments.each(&:process!)
-    end
-
-    # Finalizes an in progress order after checkout is complete.
-    # Called after transition to complete state when payments will have been processed
-    def finalize!
-      update_attribute(:completed_at, Time.now)
-      InventoryUnit.assign_opening_inventory(self)
-      # lock any optional adjustments (coupon promotions, etc.)
-      adjustments.optional.each { |adjustment| adjustment.update_attribute('locked', true) }
-      deliver_order_confirmation_email
-
-      self.state_changes.create({
-        :previous_state => 'cart',
-        :next_state     => 'complete',
-        :name           => 'order' ,
-        :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
-      }, :without_protection => true)
-    end
-
-    def deliver_order_confirmation_email
-      begin
-        OrderMailer.confirm_email(self).deliver
-      rescue Exception => e
-        logger.error("#{e.class.name}: #{e.message}")
-        logger.error(e.backtrace * "\n")
-      end
-    end
-
-    # Helper methods for checkout steps
-
-    def available_shipping_methods(display_on = nil)
-      return [] unless ship_address
-      ShippingMethod.all_available(self, display_on)
-    end
-
-    def rate_hash
-      @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
-        next unless cost = ship_method.calculator.compute(self)
-        ShippingRate.new( :id => ship_method.id,
-                          :shipping_method => ship_method,
-                          :name => ship_method.name,
-                          :cost => cost)
-      end.compact.sort_by { |r| r.cost }
-    end
-
-    def paid?
-      payment_state == 'paid'
-    end
-
-    def payment
-      payments.first
-    end
-
-    def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available(:front_end)
-    end
-
-    def payment_method
-      if payment and payment.payment_method
-        payment.payment_method
-      else
-        available_payment_methods.first
-      end
-    end
-
-    def billing_firstname
-      bill_address.try(:firstname)
-    end
-
-    def billing_lastname
-      bill_address.try(:lastname)
-    end
-
-    def products
-      line_items.map { |li| li.variant.product }
-    end
-
-    def insufficient_stock_lines
-      line_items.select &:insufficient_stock?
-    end
-
-    def merge!(order)
-      order.line_items.each do |line_item|
-        self.add_variant(line_item.variant, line_item.quantity)
-      end
-      order.destroy
-    end
-
-    # destroy any previous adjustments.
-    # Adjustments will be recalculated during order update.
-    def clear_adjustments!
-      adjustments.tax.each(&:destroy)
-      price_adjustments.each(&:destroy)
-    end
-
     private
+
+      def after_cancel
+        restock_items!
+
+        #TODO: make_shipments_pending
+        OrderMailer.cancel_email(self).deliver
+      end
+
+      def after_resume
+        unstock_items!
+      end
+
+      def has_available_payment
+        return unless :delivery == state_name.to_sym
+        errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
+      end
+
+      def has_available_shipment
+        return unless :address == state_name.to_sym
+        return unless ship_address && ship_address.valid?
+        errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
+      end
+
       def link_by_email
         self.email = user.email if self.user
+      end
+
+      # Determine if email is required (we don't want validation errors before we hit the checkout)
+      def require_email
+        return true unless new_record? or state == 'cart'
+      end
+
+      def restock_items!
+        line_items.each do |line_item|
+          InventoryUnit.decrease(self, line_item.variant, line_item.quantity)
+        end
+      end
+
+      def round_money(n)
+        (n*100).round / 100.0
+      end
+
+      def unstock_items!
+        line_items.each do |line_item|
+          InventoryUnit.increase(self, line_item.variant, line_item.quantity)
+        end
+      end
+
+      # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
+      # respond to external changes to LineItem, Shipment, other Adjustments, etc.
+      # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
+      # towards adjustment_total.
+      def update_adjustments
+        self.adjustments.reload.each { |adjustment| adjustment.update!(self) }
+      end
+
+      # Updates the +payment_state+ attribute according to the following logic:
+      #
+      # paid          when +payment_total+ is equal to +total+
+      # balance_due   when +payment_total+ is less than +total+
+      # credit_owed   when +payment_total+ is greater than +total+
+      # failed        when most recent payment is in the failed state
+      #
+      # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
+      def update_payment_state
+        
+        #line_item are empty when user empties cart
+        if self.line_items.empty? || round_money(payment_total) < round_money(total)
+          self.payment_state = 'balance_due'
+          self.payment_state = 'failed' if payments.present? and payments.last.state == 'failed'
+        elsif round_money(payment_total) > round_money(total)
+          self.payment_state = 'credit_owed'
+        else
+          self.payment_state = 'paid'
+        end
+
+        if old_payment_state = self.changed_attributes['payment_state']
+          self.state_changes.create({
+            :previous_state => old_payment_state,
+            :next_state     => self.payment_state,
+            :name           => 'payment',
+            :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
+          }, :without_protection => true)
+        end
       end
 
       # Updates the +shipment_state+ attribute according to the following logic:
@@ -504,40 +586,6 @@ module Spree
         end
       end
 
-      # Updates the +payment_state+ attribute according to the following logic:
-      #
-      # paid          when +payment_total+ is equal to +total+
-      # balance_due   when +payment_total+ is less than +total+
-      # credit_owed   when +payment_total+ is greater than +total+
-      # failed        when most recent payment is in the failed state
-      #
-      # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
-      def update_payment_state
-        
-        #line_item are empty when user empties cart
-        if self.line_items.empty? || round_money(payment_total) < round_money(total)
-          self.payment_state = 'balance_due'
-          self.payment_state = 'failed' if payments.present? and payments.last.state == 'failed'
-        elsif round_money(payment_total) > round_money(total)
-          self.payment_state = 'credit_owed'
-        else
-          self.payment_state = 'paid'
-        end
-
-        if old_payment_state = self.changed_attributes['payment_state']
-          self.state_changes.create({
-            :previous_state => old_payment_state,
-            :next_state     => self.payment_state,
-            :name           => 'payment',
-            :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
-          }, :without_protection => true)
-        end
-      end
-
-      def round_money(n)
-        (n*100).round / 100.0
-      end
-
       # Updates the following Order total values:
       #
       # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
@@ -552,55 +600,9 @@ module Spree
         self.total = item_total + adjustment_total
       end
 
-      # Updates each of the Order adjustments.  This is intended to be called from an Observer so that the Order can
-      # respond to external changes to LineItem, Shipment, other Adjustments, etc.
-      # Adjustments will check if they are still eligible. Ineligible adjustments are preserved but not counted
-      # towards adjustment_total.
-      def update_adjustments
-        self.adjustments.reload.each { |adjustment| adjustment.update!(self) }
-      end
-
-      # Determine if email is required (we don't want validation errors before we hit the checkout)
-      def require_email
-        return true unless new_record? or state == 'cart'
-      end
-
-      def has_available_shipment
-        return unless :address == state_name.to_sym
-        return unless ship_address && ship_address.valid?
-        errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
-      end
-
-      def has_available_payment
-        return unless :delivery == state_name.to_sym
-        errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
-      end
-
-      def after_cancel
-        restock_items!
-
-        #TODO: make_shipments_pending
-        OrderMailer.cancel_email(self).deliver
-      end
-
-      def restock_items!
-        line_items.each do |line_item|
-          InventoryUnit.decrease(self, line_item.variant, line_item.quantity)
-        end
-      end
-
-      def after_resume
-        unstock_items!
-      end
-
-      def unstock_items!
-        line_items.each do |line_item|
-          InventoryUnit.increase(self, line_item.variant, line_item.quantity)
-        end
-      end
-
       def use_billing?
         @use_billing == true || @use_billing == "true" || @use_billing == "1"
       end
+
   end
 end
