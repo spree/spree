@@ -443,6 +443,10 @@ module Spree
       order.destroy
     end
 
+    def has_step?(step)
+      checkout_steps.include?(step)
+    end
+
     private
       def link_by_email
         self.email = user.email if self.user and not user.anonymous?
@@ -546,6 +550,7 @@ module Spree
       end
 
       def has_available_shipment
+        return unless has_step?("delivery")
         return unless address?
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
