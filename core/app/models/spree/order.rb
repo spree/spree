@@ -319,16 +319,14 @@ module Spree
 
     # Creates a new shipment (adjustment is created by shipment model)
     def create_shipment!
-      if checkout_steps.include?("delivery")
-        shipping_method(true)
-        if shipment.present?
-          shipment.update_attributes!(:shipping_method => shipping_method)
-        else
-          self.shipments << Shipment.create!({ :order => self,
-                                            :shipping_method => shipping_method,
-                                            :address => self.ship_address,
-                                            :inventory_units => self.inventory_units}, :without_protection => true)
-        end
+      shipping_method(true)
+      if shipment.present?
+        shipment.update_attributes!(:shipping_method => shipping_method)
+      else
+        self.shipments << Shipment.create!({ :order => self,
+                                          :shipping_method => shipping_method,
+                                          :address => self.ship_address,
+                                          :inventory_units => self.inventory_units}, :without_protection => true)
       end
     end
 
