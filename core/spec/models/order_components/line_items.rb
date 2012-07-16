@@ -1,6 +1,6 @@
 require_relative '../../../app/models/spree/order_components/line_items.rb'
-require 'support/fake_order'
-require 'support/fake_line_item'
+require 'fakes/order'
+require 'fakes/line_item'
 
 module Spree
   class Order

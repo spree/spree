@@ -1,12 +1,14 @@
 require_relative '../../../app/models/spree/order_components/address'
-require 'support/fake_order'
+require 'fakes/order'
 
-class FakeOrder
-  include Spree::OrderComponents::Address
+module Spree
+  class Order
+    include Spree::OrderComponents::Address
+  end
 end
 
 describe Spree::OrderComponents::Address do
-  let(:order) { FakeOrder.new }
+  let(:order) { Spree::Order.new }
 
   context 'validation' do
     context "when @use_billing is populated" do

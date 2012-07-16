@@ -1,7 +1,8 @@
-require 'support/fake_model'
+require 'fakes/model'
 
 module Spree
-  class LineItem < FakeModel
+  class LineItem
+    include FakeModel
     attr_accessor :variant, :variant_id, :price, :quantity
 
     def initialize(attributes={})
