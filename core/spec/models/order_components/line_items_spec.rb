@@ -3,13 +3,17 @@ require 'fakes/order'
 require 'fakes/line_item'
 
 module Spree
-  class Order
+  class FakeOrder
     include Spree::OrderComponents::LineItems
+
+    def build_line_item(*attributes)
+       FakeLineItem.new(*attributes)
+    end
   end
 end
 
 describe Spree::OrderComponents::LineItems do
-  let(:order) { Spree::Order.new }
+  let(:order) { Spree::FakeOrder.new }
   let(:variant_1) { stub(:product => "product 1", :id => 1) }
   let(:variant_2) { stub(:product => "product 2", :id => 2) }
   it "#products" do
@@ -71,7 +75,7 @@ describe Spree::OrderComponents::LineItems do
     end
 
     it "uses an existing line item if it already exists" do
-      line_item = Spree::LineItem.new(:variant_id => variant_1.id, :quantity => 1)
+      line_item = Spree::FakeLineItem.new(:variant_id => variant_1.id, :quantity => 1)
       order.line_items << line_item
       order.add_variant(variant_1)
 

@@ -41,7 +41,7 @@ module Spree
           current_item.quantity += quantity
           current_item.save
         else
-          current_item = LineItem.new(:quantity => quantity)
+          current_item = build_line_item(:quantity => quantity)
           current_item.variant = variant
           current_item.price   = variant.price
           self.line_items << current_item
