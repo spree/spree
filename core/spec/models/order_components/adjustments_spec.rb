@@ -1,5 +1,4 @@
 require_relative '../../../app/models/spree/order_components/adjustments'
-require 'fakes/model/callbacks'
 require 'fakes/order'
 require 'fakes/line_item'
 
