@@ -371,13 +371,6 @@ module Spree
       adjustments.destroy_all
     end
 
-    # destroy any previous adjustments.
-    # Adjustments will be recalculated during order update.
-    def clear_adjustments!
-      adjustments.tax.each(&:destroy)
-      price_adjustments.each(&:destroy)
-    end
-
     private
       def link_by_email
         self.email = user.email if self.user

@@ -41,6 +41,13 @@ module Spree
         adjustments.tax.map(&:amount).sum
       end
 
+      # destroy any previous adjustments.
+      # Adjustments will be recalculated during order update.
+      def clear_adjustments!
+        adjustments.tax.each(&:destroy)
+        price_adjustments.each(&:destroy)
+      end
+
       private
       # Creates new tax charges if there are any applicable rates. If prices already
       # include taxes then price adjustments are created instead.
