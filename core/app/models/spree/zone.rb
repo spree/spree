@@ -58,7 +58,7 @@ module Spree
 
     # convenience method for returning the countries contained within a zone
     def country_list
-      members.map { |zone_member|
+      @countries ||= members.includes(:zoneable).map { |zone_member|
         case zone_member.zoneable_type
         when 'Spree::Country'
           zone_member.zoneable

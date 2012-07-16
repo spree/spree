@@ -44,7 +44,7 @@ module Spree
     end
 
     def zones
-      Zone.match(self)
+      @zones ||= Zone.match(self)
     end
 
     def same_as?(other)
