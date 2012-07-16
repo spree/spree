@@ -98,6 +98,12 @@ describe Spree::Order do
       end
     end
 
+    it "should be false for completed order in the canceled state" do
+      order.state = 'canceled'
+      order.shipment_state = 'ready'
+      order.completed_at = Time.now
+      order.can_cancel?.should be_false
+    end
   end
 
   context "#cancel" do

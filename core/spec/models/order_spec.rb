@@ -344,15 +344,6 @@ describe Spree::Order do
     end
   end
 
-  context "#can_cancel?" do
-    it "should be false for completed order in the canceled state" do
-      order.state = 'canceled'
-      order.shipment_state = 'ready'
-      order.completed_at = Time.now
-      order.can_cancel?.should be_false
-    end
-  end
-
   context "rate_hash" do
     let(:shipping_method_1) { mock_model Spree::ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
     let(:shipping_method_2) { mock_model Spree::ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }
