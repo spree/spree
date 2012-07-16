@@ -4,6 +4,7 @@ module Spree
   class Order < ActiveRecord::Base
     include Spree::OrderComponents::Address
     include Spree::OrderComponents::LineItems
+    include Spree::OrderComponents::Adjustments
 
     token_resource
 
@@ -31,7 +32,6 @@ module Spree
     before_validation :generate_order_number, :on => :create
 
     before_create :link_by_email
-    after_create :create_tax_charge!
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :email => true, :if => :require_email
@@ -160,31 +160,6 @@ module Spree
       return tax_zone != Zone.default_tax
     end
 
-    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
-    # include tax (ex. VAT) and you need to record the tax amount separately.
-    def price_adjustments
-      adjustments = []
-
-      line_items.each do |line_item|
-        adjustments.concat line_item.adjustments
-      end
-
-      adjustments
-    end
-
-    # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
-    # invoice.  For example, you can display tax breakout for cases where tax is included in price.
-    def price_adjustment_totals
-      totals = {}
-
-      price_adjustments.each do |adjustment|
-        label = adjustment.label
-        totals[label] ||= 0
-        totals[label] = totals[label] + adjustment.amount
-      end
-
-      totals
-    end
 
     # This is a multi-purpose method for processing logic related to changes in the Order.  It is meant to be called from
     # various observers so that the Order is aware of changes that affect totals and other values stored in the Order.
@@ -279,12 +254,6 @@ module Spree
     # current shipping address is not eligible for the existing shipping method
     def remove_invalid_shipments!
       shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
-    end
-
-    # Creates new tax charges if there are any applicable rates. If prices already
-    # include taxes then price adjustments are created instead.
-    def create_tax_charge!
-      Spree::TaxRate.adjust(self)
     end
 
     # Creates a new shipment (adjustment is created by shipment model)
