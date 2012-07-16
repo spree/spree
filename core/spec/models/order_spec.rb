@@ -418,7 +418,12 @@ describe Spree::Order do
   context "#tax_zone" do
     let(:bill_address) { Factory :address }
     let(:ship_address) { Factory :address }
-    let(:order) { Spree::Order.create(:ship_address => ship_address, :bill_address => bill_address) }
+    let(:order) do
+      Spree::Order.create({
+        :ship_address => ship_address,
+        :bill_address => bill_address
+      }, :without_protection => true)
+    end
     let(:zone) { Factory :zone }
 
     context "when no zones exist" do
