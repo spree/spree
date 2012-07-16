@@ -23,7 +23,6 @@ module Spree
     has_many :payments, :dependent => :destroy
     has_many :shipments, :dependent => :destroy
     has_many :return_authorizations, :dependent => :destroy
-    has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
 
     accepts_nested_attributes_for :payments
     accepts_nested_attributes_for :shipments

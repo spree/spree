@@ -7,6 +7,7 @@ module Spree
         base.class_eval do
           include Spree::OrderComponents::LineItems
           after_create :create_tax_charge!
+          has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
         end
       end
 
