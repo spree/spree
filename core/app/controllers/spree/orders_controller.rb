@@ -57,7 +57,7 @@ module Spree
 
     def empty
       if @order = current_order
-        @order.line_items.destroy_all
+        @order.empty!
       end
 
       redirect_to spree.cart_path

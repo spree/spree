@@ -456,6 +456,11 @@ module Spree
       order.destroy
     end
 
+    def empty!
+      line_items.destroy_all
+      adjustments.destroy_all
+    end
+
     # destroy any previous adjustments.
     # Adjustments will be recalculated during order update.
     def clear_adjustments!
