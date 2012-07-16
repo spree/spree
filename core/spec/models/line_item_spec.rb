@@ -202,4 +202,14 @@ describe Spree::LineItem do
       line_item.save.should be_true
     end
   end
+
+  context "destroying" do
+    # Regression test for #1233
+    it "removes related adjustments" do
+      line_item = create(:line_item)
+      adjustment = line_item.adjustments.create(:amount => 10, :label => "test")
+      line_item.destroy
+      lambda { adjustment.reload }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 end
