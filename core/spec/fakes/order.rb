@@ -1,7 +1,7 @@
 require 'fakes/model'
 
 module Spree
-  class Order
+  class FakeOrder
     include FakeModel
   end
 end

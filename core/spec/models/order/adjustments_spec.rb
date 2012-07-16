@@ -4,18 +4,13 @@ describe Spree::Order do
 
   context "clear_adjustments" do
     it "should destroy all previous tax adjustments" do
-      adjustment = stub
-      adjustment.should_receive :destroy
+      adjustment_1 = stub
+      adjustment_1.should_receive :destroy
+      adjustment_2 = stub
+      adjustment_2.should_receive :destroy
 
-      order.stub_chain :adjustments, :tax => [adjustment]
-      order.clear_adjustments!
-    end
-
-    it "should destroy all price adjustments" do
-      adjustment = stub
-      adjustment.should_receive :destroy
-
-      order.stub :price_adjustments => [adjustment]
+      order.stub_chain :adjustments, :tax => [adjustment_1]
+      order.stub :price_adjustments => [adjustment_2]
       order.clear_adjustments!
     end
   end

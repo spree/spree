@@ -1,7 +1,7 @@
 require 'fakes/model'
 
 module Spree
-  class LineItem
+  class FakeLineItem
     include FakeModel
     attr_accessor :variant, :variant_id, :price, :quantity, :adjustments
 
