@@ -478,6 +478,11 @@ module Spree
       order.destroy
     end
 
+    def empty!
+      line_items.destroy_all
+      adjustments.destroy_all
+    end
+
     private
       def create_user
         self.email = user.email if self.user and not user.anonymous?

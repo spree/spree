@@ -71,8 +71,7 @@ describe Spree::OrdersController do
   context "#empty" do
     it "should destroy line items in the current order" do
       controller.stub!(:current_order).and_return(order)
-      order.stub(:line_items).and_return([])
-      order.line_items.should_receive(:destroy_all)
+      order.should_receive(:empty!)
       spree_put :empty
       response.should redirect_to(spree.cart_path)
     end
