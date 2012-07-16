@@ -48,6 +48,7 @@ module Spree
 
         def spree_xhr_get(action, parameters = nil, session = nil, flash = nil)
           parameters ||= {}
+          parameters.reverse_merge!(:format => :json)
           parameters.merge!(:use_route => :spree)
           xml_http_request(:get, action, parameters, session, flash)
         end
