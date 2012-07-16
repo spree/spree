@@ -241,14 +241,6 @@ module Spree
       @shipment ||= shipments.last
     end
 
-    def ship_total
-      adjustments.shipping.map(&:amount).sum
-    end
-
-    def tax_total
-      adjustments.tax.map(&:amount).sum
-    end
-
     # Clear shipment when transitioning to delivery step of checkout if the
     # current shipping address is not eligible for the existing shipping method
     def remove_invalid_shipments!

@@ -33,6 +33,14 @@ module Spree
         totals
       end
 
+      def ship_total
+        adjustments.shipping.map(&:amount).sum
+      end
+
+      def tax_total
+        adjustments.tax.map(&:amount).sum
+      end
+
       private
       # Creates new tax charges if there are any applicable rates. If prices already
       # include taxes then price adjustments are created instead.
