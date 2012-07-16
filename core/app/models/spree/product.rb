@@ -93,6 +93,7 @@ module Spree
     def ensure_master
       return unless new_record?
       self.master ||= Variant.new
+      set_master_variant_defaults
     end
 
     def to_param
