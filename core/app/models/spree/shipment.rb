@@ -138,7 +138,12 @@ module Spree
       end
 
       def after_ship
+        send_shipped_email
         inventory_units.each &:ship!
+        self.shipped_at = Time.now
+      end
+
+      def send_shipped_email
         ShipmentMailer.shipped_email(self).deliver
       end
 
