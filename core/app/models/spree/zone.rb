@@ -53,6 +53,7 @@ module Spree
 
     # convenience method for returning the countries contained within a zone
     def country_list
+      @countries ||=
       case kind
       when 'country'
         zoneables
