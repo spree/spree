@@ -22,7 +22,7 @@
     <% @tax_rates.each do |tax_rate|%>
     <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row">
       <td><%=tax_rate.zone.name %></td>
-      <td><%=tax_rate.tax_category.try(:name) || "N/A" %></td>
+      <td><%=tax_rate.tax_category.try(:name) || t(:not_available) %></td>
       <td><%=tax_rate.amount %></td>
       <td><%=tax_rate.included_in_price %></td>
       <td><%=tax_rate.calculator.to_s %></td>

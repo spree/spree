@@ -542,4 +542,16 @@ describe Spree::Order do
       order.total.to_f.should == 22.25
     end
   end
+
+  context "empty!" do
+    it "should clear out all line items and adjustments" do
+      order = stub_model(Spree::Order)
+      order.stub(:line_items => line_items = [])
+      order.stub(:adjustments => adjustments = [])
+      order.line_items.should_receive(:destroy_all)
+      order.adjustments.should_receive(:destroy_all)
+
+      order.empty!
+    end
+  end
 end
