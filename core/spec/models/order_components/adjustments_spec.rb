@@ -8,6 +8,15 @@ module Spree
   end
 end
 
+describe "adjustment callbacks" do
+  let(:order) { Spree::Order.new }
+
+  it "creates a tax charge" do
+    order.should_receive(:create_tax_charge!)
+    order.run_callbacks(:create)
+  end
+end
+
 describe Spree::OrderComponents::Adjustments do
   let(:order) { Spree::Order.new }
   let(:line_item_1) { Spree::LineItem.new }
