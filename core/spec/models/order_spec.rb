@@ -4,10 +4,8 @@ describe Spree::Order do
 
   let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
-  let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :without_protection => true) }
 
   before do
-    Spree::Gateway.stub :current => gateway
     Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
