@@ -1,14 +1,14 @@
+require 'active_support/concern'
 require_relative 'line_items'
 
 module Spree
   module OrderComponents
     module Adjustments
-      def self.included(base)
-        base.class_eval do
-          include Spree::OrderComponents::LineItems
-          after_create :create_tax_charge!
-          has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
-        end
+      extend ActiveSupport::Concern
+      included do
+        include Spree::OrderComponents::LineItems
+        after_create :create_tax_charge!
+        has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
       end
 
       # Array of adjustments that are inclusive in the variant price.  Useful for when prices

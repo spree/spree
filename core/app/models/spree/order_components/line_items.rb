@@ -1,16 +1,16 @@
+require 'active_support/concern'
 require 'active_support/core_ext/enumerable'
 
 module Spree
   module OrderComponents
     module LineItems
-      def self.included(base)
-        base.class_eval do
-          attr_accessible :line_items, :line_items_attributes
+      extend ActiveSupport::Concern
+      included do
+        attr_accessible :line_items, :line_items_attributes
 
-          has_many :line_items, :dependent => :destroy
+        has_many :line_items, :dependent => :destroy
 
-          accepts_nested_attributes_for :line_items
-        end
+        accepts_nested_attributes_for :line_items
       end
 
       def products
