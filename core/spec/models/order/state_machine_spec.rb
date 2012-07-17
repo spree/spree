@@ -16,36 +16,36 @@ describe Spree::Order do
         order.next!
       end
 
-       context "when credit card payment fails" do
-         before do
-           order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
-         end
+      context "when credit card payment fails" do
+        before do
+          order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
+        end
 
-         context "when not configured to allow failed payments" do
-            before do
-              Spree::Config.set :allow_checkout_on_gateway_error => false
-            end
-
-            it "should not complete the order" do
-               order.next
-               order.state.should == "confirm"
-             end
+        context "when not configured to allow failed payments" do
+          before do
+            Spree::Config.set :allow_checkout_on_gateway_error => false
           end
 
-         context "when configured to allow failed payments" do
-           before do
-             Spree::Config.set :allow_checkout_on_gateway_error => true
-           end
+          it "should not complete the order" do
+            order.next
+            order.state.should == "confirm"
+          end
+        end
 
-           it "should complete the order" do
-             pending
-              order.next
-              order.state.should == "complete"
-            end
+        context "when configured to allow failed payments" do
+          before do
+            Spree::Config.set :allow_checkout_on_gateway_error => true
+          end
 
-         end
+          it "should complete the order" do
+            pending
+            order.next
+            order.state.should == "complete"
+          end
 
-       end
+        end
+
+      end
     end
 
     context "when current state is address" do
