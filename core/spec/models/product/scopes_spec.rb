@@ -27,17 +27,6 @@ describe "product scopes" do
     end
   end
 
-  context "condition finders" do
-    let!(:product) { Factory(:product, :name => "Alpha") }
-    it ".conditions" do
-      Spree::Product.conditions("name = ?", "Alpha").first.should == product
-    end
-
-    it ".conditions_all" do
-      Spree::Product.conditions("name = ?", "Alpha").first.should == product
-    end
-  end
-
   context "price" do
     let!(:product) { Factory(:product, :price => 15) }
 
