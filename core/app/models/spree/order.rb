@@ -192,19 +192,6 @@ module Spree
       update_hooks.each { |hook| self.send hook }
     end
 
-    def restore_state
-      # pop the resume event so we can see what the event before that was
-      state_changes.pop if state_changes.last.name == 'resume'
-      update_attribute('state', state_changes.last.previous_state)
-
-      if paid?
-        raise 'do something with inventory'
-        #Spree::InventoryUnit.assign_opening_inventory(self) if inventory_units.empty?
-        #shipment.inventory_units = inventory_units
-        #shipment.ready!
-      end
-    end
-
     def allow_cancel?
       return false unless completed? and state != 'canceled'
       %w{ready backorder pending}.include? shipment_state
