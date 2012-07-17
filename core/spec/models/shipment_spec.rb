@@ -144,6 +144,7 @@ describe Spree::Shipment do
 
     it "should update shipped_at timestamp" do
       shipment.shipped_at = Time.now
+      shipment.shipped_at.should_not be_nil
     end
 
     it "should send a shipment email" do
