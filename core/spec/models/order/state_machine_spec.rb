@@ -38,7 +38,6 @@ describe Spree::Order do
           end
 
           it "should complete the order" do
-            pending
             order.next
             order.state.should == "complete"
           end
