@@ -7,10 +7,6 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order do
-  before(:each) do
-    reset_spree_preferences
-    Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :without_protection => true)
-  end
 
   let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
