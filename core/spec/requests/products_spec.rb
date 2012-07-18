@@ -135,4 +135,12 @@ describe "Visiting Products" do
                          "Ruby on Rails Jr. Spaghetti",
                          "Ruby on Rails Ringer T-Shirt"]
   end
+
+  it "should be able to put a product without a description in the cart" do
+    product = FactoryGirl.create(:simple_product, :description => nil, :name => 'Sample', :price => '19.99')
+    visit spree.product_path(product)
+    page.should have_content "This product has no description"
+    click_button 'add-to-cart-button'
+    page.should have_content "This product has no description"
+  end
 end

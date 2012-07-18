@@ -14,7 +14,7 @@
         <%= variant.in_stock? ? t(:insufficient_stock, :on_hand => variant.on_hand) : t(:out_of_stock) %><br />
       </span>
     <% end %>
-    <%= truncate(variant.product.description.gsub(/<(.*?)>/,""), :length => 100, :omission => "...") %>
+    <%= truncate(variant.product.description.gsub(/<(.*?)>/,""), :length => 100, :omission => "...") rescue t(:product_has_no_description) %>
   </td>
   <td class="cart-item-price" data-hook="cart_item_price">
     <%= number_to_currency line_item.price %>
