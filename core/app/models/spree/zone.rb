@@ -14,13 +14,8 @@ module Spree
     attr_accessible :name, :description, :default_tax, :kind, :zone_members, :zone_members_attributes
 
     def kind
-      member = members.last
-
-      case member && member.zoneable_type
-      when 'Spree::State' then 'state'
-      else
-        'country'
-      end
+      return nil if members.empty? || members.any? { |member| member.try(:zoneable_type).nil? }
+      members.last.zoneable_type.demodulize.downcase
     end
 
     def kind=(value)
