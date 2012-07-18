@@ -20,5 +20,14 @@ module Spree
     def variant_images_hash(product)
       product.variant_images.inject({}) { |h, img| (h[img.viewable_id] ||= []) << img; h }
     end
+
+    def line_item_description(variant)
+      description = variant.product.description
+      if description.present?
+        truncate(strip_tags(description.gsub('&nbsp;', ' ')), :length => 100)
+      else
+        t(:product_has_no_description)
+      end
+    end
   end
 end
