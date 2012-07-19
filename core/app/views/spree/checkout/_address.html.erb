@@ -42,9 +42,6 @@
         <p class="field" id="bstate">
           <% have_states = !@order.bill_address.country.states.empty? %>
           <%= bill_form.label :state, t(:state) %><span class="required">*</span><br />
-          <noscript>
-            <%= bill_form.text_field :state_name, :class => 'required' %>
-          </noscript>
           <% state_elements = [
              bill_form.collection_select(:state_id, @order.bill_address.country.states,
                                 :id, :name,
@@ -60,6 +57,9 @@
             document.write("<%== state_elements %>");
           <% end -%>
         </p>
+          <noscript>
+            <%= bill_form.text_field :state_name, :class => 'required' %>
+          </noscript>
       <% end %>
 
       <p class="field" id="bzipcode">
@@ -129,9 +129,6 @@
         <p class="field" id="sstate">
           <% have_states = !@order.ship_address.country.states.empty? %>
           <%= ship_form.label :state, t(:state) %><span class="required">*</span><br />
-          <noscript>
-            <%= ship_form.text_field :state_name, :class => 'required' %>
-          </noscript>
           <% state_elements = [
              ship_form.collection_select(:state_id, @order.ship_address.country.states,
                                 :id, :name,
@@ -147,6 +144,9 @@
             document.write("<%== state_elements %>");
           <% end %>
         </p>
+          <noscript>
+            <%= ship_form.text_field :state_name, :class => 'required' %>
+          </noscript>
       <% end %>
 
       <p class="field" id="szipcode">
