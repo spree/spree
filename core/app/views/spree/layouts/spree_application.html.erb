@@ -6,20 +6,20 @@
 <!--[if IE 9 ]>    <html class="ie ie9" lang="en"> <![endif]-->
 <!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
 
-  
+
   <head data-hook="inside_head">
     <%= render :partial => 'spree/shared/head' %>
   </head>
 
   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
-    
+
     <div class="container">
 
       <header id="header" class="row" data-hook>
-      
+
         <figure id="logo" class="columns alpha six" data-hook>
           <%= logo %>
-        </figure> 
+        </figure>
 
         <nav id="top-nav-bar" class="columns omega ten">
           <ul id="nav-bar" class="inline" data-hook>
@@ -29,16 +29,16 @@
 
         <% if store_menu? %>
           <nav class="columns alpha omega sixteen">
-            <ul id="main-nav-bar" class="inline" data-hook>            
+            <ul id="main-nav-bar" class="inline" data-hook>
               <%= render :partial => 'spree/shared/store_menu' %>
             </ul>
           </nav>
         <% end %>
-            
+
       </header>
 
       <div id="wrapper" class="row" data-hook>
-        
+
         <% if content_for?(:sidebar) %>
           <aside id="sidebar" class="columns alpha four" data-hook>
             <%= yield :sidebar %>
