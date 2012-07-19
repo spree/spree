@@ -39,14 +39,6 @@ module Spree
       state.nil? ? state_name : (state.abbr.blank? ? state.name : state.abbr)
     end
 
-    def zone
-      (state && state.zone) || (country && country.zone)
-    end
-
-    def zones
-      @zones ||= Zone.match(self)
-    end
-
     def same_as?(other)
       return false if other.nil?
       attributes.except('id', 'updated_at', 'created_at') == other.attributes.except('id', 'updated_at', 'created_at')
