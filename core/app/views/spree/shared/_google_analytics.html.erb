@@ -1,38 +1,38 @@
 <% if tracker = Spree::Tracker.current %>
 
-  <%= javascript_tag do -%>
+  <%= javascript_tag do %>
     var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '<%= tracker.analytics_id -%>']);
+    _gaq.push(['_setAccount', '<%= tracker.analytics_id %>']);
     _gaq.push(['_trackPageview']);
+
+    <% if flash[:commerce_tracking] %>
+     <%# report e-commerce transaction information when applicable %>
+      _gaq.push(['_addTrans',
+        "<%= @order.number %>",                           <%# Order Number %>
+        "",                                               <%# Affiliation %>
+        "<%= @order.total %>",                            <%# Order total %>
+        "<%= @order.adjustments.tax.sum(:amount) %>",     <%# Tax Amount %>
+        "<%= @order.adjustments.shipping.sum(:amount) %>",<%# Ship Amount %>
+        "",                                               <%# City %>
+        "",                                               <%# State %>
+        ""                                                <%# Country %>
+      ]);
+      <% @order.line_items.each do |line_item| %>
+        _gaq.push(['_addItem',
+          "<%= @order.number %>",                 <%# order ID - required %>
+          "<%= line_item.variant.sku %>",         <%# SKU/code - required %>
+          "<%= line_item.variant.product.name %>",<%# product name %>
+          "",                                     <%# category or variation, Product Category %>
+          "<%= line_item.price %>",               <%# unit price - required %>
+          "<%= line_item.quantity %>"             <%# quantity - required %>
+        ]);
+      <% end %>
+    <% end %>
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
-    <% end -%>
-
-  <% if flash[:commerce_tracking] %>
-
-    <%= javascript_tag do -%>
-      // report e-commerce transaction information when applicable
-      pageTracker._addTrans(
-      "<%= @order.number %>",    //Order Number
-      "",    //Affiliation
-      "<%= @order.total %>",    //Order total
-      "<%= @order.adjustments.tax.sum(:amount).to_s %>",    //Tax Amount
-      "<%= @order.adjustments.shipping.sum(:amount).to_s %>",    //Ship Amount
-      "",    //City
-      "",    //State
-      ""    //Country
-      );
-      <% @order.line_items.each do |line_item| %>
-        pageTracker._addItem("<%= @order.number %>", "<%= line_item.variant.sku %>", "<%= line_item.variant.product.name %>",
-          "" /*Product Category*/, "<%= line_item.price %>", "<%= line_item.quantity %>");
-      <% end %>
-      pageTracker._trackTrans();
-    <% end -%>
-
   <% end %>
-
 <% end %>
