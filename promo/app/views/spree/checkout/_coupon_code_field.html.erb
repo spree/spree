@@ -1,4 +1,4 @@
-<% if Spree::Promotion.count > 0 %>
+<% if Spree::Promotion.active.count > 0 %>
 <p>
   <%= form.label :coupon_code %><br />
   <%= form.text_field :coupon_code %>

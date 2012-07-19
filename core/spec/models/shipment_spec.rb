@@ -142,6 +142,11 @@ describe Spree::Shipment do
       shipping_method.stub(:create_adjustment)
     end
 
+    it "should update shipped_at timestamp" do
+      shipment.shipped_at = Time.now
+      shipment.shipped_at.should_not be_nil
+    end
+
     it "should send a shipment email" do
       mail_message = mock "Mail::Message"
       Spree::ShipmentMailer.should_receive(:shipped_email).with(shipment).and_return mail_message
