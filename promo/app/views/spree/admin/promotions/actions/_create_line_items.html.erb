@@ -27,7 +27,7 @@
     <legend><%= t(:add_product) %></legend>
     <div style="float:left; width:50%; margin-right:5%;">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
-      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth' %>
+      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth product_autocomplete' %>
       <%= hidden_field_tag :add_variant_id %>
       <%= hidden_field_tag :add_line_item_variant_id %>
     </div>

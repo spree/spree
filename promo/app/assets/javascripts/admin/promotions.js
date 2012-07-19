@@ -1,6 +1,6 @@
 var initProductActions = function(){
 
-  $("#add_product_name").product_autocomplete();
+  $(".product_autocomplete").product_autocomplete();
 
   $('.calculator-fields').each(function(){
     var $fields_container = $(this);
