@@ -30,8 +30,8 @@ module Spree
     belongs_to :shipping_category
 
     has_one :master,
-      :class_name => 'Spree::Variant',
-      :conditions => ["#{Variant.quoted_table_name}.is_master = ? AND #{Variant.quoted_table_name}.deleted_at IS NULL", true]
+      :class_name => "Spree::Variant",
+      :conditions => { :is_master => true }
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
