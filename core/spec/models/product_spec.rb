@@ -283,9 +283,9 @@ describe Spree::Product do
 
     before do
       image = File.open(File.expand_path('../../../app/assets/images/noimage/product.png', __FILE__))
-      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
-      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
-      Spree::Image.create({:viewable_id => product.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
+      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
+      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
+      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
     end
 
     it "should only look for variant images to support third-party extensions" do
