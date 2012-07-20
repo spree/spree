@@ -179,22 +179,6 @@ $.fn.userPicker = function(){
   $(this).objectPicker(Spree.routes.user_search);
 }
 
-$(".observe_field").on('change', function() {
-  target = $(this).attr("data-update");
-  ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
-  $(target).hide();
-  $(ajax_indicator).show();
-  $.ajax({ dataType: 'html',
-           url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
-           type: 'get',
-           success: function(data){
-             $(target).html(data);
-             $(ajax_indicator).hide();
-             $(target).show();
-           }
-  });
-});
-
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
     dateFormat: "<%= ::I18n.t(:format, :scope => 'spree.date_picker', :default => 'yy/mm/dd') %>",
@@ -210,6 +194,22 @@ handle_date_picker_fields = function(){
 }
 
 $(document).ready(function(){
+  $(".observe_field").on('change', function() {
+    target = $(this).attr("data-update");
+    ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
+    $(target).hide();
+    $(ajax_indicator).show();
+    $.ajax({ dataType: 'html',
+             url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
+             type: 'get',
+             success: function(data){
+               $(target).html(data);
+               $(ajax_indicator).hide();
+               $(target).show();
+             }
+    });
+  });
+
   $('.add_fields').click(function() {
     var target = $(this).data("target");
     var new_table_row = $(target + ' tr:visible:last').clone();
