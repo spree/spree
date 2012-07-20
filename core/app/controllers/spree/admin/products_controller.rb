@@ -85,7 +85,7 @@ module Spree
             params[:q][:s] ||= "name asc"
 
             @search = super.ransack(params[:q])
-            @collection = @search.result.
+            @collection = @search.result(:distinct => true).
               group_by_products_id.
               includes([:master, {:variants => [:images, :option_values]}]).
               page(params[:page]).
