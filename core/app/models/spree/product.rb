@@ -62,8 +62,6 @@ module Spree
 
     def variant_images
       Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id").
-      where("#{Asset.quoted_table_name}.viewable_type = 'Spree::Variant'").
-      where("#{Variant.quoted_table_name}.product_id = #{self.id}").
       where("#{Asset.quoted_table_name}.viewable_type = '#{Variant.name}'").
       order("#{Asset.quoted_table_name}.position").
       extend(Spree::Core::RelationSerialization)
