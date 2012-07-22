@@ -1,8 +1,6 @@
 FactoryGirl.define do
-  sequence(:product_sequence) { |n| "Product ##{n} - #{rand(9999)}" }
-
   factory :simple_product, :class => Spree::Product do
-    name { FactoryGirl.generate :product_sequence }
+    sequence(:name) { |n| "Product ##{n} - #{rand(9999)}" }
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
     price 19.99
     cost_price 17.00
