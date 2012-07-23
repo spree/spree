@@ -20,6 +20,7 @@ module Spree
 
         def create
           authorize! :create, Product
+          params[:product][:available_on] ||= Time.now
           @product = Product.new(params[:product])
           if @product.save
             render :show, :status => 201
