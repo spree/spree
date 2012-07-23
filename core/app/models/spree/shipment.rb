@@ -138,6 +138,11 @@ module Spree
 
       def after_ship
         inventory_units.each &:ship!
+        send_shipped_email
+        touch :shipped_at
+      end
+
+      def send_shipped_email
         ShipmentMailer.shipped_email(self).deliver
       end
 
