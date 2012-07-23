@@ -146,6 +146,9 @@ describe Spree::Shipment do
       shipment.stub(:send_shipped_email)
       shipment.ship!
       shipment.shipped_at.should_not be_nil
+      # Ensure value is persisted
+      shipment.reload
+      shipment.shipped_at.should_not be_nil
     end
 
     it "should send a shipment email" do

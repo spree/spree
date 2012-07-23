@@ -138,9 +138,9 @@ module Spree
       end
 
       def after_ship
-        send_shipped_email
         inventory_units.each &:ship!
-        self.shipped_at = Time.now
+        send_shipped_email
+        touch :shipped_at
       end
 
       def send_shipped_email
