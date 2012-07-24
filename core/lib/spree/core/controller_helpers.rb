@@ -12,7 +12,6 @@ module Spree
           helper_method :title
           helper_method :title=
           helper_method :accurate_title
-          helper_method :get_taxonomies
           helper_method :current_order
           helper_method :try_spree_current_user
 
@@ -140,10 +139,6 @@ module Spree
       def redirect_back_or_default(default)
         redirect_to(session["user_return_to"] || default)
         session["user_return_to"] = nil
-      end
-
-      def get_taxonomies
-        @taxonomies ||= Spree::Taxonomy.includes(:root => :children).joins(:root)
       end
 
       def set_user_language
