@@ -29,5 +29,9 @@ module Spree
         t(:product_has_no_description)
       end
     end
+
+    def get_taxonomies
+      @taxonomies ||= Spree::Taxonomy.includes(:root => :children)
+    end
   end
 end

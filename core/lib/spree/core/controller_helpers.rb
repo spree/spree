@@ -5,7 +5,6 @@ module Spree
         receiver.send :layout, :get_layout
         receiver.send :before_filter, 'instantiate_controller_and_action_names'
         receiver.send :before_filter, 'set_user_language'
-
         receiver.send :helper_method, 'title'
         receiver.send :helper_method, 'title='
         receiver.send :helper_method, 'accurate_title'
@@ -76,10 +75,6 @@ module Spree
         def instantiate_controller_and_action_names
           @current_action = action_name
           @current_controller = controller_name
-        end
-
-        def get_taxonomies
-          @taxonomies ||= Taxonomy.includes(:root => :children).joins(:root)
         end
 
         def associate_user
