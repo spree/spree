@@ -383,7 +383,7 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      update_column(:completed_at, Time.now)
+      touch :completed_at
       InventoryUnit.assign_opening_inventory(self)
       # lock any optional adjustments (coupon promotions, etc.)
       adjustments.optional.each { |adjustment| adjustment.update_column('locked', true) }
