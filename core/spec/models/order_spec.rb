@@ -247,7 +247,7 @@ describe Spree::Order do
   context "#finalize!" do
     let(:order) { Spree::Order.create }
     it "should set completed_at" do
-      order.should_receive :touch, :completed_at
+      order.should_receive(:touch).with(:completed_at)
       order.finalize!
     end
     it "should sell inventory units" do
