@@ -106,9 +106,8 @@ module Spree
 
       def remove_previous_default
         return unless default_tax
-
         Zone.all.each do |zone|
-          zone.update_attribute 'default_tax', false unless zone == self
+          zone.update_column 'default_tax', false unless zone == self
         end
       end
   end

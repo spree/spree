@@ -16,7 +16,7 @@ class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
 
     say_with_time 'Transfering inventory units with status on_hand to variants table...' do
       Spree::Variant.all.each do |v|
-        v.update_attribute(:count_on_hand, v.inventory_units.with_state('on_hand').size)
+        v.update_column(:count_on_hand, v.inventory_units.with_state('on_hand').size)
         Spree::InventoryUnit.destroy_all(:variant_id => v.id, :state => 'on_hand')
       end
     end
@@ -26,7 +26,7 @@ class AddCountOnHandToVariantsAndProducts < ActiveRecord::Migration
         product_count_on_hand = p.has_variants? ?
             p.variants.inject(0) { |acc, v| acc + v.count_on_hand } :
             (p.master ? p.master.count_on_hand : 0)
-        p.update_attribute(:count_on_hand, product_count_on_hand)
+        p.update_column(:count_on_hand, product_count_on_hand)
       end
     end
 
