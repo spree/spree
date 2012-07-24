@@ -279,7 +279,7 @@ describe Spree::Order do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustment = mock_model(Spree::Adjustment)
       order.stub_chain :adjustments, :optional => [adjustment]
-      adjustment.should_receive(:update_attribute).with("locked", true)
+      adjustment.should_receive(:update_column).with("locked", true)
       order.finalize!
     end
 
