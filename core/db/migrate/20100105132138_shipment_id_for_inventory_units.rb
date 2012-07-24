@@ -12,7 +12,7 @@ class ShipmentIdForInventoryUnits < ActiveRecord::Migration
         next
       end
       shipment.order.inventory_units.each do |unit|
-        unit.update_attribute('shipment_id', shipment.id)
+        unit.update_column('shipment_id', shipment.id)
       end
     end
 

@@ -87,7 +87,7 @@ module Spree
     def update!(order)
       old_state = state
       new_state = determine_state(order)
-      update_attribute_without_callbacks 'state', determine_state(order)
+      update_column 'state', determine_state(order)
       after_ship if new_state == 'shipped' and old_state != 'shipped'
     end
 
