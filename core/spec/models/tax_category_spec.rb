@@ -19,7 +19,7 @@ describe Spree::TaxCategory do
     end
 
     it "should undefault the previous default tax category" do
-      new_tax_category.update_column(:is_default, true)
+      new_tax_category.update_attributes({:is_default => true})
       new_tax_category.is_default.should be_true
 
       tax_category.reload
