@@ -22,7 +22,7 @@ module Spree
         invoke_callbacks(:update, :before)
         payment_method_type = params[:payment_method].delete(:type)
         if @payment_method['type'].to_s != payment_method_type
-          @payment_method.update_attribute(:type, payment_method_type)
+          @payment_method.update_column(:type, payment_method_type)
           @payment_method = PaymentMethod.find(params[:id])
         end
 

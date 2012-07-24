@@ -13,7 +13,7 @@ module Spree
     private
       def set_name
         if root
-          root.update_attribute(:name, name)
+          root.update_column(:name, name)
         else
           self.root = Taxon.create!({ :taxonomy_id => id, :name => name }, :without_protection => true)
         end

@@ -52,7 +52,7 @@ describe "Checkout" do
           click_link "RoR Mug"
           click_button "add-to-cart-button"
           click_link "Checkout"
-          Spree::Order.last.update_attribute(:email, "ryan@spreecommerce.com")
+          Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
 
           address = "order_bill_address_attributes"
           fill_in "#{address}_firstname", :with => "Ryan"

@@ -25,8 +25,21 @@ describe Spree::Zone do
       let(:second_zone) { create(:zone, :name => "SecondZone") }
 
       before { second_zone.members.create(:zoneable => country) }
-      it "should return the zone that was created first" do
-        Spree::Zone.match(address).should == country_zone
+
+      context "when both zones have the same number of members" do
+        it "should return the zone that was created first" do
+          Spree::Zone.match(address).should == country_zone
+        end
+      end
+
+      context "when one of the zones has fewer members" do
+        let(:country2) { create(:country) }
+
+        before { country_zone.members.create(:zoneable => country2) }
+
+        it "should return the zone with fewer members" do
+          Spree::Zone.match(address).should == second_zone
+        end
       end
     end
 
@@ -49,51 +62,50 @@ describe Spree::Zone do
   end
 
   context "#country_list" do
+    let(:state) { create(:state) }
+    let(:country) { state.country }
+
     context "when zone consists of countries" do
-      before do
-        @zone = create(:zone, :name => "country", :zone_members => [])
-        @country = create(:country)
-        @zone.members.create(:zoneable => @country)
-      end
+      let(:country_zone) { create(:zone, :name => "CountryZone") }
+
+      before { country_zone.members.create(:zoneable => country) }
+
       it 'should return a list of countries' do
-        @zone.country_list.should == [@country]
+        country_zone.country_list.should == [country]
       end
     end
 
     context "when zone consists of states" do
-      before do
-        @zone = create(:zone, :name => "state", :zone_members => [])
-        @state = create(:state)
-        @zone.members.create(:zoneable => @state)
-      end
+      let(:state_zone) { create(:zone, :name => "StateZone") }
+
+      before { state_zone.members.create(:zoneable => state) }
+
       it 'should return a list of countries' do
-        @zone.country_list.should == [@state.country]
+        state_zone.country_list.should == [state.country]
       end
     end
   end
 
   context "#include?" do
-    before do
-      @state = create(:state)
-      @country = @state.country
-      @address = create(:address, :state => @state)
-    end
+    let(:state) { create(:state) }
+    let(:country) { state.country }
+    let(:address) { create(:address, :state => state) }
+
     context "when zone is country type" do
-      before do
-        @zone = create(:zone, :name => "country", :zone_members => [])
-        @zone.members.create(:zoneable => @country)
-      end
+      let(:country_zone) { create(:zone, :name => "CountryZone") }
+      before { country_zone.members.create(:zoneable => country) }
+
       it "should be true" do
-        @zone.include?(@address).should be_true
+        country_zone.include?(address).should be_true
       end
     end
+
     context "when zone is state type" do
-      before do
-        @zone = create(:zone, :name => "state", :zone_members => [])
-        @zone.members.create(:zoneable => @state)
-      end
+      let(:state_zone) { create(:zone, :name => "StateZone") }
+      before { state_zone.members.create(:zoneable => state) }
+
       it "should be true" do
-        @zone.include?(@address).should be_true
+        state_zone.include?(address).should be_true
       end
     end
   end
@@ -109,7 +121,7 @@ describe Spree::Zone do
     end
 
     context "when there is no default tax zone specified" do
-      it "should be_nil" do
+      it "should be nil" do
         Spree::Zone.default_tax.should be_nil
       end
     end

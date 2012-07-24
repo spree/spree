@@ -14,11 +14,24 @@ module Spree
 
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
-      raw(product.description.gsub(/(.*?)\n\n/m, '<p>\1</p>\n\n'))
+      raw(product.description.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>'))
     end
 
     def variant_images_hash(product)
       product.variant_images.inject({}) { |h, img| (h[img.viewable_id] ||= []) << img; h }
+    end
+
+    def line_item_description(variant)
+      description = variant.product.description
+      if description.present?
+        truncate(strip_tags(description.gsub('&nbsp;', ' ')), :length => 100)
+      else
+        t(:product_has_no_description)
+      end
+    end
+
+    def get_taxonomies
+      @taxonomies ||= Spree::Taxonomy.includes(:root => :children)
     end
   end
 end

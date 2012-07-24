@@ -1,6 +1,6 @@
 module Spree
   class ReturnAuthorization < ActiveRecord::Base
-    belongs_to :order, :class_name => "Spree::Order"
+    belongs_to :order
 
     has_many :inventory_units
     before_create :generate_number

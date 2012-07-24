@@ -26,8 +26,8 @@ module Spree
 
     has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
 
-    belongs_to :tax_category, :class_name => "Spree::TaxCategory"
-    belongs_to :shipping_category, :class_name => "Spree::ShippingCategory"
+    belongs_to :tax_category
+    belongs_to :shipping_category
 
     has_one :master,
       :class_name => "Spree::Variant",
@@ -62,7 +62,8 @@ module Spree
 
     def variant_images
       Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id").
-      where("#{Variant.quoted_table_name}.product_id = #{self.id}").
+      where("(#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?) OR
+             (#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
       order("#{Asset.quoted_table_name}.position").
       extend(Spree::Core::RelationSerialization)
     end

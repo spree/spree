@@ -41,11 +41,26 @@ class NamespaceTopLevelModels < ActiveRecord::Migration
     rename_table :taxons,                  :spree_taxons
     rename_table :taxonomies,              :spree_taxonomies
     rename_table :trackers,                :spree_trackers
-    unless defined?(User)
+    unless defined?(User) || table_exists?(:spree_users)
       rename_table :users,                   :spree_users
     end
     rename_table :variants,                :spree_variants
     rename_table :zones,                   :spree_zones
     rename_table :zone_members,            :spree_zone_members
+
+    rename_index :spree_configurations, 'index_configurations_on_name_and_type', 'index_spree_configurations_on_name_and_type'
+    rename_index :spree_line_items, 'index_line_items_on_order_id', 'index_spree_line_items_on_order_id'
+    rename_index :spree_line_items, 'index_line_items_on_variant_id', 'index_spree_line_items_on_variant_id'
+    rename_index :spree_option_values_variants, 'index_option_values_variants_on_variant_id', 'index_spree_option_values_variants_on_variant_id'
+    rename_index :spree_orders, 'index_orders_on_number', 'index_spree_orders_on_number'
+    rename_index :spree_products, 'index_products_on_available_on', 'index_spree_products_on_available_on'
+    rename_index :spree_products, 'index_products_on_deleted_at', 'index_spree_products_on_deleted_at'
+    rename_index :spree_products, 'index_products_on_name', 'index_spree_products_on_name'
+    rename_index :spree_products, 'index_products_on_permalink', 'index_spree_products_on_permalink'
+    rename_index :spree_products_taxons, 'index_products_taxons_on_product_id', 'index_spree_products_taxons_on_product_id'
+    rename_index :spree_products_taxons, 'index_products_taxons_on_taxon_id', 'index_spree_products_taxons_on_taxon_id'
+    rename_index :spree_roles_users, 'index_roles_users_on_role_id', 'index_spree_roles_users_on_role_id'
+    rename_index :spree_roles_users, 'index_roles_users_on_user_id', 'index_spree_roles_users_on_user_id'
+    rename_index :spree_variants, 'index_variants_on_product_id', 'index_spree_variants_on_product_id'
   end
 end

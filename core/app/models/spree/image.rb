@@ -21,6 +21,7 @@ module Spree
       Spree::Image.attachment_definitions[:attachment][:s3_credentials] = s3_creds
       Spree::Image.attachment_definitions[:attachment][:s3_headers] = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
       Spree::Image.attachment_definitions[:attachment][:bucket] = Spree::Config[:s3_bucket]
+      Spree::Image.attachment_definitions[:attachment][:s3_protocol] = Spree::Config[:s3_protocol] unless Spree::Config[:s3_protocol].blank?
     end
 
     Spree::Image.attachment_definitions[:attachment][:styles] = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])

@@ -3,10 +3,14 @@
 <title><%= "Spree #{t('administration')}: " %>
 <%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
 
+<%= stylesheet_link_tag 'admin/all' %>
+<%= javascript_include_tag 'admin/all' %>
+
 <%= javascript_tag do %>
-  ajax_urls = <%== {
-    :product_search_json       => spree.admin_products_path(:format => 'json'),
-    :product_search_basic_json => spree.admin_products_path(:format => 'json', :json_format => 'basic', :limit => 10),
+  Spree.routes = <%== {
+    :product_search       => spree.admin_products_path(:format => 'json'),
+    :product_search_basic => spree.admin_products_path(:format => 'json', :json_format => 'basic', :limit => 10),
+    :user_search          => spree.admin_search_users_path(:format => 'json', :limit => 10)
   }.to_json %>;
 
   strings = <%==
@@ -15,8 +19,6 @@
   %>
 <% end %>
 
-<%= stylesheet_link_tag 'admin/all' %>
-<%= javascript_include_tag 'admin/all' %>
 <%= javascript_tag do -%>
   jQuery.alerts.dialogClass = 'spree';
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>

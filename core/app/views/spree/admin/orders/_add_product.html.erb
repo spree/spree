@@ -3,7 +3,7 @@
     <legend><%= t(:add_product) %></legend>
     <div style="float:left; width:65%; margin-right:5%;" data-hook="add_product_name">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
-      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth title' %>
+      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth title product_autocomplete' %>
       <%= hidden_field_tag :add_variant_id %>
     </div>
     <div style="float:left; width:10%; margin-right:5%;" data-hook="add_quantity">
@@ -12,8 +12,11 @@
     </div>
     <div style="float: left; width: 15%; padding-top: 17px;" data-hook="add_button">
       <%= link_to text_for_button_link(t(:add), :icon => 'add'),
-            admin_order_line_items_url(@order),
-            {:id => 'add_line_item_to_order', :class => 'button', 'data-update' => 'order-form-wrapper'} %>
+                  admin_order_line_items_url(@order),
+                  :method => :post,
+                  :id => 'add_line_item_to_order',
+                  :class => 'button',
+                  'data-update' => 'order-form-wrapper' %>
     </div>
 
   </fieldset>

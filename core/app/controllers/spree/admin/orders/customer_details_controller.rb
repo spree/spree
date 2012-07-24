@@ -41,9 +41,9 @@ module Spree
 
         private
 
-        def load_order
-          @order = Order.find_by_number(params[:order_id], :include => :adjustments)
-        end
+          def load_order
+            @order = Order.find_by_number!(params[:order_id], :include => :adjustments)
+          end
 
       end
     end

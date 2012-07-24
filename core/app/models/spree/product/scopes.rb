@@ -34,17 +34,6 @@ module Spree
       joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
     end
 
-    # Ryan Bates - http://railscasts.com/episodes/112
-    # general merging of conditions, names following the searchlogic pattern
-    add_search_scope :conditions do |*args|
-      where(args)
-    end
-
-    # conditions_all is a more descriptively named enhancement of the above
-    add_search_scope :conditions_all do |*args|
-      where([args].flatten)
-    end
-
     add_search_scope :price_between do |low, high|
       joins(:master).where(Variant.table_name => { :price => low..high })
     end
@@ -124,7 +113,7 @@ module Spree
       end
 
       conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-      joins(:variants_including_master => :option_values).where(conditions)
+      select("DISTINCT spree_products.id").joins(:variants_including_master => :option_values).where(conditions)
     end
 
     # Finds all products which have either:
@@ -203,7 +192,7 @@ module Spree
     end
 
     add_search_scope :taxons_name_eq do |name|
-      joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      select("DISTINCT spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
@@ -216,6 +205,7 @@ module Spree
     search_scopes << :group_by_products_id
 
     private
+
       def self.variant_table_name
         Variant.quoted_table_name
       end
@@ -235,16 +225,14 @@ module Spree
       end
 
       def self.get_taxons(*ids_or_records_or_names)
-        taxons = Spree::Taxon.table_name
+        taxons = Taxon.table_name
         ids_or_records_or_names.flatten.map { |t|
           case t
           when Integer then Taxon.find_by_id(t)
           when ActiveRecord::Base then t
           when String
             Taxon.find_by_name(t) ||
-            Taxon.find(:first, :conditions => [
-              "#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/"
-            ])
+            Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
           end
         }.compact.flatten.uniq
       end

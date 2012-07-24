@@ -1,90 +1,92 @@
-<div class="clearfix">
-  <div class="left" data-hook="general">
-    <fieldset>
-      <legend><%= t(:general) %></legend>
-      <p>
-        <%= f.label :environment, t(:environment) %><br />
-        <%= f.collection_select(:environment,
-                                Rails.configuration.database_configuration.keys.sort,
-                                :to_s, :titleize,
-                                {}, {:id => 'gtwy-env'}) %>
-      </p>
+<div data-hook="admin_mail_method_form_fields">
+  <div class="clearfix">
+    <div class="left" data-hook="general">
+      <fieldset>
+        <legend><%= t(:general) %></legend>
+        <p>
+          <%= f.label :environment, t(:environment) %><br />
+          <%= f.collection_select(:environment,
+                                  Rails.configuration.database_configuration.keys.sort,
+                                  :to_s, :titleize,
+                                  {}, {:id => 'gtwy-env'}) %>
+        </p>
 
-      <p>
-        <%= f.check_box :preferred_enable_mail_delivery, {:style => "vertical-align:middle;"} %>
-        <%= f.label :preferred_enable_mail_delivery, t(:enable_mail_delivery) %>
-      </p>
+        <p>
+          <%= f.check_box :preferred_enable_mail_delivery, {:style => "vertical-align:middle;"} %>
+          <%= f.label :preferred_enable_mail_delivery, t(:enable_mail_delivery) %>
+        </p>
 
-      <p>
-        <%= f.label :preferred_mails_from, t(:send_mails_as) %><br />
-        <%= f.text_field :preferred_mails_from, :size => 40, :maxlength => 256 %>
-        <br />
-        <span class="info">
-          <%= t(:smtp_send_all_emails_as_from_following_address) %>
-        </span>
-      </p>
+        <p>
+          <%= f.label :preferred_mails_from, t(:send_mails_as) %><br />
+          <%= f.text_field :preferred_mails_from, :size => 40, :maxlength => 256 %>
+          <br />
+          <span class="info">
+            <%= t(:smtp_send_all_emails_as_from_following_address) %>
+          </span>
+        </p>
 
-      <p>
-        <%= f.label :preferred_mail_bcc, t(:send_copy_of_all_mails_to) %><br />
-        <%= f.text_field :preferred_mail_bcc, :size => 40, :maxlength => 256 %>
-        <br />
-        <span class="info">
-          <%= t(:smtp_send_copy_to_this_addresses) %>
-        </span>
-      </p>
+        <p>
+          <%= f.label :preferred_mail_bcc, t(:send_copy_of_all_mails_to) %><br />
+          <%= f.text_field :preferred_mail_bcc, :size => 40, :maxlength => 256 %>
+          <br />
+          <span class="info">
+            <%= t(:smtp_send_copy_to_this_addresses) %>
+          </span>
+        </p>
 
-      <p>
-        <%= f.label :preferred_intercept_email, t(:intercept_email_address) %><br />
-        <%= f.text_field :preferred_intercept_email, :size => 40, :maxlength => 256 %>
-        <br />
-        <span class="info">
-          <%= t(:intercept_email_instructions) %>
-        </span>
-      </p>
+        <p>
+          <%= f.label :preferred_intercept_email, t(:intercept_email_address) %><br />
+          <%= f.text_field :preferred_intercept_email, :size => 40, :maxlength => 256 %>
+          <br />
+          <span class="info">
+            <%= t(:intercept_email_instructions) %>
+          </span>
+        </p>
 
-    </fieldset>
+      </fieldset>
+
+    </div>
+
+    <div class="right" data-hook="smtp">
+
+      <fieldset>
+        <legend><%= t(:smtp) %></legend>
+        <p>
+          <%= f.label :preferred_mail_domain, t(:smtp_domain) %><br />
+          <%= f.text_field :preferred_mail_domain %>
+        </p>
+        <p>
+          <%= f.label :preferred_mail_host, t(:smtp_mail_host) %><br />
+          <%= f.text_field :preferred_mail_host %>
+        </p>
+        <p>
+          <%= f.label :preferred_mail_port, t(:smtp_port) %><br />
+          <%= f.text_field :preferred_mail_port %>
+        </p>
+        <p>
+          <%= f.label :preferred_secure_connection_type, t(:secure_connection_type) %><br />
+          <%= f.collection_select(:preferred_secure_connection_type,
+                                  Spree::MailMethod::SECURE_CONNECTION_TYPES,
+                                  :to_s, :to_s,
+                                  {}, {'style' => 'width:200px'}) %>
+        <p>
+          <%= f.label :preferred_mail_auth_type, t(:smtp_authentication_type) %><br />
+          <%= f.collection_select(:preferred_mail_auth_type,
+                                  Spree::MailMethod::MAIL_AUTH,
+                                  :to_s, :to_s,
+                                  {}, {'style' => 'width:200px'}) %>
+        </p>
+        <p>
+          <%= f.label :preferred_smtp_username, t(:smtp_username) %><br />
+          <%= f.text_field :preferred_smtp_username %>
+        </p>
+        <p>
+          <%= f.label :preferred_smtp_password, t(:smtp_password) %><br />
+          <%= f.password_field :preferred_smtp_password %>
+        </p>
+      </fieldset>
+
+    </div>
 
   </div>
-
-  <div class="right" data-hook="smtp">
-
-    <fieldset>
-      <legend><%= t(:smtp) %></legend>
-      <p>
-        <%= f.label :preferred_mail_domain, t(:smtp_domain) %><br />
-        <%= f.text_field :preferred_mail_domain %>
-      </p>
-      <p>
-        <%= f.label :preferred_mail_host, t(:smtp_mail_host) %><br />
-        <%= f.text_field :preferred_mail_host %>
-      </p>
-      <p>
-        <%= f.label :preferred_mail_port, t(:smtp_port) %><br />
-        <%= f.text_field :preferred_mail_port %>
-      </p>
-      <p>
-        <%= f.label :preferred_secure_connection_type, t(:secure_connection_type) %><br />
-        <%= f.collection_select(:preferred_secure_connection_type,
-                                Spree::MailMethod::SECURE_CONNECTION_TYPES,
-                                :to_s, :to_s,
-                                {}, {'style' => 'width:200px'}) %>
-      <p>
-        <%= f.label :preferred_mail_auth_type, t(:smtp_authentication_type) %><br />
-        <%= f.collection_select(:preferred_mail_auth_type,
-                                Spree::MailMethod::MAIL_AUTH,
-                                :to_s, :to_s,
-                                {}, {'style' => 'width:200px'}) %>
-      </p>
-      <p>
-        <%= f.label :preferred_smtp_username, t(:smtp_username) %><br />
-        <%= f.text_field :preferred_smtp_username %>
-      </p>
-      <p>
-        <%= f.label :preferred_smtp_password, t(:smtp_password) %><br />
-        <%= f.password_field :preferred_smtp_password %>
-      </p>
-    </fieldset>
-
-  </div>
-
 </div>

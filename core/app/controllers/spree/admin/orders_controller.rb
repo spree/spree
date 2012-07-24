@@ -4,7 +4,7 @@ module Spree
       require 'spree/core/gateway_error'
       before_filter :initialize_txn_partials
       before_filter :initialize_order_events
-      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend, :history, :user]
+      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend]
 
       respond_to :html
 
@@ -13,6 +13,12 @@ module Spree
         params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
         @show_only_completed = params[:q][:completed_at_not_null].present?
         params[:q][:s] ||= @show_only_completed ? 'completed_at desc' : 'created_at desc'
+
+        # As date params are deleted if @show_only_completed, store
+        # the original date so we can restore them into the params
+        # after the search
+        created_at_gt = params[:q][:created_at_gt]
+        created_at_lt = params[:q][:created_at_lt]
 
         if !params[:q][:created_at_gt].blank?
           params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
@@ -29,6 +35,11 @@ module Spree
 
         @search = Order.ransack(params[:q])
         @orders = @search.result.includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
+
+        # Restore dates
+        params[:q][:created_at_gt] = created_at_gt
+        params[:q][:created_at_lt] = created_at_lt
+
         respond_with(@orders)
       end
 
@@ -71,7 +82,6 @@ module Spree
         end
       end
 
-
       def fire
         # TODO - possible security check here but right now any admin can before any transition (and the state machine
         # itself will make sure transitions are not applied in the wrong state)
@@ -96,20 +106,19 @@ module Spree
 
       private
 
-      def load_order
-        @order ||= Order.find_by_number(params[:id], :include => :adjustments) if params[:id]
-        @order
-      end
+        def load_order
+          @order = Order.find_by_number!(params[:id], :include => :adjustments) if params[:id]
+        end
 
-      # Allows extensions to add new forms of payment to provide their own display of transactions
-      def initialize_txn_partials
-        @txn_partials = []
-      end
+        # Allows extensions to add new forms of payment to provide their own display of transactions
+        def initialize_txn_partials
+          @txn_partials = []
+        end
 
-      # Used for extensions which need to provide their own custom event links on the order details view.
-      def initialize_order_events
-        @order_events = %w{cancel resume}
-      end
+        # Used for extensions which need to provide their own custom event links on the order details view.
+        def initialize_order_events
+          @order_events = %w{cancel resume}
+        end
 
     end
   end

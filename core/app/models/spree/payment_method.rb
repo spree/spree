@@ -35,7 +35,7 @@ module Spree
     end
 
     def destroy
-      self.update_attribute(:deleted_at, Time.now.utc)
+      touch :deleted_at
     end
 
     def self.find_with_destroyed *args

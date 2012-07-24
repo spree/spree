@@ -15,6 +15,7 @@ en:
     listing: Listing
     new: New
     update: Update
+    cancel: Cancel
   active: "Active"
   activate: "Activate"
   activerecord:
@@ -25,9 +26,7 @@ en:
         city: City
         country: "Country"
         firstname: "First Name"
-        first_name_start: "First Name Begins With"
         lastname: "Last Name"
-        last_name_start: "Last Name Begins With"
         phone: Phone
         state: "State"
         zipcode: "Zip Code"
@@ -256,6 +255,7 @@ en:
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
+  attachment_default_style: "Attachments Style"
   attachment_default_url: "Attachments URL"
   attachment_path: "Attachments Path"
   attachment_styles: "Paperclip Styles"
@@ -347,6 +347,7 @@ en:
   default_seo_title: Default Seo Title
   default_tax: Default Tax
   default_tax_zone: Default Tax Zone
+  defined_paperclip_styles: Defined Paperclip Styles
   delete: Delete
   delivery: Delivery
   depth: Depth
@@ -461,6 +462,7 @@ en:
   images: Images
   images_for: "Images for"
   image_settings: "Image Settings"
+  image_settings_description: "Image Settings Description"
   image_settings_updated: "Image Settings successfully updated."
   image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails to do this."
   in_progress: "In Progress"
@@ -574,6 +576,7 @@ en:
   none_available: "None Available"
   normal_amount: "Normal Amount"
   not: not
+  not_available: "N/A"
   not_found: "%{resource} is not found"
   not_shown: "Not Shown"
   note: Note
@@ -850,6 +853,7 @@ en:
   return_authorizations: Return Authorizations
   return_quantity: Return Quantity
   returned: Returned
+  review: Review
   rma_credit: RMA Credit
   rma_number: RMA Number
   rma_value: RMA Value
@@ -858,6 +862,7 @@ en:
   s3_bucket: "Bucket"
   s3_headers: "S3 Headers"
   s3_secret: "Secret Key"
+  s3_protocol: "S3 Protocol"
   s3_used_for_product_images: "S3 is being used for product images"
   s3_not_used_for_product_images: "S3 is not being used for product images"
   sales_tax: "Sales Tax"

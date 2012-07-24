@@ -4,7 +4,7 @@
 
 <div id="order" data-hook>
   <% if params.has_key? :checkout_complete %>
-    <h3><%= t(:thank_you_for_your_order) %></h3>
+    <h1><%= t(:thank_you_for_your_order) %></h1>
   <% end %>
   <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
 

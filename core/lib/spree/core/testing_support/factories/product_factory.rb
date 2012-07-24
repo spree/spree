@@ -1,8 +1,6 @@
 FactoryGirl.define do
-  sequence(:product_sequence) { |n| "Product ##{n} - #{rand(9999)}" }
-
   factory :simple_product, :class => Spree::Product do
-    name { FactoryGirl.generate :product_sequence }
+    sequence(:name) { |n| "Product ##{n} - #{rand(9999)}" }
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
     price 19.99
     cost_price 17.00
@@ -12,8 +10,8 @@ FactoryGirl.define do
   end
 
   factory :product, :parent => :simple_product do
-    tax_category { |r| Spree::TaxCategory.find(:first) || r.association(:tax_category) }
-    shipping_category { |r| Spree::ShippingCategory.find(:first) || r.association(:shipping_category) }
+    tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
+    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
   end
 
   factory :product_with_option_types, :parent => :product do
@@ -26,8 +24,8 @@ FactoryGirl.define do
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
 
     # associations:
-    tax_category { |r| Spree::TaxCategory.find(:first) || r.association(:tax_category) }
-    shipping_category { |r| Spree::ShippingCategory.find(:first) || r.association(:shipping_category) }
+    tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
+    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
 
     sku 'ABC'
     available_on 1.year.ago

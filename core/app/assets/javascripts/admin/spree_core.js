@@ -7,6 +7,5 @@
 //= require jquery.jstree/jquery.jstree
 //= require jquery.alerts/jquery.alerts
 //= require_tree .
-function ajax_root_prefix(){
-  return $('body').data('ajax-root-path');
-}
+
+var Spree = {};

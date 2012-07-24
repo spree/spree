@@ -24,7 +24,7 @@ describe Spree::TaxRate do
           @zone.zone_members.create(:zoneable => country)
         end
 
-        it "should return an emtpy array" do
+        it "should return an empty array" do
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == []
         end
@@ -79,11 +79,24 @@ describe Spree::TaxRate do
             Spree::TaxRate.match(order).should == [rate]
           end
         end
-
       end
+    end
+  end
 
+  context "adjust" do
+    let(:order) { stub_model(Spree::Order) }
+    let(:rate_1) { stub_model(Spree::TaxRate) }
+    let(:rate_2) { stub_model(Spree::TaxRate) }
+
+    before do
+      Spree::TaxRate.stub :match => [rate_1, rate_2]
     end
 
+    it "should apply adjustments for two tax rates to the order" do
+      rate_1.should_receive(:adjust)
+      rate_2.should_receive(:adjust)
+      Spree::TaxRate.adjust(order)
+    end
   end
 
   context "default" do
@@ -100,7 +113,7 @@ describe Spree::TaxRate do
     end
 
     context "when there is a default tax_category" do
-      before { tax_category.update_attribute :is_default, true }
+      before { tax_category.update_column :is_default, true }
 
       context "when the default category has tax rates in the default tax zone" do
         before(:each) do

@@ -2,9 +2,9 @@ require 'ostruct'
 
 module Spree
   class Shipment < ActiveRecord::Base
-    belongs_to :order, :class_name => "Spree::Order"
-    belongs_to :shipping_method, :class_name => "Spree::ShippingMethod"
-    belongs_to :address, :class_name => "Spree::Address"
+    belongs_to :order
+    belongs_to :shipping_method
+    belongs_to :address
 
     has_many :state_changes, :as => :stateful
     has_many :inventory_units, :dependent => :nullify
@@ -87,7 +87,7 @@ module Spree
     def update!(order)
       old_state = state
       new_state = determine_state(order)
-      update_attribute_without_callbacks 'state', determine_state(order)
+      update_column 'state', determine_state(order)
       after_ship if new_state == 'shipped' and old_state != 'shipped'
     end
 
@@ -139,6 +139,11 @@ module Spree
 
       def after_ship
         inventory_units.each &:ship!
+        send_shipped_email
+        touch :shipped_at
+      end
+
+      def send_shipped_email
         ShipmentMailer.shipped_email(self).deliver
       end
 

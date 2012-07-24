@@ -3,15 +3,15 @@ module Spree
     module V1
       class OrdersController < Spree::Api::V1::BaseController
         before_filter :map_nested_attributes, :only => [:create, :update]
+        before_filter :authorize_read!, :except => [:index, :search, :create]
 
         def index
           # should probably look at turning this into a CanCan step
           raise CanCan::AccessDenied unless current_api_user.has_spree_role?("admin")
-          @orders = Order.page(params[:page])
+          @orders = Order.page(params[:page]).per(params[:per_page])
         end
 
         def show
-          authorize! :read, order
         end
 
         def search
@@ -27,6 +27,7 @@ module Spree
         def update
           authorize! :update, Order
           if order.update_attributes(@nested_params)
+            order.update!
             render :show
           else
             invalid_resource!(order)
@@ -55,6 +56,12 @@ module Spree
           render :show
         end
 
+        def empty
+          order.line_items.destroy_all
+          order.update!
+          render :text => nil, :status => 200
+        end
+
         private
 
         def map_nested_attributes
@@ -71,6 +78,10 @@ module Spree
           else
             render :could_not_transition, :status => 422
           end
+        end
+
+        def authorize_read!
+          authorize! :read, order
         end
       end
     end

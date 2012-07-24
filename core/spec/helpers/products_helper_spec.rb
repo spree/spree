@@ -51,7 +51,7 @@ THIS IS THE BEST PRODUCT EVER!
 "IT CHANGED MY LIFE" - Sue, MD}
 
         description = product_description(product)
-        description.strip.should == %Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>\\n\\n"IT CHANGED MY LIFE" - Sue, MD}
+        description.strip.should == %Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD}
       end
 
     end

@@ -2,6 +2,6 @@ object false
 child(@orders) do
   attributes *order_attributes
 end
-node(:count) { @orders.total_count }
+node(:count) { @orders.count }
 node(:current_page) { params[:page] || 1 }
 node(:pages) { @orders.num_pages }

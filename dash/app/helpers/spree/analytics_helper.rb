@@ -2,7 +2,7 @@ module Spree
   module AnalyticsHelper
 
     def spree_analytics
-      render :partial => 'analytics/header'
+      render :partial => 'spree/analytics/header'
     end
 
     def analytics_tags
@@ -19,7 +19,7 @@ module Spree
       { :product => { :name => @product.name,
                       :price => @product.price,
                       :sku => @product.sku,
-                      :categories => @product.taxons.map { |t| t.permalink }
+                      :categories => @product.taxons.map(&:permalink)
                     }
       }
     end
@@ -31,7 +31,7 @@ module Spree
 
     def keywords_analytics_tags
       return {} unless params[:keywords]
-      { :search => { :keyword => params[:keywords] } }
+      { :search => { :keyword => u(params[:keywords]) } }
     end
 
     def cart_analytics_tags
@@ -56,11 +56,12 @@ module Spree
     def products_for_order
       @order.line_items.map do |line_item|
         variant = line_item.variant
-        { :name => variant.name,
+        {
+          :name => variant.name,
           :qty => line_item.quantity,
           :price => variant.price,
           :sku => variant.sku,
-          :categories => variant.product.taxons.map { |t| t.permalink }
+          :categories => variant.product.taxons.map(&:permalink)
         }
       end
     end

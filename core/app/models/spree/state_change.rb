@@ -1,6 +1,6 @@
 module Spree
   class StateChange < ActiveRecord::Base
-    belongs_to :user, :class_name => "Spree::User"
+    belongs_to :user
     belongs_to :stateful, :polymorphic => true
     before_create :assign_user
 

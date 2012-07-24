@@ -1,35 +1,37 @@
-<div class="clearfix">
-  <div class="left" data-hook="variants">
+<div data-hook="admin_variant_form_fields">
+  <div class="clearfix">
+    <div class="left" data-hook="variants">
 
-    <% @product.options.each do |option| %>
-      <p data-hook="presentation">
-        <%= label :new_variant, option.option_type.presentation %><br />
-        <% if @variant.new_record? %>
-          <%= select(:new_variant, option.option_type.presentation,
-            option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
-            {})
-          %>
-        <% else %>
-          <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
-          <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled') %>
-        <% end %>
-      </p>
-    <% end %>
+      <% @product.options.each do |option| %>
+        <p data-hook="presentation">
+          <%= label :new_variant, option.option_type.presentation %><br />
+          <% if @variant.new_record? %>
+            <%= select(:new_variant, option.option_type.presentation,
+              option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
+              {})
+            %>
+          <% else %>
+            <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
+            <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled') %>
+          <% end %>
+        </p>
+      <% end %>
 
-    <p data-hook="sku"><%= f.label :sku, t(:sku) %><br />
-    <%= f.text_field :sku %></p>
+      <p data-hook="sku"><%= f.label :sku, t(:sku) %><br />
+      <%= f.text_field :sku %></p>
 
-    <p data-hook="price"><%= f.label :price, t(:price) %>:<br />
-    <%= f.text_field :price, :value => number_with_precision(@variant.price, :precision => 2) %></p>
+      <p data-hook="price"><%= f.label :price, t(:price) %>:<br />
+      <%= f.text_field :price, :value => number_with_precision(@variant.price, :precision => 2) %></p>
 
-    <p data-hook="cost_price"><%= f.label :cost_price, t(:cost_price) %>:<br />
-    <%= f.text_field :cost_price, :value => number_with_precision(@variant.cost_price, :precision => 2) %></p>
+      <p data-hook="cost_price"><%= f.label :cost_price, t(:cost_price) %>:<br />
+      <%= f.text_field :cost_price, :value => number_with_precision(@variant.cost_price, :precision => 2) %></p>
 
     <% if Spree::Config[:track_inventory_levels] %>
       <p data-hook="on_hand"><%= f.label :on_hand, t(:on_hand) %>: <br />
       <%= f.text_field :on_hand %></p>
     <% end %>
   </div>
+
   <div class="right" data-hook="admin_variant_form_additional_fields">
     <% [:weight, :height, :width, :depth].each do |field| %>
       <p data-hook="<%= field %>"><%= f.label field, t(field) %>:<br />

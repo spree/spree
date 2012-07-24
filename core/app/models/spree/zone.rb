@@ -41,7 +41,7 @@ module Spree
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
     def self.match(address)
-      return unless matches = self.order('created_at').select { |zone| zone.include? address }
+      return unless matches = self.includes(:zone_members).order('zone_members_count', 'created_at').select { |zone| zone.include? address }
 
       ['state', 'country'].each do |zone_kind|
         if match = matches.detect { |zone| zone_kind == zone.kind }
@@ -53,6 +53,7 @@ module Spree
 
     # convenience method for returning the countries contained within a zone
     def country_list
+      @countries ||=
       case kind
       when 'country'
         zoneables
@@ -107,7 +108,7 @@ module Spree
         return unless default_tax
 
         self.class.all.each do |zone|
-          zone.update_attribute 'default_tax', false unless zone == self
+          zone.update_column 'default_tax', false unless zone == self
         end
       end
   end

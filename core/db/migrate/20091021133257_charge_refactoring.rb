@@ -12,7 +12,7 @@ class ChargeRefactoring < ActiveRecord::Migration
 
     add_column :orders, :completed_at, :timestamp
     Order.reset_column_information
-    Order.all.each { |o| o.update_attribute(:completed_at, o.checkout && o.checkout.read_attribute(:completed_at)) }
+    Order.all.each { |o| o.update_column(:completed_at, o.checkout && o.checkout.read_attribute(:completed_at)) }
     remove_column :checkouts, :completed_at
 
     change_column :adjustments, :amount, :decimal, :null => true, :default => nil, :precision => 8, :scale => 2
@@ -27,7 +27,7 @@ class ChargeRefactoring < ActiveRecord::Migration
   def down
     add_column :checkouts, :completed_at, :timestamp
     Spree::Checkout.reset_column_information
-    Spree::Checkout.all.each { |c| c.update_attribute(:completed_at, c.order && c.order.completed_at) }
+    Spree::Checkout.all.each { |c| c.update_column(:completed_at, c.order && c.order.completed_at) }
     remove_column :orders, :completed_at
 
     add_column :adjustments, :secondary_type, :string

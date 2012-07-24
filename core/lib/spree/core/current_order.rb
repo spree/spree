@@ -1,6 +1,11 @@
 module Spree
   module Core
     module CurrentOrder
+      def self.included(base)
+        base.class_eval do
+          helper_method :current_order
+        end
+      end
 
       # This should be overridden by an auth-related extension which would then have the
       # opportunity to associate the new order with the # current user before saving.

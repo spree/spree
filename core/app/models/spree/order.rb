@@ -11,7 +11,7 @@ module Spree
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
     else
-      belongs_to :user, :class_name => "Spree::User"
+      belongs_to :user
     end
 
     belongs_to :bill_address, :foreign_key => :bill_address_id, :class_name => "Spree::Address"
@@ -20,7 +20,7 @@ module Spree
     belongs_to :ship_address, :foreign_key => :ship_address_id, :class_name => "Spree::Address"
     alias_attribute :shipping_address, :ship_address
 
-    belongs_to :shipping_method, :class_name => "Spree::ShippingMethod"
+    belongs_to :shipping_method
 
     has_many :state_changes, :as => :stateful
     has_many :line_items, :dependent => :destroy
@@ -111,7 +111,7 @@ module Spree
     end
 
     def self.by_customer(customer)
-      joins(:user).where("#{Spree::User.table_name}.email" => customer)
+      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
     end
 
     def self.by_state(state)
@@ -239,19 +239,6 @@ module Spree
       update_hooks.each { |hook| self.send hook }
     end
 
-    def restore_state
-      # pop the resume event so we can see what the event before that was
-      state_changes.pop if state_changes.last.name == 'resume'
-      update_attribute('state', state_changes.last.previous_state)
-
-      if paid?
-        raise 'do something with inventory'
-        #Spree::InventoryUnit.assign_opening_inventory(self) if inventory_units.empty?
-        #shipment.inventory_units = inventory_units
-        #shipment.ready!
-      end
-    end
-
     def clone_billing_address
       if bill_address and self.ship_address.nil?
         self.ship_address = bill_address.clone
@@ -343,11 +330,7 @@ module Spree
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      # destroy any previous adjustments (eveything is recalculated from scratch)
-      adjustments.tax.each(&:destroy)
-      price_adjustments.each(&:destroy)
-
-      TaxRate.match(self).each { |rate| rate.adjust(self) }
+      Spree::TaxRate.adjust(self)
     end
 
     # Creates a new shipment (adjustment is created by shipment model)
@@ -390,10 +373,10 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      update_attribute(:completed_at, Time.now)
+      update_column(:completed_at, Time.now)
       InventoryUnit.assign_opening_inventory(self)
       # lock any optional adjustments (coupon promotions, etc.)
-      adjustments.optional.each { |adjustment| adjustment.update_attribute('locked', true) }
+      adjustments.optional.each { |adjustment| adjustment.update_column('locked', true) }
       deliver_order_confirmation_email
 
       self.state_changes.create({
@@ -418,10 +401,6 @@ module Spree
     def available_shipping_methods(display_on = nil)
       return [] unless ship_address
       ShippingMethod.all_available(self, display_on)
-    end
-
-    def available_payment_methods(display_on = nil)
-      PaymentMethod.all(display_on)
     end
 
     def rate_hash
@@ -477,9 +456,21 @@ module Spree
       order.destroy
     end
 
+    def empty!
+      line_items.destroy_all
+      adjustments.destroy_all
+    end
+
+    # destroy any previous adjustments.
+    # Adjustments will be recalculated during order update.
+    def clear_adjustments!
+      adjustments.tax.each(&:destroy)
+      price_adjustments.each(&:destroy)
+    end
+
     private
       def link_by_email
-        self.email = user.email if self.user and not user.anonymous?
+        self.email = user.email if self.user
       end
 
       # Updates the +shipment_state+ attribute according to the following logic:

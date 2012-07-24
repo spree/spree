@@ -4,8 +4,6 @@ $(document).ready(function() {
     $(input).on('change', function() {
 
       var id = "#" + $(this).attr('id').replace("_quantity", "_id");
-      console.log($(this))
-      console.log($(id))
 
       jQuery.post("/admin/orders/" + $('input#order_number').val() + "/line_items/" + $(id).val(),
         { _method: "put", "line_item[quantity]": $(this).val()},

@@ -1,4 +1,4 @@
-$(function() {                                                                    
+$(function() {
   var original_gtwy_type = $('#gtwy-type').attr('value');
   $('div#gateway-settings-warning').hide();
   $('#gtwy-type').change(function() { 

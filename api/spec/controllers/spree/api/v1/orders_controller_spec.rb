@@ -34,6 +34,23 @@ module Spree
       assert_unauthorized!
     end
 
+    it "cannot cancel an order that doesn't belong to them" do
+      order.update_attribute(:completed_at, Time.now)
+      order.update_attribute(:shipment_state, "ready")
+      api_put :cancel, :id => order.to_param
+      assert_unauthorized!
+    end
+
+    it "cannot add address information to an order that doesn't belong to them" do
+      api_put :address, :id => order.to_param
+      assert_unauthorized!
+    end
+
+    it "cannot change delivery information on an order that doesn't belong to them" do
+      api_put :delivery, :id => order.to_param
+      assert_unauthorized!
+    end
+
     it "can create an order" do
       variant = create(:variant)
       api_post :create, :order => { :line_items => [{ :variant_id => variant.to_param, :quantity => 5 }] }
@@ -47,6 +64,7 @@ module Spree
 
     context "working with an order" do
       before do
+        Order.any_instance.stub :user => current_api_user
         create(:payment_method)
         order.next # Switch from cart to address
         order.ship_address.should be_nil
@@ -102,6 +120,13 @@ module Spree
         json_response["errors"]["bill_address.firstname"].should_not be_blank
       end
 
+      it "can add line items" do
+        api_put :update, :id => order.to_param, :order => { :line_items => [{:variant_id => create(:variant).id, :quantity => 2}] }
+
+        response.status.should == 200
+        json_response['order']['item_total'].to_f.should_not == order.item_total.to_f
+      end
+
       context "with a line item" do
         before do
           order.line_items << create(:line_item)
@@ -128,18 +153,38 @@ module Spree
             json_response["errors"].should include("Invalid shipping method specified.")
           end
         end
+
+        it "can empty an order" do
+          api_put :empty, :id => order.to_param
+          response.status.should == 200
+          order.reload.line_items.should be_empty
+        end
       end
     end
 
     context "as an admin" do
       sign_in_as_admin!
 
-      it "can view all orders" do
-        api_get :index
-        json_response["orders"].first.should have_attributes(attributes)
-        json_response["count"].should == 1
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
+      context "with two orders" do
+        before { create(:order) }
+
+        it "can view all orders" do
+          api_get :index
+          json_response["orders"].first.should have_attributes(attributes)
+          json_response["count"].should == 2
+          json_response["current_page"].should == 1
+          json_response["pages"].should == 1
+        end
+
+        # Test for #1763
+        it "can control the page size through a parameter" do
+          api_get :index, :per_page => 1
+          json_response["orders"].count.should == 1
+          json_response["orders"].first.should have_attributes(attributes)
+          json_response["count"].should == 1
+          json_response["current_page"].should == 1
+          json_response["pages"].should == 2
+        end
       end
 
       context "can cancel an order" do

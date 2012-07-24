@@ -1,6 +1,6 @@
 module Spree
   class Variant < ActiveRecord::Base
-    belongs_to :product, :touch => true, :class_name => "Spree::Product"
+    belongs_to :product, :touch => true
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
                         :tax_category_id, :shipping_category_id, :meta_description,
@@ -110,7 +110,7 @@ module Spree
       # no option values on master
       return if self.is_master
 
-      option_type = Spree::OptionType.find_or_initialize_by_name(opt_name) do |o|
+      option_type = Spree::OptionType.where(:name => opt_name).first_or_initialize do |o|
         o.presentation = opt_name
         o.save!
       end
@@ -128,7 +128,7 @@ module Spree
         end
       end
 
-      option_value = Spree::OptionValue.find_or_initialize_by_option_type_id_and_name(option_type.id, opt_value) do |o|
+      option_value = Spree::OptionValue.where(:option_type_id => option_type.id, :name => opt_value).first_or_initialize do |o|
         o.presentation = opt_value
         o.save!
       end

@@ -6,7 +6,7 @@
   <legend><%= t(:editing_option_type) %></legend>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <h3><%= t(:option_values) %></h3>
-  <table class="index">
+  <table class="index sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
     <thead data-hook="option_header">
       <tr>
         <th><%= t(:name) %></th>

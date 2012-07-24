@@ -1,11 +1,11 @@
 module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
-    belongs_to :order, :class_name => "Spree::Order"
-    belongs_to :variant, :class_name => "Spree::Variant"
+    belongs_to :order
+    belongs_to :variant
 
     has_one :product, :through => :variant
-    has_many :adjustments, :as => :adjustable, :class_name => "Spree::Adjustment"
+    has_many :adjustments, :as => :adjustable, :dependent => :destroy
 
     before_validation :copy_price
 
@@ -15,7 +15,7 @@ module Spree
     validate :stock_availability
     validate :quantity_no_less_than_shipped
 
-    attr_accessible :quantity
+    attr_accessible :quantity, :variant_id
 
     before_save :update_inventory
     before_destroy :ensure_not_shipped, :remove_inventory
