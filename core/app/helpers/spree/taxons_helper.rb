@@ -9,6 +9,7 @@ module Spree
         taxon.descendants.each do |taxon|
           to_get = max - products.length
           products += taxon.active_products.limit(to_get)
+          products = products.uniq
           break if products.size >= max
         end
       end
