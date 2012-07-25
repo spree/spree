@@ -74,7 +74,7 @@ class OrderUpdater
         :previous_state => old_payment_state,
         :next_state     => order.payment_state,
         :name           => 'payment',
-        :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || order.user_id
+        :user_id        => (Spree.user_class.respond_to?(:current) && Spree.user_class.current && Spree.user_class.current.id) || order.user_id
       }, :without_protection => true)
     end
   end

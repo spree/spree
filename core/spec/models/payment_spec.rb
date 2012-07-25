@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Spree::Payment do
   let(:order) do
-    order = Spree::Order.new(:bill_address => Spree::Address.new,
-                             :ship_address => Spree::Address.new)
+    order = Spree::Order.new({:bill_address => Spree::Address.new,
+                             :ship_address => Spree::Address.new}, :without_protection => true)
   end
 
   let(:gateway) do
