@@ -15,7 +15,7 @@ describe Spree::ProductsController do
     response.status.should == 404
   end
 
-  it "returns product sitemap XML" do
+  it "returns products sitemap XML" do
     spree_get :sitemap, :format => :xml
     response.status.should == 200
   end
