@@ -343,6 +343,10 @@ module Spree
       payments.present? and payments.last.state == 'failed'
     end
 
+    def update!
+      OrderUpdater.new(self).update!
+    end
+
     private
       def link_by_email
         self.email = user.email if self.user

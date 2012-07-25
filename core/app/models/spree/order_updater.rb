@@ -19,21 +19,18 @@ class OrderUpdater
     # update totals a second time in case updated adjustments have an effect on the total
     update_totals
 
-    update_attributes_without_callbacks({
-      :payment_state => payment_state,
-      :shipment_state => shipment_state,
-      :item_total => item_total,
-      :adjustment_total => adjustment_total,
-      :payment_total => payment_total,
-      :total => total
+    order.update_attributes_without_callbacks({
+      :payment_state => order.payment_state,
+      :shipment_state => order.shipment_state,
+      :item_total => order.item_total,
+      :adjustment_total => order.adjustment_total,
+      :payment_total => order.payment_total,
+      :total => order.total
     })
 
-    #ensure checkout payment always matches order total
-    if payment and payment.checkout? and payment.amount != total
-      payment.update_attributes_without_callbacks(:amount => total)
-    end
+    ensure_correct_payment_total
 
-    update_hooks.each { |hook| order.send hook }
+    order.update_hooks.each { |hook| order.send hook }
   end
 
   # Updates the following Order total values:
@@ -84,44 +81,45 @@ class OrderUpdater
 
   def update_shipments
     # give each of the shipments a chance to update themselves
-    shipments.each { |shipment| shipment.update!(order) }#(&:update!)
+    order.shipments.each { |shipment| shipment.update!(order) }#(&:update!)
   end
 
+  # Updates the +shipment_state+ attribute according to the following logic:
+  #
+  # shipped   when all Shipments are in the "shipped" state
+  # partial   when at least one Shipment has a state of "shipped" and there is another Shipment with a state other than "shipped"
+  #           or there are InventoryUnits associated with the order that have a state of "sold" but are not associated with a Shipment.
+  # ready     when all Shipments are in the "ready" state
+  # backorder when there is backordered inventory associated with an order
+  # pending   when all Shipments are in the "pending" state
+  #
+  # The +shipment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
   def update_shipment_state
-    # Updates the +shipment_state+ attribute according to the following logic:
-    #
-    # shipped   when all Shipments are in the "shipped" state
-    # partial   when at least one Shipment has a state of "shipped" and there is another Shipment with a state other than "shipped"
-    #           or there are InventoryUnits associated with the order that have a state of "sold" but are not associated with a Shipment.
-    # ready     when all Shipments are in the "ready" state
-    # backorder when there is backordered inventory associated with an order
-    # pending   when all Shipments are in the "pending" state
-    #
-    # The +shipment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
-    def update_shipment_state
+    if order.backordered?
+      order.shipment_state 'backorder'
+    else
       order.shipment_state =
-        case shipments.count
+        case order.shipments.count
         when 0
           nil
-        when shipments.shipped.count
+        when order.shipments.shipped.count
           'shipped'
-        when shipments.ready.count
+        when order.shipments.ready.count
           'ready'
-        when shipments.pending.count
+        when order.shipments.pending.count
           'pending'
         else
           'partial'
         end
-      order.shipment_state = 'backorder' if backordered?
+    end
 
-      if old_shipment_state = order.changed_attributes['shipment_state']
-        order.state_changes.create({
-          :previous_state => old_shipment_state,
-          :next_state     => order.shipment_state,
-          :name           => 'shipment',
-          :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || order.user_id
-        }, :without_protection => true)
-      end
+    if old_shipment_state = order.changed_attributes['shipment_state']
+      order.state_changes.create({
+        :previous_state => old_shipment_state,
+        :next_state     => order.shipment_state,
+        :name           => 'shipment',
+        :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || order.user_id
+      }, :without_protection => true)
     end
   end
 
@@ -133,6 +131,12 @@ class OrderUpdater
     order.adjustments.reload.each { |adjustment| adjustment.update!(order) }
   end
 
+  def ensure_correct_payment_total
+    #ensure checkout payment always matches order total
+    if order.payment and order.payment.checkout? and order.payment.amount != order.total
+      order.payment.update_column(:amount, order.total)
+    end
+  end
 
   private
 

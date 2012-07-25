@@ -188,6 +188,7 @@ describe Spree::Order do
 
   context "#payment_method" do
     it "should return payment.payment_method if payment is present" do
+      order.stub(:update!)
       payments = [create(:payment)]
       payments.stub(:completed => payments)
       order.stub(:payments => payments)
