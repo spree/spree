@@ -25,7 +25,7 @@ branches:
   only:
     - 1-0-stable
     - 1-1-stable
-    - order-split
+    - order_split
     - master
 rvm:
   - 1.8.7
