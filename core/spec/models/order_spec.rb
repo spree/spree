@@ -116,14 +116,6 @@ describe Spree::Order do
     end
   end
 
-  context "#process_payments!" do
-    it "should process the payments" do
-      order.stub!(:payments).and_return([mock(Spree::Payment)])
-      order.payment.should_receive(:process!)
-      order.process_payments!
-    end
-  end
-
   context "#complete?" do
     it "should indicate if order is complete" do
       order.completed_at = nil
