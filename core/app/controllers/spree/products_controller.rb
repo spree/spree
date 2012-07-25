@@ -6,10 +6,10 @@ module Spree
     helper 'spree/taxons'
 
     respond_to :html
+    respond_to :xml, :only => :sitemap
 
     def index
-      @searcher = Config.searcher_class.new(params)
-      @products = @searcher.retrieve_products
+      products_index
       respond_with(@products)
     end
 
@@ -28,7 +28,18 @@ module Spree
       respond_with(@product)
     end
 
+    def sitemap
+      products_index
+      respond_with(@products)      
+    end
+
     private
+
+      def products_index
+        @searcher = Config.searcher_class.new(params)
+        @products = @searcher.retrieve_products
+      end
+
       def accurate_title
         @product ? @product.name : super
       end
