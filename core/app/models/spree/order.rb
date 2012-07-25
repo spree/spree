@@ -5,6 +5,7 @@ module Spree
     include Spree::OrderComponents::Address
     include Spree::OrderComponents::LineItems
     include Spree::OrderComponents::Adjustments
+    include Spree::OrderComponents::Payment
 
     token_resource
 
