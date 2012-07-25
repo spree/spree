@@ -347,6 +347,10 @@ module Spree
       OrderUpdater.new(self).update!
     end
 
+    def build_line_item(attributes={})
+      line_items.build(attributes)
+    end
+
     private
       def link_by_email
         self.email = user.email if self.user
