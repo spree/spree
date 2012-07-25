@@ -8,4 +8,9 @@ describe Spree::ProductsController do
     spree_get :show, :id => product.to_param
     response.status.should == 404
   end
+
+  it "returns product sitemap XML" do
+    spree_get :sitemap, :format => :xml
+    response.status.should == 200
+  end
 end
