@@ -220,15 +220,6 @@ module Spree
       end
     end
 
-    def credit_cards
-      credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
-      CreditCard.scoped(:conditions => { :id => credit_card_ids })
-    end
-
-    def process_payments!
-      ret = payments.each(&:process!)
-    end
-
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!

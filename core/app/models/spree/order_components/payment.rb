@@ -37,6 +37,15 @@ module Spree
           end
         end
 
+        def credit_cards
+          credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
+          CreditCard.scoped(:conditions => { :id => credit_card_ids })
+        end
+
+        def process_payments!
+          ret = payments.each(&:process!)
+        end
+
         private
 
         def has_available_payment

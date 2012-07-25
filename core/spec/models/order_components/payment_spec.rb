@@ -59,5 +59,12 @@ describe Spree::OrderComponents::Payment do
     end
   end
 
+  context "#process_payments!" do
+    it "should process the payments" do
+      order.stub!(:payments).and_return([stub])
+      order.payment.should_receive(:process!)
+      order.process_payments!
+    end
+  end
 end
 
