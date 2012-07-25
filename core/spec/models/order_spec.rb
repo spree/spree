@@ -125,38 +125,6 @@ describe Spree::Order do
     end
   end
 
-  context "#outstanding_balance" do
-    it "should return positive amount when payment_total is less than total" do
-      order.payment_total = 20.20
-      order.total = 30.30
-      order.outstanding_balance.should == 10.10
-    end
-    it "should return negative amount when payment_total is greater than total" do
-      order.total = 8.20
-      order.payment_total = 10.20
-      order.outstanding_balance.should be_within(0.001).of(-2.00)
-    end
-
-  end
-
-  context "#outstanding_balance?" do
-    it "should be true when total greater than payment_total" do
-      order.total = 10.10
-      order.payment_total = 9.50
-      order.outstanding_balance?.should be_true
-    end
-    it "should be true when total less than payment_total" do
-      order.total = 8.25
-      order.payment_total = 10.44
-      order.outstanding_balance?.should be_true
-    end
-    it "should be false when total equals payment_total" do
-      order.total = 10.10
-      order.payment_total = 10.10
-      order.outstanding_balance?.should be_false
-    end
-  end
-
   context "#complete?" do
     it "should indicate if order is complete" do
       order.completed_at = nil
@@ -183,20 +151,6 @@ describe Spree::Order do
     end
   end
 
-  context "#payment_method" do
-    it "should return payment.payment_method if payment is present" do
-      order.stub(:update!)
-      payments = [create(:payment)]
-      payments.stub(:completed => payments)
-      order.stub(:payments => payments)
-      order.payment_method.should == order.payments.first.payment_method
-    end
-
-    it "should return the first payment method from available_payment_methods if payment is not present" do
-      create(:payment_method, :environment => 'test')
-      order.payment_method.should == order.available_payment_methods.first
-    end
-  end
 
   context "#allow_checkout?" do
     it "should be true if there are line_items in the order" do

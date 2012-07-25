@@ -8,7 +8,7 @@ module Spree
 
     token_resource
 
-    attr_accessible :payments_attributes, :number, :shipping_method_id, :email, :use_billing, :special_instructions
+    attr_accessible :number, :shipping_method_id, :email, :use_billing, :special_instructions
 
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
@@ -20,11 +20,9 @@ module Spree
 
     has_many :state_changes, :as => :stateful
     has_many :inventory_units
-    has_many :payments, :dependent => :destroy
     has_many :shipments, :dependent => :destroy
     has_many :return_authorizations, :dependent => :destroy
 
-    accepts_nested_attributes_for :payments
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
@@ -35,7 +33,6 @@ module Spree
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :email => true, :if => :require_email
     validate :has_available_shipment
-    validate :has_available_payment
 
     make_permalink :field => :number
 
@@ -216,14 +213,6 @@ module Spree
 
     end
 
-    def outstanding_balance
-      total - payment_total
-    end
-
-    def outstanding_balance?
-     self.outstanding_balance != 0
-    end
-
     def name
       if (address = bill_address || ship_address)
         "#{address.firstname} #{address.lastname}"
@@ -286,22 +275,6 @@ module Spree
       payment_state == 'paid'
     end
 
-    def payment
-      payments.first
-    end
-
-    def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available(:front_end)
-    end
-
-    def payment_method
-      if payment and payment.payment_method
-        payment.payment_method
-      else
-        available_payment_methods.first
-      end
-    end
-
     def insufficient_stock_lines
       line_items.select &:insufficient_stock?
     end
@@ -359,10 +332,6 @@ module Spree
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
 
-      def has_available_payment
-        return unless :delivery == state_name.to_sym
-        errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
-      end
 
       def after_cancel
         restock_items!
