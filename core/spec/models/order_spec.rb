@@ -157,9 +157,6 @@ describe Spree::Order do
     end
   end
 
-  context "#outstanding_credit" do
-  end
-
   context "#complete?" do
     it "should indicate if order is complete" do
       order.completed_at = nil
