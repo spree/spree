@@ -82,7 +82,6 @@ describe Spree::Order do
       Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
       order.finalize!
     end
-    it "should change the shipment state to ready if order is paid"
 
     after { Spree::Config.set :track_inventory_levels => true }
     it "should not sell inventory units if track_inventory_levels is false" do
