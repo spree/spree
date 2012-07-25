@@ -2,6 +2,7 @@ module Spree
   class ProductsController < BaseController
     HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+)$/
     before_filter :load_product, :only => :show
+    before_filter :products_index, :only => [:index, :sitemap]
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/taxons'
 
@@ -9,7 +10,6 @@ module Spree
     respond_to :xml, :only => :sitemap
 
     def index
-      products_index
       respond_with(@products)
     end
 
@@ -29,7 +29,6 @@ module Spree
     end
 
     def sitemap
-      products_index
       respond_with(@products)      
     end
 
