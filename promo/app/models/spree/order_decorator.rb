@@ -9,10 +9,6 @@ Spree::Order.class_eval do
     !! adjustments.promotion.reload.detect { |credit| credit.originator.promotion.id == promotion.id }
   end
 
-  def products
-    line_items.map {|li| li.variant.product}
-  end
-
   unless self.method_defined?('update_adjustments_with_promotion_limiting')
     def update_adjustments_with_promotion_limiting
       update_adjustments_without_promotion_limiting
