@@ -302,14 +302,6 @@ module Spree
       end
     end
 
-    def billing_firstname
-      bill_address.try(:firstname)
-    end
-
-    def billing_lastname
-      bill_address.try(:lastname)
-    end
-
     def insufficient_stock_lines
       line_items.select &:insufficient_stock?
     end

@@ -22,6 +22,14 @@ module Spree
         attr_accessor :use_billing
         end
 
+        def billing_firstname
+          bill_address.try(:firstname)
+        end
+
+        def billing_lastname
+          bill_address.try(:lastname)
+        end
+
         private
 
         def clone_billing_address
