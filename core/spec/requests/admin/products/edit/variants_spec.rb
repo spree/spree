@@ -17,7 +17,6 @@ describe "Product Variants" do
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       within('#sidebar') { click_link "Variants" }
-      find('table.index tbody tr:nth-child(2) td:nth-child(1)').text.should == "None"
       page.should have_content("To add variants, you must first define")
       within('.first_add_option_types') { click_link "Option Types" }
       within('#new_opt_link') { click_link "Add Option Type" }
