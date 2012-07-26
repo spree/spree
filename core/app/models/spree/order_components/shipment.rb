@@ -36,10 +36,13 @@ module Spree
           if shipment.present?
             shipment.update_attributes!(:shipping_method => shipping_method)
           else
-            self.shipments << Shipment.create!({ :order => self,
-                                               :shipping_method => shipping_method,
-                                               :address => self.ship_address,
-                                               :inventory_units => self.inventory_units}, :without_protection => true)
+            self.shipments << Spree::Shipment.create!(
+              {
+                :order => self,
+                :shipping_method => shipping_method,
+                :address => self.ship_address,
+                :inventory_units => self.inventory_units
+              }, :without_protection => true)
           end
 
         end
