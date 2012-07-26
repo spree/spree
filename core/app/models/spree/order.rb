@@ -17,14 +17,9 @@ module Spree
       belongs_to :user
     end
 
-    belongs_to :shipping_method
-
     has_many :state_changes, :as => :stateful
     has_many :inventory_units
-    has_many :shipments, :dependent => :destroy
     has_many :return_authorizations, :dependent => :destroy
-
-    accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
     before_validation :generate_order_number, :on => :create
@@ -33,7 +28,6 @@ module Spree
 
     # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :email => true, :if => :require_email
-    validate :has_available_shipment
 
     make_permalink :field => :number
 
@@ -189,31 +183,6 @@ module Spree
       self.number
     end
 
-    # convenience method since many stores will not allow user to create multiple shipments
-    def shipment
-      @shipment ||= shipments.last
-    end
-
-    # Clear shipment when transitioning to delivery step of checkout if the
-    # current shipping address is not eligible for the existing shipping method
-    def remove_invalid_shipments!
-      shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
-    end
-
-    # Creates a new shipment (adjustment is created by shipment model)
-    def create_shipment!
-      shipping_method(true)
-      if shipment.present?
-        shipment.update_attributes!(:shipping_method => shipping_method)
-      else
-        self.shipments << Shipment.create!({ :order => self,
-                                          :shipping_method => shipping_method,
-                                          :address => self.ship_address,
-                                          :inventory_units => self.inventory_units}, :without_protection => true)
-      end
-
-    end
-
     def name
       if (address = bill_address || ship_address)
         "#{address.firstname} #{address.lastname}"
@@ -247,12 +216,6 @@ module Spree
     end
 
     # Helper methods for checkout steps
-
-    def available_shipping_methods(display_on = nil)
-      return [] unless ship_address
-      ShippingMethod.all_available(self, display_on)
-    end
-
     def rate_hash
       @rate_hash ||= available_shipping_methods(:front_end).collect do |ship_method|
         next unless cost = ship_method.calculator.compute(self)
@@ -317,13 +280,6 @@ module Spree
       def require_email
         return true unless new_record? or state == 'cart'
       end
-
-      def has_available_shipment
-        return unless :address == state_name.to_sym
-        return unless ship_address && ship_address.valid?
-        errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
-      end
-
 
       def after_cancel
         restock_items!
