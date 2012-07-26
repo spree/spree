@@ -2,11 +2,7 @@ Spree::Core::Engine.routes.draw do
 
   root :to => 'home#index'
 
-  resources :products do
-    collection do
-      get :sitemap
-    end
-  end
+  resources :products
 
   match '/locale/set', :to => 'locale#set'
 

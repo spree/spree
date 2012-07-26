@@ -1,14 +1,14 @@
 module Spree
   class ProductsController < BaseController
     before_filter :load_product, :only => :show
-    before_filter :products_index, :only => [:index, :sitemap]
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/taxons'
 
     respond_to :html
-    respond_to :xml, :only => :sitemap
 
     def index
+      @searcher = Config.searcher_class.new(params)
+      @products = @searcher.retrieve_products
       respond_with(@products)
     end
 
@@ -29,17 +29,7 @@ module Spree
       respond_with(@product)
     end
 
-    def sitemap
-      respond_with(@products)      
-    end
-
     private
-
-      def products_index
-        @searcher = Config.searcher_class.new(params)
-        @products = @searcher.retrieve_products
-      end
-
       def accurate_title
         @product ? @product.name : super
       end
