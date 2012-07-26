@@ -222,8 +222,6 @@ describe Spree::Order do
 
     context "restocking inventory" do
       before do
-        shipment.stub(:ensure_correct_adjustment)
-        shipment.stub(:update_order)
         Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
         mail_message.stub :deliver
       end
