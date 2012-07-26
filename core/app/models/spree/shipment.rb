@@ -105,12 +105,6 @@ module Spree
         "#{I18n.t(:shipping)} (#{shipping_method.name})"
       end
 
-      # def transition_order
-      #   update_attribute(:shipped_at, Time.now)
-      #   # transition order to shipped if all shipments have been shipped
-      #   order.ship! if order.shipments.all?(&:shipped?)
-      # end
-
       def validate_shipping_method
         unless shipping_method.nil?
           errors.add :shipping_method, I18n.t(:is_not_available_to_shipment_address) unless shipping_method.zone.include?(address)
