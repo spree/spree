@@ -1,54 +1,51 @@
 require 'spec_helper'
 
-class FakeCalculator < Spree::Calculator
-  def compute(computable)
-    5
-  end
-end
-
 describe Spree::Order do
-  before(:each) do
-    reset_spree_preferences
-    Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :without_protection => true)
-  end
 
   let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
-  let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :without_protection => true) }
 
   before do
-    Spree::Gateway.stub :current => gateway
     Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
   end
 
-  context "#products" do
-    before :each do
-      @variant1 = mock_model(Spree::Variant, :product => "product1")
-      @variant2 = mock_model(Spree::Variant, :product => "product2")
-      @line_items = [mock_model(Spree::LineItem, :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
-                     mock_model(Spree::LineItem, :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
-      order.stub(:line_items => @line_items)
+  context "validation" do
+    context "email validation" do
+      # Regression test for #1238
+      it "o'brien@gmail.com is a valid email address" do
+        order.state = 'address'
+        order.email = "o'brien@gmail.com"
+        order.should be_valid
+      end
+    end
+  end
+
+  context "#save" do
+    it "should create guest user (when no user assigned)" do
+      order.run_callbacks(:create)
+      order.user.should_not be_nil
     end
 
-    it "should return ordered products" do
-      order.products.should == ['product1', 'product2']
+    context "when associated with a registered user" do
+      it "should assign the email address of the user" do
+        order.run_callbacks(:create)
+        order.email.should == user.email
+      end
+
+      it "should accept the sample admin email address" do
+        user.stub :email => "spree@example.com"
+        order.run_callbacks(:create)
+        order.email.should == user.email
+      end
+
+      it "should reject the automatic email for anonymous users" do
+        user.stub :anonymous? => true
+        order.email.should be_blank
+      end
+
     end
 
-    it "contains?" do
-      order.contains?(@variant1).should be_true
-    end
-
-    it "gets the quantity of a given variant" do
-      order.quantity_of(@variant1).should == 1
-
-      @variant3 = mock_model(Spree::Variant, :product => "product3")
-      order.quantity_of(@variant3).should == 0
-    end
-
-    it "can find a line item matching a given variant" do
-      order.find_line_item_by_variant(@variant1).should_not be_nil
-      order.find_line_item_by_variant(mock_model(Spree::Variant)).should be_nil
-    end
+    it "should destroy any line_items with zero quantity"
   end
 
   context "#generate_order_number" do
@@ -85,7 +82,6 @@ describe Spree::Order do
       Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
       order.finalize!
     end
-    it "should change the shipment state to ready if order is paid"
 
     after { Spree::Config.set :track_inventory_levels => true }
     it "should not sell inventory units if track_inventory_levels is false" do
@@ -120,49 +116,6 @@ describe Spree::Order do
     end
   end
 
-  context "#process_payments!" do
-    it "should process the payments" do
-      order.stub!(:payments).and_return([mock(Spree::Payment)])
-      order.payment.should_receive(:process!)
-      order.process_payments!
-    end
-  end
-
-  context "#outstanding_balance" do
-    it "should return positive amount when payment_total is less than total" do
-      order.payment_total = 20.20
-      order.total = 30.30
-      order.outstanding_balance.should == 10.10
-    end
-    it "should return negative amount when payment_total is greater than total" do
-      order.total = 8.20
-      order.payment_total = 10.20
-      order.outstanding_balance.should be_within(0.001).of(-2.00)
-    end
-
-  end
-
-  context "#outstanding_balance?" do
-    it "should be true when total greater than payment_total" do
-      order.total = 10.10
-      order.payment_total = 9.50
-      order.outstanding_balance?.should be_true
-    end
-    it "should be true when total less than payment_total" do
-      order.total = 8.25
-      order.payment_total = 10.44
-      order.outstanding_balance?.should be_true
-    end
-    it "should be false when total equals payment_total" do
-      order.total = 10.10
-      order.payment_total = 10.10
-      order.outstanding_balance?.should be_false
-    end
-  end
-
-  context "#outstanding_credit" do
-  end
-
   context "#complete?" do
     it "should indicate if order is complete" do
       order.completed_at = nil
@@ -189,19 +142,6 @@ describe Spree::Order do
     end
   end
 
-  context "#payment_method" do
-    it "should return payment.payment_method if payment is present" do
-      payments = [create(:payment)]
-      payments.stub(:completed => payments)
-      order.stub(:payments => payments)
-      order.payment_method.should == order.payments.first.payment_method
-    end
-
-    it "should return the first payment method from available_payment_methods if payment is not present" do
-      create(:payment_method, :environment => 'test')
-      order.payment_method.should == order.available_payment_methods.first
-    end
-  end
 
   context "#allow_checkout?" do
     it "should be true if there are line_items in the order" do
@@ -224,41 +164,110 @@ describe Spree::Order do
     end
   end
 
-  context "#amount" do
-    before do
-      @order = create(:order, :user => user)
-      @order.line_items = [ create(:line_item, :price => 1.0, :quantity => 2), create(:line_item, :price => 1.0, :quantity => 1) ]
-    end
-    it "should return the correct lum sum of items" do
-      @order.amount.should == 3.0
-    end
-  end
-
-  context "with adjustments" do
-    let(:adjustment1) { mock_model(Spree::Adjustment, :amount => 5) }
-    let(:adjustment2) { mock_model(Spree::Adjustment, :amount => 10) }
-
-    context "#ship_total" do
-      it "should return the correct amount" do
-        order.stub_chain :adjustments, :shipping => [adjustment1, adjustment2]
-        order.ship_total.should == 15
-      end
-    end
-
-    context "#tax_total" do
-      it "should return the correct amount" do
-        order.stub_chain :adjustments, :tax => [adjustment1, adjustment2]
-        order.tax_total.should == 15
-      end
+  context "in the cart state" do
+    it "should not validate email address" do
+      order.state = "cart"
+      order.email = nil
+      order.should be_valid
     end
   end
 
   context "#can_cancel?" do
-    it "should be false for completed order in the canceled state" do
-      order.state = 'canceled'
-      order.shipment_state = 'ready'
-      order.completed_at = Time.now
-      order.can_cancel?.should be_false
+
+    %w(pending backorder ready).each do |shipment_state|
+      it "should be true if shipment_state is #{shipment_state}" do
+        order.stub :completed? => true
+        order.shipment_state = shipment_state
+        order.can_cancel?.should be_true
+      end
+    end
+
+    (SHIPMENT_STATES - %w(pending backorder ready)).each do |shipment_state|
+      it "should be false if shipment_state is #{shipment_state}" do
+        order.stub :completed? => true
+        order.shipment_state = shipment_state
+        order.can_cancel?.should be_false
+      end
+    end
+
+  end
+
+  context "#cancel" do
+    let!(:variant) { stub_model(Spree::Variant, :on_hand => 0) }
+    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, :variant => variant),
+                              stub_model(Spree::InventoryUnit, :variant => variant) ]}
+    let!(:shipment) do
+      shipment = stub_model(Spree::Shipment)
+      shipment.stub :inventory_units => inventory_units
+      order.stub :shipments => [shipment]
+      shipment
+    end
+
+    before do
+      order.email = user.email
+      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 2)]
+      order.line_items.stub :find_by_variant_id => order.line_items.first
+
+      order.stub :completed? => true
+      order.stub :allow_cancel? => true
+    end
+
+    it "should send a cancel email" do
+      order.stub :restock_items!
+      mail_message = mock "Mail::Message"
+      Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
+      mail_message.should_receive :deliver
+      order.cancel!
+    end
+
+    context "restocking inventory" do
+      before do
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        mail_message.stub :deliver
+      end
+
+      # Regression fix for #729
+      specify do
+        Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2).once
+        order.cancel!
+      end
+
+    end
+  end
+
+
+  # Another regression test for #729
+  context "#resume" do
+    before do
+      order.stub :email => "user@spreecommerce.com"
+      order.stub :state => "canceled"
+      order.stub :allow_resume? => true
+    end
+
+    it "should send a resume email" do
+      pending "Pending test for #818"
+      order.stub :unstock_items!
+      order.resume!
+    end
+
+    context "unstocks inventory" do
+      let(:variant) { stub_model(Spree::Variant) }
+
+      before do
+        shipment = stub_model(Spree::Shipment)
+        line_item = stub_model(Spree::LineItem, :variant => variant, :quantity => 2)
+        order.stub :line_items => [line_item]
+        order.line_items.stub :find_by_variant_id => line_item
+
+        order.stub :shipments => [shipment]
+        shipment.stub :inventory_units => [stub_model(Spree::InventoryUnit, :variant => variant),
+                                           stub_model(Spree::InventoryUnit, :variant => variant) ]
+      end
+
+      specify do
+        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 2).once
+        order.resume!
+      end
     end
   end
 
@@ -311,32 +320,15 @@ describe Spree::Order do
 
   end
 
-  context "clear_adjustments" do
-    before do
-      @order = Spree::Order.new
-    end
-
-    it "should destroy all previous tax adjustments" do
-      adjustment = mock_model(Spree::Adjustment)
-      adjustment.should_receive :destroy
-
-      @order.stub_chain :adjustments, :tax => [adjustment]
-      @order.clear_adjustments!
-    end
-
-    it "should destroy all price adjustments" do
-      adjustment = mock_model(Spree::Adjustment)
-      adjustment.should_receive :destroy
-
-      @order.stub :price_adjustments => [adjustment]
-      @order.clear_adjustments!
-    end
-  end
-
   context "#tax_zone" do
     let(:bill_address) { Factory :address }
     let(:ship_address) { Factory :address }
-    let(:order) { Spree::Order.create(:ship_address => ship_address, :bill_address => bill_address) }
+    let(:order) do
+      Spree::Order.create({
+        :ship_address => ship_address,
+        :bill_address => bill_address
+      }, :without_protection => true)
+    end
     let(:zone) { Factory :zone }
 
     context "when no zones exist" do
@@ -411,93 +403,6 @@ describe Spree::Order do
     end
   end
 
-  context "#price_adjustments" do
-    before do
-      @order = Spree::Order.create!
-      @order.stub :line_items => [line_item1, line_item2]
-    end
-
-    let(:line_item1) { create(:line_item, :order => @order) }
-    let(:line_item2) { create(:line_item, :order => @order) }
-
-    context "when there are no line item adjustments" do
-      it "should return nothing if line items have no adjustments" do
-        @order.price_adjustments.should be_empty
-      end
-    end
-
-    context "when only one line item has adjustments" do
-      before do
-        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :without_protection => true)
-        @adj2 = line_item1.adjustments.create({:amount => 5, :source => line_item1, :label => "VAT 10%"}, :without_protection => true)
-      end
-
-      it "should return the adjustments for that line item" do
-         @order.price_adjustments.should =~ [@adj1, @adj2]
-      end
-    end
-
-    context "when more than one line item has adjustments" do
-      before do
-        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :without_protection => true)
-        @adj2 = line_item2.adjustments.create({:amount => 5, :source => line_item2, :label => "VAT 10%"}, :without_protection => true)
-      end
-
-      it "should return the adjustments for each line item" do
-        @order.price_adjustments.should == [@adj1, @adj2]
-      end
-    end
-  end
-
-  context "#price_adjustment_totals" do
-    before { @order = Spree::Order.create! }
-
-
-    context "when there are no price adjustments" do
-      before { @order.stub :price_adjustments => [] }
-
-      it "should return an empty hash" do
-        @order.price_adjustment_totals.should == {}
-      end
-    end
-
-    context "when there are two adjustments with different labels" do
-      let(:adj1) { mock_model Spree::Adjustment, :amount => 10, :label => "Foo" }
-      let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
-
-      before do
-        @order.stub :price_adjustments => [adj1, adj2]
-      end
-
-      it "should return exactly two totals" do
-        @order.price_adjustment_totals.size.should == 2
-      end
-
-      it "should return the correct totals" do
-        @order.price_adjustment_totals["Foo"].should == 10
-        @order.price_adjustment_totals["Bar"].should == 20
-      end
-    end
-
-    context "when there are two adjustments with one label and a single adjustment with another" do
-      let(:adj1) { mock_model Spree::Adjustment, :amount => 10, :label => "Foo" }
-      let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
-      let(:adj3) { mock_model Spree::Adjustment, :amount => 40, :label => "Bar" }
-
-      before do
-        @order.stub :price_adjustments => [adj1, adj2, adj3]
-      end
-
-      it "should return exactly two totals" do
-        @order.price_adjustment_totals.size.should == 2
-      end
-      it "should return the correct totals" do
-        @order.price_adjustment_totals["Foo"].should == 10
-        @order.price_adjustment_totals["Bar"].should == 60
-      end
-    end
-  end
-
   context "#exclude_tax?" do
     before do
       @order = create(:order)
@@ -525,21 +430,6 @@ describe Spree::Order do
       it "should be false" do
         @order.exclude_tax?.should be_false
       end
-    end
-  end
-
-  context "#add_variant" do
-    it "should update order totals" do
-      order = Spree::Order.create!
-
-      order.item_total.to_f.should == 0.00
-      order.total.to_f.should == 0.00
-
-      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
-      order.add_variant(product.master)
-
-      order.item_total.to_f.should == 22.25
-      order.total.to_f.should == 22.25
     end
   end
 
