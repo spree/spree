@@ -233,8 +233,6 @@ describe Spree::Order do
       end
 
     end
-
-    it "should change shipment status (unless shipped)"
   end
 
 
