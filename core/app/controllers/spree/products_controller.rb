@@ -18,9 +18,12 @@ module Spree
       @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
       @product_properties = ProductProperty.includes(:property).where(:product_id => @product.id)
 
-      referer_path = URI.parse(request.env['HTTP_REFERER']).path
-      if referer_path && referer_path.match(/\/t\/(.*)/)
-        @taxon = Taxon.find_by_permalink($1)
+      referer = request.env['HTTP_REFERER']
+      if referer
+        referer_path = URI.parse(request.env['HTTP_REFERER']).path
+        if referer_path && referer_path.match(/\/t\/(.*)/)
+          @taxon = Taxon.find_by_permalink($1)
+        end
       end
 
       respond_with(@product)
