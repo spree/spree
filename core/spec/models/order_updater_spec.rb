@@ -11,12 +11,12 @@ class FakeOrder
   end
 end
 
-describe OrderUpdater do
+describe Spree::OrderUpdater do
   let(:order) do
     FakeOrder.new
   end
 
-  let(:updater) { OrderUpdater.new(order) }
+  let(:updater) { Spree::OrderUpdater.new(order) }
 
   it "updates an order's totals" do
     order.stub :completed_payment_total => 1
