@@ -2,14 +2,14 @@ require_relative '../../../app/models/spree/order_components/payment'
 require 'fakes/order'
 
 module Spree
-  class FakePaymentsOrder < Spree::FakeOrder
+  class FakeOrder
     attr_accessor :payment_total, :total
     include Spree::OrderComponents::Payment
   end
 end
 
 describe Spree::OrderComponents::Payment do
-  let(:order) { Spree::FakePaymentsOrder.new }
+  let(:order) { Spree::FakeOrder.new }
 
   context "#outstanding_balance" do
     it "should return positive amount when payment_total is less than total" do
