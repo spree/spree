@@ -86,6 +86,7 @@ require 'spree/core/middleware/redirect_legacy_product_url'
 require 'spree/core/middleware/seo_assist'
 require 'spree/core/permalinks'
 require 'spree/core/token_resource'
+require 'spree/core/s3_support'
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'
