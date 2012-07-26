@@ -3,7 +3,7 @@ require 'fakes/order'
 require 'fakes/line_item'
 
 module Spree
-  class FakeOrder
+  class FakeLineItemsOrder < Spree::FakeOrder
     include Spree::OrderComponents::LineItems
 
     def build_line_item(*attributes)
@@ -13,7 +13,7 @@ module Spree
 end
 
 describe Spree::OrderComponents::LineItems do
-  let(:order) { Spree::FakeOrder.new }
+  let(:order) { Spree::FakeLineItemsOrder.new }
   let(:variant_1) { stub(:product => "product 1", :id => 1) }
   let(:variant_2) { stub(:product => "product 2", :id => 2) }
   it "#products" do

@@ -3,13 +3,13 @@ require 'fakes/order'
 require 'fakes/line_item'
 
 module Spree
-  class FakeOrder
+  class FakeAdjustmentsOrder < Spree::FakeOrder
     include Spree::OrderComponents::Adjustments
   end
 end
 
 describe "adjustment callbacks" do
-  let(:order) { Spree::FakeOrder.new }
+  let(:order) { Spree::FakeAdjustmentsOrder.new }
 
   it "creates a tax charge" do
     order.should_receive(:create_tax_charge!)
@@ -18,7 +18,7 @@ describe "adjustment callbacks" do
 end
 
 describe Spree::OrderComponents::Adjustments do
-  let(:order) { Spree::FakeOrder.new }
+  let(:order) { Spree::FakeAdjustmentsOrder.new }
   let(:line_item_1) { Spree::FakeLineItem.new }
   let(:line_item_2) { Spree::FakeLineItem.new }
 
