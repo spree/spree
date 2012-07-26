@@ -1,14 +1,16 @@
 require_relative '../../../app/models/spree/order_components/payment'
-require 'fakes/order'
-
-module Spree
-  class FakeOrder
-    attr_accessor :payment_total, :total
-    include Spree::OrderComponents::Payment
-  end
-end
 
 describe Spree::OrderComponents::Payment do
+  before(:all) do
+    load 'fakes/order.rb'
+    module Spree
+      class FakeOrder
+        attr_accessor :payment_total, :total
+        include Spree::OrderComponents::Payment
+      end
+    end
+  end
+
   let(:order) { Spree::FakeOrder.new }
 
   context "#outstanding_balance" do

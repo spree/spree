@@ -1,13 +1,15 @@
 require_relative '../../../app/models/spree/order_components/address'
-require 'fakes/order'
-
-module Spree
-  class FakeOrder
-    include Spree::OrderComponents::Address
-  end
-end
 
 describe Spree::OrderComponents::Address do
+  before(:all) do
+    load 'fakes/order.rb'
+    module Spree
+      class FakeOrder
+        include Spree::OrderComponents::Address
+      end
+    end
+  end
+
   let(:order) { Spree::FakeOrder.new }
 
   context 'validation' do

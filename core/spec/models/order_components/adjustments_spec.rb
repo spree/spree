@@ -1,14 +1,17 @@
 require_relative '../../../app/models/spree/order_components/adjustments'
-require 'fakes/order'
-require 'fakes/line_item'
-
-module Spree
-  class FakeOrder
-    include Spree::OrderComponents::Adjustments
-  end
-end
 
 describe "adjustment callbacks" do
+  before(:all) do
+    load 'fakes/order.rb'
+    load 'fakes/line_item.rb'
+
+    module Spree
+      class FakeOrder
+        include Spree::OrderComponents::Adjustments
+      end
+    end
+  end
+
   let(:order) { Spree::FakeOrder.new }
 
   it "creates a tax charge" do

@@ -1,18 +1,21 @@
 require_relative '../../../app/models/spree/order_components/line_items.rb'
-require 'fakes/order'
-require 'fakes/line_item'
-
-module Spree
-  class FakeOrder
-    include Spree::OrderComponents::LineItems
-
-    def build_line_item(*attributes)
-       FakeLineItem.new(*attributes)
-    end
-  end
-end
 
 describe Spree::OrderComponents::LineItems do
+  before(:all) do
+    load 'fakes/order.rb'
+    require 'fakes/line_item'
+
+    module Spree
+      class FakeOrder
+        include Spree::OrderComponents::LineItems
+
+        def build_line_item(*attributes)
+           FakeLineItem.new(*attributes)
+        end
+      end
+    end
+  end
+
   let(:order) { Spree::FakeOrder.new }
   let(:variant_1) { stub(:product => "product 1", :id => 1) }
   let(:variant_2) { stub(:product => "product 2", :id => 2) }
