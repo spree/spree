@@ -16,7 +16,7 @@ module Spree
         end
 
         if mail_method.preferred_mail_bcc.present?
-          message.bcc = mail_method.preferred_mail_bcc
+          message.bcc ||= mail_method.preferred_mail_bcc
         end
       end
 
