@@ -15,9 +15,6 @@
     <li<%== ' class="active"' if current == 'Variants' %>>
       <%= link_to t(:variants),  admin_product_variants_url(@product) %>
     </li>
-    <li<%== ' class="active"' if current == 'Option Types' %>>
-      <%= link_to t(:option_types), selected_admin_product_option_types_url(@product) %>
-    </li>
     <li<%== ' class="active"' if current == 'Product Properties' %>>
       <%= link_to t(:product_properties), admin_product_product_properties_url(@product) %>
     </li>
