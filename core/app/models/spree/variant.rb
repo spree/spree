@@ -22,6 +22,7 @@ module Spree
     validates :count_on_hand, :numericality => true
 
     before_save :touch_product
+    after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
@@ -165,6 +166,10 @@ module Spree
 
       def touch_product
         product.touch unless is_master?
+      end
+
+      def recalculate_product_on_hand
+        product.update_column(:count_on_hand, product.on_hand)
       end
   end
 end

@@ -21,6 +21,13 @@ describe Spree::Variant do
     end
   end
 
+  # Regression test for #1778
+  it "recalculates product's count_on_hand when saved" do
+    variant.product.should_receive(:on_hand).and_return(3)
+    variant.product.should_receive(:update_column).with(:count_on_hand, 3)
+    variant.decrement!(:count_on_hand)
+  end
+
   context "on_hand=" do
     before { variant.stub(:inventory_units => mock('inventory-units')) }
 
