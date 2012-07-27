@@ -25,12 +25,6 @@ module Spree
     scope :active, where(:deleted_at => nil)
     scope :deleted, where('deleted_at IS NOT NULL')
 
-    # default extra fields for shipping purposes
-    @fields = [{ :name => 'Weight', :only => [:variant], :format => '%.2f' },
-               { :name => 'Height', :only => [:variant], :format => '%.2f' },
-               { :name => 'Width',  :only => [:variant], :format => '%.2f' },
-               { :name => 'Depth',  :only => [:variant], :format => '%.2f' }]
-
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
       Spree::Config[:track_inventory_levels] ? count_on_hand : (1.0 / 0) # Infinity
