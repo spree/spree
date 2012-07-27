@@ -169,7 +169,7 @@ describe Spree::Variant do
         end
 
         it "should not duplicate associated option values when set multiple times" do
-          multi_variant.set_option_value('media_type', 'CD')      
+          multi_variant.set_option_value('media_type', 'CD')
 
           expect {
            multi_variant.set_option_value('media_type', 'DVD')
