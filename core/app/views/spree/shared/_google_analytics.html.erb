@@ -13,9 +13,9 @@
         "<%= @order.total %>",                            <%# Order total %>
         "<%= @order.adjustments.tax.sum(:amount) %>",     <%# Tax Amount %>
         "<%= @order.adjustments.shipping.sum(:amount) %>",<%# Ship Amount %>
-        "",                                               <%# City %>
-        "",                                               <%# State %>
-        ""                                                <%# Country %>
+        "<%= @order.bill_address.city %>",                <%# City %>
+        "<%= @order.bill_address.state.name %>",          <%# State %>
+        "<%= @order.bill_address.country.name %>"         <%# Country %>
       ]);
       <% @order.line_items.each do |line_item| %>
         _gaq.push(['_addItem',
@@ -27,6 +27,7 @@
           "<%= line_item.quantity %>"             <%# quantity - required %>
         ]);
       <% end %>
+      _gaq.push(['_trackTrans']);
     <% end %>
 
     (function() {
