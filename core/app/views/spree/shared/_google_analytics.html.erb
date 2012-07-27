@@ -6,27 +6,28 @@
     _gaq.push(['_trackPageview']);
 
     <% if flash[:commerce_tracking] %>
-      // report e-commerce transaction information when applicable
+      <%# more info: https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiEcommerce %>
       _gaq.push(['_addTrans',
-        "<%= @order.number %>",                            // Order Number
-        "",                                                // Affiliation
-        "<%= @order.total %>",                             // Order total
-        "<%= @order.adjustments.tax.sum(:amount) %>",      // Tax Amount
-        "<%= @order.adjustments.shipping.sum(:amount) %>", // Ship Amount
-        "",                                                // City
-        "",                                                // State
-        ""                                                 // Country
+        "<%= @order.number %>",
+        "",
+        "<%= @order.total %>",
+        "<%= @order.adjustments.tax.sum(:amount) %>",
+        "<%= @order.adjustments.shipping.sum(:amount) %>",
+        "<%= @order.bill_address.city %>",
+        "<%= @order.bill_address.state_text %>",
+        "<%= @order.bill_address.country.name %>"
       ]);
       <% @order.line_items.each do |line_item| %>
         _gaq.push(['_addItem',
-          "<%= @order.number %>",                  // order ID - required
-          "<%= line_item.variant.sku %>",          // SKU/code - required
-          "<%= line_item.variant.product.name %>", // product name
-          "",                                      // category or variation, Product Category
-          "<%= line_item.price %>",                // unit price - required
-          "<%= line_item.quantity %>"              // quantity - required
+          "<%= @order.number %>",
+          "<%= line_item.variant.sku %>",
+          "<%= line_item.variant.product.name %>",
+          "",
+          "<%= line_item.price %>",
+          "<%= line_item.quantity %>"
         ]);
       <% end %>
+      _gaq.push(['_trackTrans']);
     <% end %>
 
     (function() {
