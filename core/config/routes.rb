@@ -38,14 +38,8 @@ Spree::Core::Engine.routes.draw do
     end
   end
 
-  #   # route globbing for pretty nested taxon and product paths
+  # route globbing for pretty nested taxon and product paths
   match '/t/*id', :to => 'taxons#show', :as => :nested_taxons
-  #
-  #   #moved old taxons route to after nested_taxons so nested_taxons will be default route
-  #   #this route maybe removed in the near future (no longer used by core)
-  #   map.resources :taxons
-  #
-  #
 
   namespace :admin do
     get '/search/users', :to => "search#users", :as => :search_users
