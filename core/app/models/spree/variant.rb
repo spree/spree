@@ -21,6 +21,8 @@ module Spree
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
 
+    after_save :recalculate_product_on_hand, :if => :is_master?
+
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
     scope :deleted, where('deleted_at IS NOT NULL')
@@ -144,6 +146,10 @@ module Spree
           raise 'Must supply price for variant or master.price for product.' if self == product.master
           self.price = product.master.price
         end
+      end
+
+      def recalculate_product_on_hand
+        product.update_column(:count_on_hand, product.on_hand)
       end
   end
 end
