@@ -1,6 +1,6 @@
-<%# encoding: utf-8 %>
 //= require_self
-//= require admin/product_autcomplete
+//= require admin/product_autocomplete
+//= require chosen-jquery
 
 /**
 This is a collection of javascript functions and whatnot
@@ -176,4 +176,6 @@ $(document).ready(function(){
   $('a.dismiss').click(function() {
     $(this).parent().fadeOut();
   });
+
+  $('select.chosen').chosen();
 });

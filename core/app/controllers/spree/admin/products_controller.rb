@@ -71,6 +71,7 @@ module Spree
         end
 
         def load_data
+          @taxons = Taxon.order(:name)
           @tax_categories = TaxCategory.order(:name)
           @shipping_categories = ShippingCategory.order(:name)
         end

@@ -85,6 +85,12 @@
     </div>
   </div>
 
+
+  <%= f.field_container :taxons do %>
+    <%= f.label :taxon_ids, t(:taxons) %><br />
+    <%= f.select :taxon_ids, taxon_options_for(@product), {}, :class => "chosen", :multiple => true %>
+  <% end %>
+
   <h2><%= t(:metadata) %></h2>
   <div data-hook="admin_product_form_meta">
     <%= f.field_container :meta_keywords do %>
