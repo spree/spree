@@ -11,6 +11,17 @@ module Spree
           end
         end.join("").html_safe
       end
+
+      def option_types_options_for(product)
+        options = @option_types.map do |option_type|
+          selected = product.option_types.include?(option_type)
+          content_tag(:option,
+                      :value    => option_type.id,
+                      :selected => ('selected' if selected)) do
+            option_type.presentation
+          end
+        end.join("").html_safe
+      end
     end
   end
 end

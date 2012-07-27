@@ -78,7 +78,7 @@ module Spree
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
                     :option_values_hash, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
-                    :variants_attributes, :taxon_ids
+                    :variants_attributes, :taxon_ids, :option_type_ids
 
     attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 

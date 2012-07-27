@@ -72,18 +72,6 @@ Spree::Core::Engine.routes.draw do
           post :update_positions
         end
       end
-      resources :option_types do
-        member do
-          get :select
-          get :remove
-          delete :remove
-        end
-        collection do
-          get :available
-          get :selected
-          post :update_positions
-        end
-      end
     end
 
     resources :option_types do
