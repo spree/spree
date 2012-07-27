@@ -56,13 +56,16 @@ module SslRequirement
 
   module ClassMethods
     # SSL is no longer specified to be on, off, or allowed for certain
-    # actions. It is configured to be on or off application-wide.
+    # actions. It is configured to be on or off application-wide. To enable SSL
+    # please use the Rails configuration option 'config.force_ssl = true' in
+    # the appropriate Rails config file (e.g., config/application.rb,
+    # config/environments/production.rb)
     def ssl_required(*actions)
-      ActiveSupport::Deprecation.warn "ssl_required has been deprecated. SSL is either on or off.", caller
+      ActiveSupport::Deprecation.warn "ssl_required has been removed. SSL can only be on or off and should be enabled inside your application's config using 'config.force_ssl = true'", caller
     end
 
     def ssl_allowed(*actions)
-      ActiveSupport::Deprecation.warn "ssl_allowed has been deprecated. SSL is either on or off.", caller
+      ActiveSupport::Deprecation.warn "ssl_allowed has been removed. SSL can only be on or off and should be enabled inside your application's config using 'config.force_ssl = true'", caller
     end
   end
 end
