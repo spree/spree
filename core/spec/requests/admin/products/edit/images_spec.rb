@@ -7,7 +7,7 @@ describe "Product Images" do
     it "should allow an admin to upload and edit an image for a product" do
       Spree::Image.attachment_definitions[:attachment].delete :storage
 
-      create(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01", :count_on_hand => 10)
+      create(:product)
 
       visit spree.admin_path
       click_link "Products"
