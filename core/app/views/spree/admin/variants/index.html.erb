@@ -36,7 +36,7 @@
 
   <p class='first_add_option_types' data-hook="first_add_option_types">
     <%= t(:to_add_variants_you_must_first_define) %>
-    <%= link_to t(:option_types), selected_admin_product_option_types_url(@product) %>
+    <%= link_to t(:option_types), admin_product_url(@product) %>
     <%= t(:and) %>
     <%= link_to t(:option_values), admin_option_types_url %>
   </p>
