@@ -11,8 +11,8 @@ describe "Products" do
     context "listing products" do
       context "sorting" do
         before do
-          create(:product, :name => 'apache baseball cap')
-          create(:product, :name => 'zomg shirt')
+          create(:product, :name => 'apache baseball cap', :price => 10)
+          create(:product, :name => 'zomg shirt', :price => 5)
         end
 
         it "should list existing products with correct sorting by name" do
@@ -156,7 +156,7 @@ describe "Products" do
 
       context "cloning a deleted product" do
         it "should allow an admin to clone a deleted product" do
-          create(:product)
+          create(:product, :name => "apache baseball cap")
 
           click_link "Products"
           check "Show Deleted"
