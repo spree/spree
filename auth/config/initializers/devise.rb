@@ -139,5 +139,5 @@ Devise.setup do |config|
   # change their passwords.
   config.reset_password_within = 6.hours
 
-  config.sign_out_via = :delete
+  config.sign_out_via = :get
 end
