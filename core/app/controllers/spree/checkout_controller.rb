@@ -6,6 +6,8 @@ module Spree
     ssl_required
 
     before_filter :load_order
+    before_filter :ensure_valid_state
+
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     respond_to :html
@@ -36,6 +38,14 @@ module Spree
     end
 
     private
+      def ensure_valid_state
+        if params[:state] && params[:state] != 'cart' &&
+           !@order.checkout_steps.include?(params[:state])
+          @order.state = 'cart'
+          redirect_to checkout_path
+        end
+      end
+
       # Provides a route to redirect after order completion
       def completion_route
         order_path(@order)

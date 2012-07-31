@@ -127,6 +127,14 @@ module Spree
       self.update_hooks.add(hook)
     end
 
+    def checkout_steps
+      if payment and payment.payment_method.payment_profiles_supported?
+        %w(address delivery payment confirm complete)
+      else
+        %w(address delivery payment complete)
+      end
+    end
+
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.map(&:amount).sum
