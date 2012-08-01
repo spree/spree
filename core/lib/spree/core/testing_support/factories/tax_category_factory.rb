@@ -10,7 +10,7 @@ FactoryGirl.define do
         :amount => 0.05,
         :calculator => Spree::Calculator::DefaultTax.new,
         :zone => Spree::Zone.find_by_name('GlobalZone') || FactoryGirl.create(:global_zone)
-      })
+      }, :without_protection => true)
     end
   end
 end
