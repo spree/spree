@@ -1,1 +1,1 @@
-Spree.user_class = "Spree::User"
+# Spree.user_class = "User"

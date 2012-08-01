@@ -12,13 +12,13 @@ describe Spree::Order do
     Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :without_protection => true)
   end
 
-  let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
+  let(:user) { stub_model(Spree::LegacyUser, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
   let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :without_protection => true) }
 
   before do
     Spree::Gateway.stub :current => gateway
-    Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
+    Spree::LegacyUser.stub(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
   context "#products" do
