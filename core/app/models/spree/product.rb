@@ -64,7 +64,7 @@ module Spree
       Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Spree::Asset.quoted_table_name}.viewable_id").
       where("(#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?) OR
              (#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
-      order("#{Asset.quoted_table_name}.position").
+      order("#{Spree::Asset.quoted_table_name}.position").
       extend(Spree::Core::RelationSerialization)
     end
 
