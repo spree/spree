@@ -23,6 +23,7 @@ describe Spree::Variant do
 
   # Regression test for #1778
   it "recalculates product's count_on_hand when saved" do
+    Spree::Config[:track_inventory_levels] = true
     variant.stub :is_master? => true
     variant.product.should_receive(:on_hand).and_return(3)
     variant.product.should_receive(:update_column).with(:count_on_hand, 3)
