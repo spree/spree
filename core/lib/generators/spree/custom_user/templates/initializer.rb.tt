@@ -1,2 +1,1 @@
 Spree.user_class = "<%= class_name %>"
-Spree.current_user_method = "current_<%= class_name.downcase %>"
