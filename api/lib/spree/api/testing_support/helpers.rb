@@ -13,13 +13,13 @@ module Spree
 
         def stub_authentication!
           controller.stub :check_for_api_key
-          Spree::User.stub :find_by_spree_api_key => current_api_user
+          Spree::LegacyUser.stub :find_by_spree_api_key => current_api_user
         end
 
         # This method can be overriden (with a let block) inside a context
         # For instance, if you wanted to have an admin user instead.
         def current_api_user
-          @current_api_user ||= stub_model(Spree::User, :email => "spree@example.com")
+          @current_api_user ||= stub_model(Spree::LegacyUser, :email => "spree@example.com")
         end
 
         def image(filename)
