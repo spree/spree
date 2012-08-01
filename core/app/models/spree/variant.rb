@@ -169,7 +169,10 @@ module Spree
       end
 
       def recalculate_product_on_hand
-        product.update_column(:count_on_hand, product.on_hand)
+        on_hand = product.on_hand
+        if Spree::Config[:track_inventory_levels] && on_hand != (1.0 / 0) # Infinity
+          product.update_column(:count_on_hand, on_hand)
+        end
       end
   end
 end
