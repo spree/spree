@@ -59,10 +59,10 @@ module Spree
     accepts_nested_attributes_for :variants, :allow_destroy => true
 
     def variant_images
-      Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id").
-      where("(#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?) OR
-             (#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
-      order("#{Asset.quoted_table_name}.position").
+      Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Spree::Asset.quoted_table_name}.viewable_id").
+      where("(#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?) OR
+             (#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
+      order("#{Spree::Asset.quoted_table_name}.position").
       extend(Spree::Core::RelationSerialization)
     end
 
