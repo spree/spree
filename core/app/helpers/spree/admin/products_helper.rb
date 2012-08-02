@@ -7,7 +7,7 @@ module Spree
           content_tag(:option,
                       :value    => taxon.id,
                       :selected => ('selected' if selected)) do
-            taxon.name
+            (taxon.ancestors.map(&:name) + [taxon.name]).join(" -> ")
           end
         end.join("").html_safe
       end

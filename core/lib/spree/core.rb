@@ -38,7 +38,7 @@ require 'ransack'
 require 'jquery-rails'
 require 'deface'
 require 'cancan'
-require 'chosen-rails'
+require 'select2-rails'
 
 module Spree
 
