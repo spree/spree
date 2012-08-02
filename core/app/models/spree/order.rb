@@ -586,6 +586,9 @@ module Spree
 
         #TODO: make_shipments_pending
         OrderMailer.cancel_email(self).deliver
+        unless %w(partial shipped).include?(shipment_state)
+          self.payment_state = 'credit_owed'
+        end
       end
 
       def restock_items!
