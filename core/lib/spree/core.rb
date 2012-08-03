@@ -39,6 +39,8 @@ require 'jquery-rails'
 require 'deface'
 require 'cancan'
 require 'select2-rails'
+require 'money'
+require 'spree/money'
 
 module Spree
 
