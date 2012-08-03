@@ -41,6 +41,8 @@ module Spree
     preference :checkout_zone, :string, :default => nil # replace with the name of a zone if you would like to limit the countries
     preference :company, :boolean, :default => false # Request company field for billing and shipping addr
     preference :create_inventory_units, :boolean, :default => true # should only be false when track_inventory_levels is false, also disables RMA's
+    preference :currency, :string, :default => "USD"
+    preference :display_currency, :boolean, :default => false
     preference :default_country_id, :integer, :default => 214
     preference :default_locale, :string, :default => Rails.application.config.i18n.default_locale || :en
     preference :default_meta_description, :string, :default => 'Spree demo site'
