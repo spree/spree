@@ -16,6 +16,7 @@ module Spree
             self.attachment_definitions[field][:s3_headers] = ActiveSupport::JSON.decode(config[:s3_headers])
             self.attachment_definitions[field][:bucket] = config[:s3_bucket]
             self.attachment_definitions[field][:s3_protocol] = config[:s3_protocol] unless config[:s3_protocol].blank?
+            self.attachment_definitions[field][:s3_host_alias] = config[:s3_host_alias] unless config[:s3_host_alias].blank?
           end
         end
       end
