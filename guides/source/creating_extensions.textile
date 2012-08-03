@@ -17,17 +17,17 @@ There are a few basic steps to know when it comes to creating your own extension
 
 h4. Integrated vs. Standalone
 
-Extensions can be created in their own standalone directory (like the ones shared on Github) or they can be created within your Rails application.  We refer to the extensions that sit in an existing Rails application as "integrated" extensions.
+Extensions can be created in their own standalone directory (like the ones shared on GitHub) or they can be created within your Rails application.  We refer to the extensions that sit in an existing Rails application as "integrated" extensions.
 
-Integrated extensions are usesful during the active development phase of your store.  Instead of switching projects all of the time you can just make little tweaks to your extension inside of your store repo.  Generally you would only do this if you intended to one day share the extension with someone else (or reuse it elsewhere in a private project.)
+Integrated extensions are useful during the active development phase of your store.  Instead of switching projects all of the time you can just make little tweaks to your extension inside of your store repo.  Generally you would only do this if you intended to one day share the extension with someone else (or reuse it elsewhere in a private project.)
 
-INFO: The distinction between standlone and integrated extensions is not very important.  The instructions for this guide can be assumed to apply to both cases (unless stated otherwise.)
+INFO: The distinction between standalone and integrated extensions is not very important.  The instructions for this guide can be assumed to apply to both cases (unless stated otherwise.)
 
 NOTE: You may want to consider the integrated approach if the extension is potentially useful on another project but you don't want to make the extension publicly available for others to use.
 
 h4. Creating
 
-You can create a new extension using the +spree+ command.  This requires that you have a gem version of Spree installed that is version 0.70.0 or greater.  Once you've navigated the directory in which you wish to create the extension, you can create a new extension by typing the following in your console:
+You can create a new extension using the +spree+ command.  This requires that you have a gem version of Spree installed that is version 0.70.0 or greater.  Once you've navigated to the directory in which you wish to create the extension, you can create a new extension by typing the following in your console:
 
 <shell>
 $ spree extension foofah
@@ -107,13 +107,13 @@ h3. Sharing Your Extension
 
 h4. Publishing Your Source
 
-The first order of business is to get your extension on "Github":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  Github provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
+The first order of business is to get your extension on "GitHub":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  GitHub provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
 
-INFO: It is convention to use the +spree-+ naming convention for your Github repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the Github project would be named +spree-foofah+ and the gem would be +spree_foofah+.
+INFO: It is convention to use the +spree-+ naming convention for your GitHub repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the GitHub project would be named +spree-foofah+ and the gem would be +spree_foofah+.
 
 h4. Publishing Your Gem
 
-If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, its already a gem and ready to be published.  You'll just want to edit a few details in your gemspec file before you proceed.
+If your extension is ready to be released into the wild you can publish it as a gem on "RubyGems.org":http://rubygems.org.  Assuming you used the extension generator to build your extension, it's already a gem and ready to be published.  You'll just want to edit a few details in your gemspec file before you proceed.
 
 <ruby>
 s.name        = 'foofah'
@@ -138,7 +138,7 @@ Spree is moving at a rapid pace with the code constantly evolving as new release
 
 h4. Versionfile Basics
 
-+Versionfile+ is a plain text file which keeps information about which version of Spree an extension is compatible with.  It was inspired by the +Gemfile+ used by bundler.  Lets take a look at a sample +Versionfile+.
++Versionfile+ is a plain text file which keeps information about which version of Spree an extension is compatible with.  It was inspired by the +Gemfile+ used by bundler.  Let's take a look at a sample +Versionfile+.
 
 <ruby>
 "0.50.x" => { :branch => "master" }
@@ -149,15 +149,15 @@ The above +Versionfile+ is saying that if you are using Spree version "0.50.x" t
 
 You should note that we are dealing with two different concepts of "version" here.  One is the version of Spree supported and the other is the version of the extension.
 
-INFO: All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example "I'm having a problem with spree_active_shipping 1.0.1"
+INFO: All Spree extensions should have a version.  This version number has nothing to do with what version of Spree is supported.  It is listed purely as a convenient way to refer to an extension.  For example, "I'm having a problem with spree_active_shipping 1.0.1"
 
 h4. Syntax
 
-A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should is the Spree version it is supporting. Next within curly braces how to get extension supporting the specified Spree version is mentioned.
+A +Versionfile+ can have any number of lines. It is recommended that you put the latest Spree releases at the top. The very first thing a line should include is the Spree version it is supporting. Next, within curly braces, how to get the extension supporting the specified Spree version.
 
-There are four different ways of specifying an extension's compatibilty information.
+There are four different ways of specifying an extension's compatibility information.
 
-NOTE: All four variations for identifying extension compatibility can be mapped to more than one Spree version.  In other words, its entirely possible that the same version of an extension can be compatible with multiple versions of Spree.
+NOTE: All four variations for identifying extension compatibility can be mapped to more than one Spree version.  In other words, it's entirely possible that the same version of an extension can be compatible with multiple versions of Spree.
 
 *Gem Version*
 
@@ -165,7 +165,7 @@ NOTE: All four variations for identifying extension compatibility can be mapped 
 "0.30.x" => { :version => "1.2" }
 </ruby>
 
-Above case is saying that if you are using Spree version "0.30.x" then use extension as a gem and the version of gem you should be using is "1.2".
+In the above case, if you are using Spree version "0.30.x" then use the extension as a gem and the version of gem you should be using is "1.2".
 
 Gem versions are considered "stable."  They will show up in the extension registry as such.
 
@@ -175,7 +175,7 @@ Gem versions are considered "stable."  They will show up in the extension regist
 "0.30.x" => { :branch => "0-30-stable" }
 </ruby>
 
-Above case is telling that if you are using Spree version "0.30.x" then use branch named "0-30-stable". Notice that when you suggesting to use "branch" then "version" should not be specified.
+In the above example, if you are using Spree version "0.30.x" then use the branch named "0-30-stable". Notice that when you suggest the "branch" the "version" should not be specified.
 
 Versions identified by Git branch are considered "unstable" or "edge."  They will be identified as such in the extension registry.
 
@@ -185,7 +185,7 @@ Versions identified by Git branch are considered "unstable" or "edge."  They wil
 "0.30.x" => { :tag => "v0.30", :version => '1.1' }
 </ruby>
 
-Above case is suggesting that if you are using Spree version "0.30.x" then use tag named "v0.30". The version information indicates that the author of the extension is calling that release as version "1.1".
+In this example, if you are using Spree version "0.30.x" then use the tag named "v0.30". The version information indicates that the author of the extension is calling that release as version "1.1".
 
 Versions identified by tags are considered "stable."  They will show up in the extension registry as such.  This is also a nice alternative to having to release an extension as an actual gem.
 
@@ -195,7 +195,7 @@ Versions identified by tags are considered "stable."  They will show up in the e
 "0.30.x" => { :ref => "4aedfg", :version => '1.2' }
 </ruby>
 
-Above case is suggesting that if you are using Spree version "0.30.x" then use ref named "4aedfg" . The version information indicates that the author of the extension is calling that release as version "1.2"
+In the above case, if you are using Spree version "0.30.x" then use ref named "4aedfg" . The version information indicates that the author of the extension is calling that release as version "1.2"
 
 Versions identified by a Git SHA are considered "stable."  They will show up in the extension registry as such.  This is also a nice alternative to having to release an extension as an actual gem.
 
@@ -203,11 +203,11 @@ Versions identified by a Git SHA are considered "stable."  They will show up in 
 #"0.30.x" => { :ref => "4aedfg", :version => '1.2' }
 </ruby>
 
-Above case is indicating how you can comment out a line. A line beginning with hash "#" is treated as comment.
+The last example indicates how you can comment out a line. A line beginning with a hash "#" is treated as a comment.
 
 h4. Using the Versionfile
 
-+Versionfile+ has no impact on the actual ability of an extension to work with Spree.  It is simply a declaration by the extension author that a certain version of the extension is known to work with a particular version(s) of Spree.  Its also possible that an extension version might be compatible with versions of Spree not listed.  If you discover this to be the case please send a pull request to the extension author so they can update their +Versionfile+.
++Versionfile+ has no impact on the actual ability of an extension to work with Spree.  It is simply a declaration by the extension author that a certain version of the extension is known to work with a particular version(s) of Spree.  It's also possible that an extension version might be compatible with versions of Spree not listed.  If you discover this to be the case please send a pull request to the extension author so they can update their +Versionfile+.
 
 There is a crawler which crawls the +Versionfile+ of all the registered extensions once every day. So any changes you make to your extension's +Versionfile+ should be captured within 24 hours.
 
@@ -217,13 +217,13 @@ After the +Versionfile+ info has been processed you will see it listed in the "E
 
 h4. Troubleshooting
 
-While parsing the lines gathered from +Versionfile+ if a line is invalid then that line is skipped. So make sure that entries in +Versionfile+ are valid. Soon we would be releasing a tool that can verify the +Versionfile+ and provide instant feedback if something is not right.
+While parsing the lines gathered from +Versionfile+ if a line is invalid then that line is skipped. So make sure that entries in +Versionfile+ are valid. We'll soon be releasing a tool that can verify the +Versionfile+ and provide instant feedback if something is not right.
 
 h3. Testing Against a Release Candidate
 
 The Spree core team will often announce a so-called "release candidate":http://en.wikipedia.org/wiki/Software_release_life_cycle#Release_candidate shortly before an official release.  This is to allow Spree developers to test their sites and extensions against the upcoming release code.
 
-In order to test your extension against the release candidate you will need to first update your gemspec file.  Lets look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.rc1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
+In order to test your extension against the release candidate you will need to first update your gemspec file.  Let's look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.rc1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
 
 <ruby>
 Gem::Specification.new do |s|
@@ -240,13 +240,13 @@ You'll also want to update your +Gemfile+ that belongs to the Spree application 
   gem 'spree', '0.60.0.rc1'
 </ruby>
 
-Next, you'll need to update the dependencies locally using bundler and commit the resulting +Gemfile.lock+ to your source code respository.
+Next, you'll need to update the dependencies locally using bundler and commit the resulting +Gemfile.lock+ to your source code repository.
 
 <shell>
 $ bundle update spree_social
 </shell>
 
-Now its time to fire up Spree and make sure everything is working properly.  Assuming everything looks good you'll also want to update the +Versionfile+ associated with your extension so that people can use the new and improved version.
+Now it's time to fire up Spree and make sure everything is working properly.  Assuming everything looks good you'll also want to update the +Versionfile+ associated with your extension so that people can use the new and improved version.
 
 In our example we're adding support for a new 0.60.0RC1 release candidate which is equivalent to 0.60.x in the extension directory.
 
@@ -255,22 +255,22 @@ In our example we're adding support for a new 0.60.0RC1 release candidate which 
 "0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
 </ruby>
 
-If we're not 100% sure the extension will support the release candidate (or if its a work in progress) we could reference the "edge" branch (ie. master) in the +Versionfile+ instead.
+If we're not 100% sure the extension will support the release candidate (or if it's a work in progress) we could reference the "edge" branch (i.e. master) in the +Versionfile+ instead.
 
 <ruby>
 "0.60.x" => { :branch => "master" }
 "0.50.x" => { :tag => "v1.0.2", :version => "1.0.2" }
 </ruby>
 
-INFO: Using a branch in the +Versionfile+ designates the gem as a "development release" which is possibly unstable and subject to change.  Once things are stable you can point ot a specific Git SHA or tag so that people can rely on the extension not changing in a production release.
+INFO: Using a branch in the +Versionfile+ designates the gem as a "development release" which is possibly unstable and subject to change.  Once things are stable you can point to a specific Git SHA or tag so that people can rely on the extension not changing in a production release.
 
 h3. Extension Tutorial
 
-This tutorial assumes a basic familiarity with Spree extensions.  For more detailed information on how extensions, please see the previous sections. The tutorial will, however, walk you through a complete example touching on all of the major aspects of an extension so if you like to learn through "step by step" instructions you may want to start here.
+This tutorial assumes a basic familiarity with Spree extensions.  For more detailed information on how to use extensions, please see the previous sections. This tutorial will, however, walk you through a complete example touching on all of the major aspects of an extension. If you like to learn through "step by step" instructions you may want to start here.
 
 h4. Getting Started
 
-Let’s start by building a simple extension. Suppose we want the ability to mark certain products as part of a promotion. We’d like to add an admin interface for marking certain items as being part of the promotion. We’d also like to highlight these products in our store view. This is a great example of how an extension can be used to build on the solid Spree foundation. We’ll be adding our own custom models, views, controllers, routes and locales via the new extension.
+Let’s start by building a simple extension. Suppose we want the ability to mark certain products as part of a promotion. We’d like to add an admin interface for marking certain items as being part of the promotion. We’d also like to highlight these products in our store view. This is a great example of how an extension can be used to build on the solid Spree foundation. We'll be adding our own custom models, views, controllers, routes and locales via the new extension.
 
 We're going to assume you already have a functioning Spree application.  If you have not yet achieved this you should read the "Getting Started Guide":getting_started.html first.
 
@@ -316,7 +316,7 @@ This creates a +spree_flag_promotions+ directory with several additional files a
 
 h4. Creating a Resource
 
-Lets create a new +PromotedItem+ resource for our extension.  Since Spree let us take advantage of normal Rails generators we can do this pretty easily.
+Let's create a new +PromotedItem+ resource for our extension.  Since Spree lets us take advantage of normal Rails generators we can do this pretty easily.
 
 First we'll make sure we have a test app created.
 
@@ -413,7 +413,7 @@ Please see the "View Customization":view_customization.html pages for details.
 
 h4. Internationalization (I18n)
 
-Spree extensions can also provide their own locales/translations.  If you're adding additional view text and you wish to support multiple locales, or if you are interested in sharing your extension with others, its a good idea to enable your extension with the i18n features of Spree.
+Spree extensions can also provide their own locales/translations.  If you're adding additional view text and you wish to support multiple locales, or if you are interested in sharing your extension with others, it's a good idea to enable your extension with the i18n features of Spree.
 
 In order to properly display the "Promoted Items" tab we'll need to provide an English localization in the +config/locales/en.yml+ file.
 
@@ -460,6 +460,7 @@ In order to configure these preferences within the extension, we must first inst
 </ruby>
 
 Now this preference can be accessed using *Spree::FlagPromotions::Config*
+
 <ruby>
   Spree::FlagPromotions::Config[:show_flags] = false
   Spree::FlagPromotions::Config[:show_flags] #=> false
@@ -469,7 +470,7 @@ INFO: Please refer to the "Preferences":preferences.html#site_wide_preferences g
 
 h4. Adding the Extension to Your Application
 
-Lets now add the extension to our application.  We'll create a simple Spree application for this purpose just to illustrate how its done.
+Let's now add the extension to our application.  We'll create a simple Spree application for this purpose just to illustrate how it's done.
 
 We'll start by creating a new Rails app
 
@@ -487,13 +488,13 @@ gem 'spree_flag_promotions', :path => '../spree_flag_promotions'
 
 </ruby>
 
-NOTE: This is a relative path to the 'spree_flag_promotions' directory.  You could also refer to a git location or any other convention that is acceptable to bundler.  See the "bundler site":http://gembundler.com for more details on bundler.
+NOTE: This is a relative path to the 'spree_flag_promotions' directory.  You could also refer to a Git location or any other convention that is acceptable to bundler.  See the "bundler site":http://gembundler.com for more details.
 
 <shell>
 $ bundle install
 </shell>
 
-Now that the extension is setup its time to install (and then run) the migrations.
+Now that the extension is setup it's time to install (and then run) the migrations.
 
 <shell>
 $ rake railties:install:migrations

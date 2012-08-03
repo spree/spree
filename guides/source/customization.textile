@@ -9,14 +9,13 @@ For more detailed information and a step-by-step tutorial on creating extensions
 
 endprologue.
 
-h3. Managing  Customizations
+h3. Managing Customizations
 
-Spree supports three methods for managing and organizing your customizations, while they all support exactly the same options for customization they differ in terms of re-usability. So before you get started you need to decide what sort of customizations you are going to make:
+Spree supports three methods for managing and organizing your customizations. While they all support exactly the same options for customization they differ in terms of re-usability. So before you get started you need to decide what sort of customizations you are going to make.
 
 h4. Application Specific
 
-Application specific customizations are the most common type of customization applied to Spree, it's generally used by developers and designers to tweak Spree's behaviour or appearance to match a particular business's operating procedures, branding, or provide a unique feature.
-
+Application specific customizations are the most common type of customization applied to Spree. It's generally used by developers and designers to tweak Spree's behaviour or appearance to match a particular business's operating procedures, branding, or provide a unique feature.
 
 All application specific customizations are stored within the host application where Spree is installed (please see the Installation section of the "Getting Started with Spree":getting_started.html guide, for how to setup the host application). Application customizations are not generally shared or re-used in anyway.
 
@@ -30,21 +29,21 @@ Visit the "Extension Registry":http://spreecommerce.com/extensions to get an ide
 
 h4. Theme
 
-Themes are designed to overhaul the entire look and feel of a Spree store (or it's administration system). Themes are distributed in exactly the same manner as extensions, but don't generally include logic customizations.
+Themes are designed to overhaul the entire look and feel of a Spree store (or its administration system). Themes are distributed in exactly the same manner as extensions, but don't generally include logic customizations.
 
 INFO: For more implementation details on Extensions and Themes please refer to the "Extensions & Themes":extensions.html guide.
 
 h3. Customization Options
 
-Once you've decided how you're going to manage your customizations, you then need to choose the correct option to achieve the desired changes:
+Once you've decided how you're going to manage your customizations, you then need to choose the correct option to achieve the desired changes.
 
 h4. View Customizations
 
-Allows you to change and/or extend the look and feel of a Spree store (and it's administration system). For details see the "View Customization":view_customization.html guide.
+Allows you to change and/or extend the look and feel of a Spree store (and its administration system). For details see the "View Customization":view_customization.html guide.
 
 h4. Asset Customizations
 
-Allows changing the static assets provided by Spree, this includes Stylesheets, Javascripts and Images. For details see the "Asset Customization":asset_customization.html guide.
+Allows changing the static assets provided by Spree, this includes stylesheets, JavaScript files and images. For details see the "Asset Customization":asset_customization.html guide.
 
 h4. Logic Customizations
 

@@ -8,13 +8,14 @@ After this guide you should understand:
 * The differences between extensions and themes
 * How to install a third party extension
 * How to install a third party theme
+
 endprologue.
 
 h3. The Basics
 
-Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stylesheets, javascripts, etc), but the technical differences between the two are neglible:
+Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stylesheets, JavaScript files, etc), but the technical differences between the two are negligible:
 
-* **Extensions** refer to discrete packages of code that provide new functionality to a Spree application, while extensions may affect the appearance of a Spree application they generally only provide additional interfaces to enable users to interact with the new functionality provided.
+* **Extensions** refer to discrete packages of code that provide new functionality to a Spree application. While extensions may affect the appearance of a Spree application they generally only provide additional interfaces to enable users to interact with the new functionality provided.
 
 * **Themes** are discrete packages of code that **only** affect the appearance of a Spree application (and generally only the front-end store). Themes do not generally include any logic customizations.
 
@@ -62,7 +63,7 @@ Please see the "Source Code Guide":source_code.html for a more in-depth discussi
 
 h3. Using Extensions
 
-Now that we've discussed some of the rationale behind extensions, its time to get started using them.  You may also want to refer to the "Creating Extensions":creating_extensions.html guide for a tutorial that will walk you through a detailed example of creating and publishing your own extension.
+Now that we've discussed some of the rationale behind extensions, it's time to get started using them.  You may also want to refer to the "Creating Extensions":creating_extensions.html guide for a tutorial that will walk you through a detailed example of creating and publishing your own extension.
 
 h4. Installing an Extension or Theme
 
@@ -70,7 +71,7 @@ Since extensions/themes are created as engines in Rails, using them is as simple
 
 WARNING: The dependencies should be specified in a specific order. Always specify +spree+, followed by the various spree extensions and then the required theme(s) at the very end of +Gemfile+.  This is to ensure the proper classes are defined for extensions, and also so Deface Overrides are loaded in the proper order.
 
-WARNING: Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
+WARNING: Prior to Spree 0.30.0 extensions were not managed as gems.  They were typically installed from the command line using +script/extension install+.  They were then added to the Git repository of the application itself and deployed on the server.  This is no longer supported.  You must convert your old extension into a gem in order to use it in Spree.
 
 h5. Modifying Your +Gemfile+
 
@@ -96,7 +97,7 @@ NOTE: Using the +path+ directive is an excellent option when actively developing
 
 h5. Selecting the correct extension / theme version
 
-As Spree releases new versions the underlying code can change and this necessitates extensions and themes to be updated to account for the changes in Spree. To help match the correct version of an extension / theme with the Spree version you should refer to the <tt>Versionfile</tt>, normally located in the root of the engines git repository.
+As Spree releases new versions the underlying code can change and this necessitates extensions and themes to be updated to account for the changes in Spree. To help match the correct version of an extension / theme with the Spree version you should refer to the <tt>Versionfile</tt>, normally located in the root of the engine's Git repository.
 
 The "Spree Extension Registry":http://spreecommerce.com/extensions also presents the contents of an engine's Versionfile, and suggests the correct line to add your Gemfile when you click on the "Install" link beside the relevant Spree version number.
 
