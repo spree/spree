@@ -107,6 +107,10 @@ module Spree
       line_items.sum(&:amount)
     end
 
+    def display_total
+      Spree::Money.new(total)
+    end
+
     def to_param
       number.to_s.to_url.upcase
     end

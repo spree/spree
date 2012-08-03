@@ -31,7 +31,7 @@
   <%= f.field_container :amount do %>
     <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
     <% if @return_authorization.received? %>
-      <%= number_to_currency @return_authorization.amount %>
+      <%= money @return_authorization.amount %>
     <% else %>
       <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= t(:rma_value) %>: <span id="rma_value"></span>
       <%= f.error_message_on :amount %>

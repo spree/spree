@@ -11,6 +11,12 @@
   <% end %>
   <tr>
     <td colspan="2">
+      <%= t(:dollar_amounts_displayed_as, :example => Spree::Money.new(20.99)) %>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2">
       <%= Spree::Config[:allow_ssl_in_production] ? t(:ssl_will_be_used_in_production_mode) : t(:ssl_will_not_be_used_in_production_mode) %>
     </td>
   </tr>

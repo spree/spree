@@ -12,7 +12,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <% if @order.outstanding_balance? %>
-  <p><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %> <strong><%= number_to_currency @order.outstanding_balance %></strong></p>
+  <p><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %> <strong><%= money(@order.outstanding_balance) %></strong></p>
 <% end %>
 
 <h2><%= t(:payments) %></h2>

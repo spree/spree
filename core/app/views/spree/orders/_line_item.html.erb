@@ -17,13 +17,13 @@
     <%= line_item_description(variant) %>
   </td>
   <td class="cart-item-price" data-hook="cart_item_price">
-    <%= number_to_currency line_item.price %>
+    <%= money line_item.price %>
   </td>
   <td class="cart-item-quantity" data-hook="cart_item_quantity">
     <%= item_form.number_field :quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
   </td>
   <td class="cart-item-total" data-hook="cart_item_total">
-    <%= number_to_currency(line_item.price * line_item.quantity) unless line_item.quantity.nil? %>
+    <%= money(line_item.price * line_item.quantity) unless line_item.quantity.nil? %>
   </td>
   <td class="cart-item-delete" data-hook="cart_item_delete">
     <%= link_to image_tag('icons/delete.png'), '#', :class => 'delete', :id => "delete_#{dom_id(line_item)}" %>

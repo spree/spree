@@ -12,7 +12,7 @@
     <tr id="<%= spree_dom_id(adjustment) %>" data-hook="adjustment_row">
       <td><%= adjustment.created_at.to_s(:date_time24) %></td>
       <td><%= adjustment.label %></td>
-      <td><%= number_to_currency adjustment.amount %></td>
+      <td><%= adjustment.display_amount %></td>
       <td class='actions'>
         <%= link_to_edit adjustment, :class => 'edit' %>
         &nbsp;
