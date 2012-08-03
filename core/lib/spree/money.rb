@@ -1,3 +1,5 @@
+require 'money'
+
 module Spree
   class Money
     def initialize(amount)
