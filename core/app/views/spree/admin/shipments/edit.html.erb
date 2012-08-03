@@ -14,7 +14,7 @@
 <div data-hook="admin_shipment_edit_header">
   <h2><%= t(:shipment) %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)</h2>
   <% if @shipment.cost %>
-    <h3><%= t(:charges) %> <%= number_to_currency @shipment.cost %></h3>
+    <h3><%= t(:charges) %> <%= money @shipment.cost %></h3>
   <% end %>
 
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>

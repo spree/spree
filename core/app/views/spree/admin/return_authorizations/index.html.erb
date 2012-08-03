@@ -23,7 +23,7 @@
     <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
       <td><%= return_authorization.number %></td>
       <td><%= t(return_authorization.state.downcase) %></td>
-      <td><%= number_to_currency return_authorization.amount %></td>
+      <td><%= money return_authorization.amount %></td>
       <td><%= return_authorization.created_at.to_s(:date_time24) %></td>
       <td>
         <%= link_to_edit return_authorization %>
