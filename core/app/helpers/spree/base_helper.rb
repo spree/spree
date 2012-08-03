@@ -160,6 +160,10 @@ module Spree
        Gem.available?(name)
     end
 
+    def money(amount)
+      Spree::Money.new(amount)
+    end
+
     def method_missing(method_name, *args, &block)
       if image_style = image_style_from_method_name(method_name)
         define_image_method(image_style)
