@@ -46,9 +46,6 @@ module Spree
   # happen until Taxon class is loaded. Ensure that Taxon class is loaded before
   # you try something like Product.price_range_any
   module ProductFilters
-    extend ActionView::Helpers::NumberHelper
-    extend Spree::BaseHelper
-
     # Example: filtering by price
     #   The named scope just maps incoming labels onto their conditions, and builds the conjunction
     #   'price' is in the base scope's context (ie, "select foo from products where ...") so
@@ -65,6 +62,10 @@ module Spree
         scope = scope.or(new_scope)
       end
       Spree::Product.joins(:master).where(scope)
+    end
+
+    def ProductFilters.format_price(amount)
+      Spree::Money.new(amount)
     end
 
     def ProductFilters.price_filter

@@ -136,16 +136,6 @@ module Spree
       end.sort { |a, b| a.name <=> b.name }
     end
 
-    def format_price(price, options={})
-      options.assert_valid_keys(:show_vat_text)
-      formatted_price = number_to_currency price
-      if options[:show_vat_text]
-        I18n.t(:price_with_vat_included, :price => formatted_price)
-      else
-        formatted_price
-      end
-    end
-
     # generates nested url to product based on supplied taxon
     def seo_url(taxon, product = nil)
       return spree.nested_taxons_path(taxon.permalink) if product.nil?
