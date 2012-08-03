@@ -9,7 +9,7 @@
   <% payments.each do |payment| %>
     <tr data-hook="payments_row">
       <td><%= payment.created_at.to_s(:date_time24) %></td>
-      <td><%= number_to_currency payment.amount %></td>
+      <td><%= money(payment.amount) %></td>
       <td><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>
       <td><%= t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></td>
       <td>
