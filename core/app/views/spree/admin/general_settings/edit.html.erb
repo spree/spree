@@ -10,9 +10,18 @@
         <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
         <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
     <% end %>
+    <p>
+      <%= label_tag :currency, t(:currency) %>
+      <%= select_tag :currency, currency_options %>
+    </p>
   </fieldset>
+
   <p class="form-buttons" data-hook="buttons">
     <%= button t(:update) %>
     <%= t(:or) %> <%= link_to t(:cancel), admin_general_settings_url %>
   </p>
 <% end %>
+
+<script>
+  $('#currency').select2();
+</script>

@@ -32,7 +32,7 @@
       <td><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></td>
       <td><%= link_to t("shipment_states.#{order.shipment_state}"), admin_order_shipments_path(order) if order.shipment_state %></td>
       <td><%= order.email %></td>
-      <td><%= number_to_currency order.total %></td>
+      <td><%= order.display_total %></td>
       <td class='actions' data-hook="admin_orders_index_row_actions">
         <%= link_to_edit_url edit_admin_order_path(order), :title => "admin_edit_#{dom_id(order)}" %>
       </td>

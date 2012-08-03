@@ -16,7 +16,7 @@
     <% next if variant.option_values.empty? %>
     <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
       <td><span class="handle"></span> <%= variant.options_text %></td>
-      <td><%= number_to_currency variant.price %></td>
+      <td><%= money variant.price %></td>
       <td><%= variant.sku %></td>
       <td><%= variant.on_hand %></td>
       <td valign="top">

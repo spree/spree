@@ -4,15 +4,15 @@
   <tbody>
     <tr>
       <th scope="row"><%= t(:item_total) %>:</th>
-      <td align="right"><%= number_to_currency @item_total %></td>
+      <td align="right"><%= money @item_total %></td>
     </tr>
     <tr>
       <th scope="row"><%= t(:adjustment_total) %>:</th>
-      <td align="right"><%= number_to_currency @adjustment_total %></td>
+      <td align="right"><%= money @adjustment_total %></td>
     </tr>
     <tr>
       <th scope="row"><%= t(:sales_total) %>:</th>
-      <td align="right"><%= number_to_currency @sales_total %></td>
+      <td align="right"><%= money @sales_total %></td>
     </tr>
   </tbody>
 </table>
