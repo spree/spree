@@ -215,6 +215,10 @@ module Spree
       end
     end
 
+    def display_price
+      Spree::Money.new(price).to_s
+    end
+
     private
 
       # Builds variants from a hash of option types & values
