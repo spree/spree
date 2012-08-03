@@ -22,20 +22,11 @@ module Spree
         text = "#{text}: (#{t('empty')})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{order_subtotal(current_order)}</span>".html_safe
+        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_price}</span>".html_safe
         css_class = 'full'
       end
 
       link_to text, cart_path, :class => css_class
-    end
-
-    def order_subtotal(order, options={})
-      options.assert_valid_keys(:format_as_currency, :show_vat_text)
-      options.reverse_merge! :format_as_currency => true, :show_vat_text => true
-
-      amount =  order.total
-
-      options.delete(:format_as_currency) ? number_to_currency(amount) : amount
     end
 
     def todays_short_date

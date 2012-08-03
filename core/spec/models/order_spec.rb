@@ -554,4 +554,24 @@ describe Spree::Order do
       order.empty!
     end
   end
+
+  context "#display_total" do
+    before { order.total = 10.55 }
+
+    context "with display_currency set to true" do
+      before { Spree::Config[:display_currency] = true }
+
+      it "shows the currency" do
+        order.display_total.to_s.should == "$10.55 USD"
+      end
+    end
+
+    context "with display_currency set to false" do
+      before { Spree::Config[:display_currency] = false }
+
+      it "does not include the currency" do
+        order.display_total.to_s.should == "$10.55"
+      end
+    end
+  end
 end
