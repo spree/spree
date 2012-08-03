@@ -8,7 +8,7 @@ module Spree
     end
 
     def to_s
-      @money.format(@options)
+      @money.format(*@options)
     end
   end
 end
