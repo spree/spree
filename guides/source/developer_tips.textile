@@ -31,10 +31,10 @@ h4. Tracking changes for overridden code
 
 Be aware that core changes might have an impact on the components you have overridden in your project.
 You might need to patch your local copies, or ensure that such copies interact correctly with changed
-code (e.g. using appropriate ids in Html to allow the JavaScript to work).
+code (e.g. using appropriate ids in HTML to allow the JavaScript to work).
 
-If you can help us to generalise the core code so that your preferred effect is achieved by altering
-a few parameters, then this is more useful than duplicating several files. Ideas and suggestions always
+If you can help us generalise the core code so that your preferred effect is achieved by altering
+a few parameters, this will be more useful than duplicating several files. Ideas and suggestions are always
 welcome.
 
 h4. Initializers
@@ -76,15 +76,16 @@ but which aren't the usual things that you'd override (like views) - so somethin
 models or controllers.
 
 You could hide these away in your site extension, but they could get mixed up with your real site
-customizations. Your could also fork Spree and run your site on this forked version, but this can
+customizations. You could also fork Spree and run your site on this forked version, but this can
 also be a headache to get right. There's also the hassle of tracking changes to +spree/master+ and
 pulling them into your project at the right time.
 
 So here's a compromise: have an extra extension, say +spree-tweaks+, to contain your small collection
-of modified files, which is loaded first in the extension order. The benefits are: it's clear what you
-are overriding, and easier to check against core changes; you can base your project on an official
-gem release or a +spree/master+ commit stage; such tweaks can become part of your client site project
-and be managed with SCM etc.
+of modified files, which is loaded first in the extension order. The benefits are: 
+
+* it's clear what you are overriding, and easier to check against core changes
+* you can base your project on an official gem release or a +spree/master+ commit stage
+* such tweaks can become part of your client site project and be managed with SCM etc.
 
 If you find yourself wanting extensive changes to core, this technique probably won't work so well.
 But then again, if this is the case, then you probably want to look seriously at splitting some
@@ -123,7 +124,7 @@ git submodule update --init
 
 h4. Managing submodules
 
-+git submodule foreach+ is very useful for managing your submodules, e.g. you can update all of them
++git submodule foreach+ is very useful for managing your submodules. For example, you can update all of them
 with +git submodule foreach "git pull"+, or check for modifications with this
 (the +echo ok+ gets round a return-code issue):
 <shell>
