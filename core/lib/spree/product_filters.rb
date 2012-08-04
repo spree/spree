@@ -4,7 +4,7 @@ module Spree
   #   the current contents are mainly for testing and documentation
 
   # To override this file...
-  #   1) Make a copy of it in your sites local /lib folder
+  #   1) Make a copy of it in your sites local /lib/spree folder
   #   2) Add it to the config load path, or require it in an initializer, e.g...
   #
   #      # config/initializers/spree.rb
