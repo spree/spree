@@ -10,7 +10,7 @@ Chapter 1 contains a description of the work that has been completed to address 
 
 h4. Relevant, Meaningful URLs
 
-Several improvements have been made to improve the URLs used for products and taxonomies since the release of Spree 0.4.0. The helper method <tt>seo_url(taxon, product)</tt> yields SEO friendly URLs such as <a href="http://demo.spreecommerce.com/products/xm-direct2-interface-adapter">http://demo.spreecommerce.com/products/xm-direct2-interface-adapter</a>, <a href="http://demo.spreecommerce.com/t/categories/headphones/">http://demo.spreecommerce.com/t/categories/headphones</a>. Rails config/routes.rb is configured to serve the content using these keyword relevant, meaningful URLs.
+Several improvements have been made to improve the URLs used for products and taxonomies since the release of Spree 0.4.0. The helper method <tt>seo_url(taxon, product)</tt> yields SEO friendly URLs such as "demo.spreecommerce.com/products/xm-direct2-interface-adapter":http://demo.spreecommerce.com/products/xm-direct2-interface-adapter and "demo.spreecommerce.com/t/categories/headphones":http://demo.spreecommerce.com/t/categories/headphones. Rails config/routes.rb is configured to serve the content using these keyword relevant, meaningful URLs.
 
 h4. On Page Keyword Targeting
 
@@ -30,11 +30,11 @@ Google Analytics has been integrated into the Spree core and can be managed by a
 
 h3. Planned Search Engine Optimization Features
 
-Although several common search engine optimization issues have been addressed, remaining known issues are discussed in Chapter 2. While solutions for several of the issues are in development, contributions to address the other issues will be very welcome. Visit the <a href="contributing_to_spree.html">contributing to spree section</a> to learn more about contributing.
+Although several common search engine optimization issues have been addressed, remaining known issues are discussed in Chapter 2. While solutions for several of the issues are in development, contributions to address the other issues will be very welcome. Visit the "contributing to spree section":contributing_to_spree.html to learn more about contributing.
 
 h4. Product and Taxonomy Page Title Enhancements
 
-Currently, the Spree core does not include functionality for page title management. The Spree demo has "Spree" as the page title for all pages that use the 'application' layout. Page titles are an important part of search engine optimization and should be meaningful and relevant to the page content. Page title templating is in development and can be reviewed at <a href="http://groups.google.com/group/spree-user">the spree-user group</a> for more information. Discussion of the solution includes creating a templating solution, where &nbsp;<tt>%PRODUCT%</tt><tt> from </tt><tt>%STORE%</tt>&nbsp; would yield a page title with the product and store name for all product pages (e.g., Ruby on Rails Bag from Spree) and &nbsp;<tt>%SECTION%</tt><tt> at </tt><tt>%STORE%</tt>&nbsp; would yield a page title with the taxonomy name and store name for all taxonomy pages (e.g., Apache at Spree). Also included in this discussion is the intended functionality to allow page titles to be overridden at the page level.
+Currently, the Spree core does not include functionality for page title management. The Spree demo has "Spree" as the page title for all pages that use the 'application' layout. Page titles are an important part of search engine optimization and should be meaningful and relevant to the page content. Page title templating is in development and can be reviewed at "the spree-user group":http://groups.google.com/group/spree-user for more information. Discussion of the solution includes creating a templating solution, where &nbsp;<tt>%PRODUCT%</tt><tt> from </tt><tt>%STORE%</tt>&nbsp; would yield a page title with the product and store name for all product pages (e.g., Ruby on Rails Bag from Spree) and &nbsp;<tt>%SECTION%</tt><tt> at </tt><tt>%STORE%</tt>&nbsp; would yield a page title with the taxonomy name and store name for all taxonomy pages (e.g., Apache at Spree). Also included in this discussion is the intended functionality to allow page titles to be overridden at the page level.
 
 h4. Alt Attribute on Product Images
 
@@ -42,11 +42,11 @@ The alt attribute on product images currently pulls data from product titles or 
 
 h4. Known Duplicate Content Issues
 
-In the Spree demo, it is a known issue that <a href="http://demo.spreecommerce.com">http://demo.spreecommerce.com/</a> contains duplicate content to <a href="http://demo.spreecommerce.com/products">http://demo.spreecommerce.com/products</a>. Duplicate content can be a detriment to search engine performance as external links are divided among duplicate content pages. As a result, duplicate content pages may not only not be excluded from the main search engine index, but pages may also rank poorly in comparison to other sites where all external links go to one non-duplicated page.
+In the Spree demo, it is a known issue that "demo.spreecommerce.com":http://demo.spreecommerce.com/ contains duplicate content to "demo.spreecommerce.com/products":http://demo.spreecommerce.com/products. Duplicate content can be a detriment to search engine performance as external links are divided among duplicate content pages. As a result, duplicate content pages may not only not be excluded from the main search engine index, but pages may also rank poorly in comparison to other sites where all external links go to one non-duplicated page.
 
 h4. Integration of Content Management System or Content
 
-There has been quite a bit of interest in development of <a href="http://groups.google.com/group/spree-user/search?q=cms">CMS integration into spree</a>. Having good content is an important part of search engine optimization, as it not only can improve on page keyword targeting, but it also can improve the popularity of a site which can in turn improve search engine optimization.
+There has been quite a bit of interest in development of "CMS integration into Spree":http://groups.google.com/group/spree-user/search?q=cms. Having good content is an important part of search engine optimization, as it not only can improve on page keyword targeting, but it also can improve the popularity of a site which can in turn improve search engine optimization.
 
 h4. Tool Integration
 
@@ -55,11 +55,12 @@ In addition to integration of Google Analytics, several other tools can be imple
 h3. Spree SEO Extensions
 
 The following list shows extensions that can improve search engine performance. Refer to the GitHub README for developer notes.
-* <a href="http://github.com/stephskardal/spree-google-base/tree/master">Google Base Integration</a>
-* <a href="http://github.com/stephskardal/spree-sitemaps/tree/master">Spree Sitemap Generation</a>
-* <a href="https://github.com/spree/spree_static_content">Static Content Management</a>
-* <a href="http://github.com/paulcc/spree-reviews/tree/master">Product Reviews</a>
-* <a href="http://github.com/stephskardal/spree-product-reviews-ratings/tree/master">Product Reviews and Ratings</a>
+
+* "Google Base Integration":https://github.com/stephskardal/spree-google-base/tree/master
+* "Spree Sitemap Generation":https://github.com/stephskardal/spree-sitemaps/tree/master
+* "Static Content Management":https://github.com/spree/spree_static_content
+* "Product Reviews":https://github.com/paulcc/spree-reviews/tree/master
+* "Product Reviews and Ratings":https://github.com/stephskardal/spree-product-reviews-ratings/tree/master
 
 h3. External Search Engine Optimization Efforts
 

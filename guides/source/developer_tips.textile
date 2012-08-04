@@ -95,10 +95,10 @@ to the core.
 
 h4. Setting up submodules
 
-Some of us use "Git submodules":http://git.or.cz/gitwiki/GitSubmoduleTutorial
+Some of us use "Git submodules":https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
 to tie large projects together: the basic Spree shell plus the
 +site/+ extension is the main repository, and everything else is loaded in as a submodule,
-including Spree itself. See "this Spree-demo fork":http://github.com/paulcc/spree-demo/tree
+including Spree itself. See "this Spree-demo fork":https://github.com/paulcc/spree-demo/tree
 for an example.
 
 The basic command to set up a submodule is this. Call it for each of the submodules you need.
