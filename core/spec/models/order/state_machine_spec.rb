@@ -140,7 +140,32 @@ describe Spree::Order do
         Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2).once
         order.cancel!
       end
+    end
 
+    context "resets payment state" do
+      before do
+        # TODO: This is ugly :(
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        mail_message.stub :deliver
+      end
+
+      context "without shipped items" do
+        it "should set payment state to 'credit owed'" do
+          order.cancel!
+          order.payment_state.should == 'credit_owed'
+        end
+      end
+
+      context "with shipped items" do
+        before do
+          order.stub :shipment_state => 'partial'
+        end
+
+        it "should not alter the payment state" do
+          order.cancel!
+          order.payment_state.should be_nil
+        end
+      end
     end
 
     it "should change shipment status (unless shipped)"

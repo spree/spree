@@ -12,13 +12,13 @@ describe Spree::Order do
     Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :without_protection => true)
   end
 
-  let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
+  let(:user) { stub_model(Spree::LegacyUser, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
   let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :without_protection => true) }
 
   before do
     Spree::Gateway.stub :current => gateway
-    Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
+    Spree::LegacyUser.stub(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
   context "#products" do
@@ -78,7 +78,7 @@ describe Spree::Order do
   context "#finalize!" do
     let(:order) { Spree::Order.create }
     it "should set completed_at" do
-      order.should_receive :completed_at=
+      order.should_receive(:touch).with(:completed_at)
       order.finalize!
     end
     it "should sell inventory units" do
@@ -110,7 +110,7 @@ describe Spree::Order do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustment = mock_model(Spree::Adjustment)
       order.stub_chain :adjustments, :optional => [adjustment]
-      adjustment.should_receive(:update_attribute).with("locked", true)
+      adjustment.should_receive(:update_column).with("locked", true)
       order.finalize!
     end
 

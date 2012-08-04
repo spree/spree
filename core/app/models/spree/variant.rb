@@ -21,15 +21,11 @@ module Spree
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
 
+    after_save :recalculate_product_on_hand, :if => :is_master?
+
     # default variant scope only lists non-deleted variants
     scope :active, where(:deleted_at => nil)
     scope :deleted, where('deleted_at IS NOT NULL')
-
-    # default extra fields for shipping purposes
-    @fields = [{ :name => 'Weight', :only => [:variant], :format => '%.2f' },
-               { :name => 'Height', :only => [:variant], :format => '%.2f' },
-               { :name => 'Width',  :only => [:variant], :format => '%.2f' },
-               { :name => 'Depth',  :only => [:variant], :format => '%.2f' }]
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
@@ -149,6 +145,13 @@ module Spree
         if price.nil?
           raise 'Must supply price for variant or master.price for product.' if self == product.master
           self.price = product.master.price
+        end
+      end
+
+      def recalculate_product_on_hand
+        on_hand = product.on_hand
+        if Spree::Config[:track_inventory_levels] && on_hand != (1.0 / 0) # Infinity
+          product.update_column(:count_on_hand, on_hand)
         end
       end
   end

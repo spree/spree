@@ -1,6 +1,5 @@
 module Spree
   class ProductsController < BaseController
-    HTTP_REFERER_REGEXP = /^https?:\/\/[^\/]+\/t\/([a-z0-9\-\/]+)$/
     before_filter :load_product, :only => :show
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/taxons'
@@ -20,9 +19,11 @@ module Spree
       @product_properties = ProductProperty.includes(:property).where(:product_id => @product.id)
 
       referer = request.env['HTTP_REFERER']
-
-      if referer && referer.match(HTTP_REFERER_REGEXP)
-        @taxon = Taxon.find_by_permalink($1)
+      if referer
+        referer_path = URI.parse(request.env['HTTP_REFERER']).path
+        if referer_path && referer_path.match(/\/t\/(.*)/)
+          @taxon = Taxon.find_by_permalink($1)
+        end
       end
 
       respond_with(@product)

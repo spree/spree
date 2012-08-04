@@ -16,7 +16,7 @@ module Spree
 
     def cvv
       respond_with do |format|
-        format.html { render 'cvv', :layout => false }
+        format.html { render :layout => false }
       end
     end
   end

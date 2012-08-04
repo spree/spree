@@ -61,10 +61,10 @@ module Spree
     accepts_nested_attributes_for :variants, :allow_destroy => true
 
     def variant_images
-      Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id").
-      where("(#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?) OR
-             (#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
-      order("#{Asset.quoted_table_name}.position").
+      Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Spree::Asset.quoted_table_name}.viewable_id").
+      where("(#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?) OR
+             (#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
+      order("#{Spree::Asset.quoted_table_name}.position").
       extend(Spree::Core::RelationSerialization)
     end
 
@@ -78,7 +78,7 @@ module Spree
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
                     :option_values_hash, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
-                    :variants_attributes, :taxon_ids
+                    :variants_attributes, :taxon_ids, :option_type_ids
 
     attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 

@@ -530,6 +530,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       text-align: center;
       border: 1px solid lighten($body_text_color, 60);
       background-color: $product_background_color;
+
+      img {
+        min-height: 240px;
+      }
     }
     #product-thumbnails {
       li {

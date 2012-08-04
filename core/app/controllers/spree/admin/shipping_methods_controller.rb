@@ -5,7 +5,7 @@ module Spree
       before_filter :set_shipping_category, :only => [:create, :update]
 
       def destroy
-        @object.update_column(:deleted_at, Time.now)
+        @object.touch :deleted_at
 
         flash.notice = flash_message_for(@object, :successfully_removed)
 

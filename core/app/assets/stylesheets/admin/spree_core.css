@@ -11,5 +11,6 @@
  *= require admin/edit_checkouts.css
  *= require admin/token-input.css
  *= require jquery-ui.datepicker
+ *= require select2
  *= require admin/admin
 */

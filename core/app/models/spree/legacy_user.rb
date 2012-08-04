@@ -1,6 +1,7 @@
 # Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth_devise)
 module Spree
-  class User < ActiveRecord::Base
+  class LegacyUser < ActiveRecord::Base
+    self.table_name = 'spree_users'
     attr_accessible :email, :password, :password_confirmation
 
     belongs_to :ship_address, :class_name => 'Spree::Address'

@@ -10,6 +10,7 @@
     <th><%= t(:on_hand) %></th>
     <th><%= t(:action) %></th>
   </tr>
+  <tbody>
   <% @variants.each do |variant| %>
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
@@ -28,13 +29,14 @@
   <% unless @product.has_variants? %>
     <tr><td colspan="9"><%= t(:none) %></td></tr>
   <% end %>
+  </tbody>
 </table>
 
 <% if @product.empty_option_values? %>
 
   <p class='first_add_option_types' data-hook="first_add_option_types">
     <%= t(:to_add_variants_you_must_first_define) %>
-    <%= link_to t(:option_types), selected_admin_product_option_types_url(@product) %>
+    <%= link_to t(:option_types), admin_product_url(@product) %>
     <%= t(:and) %>
     <%= link_to t(:option_values), admin_option_types_url %>
   </p>
