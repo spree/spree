@@ -37,8 +37,7 @@ describe "Product Variants" do
       visit spree.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
-      page!
-      select "colors", :from => "Option Types"
+      select2('#product_option_types_field', 'color')
       click_button "Update"
       page.should have_content("successfully updated!")
 

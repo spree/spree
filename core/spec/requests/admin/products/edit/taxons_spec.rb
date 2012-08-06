@@ -21,7 +21,7 @@ describe "Product Taxons" do
       end
 
       selected_taxons.should =~ [taxon_1.id]
-      select "Clothing", :from => "product_taxon_ids"
+      select2("#product_taxons_field", "Clothing")
       click_button "Update"
       selected_taxons.should =~ [taxon_1.id, taxon_2.id]
     end
