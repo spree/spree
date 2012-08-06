@@ -1,7 +1,7 @@
 require "rails/generators/rails/app/app_generator"
 
 module Spree
-  class DummyGenerator  < Rails::Generators::Base
+  class DummyGenerator < Rails::Generators::Base
     desc "Creates blank Rails application, installs Spree and all sample data"
 
     class_option :lib_name, :default => ''
