@@ -9,7 +9,7 @@ describe Spree::Promotion::Rules::FirstOrder do
   end
 
   context "should be eligible if user does not have any other completed orders yet" do
-    let(:user) { mock_model(Spree::User) }
+    let(:user) { mock_model(Spree::LegacyUser) }
 
     before do
       user.stub_chain(:orders, :complete, :count => 0)
@@ -26,7 +26,7 @@ describe Spree::Promotion::Rules::FirstOrder do
   end
 
   it "should be not eligible if user have at least one complete order" do
-    user = mock_model(Spree::User)
+    user = mock_model(Spree::LegacyUser)
     user.stub_chain(:orders, :complete, :count => 1)
     order.stub(:user => user)
 
