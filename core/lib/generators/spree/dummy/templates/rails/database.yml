@@ -28,7 +28,7 @@ production:
 <% when 'postgres' %>
 development:
   adapter: postgresql
-  database: spree_test
+  database: spree_development
   username: postgres
   min_messages: warning
 test:
