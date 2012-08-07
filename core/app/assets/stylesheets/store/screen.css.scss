@@ -671,6 +671,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
+  #checkout .form-buttons {
+    margin-top: 10px;
+  }
+
   #billing, #shipping, #shipping_method, 
   #payment, #order_details, #order_summary {
     margin-top: 10px;
