@@ -70,7 +70,6 @@ describe Spree::Order do
 
       context "when transitioning to payment state" do
         it "should create a shipment" do
-          order.should_receive(:has_available_shipment)
           order.should_receive(:create_shipment!)
           order.next!
           order.state.should == 'payment'
