@@ -10,16 +10,16 @@
     <% @order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
         <td width="300"><%= item.variant.product.name %> <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
-        <td class="price"><%= number_to_currency item.price %></td>
+        <td class="price"><%= money item.price %></td>
         <td class="qty"><%= item.quantity %></td>
-        <td class="total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
+        <td class="total"><span><%= money(item.price * item.quantity) %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tbody id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= number_to_currency @order.item_total %></span></td>
+      <td class="total"><span><%= money @order.item_total %></span></td>
     </tr>
   </tbody>
   <tbody id="order-charges" data-hook="order_details_adjustments">
@@ -27,14 +27,14 @@
     <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="3"><strong><%= adjustment.label %>:</strong></td>
-        <td class="total"><span><%= number_to_currency adjustment.amount %></span></td>
+        <td class="total"><span><%= money adjustment.amount %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tbody id="order-total" data-hook="order_details_total">
     <tr class="total">
       <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
+      <td class="total"><span id="order_total"><%= money @order.total %></span></td>
     </tr>
   </tbody>
   <% if order.price_adjustment_totals.present? %>
@@ -42,7 +42,7 @@
       <% @order.price_adjustment_totals.keys.each do |key| %>
         <tr class="total">
           <td colspan="3"><strong><%= key %></strong></td>
-          <td class="total"><span><%= number_to_currency @order.price_adjustment_totals[key] %></span></td>
+          <td class="total"><span><%= money @order.price_adjustment_totals[key] %></span></td>
         </tr>
       <% end %>
     </tbody>

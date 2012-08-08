@@ -10,7 +10,7 @@ module Spree
         @preferences = [:site_name, :default_seo_title, :default_meta_keywords,
                         :default_meta_description, :site_url, :allow_ssl_in_production,
                         :allow_ssl_in_staging, :allow_ssl_in_development_and_test,
-                        :check_for_spree_alerts]
+                        :check_for_spree_alerts, :display_currency]
       end
 
       def update

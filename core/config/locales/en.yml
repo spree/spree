@@ -334,6 +334,7 @@ en:
   credit_cards: Credit Cards
   credits: Credits
   current: Current
+  currency: Currency
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
@@ -357,7 +358,9 @@ en:
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
   discount_amount: "Discount Amount"
   display: Display
+  display_currency: "Display currency"
   dismiss_banner: "No. Thanks! I'm not interested, do not display this message again"
+  dollar_amounts_displayed_as: "Dollar amounts displayed as %{example}"
   edit: Edit
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"

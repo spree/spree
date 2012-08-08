@@ -6,11 +6,7 @@
         <% @order.rate_hash.each do |shipping_method| %>
           <label>
             <%= radio_button(:order, :shipping_method_id, shipping_method[:id]) %>
-            <% if Spree::Config[:shipment_inc_vat] %>
-              <%= shipping_method[:name] %> <%= format_price (1 + Spree::TaxRate.default) * shipping_method[:cost] %>
-            <% else %>
-            <%= shipping_method[:name] %> <%= number_to_currency shipping_method[:cost] %>
-            <% end %>
+            <%= shipping_method.name %> <%= shipping_method.display_price %>
           </label>
         <% end %>
       </p>
