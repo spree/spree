@@ -95,8 +95,10 @@ module Spree
       link_to image_tag(image_path), root_path
     end
 
-    def flash_messages
-      flash.each do |msg_type, text|
+    def flash_messages(opts = {})
+      flash.reject{|msg_type, text|
+        opts[:ignore_types] && opts[:ignore_types].include?(msg_type)
+      }.each do |msg_type, text|
         concat(content_tag :div, text, :class => "flash #{msg_type}") unless msg_type == :commerce_tracking
       end
       nil
