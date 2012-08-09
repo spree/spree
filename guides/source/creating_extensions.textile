@@ -132,6 +132,36 @@ h4. Registering Your Extension
 
 In order for your extension to show up in the "Extension Registry":http://spreecommerce.com/extensions you need to register it. To do so, sign into your spreecommerce.com account and navigate to the "My Extensions":http://spreecommerce.com/account/extensions page. You may have to create an account first, or you can log-in with GitHub.
 
+h4. Adding the Extension to Your Application
+
+To use your extension with your application, you will need to add it to the +Gemfile+ of your application like this:
+
+<ruby>
+gem 'spree_flag_promotions', :path => '../spree_flag_promotions'
+
+</ruby>
+
+NOTE: This is a relative path to the 'spree_flag_promotions' directory.  You could also refer to a Git location or any other convention that is acceptable to bundler.  See the "bundler site":http://gembundler.com for more details.
+
+<shell>
+$ bundle install
+</shell>
+
+If your extension has any migrations, they can be copied over from the extension into your application (along with any other migrations from other railties) by running this command:
+
+<shell>
+$ rake railties:install:migrations
+</shell>
+
+To run those migrations, run this command:
+
+<shell>
+$ rake db:migrate
+</shell>
+
+That's it!  Your store should be ready to go with your new custom extension.
+
+
 h3. Versionfile
 
 Spree is moving at a rapid pace with the code constantly evolving as new releases are being pushed out.  These changes sometimes make it difficult to keep track of which version of Spree is compatible with which version of an extension. To solve this problem extension authors are encouraged to add a +Versionfile+ to their extension.
@@ -468,37 +498,3 @@ Now this preference can be accessed using *Spree::FlagPromotions::Config*
 
 INFO: Please refer to the "Preferences":preferences.html#site_wide_preferences guide for more information.
 
-h4. Adding the Extension to Your Application
-
-Let's now add the extension to our application.  We'll create a simple Spree application for this purpose just to illustrate how it's done.
-
-We'll start by creating a new Rails app
-
-<shell>
-$ rails new my-store
-</shell>
-
-Then edit the Gemfile and add dependencies for Spree and the spree_flag_promotions extension
-
-<ruby>
-#Gemfile
-
-gem 'spree'
-gem 'spree_flag_promotions', :path => '../spree_flag_promotions'
-
-</ruby>
-
-NOTE: This is a relative path to the 'spree_flag_promotions' directory.  You could also refer to a Git location or any other convention that is acceptable to bundler.  See the "bundler site":http://gembundler.com for more details.
-
-<shell>
-$ bundle install
-</shell>
-
-Now that the extension is setup it's time to install (and then run) the migrations.
-
-<shell>
-$ rake railties:install:migrations
-$ rake db:migrate
-</shell>
-
-That's it!  Your store should be ready to go with your new custom extension.
