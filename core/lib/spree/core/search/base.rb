@@ -28,7 +28,7 @@ module Spree
           def get_base_scope
             base_scope = Spree::Product.active
             base_scope = base_scope.in_taxon(taxon) unless taxon.blank?
-            base_scope = get_products_conditions_for(base_scope, keywords) unless keywords.blank?
+            base_scope = get_products_conditions_for(base_scope, keywords)
             base_scope = base_scope.on_hand unless Spree::Config[:show_zero_stock_products]
             base_scope = add_search_scopes(base_scope)
             base_scope
@@ -48,7 +48,10 @@ module Spree
 
           # method should return new scope based on base_scope
           def get_products_conditions_for(base_scope, query)
-            base_scope.like_any([:name, :description], query.split)
+            unless query.blank?
+              base_scope = base_scope.like_any([:name, :description], query.split)
+            end
+            base_scope
           end
 
           def prepare(params)
