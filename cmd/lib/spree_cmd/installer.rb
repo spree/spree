@@ -182,10 +182,16 @@ module SpreeCmd
       end
 
       def image_magick_installed?
+        cmd = 'identify -version'
+        if RUBY_PLATFORM =~ /mswin/ #windows
+          cmd += " >nul"
+        else
+          cmd += " >/dev/null"
+        end
         # true if command executed succesfully
         # false for non zero exit status
         # nil if command execution fails
-        system('identify -version')
+        system(cmd)
       end
   end
 end
