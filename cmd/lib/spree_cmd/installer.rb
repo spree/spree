@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'active_support/core_ext/string'
 
 module SpreeCmd
 
@@ -64,6 +65,12 @@ module SpreeCmd
     def ask_questions
       @install_default_gateways = ask_with_default('Would you like to install the default gateways?')
       @install_default_auth = ask_with_default('Would you like to install the default authentication system?')
+      unless @install_default_auth
+        @user_class = ask("What is the name of the class representing users within your application? [User]")
+        if @user_class.blank?
+          @user_class = "User"
+        end
+      end
 
       if options[:skip_install_data]
         @run_migrations = false
@@ -106,6 +113,7 @@ module SpreeCmd
       spree_options << "--migrate=#{@run_migrations}"
       spree_options << "--seed=#{@load_seed_data}"
       spree_options << "--sample=#{@load_sample_data}"
+      spree_options << "--user_class=#{@user_class}"
       spree_options << "--auto_accept" if options[:auto_accept]
 
       inside @app_path do
