@@ -1,5 +1,17 @@
 <header id="header" class="row" data-hook>
   <figure id="logo" class="columns alpha six" data-hook><%= logo %></figure>
-  <%= render :partial => 'spree/shared/nav_bar' %>
-  <%= render :partial => 'spree/shared/main_nav_bar' if store_menu? %>
+  <nav id="top-nav-bar" class="columns omega ten">
+	  <ul id="nav-bar" class="inline" data-hook>
+	    <li id="search-bar" data-hook>
+	      <%= render :partial => 'spree/shared/search' %>
+	    </li>
+	  </ul>
+	</nav>
+	<% if store_menu? %>
+	<nav class="columns alpha omega sixteen">
+	  <ul id="main-nav-bar" class="inline" data-hook>
+	    <%= render :partial => 'spree/shared/store_menu' %>
+	  </ul>
+	</nav>
+	<% end %>
 </header>
