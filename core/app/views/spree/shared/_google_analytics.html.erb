@@ -14,7 +14,7 @@
         "<%= @order.adjustments.tax.sum(:amount) %>",
         "<%= @order.adjustments.shipping.sum(:amount) %>",
         "<%= @order.bill_address.city %>",
-        "<%= @order.bill_address.state.try(:name) || @order.bill_address.state_name %>",
+        "<%= @order.bill_address.state_text %>",
         "<%= @order.bill_address.country.name %>"
       ]);
       <% @order.line_items.each do |line_item| %>
