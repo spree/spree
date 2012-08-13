@@ -96,12 +96,14 @@ module Spree
     end
 
     def flash_messages(opts = {})
+      opts[:ignore_types] = [:commerce_tracking].concat(opts[:ignore_types] || [])
+
       flash.reject do |msg_type, text|
-        opts[:ignore_types] && opts[:ignore_types].include?(msg_type)
+        opts[:ignore_types].include?(msg_type)
       end
 
       flash.each do |msg_type, text|
-        concat(content_tag :div, text, :class => "flash #{msg_type}") unless msg_type == :commerce_tracking
+        concat(content_tag :div, text, :class => "flash #{msg_type}")
       end
       nil
     end
