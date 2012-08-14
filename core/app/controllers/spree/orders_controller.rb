@@ -24,6 +24,7 @@ module Spree
     # Shows the current incomplete order from the session
     def edit
       @order = current_order(true)
+      associate_user
     end
 
     # Adds a new item to the order (creating a new order if none already exists)
