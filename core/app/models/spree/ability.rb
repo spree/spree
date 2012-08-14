@@ -36,13 +36,13 @@ module Spree
         can :manage, :all
       else
         #############################
-        can :read, LegacyUser do |resource|
+        can :read, Spree.user_class do |resource|
           resource == user
         end
-        can :update, LegacyUser do |resource|
+        can :update, Spree.user_class do |resource|
           resource == user
         end
-        can :create, LegacyUser
+        can :create, Spree.user_class
         #############################
         can :read, Order do |order, token|
           order.user == user || order.token && token == order.token
