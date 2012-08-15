@@ -33,6 +33,8 @@ module Spree
       :class_name => "Spree::Variant",
       :conditions => { :is_master => true }
 
+    has_many :images, :through => :master
+
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
@@ -61,14 +63,9 @@ module Spree
     accepts_nested_attributes_for :variants, :allow_destroy => true
 
     def variant_images
-      Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Spree::Asset.quoted_table_name}.viewable_id").
-      where("(#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?) OR
-             (#{Spree::Asset.quoted_table_name}.viewable_type = ? AND #{Spree::Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
-      order("#{Spree::Asset.quoted_table_name}.position").
-      extend(Spree::Core::RelationSerialization)
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Product#variant_images will be deprecated in Spree 1.3. Please use Spree::Product#images.")
+      self.images
     end
-
-    alias_method :images, :variant_images
 
     validates :name, :price, :permalink, :presence => true
 
