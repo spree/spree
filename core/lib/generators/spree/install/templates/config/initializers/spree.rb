@@ -11,4 +11,4 @@ Spree.config do |config|
   # config.site_name = "Spree Demo Site"
 end
 
-Spree.user_class = <%= (options[:user_class] || "Spree::LegacyUser").inspect %>
+Spree.user_class = <%= (options[:user_class].blank? ? "Spree::LegacyUser" : options[:user_class]).inspect %>
