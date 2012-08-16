@@ -31,7 +31,7 @@ module Spree
       :class_name => 'Spree::Variant',
       :conditions => ["#{Variant.quoted_table_name}.is_master = ?", true]
 
-    has_many :images, :through => :master
+    has_many :images, :through => :master, :order => "position ASC"
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
