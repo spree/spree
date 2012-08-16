@@ -20,7 +20,11 @@ h3. Major changes (backwards incompatibility)
 
 h4. spree_auth removal
 
-Authentication is disabled by default within Spree as of this release, with the application supposed to be providing its own authentication. If you have an application that depended on this functionality within Spree existing, please add "spree_auth_devise":https://github.com/spree/spree_auth_devise to your Gemfile. 
+Authentication is disabled by default within Spree as of this release, with the application supposed to be providing its own authentication. If you have an application that depended on this functionality within Spree existing, please add "spree_auth_devise":https://github.com/spree/spree_auth_devise to your Gemfile and then put this line inside +config/initializers/spree.rb+ as well:
+
+<ruby>
+Spree.user_class = "Spree::User"
+</ruby>
 
 For more information, please see the "Authentication guide":http://guides.spreecommerce.com/authentication.html.
 
