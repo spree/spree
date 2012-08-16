@@ -102,6 +102,4 @@ task :sandbox do
 
   Spree::SandboxGenerator.start ["--lib_name=spree"]
   Spree::InstallGenerator.start ["--auto-accept"]
-
-  cmd = "bundle exec rake assets:precompile:nondigest"; puts cmd; system cmd
 end
