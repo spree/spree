@@ -18,6 +18,7 @@ module Spree
 
           def self.define_state_machine!
             self.checkout_steps = []
+            @checkout_steps = {}
             self.next_event_transitions = []
             self.previous_states = [:cart]
             instance_eval(&checkout_flow)
