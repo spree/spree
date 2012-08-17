@@ -45,6 +45,12 @@ For more information about customizing the checkout process within Spree, please
 
 h3. Minor changes
 
+h4. Introduce Spree::Product#master_images and Spree::Product#variant_images
+
++Spree::Product#master_images+ and its alias +Spree::Product#images+ only returns images belongs to master variant.
+
++Spree::Product#variant_images+ behaviour is changed, it is no longer return only images belongs to master variants but now also include all variants' images.
+
 h4. Spree::Zone#country_list renamed to #zone_member_list
 
 Please be noted that the underlying logics remain intact.
