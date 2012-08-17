@@ -1,26 +1,28 @@
 <div class="row steps-data">
   
-  <div class="columns alpha four">
-    <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
-      <%= order.ship_address %>
-    </div>
-  </div>
-
-  <div class="columns alpha four">
-    <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
-      <%= order.bill_address %>
-    </div>
-  </div>
-
-  <% if @order.has_step?("delivery") %>
+  <% if order.has_step?("address") %>
     <div class="columns alpha four">
-      <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
-      <div class="delivery">
-        <%= order.shipping_method.name %>
+      <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+      <div class="address">
+        <%= order.ship_address %>
       </div>
     </div>
+
+    <div class="columns alpha four">
+      <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+      <div class="address">
+        <%= order.bill_address %>
+      </div>
+    </div>
+
+    <% if @order.has_step?("delivery") %>
+      <div class="columns alpha four">
+        <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
+        <div class="delivery">
+          <%= order.shipping_method.name %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 
   <div class="columns omega four">
