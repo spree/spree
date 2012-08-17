@@ -210,7 +210,7 @@ describe Spree::Product do
         @product.option_type_ids.should == prototype.option_type_ids
       end
 
-      it "should create product option types based on the prototype" do  
+      it "should create product option types based on the prototype" do
         @product.save
         @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
       end
