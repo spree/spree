@@ -29,7 +29,22 @@ module Spree
 
     has_one :master,
       :class_name => 'Spree::Variant',
-      :conditions => ["#{Variant.quoted_table_name}.is_master = ?", true]
+      :conditions => { :is_master => true }
+
+    has_many :variants,
+      :class_name => 'Spree::Variant',
+      :conditions => { :is_master => false, :deleted_at => nil },
+      :order => :position
+
+    has_many :variants_including_master,
+      :class_name => 'Spree::Variant',
+      :conditions => { :deleted_at => nil },
+      :dependent => :destroy
+
+    has_many :variants_with_only_master,
+      :class_name => 'Spree::Variant',
+      :conditions => { :is_master => true, :deleted_at => nil },
+      :dependent => :destroy
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
@@ -40,21 +55,6 @@ module Spree
     before_save :recalculate_count_on_hand
     after_save :save_master
     after_save :set_master_on_hand_to_zero_when_product_has_variants
-
-    has_many :variants,
-      :class_name => 'Spree::Variant',
-      :conditions => ["#{::Spree::Variant.quoted_table_name}.is_master = ? AND #{::Spree::Variant.quoted_table_name}.deleted_at IS NULL", false],
-      :order => "#{::Spree::Variant.quoted_table_name}.position ASC"
-
-    has_many :variants_including_master,
-      :class_name => 'Spree::Variant',
-      :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL"],
-      :dependent => :destroy
-
-    has_many :variants_with_only_master,
-      :class_name => 'Spree::Variant',
-      :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL AND #{::Spree::Variant.quoted_table_name}.is_master = ?", true],
-      :dependent => :destroy
 
     has_many :master_images, :source => :images, :through => :master, :order => :position
     has_many :variant_images, :source => :images, :through => :variants_including_master, :order => :position
