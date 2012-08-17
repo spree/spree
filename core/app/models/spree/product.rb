@@ -31,8 +31,6 @@ module Spree
       :class_name => 'Spree::Variant',
       :conditions => ["#{Variant.quoted_table_name}.is_master = ?", true]
 
-    has_many :images, :through => :master, :order => "position ASC"
-
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
@@ -58,12 +56,11 @@ module Spree
       :conditions => ["#{::Spree::Variant.quoted_table_name}.deleted_at IS NULL AND #{::Spree::Variant.quoted_table_name}.is_master = ?", true],
       :dependent => :destroy
 
-    accepts_nested_attributes_for :variants, :allow_destroy => true
+    has_many :master_images, :source => :images, :through => :master, :order => :position
+    has_many :variant_images, :source => :images, :through => :variants_including_master, :order => :position
+    alias_method :images, :master_images
 
-    def variant_images
-      ActiveSupport::Deprecation.warn("[SPREE] Spree::Product#variant_images will be deprecated in Spree 1.3. Please use Spree::Product#images.")
-      self.images
-    end
+    accepts_nested_attributes_for :variants, :allow_destroy => true
 
     validates :name, :price, :permalink, :presence => true
 
