@@ -26,7 +26,7 @@
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
             <%= t(:update) %>
           <% end %>
-         <%= link_to t(:checkout), checkout_path, :class => 'button checkout primary', :id => 'checkout-link' %>
+         <%= link_to t(:checkout), checkout_state_path(@order.checkout_steps.first), :class => 'button checkout primary', :id => 'checkout-link' %>
         </div>
 
       </div>
