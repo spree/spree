@@ -39,10 +39,10 @@ module Spree
 
     private
       def ensure_valid_state
-        if params[:state] && params[:state] != 'cart' &&
-           !@order.checkout_steps.include?(params[:state])
+        if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
+           (!params[:state] && !@order.checkout_steps.include?(@order.state))
           @order.state = 'cart'
-          redirect_to checkout_path
+          redirect_to checkout_state_path(@order.checkout_steps.first)
         end
       end
 
