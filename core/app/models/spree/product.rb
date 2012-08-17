@@ -91,7 +91,7 @@ module Spree
 
     # returns true if the product has any variants (the master variant is not a member of the variants array)
     def has_variants?
-      variants.exists?
+      variants.any?
     end
 
     # returns the number of inventory units "on_hand" for this product
