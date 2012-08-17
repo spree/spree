@@ -88,11 +88,6 @@ module Spree
 
     after_initialize :ensure_master
 
-    def ensure_master
-      return unless new_record?
-      self.master ||= Variant.new
-    end
-
     def to_param
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end
@@ -256,6 +251,11 @@ module Spree
       # when saving so we force a save using a hook.
       def save_master
         master.save if master && (master.changed? || master.new_record?)
+      end
+
+      def ensure_master
+        return unless new_record?
+        self.master ||= Variant.new
       end
   end
 end
