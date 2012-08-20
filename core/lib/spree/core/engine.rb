@@ -10,7 +10,6 @@ module Spree
       config.autoload_paths += %W(#{config.root}/lib)
 
       def self.activate
-        Spree::Order.define_state_machine!
       end
 
       config.to_prepare &method(:activate).to_proc

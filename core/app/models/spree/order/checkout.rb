@@ -11,6 +11,7 @@ module Spree
           def self.checkout_flow(&block)
             if block_given?
               @checkout_flow = block
+              define_state_machine!
             else
               @checkout_flow
             end
