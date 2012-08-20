@@ -18,7 +18,7 @@ h3. Default Checkout Steps
 
 The Spree checkout process consists of the following steps (With the exception of the Registration step, each of these steps corresponds to a state of the +Spree::Order+ object):
 
-* Registration (Optional - can be changed through configuration setting)
+* Registration (Optional - only if using spree_auth_devise extension, can be toggled through configuration setting)
 * Address Information
 * Delivery Options (Shipping Method)
 * Payment
@@ -30,7 +30,8 @@ h4. Registration
 
 Prior to beginning the checkout process, the customer will be prompted to create a new account or to login to their existing account. By default, there is also a "guest checkout" option which allows users to specify only their email address if they do not wish to create an account.
 
-Technically, the registration step is not an actual state in the +Spree::Order+ state machine.  The spree_auth gem, adds the +check_registration+ before filter to the all actions of +Spree::CheckoutController+ (except for obvious reasons the +registration+ and +update_registration+ actions), which redirects to a registration page unless one of the following is true:
+Technically, the registration step is not an actual state in the +Spree::Order+ state machine.  The spree_auth_devise gem (an extension that comes with Spree by default) adds the +check_registration+ before filter to the all actions of +Spree::CheckoutController+ (except for obvious reasons the +registration+ and +update_registration+ actions), which redirects to a registration page unless one of the following is true:
+
 * +registration_step+ preference is not true
 * user is already logged in
 * the current order has an email address associated with it
@@ -48,9 +49,9 @@ The configuration of the guest checkout option is done via "preferences":prefere
 
 h4. Address Information
 
-This step allows the customer to add both their billing and shipping information.  Customers can click the "use billing address" option to use the same address for both.  Selecting this option will have the effect of hiding the shipping address fields using javascript.  If users have disabled javascript, the section will not disappear but it will copy over the address information once submitted.  If you would like to automatically copy the address information via javascript on the client side, that is an exercise left to the developer.  We have found the server side approach to be simpler and easier to maintain.
+This step allows the customer to add both their billing and shipping information.  Customers can click the "use billing address" option to use the same address for both.  Selecting this option will have the effect of hiding the shipping address fields using JavaScript.  If users have disabled JavaScript, the section will not disappear but it will copy over the address information once submitted.  If you would like to automatically copy the address information via JavaScript on the client side, that is an exercise left to the developer.  We have found the server side approach to be simpler and easier to maintain.
 
-The address fields include a select box for choosing state/province.  The list of states will be populated via javascript and will contain all of the states listed in the database for the currently selected country.  If there are no states configured for a particular country, or if the user has javascript disabled, the select box will be replaced by a text field instead.
+The address fields include a select box for choosing state/province.  The list of states will be populated via JavaScript and will contain all of the states listed in the database for the currently selected country.  If there are no states configured for a particular country, or if the user has JavaScript disabled, the select box will be replaced by a text field instead.
 
 INFO: The default "seed" data for Spree only includes the U.S. states.  Its easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":http://gist.github.com.)
 
@@ -60,30 +61,27 @@ The list of countries that appear in the country select box can also be configur
 
 h4. Delivery Options
 
-During this step, the user may choose a delivery method. Spree assumes the list of shipping methods to be dependent on the shipping address.  This is one of the reasons why it is difficult to support single page checkout for customers who have disabled javascript.  Spree allows you to configure any number of custom "shipping methods":shipping.html.  Each shipping method must be configured with a "zone":zones.html.  The available shipping methods shown during this step will reflect those whose zone overlaps with the specified shipping address.  The shipping methods will also list the associated shipping charge based on the logic provided by their "calculators":adjustments.html#calculators.
+During this step, the user may choose a delivery method. Spree assumes the list of shipping methods to be dependent on the shipping address.  This is one of the reasons why it is difficult to support single page checkout for customers who have disabled JavaScript.  Spree allows you to configure any number of custom "shipping methods":shipping.html.  Each shipping method must be configured with a "zone":zones.html.  The available shipping methods shown during this step will reflect those whose zone overlaps with the specified shipping address.  The shipping methods will also list the associated shipping charge based on the logic provided by their "calculators":adjustments.html#calculators.
 
-INFO: At least one shipping method and corresponding zone must be configured in order to show shipping methods during checkout.
-
-NOTE: The delivery step is an excellent place to add information on gift options (wrapping paper, etc.)  See the "gift-options":http://github.com/calas/spree-gift-options extension for one possible implementation of this.
+INFO: At least one shipping method and corresponding zone must be configured in order to show shipping methods during checkout. If no shipping methods are available for this order, the user is prompted to choose another delivery location.
 
 h4. Payment
 
-This step is where the customer provides payment infomation.  This step is intentionally placed last in order to minimize security issues with credit card information.  Credit card information is never stored in the database so it would be impossible to have a subsequent step and still be able to submit the information to the "payment gateway":payment_gateways.html.  Spree submits the information to the gateway before saving the model so that the sensitive information can be discarded before saving the checkout information.
+This step is where the customer provides payment information.  This step is intentionally placed last in order to minimize security issues with credit card information.  Credit card information is never stored in the database so it would be impossible to have a subsequent step and still be able to submit the information to the "payment gateway":payment_gateways.html.  Spree submits the information to the gateway before saving the model so that the sensitive information can be discarded before saving the checkout information.
 
-WARNING: Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card (which is done after the "Confirmation" step.)
+WARNING: Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card.
 
-INFO: Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the database.
+INFO: Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the Spree database.
 
-INFO: The advantage of using a credit card profile is that you can ask for confirmation in a separate step without sacrificing security
-
-NOTE: Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a credit card "profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
+NOTE: Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a "payment profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
 
 NOTE: If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the order is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.
-
 
 h4. Confirmation
 
 This is the final opportunity for the customer to review their order before submitting it to be processed.  Users have the opportunity to return to any step in the process using either the back button or by clicking on the appropriate step in the "progress breadcrumb."
+
+This step is disabled by default (except for payment methods that support payment profiles), but can be enabled by overriding the +confirmation_required?+ method in +Spree::Order+.
 
 h3. Checkout Architecture
 
@@ -96,16 +94,22 @@ Three custom routes in spree_core handle all of the routing for a checkout:
 <ruby>
   put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
   get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
-  get '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
+  get '/checkout', :to => 'checkout#edit', :as => :checkout
 </ruby>
 
-The '/checkout' route maps to the +edit+ action of the +Spree::CheckoutController+ and provides the default state of 'address'.  The '/checkout/:state' route also maps to the +edit+ action of +Spree::CheckoutController+, however the state is supplied in the url.  The '/checkout/update/:state' route maps to the +Spree::CheckoutController#update+ action
+The '/checkout' route maps to the +edit+ action of the +Spree::CheckoutController+. A request to this route will redirect to the current state of the current order. If the current order was in the "address" state, then a request to '/checkout' would redirect to '/checkout/addres'.
+
+The '/checkout/:state' route is used for the previously mentioned route, and also maps to the +edit+ action of +Spree::CheckoutController+. 
+
+The '/checkout/update/:state' route maps to the +Spree::CheckoutController#update+ action and is used in the checkout form to update order data during the checkout process.
 
 h4. Spree::CheckoutController
 
-The +Spree::CheckoutController+ drives the state of an order during checkout. Since there is no "checkout" model, the +Spree::CheckoutController+ is not a typical RESTful controller. The spree_core and spree_auth gems expose a few different actions for the +Spree::CheckoutController+.
+The +Spree::CheckoutController+ drives the state of an order during checkout. Since there is no "checkout" model, the +Spree::CheckoutController+ is not a typical RESTful controller. The spree_core and spree_auth_devise gems expose a few different actions for the +Spree::CheckoutController+.
 
-The +edit+ action renders the checkout/edit.html.erb template. The +update+ action performs the following:
+The +edit+ action renders the checkout/edit.html.erb template, which then renders a partial with the current state, such as +app/views/spree/checkout/address.html.erb+. This partial shows state-specific fields for the user to fill in. If you choose to customize the checkout flow to add a new state, you will need to create a new partial for this state.
+
+The +update+ action performs the following:
 
 * Updates the +current_order+ with the paramaters passed in from the current step.
 * Transitions the order state machine using the +next+ event after successfully updating the order.
@@ -120,28 +124,18 @@ The +spree_core+ and the default authentication gem (+spree_auth_devise+) gems d
 
 |_<.Name|_.Gem|_.Description|
 |+load_order+|+spree_core+| Assigns the +@order+ instance variable and set the +@order.state+ to the +params[:state]+ value. This filter also runs the "before" callbacks for +@order.state+.|
-|+check_authorization+|+spree_auth+|Verifies that the +current_user+ has access to the +current_order+.|
-|+check_registration+|+spree_auth+|Checks the registration status of +current_user+ and redirects to the registration step if necessary.|
+|+check_authorization+|+spree_auth_devise+|Verifies that the +current_user+ has access to the +current_order+.|
+|+check_registration+|+spree_auth_devise+|Checks the registration status of +current_user+ and redirects to the registration step if necessary.|
 
 h4. The Order Model and State Machine
 
  The +Spree::Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Spree::Order+ model as well as in several other places (such as +Spree::Shipment+ and +Spree::InventoryUnit+.)
 
-The default state machine and state methods for the +Spree::Order+ model are defined in +app/models/spree/order/state_machine.rb+ of spree_core.
+The default checkout flow for the +Spree::Order+ model is defined in +app/models/spree/order/checkout.rb+ of spree_core.
 
-An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart.  We reached this decision when taking a REST approach to modeling our resources.  What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
+An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart. What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
 
 INFO: For more information on the state machine gem please see the "README":http://github.com/pluginaweek/state_machine
-
-h4. Checkout Partials
-
-The +spree_core+ gem contains several partials located within +app/views/checkout/+.  Each checkout step automatically renders the +edit.html.erb+ template. The edit template renders a partial with a name based on the state with the current step.  For example, in the delivery step the +_delivery.html.erb+ partial is rendered.
-
-h4. Javascript and CSS
-
-Spree does not require javascript for checkout but the user experience will be slightly more pleasing if they have javascript enabled in their browser.  Spree automatically includes the +checkout.js+ file located in the default theme.  This file can be replaced in its entirety through use of a site extension. There are two stylesheet files used by the Spree checkout process.  Both +_checkout.less+ and +_checkout_progress.less+ can be found in the default theme.
-
-[TODO - Add brief mention of and link to CSS customization using Less once that guide becomes available. ]
 
 h3. Checkout Customization
 
@@ -158,17 +152,12 @@ h5. Adding Logic Before or After a Particular Step
 
 The state_machine gem allows you to callbacks before or after transitioning to a particular step. These callbacks work similarly to "Active Record Callbacks":http://guides.rubyonrails.org/active_record_validations_callbacks.html#callbacks-overview in that you can specify a method or block of code to be executed prior to or after a transition. If the method executed in a in a before_transition returns false, then the transition will not execute.
 
-So, for example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step, you would first implement a +valid_zip_code?+ method, and then add the following transition callback to your state_machine definition:
+So, for example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step, you would first implement a +valid_zip_code?+ method, and then tell the state machine to run this method before that transition, placing this code in a file called +app/models/spree/order_decorator.rb+:
+
 
 <ruby>
-  before_transition :to => 'delivery', :do => :valid_zip_code?
-</ruby>
-
-You can do this without overriding the entire state machine by calling this method directly on the `state_machine` object itself:
-
-<ruby>
-  Spree::Order.before_transition :to => 'delivery',
-                                 :do => :valid_zip_code?
+  Spree::Order.state_machine.before_transition :to => 'delivery',
+                                               :do => :valid_zip_code?
 </ruby>
 
 This callback would prevent transitioning to the +delivery+ step if +valid_zip_code?+ returns false.
@@ -179,68 +168,63 @@ Each of the default checkout steps has its own partial defined in the spree_core
 
 INFO: See also the brief discussion in "checkout partials":#checkout-partials for additional information.
 
-h4. Adding or Removing Steps
+h3. The Checkout Flow DSL
 
-Spree allows you to easily add or remove checkout steps.  We will outline the basic instructions for doing so here.  If you require more information, please read the detailed overview of "checkout architecture":#checkout-architecture.  Spree comes with a predefined series of checkout steps.  To make changes to this default flow you will need to alter the state machine for +Spree::Order+.  State machines are tricky to modify - the recommended approach is to simply define an entirely new state machine as shown in the following two examples:
+With Spree 1.2 comes a new checkout DSL that allows you succinctly define the different steps of your checkout. This new DSL allows you to customize *just* the checkout flow, while maintaining the unrelated admin states, such as "canceled" and "resumed", that an order can transition to. Ultimately, it provides a shorter syntax compared with overriding the entire state machine for the +Spree::Order+ class. 
 
-h5. Removing a checkout step
-
-All of the states of the default Spree cart, aside from the default "cart" and the final "complete" state can easily be disabled by re-defining their relative method. The list below lists the states and the method that would need to return false so that state is disabled:
-
-* Address - +address_required?+ (will also trigger delivery step to not appear if disabeld)
-* Delivery - +delivery_required?+
-* Payment - +payment_required?+
-* Confirm - +confirmation_required?+
-
-You can choose to remove multiple steps if you wish. The breadcrumbs on top of the checkout will automatically adjust depending on what steps you have disabled. You may also put in some conditional logic into an order to determine whether or not to show some steps.
-
-h5. Registering new checkout steps
-
-Registering new steps with the order state machine requires a complete override of it. This is made easier recently with the extraction of the state machine and its related methods into a file located inside spree_core called +app/models/spree/order/state_machine.rb+.
-
-To override the default state machine for Spree, run this generator:
-
-<plain>
-rails g spree:state_machine
-</plain>
-
-This will copy over the state machine from Spree into your application's models directory, placing it into +app/models/spree/order/state_machine.rb+.
-
-Let's say, for instance, you want to have all the default steps enabled plus another one to ask your user to select a calling plan if they are purchasing a cell phone:
+The default checkout flow for Spree is defined like this, adequately demonstrating the abilities of this new system:
 
 <ruby>
-Spree::Order.class_eval do
-  state_machine :initial => 'cart', :use_transactions => false do
-    event :next do
-      transition :from => 'cart',     :to => 'address'
-      transition :from => 'address',  :to => 'delivery'
-      transition :from => 'delivery',  :to => 'calling_plan', :if => :cell_phone_included?
-      transition :from => 'delivery', :to => 'confirm'
-      transition :from => 'calling_plan',  :to => 'confirm'
-      transition :from => 'confirm',  :to => 'complete'
-    end
-
-    ...
-  end
+checkout_flow do
+  go_to_state :address
+  go_to_state :delivery
+  go_to_state :payment, :if => lambda { |order| order.payment_required? }
+  go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
+  go_to_state :complete
+  remove_transition :from => :delivery, :to => :confirm
 end
 </ruby>
 
-In this example, the order will now transition from cart to address, then from address to delivery. After that, if your custom +cell_phone_included?+ method returns `true`, then the order will go to the +calling_plan+ step. If it does not, then it will skip that step and go straight to the +confirm+ step instead. This is why in the above example that there's two possible transitions for delivery: it can go either to the calling_plan state *or* the confirm state. It all will depend on t he +cell_phone_included?+ method.
+The first two states,+address+ and +delivery+,  will always be the first two states for any checkout processed through this store.
 
-INFO: You will also need a custom +app/views/spree/checkout/_calling_plan.html.erb+ partial and a migration to create any custom db fields required for the new step.
+The third step, payment, will only be available if payment is required on the order, which is determined by the +payment_required?+ method defined on the +Spree::Order+ model. Similarly, the confirm state is only used if confirmation is required.
 
-INFO: This completely overwrites the default +Spree::Order+ +state_machine+.  This means it is necessary to explicitly define all of the events, transitions, callbacks etc associated with the +Spree::Order+ +state_machine+ that you want to keep around. In this example we ommited everything except the definition of the +next+ event for brevity's sake.
+These conditional states present a situation where an order could transition from delivery to one of payment, confirm or complete. In the default checkout, we never want to transition from delivery to confirm, and therefore have removed it using the +remove_transition+ method of the Checkout DSL. The resulting transitions between states look like the image below:
+
+[TODO - State diagram]
+
+These tow helper methods are provided on +Spree::Order+ instances for your convinience:
+
+* +checkout_steps+: returns a list of all the potential states of the checkout.
+* +has_step?+: Used to check if the current order fufils the requirements for a specific state.
+
+
+If you want a list of all the currently available states for the checkout, use the +checkout_steps+ method, which will return the steps in an array.
+
+
+h4. Modifying the checkout flow
+
+To add or remove steps to the checkout flow, you must re-define the entire checkout flow. Imagine a situation where address and delivery were not required steps, as the store only "shipped" electronic goods, such as online games or movies. In this case, the checkout flow definition would be this:
+
+<ruby>
+checkout_flow do
+  go_to_state :payment, :if => lambda { |order| order.payment_required? }
+  go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
+  go_to_state :complete
+end
+</ruby>
+
+What will happen here is that when a user goes to checkout, they will be asked to (potentially) fill in their payment details and then (potentially) confirm the order. If they are not required to provide payment or confirmation for this order then checking out this order will result in its immediate completion.
 
 h4. The Checkout "Breadcrumb"
 
-The Spree code automatically creates a progress "breadcrumb" based on the available checkout states.  If you add a new state you'll want to add a translation for that state in the relevant translation file located in the +config/locales+ directory of your extension.
+The Spree code automatically creates a progress "breadcrumb" based on the available checkout states. The states listed in the breadcrumb come from the +Spree::Order#checkout_steps+ method. If you add a new state you'll want to add a translation for that state in the relevant translation file located in the +config/locales+ directory of your extension or application:
 
 <ruby>
 ---
-en-US:
-  checkout_steps:
-    # keys correspond to Checkout state names:
-    calling_plan: Calling Plan
+checkout_steps:
+  # keys correspond to Checkout state names:
+  calling_plan: Calling Plan
 </ruby>
 
 INFO: The default use of the breadcrumb is entirely optional.  It does not need to correspond to checkout states, nor does every state need to be represented.  Feel free to customize this behavior to meet your exact requirements.
