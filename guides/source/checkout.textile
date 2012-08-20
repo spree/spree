@@ -97,7 +97,7 @@ Three custom routes in spree_core handle all of the routing for a checkout:
   get '/checkout', :to => 'checkout#edit', :as => :checkout
 </ruby>
 
-The '/checkout' route maps to the +edit+ action of the +Spree::CheckoutController+. A request to this route will redirect to the current state of the current order. If the current order was in the "address" state, then a request to '/checkout' would redirect to '/checkout/addres'.
+The '/checkout' route maps to the +edit+ action of the +Spree::CheckoutController+. A request to this route will redirect to the current state of the current order. If the current order was in the "address" state, then a request to '/checkout' would redirect to '/checkout/address'.
 
 The '/checkout/:state' route is used for the previously mentioned route, and also maps to the +edit+ action of +Spree::CheckoutController+. 
 
