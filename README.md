@@ -108,7 +108,7 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
         bundle exec rake sandbox
 
-6. Start the server
+4. Start the server
 
         cd sandbox
         rails server
@@ -125,8 +125,6 @@ You can recompile your assets as follows:
 If you want to remove precompiled assets (recommended before you commit to Git and push your changes) use the following rake task:
 
     $ bundle exec rake assets:clean
-
-
 
 Running Tests
 -------------
