@@ -30,7 +30,7 @@ module Spree
 
     # sets self.cc_type while we still have the card number
     def set_card_type
-      self.cc_type ||= CardDetector.type?(number)
+      self.cc_type ||= CardDetector.brand?(number)
     end
 
     def name?
