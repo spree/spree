@@ -13,21 +13,10 @@ module Spree
       stub_authentication!
     end
 
-    it "can upload a new image for a product" do
-      lambda do
-        api_post :create,
-                 :image => { :attachment => upload_image("thinking-cat.jpg"),
-                             :viewable_type => 'Spree::Product',
-                             :viewable_id => product.id  }
-        response.status.should == 201
-        json_response.should have_attributes(attributes)
-      end.should change(Image, :count).by(1)
-    end
-
     it "can upload a new image for a variant" do
       lambda do
         api_post :create,
-                 :image => { :attachment => upload_image("thinking-cat.jpg"),
+                 :image => { :attachment => upload_image('thinking-cat.jpg'),
                              :viewable_type => 'Spree::Variant',
                              :viewable_id => product.master.to_param  }
         response.status.should == 201
@@ -36,7 +25,7 @@ module Spree
     end
 
     context "working with an existing image" do
-      let!(:product_image) { product.master.images.create!(:attachment => image("thinking-cat.jpg")) }
+      let!(:product_image) { product.master.images.create!(:attachment => image('thinking-cat.jpg')) }
 
       it "can update image data" do
         product_image.position.should == 1

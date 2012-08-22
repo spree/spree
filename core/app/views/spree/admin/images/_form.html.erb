@@ -3,14 +3,10 @@
     <td><%= t(:filename) %>:</td>
     <td><%= f.file_field :attachment %></td>
   </tr>
-  <% if @product.has_variants? %>
-    <tr data-hook="variant">
-      <td><%= Spree::Variant.model_name.human %>:</td>
-      <td><%= f.select :viewable_id, @variants %></td>
-    </tr>
-  <% else %>
-    <%= hidden_field_tag :product_id, @product.id %>
-  <% end %>
+  <tr data-hook="variant">
+    <td><%= Spree::Variant.model_name.human %>:</td>
+    <td><%= f.select :viewable_id, @variants %></td>
+  </tr>
   <tr data-hook="alt_text">
     <td><%= t(:alt_text) %>:</td>
     <td><%= f.text_area :alt %></td>

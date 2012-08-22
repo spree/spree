@@ -19,30 +19,22 @@ module Spree
 
 
       private
-  
+
         def location_after_save
           admin_product_images_url(@product)
         end
 
         def load_data
-          @product = Product.find_by_permalink(params[:product_id])
+          @product = Product.where(:permalink => params[:product_id]).first
           @variants = @product.variants.collect do |variant|
             [variant.options_text, variant.id]
           end
-          @variants.insert(0, [I18n.t(:all), 'All'])
+          @variants.insert(0, [I18n.t(:all), @product.master.id])
         end
 
         def set_viewable
-          if params[:image].has_key? :viewable_id
-            if params[:image][:viewable_id] == 'All'
-              @image.viewable = @product.master
-            else
-              @image.viewable_type = 'Spree::Variant'
-              @image.viewable_id = params[:image][:viewable_id]
-            end
-          else
-            @image.viewable = @product.master
-          end
+          @image.viewable_type = 'Spree::Variant'
+          @image.viewable_id = params[:image][:viewable_id]
         end
 
         def destroy_before
