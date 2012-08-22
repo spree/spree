@@ -6,6 +6,7 @@ module Spree
 
         attr_accessor :current_api_user
 
+        before_filter :set_content_type
         before_filter :check_for_api_key
         before_filter :authenticate_user
 
@@ -24,6 +25,16 @@ module Spree
         end
 
         private
+
+        def set_content_type
+          content_type = case params[:format]
+          when "json"
+            "application/json"
+          when "xml"
+            "text/xml"
+          end
+          headers["Content-Type"] = content_type
+        end
 
         def check_for_api_key
           render "spree/api/v1/errors/must_specify_api_key", :status => 401 and return if api_key.blank?
