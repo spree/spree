@@ -948,6 +948,7 @@ en:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
+  show_only_unfulfilled_orders: "Show only unfulfilled orders"
   showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"

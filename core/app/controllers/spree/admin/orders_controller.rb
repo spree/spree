@@ -20,6 +20,8 @@ module Spree
         created_at_gt = params[:q][:created_at_gt]
         created_at_lt = params[:q][:created_at_lt]
 
+        params[:q].delete(:inventory_units_shipment_id_null) if params[:q][:inventory_units_shipment_id_null] == "0"
+
         if !params[:q][:created_at_gt].blank?
           params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
         end
@@ -34,7 +36,7 @@ module Spree
         end
 
         @search = Order.ransack(params[:q])
-        @orders = @search.result.includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
+        @orders = @search.result(:distinct => true).includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
 
         # Restore dates
         params[:q][:created_at_gt] = created_at_gt
