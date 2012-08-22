@@ -14,7 +14,7 @@ Spree::Core::Engine.config.to_prepare do
 
       # has_spree_role? simply needs to return true or false whether a user has a role or not.
       def has_spree_role?(role_in_question)
-        spree_roles.where(:name => role_in_question.to_s).any?
+        spree_roles.any?{ |r| r.name == role_in_question.to_s.camelize || r.name == role_in_question.to_s }
       end
 
       def last_incomplete_spree_order
