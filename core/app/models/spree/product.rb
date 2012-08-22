@@ -117,6 +117,13 @@ module Spree
       end
     end
 
+    # override the delete method to set deleted_at value
+    # instead of actually deleting the product.
+    def delete
+      self.update_column(:deleted_at, Time.now)
+      variants_including_master.update_all(:deleted_at => Time.now)
+    end
+
     # Adding properties and option types on creation based on a chosen prototype
     attr_reader :prototype_id
     def prototype_id=(value)

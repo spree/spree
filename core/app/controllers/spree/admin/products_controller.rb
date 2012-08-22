@@ -19,13 +19,9 @@ module Spree
         end
       end
 
-      # override the destory method to set deleted_at value
-      # instead of actually deleting the product.
       def destroy
-        @product = Product.find_by_permalink!(params[:id])
-        @product.update_column(:deleted_at, Time.now)
-
-        @product.variants_including_master.update_all(:deleted_at => Time.now)
+        @product = Product.where(:permalink => params[:id]).first!
+        @product.delete
 
         flash.notice = I18n.t('notice_messages.product_deleted')
 
