@@ -82,6 +82,10 @@
         <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '' %>
         <%= label_tag nil, t(:show_only_complete_orders) %>
       </p>
+      <p>
+        <%= f.check_box :inventory_units_shipment_id_null, { }, '1', '0' %>
+        <%= label_tag nil, t(:show_only_unfulfilled_orders) %>
+      </p>
       <div data-hook="admin_orders_index_search_buttons">
         <p><%= button t(:search) %></p>
       </div>
