@@ -32,7 +32,7 @@ describe Spree::Admin::ImageSettingsController do
       after(:all) do
         Spree::Image.attachment_definitions[:attachment].delete :storage
       end
-      
+
       it "should be able to update s3 settings" do
         spree_put :update, { :preferences => {
           "use_s3"        => "1",
@@ -46,16 +46,16 @@ describe Spree::Admin::ImageSettingsController do
         Spree::Config[:s3_secret].should     == "a_secret"
         Spree::Config[:s3_bucket].should     == "some_bucket"
       end
-    
+
       context "headers" do
         before(:each) { Spree::Config[:use_s3] = true }
-          
+
         it "should be able to update the s3 headers" do
           spree_put :update, { :preferences => { "use_s3" => "1" }, "s3_headers" => { "Cache-Control" => "max-age=1111" } }
           headers = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
           headers["Cache-Control"].should == "max-age=1111"
         end
-          
+
         it "should be able to add a new header" do
           spree_put :update, { "s3_headers" => { }, "new_s3_headers" => { "1" => { "name" => "Charset", "value" => "utf-8" } } }
           headers = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
