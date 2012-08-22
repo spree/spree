@@ -57,8 +57,8 @@ module SpreeCmd
       elsif options[:version]
         @spree_gem_options[:version] = options[:version]
       else
-        require 'spree/core/version'
-        @spree_gem_options[:version] = Spree.version
+        version = Gem.loaded_specs['spree_cmd'].version
+        @spree_gem_options[:version] = version.to_s
       end
     end
 
