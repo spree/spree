@@ -339,6 +339,7 @@ en:
   customer_details_updated: "The customer's details have been updated."
   customer_search: "Customer Search"
   date_created: Date created
+  date_completed: Date Completed
   date_range: "Date Range"
   debit: Debit
   default: Default
