@@ -8,6 +8,7 @@
     <% if @order.completed? %>
       <h5 id="shipment_status"><%= t(:shipment) %>: <%= t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %></h5>
       <h5 id="payment_status"><%= t(:payment) %>: <%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></h5>
+      <h5 id="date_completed" style="width:100%; float:none;" data-hook><%= t(:date_completed) %>: <%= I18n.l(@order.completed? ? @order.completed_at : @order.created_at) %></h5>
     <% end %>
     <br class="clear" />
   </div>
