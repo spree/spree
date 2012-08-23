@@ -5,7 +5,7 @@ Your order has been shipped
 ============================================================
 Shipment Summary
 ============================================================
-<% @shipment.line_items.each do |item| %>
+<% @shipment.manifest.each do |item| %>
   <%= item.variant.sku %> <%= item.variant.product.name %> <%= variant_options(item.variant, :include_style => false) %> (<%= item.quantity %>)
 <% end %>
 ============================================================
