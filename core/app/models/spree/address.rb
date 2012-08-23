@@ -36,7 +36,7 @@ module Spree
     end
 
     def state_text
-      state.nil? ? state_name : (state.abbr.blank? ? state.name : state.abbr)
+      state.try(:abbr) || state.try(:name) || state_name 
     end
 
     def same_as?(other)
