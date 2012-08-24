@@ -27,11 +27,11 @@ module Spree
     end
 
     add_search_scope :ascend_by_master_price do
-      joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
+      joins(:master).order("#{variant_table_name}.price ASC")
     end
 
     add_search_scope :descend_by_master_price do
-      joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
+      joins(:master).order("#{variant_table_name}.price DESC")
     end
 
     add_search_scope :price_between do |low, high|

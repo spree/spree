@@ -31,7 +31,8 @@ module Spree
 
     has_one :master,
       :class_name => 'Spree::Variant',
-      :conditions => { :is_master => true }
+      :conditions => { :is_master => true },
+      :dependent => :destroy
 
     has_many :variants,
       :class_name => 'Spree::Variant',
@@ -41,11 +42,6 @@ module Spree
     has_many :variants_including_master,
       :class_name => 'Spree::Variant',
       :conditions => { :deleted_at => nil },
-      :dependent => :destroy
-
-    has_many :variants_with_only_master,
-      :class_name => 'Spree::Variant',
-      :conditions => { :is_master => true, :deleted_at => nil },
       :dependent => :destroy
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
@@ -85,6 +81,12 @@ module Spree
     alias :options :product_option_types
 
     after_initialize :ensure_master
+
+    def variants_with_only_master
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Product#variants_with_only_master will be deprecated in Spree 1.3. Please use Spree::Product#master instead.")
+      master
+    end
+
 
     def to_param
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
