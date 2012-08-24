@@ -14,6 +14,10 @@ module Spree
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
                     :month, :gateway_customer_profile_id, :gateway_payment_profile_id
 
+    def number=(num)
+      @number = num.gsub(/[^0-9]/, '') rescue nil
+    end
+    
     def set_last_digits
       number.to_s.gsub!(/\s/,'')
       verification_value.to_s.gsub!(/\s/,'')
