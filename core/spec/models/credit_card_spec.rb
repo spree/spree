@@ -191,5 +191,20 @@ describe Spree::CreditCard do
       credit_card.spree_cc_type.should == "master"
     end
   end
+
+  context "#number=" do
+    it "should strip non-numeric characters from card input" do
+      credit_card.number = "6011000990139424"
+      credit_card.number.should == "6011000990139424"
+
+      credit_card.number = "  6011-0009-9013-9424  "
+      credit_card.number.should == "6011000990139424"
+    end
+
+    it "should not raise an exception on non-string input" do
+      credit_card.number = Hash.new
+      credit_card.number.should be_nil
+    end
+  end
 end
 
