@@ -611,6 +611,11 @@ en:
       thanks: "Thank you for your business."
     cancel_email:
       subject: "Cancellation of Order"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been CANCELED.  Please retain this cancellation information for your records."
+      order_summary_canceled: "Order Summary [CANCELED]"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
