@@ -31,7 +31,7 @@ describe Spree::OrderMailer do
     end
 
     let!(:confirmation_email) { Spree::OrderMailer.confirm_email(order) }
-    let!(:cancel_email) { Spree::OrderMailer.confirm_email(order) }
+    let!(:cancel_email) { Spree::OrderMailer.cancel_email(order) }
 
     specify do
       confirmation_email.body.should_not include("Ineligible Adjustment")
