@@ -42,4 +42,31 @@ describe Spree::OrderMailer do
     end
   end
 
+  context "emails must be translatable by locale" do
+    context "en" do
+      before do
+        en = { :order_mailer => { :confirm_email => { :dear_customer => 'Dear Customer,' } } }
+        I18n.backend.store_translations :en, en
+        I18n.locale = :en
+      end
+
+      specify do
+        confirmation_email = Spree::OrderMailer.confirm_email(order)
+        confirmation_email.body.should include("Dear Customer,")
+      end
+    end
+
+    context "pt-BR" do
+      before do
+        pt_br = { :order_mailer => { :confirm_email => { :dear_customer => 'Caro Cliente,' } } }
+        I18n.backend.store_translations :'pt-BR', pt_br
+        I18n.locale = :'pt-BR'
+      end
+
+      specify do
+        confirmation_email = Spree::OrderMailer.confirm_email(order)
+        confirmation_email.body.should include("Caro Cliente,")
+      end
+    end
+  end
 end

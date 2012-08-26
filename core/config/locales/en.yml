@@ -603,6 +603,12 @@ en:
   order_mailer:
     confirm_email:
       subject:  "Order Confirmation"
+      dear_customer: "Dear Customer,"
+      instructions: "Please review and retain the following order information for your records."
+      order_summary: "Order Summary"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
+      thanks: "Thank you for your business."
     cancel_email:
       subject: "Cancellation of Order"
   order_not_in_system: That order number is not valid on this site.
