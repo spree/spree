@@ -195,4 +195,45 @@ describe Spree::Variant do
     end
 
   end
+
+  context "price parsing" do
+    before(:each) do
+      I18n.locale = I18n.default_locale
+      I18n.backend.store_translations(:de, { :number => { :currency => { :format => { :delimiter => '.', :separator => ',' } } } })
+    end
+
+    context "price=" do
+      context "with decimal point" do
+        it "captures the proper amount for a formatted price" do
+          variant.price = '1,599.99'
+          variant.price.should == 1599.99
+        end
+      end
+
+      context "with decimal comma" do
+        it "captures the proper amount for a formatted price" do
+          I18n.locale = :de
+          variant.price = '1.599,99'
+          variant.price.should == 1599.99
+        end
+      end
+    end
+
+    context "cost_price=" do
+      context "with decimal point" do
+        it "captures the proper amount for a formatted price" do
+          variant.cost_price = '1,599.99'
+          variant.cost_price.should == 1599.99
+        end
+      end
+
+      context "with decimal comma" do
+        it "captures the proper amount for a formatted price" do
+          I18n.locale = :de
+          variant.cost_price = '1.599,99'
+          variant.cost_price.should == 1599.99
+        end
+      end
+    end
+  end
 end
