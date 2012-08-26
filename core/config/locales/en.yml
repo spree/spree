@@ -609,8 +609,19 @@ en:
   order_mailer:
     confirm_email:
       subject:  "Order Confirmation"
+      dear_customer: "Dear Customer,"
+      instructions: "Please review and retain the following order information for your records."
+      order_summary: "Order Summary"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
+      thanks: "Thank you for your business."
     cancel_email:
       subject: "Cancellation of Order"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been CANCELED.  Please retain this cancellation information for your records."
+      order_summary_canceled: "Order Summary [CANCELED]"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
@@ -899,6 +910,11 @@ en:
   shipment_mailer:
     shipped_email:
       subject: "Shipment Notification"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been shipped"
+      shipment_summary: "Shipment Summary"
+      track_information: "Tracking Information: %{tracking}"
+      thanks: "Thank you for your business."
   shipment_number: "Shipment #"
   shipment_state: Shipment State
   shipment_states:

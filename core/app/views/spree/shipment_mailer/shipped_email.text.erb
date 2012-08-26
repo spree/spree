@@ -1,15 +1,15 @@
-Dear Customer,
+<%= t('shipment_mailer.shipped_email.dear_customer') %>
 
-Your order has been shipped
+<%= t('shipment_mailer.shipped_email.instructions') %>
 
 ============================================================
-Shipment Summary
+<%= t('shipment_mailer.shipped_email.shipment_summary') %>
 ============================================================
 <% @shipment.manifest.each do |item| %>
   <%= item.variant.sku %> <%= item.variant.product.name %> <%= variant_options(item.variant, :include_style => false) %> (<%= item.quantity %>)
 <% end %>
 ============================================================
 
-<%= "Tracking Information: #{@shipment.tracking}" if @shipment.tracking %>
+<%= t('shipment_mailer.shipped_email.track_information', :tracking => @shipment.tracking) if @shipment.tracking %>
 
-Thank you for your business.
+<%= t('shipment_mailer.shipped_email.thanks') %>
