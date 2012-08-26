@@ -903,6 +903,11 @@ en:
   shipment_mailer:
     shipped_email:
       subject: "Shipment Notification"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been shipped"
+      shipment_summary: "Shipment Summary"
+      track_information: "Tracking Information: %{tracking}"
+      thanks: "Thank you for your business."
   shipment_number: "Shipment #"
   shipment_state: Shipment State
   shipment_states:
