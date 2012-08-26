@@ -1,19 +1,20 @@
-Dear Customer,
+<%= t('order_mailer.confirm_email.dear_customer') %>
 
-Please review and retain the following order information for your records.
+<%= t('order_mailer.confirm_email.instructions') %>
 
 ============================================================
-Order Summary
+<%= t('order_mailer.confirm_email.order_summary') %>
 ============================================================
 <% @order.line_items.each do |item| %>
   <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= number_to_currency item.price %> = <%= number_to_currency(item.price * item.quantity) %>
 <% end %>
 ============================================================
-Subtotal: <%= number_to_currency @order.item_total %>
+<%= t('order_mailer.confirm_email.subtotal') %>: <%= number_to_currency @order.item_total %>
+
 <% @order.adjustments.eligible.each do |adjustment| %>
   <%= raw(adjustment.label) %> <%= number_to_currency(adjustment.amount) %>
 <% end %>
-Order Total: <%= number_to_currency(@order.total) %>
 
+<%= t('order_mailer.confirm_email.total') %>: <%= number_to_currency(@order.total) %>
 
-Thank you for your business.
+<%= t('order_mailer.confirm_email.thanks') %>
