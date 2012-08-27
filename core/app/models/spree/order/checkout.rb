@@ -3,10 +3,10 @@ module Spree
     module Checkout
       def self.included(klass)
         klass.class_eval do
-          cattr_accessor :next_event_transitions
-          cattr_accessor :previous_states
-          cattr_accessor :checkout_flow
-          cattr_accessor :checkout_steps
+          class_attribute :next_event_transitions
+          class_attribute :previous_states
+          class_attribute :checkout_flow
+          class_attribute :checkout_steps
 
           def self.checkout_flow(&block)
             if block_given?
@@ -18,13 +18,27 @@ module Spree
           end
 
           def self.define_state_machine!
-            self.checkout_steps = []
-            @checkout_steps = ActiveSupport::OrderedHash.new
+            # Needs to be an ordered hash to preserve flow order
+            self.checkout_steps = ActiveSupport::OrderedHash.new
             self.next_event_transitions = []
             self.previous_states = [:cart]
+
+            # Build the checkout flow using the checkout_flow defined either
+            # within the Order class, or a decorator for that class.
+            #
+            # This method may be called multiple times depending on if the
+            # checkout_flow is re-defined in a decorator or not.
             instance_eval(&checkout_flow)
+
+            # Add complete state as the final state
+            # This removes the need to add it to checkout_flow definitions
             klass = self
 
+            # To avoid a ton of warnings when the state machine is re-defined
+            StateMachine::Machine.ignore_method_conflicts = true
+            # To avoid multiple occurrences of the same transition being defined
+            # On first definition, state_machines will not be defined
+            state_machines.clear if respond_to?(:state_machines)
             state_machine :state, :initial => :cart do
               klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
 

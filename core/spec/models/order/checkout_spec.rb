@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order do
   let(:order) { Spree::Order.new }
+
   context "with default state machine" do
     it "has the following transitions" do
       transitions = [
@@ -132,10 +133,59 @@ describe Spree::Order do
         end
 
         it "transitions to complete" do
+          order.should_receive(:process_payments!).once
           order.next!
           order.state.should == "complete"
         end
       end
+    end
+  end
+
+  context "subclassed order" do
+    # This causes another test above to fail, but fixing this test should make
+    #   the other test pass
+    class SubclassedOrder < Spree::Order
+      checkout_flow do
+        go_to_state :payment
+        go_to_state :complete
+      end
+    end
+
+    it "should only call default transitions once when checkout_flow is redefined" do
+      order = SubclassedOrder.new
+      order.should_receive(:process_payments!).once
+      order.state = "payment"
+      order.next!
+      order.state.should == "complete"
+    end
+  end
+
+  context "re-define checkout flow" do
+    before do
+      @old_checkout_flow = Spree::Order.checkout_flow
+      Spree::Order.class_eval do
+        checkout_flow do
+          go_to_state :payment
+          go_to_state :complete
+        end
+      end
+    end
+
+    after do
+      Spree::Order.checkout_flow = @old_checkout_flow
+    end
+
+    it "should not keep old event transitions when checkout_flow is redefined" do
+      Spree::Order.next_event_transitions.should == [{:cart=>:payment}, {:payment=>:complete}]
+    end
+
+    it "should not keep old events when checkout_flow is redefined" do
+      state_machine = Spree::Order.state_machine
+      state_machine.states.any? { |s| s.name == :address }.should be_false
+      known_states = state_machine.events[:next].branches.map(&:known_states).flatten
+      known_states.should_not include(:address)
+      known_states.should_not include(:delivery)
+      known_states.should_not include(:confirm)
     end
   end
 end
