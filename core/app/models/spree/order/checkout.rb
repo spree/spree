@@ -30,8 +30,6 @@ module Spree
             # checkout_flow is re-defined in a decorator or not.
             instance_eval(&checkout_flow)
 
-            # Add complete state as the final state
-            # This removes the need to add it to checkout_flow definitions
             klass = self
 
             # To avoid a ton of warnings when the state machine is re-defined
