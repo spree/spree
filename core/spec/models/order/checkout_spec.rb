@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order do
   let(:order) { Spree::Order.new }
+
   context "with default state machine" do
     it "has the following transitions" do
       transitions = [
@@ -132,9 +133,52 @@ describe Spree::Order do
         end
 
         it "transitions to complete" do
+          order.should_receive(:process_payments!).once
           order.next!
           order.state.should == "complete"
         end
+      end
+    end
+  end
+
+  context "subclassed order" do
+    # This causes another test above to fail, but fixing this test should make
+    #   the other test pass
+    class SubclassedOrder < Spree::Order
+      checkout_flow do
+        go_to_state :payment
+        go_to_state :complete
+      end
+    end
+
+    it "should only call default transitions once when checkout_flow is redefined" do
+      order = SubclassedOrder.new
+      order.should_receive(:process_payments!).once
+      order.state = "payment"
+      order.next!
+      order.state.should == "complete"
+    end
+  end
+
+  context "dup order" do
+    DupOrder = Spree::Order.dup
+
+    DupOrder.class_eval do
+      checkout_flow do
+        go_to_state :payment
+        go_to_state :complete
+      end
+    end
+
+    it "should not keep old event transitions when checkout_flow is redefined" do
+      DupOrder.next_event_transitions.should == [{:cart=>:payment}, {:payment=>:complete}]
+    end
+
+    it "should not keep old events when checkout_flow is redefined" do
+      DupOrder.state_machine :state, :initial => :cart do
+        # This is a terrible way of performing the test, but it demonstrates the
+        #   failure
+        events[:next].inspect.should_not =~ /:cart => :address/
       end
     end
   end
