@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Order do
   let(:order) { Spree::Order.new }
   before do
+    # Ensure state machine has been re-defined correctly
+    Spree::Order.define_state_machine!
     # We don't care about this validation here
     order.stub(:require_email)
   end
