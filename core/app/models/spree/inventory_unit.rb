@@ -107,7 +107,8 @@ module Spree
       end
 
       def restock_variant
-        variant.increment(:on_hand)
+        variant.on_hand += 1
+        variant.save
       end
   end
 end
