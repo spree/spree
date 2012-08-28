@@ -137,6 +137,8 @@ Add the following to your Gemfile
 
 Then run `bundle install`. Authentication will then work exactly as it did in previous versions of Spree.
 
+This line is automatically added by the `spree install` command.
+
 If you're installing this in a new Spree 1.2+ application, you'll need to install and run the migrations with
 
     $ bundle exec rake spree_auth:install:migrations
