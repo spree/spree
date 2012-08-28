@@ -9,6 +9,8 @@ describe Spree::Order do
       it "o'brien@gmail.com is a valid email address" do
         order.state = 'address'
         order.email = "o'brien@gmail.com"
+        p order.valid?
+        p order.errors
         order.should be_valid
       end
     end
