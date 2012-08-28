@@ -60,8 +60,7 @@ module Spree
       event :next do
         transition :from => 'cart',     :to => 'address'
         transition :from => 'address',  :to => 'delivery'
-        transition :from => 'delivery', :to => 'payment', :if => :payment_required?
-        transition :from => 'delivery', :to => 'complete'
+        transition :from => 'delivery', :to => 'payment'
         transition :from => 'confirm',  :to => 'complete'
 
         # note: some payment methods will not support a confirm step
@@ -96,7 +95,7 @@ module Spree
 
       after_transition :to => 'complete', :do => :finalize!
       after_transition :to => 'delivery', :do => :create_tax_charge!
-      after_transition :to => 'payment',  :do => :create_shipment!
+      after_transition :to => 'payment',  :do => :after_payment
       after_transition :to => 'resumed',  :do => :after_resume
       after_transition :to => 'canceled', :do => :after_cancel
 
@@ -584,6 +583,12 @@ module Spree
       def has_available_payment
         return unless :delivery == state_name.to_sym
         errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
+      end
+
+      def after_payment
+        create_shipment!
+        update!
+        next! if !payment_required?
       end
 
       def after_cancel
