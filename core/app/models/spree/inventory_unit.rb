@@ -1,9 +1,9 @@
 module Spree
   class InventoryUnit < ActiveRecord::Base
-    belongs_to :variant, :class_name => "Spree::Variant"
-    belongs_to :order, :class_name => "Spree::Order"
-    belongs_to :shipment, :class_name => "Spree::Shipment"
-    belongs_to :return_authorization, :class_name => "Spree::ReturnAuthorization"
+    belongs_to :variant
+    belongs_to :order
+    belongs_to :shipment
+    belongs_to :return_authorization
 
     scope :backorder, where(:state => 'backordered')
 
@@ -107,7 +107,7 @@ module Spree
       end
 
       def restock_variant
-        variant.on_hand = (variant.on_hand + 1)
+        variant.on_hand += 1
         variant.save
       end
   end
