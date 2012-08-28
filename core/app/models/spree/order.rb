@@ -1,8 +1,9 @@
 require 'spree/core/validators/email'
+require 'spree/order/checkout'
 
 module Spree
   class Order < ActiveRecord::Base
-    include Checkout
+    include Spree::Order::Checkout
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
