@@ -27,8 +27,9 @@ describe Spree::Variant do
     variant.stub :is_master? => true
     variant.product.should_receive(:on_hand).and_return(3)
     variant.product.should_receive(:update_column).with(:count_on_hand, 3)
-    variant.decrement!(:count_on_hand)
+    variant.run_callbacks(:save)
   end
+
 
   context "on_hand=" do
     before { variant.stub(:inventory_units => mock('inventory-units')) }
