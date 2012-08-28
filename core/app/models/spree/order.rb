@@ -3,6 +3,14 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < ActiveRecord::Base
+    # TODO:
+    # Need to use fully qualified name here because during sandbox migration
+    # there is a class called Checkout which conflicts if you use this:
+    #
+    #   include Checkout
+    #
+    # rather than the qualified name. This will most likely be fixed with the
+    # 1.3 release.
     include Spree::Order::Checkout
     checkout_flow do
       go_to_state :address
