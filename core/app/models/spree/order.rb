@@ -589,6 +589,10 @@ module Spree
       end
 
       def after_cancel
+        if shipment_state == 'pending'
+          self.update_attribute(:payment_state, 'credit_owed')
+        end
+
         restock_items!
 
         #TODO: make_shipments_pending

@@ -648,6 +648,7 @@ describe Spree::Order do
         # TODO: This is ugly :(
         Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
         mail_message.stub :deliver
+        order.stub :shipment_state => 'pending'
       end
 
       context "without shipped items" do
