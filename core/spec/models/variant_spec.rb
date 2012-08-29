@@ -199,6 +199,10 @@ describe Spree::Variant do
       I18n.backend.store_translations(:de, { :number => { :currency => { :format => { :delimiter => '.', :separator => ',' } } } })
     end
 
+    after do
+      I18n.locale = I18n.default_locale
+    end
+
     context "price=" do
       context "with decimal point" do
         it "captures the proper amount for a formatted price" do
