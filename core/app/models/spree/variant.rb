@@ -51,18 +51,12 @@ module Spree
       end
     end
 
-    # strips all non-price-like characters from the price.
     def price=(price)
-      if price.present?
-        self[:price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
-      end
+      self[:price] = parse_price(price) if price.present?
     end
 
-    # and cost_price
     def cost_price=(price)
-      if price.present?
-        self[:cost_price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
-      end
+      self[:cost_price] = parse_price(price) if price.present?
     end
 
     # returns number of units currently on backorder for this variant.
@@ -139,6 +133,18 @@ module Spree
 
 
     private
+
+      # strips all non-price-like characters from the price, taking into account locale settings
+      def parse_price(price)
+        price = price.to_s
+
+        separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
+        non_price_characters = /[^0-9\-#{separator}]/
+        price.gsub!(non_price_characters, '') # strip everything else first
+        price.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
+
+        price.to_d
+      end
 
       # Ensures a new variant takes the product master price when price is not supplied
       def check_price
