@@ -144,6 +144,14 @@ If you're installing this in a new Spree 1.2+ application, you'll need to instal
     $ bundle exec rake spree_auth:install:migrations
     $ bundle exec rake db:migrate
 
+change the following line in `config/initializers/spree.rb`
+```ruby
+Spree.user_class = "Spree::LegacyUser"
+```
+to
+```ruby
+Spree.user_class = "Spree::User"
+```
 and then run `bundle exec rake spree_auth:admin:create` in order to set up the admin user for the application.
 
 Running Tests
