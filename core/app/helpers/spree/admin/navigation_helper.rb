@@ -17,7 +17,11 @@ module Spree
 
         titleized_label = t(options[:label], :default => options[:label]).titleize
 
-        link = link_to(titleized_label, destination_url)
+        if options[:icon]
+          link = link_to_with_icon(options[:icon], titleized_label, destination_url)
+        else
+          link = link_to(titleized_label, destination_url)
+        end
 
         css_classes = []
 
@@ -64,7 +68,7 @@ module Spree
       end
 
       def icon(icon_name)
-        icon_name ? image_tag("admin/icons/#{icon_name}.png") : ''
+        icon_name ? content_tag(:i, '', :class => icon_name) : ''
       end
 
       def button(text, icon_name = nil, button_type = 'submit', options={})

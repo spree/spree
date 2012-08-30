@@ -14,11 +14,13 @@
 <div id="new_option_type"></div>
 
 <table class="index sortable" id="listing_option_types" data-hook data-sortable-link="<%= update_positions_admin_option_types_url %>">
-  <tr data-hook="option_header">
-    <th><%= t(:name) %></th>
-    <th><%= t(:presentation) %></th>
-    <th></th>
-  </tr>
+  <thead>
+    <tr data-hook="option_header">
+      <th><%= t(:name) %></th>
+      <th><%= t(:presentation) %></th>
+      <th></th>
+    </tr>
+  </thead>
   <tbody>
   <% @option_types.each do |option_type| %>
     <tr class="spree_option_type" id="<%= spree_dom_id option_type %>" data-hook="option_row">

@@ -3,14 +3,16 @@
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Images'} %>
 
 <table class="index sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
-  <tr data-hook="images_header">
-    <th><%= t(:thumbnail) %></th>
-    <% if @product.has_variants? %>
-      <th><%= Spree::Variant.model_name.human %></th>
-    <% end %>
-    <th><%= t(:alt_text) %></th>
-    <th><%= t(:action) %></th>
-  </tr>
+  <thead>
+    <tr data-hook="images_header">
+      <th><%= t(:thumbnail) %></th>
+      <% if @product.has_variants? %>
+        <th><%= Spree::Variant.model_name.human %></th>
+      <% end %>
+      <th><%= t(:alt_text) %></th>
+      <th><%= t(:action) %></th>
+    </tr>
+  </thead>
 
   <tbody>
   <% @product.images.each do |image| %>

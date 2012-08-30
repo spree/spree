@@ -3,13 +3,15 @@
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Variants'} %>
 
 <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
-  <tr data-hook="variants_header">
-    <th><%= t(:options) %></th>
-    <th><%= t(:price) %></th>
-    <th><%= t(:sku) %></th>
-    <th><%= t(:on_hand) %></th>
-    <th><%= t(:action) %></th>
-  </tr>
+  <thead>
+    <tr data-hook="variants_header">
+      <th><%= t(:options) %></th>
+      <th><%= t(:price) %></th>
+      <th><%= t(:sku) %></th>
+      <th><%= t(:on_hand) %></th>
+      <th><%= t(:action) %></th>
+    </tr>
+  </thead>
   <tbody>
   <% @variants.each do |variant| %>
     <!-- you can skip variant with no options: that's just the default variant that all products have -->

@@ -14,25 +14,29 @@
 <div id="new_product" data-hook></div>
 
 <table class="index" id="listing_products">
-  <tr data-hook="admin_products_index_headers">
-    <th><%= t(:sku) %></th>
-    <th><%= sort_link @search,:name, t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
-    <th><%= sort_link @search,:master_price, t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
-    <th data-hook="admin_products_index_header_actions"></th>
-  </tr>
+  <thead>
+    <tr data-hook="admin_products_index_headers">
+      <th><%= t(:sku) %></th>
+      <th><%= sort_link @search,:name, t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
+      <th><%= sort_link @search,:master_price, t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
+      <th data-hook="admin_products_index_header_actions"></th>
+    </tr>  
+  </thead>  
 <% @collection.each do |product| %>
-  <tr <%= "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows">
-    <td><%= product.sku rescue '' %></td>
-    <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
-    <td><%= money(product.price) rescue '' %></td>
-    <td class="actions" data-hook="admin_products_index_row_actions">
-      <%= link_to_edit product, :class => 'edit' unless product.deleted? %>
-      &nbsp;
-      <%= link_to_clone product, :class => 'clone' %>
-      &nbsp;
-      <%= link_to_delete product unless product.deleted? %>
-    </td>
-  </tr>
+  <tbody>
+    <tr <%= "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows">
+      <td><%= product.sku rescue '' %></td>
+      <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
+      <td><%= money(product.price) rescue '' %></td>
+      <td class="actions" data-hook="admin_products_index_row_actions">
+        <%= link_to_edit product, :class => 'edit' unless product.deleted? %>
+        &nbsp;
+        <%= link_to_clone product, :class => 'clone' %>
+        &nbsp;
+        <%= link_to_delete product unless product.deleted? %>
+      </td>
+    </tr>
+  </tbody>
 <% end %>
 </table>
 <%= paginate @collection %>

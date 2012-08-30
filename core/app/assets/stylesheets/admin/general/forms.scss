@@ -1,0 +1,39 @@
+@import "../variables";
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+input[type="datetime"],
+input[type="time"],
+input[type="url"],
+input[type="number"] {
+  padding: 5px 10px;
+  border: 1px solid $color-border;
+  color: $color-body-text;
+  font-size: 80%;
+
+  &:focus {
+    outline: none;
+    border-color: lighten($c_green1, 30);
+  }
+}
+
+label {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 80%;
+}
+
+input[type="submit"], 
+input[type="button"], 
+button, .button {
+  padding: 5px 10px;
+  border: 1px solid $color-border;
+  background-color: lighten($color-border, 5);
+  color: $color-body-text;
+}
+
+.field {
+  margin-bottom: 10px;
+}
