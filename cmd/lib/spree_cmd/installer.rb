@@ -70,6 +70,8 @@ module SpreeCmd
         if @user_class.blank?
           @user_class = "User"
         end
+      else
+        @user_class = "Spree::User"
       end
 
       if options[:skip_install_data]
