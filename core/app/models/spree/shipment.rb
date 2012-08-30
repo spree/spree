@@ -26,9 +26,10 @@ module Spree
 
     make_permalink :field => :number
 
-    scope :shipped, where(:state => 'shipped')
-    scope :ready,   where(:state => 'ready')
-    scope :pending, where(:state => 'pending')
+    scope :with_state, lambda { |s| where(:state => s) }
+    scope :shipped, with_state('shipped')
+    scope :ready,   with_state('ready')
+    scope :pending, with_state('pending')
 
     def to_param
       number if number

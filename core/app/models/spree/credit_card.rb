@@ -67,7 +67,7 @@ module Spree
       cc_type
     end
 
-    scope :with_payment_profile, where('gateway_customer_profile_id IS NOT NULL')
+    scope :with_payment_profile, lambda { where('gateway_customer_profile_id IS NOT NULL') }
 
     def actions
       %w{capture void credit}

@@ -3,7 +3,7 @@ module Spree
     DISPLAY = [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
-    scope :production, where(:environment => 'production')
+    scope :production, lambda { where(:environment => 'production') }
 
     attr_accessible :name, :description, :environment, :display_on, :active
 
