@@ -76,6 +76,10 @@ describe Spree::OrderMailer do
         I18n.locale = :'pt-BR'
       end
 
+      after do
+        I18n.locale = I18n.default_locale
+      end
+
       context "confirm_email" do
         specify do
           confirmation_email = Spree::OrderMailer.confirm_email(order)
