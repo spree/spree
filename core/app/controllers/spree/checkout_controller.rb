@@ -39,11 +39,19 @@ module Spree
 
     private
       def ensure_valid_state
-        if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
-           (!params[:state] && !@order.checkout_steps.include?(@order.state))
-          @order.state = 'cart'
-          redirect_to checkout_state_path(@order.checkout_steps.first)
+        unless skip_state_validation?
+          if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
+             (!params[:state] && !@order.checkout_steps.include?(@order.state))
+            @order.state = 'cart'
+            redirect_to checkout_state_path(@order.checkout_steps.first)
+          end
         end
+      end
+
+      # Should be overriden if you have areas of your checkout that don't match
+      # up to a step within checkout_steps, such as a registration step
+      def skip_state_validation?
+        false
       end
 
       def load_order
