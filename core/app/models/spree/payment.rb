@@ -18,7 +18,7 @@ module Spree
 
     attr_accessible :amount, :payment_method_id, :source_attributes
 
-    scope :from_credit_card, where(:source_type => 'Spree::CreditCard')
+    scope :from_credit_card, lambda { where(:source_type => 'Spree::CreditCard') }
     scope :with_state, lambda { |s| where(:state => s) }
     scope :completed, with_state('completed')
     scope :pending, with_state('pending')

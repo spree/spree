@@ -24,8 +24,8 @@ module Spree
     after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
-    scope :active, where(:deleted_at => nil)
-    scope :deleted, where('deleted_at IS NOT NULL')
+    scope :active, lambda { where(:deleted_at => nil) }
+    scope :deleted, lambda { where('deleted_at IS NOT NULL') }
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
