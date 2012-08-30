@@ -107,7 +107,7 @@ module Spree
           format.html do
             if try_spree_current_user
               flash.now[:error] = t(:authorization_failure)
-              render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
+              render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
             else
               store_location
               url = respond_to?(:spree_login_path) ? spree_login_path : root_path
