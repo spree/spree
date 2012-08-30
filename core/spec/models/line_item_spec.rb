@@ -186,9 +186,12 @@ describe Spree::LineItem do
       shipping_method = mock_model(Spree::ShippingMethod, :calculator => mock(:calculator))
       shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
       shipment.stub(:state => 'shipped')
-      inventory_units = 5.times.map { Spree::InventoryUnit.new({:variant => line_item.variant}, :without_protection => true) }
+      shipped_inventory_units = 5.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'shipped' }, :without_protection => true) }
+      unshipped_inventory_units = 2.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'sold' }, :without_protection => true) }
+      inventory_units = shipped_inventory_units + unshipped_inventory_units
       order.stub(:shipments => [shipment])
       shipment.stub(:inventory_units => inventory_units)
+      shipment.stub_chain(:inventory_units, :shipped).and_return(shipped_inventory_units)
     end
 
     it 'should not allow quantity to be adjusted lower than already shipped units' do
