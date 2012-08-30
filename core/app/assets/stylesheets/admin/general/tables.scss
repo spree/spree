@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import "../variables";
 
 table {
@@ -38,5 +39,10 @@ table {
       &.state-cart     { border-color: lighten($c_blue1, 30) }
 
     }
+=======
+table {
+  th, td {
+    padding: 10px;
+>>>>>>> Initial admin redesign stage
   }
 }

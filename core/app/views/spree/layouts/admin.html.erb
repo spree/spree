@@ -33,7 +33,7 @@
 
             <!-- <h1 class="columns four" data-hook="admin-title"><%= link_to t(:administration), spree.admin_path %></h1> -->
 
-            <nav data-hook="admin_login_navigation_bar" class="columns eight"></nav>
+            <!-- <nav data-hook="admin_login_navigation_bar" class="columns eight"></nav> -->
 
           </div>
         </div>
@@ -50,6 +50,7 @@
         </div>
       </nav>
 
+<<<<<<< HEAD
       <% if content_for?(:sub_menu) %>
         <nav id="sub-menu" data-hook>
           <div class="container">
@@ -92,12 +93,39 @@
             <% end %>
 
             <div class="<%= if content_for?(:sidebar) then 'twelve alpha' else 'sixteen' end %> columns">
+=======
+      <div class="container">
+        <div class="row">
+          <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %>" id="content" data-hook>
+
+            <% if content_for?(:sub_menu) %>
+              <nav id="sub-menu" data-hook>
+                <div class="container">
+                  <div class="row">
+                    <%= yield :sub_menu %>
+                  </div>
+                </div>
+              </nav>
+            <% end %>
+
+            <% if content_for?(:content_header) %>
+              <header id="content-header" data-hook>
+                <%= yield :content_header %>
+              </header>
+            <% end %>
+
+            <div class="<%= if content_for?(:sidebar) then 'twelve' else 'sixteen' end %> columns">
+>>>>>>> Initial admin redesign stage
               <%= yield %>
             </div>
 
 
             <% if content_for?(:sidebar) %>
+<<<<<<< HEAD
               <aside id="sidebar" data-hook class="four columns omega">
+=======
+              <aside id="sidebar" data-hook class="four columns">
+>>>>>>> Initial admin redesign stage
                 <%= yield :sidebar %>
               </aside>
             <% end %>

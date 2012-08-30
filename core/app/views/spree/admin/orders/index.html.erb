@@ -15,65 +15,6 @@
     
     <h3 class="filter-title"><%= t(:search) %></h3>
 
-    <%= search_form_for [:admin, @search] do |f| %>
-      <div class="field-block field">
-        <%= label_tag nil, t(:date_range) %><br />
-        <div class="date-range-filter">
-          <div class="left sub-field">
-            <%= f.text_field :created_at_gt, :class => 'datepicker', :value => params[:q][:created_at_gt] %><br />
-            <%= label_tag nil, t(:start), :class => 'sub' %>
-          </div>
-          <div class="right sub-field">
-            <%= f.text_field :created_at_lt, :class => 'datepicker', :value => params[:q][:created_at_lt] %><br />
-            <%= label_tag nil, t(:stop), :class => 'sub' %>
-          </div>
-        </div>  
-      </div>
-      
-      <div class="field">
-        <%= label_tag nil, t(:status) %>
-        <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true} %>  
-      </div>
-      
-      <div class="field">
-        <%= label_tag nil, t(:order_number) %>
-        <%= f.text_field :number_cont, :size => 25 %>
-      </div>
-
-      <div class="field">
-        <%= label_tag nil, t(:email) %>
-        <%= f.text_field :email_cont, :size => 25 %>
-      </div>
-
-      <div class="field">
-        <%= label_tag nil, t(:first_name_begins_with) %>
-        <%= f.text_field :bill_address_firstname_start, :size => 25 %>
-      </div>
-      
-      <div class="field">
-        <%= label_tag nil, t(:last_name_begins_with) %>
-        <%= f.text_field :bill_address_lastname_start, :size => 25 %>
-      </div>
-
-      <div class="field">
-        <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '' %>
-        <%= label_tag nil, t(:show_only_complete_orders) %>
-      </div>
-
-      <div class="field">
-        <%= f.check_box :inventory_units_shipment_id_null, { }, '1', '0' %>
-        <%= label_tag nil, t(:show_only_unfulfilled_orders) %>
-      </div>
-
-      <div class="actions">
-        <div data-hook="admin_orders_index_search_buttons">
-          <%= button t(:search), 'icon-search' %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-<% end %>
-
 <table class="index responsive" id="listing_orders" data-hook>
   <thead>
     <tr data-hook="admin_orders_index_headers">
