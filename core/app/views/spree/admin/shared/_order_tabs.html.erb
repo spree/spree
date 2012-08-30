@@ -20,7 +20,7 @@
         <dt id="payment_status"><%= t(:payment) %>: </dt>
         <dd><span class="state <%= @order.payment_state %>"><%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></dd>
         <dt id="date_completed" data-hook><%= t(:date_completed) %>:</dt>
-        <dd><%= I18n.l(@order.completed? ? @order.completed_at : @order.created_at) %></dd>      
+        <dd><%= I18n.l(@order.completed? ? @order.completed_at : @order.created_at) %></dd>
       <% end %>
     </dl>
   </header>

@@ -33,18 +33,18 @@
           </div>
         </div>
         
-        <div class="four columns">
+        <div class="alpha four columns">
           <div class="field">
             <%= label_tag nil, t(:order_number) %>
-            <%= f.text_field :number_cont %>
+            <%= f.text_field :number_cont, :size => 25 %>
           </div>
           <div class="field">
             <%= label_tag nil, t(:email) %>
-            <%= f.email_field :email_cont %>
+            <%= f.text_field :email_cont, :size => 25 %>
           </div>
         </div>
         
-        <div class="four columns">
+        <div class="alpha four columns">
           <div class="field">
             <%= label_tag nil, t(:first_name_begins_with) %>
             <%= f.text_field :bill_address_firstname_start, :size => 25 %>

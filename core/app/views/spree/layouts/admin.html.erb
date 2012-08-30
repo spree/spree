@@ -22,10 +22,8 @@
       <% end %>
 
       <div id="progress">
-        <div class="wrapper">
-          <div id="spinner"></div>
-          <div class="progress-message"><%= t(:loading) %>...</div>
-        </div>
+        <div id="spinner"></div>
+        <%= t(:loading) %>...
       </div>
 
       <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>

@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
 =======
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
@@ -18,6 +19,12 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockqu
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 =======
 >>>>>>> Shipment edit styles
+=======
+=======
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
+
+>>>>>>> New admin design for Spree 2.0
+>>>>>>> New admin design for Spree 2.0
 * { 
 <<<<<<< HEAD
   -webkit-box-sizing: border-box; 
@@ -47,6 +54,7 @@ body {
   .table-cell {
     display: table-cell;
     vertical-align: middle;
+<<<<<<< HEAD
     padding: 0 10px;
 
     &:first-child {
@@ -55,6 +63,8 @@ body {
     &:last-child {
       padding-right: 0;
     }
+=======
+>>>>>>> New admin design for Spree 2.0
   }
 }
 

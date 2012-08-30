@@ -1,0 +1,163 @@
+@import "../variables";
+
+// Basics
+//---------------------------------------------------
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
+
+* { 
+  -webkit-box-sizing: border-box; 
+     -moz-box-sizing: border-box; 
+          box-sizing: border-box; 
+  text-rendering: optimizeLegibility; 
+}
+
+body {
+  font-family: $base-font-family;
+  font-size: $body-font-size;
+  color: $color-body-text;
+}
+
+// Helpers
+.block-table {
+  display: table;
+  width: 100%;
+
+  .table-cell {
+    display: table-cell;
+  }
+}
+
+// Header
+//---------------------------------------------------
+#header {
+  background-color: white;
+}
+#logo { height: 50px }
+[data-hook="admin-title"] { font-size: 14px }
+
+// Navigation
+//---------------------------------------------------
+.inline-menu { 
+  margin: 0;
+  -webkit-margin-before: 0;
+  -webkit-padding-start: 0;
+}
+
+[data-hook="admin_login_navigation_bar"] {
+  ul {
+    text-align: right;
+
+    li {
+      padding: 5px 0 5px 10px;
+      text-align: right;
+      font-size: 85%;
+      color: $color-links;
+      margin-top: 15px;
+
+      &[data-hook="user-logged-in-as"] {
+        width: 50%;
+        color: $color-body-text;
+      }
+
+      &:hover {
+        i {
+          color: $c_green1;
+        }
+      }
+    }
+  }
+}
+
+#admin-menu {
+  background-color: $c_blue1;
+
+  li {
+    a {
+      display: block;
+      padding: 20px;
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+      position: relative;
+      text-align: center;
+
+      i {
+        display: inline;
+      }
+
+      &:hover {
+        background-color: $c_green1;
+
+        &:after {
+          content: '';
+          position: absolute;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 5px solid $c_green1;
+          bottom: 0px;
+          margin-bottom: -5px;
+          left: 50%;
+          margin-left: -10px;
+          z-index: 1;
+        }
+      }
+    }
+
+    &.selected a {
+      @extend a:hover;
+    }
+  }
+}
+
+#sub-menu {
+  background-color: $c_green1;
+  padding-bottom: 0;
+
+  li {
+    a {
+      display: block;
+      padding: 12px 20px;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    &.selected a, a:hover {
+      background-color: white;
+      color: $c_blue1;
+    }
+  }
+}
+
+// Sidebar
+//---------------------------------------------------
+
+// Content
+//---------------------------------------------------
+#content {
+  background-color: white;
+  position: relative;
+  z-index: 0;
+<<<<<<< HEAD
+}
+=======
+  padding: 15px 0;
+}
+
+#content-header {
+  padding: 15px 0;
+  background-color: lighten($c_blue1, 50);
+  border-bottom: 1px solid lighten($c_blue1, 45);
+
+  .page-title {
+    font-size: 130%;
+  }
+<<<<<<< HEAD
+}
+>>>>>>> Inital stage of admin redesign in progress ...
+=======
+  .page-actions {
+    text-align: right;
+  }
+}
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons

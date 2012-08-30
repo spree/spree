@@ -1,0 +1,14 @@
+@import "../variables";
+
+#table-filter {
+  fieldset {
+    background-color: lighten($c_blue1, 50);
+    border: 1px solid lighten($c_blue1, 45);
+    margin-bottom: 15px;
+    padding: 5px 0;
+
+    .field {
+      padding: 0 5px;
+    }
+  }
+}

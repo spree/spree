@@ -8,8 +8,11 @@
 >>>>>>> SCSS cleanup
 // Base
 //--------------------------------------------------------------
+<<<<<<< HEAD
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
 
+=======
+>>>>>>> New admin design for Spree 2.0
 body {
   font-family: $base-font-family;
   font-size: $body-font-size;
@@ -153,7 +156,10 @@ dl {
 // States
 //--------------------------------------------------------------
 .state {
+<<<<<<< HEAD
   @include border-radius(3px);
+=======
+>>>>>>> New admin design for Spree 2.0
   text-transform: uppercase;
   font-size: 70%;
   border: 1px solid transparent;
@@ -206,6 +212,7 @@ dl {
   font-weight: bold;
 >>>>>>> More work tables styling
   border: 1px solid transparent;
+<<<<<<< HEAD
   padding: 2px 5px;  
   width: 100%;
   display: inline-block;
@@ -214,6 +221,15 @@ dl {
   &.complete, &.ready, &.paid, &.sold {
     background-color: $c_green1;
 
+=======
+  border-radius: 10px;
+  padding: 2px 5px;  
+  width: 100%;
+  display: inline-block;
+
+  &.complete, &.ready, &.paid {
+    background-color: $c_green1;
+>>>>>>> New admin design for Spree 2.0
     &, a {
       color: white;
     }

@@ -1,5 +1,4 @@
 <%= csrf_meta_tags %>
-
 <% content_for :page_actions do %>
   <li><%= event_links %></li>
   <li><%= button_link_to t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'icon-email' if @order.user %></li>
