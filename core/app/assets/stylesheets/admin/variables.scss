@@ -7,6 +7,7 @@
 //--------------------------------------------------------------
 // Font Settings
 <<<<<<< HEAD
+<<<<<<< HEAD
 $base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 
 // Colors
@@ -25,19 +26,26 @@ $color-links:     $c_blue1;
 $color-border:    lighten($c_gray1, 32);
 =======
 $base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif !default;
+=======
+$base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+>>>>>>> Inital stage of admin redesign in progress ...
 
 // Colors
 //--------------------------------------------------------------
-$c_gray1:   #727272;
+$c_gray1:   #929292;
 $c_green1:  #9FC820;
 $c_blue1:   #0095EA;
 $c_blue2:   #D4F1F7;
-
+$c_red1:    #C60F13;
 
 $color-body-text: $c_gray1;
 $color-headers:   darken($c_blue1, 20);
 $color-links:     $c_blue1;
+<<<<<<< HEAD
 >>>>>>> Initial admin redesign stage
+=======
+$color-border:    lighten($c_gray1, 32);
+>>>>>>> Inital stage of admin redesign in progress ...
 
 // Gradients
 //--------------------------------------------------------------

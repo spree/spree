@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 @import "../variables";
 
 table {
@@ -40,9 +41,47 @@ table {
 
     }
 =======
+=======
+@import "../variables";
+
+>>>>>>> Inital stage of admin redesign in progress ...
 table {
+  border: 1px solid lighten($c_gray1, 35);
+  width: 100%;
+
   th, td {
+<<<<<<< HEAD
     padding: 10px;
 >>>>>>> Initial admin redesign stage
+=======
+    padding: 15px 10px;
+    border: 1px solid lighten($c_gray1, 35);    
+
+    &.sort-active {
+      background-color: lighten($c_blue1, 45);
+      border-bottom: 1px solid lighten($c_blue1, 40);
+    }
+  }
+  
+  td.sort-active {
+    background-color: lighten($c_blue1, 50) !important;
+  }
+
+  thead {
+    background-color: lighten($c_blue1, 52);
+    
+    th {
+      text-transform: uppercase;
+      font-size: 80%;
+    }
+  }
+
+  tbody {
+    tr {
+      &.state-complete {
+        border-left: 5px solid $c_green1;
+      }
+    }
+>>>>>>> Inital stage of admin redesign in progress ...
   }
 }

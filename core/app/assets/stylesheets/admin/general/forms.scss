@@ -7,8 +7,12 @@ input[type="date"],
 input[type="datetime"],
 input[type="time"],
 input[type="url"],
+<<<<<<< HEAD
 input[type="number"],
 textarea, fieldset {
+=======
+input[type="number"] {
+>>>>>>> Inital stage of admin redesign in progress ...
   padding: 5px 10px;
   border: 1px solid $color-border;
   color: $color-body-text;
@@ -33,6 +37,7 @@ button, .button {
   border: 1px solid $color-border;
   background-color: lighten($color-border, 5);
   color: $color-body-text;
+<<<<<<< HEAD
   text-transform: uppercase;
   font-size: 80%;
   font-weight: bold;
@@ -60,6 +65,8 @@ button, .button {
 }
 [class^="icon-"]::before, [class*=" icon-"]::before {
 
+=======
+>>>>>>> Inital stage of admin redesign in progress ...
 }
 
 .field {
