@@ -51,17 +51,14 @@ describe "Order Details" do
 
       I18n.backend.store_translations I18n.locale,
         :shipment_state => { :missing => 'some text' },
-        :payment_states => { :missing => 'other text' },
-        :number => { :currency => { :format => {
-          :format => "%n&mdash;%u",
-          :unit => "&pound;"
-        }}}
+        :payment_states => { :missing => 'other text' }
+
+      Spree::Config[:currency] = "GBP"
 
       visit spree.edit_admin_order_path(order)
 
       within "#sidebar" do
-        # beware - the dash before pound is really em dash character '—'
-        find("#order_total").text.should == "#{I18n.t(:total)}: 0.00—£"
+        find("#order_total").text.should == "#{I18n.t(:total)}: £0.00"
         find("#shipment_status").text.should == "#{I18n.t(:shipment)}: some text"
         find("#payment_status").text.should == "#{I18n.t(:payment)}: other text"
       end
