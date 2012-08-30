@@ -4,6 +4,8 @@
 //= require jquery.delayedobserver
 //= require jquery.jstree/jquery.jstree
 //= require jquery.alerts/jquery.alerts
+//= require responsive-tables
+//= require jquery.horizontalNav
 //= require_tree .
 
 var Spree = {};

@@ -1,68 +1,98 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head data-hook="admin_inside_head">
-  <%= render :partial => 'spree/admin/shared/head' %>
-</head>
-<body class='admin' data-ajax-root-path="<%= spree.root_path %>">
-<!--[if IE 7]>
-<div id='IE7'>
-<![endif]-->
-<div id='wrapper' data-hook>
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
+  <head data-hook="admin_inside_head">
+    <%= render :partial => 'spree/admin/shared/head' %>
+  </head>
+  
+  <body class='admin' data-ajax-root-path="<%= spree.root_path %>">
+    <div id='wrapper' data-hook>
 
-  <div id="header" data-hook>
+      <% if flash[:error] %>
+        <div class="flash error"><%= flash[:error] %></div>
+      <% end %>
+      <% if notice %>
+        <div class="flash notice"><%= notice %></div>
+      <% end %>
 
-    <div data-hook="admin_login_navigation_bar"></div>
+      <div id="progress"><%= image_tag 'admin/progress.gif' %> <%= t(:loading) %>...</div>
 
-    <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path %>
-    <h1><%= link_to t(:administration), spree.admin_path %></h1>
-    <div id="progress"><%= image_tag 'admin/progress.gif' %> <%= t(:loading) %>...</div>
-  </div>
+      <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>
 
-  <div id="admin-menu" data-hook>
-    <ul data-hook="admin_tabs">
-      <%= render :partial => 'spree/admin/shared/tabs' %>
-    </ul>
-    <br class="clear" />
-  </div>
+      <header id="header" data-hook>
 
-  <div id="sub-menu" data-hook>
-    <%= yield :sub_menu %>
-    <br class="clear" />
-  </div>
+        <div class="container">
+          <div class="row">        
 
-  <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %> clear tile_bg" id="content" data-hook>
+            <figure data-hook="logo-wrapper" class="columns eight">
+              <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path %>
+            </figure>
 
-    <% if flash[:error] %>
-      <div class="flash error"><%= flash[:error] %></div>
-    <% end %>
-    <% if notice %>
-      <div class="flash notice"><%= notice %></div>
-    <% end %>
+            <!-- <h1 class="columns four" data-hook="admin-title"><%= link_to t(:administration), spree.admin_path %></h1> -->
 
-    <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>
+            <!-- <nav data-hook="admin_login_navigation_bar" class="columns eight"></nav> -->
 
-    <%= yield %>
+          </div>
+        </div>
+        
+      </header>
 
-    <% if content_for?(:sidebar) %>
-      <br class="clear" />
-      <div id="sidebar" data-hook>
-        <%= yield :sidebar %>
+      <nav id="admin-menu" data-hook>
+        <div class="container">
+          <div class="row">
+            <ul data-hook="admin_tabs" class="inline-menu fullwidth-menu">
+              <%= render :partial => 'spree/admin/shared/tabs' %>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container">
+        <div class="row">
+          <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %>" id="content" data-hook>
+
+            <% if content_for?(:sub_menu) %>
+              <nav id="sub-menu" data-hook>
+                <div class="container">
+                  <div class="row">
+                    <%= yield :sub_menu %>
+                  </div>
+                </div>
+              </nav>
+            <% end %>
+
+            <% if content_for?(:content_header) %>
+              <header id="content-header" data-hook>
+                <%= yield :content_header %>
+              </header>
+            <% end %>
+
+            <div class="<%= if content_for?(:sidebar) then 'twelve' else 'sixteen' end %> columns">
+              <%= yield %>
+            </div>
+
+
+            <% if content_for?(:sidebar) %>
+              <aside id="sidebar" data-hook class="four columns">
+                <%= yield :sidebar %>
+              </aside>
+            <% end %>
+
+          </div>
+        </div>
+
       </div>
-    <% end %>
 
-  </div>
+      <div id="footer" data-hook>
+        
+      </div>
 
-  <div id="footer" data-hook>
-    <p><%= t(:icons_by) %> <%= link_to 'pInvoke', 'http://pinvoke.com' %></p>
-  </div>
+    </div>
 
+    <div data-hook="admin_footer_scripts"></div>
 
-</div>
-<!--[if IE]>
-</div>
-<![endif]-->
-
-<div data-hook="admin_footer_scripts"></div>
-</body>
+  </body>
 </html>

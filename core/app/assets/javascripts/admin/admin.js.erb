@@ -16,6 +16,11 @@ $(document).ajaxStop(function(){
   $("#progress").slideUp();
 });
 
+// Make main menu use full width
+$(document).ready(function() {
+    $('.fullwidth-menu').horizontalNav({});
+});
+
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
 show_flash_error = function(message) {

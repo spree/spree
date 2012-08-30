@@ -1,0 +1,97 @@
+@import "../variables";
+
+// Basics
+//---------------------------------------------------
+body {
+  font-family: $base-font-family;
+  font-size: $body-font-size;
+  background-color: darken($c_blue1, 35);
+  color: $color-body-text;
+}
+
+// Header
+//---------------------------------------------------
+#header {
+  background-color: lighten($c_blue1, 50);
+}
+#logo { height: 50px }
+[data-hook="admin-title"] { font-size: 14px }
+
+// Navigation
+//---------------------------------------------------
+.inline-menu { 
+  margin: 0;
+  -webkit-margin-before: 0;
+  -webkit-padding-start: 0;
+}
+
+#admin-menu {
+  background-color: $c_blue1;
+  padding-bottom: 40px;
+
+  li {
+    a {
+      display: block;
+      padding: 20px;
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+      position: relative;
+      text-align: center;
+
+      &:hover {
+        background-color: $c_green1;
+
+        &:after {
+          content: '';
+          position: absolute;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 10px solid $c_green1;
+          bottom: 0px;
+          margin-bottom: -10px;
+          left: 50%;
+          margin-left: -10px;
+          z-index: 1;
+        }
+      }
+    }
+
+    &.selected a {
+      @extend a:hover;
+    }
+  }
+}
+
+#sub-menu {
+  background-color: $c_green1;
+  padding-bottom: 0;
+
+  li {
+    a {
+      display: block;
+      padding: 12px 20px;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    &.selected a, a:hover {
+      background-color: white;
+      color: $c_blue1;
+    }
+  }
+}
+
+// Sidebar
+//---------------------------------------------------
+
+// Content
+//---------------------------------------------------
+#content {
+  background-color: white;
+  overflow: auto;
+  margin-top: -40px;
+  position: relative;
+  z-index: 0;
+}
