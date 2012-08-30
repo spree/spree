@@ -43,6 +43,10 @@ describe Spree::ShipmentMailer do
           I18n.locale = :'pt-BR'
         end
 
+        after do
+          I18n.locale = I18n.default_locale
+        end
+
         specify do
           shipped_email = Spree::ShipmentMailer.shipped_email(shipment)
           shipped_email.body.should include("Caro Cliente,")
