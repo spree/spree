@@ -49,6 +49,10 @@ For more information about customizing the checkout process within Spree, please
 
 h3. Minor changes
 
+h4. has_role?, api_key and roles methods now namespaced
+
+On a usr object, the +has_role?+ method is now called +has_spree_role?+, the +api_key+ method is called +spree_api_key+ and the +roles+ association is now called +spree_roles+. This allows for applications to define their own +has_role?+, +api_key+ and +roles+ methods without them conflicting with the methods defined within Spree.
+
 h4. Introduce Spree::Product#master_images and Spree::Product#variant_images
 
 +Spree::Product#master_images+ and its alias +Spree::Product#images+ only returns images belongs to master variant.
