@@ -189,7 +189,8 @@ describe Spree::LineItem do
       inventory_units = shipped_inventory_units + unshipped_inventory_units
       order.stub(:shipments => [shipment])
       shipment.stub(:inventory_units => inventory_units)
-      shipment.stub_chain(:inventory_units, :shipped).and_return(shipped_inventory_units)
+      inventory_units.stub(:shipped => shipped_inventory_units)
+      shipped_inventory_units.stub(:where).with(:variant_id => line_item.variant_id).and_return(shipped_inventory_units)
     end
 
     it 'should not allow quantity to be adjusted lower than already shipped units' do
