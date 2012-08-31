@@ -93,7 +93,6 @@ describe Spree::Shipment do
     after { Spree::Config.set :track_inventory_levels => true }
 
     it "should not use the line items from order when track_inventory_levels is false" do
-      pending
       line_items = [mock_model(Spree::LineItem)]
       order.stub :complete? => true
       order.stub :line_items => line_items
@@ -129,7 +128,6 @@ describe Spree::Shipment do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should validate with no inventory" do
-        pending
         shipment.valid?.should be_true
       end
     end
