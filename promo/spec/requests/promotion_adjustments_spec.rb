@@ -147,7 +147,6 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Order's total > $30"
-      fill_in "Code", :with => ""
       select "Order contents changed", :from => "Event"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -176,7 +175,6 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Free Shipping"
-      fill_in "Code", :with => ""
       click_button "Create"
       page.should have_content("Editing Promotion")
 
