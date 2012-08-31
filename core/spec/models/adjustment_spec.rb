@@ -4,7 +4,6 @@ describe Spree::Adjustment do
 
   let(:order) { mock_model(Spree::Order, :update! => nil) }
   let(:adjustment) { Spree::Adjustment.new }
-  it "should accept a negative amount"
 
   context "#update!" do
     context "when originator present" do
