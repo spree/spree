@@ -178,7 +178,7 @@ module SpreeCmd
 
       def image_magick_installed?
         cmd = 'identify -version'
-        if RUBY_PLATFORM =~ /mswin/ #windows
+        if RUBY_PLATFORM =~ /mingw|mswin/ #windows
           cmd += " >nul"
         else
           cmd += " >/dev/null"
