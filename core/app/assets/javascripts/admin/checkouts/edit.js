@@ -33,7 +33,7 @@ $(document).ready(function(){
   }
 
   prep_user_autocomplete_data = function(data){
-    return $.map(eval(data), function(row) {
+    return $.map(eval(data['users']), function(row) {
       return {
           data: row['user'],
           value: row['user']['email'],
@@ -48,7 +48,7 @@ $(document).ready(function(){
       delay: 500,
       source: function(request, response) {
         var params = { q: $('#customer_search').val(),
-                       authenticity_token: encodeURIComponent($('meta[name=csrf-token]').attr("content")) }
+                       authenticity_token: AUTH_TOKEN }
         $.get(Spree.routes.user_search + '&' + jQuery.param(params), function(data) {
           result = prep_user_autocomplete_data(data)
           response(result);

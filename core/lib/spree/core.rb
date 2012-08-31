@@ -40,6 +40,7 @@ require 'deface'
 require 'cancan'
 require 'select2-rails'
 require 'spree/money'
+require 'rabl'
 
 module Spree
 
