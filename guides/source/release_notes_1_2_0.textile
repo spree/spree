@@ -81,7 +81,7 @@ h4. New UI for defining taxons and option types for a product
 
 Rather than having the taxons and option types related to a product on two completely separate pages, they are now included on the product edit form. This functionality is provided by the Select2 JavaScript plugin, and will fall back to a typical select box if JavaScript is not available.
 
-TODO: show image.
+!images/1-2-release-notes/select2.png(select2 shiny)!
 
 h3. Tiny changes / bugfixes
 
