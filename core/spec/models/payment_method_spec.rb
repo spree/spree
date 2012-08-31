@@ -17,17 +17,14 @@ describe Spree::PaymentMethod do
     end
 
     it "should return all methods available to front-end/back-end when display_on = :both" do
-      pending
       Spree::PaymentMethod.available(:both).size.should == 2
     end
 
     it "should return all methods available to front-end when display_on = :front_end" do
-      pending
       Spree::PaymentMethod.available(:front_end).size.should == 2
     end
 
     it "should return all methods available to back-end when display_on = :back_end" do
-      pending
       Spree::PaymentMethod.available(:back_end).size.should == 2
     end
   end
