@@ -51,7 +51,6 @@ describe Spree::InventoryUnit do
       end
 
       it "should decrement count_on_hand" do
-        pending
         variant.should_not_receive(:decrement!)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
@@ -78,7 +77,6 @@ describe Spree::InventoryUnit do
       end
 
       it "should not create units" do
-        pending
         Spree::InventoryUnit.should_not_receive(:create_units)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
@@ -108,7 +106,6 @@ describe Spree::InventoryUnit do
       end
 
       it "should decrement count_on_hand" do
-        pending
         variant.should_not_receive(:increment!)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
@@ -135,7 +132,6 @@ describe Spree::InventoryUnit do
       end
 
       it "should destroy units" do
-        pending
         Spree::InventoryUnit.should_not_receive(:destroy_units)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
