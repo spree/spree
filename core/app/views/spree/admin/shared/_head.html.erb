@@ -21,7 +21,7 @@
 
 <%= javascript_tag do -%>
   jQuery.alerts.dialogClass = 'spree';
-  <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+  <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" %>
 <% end -%>
 
 <%= yield :head %>
