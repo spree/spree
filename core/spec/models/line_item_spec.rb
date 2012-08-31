@@ -123,14 +123,12 @@ describe Spree::LineItem do
       before { Spree::Config.set :allow_backorders => false }
 
       it 'should report insufficient stock when variant is out of stock' do
-        pending
         line_item.stub_chain :variant, :on_hand => 0
         line_item.insufficient_stock?.should be_true
         line_item.sufficient_stock?.should be_false
       end
 
       it 'should report insufficient stock when variant has less on_hand that line_item quantity' do
-        pending
         line_item.stub_chain :variant, :on_hand => 3
         line_item.insufficient_stock?.should be_true
         line_item.sufficient_stock?.should be_false
