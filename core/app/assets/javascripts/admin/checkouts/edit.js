@@ -80,7 +80,7 @@ $(document).ready(function(){
         $('#user_id').val(ui.item.data['id']);
         $('#guest_checkout_true').prop("checked", false);
         $('#guest_checkout_false').prop("checked", true);
-        $('#guest_checkout_false').prob("disabled", false);
+        $('#guest_checkout_false').prop("disabled", false);
         return true;
       }
     }).data("autocomplete")._renderItem = function(ul, item) {
