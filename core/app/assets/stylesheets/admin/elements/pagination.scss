@@ -1,0 +1,17 @@
+@import "../variables";
+
+.pagination {
+  padding: 10px 0;
+
+  .page {
+    padding: 5px 8px;
+    text-align: center;
+    display: inline-block;
+    text-align: center;
+
+    &.current {
+      background-color: $c_blue1;
+      color: white;
+    }
+  }
+}
