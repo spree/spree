@@ -45,7 +45,7 @@ $(document).ready(function(){
   if ($("#customer_search").length > 0) {
     $("#customer_search").autocomplete({
       minChars: 5,
-      delay: 1500,
+      delay: 500,
       source: function(request, response) {
         var params = { q: $('#customer_search').val(),
                        authenticity_token: encodeURIComponent($('meta[name=csrf-token]').attr("content")) }
