@@ -8,11 +8,16 @@ input[type="datetime"],
 input[type="time"],
 input[type="url"],
 <<<<<<< HEAD
+<<<<<<< HEAD
 input[type="number"],
 textarea, fieldset {
 =======
 input[type="number"] {
 >>>>>>> Inital stage of admin redesign in progress ...
+=======
+input[type="number"],
+textarea, fieldset {
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons
   padding: 5px 10px;
   border: 1px solid $color-border;
   color: $color-body-text;
@@ -38,6 +43,9 @@ button, .button {
   background-color: lighten($color-border, 5);
   color: $color-body-text;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons
   text-transform: uppercase;
   font-size: 80%;
   font-weight: bold;
@@ -65,8 +73,11 @@ button, .button {
 }
 [class^="icon-"]::before, [class*=" icon-"]::before {
 
+<<<<<<< HEAD
 =======
 >>>>>>> Inital stage of admin redesign in progress ...
+=======
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 }
 
 .field {

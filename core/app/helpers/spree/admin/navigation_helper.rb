@@ -17,12 +17,6 @@ module Spree
 
         titleized_label = t(options[:label], :default => options[:label]).titleize
 
-        if options[:icon]
-          link = link_to_with_icon(options[:icon], titleized_label, destination_url)
-        else
-          link = link_to(titleized_label, destination_url)
-        end
-
         css_classes = []
 
         if options[:icon]

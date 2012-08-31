@@ -4,14 +4,20 @@
 //---------------------------------------------------
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
 
 =======
 >>>>>>> Inital stage of admin redesign in progress ...
+=======
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
+
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 * { 
   -webkit-box-sizing: border-box; 
      -moz-box-sizing: border-box; 
           box-sizing: border-box; 
+<<<<<<< HEAD
 <<<<<<< HEAD
   text-rendering: optimizeLegibility; 
 }
@@ -39,6 +45,10 @@ body {
 =======
 =======
   }
+=======
+  text-rendering: optimizeLegibility; 
+}
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 
 >>>>>>> Inital stage of admin redesign in progress ...
 body {
@@ -244,5 +254,11 @@ body {
   .page-title {
     font-size: 130%;
   }
+<<<<<<< HEAD
 >>>>>>> Inital stage of admin redesign in progress ...
+=======
+  .page-actions {
+    text-align: right;
+  }
+>>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 }
