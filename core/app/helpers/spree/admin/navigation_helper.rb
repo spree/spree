@@ -17,13 +17,14 @@ module Spree
 
         titleized_label = t(options[:label], :default => options[:label]).titleize
 
+        css_classes = []
+
         if options[:icon]
           link = link_to_with_icon(options[:icon], titleized_label, destination_url)
+          css_classes << 'tab-with-icon'
         else
           link = link_to(titleized_label, destination_url)
         end
-
-        css_classes = []
 
         selected = if options[:match_path]
           request.fullpath.starts_with?("#{root_path}admin#{options[:match_path]}")
@@ -63,8 +64,8 @@ module Spree
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
-        options[:class] = (options[:class].to_s + ' icon_link').strip
-        link_to(icon(icon_name) + ' ' + text, url, options)
+        options[:class] = (options[:class].to_s + " icon_link #{icon_name}").strip
+        link_to(text, url, options)
       end
 
       def icon(icon_name)
@@ -72,7 +73,7 @@ module Spree
       end
 
       def button(text, icon_name = nil, button_type = 'submit', options={})
-        button_tag(content_tag('span', icon(icon_name) + ' ' + text), options.merge(:type => button_type))
+        button_tag(text, options.merge(:type => button_type, :class => "#{icon_name} button"))
       end
 
       def button_link_to(text, url, html_options = {})
@@ -87,22 +88,22 @@ module Spree
             object_name, action = url.split('/')[-2..-1]
             html_options['data-update'] = [action, object_name.singularize].join('_')
           end
+          
           html_options.delete('data-update') unless html_options['data-update']
-          link_to(text_for_button_link(text, html_options), url, html_options_for_button_link(html_options))
+          
+          html_options[:class] = 'button'
+
+          if html_options[:icon]
+            html_options[:class] += " #{html_options[:icon]}"
+          end
+          link_to(text_for_button_link(text, html_options), url, html_options)
         end
       end
 
       def text_for_button_link(text, html_options)
         s = ''
-        if html_options[:icon]
-          s << icon(html_options.delete(:icon)) + ' '
-        end
         s << text
-        content_tag('span', raw(s))
-      end
-
-      def html_options_for_button_link(html_options)
-        options = { :class => 'button' }.update(html_options)
+        raw(s)
       end
 
       def configurations_menu_item(link_text, url, description = '')

@@ -7,7 +7,8 @@ input[type="date"],
 input[type="datetime"],
 input[type="time"],
 input[type="url"],
-input[type="number"] {
+input[type="number"],
+textarea, fieldset {
   padding: 5px 10px;
   border: 1px solid $color-border;
   color: $color-body-text;
@@ -32,6 +33,33 @@ button, .button {
   border: 1px solid $color-border;
   background-color: lighten($color-border, 5);
   color: $color-body-text;
+  text-transform: uppercase;
+  font-size: 80%;
+  font-weight: bold;
+
+  &:visited, &:active {
+    color: $color-body-text;
+  }
+
+  &:hover {
+    color: white;
+    background-color: $c_green1;
+    border-color: darken($c_green1, 5);
+  }
+}
+
+// Some fixes for fontwesome stylesheets
+[class^="icon-"], [class*=" icon-"] {
+  &.button, &.icon_link {
+    width: auto;
+
+    &:before {
+      padding-right: 5px;
+    }
+  }
+}
+[class^="icon-"]::before, [class*=" icon-"]::before {
+
 }
 
 .field {

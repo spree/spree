@@ -2,11 +2,14 @@
 
 // Basics
 //---------------------------------------------------
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
+
 * { 
   -webkit-box-sizing: border-box; 
      -moz-box-sizing: border-box; 
           box-sizing: border-box; 
-  }
+  text-rendering: optimizeLegibility; 
+}
 
 body {
   font-family: $base-font-family;
@@ -146,5 +149,8 @@ body {
 
   .page-title {
     font-size: 130%;
+  }
+  .page-actions {
+    text-align: right;
   }
 }

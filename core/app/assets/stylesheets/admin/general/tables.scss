@@ -29,9 +29,14 @@ table {
 
   tbody {
     tr {
-      &.state-complete {
-        border-left: 5px solid $c_green1;
+      &[class*="state"] {
+        border-left-width: 5px; 
+        border-left-style: solid;
       }
+
+      &.state-complete { border-color: $c_green1 }
+      &.state-cart     { border-color: lighten($c_blue1, 30) }
+
     }
   }
 }

@@ -1,14 +1,14 @@
-  <% content_for :page_title do %>
-    <%= t(:listing_orders) %>
-  <% end %>
+<% content_for :page_title do %>
+  <%= t(:listing_orders) %>
+<% end %>
 
-  <% content_for :page_actions do %>
-    <ul class='toolbar order-links header-action-links inline-menu'>
-      <li>
-        <%= button_link_to t(:new_order), new_admin_order_url, :icon => 'add', :id => 'admin_new_order' %>
-      </li>
-    </ul>
-  <% end %>
+<% content_for :page_actions do %>
+  <ul class='toolbar order-links header-action-links inline-menu'>
+    <li>
+      <%= button_link_to t(:new_order), new_admin_order_url, :icon => 'icon-plus', :id => 'admin_new_order' %>
+    </li>
+  </ul>
+<% end %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
@@ -67,7 +67,7 @@
 
       <div class="actions">
         <div data-hook="admin_orders_index_search_buttons">
-          <%= button t(:search) %>
+          <%= button t(:search), 'icon-search' %>
         </div>
       </div>
     <% end %>
@@ -96,9 +96,9 @@
     <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %>">
       <td <%= sort_by_active_class('created_at')%> <%= sort_by_active_class('completed_at')%>><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
       <td <%= sort_by_active_class('number')%>><%= link_to order.number, admin_order_path(order) %></td>
-      <td <%= sort_by_active_class('state')%>><span class="state"><%= t("order_state.#{order.state.downcase}") %></span></td>
-      <td <%= sort_by_active_class('payment_state')%>><span class="state"><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
-      <td <%= sort_by_active_class('shipment_state')%>><span class="state"><%= link_to t("shipment_states.#{order.shipment_state}"), admin_order_shipments_path(order) if order.shipment_state %></span></td>
+      <td <%= sort_by_active_class('state')%> class="align-center"><span class="state <%= order.state.downcase %>"><%= t("order_state.#{order.state.downcase}") %></span></td>
+      <td <%= sort_by_active_class('payment_state')%> class="align-center"><span class="state <%= order.payment_state %>"><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
+      <td <%= sort_by_active_class('shipment_state')%> class="align-center"><span class="state <%= order.shipment_state %>"><%= link_to t("shipment_states.#{order.shipment_state}"), admin_order_shipments_path(order) if order.shipment_state %></span></td>
       <td <%= sort_by_active_class('email')%>><%= mail_to order.email %></td>
       <td <%= sort_by_active_class('total')%>><%= order.display_total %></td>
       <td class='actions' data-hook="admin_orders_index_row_actions">

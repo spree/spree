@@ -1,8 +1,7 @@
 @import "../variables";
 
-// Baseics
+// Base
 //--------------------------------------------------------------
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
 
 // links
 //--------------------------------------------------------------
@@ -51,8 +50,40 @@ ul {
   }
 }
 
+// Helpers
+.align-center  { text-align: center  }
+.align-right   { text-align: right   }
+.align-left    { text-align: left    }
+.align-justify { text-align: justify }
+
 // States
+//--------------------------------------------------------------
 .state {
   text-transform: uppercase;
-  font-size: 80%;
+  font-size: 70%;
+  border: 1px solid transparent;
+  padding: 2px 5px;  
+  width: 100%;
+  display: inline-block;
+
+  &.complete {
+    background-color: $c_green1;
+    color: white;
+  }
+
+  &.pending {
+    background-color: $c_yellow1;
+
+    a {
+      color: white;
+    }
+  }
+
+  &.balance_due {
+    background-color: $c_blue2;
+  }
+  &.cart {
+    background-color: lighten($c_blue1, 30);
+    color: white;
+  }
 }

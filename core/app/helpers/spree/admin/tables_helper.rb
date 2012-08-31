@@ -6,7 +6,7 @@ module Spree
       # for better tables styling
       def sort_by_active_class(row)
         if params[:q][:s] && params[:q][:s].include?(row)
-          return "class=sort-active"
+          return "sort-active"
         end
       end
 
