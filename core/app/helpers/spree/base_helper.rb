@@ -29,14 +29,6 @@ module Spree
       link_to text, cart_path, :class => css_class
     end
 
-    def todays_short_date
-      utc_to_local(Time.now.utc).to_ordinalized_s(:stub)
-    end
-
-    def yesterdays_short_date
-      utc_to_local(Time.now.utc.yesterday).to_ordinalized_s(:stub)
-    end
-
     # human readable list of variant options
     def variant_options(v, allow_back_orders = Spree::Config[:allow_backorders], include_style = true)
       list = v.options_text
@@ -146,14 +138,6 @@ module Spree
       warn "DEPRECATION: the /t/taxon-permalink/p/product-permalink urls are "+
         "not used anymore. Use product_url instead. (called from #{caller[0]})"
       return product_url(product)
-    end
-
-    def current_orders_product_count
-      if current_order.blank? || current_order.item_count < 1
-        return 0
-      else
-        return current_order.item_count
-      end
     end
 
     def gem_available?(name)
