@@ -83,6 +83,12 @@ Rather than having the taxons and option types related to a product on two compl
 
 !images/1-2-release-notes/select2.png(select2 shiny)!
 
+h4. Using the Money gem to display currencies
+
+In earlier versions of Spree, we used +number_to_currency+ to display prices for products. This caused a problem when somebody selected a different I18n locale, as the prices would be displayed in their currency: 20 Japanese Yen, rather than 20 American Dollars, for instance.
+
+To fix this problem, we're now parsing the prices through the Money gem which will display prices consistently across all I18n locales. To now change the currency for your site, go to Admin, then Configuration, then General Settings. Changing the currency will only change the currency symbol across all prices of your store.
+
 h3. Tiny changes / bugfixes
 
 h4. General
