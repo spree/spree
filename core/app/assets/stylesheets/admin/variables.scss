@@ -24,6 +24,7 @@ $c_yellow1: #FF9300;
 $color-body-text: $c_gray1;
 $color-headers:   $c_blue3;
 $color-links:     $c_blue1;
+<<<<<<< HEAD
 $color-border:    lighten($c_gray1, 32);
 =======
 $base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif !default;
@@ -50,6 +51,9 @@ $color-links:     $c_blue1;
 =======
 $color-border:    lighten($c_gray1, 32);
 >>>>>>> Inital stage of admin redesign in progress ...
+=======
+$color-border:    lighten($c_blue1, 45);
+>>>>>>> More amin styling
 
 // Gradients
 //--------------------------------------------------------------

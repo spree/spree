@@ -21,6 +21,13 @@ $(document).ready(function() {
     $('.fullwidth-menu').horizontalNav({});
 });
 
+// Make select beautifu 
+$(document).ready(function(){
+  $('select.select2').select2({
+    allowClear: true
+  });
+})
+
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
 show_flash_error = function(message) {

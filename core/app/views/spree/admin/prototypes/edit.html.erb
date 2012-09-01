@@ -1,5 +1,8 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-<h1><%= t(:editing_prototype) %></h1>
+
+<% content_for :page_title do %>
+  <%= t(:editing_prototype) %>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @prototype } %>
 

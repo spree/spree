@@ -48,11 +48,16 @@ module Spree
       end
 
       def link_to_edit(resource, options={})
-        link_to_with_icon('edit', t(:edit), edit_object_url(resource), options)
+        link_to_with_icon('icon-edit', t(:edit), edit_object_url(resource), options)
       end
 
       def link_to_edit_url(url, options={})
-        link_to_with_icon('edit', t(:edit), url, options)
+        text = if options[:no_text]
+                 content_tag(:i, nil, :class => 'icon-edit')
+               else
+                 t(:edit)
+               end
+        link_to(text, url, options)
       end
 
       def link_to_delete(resource, options={})

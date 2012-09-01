@@ -3,12 +3,12 @@
 @import "../variables";
 
 table {
-  border: 1px solid lighten($c_gray1, 35);
+  border: 1px solid $color-border;
   width: 100%;
 
   th, td {
     padding: 15px 10px;
-    border: 1px solid lighten($c_gray1, 35);    
+    border: 1px solid $color-border;
 
     &.sort-active {
       background-color: lighten($c_blue1, 45);

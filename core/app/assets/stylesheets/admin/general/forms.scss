@@ -33,12 +33,15 @@ label {
   font-weight: bold;
   text-transform: uppercase;
   font-size: 80%;
+  display: inline-block;
+  margin-bottom: 5px;
 }
 
 input[type="submit"], 
 input[type="button"], 
 button, .button {
   padding: 5px 10px;
+<<<<<<< HEAD
   border: 1px solid $color-border;
   background-color: lighten($color-border, 5);
   color: $color-body-text;
@@ -46,18 +49,35 @@ button, .button {
 <<<<<<< HEAD
 =======
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
+=======
+  border: 1px solid darken($c_blue1, 5);
+  background-color: $c_blue1;
+  color: white;
+>>>>>>> More amin styling
   text-transform: uppercase;
   font-size: 80%;
   font-weight: bold;
 
-  &:visited, &:active {
-    color: $color-body-text;
-  }
-
+  &:visited, &:active { color: white }
   &:hover {
-    color: white;
     background-color: $c_green1;
     border-color: darken($c_green1, 5);
+  }
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+
+  legend {
+    margin-left: 10px;
+    text-transform: uppercase;
+    
+    font-weight: bold;
+    background-color: $c_blue1;
+    color: white;
+    padding: 5px 10px;
+    border: 1px solid $color-border;
   }
 }
 
