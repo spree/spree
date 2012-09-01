@@ -150,7 +150,7 @@ Spree allows you to customize the individual steps of the checkout process.  The
 
 h5. Adding Logic Before or After a Particular Step
 
-The state_machine gem allows you to callbacks before or after transitioning to a particular step. These callbacks work similarly to "Active Record Callbacks":http://guides.rubyonrails.org/active_record_validations_callbacks.html#callbacks-overview in that you can specify a method or block of code to be executed prior to or after a transition. If the method executed in a before_transition returns false, then the transition will not execute.
+The state_machine gem allows you to implement callbacks before or after transitioning to a particular step. These callbacks work similarly to "Active Record Callbacks":http://guides.rubyonrails.org/active_record_validations_callbacks.html#callbacks-overview in that you can specify a method or block of code to be executed prior to or after a transition. If the method executed in a before_transition returns false, then the transition will not execute.
 
 So, for example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step, you would first implement a +valid_zip_code?+ method, and then tell the state machine to run this method before that transition, placing this code in a file called +app/models/spree/order_decorator.rb+:
 
