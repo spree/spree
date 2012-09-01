@@ -193,7 +193,7 @@ These conditional states present a situation where an order could transition fro
 
 [TODO - State diagram]
 
-These tow helper methods are provided on +Spree::Order+ instances for your convinience:
+These two helper methods are provided on +Spree::Order+ instances for your convinience:
 
 * +checkout_steps+: returns a list of all the potential states of the checkout.
 * +has_step?+: Used to check if the current order fufils the requirements for a specific state.
