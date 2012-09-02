@@ -31,14 +31,6 @@ group :test do
   # gem 'debugger'
 end
 
-# platform :ruby_18 do
-#   gem "ruby-debug"
-# end
-
-# platform :ruby_19 do
-#   gem "ruby-debug19"
-# end
-
 gemspec
 
 
