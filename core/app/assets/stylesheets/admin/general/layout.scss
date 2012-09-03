@@ -1,4 +1,5 @@
 @import "../variables";
+@import "./typography";
 
 // Basics
 //---------------------------------------------------
@@ -35,6 +36,7 @@ body {
 
   .table-cell {
     display: table-cell;
+    vertical-align: middle;
   }
 }
 
@@ -134,7 +136,7 @@ body {
     a {
       display: block;
       padding: 20px;
-      color: white;
+      color: white !important;
       font-weight: bold;
       text-transform: uppercase;
       position: relative;
@@ -197,14 +199,30 @@ body {
     a {
       display: block;
       padding: 12px 20px;
-      color: white;
-      font-weight: bold;
+      color: white;      
       text-align: center;
+      text-transform: uppercase;
+      position: relative;
+      font-size: 80%;
+      font-weight: bold;
     }
 
     &.selected a, a:hover {
-      background-color: white;
-      color: $c_blue1;
+      // background-color: white;
+      // color: $c_blue1;
+
+      &:after {
+        content: '';
+        position: absolute;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 5px solid $c_green1;
+        bottom: 0px;
+        margin-bottom: -5px;
+        left: 50%;
+        margin-left: -10px;
+        z-index: 1;
+      }
     }
   }
 }
@@ -255,13 +273,17 @@ body {
   border-bottom: 1px solid lighten($c_blue1, 45);
 
   .page-title {
-    font-size: 130%;
+    font-size: 27px;
   }
 <<<<<<< HEAD
 >>>>>>> Inital stage of admin redesign in progress ...
 =======
   .page-actions {
     text-align: right;
+
+    .button {
+      font-size: 100%;
+    }
   }
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 }

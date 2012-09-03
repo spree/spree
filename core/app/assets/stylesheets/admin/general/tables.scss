@@ -9,10 +9,21 @@ table {
   th, td {
     padding: 15px 10px;
     border: 1px solid $color-border;
+    box-shadow: white 1px 1px 1px 0 inset;
 
     &.sort-active {
       background-color: lighten($c_blue1, 45);
       border-bottom: 1px solid lighten($c_blue1, 40);
+    }
+  }
+
+  th {
+    padding: 10px;
+  }
+
+  td.actions {
+    [class*='icon-'] {
+      font-size: 120%;
     }
   }
   

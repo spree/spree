@@ -7,13 +7,13 @@
  *= require responsive-tables
  *= require normalize
  *= require font-awesome
- *= require skeleton 
- *= require_tree ./general
- *= require_tree ./elements
- *= require_tree ./plugins
- *= require_tree ./pages 
+ *= require skeleton
  *= require admin/edit_checkouts.css
  *= require admin/token-input.css
  *= require jquery-ui.datepicker
  *= require select2
+ *= require_tree ./general
+ *= require_tree ./elements
+ *= require_tree ./plugins
+ *= require_tree ./pages  
 */

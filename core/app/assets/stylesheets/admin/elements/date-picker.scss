@@ -1,7 +1,117 @@
 @import "../variables";
+@import "font-awesome";
 
 .date-range-filter {
+  .range-divider {
+    padding: 0 6px 0 5px;
+  }
   input.datepicker {
-    width: 70px;
+    width: 90px !important;
+  }
+}
+
+#ui-datepicker-div {
+  border-color: darken($c_blue1, 5);
+  border-radius: 0;
+  padding: 0;
+
+  .ui-datepicker-header {
+    padding: 0;
+    background-image: none;
+    background-color: $c_blue1;
+    border: none;
+    border-bottom: 1px solid darken($c_blue1, 5);
+    border-radius: 0;
+
+    .ui-datepicker-prev, .ui-datepicker-next {
+      border-radius: 0;      
+      top: 0;
+      height: 26px;
+
+      &:hover {
+        border: none;
+        background-image: none;
+        background-color: $c_green1;
+        cursor: pointer;
+      }
+
+      .ui-icon {
+        background-image: none;
+        text-indent: 0;
+        color: white;
+        width: 11px;
+        @extend [class^="icon-"]:before;
+      }
+    }
+    .ui-datepicker-prev {
+      left: 0;
+
+      .ui-icon {
+        @extend .icon-arrow-left;
+      }
+    }
+    .ui-datepicker-next {
+      right: 0;
+
+      .ui-icon {
+        @extend .icon-arrow-right;
+        margin-left: -3px;
+      }
+    }
+
+    .ui-datepicker-title {
+      color: white;
+      text-transform: uppercase;
+      font-size: 80%;
+      padding: 3px 10px;
+    }
+  }
+
+  table.ui-datepicker-calendar {
+    border: none;
+
+    thead {
+      th { 
+        border-bottom: 1px solid $color-border;
+        border-right: 1px solid $color-border;
+        color: $color-body-text;
+        width: 33px;
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+    tbody {
+      td {
+        a {
+          border: 1px solid transparent;
+          background-color: white;
+          background-image: none;
+          font-size: 80%;
+          color: $color-body-text;
+
+          &.ui-state-active {
+            background-color: $c_green1;
+            color: white;
+          }
+
+          &:hover {
+            background-color: $c_green1;
+            color: white;
+            border-color: darken($c_green1, 5);
+
+          }
+        }
+
+        &.ui-datepicker-today {
+          a {
+            background-color: $c_yellow1;
+            color: white;
+            border: 1px solid darken($c_yellow1, 5);
+          }
+        }
+      }      
+    }
   }
 }

@@ -11,6 +11,7 @@ input[type="url"],
 <<<<<<< HEAD
 input[type="number"],
 textarea, fieldset {
+<<<<<<< HEAD
 =======
 input[type="number"] {
 >>>>>>> Inital stage of admin redesign in progress ...
@@ -19,6 +20,9 @@ input[type="number"],
 textarea, fieldset {
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
   padding: 5px 10px;
+=======
+  padding: 6px 10px;
+>>>>>>> More admin restyle & refactoring
   border: 1px solid $color-border;
   color: $color-body-text;
   font-size: 80%;
@@ -35,6 +39,7 @@ label {
   font-size: 80%;
   display: inline-block;
   margin-bottom: 5px;
+  color: $c_blue3;
 }
 
 input[type="submit"], 
@@ -58,7 +63,7 @@ button, .button {
   font-size: 80%;
   font-weight: bold;
 
-  &:visited, &:active { color: white }
+  &:visited, &:active, &:focus { color: white }
   &:hover {
     background-color: $c_green1;
     border-color: darken($c_green1, 5);
@@ -68,6 +73,7 @@ button, .button {
 fieldset {
   margin: 0;
   padding: 0;
+  box-shadow: white 1px 1px 1px 0 inset;
 
   legend {
     margin-left: 10px;

@@ -23,9 +23,16 @@ a {
   text-decoration: none;
   line-height: inherit;
 
-  &:active, &:visited {
+  &:active, &:visited, &:focus {
     color: darken($color-links, 5);    
   }
+
+  &.button {
+    &:active, &:visited, &:focus {
+      color: white !important;
+    }    
+  }
+
   &:hover {
     color: lighten($c_blue1, 10);
   }

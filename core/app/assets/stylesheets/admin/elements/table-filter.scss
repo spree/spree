@@ -9,6 +9,31 @@
 
     .field {
       padding: 0 5px;
+
+      input[type="text"] {
+        width: 100%;
+      }
+
+      input[type="checkbox"] {
+        display: inline-block;
+      }
+
+      label {
+        display: block;
+      }
+
+      &.checkbox {
+        padding: 0;
+
+        label {
+          display: inline-block;
+        }
+      }
+    }
+
+    .actions {
+      text-align: right;
+      padding-right: 5px;
     }
   }
 }

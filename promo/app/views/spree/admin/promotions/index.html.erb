@@ -1,13 +1,16 @@
-<div class='toolbar'>
-  <ul class='actions'>
-    <li>
-      <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'add' %>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
+<% content_for :page_title do %>
+  <%= t(:promotions) %>
+<% end %>
 
-<h1><%= t(:promotions) %></h1>
+<% content_for :page_actions do %>
+  <div class='toolbar'>
+    <ul class='actions header-action-links inline-menu'>
+      <li>
+        <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'icon-plus' %>
+      </li>
+    </ul>
+  </div>
+<% end %>
 
 <table class="index">
   <thead>
