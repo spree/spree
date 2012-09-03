@@ -25,8 +25,7 @@ class SpreePromoOneTwo < ActiveRecord::Migration
       t.integer  "user_id"
       t.integer  "product_group_id"
       t.string   "type"
-      t.datetime "created_at",       :null => false
-      t.datetime "updated_at",       :null => false
+      t.timestamps
     end
 
     add_index "spree_promotion_rules", ["product_group_id"], :name => "index_promotion_rules_on_product_group_id"
