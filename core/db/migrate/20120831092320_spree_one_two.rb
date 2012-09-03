@@ -32,7 +32,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     add_index :spree_addresses, [:firstname], :name => 'index_addresses_on_firstname'
-    add_index :spree_addresses, [:lastname], :name => 'index_addresses_on_lastname'
+    add_index :spree_addresses, [:lastname],  :name => 'index_addresses_on_lastname'
 
     create_table :spree_adjustments do |t|
       t.references :source,     :polymorphic => true
@@ -61,7 +61,7 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.text       :alt
     end
 
-    add_index :spree_assets, [:viewable_id], :name => 'index_assets_on_viewable_id'
+    add_index :spree_assets, [:viewable_id],          :name => 'index_assets_on_viewable_id'
     add_index :spree_assets, [:viewable_type, :type], :name => 'index_assets_on_viewable_type_and_type'
 
     create_table :spree_calculators do |t|
@@ -123,9 +123,9 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :spree_inventory_units, [:order_id], :name => 'index_inventory_units_on_order_id'
+    add_index :spree_inventory_units, [:order_id],    :name => 'index_inventory_units_on_order_id'
     add_index :spree_inventory_units, [:shipment_id], :name => 'index_inventory_units_on_shipment_id'
-    add_index :spree_inventory_units, [:variant_id], :name => 'index_inventory_units_on_variant_id'
+    add_index :spree_inventory_units, [:variant_id],  :name => 'index_inventory_units_on_variant_id'
 
     create_table :spree_line_items do |t|
       t.references :variant
@@ -135,7 +135,7 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :spree_line_items, [:order_id], :name => 'index_spree_line_items_on_order_id'
+    add_index :spree_line_items, [:order_id],   :name => 'index_spree_line_items_on_order_id'
     add_index :spree_line_items, [:variant_id], :name => 'index_spree_line_items_on_variant_id'
 
     create_table :spree_log_entries do |t|
@@ -176,7 +176,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     add_index :spree_option_values_variants, [:variant_id, :option_value_id], :name => 'index_option_values_variants_on_variant_id_and_option_value_id'
-    add_index :spree_option_values_variants, [:variant_id], :name => 'index_spree_option_values_variants_on_variant_id'
+    add_index :spree_option_values_variants, [:variant_id],                   :name => 'index_spree_option_values_variants_on_variant_id'
 
     create_table :spree_orders do |t|
       t.string     :number,               :limit => 15
@@ -263,9 +263,9 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     add_index :spree_products, [:available_on], :name => 'index_spree_products_on_available_on'
-    add_index :spree_products, [:deleted_at], :name => 'index_spree_products_on_deleted_at'
-    add_index :spree_products, [:name], :name => 'index_spree_products_on_name'
-    add_index :spree_products, [:permalink], :name => 'index_spree_products_on_permalink'
+    add_index :spree_products, [:deleted_at],   :name => 'index_spree_products_on_deleted_at'
+    add_index :spree_products, [:name],         :name => 'index_spree_products_on_name'
+    add_index :spree_products, [:permalink],    :name => 'index_spree_products_on_permalink'
 
     create_table :spree_products_taxons, :id => false do |t|
       t.references :product
@@ -273,7 +273,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     add_index :spree_products_taxons, [:product_id], :name => 'index_spree_products_taxons_on_product_id'
-    add_index :spree_products_taxons, [:taxon_id], :name => 'index_spree_products_taxons_on_taxon_id'
+    add_index :spree_products_taxons, [:taxon_id],   :name => 'index_spree_products_taxons_on_taxon_id'
 
     create_table :spree_properties do |t|
       t.string     :name
@@ -396,8 +396,8 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :spree_taxons, [:parent_id], :name => 'index_taxons_on_parent_id'
-    add_index :spree_taxons, [:permalink], :name => 'index_taxons_on_permalink'
+    add_index :spree_taxons, [:parent_id],   :name => 'index_taxons_on_parent_id'
+    add_index :spree_taxons, [:permalink],   :name => 'index_taxons_on_permalink'
     add_index :spree_taxons, [:taxonomy_id], :name => 'index_taxons_on_taxonomy_id'
 
     create_table :spree_tokenized_permissions, :force => true do |t|
