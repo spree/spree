@@ -25,8 +25,8 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.string   "phone"
       t.string   "state_name"
       t.string   "alternative_phone"
-      t.integer  "state_id"
-      t.integer  "country_id"
+      t.references :state
+      t.references :country
       t.string   "company"
       t.timestamps
     end
@@ -35,29 +35,25 @@ class SpreeOneTwo < ActiveRecord::Migration
     add_index "spree_addresses", ["lastname"], :name => "index_addresses_on_lastname"
 
     create_table "spree_adjustments" do |t|
-      t.integer  "source_id"
+      t.references :source, :polymorphic => true
+      t.references :adjustable, :polymorphic => true
+      t.references :originator, :polymorphic => true
       t.decimal  "amount",          :precision => 8, :scale => 2
       t.string   "label"
-      t.string   "source_type"
-      t.integer  "adjustable_id"
       t.boolean  "mandatory"
       t.boolean  "locked"
-      t.integer  "originator_id"
-      t.string   "originator_type"
       t.boolean  "eligible",                                      :default => true
-      t.string   "adjustable_type"
       t.timestamps
     end
 
     add_index "spree_adjustments", ["adjustable_id"], :name => "index_adjustments_on_order_id"
 
     create_table "spree_assets" do |t|
-      t.integer  "viewable_id"
+      t.references :viewable, :polymorphic => true
       t.integer  "attachment_width"
       t.integer  "attachment_height"
       t.integer  "attachment_file_size"
       t.integer  "position"
-      t.string   "viewable_type",           :limit => 50
       t.string   "attachment_content_type"
       t.string   "attachment_file_name"
       t.string   "type",                    :limit => 75
@@ -70,8 +66,7 @@ class SpreeOneTwo < ActiveRecord::Migration
 
     create_table "spree_calculators" do |t|
       t.string   "type"
-      t.integer  "calculable_id",   :null => false
-      t.string   "calculable_type", :null => false
+      t.references :calculable, :polymorphic => true
       t.timestamps
     end
 
@@ -101,9 +96,9 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.string   "start_month"
       t.string   "start_year"
       t.string   "issue_number"
-      t.integer  "address_id"
-      t.string   "gateway_customer_profile_id"
-      t.string   "gateway_payment_profile_id"
+      t.references :address
+      t.references :gateway_customer_profile
+      t.references :gateway_payment_profile
       t.timestamps
     end
 
@@ -121,10 +116,10 @@ class SpreeOneTwo < ActiveRecord::Migration
     create_table "spree_inventory_units" do |t|
       t.integer  "lock_version",            :default => 0
       t.string   "state"
-      t.integer  "variant_id"
-      t.integer  "order_id"
-      t.integer  "shipment_id"
-      t.integer  "return_authorization_id"
+      t.references :variant
+      t.references :order
+      t.references :shipment
+      t.references :return_authorization
       t.timestamps
     end
 
@@ -133,8 +128,8 @@ class SpreeOneTwo < ActiveRecord::Migration
     add_index "spree_inventory_units", ["variant_id"], :name => "index_inventory_units_on_variant_id"
 
     create_table "spree_line_items" do |t|
-      t.integer  "order_id"
-      t.integer  "variant_id"
+      t.references :variant
+      t.references :order
       t.integer  "quantity",                                 :null => false
       t.decimal  "price",      :precision => 8, :scale => 2, :null => false
       t.timestamps
@@ -144,8 +139,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     add_index "spree_line_items", ["variant_id"], :name => "index_spree_line_items_on_variant_id"
 
     create_table "spree_log_entries" do |t|
-      t.integer  "source_id"
-      t.string   "source_type"
+      t.references :source, :polymorphic => true
       t.text     "details"
       t.timestamps
     end
@@ -164,21 +158,21 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     create_table "spree_option_types_prototypes", :id => false do |t|
-      t.integer "prototype_id"
-      t.integer "option_type_id"
+      t.references :prototype
+      t.references :option_type
     end
 
     create_table "spree_option_values" do |t|
       t.integer  "position"
       t.string   "name"
       t.string   "presentation"
-      t.integer  "option_type_id"
+      t.references :option_type
       t.timestamps
     end
 
     create_table "spree_option_values_variants", :id => false do |t|
-      t.integer "variant_id"
-      t.integer "option_value_id"
+      t.references :variant
+      t.references :option_value
     end
 
     add_index "spree_option_values_variants", ["variant_id", "option_value_id"], :name => "index_option_values_variants_on_variant_id_and_option_value_id"
@@ -190,12 +184,12 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.decimal  "total",                              :precision => 8, :scale => 2, :default => 0.0, :null => false
       t.string   "state"
       t.decimal  "adjustment_total",                   :precision => 8, :scale => 2, :default => 0.0, :null => false
-      t.integer  "user_id"
+      t.references :user
       t.datetime "completed_at"
-      t.integer  "bill_address_id"
-      t.integer  "ship_address_id"
+      t.references :bill_address
+      t.references :ship_address
       t.decimal  "payment_total",                      :precision => 8, :scale => 2, :default => 0.0
-      t.integer  "shipping_method_id"
+      t.references :shipping_method
       t.string   "shipment_state"
       t.string   "payment_state"
       t.string   "email"
@@ -218,10 +212,9 @@ class SpreeOneTwo < ActiveRecord::Migration
 
     create_table "spree_payments" do |t|
       t.decimal  "amount",            :precision => 8, :scale => 2, :default => 0.0, :null => false
-      t.integer  "order_id"
-      t.integer  "source_id"
-      t.string   "source_type"
-      t.integer  "payment_method_id"
+      t.references :order
+      t.references :source, :polymorphic => true
+      t.references :payment_method
       t.string   "state"
       t.string   "response_code"
       t.string   "avs_response"
@@ -230,8 +223,7 @@ class SpreeOneTwo < ActiveRecord::Migration
 
     create_table "spree_preferences" do |t|
       t.string   "name",       :limit => 100
-      t.integer  "owner_id",   :limit => 30
-      t.string   "owner_type", :limit => 50
+      t.references :owner, :polymorphic => true
       t.text     "value"
       t.string   "key"
       t.string   "value_type"
@@ -242,15 +234,15 @@ class SpreeOneTwo < ActiveRecord::Migration
 
     create_table "spree_product_option_types" do |t|
       t.integer  "position"
-      t.integer  "product_id"
-      t.integer  "option_type_id"
+      t.references :product
+      t.references :option_type
       t.timestamps
     end
 
     create_table "spree_product_properties" do |t|
       t.string   "value"
-      t.integer  "product_id"
-      t.integer  "property_id"
+      t.references :product
+      t.references :property
       t.timestamps
     end
 
@@ -264,8 +256,8 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.string   "permalink"
       t.string   "meta_description"
       t.string   "meta_keywords"
-      t.integer  "tax_category_id"
-      t.integer  "shipping_category_id"
+      t.references :tax_category
+      t.references :shipping_category
       t.integer  "count_on_hand",        :default => 0,  :null => false
       t.timestamps
     end
@@ -276,8 +268,8 @@ class SpreeOneTwo < ActiveRecord::Migration
     add_index "spree_products", ["permalink"], :name => "index_spree_products_on_permalink"
 
     create_table "spree_products_taxons", :id => false do |t|
-      t.integer "product_id"
-      t.integer "taxon_id"
+      t.references :product
+      t.references :taxon
     end
 
     add_index "spree_products_taxons", ["product_id"], :name => "index_spree_products_taxons_on_product_id"
@@ -290,8 +282,8 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     create_table "spree_properties_prototypes", :id => false do |t|
-      t.integer "prototype_id"
-      t.integer "property_id"
+      t.references :prototype
+      t.references :property
     end
 
     create_table "spree_prototypes" do |t|
@@ -303,7 +295,7 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.string   "number"
       t.string   "state"
       t.decimal  "amount",     :precision => 8, :scale => 2, :default => 0.0, :null => false
-      t.integer  "order_id"
+      t.references :order
       t.text     "reason"
       t.timestamps
     end
@@ -313,8 +305,8 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     create_table "spree_roles_users", :id => false do |t|
-      t.integer "role_id"
-      t.integer "user_id"
+      t.references :role
+      t.references :user
     end
 
     add_index "spree_roles_users", ["role_id"], :name => "index_spree_roles_users_on_role_id"
@@ -325,9 +317,9 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.string   "number"
       t.decimal  "cost",               :precision => 8, :scale => 2
       t.datetime "shipped_at"
-      t.integer  "order_id"
-      t.integer  "shipping_method_id"
-      t.integer  "address_id"
+      t.references :order
+      t.references :shipping_method
+      t.references :address
       t.string   "state"
       t.timestamps
     end
@@ -341,9 +333,9 @@ class SpreeOneTwo < ActiveRecord::Migration
 
     create_table "spree_shipping_methods" do |t|
       t.string   "name"
-      t.integer  "zone_id"
+      t.references :zone
       t.string   "display_on"
-      t.integer  "shipping_category_id"
+      t.references :shipping_category
       t.boolean  "match_none"
       t.boolean  "match_all"
       t.boolean  "match_one"
@@ -354,8 +346,8 @@ class SpreeOneTwo < ActiveRecord::Migration
     create_table "spree_state_changes" do |t|
       t.string   "name"
       t.string   "previous_state"
-      t.integer  "stateful_id"
-      t.integer  "user_id"
+      t.references :stateful
+      t.references :user
       t.string   "stateful_type"
       t.string   "next_state"
       t.timestamps
@@ -364,7 +356,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     create_table "spree_states" do |t|
       t.string  "name"
       t.string  "abbr"
-      t.integer "country_id"
+      t.references :country
     end
 
     create_table "spree_tax_categories" do |t|
@@ -377,8 +369,8 @@ class SpreeOneTwo < ActiveRecord::Migration
 
     create_table "spree_tax_rates" do |t|
       t.decimal  "amount",            :precision => 8, :scale => 5
-      t.integer  "zone_id"
-      t.integer  "tax_category_id"
+      t.references :zone
+      t.references :tax_category
       t.boolean  "included_in_price",                               :default => false
       t.timestamps
     end
@@ -389,11 +381,11 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     create_table "spree_taxons" do |t|
-      t.integer  "parent_id"
+      t.references :parent
       t.integer  "position",          :default => 0
       t.string   "name",                             :null => false
       t.string   "permalink"
-      t.integer  "taxonomy_id"
+      t.references :taxonomy
       t.integer  "lft"
       t.integer  "rgt"
       t.string   "icon_file_name"
@@ -409,8 +401,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     add_index "spree_taxons", ["taxonomy_id"], :name => "index_taxons_on_taxonomy_id"
 
     create_table "spree_tokenized_permissions", :force => true do |t|
-      t.integer  "permissable_id"
-      t.string   "permissable_type"
+      t.references :permissable, :polymorphic => true
       t.string   "token"
       t.timestamps
     end
@@ -440,8 +431,8 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.string   "current_sign_in_ip"
       t.string   "last_sign_in_ip"
       t.string   "login"
-      t.integer  "ship_address_id"
-      t.integer  "bill_address_id"
+      t.references :ship_address
+      t.references :bill_address
       t.string   "authentication_token"
       t.string   "unlock_token"
       t.datetime "locked_at"
@@ -459,7 +450,7 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.decimal  "depth",         :precision => 8, :scale => 2
       t.datetime "deleted_at"
       t.boolean  "is_master",                                   :default => false
-      t.integer  "product_id"
+      t.references :product
       t.integer  "count_on_hand",                               :default => 0,     :null => false
       t.decimal  "cost_price",    :precision => 8, :scale => 2
       t.integer  "position"
@@ -468,9 +459,8 @@ class SpreeOneTwo < ActiveRecord::Migration
     add_index "spree_variants", ["product_id"], :name => "index_spree_variants_on_product_id"
 
     create_table "spree_zone_members" do |t|
-      t.integer  "zoneable_id"
-      t.string   "zoneable_type"
-      t.integer  "zone_id"
+      t.references :zoneable, :polymorphic => true
+      t.references :zone
       t.timestamps
     end
 
