@@ -105,11 +105,13 @@ describe Spree::Order do
       order.finalize!
     end
 
-    it "should freeze optional adjustments" do
+    it "should freeze all adjustments" do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
-      adjustment = mock_model(Spree::Adjustment)
-      order.stub_chain :adjustments, :optional => [adjustment]
-      adjustment.should_receive(:update_column).with("locked", true)
+      adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
+      adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
+      order.stub :adjustments => [adjustment1, adjustment2]
+      adjustment1.should_receive(:update_column).with("locked", true)
+      adjustment2.should_receive(:update_column).with("locked", true)
       order.finalize!
     end
 
