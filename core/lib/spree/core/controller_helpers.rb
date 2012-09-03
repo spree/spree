@@ -39,7 +39,7 @@ module Spree
         title_string = @title.present? ? @title : accurate_title
         if title_string.present?
           if Spree::Config[:always_put_site_name_in_title]
-            [default_title, title_string].join(' - ')
+            [title_string, default_title].join(' - ')
           else
             title_string
           end
