@@ -335,6 +335,7 @@ en:
   credits: Credits
   current: Current
   currency: Currency
+  currency_symbol_position: "Put currency symbol before or after dollar amount?"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."

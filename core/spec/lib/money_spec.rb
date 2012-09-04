@@ -34,8 +34,13 @@ module Spree
         money.to_s.should == "10.00 $"
       end
 
+      it "passed in option string" do
+        money = Spree::Money.new(10, :symbol_position => "after")
+        money.to_s.should == "10.00 $"
+      end
+
       it "config option" do
-        Spree::Config[:currency_symbol] = :after
+        Spree::Config[:currency_symbol_position] = :after
         money = Spree::Money.new(10)
         money.to_s.should == "10.00 $"
       end
