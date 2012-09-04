@@ -10,10 +10,19 @@
         <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
         <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
     <% end %>
-      <p>
-        <%= label_tag :currency, t(:currency) %>
-        <%= select_tag :currency, currency_options %>
-      </p>
+
+    <p>
+      <%= label_tag :currency, t(:currency) %>
+      <%= select_tag :currency, currency_options %>
+    </p>
+
+     <p>
+       <strong><%= t(:currency_symbol_position) %></strong><br>
+       <%= radio_button_tag :currency_symbol_position, "before" %>
+       <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %><br>
+       <%= radio_button_tag :currency_symbol_position, "after" %>
+       <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
+     </p>
   </fieldset>
 
   <p class="form-buttons" data-hook="buttons">
