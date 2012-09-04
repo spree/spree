@@ -44,7 +44,6 @@ module Spree
     preference :currency, :string, :default => "USD"
     preference :display_currency, :boolean, :default => false
     preference :default_country_id, :integer, :default => 214
-    preference :default_locale, :string, :default => Rails.application.config.i18n.default_locale || :en
     preference :default_meta_description, :string, :default => 'Spree demo site'
     preference :default_meta_keywords, :string, :default => 'spree, demo'
     preference :default_seo_title, :string, :default => ''
