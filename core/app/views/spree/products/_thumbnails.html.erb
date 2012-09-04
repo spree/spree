@@ -1,5 +1,5 @@
 <!-- no need for thumnails unless there is more then one image -->
-<% if product.images.size > 1 %>
+<% if product.images.size > 1 || product.variant_images.size > 0 %>
   <ul id="product-thumbnails" class="thumbnails inline" data-hook>
     <% product.images.each do |i| %>
       <li class="tmb-all" id="tmb-<%= i.id.to_s %>"><%= link_to image_tag(i.attachment.url(:mini)), i.attachment.url(:product) %></li>
