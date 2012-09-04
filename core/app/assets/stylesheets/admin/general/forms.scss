@@ -24,8 +24,9 @@ textarea, fieldset {
   padding: 6px 10px;
 >>>>>>> More admin restyle & refactoring
   border: 1px solid $color-border;
+  box-shadow: 0 0 0 3px lighten($c_blue1, 32);
   color: $color-body-text;
-  font-size: 80%;
+  font-size: 85%;
 
   &:focus {
     outline: none;
@@ -33,10 +34,14 @@ textarea, fieldset {
   }
 }
 
+fieldset {
+  box-shadow: none;
+}
+
 label {
   font-weight: bold;
   text-transform: uppercase;
-  font-size: 80%;
+  font-size: 85%;
   display: inline-block;
   margin-bottom: 5px;
   color: $c_blue3;
@@ -56,24 +61,30 @@ button, .button {
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 =======
   border: 1px solid darken($c_blue1, 5);
+  box-shadow: 0 0 0 3px lighten($c_blue1, 32);
   background-color: $c_blue1;
   color: white;
 >>>>>>> More amin styling
   text-transform: uppercase;
-  font-size: 80%;
+  font-size: 85%;
   font-weight: bold;
 
   &:visited, &:active, &:focus { color: white }
   &:hover {
     background-color: $c_green1;
     border-color: darken($c_green1, 5);
+    box-shadow: 0 0 0 3px lighten($c_green1, 45);
+    color: white;
+  }
+
+  &:active {
+    box-shadow: 0 0 8px 0 darken($c_green1, 5) inset, 0 0 0 3px lighten($c_green1, 45);
   }
 }
 
 fieldset {
   margin: 0;
   padding: 0;
-  box-shadow: white 1px 1px 1px 0 inset;
 
   legend {
     margin-left: 10px;
@@ -84,6 +95,31 @@ fieldset {
     color: white;
     padding: 5px 10px;
     border: 1px solid $color-border;
+  }
+
+  &.labels-inline {
+    .field {
+      margin-bottom: 0;
+      display: table;
+      width: 100%;
+
+      label, input {
+        display: table-cell !important;
+      }
+      input {
+        width: 100%;
+      }
+
+      &.checkbox {
+        input {
+          width: auto !important
+        }
+      }
+    }
+    .actions {
+      padding: 0;
+      text-align: right;
+    }
   }
 }
 

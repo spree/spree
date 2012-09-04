@@ -124,11 +124,17 @@ ul {
 .state {
   text-transform: uppercase;
 <<<<<<< HEAD
+<<<<<<< HEAD
   font-size: 80%;
 >>>>>>> Inital stage of admin redesign in progress ...
 =======
   font-size: 70%;
+=======
+  font-size: 80%;
+  font-weight: bold;
+>>>>>>> More work tables styling
   border: 1px solid transparent;
+  border-radius: 10px;
   padding: 2px 5px;  
   width: 100%;
   display: inline-block;
@@ -151,7 +157,7 @@ ul {
   }
   &.cart {
     background-color: lighten($c_blue1, 30);
-    color: white;
+    color: lighten($color-body-text, 15);
   }
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 }

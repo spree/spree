@@ -1,11 +1,13 @@
-<h1><%= t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;</h1>
+<% content_for :page_title do %>
+  <%= t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;
+<% end %>
 
 <% content_for :sidebar do %>
 
-  <h3><%= @product.name %><span class="sku"><%= @product.sku %></span></h3>
+  <h4><%= @product.name %><span class="sku"><%= @product.sku %></span></h4>
   <br class="clear" />
 
-  <ul class="sidebar product-menu" data-hook="admin_product_tabs">
+  <ul class="sidebar sidebar-menu product-menu" data-hook="admin_product_tabs">
     <li<%== ' class="active"' if current == 'Product Details' %>>
       <%= link_to t(:product_details), edit_admin_product_url(@product) %>
     </li>

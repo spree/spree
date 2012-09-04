@@ -16,17 +16,28 @@ $(document).ajaxStop(function(){
   $("#progress").slideUp();
 });
 
-// Make main menu use full width
-$(document).ready(function() {
-    $('.fullwidth-menu').horizontalNav({});
-});
+jQuery(function($) {
+  // Make main menu use full width
+  $('.fullwidth-menu').horizontalNav({});
 
-// Make select beautifu 
-$(document).ready(function(){
+  // Make select beautiful
   $('select.select2').select2({
     allowClear: true
   });
-})
+
+  // Add some tips
+  $(document).tooltips({
+    targetClass: 'with-tip'
+  });
+
+  // Highlight hovered table column
+  $('table tbody tr td.actions a').hover(function(){
+    $(this).closest('tr').addClass('highlight')
+  }, function(){
+    $(this).closest('tr').removeClass('highlight')
+  })
+});
+
 
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 

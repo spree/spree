@@ -2,13 +2,13 @@
 
 #table-filter {
   fieldset {
-    background-color: lighten($c_blue1, 50);
-    border: 1px solid lighten($c_blue1, 45);
+    background-color: lighten($c_blue1, 33);
+    border: 1px solid $color-border;
     margin-bottom: 15px;
-    padding: 5px 0;
+    padding: 10px 0;
 
     .field {
-      padding: 0 5px;
+      padding: 0 10px;
 
       input[type="text"] {
         width: 100%;
@@ -32,8 +32,8 @@
     }
 
     .actions {
-      text-align: right;
-      padding-right: 5px;
+      text-align: center;
+      padding: 5px 0;
     }
   }
 }

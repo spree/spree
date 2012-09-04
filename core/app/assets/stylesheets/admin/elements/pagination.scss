@@ -2,6 +2,7 @@
 
 .pagination {
   padding: 10px 0;
+  text-align: center;
 
   .page {
     padding: 5px 8px;
@@ -10,7 +11,8 @@
     text-align: center;
 
     &.current {
-      background-color: $c_blue1;
+      background-color: $c_green1;
+      border-radius: 3px;
       color: white;
     }
   }

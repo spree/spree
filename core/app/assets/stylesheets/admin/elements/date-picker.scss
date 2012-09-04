@@ -6,7 +6,7 @@
     padding: 0 6px 0 5px;
   }
   input.datepicker {
-    width: 90px !important;
+    width: 85px !important;
   }
 }
 
@@ -40,6 +40,7 @@
         text-indent: 0;
         color: white;
         width: 11px;
+        margin-left: -5px;
         @extend [class^="icon-"]:before;
       }
     }
@@ -47,22 +48,27 @@
       left: 0;
 
       .ui-icon {
-        @extend .icon-arrow-left;
+        @extend .icon-arrow-left;        
       }
     }
     .ui-datepicker-next {
-      right: 0;
+      right: 1;
 
       .ui-icon {
         @extend .icon-arrow-right;
-        margin-left: -3px;
+      }
+
+      &:hover {
+        .ui-icon {
+          margin-left: -6px;
+        }        
       }
     }
 
     .ui-datepicker-title {
       color: white;
       text-transform: uppercase;
-      font-size: 80%;
+      font-size: 85% !important;
       padding: 3px 10px;
     }
   }
@@ -88,7 +94,7 @@
           border: 1px solid transparent;
           background-color: white;
           background-image: none;
-          font-size: 80%;
+          font-size: 85%;
           color: $color-body-text;
 
           &.ui-state-active {

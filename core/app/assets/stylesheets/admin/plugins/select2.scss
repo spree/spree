@@ -3,43 +3,53 @@
 @import '../general/forms';
 
 .select2-container {
-  &.select2-container-active {
-    .select2-choice {box-shadow: none !important;}
-  }
   &:hover .select2-choice, &.select2-container-active .select2-choice {
     background-color: $c_green1 !important;
     border-color: darken($c_green1, 5) !important;
+    box-shadow: 0 0 0 3px lighten($c_green1, 45) !important;
   }
   .select2-results {    
     padding-left: 0 !important;
 
     li {
-      font-size: 80% !important;
+      font-size: 85% !important;
+    }
+
+    .select2-highlighted {
+      background-color: lighten($c_blue1, 10);
     }
   }
   .select2-search {
+    @extend [class^="icon-"]:before;
+    @extend .icon-search;
+    font-size: 100%;
+    padding-left: 15px;
+
     input {
       @extend input[type="text"];
       margin-top: 5px;
+      margin-left: -23px;
+      padding-left: 25px;
       font-family: $base-font-family;
+      font-size: 90%;
       box-shadow: none;
+      background-image: none;
+      width: 105% !important;
     }
   }
   .select2-drop {
     border-color: darken($c_green1, 5);
-    border-radius: 0;
     box-shadow: none;
   }
   .select2-choice {
     background-image: none !important;
-    background-color: $c_blue1 !important;
-    border: 1px solid darken($c_blue1, 5) !important;
-    color: white !important;
-    border-radius: 0 !important;
-    font-size: 80% !important;
-    font-weight: bold;
-    text-transform: uppercase;    
-    height: inherit !important;
+    background-color: lighten($c_blue1, 10) !important;
+    border: 1px solid lighten($c_blue1, 5) !important;
+    box-shadow: 0 0 0 3px lighten($c_blue1, 32);
+    border-radius: 0;
+    color: white !important;    
+    font-size: 85%;
+    height: 26px;    
     line-height: inherit !important;
     padding: 5px 10px;
 
@@ -65,6 +75,16 @@
         @extend .icon-caret-down;
         @extend [class^="icon-"]:before;
       }
+    }
+  }
+
+  &.select2-container-active {
+    .select2-choice {
+      box-shadow: none !important;
+    }
+
+    &.select2-dropdown-open .select2-choice div b {
+      @extend .icon-caret-up
     }
   }
 }

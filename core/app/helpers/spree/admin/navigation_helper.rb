@@ -40,11 +40,11 @@ module Spree
       end
 
       def link_to_clone(resource, options={})
-        link_to_with_icon('exclamation', t(:clone), clone_admin_product_url(resource), options)
+        link_to_with_icon('icon-repeat', t(:clone), clone_admin_product_url(resource), options)
       end
 
       def link_to_new(resource)
-        link_to_with_icon('add', t(:new), edit_object_url(resource))
+        link_to_with_icon('icon-plus', t(:new), edit_object_url(resource))
       end
 
       def link_to_edit(resource, options={})
@@ -52,24 +52,26 @@ module Spree
       end
 
       def link_to_edit_url(url, options={})
-        text = if options[:no_text]
-                 content_tag(:i, nil, :class => 'icon-edit')
-               else
-                 t(:edit)
-               end
-        link_to(text, url, options)
+        link_to_with_icon('icon-edit', t(:edit), url, options)
       end
 
       def link_to_delete(resource, options={})
         url = options[:url] || object_url(resource)
-        name = options[:name] || icon('delete') + ' ' + t(:delete)
-        link_to name, url,
+        name = options[:name] || t(:delete)
+        if options[:no_text]
+          name = ''
+          options[:'data-tip'] = name
+        end
+        link_to_with_icon 'icon-trash', name, url,
           :class => "delete-resource",
           :data => { :confirm => t(:are_you_sure) }
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
-        options[:class] = (options[:class].to_s + " icon_link #{icon_name}").strip
+        options[:class] = (options[:class].to_s + " icon_link with-tip #{icon_name}").strip
+        options[:title] = text if options[:no_text]
+        text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")        
+        options.delete(:no_text)
         link_to(text, url, options)
       end
 
