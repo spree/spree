@@ -6,7 +6,7 @@ module Spree
           iso = details[:iso_code]
           [iso, "#{details[:name]} (#{iso})"]
         end
-        options_from_collection_for_select(currencies, :first, :last)
+        options_from_collection_for_select(currencies, :first, :last, Spree::Config[:currency])
       end
     end
   end
