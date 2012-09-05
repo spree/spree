@@ -416,15 +416,15 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 13.00
+      Spree::Order.last.total.to_f.should == 15.00
 
       fill_in "order[line_items_attributes][0][quantity]", :with => "2"
       click_button "Update"
-      Spree::Order.last.total.to_f.should == 31.00
+      Spree::Order.last.total.to_f.should == 35.00
 
       fill_in "order[line_items_attributes][0][quantity]", :with => "3"
       click_button "Update"
-      Spree::Order.last.total.to_f.should == 49.00
+      Spree::Order.last.total.to_f.should == 54.00
     end
 
     def create_per_product_promotion product_name, discount_amount
