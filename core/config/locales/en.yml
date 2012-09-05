@@ -108,6 +108,7 @@ en:
       spree/tax_rate:
         amount: Rate
         included_in_price: Included in Price
+        show_rate_in_label: Show rate in label
       spree/taxon:
         name: Name
         permalink: Permalink

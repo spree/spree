@@ -15,6 +15,7 @@
       <th><%= t(:category) %></th>
       <th><%= t(:amount) %></th>
       <th><%= t(:included_in_price) %></th>
+      <th><%= t(:show_rate_in_label) %></th>
       <th><%= t(:calculator) %></th>
       <th><%= t(:action) %></th>
     </tr>
@@ -27,6 +28,7 @@
       <td><%=tax_rate.tax_category.try(:name) || t(:not_available) %></td>
       <td><%=tax_rate.amount %></td>
       <td><%=tax_rate.included_in_price %></td>
+      <td><%=tax_rate.show_rate_in_label %></td>
       <td><%=tax_rate.calculator.to_s %></td>
       <td>
         <%= link_to_edit tax_rate %> &nbsp;

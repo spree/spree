@@ -20,6 +20,10 @@
       <td><%= f.label :amount, t(:rate) %></td>
       <td><%= f.text_field :amount %></td>
     </tr>
+    <tr data-hook="show_rate">
+      <td><%= f.label :show_rate_in_label, t(:show_rate_in_label) %></td>
+      <td><%= f.check_box :show_rate_in_label %></td>
+    </tr>
   </table>
 
   <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
