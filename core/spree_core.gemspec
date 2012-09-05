@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'ransack', '~> 0.6.0'
   s.add_dependency 'activemerchant', '= 1.28.0'
   s.add_dependency 'rails', '~> 3.2.8'
-  s.add_dependency 'kaminari', '>= 0.13.0'
+  s.add_dependency 'kaminari', '0.13.0'
   s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.3.2'
 end
