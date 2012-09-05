@@ -4,6 +4,10 @@
       <td><%= f.label :zone, t(:zone) %></td>
       <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
     </tr>
+    <tr data-hook="name">
+      <td><%= f.label :name, t(:name) %></td>
+      <td><%= f.text_field :name %></td>
+    </tr>
     <tr data-hook="category">
       <td><%= f.label :tax_category_id, t(:tax_category) %></td>
       <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
