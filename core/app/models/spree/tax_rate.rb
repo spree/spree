@@ -73,7 +73,7 @@ module Spree
     private
 
       def create_label
-        name ? name : tax_category.name
+        "#{name ? name : tax_category.name} #{amount * 100}%"
       end
   end
 end
