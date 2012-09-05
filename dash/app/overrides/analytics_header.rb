@@ -1,4 +1,4 @@
-Deface::Override.new(:virtual_path => Spree::Config[:layout],
+Deface::Override.new(:virtual_path => Spree::Config[:layout].gsub(/^\//, ''),
                      :name => "add_analytics_header",
                      :insert_bottom => "head",
                      :partial => "spree/analytics/header",
