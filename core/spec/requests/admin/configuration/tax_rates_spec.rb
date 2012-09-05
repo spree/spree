@@ -14,7 +14,7 @@ describe "Tax Rates" do
   it "can see a tax rate in the list if the tax category has been deleted" do
     tax_rate.tax_category.mark_deleted!
     lambda { click_link "Tax Rates" }.should_not raise_error
-    within("table tbody td:nth-child(2)") do
+    within("table tbody td:nth-child(3)") do
       page.should have_content("N/A")
     end
   end
