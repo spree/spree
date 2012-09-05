@@ -73,9 +73,7 @@ module Spree
     private
 
       def create_label
-        label = ""
-        label << (name.present? ? name : tax_category.name) + " "
-        label << (show_rate_in_label? ? "#{amount * 100}%" : "")
+        "#{name ? name : tax_category.name} " + (show_rate_in_label ? "#{amount * 100}%" : "")
       end
   end
 end
