@@ -39,8 +39,7 @@ module Spree
         end
       end
 
-      def save_permalink
-        permalink_value = self.to_param
+      def save_permalink(permalink_value=self.to_param)
         field = self.class.permalink_field
           # Do other links exist with this permalink?
           other = self.class.where("#{field} LIKE ?", "#{permalink_value}%")
