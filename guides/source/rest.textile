@@ -451,7 +451,13 @@ POST /api/orders
 For instance, to create an order containing a line item for a single variant who's ID is "1" and quantity is 5, make this request:
 
 <plain>
-POST /api/orders?order[line_items][0][variant_id]=1&order[line_items[0][quantity]=5
+POST /api/orders?order[line_items][][variant_id]=1&order[line_items[][quantity]=5
+</plain>
+
+If you want to create an order with more than one variant, then continue to chain +variant_id+ and +quantity+ pairs, like this:
+
+<plain>
+POST /api/orders?order[line_items][][variant_id]=1&order[line_items[][quantity]=5&order[line_items][][variant_id]=2&order[line_items[][quantity]=10
 </plain>
 
 h5. Adding address information to an order
