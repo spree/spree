@@ -13,10 +13,10 @@ module Spree
     calculated_adjustments
 
     def available?(order, display_on = nil)
-      displayable? && calculator.available?(order)
+      displayable?(display_on) && calculator.available?(order)
     end
 
-    def displayable?
+    def displayable?(display_on)
       (self.display_on == display_on.to_s || self.display_on.blank?)
     end
 
