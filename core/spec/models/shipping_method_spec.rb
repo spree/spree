@@ -31,6 +31,34 @@ describe Spree::ShippingMethod do
         @shipping_method.available?(@order).should be_true
       end
     end
+
+    context "whe the calculator is front_end" do
+      before { @shipping_method.display_on = 'front_end' }
+
+      context "and the order is processed through the front_end" do
+        it "should be true" do
+          @shipping_method.available?(@order, :front_end).should be_true
+        end
+
+        it "should be false" do
+          @shipping_method.available?(@order, :back_end).should be_false
+        end
+      end
+    end
+
+    context "whe the calculator is back_end" do
+      before { @shipping_method.display_on = 'back_end' }
+
+      context "and the order is processed through the back_end" do
+        it "should be false" do
+          @shipping_method.available?(@order, :front_end).should be_false
+        end
+
+        it "should be true" do
+          @shipping_method.available?(@order, :back_end).should be_true
+        end
+      end
+    end
   end
 
   context 'available_to_order?' do
