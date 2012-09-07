@@ -1581,3 +1581,10 @@ countries_171:
   iso_name: SAINT KITTS AND NEVIS
   id: "171"
   numcode: "659"
+countries_XXX: 
+  name: Serbia
+  iso3: SRB
+  iso: RS
+  iso_name: SERBIA
+  id: "XXX"
+  numcode: "XXX"
