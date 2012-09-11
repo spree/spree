@@ -14,7 +14,7 @@ $ ->
       state_select = ($ 'p#' + region + 'state select')
       state_input = ($ 'p#' + region + 'state input')
       if states
-        selected = state_select.val()
+        selected = parseInt state_select.val()
         state_select.html ''
         states_with_blank = [ [ '', '' ] ].concat(states)
         $.each states_with_blank, (pos, id_nm) ->
