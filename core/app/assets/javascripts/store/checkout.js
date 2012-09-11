@@ -16,7 +16,7 @@
         state_input = $('p#' + region + 'state input');
 
         if(states) {
-          selected = state_select.val();
+          selected = parseInt(state_select.val());
           state_select.html('');
           states_with_blank = [["",""]].concat(states);
           $.each(states_with_blank, function(pos,id_nm) {
