@@ -62,18 +62,6 @@ describe Spree::Admin::ProductsController do
       response.should render_template("admin/products/new")
     end
 
-    it "should be able to fallback to NL translations if NL-NL translations are missing" do
-      require 'i18n/backend/fallbacks'
-      I18n.locale = I18n.default_locale
-      I18n.backend.store_translations(:'nl-NL', { :number => { :currency => { :format => { :separator => ',' } } } })
-      I18n.backend.store_translations(:'nl', { :number => { :currency => { :format => { :delimiter => ',' } } } })
-
-      I18n.fallbacks[:'nl-NL'] = :'NL'
-      separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
-
-      spree_post :create, :product => product_attributes
-    end
-
     it "should create product from prototype" do
       spree_post :create, :product => product_attributes.merge(:prototype_id => prototype.id)
       product = Spree::Product.last
