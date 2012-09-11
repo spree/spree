@@ -218,6 +218,14 @@ describe Spree::Variant do
           variant.price.should == 1599.99
         end
       end
+
+      context "in a locale it does not know about" do
+        it "defaults to standard" do
+          I18n.locale = :"kl-On" # klingon
+          variant.price = '1,599.99'
+          variant.price.should == 1599.99
+        end
+      end
     end
 
     context "cost_price=" do

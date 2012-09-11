@@ -138,7 +138,8 @@ module Spree
       def parse_price(price)
         price = price.to_s
 
-        separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
+        separator = I18n.t(:'number.currency.format.separator', :default => '.')
+        delimiter = I18n.t(:'number.currency.format.delimiter', :default => ',')
         non_price_characters = /[^0-9\-#{separator}]/
         price.gsub!(non_price_characters, '') # strip everything else first
         price.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
