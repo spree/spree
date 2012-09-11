@@ -16,14 +16,6 @@ All of Spree's business logic (models, controllers, helpers, etc) can easily be 
 
 Standard practice for including such changes in your application or extension is to create a file within the relevant *app/models* or *app/controllers* directory with the original class name with **_decorator** appended.
 
-NOTE: In order to use decorators in an extension you need to include the following code in the self.activate method defined in *lib/extension_name/engine.rb*:
-
-<ruby>
-  Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
-    Rails.configuration.cache_classes ? require(c) : load(c)
-  end
-</ruby>
-
 **Adding a custom method to the Product model:** app/models/product_decorator.rb
 
 <ruby>
