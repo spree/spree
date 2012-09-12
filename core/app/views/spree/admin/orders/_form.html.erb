@@ -6,14 +6,23 @@
   <%= form_for @order, :url => admin_order_url(@order), :method => :put do |f| %>
     <%= f.hidden_field :number %>
     <table class="index">
-      <tbody id="line-items">
+      <colgroup>
+         <col style="width: 49%;">
+         <col style="width: 14%;">
+         <col style="width: 10%;">
+         <col style="width: 14%;">
+         <col style="width: 8%;">
+      </colgroup>
+      <thead id="line-items">
         <tr data-hook="admin_order_form_line_items_headers">
           <th><%= t(:item_description) %></th>
           <th class="price"><%= t(:price) %></th>
           <th class="qty"><%= t(:qty) %></th>
           <th class="total"><span><%= t(:total) %></span></th>
-          <th class="orders-actions" data-hook="admin_order_form_line_items_header_actions"></th>
-        </tr>
+          <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
+        </tr>        
+      </thead>
+      <tbody data-hook="admin_order_form_line_items">
         <%= f.fields_for :line_items do |li_form| %>
           <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
         <% end %>
@@ -21,32 +30,32 @@
       <tbody id="subtotal" data-hook="admin_order_form_subtotal">
         <tr id="subtotal-row">
           <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-          <td class="total"><span><%= money(@order.item_total) %></span></td>
-          <td></td>
+          <td class="total align-center"><span><%= money(@order.item_total) %></span></td>
+          <td class="actions"></td>
         </tr>
       </tbody>
       <tbody id="order-charges" data-hook="admin_order_form_adjustments">
         <% @order.adjustments.each do |adjustment| %>
           <tr>
             <td colspan="3"><strong><%= adjustment.label %></strong></td>
-            <td class="total"><span><%= adjustment.display_amount %></span></td>
-            <td></td>
+            <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
+            <td class="actions"></td>
           </tr>
         <% end %>
       </tbody>
-      <tbody id="order-total" data-hook="admin_order_form_total">
+      <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total">
         <tr>
           <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-          <td class="total"><span id="order_total"><%= @order.display_total %></span></td>
-          <td></td>
+          <td class="total align-center"><span id="order_total"><%= @order.display_total %></span></td>
+          <td class="actions"></td>
         </tr>
       </tbody>
     </table>
 
-    <p class="form-buttons" data-hook="admin_order_form_buttons">
-      <%= button t(:update) %>
-      <%= t(:or) %> <%= link_to t(:back), admin_orders_url %>
-    </p>
+    <div class="form-buttons actions" data-hook="admin_order_form_buttons">
+      <%= button t(:update), 'icon-refresh' %>
+      <%= t(:or) %> <%= link_to_with_icon 'button icon-arrow-left', t(:back), admin_orders_url %>
+    </div>
 
   <% end %>
 

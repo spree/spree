@@ -6,7 +6,6 @@
   &:hover .select2-choice, &.select2-container-active .select2-choice {
     background-color: $c_green1 !important;
     border-color: darken($c_green1, 5) !important;
-    box-shadow: 0 0 0 3px lighten($c_green1, 45) !important;
   }
   .select2-results {    
     padding-left: 0 !important;
@@ -30,6 +29,8 @@
       margin-top: 5px;
       margin-left: -23px;
       padding-left: 25px;
+      padding-top: 6px;
+      padding-bottom: 6px;
       font-family: $base-font-family;
       font-size: 90%;
       box-shadow: none;
@@ -42,16 +43,21 @@
     box-shadow: none;
   }
   .select2-choice {
-    background-image: none !important;
-    background-color: lighten($c_blue1, 10) !important;
-    border: 1px solid lighten($c_blue1, 5) !important;
-    box-shadow: 0 0 0 3px lighten($c_blue1, 32);
-    border-radius: 0;
+    background-image: none;
+    background-color: lighten($c_blue1, 10);
+    border: none;
+    box-shadow: none;
+    border-radius: 3px;
     color: white !important;    
     font-size: 85%;
-    height: 26px;    
+    height: 32px;    
     line-height: inherit !important;
-    padding: 5px 10px;
+    padding: 8px 15px;
+
+    span {
+      display: block;
+      padding: 2px;
+    }
 
     .select2-search-choice-close {
       background-image: none !important;
@@ -71,7 +77,7 @@
         display: inherit !important;
         width: auto !important;
         height: auto !important;
-        margin-top: 6px;
+        margin-top: 11px;
         @extend .icon-caret-down;
         @extend [class^="icon-"]:before;
       }

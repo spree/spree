@@ -139,7 +139,7 @@ body {
   li {
     a {
       display: block;
-      padding: 20px;
+      padding: 25px 20px;
       color: white !important;
       font-weight: bold;
       text-transform: uppercase;
@@ -169,6 +169,7 @@ body {
           border-right: 10px solid transparent;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
           border-top: 5px solid $c_green1;
           bottom: 0px;
           margin-bottom: -5px;
@@ -179,6 +180,9 @@ body {
 >>>>>>> Initial admin redesign stage
 =======
           border-top: 5px solid $c_green1;
+=======
+          border-top: 5px solid $c_green1;          
+>>>>>>> More admin styling...
           bottom: 0px;
           margin-bottom: -5px;
 >>>>>>> Inital stage of admin redesign in progress ...
@@ -235,8 +239,56 @@ body {
 //---------------------------------------------------
 #sidebar {
   background-color: lighten($c_blue1, 33);
-  border: 1px solid $color-border;
+  border: 1px solid $color-border;  
+  border-radius: 3px;
   padding: 10px;
+  overflow: visible;
+
+  .sidebar-title {
+    color: $c_green1;
+  }
+
+  .additional-info {
+    // border-top: 1px solid $color-border;
+    // border-bottom: 1px solid $color-border;
+  }
+
+  .sidebar-menu {
+    ul {
+      list-style: none;      
+
+      li {
+        a {
+          padding: 10px 0 10px 10px;
+          display: block;
+          position: relative;
+          text-transform: uppercase;
+          font-weight: bold;
+          font-size: 85%;
+          margin: 0 -11px;
+          text-align: left;
+        }
+
+        &.active a, &:hover a {
+          color: white;
+          background-color: $c_green1;
+
+          &:after {
+            content: '';
+            position: absolute;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent; 
+            border-right:10px solid $c_green1;
+            left: -10px;
+            margin-bottom: -5px;
+            top: 50%;
+            margin-top: -10px;
+            z-index: 1;
+          }
+        }
+      }
+    }
+  }
 }
 
 // Content
@@ -295,5 +347,16 @@ body {
       font-size: 100%;
     }
   }
+<<<<<<< HEAD
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
+=======
+}
+
+// Footer
+//---------------------------------------------------
+#footer {
+  margin-top: 15px;
+  border-top: 1px solid $color-border;
+  padding: 10px 0;
+>>>>>>> More admin styling...
 }

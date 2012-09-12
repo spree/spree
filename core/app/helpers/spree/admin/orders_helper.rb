@@ -8,6 +8,7 @@ module Spree
           if @order.send("can_#{event}?")
             links << button_link_to(t(event), fire_admin_order_url(@order, :e => event),
                                     :method => :put,
+                                    :icon => "icon-#{event}",
                                     :data => { :confirm => t(:order_sure_want_to, :event => t(event)) })
           end
         end

@@ -1,3 +1,4 @@
+// Customize orders filter
 [data-hook="admin_orders_index_search"] {
   fieldset {
     
@@ -14,6 +15,24 @@
 
       &:first-child {
         margin-bottom: 33px !important;
+      }
+    }
+  }
+}
+
+// Customize orduct add fieldset
+#add-line-item {
+  fieldset {
+    padding: 10px 0;
+
+    .field {
+      input[type="text"], input[type="number"] {
+        width: 100%;
+      }     
+    }
+    .actions {
+      .button {
+        margin-top: 20px;
       }
     }
   }

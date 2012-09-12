@@ -1,4 +1,15 @@
+@import '../variables';
+
 #progress { 
   display: none;
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background-color: $c_yellow1;
+  color: white;
+  text-align: center;
+  z-index: 1000;
+  opacity: 0.8;
 }

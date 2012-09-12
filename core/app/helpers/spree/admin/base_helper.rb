@@ -138,13 +138,17 @@ module Spree
         %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
       end
 
-      def link_to_add_fields(name, target)
+      def link_to_add_fields(name, target, options = {})
+        name = '' if options[:no_text]
         link_to icon('add') + name, 'javascript:', :data => { :target => target }, :class => "add_fields"
       end
 
       # renders hidden field and link to remove record using nested_attributes
-      def link_to_remove_fields(name, f)
-        f.hidden_field(:_destroy) + link_to_with_icon(:delete, name, '#', :class => 'remove_fields')
+      def link_to_remove_fields(name, f, options = {})
+        name = '' if options[:no_text]
+        options[:class] = '' unless options[:class]
+        options[:class] += 'no-text with-tip' if options[:no_text]
+        link_to_with_icon('icon-trash', name, '#', :class => "remove_fields #{options[:class]}") + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)

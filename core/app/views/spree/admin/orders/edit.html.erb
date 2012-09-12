@@ -1,12 +1,10 @@
 <%= csrf_meta_tags %>
-<div class="order-links" data-hook="admin_order_edit_buttons">
-  <div class="toolbar">
-    <%= event_links %>
-  </div>
-  <div class="toolbar">
-    <%= button_link_to t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'send-email' if @order.user %>
-  </div>
-</div>
+<% content_for :page_actions do %>
+  <ul class="order-links header-action-links inline-menu" data-hook="admin_order_edit_buttons">
+    <li><%= event_links %></li>
+    <li><%= button_link_to t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'icon-email' if @order.user %></li>
+  </ul>
+<% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 

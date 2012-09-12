@@ -2,6 +2,8 @@
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Images'} %>
 
+<div id="images" data-hook></div>
+
 <table class="index sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
   <thead>
     <tr data-hook="images_header">
@@ -10,50 +12,50 @@
         <th><%= Spree::Variant.model_name.human %></th>
       <% end %>
       <th><%= t(:alt_text) %></th>
-      <th><%= t(:action) %></th>
+      <th class="actions"></th>
     </tr>
   </thead>
 
   <tbody>
-  <% @product.images.each do |image| %>
-    <tr id="<%= spree_dom_id image %>" data-hook="images_row">
-      <td>
-        <span class="handle"></span>
-        <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
-      </td>
-      <% if @product.has_variants? %>
-        <td><%= t(:all) %></td>
-      <% end %>
-      <td><%= image.alt %></td>
-      <td class="actions">
-        <%= link_to_with_icon 'edit', t(:edit), edit_admin_product_image_url(@product, image), :class => 'edit' %>
-        &nbsp;
-        <%= link_to_delete image, { :url => admin_product_image_url(@product, image) }%>
-      </td>
-    </tr>
-  <% end %>
-
-  <% @product.variants.each do |variant| %>
-    <% variant.images.each do |image| %>
+    <% @product.images.each do |image| %>
       <tr id="<%= spree_dom_id image %>" data-hook="images_row">
-        <td><span class="handle"></span><%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %></td>
+        <td>
+          <span class="handle"></span>
+          <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
+        </td>
         <% if @product.has_variants? %>
-          <td><%= variant.options_text %></td>
+          <td><%= t(:all) %></td>
         <% end %>
         <td><%= image.alt %></td>
         <td class="actions">
-          <%= link_to_with_icon 'edit', t(:edit), edit_admin_product_image_url(@product, image) %>
+          <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_product_image_url(@product, image), :no_text => true %>
           &nbsp;
-          <%= link_to_delete image, {:url => admin_product_image_url(@product, image) }%>
+          <%= link_to_delete image, { :url => admin_product_image_url(@product, image), :no_text => true } %>
         </td>
       </tr>
     <% end %>
-  <% end %>
+
+    <% @product.variants.each do |variant| %>
+      <% variant.images.each do |image| %>
+        <tr id="<%= spree_dom_id image %>" data-hook="images_row">
+          <td><span class="handle"></span><%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %></td>
+          <% if @product.has_variants? %>
+            <td><%= variant.options_text %></td>
+          <% end %>
+          <td><%= image.alt %></td>
+          <td class="actions">
+            <%= link_to_with_icon 'edit', t(:edit), edit_admin_product_image_url(@product, image) %>
+            &nbsp;
+            <%= link_to_delete image, {:url => admin_product_image_url(@product, image) }%>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
   </tbody>
 </table>
 
-<div id="images" data-hook></div>
-<br />
-<p data-hook="links">
-  <%= link_to icon('add') + ' ' + t(:new_image), new_admin_product_image_url(@product), :id => 'new_image_link' %>
-</p>
+<% content_for :page_actions do %>
+  <ul class="inline-menu" data-hook="toolbar">
+    <li><%= link_to_with_icon('icon-plus', t(:new_image), new_admin_product_image_url(@product), :id => 'new_image_link', :class => 'button') %></li>
+  </ul>
+<% end %>

@@ -1,22 +1,26 @@
 <table class="index">
-  <tr data-hook="payments_header">
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t(:amount, :scope => 'activerecord.attributes.spree/payment') %></th>
-    <th><%= t(:payment_method) %></th>
-    <th><%= t(:payment_state) %></th>
-    <th><%= t(:payment_actions) %></th>
-  </tr>
-  <% payments.each do |payment| %>
-    <tr data-hook="payments_row">
-      <td><%= payment.created_at.to_s(:date_time24) %></td>
-      <td><%= money(payment.amount) %></td>
-      <td><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>
-      <td><%= t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></td>
-      <td>
-        <% payment.actions.each do |action| %>
-          <%= button_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put %>
-        <% end %>
-      </td>
+  <thead>
+    <tr data-hook="payments_header">
+      <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+      <th><%= t(:amount, :scope => 'activerecord.attributes.spree/payment') %></th>
+      <th><%= t(:payment_method) %></th>
+      <th><%= t(:payment_state) %></th>
+      <th class="actions"></th>
     </tr>
-  <% end %>
+  </thead>
+  <tbody>
+    <% payments.each do |payment| %>
+      <tr data-hook="payments_row">
+        <td><%= payment.created_at.to_s(:date_time24) %></td>
+        <td><%= money(payment.amount) %></td>
+        <td class="align-center"><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>
+        <td class="align-center"><%= t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></td>
+        <td class="actions">
+          <% payment.actions.each do |action| %>
+            <%= button_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :class => "icon-plus button" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>

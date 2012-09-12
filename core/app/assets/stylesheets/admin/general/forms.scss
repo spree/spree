@@ -1,4 +1,5 @@
 @import "../variables";
+@import "font-awesome";
 
 input[type="text"],
 input[type="password"],
@@ -10,7 +11,9 @@ input[type="url"],
 <<<<<<< HEAD
 <<<<<<< HEAD
 input[type="number"],
+input[type="tel"],
 textarea, fieldset {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 input[type="number"] {
@@ -25,6 +28,11 @@ textarea, fieldset {
 >>>>>>> More admin restyle & refactoring
   border: 1px solid $color-border;
   box-shadow: 0 0 0 3px lighten($c_blue1, 32);
+=======
+  padding: 9px 10px;
+  border-radius: 3px;
+  border: 1px solid $color-border;  
+>>>>>>> More admin styling...
   color: $color-body-text;
   font-size: 85%;
 
@@ -32,10 +40,6 @@ textarea, fieldset {
     outline: none;
     border-color: lighten($c_green1, 30);
   }
-}
-
-fieldset {
-  box-shadow: none;
 }
 
 label {
@@ -50,6 +54,7 @@ label {
 input[type="submit"], 
 input[type="button"], 
 button, .button {
+<<<<<<< HEAD
   padding: 5px 10px;
 <<<<<<< HEAD
   border: 1px solid $color-border;
@@ -62,6 +67,12 @@ button, .button {
 =======
   border: 1px solid darken($c_blue1, 5);
   box-shadow: 0 0 0 3px lighten($c_blue1, 32);
+=======
+  display: inline-block;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 3px;
+>>>>>>> More admin styling...
   background-color: $c_blue1;
   color: white;
 >>>>>>> More amin styling
@@ -73,28 +84,43 @@ button, .button {
   &:hover {
     background-color: $c_green1;
     border-color: darken($c_green1, 5);
-    box-shadow: 0 0 0 3px lighten($c_green1, 45);
     color: white;
   }
 
   &:active {
-    box-shadow: 0 0 8px 0 darken($c_green1, 5) inset, 0 0 0 3px lighten($c_green1, 45);
+    box-shadow: 0 0 8px 0 darken($c_green1, 5) inset;
   }
 }
 
 fieldset {
-  margin: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  background-color: lighten($c_blue1, 33);
+  margin-bottom: 15px;
+  margin-left: 0;
+  margin-right: 0;  
+  position: relative;
   padding: 0;
 
-  legend {
-    margin-left: 10px;
+  .field {
+    padding: 10px;
+  }
+
+  legend {    
+    @extend [class^="icon-"]:before;
+    @extend .icon-caret-down;
     text-transform: uppercase;
-    
     font-weight: bold;
+    border-radius: 3px;
+    margin-left: 10px;
     background-color: $c_blue1;
     color: white;
-    padding: 5px 10px;
-    border: 1px solid $color-border;
+    padding: 8px 15px;
+
+    &:before {
+      padding-right: 3px;
+    }
   }
 
   &.labels-inline {
@@ -121,6 +147,10 @@ fieldset {
       text-align: right;
     }
   }
+}
+
+.form-actions {
+  margin-top: 18px;
 }
 
 // Some fixes for fontwesome stylesheets

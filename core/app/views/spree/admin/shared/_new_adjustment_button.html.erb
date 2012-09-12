@@ -1,8 +1,7 @@
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu" data-hook="toolbar">
     <li>
-      <%= button_link_to t(:new_adjustment), new_admin_order_adjustment_url(@order), :icon => 'add' %>
+      <%= button_link_to t(:new_adjustment), new_admin_order_adjustment_url(@order), :icon => 'icon-plus' %>
     </li>
   </ul>
-  <br class="clear" />
-</div>
+<% end %>

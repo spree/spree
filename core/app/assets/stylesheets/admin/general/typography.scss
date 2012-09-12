@@ -5,6 +5,11 @@
 <<<<<<< HEAD
 // Base
 //--------------------------------------------------------------
+hr {
+  border-top: 1px solid $color-border;
+  border-bottom: 1px solid white;
+  border-left: none;
+}
 
 =======
 >>>>>>> Initial admin redesign stage
@@ -70,6 +75,37 @@ ul {
   }
 <<<<<<< HEAD
 <<<<<<< HEAD
+}
+
+dl {
+  width: 100%;
+  overflow: hidden;
+  margin: 5px 0;
+
+  dt, dd {
+    float: left;
+    line-height: 16px;
+    padding: 5px;
+  }
+
+  dt {
+    width: 40%;
+    font-weight: bold;
+    padding-left: 0;
+    text-transform: uppercase;
+    font-size: 85%;
+  }
+
+  dd {
+    width: 60%;
+    padding-right: 0;
+  }
+
+  dd:after {
+    content: '';
+    clear: both;
+  }
+
 }
 
 // Helpers
@@ -139,9 +175,11 @@ ul {
   width: 100%;
   display: inline-block;
 
-  &.complete {
+  &.complete, &.ready, &.paid {
     background-color: $c_green1;
-    color: white;
+    &, a {
+      color: white;
+    }
   }
 
   &.pending {

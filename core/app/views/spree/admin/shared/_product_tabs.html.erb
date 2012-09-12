@@ -4,23 +4,24 @@
 
 <% content_for :sidebar do %>
 
-  <h4><%= @product.name %><span class="sku"><%= @product.sku %></span></h4>
-  <br class="clear" />
+  <h5 class="sidebar-title"><span class="sku"><%= @product.sku %></span></h5>
+  <hr>
 
-  <ul class="sidebar sidebar-menu product-menu" data-hook="admin_product_tabs">
-    <li<%== ' class="active"' if current == 'Product Details' %>>
-      <%= link_to t(:product_details), edit_admin_product_url(@product) %>
-    </li>
-    <li<%== ' class="active"' if current == 'Images' %>>
-      <%= link_to t(:images), admin_product_images_url(@product) %>
-    </li>
-    <li<%== ' class="active"' if current == 'Variants' %>>
-      <%= link_to t(:variants),  admin_product_variants_url(@product) %>
-    </li>
-    <li<%== ' class="active"' if current == 'Product Properties' %>>
-      <%= link_to t(:product_properties), admin_product_product_properties_url(@product) %>
-    </li>
-  </ul>
-  <br class="clear" />
+  <nav class="sidebar-menu">
+    <ul data-hook="admin_product_tabs">
+      <li<%== ' class="active"' if current == 'Product Details' %>>
+        <%= link_to_with_icon 'icon-edit', t(:product_details), edit_admin_product_url(@product) %>
+      </li>
+      <li<%== ' class="active"' if current == 'Images' %>>
+        <%= link_to_with_icon 'icon-picture', t(:images), admin_product_images_url(@product) %>
+      </li>
+      <li<%== ' class="active"' if current == 'Variants' %>>
+        <%= link_to_with_icon 'icon-th-large', t(:variants),  admin_product_variants_url(@product) %>
+      </li>
+      <li<%== ' class="active"' if current == 'Product Properties' %>>
+        <%= link_to_with_icon 'icon-tasks', t(:product_properties), admin_product_product_properties_url(@product) %>
+      </li>
+    </ul>
+  </nav>
 
 <% end %>

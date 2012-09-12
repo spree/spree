@@ -8,17 +8,9 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-$(document).ajaxStart(function(){
-  $("#progress").slideDown();
-});
-
-$(document).ajaxStop(function(){
-  $("#progress").slideUp();
-});
-
 jQuery(function($) {
   // Make main menu use full width
-  $('.fullwidth-menu').horizontalNav({});
+  $('.fullwidth-menu').horizontalNav();
 
   // Make select beautiful
   $('select.select2').select2({
@@ -31,11 +23,12 @@ jQuery(function($) {
   });
 
   // Highlight hovered table column
-  $('table tbody tr td.actions a').hover(function(){
-    $(this).closest('tr').addClass('highlight')
+  $('table tbody tr td.actions a').hover(function(){    
+    $(this).closest('tr').addClass('highlight action-' + $(this).attr('data-action'))
   }, function(){
-    $(this).closest('tr').removeClass('highlight')
-  })
+    $(this).closest('tr').removeClass('highlight action-' + $(this).attr('data-action'))
+  });
+
 });
 
 
