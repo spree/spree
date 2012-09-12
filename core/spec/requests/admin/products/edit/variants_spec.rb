@@ -17,6 +17,10 @@ describe "Product Variants" do
       page.should have_content("To add variants, you must first define")
     end
 
+    # NOTE:
+    # If this test fails it could be because the asset compilation is failing.
+    # Ensure that the option type field on the product's page actually displays
+    # as a select2 field, not as a standard select field.
     it "should allow an admin to create a variant if there are option types" do
       click_link "Products"
       click_link "Option Types"
