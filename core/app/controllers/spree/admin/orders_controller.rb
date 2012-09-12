@@ -36,7 +36,7 @@ module Spree
         end
 
         @search = Order.ransack(params[:q])
-        @orders = @search.result(:distinct => true).includes([:user, :shipments, :payments]).page(params[:page]).per(Spree::Config[:orders_per_page])
+        @orders = @search.result(:distinct => true).includes([:user, :shipments, :payments]).page(params[:page]).per(params[:per_page] || Spree::Config[:orders_per_page])
 
         # Restore dates
         params[:q][:created_at_gt] = created_at_gt
