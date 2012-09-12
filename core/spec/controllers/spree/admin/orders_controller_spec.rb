@@ -15,6 +15,7 @@ describe Spree::Admin::OrdersController do
       order.should_receive(:foo).and_return true
       spree_put :fire, {:id => "R1234567", :e => "foo"}
     end
+
     it "should respond with a flash message if the event cannot be fired" do
       order.stub :foo => false
       spree_put :fire, {:id => "R1234567", :e => "foo"}
@@ -22,4 +23,11 @@ describe Spree::Admin::OrdersController do
     end
   end
 
+  context "pagination" do
+    it "can page through the orders" do
+      spree_get :index, :page => 2, :per_page => 10
+      assigns[:orders].offset_value.should == 10
+      assigns[:orders].limit_value.should == 10
+    end
+  end
 end
