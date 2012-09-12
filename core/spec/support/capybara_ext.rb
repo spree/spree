@@ -8,7 +8,7 @@ module CapybaraExt
     script = %Q{
       $('#{within} .select2-search-field input').val('#{value}')
       $('#{within} .select2-search-field input').keydown();
-      $('#{within} .select2-highlighted').click();
+      $('#{within} .select2-highlighted').mouseup();
     }
     page.execute_script(script)
   end
