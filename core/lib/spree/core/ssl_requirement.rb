@@ -54,60 +54,18 @@
 module SslRequirement
   extend ActiveSupport::Concern
 
-  included do
-    before_filter(:ensure_proper_protocol)
-  end
-
   module ClassMethods
-    # Specifies that the named actions requires an SSL connection to be performed (which is enforced by ensure_proper_protocol).
+    # SSL is no longer specified to be on, off, or allowed for certain
+    # actions. It is configured to be on or off application-wide. To enable SSL
+    # please use the Rails configuration option 'config.force_ssl = true' in
+    # the appropriate Rails config file (e.g., config/application.rb,
+    # config/environments/production.rb)
     def ssl_required(*actions)
-      class_attribute(:ssl_required_actions)
-      self.ssl_required_actions = actions
+      ActiveSupport::Deprecation.warn "ssl_required has been removed. SSL can only be on or off and should be enabled inside your application's config using 'config.force_ssl = true'", caller
     end
 
     def ssl_allowed(*actions)
-      class_attribute(:ssl_allowed_actions)
-      self.ssl_allowed_actions = actions
+      ActiveSupport::Deprecation.warn "ssl_allowed has been removed. SSL can only be on or off and should be enabled inside your application's config using 'config.force_ssl = true'", caller
     end
   end
-
-  protected
-    # Returns true if the current action is supposed to run as SSL
-    def ssl_required?
-      if self.class.respond_to?(:ssl_required_actions)
-        actions = self.class.ssl_required_actions
-        actions.empty? || actions.include?(action_name.to_sym)
-      else
-        return false
-      end
-    end
-
-    def ssl_allowed?
-      if self.class.respond_to?(:ssl_allowed_actions)
-        actions = self.class.ssl_allowed_actions
-        actions.empty? || actions.include?(action_name.to_sym)
-      else
-        return false
-      end
-    end
-
-  private
-
-    def ssl_supported?
-      return Spree::Config[:allow_ssl_in_production] if Rails.env.production?
-      return Spree::Config[:allow_ssl_in_staging] if Rails.env.staging?
-      return Spree::Config[:allow_ssl_in_development_and_test] if (Rails.env.development? or Rails.env.test?)
-    end
-
-    def ensure_proper_protocol
-      return true if ssl_allowed?
-      if ssl_required? && !request.ssl? && ssl_supported?
-        redirect_to "https://" + request.host + request.fullpath
-        flash.keep
-      elsif request.ssl? && !ssl_required?
-        redirect_to "http://" + request.host + request.fullpath
-        flash.keep
-      end
-
-    end
 end
