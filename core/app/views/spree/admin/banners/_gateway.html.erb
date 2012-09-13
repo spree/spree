@@ -1,4 +1,4 @@
-<% if !spree_current_user.dismissed_banner?(:gateway) &&
+<% if !try_spree_current_user.try(:dismissed_banner?, :gateway) &&
       Spree::PaymentMethod.production.where("type != 'Spree::Gateway::Bogus'").empty?  %>
 
   <div class="banner payment_banner">
@@ -8,7 +8,7 @@
     </p>
 
     <%= link_to t(:dismiss_banner), dismiss_admin_banner_path(spree_current_user, :banner_id => :gateway),
-                :remote => true, :method => :post, :class => 'dismiss' %>
+      :remote => true, :method => :post, :class => 'dismiss', :id => "dismiss-banner" %>
   </div>
 
 <% end %>
