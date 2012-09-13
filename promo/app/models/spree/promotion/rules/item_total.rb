@@ -1,4 +1,5 @@
-# A rule to limit a promotion to a specific user.
+# A rule to apply to an order greater than (or greater than or equal to)
+# a specific amount
 module Spree
   class Promotion
     module Rules
