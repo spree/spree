@@ -191,5 +191,11 @@ describe Spree::CreditCard do
       credit_card.spree_cc_type.should == "master"
     end
   end
+
+  context "#associations" do
+    it "should be able to access its payments" do
+      lambda { credit_card.payments.all }.should_not raise_error ActiveRecord::StatementInvalid
+    end
+  end
 end
 
