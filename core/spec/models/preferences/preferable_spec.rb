@@ -79,7 +79,6 @@ describe Spree::Preferences::Preferable do
 
   describe "preference access" do
     it "handles ghost methods for preferences" do
-      #pending("TODO: cmar to look at this test to figure out why it's failing on 1.9")
       @a.preferred_color = 'blue'
       @a.preferred_color.should eq 'blue'
 
