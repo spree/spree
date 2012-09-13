@@ -8,4 +8,8 @@ Spree::Order.class_eval do
   def promotion_credit_exists?(promotion)
     !! adjustments.promotion.reload.detect { |credit| credit.originator.promotion.id == promotion.id }
   end
+
+  def promo_total
+    adjustments.promotion.map(&:amount).sum
+  end
 end
