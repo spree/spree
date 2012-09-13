@@ -21,4 +21,8 @@ Spree::Order.class_eval do
     end
     alias_method_chain :update_adjustments, :promotion_limiting
   end
+
+  def promo_total
+    adjustments.promotion.map(&:amount).sum
+  end
 end
