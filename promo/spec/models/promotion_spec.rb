@@ -112,12 +112,6 @@ describe Spree::Promotion do
       @order.state = 'returned'
       promotion.activate(@payload)
     end
-
-    it "does not activate if newer then order" do
-      @action1.should_not_receive(:perform).with(@payload)
-      promotion.created_at = DateTime.now + 2
-      promotion.activate(@payload)
-    end
   end
 
   context "#usage_limit_exceeded" do
