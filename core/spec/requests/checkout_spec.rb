@@ -33,6 +33,22 @@ describe "Checkout" do
         within(:css, "span.out-of-stock") { page.should have_content("Out of Stock") }
       end
 
+      it "prevents double clicking the payment button on checkout", :js => true do
+        visit spree.root_path
+        click_link "RoR Mug"
+        click_button "add-to-cart-button"
+        click_link "Checkout"
+
+        visit spree.checkout_state_path(:payment)
+
+        # prevent form submit to verify button is disabled
+        page.execute_script("$('#checkout_form_payment').submit(function(){return false;})")
+
+        page.should_not have_selector('input.button[disabled]')
+        click_button "Save and Continue"
+        page.should have_selector('input.button[disabled]')
+      end
+
       # Regression test for #1596
       context "full checkout" do
         before do
