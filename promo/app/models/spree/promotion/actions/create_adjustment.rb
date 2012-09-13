@@ -13,10 +13,19 @@ module Spree
           # Nothing to do if the promotion is already associated with the order
           return if order.promotion_credit_exists?(promotion)
 
-          order.adjustments.promotion.reload.clear
-          order.update!
-          create_adjustment("#{I18n.t(:promotion)} (#{promotion.name})", order, order)
-          order.update!
+          amount = compute_amount(order)
+
+          # TODO in order to support multiple promotions we would have to limit
+          # promotion adjustment deletion to promotions that are not combinable
+
+          # currently there can only be one promotion at a time, so we can look at .first
+
+          if order.adjustments.promotion.blank? || amount < order.adjustments.promotion.first.amount
+            order.adjustments.promotion.reload.delete_all
+            order.update!
+            create_adjustment("#{I18n.t(:promotion)} (#{promotion.name})", order, order)
+            order.update!
+          end
         end
 
         # override of CalculatedAdjustments#create_adjustment so promotional

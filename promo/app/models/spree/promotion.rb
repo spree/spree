@@ -41,11 +41,18 @@ module Spree
     end
 
     def activate(payload)
+      puts "DO OR DO NOT #{name}"
       return unless order_activatable? payload[:order]
 
       if code.present?
         event_code = payload[:coupon_code].to_s.strip.downcase
         return unless event_code == self.code.to_s.strip.downcase
+      end
+
+      if code.blank? and payload[:first_activator].blank?
+        payload[:order].adjustments.promotion.reload.delete_all
+        payload[:order].update!
+        payload[:first_activator] = true
       end
 
       if path.present?
@@ -75,7 +82,7 @@ module Spree
 
     def order_activatable?(order)
       order &&
-      created_at.to_i < order.created_at.to_i &&
+      # created_at.to_i < order.created_at.to_i &&
       !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
