@@ -112,6 +112,24 @@ describe Spree::Preferences::Preferable do
       @b.preferences[:color].should eq 'green' #default from A
     end
 
+    context "database fallback" do
+      before do
+        @a.instance_variable_set("@pending_preferences", {})
+      end
+
+      it "retrieves a preference from the database before falling back to default" do
+        preference = mock(:value => "chatreuse")
+        Spree::Preference.should_receive(:find_by_name).with(:color).and_return(preference)
+        @a.preferred_color.should == 'chatreuse'
+      end
+
+      it "defaults if no database key exists" do
+        Spree::Preference.should_receive(:find_by_name).and_return(nil)
+        @a.preferred_color.should == 'green'
+      end
+    end
+
+
     context "converts integer preferences to integer values" do
       before do
         A.preference :is_integer, :integer

@@ -15,6 +15,8 @@ module Spree::Preferences
         else
           if get_pending_preference(name)
             get_pending_preference(name)
+          elsif preference = Spree::Preference.find_by_name(name)
+            preference.value
           else
             send self.class.preference_default_getter_method(name)
           end
