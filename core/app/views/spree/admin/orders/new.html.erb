@@ -1,8 +1,10 @@
+<% content_for :page_title do %>
+  <%= t(:new) %>
+<% end %>
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 <%= csrf_meta_tags %>
 
 <div data-hook="admin_order_new_header">
-  <h2><%= t(:new_order) %></h2>
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 </div>
 

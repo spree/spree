@@ -2,11 +2,11 @@
   <%= t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;
 <% end %>
 
+<% content_for :sidebar_title do %>
+  <span class="sku"><%= @product.sku %></span>
+<% end %>
+
 <% content_for :sidebar do %>
-
-  <h5 class="sidebar-title"><span class="sku"><%= @product.sku %></span></h5>
-  <hr>
-
   <nav class="sidebar-menu">
     <ul data-hook="admin_product_tabs">
       <li<%== ' class="active"' if current == 'Product Details' %>>

@@ -2,7 +2,7 @@
   <% if @line_item.try(:errors).present? %>
     <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
   <% end %>
-
+  
   <%= form_for @order, :url => admin_order_url(@order), :method => :put do |f| %>
     <%= f.hidden_field :number %>
     <table class="index">

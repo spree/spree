@@ -5,6 +5,7 @@
 //= require jquery.delayedobserver
 //= require jquery.jstree/jquery.jstree
 //= require jquery.alerts/jquery.alerts
+//= require jquery.powertip
 //= require spin
 //= require responsive-tables
 //= require jquery.foundation.tooltips

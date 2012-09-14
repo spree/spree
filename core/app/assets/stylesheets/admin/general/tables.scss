@@ -21,6 +21,11 @@ table {
     border-top: 1px solid $color-border;
     border-right: 1px solid $color-border;
     vertical-align: middle;
+    text-overflow: ellipsis;
+
+    img {
+      border: 1px solid transparent;
+    }
 
     &:first-child {
       border-left: 1px solid $color-border;
@@ -38,6 +43,10 @@ table {
 
     input[type="number"] {
       width: 100%;
+    }
+
+    &.no-border {
+      border-right: none;
     }
 
     .handle {
@@ -80,13 +89,20 @@ table {
         background-color: $c_red1;
         color: white;        
       }
-    }
-    .icon-repeat:hover {
-      color: $c_yellow1;
-    }
+    }    
     .icon-edit:hover {
       background-color: $c_green1;
       color: white;
+    }
+    .icon-repeat {
+      &.no-text {
+        padding: 5px 3px 5px 8px;
+      }
+
+      &:hover {
+        background-color: $c_yellow1;
+        color: white;
+      }
     }
   }
   
@@ -111,12 +127,23 @@ table {
 <<<<<<< HEAD
 =======
       &.even td {
-        background-color: lighten($c_blue1, 35);        
+        background-color: lighten($c_blue1, 35);
+
+        img {
+          border: 1px solid lighten($c_blue1, 30);
+        }
       }
 
       &:hover td{
         background-color: lighten($c_blue1, 33);
+<<<<<<< HEAD
 >>>>>>> More work tables styling
+=======
+
+        img {
+          border: 1px solid $color-border;
+        }
+>>>>>>> More admin styling ...
       }
 
       &.highlight {
@@ -127,7 +154,7 @@ table {
           background-color: lighten($c_green1, 43);
         }
         &.action-clone td {
-          background-color: lighten($c_green1, 43);
+          background-color: lighten($c_yellow1, 43);
         }
       }
 
@@ -140,6 +167,33 @@ table {
       }
       &.state-complete td:first-child { border-left-color: $c_green1 }      
       &.state-cart     td:first-child { border-left-color: lighten($c_blue1, 30) }
+      &.state-canceled td:first-child { border-left-color: lighten($c_red1, 30) }
+
+      &.ui-sortable-placeholder td {
+        border: 1px solid $c_green1 !important;
+        visibility: visible !important;
+
+        &.actions {
+          background-color: transparent;
+          border-right: none !important;
+          border-top: none !important;
+          border-bottom: none !important;
+          border-left: 1px solid $c_green1 !important;
+        }
+      }
+
+      &.ui-sortable-helper {
+        width: 100%;
+
+        td {
+          background-color: lighten($c_blue1, 33);
+          border-bottom: 1px solid $color-border;          
+
+          &.actions {
+            display: none;
+          }
+        }
+      }
     }
 <<<<<<< HEAD
 =======

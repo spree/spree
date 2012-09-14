@@ -1,0 +1,88 @@
+@import "../variables";
+
+#powerTip {
+  background-color: $c_blue1;
+  padding: 5px 15px;
+  border-radius: 3px;
+
+  &.n:before, &.ne:before, &.nw:before {
+    border-top-width: 5px;
+    border-top-color: $c_blue1;
+    bottom: -5px;
+  }
+
+  &.e:before {
+    border-right-width: 5px;
+    border-right-color: $c_blue1;
+    left: -5px;
+  }
+  &.s:before, &.se:before, &.sw:before {
+    border-bottom-width: 5px;
+    border-bottom-color: $c_blue1;
+    top: -5px; 
+  }
+  &.w:before {
+    border-left-width: 5px;
+    border-left-color: $c_blue1;
+    right: -5px;
+  }
+  &.ne:before, &.se:before {
+    border-right-width: 5px;
+    border-right-color: $c_blue1;
+    left: -5px;
+  }
+  &.nw:before, &.sw:before {
+    border-left-width: 5px;
+    border-right-color: $c_blue1;
+    right: -5px; 
+  }   
+
+  &.clone, &.yellow { 
+    background-color: $c_yellow1;
+
+    &.n:before, &.ne:before, &.nw:before {
+      border-top-color: $c_yellow1;
+    }
+    &.e:before, &.nw:before, &.sw:before {
+      border-right-color: $c_yellow1; 
+    }
+    &.s:before, &.se:before, &.sw:before {
+      border-bottom-color: $c_yellow1;
+    }
+    &.w:before {
+      border-left-color: $c_yellow1; 
+    }
+  }
+  &.edit, &.green { 
+    background-color: $c_green1;
+
+    &.n:before, &.ne:before, &.nw:before {
+      border-top-color: $c_green1;
+    }
+    &.e:before, &.nw:before, &.sw:before {
+      border-right-color: $c_green1; 
+    }
+    &.s:before, &.se:before, &.sw:before {
+      border-bottom-color: $c_green1;
+    }
+    &.w:before {
+      border-left-color: $c_green1;
+    }
+  }
+  &.remove, &.red { 
+    background-color: $c_red1;
+
+    &.n:before, &.ne:before, &.nw:before {
+      border-top-color: $c_red1;
+    }
+    &.e:before, &.nw:before, &.sw:before {
+      border-right-color: $c_red1;
+    }
+    &.s:before, &.se:before, &.sw:before {
+      border-bottom-color: $c_red1;
+    }
+    &.w:before {
+      border-left-color: $c_red1;
+    }
+  }
+}

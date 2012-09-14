@@ -7,52 +7,17 @@
     background-color: $c_green1 !important;
     border-color: darken($c_green1, 5) !important;
   }
-  .select2-results {    
-    padding-left: 0 !important;
-
-    li {
-      font-size: 85% !important;
-    }
-
-    .select2-highlighted {
-      background-color: lighten($c_blue1, 10);
-    }
-  }
-  .select2-search {
-    @extend [class^="icon-"]:before;
-    @extend .icon-search;
-    font-size: 100%;
-    padding-left: 15px;
-
-    input {
-      @extend input[type="text"];
-      margin-top: 5px;
-      margin-left: -23px;
-      padding-left: 25px;
-      padding-top: 6px;
-      padding-bottom: 6px;
-      font-family: $base-font-family;
-      font-size: 90%;
-      box-shadow: none;
-      background-image: none;
-      width: 105% !important;
-    }
-  }
-  .select2-drop {
-    border-color: darken($c_green1, 5);
-    box-shadow: none;
-  }
   .select2-choice {
-    background-image: none;
+    background-image: none !important;
     background-color: lighten($c_blue1, 10);
-    border: none;
-    box-shadow: none;
+    border: none !important;
+    box-shadow: none !important;
     border-radius: 3px;
     color: white !important;    
-    font-size: 85%;
-    height: 32px;    
+    font-size: 90%;
+    height: 30px;    
     line-height: inherit !important;
-    padding: 8px 15px;
+    padding: 7px 15px;
 
     span {
       display: block;
@@ -64,6 +29,7 @@
       font-size: 100% !important;
       @extend .icon-remove;
       @extend [class^="icon-"]:before;
+      margin-top: 2px;
     }
 
     div {
@@ -77,7 +43,7 @@
         display: inherit !important;
         width: auto !important;
         height: auto !important;
-        margin-top: 11px;
+        margin-top: 10px;
         @extend .icon-caret-down;
         @extend [class^="icon-"]:before;
       }
@@ -91,6 +57,110 @@
 
     &.select2-dropdown-open .select2-choice div b {
       @extend .icon-caret-up
+    }
+  }
+}
+
+.select2-drop {
+  border-color: $c_green1;
+  box-shadow: none !important;
+
+  &.select2-drop-above {
+    border-color: $c_green1;
+  }
+}
+
+.select2-search {
+  @extend [class^="icon-"]:before;
+  @extend .icon-search;
+  font-size: 100%;
+  padding-left: 15px;
+  color: darken($color-border, 15);
+
+  input {
+    @extend input[type="text"];
+    margin-top: 5px;
+    margin-left: -23px;
+    padding-left: 25px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-family: $base-font-family;
+    font-size: 90%;
+    box-shadow: none;
+    background-image: none;
+    width: 105% !important;
+  }
+}
+
+.select2-results {    
+  padding-left: 0 !important;
+
+  li {
+    font-size: 85% !important;
+
+    &.select2-highlighted {
+      .select2-result-label {
+        color: white !important;
+      }
+    }
+
+    .select2-result-label {
+      color: $color-body-text;
+      min-height: 22px;
+    }
+
+    &.select2-no-results {
+      padding: 5px;
+      background-color: transparent;
+      color: $color-body-text;
+      text-align: center; 
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+
+  .select2-highlighted {
+    background-color: lighten($c_blue1, 10);
+  }
+}
+
+.select2-container-multi {
+  &.select2-container-active, &.select2-dropdown-open {
+    .select2-choices {
+      border-color: $c_green1 !important;
+      box-shadow: none;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+  .select2-choices {
+    @extend input[type="text"];
+    padding: 4px 3px 1px 1px;
+    box-shadow: none;
+    background-image: none;
+
+    .select2-search-choice {
+      margin: 0 0 3px 3px;
+      background-image: none;
+      background-color: lighten($c_blue1, 10);
+      border: none;
+      box-shadow: none;
+      border-radius: 3px;
+      color: white !important;    
+      font-size: 90%;
+
+      &:hover {
+        background-color: $c_green1;
+      }
+
+      .select2-search-choice-close {
+        background-image: none !important;
+        font-size: 85% !important;
+        @extend .icon-remove;
+        @extend [class^="icon-"]:before;
+        margin-left: 2px;
+        color: white;
+      }
     }
   }
 }

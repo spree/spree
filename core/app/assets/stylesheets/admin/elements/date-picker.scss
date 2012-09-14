@@ -12,8 +12,21 @@
 
 #ui-datepicker-div {
   border-color: darken($c_blue1, 5);
-  border-radius: 0;
+  border-radius: 3px;
   padding: 0;
+  margin-top: 10px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid $c_blue1;
+    top: 0px;
+    margin-top: -10px;
+    left: 25px;
+    z-index: 1;
+  }
 
   .ui-datepicker-header {
     padding: 0;
@@ -22,11 +35,12 @@
     border: none;
     border-bottom: 1px solid darken($c_blue1, 5);
     border-radius: 0;
+    height: 32px;
 
     .ui-datepicker-prev, .ui-datepicker-next {
       border-radius: 0;      
       top: 0;
-      height: 26px;
+      height: 32px;
 
       &:hover {
         border: none;
@@ -69,7 +83,7 @@
       color: white;
       text-transform: uppercase;
       font-size: 85% !important;
-      padding: 3px 10px;
+      padding: 6px 10px;
     }
   }
 
@@ -89,6 +103,14 @@
       }
     }
     tbody {
+      tr:hover {
+        td {
+          background-color: transparent !important;
+        }
+      }
+      &:last-child tr:last-child td {
+        border-bottom: none;
+      }
       td {
         a {
           border: 1px solid transparent;

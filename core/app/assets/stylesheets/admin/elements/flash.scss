@@ -1,8 +1,18 @@
+@import "../variables";
+
 .flash {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px;
+  padding: 17px;
   text-align: center;
+  z-index: 1000;
+  font-size: 120%;
+  color: white;
+  font-weight: bold;
+
+  &.notice  { background-color: rgba($c_yellow1, 0.8) }
+  &.success { background-color: rgba($c_green1, 0.8)  }
+  &.error   { background-color: rgba($c_red1, 0.8)    }
 }

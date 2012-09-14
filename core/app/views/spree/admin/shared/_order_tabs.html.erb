@@ -27,22 +27,19 @@
     <ul data-hook="admin_order_tabs">
       <% unless @order.completed? %>
         <li<%== ' class="active"' if current == 'Order Details' %>>
-          <i class="icon-edit"></i>
-          <%= link_to t(:order_details), edit_admin_order_url(@order) %>
+          <%= link_to_with_icon 'icon-edit', t(:order_details), edit_admin_order_url(@order) %>
         </li>
         <li<%== ' class="active"' if current == 'Customer Details' %>>
-          <i class="icon-user"></i>
-          <%= link_to t(:customer_details), admin_order_customer_url(@order) %>
+          <%= link_to_with_icon 'icon-user', t(:customer_details), admin_order_customer_url(@order) %>
         </li>
         <li<%== ' class="active"' if current == 'Shipments' %>>
-          <i class="icon-edit"></i>
-          <%= link_to t(:shipment), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : edit_admin_order_shipment_url(@order, @order.shipment) %>
+          <%=link_to_with_icon 'icon-road', t(:shipments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : edit_admin_order_shipment_url(@order, @order.shipment) %>
         </li>
         <li<%== ' class="active"' if current == 'Adjustments' %>>
-           <%= link_to t(:adjustments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : admin_order_adjustments_url(@order) %>
+           <%= link_to_with_icon 'icon-cogs', t(:adjustments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : admin_order_adjustments_url(@order) %>
         </li>
         <li<%== ' class="active"' if current == 'Payments' %>>
-           <%= link_to t(:payment), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : new_admin_order_payment_url(@order) %>
+           <%= link_to_with_icon 'icon-credit-card', t(:payments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : new_admin_order_payment_url(@order) %>
         </li>
 
       <% else %>

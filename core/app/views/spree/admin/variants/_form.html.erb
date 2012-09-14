@@ -1,42 +1,54 @@
-<div data-hook="admin_variant_form_fields">
-  <div class="clearfix">
-    <div class="left" data-hook="variants">
+<div data-hook="admin_variant_form_fields" class="label-block left six columns alpha">
+  
+  <div data-hook="variants">
+    <% @product.options.each do |option| %>
+      <div class="field" data-hook="presentation">
+        <%= label :new_variant, option.option_type.presentation %>
+        <% if @variant.new_record? %>
+          <%= select(:new_variant, option.option_type.presentation,
+            option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
+            {})
+          %>
+        <% else %>
+          <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
+          <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled') %>
+        <% end %>
+      </div>
+    <% end %>
 
-      <% @product.options.each do |option| %>
-        <p data-hook="presentation">
-          <%= label :new_variant, option.option_type.presentation %><br />
-          <% if @variant.new_record? %>
-            <%= select(:new_variant, option.option_type.presentation,
-              option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
-              {})
-            %>
-          <% else %>
-            <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
-            <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled') %>
-          <% end %>
-        </p>
-      <% end %>
+    <div class="field" data-hook="sku">
+      <%= f.label :sku, t(:sku) %>
+      <%= f.text_field :sku %>
+    </div>
 
-      <p data-hook="sku"><%= f.label :sku, t(:sku) %><br />
-      <%= f.text_field :sku %></p>
+    <div class="field" data-hook="price">
+      <%= f.label :price, t(:price) %>
+      <%= f.text_field :price, :value => number_to_currency(@variant.price, :unit => '') %>
+    </div>
 
-      <p data-hook="price"><%= f.label :price, t(:price) %>:<br />
-      <%= f.text_field :price, :value => number_to_currency(@variant.price, :unit => '') %></p>
-
-      <p data-hook="cost_price"><%= f.label :cost_price, t(:cost_price) %>:<br />
-      <%= f.text_field :cost_price, :value => number_to_currency(@variant.cost_price, :unit => '') %></p>
+    <div class="field" data-hook="cost_price">
+      <%= f.label :cost_price, t(:cost_price) %>
+      <%= f.text_field :cost_price, :value => number_to_currency(@variant.cost_price, :unit => '') %>
+    </div>
 
     <% if Spree::Config[:track_inventory_levels] %>
-      <p data-hook="on_hand"><%= f.label :on_hand, t(:on_hand) %>: <br />
-      <%= f.text_field :on_hand %></p>
-    <% end %>
-  </div>
-
-  <div class="right" data-hook="admin_variant_form_additional_fields">
-    <% [:weight, :height, :width, :depth].each do |field| %>
-      <p data-hook="<%= field %>"><%= f.label field, t(field) %>:<br />
-      <% value = number_with_precision(@variant.send(field), :precision => 2) %>
-      <%= f.text_field field, :value => value %></p>
+      <div class="field" data-hook="on_hand">
+        <%= f.label :on_hand, t(:on_hand) %>
+        <%= f.text_field :on_hand %>
+      </div>
     <% end %>
   </div>
 </div>
+
+
+
+<div class="right six columns omega label-block" data-hook="admin_variant_form_additional_fields">
+  <% [:weight, :height, :width, :depth].each do |field| %>
+    <div class="field" data-hook="<%= field %>"><%= f.label field, t(field) %>
+      <% value = number_with_precision(@variant.send(field), :precision => 2) %>
+      <%= f.text_field field, :value => value %>
+    </div>
+  <% end %>
+</div>
+
+<div class="clear"></div>

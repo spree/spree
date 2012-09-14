@@ -26,13 +26,15 @@
     padding: 10px 0;
 
     .field {
+      margin-bottom: 0;
+      
       input[type="text"], input[type="number"] {
         width: 100%;
       }     
     }
     .actions {
       .button {
-        margin-top: 20px;
+        margin-top: 30px;
       }
     }
   }

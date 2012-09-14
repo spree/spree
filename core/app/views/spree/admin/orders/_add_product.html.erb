@@ -2,18 +2,18 @@
   <fieldset>
     <legend><%= t(:add_product) %></legend>
     
-    <div data-hook="add_product_name" class="field eight columns">
+    <div data-hook="add_product_name" class="field eight columns alpha">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
       <%= text_field_tag :add_product_name, nil %>
       <%= hidden_field_tag :add_variant_id %>
     </div>
     
-    <div data-hook="add_quantity" class="field one column">
+    <div data-hook="add_quantity" class="field two columns alpha">
       <%= label_tag :add_quantity, t(:qty) %>
       <%= number_field_tag :add_quantity,  1, :min => 0 %>
     </div>
     
-    <div data-hook="add_button"  class="actions two columns">
+    <div data-hook="add_button"  class="actions two columns omega">
       <%= link_to_with_icon 'icon-plus', t(:add), admin_order_line_items_url(@order), 
                   :method => :post,
                   :id => 'add_line_item_to_order',

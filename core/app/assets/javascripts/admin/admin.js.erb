@@ -18,9 +18,24 @@ jQuery(function($) {
   });
 
   // Add some tips
-  $(document).tooltips({
-    targetClass: 'with-tip'
+  $('.with-tip').powerTip({
+    smartPlacement: true,
+    fadeInTime: 50,
+    fadeOutTime: 50
   });
+
+  $('.with-tip').on({
+    powerTipPreRender: function(){
+      $('#powerTip').addClass($(this).attr("data-action"));
+      $('#powerTip').addClass($(this).attr("data-tip-color"));
+    },
+    powerTipClose: function(){
+      $('#powerTip').removeClass($(this).attr("data-action"))
+    }
+  });
+
+  // Make flash messages dissapear
+  setTimeout('$(".flash").fadeOut()', 5000);
 
   // Highlight hovered table column
   $('table tbody tr td.actions a').hover(function(){    
@@ -163,11 +178,21 @@ $(document).ready(function(){
     return false;
   });
 
+  // Fix sortable helper
+  var fixHelper = function(e, ui) {
+      ui.children().each(function() {
+          $(this).width($(this).width());
+      });
+      return ui;
+  };
 
   $('table.sortable').ready(function(){
+    var td_count = $(this).find('tbody tr:first-child td').length
     $('table.sortable tbody').sortable(
       {
         handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
         update: function(event, ui) {
           $("#progress").show();
           positions = {};
@@ -184,9 +209,21 @@ $(document).ready(function(){
             url: $(ui.item).closest("table.sortable").data("sortable-link"),
             data: positions,
             success: function(data){ $("#progress").hide(); }
-          });
+          });                    
+        },
+        start: function (event, ui) {          
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $("table.sortable tr:even").removeClass("odd even").addClass("even");
+          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
         }
-      });
+
+      }).disableSelection();
   });
 
   $('a.dismiss').click(function() {

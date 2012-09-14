@@ -11,6 +11,7 @@
  *= require admin/edit_checkouts.css
  *= require admin/token-input.css
  *= require jquery-ui.datepicker
+ *= require jquery.powertip
  *= require select2
  *= require_tree ./general
  *= require_tree ./elements

@@ -190,6 +190,11 @@ dl {
     }
   }
 
+  &.canceled {
+    background-color: $c_red1;
+    color: white;
+  }
+
   &.balance_due {
     background-color: $c_blue2;
   }

@@ -2,7 +2,7 @@
   <thead>
     <tr data-hook="avilable_header">
       <th><%= t(:name) %></th>
-      <th></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
@@ -10,7 +10,7 @@
       <tr id="row_<%= prototype.id %>" data-hook="available_row">
         <td><%= prototype.name %></td>
         <td class="actions">
-          <%= link_to icon('add') + ' ' + t(:select), select_admin_prototype_url(prototype), :class => 'ajax iconlink select_properties_from_prototype' %>
+          <%= link_to_with_icon 'icon-ok', t(:select), select_admin_prototype_url(prototype), :class => 'ajax iconlink select_properties_from_prototype button', :no_text => true %>
         </td>
       </tr>
     <% end %>

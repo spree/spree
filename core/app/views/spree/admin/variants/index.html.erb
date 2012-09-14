@@ -4,11 +4,11 @@
 
 <%# Place for new variant form %>
 <div id="new_variant" data-hook></div>
-
+<% if @variants.any? %>
 <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
   <thead data-hook="variants_header">
     <tr>
-      <th><%= t(:options) %></th>
+      <th colspan="2"><%= t(:options) %></th>
       <th><%= t(:price) %></th>
       <th><%= t(:sku) %></th>
       <th><%= t(:on_hand) %></th>
@@ -20,7 +20,10 @@
     <!-- you can skip variant with no options: that's just the default variant that all products have -->
     <% next if variant.option_values.empty? %>
       <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
-        <td><span class="handle"></span> <%= variant.options_text %></td>
+        <td class="no-border">
+          <span class="handle"></span>
+        </td>
+        <td><%= variant.options_text %></td>
         <td><%= money variant.price %></td>
         <td><%= variant.sku %></td>
         <td><%= variant.on_hand %></td>
@@ -36,6 +39,9 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found"><%= t(:nothing_found)%></div>
+<% end %>
 
 <% if @product.empty_option_values? %>
 

@@ -15,6 +15,7 @@ input[type="tel"],
 textarea, fieldset {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 input[type="number"] {
 >>>>>>> Inital stage of admin redesign in progress ...
@@ -30,16 +31,23 @@ textarea, fieldset {
   box-shadow: 0 0 0 3px lighten($c_blue1, 32);
 =======
   padding: 9px 10px;
+=======
+  padding: 7px 10px;
+>>>>>>> More admin styling ...
   border-radius: 3px;
   border: 1px solid $color-border;  
 >>>>>>> More admin styling...
   color: $color-body-text;
-  font-size: 85%;
+  font-size: 90%;
 
   &:focus {
     outline: none;
     border-color: lighten($c_green1, 30);
   }
+}
+
+textarea {
+  line-height: 19px;
 }
 
 label {
@@ -50,6 +58,8 @@ label {
   margin-bottom: 5px;
   color: $c_blue3;
 }
+
+.label-block label { display: block }
 
 input[type="submit"], 
 input[type="button"], 
@@ -151,6 +161,9 @@ fieldset {
 
 .form-actions {
   margin-top: 18px;
+}
+.form-buttons {
+  text-align: center;
 }
 
 // Some fixes for fontwesome stylesheets
