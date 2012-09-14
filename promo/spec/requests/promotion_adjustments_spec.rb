@@ -282,13 +282,29 @@ describe "Promotion Adjustments" do
 
       create_per_product_promotion("RoR Mug", 10.0)
       Spree::Activator.active.event_name_starts_with('spree.cart.add').size.should == 2
-      visit '/cart'
-      fill_in 'order_line_items_attributes_0_quantity', :with => 0
-      click_button "Update"
 
+      update_first_item_quantity 0
       add_to_cart "RoR Mug"
 
       Spree::Order.last.total.to_f.should == 30.00
+    end
+
+    it "should not lose the coupon promotion if other automatic promotions exist but are of lesser value" do
+      create_per_order_coupon_promotion 5, 19, "COUPON"
+      create_per_product_promotion("RoR Bag", 10.0)
+      create_per_product_promotion("RoR Bag", 15.0)
+
+      add_to_cart 'RoR Bag'
+      Spree::Order.last.total.to_f.should == 5
+
+      fill_coupon 'COUPON'
+      Spree::Order.last.total.to_f.should == 1
+
+      update_first_item_quantity 2
+      Spree::Order.last.total.to_f.should == 10
+
+      update_first_item_quantity 1
+      Spree::Order.last.total.to_f.should == 1
     end
 
 
@@ -482,6 +498,40 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       Spree::Promotion.find_by_name promotion_name
+    end
+
+    def create_per_order_coupon_promotion order_min, order_discount, coupon_code
+      fill_in "Name", :with => "Order's total > $#{order_min}, Discount #{order_discount}"
+      fill_in "Usage Limit", :with => "100"
+      select "Coupon code added", :from => "Event"
+      fill_in "Code", :with => coupon_code
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select "Item total", :from => "Add rule of type"
+      within('#rule_fields') { click_button "Add" }
+      fill_in "Order total meets these criteria", :with => order_min
+      within('#rule_fields') { click_button "Update" }
+
+      select "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select "Flat Rate (per order)", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+
+      within('.calculator-fields') { fill_in "Amount", :with => order_discount }
+      within('#actions_container') { click_button "Update" }
+    end
+
+    def fill_coupon coupon
+      visit '/cart'
+      fill_in 'order_coupon_code', :with => coupon
+      click_button 'Update'
+    end
+
+    def update_first_item_quantity quantity
+      visit '/cart'
+      fill_in 'order_line_items_attributes_0_quantity', :with => quantity
+      click_button "Update"
     end
 
     def add_to_cart product_name
