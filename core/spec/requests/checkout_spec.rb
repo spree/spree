@@ -7,16 +7,19 @@ describe "Checkout" do
   end
 
   context "visitor makes checkout as guest without registration" do
+    before(:each) do
+      Spree::Product.delete_all
+      @product = create(:product, :name => "RoR Mug")
+      @product.on_hand = 1
+      @product.save
+      create(:zone)
+    end
+
     context "when backordering is disabled" do
       before(:each) do
         reset_spree_preferences do |config|
           config.allow_backorders = false
         end
-        Spree::Product.delete_all
-        @product = create(:product, :name => "RoR Mug")
-        @product.on_hand = 1
-        @product.save
-        create(:zone)
       end
 
       it "should warn the user about out of stock items" do
@@ -31,13 +34,23 @@ describe "Checkout" do
 
         within(:css, "span.out-of-stock") { page.should have_content("Out of Stock") }
       end
+    end
+
+    context "and likes to double click buttons" do
+      before(:each) do
+        @order = create(:order_with_totals, :state => 'payment',
+                                            :bill_address => create(:address),
+                                            :ship_address => create(:address),
+                                            :shipping_method => create(:shipping_method))
+        @order.reload
+        @order.update!
+
+        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
+        Spree::CheckoutController.any_instance.stub(:current_order => @order)
+        Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
+      end
 
       it "prevents double clicking the payment button on checkout", :js => true do
-        visit spree.root_path
-        click_link "RoR Mug"
-        click_button "add-to-cart-button"
-        click_link "Checkout"
-
         visit spree.checkout_state_path(:payment)
 
         # prevent form submit to verify button is disabled
@@ -45,6 +58,17 @@ describe "Checkout" do
 
         page.should_not have_selector('input.button[disabled]')
         click_button "Save and Continue"
+        page.should have_selector('input.button[disabled]')
+      end
+
+      it "prevents double clicking the confirm button on checkout", :js => true do
+        visit spree.checkout_state_path(:confirm)
+
+        # prevent form submit to verify button is disabled
+        page.execute_script("$('#checkout_form_confirm').submit(function(){return false;})")
+
+        page.should_not have_selector('input.button[disabled]')
+        click_button "Place Order"
         page.should have_selector('input.button[disabled]')
       end
 
