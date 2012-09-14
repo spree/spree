@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:general_settings) %></h1>
+<% content_for :page_title do %>
+  <%= t(:general_settings) %>
+<% end %>
 
 <table data-hook="preferences">
   <% @preferences.each do |key| %>

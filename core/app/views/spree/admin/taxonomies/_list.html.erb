@@ -1,19 +1,21 @@
 <table class="index" id='listing_taxonomies' data-hook>
-  <tr data-hook="taxonomies_header">
-    <th><%= t(:name) %></th>
-    <th></th>
-  </tr>
-<% @taxonomies.each do |taxonomy| %>
-  <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
-    <td>
-      <%= taxonomy.name %>
-    </td>
-    <td class="actions">
-      <%= link_to_edit taxonomy.id, :class => 'edit' %>
-      &nbsp;
-      <%= link_to_delete taxonomy %>
-    </td>
-  </tr>
-<% end %>
+  <thead>
+    <tr data-hook="taxonomies_header">
+      <th><%= t(:name) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @taxonomies.each do |taxonomy| %>
+      <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
+        <td>
+          <%= taxonomy.name %>
+        </td>
+        <td class="actions">
+          <%= link_to_edit taxonomy.id, :no_text => true %>
+          <%= link_to_delete taxonomy, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>    
+  </tbody>
 </table>
-

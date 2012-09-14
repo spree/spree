@@ -1,12 +1,13 @@
 <table class="index" data-hook="order_details">
-  <tbody id="line-items" data-hook>
+  <thead id="line-items" data-hook>
     <tr data-hook="order_details_line_items_headers">
       <th><%= t(:item_description) %></th>
       <th class="price"><%= t(:price) %></th>
       <th class="qty"><%= t(:qty) %></th>
       <th class="total"><span><%= t(:total) %></span></th>
     </tr>
-
+  </thead>
+  <tbody>
     <% @order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
         <td width="300"><%= item.variant.product.name %> <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>

@@ -1,12 +1,15 @@
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
+<% content_for :page_title do %>
+  <%= t(:tax_rates) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
     <li>
       <%= button_link_to t(:new_tax_rate), new_object_url, :icon => 'add' %>
     </li>
   </ul>
-  <br class="clear" />
-</div>
-<h1><%= t(:tax_rates) %></h1>
+<% end %>
+
 <table class="index">
   <thead>
     <tr data-hook="rate_header">

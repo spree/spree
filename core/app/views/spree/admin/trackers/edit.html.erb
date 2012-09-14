@@ -1,6 +1,9 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:editing_tracker) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_tracker) %>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tracker } %>
 <%= form_for [:admin, @tracker] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

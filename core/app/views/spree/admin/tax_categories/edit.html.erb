@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:editing_tax_category) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_tax_category) %>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_category } %>
 

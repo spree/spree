@@ -1,16 +1,17 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
+<% content_for :page_title do %>
+  <%= t(:zones) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
     <li>
-      <%= button_link_to t(:new_zone), new_object_url, :icon => 'add', :id => 'admin_new_zone_link' %>
+      <%= button_link_to t(:new_zone), new_object_url, :icon => 'icon-plus', :id => 'admin_new_zone_link' %>
     </li>
   </ul>
-  <br class="clear" />
-</div>
+<% end %>
 
-
-<h1><%= t(:zones) %></h1>
 <table class="index" id='listing_zones' data-hook>
   <thead>
     <tr data-hook="zones_header">
@@ -19,7 +20,7 @@
         <%= sort_link @search,:description, t(:description), {}, {:title => 'zones_order_by_description_title'} %>
       </th>
       <th><%= t(:default_tax) %></th>
-      <th></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
@@ -29,13 +30,13 @@
         <td><%=zone.description %></td>
         <td><%=zone.default_tax %></td>
         <td class="actions">
-          <%=link_to_edit zone %> &nbsp;
+          <%=link_to_edit zone %>
           <%=link_to_delete zone %>
         </td>
       </tr>
     <% end %>
     <% if @zones.empty? %>
-      <tr data-hook="zones_none"><td colspan="2"><%= t(:none) %></td></tr>
+      <tr data-hook="zones_none"><td colspan="3"><%= t(:none) %></td></tr>
     <% end %>
   </tbody>
 </table>

@@ -1,4 +1,6 @@
-<h1><%= t(:sales_totals) %> </h1>
+<% content_for :page_title do %>
+  <%= t(:sales_totals) %>
+<% end %>
 
 <table class="admin-report" data-hook="sales_total">
   <tbody>

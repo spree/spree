@@ -44,6 +44,10 @@ textarea, fieldset {
     outline: none;
     border-color: lighten($c_green1, 30);
   }
+
+  &[disabled] {
+    opacity: 0.7;
+  }
 }
 
 textarea {

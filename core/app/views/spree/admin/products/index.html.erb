@@ -17,9 +17,7 @@
 <% content_for :table_filter do %>
   <div data-hook="admin_products_sidebar">
     
-    <%= search_form_for [:admin, @search] do |f| %>
-      <fieldset class="labels-inline">
-        <!-- <legend class="sidebar-title"><%= t(:search) %></legend> -->
+    <%= search_form_for [:admin, @search] do |f| %>      
 
         <%- locals = {:f => f} %>
 
@@ -49,7 +47,7 @@
             <%= button t(:search), 'icon-search' %>
           </div>
         </div>
-      </fieldset>
+      
       
     <% end %>
   </div>

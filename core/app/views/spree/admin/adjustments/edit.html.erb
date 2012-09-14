@@ -1,13 +1,16 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
 
-<h2><%= t(:adjustment) %></h2>
+<% content_for :page_title do %>
+   / <%= t(:adjustment) %>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @adjustment } %>
 <%= form_for @adjustment, :url => admin_order_adjustment_path(@order, @adjustment), :method => :put do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
 
   <p class="form-buttons" data-hook="buttons">
-    <%= button t(:continue) %>
-    <%= t(:or) %> <%= link_to t('actions.cancel'), admin_order_adjustments_url(@order) %>
+    <%= button t(:continue), 'icon-arrow-right' %>
+    <%= t(:or) %>
+    <%= link_to_with_icon 'icon-remove', t('actions.cancel'), admin_order_adjustments_url(@order), :class => 'button' %>
   </p>
 <% end %>

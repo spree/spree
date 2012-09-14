@@ -1,36 +1,32 @@
 @import "../variables";
 
 #table-filter {
-  fieldset {
-    padding: 10px 0;
+  .field {
+    padding: 0 10px;
 
-    .field {
-      padding: 0 10px;
+    input[type="text"] {
+      width: 100%;
+    }
 
-      input[type="text"] {
-        width: 100%;
-      }
+    input[type="checkbox"] {
+      display: inline-block;
+    }
 
-      input[type="checkbox"] {
-        display: inline-block;
-      }
+    label {
+      display: block;
+    }
+
+    &.checkbox {
+      padding: 0;
 
       label {
-        display: block;
-      }
-
-      &.checkbox {
-        padding: 0;
-
-        label {
-          display: inline-block;
-        }
+        display: inline-block;
       }
     }
+  }
 
-    .actions {
-      text-align: center;
-      padding: 5px 0;
-    }
+  .actions {
+    text-align: center;
+    padding: 5px 0;
   }
 }

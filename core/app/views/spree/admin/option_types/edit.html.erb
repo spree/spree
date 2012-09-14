@@ -1,10 +1,15 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-<h1><%= t(:editing_option_type) %></h1>
+
+<% content_for :page_title do %>
+  <%= t(:editing_option_type) %>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @option_type } %>
 <%= form_for [:admin, @option_type] do |f| %>
 <fieldset>
-  <legend><%= t(:editing_option_type) %></legend>
+  
   <%= render :partial => 'form', :locals => { :f => f } %>
+  
   <h3><%= t(:option_values) %></h3>
   <table class="index sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
     <thead data-hook="option_header">

@@ -1,38 +1,41 @@
 <div data-hook="admin_shipment_form_fields">
   <% unless @shipment.order.cart? %>
     <table class="index" style="width:100%;" data-hook="admin_shipment_form_inventory_units">
-      <tr data-hook="shipments_header">
-        <th style="width:130px;"><%= t(:include_in_shipment) %></th>
-        <th><%= t(:sku) %></th>
-        <th><%= t(:item_description) %></th>
-        <th><%= t(:status) %></th>
-        <th><%= t(:note) %></th>
-      </tr>
-
-      <% @shipment.order.inventory_units.each do |inventory_unit| %>
-        <tr data-hook="shipments_row">
-          <td style="text-align:center;">
-            <%= check_box_tag "inventory_units[#{inventory_unit.id}]",
-                              :true,
-                              (inventory_unit.shipment == @shipment),
-                              { :disabled => %w(shipped backordered returned).include?(inventory_unit.state),
-                                :class => 'inventory_unit'} %>
-          </td>
-          <td style="vertical-align:top; width:120px;"><%= inventory_unit.variant.sku %></td>
-          <td style="width:300px;">
-            <%=inventory_unit.variant.product.name %>
-            <%= '(' + variant_options(inventory_unit.variant) + ')' unless inventory_unit.variant.option_values.empty? %>
-          </td>
-          <td><%= t(inventory_unit.state) %></td>
-          <td>
-            <% if inventory_unit.shipment == @shipment %>
-              <%= t(:included_in_this_shipment) %>
-            <% elsif !inventory_unit.shipment.nil? %>
-              <%= t(:included_in_other_shipment) %> - <%= link_to inventory_unit.shipment.number, edit_admin_order_shipment_url(inventory_unit.order, inventory_unit.shipment) %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
+      <thead>
+        <tr data-hook="shipments_header">
+          <th style="width:130px;"><%= t(:include_in_shipment) %></th>
+          <th><%= t(:sku) %></th>
+          <th><%= t(:item_description) %></th>
+          <th><%= t(:status) %></th>
+          <th><%= t(:note) %></th>
+        </tr>  
+      </thead>
+      <tbody>
+        <% @shipment.order.inventory_units.each do |inventory_unit| %>
+          <tr data-hook="shipments_row">
+            <td style="text-align:center;">
+              <%= check_box_tag "inventory_units[#{inventory_unit.id}]",
+                                :true,
+                                (inventory_unit.shipment == @shipment),
+                                { :disabled => %w(shipped backordered returned).include?(inventory_unit.state),
+                                  :class => 'inventory_unit'} %>
+            </td>
+            <td style="vertical-align:top; width:120px;"><%= inventory_unit.variant.sku %></td>
+            <td style="width:300px;">
+              <%=inventory_unit.variant.product.name %>
+              <%= '(' + variant_options(inventory_unit.variant) + ')' unless inventory_unit.variant.option_values.empty? %>
+            </td>
+            <td><%= t(inventory_unit.state) %></td>
+            <td>
+              <% if inventory_unit.shipment == @shipment %>
+                <%= t(:included_in_this_shipment) %>
+              <% elsif !inventory_unit.shipment.nil? %>
+                <%= t(:included_in_other_shipment) %> - <%= link_to inventory_unit.shipment.number, edit_admin_order_shipment_url(inventory_unit.order, inventory_unit.shipment) %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
   <% end %>
 

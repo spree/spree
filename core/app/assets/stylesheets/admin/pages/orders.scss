@@ -1,21 +1,18 @@
 // Customize orders filter
 [data-hook="admin_orders_index_search"] {
-  fieldset {
-    
-    select[data-placeholder="Status"] {
-      width: 100%;
-    }
+  select[data-placeholder="Status"] {
+    width: 100%;
+  }
 
-    .select2-container {
-      width: 100% !important;
-    }
+  .select2-container {
+    width: 100% !important;
+  }
 
-    .field.checkbox {
-      margin-top: 25px;
+  .field.checkbox {
+    margin-top: 25px;
 
-      &:first-child {
-        margin-bottom: 33px !important;
-      }
+    &:first-child {
+      margin-bottom: 33px !important;
     }
   }
 }

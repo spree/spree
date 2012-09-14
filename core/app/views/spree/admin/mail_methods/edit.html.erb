@@ -1,6 +1,9 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:editing_mail_method) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_mail_method) %>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @mail_method } %>
 
 <%= form_for [:admin, @mail_method] do |f| %>

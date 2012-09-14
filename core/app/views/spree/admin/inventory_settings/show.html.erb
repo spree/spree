@@ -1,9 +1,21 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:inventory_settings) %></h1>
+<% content_for :page_title do %>
+  <%= t(:inventory_settings) %>
+<% end %>
 
-<h4><%= t(:products_with_zero_inventory_display, :not => show_not(Spree::Config[:show_zero_stock_products])) %> </h4>
-<h4><%= t(:backordering_is_allowed, :not => show_not(Spree::Config[:allow_backorders])) %></h4>
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
+    <li>
+      <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_inventory_settings_path, :id => 'admin_inventory_settings_link', :class => 'button' %>
+    </li>
+  </ul>
+<% end %>
 
-<%= link_to_with_icon 'edit', t(:edit), edit_admin_inventory_settings_path, :id => 'admin_inventory_settings_link' %>
+<dl>
+  <dt><%= t(:products_with_zero_inventory_display, :not => show_not(Spree::Config[:show_zero_stock_products])) %></dt>
+  <dd></dd>
 
+  <dt><%= t(:backordering_is_allowed, :not => show_not(Spree::Config[:allow_backorders])) %></dt>
+  <dd></dd>
+</dl>

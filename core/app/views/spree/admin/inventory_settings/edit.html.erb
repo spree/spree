@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:inventory_settings) %></h1>
+<% content_for :page_title do %>
+  <%= t(:inventory_settings) %>
+<% end %>
 
 <%= form_tag admin_inventory_settings_path, :method => :put do %>
 

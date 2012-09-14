@@ -134,7 +134,7 @@ table {
         }
       }
 
-      &:hover td{
+      &:hover td {
         background-color: lighten($c_blue1, 33);
 <<<<<<< HEAD
 >>>>>>> More work tables styling
@@ -147,8 +147,13 @@ table {
       }
 
       &.highlight {
-        &.action-remove td{
+        &.action-remove td {
           background-color: lighten($c_red1, 55);
+          text-decoration: line-through;
+
+          &.actions {
+            text-decoration: none;
+          }
         }
         &.action-edit td {
           background-color: lighten($c_green1, 43);

@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:edit_general_settings) %></h1>
+<% content_for :page_title do %>
+  <%= t(:edit_general_settings) %>
+<% end %>
 
 <%= form_tag admin_general_settings_path, :method => :put do %>
   <fieldset id="preferences" data-hook>

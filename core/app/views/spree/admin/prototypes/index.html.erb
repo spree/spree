@@ -21,7 +21,7 @@
   <thead>
     <tr data-hook="prototypes_header">
       <th><%= t(:name) %></th>
-      <th class="actions"><%= t(:action) %></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
@@ -29,8 +29,8 @@
       <tr id="<%= spree_dom_id prototype %>" data-hook="prototypes_row">
         <td><%= prototype.name %></td>
         <td class="actions">
-          <%= link_to_edit(prototype, :no_text => true, :class => 'admin_edit_prototype button') %>
-          <%= link_to_delete(prototype, :no_text => true, :class => 'button') %>
+          <%= link_to_edit(prototype, :no_text => true, :class => 'admin_edit_prototype') %>
+          <%= link_to_delete(prototype, :no_text => true) %>
         </td>
       </tr>
     <% end %>

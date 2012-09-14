@@ -1,6 +1,9 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:editing_payment_method) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_payment_method) %>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment_method } %>
 <%= form_for @payment_method, :url => admin_payment_method_path(@payment_method), :method => :put do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

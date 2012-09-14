@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:image_settings) %></h1>
+<% content_for :page_title do %>
+  <%= t(:image_settings) %>
+<% end %>
 
 <p><span class="warning"><%= t(:image_settings_warning) %></span></p>
 
