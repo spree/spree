@@ -28,25 +28,7 @@ describe "Promotion Adjustments" do
     let!(:address) { create(:address, :state => Spree::State.first) }
 
     it "should allow an admin to create a flat rate discount coupon promo" do
-      fill_in "Name", :with => "Order's total > $30"
-      fill_in "Usage Limit", :with => "100"
-      select "Coupon code added", :from => "Event"
-      fill_in "Code", :with => "ORDER_38"
-      click_button "Create"
-      page.should have_content("Editing Promotion")
-
-      select "Item total", :from => "Add rule of type"
-      within('#rule_fields') { click_button "Add" }
-      fill_in "Order total meets these criteria", :with => "30"
-      within('#rule_fields') { click_button "Update" }
-
-      select "Create adjustment", :from => "Add action of type"
-      within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
-      within('#actions_container') { click_button "Update" }
-
-      within('.calculator-fields') { fill_in "Amount", :with => "5" }
-      within('#actions_container') { click_button "Update" }
+      create_per_order_coupon_promotion 30, 5, "ORDER_38"
 
       visit spree.root_path
       click_link "RoR Mug"
@@ -451,6 +433,28 @@ describe "Promotion Adjustments" do
       select "Flat Rate (per item)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
+      within('#actions_container') { click_button "Update" }
+    end
+
+    def create_per_order_coupon_promotion order_min, order_discount, coupon_code
+      fill_in "Name", :with => "Order's total > $#{order_min}, Discount #{order_discount}"
+      fill_in "Usage Limit", :with => "100"
+      select "Coupon code added", :from => "Event"
+      fill_in "Code", :with => coupon_code
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select "Item total", :from => "Add rule of type"
+      within('#rule_fields') { click_button "Add" }
+      fill_in "Order total meets these criteria", :with => order_min
+      within('#rule_fields') { click_button "Update" }
+
+      select "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select "Flat Rate (per order)", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+
+      within('.calculator-fields') { fill_in "Amount", :with => order_discount }
       within('#actions_container') { click_button "Update" }
     end
 
