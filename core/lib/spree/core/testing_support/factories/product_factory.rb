@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :simple_product, :class => Spree::Product do
-    sequence(:name) { |n| "Product ##{n} - #{rand(9999)}" }
+    sequence(:name) { |n| "Product ##{n} - #{Kernel.rand(9999)}" }
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
     price 19.99
     cost_price 17.00
