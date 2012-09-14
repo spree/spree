@@ -10,8 +10,8 @@ describe "Payments" do
     end
 
     Spree::Zone.delete_all
-    shipping_method = create(:shipping_method, :zone => create(:zone, :name => 'North America')) 
-    @order = create(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method) 
+    shipping_method = create(:shipping_method, :zone => create(:zone, :name => 'North America'))
+    @order = create(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method)
     product = create(:product, :name => 'spree t-shirt', :on_hand => 5)
     product.master.count_on_hand = 5
     product.master.save
@@ -50,7 +50,7 @@ describe "Payments" do
       find('table.index tbody tr:nth-child(2) td:nth-child(4)').text.should == "void"
 
       click_on "New Payment"
-      page.should have_content("New Payment") 
+      page.should have_content("New Payment")
       click_button "Update"
       page.should have_content("successfully created!")
 

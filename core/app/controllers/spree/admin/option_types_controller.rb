@@ -7,7 +7,7 @@ module Spree
         params[:positions].each do |id, index|
           OptionType.where(:id => id).update_all(:position => index)
         end
-    
+
         respond_to do |format|
           format.html { redirect_to admin_product_variants_url(params[:product_id]) }
           format.js  { render :text => 'Ok' }
@@ -26,7 +26,7 @@ module Spree
       end
 
       protected
-    
+
         def location_after_save
           if @option_type.created_at == @option_type.updated_at
             edit_admin_option_type_url(@option_type)
@@ -44,8 +44,8 @@ module Spree
         def setup_new_option_value
           @option_type.option_values.build if @option_type.option_values.empty?
         end
-  
-        def set_available_option_types     
+
+        def set_available_option_types
           @available_option_types = if @product.option_type_ids.any?
             OptionType.where('id NOT IN (?)', @product.option_type_ids)
           else

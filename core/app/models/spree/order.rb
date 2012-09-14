@@ -504,7 +504,7 @@ module Spree
       #
       # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
       def update_payment_state
-        
+
         #line_item are empty when user empties cart
         if self.line_items.empty? || round_money(payment_total) < round_money(total)
           self.payment_state = 'balance_due'
