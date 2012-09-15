@@ -576,6 +576,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #product-properties {
     border: 1px solid lighten($body_text_color, 60);
     padding: 10px;
+    width: 100%;
   }
 
   #product-variants {

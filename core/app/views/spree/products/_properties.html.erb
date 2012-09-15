@@ -1,14 +1,15 @@
 <% unless @product_properties.empty? %>  
   <h6 class="product-section-title"><%= t('properties')%></h6>
-  <table id="product-properties" class="table-display" data-hook width="100%">
+  <table id="product-properties" class="table-display" data-hook>
     <tbody>
-      <% for product_property in @product_properties 
-        css_class = cycle('even', 'odd') %>
+      <% @product_properties.each do |product_property| %>
+        <% css_class = cycle('even', 'odd', :name => "properties") %>
         <tr class="<%= css_class %>">
           <td><strong><%= product_property.property.presentation %></strong></td>
           <td><%= product_property.value %></td>
         </tr>
       <% end %>
+      <% reset_cycle('properties') %>
     </tbody>
   </table>
 <% end %>
