@@ -9,11 +9,18 @@ module Spree
         before_filter :set_content_type
         before_filter :check_for_api_key
         before_filter :authenticate_user
+        after_filter  :set_jsonp_format
 
         rescue_from CanCan::AccessDenied, :with => :unauthorized
         rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
         helper Spree::Api::ApiHelpers
+
+        def set_jsonp_format
+          if params[:callback] && request.get?
+            self.response_body = "#{params[:callback]}(#{self.response_body})" 
+          end
+        end
 
         def map_nested_attributes_keys(klass, attributes)
           nested_keys = klass.nested_attributes_options.keys
