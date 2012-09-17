@@ -180,7 +180,7 @@ module Spree
       price_adjustments.each do |adjustment|
         label = adjustment.label
         totals[label] ||= 0
-        totals[label] = totals[label] + adjustment.amount
+        totals[label] = totals[label] + adjustment.display_amount
       end
 
       totals
