@@ -6,19 +6,15 @@ module Spree
       diff = variant.price - variant.product.price
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{number_to_currency diff.abs})"
+        "(#{t(:add)}: #{Spree::Money.new(diff.abs)})"
       else
-        "(#{t(:subtract)}: #{number_to_currency diff.abs})"
+        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs)})"
       end
     end
 
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
       raw(product.description.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>'))
-    end
-
-    def variant_images_hash(product)
-      product.variant_images.inject({}) { |h, img| (h[img.viewable_id] ||= []) << img; h }
     end
 
     def line_item_description(variant)
@@ -28,6 +24,10 @@ module Spree
       else
         t(:product_has_no_description)
       end
+    end
+
+    def get_taxonomies
+      @taxonomies ||= Spree::Taxonomy.includes(:root => :children)
     end
   end
 end

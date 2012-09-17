@@ -65,6 +65,10 @@ module Spree
       set_eligibility
     end
 
+    def display_amount
+      Spree::Money.new(amount).to_s
+    end
+
     private
 
       def update_adjustable

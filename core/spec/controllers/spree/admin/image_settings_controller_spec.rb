@@ -29,6 +29,10 @@ describe Spree::Admin::ImageSettingsController do
     end
 
     context "amazon s3" do
+      after(:all) do
+        Spree::Image.attachment_definitions[:attachment].delete :storage
+      end
+
       it "should be able to update s3 settings" do
         spree_put :update, { :preferences => {
           "use_s3"        => "1",

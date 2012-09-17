@@ -29,7 +29,7 @@ module Spree
     end
 
     it "can not view someone else's order" do
-      Order.any_instance.stub :user => stub_model(User)
+      Order.any_instance.stub :user => stub_model(Spree::LegacyUser)
       api_get :show, :id => order.to_param
       assert_unauthorized!
     end

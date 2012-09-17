@@ -9,10 +9,6 @@ Spree::Order.class_eval do
     !! adjustments.promotion.reload.detect { |credit| credit.originator.promotion.id == promotion.id }
   end
 
-  def products
-    line_items.map {|li| li.variant.product}
-  end
-
   unless self.method_defined?('update_adjustments_with_promotion_limiting')
     def update_adjustments_with_promotion_limiting
       update_adjustments_without_promotion_limiting
@@ -20,9 +16,7 @@ Spree::Order.class_eval do
       most_valuable_adjustment = adjustments.promotion.eligible.max{|a,b| a.amount.abs <=> b.amount.abs}
       current_adjustments = (adjustments.promotion.eligible - [most_valuable_adjustment])
       current_adjustments.each do |adjustment|
-        if adjustment.originator.calculator.is_a?(Spree::Calculator::PerItem)
-          adjustment.update_attribute_without_callbacks(:eligible, false)
-        end
+        adjustment.update_attribute_without_callbacks(:eligible, false)
       end
     end
     alias_method_chain :update_adjustments, :promotion_limiting

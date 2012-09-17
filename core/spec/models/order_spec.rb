@@ -12,13 +12,13 @@ describe Spree::Order do
     Spree::Gateway.create({:name => 'Test', :active => true, :environment => 'test', :description => 'foofah'}, :without_protection => true)
   end
 
-  let(:user) { stub_model(Spree::User, :email => "spree@example.com") }
+  let(:user) { stub_model(Spree::LegacyUser, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
   let(:gateway) { Spree::Gateway::Bogus.new({:name => "Credit Card", :active => true}, :without_protection => true) }
 
   before do
     Spree::Gateway.stub :current => gateway
-    Spree::User.stub(:current => mock_model(Spree::User, :id => 123))
+    Spree::LegacyUser.stub(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
   context "#products" do
@@ -78,14 +78,13 @@ describe Spree::Order do
   context "#finalize!" do
     let(:order) { Spree::Order.create }
     it "should set completed_at" do
-      order.should_receive :completed_at=
+      order.should_receive(:touch).with(:completed_at)
       order.finalize!
     end
     it "should sell inventory units" do
       Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
       order.finalize!
     end
-    it "should change the shipment state to ready if order is paid"
 
     after { Spree::Config.set :track_inventory_levels => true }
     it "should not sell inventory units if track_inventory_levels is false" do
@@ -106,11 +105,13 @@ describe Spree::Order do
       order.finalize!
     end
 
-    it "should freeze optional adjustments" do
+    it "should freeze all adjustments" do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
-      adjustment = mock_model(Spree::Adjustment)
-      order.stub_chain :adjustments, :optional => [adjustment]
-      adjustment.should_receive(:update_attribute).with("locked", true)
+      adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
+      adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
+      order.stub :adjustments => [adjustment1, adjustment2]
+      adjustment1.should_receive(:update_column).with("locked", true)
+      adjustment2.should_receive(:update_column).with("locked", true)
       order.finalize!
     end
 
@@ -175,16 +176,15 @@ describe Spree::Order do
 
   context "#backordered?" do
     it "should indicate whether any units in the order are backordered" do
-      order.stub_chain(:inventory_units, :backorder).and_return []
+      order.stub_chain(:inventory_units, :backordered).and_return []
       order.backordered?.should be_false
-      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(Spree::InventoryUnit)]
+      order.stub_chain(:inventory_units, :backordered).and_return [mock_model(Spree::InventoryUnit)]
       order.backordered?.should be_true
     end
 
     it "should always be false when inventory tracking is disabled" do
-      pending
       Spree::Config.set :track_inventory_levels => false
-      order.stub_chain(:inventory_units, :backorder).and_return [mock_model(Spree::InventoryUnit)]
+      order.stub_chain(:inventory_units, :backordered).and_return [mock_model(Spree::InventoryUnit)]
       order.backordered?.should be_false
     end
   end
@@ -530,7 +530,7 @@ describe Spree::Order do
 
   context "#add_variant" do
     it "should update order totals" do
-      order = Spree::Order.create!
+      order = Spree::Order.create
 
       order.item_total.to_f.should == 0.00
       order.total.to_f.should == 0.00
@@ -552,6 +552,26 @@ describe Spree::Order do
       order.adjustments.should_receive(:destroy_all)
 
       order.empty!
+    end
+  end
+
+  context "#display_total" do
+    before { order.total = 10.55 }
+
+    context "with display_currency set to true" do
+      before { Spree::Config[:display_currency] = true }
+
+      it "shows the currency" do
+        order.display_total.to_s.should == "$10.55 USD"
+      end
+    end
+
+    context "with display_currency set to false" do
+      before { Spree::Config[:display_currency] = false }
+
+      it "does not include the currency" do
+        order.display_total.to_s.should == "$10.55"
+      end
     end
   end
 end

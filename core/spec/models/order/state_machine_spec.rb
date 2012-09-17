@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Order do
   let(:order) { Spree::Order.new }
   before do
+    # Ensure state machine has been re-defined correctly
+    Spree::Order.define_state_machine!
     # We don't care about this validation here
     order.stub(:require_email)
   end
@@ -38,7 +40,6 @@ describe Spree::Order do
            end
 
            it "should complete the order" do
-             pending
               order.next
               order.state.should == "complete"
             end
@@ -70,7 +71,6 @@ describe Spree::Order do
 
       context "when transitioning to payment state" do
         it "should create a shipment" do
-          order.should_receive(:has_available_shipment)
           order.should_receive(:create_shipment!)
           order.next!
           order.state.should == 'payment'
@@ -140,10 +140,33 @@ describe Spree::Order do
         Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2).once
         order.cancel!
       end
-
     end
 
-    it "should change shipment status (unless shipped)"
+    context "resets payment state" do
+      before do
+        # TODO: This is ugly :(
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        mail_message.stub :deliver
+      end
+
+      context "without shipped items" do
+        it "should set payment state to 'credit owed'" do
+          order.cancel!
+          order.payment_state.should == 'credit_owed'
+        end
+      end
+
+      context "with shipped items" do
+        before do
+          order.stub :shipment_state => 'partial'
+        end
+
+        it "should not alter the payment state" do
+          order.cancel!
+          order.payment_state.should be_nil
+        end
+      end
+    end
   end
 
 
@@ -153,12 +176,6 @@ describe Spree::Order do
       order.stub :email => "user@spreecommerce.com"
       order.stub :state => "canceled"
       order.stub :allow_resume? => true
-    end
-
-    it "should send a resume email" do
-      pending "Pending test for #818"
-      order.stub :unstock_items!
-      order.resume!
     end
 
     context "unstocks inventory" do

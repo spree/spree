@@ -25,16 +25,16 @@ however, to use only the pieces you are interested in.  So for example, you coul
 and perhaps combine it with your own custom promotion scheme instead of using spree_promo.
 
 [![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
-
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/spree/spree)
 Installation
 ------------
 
 The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
-    $ gem install rails -v 3.2.6
+    $ gem install rails -v 3.2.8
     $ gem install spree
-    $ rails _3.2.6_ new my_store
+    $ rails _3.2.8_ new my_store
     $ spree install my_store
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations and
@@ -100,21 +100,21 @@ The source code is essentially a collection of gems.  Spree is meant to be run w
 
 1. Clone the Git repo
 
-        git clone git://github.com/spree/spree.git
-        cd spree
+        $ git clone git://github.com/spree/spree.git
+        $ cd spree
 
 2. Install the gem dependencies
 
-        bundle install
+        $ bundle install
 
 3. Create a sandbox Rails application for testing purposes (and automatically perform all necessary database setup)
 
-        bundle exec rake sandbox
+        $ bundle exec rake sandbox
 
 4. Start the server
 
-        cd sandbox
-        rails server
+        $ cd sandbox
+        $ rails server
 
 Performance
 -----------
@@ -134,14 +134,24 @@ Use Dedicated Spree Devise Authentication
 Add the following to your Gemfile
 
     $ gem 'spree_auth_devise', :git => 'git://github.com/spree/spree_auth_devise'
-    
+
 Then run `bundle install`. Authentication will then work exactly as it did in previous versions of Spree.
+
+This line is automatically added by the `spree install` command.
 
 If you're installing this in a new Spree 1.2+ application, you'll need to install and run the migrations with
 
     $ bundle exec rake spree_auth:install:migrations
     $ bundle exec rake db:migrate
 
+change the following line in `config/initializers/spree.rb`
+```ruby
+Spree.user_class = "Spree::LegacyUser"
+```
+to
+```ruby
+Spree.user_class = "Spree::User"
+```
 and then run `bundle exec rake spree_auth:admin:create` in order to set up the admin user for the application.
 
 Running Tests

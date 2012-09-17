@@ -1581,3 +1581,9 @@ countries_171:
   iso_name: SAINT KITTS AND NEVIS
   id: "171"
   numcode: "659"
+countries_998:
+  name: Serbia
+  iso3: SRB
+  iso: RS
+  id: "998"
+  numcode: "999"

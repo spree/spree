@@ -12,6 +12,12 @@
   <div class="row" data-hook="checkout_content">
     <div class="columns <%= if @order.state != 'confirm' then 'alpha twelve' else 'alpha omega sixteen' end %>" data-hook="checkout_form_wrapper">
       <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
+        <% unless @order.email? %>
+          <p class="field" style='clear: both'>
+            <%= form.label :email %><br />
+            <%= form.text_field :email %>
+          </p>
+        <% end %>
         <%= render @order.state, :form => form %>
       <% end %>
     </div>    

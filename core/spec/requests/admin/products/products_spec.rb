@@ -11,8 +11,8 @@ describe "Products" do
     context "listing products" do
       context "sorting" do
         before do
-          create(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :count_on_hand => '0', :price => 10)
-          create(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13', :count_on_hand => '5', :price => 5)
+          create(:product, :name => 'apache baseball cap', :price => 10)
+          create(:product, :name => 'zomg shirt', :price => 5)
         end
 
         it "should list existing products with correct sorting by name" do
@@ -40,8 +40,8 @@ describe "Products" do
 
     context "searching products" do
       it "should be able to search deleted products", :js => true do
-        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-06 18:21:13:', :deleted_at => "2011-01-06 18:21:13")
-        create(:product, :name => 'zomg shirt', :available_on => '2125-01-06 18:21:13')
+        create(:product, :name => 'apache baseball cap', :deleted_at => "2011-01-06 18:21:13")
+        create(:product, :name => 'zomg shirt')
 
         click_link "Products"
         page.should have_content("zomg shirt")
@@ -57,10 +57,9 @@ describe "Products" do
       end
 
       it "should be able to search products by their properties" do
-        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
-        create(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
-        create(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
-        Spree::Product.update_all :count_on_hand => 10
+        create(:product, :name => 'apache baseball cap', :sku => "A100")
+        create(:product, :name => 'apache baseball cap2', :sku => "B100")
+        create(:product, :name => 'zomg shirt')
 
         click_link "Products"
         fill_in "q_name_cont", :with => "ap"
@@ -82,7 +81,7 @@ describe "Products" do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, :name => "Random") 
+        @property_prototype = create(:prototype, :name => "Random")
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') { page.should have_content("SKU") }
@@ -148,7 +147,7 @@ describe "Products" do
 
     context "cloning a product", :js => true do
       it "should allow an admin to clone a product" do
-        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
+        create(:product)
 
         click_link "Products"
         within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
@@ -157,7 +156,7 @@ describe "Products" do
 
       context "cloning a deleted product" do
         it "should allow an admin to clone a deleted product" do
-          create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100", :deleted_at => '2011-05-01 01:01:01')
+          create(:product, :name => "apache baseball cap")
 
           click_link "Products"
           check "Show Deleted"
@@ -167,53 +166,6 @@ describe "Products" do
           within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
           page.should have_content("Product has been cloned")
         end
-      end
-    end
-
-    context "uploading a product image" do
-      it "should allow an admin to upload an image and edit it for a product" do
-        Spree::Image.attachment_definitions[:attachment].delete :storage
-        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
-        create(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
-        create(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
-        Spree::Product.update_all :count_on_hand => 10
-
-        click_link "Products"
-        within('table#listing_products tr:nth-child(2)') { click_link "Edit" }
-        click_link "Images"
-        click_link "new_image_link"
-        absolute_path = File.expand_path(Rails.root.join('..', '..', 'spec', 'support', 'ror_ringer.jpeg'))
-        attach_file('image_attachment', absolute_path)
-        click_button "Update"
-        page.should have_content("successfully created!")
-        within('table.index tr:nth-child(2)') { click_link "Edit" }
-        fill_in "image_alt", :with => "ruby on rails t-shirt"
-        click_button "Update"
-        page.should have_content("successfully updated!")
-        page.should have_content("ruby on rails t-shirt")
-      end
-    end
-
-    context "uploading a product image" do
-      it "should allow an admin to upload an image and edit it for a product" do
-        create(:product, :name => 'apache baseball cap', :available_on => '2011-01-01 01:01:01', :sku => "A100")
-        create(:product, :name => 'apache baseball cap2', :available_on => '2011-01-01 01:01:01', :sku => "B100")
-        create(:product, :name => 'zomg shirt', :available_on => '2011-01-01 01:01:01', :sku => "Z100")
-        Spree::Product.update_all :count_on_hand => 10
-
-        click_link "Products"
-        within('table#listing_products tr:nth-child(2)') { click_link "Edit" }
-        click_link "Images"
-        click_link "new_image_link"
-        absolute_path = File.expand_path(Rails.root.join('..', '..', 'spec', 'support', 'ror_ringer.jpeg'))
-        attach_file('image_attachment', absolute_path)
-        click_button "Update"
-        page.should have_content("successfully created!")
-        within('table.index tr:nth-child(2)') { click_link "Edit" }
-        fill_in "image_alt", :with => "ruby on rails t-shirt"
-        click_button "Update"
-        page.should have_content("successfully updated!")
-        page.should have_content("ruby on rails t-shirt")
       end
     end
   end

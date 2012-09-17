@@ -31,13 +31,16 @@ require 'rails/generators'
 require 'state_machine'
 require 'paperclip'
 require 'kaminari'
-require 'nested_set'
+require 'awesome_nested_set'
 require 'acts_as_list'
 require 'active_merchant'
 require 'ransack'
 require 'jquery-rails'
 require 'deface'
 require 'cancan'
+require 'select2-rails'
+require 'spree/money'
+require 'rabl'
 
 module Spree
 
@@ -86,6 +89,7 @@ require 'spree/core/middleware/redirect_legacy_product_url'
 require 'spree/core/middleware/seo_assist'
 require 'spree/core/permalinks'
 require 'spree/core/token_resource'
+require 'spree/core/s3_support'
 
 silence_warnings do
   require 'spree/core/authorize_net_cim_hack'
@@ -102,7 +106,7 @@ ActiveRecord::Base.class_eval do
 end
 
 if defined?(ActionView)
-  require 'nested_set/helper'
+  require 'awesome_nested_set/helper'
   ActionView::Base.class_eval do
     include CollectiveIdea::Acts::NestedSet::Helper
   end

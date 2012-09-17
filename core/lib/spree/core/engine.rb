@@ -22,7 +22,6 @@ module Spree
             activator.activate(payload)
           end
         end
-
       end
 
       # We need to reload the routes here due to how Spree sets them up.

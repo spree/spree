@@ -59,4 +59,35 @@ describe "Prototypes" do
       page.should have_content("Shirt 99")
     end
   end
+
+  context "editing a prototype" do
+    it "should allow to empty its properties" do
+      create(:property, :name => "model", :presentation => "Model")
+      create(:property, :name => "brand", :presentation => "Brand")
+
+      shirt_prototype = create(:prototype, :name => "Shirt", :properties => [])
+      %w( brand model ).each do |prop|
+        shirt_prototype.properties << Spree::Property.find_by_name(prop)
+      end
+
+      visit spree.admin_path
+      click_link "Products"
+      click_link "Prototypes"
+
+      click_on "Edit"
+
+      page.should have_checked_field('brand')
+      page.should have_checked_field('model')
+
+      page.uncheck('brand')
+      page.uncheck('model')
+
+      click_button 'Update'
+
+      click_on "Edit"
+
+      page.should have_unchecked_field('brand')
+      page.should have_unchecked_field('model')
+    end
+  end
 end

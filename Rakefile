@@ -18,15 +18,6 @@ task :test_app do
   end
 end
 
-desc "Run all tests for all supported databases"
-task :ci do
-  cmd = "bundle update"; puts cmd; system cmd;
-
-  %w(sqlite3 mysql).each do |database_name|
-    run_all_tests(database_name)
-  end
-end
-
 desc "clean the whole repository by removing all the generated files"
 task :clean do
   puts "Deleting sandbox..."
@@ -96,5 +87,7 @@ end
 
 desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  exec("lib/sandbox.sh")
+  Bundler.with_clean_env do
+    exec("lib/sandbox.sh")
+  end
 end

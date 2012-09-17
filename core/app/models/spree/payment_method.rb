@@ -3,7 +3,7 @@ module Spree
     DISPLAY = [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
-    scope :production, where(:environment => 'production')
+    scope :production, lambda { where(:environment => 'production') }
 
     attr_accessible :name, :description, :environment, :display_on, :active
 
@@ -35,7 +35,7 @@ module Spree
     end
 
     def destroy
-      self.update_attribute(:deleted_at, Time.now.utc)
+      touch :deleted_at
     end
 
     def self.find_with_destroyed *args

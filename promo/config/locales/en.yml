@@ -34,6 +34,7 @@ en:
     path: Path
   new_promotion: New Promotion
   no_rules_added: No rules added
+  percent_per_item: Percent Per Item
   product_rule:
     choose_products: Choose products
     label: "Order must contain %{select} of these products"

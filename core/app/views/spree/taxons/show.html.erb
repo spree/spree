@@ -7,11 +7,11 @@
   </div>
 <% end %>
 
-<% if @taxon.children.empty? || !params[:keywords].blank? %>
-  <div data-hook="taxon_products">
-    <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
-  </div>
-<% else %>
+<div data-hook="taxon_products">
+  <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
+</div>
+
+<% unless params[:keyword].present? %>
   <div data-hook="taxon_children">
     <%= render :partial => 'taxon', :collection => @taxon.children %>
   </div>

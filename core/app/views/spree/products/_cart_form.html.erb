@@ -31,7 +31,7 @@
         
         <div id="product-price">
           <h6 class="product-section-title"><%= t(:price) %></h6>
-          <div><span class="price selling" itemprop="price"><%= number_to_currency @product.price %></span></div>
+          <div><span class="price selling" itemprop="price"><%= money @product.price %></span></div>
         </div>
 
         <div class="add-to-cart">

@@ -113,7 +113,7 @@ describe Spree::TaxRate do
     end
 
     context "when there is a default tax_category" do
-      before { tax_category.update_attribute :is_default, true }
+      before { tax_category.update_column :is_default, true }
 
       context "when the default category has tax rates in the default tax zone" do
         before(:each) do

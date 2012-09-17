@@ -6,6 +6,7 @@ module Spree
     ssl_required
 
     before_filter :load_order
+    before_filter :ensure_valid_state
     before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
@@ -37,6 +38,22 @@ module Spree
     end
 
     private
+      def ensure_valid_state
+        unless skip_state_validation?
+          if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
+             (!params[:state] && !@order.checkout_steps.include?(@order.state))
+            @order.state = 'cart'
+            redirect_to checkout_state_path(@order.checkout_steps.first)
+          end
+        end
+      end
+
+      # Should be overriden if you have areas of your checkout that don't match
+      # up to a step within checkout_steps, such as a registration step
+      def skip_state_validation?
+        false
+      end
+
       def load_order
         @order = current_order
         redirect_to cart_path and return unless @order and @order.checkout_allowed?
@@ -44,24 +61,6 @@ module Spree
         redirect_to cart_path and return if @order.completed?
         @order.state = params[:state] if params[:state]
         state_callback(:before)
-      end
-
-      def associate_user
-        if try_spree_current_user && @order
-          if @order.user.blank? || @order.email.blank?
-            @order.associate_user!(try_spree_current_user)
-          end
-        end
-
-        # This will trigger any "first order" promotions to be triggered
-        # Assuming of course that this session variable was set correctly in
-        # the authentication provider's registrations controller
-        if session[:spree_user_signup]
-          fire_event('spree.user.signup', :user => try_spree_current_user, :order => current_order(true))
-        end
-
-        session[:guest_token] = nil
-        session[:spree_user_signup] = nil
       end
 
       # Provides a route to redirect after order completion

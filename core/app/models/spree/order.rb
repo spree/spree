@@ -1,7 +1,26 @@
 require 'spree/core/validators/email'
+require 'spree/order/checkout'
 
 module Spree
   class Order < ActiveRecord::Base
+    # TODO:
+    # Need to use fully qualified name here because during sandbox migration
+    # there is a class called Checkout which conflicts if you use this:
+    #
+    #   include Checkout
+    #
+    # rather than the qualified name. This will most likely be fixed with the
+    # 1.3 release.
+    include Spree::Order::Checkout
+    checkout_flow do
+      go_to_state :address
+      go_to_state :delivery
+      go_to_state :payment, :if => lambda { |order| order.payment_required? }
+      go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
+      go_to_state :complete
+      remove_transition :from => :delivery, :to => :confirm
+    end
+
     token_resource
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
@@ -23,7 +42,7 @@ module Spree
     belongs_to :shipping_method
 
     has_many :state_changes, :as => :stateful
-    has_many :line_items, :dependent => :destroy
+    has_many :line_items, :dependent => :destroy, :order => "created_at ASC"
     has_many :inventory_units
     has_many :payments, :dependent => :destroy
     has_many :shipments, :dependent => :destroy
@@ -44,7 +63,6 @@ module Spree
     before_create :link_by_email
     after_create :create_tax_charge!
 
-    # TODO: validate the format of the email as well (but we can't rely on authlogic anymore to help with validation)
     validates :email, :presence => true, :email => true, :if => :require_email
     validate :has_available_shipment
     validate :has_available_payment
@@ -53,54 +71,6 @@ module Spree
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
-
-    # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine :initial => 'cart', :use_transactions => false do
-
-      event :next do
-        transition :from => 'cart',     :to => 'address'
-        transition :from => 'address',  :to => 'delivery'
-        transition :from => 'delivery', :to => 'payment', :if => :payment_required?
-        transition :from => 'delivery', :to => 'complete'
-        transition :from => 'confirm',  :to => 'complete'
-
-        # note: some payment methods will not support a confirm step
-        transition :from => 'payment',  :to => 'confirm',
-                                        :if => Proc.new { |order| order.payment_method && order.payment_method.payment_profiles_supported? }
-
-        transition :from => 'payment', :to => 'complete'
-      end
-
-      event :cancel do
-        transition :to => 'canceled', :if => :allow_cancel?
-      end
-      event :return do
-        transition :to => 'returned', :from => 'awaiting_return'
-      end
-      event :resume do
-        transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
-      end
-      event :authorize_return do
-        transition :to => 'awaiting_return'
-      end
-
-      before_transition :to => 'complete' do |order|
-        begin
-          order.process_payments!
-        rescue Core::GatewayError
-          !!Spree::Config[:allow_checkout_on_gateway_error]
-        end
-      end
-
-      before_transition :to => 'delivery', :do => :remove_invalid_shipments!
-
-      after_transition :to => 'complete', :do => :finalize!
-      after_transition :to => 'delivery', :do => :create_tax_charge!
-      after_transition :to => 'payment',  :do => :create_shipment!
-      after_transition :to => 'resumed',  :do => :after_resume
-      after_transition :to => 'canceled', :do => :after_cancel
-
-    end
 
     def self.by_number(number)
       where(:number => number)
@@ -136,6 +106,10 @@ module Spree
       line_items.sum(&:amount)
     end
 
+    def display_total
+      Spree::Money.new(total)
+    end
+
     def to_param
       number.to_s.to_url.upcase
     end
@@ -156,6 +130,11 @@ module Spree
       total.to_f > 0.0
     end
 
+    # If true, causes the confirmation step to happen during the checkout process
+    def confirmation_required?
+      payment_method && payment_method.payment_profiles_supported?
+    end
+
     # Indicates the number of items in the order
     def item_count
       line_items.sum(:quantity)
@@ -164,7 +143,7 @@ module Spree
     # Indicates whether there are any backordered InventoryUnits associated with the Order.
     def backordered?
       return false unless Spree::Config[:track_inventory_levels]
-      inventory_units.backorder.present?
+      inventory_units.backordered.present?
     end
 
     # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
@@ -344,7 +323,6 @@ module Spree
                                           :address => self.ship_address,
                                           :inventory_units => self.inventory_units}, :without_protection => true)
       end
-
     end
 
     def outstanding_balance
@@ -366,24 +344,20 @@ module Spree
       CreditCard.scoped(:conditions => { :id => credit_card_ids })
     end
 
-    def process_payments!
-      ret = payments.each(&:process!)
-    end
-
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      update_attribute(:completed_at, Time.now)
+      touch :completed_at
       InventoryUnit.assign_opening_inventory(self)
-      # lock any optional adjustments (coupon promotions, etc.)
-      adjustments.optional.each { |adjustment| adjustment.update_attribute('locked', true) }
+      # lock all adjustments (coupon promotions, etc.)
+      adjustments.each { |adjustment| adjustment.update_column('locked', true) }
       deliver_order_confirmation_email
 
       self.state_changes.create({
         :previous_state => 'cart',
         :next_state     => 'complete',
         :name           => 'order' ,
-        :user_id        => (User.respond_to?(:current) && User.current.try(:id)) || self.user_id
+        :user_id        => self.user_id
       }, :without_protection => true)
     end
 
@@ -433,6 +407,14 @@ module Spree
       end
     end
 
+    def process_payments!
+      begin
+        payments.each(&:process!)
+      rescue Core::GatewayError
+        !!Spree::Config[:allow_checkout_on_gateway_error]
+      end
+    end
+
     def billing_firstname
       bill_address.try(:firstname)
     end
@@ -466,6 +448,10 @@ module Spree
     def clear_adjustments!
       adjustments.tax.each(&:destroy)
       price_adjustments.each(&:destroy)
+    end
+
+    def has_step?(step)
+      checkout_steps.include?(step)
     end
 
     private
@@ -504,7 +490,7 @@ module Spree
             :previous_state => old_shipment_state,
             :next_state     => self.shipment_state,
             :name           => 'shipment',
-            :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
+            :user_id        => self.user_id
           }, :without_protection => true)
         end
       end
@@ -518,7 +504,7 @@ module Spree
       #
       # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
       def update_payment_state
-        
+
         #line_item are empty when user empties cart
         if self.line_items.empty? || round_money(payment_total) < round_money(total)
           self.payment_state = 'balance_due'
@@ -534,7 +520,7 @@ module Spree
             :previous_state => old_payment_state,
             :next_state     => self.payment_state,
             :name           => 'payment',
-            :user_id        => (User.respond_to?(:current) && User.current && User.current.id) || self.user_id
+            :user_id        => self.user_id
           }, :without_protection => true)
         end
       end
@@ -571,13 +557,14 @@ module Spree
       end
 
       def has_available_shipment
-        return unless :address == state_name.to_sym
+        return unless has_step?("delivery")
+        return unless address?
         return unless ship_address && ship_address.valid?
         errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
 
       def has_available_payment
-        return unless :delivery == state_name.to_sym
+        return unless delivery?
         errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
 
@@ -586,6 +573,9 @@ module Spree
 
         #TODO: make_shipments_pending
         OrderMailer.cancel_email(self).deliver
+        unless %w(partial shipped).include?(shipment_state)
+          self.payment_state = 'credit_owed'
+        end
       end
 
       def restock_items!

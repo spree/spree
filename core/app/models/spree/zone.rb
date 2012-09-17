@@ -108,7 +108,7 @@ module Spree
         return unless default_tax
 
         self.class.all.each do |zone|
-          zone.update_attribute 'default_tax', false unless zone == self
+          zone.update_column 'default_tax', false unless zone == self
         end
       end
   end

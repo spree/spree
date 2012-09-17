@@ -41,14 +41,16 @@ module Spree
     preference :checkout_zone, :string, :default => nil # replace with the name of a zone if you would like to limit the countries
     preference :company, :boolean, :default => false # Request company field for billing and shipping addr
     preference :create_inventory_units, :boolean, :default => true # should only be false when track_inventory_levels is false, also disables RMA's
+    preference :currency, :string, :default => "USD"
+    preference :currency_symbol_position, :string, :default => "before"
+    preference :display_currency, :boolean, :default => false
     preference :default_country_id, :integer, :default => 214
-    preference :default_locale, :string, :default => Rails.application.config.i18n.default_locale || :en
     preference :default_meta_description, :string, :default => 'Spree demo site'
     preference :default_meta_keywords, :string, :default => 'spree, demo'
     preference :default_seo_title, :string, :default => ''
     preference :dismissed_spree_alerts, :string, :default => ''
     preference :last_check_for_spree_alerts, :string, :default => nil
-    preference :layout, :string, :default => '/spree/layouts/spree_application'
+    preference :layout, :string, :default => 'spree/layouts/spree_application'
     preference :logo, :string, :default => 'admin/bg/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, :default => 1 # maximum nesting level in taxons menu
     preference :orders_per_page, :integer, :default => 15
@@ -77,6 +79,7 @@ module Spree
     preference :s3_headers, :string, :default => "{\"Cache-Control\":\"max-age=31557600\"}"
     preference :use_s3, :boolean, :default => false # Use S3 for images rather than the file system
     preference :s3_protocol, :string
+    preference :s3_host_alias, :string
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class

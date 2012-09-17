@@ -5,7 +5,13 @@ module Spree
     belongs_to :shipment
     belongs_to :return_authorization
 
-    scope :backorder, where(:state => 'backordered')
+    scope :backordered, lambda { where(:state => 'backordered') }
+    scope :shipped, lambda { where(:state => 'shipped') }
+
+    def self.backorder
+      warn "[SPREE] Spree::InventoryUnit.backorder will be deprecated in Spree 1.3. Please use Spree::Product.backordered instead."
+      backordered
+    end
 
     attr_accessible :shipment
 
@@ -107,7 +113,7 @@ module Spree
       end
 
       def restock_variant
-        variant.on_hand = (variant.on_hand + 1)
+        variant.on_hand += 1
         variant.save
       end
   end

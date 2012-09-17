@@ -6,5 +6,4 @@ cd sandbox
 echo "gem 'spree', :path => '..'" >> Gemfile
 echo "gem 'spree_auth_devise', :git => 'git://github.com/spree/spree_auth_devise'" >> Gemfile
 bundle install --gemfile Gemfile
-rails g spree:install --auto-accept
-rake assets:precompile
+rails g spree:install --auto-accept --user_class=Spree::User

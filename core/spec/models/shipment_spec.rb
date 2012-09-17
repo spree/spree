@@ -31,7 +31,7 @@ describe Spree::Shipment do
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
         shipment.state = "shipped"
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "shipped")
+        shipment.should_receive(:update_column).with("state", "shipped")
         shipment.update!(order)
       end
     end
@@ -39,7 +39,7 @@ describe Spree::Shipment do
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
         shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)] )
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
+        shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
     end
@@ -47,7 +47,7 @@ describe Spree::Shipment do
     context "when order is paid" do
       before { order.stub :paid? => true }
       it "should result in a 'ready' state" do
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "ready")
+        shipment.should_receive(:update_column).with("state", "ready")
         shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
@@ -58,7 +58,7 @@ describe Spree::Shipment do
       before { order.stub :paid? => false }
       it "should result in a 'pending' state" do
         shipment.state = 'ready'
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
+        shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
@@ -69,7 +69,7 @@ describe Spree::Shipment do
       before { order.stub :payment_state => 'credit_owed', :paid? => true }
       it "should result in a 'ready' state" do
         shipment.state = 'pending'
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "ready")
+        shipment.should_receive(:update_column).with("state", "ready")
         shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
@@ -81,6 +81,7 @@ describe Spree::Shipment do
         shipment.state = "pending"
         shipment.should_receive :after_ship
         shipment.stub :determine_state => 'shipped'
+        shipment.should_receive(:update_column).with("state", "shipped")
         shipment.update!(order)
       end
     end
@@ -92,7 +93,6 @@ describe Spree::Shipment do
     after { Spree::Config.set :track_inventory_levels => true }
 
     it "should not use the line items from order when track_inventory_levels is false" do
-      pending
       line_items = [mock_model(Spree::LineItem)]
       order.stub :complete? => true
       order.stub :line_items => line_items
@@ -128,7 +128,6 @@ describe Spree::Shipment do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should validate with no inventory" do
-        pending
         shipment.valid?.should be_true
       end
     end
@@ -145,6 +144,9 @@ describe Spree::Shipment do
     it "should update shipped_at timestamp" do
       shipment.stub(:send_shipped_email)
       shipment.ship!
+      shipment.shipped_at.should_not be_nil
+      # Ensure value is persisted
+      shipment.reload
       shipment.shipped_at.should_not be_nil
     end
 

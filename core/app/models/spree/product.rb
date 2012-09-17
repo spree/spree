@@ -30,8 +30,19 @@ module Spree
     belongs_to :shipping_category
 
     has_one :master,
-      :class_name => "Spree::Variant",
-      :conditions => { :is_master => true }
+      :class_name => 'Spree::Variant',
+      :conditions => { :is_master => true },
+      :dependent => :destroy
+
+    has_many :variants,
+      :class_name => 'Spree::Variant',
+      :conditions => { :is_master => false, :deleted_at => nil },
+      :order => :position
+
+    has_many :variants_including_master,
+      :class_name => 'Spree::Variant',
+      :conditions => { :deleted_at => nil },
+      :dependent => :destroy
 
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
@@ -43,32 +54,12 @@ module Spree
     after_save :save_master
     after_save :set_master_on_hand_to_zero_when_product_has_variants
 
-    has_many :variants,
-      :class_name => "Spree::Variant",
-      :conditions => { :is_master => false, :deleted_at => nil },
-      :order => 'position ASC'
+    delegate :images, :to => :master, :prefix => true
+    alias_method :images, :master_images
 
-    has_many :variants_including_master,
-      :class_name => "Spree::Variant",
-      :conditions => { :deleted_at => nil },
-      :dependent => :destroy
-
-    has_many :variants_with_only_master,
-      :class_name => "Spree::Variant",
-      :conditions => { :is_master => true, :deleted_at => nil },
-      :dependent => :destroy
+    has_many :variant_images, :source => :images, :through => :variants_including_master, :order => :position
 
     accepts_nested_attributes_for :variants, :allow_destroy => true
-
-    def variant_images
-      Image.joins("LEFT JOIN #{Variant.quoted_table_name} ON #{Variant.quoted_table_name}.id = #{Asset.quoted_table_name}.viewable_id").
-      where("(#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?) OR
-             (#{Asset.quoted_table_name}.viewable_type = ? AND #{Asset.quoted_table_name}.viewable_id = ?)", Variant.name, self.master.id, Product.name, self.id).
-      order("#{Asset.quoted_table_name}.position").
-      extend(Spree::Core::RelationSerialization)
-    end
-
-    alias_method :images, :variant_images
 
     validates :name, :price, :permalink, :presence => true
 
@@ -78,7 +69,7 @@ module Spree
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
                     :option_values_hash, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
-                    :variants_attributes, :taxon_ids
+                    :variants_attributes, :taxon_ids, :option_type_ids
 
     attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
@@ -91,10 +82,11 @@ module Spree
 
     after_initialize :ensure_master
 
-    def ensure_master
-      return unless new_record?
-      self.master ||= Variant.new
+    def variants_with_only_master
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Product#variants_with_only_master will be deprecated in Spree 1.3. Please use Spree::Product#master instead.")
+      master
     end
+
 
     def to_param
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
@@ -102,7 +94,7 @@ module Spree
 
     # returns true if the product has any variants (the master variant is not a member of the variants array)
     def has_variants?
-      variants.exists?
+      variants.any?
     end
 
     # returns the number of inventory units "on_hand" for this product
@@ -128,6 +120,13 @@ module Spree
       else
         TaxCategory.find(self[:tax_category_id])
       end
+    end
+
+    # override the delete method to set deleted_at value
+    # instead of actually deleting the product.
+    def delete
+      self.update_column(:deleted_at, Time.now)
+      variants_including_master.update_all(:deleted_at => Time.now)
     end
 
     # Adding properties and option types on creation based on a chosen prototype
@@ -215,6 +214,10 @@ module Spree
       end
     end
 
+    def display_price
+      Spree::Money.new(price).to_s
+    end
+
     private
 
       # Builds variants from a hash of option types & values
@@ -259,6 +262,11 @@ module Spree
       # when saving so we force a save using a hook.
       def save_master
         master.save if master && (master.changed? || master.new_record?)
+      end
+
+      def ensure_master
+        return unless new_record?
+        self.master ||= Variant.new
       end
   end
 end

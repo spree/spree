@@ -19,6 +19,15 @@ describe Spree::Variant do
     end
   end
 
+  # Regression test for #1778
+  it "recalculates product's count_on_hand when saved" do
+    Spree::Config[:track_inventory_levels] = true
+    variant.stub :is_master? => true
+    variant.product.should_receive(:on_hand).and_return(3)
+    variant.product.should_receive(:update_column).with(:count_on_hand, 3)
+    variant.run_callbacks(:save)
+  end
+
   context "on_hand=" do
     before { variant.stub(:inventory_units => mock('inventory-units')) }
 
@@ -169,7 +178,7 @@ describe Spree::Variant do
         end
 
         it "should not duplicate associated option values when set multiple times" do
-          multi_variant.set_option_value('media_type', 'CD')      
+          multi_variant.set_option_value('media_type', 'CD')
 
           expect {
            multi_variant.set_option_value('media_type', 'DVD')
@@ -182,5 +191,50 @@ describe Spree::Variant do
       end
     end
 
+  end
+
+  context "price parsing" do
+    before(:each) do
+      I18n.locale = I18n.default_locale
+      I18n.backend.store_translations(:de, { :number => { :currency => { :format => { :delimiter => '.', :separator => ',' } } } })
+    end
+
+    after do
+      I18n.locale = I18n.default_locale
+    end
+
+    context "price=" do
+      context "with decimal point" do
+        it "captures the proper amount for a formatted price" do
+          variant.price = '1,599.99'
+          variant.price.should == 1599.99
+        end
+      end
+
+      context "with decimal comma" do
+        it "captures the proper amount for a formatted price" do
+          I18n.locale = :de
+          variant.price = '1.599,99'
+          variant.price.should == 1599.99
+        end
+      end
+    end
+
+    context "cost_price=" do
+      context "with decimal point" do
+        it "captures the proper amount for a formatted price" do
+          variant.cost_price = '1,599.99'
+          variant.cost_price.should == 1599.99
+        end
+      end
+
+      context "with decimal comma" do
+        it "captures the proper amount for a formatted price" do
+          I18n.locale = :de
+          variant.cost_price = '1.599,99'
+          variant.cost_price.should == 1599.99
+        end
+      end
+    end
   end
 end

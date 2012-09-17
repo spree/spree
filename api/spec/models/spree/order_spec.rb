@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Order do
-    let(:user) { stub_model(User) }
+    let(:user) { stub_model(LegacyUser) }
 
     it 'can build an order from API parameters' do
       product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 33.22)

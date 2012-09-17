@@ -12,6 +12,7 @@
     <th><%= t(:action) %></th>
   </tr>
 
+  <tbody>
   <% @product.images.each do |image| %>
     <tr id="<%= spree_dom_id image %>" data-hook="images_row">
       <td>
@@ -46,6 +47,7 @@
       </tr>
     <% end %>
   <% end %>
+  </tbody>
 </table>
 
 <div id="images" data-hook></div>

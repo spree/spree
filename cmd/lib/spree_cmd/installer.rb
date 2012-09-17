@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'active_support/core_ext/string'
 
 module SpreeCmd
 
@@ -56,14 +57,22 @@ module SpreeCmd
       elsif options[:version]
         @spree_gem_options[:version] = options[:version]
       else
-        require 'spree/core/version'
-        @spree_gem_options[:version] = Spree.version
+        version = Gem.loaded_specs['spree_cmd'].version
+        @spree_gem_options[:version] = version.to_s
       end
     end
 
     def ask_questions
       @install_default_gateways = ask_with_default('Would you like to install the default gateways?')
       @install_default_auth = ask_with_default('Would you like to install the default authentication system?')
+      unless @install_default_auth
+        @user_class = ask("What is the name of the class representing users within your application? [User]")
+        if @user_class.blank?
+          @user_class = "User"
+        end
+      else
+        @user_class = "Spree::User"
+      end
 
       if options[:skip_install_data]
         @run_migrations = false
@@ -94,7 +103,7 @@ module SpreeCmd
         end
 
         if @install_default_auth
-          gem :spree_auth_devise, :git => "git://github.com/radar/spree_auth_devise"
+          gem :spree_auth_devise, :git => "git://github.com/spree/spree_auth_devise"
         end
 
         run 'bundle install', :capture => true
@@ -106,6 +115,7 @@ module SpreeCmd
       spree_options << "--migrate=#{@run_migrations}"
       spree_options << "--seed=#{@load_seed_data}"
       spree_options << "--sample=#{@load_sample_data}"
+      spree_options << "--user_class=#{@user_class}"
       spree_options << "--auto_accept" if options[:auto_accept]
 
       inside @app_path do
@@ -181,10 +191,16 @@ module SpreeCmd
       end
 
       def image_magick_installed?
+        cmd = 'identify -version'
+        if RUBY_PLATFORM =~ /mingw|mswin/ #windows
+          cmd += " >nul"
+        else
+          cmd += " >/dev/null"
+        end
         # true if command executed succesfully
         # false for non zero exit status
         # nil if command execution fails
-        system('identify -version')
+        system(cmd)
       end
   end
 end

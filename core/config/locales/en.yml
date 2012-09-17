@@ -108,6 +108,7 @@ en:
       spree/tax_rate:
         amount: Rate
         included_in_price: Included in Price
+        show_rate_in_label: Show rate in label
       spree/taxon:
         name: Name
         permalink: Permalink
@@ -334,11 +335,14 @@ en:
   credit_cards: Credit Cards
   credits: Credits
   current: Current
+  currency: Currency
+  currency_symbol_position: "Put currency symbol before or after dollar amount?"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
   customer_search: "Customer Search"
   date_created: Date created
+  date_completed: Date Completed
   date_range: "Date Range"
   debit: Debit
   default: Default
@@ -357,7 +361,9 @@ en:
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
   discount_amount: "Discount Amount"
   display: Display
+  display_currency: "Display currency"
   dismiss_banner: "No. Thanks! I'm not interested, do not display this message again"
+  dollar_amounts_displayed_as: "Dollar amounts displayed as %{example}"
   edit: Edit
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
@@ -606,8 +612,19 @@ en:
   order_mailer:
     confirm_email:
       subject:  "Order Confirmation"
+      dear_customer: "Dear Customer,"
+      instructions: "Please review and retain the following order information for your records."
+      order_summary: "Order Summary"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
+      thanks: "Thank you for your business."
     cancel_email:
       subject: "Cancellation of Order"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been CANCELED.  Please retain this cancellation information for your records."
+      order_summary_canceled: "Order Summary [CANCELED]"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
@@ -896,6 +913,11 @@ en:
   shipment_mailer:
     shipped_email:
       subject: "Shipment Notification"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been shipped"
+      shipment_summary: "Shipment Summary"
+      track_information: "Tracking Information: %{tracking}"
+      thanks: "Thank you for your business."
   shipment_number: "Shipment #"
   shipment_state: Shipment State
   shipment_states:
@@ -929,6 +951,7 @@ en:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
+  show_only_unfulfilled_orders: "Show only unfulfilled orders"
   showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"

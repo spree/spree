@@ -105,7 +105,6 @@ describe Spree::Address do
     end
 
     it "address_requires_state preference is false" do
-      pending "Broken on CI server, but not on dev machines. To be investigated later."
       Spree::Config.set :address_requires_state => false
       address.state = nil
       address.state_name = nil

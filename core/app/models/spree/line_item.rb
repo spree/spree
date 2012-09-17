@@ -97,7 +97,7 @@ module Spree
       end
 
       def quantity_no_less_than_shipped
-        already_shipped = order.shipments.reduce(0) { |acc,s| acc + s.inventory_units.count { |i| i.variant == variant } }
+        already_shipped = order.shipments.reduce(0) { |acc, s| acc + s.inventory_units.shipped.where(:variant_id => variant_id).count }
         unless quantity >= already_shipped
           errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units'))
         end

@@ -85,6 +85,17 @@
     </div>
   </div>
 
+
+  <%= f.field_container :taxons do %>
+    <%= f.label :taxon_ids, t(:taxons) %><br />
+    <%= f.select :taxon_ids, taxon_options_for(@product), {}, :class => "select2", :multiple => true %>
+  <% end %>
+
+  <%= f.field_container :option_types do %>
+    <%= f.label :option_type_ids, t(:option_types) %><br />
+    <%= f.select :option_type_ids, option_types_options_for(@product), {}, :class => "select2", :multiple => true %>
+  <% end %>
+
   <h2><%= t(:metadata) %></h2>
   <div data-hook="admin_product_form_meta">
     <%= f.field_container :meta_keywords do %>
@@ -100,3 +111,12 @@
 
   <div data-hook="admin_product_form_additional_fields"></div>
 </div>
+
+<script>
+
+$("#product_taxon_ids").select2({
+  formatSelection: function(item) { return item.text.split(' -> ').slice(-1)[0] },
+});
+
+$("#product_option_type_ids").select2();
+</script>

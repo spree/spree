@@ -27,11 +27,11 @@ module Spree
     end
 
     add_search_scope :ascend_by_master_price do
-      joins(:variants_with_only_master).order("#{variant_table_name}.price ASC")
+      joins(:master).order("#{variant_table_name}.price ASC")
     end
 
     add_search_scope :descend_by_master_price do
-      joins(:variants_with_only_master).order("#{variant_table_name}.price DESC")
+      joins(:master).order("#{variant_table_name}.price DESC")
     end
 
     add_search_scope :price_between do |low, high|
@@ -51,7 +51,7 @@ module Spree
     #
     #   Spree::Product.taxons_id_eq(x)
     add_search_scope :in_taxon do |taxon|
-      joins(:taxons).where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+      joins(:taxons).where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) }).uniq
     end
 
     # This scope selects products in all taxons AND all its descendants

@@ -36,6 +36,31 @@ describe Spree::Product do
       end
     end
 
+    context "product has no variants" do
+      context "#delete" do
+        it "should set deleted_at value" do
+          product.delete
+          product.reload
+          product.deleted_at.should_not be_nil
+          product.master.deleted_at.should_not be_nil
+        end
+      end
+    end
+
+    context "product has variants" do
+      before do
+        create(:variant, :product => product)
+      end
+
+      context "#delete" do
+        it "should set deleted_at value" do
+          product.delete
+          product.deleted_at.should_not be_nil
+          product.variants_including_master.all? { |v| !v.deleted_at.nil? }.should be_true
+        end
+      end
+    end
+
     context "#on_hand" do
       # Regression test for #898
       context 'returns the correct number of products on hand' do
@@ -52,6 +77,26 @@ describe Spree::Product do
       it 'strips non-price characters' do
         product.price = "$10"
         product.price.should == 10.0
+      end
+    end
+
+    context "#display_price" do
+      before { product.price = 10.55 }
+
+      context "with display_currency set to true" do
+        before { Spree::Config[:display_currency] = true }
+
+        it "shows the currency" do
+          product.display_price.should == "$10.55 USD"
+        end
+      end
+
+      context "with display_currency set to false" do
+        before { Spree::Config[:display_currency] = false }
+
+        it "does not include the currency" do
+          product.display_price.should == "$10.55"
+        end
       end
     end
   end
@@ -154,6 +199,29 @@ describe Spree::Product do
     end
   end
 
+  context "manual permalink override" do
+    it "calling save_permalink with a parameter" do
+      @product = create(:product, :name => "foo")
+      @product.permalink.should == "foo"
+      @product.name = "foobar"
+      @product.save
+      @product.permalink.should == "foo"
+      @product.save_permalink(@product.name)
+      @product.permalink.should == "foobar"
+    end
+
+    it "should be incremented until not taken with a parameter" do
+      @product = create(:product, :name => "foo")
+      @product2 = create(:product, :name => "foobar")
+      @product.permalink.should == "foo"
+      @product.name = "foobar"
+      @product.save
+      @product.permalink.should == "foo"
+      @product.save_permalink(@product.name)
+      @product.permalink.should == "foobar-1"
+    end
+  end
+
   context "properties" do
     it "should properly assign properties" do
       product = FactoryGirl.create :product
@@ -210,7 +278,7 @@ describe Spree::Product do
         @product.option_type_ids.should == prototype.option_type_ids
       end
 
-      it "should create product option types based on the prototype" do  
+      it "should create product option types based on the prototype" do
         @product.save
         @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
       end

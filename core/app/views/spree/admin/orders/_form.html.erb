@@ -21,7 +21,7 @@
       <tbody id="subtotal" data-hook="admin_order_form_subtotal">
         <tr id="subtotal-row">
           <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-          <td class="total"><span><%= number_to_currency @order.item_total %></span></td>
+          <td class="total"><span><%= money(@order.item_total) %></span></td>
           <td></td>
         </tr>
       </tbody>
@@ -29,7 +29,7 @@
         <% @order.adjustments.each do |adjustment| %>
           <tr>
             <td colspan="3"><strong><%= adjustment.label %></strong></td>
-            <td class="total"><span><%= number_to_currency adjustment.amount %></span></td>
+            <td class="total"><span><%= adjustment.display_amount %></span></td>
             <td></td>
           </tr>
         <% end %>
@@ -37,7 +37,7 @@
       <tbody id="order-total" data-hook="admin_order_form_total">
         <tr>
           <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-          <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
+          <td class="total"><span id="order_total"><%= @order.display_total %></span></td>
           <td></td>
         </tr>
       </tbody>

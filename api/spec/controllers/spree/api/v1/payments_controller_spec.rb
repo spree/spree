@@ -2,6 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Api::V1::PaymentsController do
+    render_views
     let!(:order) { create(:order) }
     let!(:payment) { create(:payment, :order => order) }
     let!(:attributes) { [:id, :source_type, :source_id, :amount,
@@ -50,7 +51,7 @@ module Spree
 
       context "when the order does not belong to the user" do
         before do
-          Order.any_instance.stub :user => stub_model(User)
+          Order.any_instance.stub :user => stub_model(LegacyUser)
         end
 
         it "cannot view payments for somebody else's order" do

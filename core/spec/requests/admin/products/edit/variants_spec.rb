@@ -9,22 +9,19 @@ describe "Product Variants" do
 
   context "editing variant option types", :js => true do
     it "should allow an admin to create option types for a variant" do
-      create(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
-      create(:product, :name => 'apache baseball cap2', :sku => 'B100', :available_on => "2011-01-01 01:01:01")
-      create(:product, :name => 'zomg shirt', :sku => 'Z100', :available_on => "2011-01-01 01:01:01")
-      Spree::Product.update_all :count_on_hand => 10
+      create(:product)
 
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
       within('#sidebar') { click_link "Variants" }
-      find('table.index tbody tr:nth-child(2) td:nth-child(1)').text.should == "None"
       page.should have_content("To add variants, you must first define")
-      within('.first_add_option_types') { click_link "Option Types" }
-      within('#new_opt_link') { click_link "Add Option Type" }
-      page.should have_content("None Available")
     end
 
-    it "should allow an admin to edit existing option types" do
+    # NOTE:
+    # If this test fails it could be because the asset compilation is failing.
+    # Ensure that the option type field on the product's page actually displays
+    # as a select2 field, not as a standard select field.
+    it "should allow an admin to create a variant if there are option types" do
       click_link "Products"
       click_link "Option Types"
       click_link "new_option_type_link"
@@ -39,22 +36,15 @@ describe "Product Variants" do
       click_button "Update"
       page.should have_content("successfully updated!")
 
-      create(:product, :name => 'apache baseball cap', :sku => 'A100', :available_on => "2011-01-01 01:01:01")
-      Spree::Product.update_all :count_on_hand => 10
+      create(:product)
 
       visit spree.admin_path
       click_link "Products"
       within('table.index tr:nth-child(2)') { click_link "Edit" }
-      within('#sidebar') { click_link "Option Types" }
-      within('#new_opt_link') { click_link "Add Option Type" }
-      within('#option-types') { click_link "Select" }
-      within(".index") do
-        page.should have_content("shirt colors")
-      end
+      select2('#product_option_types_field', 'color')
+      click_button "Update"
+      page.should have_content("successfully updated!")
 
-      visit spree.admin_path
-      click_link "Products"
-      within('table.index tr:nth-child(2)') { click_link "Edit" }
       within('#sidebar') { click_link "Variants" }
       click_link "New Variant"
       fill_in "variant_sku", :with => "A100"

@@ -12,7 +12,6 @@ module Spree
           helper_method :title
           helper_method :title=
           helper_method :accurate_title
-          helper_method :get_taxonomies
           helper_method :current_order
           helper_method :try_spree_current_user
 
@@ -40,13 +39,31 @@ module Spree
         title_string = @title.present? ? @title : accurate_title
         if title_string.present?
           if Spree::Config[:always_put_site_name_in_title]
-            [default_title, title_string].join(' - ')
+            [title_string, default_title].join(' - ')
           else
             title_string
           end
         else
           default_title
         end
+      end
+
+      def associate_user
+        if try_spree_current_user && @order
+          if @order.user.blank? || @order.email.blank?
+            @order.associate_user!(try_spree_current_user)
+          end
+        end
+
+        # This will trigger any "first order" promotions to be triggered
+        # Assuming of course that this session variable was set correctly in
+        # the authentication provider's registrations controller
+        if session[:spree_user_signup]
+          fire_event('spree.user.signup', :user => try_spree_current_user, :order => current_order(true))
+        end
+
+        session[:guest_token] = nil
+        session[:spree_user_signup] = nil
       end
 
       protected
@@ -90,7 +107,7 @@ module Spree
           format.html do
             if try_spree_current_user
               flash.now[:error] = t(:authorization_failure)
-              render 'spree/shared/unauthorized', :layout => '/spree/layouts/spree_application', :status => 401
+              render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
             else
               store_location
               url = respond_to?(:spree_login_path) ? spree_login_path : root_path
@@ -142,24 +159,21 @@ module Spree
         session["user_return_to"] = nil
       end
 
-      def get_taxonomies
-        @taxonomies ||= Spree::Taxonomy.includes(:root => :children).joins(:root)
-      end
-
       def set_user_language
         locale = session[:locale]
-        locale ||= Spree::Config[:default_locale] unless Spree::Config[:default_locale].blank?
         locale ||= Rails.application.config.i18n.default_locale
-        locale ||= I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
+        if locale.blank? || !I18n.available_locales.include?(locale.to_sym)
+          locale ||= I18n.default_locale
+        end
         I18n.locale = locale.to_sym
       end
 
       # Returns which layout to render.
-      # 
+      #
       # You can set the layout you want to render inside your Spree configuration with the +:layout+ option.
-      # 
+      #
       # Default layout is: +app/views/spree/layouts/spree_application+
-      # 
+      #
       def get_layout
         layout ||= Spree::Config[:layout]
       end

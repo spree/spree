@@ -123,14 +123,12 @@ describe Spree::LineItem do
       before { Spree::Config.set :allow_backorders => false }
 
       it 'should report insufficient stock when variant is out of stock' do
-        pending
         line_item.stub_chain :variant, :on_hand => 0
         line_item.insufficient_stock?.should be_true
         line_item.sufficient_stock?.should be_false
       end
 
       it 'should report insufficient stock when variant has less on_hand that line_item quantity' do
-        pending
         line_item.stub_chain :variant, :on_hand => 3
         line_item.insufficient_stock?.should be_true
         line_item.sufficient_stock?.should be_false
@@ -186,9 +184,13 @@ describe Spree::LineItem do
       shipping_method = mock_model(Spree::ShippingMethod, :calculator => mock(:calculator))
       shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
       shipment.stub(:state => 'shipped')
-      inventory_units = 5.times.map { Spree::InventoryUnit.new({:variant => line_item.variant}, :without_protection => true) }
+      shipped_inventory_units = 5.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'shipped' }, :without_protection => true) }
+      unshipped_inventory_units = 2.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'sold' }, :without_protection => true) }
+      inventory_units = shipped_inventory_units + unshipped_inventory_units
       order.stub(:shipments => [shipment])
       shipment.stub(:inventory_units => inventory_units)
+      inventory_units.stub(:shipped => shipped_inventory_units)
+      shipped_inventory_units.stub(:where).with(:variant_id => line_item.variant_id).and_return(shipped_inventory_units)
     end
 
     it 'should not allow quantity to be adjusted lower than already shipped units' do

@@ -50,10 +50,6 @@ module Spree
         link_to_with_icon('edit', t(:edit), url, options)
       end
 
-      def link_to_clone(resource, options={})
-        link_to_with_icon('exclamation', t(:clone), clone_admin_product_url(resource), options)
-      end
-
       def link_to_delete(resource, options={})
         url = options[:url] || object_url(resource)
         name = options[:name] || icon('delete') + ' ' + t(:delete)
