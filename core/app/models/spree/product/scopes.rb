@@ -51,7 +51,7 @@ module Spree
     #
     #   Spree::Product.taxons_id_eq(x)
     add_search_scope :in_taxon do |taxon|
-      joins(:taxons).where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) }).uniq
+      joins(:taxons).where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
     end
 
     # This scope selects products in all taxons AND all its descendants
