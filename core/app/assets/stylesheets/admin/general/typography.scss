@@ -81,6 +81,7 @@ dl {
   width: 100%;
   overflow: hidden;
   margin: 5px 0;
+  color: lighten($color-body-text, 15);
 
   dt, dd {
     float: left;

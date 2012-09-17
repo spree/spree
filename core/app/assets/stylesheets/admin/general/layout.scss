@@ -238,14 +238,17 @@ body {
 // Sidebar
 //---------------------------------------------------
 #sidebar {
-  background-color: lighten($c_blue1, 33);
-  border: 1px solid $color-border;  
-  border-radius: 3px;
-  padding: 10px;
+  // background-color: lighten($c_blue1, 33);
+  // border: 1px solid $color-border;  
+  // border-radius: 3px;
+  // padding: 10px;
   overflow: visible;
 
   .sidebar-title {
     color: $c_green1;
+    text-transform: uppercase;
+    font-size: 14px;
+    text-align: center;
   }
 
   .additional-info {
@@ -267,24 +270,25 @@ body {
           font-size: 85%;
           margin: 0 -11px;
           text-align: left;
+          border-bottom: 1px solid $color-border;
         }
 
         &.active a, &:hover a {
-          color: white;
-          background-color: $c_green1;
+          color: $c_green1;
+          border-bottom: 1px solid $c_green1;
 
-          &:after {
-            content: '';
-            position: absolute;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent; 
-            border-right:10px solid $c_green1;
-            left: -10px;
-            margin-bottom: -5px;
-            top: 50%;
-            margin-top: -10px;
-            z-index: 1;
-          }
+          // &:after {
+          //   content: '';
+          //   position: absolute;
+          //   border-top: 10px solid transparent;
+          //   border-bottom: 10px solid transparent; 
+          //   border-right:10px solid $c_green1;
+          //   left: -10px;
+          //   margin-bottom: -5px;
+          //   top: 50%;
+          //   margin-top: -10px;
+          //   z-index: 1;
+          // }
         }
       }
     }

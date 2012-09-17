@@ -110,32 +110,49 @@ fieldset {
   box-shadow: none;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  background-color: lighten($c_blue1, 33);
-  margin-bottom: 15px;
   margin-left: 0;
   margin-right: 0;  
-  position: relative;
-  padding: 0;
+  position: relative;  
+  margin-bottom: 35px;
+  padding: 10px 0 15px 0;
+  background-color: transparent;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;    
+
+  legend {
+    background-color: white;
+    border-radius: 3px;
+    color: $c_green1;    
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 8px 15px;
+  }
+
+  label {
+    color: lighten($color-body-text, 15);
+  }
+
+  .filter-actions {
+    margin-bottom: -45px;
+
+    button {
+      border: 15px solid white;
+      border-radius: 18px;
+      margin-top: -5px;
+
+      &:hover {
+        border-color: white;
+      }
+    }
+  }
+  
 
   .field {
     padding: 10px;
-  }
-
-  legend {    
-    @extend [class^="icon-"]:before;
-    @extend .icon-caret-down;
-    text-transform: uppercase;
-    font-weight: bold;
-    border-radius: 3px;
-    margin-left: 10px;
-    background-color: $c_blue1;
-    color: white;
-    padding: 8px 15px;
-
-    &:before {
-      padding-right: 3px;
-    }
-  }
+  }  
 
   &.labels-inline {
     .field {

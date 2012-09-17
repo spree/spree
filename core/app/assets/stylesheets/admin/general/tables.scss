@@ -115,6 +115,14 @@ table {
       background-color: lighten($c_blue1, 33);
       text-transform: uppercase;
       font-size: 85%;
+
+      a {
+        color: lighten($color-links, 15) !important;
+
+        &:hover, &.desc, &.asc {
+          color: $c_green1 !important;
+        }
+      }
     }
   }
 
