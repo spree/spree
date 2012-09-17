@@ -15,9 +15,15 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
 <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display: none', :id => 'busy_indicator' %>
+
+<%# Placeholder for new prototype form %>
 <div id="new_prototype"></div>
 
 <table class="index" id='listing_prototypes' data-hook>
+  <colgroup>
+    <col style="width: 90%">
+    <col style="width: 10%">
+  </colgroup>
   <thead>
     <tr data-hook="prototypes_header">
       <th><%= t(:name) %></th>

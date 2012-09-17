@@ -208,4 +208,20 @@ fieldset {
 
 .field {
   margin-bottom: 10px;
+
+  ul {
+    border-top: 1px solid $color-border;
+    list-style: none;
+    padding-top: 5px;
+
+    li {
+      display: inline-block;
+      min-width: 150px;
+
+      label {
+        font-weight: normal;
+        text-transform: none;
+      }
+    }
+  }
 }

@@ -86,6 +86,12 @@ body {
 #logo { height: 50px }
 [data-hook="admin-title"] { font-size: 14px }
 
+.page-title {
+  i {
+    color: $c_green1;
+  }
+}
+
 // Navigation
 //---------------------------------------------------
 .inline-menu { 

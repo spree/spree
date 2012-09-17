@@ -115,6 +115,14 @@ dl {
 .align-left    { text-align: left    }
 .align-justify { text-align: justify }
 
+.no-objects-found {
+  text-align: center;
+  font-size: 120%;
+  text-transform: uppercase;
+  padding: 40px 0px;
+  color: lighten($color-body-text, 15);
+}
+
 // States
 //--------------------------------------------------------------
 .state {

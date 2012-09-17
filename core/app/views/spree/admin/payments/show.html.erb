@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
-<h2><%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>
+<% end %>
 
 <p data-hook="amount">
   <%= label_tag nil, t(:amount) %>

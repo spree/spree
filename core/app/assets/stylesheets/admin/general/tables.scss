@@ -49,6 +49,10 @@ table {
       border-right: none;
     }
 
+    input[type="text"] {
+      width: 100%;
+    }
+
     .handle {
       @extend [class^="icon-"]:before;
       @extend .icon-reorder;
