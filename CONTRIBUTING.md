@@ -7,11 +7,9 @@ Here's a quick guide:
 2. Run the tests. We only take pull requests with passing tests, and it's great
 to know that you have a clean slate:
 
-```
-bundle install
-bundle exec rake test_app
-bundle exec rake
-```
+        $ bundle install
+        $ bundle exec rake test_app
+        $ bundle exec rake
 
 3. Add a test for your change. Only refactoring and documentation changes
 require no new tests. If you are adding functionality or fixing a bug, we need
