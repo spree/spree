@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag states_url(:format => :js) %>
+  <%= javascript_include_tag states_path(:format => :js) %>
 <% end %>
 <div id="checkout" data-hook>  
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
