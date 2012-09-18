@@ -43,6 +43,7 @@ module Spree
         it "retrieves a list of products of jsonp" do
           api_get :index, {:callback => 'callback'}
           response.body.should =~ /^callback\(.*\)$/
+          response.header['Content-Type'].should include('application/javascript')
         end
       end
 
