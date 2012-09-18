@@ -2,7 +2,6 @@ h2. Developer Tips and Tricks
 
 This guide presents accumulated wisdom from person-years of Spree use.
 
-
 endprologue.
 
 h3. Upgrade Considerations
@@ -32,10 +31,10 @@ h4. Tracking changes for overridden code
 
 Be aware that core changes might have an impact on the components you have overridden in your project.
 You might need to patch your local copies, or ensure that such copies interact correctly with changed
-code (e.g. using appropriate ids in Html to allow the javascript to work).
+code (e.g. using appropriate ids in HTML to allow the JavaScript to work).
 
-If you can help us to generalise the core code so that your preferred effect is achieved by altering
-a few parameters, then this is more useful than duplicating several files. Ideas and suggestions always
+If you can help us generalise the core code so that your preferred effect is achieved by altering
+a few parameters, this will be more useful than duplicating several files. Ideas and suggestions are always
 welcome.
 
 h4. Initializers
@@ -77,15 +76,16 @@ but which aren't the usual things that you'd override (like views) - so somethin
 models or controllers.
 
 You could hide these away in your site extension, but they could get mixed up with your real site
-customizations. Your could also fork Spree and run your site on this forked version, but this can
+customizations. You could also fork Spree and run your site on this forked version, but this can
 also be a headache to get right. There's also the hassle of tracking changes to +spree/master+ and
 pulling them into your project at the right time.
 
 So here's a compromise: have an extra extension, say +spree-tweaks+, to contain your small collection
-of modified files, which is loaded first in the extension order. The benefits are: it's clear what you
-are overriding, and easier to check against core changes; you can base your project on an official
-gem release or a +spree/master+ commit stage; such tweaks can become part of your client site project
-and be managed with SCM etc.
+of modified files, which is loaded first in the extension order. The benefits are: 
+
+* it's clear what you are overriding, and easier to check against core changes
+* you can base your project on an official gem release or a +spree/master+ commit stage
+* such tweaks can become part of your client site project and be managed with SCM etc.
 
 If you find yourself wanting extensive changes to core, this technique probably won't work so well.
 But then again, if this is the case, then you probably want to look seriously at splitting some
@@ -95,10 +95,10 @@ to the core.
 
 h4. Setting up submodules
 
-Some of us use "Git submodules":http://git.or.cz/gitwiki/GitSubmoduleTutorial
+Some of us use "Git submodules":https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
 to tie large projects together: the basic Spree shell plus the
 +site/+ extension is the main repository, and everything else is loaded in as a submodule,
-including Spree itself. See "this Spree-demo fork":http://github.com/paulcc/spree-demo/tree
+including Spree itself. See "this Spree-demo fork":https://github.com/paulcc/spree-demo/tree
 for an example.
 
 The basic command to set up a submodule is this. Call it for each of the submodules you need.
@@ -110,7 +110,7 @@ git submodule add some_repo [-b branch] vendor/extensions/some_ext
 
 If your project is public, then you probably want to give the public version of your repo so
 other people can use it without change. When I need to change a submodule in place, I add a
-new remote with the proper url for changes to be pushed to.
+new remote with the proper URL for changes to be pushed to.
 The branch option is recommended (and you probably want to specify "master" most of the time).
 
 h4. Checking out submodules
@@ -124,7 +124,7 @@ git submodule update --init
 
 h4. Managing submodules
 
-+git submodule foreach+ is very useful for managing your submodules, e.g. you can update all of them
++git submodule foreach+ is very useful for managing your submodules. For example, you can update all of them
 with +git submodule foreach "git pull"+, or check for modifications with this
 (the +echo ok+ gets round a return-code issue):
 <shell>
