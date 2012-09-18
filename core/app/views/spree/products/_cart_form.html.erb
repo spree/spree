@@ -1,4 +1,4 @@
-<%= form_for :order, :url => populate_orders_url do |f| %>
+<%= form_for :order, :url => populate_orders_path do |f| %>
   <div id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
     <% if @product.has_variants? %>
