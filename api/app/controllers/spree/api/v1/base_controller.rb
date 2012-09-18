@@ -18,7 +18,8 @@ module Spree
 
         def set_jsonp_format
           if params[:callback] && request.get?
-            self.response_body = "#{params[:callback]}(#{self.response_body})" 
+            self.response_body = "#{params[:callback]}(#{self.response_body})"
+            headers["Content-Type"] = 'application/javascript'
           end
         end
 
