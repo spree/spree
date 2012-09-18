@@ -12,12 +12,12 @@ describe 'orders' do
   it "should have credit card info if paid with credit card" do
     create(:payment, :order => completed_order)
     visit spree.order_path(completed_order)
-    page.should have_content "Ending in 1111"
+    within(:css, '.payment-info') { page.should have_content "Ending in 1111" }
   end
 
   it "should have payment method name visible if not paid with credit card" do
     create(:check_payment, :order => completed_order)
     visit spree.order_path(completed_order)
-    page.should have_content "Check"
+    within(:css, '.payment-info') { page.should have_content "Check" }
   end
 end
