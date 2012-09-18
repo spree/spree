@@ -36,6 +36,40 @@ describe "Checkout" do
       end
     end
 
+    context "defaults to use billing address" do
+      before do
+        @order = create(:order_with_totals, :state => 'cart',
+                                            :shipping_method => create(:shipping_method))
+        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
+
+        visit spree.root_path
+        click_link "RoR Mug"
+        click_button "add-to-cart-button"
+        Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
+        click_link "Checkout"
+      end
+
+      it "should default checkbox to checked" do
+        find('input#order_use_billing').should be_checked
+      end
+
+      it "should remain checked when used and visitor steps back to address step", :js => true do
+        address = "order_bill_address_attributes"
+        fill_in "#{address}_firstname", :with => "Ryan"
+        fill_in "#{address}_lastname", :with => "Bigg"
+        fill_in "#{address}_address1", :with => "143 Swan Street"
+        fill_in "#{address}_city", :with => "Richmond"
+        select "United States", :from => "#{address}_country_id"
+        select "Vermont", :from => "#{address}_state_id"
+        fill_in "#{address}_zipcode", :with => "12345"
+        fill_in "#{address}_phone", :with => "(555) 5555-555"
+        click_button "Save and Continue"
+        click_link "Address"
+
+        find('input#order_use_billing').should be_checked
+      end
+    end
+
     context "and likes to double click buttons" do
       before(:each) do
         @order = create(:order_with_totals, :state => 'payment',
@@ -103,7 +137,6 @@ describe "Checkout" do
           fill_in "#{address}_zipcode", :with => "12345"
           fill_in "#{address}_phone", :with => "(555) 5555-555"
 
-          check "Use Billing Address"
           click_button "Save and Continue"
           page.should_not have_content("undefined method `promotion'")
         end
