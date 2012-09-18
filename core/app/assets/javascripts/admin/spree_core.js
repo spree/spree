@@ -7,6 +7,7 @@
 //= require jquery.alerts/jquery.alerts
 //= require jquery.powertip
 //= require spin
+//= require trunk8
 //= require responsive-tables
 //= require jquery.foundation.tooltips
 //= require jquery.horizontalNav

@@ -1,4 +1,6 @@
-<h1><%= t(:editing_promotion) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_promotion) %>
+<% end %>
 
 <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

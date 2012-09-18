@@ -20,7 +20,7 @@
       <th><%= t(:description) %></th>
       <th><%= t(:usage_limit) %></th>
       <th><%= t(:expiration) %></th>
-      <th style="width:150px;"><%= t(:action) %></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
@@ -30,10 +30,10 @@
         <td><%= promotion.code %></td>
         <td><%= promotion.description %></td>
         <td><%= promotion.usage_limit %></td>
-        <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-        <td>
-          <%= link_to_edit promotion %> &nbsp;
-          <%= link_to_delete promotion %>
+        <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
+        <td class="actions">
+          <%= link_to_edit promotion, :no_text => true %>
+          <%= link_to_delete promotion, :no_text => true %>
         </td>
       </tr>
     <% end %>

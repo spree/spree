@@ -1,14 +1,16 @@
 <div data-hook="admin_image_form_fields">
-  <div data-hook="file" class="field">
-    <%= f.label t(:filename) %>:
-    <%= f.file_field :attachment %>
+  <div class="four columns alpha">
+    <div data-hook="file" class="field">
+      <%= f.label t(:filename) %><br>
+      <%= f.file_field :attachment %>
+    </div>
+    <div data-hook="variant" class="field">
+      <%= f.label Spree::Variant.model_name.human %><br>
+      <%= f.select :viewable_id, @variants, {}, {:class => 'select2 fullwidth'} %>
+    </div>
   </div>
-  <div data-hook="variant" class="field">
-    <%= f.label Spree::Variant.model_name.human %>:
-    <%= f.select :viewable_id, @variants, {}, {:class => 'select2'} %>
+  <div data-hook="alt_text" class="field omega five columns">
+    <%= f.label t(:alt_text) %><br>
+    <%= f.text_area :alt, :rows => 5, :class => 'fullwidth' %>
   </div>
-  <div data-hook="alt_text" class="field">
-    <%= f.label t(:alt_text) %>:
-    <%= f.text_area :alt %>
-  </divr>
 </div>

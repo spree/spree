@@ -6,6 +6,8 @@
     <%= f.text_field :value, :class => 'autocomplete' %>
   </td>
   <td class="actions">
-    <%= link_to_remove_fields t(:remove), f, :no_text => true %>
+    <% unless @product.properties.empty? %>
+      <%= link_to_remove_fields t(:remove), f, :no_text => true %>
+    <% end %>
   </td>
 </tr>

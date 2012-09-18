@@ -244,10 +244,6 @@ body {
 // Sidebar
 //---------------------------------------------------
 #sidebar {
-  // background-color: lighten($c_blue1, 33);
-  // border: 1px solid $color-border;  
-  // border-radius: 3px;
-  // padding: 10px;
   overflow: visible;
 
   .sidebar-title {
@@ -268,13 +264,12 @@ body {
 
       li {
         a {
-          padding: 10px 0 10px 10px;
+          padding: 10px 0;
           display: block;
           position: relative;
           text-transform: uppercase;
           font-weight: bold;
           font-size: 85%;
-          margin: 0 -11px;
           text-align: left;
           border-bottom: 1px solid $color-border;
         }

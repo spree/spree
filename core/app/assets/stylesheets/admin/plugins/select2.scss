@@ -64,6 +64,7 @@
 .select2-drop {
   border-color: $c_green1;
   box-shadow: none !important;
+  z-index: 1000000;
 
   &.select2-drop-above {
     border-color: $c_green1;

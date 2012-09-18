@@ -140,7 +140,8 @@ module Spree
 
       def link_to_add_fields(name, target, options = {})
         name = '' if options[:no_text]
-        link_to icon('add') + name, 'javascript:', :data => { :target => target }, :class => "add_fields"
+        css_classes = options[:class] ? options[:class] + " add_fields" : "add_fields"
+        link_to icon('add') + name, 'javascript:', :data => { :target => target }, :class => css_classes
       end
 
       # renders hidden field and link to remove record using nested_attributes

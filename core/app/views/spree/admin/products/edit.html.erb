@@ -1,3 +1,9 @@
+<% content_for :page_actions do %>
+  <ul class="inline-menu toolbar">
+    <li><%= button_link_to t(:back_to_products_list), admin_products_url, :icon => 'icon-arrow-left' %></li>
+  </ul>
+<% end %>
+
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Product Details' } %>

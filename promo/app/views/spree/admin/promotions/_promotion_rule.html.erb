@@ -1,4 +1,4 @@
-<div class="promotion_rule" id="<%= dom_id promotion_rule %>">
+<div class="promotion_rule alpha omega eight columns" id="<%= dom_id promotion_rule %>">
   <span class="delete"><%= link_to_with_icon 'cross', '', spree.admin_promotion_promotion_rule_path(@promotion, promotion_rule), :remote => true, :method => :delete %></span>
   <% type_name = promotion_rule.class.name.demodulize.underscore %>
   <% param_prefix = "promotion[promotion_rules_attributes][#{promotion_rule.id}]" %>

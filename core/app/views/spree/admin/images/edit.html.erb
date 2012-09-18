@@ -4,16 +4,26 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @image } %>
 
+<% content_for :page_actions do %>
+  <ul class="inline-menu toolbar">
+    <li><%= button_link_to t(:back_to_images_list), admin_product_images_url(@product), :icon => 'icon-arrow-left' %></li>
+  </ul>
+<% end %>
+
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
-  <table class="basic-table" data-hook="edit_image">
-    <tr data-hook="thumbnail">
-      <td><%= t(:thumbnail) %>:</td>
-      <td><%= link_to image_tag(@image.attachment.url(:mini)), @image.attachment.url(:product) %></td>
-    </tr>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-  </table>
-  <p class="form-buttons" data-hook="buttons">
-    <%= button t(:update) %>
-    <%= t(:or) %> <%= link_to t(:cancel), admin_product_images_url(@product), :id => 'cancel_link' %>
-  </p>
+  <fieldset data-hook="edit_image">
+    <legend><%= @image.attachment_file_name%></legend>
+    <div data-hook="thumbnail" class="field alpha three columns align-center">
+      <%= f.label t(:thumbnail) %><br>
+      <%= link_to image_tag(@image.attachment.url(:small)), @image.attachment.url(:product) %>
+    </div>
+    <div class="nine columns omega">
+      <%= render :partial => 'form', :locals => { :f => f } %>  
+    </div>
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button t(:update), 'icon-refresh' %>
+      <%= t(:or) %>
+      <%= link_to t(:cancel), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button icon-remove' %>
+    </div>
+  </fieldset>
 <% end %>

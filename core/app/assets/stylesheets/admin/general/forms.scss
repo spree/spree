@@ -54,6 +54,10 @@ textarea {
   line-height: 19px;
 }
 
+.fullwidth {
+  width: 100%;
+}
+
 label {
   font-weight: bold;
   text-transform: uppercase;
@@ -61,6 +65,10 @@ label {
   display: inline-block;
   margin-bottom: 5px;
   color: $c_blue3;
+
+  &.inline {
+    display: inline-block !important;
+  }
 }
 
 .label-block label { display: block }
@@ -216,7 +224,6 @@ fieldset {
 
     li {
       display: inline-block;
-      min-width: 150px;
 
       label {
         font-weight: normal;

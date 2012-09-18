@@ -1,4 +1,6 @@
-<h1><%= t(:new_promotion) %></h1>
+<% content_for :page_title do %>
+  <%= t(:new_promotion) %>
+<% end %>
 
 <%= form_for :promotion, :url => collection_url do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
