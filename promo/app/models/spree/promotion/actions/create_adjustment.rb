@@ -19,6 +19,7 @@ module Spree
           # promotion adjustment deletion to promotions that are not combinable
 
           # currently there can only be one promotion at a time, so we can look at .first
+          # this will break when multiple promotions are supported
 
           if order.adjustments.promotion.blank? || amount < order.adjustments.promotion.first.amount
             order.adjustments.promotion.reload.delete_all
