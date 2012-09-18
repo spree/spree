@@ -40,6 +40,23 @@ module Spree
       search(:code_cont => coupon_code).result
     end
 
+    def self.handle_notifications(*args)
+      event_name, start_time, end_time, id, payload = args
+      payload[:event_name] = event_name
+
+      if payload[:order].present?
+        payload[:order].adjustments.promotion.each do |adjustment|
+          adjustment.delete if adjustment.originator.promotion.event_name == event_name
+        end
+        
+        payload[:order].update!
+      end
+
+      Spree::Activator.active.event_name_starts_with(event_name).each do |activator|
+        activator.activate(payload)
+      end
+    end
+
     def activate(payload)
       return unless order_activatable? payload[:order]
 
@@ -52,18 +69,12 @@ module Spree
         return unless path == payload[:path]
       end
 
-      if code.blank? and payload[:first_activator].blank?
-        payload[:order].adjustments.promotion.reload.delete_all
-        payload[:order].update!
-        payload[:first_activator] = true
-      end
-
       actions.each do |action|
         action.perform(payload)
       end
     end
 
-    # called anytime order.update! happens
+    # called anytime order.update! happens via Spree::Adjustment#eligible_for_originator?
     def eligible?(order)
       return false if expired? || usage_limit_exceeded?(order)
       rules_are_eligible?(order, {})

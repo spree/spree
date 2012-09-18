@@ -21,6 +21,12 @@ module Spree
       config.autoload_paths += %W(#{config.root}/lib)
       config.to_prepare &method(:activate).to_proc
 
+      config.after_initialize do
+        ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
+          Spree::Promotion.handle_notifications(*args)
+        end
+      end
+
       initializer 'spree.promo.environment', :after => 'spree.environment' do |app|
         app.config.spree.add_class('promotions')
         app.config.spree.promotions = Spree::Promo::Environment.new
