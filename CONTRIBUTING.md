@@ -1,5 +1,21 @@
 Spree is an open source project and we encourage contributions.  Please see the [contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html) before contributing.
 
+## Filing an issue
+
+When filing an issue on the Spree project, please provide these details:
+
+* A comprehensive list of steps to reproduce the issue.
+* The version of Spree *and* the version of Rails.
+* A list of all extensions.
+
+In 99% of cases, this information is enough to determine the cause and solution to the problem that is being described.
+
+Any issue that is open for 14 days without actionable information or activity will be marked as "stalled" and then closed. Stalled issues can be re-opened if the information requested is provided.
+
+## Pull requests
+
+We gladly accept pull requests to fix bugs and, in some circumstances, add new features to Spree.
+
 Here's a quick guide:
 
 1. Fork the repo.
@@ -19,7 +35,6 @@ a test!
 
 5. Push to your fork and submit a pull request.
 
-
 At this point you're waiting on us. We like to at least comment on, if not
 accept, pull requests within three business days (and, typically, one business
 day). We may suggest some changes or improvements or alternatives.
@@ -37,8 +52,9 @@ Syntax:
 * Two spaces, no tabs.
 * No trailing whitespace. Blank lines should not have any space.
 * Prefer &&/|| over and/or.
-* MyClass.my_method(my_arg) not my_method( my_arg ) or my_method my_arg.
-* a = b and not a=b.
+* `MyClass.my_method(my_arg)` not `my_method( my_arg )` or my_method my_arg.
+* `a = b` and not `a=b`.
+* `a_method { |block| ... }` and not `a_method { | block | ... }`
 * Follow the conventions you see used in the source already.
 
 And in case we didn't emphasize it enough: we love tests!
