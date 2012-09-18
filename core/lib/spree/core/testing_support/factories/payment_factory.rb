@@ -25,4 +25,10 @@ FactoryGirl.define do
   #     txn.update_attribute(:amount, txn.payment.amount)
   #   end
   # end
+
+  factory :check_payment, :class => Spree::Payment do
+    amount 45.75
+    payment_method { FactoryGirl.create(:payment_method) }
+    order { FactoryGirl.create(:order) }
+  end
 end
