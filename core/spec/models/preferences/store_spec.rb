@@ -15,4 +15,10 @@ describe Spree::Preferences::Store do
     @store.set :test, false, :boolean
     @store.get(:test).should be_false
   end
+
+  it "returns the correct preference value when the cache is empty" do
+    @store.set :test, "1", :string
+    Rails.cache.clear
+    @store.get(:test).should == "1"
+  end
 end
