@@ -229,7 +229,7 @@ module Spree
 
     def allow_cancel?
       return false unless completed? and state != 'canceled'
-      %w{ready backorder pending}.include? shipment_state
+      shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
     end
 
     def allow_resume?
