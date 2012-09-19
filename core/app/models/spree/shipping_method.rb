@@ -1,6 +1,9 @@
 module Spree
   class ShippingMethod < ActiveRecord::Base
     DISPLAY = [:both, :front_end, :back_end]
+
+    default_scope where(:deleted_at => nil)
+
     has_many :shipments
     validates :name, :zone, :presence => true
 
