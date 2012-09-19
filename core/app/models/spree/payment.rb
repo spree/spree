@@ -91,7 +91,19 @@ module Spree
 
       def create_payment_profile
         return unless source.is_a?(CreditCard) && source.number && !source.has_payment_profile?
-        payment_method.create_profile(self)
+
+        source.user = order.user
+        source.payment_method = payment_method
+        source.bill_address = order.bill_address
+        source.save!
+
+        # Going forward, gateways should rely only on the source to create a profile
+        # Version taking payment provided for backward compatibility
+        if payment_method.respond_to?(:create_payment_profile)
+          payment_method.create_payment_profile(source)
+        else
+          payment_method.create_profile(self)
+        end
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
       end

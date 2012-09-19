@@ -1,5 +1,15 @@
 module Spree
   class CreditCard < ActiveRecord::Base
+    belongs_to :user
+    validates :user, :presence => true, :if => :has_payment_profile?
+
+    belongs_to :bill_address, :foreign_key => :bill_address_id, :class_name => "Spree::Address"
+    alias_attribute :billing_address, :bill_address
+
+    belongs_to :payment_method
+    alias_attribute :gateway, :payment_method
+    validates :payment_method, :presence => true, :if => :has_payment_profile?
+
     has_many :payments, :as => :source
 
     before_save :set_last_digits
