@@ -9,6 +9,9 @@ class AddUserAndPaymentMethodAndBillAddressToCreditCard < ActiveRecord::Migratio
     # if all migrations are run (as with test module)
     Spree::CreditCard.reset_table_name 
 
+    # Postgres gem does not reload column information without explicit reset
+    Spree::CreditCard.reset_column_information 
+
     Spree::CreditCard.where('gateway_customer_profile_id IS NOT NULL').find_each do |credit_card|
       next unless (payment = credit_card.payments.first) && payment.order && payment.order.user
       credit_card.user = payment.order.try(:user)
