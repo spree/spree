@@ -262,6 +262,13 @@ describe Spree::Order do
       order.completed_at = Time.now
       order.can_cancel?.should be_false
     end
+
+    it "should be true for completed order with no shipment" do
+      order.state = 'complete'
+      order.shipment_state = nil
+      order.completed_at = Time.now
+      order.can_cancel?.should be_true
+    end
   end
 
   context "rate_hash" do
