@@ -1,3 +1,7 @@
 Spree::Adjustment.class_eval do
-  scope :promotion, lambda { where('label LIKE ?', "#{I18n.t(:promotion)}%") }
+  class << self
+    def promotion
+      where(:originator_type => 'Spree::PromotionAction')
+    end
+  end
 end
