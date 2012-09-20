@@ -42,7 +42,9 @@ module Spree
     belongs_to :shipping_method
 
     has_many :state_changes, :as => :stateful
-    has_many :line_items, :dependent => :destroy, :order => "created_at ASC"
+    has_many :line_items, :dependent => :destroy, :order => "created_at ASC", 
+                          :before_add => :invalidate_cache_entries, 
+                          :before_remove => :invalidate_cache_entries
     has_many :inventory_units
     has_many :payments, :dependent => :destroy
     has_many :shipments, :dependent => :destroy
@@ -60,6 +62,7 @@ module Spree
     before_validation :clone_billing_address, :if => :use_billing?
     attr_accessor :use_billing
 
+    before_save :invalidate_cache_entries
     before_create :link_by_email
     after_create :create_tax_charge!
 
@@ -378,28 +381,29 @@ module Spree
     end
 
     def rate_hash
-      return @rate_hash if @rate_hash.present?
+      Rails.cache.fetch(rate_hash_cache_key) do
 
-      # reserve one slot for each shipping method computation
-      computed_costs = Array.new(available_shipping_methods(:front_end).size)
+        # reserve one slot for each shipping method computation
+        computed_costs = Array.new(available_shipping_methods(:front_end).size)
 
-      # create all the threads and kick off their execution
-      threads = available_shipping_methods(:front_end).each_with_index.map do |ship_method, index|
-        Thread.new { computed_costs[index] = [ship_method, ship_method.calculator.compute(self)] }
-      end      
+        # create all the threads and kick off their execution
+        threads = available_shipping_methods(:front_end).each_with_index.map do |ship_method, index|
+          Thread.new { computed_costs[index] = [ship_method, ship_method.calculator.compute(self)] }
+        end      
 
-      # wait for all threads to finish
-      threads.map(&:join)
+        # wait for all threads to finish
+        threads.map(&:join)
 
-      # now consolidate and memoize the threaded results
-      @rate_hash ||= computed_costs.map do |pair|
-        ship_method,cost = *pair
-        next unless cost
-        ShippingRate.new( :id => ship_method.id,
-                          :shipping_method => ship_method,
-                          :name => ship_method.name,
-                          :cost => cost)
-      end.compact.sort_by { |r| r.cost }
+        # now consolidate the threaded results
+        computed_costs.map do |pair|
+          ship_method,cost = *pair
+          next unless cost
+          ShippingRate.new( :id => ship_method.id,
+                            :shipping_method => ship_method,
+                            :name => ship_method.name,
+                            :cost => cost)
+        end.compact.sort_by { |r| r.cost }
+      end
     end
 
     def paid?
@@ -467,6 +471,10 @@ module Spree
 
     def has_step?(step)
       checkout_steps.include?(step)
+    end
+
+    def rate_hash_cache_key(old_number = nil)
+      "rate_hash_for_#{old_number || self.number}"
     end
 
     private
@@ -611,6 +619,15 @@ module Spree
 
       def use_billing?
         @use_billing == true || @use_billing == "true" || @use_billing == "1"
+      end
+   
+      def invalidate_cache_entries(changing_line_item = nil)
+        if changing_line_item || ship_address_id_changed?
+          Rails.cache.delete(rate_hash_cache_key)
+        elsif number_changed?
+          Rails.cache.delete(rate_hash_cache_key(number_was))
+        end
+        true
       end
   end
 end
