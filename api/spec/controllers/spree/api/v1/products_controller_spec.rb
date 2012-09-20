@@ -39,6 +39,14 @@ module Spree
         end
       end
 
+      context "jsonp" do
+        it "retrieves a list of products of jsonp" do
+          api_get :index, {:callback => 'callback'}
+          response.body.should =~ /^callback\(.*\)$/
+          response.header['Content-Type'].should include('application/javascript')
+        end
+      end
+
       it "can search for products" do
         create(:product, :name => "The best product in the world")
         api_get :search, :q => { :name_cont => "best" }

@@ -29,7 +29,7 @@ module Spree
       private
 
         def set_habtm_associations
-          @prototype.property_ids = params[:option_type].blank? ? [] : params[:property][:id]
+          @prototype.property_ids = params[:property].blank? ? [] : params[:property][:id]
           @prototype.option_type_ids = params[:option_type].blank? ? [] : params[:option_type][:id]
         end
     end

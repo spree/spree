@@ -81,7 +81,7 @@ describe "Products" do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, :name => "Random") 
+        @property_prototype = create(:prototype, :name => "Random")
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') { page.should have_content("SKU") }

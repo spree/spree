@@ -199,6 +199,29 @@ describe Spree::Product do
     end
   end
 
+  context "manual permalink override" do
+    it "calling save_permalink with a parameter" do
+      @product = create(:product, :name => "foo")
+      @product.permalink.should == "foo"
+      @product.name = "foobar"
+      @product.save
+      @product.permalink.should == "foo"
+      @product.save_permalink(@product.name)
+      @product.permalink.should == "foobar"
+    end
+
+    it "should be incremented until not taken with a parameter" do
+      @product = create(:product, :name => "foo")
+      @product2 = create(:product, :name => "foobar")
+      @product.permalink.should == "foo"
+      @product.name = "foobar"
+      @product.save
+      @product.permalink.should == "foo"
+      @product.save_permalink(@product.name)
+      @product.permalink.should == "foobar-1"
+    end
+  end
+
   context "properties" do
     it "should properly assign properties" do
       product = FactoryGirl.create :product

@@ -95,7 +95,7 @@ describe Spree::Order do
         order.update!
       end
     end
-    
+
     context "when there is a single checkout payment" do
       before { order.stub(:payment => mock_model(Spree::Payment, :checkout? => true, :amount => 11), :total => 22) }
 

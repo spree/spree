@@ -15,8 +15,8 @@ module Spree
     def show
       return unless @product
 
-      @variants = Variant.active.includes([:option_values, :images]).where(:product_id => @product.id)
-      @product_properties = ProductProperty.includes(:property).where(:product_id => @product.id)
+      @variants = @product.variants_including_master.active.includes([:option_values, :images])
+      @product_properties = @product.product_properties.includes(:property)
 
       referer = request.env['HTTP_REFERER']
       if referer

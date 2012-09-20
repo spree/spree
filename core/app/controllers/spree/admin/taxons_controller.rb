@@ -24,7 +24,7 @@ module Spree
         @taxon = @taxonomy.taxons.find(params[:id])
         @permalink_part = @taxon.permalink.split("/").last
 
-        respond_with(:admin, @taxon) 
+        respond_with(:admin, @taxon)
       end
 
       def update
@@ -59,7 +59,7 @@ module Spree
           end
           # Reset legacy position, if any extensions still rely on it
           new_parent.children.reload.each{|t| t.update_column(:position, t.position)}
-      
+
           if parent_id
             @taxon.reload
             @taxon.set_permalink
@@ -88,7 +88,7 @@ module Spree
             taxon.save!
           end
         end
-    
+
         respond_with(@taxon) do |format|
           format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
           format.json {render :json => @taxon.to_json }

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Api::V1::BaseController do
+  render_views
   controller(Spree::Api::V1::BaseController) do
     def index
       render :json => { "products" => [] }

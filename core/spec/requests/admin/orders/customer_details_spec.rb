@@ -25,7 +25,7 @@ describe "Customer Details" do
     bill_address = create(:address, :country => country, :state => state)
     create(:user, :email => 'foobar@example.com',
                   :ship_address => ship_address,
-                  :bill_address => bill_address) 
+                  :bill_address => bill_address)
 
     visit spree.admin_path
     click_link "Orders"
