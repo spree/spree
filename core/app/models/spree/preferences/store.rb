@@ -23,7 +23,7 @@ module Spree::Preferences
     end
 
     def exist?(key)
-      @cache.exist?(key) || !get(key).nil?
+      @cache.exist?(key) || Spree::Preference.where(:key => key).exists?
     end
 
     def get(key)
