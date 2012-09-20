@@ -14,6 +14,16 @@ module Spree
 
       config.to_prepare &method(:activate).to_proc
 
+      config.after_initialize do
+        ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
+          event_name, start_time, end_time, id, payload = args
+          Activator.active.event_name_starts_with(event_name).each do |activator|
+            payload[:event_name] = event_name
+            activator.activate(payload)
+          end
+        end
+      end
+
       # We need to reload the routes here due to how Spree sets them up.
       # The different facets of Spree (auth, promo, etc.) append/prepend routes to Core
       # *after* Core has been loaded.
