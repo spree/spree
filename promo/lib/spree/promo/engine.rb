@@ -22,7 +22,7 @@ module Spree
       config.to_prepare &method(:activate).to_proc
 
       config.after_initialize do
-        ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
+        ActiveSupport::Notifications.subscribe(/^spree\.promo/) do |*args|
           Spree::Promotion.handle_notifications(*args)
         end
       end

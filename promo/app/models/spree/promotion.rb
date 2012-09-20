@@ -52,7 +52,7 @@ module Spree
         payload[:order].update!
       end
 
-      Spree::Activator.active.event_name_starts_with(event_name).each do |activator|
+      self.active.event_name_starts_with(event_name).each do |activator|
         activator.activate(payload)
       end
     end
