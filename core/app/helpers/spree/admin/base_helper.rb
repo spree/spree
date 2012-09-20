@@ -102,16 +102,17 @@ module Spree
           {}
         when :string
           { :size => 10,
-            :class => 'input_string' }
+            :class => 'input_string fullwidth' }
         when :password
           { :size => 10,
-            :class => 'password_string' }
+            :class => 'password_string fullwidth' }
         when :text
           { :rows => 15,
-            :cols => 85 }
+            :cols => 85,
+            :class => 'fullwidth' }
         else
           { :size => 10,
-            :class => 'input_string' }
+            :class => 'input_string fullwidth' }
         end
 
         field_options.merge!({
@@ -141,7 +142,7 @@ module Spree
       def link_to_add_fields(name, target, options = {})
         name = '' if options[:no_text]
         css_classes = options[:class] ? options[:class] + " add_fields" : "add_fields"
-        link_to icon('add') + name, 'javascript:', :data => { :target => target }, :class => css_classes
+        link_to_with_icon('icon-plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
       end
 
       # renders hidden field and link to remove record using nested_attributes

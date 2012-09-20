@@ -4,6 +4,12 @@
   <%= t(:editing_property) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <ul class="toolbar inline-menu">
+    <li><%= button_link_to t(:back_to_properties_list), admin_properties_url, :icon => 'icon-arrow-left'%></li>
+  </ul>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @property } %>
 
 <%= form_for [:admin, @property] do |f| %>

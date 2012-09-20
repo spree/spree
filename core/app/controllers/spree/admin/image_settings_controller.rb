@@ -1,11 +1,6 @@
 module Spree
   module Admin
     class ImageSettingsController < Spree::Admin::BaseController
-      def show
-        styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
-        @styles_list = styles.collect { |k, v| k }.join(", ")
-      end
-
       def edit
         @styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
         @headers = ActiveSupport::JSON.decode(Spree::Config[:s3_headers])
@@ -20,8 +15,8 @@ module Spree
 
         respond_to do |format|
           format.html {
-            flash[:notice] = t(:image_settings_updated)
-            redirect_to admin_image_settings_path
+            flash[:success] = t(:image_settings_updated)
+            redirect_to edit_admin_image_settings_path
           }
         end
       end

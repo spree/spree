@@ -29,12 +29,11 @@
   </thead>
   <tbody>
     <% @properties.each do |property| %>
-      <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
+      <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row" class="<%= cycle('even', 'odd')%>">
         <td><%= property.name %></td>
         <td><%= property.presentation %></td>
         <td class="actions">
           <%= link_to_edit(property, :no_text => true) %>
-          &nbsp;
           <%= link_to_delete(property, :no_text => true) %>
         </td>
       </tr>

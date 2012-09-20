@@ -52,6 +52,9 @@ jQuery(function($) {
     page_title.trunk8();
   });
 
+  // Make height of dt/dd elements the same
+  $("dl").equalize('outerHeight');
+
 });
 
 
@@ -141,7 +144,7 @@ $(document).ready(function(){
       el.attr("id", el.attr("id").replace(/\d+/, new_id))
       el.attr("name", el.attr("name").replace(/\d+/, new_id))
     })
-    $(target).append(new_table_row);
+    $(target).prepend(new_table_row);
   })
 
   $('body').on('click', '.delete-resource', function() {

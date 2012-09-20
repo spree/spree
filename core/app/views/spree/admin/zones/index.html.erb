@@ -5,39 +5,41 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="actions inline-menu">
-    <li>
-      <%= button_link_to t(:new_zone), new_object_url, :icon => 'icon-plus', :id => 'admin_new_zone_link' %>
-    </li>
-  </ul>
+  <li>
+    <%= button_link_to t(:new_zone), new_object_url, :icon => 'icon-plus', :id => 'admin_new_zone_link' %>
+  </li>
 <% end %>
 
-<table class="index" id='listing_zones' data-hook>
-  <thead>
-    <tr data-hook="zones_header">
-      <th><%= sort_link @search,:name, t(:name), :title => 'zones_order_by_name_title' %></th>
-      <th>
-        <%= sort_link @search,:description, t(:description), {}, {:title => 'zones_order_by_description_title'} %>
-      </th>
-      <th><%= t(:default_tax) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @zones.each do |zone| %>
-      <tr id="<%= spree_dom_id zone %>" data-hook="zones_row">
-        <td><%=zone.name %></td>
-        <td><%=zone.description %></td>
-        <td><%=zone.default_tax %></td>
-        <td class="actions">
-          <%=link_to_edit zone %>
-          <%=link_to_delete zone %>
-        </td>
+ <% if @zones.empty? %>
+  <div class="no-objects-found">
+    <%= t(:none) %>
+  </div>
+<% else %>
+  <table class="index" id='listing_zones' data-hook>
+    <thead>
+      <tr data-hook="zones_header">
+        <th><%= sort_link @search,:name, t(:name), :title => 'zones_order_by_name_title' %></th>
+        <th>
+          <%= sort_link @search,:description, t(:description), {}, {:title => 'zones_order_by_description_title'} %>
+        </th>
+        <th><%= t(:default_tax) %></th>
+        <th class="actions"></th>
       </tr>
-    <% end %>
-    <% if @zones.empty? %>
-      <tr data-hook="zones_none"><td colspan="3"><%= t(:none) %></td></tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @zones.each do |zone| %>
+        <tr id="<%= spree_dom_id zone %>" data-hook="zones_row">
+          <td><%=zone.name %></td>
+          <td><%=zone.description %></td>
+          <td><%=zone.default_tax %></td>
+          <td class="actions">
+            <%=link_to_edit zone %>
+            <%=link_to_delete zone %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end%>
+
 <%= paginate @zones %>

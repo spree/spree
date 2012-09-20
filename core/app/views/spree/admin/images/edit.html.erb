@@ -20,9 +20,10 @@
     <div class="nine columns omega">
       <%= render :partial => 'form', :locals => { :f => f } %>  
     </div>
+    <div class="clear"></div>
     <div class="form-buttons filter-actions actions" data-hook="buttons">
       <%= button t(:update), 'icon-refresh' %>
-      <%= t(:or) %>
+      <span class="or"><%= t(:or) %></span>
       <%= link_to t(:cancel), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button icon-remove' %>
     </div>
   </fieldset>

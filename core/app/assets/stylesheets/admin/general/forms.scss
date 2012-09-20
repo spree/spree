@@ -62,7 +62,7 @@ label {
   font-weight: bold;
   text-transform: uppercase;
   font-size: 85%;
-  display: inline-block;
+  display: inline;
   margin-bottom: 5px;
   color: $c_blue3;
 
@@ -114,6 +114,16 @@ button, .button {
   }
 }
 
+span.info {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 85%;
+  color: lighten($color-body-text, 15);
+  display: block;
+  line-height: 20px;
+  margin: 5px 0;
+}
+
 fieldset {
   box-shadow: none;
   box-sizing: border-box;
@@ -127,6 +137,16 @@ fieldset {
   border-left: none;
   border-right: none;
   border-radius: 0;    
+
+  &.no-border-bottom {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  &.no-border-top {
+    border-top: none;
+    padding-top: 0;
+  }
 
   legend {
     background-color: white;
@@ -146,7 +166,7 @@ fieldset {
   .filter-actions {
     margin-bottom: -45px;
 
-    button {
+    button, .button, input[type="submit"], input[type="button"], span.or {
       border: 15px solid white;
       border-radius: 18px;
       margin-top: -5px;
@@ -155,11 +175,19 @@ fieldset {
         border-color: white;
       }
     }
+
+    span.or {
+      background-color: white;
+      border-width: 5px;
+      margin-left: -15px;
+      margin-right: -15px;
+      position: relative;
+    }
   }
   
 
   .field {
-    padding: 10px;
+    padding: 10px 0;
   }  
 
   &.labels-inline {

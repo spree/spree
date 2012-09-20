@@ -87,6 +87,7 @@ dl {
     float: left;
     line-height: 16px;
     padding: 5px;
+    text-align: justify;
   }
 
   dt {
@@ -114,6 +115,11 @@ dl {
 .align-right   { text-align: right   }
 .align-left    { text-align: left    }
 .align-justify { text-align: justify }
+
+.green { color: $c_green1 }
+.blue  { color: $c_blue1  }
+.red   { color: $c_red1   }
+.yellow{ color: $c_yellow1}
 
 .no-objects-found {
   text-align: center;

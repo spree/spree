@@ -4,97 +4,107 @@
   <%= t(:image_settings) %>
 <% end %>
 
-<p><span class="warning"><%= t(:image_settings_warning) %></span></p>
-
 <%= form_tag admin_image_settings_path, :method => :put do %>
+  
+  <fieldset class="no-border-top">
+    <fieldset class="no-border-bottom">
+      <legend><%= t(:general_settings)%></legend>
+      
+      <div class="field">
+        <div class="warning note"><%= t(:image_settings_warning) %></div>
+      </div>    
 
-  <p data-hook="attachment_path">
-    <label>
-      <%= label_tag 'preferences[attachment_path]', t(:attachment_path) %>
-      <%= preference_field_tag 'preferences[attachment_path]', Spree::Config[:attachment_path], :type => :string, :size => 70 %>
-    </label>
-  </p>
+      <div data-hook="attachment_path" class="field">
+        <%= label_tag 'preferences[attachment_path]', t(:attachment_path) %>
+        <%= preference_field_tag 'preferences[attachment_path]', Spree::Config[:attachment_path], :type => :string %>
+      </div>
 
-  <p data-hook="attachment_default_url">
-    <label>
-      <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
-      <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string, :size => 60 %>
-    </label>
-  </p>
+      <div class="row">
+        <div class="alpha eight columns">
+          <div data-hook="attachment_default_url" class="field">
+            <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
+            <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string %>
+          </div>
+        </div>
+        <div class="omega four columns">
+          <div data-hook="attachment_default_style" class="field">
+            <%= label_tag 'preferences[attachment_default_style]', t(:attachment_default_style) %>
+            <%= collection_select 'preferences', 'attachment_default_style', @styles, :first, :first, {:selected => Spree::Config[:attachment_default_style] }, :class => 'select2 fullwidth' %> 
+          </div>
+        </div>
+      </div>
 
-  <p data-hook="attachment_default_style">
-    <label>
-      <%= label_tag 'preferences[attachment_default_style]', t(:attachment_default_style) %>
-      <%= collection_select 'preferences', 'attachment_default_style', @styles, :first, :first, {:selected => Spree::Config[:attachment_default_style] } %> 
-    </label>
-  </p>
+      <div data-hook="use_s3" class="field">
+        <%= preference_field_tag 'preferences[use_s3]', Spree::Config[:use_s3], :type => :boolean %>
+        <%= label_tag 'preferences[use_s3]', t(:use_s3) %>      
+      </div>
 
-  <div id="attachment_styles" data-hook="attachment_styles">
-    <h2><%= t(:attachment_styles) %></h2>
-    <ul id="styles_list">
-      <% @styles.each do |style_name, style_value| %>
-        <li>
-          <%= label_tag "attachment_styles[#{style_name}]", style_name %>
-          <%= text_field_tag "attachment_styles[#{style_name}]", style_value %>
-          <a href="#" alt="Destroy" class="destroy_style">x</a>
-        </li>
-      <% end %>
-    </ul>
-    <p><a href="#" alt="Add Style" class="add_style"><%= t(:add_new_style) %></a></p>
-  </div>
+    </fieldset>
 
-  <p data-hook="use_s3">
-    <label>
-      <%= label_tag 'preferences[use_s3]', t(:use_s3) %>
-      <%= preference_field_tag 'preferences[use_s3]', Spree::Config[:use_s3], :type => :boolean %>
-    </label>
-  </p>
+    <fieldset class="no-border-bottom" id="attachment_styles" data-hook="attachment_styles">
+      <legend><%= t(:attachment_styles) %></legend>
 
-  <div id="s3_settings" data-hook="s3_settings">
-    <h2><%= t(:configure_s3) %></h1>
-    <p data-hook="s3_access_key">
-      <label>
-        <%= label_tag 'preferences[s3_access_key]', t(:s3_access_key) %>
-        <%= preference_field_tag 'preferences[s3_access_key]', Spree::Config[:s3_access_key], :type => :string %>
-      </label>
-    </p>
+      <div id="styles_list" class="row frameless">      
+        <% @styles.each_with_index do |(style_name, style_value), index| %>        
+          <div class="field three columns">
+            <%= label_tag "attachment_styles[#{style_name}]", style_name %>
+            <a href='#' alt="<%= t(:destroy)%>" title="<%= t(:destroy)%>" class='destroy_style with-tip'><i class='icon-trash'></i></a>
+            <%= text_field_tag "attachment_styles[#{style_name}]", style_value, :class => 'fullwidth' %>
+          </div>
+        <% end %>
+      </div>
 
-    <p data-hook="s3_secret">
-      <label>
-        <%= label_tag 'preferences[s3_secret]', t(:s3_secret) %>
-        <%= preference_field_tag 'preferences[s3_secret]', Spree::Config[:s3_secret], :type => :string %>
-      </label>
-    </p>
+      <%= link_to_with_icon 'icon-plus', t(:add_new_style), '#', :class => 'add_new_style button' %>
+      
+    </fieldset>
+    
+    <div class="row">
+      <fieldset class="alpha six columns no-border-bottom" id="s3_settings" data-hook="s3_settings" style="display: none">
+        <legend><%= t(:configure_s3) %></legend>
 
-    <p data-hook="s3_bucket">
-      <label>
-        <%= label_tag 'preferences[s3_bucket]', t(:s3_bucket) %>
-        <%= preference_field_tag 'preferences[s3_bucket]', Spree::Config[:s3_bucket], :type => :string %>
-      </label>
-    </p>
+        <div data-hook="s3_access_key" class="field">
+          <%= label_tag 'preferences[s3_access_key]', t(:s3_access_key) %>
+          <%= preference_field_tag 'preferences[s3_access_key]', Spree::Config[:s3_access_key], :type => :string %>
+        </div>
 
-    <p data-hook="s3_protocol">
-      <label>
-        <%= label_tag 'preferences[s3_protocol]', t(:s3_protocol) %>
-        <%= preference_field_tag 'preferences[s3_protocol]', Spree::Config[:s3_protocol], :type => :string %>
-      </label>
-    </p>
+        <div data-hook="s3_secret" class="field">
+          <%= label_tag 'preferences[s3_secret]', t(:s3_secret) %>
+          <%= preference_field_tag 'preferences[s3_secret]', Spree::Config[:s3_secret], :type => :string %>
+        </div>
 
-    <h2><%= t(:s3_headers) %></h2>
-    <ul id="headers_list">
-      <% @headers.each do |header_name, header_value| %>
-        <li>
-          <%= label_tag "s3_headers[#{header_name}]", header_name %>
-          <%= text_field_tag "s3_headers[#{header_name}]", header_value %>
-          <a href="#" alt="Destroy" class="destroy_header">x</a>
-        </li>
-      <% end %>
-    </ul>
-    <p><a href="#" alt="Add Header" class="add_header"><%= t(:add_new_header) %></a></p>
-  </div>
+        <div data-hook="s3_bucket" class="field">
+          <%= label_tag 'preferences[s3_bucket]', t(:s3_bucket) %>
+          <%= preference_field_tag 'preferences[s3_bucket]', Spree::Config[:s3_bucket], :type => :string %>
+        </div>
 
-  <p class="form-buttons" data-hook="buttons">
-    <%= button t(:update) %>
-  </p>
+        <div data-hook="s3_protocol" class="field">
+          <%= label_tag 'preferences[s3_protocol]', t(:s3_protocol) %>
+          <%= preference_field_tag 'preferences[s3_protocol]', Spree::Config[:s3_protocol], :type => :string %>
+        </div>
+      </fieldset>
+
+      <fieldset class="omega six columns no-border-bottom" id="s3_headers" data-hook="s3_headers" style="display: none">
+        <legend><%= t(:s3_headers) %></legend>
+
+        <div id="headers_list">
+          <% @headers.each do |header_name, header_value| %>
+            <div class="field">
+              <%= label_tag "s3_headers[#{header_name}]", header_name %>
+              <a href="#" alt="<%= t(:destroy) %>" title="<%= t(:destroy) %>" class="destroy_header with-tip"><i class="icon-trash"></i></a>
+              <%= text_field_tag "s3_headers[#{header_name}]", header_value, :class => 'fullwidth' %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= link_to_with_icon 'icon-plus', t(:add_new_header), '#', :class => 'add_header button' %>
+        
+      </fiedlset>  
+    </div>
+    
+
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button t(:update), 'icon-refresh' %>
+    </div>
+  </fieldset>
 
 <% end %>

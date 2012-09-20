@@ -1,5 +1,5 @@
-<div class="form-buttons" data-hook="buttons">
+<div class="form-buttons filter-actions actions" data-hook="buttons">
   <%= button t('actions.create'), 'icon-ok' %>
-  <%= t(:or) %>
+  <span class="or"><%= t(:or) %></span>
   <%= link_to_with_icon 'icon-remove', t('actions.cancel'), collection_url, :class => 'button' %>
 </div>

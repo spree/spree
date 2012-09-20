@@ -44,6 +44,12 @@ body {
   }
 }
 
+// For block grids
+.frameless {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
 // Header
 //---------------------------------------------------
 #header {
@@ -245,12 +251,22 @@ body {
 //---------------------------------------------------
 #sidebar {
   overflow: visible;
+  border-top: 1px solid $color-border; 
+  margin-top: 16px;
 
   .sidebar-title {
     color: $c_green1;
     text-transform: uppercase;
-    font-size: 14px;
-    text-align: center;
+    text-align: center; 
+    font-size: 14px;    
+    
+    > span {
+      display: inline;
+      background: #fff; 
+      padding: 5px 10px; 
+      position: relative; 
+      top: -8px;
+    }
   }
 
   .additional-info {
@@ -264,34 +280,27 @@ body {
 
       li {
         a {
-          padding: 10px 0;
+          padding: 10px 0 10px 10px;
           display: block;
           position: relative;
           text-transform: uppercase;
           font-weight: bold;
           font-size: 85%;
-          text-align: left;
-          border-bottom: 1px solid $color-border;
+          text-align: left;          
+          border: 1px solid transparent;
         }
 
-        &.active a, &:hover a {
+        &.active a {
           color: $c_green1;
-          border-bottom: 1px solid $c_green1;
-
-          // &:after {
-          //   content: '';
-          //   position: absolute;
-          //   border-top: 10px solid transparent;
-          //   border-bottom: 10px solid transparent; 
-          //   border-right:10px solid $c_green1;
-          //   left: -10px;
-          //   margin-bottom: -5px;
-          //   top: 50%;
-          //   margin-top: -10px;
-          //   z-index: 1;
-          // }
+          padding-left: 11px;
+          border-left-width: 0;          
+          border-bottom-color: $c_green1;
         }
-      }
+
+        &:hover a {
+          color: $c_green1;
+        }
+      }      
     }
   }
 }
@@ -349,7 +358,7 @@ body {
     text-align: right;
 
     .button {
-      font-size: 100%;
+      font-size: 85%;
     }
   }
 <<<<<<< HEAD

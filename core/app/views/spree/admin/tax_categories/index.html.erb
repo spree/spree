@@ -13,6 +13,12 @@
 <% end %>
 
 <table class="index" id='listing_tax_categories' data-hook>
+  <colgroup>
+    <col style="width: 30%" />
+    <col style="width: 40%" />
+    <col style="width: 15%" />
+    <col style="width: 15%" />
+  </colgroup>
   <thead>
     <tr data-hook="tax_header">
       <th><%= t(:name) %></th>
@@ -29,7 +35,7 @@
       <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row">
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
-        <td><%= tax_category.is_default.to_s.titleize %></td>
+        <td class="align-center"><%= tax_category.is_default.to_s.titleize %></td>
         <td class="actions">
           <%= link_to_edit tax_category, :no_text => true %>
           <%= link_to_delete tax_category, :no_text => true %>

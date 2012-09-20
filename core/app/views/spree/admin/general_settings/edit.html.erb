@@ -5,31 +5,76 @@
 <% end %>
 
 <%= form_tag admin_general_settings_path, :method => :put do %>
-  <fieldset id="preferences" data-hook>
-    <% @preferences.each do |key|
-        type = Spree::Config.preference_type(key) %>
-        <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
-        <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
-        <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
-    <% end %>
-    <p>
-      <%= label_tag :currency, t(:currency) %>
-      <%= select_tag :currency, currency_options %>
-    </p>
+  <div id="preferences" data-hook>
+    
+    <fieldset class="general">
+      <legend><%= t(:general_settings)%></legend>
+      <% @preferences_general.each do |key|
+          type = Spree::Config.preference_type(key) %>
+          <div class="field">
+            <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+            <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
+            <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+          </div>
+      <% end %>
+    
 
-     <p>
-       <strong><%= t(:currency_symbol_position) %></strong><br>
-       <%= radio_button_tag :currency_symbol_position, "before" %>
-       <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %><br>
-       <%= radio_button_tag :currency_symbol_position, "after" %>
-       <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
-     </p>
-  </fieldset>
+      <div class="row">
+        <div class="alpha six columns">
+          <fieldset class="security no-border-bottom">
+            <legend><%= t(:security_settings)%></legend>
+            <% @preferences_security.each do |key|
+                type = Spree::Config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+          </fieldset>    
+        </div>
+        <div class="omega six columns">
+          <fieldset class="currency no-border-bottom">
+            <legend><%= t(:currency_settings)%></legend>
+            <% @preferences_currency.each do |key|
+                type = Spree::Config.preference_type(key) %>
+                <div class="field">
+                  <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
+                  <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+                </div>
+            <% end %>
+            <div class="field">
+              <%= label_tag :currency, t(:choose_currency) %><br>
+              <%= select_tag :currency, currency_options, :class => 'fullwidth' %>
+            </div>
+            <div class="field">
+              <%= label_tag t(:currency_symbol_position) %><br>
+              <div class="choices">
+                
+                  <%= radio_button_tag :currency_symbol_position, "before" %>
+                  <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %>    
+                
+                  <%= radio_button_tag :currency_symbol_position, "after" %>
+                  <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
+                
+              </div>
+            </div>
+          </fieldset>    
+        </div>
+      </div>
 
-  <p class="form-buttons" data-hook="buttons">
-    <%= button t(:update) %>
-    <%= t(:or) %> <%= link_to t(:cancel), admin_general_settings_url %>
-  </p>
+      <div class="form-buttons filter-actions actions" data-hook="buttons">
+        <%= button t(:update), 'icon-refresh' %>
+        <span class="or"><%= t(:or) %></span>
+        <%= link_to_with_icon 'icon-remove', t(:cancel), admin_general_settings_url, :class => 'button' %>
+      </div>
+
+    </fieldset>
+     
+  </div>
+
+  
 <% end %>
 
 <script>

@@ -1,11 +1,13 @@
 <% content_for :page_title do %>
-  <%= t(:order) %> #<%= @order.number %>
+  <%= t(:order) %> <span class="green">#<%= @order.number %></span>
+<% end %>
+
+<% content_for :sidebar_title do %>
+  <%= t(:order_information) %>
 <% end %>
 
 <% content_for :sidebar do %>
   <header id="order_tab_summary" data-hook>
-    <h5 class="sidebar-title" id="order_number" data-hook><%= t(:order_information) %></h5>
-    <hr>
     <dl class="additional-info">
       <dt id="order_status" data-hook><%= t(:status) %>:</dt>
       <dd><%= t(@order.state, :scope => :order_state) %></dd>
@@ -22,6 +24,8 @@
       <% end %>
     </dl>
   </header>
+
+  <hr>
 
   <nav class="sidebar-menu">
     <ul data-hook="admin_order_tabs">

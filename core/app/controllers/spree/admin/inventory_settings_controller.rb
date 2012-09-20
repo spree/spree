@@ -7,7 +7,7 @@ module Spree
 
         respond_to do |format|
           format.html {
-            redirect_to admin_inventory_settings_path
+            redirect_to edit_admin_inventory_settings_path
           }
         end
       end

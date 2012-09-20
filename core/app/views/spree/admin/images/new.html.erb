@@ -4,10 +4,10 @@
 
       <%= render :partial => 'form', :locals => { :f => f } %>
     
-      <div class="form-buttons" data-hook="buttons">
-        <%= button t(:update) %>
-        <%= t(:or) %>
-        <%= link_to_with_icon 'icon-remove', t(:cancel), admin_product_images_url(@product), :id => 'cancel_link' %>
+      <div class="form-buttons filter-actions actions" data-hook="buttons">
+        <%= button t(:update), 'icon-refresh' %>
+        <span class="or"><%= t(:or) %></span>
+        <%= link_to_with_icon 'icon-remove', t(:cancel), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button' %>
       </div>
   </fieldset>
 <% end %>

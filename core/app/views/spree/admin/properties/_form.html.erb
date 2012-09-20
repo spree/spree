@@ -1,19 +1,16 @@
-<div data-hook="admin_property_form">
-  <div class="alpha one-third column">
+<div data-hook="admin_property_form" class="align-center">
+  <div class="alpha eight columns">
     <%= f.field_container :name do %>
       <%= f.label :name, t(:name) %> <span class="required">*</span><br />
-      <%= f.text_field :name %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
       <%= f.error_message_on :name %>
     <% end %>
   </div>
-  <div class="one-third column">
+  <div class="eight columns omega">
     <%= f.field_container :presentation do %>
       <%= f.label :presentation, t(:presentation) %> <span class="required">*</span><br />
-      <%= f.text_field :presentation %>
+      <%= f.text_field :presentation, :class => 'fullwidth' %>
       <%= f.error_message_on :presentation %>
     <% end %>
-  </div>
-  <div class="omega one-third column">
-    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
   </div>
 </div>

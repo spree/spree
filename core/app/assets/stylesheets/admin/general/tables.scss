@@ -84,6 +84,14 @@ table {
         border-color: transparent;
       }
     }
+    .icon-envelope-alt {
+      color: $color-links;
+
+      &:hover {
+        background-color: $c_blue1;
+        color: white;
+      }
+    }
     .icon-trash {
       &.no-text {
         padding: 5px 4px 5px 9px;
