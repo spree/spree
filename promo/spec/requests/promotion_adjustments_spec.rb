@@ -5,9 +5,6 @@ describe "Promotion Adjustments" do
 
   context "coupon promotions", :js => true do
     before(:each) do
-      PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
-      SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
-      ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
       # creates a default shipping method which is required for checkout
       create(:bogus_payment_method, :environment => 'test')
       # creates a check payment method so we don't need to worry about cc details
