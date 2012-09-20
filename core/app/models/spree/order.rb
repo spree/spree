@@ -551,7 +551,6 @@ module Spree
       # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
       # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
       def update_totals
-        # update_adjustments
         self.payment_total = payments.completed.map(&:amount).sum
         self.item_total = line_items.map(&:amount).sum
         self.adjustment_total = adjustments.eligible.map(&:amount).sum
