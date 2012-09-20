@@ -275,8 +275,9 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 76.00
     end
 
-    it "should remove expired promotions from an old order" do
-      promo = create_per_product_promotion "RoR Mug", 10.0
+    it "should update promotional adjustment when promotion expiration date changes" do
+      # TODO if the event subscription changes to add to cart, this test will break
+      promo = create_per_product_promotion "RoR Mug", 10.0, "Order contents changed"
 
       add_to_cart 'RoR Mug'
       Spree::Order.last.total.to_f.should == 30.0
@@ -286,11 +287,19 @@ describe "Promotion Adjustments" do
       promo.starts_at = Date.today.beginning_of_week.advance(:day => 3)
       promo.save!
 
-      update_first_item_quantity 2
-      Spree::Order.last.total.to_f.should == 80.0
+      click_button 'Update'
+      Spree::Order.last.total.to_f.should == 40.0
+      Spree::Order.last.adjustments.promotion.size.should == 0
+
+      promo.starts_at = Date.yesterday.to_time
+      promo.expires_at = Date.tomorrow.to_time
+      promo.save!
+
+      click_button 'Update'
+      Spree::Order.last.total.to_f.should == 30.00
     end
 
-    it "should update the adjustment amount if the promotion changes and the event is refired" do
+    it "should update the adjustment amount if the promotion changes and the promotion event is refired" do
       promo = create_per_product_promotion 'RoR Mug', 5.0
 
       add_to_cart 'RoR Mug'
