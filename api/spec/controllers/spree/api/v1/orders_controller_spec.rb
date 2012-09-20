@@ -28,6 +28,13 @@ module Spree
       json_response.should have_attributes(attributes)
     end
 
+    # Regression test for #1992
+    it "can view an order not in a standard state" do
+      Order.any_instance.stub :user => current_api_user
+      order.update_column(:state, 'shipped')
+      api_get :show, :id => order.to_param
+    end
+
     it "can not view someone else's order" do
       Order.any_instance.stub :user => stub_model(User)
       api_get :show, :id => order.to_param
