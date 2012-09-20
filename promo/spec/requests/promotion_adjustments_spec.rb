@@ -290,6 +290,18 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 80.0
     end
 
+    it "should update the adjustment amount if the promotion changes and the event is refired" do
+      promo = create_per_product_promotion 'RoR Mug', 5.0
+
+      add_to_cart 'RoR Mug'
+      Spree::Order.last.total.to_f.should == 35.00
+
+      promo.actions.first.calculator.preferred_amount = 10.00
+
+      click_button "Update"
+      Spree::Order.last.total.to_f.should == 30.00
+    end
+
     it "should pick the best promotion when two promotions exist for the same product" do
       create_per_product_promotion("RoR Mug", 5.0)
       add_to_cart "RoR Mug"
