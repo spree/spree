@@ -40,8 +40,8 @@ Deploying
 
 To deploy the normal guides:
 
-    $ cap deploy
+    $ bundle exec cap deploy
 
 To deploy edge guides:
 
-    $ cap deploy -S edge=true
+    $ bundle exec cap deploy -S edge=true

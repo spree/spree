@@ -106,11 +106,11 @@ h4. Upgrade Migrations and Assets
 The gems that comprise Spree contain various public assets (images, stylesheets, etc.) as well as database migrations that are needed in order to run Spree.  There is a Rake tasks designed to copy over the necessary files.
 
 <shell>
-$ rake spree:install
+$ bundle exec rake spree:install
 </shell>
 
 Once the migrations are copied over you can migrate using the familiar Rake task for this.
 
 <shell>
-$ rake db:migrate
+$ bundle exec rake db:migrate
 </shell>

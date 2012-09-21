@@ -13,8 +13,8 @@ h3. Database Migrations
 There are several new database changes in the 0.40.0 release.  You will need to update your database migrations as follows:
 
 <shell>
-$ rake spree:install:migrations
-$ rake db:migrate
+$ bundle exec rake spree:install:migrations
+$ bundle exec rake db:migrate
 </shell>
 
 WARNING: Always be sure to perform a complete database backup before performing any operations.  It is also suggested that you examine the new migrations closely before running them so you are aware of what changes are being made to your database.

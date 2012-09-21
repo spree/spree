@@ -154,7 +154,7 @@ h4. Refreshing the Default Locale
 The default Spree locale is actually maintained as part of the Spree project (and not part of +spree_i18n+ project.)  A copy of the default locale information is, however, available in the +spree_i18n+ source. Before you run any of the other rake tasks, its a good idea to "refresh" the localization information for +en.yml+.
 
 <shell>
-$ rake spree_i18n:update_default
+$ bundle exec rake spree_i18n:update_default
 </shell>
 
 This updates the localization files in the +default+ directory with the latest information from the Spree project.
@@ -164,7 +164,7 @@ h4. Checking the Translation Progress
 The Spree localization files are essentially a continual work in progress.  Over time new localization entries are added to the default locale and the translation files need to be updated.  You can get a sense for how much translation work is needed using the rake task designed for this purpose.
 
 <shell>
-$ rake spree_i18n:stats
+$ bundle exec rake spree_i18n:stats
 </shell>
 
 This will list all of the available locales and give you the percentage of completion for each.
@@ -176,7 +176,7 @@ h4. Syncing the Locales
 As new translation strings are added to Spree you will want to resync the locale files so that they provide "stub" entries for these strings which will help to identify them as needing translation.  There is a special Rake task that will resync all of the locale files with the latest values from the Spree project.  The Rake task will also reorder the translations alphabetically.
 
 <shell>
-$ rake spree_i18n:sync
+$ bundle exec rake spree_i18n:sync
 </shell>
 
 NOTE: Remember to run +rake spree_i18n:update_default+ first if you haven't done so already.
@@ -186,7 +186,7 @@ h4. Adding a New Locale
 Its simple enought to add a new locale using the appropriate Rake task.
 
 <shell>
-$ rake spree_i18n:new LOCALE=es-PE
+$ bundle exec rake spree_i18n:new LOCALE=es-PE
 </shell>
 
 This will generate a new localization with the file name +es-PE.yml+ in the +config/locales+ directory.  Here's a snippet of the file that is generated:

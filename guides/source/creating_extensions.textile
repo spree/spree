@@ -97,7 +97,7 @@ h4. Testing
 You can test your extensions in the manner you're accustomed to with a standard rails application
 
 <shell>
-$ rake test_app
+$ bundle exec rake test_app
 $ bundle exec rspec spec
 </shell>
 
@@ -149,13 +149,13 @@ $ bundle install
 If your extension has any migrations, they can be copied over from the extension into your application (along with any other migrations from other railties) by running this command:
 
 <shell>
-$ rake railties:install:migrations
+$ bundle exec rake railties:install:migrations
 </shell>
 
 To run those migrations, run this command:
 
 <shell>
-$ rake db:migrate
+$ bundle exec rake db:migrate
 </shell>
 
 That's it!  Your store should be ready to go with your new custom extension.
@@ -525,8 +525,8 @@ $ bundle install
 Now that the extension is setup it's time to install (and then run) the migrations.
 
 <shell>
-$ rake railties:install:migrations
-$ rake db:migrate
+$ bundle exec rake railties:install:migrations
+$ bundle exec rake db:migrate
 </shell>
 
 That's it!  Your store should be ready to go with your new custom extension.

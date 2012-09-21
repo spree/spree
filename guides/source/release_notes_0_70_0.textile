@@ -128,7 +128,7 @@ To prevent problems later please ensure that you've copied all the migrations fr
 
 You can check that all Spree migrations are copied by running:
 
-<shell> $ rake spree:install:migrations</shell>
+<shell> $ bundle exec rake spree:install:migrations</shell>
 
 Each extension will provide it's own rake task (or generator) for copying migrations so please refer to the extensions README for instructions.
 
