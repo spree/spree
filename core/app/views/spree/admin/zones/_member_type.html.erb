@@ -1,16 +1,16 @@
-<%= javascript_tag "var #{type}_member='#{generate_template(zone_form, :zone_members, {:partial => type + "_member"})}'" %>
+<%= javascript_tag "var #{type}_member='#{generate_template(zone_form, :zone_members, {:partial => type + "_member"})}';" %>
 
-<div id="<%= type %>_members" data-hook="member">
-  <fieldset id="">
-    <legend><%= t(type) %></legend>
-    <ul id="ul-nested-<%= type %>" class="member-list">
-      <% members_of_type = zone_form.object.zone_members.select { |member| member.zoneable_type && member.zoneable_type == "Spree::#{type.capitalize}" } %>
-      <%= zone_form.fields_for :zone_members, members_of_type do |member_form| %>
-        <%= render :partial => "#{type}_member", :locals => { :f => member_form } %>
-      <% end %>
-    </ul>
-    <p data-hook="buttons">
-      <%= button_link_to t("add_#{type}"), "##{type}_member", { :icon => 'add', :id => "nested-#{type}" } %>
-    </p>
-  </fieldset>
-</div>
+<fieldset id="<%= type %>_members" data-hook="member" class="omega six columns no-border-bottom">
+  <legend><%= t(type) %></legend>
+
+  <ul id="ul-nested-<%= type %>" class="member-list">
+    <% members_of_type = zone_form.object.zone_members.select { |member| member.zoneable_type && member.zoneable_type == "Spree::#{type.capitalize}" } %>
+    <%= zone_form.fields_for :zone_members, members_of_type do |member_form| %>
+      <%= render :partial => "#{type}_member", :locals => { :f => member_form } %>
+    <% end %>
+  </ul>
+  
+  <div data-hook="buttons" class="field align-center">
+    <%= button_link_to t("add_#{type}"), "##{type}_member", { :icon => 'icon-plus', :id => "nested-#{type}" } %>
+  </div>
+</fieldset>

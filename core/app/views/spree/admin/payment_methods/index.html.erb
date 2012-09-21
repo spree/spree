@@ -5,14 +5,20 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="header-action-links inline-menu" data-hook="toolbar">
-    <li>
-      <%= button_link_to t(:new_payment_method), new_object_url, :icon => 'add', :id => 'admin_new_payment_methods_link' %>
-    </li>
-  </ul>
+  <li>
+    <%= button_link_to t(:new_payment_method), new_object_url, :icon => 'icon-plus', :id => 'admin_new_payment_methods_link' %>
+  </li>
 <% end %>
 
 <table class="index" id='listing_payment_methods'>
+  <colgroup>
+    <col style="width: 15%">
+    <col style="width: 35%">
+    <col style="width: 15%">
+    <col style="width: 10%">
+    <col style="width: 10%">
+    <col style="width: 15%">
+  </colgroup>
   <thead>
     <tr data-hook="admin_payment_methods_index_headers">
       <th><%= t(:name) %></th>
@@ -26,12 +32,12 @@
   <tbody>
     <% @payment_methods.each do |method|%>
       <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
-        <td width="120px"><%= method.name %></td>
-        <td width="140px"><%= method.type %></td>
-        <td width="100px"><%= method.environment.to_s.titleize %></td>
-        <td width="60px"><%= method.display_on.blank? ? t(:both) : t(method.display_on) %></td>
-        <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
-        <td width="140px" data-hook="admin_payment_methods_index_row_actions" class="actions">
+        <td class="align-center"><%= method.name %></td>
+        <td><%= method.type %></td>
+        <td class="align-center"><%= method.environment.to_s.titleize %></td>
+        <td class="align-center"><%= method.display_on.blank? ? t(:both) : t(method.display_on) %></td>
+        <td class="align-center"><%= method.active ? t(:yes) : t(:no) %></td>
+        <td data-hook="admin_payment_methods_index_row_actions" class="actions">
           <%= link_to_edit method, :no_text => true %>
           <%= link_to_delete method, :no_text => true  %>
         </td>

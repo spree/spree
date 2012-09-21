@@ -16,6 +16,12 @@
   </div>
 <% else %>
   <table class="index" id='listing_zones' data-hook>
+    <colgroup>
+      <col style="width: 30%" />
+      <col style="width: 40%" />
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+    </colgroup>
     <thead>
       <tr data-hook="zones_header">
         <th><%= sort_link @search,:name, t(:name), :title => 'zones_order_by_name_title' %></th>
@@ -31,10 +37,10 @@
         <tr id="<%= spree_dom_id zone %>" data-hook="zones_row">
           <td><%=zone.name %></td>
           <td><%=zone.description %></td>
-          <td><%=zone.default_tax %></td>
+          <td class="align-center"><%=zone.default_tax %></td>
           <td class="actions">
-            <%=link_to_edit zone %>
-            <%=link_to_delete zone %>
+            <%=link_to_edit zone, :no_text => true %>
+            <%=link_to_delete zone, :no_text => true %>
           </td>
         </tr>
       <% end %>

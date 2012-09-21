@@ -2,26 +2,36 @@
 
 <%= render :partial => 'js_head' %>
 
-<h1><%= t(:taxonomy_edit) %></h1>
+<% content_for :page_title do %>
+  <%= t(:taxonomy_edit) %>
+<% end %>
 
-<p id="ajax_error" class="errorExplanation" style="display:none;"></p>
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_taxonomies_list), admin_taxonomies_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
+
+<div id="ajax_error" class="errorExplanation" style="display:none;"></div>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
-    <div>
-      <%= label_tag nil, t(:tree) %><br />
-      <div id="taxonomy_tree" class="tree" data-url="<%= admin_taxonomy_taxons_path @taxonomy %>"></div>
-    </div>
-    <p id="progress" style="display:none;">
-      <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
-    </p>
-    <p><br /><small><%= t(:taxonomy_tree_instruction) %></small></p>
+  <div>
+    <%= label_tag nil, t(:tree) %><br />
+    <div id="taxonomy_tree" class="tree" data-url="<%= admin_taxonomy_taxons_path @taxonomy %>"></div>
+  </div>
+  <div id="progress" style="display:none;">
+    <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
+  </div>
 
-    <p class="form-buttons">
-      <%= button t(:update) %> <%= t(:or) %> <%= link_to t(:cancel), admin_taxonomies_path %>
-    </p>
+  <div class="info"><%= t(:taxonomy_tree_instruction) %></div>
+
+  <br>
+
+  <div class="form-buttons">
+    <%= button t(:update), 'icon-refresh' %> <%= t(:or) %> <%= button_link_to t(:cancel), admin_taxonomies_path, :icon => 'icon-remove' %>
+  </div>
 <% end %>
-
 
 <% content_for :head do %>
   <%= javascript_tag do -%>

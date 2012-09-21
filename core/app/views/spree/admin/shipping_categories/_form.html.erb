@@ -1,8 +1,6 @@
 <div data-hook="admin_shipping_category_form_fields">
-  <table data-hook="name">
-    <tr>
-      <td><%= t(:name) %>:</td>
-      <td><%= f.text_field :name %></td>
-    </tr>
-  </table>
+  <div data-hook="name" class="field align-center">
+    <%= label_tag t(:name) %><br>
+    <%= f.text_field :name %>    
+  </div>
 </div>

@@ -4,10 +4,20 @@
   <%= t(:editing_payment_method) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'icon-arrow-left' %>
+  </li>  
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment_method } %>
+
 <%= form_for @payment_method, :url => admin_payment_method_path(@payment_method), :method => :put do |f| %>
+  
   <%= render :partial => 'form', :locals => { :f => f } %>
-  <p data-hook="buttons">
-    <%= submit_tag t(:update) %>
-  </p>
+  
+  <div data-hook="buttons" class="align-center">
+    <%= f.submit t(:update), :class => 'icon-refresh button' %>
+  </div>
+
 <% end %>

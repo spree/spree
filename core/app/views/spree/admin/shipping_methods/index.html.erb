@@ -5,14 +5,19 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="actions inline-menu">
-    <li>
-      <%= button_link_to t(:new_shipping_method), new_object_url,  :icon => 'icon-plus', :id => 'admin_new_shipping_method_link' %>
-    </li>
-  </ul>
+  <li>
+    <%= button_link_to t(:new_shipping_method), new_object_url,  :icon => 'icon-plus', :id => 'admin_new_shipping_method_link' %>
+  </li>
 <% end %>
 
 <table class="index" id='listing_shipping_methods'>
+  <colgroup>
+    <col style="width: 20%">
+    <col style="width: 15%">
+    <col style="width: 40%">
+    <col style="width: 10%">
+    <col style="width: 15%">
+  </colgroup>
   <thead>
     <tr data-hook="admin_shipping_methods_index_headers">
       <th><%= t(:name) %></th>
@@ -28,7 +33,7 @@
         <td><%= shipping_method.name %></td>
         <td><%= shipping_method.zone.name if shipping_method.zone %></td>
         <td><%= shipping_method.calculator.description %></td>
-        <td><%= shipping_method.display_on.blank? ? t(:both) : t(shipping_method.display_on) %></td>
+        <td class="align-center"><%= shipping_method.display_on.blank? ? t(:both) : t(shipping_method.display_on) %></td>
         <td data-hook="admin_shipping_methods_index_row_actions" class="actions">
           <%= link_to_edit shipping_method, :no_text => true %>
           <%= link_to_delete shipping_method, :no_text => true %>

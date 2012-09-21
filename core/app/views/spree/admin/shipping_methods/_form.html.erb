@@ -1,38 +1,50 @@
 <div data-hook="admin_shipping_method_form_fields">
-  <%= f.field_container :name do %>
-    <%= f.label :name, t(:name) %><br />
-    <%= f.text_field :name %>
-    <%= error_message_on :shipping_method, :name %>
-  <% end %>
+  <div class="alpha four columns">
+    <%= f.field_container :name do %>
+      <%= f.label :name, t(:name) %><br />
+      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= error_message_on :shipping_method, :name %>
+    <% end %>
+  </div>
 
-  <%= f.field_container :zone_id do %>
-    <%= f.label :zone_id, t(:zone) %><br />
-    <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {'style' => 'width:200px;'}) %>
-    <%= error_message_on :shipping_method, :zone_id %>
-  <% end %>
+  <div class="four columns">
+    <%= f.field_container :zone_id do %>
+      <%= f.label :zone_id, t(:zone) %><br />
+      <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2 fullwidth'}) %>
+      <%= error_message_on :shipping_method, :zone_id %>
+    <% end %>
+  </div>
 
-  <%= f.field_container :display_on do %>
-    <%= f.label :display_on, t(:display) %><br />
-    <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }) %>
-    <%= error_message_on :shipping_method, :display_on %>
-  <% end %>
+  <div class="omega four columns">
+    <%= f.field_container :display_on do %>
+      <%= f.label :display_on, t(:display) %><br />
+      <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
+      <%= error_message_on :shipping_method, :display_on %>
+    <% end %>
+  </div>
 </div>
 
-<div data-hook"admin_shipping_method_form_availability_fields">
-  <fieldset class="categories">
+<div data-hook"admin_shipping_method_form_availability_fields" class="alpha six columns">
+  <fieldset class="categories no-border-bottom">
     <legend><%= t(:availability) %></legend>
+
     <%= f.field_container :shipping_category do %>
       <%= f.label :shipping_category, t(:shipping_category_choose) %>
-      <%= select(:shipping_method, :shipping_category_id, Spree::ShippingCategory.all.collect { |s| [s.name, s.id] }, { :include_blank => true }) %>
+      <%= select(:shipping_method, :shipping_category_id, Spree::ShippingCategory.all.collect { |s| [s.name, s.id] }, { :include_blank => true }, {:class => 'select2 fullwidth'}) %>
     <% end %>
 
-    <b><%= t(:match_rule) %></b>&nbsp;&nbsp;
-    <%= f.check_box :match_none %>&nbsp;<%= f.label :match_none, t('match_choices.none') %>
-    <%= f.check_box :match_one %>&nbsp;<%= f.label :match_one, t('match_choices.one') %>
-    <%= f.check_box :match_all %>&nbsp;<%= f.label :match_all, t('match_choices.all') %>
+    <div class="field">
+      <%= label_tag t(:match_rule) %> 
+      <ul>
+        <li><%= f.check_box :match_none %> <%= f.label :match_none, t('match_choices.none') %></li>
+        <li><%= f.check_box :match_one %>  <%= f.label :match_one, t('match_choices.one') %></li>
+        <li><%= f.check_box :match_all %>  <%= f.label :match_all, t('match_choices.all') %></li>
+      </ul> 
+    </div>
+    
   </fieldset>
 </div>
 
-<div data-hook="admin_shipping_method_form_calculator_fields">
+<div data-hook="admin_shipping_method_form_calculator_fields" class="omega six columns">
   <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
 </div>

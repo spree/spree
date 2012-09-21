@@ -4,6 +4,12 @@
   <%= t(:new_tracker) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_trackers_list), admin_trackers_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tracker } %>
 
 <%= form_for [:admin, @tracker] do |f| %>
