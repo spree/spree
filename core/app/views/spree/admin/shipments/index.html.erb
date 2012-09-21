@@ -1,11 +1,8 @@
-<% content_for :page_actions do %>
-  <div class="toolbar" data-hook="toolbar">
-    <ul class="actions inline-menu">
-      <li id='new_shipment_section'>
-        <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order), :icon => 'icon-plus' %>
-      </li>
-    </ul>
-  </div>
+<% content_for :page_actions do %>  
+    <li id='new_shipment_section'>
+      <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order), :icon => 'icon-plus' %>
+    </li>
+    <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>  
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>

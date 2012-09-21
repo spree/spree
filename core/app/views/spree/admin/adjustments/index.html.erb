@@ -1,8 +1,12 @@
-<%= render :partial => 'spree/admin/shared/new_adjustment_button' %>
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
 
 <% content_for :page_title do %>
    <i class="icon-arrow-right"></i> <%= t(:adjustment) %>
+<% end %>
+
+<% content_for :page_actions do %>  
+  <li><%= button_link_to t(:new_adjustment), new_admin_order_adjustment_url(@order), :icon => 'icon-plus' %></li>
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => 'adjustments_table' %>

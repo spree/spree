@@ -4,7 +4,6 @@
 @import "font-awesome";
 
 table {
-  // border: 1px solid $color-border;
   width: 100%;
   margin-bottom: 15px;
 
@@ -18,7 +17,7 @@ table {
 
   th, td {
     padding: 15px 10px;
-    border-top: 1px solid $color-border;
+    // border-top: 1px solid $color-border;
     border-right: 1px solid $color-border;
     vertical-align: middle;
     text-overflow: ellipsis;
@@ -62,6 +61,8 @@ table {
 
   th {
     padding: 10px;
+    border-top: 1px solid $color-border;
+    border-bottom: 1px solid $color-border;
   }
 
   td.actions {
@@ -129,7 +130,7 @@ table {
       font-size: 85%;
 
       a {
-        color: lighten($color-links, 15) !important;
+        color: $color-links !important;
 
         &:hover, &.desc, &.asc {
           color: $c_green1 !important;
@@ -139,6 +140,9 @@ table {
   }
 
   tbody {
+    &.with-border tr td {
+      border-top: 1px solid $color-border;
+    }
     tr {
 <<<<<<< HEAD
       &[class*="state"] {
@@ -147,7 +151,7 @@ table {
 <<<<<<< HEAD
 =======
       &.even td {
-        background-color: lighten($c_blue1, 35);
+        background-color: lighten($c_blue1, 33);
 
         img {
           border: 1px solid lighten($c_blue1, 30);

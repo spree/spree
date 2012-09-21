@@ -1,13 +1,10 @@
-<% content_for :page_actions do %>
-  <div class="toolbar" data-hook="toolbar">
-    <ul class="actions inline-menu">
-      <% if @order.outstanding_balance? %>
-        <li id="new_payment_section">
-          <%= button_link_to t(:new_payment), new_admin_order_payment_url(@order), :icon => 'icon-plus' %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
+<% content_for :page_actions do %>  
+  <% if @order.outstanding_balance? %>
+    <li id="new_payment_section">
+      <%= button_link_to t(:new_payment), new_admin_order_payment_url(@order), :icon => 'icon-plus' %>
+    </li>
+  <% end %>  
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>

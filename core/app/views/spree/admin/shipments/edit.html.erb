@@ -1,13 +1,11 @@
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions" data-hook="admin_shipment_edit_buttons">
+<% content_for :page_actions do %>
+  <% if @shipment.can_ship? %>
     <li>
-      <% if @shipment.can_ship? %>
-        <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
-      <% end %>
+      <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
     </li>
-  </ul>
-  <br class="clear" />
-</div>
+  <% end %>  
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 

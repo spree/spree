@@ -3,16 +3,20 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <div class='toolbar'>
-    <ul class='actions header-action-links inline-menu'>
-      <li>
-        <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'icon-plus' %>
-      </li>
-    </ul>
-  </div>
+  <li>
+    <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'icon-plus' %>
+  </li>
 <% end %>
 
 <table class="index">
+  <colgroup>
+    <col style="width: 20%">
+    <col style="width: 10%">
+    <col style="width: 35%">
+    <col style="width: 10%">
+    <col style="width: 15%">
+    <col style="width: 10%">
+  </colgroup>
   <thead>
     <tr>
       <th><%= t(:name) %></th>
@@ -27,9 +31,9 @@
     <% @promotions.each do |promotion| %>
       <tr id="<%= spree_dom_id promotion %>">
         <td><%= promotion.name %></td>
-        <td><%= promotion.code %></td>
+        <td class="align-center"><%= promotion.code %></td>
         <td><%= promotion.description %></td>
-        <td><%= promotion.usage_limit %></td>
+        <td class="align-center"><%= promotion.usage_limit %></td>
         <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
         <td class="actions">
           <%= link_to_edit promotion, :no_text => true %>
