@@ -46,8 +46,6 @@ moving between hosting platforms. Another is when cloning some project:
 collaborators can just import a database dump prepared by someone else,
 and save the time of the code import.
 
-NOTE: Spree has database consistency checker Rake tasks - try +rake db:consistency+ or +rake db:consistency:products+. These do basic checks on information structure. They aren't a full check, but do help to pick up serious problems.
-
 
 h4. Rails Fixtures
 
