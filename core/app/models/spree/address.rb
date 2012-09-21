@@ -36,7 +36,7 @@ module Spree
     end
 
     def state_text
-      state.try(:abbr) || state.try(:name) || state_name 
+      state.try(:abbr) || state.try(:name) || state_name
     end
 
     def same_as?(other)

@@ -2,7 +2,7 @@ module Spree
   class CustomUserGenerator < Rails::Generators::NamedBase
     include Rails::Generators::ResourceHelpers
     include Rails::Generators::Migration
-    
+
 
     desc "Set up a Spree installation with a custom User class"
 

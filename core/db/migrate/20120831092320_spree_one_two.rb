@@ -123,9 +123,9 @@ class SpreeOneTwo < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :spree_inventory_units, [:order_id], :name => 'index_inventory_units_on_order_id'
+    add_index :spree_inventory_units, [:order_id],    :name => 'index_inventory_units_on_order_id'
     add_index :spree_inventory_units, [:shipment_id], :name => 'index_inventory_units_on_shipment_id'
-    add_index :spree_inventory_units, [:variant_id], :name => 'index_inventory_units_on_variant_id'
+    add_index :spree_inventory_units, [:variant_id],  :name => 'index_inventory_units_on_variant_id'
 
     create_table :spree_line_items do |t|
       t.references :variant
@@ -176,7 +176,7 @@ class SpreeOneTwo < ActiveRecord::Migration
     end
 
     add_index :spree_option_values_variants, [:variant_id, :option_value_id], :name => 'index_option_values_variants_on_variant_id_and_option_value_id'
-    add_index :spree_option_values_variants, [:variant_id], :name => 'index_spree_option_values_variants_on_variant_id'
+    add_index :spree_option_values_variants, [:variant_id],                   :name => 'index_spree_option_values_variants_on_variant_id'
 
     create_table :spree_orders do |t|
       t.string     :number,               :limit => 15

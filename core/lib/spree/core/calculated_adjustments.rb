@@ -13,7 +13,7 @@ module Spree
           end
         end
       end
-        
+
       def calculator_type
         calculator.class.to_s if calculator
       end

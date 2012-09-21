@@ -6,10 +6,10 @@ describe Spree::Calculator::PerItem do
   let!(:product2) { double("Product") }
   let!(:line_items) { [double("LineItem", :quantity => 5, :product => product1), double("LineItem", :quantity => 3, :product => product2)] }
   let!(:object) { double("Order", :line_items => line_items) }
-  
+
   let!(:shipping_calculable) { double("Calculable") }
   let!(:promotion_calculable) { double("Calculable", :promotion => promotion) }
-  
+
   let!(:promotion) { double("Promotion", :rules => [double("Rule", :products => [product1])]) }
 
   let!(:calculator) { Spree::Calculator::PerItem.new(:preferred_amount => 10) }

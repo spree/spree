@@ -1,4 +1,4 @@
-# Resets all preferences to default values, you can 
+# Resets all preferences to default values, you can
 # pass a block to override the defaults with a block
 #
 # reset_spree_preferences do |config|
