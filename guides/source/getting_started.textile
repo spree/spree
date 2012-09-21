@@ -192,7 +192,9 @@ WARNING: Using the precompile rake task in development will prevent any changes 
 
 Rails also provides the following rake task that will delete the entire <tt>public/assets</tt> directory, this can be helpful to clear out development assets before committing.
 
-<ruby> $ rake assets:clean</ruby>
+<shell>
+$ bundle exec rake assets:clean
+</shell>
 
 It might also be worthwhile to include the <tt>public/assets</tt> directory in your <tt>.gitignore</tt> file.
 
