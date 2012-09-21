@@ -275,6 +275,25 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 76.00
     end
 
+    it "should not update promotional adjustments after the order is complete" do
+      promo = create_per_product_promotion "RoR Mug", 10.0, "Order contents changed"
+
+      add_to_cart 'RoR Mug'
+      o = Spree::Order.last
+      o.finalize!
+
+      o.completed?.should be_true
+      o.total.to_f.should == 30.00
+      o.adjustments.eligible.promotion.size.should == 1
+
+      # change promotion amount and update order
+      promo.actions.first.calculator.preferred_amount = 20.00
+      o.update!
+
+      o.adjustments.eligible.promotion.first.amount.to_f.should == -10.00
+      o.reload.total.to_f.should == 30.00
+    end
+
     it "should update promotional adjustment when promotion expiration date changes" do
       # TODO if the event subscription changes to add to cart, this test will break
       promo = create_per_product_promotion "RoR Mug", 10.0, "Order contents changed"
