@@ -178,7 +178,7 @@ h4. Products
 Products must have at least a name and a price in order to pass validation,
 and we set the description too.
 <ruby>
-p = Product.create :name => "some product", :price => 10.0, :description => "some text here"
+p = Spree::Product.create :name => 'some product', :price => 10.0, :description => 'some text here'
 </ruby>
 
 Observe that the +permalink+ and timestamps are added automatically.
@@ -218,13 +218,13 @@ provides product-specific information for the shipping
 calculators, eg to indicate that a product requires additional insurance or
 can only be surface shipped. If no special conditions are needed, you can
 leave this field as nil.
-The +ShippingCategory+ model is effectively a wrapper for a string.
+The +Spree::ShippingCategory+ model is effectively a wrapper for a string.
 You can either generate the list of categories in advance, or use
-+find_or_create_by_XYZ+ to reuse previous objects or create new ones when
++where(*args).first_or_create+ to reuse previous objects or create new ones when
 required.
 
 <ruby>
-p.shipping_category = ShippingCategory.find_or_create_by_name("Type A")
+p.shipping_category = Spree::ShippingCategory.where(:name => 'Type A').first_or_create
 </ruby>
 
 h5. Tax category
@@ -234,7 +234,7 @@ of product taxes, eg to distinguish clothing items from electrical goods.
 The model wraps a name _and_ a description (both strings), and you can
 leave the field as nil if no special treatment is needed.
 
-You can use the +find_or_create+ technique, though you probably want to
+You can use the +where(*args).first_or_create+ technique, though you probably want to
 set up the entire "tax configuration":taxation.html before you start
 loading products.
 
@@ -275,11 +275,11 @@ the taxon information column to do some product-specific fine tuning.
 
 The following code uses a list of (newline-separated) taxon descriptions -
 possibly using 'A > B > C'-style of context -
-to assign the taxons for a product. Notice the use of +find_or_create+.
+to assign the taxons for a product. Notice the use of +where(*args).first_or_create+.
 
 <ruby>
 # create outside of loop
-main_taxonomy = Taxonomy.find_or_create_by_name "Products"
+main_taxonomy = Spree::Taxonomy.where(:name => 'Products').first_or_create
 
 # ... inside of main loop
   the_taxons = []
@@ -287,7 +287,7 @@ main_taxonomy = Taxonomy.find_or_create_by_name "Products"
     taxon = nil
     names = chain.split(/\s*>\s*/)
     names.each do |name|
-      taxon = Taxon.find_or_create_by_name_and_parent_id_and_taxonomy_id(name, taxon && taxon.id, main_taxonomy.id)
+      taxon = Spree::Taxon.where(:name => name, :parent_id => taxon && taxon.id, :taxonomy_id => main_taxonomy.id).first_or_create
     end
     the_taxons << taxon
   end
@@ -310,14 +310,14 @@ internal name and presentation name. For simplicity, the code examples
 have these names as the same string.
 
 <ruby>
-size_prop = Property.find_or_create_by_name_and_presentation("Size", "Size")
+size_prop = Spree::Property.where(:name => 'Size', :presentation => 'Size').first_or_create
 </ruby>
 
 Then you just set the value for the property-product pair.
 Assuming value +size_info+ which is derived from the relevant column, this
 means:
 <ruby>
-ProductProperty.create :property => size_prop, :product => p, :value => size_info
+Spree::ProductProperty.create :property => size_prop, :product => p, :value => size_info
 </ruby>
 
 h5. Product prototypes
@@ -353,7 +353,7 @@ the new variant will use the master variant's price (the same applies to +cost_p
 too). You can also set the +weight+, +width+, +height+, and +depth+ too.
 
 <ruby>
-v = Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
+v = Spree::Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
 </ruby>
 
 NOTE: The price is only copied at creation, so any subsequent changes to a product's price will need to be copied to all of its variants.
@@ -375,11 +375,11 @@ only use different names when this column is empty.
 
 You can probably declare most of the option types in advance, and so
 just look up the names when required, though for fine control, you can
-use the +find_or_create+ technique, with something like this:
+use the +where(*args).first_or_create+ technique, with something like this:
 
 <ruby>
 p.option_types = option_names_col.map do |name|
-  OptionType.find_or_create_by_name_and_presentation(name, name)
+  Spree::OptionType.where(:name => name, :presentation => name).first_or_create
 end
 </ruby>
 
@@ -387,7 +387,7 @@ end
 h5. Option values
 
 Option values represent the choices possible for some option type. Again, you could
-declare them in advance, or use +find_or_create+. You'll probably find it easier to
+declare them in advance, or use +where(*args).first_or_create+. You'll probably find it easier to
 create/retrieve the option values as you create each variant.
 
 Suppose you are using a notation like +"Green & Small = small_green_shirt @ $10.00"+
@@ -398,10 +398,10 @@ the option values for the new variant (see below for variant creation).
 <ruby>
 _,opts,sku,price = opt_info.match(/(.*?)\s*=\s*(.*?)\s*@.*?(\d+([.]\d*))/).to_a
 
-v = Variant.create :product => p, :sku => sku, :price => price
+v = Spree::Variant.create :product => p, :sku => sku, :price => price
 
 v.option_values = opts.split(/\s*&\s*/).map do |nm|
-  OptionValue.find_or_create_by_name_and_presentation_and_option_type_id(nm,nm, color_type.id)
+  Spree::OptionValue.where(:name => nm, :presentation => nm, :option_type_id => color_type.id).first_or_create
 end
 </ruby>
 
@@ -418,7 +418,7 @@ attach resources like color swatches to the more specific values.
 h5. Ordering of option values
 
 You might want option values to appear in a certain order, such as by increasing size
-or by alphabetical order. The +OptionValue+ model uses +acts_as_list+ for setting the
+or by alphabetical order. The +Spree::OptionValue+ model uses +acts_as_list+ for setting the
 order, and option types will use the +position+ field when retrieving their associated
 values. The position is scoped to the relevant option type.
 
@@ -426,15 +426,15 @@ If you create option values in advance, just create them in the required order a
 the plugin will set the +position+ automatically.
 
 <ruby>
-color_type = OptionType.create :name => "Color", :presentation => "Color"
-color_options = %w[Red Blue Green].split.map {|n| OptionValue.create :name => n, :presentation => n, :option_type => color_type}
+color_type = Spree::OptionType.create :name => 'Color', :presentation => 'Color'
+color_options = %w[Red Blue Green].split.map { |n| Spree::OptionValue.create :name => n, :presentation => n, :option_type => color_type }
 </ruby>
 
 Otherwise, you could enforce the ordering _after_ loading up all of the variants,
 using something like this:
 
 <ruby>
-color_type.option_values.sort_by {|o| o.name}.each_with_index do |val,pos|
+color_type.option_values.sort_by(&:name).each_with_index do |val, pos|
   val.update_attribute(:position, pos + 1)
 end
 </ruby>
@@ -458,11 +458,11 @@ Given some local image file, the following will associate the image and create
 all of the size formats.
 
 <ruby>
-#for image for product (all variants)
-img = Image.create(:attachment => File.open(path), :viewable => product)
+#for image for product (all variants) represented by master variant
+img = Spree::Image.create(:attachment => File.open(path), :viewable => product.master)
 
 #for image for single variant
-img = Image.create(:attachment => File.open(path), :viewable => variant)
+img = Spree::Image.create(:attachment => File.open(path), :viewable => variant)
 </ruby>
 
 Paperclip also supports external "storage of images in
