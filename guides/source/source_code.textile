@@ -55,7 +55,7 @@ h3. Layout and Structure
 
 h4. Collection of Gems
 
-The Spree gem itself is very minimal and consists mostly as a collection of gems.  These gems are maintained together in a single Github repository and new versions of the gems are shipped with each new Spree release.  The official documentation (which you are reading now) covers functionality provided by each of these gems.|
+The Spree gem itself is very minimal and consists mostly as a collection of gems.  These gems are maintained together in a single Github repository and new versions of the gems are shipped with each new Spree release.  The official documentation (which you are reading now) covers functionality provided by each of these gems.
 
 Within the Spree source, each of the gems is organized into subdirectories as follows:
 
