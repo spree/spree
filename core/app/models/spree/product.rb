@@ -179,6 +179,10 @@ module Spree
       !!deleted_at
     end
 
+    def available?
+      !(available_on.nil? || available_on.future?)
+    end
+
     # split variants list into hash which shows mapping of opt value onto matching variants
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
