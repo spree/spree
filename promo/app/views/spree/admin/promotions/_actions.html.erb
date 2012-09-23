@@ -6,21 +6,25 @@
       <% if @promotion.actions.any? %>
         <%= render :partial => 'promotion_action',  :collection => @promotion.actions %>
       <% else %>
-        <!-- <p><%= t(:no_actions_added) %></p> -->
+        <div class="no-objects-found">
+          <%= t(:no_actions_added) %>
+        </div>
       <% end %>
     </div>
-    <p class="form-buttons">
-      <%= button t(:update) %>
-    </p>
+    <div class="form-buttons actions">
+      <%= button t(:update), 'icon-refresh' %>
+    </div>
   <% end %>
+
+  <hr>
 
   <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
     <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
-    <p>
+    <div class="field">
       <%= label_tag :action_type, t(:add_action_of_type) %>
-      <%= select_tag 'action_type', options %>
-      <%= submit_tag t(:add) %>
-    </p>
+      <%= select_tag 'action_type', options, :class => 'select2' %>
+      <%= submit_tag t(:add), :class => 'icon-plus button' %>
+    </div>
   <% end %>
 
 </fieldset>

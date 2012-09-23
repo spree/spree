@@ -1,5 +1,15 @@
+@import '../variables';
+
 #general_fields, #expiry_fields {
   border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
+}
+
+.promotion-block {
+  padding: 5px;
+  background-color: lighten($color-border, 5);
+  border: 1px solid $color-border;
+  border-radius: 3px;
+  margin-bottom: 5px;
 }

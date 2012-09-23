@@ -29,7 +29,7 @@
   </thead>
   <tbody>
     <% @promotions.each do |promotion| %>
-      <tr id="<%= spree_dom_id promotion %>">
+      <tr id="<%= spree_dom_id promotion %>" class="<%= cycle('odd', 'even')%>">
         <td><%= promotion.name %></td>
         <td class="align-center"><%= promotion.code %></td>
         <td><%= promotion.description %></td>

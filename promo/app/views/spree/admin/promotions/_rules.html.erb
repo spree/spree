@@ -18,7 +18,9 @@
           <% if @promotion.rules.any? %>
             <%= render :partial => 'promotion_rule', :collection => @promotion.rules, :locals => {} %>
           <% else %>
-            <%= t(:no_rules_added) %>
+            <div class="no-objects-found">
+              <%= t(:no_rules_added) %>
+            </div>
           <% end %>
         </div>
       </div>
@@ -28,7 +30,7 @@
       </div>
     <% end %>
   </div>  
-
+  <hr>
   <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), :remote => true, :id => 'new_product_rule_form' do %>
     <div class="field">
       <%= label_tag :promotion_rule_type, t(:add_rule_of_type) %>

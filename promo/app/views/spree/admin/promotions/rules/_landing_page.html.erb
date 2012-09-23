@@ -1,8 +1,6 @@
-<p class="field">
-  <label for="<%= "#{param_prefix}_preferred_path" %>">
-    <%= t('promotion_rule_types.landing_page.description') %>:
-    <%= t('landing_page_rule.must_have_visited_path') %>
-    <%= text_field_tag "#{param_prefix}[preferred_path]", promotion_rule.preferred_path, :size => 10 %>
-  </label>
-</p>
+<div class="field">
+  <label for="<%= "#{param_prefix}_preferred_path" %>"><%= t('promotion_rule_types.landing_page.description') %>:</label>
+  <span class="info"><%= t('landing_page_rule.must_have_visited_path') %></span>
+  <%= text_field_tag "#{param_prefix}[preferred_path]", promotion_rule.preferred_path, :size => 10 %>  
+</div>
 

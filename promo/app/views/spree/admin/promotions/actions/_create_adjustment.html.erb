@@ -1,15 +1,15 @@
 <div class="calculator-fields">
 
-  <p class="field">
+  <div class="field">
     <% field_name = "#{param_prefix}[calculator_type]" %>
     <%= label_tag field_name, t(:calculator) %>
     <%= select_tag field_name,
                    options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
-                   :class => 'type-select' %>
+                   :class => 'type-select select2' %>
     <% if promotion_action.calculator.respond_to?(:preferences) %>
-      &nbsp; <span class="warning"><%= t(:calculator_settings_warning) %></span>
+      &nbsp; <span class="warning info"><%= t(:calculator_settings_warning) %></span>
     <% end %>
-  </p>
+  </div>
 
   <% unless promotion_action.new_record? %>
     <div class="settings">

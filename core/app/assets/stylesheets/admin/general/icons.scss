@@ -1,6 +1,0 @@
-@import "font-awesome";
-
-.icon-cancel {
-  @extend [class*="icon-"];
-  @extend .icon-remove;
-}
