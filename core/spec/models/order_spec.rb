@@ -318,28 +318,6 @@ describe Spree::Order do
 
   end
 
-  context "clear_adjustments" do
-    before do
-      @order = Spree::Order.new
-    end
-
-    it "should destroy all previous tax adjustments" do
-      adjustment = mock_model(Spree::Adjustment)
-      adjustment.should_receive :destroy
-
-      @order.stub_chain :adjustments, :tax => [adjustment]
-      @order.clear_adjustments!
-    end
-
-    it "should destroy all price adjustments" do
-      adjustment = mock_model(Spree::Adjustment)
-      adjustment.should_receive :destroy
-
-      @order.stub :price_adjustments => [adjustment]
-      @order.clear_adjustments!
-    end
-  end
-
   context "#tax_zone" do
     let(:bill_address) { Factory :address }
     let(:ship_address) { Factory :address }
