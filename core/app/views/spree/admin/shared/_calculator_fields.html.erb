@@ -5,17 +5,17 @@
     <div class="field">
       <%= f.label(:calculator_type, t(:calculator), :for => 'calc_type') %>
       <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {}, {:id => 'calc_type', :class => 'select2 fullwidth'}) %>
-    </div>
-    
-    <% if !@object.new_record? %>
-      <div class="calculator-settings">
-        <%= f.fields_for :calculator do |calculator_form| %>
-          <%= preference_fields(@object.calculator, calculator_form) %>
+
+      <% if !@object.new_record? %>
+        <div class="calculator-settings">
+          <%= f.fields_for :calculator do |calculator_form| %>
+            <%= preference_fields(@object.calculator, calculator_form) %>
+          <% end %>
+        </div>
+        <% if @object.calculator.respond_to?(:preferences) %>
+          <span class="calculator-settings-warning info warning"><%= t(:calculator_settings_warning) %></span>
         <% end %>
-      </div>
-      <% if @object.calculator.respond_to?(:preferences) %>
-        <span class="calculator-settings-warning info warning"><%= t(:calculator_settings_warning) %></span>
       <% end %>
-    <% end %>
+    </div>
   </div>
 </fieldset>

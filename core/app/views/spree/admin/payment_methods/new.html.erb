@@ -15,6 +15,6 @@
 <%= form_for @payment_method, :url => collection_url do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <div data-hook="buttons" class="align-center">
-    <%= submit_tag t(:create), :class => 'icon-ok' %>
+    <%= button t(:create), 'icon-ok' %>
   </div>
 <% end %>

@@ -6,7 +6,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'icon-arrow-left' %>
+    <%= button_link_to t(:back_to_payment_methods_list), spree.admin_payment_methods_path, :icon => 'icon-arrow-left' %>
   </li>  
 <% end %>
 
@@ -17,7 +17,7 @@
   <%= render :partial => 'form', :locals => { :f => f } %>
   
   <div data-hook="buttons" class="align-center">
-    <%= f.submit t(:update), :class => 'icon-refresh button' %>
+    <%= button t(:update), 'icon-refresh' %>
   </div>
 
 <% end %>

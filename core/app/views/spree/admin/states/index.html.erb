@@ -1,13 +1,21 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:states) %></h1>
+<% content_for :page_title do %>
+  <%= t(:states) %>
+<% end %>
 
-<p data-hook="country">
+<% content_for :page_actions do %>
+  <li id="new_state_link">
+    <%= button_link_to t(:new_state), new_admin_country_state_url(@country), { :remote => true, :icon => 'icon-plus', :id => 'new_state_link' } %>
+  </li>
+<% end %>
+
+<div data-hook="country" class="field row">
   <%= label_tag :country, t(:country) %>
-  <select id="country" class='observe_field' data-base-url="<%=admin_states_path(:format => :js) %>?country_id=" data-update="#state-list">
+  <select id="country" class='observe_field select2 fullwidth' data-base-url="<%=admin_states_path(:format => :js) %>?country_id=" data-update="#state-list">
   <%= options_from_collection_for_select(@countries, :id, :name, @country.id) %>
   </select>
-</p>
+</div>
 
 <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
 

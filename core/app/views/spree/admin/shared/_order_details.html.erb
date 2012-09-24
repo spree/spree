@@ -17,13 +17,13 @@
       </tr>
     <% end %>
   </tbody>
-  <tbody id="subtotal" data-hook="order_details_subtotal">
+  <tbody id="subtotal" data-hook="order_details_subtotal"  class="with-border">
     <tr class="total" id="subtotal-row">
       <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
       <td class="total"><span><%= money @order.item_total %></span></td>
     </tr>
   </tbody>
-  <tbody id="order-charges" data-hook="order_details_adjustments">
+  <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
     <% @order.adjustments.eligible.each do |adjustment| %>
     <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
@@ -32,16 +32,16 @@
       </tr>
     <% end %>
   </tbody>
-  <tbody id="order-total" data-hook="order_details_total">
-    <tr class="total">
-      <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= money @order.total %></span></td>
+  <tbody id="order-total" data-hook="order_details_total" class="with-border grand-total">
+    <tr>
+      <td colspan="3" ><%= t(:order_total) %>:</td>
+      <td class="total" id="order-total"><span id="order_total"><%= money @order.total %></span></td>
     </tr>
   </tbody>
   <% if order.price_adjustment_totals.present? %>
     <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
       <% @order.price_adjustment_totals.keys.each do |key| %>
-        <tr class="total">
+        <tr>
           <td colspan="3"><strong><%= key %></strong></td>
           <td class="total"><span><%= money @order.price_adjustment_totals[key] %></span></td>
         </tr>

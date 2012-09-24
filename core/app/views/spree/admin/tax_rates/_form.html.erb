@@ -1,30 +1,37 @@
 <div data-hook="admin_tax_rate_form_fields">
-  <table data-hook="tax_rates">
-    <tr data-hook="zone">
-      <td><%= f.label :zone, t(:zone) %></td>
-      <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
-    </tr>
-    <tr data-hook="name">
-      <td><%= f.label :name, t(:name) %></td>
-      <td><%= f.text_field :name %></td>
-    </tr>
-    <tr data-hook="category">
-      <td><%= f.label :tax_category_id, t(:tax_category) %></td>
-      <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
-    </tr>
-    <tr data-hook="included">
-      <td><%= f.label :included_in_price, t(:included_in_price) %></td>
-      <td><%= f.check_box :included_in_price %></td>
-    </tr>
-    <tr data-hook="rate">
-      <td><%= f.label :amount, t(:rate) %></td>
-      <td><%= f.text_field :amount %></td>
-    </tr>
-    <tr data-hook="show_rate">
-      <td><%= f.label :show_rate_in_label, t(:show_rate_in_label) %></td>
-      <td><%= f.check_box :show_rate_in_label %></td>
-    </tr>
-  </table>
+  <fieldset data-hook="tax_rates" class="alpha ten columns no-border-bottom">
+    <legend><%= t(:general_settings) %></legend>
+    
+    <div class="alpha five columns">
+      <div data-hook="name" class="field">
+        <%= f.label :name, t(:name) %>
+        <%= f.text_field :name, :class => 'fullwidth' %>
+      </div>
+      <div data-hook="rate" class="field">
+        <%= f.label :amount, t(:rate) %>
+        <%= f.text_field :amount, :class => 'fullwidth' %>
+      </div>
+      <div data-hook="included" class="field">
+        <%= f.check_box :included_in_price %>
+        <%= f.label :included_in_price, t(:included_in_price) %>      
+      </div>
+    </div>
+
+    <div class="omega five columns">
+      <div data-hook="zone" class="field">
+        <%= f.label :zone, t(:zone) %>
+        <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2 fullwidth'}) %>
+      </div>      
+      <div data-hook="category" class="field">
+        <%= f.label :tax_category_id, t(:tax_category) %>
+        <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, {:class => 'select2 fullwidth'}) %>
+      </div>
+      <div data-hook="show_rate" class="field">
+        <%= f.check_box :show_rate_in_label %>
+        <%= f.label :show_rate_in_label, t(:show_rate_in_label) %>      
+      </div>  
+    </div>
+  </fieldset>
 
   <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
 </div>

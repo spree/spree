@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     <% @taxonomies.each do |taxonomy| %>
-      <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
+      <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row" class="<%= cycle('odd', 'even')%>">
         <td>
           <%= taxonomy.name %>
         </td>

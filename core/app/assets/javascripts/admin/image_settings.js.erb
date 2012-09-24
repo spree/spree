@@ -21,7 +21,7 @@ $(document).ready(function() {
 
   // Handle adding new styles
   var styles_hash_index = 1;
-  $('.add_style').live("click", function(e) {
+  $('.add_new_style').live("click", function(e) {
     e.preventDefault();
     $('#styles_list').append(generate_html_for_hash("new_attachment_styles", styles_hash_index));
   });
@@ -36,14 +36,17 @@ $(document).ready(function() {
   // Generates html for new paperclip styles form fields
   generate_html_for_hash = function(hash_name, index) {
     var html = '<div class="field">';
+    html += '<div class="five columns">';
     html += '<label for="' + hash_name + '_' + index + '_name">';
-    html += '<%= I18n.t(:name) %></label><br>';
-    html += '<input id="' + hash_name + '_' + index + '_name" name="' + hash_name + '[' + index + '][name]" type="text"><br>';
+    html += '<%= I18n.t(:name) %></label>';
+    html += '<input id="' + hash_name + '_' + index + '_name" name="' + hash_name + '[' + index + '][name]" type="text" class="fullwidth"><br>';
+    html += '</div><div class="five columns">'
     html += '<label for="' + hash_name + '_' + index + '_value">';
-    html += '<%= I18n.t(:value) %></label><br>';
-    html += '<input id="' + hash_name + '_' + index + '_value" name="' + hash_name + '[' + index + '][value]" type="text">';
-    html += '<a href="#" title="<%= I18n.t(:destroy) %>" class="destroy_style with-tip"><i class="icon-trash"></i></a>';
-    html += '</div>';
+    html += '<%= I18n.t(:value) %></label>';
+    html += '<input id="' + hash_name + '_' + index + '_value" name="' + hash_name + '[' + index + '][value]" type="text" class="fullwidth">';
+    html += '</div><div class="two columns">'
+    html += '<a href="#" title="<%= I18n.t(:destroy) %>" class="destroy_style with-tip button" style="margin-top: 19px;"><i class="icon-trash"></i> &nbsp; <%= I18n.t(:destroy)%></a>';
+    html += '</div></div>';
 
     index += 1;
     return html;
