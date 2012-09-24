@@ -3,11 +3,9 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="header-action-links inline-menu" data-hook="toolbar">
-    <li id="new_ot_link">
-      <%= button_link_to t(:new_option_type), new_admin_option_type_url, { :remote => true, :icon => 'icon-plus', :id => 'new_option_type_link' } %>
-    </li>
-  </ul>
+  <li id="new_ot_link">
+    <%= button_link_to t(:new_option_type), new_admin_option_type_url, { :remote => true, :icon => 'icon-plus', :id => 'new_option_type_link' } %>
+  </li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
@@ -29,7 +27,7 @@
   </thead>
   <tbody>
     <% @option_types.each do |option_type| %>
-      <tr class="spree_option_type" id="<%= spree_dom_id option_type %>" data-hook="option_row">
+      <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
         <td><span class="handle"></span> <%= option_type.name %></td>
         <td class="presentation"><%= option_type.presentation %></td>
         <td class="actions">

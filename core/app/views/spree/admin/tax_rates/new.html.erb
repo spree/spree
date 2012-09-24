@@ -1,4 +1,6 @@
-<h1><%= t(:new_tax_rate) %></h1>
+<% content_for :page_title do %>
+  <%= t(:new_tax_rate) %>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_rate } %>
 

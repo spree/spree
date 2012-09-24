@@ -1,7 +1,10 @@
-<h2><%= t(:properties) %></h2>
+<% content_for :page_title do %>
+  <%= t(:properties) %>
+<% end %>
+
 <% f.fields_for :product_properties do |properties_form| %>
-    <p data-hook="value">
+    <div data-hook="value">
       <%= properties_form.label :value, properties_form.object.property.presentation %><br />
       <%= properties_form.text_field :value %>
-    </p>
+    </div>
 <% end %>

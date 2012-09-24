@@ -1,4 +1,6 @@
-<h1><%= t(:new_shipping_category) %></h1>
+<% content_for :page_title do %>
+  <%= t(:new_shipping_category) %>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipping_category } %>
 

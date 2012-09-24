@@ -8,9 +8,9 @@
 <%= form_for @adjustment, :url => admin_order_adjustment_path(@order, @adjustment), :method => :put do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
 
-  <p class="form-buttons" data-hook="buttons">
+  <div class="form-buttons" data-hook="buttons">
     <%= button t(:continue), 'icon-arrow-right' %>
     <%= t(:or) %>
     <%= link_to_with_icon 'icon-remove', t('actions.cancel'), admin_order_adjustments_url(@order), :class => 'button' %>
-  </p>
+  </div>
 <% end %>

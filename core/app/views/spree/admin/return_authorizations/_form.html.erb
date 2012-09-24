@@ -10,7 +10,7 @@
     </thead>
     <tbody>
       <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
-        <tr id="<%= dom_id(variant) %>" data-hook="rma_row">
+        <tr id="<%= dom_id(variant) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td>
             <h4 style="margin-bottom:0px;"><%= variant.name %></h4>
             <%= variant.options_text %>

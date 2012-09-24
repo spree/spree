@@ -9,7 +9,7 @@
   </thead>
   <tbody>
     <% @order.line_items.each do |item| %>
-      <tr data-hook="order_details_line_item_row">
+      <tr data-hook="order_details_line_item_row" class="<%= cycle('odd', 'even')%>">
         <td width="300"><%= item.variant.product.name %> <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
         <td class="price"><%= money item.price %></td>
         <td class="qty"><%= item.quantity %></td>

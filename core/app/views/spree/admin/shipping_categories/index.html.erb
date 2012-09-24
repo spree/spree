@@ -23,7 +23,7 @@
   </thead>
   <tbody>
     <% @shipping_categories.each do |shipping_category|%>
-    <tr id="<%= spree_dom_id shipping_category %>" data-hook="category_row">
+    <tr id="<%= spree_dom_id shipping_category %>" data-hook="category_row" class="<%= cycle('odd', 'even')%>">
       <td style="width:350px;"><%= shipping_category.name %></td>
       <td class="actions">
         <%= link_to_edit shipping_category, :no_text => true %>

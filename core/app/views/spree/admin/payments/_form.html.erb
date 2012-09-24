@@ -1,8 +1,8 @@
 <div data-hook="admin_payment_form_fields">
-  <p>
+  <div class="field">
     <%= f.label :amount, t(:amount) %>
     <%= f.text_field :amount, :size => 8, :value => @order.outstanding_balance %>
-  </p>
+  </div>
 
   <% @payment_methods.each do |method| %>
 

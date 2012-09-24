@@ -4,9 +4,9 @@
   <i class="icon-arrow-right"></i> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>
 <% end %>
 
-<p data-hook="amount">
+<div data-hook="amount">
   <%= label_tag nil, t(:amount) %>
   <%= @payment.amount %>
-</p>
+</div>
 
 <%= render :partial => "spree/admin/payments/source_views/#{@payment.payment_method.method_type}", :locals => { :payment => @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment } %>

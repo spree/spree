@@ -3,11 +3,9 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="actions inline-menu">
-    <li>
-      <%= button_link_to t(:new_tax_rate), new_object_url, :icon => 'add' %>
-    </li>
-  </ul>
+  <li>
+    <%= button_link_to t(:new_tax_rate), new_object_url, :icon => 'add' %>
+  </li>
 <% end %>
 
 <table class="index">
@@ -20,12 +18,12 @@
       <th><%= t(:included_in_price) %></th>
       <th><%= t(:show_rate_in_label) %></th>
       <th><%= t(:calculator) %></th>
-      <th><%= t(:action) %></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
     <% @tax_rates.each do |tax_rate|%>
-    <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row">
+    <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row" class="<%= cycle('odd', 'even')%>">
       <td><%=tax_rate.zone.name %></td>
       <td><%=tax_rate.name %></td>
       <td><%=tax_rate.tax_category.try(:name) || t(:not_available) %></td>
@@ -33,9 +31,9 @@
       <td><%=tax_rate.included_in_price %></td>
       <td><%=tax_rate.show_rate_in_label %></td>
       <td><%=tax_rate.calculator.to_s %></td>
-      <td>
-        <%= link_to_edit tax_rate %> &nbsp;
-        <%= link_to_delete tax_rate %>
+      <td class="actions">
+        <%= link_to_edit tax_rate, :no_text => true %>
+        <%= link_to_delete tax_rate, :no_text => true %>
       </td>
     </tr>
     <% end %>

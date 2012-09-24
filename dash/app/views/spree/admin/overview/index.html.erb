@@ -10,9 +10,9 @@
 <% if Spree::Dash::Config.configured? %>
   
 <% content_for :page_actions do %>
-  <div id="jirafe_locales" class="toolbar inline-menu">
+  <li id="jirafe_locales">
     <i class="icon-globe"></i> <%= t(:choose_dashboard_locale) %>: <%= raw jirafe_locale_links.join(' ') %>
-  </div>
+  </li>
 <% end %>
 
   <div id="jirafe"></div>

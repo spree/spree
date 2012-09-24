@@ -5,18 +5,15 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="toolbar inline-menu">
-    <li>
-      <span id="new_add_option_value" data-hook>
-        <%= link_to_add_fields t(:add_option_value), "tbody#option_values", :class => 'button icon-plus' %>
-      </span>      
-    </li>
-  </ul>
+  <li>
+    <span id="new_add_option_value" data-hook>
+      <%= link_to_add_fields t(:add_option_value), "tbody#option_values", :class => 'button icon-plus' %>
+    </span>      
+  </li>
 <% end %>
 
-
-
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @option_type } %>
+
 <%= form_for [:admin, @option_type] do |f| %>
   <fieldset>
     <legend><%= t(:option_values) %></legend>
@@ -33,7 +30,7 @@
       </thead>
       <tbody id="option_values">
         <% if @option_type.option_values.empty? %>
-          <tr id="none" data-hook="option_none">
+          <tr id="none" data-hook="option_none" class="<%= cycle('odd', 'even')%>">
             <td colspan="2"><%= t(:none) %></td>
             <td class="actions"></td>
           </tr>

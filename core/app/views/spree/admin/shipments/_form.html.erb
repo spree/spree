@@ -12,7 +12,7 @@
       </thead>
       <tbody>
         <% @shipment.order.inventory_units.each do |inventory_unit| %>
-          <tr data-hook="shipments_row">
+          <tr data-hook="shipments_row" class="<%= cycle('odd', 'even')%>">
             <td style="text-align:center;">
               <%= check_box_tag "inventory_units[#{inventory_unit.id}]",
                                 :true,

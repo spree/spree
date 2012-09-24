@@ -1,10 +1,8 @@
 <% content_for :page_action do %>
   <% if @order.inventory_units.any? &:shipped? %>
-    <ul class="actions toolbar inline-menu">
-      <li>
-        <%= button_link_to t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'icon-plus' %>
-      </li>
-    </ul>
+    <li>
+      <%= button_link_to t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'icon-plus' %>
+    </li>
   <% end %>
 <% end %>
 
@@ -23,7 +21,7 @@
     </thead>
     <tbody>
       <% @return_authorizations.each do |return_authorization| %>
-        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
+        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td><%= return_authorization.number %></td>
           <td><%= t(return_authorization.state.downcase) %></td>
           <td><%= money return_authorization.amount %></td>

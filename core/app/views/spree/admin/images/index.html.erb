@@ -2,6 +2,10 @@
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Images'} %>
 
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon('icon-plus', t(:new_image), new_admin_product_image_url(@product), :id => 'new_image_link', :class => 'button') %></li>
+<% end %>
+
 <div id="images" data-hook></div>
 
 <table class="index sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
@@ -69,9 +73,3 @@
     <% end %>
   </tbody>
 </table>
-
-<% content_for :page_actions do %>
-  <ul class="inline-menu" data-hook="toolbar">
-    <li><%= link_to_with_icon('icon-plus', t(:new_image), new_admin_product_image_url(@product), :id => 'new_image_link', :class => 'button') %></li>
-  </ul>
-<% end %>

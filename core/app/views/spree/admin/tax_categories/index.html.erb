@@ -32,7 +32,7 @@
          @edit_url = edit_admin_tax_category_path(tax_category)
          @delete_url = admin_tax_category_path(tax_category)
     %>
-      <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row">
+      <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row" class="<%= cycle('odd', 'even')%>">
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
         <td class="align-center"><%= tax_category.is_default.to_s.titleize %></td>

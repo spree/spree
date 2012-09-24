@@ -29,7 +29,7 @@
   </thead>
   <tbody>
     <% @shipping_methods.each do |shipping_method|%>
-      <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows">
+      <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows" class="<%= cycle('odd', 'even')%>">
         <td><%= shipping_method.name %></td>
         <td><%= shipping_method.zone.name if shipping_method.zone %></td>
         <td><%= shipping_method.calculator.description %></td>

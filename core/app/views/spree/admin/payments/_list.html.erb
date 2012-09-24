@@ -10,7 +10,7 @@
   </thead>
   <tbody>
     <% payments.each do |payment| %>
-      <tr data-hook="payments_row">
+      <tr data-hook="payments_row" class="<%= cycle('odd', 'even')%>">
         <td><%= payment.created_at.to_s(:date_time24) %></td>
         <td><%= money(payment.amount) %></td>
         <td class="align-center"><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>

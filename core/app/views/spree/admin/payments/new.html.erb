@@ -1,6 +1,8 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
-<h2><%= t(:new) %> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %></h2>
+<% content_for :page_title do %>
+  <%= t(:new) %> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>  
+<% end %>
 
 <% if @payment_methods.any? %>
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment } %>
@@ -9,9 +11,9 @@
 
     <%= render :partial => 'form', :locals => { :f => f } %>
 
-    <p class="form-buttons" data-hook="buttons">
+    <div class="form-buttons" data-hook="buttons">
       <%= button @order.cart? ? t(:continue) : t(:update) %>
-    </p>
+    </div>
 
   <% end %>
 <% else %>

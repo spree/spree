@@ -1,4 +1,7 @@
-<h1><%= t(:editing_tax_rate) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_tax_rate) %>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_rate } %>
 <%= form_for [:admin, @tax_rate] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>

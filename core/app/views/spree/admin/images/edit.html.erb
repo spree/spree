@@ -5,9 +5,7 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @image } %>
 
 <% content_for :page_actions do %>
-  <ul class="inline-menu toolbar">
-    <li><%= button_link_to t(:back_to_images_list), admin_product_images_url(@product), :icon => 'icon-arrow-left' %></li>
-  </ul>
+  <li><%= button_link_to t(:back_to_images_list), admin_product_images_url(@product), :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>

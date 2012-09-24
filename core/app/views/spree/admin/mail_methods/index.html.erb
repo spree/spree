@@ -26,7 +26,7 @@
     </thead>
     <tbody class="align-center">
       <% @mail_methods.each do |method|%>
-        <tr id="<%= spree_dom_id method %>" data-hook="admin_mail_methods_index_rows">
+        <tr id="<%= spree_dom_id method %>" data-hook="admin_mail_methods_index_rows" class="<%= cycle('odd', 'even')%>">
           <td><%= method.environment.to_s.titleize %></td>
           <td><%= method.active ? t(:yes) : t(:no) %></td>
           <td data-hook="admin_mail_methods_index_row_actions" class="actions">
