@@ -39,3 +39,23 @@
 <% end %>
 
 
+<<<<<<< HEAD
+=======
+<div class="add-line-item block-table">
+  
+    <div class="field table-cell">
+      <%= label_tag :add_product_name, t(:name_or_sku) %>
+      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth product_autocomplete' %>
+      <%= hidden_field_tag :add_variant_id %>
+      <%= hidden_field_tag :add_line_item_variant_id %>
+    </div>
+    <div class="field table-cell">
+      <%= label_tag :add_quantity, t(:qty) %>
+      <%= number_field_tag :add_quantity, 1, :min =>  1, :size => '4' %>
+    </div>
+    <div class="field table-cell">     
+      <button class="icon-plus add small"><%= t(:add) %></button>
+    </div>
+  
+</div>
+>>>>>>> More admin cruft cleaning
