@@ -1,8 +1,4 @@
 <div class="field">
-<<<<<<< HEAD
-=======
-  <label for="<%= "#{param_prefix}_preferred_amount" %>"><%= t('promotion_rule_types.item_total.description') %></label>
->>>>>>> More promo fixes
   <%= select_tag "#{param_prefix}[preferred_operator]", options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS.map{|o| [t("item_total_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator), {:class => 'select2'} %>
   <%= text_field_tag "#{param_prefix}[preferred_amount]", promotion_rule.preferred_amount, :size => 10 %>  
 </div>
