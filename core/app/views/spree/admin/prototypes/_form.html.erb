@@ -2,7 +2,7 @@
   <div class="alpha four columns">
     <%= f.field_container :name do %>
       <%= f.label :name, t(:name) %>
-      <%= f.text_field :name %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
       <%= f.error_message_on :name %>
     <% end %>
   </div>

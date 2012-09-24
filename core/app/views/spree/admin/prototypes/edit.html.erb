@@ -4,6 +4,12 @@
   <%= t(:editing_prototype) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_prototypes_list), spree.admin_prototypes_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @prototype } %>
 
 <%= form_for [:admin, @prototype] do |f| %>
