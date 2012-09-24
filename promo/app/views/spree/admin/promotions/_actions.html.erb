@@ -1,8 +1,26 @@
 <fieldset id="action_fields" class="eight columns omega no-border-bottom">
+
   <legend><%= t(:promotion_actions) %></legend>
 
+  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
+    <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
+    <div class="row">
+      <div class="alpha two columns">
+        <%= label_tag :action_type, t(:add_action_of_type)%>  
+      </div>
+      <div class="four columns">
+        <%= select_tag 'action_type', options, :class => 'select2 fullwidth' %>  
+      </div>
+      <div class="two columns omega">
+        <%= button t(:add), 'icon-plus', :class => 'fullwidth' %>
+      </div>
+    </div>
+  <% end %>
+
+  <hr>
+
   <%= form_for @promotion, :url => spree.admin_promotion_path(@promotion), :method => :put do |f| %>
-    <div id="actions" class="filter_list">
+    <div id="actions" class="filter_list row">
       <% if @promotion.actions.any? %>
         <%= render :partial => 'promotion_action',  :collection => @promotion.actions %>
       <% else %>
@@ -11,19 +29,8 @@
         </div>
       <% end %>
     </div>
-    <div class="form-buttons actions">
-      <%= button t(:update), 'icon-refresh' %>
-    </div>
-  <% end %>
-
-  <hr>
-
-  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
-    <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
-    <div class="field">
-      <%= label_tag :action_type, t(:add_action_of_type) %>
-      <%= select_tag 'action_type', options, :class => 'select2' %>
-      <%= submit_tag t(:add), :class => 'icon-plus button' %>
+    <div class="form-buttons actions promotion-update">
+      <%= button t(:update), 'icon-refresh'%>
     </div>
   <% end %>
 

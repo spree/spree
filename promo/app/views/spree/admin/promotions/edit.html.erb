@@ -13,10 +13,12 @@
   <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>
 
-<div id="rules_container">
-  <%= render :partial => 'rules' %>
-</div>
+<div id="promotion-filters" class="row">
+  <div id="rules_container" class="alpha eight columns">
+    <%= render :partial => 'rules' %>
+  </div>
 
-<div id="actions_container">
-  <%= render :partial => 'actions' %>
+  <div id="actions_container" class="omega eight columns">
+    <%= render :partial => 'actions' %>
+  </div>
 </div>

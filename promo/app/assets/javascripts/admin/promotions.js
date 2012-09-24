@@ -1,5 +1,6 @@
 var initProductActions = function(){
 
+  // Add classes on promotion items for design
   $('a.delete').live('mouseover mouseout', function(event) {
     if (event.type == 'mouseover') {
       $(this).parent().addClass('action-remove');

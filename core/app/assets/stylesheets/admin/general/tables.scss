@@ -7,14 +7,6 @@ table {
   width: 100%;
   margin-bottom: 15px;
 
-  tbody:last-child {
-    tr:last-child {
-      td { 
-        border-bottom: 1px solid $color-border;
-      }
-    }
-  }
-
   th, td {
     padding: 15px 10px;
     // border-top: 1px solid $color-border;
@@ -57,6 +49,10 @@ table {
       @extend .icon-reorder;
       cursor: move;
     }
+
+    a:hover {
+      color: $c_green1;
+    }
   }
 
   th {
@@ -78,8 +74,16 @@ table {
       background-color: lighten($c_blue1, 33);
       border: 1px solid $color-border;
       border-radius: 15px;
-      padding: 5px 2px 5px 8px;
-      width: 32px;
+      width: 29px;
+      height: 29px;
+      display: inline-block;
+      padding-top: 2px;
+
+      &:before {
+        text-align: center !important;
+        width: 27px;
+        display: inline-block;
+      }
 
       &:hover {
         border-color: transparent;
@@ -95,7 +99,7 @@ table {
     }
     .icon-trash {
       &.no-text {
-        padding: 5px 4px 5px 9px;
+        
       }
 
       &:hover {
@@ -107,9 +111,9 @@ table {
       background-color: $c_green1;
       color: white;
     }
-    .icon-repeat {
+    .icon-copy {
       &.no-text {
-        padding: 5px 3px 5px 8px;
+        
       }
 
       &:hover {
@@ -290,5 +294,13 @@ table {
       }
     }
 >>>>>>> More admin styling...
+  }
+
+  tbody:last-child {
+    tr:last-child {
+      td { 
+        border-bottom: 1px solid $color-border;
+      }
+    }
   }
 }

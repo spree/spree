@@ -6,6 +6,30 @@
   padding-bottom: 0;
 }
 
+#rules_container, #actions_container {
+  position: relative;
+
+  fieldset {
+    position: static !important;
+  }
+
+  .promotion-update {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+#actions_container {
+  .edit_promotion {
+    margin-top: 44px;
+  }
+}
+
+#promotion-pilicy-select {
+  overflow: auto;
+}
+
 .promotion-block {
   padding: 5px;
   background-color: lighten($color-border, 5);
@@ -13,6 +37,11 @@
   border-radius: 3px;
   margin-bottom: 15px;
   position: relative;  
+
+  label {
+    text-transform: none;
+    font-weight: normal;
+  }
 
   &.action-remove {
     background-color: lighten($c_red1, 50);
@@ -22,6 +51,21 @@
     .promotion-title, input[type="text"], input[type="number"],
     .token-input-list {
       border-color: lighten($c_red1, 45);
+    }
+  }
+
+  .add-line-item {
+    #add_quantity {
+      width: 50px;
+      margin-top: 15px;
+    }
+    button.add {
+      min-width: 80px;
+      margin-top: 30px;
+
+      &:before {
+        padding-right: 5px;
+      }
     }
   }
 
