@@ -1,16 +1,19 @@
+@import '../variables';
+
 /* Example tokeninput style #1: Token vertical list*/
 ul.token-input-list {
     overflow: hidden; 
     height: auto !important; 
     height: 1%;
-    width: 400px;
-    border: 1px solid #999;
+    width: 100%;
+    border: 1px solid $color-border;
+    border-radius: 3px;
     cursor: text;
-    font-size: 12px;
+    font-size: 90%;
+    padding: 4px 10px;
     font-family: Verdana;
     z-index: 999;
     margin: 0;
-    padding: 0;
     background-color: #fff;
 }
 

@@ -1,5 +1,13 @@
 var initProductActions = function(){
 
+  $('a.delete').live('mouseover mouseout', function(event) {
+    if (event.type == 'mouseover') {
+      $(this).parent().addClass('action-remove');
+    } else {
+      $(this).parent().removeClass('action-remove');
+    }
+  });
+
   $(".product_autocomplete").product_autocomplete();
 
   $('.calculator-fields').each(function(){

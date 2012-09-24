@@ -1,10 +1,9 @@
 <div class="field products_rule_products">
-  <label>
-    <%= t('product_rule.choose_products') %><br />
-    <%= product_picker_field "#{param_prefix}[product_ids_string]", promotion_rule.product_ids_string %>
+  <%= label_tag t('product_rule.choose_products') %>
+  <%= product_picker_field "#{param_prefix}[product_ids_string]", promotion_rule.product_ids_string %>
 </div>
 <div class="field">
   <label>
-    <%= t('product_rule.label', :select => select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Spree::Promotion::Rules::Product::MATCH_POLICIES.map{|s| [t("product_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy)), :include_blank => true).html_safe %>
+    <%= t('product_rule.label', :select => select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Spree::Promotion::Rules::Product::MATCH_POLICIES.map{|s| [t("product_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy), {:class => 'select2'})).html_safe %>
   </label>
 </div>
