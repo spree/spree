@@ -14,6 +14,7 @@
   .table-cell {
     display: table-cell;
     vertical-align: middle;
+<<<<<<< HEAD
     padding: 0 10px;
 
     &:first-child {
@@ -22,6 +23,9 @@
     &:last-child {
       padding-right: 0;
     }
+=======
+    padding: 0 5px;
+>>>>>>> More admin cruft cleaning
   }
 }
 
