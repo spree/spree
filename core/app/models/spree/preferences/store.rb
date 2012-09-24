@@ -23,11 +23,29 @@ module Spree::Preferences
     end
 
     def exist?(key)
-      @cache.exist? key
+      @cache.exist?(key) ||
+      should_persist? && Spree::Preference.where(:key => key).exists?
     end
 
     def get(key)
-      @cache.read(key)
+      # return the retrieved value, if it's in the cache
+      if (val = @cache.read(key)).present?
+        return val
+      end
+
+      return nil unless should_persist?
+
+      # If it's not in the cache, maybe it's in the database, but
+      # has been cleared from the cache
+
+      # does it exist in the database?
+      if preference = Spree::Preference.find_by_key(key)
+        # it does exist, so let's put it back into the cache
+        @cache.write(preference.key, preference.value)
+
+        # and return the value
+        preference.value
+      end
     end
 
     def delete(key)
