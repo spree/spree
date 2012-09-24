@@ -8,6 +8,10 @@
  *= require responsive-tables
  *= require normalize
  *= require skeleton
+<<<<<<< HEAD
+=======
+ *= require admin/edit_checkouts.css
+>>>>>>> More promo fixes
  *= require jquery-ui.datepicker
  *= require jquery.powertip
  *= require select2
