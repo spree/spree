@@ -1,0 +1,17 @@
+<script>
+  Spree.translations = <%==
+  { :date_picker    => I18n.t(:format, 
+                              :scope => 'spree.date_picker',
+                              :default => 'yy/mm/dd'),
+    :abbr_day_names => I18n.t(:abbr_day_names, :scope => :date),
+    :month_names    => I18n.t(:month_names, :scope => :date).delete_if(&:blank?),
+    :previous       => I18n.t(:previous),
+    :next           => I18n.t(:next),
+    :no_results     => I18n.t(:no_results),
+    :type_to_search => I18n.t(:type_to_search),
+    :searching      => I18n.t(:searching),
+    :sku            => I18n.t(:sku),
+    :on_hand        => I18n.t(:on_hand)
+  }.to_json
+%>
+</script>
