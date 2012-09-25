@@ -19,27 +19,27 @@ module Spree
       update_payment_state
 
       # give each of the shipments a chance to update themselves
-      shipments.each { |shipment| shipment.update!(self) }#(&:update!)
+      shipments.each { |shipment| shipment.update!(order) }#(&:update!)
       update_shipment_state
       update_adjustments
       # update totals a second time in case updated adjustments have an effect on the total
       update_totals
 
-      update_attributes_without_callbacks({
-        :payment_state => payment_state,
-        :shipment_state => shipment_state,
-        :item_total => item_total,
-        :adjustment_total => adjustment_total,
-        :payment_total => payment_total,
-        :total => total
+      order.update_attributes_without_callbacks({
+        :payment_state => order.payment_state,
+        :shipment_state => order.shipment_state,
+        :item_total => order.item_total,
+        :adjustment_total => order.adjustment_total,
+        :payment_total => order.payment_total,
+        :total => order.total
       })
 
       #ensure checkout payment always matches order total
-      if payment and payment.checkout? and payment.amount != total
-        payment.update_attributes_without_callbacks(:amount => total)
+      if order.payment and order.payment.checkout? and order.payment.amount != order.total
+        order.payment.update_attributes_without_callbacks(:amount => order.total)
       end
 
-      update_hooks.each { |hook| self.send hook }
+      update_hooks.each { |hook| order.send hook }
     end
 
     # Updates the following Order total values:

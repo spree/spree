@@ -187,7 +187,7 @@ module Spree
     end
 
     def update!
-      OrderUpdater.new(order).update
+      OrderUpdater.new(self).update
     end
 
     def clone_billing_address
