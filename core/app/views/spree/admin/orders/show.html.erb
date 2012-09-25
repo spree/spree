@@ -5,7 +5,9 @@
   <li>
     <%= button_link_to t(:edit), edit_admin_order_url(@order.number), :icon => 'icon-edit' %>
   </li>
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
+
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 

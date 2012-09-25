@@ -206,9 +206,15 @@ dl {
 
   &.pending {
     background-color: $c_yellow1;
+<<<<<<< HEAD
 
     a {
       color: white;
+=======
+    
+    &, a { 
+      color: white
+>>>>>>> Various order payment style fixes in admin. Fixes related to select2 lib.
     }
   }
 

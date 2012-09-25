@@ -1,12 +1,11 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>
+  <i class="icon-arrow-right"></i> / <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>
 <% end %>
 
-<div data-hook="amount">
-  <%= label_tag nil, t(:amount) %>
-  <%= @payment.amount %>
-</div>
-
 <%= render :partial => "spree/admin/payments/source_views/#{@payment.payment_method.method_type}", :locals => { :payment => @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment } %>
+
+<div data-hook="amount" class="align-center">
+  <h5><%= label_tag nil, t(:amount) %>: <span class="green"><%= @payment.amount %></span> </h5>  
+</div>

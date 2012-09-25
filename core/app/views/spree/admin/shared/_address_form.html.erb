@@ -1,85 +1,62 @@
-<table class="index">
-  <thead>
-    <tr data-hook="use_billing">
-      <th colspan="8">
-        <%= name %>
-        <span class="right">
-          <% if use_billing %>
-            <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %> 
-            <%= label_tag 'order[use_billing]', t(:use_billing_address) %>
-          <% end %>
-        </span>
-      </th>
-    </tr>
-  </thead>
-  <tbody id="<%= name == t(:shipping_address) ? 'shipping' : 'billing' %>" style="display: <%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? 'none' : '' %>" data-hook="address_fields">
-    <tr class="<%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
-      <td class="lbl-col">
-        <%= f.label :firstname, t(:first_name) + ':' %>
-      </td>
-      <td class="val-col" colspan="3"><%= f.text_field :firstname %></td>
-      <td class="lbl-col">
-        <%= f.label :lastname, t(:last_name) + ':' %>
-      </td>
-      <td class="val-col" colspan="3"><%= f.text_field :lastname %></td>
-    </tr>
-    <% if Spree::Config[:company] %>
-      <tr class="<%= name == t(:company) ? 'shipping-row' : 'billing-row' %>">
-        <td class="lbl-col">  <%= f.label :company, t(:company) + ':' %> </td>
-        <td class=colspan="7"> <%= f.text_field :company %> </td>
-      </tr>
-    <% end %>
-    <tr class="<%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
-      <td class="lbl-col">
-        <%= f.label :address1, t(:street_address) + ':' %>
-      </td>
-      <td colspan="3"><%= f.text_field :address1, :class => "fullwidth" %></td>
-      <td class="lbl-col">
-        <%= f.label :address2, t(:street_address_2) + ':' %>
-      </td>
-      <td colspan="3"><%= f.text_field :address2, :class => "fullwidth" %></td>
-    </tr>
-    <tr class="<%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
-      <td class="lbl-col">
-        <%= f.label :city, t(:city) + ':' %>
-      </td>
-      <td colspan="3"><%= f.text_field :city %></td>
-      <td class="lbl-col">
-        <%= f.label :zipcode, t(:zip) + ':' %>
-      </td>
-      <td colspan="3"><%= f.text_field :zipcode, :style => 'width: 100px;' %></td>
-    </tr>
-    <tr class="<%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
-      <td class="lbl-col">
-        <%= f.label :state_id, t(:state) + ':' %>
-      </td>
-      <td colspan="3">
-        <span id="<%= name == t(:shipping_address) ? 's' : 'b' %>state">
-
-          <%= f.text_field :state_name, :style => "width:150px; display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty? %>
-          <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:style => "width:150px; display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
-        </span>
-      </td>
-      <td class="lbl-col">
-        <%= f.label :country_id, t(:country) + ':' %>
-      </td>
-      <td colspan="3">
-        <span id="<%= name == t(:shipping_address) ? 's' : 'b' %>country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:style => 'width: 150px;'} %></span>
-      </td>
-    </tr>
-    <tr class="<%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
-      <td class="lbl-col">
-        <%= f.label :phone, t(:phone) + ':' %>
-      </td>
-      <td colspan="7"><%= f.phone_field :phone %></td>
-    </tr>
-  </tbody>
-</table>
+<% if use_billing %>
+  <span data-hook="use_billing">  
+    <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %> 
+    <%= label_tag 'order[use_billing]', t(:use_billing_address) %>
+  </span>
+<% end %>
+  
+<div id="<%= name == t(:shipping_address) ? 'shipping' : 'billing' %>" style="display: <%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? 'none' : '' %>" data-hook="address_fields">
+  <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">    
+    <%= f.label :firstname, t(:first_name) + ':' %>    
+    <%= f.text_field :firstname, :class => 'fullwidth' %>
+  </div>
+  <div class="field">
+    <%= f.label :lastname, t(:last_name) + ':' %>
+    <%= f.text_field :lastname, :class => 'fullwidth' %>
+  </div>  
+  <% if Spree::Config[:company] %>
+    <div class="field <%= name == t(:company) ? 'shipping-row' : 'billing-row' %>">
+      <%= f.label :company, t(:company) + ':' %>
+      <%= f.text_field :company, :class => 'fullwidth' %>
+    </div>
+  <% end %>
+  <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">    
+    <%= f.label :address1, t(:street_address) + ':' %>
+    <%= f.text_field :address1, :class => "fullwidth" %>
+  </div>
+  <div class="field">
+    <%= f.label :address2, t(:street_address_2) + ':' %>
+    <%= f.text_field :address2, :class => "fullwidth" %>
+  </div>
+  <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">    
+    <%= f.label :city, t(:city) + ':' %>
+    <%= f.text_field :city, :class => 'fullwidth' %>
+  </div>
+  <div class="field">
+    <%= f.label :zipcode, t(:zip) + ':' %>
+    <%= f.text_field :zipcode, :class => 'fullwidth' %>
+  </div>  
+  <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">    
+    <%= f.label :state_id, t(:state) + ':' %>
+    <span id="<%= name == t(:shipping_address) ? 's' : 'b' %>state">
+      <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth' %>
+      <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+    </span>
+  </div>
+  <div class="field">
+    <%= f.label :country_id, t(:country) + ':' %>    
+    <span id="<%= name == t(:shipping_address) ? 's' : 'b' %>country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %></span>
+  </div>    
+  <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
+    <%= f.label :phone, t(:phone) + ':' %>
+    <%= f.phone_field :phone, :class => 'fullwidth' %>
+  </div>
+</div>
 
 <% content_for :head do %>
   <%= javascript_tag do -%>
     $(document).ready(function(){
-      $('span#<%= name == t(:shipping_address) ? 's' : 'b' %>country select').change(function() { update_state('<%= name == t(:shipping_address) ? 's' : 'b' %>'); });
+      $('span#<%= name == t(:shipping_address) ? 's' : 'b' %>country .select2').on('change', function() { update_state('<%= name == t(:shipping_address) ? 's' : 'b' %>'); });
     });
   <% end -%>
 <% end %>
