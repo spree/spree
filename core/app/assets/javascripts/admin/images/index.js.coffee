@@ -1,6 +1,9 @@
 $ ->
   ($ '#new_image_link').click (event) ->
     event.preventDefault()
+
+    ($ '.no-objects-found').hide()
+
     ($ this).hide()
     $.ajax
       type: 'GET'
