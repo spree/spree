@@ -443,7 +443,8 @@ module Spree
 
     def state_changed(name)
       state = "#{name}_state"
-      if old_state = self.send("#{state}_was")
+      if persisted?
+        old_state = self.send("#{state}_was")
         self.state_changes.create({
           :previous_state => old_state,
           :next_state     => self.send(state),
