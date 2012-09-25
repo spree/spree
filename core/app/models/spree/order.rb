@@ -443,13 +443,14 @@ module Spree
 
     def state_changed(name)
       state = "#{name}_state"
-      old_state = self.send("#{state}_was")
-      self.state_changes.create({
-        :previous_state => old_state,
-        :next_state     => self.send(state),
-        :name           => name,
-        :user_id        => self.user_id
-      }, :without_protection => true)
+      if old_state = self.send("#{state}_was")
+        self.state_changes.create({
+          :previous_state => old_state,
+          :next_state     => self.send(state),
+          :name           => name,
+          :user_id        => self.user_id
+        }, :without_protection => true)
+      end
     end
 
     private
