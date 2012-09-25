@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :shipments, :to => :order
+    delegate :payments, :line_items, :adjustments, :shipments, :update_hooks, :to => :order
 
     def initialize(order)
       @order = order
