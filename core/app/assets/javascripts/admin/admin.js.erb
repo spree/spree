@@ -49,9 +49,9 @@ $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
 $.fn.objectPicker = function(url){
   $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
     searchDelay          : 600,
-    hintText             : strings.type_to_search,
-    noResultsText        : strings.no_results,
-    searchingText        : strings.searching,
+    hintText             : Spree.translations.type_to_search,
+    noResultsText        : Spree.translations.no_results,
+    searchingText        : Spree.translations.searching,
     prePopulateFromInput : true
   });
 };
@@ -62,12 +62,12 @@ $.fn.productPicker = function(){
 
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
-    dateFormat: "<%= ::I18n.t(:format, :scope => 'spree.date_picker', :default => 'yy/mm/dd') %>",
-    dayNames: <%= ::I18n.t(:day_names, :scope => :date).to_json %>,
-    dayNamesMin: <%= ::I18n.t(:abbr_day_names, :scope => :date).to_json %>,
-    monthNames: <%= (::I18n.t(:month_names, :scope => :date).delete_if(&:blank?)).to_json %>,
-    prevText: '<%= ::I18n.t(:previous) %>',
-    nextText: '<%= ::I18n.t(:next) %>',
+    dateFormat: Spree.translations.date_picker,
+    dayNames: Spree.translations.abbr_day_names,
+    dayNamesMin: Spree.translations.abbr_day_names,
+    monthNames: Spree.translations.month_names, 
+    prevText: Spree.translations.previous,
+    nextText: Spree.translations.next,
     showOn: "button",
     buttonImage: "<%= asset_path 'datepicker/cal.gif' %>",
     buttonImageOnly: true
