@@ -61,7 +61,7 @@ module Spree
             collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
           else
             collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type},
-                                                          :images => {:only => [:id], :methods => :mini_url}}},
+                                                          :images => {:only => [:id], :methods => :mini_url}}, :methods => :admin_label},
                                                           :images => {:only => [:id], :methods => :mini_url}, :master => {}})
           end
         end
