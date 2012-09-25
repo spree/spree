@@ -25,10 +25,15 @@ describe Spree::Order do
       create_adjustment("Promotion A", -100)
       create_adjustment("Promotion B", -200)
       create_adjustment("Promotion C", -300)
-      create_adjustment("Some other credit", -500)
+      create(:adjustment, :adjustable => order,
+                          :originator => nil,
+                          :amount => -500,
+                          :locked => true,
+                          :label => "Some other credit")
       order.adjustments.each {|a| a.update_attribute_without_callbacks(:eligible, true)}
 
       order.send(:update_adjustments)
+
       order.adjustments.eligible.promotion.count.should == 1
       order.adjustments.eligible.promotion.first.label.should == 'Promotion C'
     end
