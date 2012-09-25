@@ -132,11 +132,7 @@ module Spree
     end
 
     def admin_label
-      option_values = self.option_values.map do |ov|
-        ov.option_type.presentation + " " + ov.presentation
-      end.join(',')
-
-      self.product.name += " - " + option_values
+      self.product.name += " - " + self.option_values.map { |ov| ov.option_type.presentation + " " + ov.presentation }.join(',')
     end
 
     private
