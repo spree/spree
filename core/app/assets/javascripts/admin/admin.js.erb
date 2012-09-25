@@ -61,9 +61,9 @@ format_product_autocomplete = function(item){
 
     html += "<div><h4>" + product['name'] + "</h4>";
     if (product['master']) {
-      html += "<span><strong><%= ::I18n.t(:sku) %>: </strong>" + product['master']['sku'] + "</span>";
+      html += "<span><strong>" + Spree.translations.sku + ":</strong>" + product['master']['sku'] + "</span>";
     }
-    html += "<span><strong><%= ::I18n.t(:on_hand) %>: </strong>" + product['count_on_hand'] + "</span></div>";
+    html += "<span><strong>" + Spree.translations.on_hand + ":</strong>" + product['count_on_hand'] + "</span></div>";
   }else{
     // variant
     var variant = item.data['variant'];
@@ -82,8 +82,8 @@ format_product_autocomplete = function(item){
     }).join(", ")
 
     html += "<div><h4>" + name + "</h4>";
-    html += "<span><strong><%= ::I18n.t(:sku) %>: </strong>" + variant['sku'] + "</span>";
-    html += "<span><strong><%= ::I18n.t(:on_hand) %>: </strong>" + variant['count_on_hand'] + "</span></div>";
+    html += "<span><strong>" + Spree.translations.sku + ":</strong>" + variant['sku'] + "</span>";
+    html += "<span><strong>" + Spree.translations.on_hand + ":</strong>" + variant['count_on_hand'] + "</span></div>";
   }
 
   return html
@@ -164,9 +164,9 @@ $.fn.product_autocomplete = function(){
 $.fn.objectPicker = function(url){
   $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
     searchDelay          : 600,
-    hintText             : Spree.strings.type_to_search,
-    noResultsText        : Spree.strings.no_results,
-    searchingText        : Spree.strings.searching,
+    hintText             : Spree.translations.type_to_search,
+    noResultsText        : Spree.translations.no_results,
+    searchingText        : Spree.translations.searching,
     prePopulateFromInput : true
   });
 };
@@ -181,12 +181,12 @@ $.fn.userPicker = function(){
 
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
-    dateFormat: "<%= ::I18n.t(:format, :scope => 'spree.date_picker', :default => 'yy/mm/dd') %>",
-    dayNames: <%= ::I18n.t(:day_names, :scope => :date).to_json %>,
-    dayNamesMin: <%= ::I18n.t(:abbr_day_names, :scope => :date).to_json %>,
-    monthNames: <%= (::I18n.t(:month_names, :scope => :date).delete_if(&:blank?)).to_json %>,
-    prevText: '<%= ::I18n.t(:previous) %>',
-    nextText: '<%= ::I18n.t(:next) %>',
+    dateFormat: Spree.translations.date_picker,
+    dayNames: Spree.translations.abbr_day_names,
+    dayNamesMin: Spree.translations.abbr_day_names,
+    monthNames: Spree.translations.month_names, 
+    prevText: Spree.translations.previous,
+    nextText: Spree.translations.next,
     showOn: "button",
     buttonImage: "<%= asset_path 'datepicker/cal.gif' %>",
     buttonImageOnly: true
