@@ -20,7 +20,6 @@ module Spree
     before_save :update_inventory
     before_destroy :ensure_not_shipped, :remove_inventory
 
-    before_save :invalidate_cache_entries
     after_save :update_order
     after_destroy :update_order
 
@@ -102,13 +101,6 @@ module Spree
         unless quantity >= already_shipped
           errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units'))
         end
-      end
-
-      def invalidate_cache_entries
-        if quantity_changed?
-          Rails.cache.delete(order.rate_hash_cache_key)
-        end
-        true
       end
   end
 end
