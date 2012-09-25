@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::Order do
 
   let(:order) { create(:order) }
+  let(:updater) { Spree::OrderUpdater.new(order) }
 
   context "#update_adjustments" do
     let(:originator) do
@@ -28,7 +29,8 @@ describe Spree::Order do
       create_adjustment("Some other credit", -500)
       order.adjustments.each {|a| a.update_attribute_without_callbacks(:eligible, true)}
 
-      order.send(:update_adjustments)
+      updater.update_adjustments
+
       order.adjustments.eligible.promotion.count.should == 1
       order.adjustments.eligible.promotion.first.label.should == 'Promotion C'
     end
@@ -38,7 +40,8 @@ describe Spree::Order do
       create_adjustment("Promotion B", -200)
       create_adjustment("Promotion C", -200)
 
-      order.send(:update_adjustments)
+      updater.update_adjustments
+
       order.adjustments.eligible.promotion.count.should == 1
       order.adjustments.eligible.promotion.first.amount.to_i.should == -200
     end
