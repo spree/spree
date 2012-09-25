@@ -1,5 +1,6 @@
 @import "font-awesome";
 
-.icon-cancel:before {
-  @extend .icon-remove:before;
-}
+.icon-cancel:before, 
+.icon-void:before     { @extend .icon-remove:before }
+
+.icon-capture:before  { @extend .icon-ok:before     }

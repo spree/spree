@@ -154,9 +154,8 @@ dl {
 
   &.pending {
     background-color: $c_yellow1;
-
-    a {
-      color: white;
+    &, a { 
+      color: white
     }
   }
 

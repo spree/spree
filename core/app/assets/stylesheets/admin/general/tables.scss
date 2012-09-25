@@ -97,29 +97,17 @@ table {
         color: white;
       }
     }
-    .icon-trash {
-      &.no-text {
-        
-      }
-
-      &:hover {
-        background-color: $c_red1;
-        color: white;        
-      }
+    .icon-trash:hover, .icon-void:hover {
+      background-color: $c_red1;
+      color: white;
     }    
-    .icon-edit:hover {
+    .icon-edit:hover, .icon-capture:hover {
       background-color: $c_green1;
       color: white;
     }
-    .icon-copy {
-      &.no-text {
-        
-      }
-
-      &:hover {
-        background-color: $c_yellow1;
-        color: white;
-      }
+    .icon-copy:hover {
+      background-color: $c_yellow1;
+      color: white;
     }
   }
   
@@ -175,7 +163,7 @@ table {
       }
 
       &.highlight {
-        &.action-remove td {
+        &.action-remove td, &.action-void td {
           background-color: lighten($c_red1, 55);
           text-decoration: line-through;
 
@@ -183,7 +171,7 @@ table {
             text-decoration: none;
           }
         }
-        &.action-edit td {
+        &.action-edit td, &.action-capture td {
           background-color: lighten($c_green1, 43);
         }
         &.action-clone td {

@@ -14,10 +14,10 @@
         <td><%= payment.created_at.to_s(:date_time24) %></td>
         <td><%= money(payment.amount) %></td>
         <td class="align-center"><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>
-        <td class="align-center"><%= t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></td>
+        <td class="align-center"> <span class="state <%= payment.state %>"><%= t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></span></td>
         <td class="actions">
           <% payment.actions.each do |action| %>
-            <%= button_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :class => "icon-plus button" %>
+            <%= link_to_with_icon "icon-#{action}", t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :no_text => true, :data => {:action => action} %>
           <% end %>
         </td>
       </tr>
