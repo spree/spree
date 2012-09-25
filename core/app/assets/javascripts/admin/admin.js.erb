@@ -110,9 +110,15 @@ handle_date_picker_fields = function(){
     monthNames: Spree.translations.month_names, 
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
-    showOn: "button",
-    buttonImage: "<%= asset_path 'datepicker/cal.gif' %>",
-    buttonImageOnly: true
+    showOn: "focus"
+  });
+
+  // Correctly display range dates
+  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-to" ).datepicker( "option", "minDate", selectedDate );
+  });
+  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-from" ).datepicker( "option", "maxDate", selectedDate );
   });
 }
 

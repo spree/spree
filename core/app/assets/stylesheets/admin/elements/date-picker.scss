@@ -132,6 +132,14 @@
           }
         }
 
+        &.ui-state-disabled {
+          .ui-state-default {
+            border: none;
+            background-image: none;
+            background-color: transparent;
+          }
+        }
+
         &.ui-datepicker-today {
           a {
             background-color: $c_yellow1;
