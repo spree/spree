@@ -112,5 +112,24 @@ module Spree
 
       order.state_changed('shipment')
     end
+
+    it "updates each shipment" do
+      shipment = stub_model(Shipment)
+      shipments = [shipment]
+      order.stub :shipments => shipments
+      shipments.stub :ready => []
+      shipments.stub :pending => []
+      shipments.stub :shipped => []
+
+      shipment.should_receive(:update!).with(order)
+
+      updater.update
+    end
+
+    it "updates totals twice" do
+      updater.should_receive(:update_totals).twice
+
+      updater.update
+    end
   end
 end
