@@ -1,9 +1,30 @@
 // Basics
 //---------------------------------------------------
 * { 
+<<<<<<< HEAD
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
+=======
+<<<<<<< HEAD
+  -webkit-box-sizing: border-box; 
+     -moz-box-sizing: border-box; 
+          box-sizing: border-box; 
+<<<<<<< HEAD
+<<<<<<< HEAD
+  text-rendering: optimizeLegibility; 
+}
+
+body {
+  font-family: $base-font-family;
+  font-size: $body-font-size;
+  color: $color-body-text;
+=======
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+>>>>>>> Various font style fixes
+>>>>>>> Various font style fixes
 }
 
 // Helpers
@@ -14,6 +35,7 @@
   .table-cell {
     display: table-cell;
     vertical-align: middle;
+<<<<<<< HEAD
 <<<<<<< HEAD
     padding: 0 10px;
 
@@ -26,6 +48,8 @@
 =======
     padding: 0 5px;
 >>>>>>> More admin cruft cleaning
+=======
+>>>>>>> Various font style fixes
   }
 }
 
