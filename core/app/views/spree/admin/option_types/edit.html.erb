@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:editing_option_type) %>
+  <%= t(:editing_option_type) %> <span class="green">"<%= @option_type.name %>"</span>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -9,6 +9,9 @@
     <span id="new_add_option_value" data-hook>
       <%= link_to_add_fields t(:add_option_value), "tbody#option_values", :class => 'button icon-plus' %>
     </span>      
+  </li>
+  <li>
+    <%= button_link_to t(:back_to_option_types_list), spree.admin_option_types_path, :icon => 'icon-arrow-left' %>
   </li>
 <% end %>
 
