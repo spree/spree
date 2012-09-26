@@ -8,7 +8,7 @@ endprologue.
 
 h3. Summary
 
-There were two major addressed within this release of Spree: custom authentication and better checkout customization.
+There were two major topics addressed within this release of Spree: custom authentication and better checkout customization.
 
 The first was the ability to use Spree in conjunction with an application that already provided its own way to authenticate users. Due to how Spree was architected in the past, this was not as easy as it could have been. In this release of Spree, the auth component of Spree has been removed completely and placed into a separate extension called "spree_auth_devise":https://github.com/spree/spree_auth_devise. If you wish to continue using this component of Spree, you will need to specify this extension as a dependency in your Gemfile. See "Issue #1512":https://github.com/spree/spree/pull/1512 for more detail about the customization.
 
