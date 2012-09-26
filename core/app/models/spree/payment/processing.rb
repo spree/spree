@@ -104,19 +104,22 @@ module Spree
       credit!(amount)
     end
 
-    # This needs to be public so that gateway subclasses can use
-    # this to report errors
-    def gateway_error(error)
-      if error.is_a? ActiveMerchant::Billing::Response
-        text = error.params['message'] || error.params['response_reason_text'] || error.message
-      elsif error.is_a? ActiveMerchant::ConnectionError
-        text = I18n.t(:unable_to_connect_to_gateway)
-      else
-        text = error.to_s
-      end
-      logger.error(I18n.t(:gateway_error))
-      logger.error("  #{error.to_yaml}")
-      raise Core::GatewayError.new(text)
+    def gateway_options
+      options = { :email    => order.email,
+                  :customer => order.email,
+                  :ip       => '192.168.1.100', # TODO: Use an actual IP
+                  :order_id => order.number }
+
+      options.merge!({ :shipping => order.ship_total * 100,
+                       :tax      => order.tax_total * 100,
+                       :subtotal => order.item_total * 100 })
+      
+      options.merge!({ :currency => payment_method.preferences[:currency_code] }) if payment_method && payment_method.preferences[:currency_code]
+
+      options.merge({ :billing_address  => order.bill_address.try(:active_merchant_hash),
+                      :shipping_address => order.ship_address.try(:active_merchant_hash) })
+
+      options.merge!(:discount => promo_total) if respond_to?(:promo_total)
     end
 
     private
@@ -149,22 +152,6 @@ module Spree
 
     def record_response(response)
       log_entries.create({:details => response.to_yaml}, :without_protection => true)
-    end
-
-    def gateway_options
-      options = { :email    => order.email,
-                  :customer => order.email,
-                  :ip       => '192.168.1.100', # TODO: Use real IP address
-                  :order_id => order.number }
-
-      options.merge!({ :shipping => order.ship_total * 100,
-                       :tax      => order.tax_total * 100,
-                       :subtotal => order.item_total * 100 })
-      
-      options.merge!({ :currency => payment_method.preferences[:currency_code] }) if payment_method && payment_method.preferences[:currency_code]
-
-      options.merge({ :billing_address  => order.bill_address.try(:active_merchant_hash),
-                      :shipping_address => order.ship_address.try(:active_merchant_hash) })
     end
 
     def protect_from_connection_error
