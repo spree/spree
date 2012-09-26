@@ -897,6 +897,7 @@ en:
   select: Select
   select_from_prototype: "Select From Prototype"
   select_preferred_shipping_option: "Select preferred shipping option"
+  sellable: "Sellable Product"
   send_copy_of_all_mails_to: Send Copy of All Mails To
   send_copy_of_orders_mails_to: Send Copy of Order Mails To
   send_mails_as: Send Mails As

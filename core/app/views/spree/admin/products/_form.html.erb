@@ -71,6 +71,11 @@
         </ul>
       <% end %>
 
+      <%= f.field_container :sellable do %>
+        <%= f.label :sellable, t(:sellable) %><br />
+        <%= f.check_box :sellable %> 
+      <% end %>
+
       <%= f.field_container :shipping_categories do %>
         <%= f.label :shipping_category_id, t(:shipping_categories) %><br />
         <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => true }, { 'style' => 'width:200px' }) %>
