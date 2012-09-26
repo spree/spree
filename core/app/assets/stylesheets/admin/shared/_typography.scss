@@ -8,6 +8,14 @@
 >>>>>>> SCSS cleanup
 // Base
 //--------------------------------------------------------------
+body {
+  font-family: $base-font-family;
+  font-size: $body-font-size;
+  font-weight: 400;
+  color: $color-body-text;
+  text-rendering: optimizeLegibility;
+}
+
 hr {
   border-top: 1px solid $color-border;
   border-bottom: 1px solid white;

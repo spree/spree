@@ -12,8 +12,8 @@ table {
 
   th, td {
     padding: 15px 10px;
-    // border-top: 1px solid $color-border;
-    border-right: 1px solid $color-border;
+    border: 1px solid transparent;
+    border-right: 1px solid $color-border;    
     vertical-align: middle;
     text-overflow: ellipsis;
 
@@ -25,26 +25,64 @@ table {
       border-left: 1px solid $color-border;
     }
 
-    &.sort-active {
-      background-color: lighten($c_blue1, 30);
-      border-bottom: 1px solid lighten($c_blue1, 40);
-    }
-
     &.actions {
       background-color: transparent;
       border: none !important;
+      text-align: center;
+
+      span.text {
+        font-size: $body-font-size;
+      }
+
+      [class*='icon-'].no-text {
+        font-size: 120%;
+        background-color: lighten($c_blue1, 33);
+        border: 1px solid $color-border;
+        border-radius: 15px;
+        width: 29px;
+        height: 29px;
+        display: inline-block;
+        padding-top: 2px;
+
+        &:before {
+          text-align: center !important;
+          width: 27px;
+          display: inline-block;
+        }
+
+        &:hover {
+          border-color: transparent;
+        }
+      }
+      .icon-envelope-alt {
+        color: $color-links;
+
+        &:hover {
+          background-color: $c_blue1;
+          color: white;
+        }
+      }
+      .icon-trash:hover, .icon-void:hover {
+        background-color: $c_red1;
+        color: white;
+      }    
+      .icon-edit:hover, .icon-capture:hover {
+        background-color: $c_green1;
+        color: white;
+      }
+      .icon-copy:hover {
+        background-color: $c_yellow1;
+        color: white;
+      }
     }
 
-    input[type="number"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
     }
 
     &.no-border {
       border-right: none;
-    }
-
-    input[type="text"] {
-      width: 100%;
     }
 
     .handle {
@@ -62,60 +100,6 @@ table {
     padding: 10px;
     border-top: 1px solid $color-border;
     border-bottom: 1px solid $color-border;
-  }
-
-  td.actions {
-    text-align: center;
-    border: none;
-
-    span.text {
-      font-size: $body-font-size;
-    }
-
-    [class*='icon-'].no-text {
-      font-size: 120%;
-      background-color: lighten($c_blue1, 33);
-      border: 1px solid $color-border;
-      border-radius: 15px;
-      width: 29px;
-      height: 29px;
-      display: inline-block;
-      padding-top: 2px;
-
-      &:before {
-        text-align: center !important;
-        width: 27px;
-        display: inline-block;
-      }
-
-      &:hover {
-        border-color: transparent;
-      }
-    }
-    .icon-envelope-alt {
-      color: $color-links;
-
-      &:hover {
-        background-color: $c_blue1;
-        color: white;
-      }
-    }
-    .icon-trash:hover, .icon-void:hover {
-      background-color: $c_red1;
-      color: white;
-    }    
-    .icon-edit:hover, .icon-capture:hover {
-      background-color: $c_green1;
-      color: white;
-    }
-    .icon-copy:hover {
-      background-color: $c_yellow1;
-      color: white;
-    }
-  }
-  
-  td.sort-active {
-    background-color: lighten($c_blue1, 33) !important;
   }
 
   thead {

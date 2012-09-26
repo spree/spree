@@ -1,11 +1,21 @@
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+
 <%= csrf_meta_tags %>
-<title><%= "Spree #{t('administration')}: " %>
-<%= t(controller.controller_name, :default => controller.controller_name.titleize) %></title>
+
+<title>
+  <%= "Spree #{t('administration')}: " %>
+  <%= t(controller.controller_name, :default => controller.controller_name.titleize) %>
+</title>
+
+<!-- Get "Open Sans" font from Google -->
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600&subset=latin,cyrillic,greek,vietnamese' rel='stylesheet' type='text/css'>
 
 <%= stylesheet_link_tag 'admin/all' %>
+
 <%= javascript_include_tag 'admin/all' %>
+
 <%= render "spree/admin/shared/translations" %>
+
 <%= javascript_tag do %>
   Spree.routes = <%== {
     :product_search       => spree.admin_products_path(:format => 'json'),

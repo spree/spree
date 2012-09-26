@@ -16,6 +16,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockqu
 
 >>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 * { 
+<<<<<<< HEAD
   -webkit-box-sizing: border-box; 
      -moz-box-sizing: border-box; 
           box-sizing: border-box; 
@@ -28,6 +29,11 @@ body {
   font-family: $base-font-family;
   font-size: $body-font-size;
   color: $color-body-text;
+=======
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+>>>>>>> Various font style fixes
 }
 
 // Helpers
@@ -38,7 +44,6 @@ body {
   .table-cell {
     display: table-cell;
     vertical-align: middle;
-    padding: 0 5px;
   }
 }
 
@@ -224,9 +229,6 @@ body {
     }
 
     &.selected a, a:hover {
-      // background-color: white;
-      // color: $c_blue1;
-
       &:after {
         content: '';
         position: absolute;
@@ -254,7 +256,8 @@ body {
     color: $c_green1;
     text-transform: uppercase;
     text-align: center; 
-    font-size: 14px;    
+    font-size: 14px;
+    font-weight: bold;
     
     > span {
       display: inline;
@@ -263,11 +266,6 @@ body {
       position: relative; 
       top: -8px;
     }
-  }
-
-  .additional-info {
-    // border-top: 1px solid $color-border;
-    // border-bottom: 1px solid $color-border;
   }
 
   .sidebar-menu {
@@ -279,11 +277,11 @@ body {
           padding: 10px 0;
           display: block;
           position: relative;
-          text-transform: uppercase;
-          font-weight: bold;
-          font-size: 85%;
           text-align: left;          
           border: 1px solid transparent;
+          text-transform: uppercase;
+          font-weight: bold;
+          font-size: 90%;
         }
 
         &.active a {

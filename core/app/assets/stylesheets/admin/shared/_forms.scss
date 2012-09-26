@@ -80,6 +80,7 @@ input[type="submit"],
 input[type="button"], 
 button, .button {
 <<<<<<< HEAD
+<<<<<<< HEAD
   padding: 5px 10px;
 <<<<<<< HEAD
   border: 1px solid $color-border;
@@ -102,6 +103,12 @@ button, .button {
 =======
   @include border-radius(3px);
 >>>>>>> SCSS cleanup
+=======
+  @include border-radius(3px);
+  display: inline-block;
+  padding: 8px 15px;
+  border: none;  
+>>>>>>> Various font style fixes
   background-color: $c_blue1;
   color: white;
 >>>>>>> More amin styling

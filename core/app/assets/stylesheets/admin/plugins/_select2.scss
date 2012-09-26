@@ -8,7 +8,7 @@
     background-color: lighten($c_blue1, 10);
     border: none !important;
     box-shadow: none !important;
-    border-radius: 3px;
+    @include border-radius(3px);
     color: white !important;    
     font-size: 90%;
     height: 33px;    
@@ -132,19 +132,19 @@
   }
   .select2-choices {
     @extend input[type="text"];
-    padding: 4px 3px 1px 1px;
+    padding: 6px 3px 3px 3px;
     box-shadow: none;
     background-image: none;
 
     .select2-search-choice {
+      @include border-radius(3px);
       margin: 0 0 3px 3px;
       background-image: none;
       background-color: lighten($c_blue1, 10);
       border: none;
-      box-shadow: none;
-      border-radius: 3px;
+      box-shadow: none;      
       color: white !important;    
-      font-size: 90%;
+      font-size: 85%;            
 
       &:hover {
         background-color: $c_green1;
