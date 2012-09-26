@@ -28,14 +28,14 @@
     var initial = [
       { "attr" :
       { "id" : "<%= @taxonomy.root.id %>", "rel" : "root" },
-      "data" : "<%= @taxonomy.root.name %>",
+      "data" : "<%= escape_javascript(raw(@taxonomy.root.name)) %>",
       "state" : "open",
       "children" : [
         <% @taxonomy.root.children.each_with_index do |taxon,i| %>
           {
             "attr" :
             { "id" : "<%= taxon.id %>"},
-            "data" : "<%= taxon.name %>"
+            "data" : "<%= escape_javascript(raw(taxon.name)) %>"
             <% unless taxon.children.empty? %>
               ,"state" : "closed"
             <% end %>
