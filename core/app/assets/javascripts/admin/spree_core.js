@@ -8,6 +8,7 @@
 //= require jquery.powertip
 //= require spin
 //= require trunk8
+//= require flexmenu
 //= require equalize
 //= require responsive-tables
 //= require jquery.foundation.tooltips

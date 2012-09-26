@@ -2,6 +2,10 @@
   <%= t(:new) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_orders_list), spree.admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
+
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 
 <%= csrf_meta_tags %>
@@ -12,11 +16,17 @@
 
 <%= render :partial => 'add_product' %>
 
-<div data-hook="admin_order_new_form">
-  <div id="order-form-wrapper">
-    <%= render :partial => 'form' %>
+<% unless @order.line_items.any? %>
+  <div class="no-objects-found">
+    <%= t(:add_some_products_to_order_first) %>
   </div>
-</div>
+<% else %>
+  <div data-hook="admin_order_new_form">
+    <div id="order-form-wrapper">
+      <%= render :partial => 'form' %>
+    </div>
+  </div>
+<% end %>
 
 <% content_for :head do %>
   <%= javascript_tag 'var expand_variants = true;' %>

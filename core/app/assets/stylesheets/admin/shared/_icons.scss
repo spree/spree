@@ -1,0 +1,15 @@
+// Some fixes for fontwesome stylesheets
+[class^="icon-"], [class*=" icon-"] {
+  &.button, &.icon_link {
+    width: auto;
+
+    &:before {
+      padding-right: 5px;
+    }
+  }
+}
+
+.icon-cancel:before, 
+.icon-void:before     { @extend .icon-remove:before }
+
+.icon-capture:before  { @extend .icon-ok:before     }

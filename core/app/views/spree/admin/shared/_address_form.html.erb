@@ -1,8 +1,11 @@
 <% if use_billing %>
-  <span data-hook="use_billing">  
-    <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %> 
-    <%= label_tag 'order[use_billing]', t(:use_billing_address) %>
-  </span>
+  <div class="field" style="position: absolute;margin-top: -15px;right: 0;">
+    <span data-hook="use_billing">  
+      <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %> 
+      <%= label_tag 'order[use_billing]', t(:use_billing_address) %>
+    </span>
+  </div>
+  
 <% end %>
   
 <div id="<%= name == t(:shipping_address) ? 'shipping' : 'billing' %>" style="display: <%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? 'none' : '' %>" data-hook="address_fields">

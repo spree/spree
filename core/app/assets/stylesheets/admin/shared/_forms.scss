@@ -1,6 +1,3 @@
-@import "../variables";
-@import "font-awesome";
-
 input[type="text"],
 input[type="password"],
 input[type="email"],
@@ -13,6 +10,7 @@ input[type="url"],
 input[type="number"],
 input[type="tel"],
 textarea, fieldset {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -37,6 +35,11 @@ textarea, fieldset {
   border-radius: 3px;
   border: 1px solid $color-border;  
 >>>>>>> More admin styling...
+=======
+  @include border-radius(3px);
+  padding: 7px 10px;  
+  border: 1px solid $color-border;
+>>>>>>> SCSS cleanup
   color: $color-body-text;
   font-size: 90%;
 
@@ -93,8 +96,12 @@ button, .button {
   display: inline-block;
   padding: 8px 15px;
   border: none;
+<<<<<<< HEAD
   border-radius: 3px;
 >>>>>>> More admin styling...
+=======
+  @include border-radius(3px);
+>>>>>>> SCSS cleanup
   background-color: $c_blue1;
   color: white;
 >>>>>>> More amin styling
@@ -124,6 +131,25 @@ span.info {
   margin: 5px 0;
 }
 
+.field {
+  margin-bottom: 10px;
+
+  ul {
+    border-top: 1px solid $color-border;
+    list-style: none;
+    padding-top: 5px;
+
+    li {
+      display: inline-block;
+
+      label {
+        font-weight: normal;
+        text-transform: none;
+      }
+    }
+  }
+}
+
 fieldset {
   box-shadow: none;
   box-sizing: border-box;
@@ -149,8 +175,8 @@ fieldset {
   }
 
   legend {
-    background-color: white;
-    border-radius: 3px;
+    @include border-radius(3px);
+    background-color: white;    
     color: $c_green1;    
     font-size: 14px;
     font-weight: bold;
@@ -221,6 +247,7 @@ fieldset {
 }
 .form-buttons {
   text-align: center;
+<<<<<<< HEAD
 }
 
 // Some fixes for fontwesome stylesheets
@@ -259,4 +286,6 @@ fieldset {
       }
     }
   }
+=======
+>>>>>>> SCSS cleanup
 }

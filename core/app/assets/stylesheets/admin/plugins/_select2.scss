@@ -1,7 +1,3 @@
-@import '../variables';
-@import 'font-awesome';
-@import '../general/forms';
-
 .select2-container {
   &:hover .select2-choice, &.select2-container-active .select2-choice {
     background-color: $c_green1 !important;
