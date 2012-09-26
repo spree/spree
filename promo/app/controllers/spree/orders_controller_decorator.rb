@@ -21,7 +21,8 @@ Spree::OrdersController.class_eval do
 
   def apply_coupon_code
     return if @order.coupon_code.blank?
-    if promo = Spree::Promotion.where(:code => @order.coupon_code).first
+    code = Spree::Promotion.arel_table[:code]
+    if promo = Spree::Promotion.where(code.matches("%#{@order.coupon_code}%")).first
       if promo.order_activatable?(@order)
         fire_event('spree.checkout.coupon_code_added', :coupon_code => @order.coupon_code)
         true

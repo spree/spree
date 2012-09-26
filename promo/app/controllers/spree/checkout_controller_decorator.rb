@@ -8,9 +8,8 @@ Spree::CheckoutController.class_eval do
 
       if @order.coupon_code.present?
         event_name = "spree.checkout.coupon_code_added"
-        if Spree::Promotion.exists?(:code       => @order.coupon_code,
-                                    :event_name => event_name)
-
+        code = Spree::Promotion.arel_table[:code]
+        if promo = Spree::Promotion.where(code.matches("%#{@order.coupon_code}%"), :event_name => event_name).first
           fire_event(event_name, :coupon_code => @order.coupon_code)
           # If it doesn't exist, raise an error!
           # Giving them another chance to enter a valid coupon code
