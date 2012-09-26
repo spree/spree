@@ -138,10 +138,14 @@ table {
       }
 
       &:hover td {
+<<<<<<< HEAD
         background-color: lighten($c_blue1, 33);
 <<<<<<< HEAD
 >>>>>>> More work tables styling
 =======
+=======
+        background-color: lighten($c_blue1, 30);
+>>>>>>> Order filter style fix
 
         img {
           border: 1px solid $color-border;
