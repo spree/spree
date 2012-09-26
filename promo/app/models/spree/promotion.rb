@@ -36,6 +36,10 @@ module Spree
       where(:advertise => true)
     end
 
+    def self.with_coupon_code(coupon_code)
+      search(:code_cont => coupon_code).result
+    end
+
     # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
     # is provided
     def save(*)
