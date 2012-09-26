@@ -59,7 +59,7 @@ var handle_delete = function(e, data){
   last_rollback = data.rlbk;
   var node = data.rslt.obj;
 
-  jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
+  jConfirm(Spree.translations.are_you_sure_delete, Spree.translations.confirm_delete, function(r) {
     if(r){
       $.ajax({
         type: "POST",
@@ -103,7 +103,7 @@ $(document).ready(function(){
       },
       "strings" : {
         "new_node" : new_taxon,
-        "loading" : loading + "..."
+        "loading" : Spree.translations.loading + "..."
       },
       "crrm" : {
         "move" : {
@@ -131,48 +131,48 @@ $(document).ready(function(){
             if(type_of_node == "root") {
               menu = {
                 "create" : {
-                  "label"            : "Create",
+                  "label"            : Spree.translations.add,
                   "action"           : function (obj) { this.create(obj); }
                 },
                  "paste" : {
                    "separator_before" : true,
-                   "label"            : "Paste",
+                   "label"            : Spree.translations.paste,
                    "action"           : function (obj) { is_cut = false; this.paste(obj); },
                    "_disabled"        : is_cut == false
                 },
                 "edit" : {
                   "separator_before" : true,
-                  "label"            : "Edit",
+                  "label"            : Spree.translations.edit,
                   "action"           : function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
                 }
               }
             } else {
               menu =  {
                 "create" : {
-                  "label"            : "Create",
+                  "label"            : Spree.translations.add,
                   "action"           : function (obj) { this.create(obj); }
                 },
                 "rename" : {
-                  "label"            : "Rename",
+                  "label"            : Spree.translations.rename,
                   "action"           : function (obj) { this.rename(obj); }
                 },
                 "remove" : {
-                  "label"            : "Remove",
+                  "label"            : Spree.translations.remove,
                   "action"           : function (obj) { this.remove(obj); }
                 },
                 "cut" : {
                   "separator_before" : true,
-                  "label"            : "Cut",
+                  "label"            : Spree.translations.cut,
                   "action"           : function (obj) { is_cut = true; this.cut(obj); }
                 },
                 "paste" : {
-                  "label"            : "Paste",
+                  "label"            : Spree.translations.paste,
                   "action"           : function (obj) { is_cut = false; this.paste(obj); },
                   "_disabled"        : is_cut == false
                 },
                 "edit" : {
                   "separator_before" : true,
-                  "label"            : "Edit",
+                  "label"            : Spree.translations.edit,
                   "action"           : function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
                 }
                     }
