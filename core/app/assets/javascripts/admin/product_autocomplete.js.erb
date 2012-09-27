@@ -36,20 +36,22 @@ format_product_autocomplete = function(item){
   }
   else {
     // variant
-    var variant = item.data['variant'];
+    var variant = item.data['variant']['variant'];
     var name = variant['admin_label']
 
-    if(variant['images'].length!=0){
-      html = image_html(variant);
-    }else{
-      if(product['images'].length!=0){
-        html = image_html(product);
+    if (variant['images'].length != 0){
+      html = output_image(variant);
+    }
+    else {
+      if (product['images'].length != 0){
+        html = output_image(product);
       }
     }
 
-    html += "<div><h4>" + name + "</h4>";
-    html += "<span><strong>" + Spree.translations.sku + ":</strong>" + variant['sku'] + "</span>";
-    html += "<span><strong>" + Spree.translations.on_hand + ":</strong>" + variant['count_on_hand'] + "</span></div>";
+    html += "<div>";
+    html += output_name(name);
+    html += output_sku(variant['sku']);
+    html += output_count_on_hand(variant['count_on_hand']);
   }
 
   return html

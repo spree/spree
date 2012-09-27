@@ -19,7 +19,6 @@ module Spree
             if params[:json_format] == 'basic'
               render :json => collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
             else
-              @collection = @collection.includes(product_includes)
               render
             end
           end
