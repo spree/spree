@@ -13,7 +13,7 @@ body {
 
 /* Line style */
 hr {
-  border-color: lighten($body_text_color, 60);
+  border-color: $border_color;
 }
 
 /* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
@@ -92,7 +92,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   input[type="password"], input[type="search"], input[type="tel"],
   input[type="text"], input[type="time"], input[type="url"], 
   input[type="week"] {
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 2px 5px;    
     font-family: $ff_base;
     font-size: $input_box_font_size;
@@ -112,7 +112,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   select {
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     font-family: $ff_base;
     background-image: url('select_arrow.gif');
     background-repeat: no-repeat;
@@ -470,7 +470,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       }
 
       .product-image {
-        border: 1px solid lighten($body_text_color, 60);
+        border: $default_border;
         padding: 5px;        
         min-height: 110px;
         background-color: $product_background_color;
@@ -528,7 +528,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #product-images {
     #main-image {
       text-align: center;
-      border: 1px solid lighten($body_text_color, 60);
+      border: $default_border;
       background-color: $product_background_color;
 
       img {
@@ -561,7 +561,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
     li {
       margin-right: 6px;
-      border: 1px solid lighten($body_text_color, 60);
+      border: $default_border;
 
       img {
         padding: 5px;
@@ -574,7 +574,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #product-properties {
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
     width: 100%;
   }
@@ -644,7 +644,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #checkout-summary {
     text-align: center;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     margin-top: 23px;
     margin-left: 0;
 
@@ -679,7 +679,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #billing, #shipping, #shipping_method, 
   #payment, #order_details, #order_summary {
     margin-top: 10px;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
 
     legend {
@@ -843,7 +843,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #user-info {
     margin-bottom: 15px;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
   }
 
