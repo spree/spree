@@ -20,13 +20,13 @@ h3. Major changes (backwards incompatibility)
 
 h4. spree_auth removal
 
-Authentication is disabled by default within Spree as of this release, with the application supposed to be providing its own authentication. If you have an application that depended on this functionality within Spree existing, please add "spree_auth_devise":https://github.com/spree/spree_auth_devise to your Gemfile and then put this line inside +config/initializers/spree.rb+ as well:
+Authentication is disabled by default within Spree as of this release, with the application supposed to be providing its own authentication. If you are upgrading an existing Spree installation or just want it to work, you can achieve the behaviour of a 1.1 installation by adding "spree_auth_devise" to your Gemfile.
 
 <ruby>
-Spree.user_class = "Spree::User"
+  gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
 </ruby>
 
-For more information, please see the "Authentication guide":http://guides.spreecommerce.com/authentication.html.
+For more information on how to customize authentication, please see the "Authentication guide":http://guides.spreecommerce.com/authentication.html.
 
 h4. State machine customizations
 
@@ -92,6 +92,8 @@ h4. Using the Money gem to display currencies
 In earlier versions of Spree, we used +number_to_currency+ to display prices for products. This caused a problem when somebody selected a different I18n locale, as the prices would be displayed in their currency: 20 Japanese Yen, rather than 20 American Dollars, for instance.
 
 To fix this problem, we're now parsing the prices through the Money gem which will display prices consistently across all I18n locales. To now change the currency for your site, go to Admin, then Configuration, then General Settings. Changing the currency will only change the currency symbol across all prices of your store.
+
+Note: After the 1.2.0 release, more options to format the currency output have been introduced. Specifically the position of the currency symbol which is fixed to :before in 1.2.0 can be adjusted. To achieve this in the 1.2.0, you may wish to override the Spree::Money.to_s function.
 
 h3. Tiny changes / bugfixes
 
