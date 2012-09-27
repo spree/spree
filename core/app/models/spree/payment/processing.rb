@@ -155,22 +155,6 @@ module Spree
       log_entries.create({:details => response.to_yaml}, :without_protection => true)
     end
 
-    def gateway_options
-      options = { :email    => order.email,
-                  :customer => order.email,
-                  :ip       => '192.168.1.100', # TODO: Use an actual IP
-                  :order_id => order.number }
-
-      options.merge!({ :shipping => order.ship_total * 100,
-                       :tax      => order.tax_total * 100,
-                       :subtotal => order.item_total * 100 })
-      
-      options.merge!({ :currency => payment_method.preferences[:currency_code] }) if payment_method && payment_method.preferences[:currency_code]
-
-      options.merge({ :billing_address  => order.bill_address.try(:active_merchant_hash),
-                      :shipping_address => order.ship_address.try(:active_merchant_hash) })
-    end
-
     def protect_from_connection_error
       begin
         yield
