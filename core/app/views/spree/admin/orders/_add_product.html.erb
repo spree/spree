@@ -8,16 +8,16 @@
       <%= hidden_field_tag :add_variant_id %>
     </div>
     
-    <div data-hook="add_quantity" class="field two columns alpha">
+    <div data-hook="add_quantity" class="field two columns">
       <%= label_tag :add_quantity, t(:qty) %>
       <%= number_field_tag :add_quantity,  1, :min => 0 %>
     </div>
     
-    <div data-hook="add_button"  class="actions two columns omega">
+    <div data-hook="add_button" class="actions two columns omega">
       <%= link_to_with_icon 'icon-plus', t(:add), admin_order_line_items_url(@order), 
                   :method => :post,
                   :id => 'add_line_item_to_order',
-                  :class => 'button',
+                  :class => 'button fullwidth',
                   'data-update' => 'order-form-wrapper' %>
     </div>
 

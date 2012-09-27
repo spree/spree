@@ -22,7 +22,7 @@
           <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
         </tr>        
       </thead>
-      <tbody data-hook="admin_order_form_line_items">
+      <tbody data-hook="admin_order_form_line_items" class="with-border">
         <%= f.fields_for :line_items do |li_form| %>
           <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
         <% end %>
@@ -54,7 +54,6 @@
 
     <div class="form-buttons actions" data-hook="admin_order_form_buttons">
       <%= button t(:update), 'icon-refresh' %>
-      <%= t(:or) %> <%= link_to_with_icon 'button icon-arrow-left', t(:back), admin_orders_url %>
     </div>
 
   <% end %>

@@ -1,7 +1,9 @@
 #table-filter {
 
   .field {
-    input[type="text"] {
+    input[type="text"], input[type="phone"],
+    input[type="email"], input[type="number"],
+    input[type="url"] {
       width: 100%;
     }
 

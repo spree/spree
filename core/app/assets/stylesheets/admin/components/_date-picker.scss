@@ -3,13 +3,13 @@
     padding: 0 6px 0 5px;
   }
   input.datepicker {
-    width: 85px !important;
+    width: 96px !important;
   }
 }
 
 #ui-datepicker-div {
   border-color: darken($c_blue1, 5);
-  border-radius: 3px;
+  @include border-radius(3px);
   padding: 0;
   margin-top: 10px;
 
@@ -42,7 +42,7 @@
       &:hover {
         border: none;
         background-image: none;
-        background-color: $c_green1;
+        background-color: $c_blue1;
         cursor: pointer;
       }
 
@@ -50,9 +50,13 @@
         background-image: none;
         text-indent: 0;
         color: white;
-        width: 11px;
+        width: 10px;
         margin-left: -5px;
         @extend [class^="icon-"]:before;
+
+        &:hover {
+          color: lighten($c_green1, 20);
+        }
       }
     }
     .ui-datepicker-prev {
@@ -63,7 +67,7 @@
       }
     }
     .ui-datepicker-next {
-      right: 1;
+      right: 0;
 
       .ui-icon {
         @extend .icon-arrow-right;

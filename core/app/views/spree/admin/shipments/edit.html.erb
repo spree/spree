@@ -4,13 +4,17 @@
       <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
     </li>
   <% end %>  
-  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to t(:back_to_orders_list), spree.admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
+<% content_for :page_title do %>
+  / <%= t(:shipment) %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)
+<% end %>
+
 <div data-hook="admin_shipment_edit_header">
-  <h2><%= t(:shipment) %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)</h2>
+  
   <% if @shipment.cost %>
     <h3><%= t(:charges) %> <%= money @shipment.cost %></h3>
   <% end %>

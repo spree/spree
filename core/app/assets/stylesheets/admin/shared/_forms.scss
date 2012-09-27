@@ -126,6 +126,11 @@ button, .button {
   &:active {
     box-shadow: 0 0 8px 0 darken($c_green1, 5) inset;
   }
+
+  &.fullwidth {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 span.info {
