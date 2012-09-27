@@ -30,7 +30,7 @@ describe "Cart" do
   it "does not error out with a 404 when GET'ing to /orders/populate" do
     visit '/orders/populate'
     within(".error") do
-      page.should have_content(I18n.t(:populate_get))
+      page.should have_content(I18n.t(:populate_get_error))
     end
   end
 end
