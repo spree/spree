@@ -109,7 +109,15 @@
     <% end %>
   </div>
 
-  <div data-hook="admin_product_form_additional_fields"></div>
+  <div data-hook="admin_product_form_additional_fields">
+    <h2><%= t(:restrictions_label) %></h2>
+    <div data-hook="admin_product_restrictions">
+      <%= f.field_container :restrictions do %>
+      <%= f.label :role_ids, t(:restrictions_description) %><br />
+        <%= f.select :role_ids, roles_for(@product), {}, :class => "select2", :multiple => true %>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <script>

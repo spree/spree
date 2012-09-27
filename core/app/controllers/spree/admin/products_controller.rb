@@ -71,6 +71,7 @@ module Spree
           @option_types = OptionType.order(:name)
           @tax_categories = TaxCategory.order(:name)
           @shipping_categories = ShippingCategory.order(:name)
+          @roles = Role.order(:name)
         end
 
         def collection
