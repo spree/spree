@@ -699,6 +699,7 @@ en:
   please_create_user: "Please create a user account"
   please_define_payment_methods: "Please define some payment methods first."
   powered_by: "Powered by"
+  populate_get_error: "Something went wrong. Please try adding the item again."
   presentation: Presentation
   preview: Preview
   previous: Previous

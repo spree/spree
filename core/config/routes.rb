@@ -15,6 +15,13 @@ Spree::Core::Engine.routes.draw do
   get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
   get '/checkout', :to => 'checkout#edit' , :as => :checkout
 
+  populate_redirect = redirect do |params, request|
+    request.flash[:error] = I18n.t(:populate_get_error)
+    request.referer || '/cart'
+  end
+
+  get '/orders/populate', :via => :get, :to => populate_redirect
+
   resources :orders do
     post :populate, :on => :collection
 

@@ -25,4 +25,12 @@ describe "Cart" do
     page.find(:css, '.delete img').click
     page.should have_selector('button#update-button[disabled]')
   end
+
+  # Regression test for #2006
+  it "does not error out with a 404 when GET'ing to /orders/populate" do
+    visit '/orders/populate'
+    within(".error") do
+      page.should have_content(I18n.t(:populate_get))
+    end
+  end
 end
