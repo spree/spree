@@ -22,7 +22,7 @@ format_product_autocomplete = function(item){
   }else{
     // variant
     var variant = item.data['variant'];
-    var name = item.data.product['name'];
+    var name = variant['admin_label']
 
     if(variant['images'].length!=0){
       html = image_html(variant);
@@ -31,10 +31,6 @@ format_product_autocomplete = function(item){
         html = image_html(product);
       }
     }
-
-    name += " - " + $.map(variant['option_values'], function(option_value){
-      return option_value["option_type"]["presentation"] + ": " + option_value['presentation'];
-    }).join(", ")
 
     html += "<div><h4>" + name + "</h4>";
     html += "<span><strong>" + Spree.translations.sku + ":</strong>" + variant['sku'] + "</span>";
@@ -53,10 +49,7 @@ prep_product_autocomplete_data = function(data){
       //variants
       return $.map(product['variants'], function(variant){
 
-        var name = product['name'];
-        name += " - " + $.map(variant['option_values'], function(option_value){
-          return option_value["option_type"]["presentation"] + ": " + option_value['presentation'];
-        }).join(", ");
+        var name = variant['admin_label']
 
         return {
             data: {product: product, variant: variant},
