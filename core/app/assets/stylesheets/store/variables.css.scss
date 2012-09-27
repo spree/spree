@@ -55,4 +55,6 @@ $ff_base:       'Ubuntu', sans-serif !default;
       $button_font_size:                      12px !default;
       $input_box_font_size:                   13px !default;
       $base_font_size:                        12px !default;
+      $border_color:                          lighten($body_text_color, 60);
+      $default_border:                        1px solid $border_color;
       $button_border_color:                   rgba(0, 138, 189, .75) !default;
