@@ -15,7 +15,13 @@ module Spree
       def index
         respond_with(@collection) do |format|
           format.html
-          format.json { render :json => json_data }
+          format.json do
+            if params[:json_format] == 'basic'
+              render :json => collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
+            else
+              render
+            end
+          end
         end
       end
 
@@ -51,19 +57,6 @@ module Spree
 
         def location_after_save
           edit_admin_product_url(@product)
-        end
-
-        # Allow different formats of json data to suit different ajax calls
-        def json_data
-          json_format = params[:json_format] or 'default'
-          case json_format
-          when 'basic'
-            collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
-          else
-            collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type},
-                                                          :images => {:only => [:id], :methods => :mini_url}}, :methods => :admin_label},
-                                                          :images => {:only => [:id], :methods => :mini_url}, :master => {}})
-          end
         end
 
         def load_data
