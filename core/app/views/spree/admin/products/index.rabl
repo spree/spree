@@ -1,6 +1,6 @@
 object @false
 child(@collection => :products) do
-  attributes :sku, :count_on_hand, :name
+  attributes :sku, :count_on_hand, :name, :id
   child(:variants => :variants) do
     attributes :sku, :admin_label, :count_on_hand
 
