@@ -863,6 +863,7 @@ en:
     successfully_removed: "Successfully removed!"
     successfully_updated: "Successfully updated!"
   response_code: "Response Code"
+  restrictions_label: "Restrict visibility to these roles"
   resume: "resume"
   resumed: Resumed
   return: return

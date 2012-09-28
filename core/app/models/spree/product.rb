@@ -25,6 +25,20 @@ module Spree
     has_many :properties, :through => :product_properties
 
     has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
+    has_and_belongs_to_many :roles, :join_table => 'spree_restrictions'
+    
+    scope :by_roles, lambda{ |user_roles| 
+      if(user_roles.include?(Role.find_by_name('admin')))
+        where('1=1')
+      else
+        where('spree_products.id IN (
+          SELECT p.id FROM spree_products p LEFT JOIN spree_restrictions r ON r.product_id = p.id WHERE r.product_id IS NULL
+        )
+        OR spree_products.id IN (
+          SELECT p.id FROM spree_products p JOIN spree_restrictions r ON r.product_id = p.id WHERE role_id IN (?)
+        )', user_roles.collect{|role|role.id}.join(','))
+      end
+    }
 
     belongs_to :tax_category
     belongs_to :shipping_category
@@ -69,7 +83,7 @@ module Spree
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
                     :option_values_hash, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
-                    :variants_attributes, :taxon_ids, :option_type_ids
+                    :variants_attributes, :taxon_ids, :option_type_ids, :role_ids
 
     attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
