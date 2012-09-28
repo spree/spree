@@ -138,6 +138,19 @@ describe Spree::Order do
           order.state.should == "complete"
         end
       end
+
+      # Regression test for #2028
+      context "when payment is not required" do
+        before do
+          order.stub :payment_required => false
+        end
+
+        it "does not call process payments" do
+          order.should_not_receive(:process_payments!)
+          order.next!
+          order.state.should == "complete"
+        end
+      end
     end
   end
 
