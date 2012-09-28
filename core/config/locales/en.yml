@@ -341,6 +341,7 @@ en:
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
   customer_search: "Customer Search"
+  cut: Cut
   date_created: Date created
   date_completed: Date Completed
   date_range: "Date Range"
@@ -667,6 +668,7 @@ en:
   password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
   password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."
   password_updated: "Password successfully updated"
+  paste: Paste
   path: Path
   pay: pay
   payment: Payment
@@ -851,6 +853,7 @@ en:
   registration: Registration
   remember_me: "Remember me"
   remove: Remove
+  rename: Rename
   reports: Reports
   required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Resend

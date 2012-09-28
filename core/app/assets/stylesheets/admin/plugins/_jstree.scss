@@ -112,6 +112,18 @@
     }
   }
 
+  li:first-child a:hover:before {
+    content: '';
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid $c_green1;
+    top: 0px;
+    margin-top: -10px;
+    left: 25px;
+    z-index: 1;
+  }
+
   li.vakata-separator {
     display: none;
   }
