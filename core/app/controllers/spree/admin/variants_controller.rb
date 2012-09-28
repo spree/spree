@@ -6,10 +6,7 @@ module Spree
       new_action.before :new_before
 
       def index
-        respond_with(collection) do |format|
-          format.html
-          format.json { render :json => json_data }
-        end
+        respond_with(collection)
       end
 
       # override the destory method to set deleted_at value
@@ -65,13 +62,6 @@ module Spree
           end
           @collection
         end
-
-        def json_data
-          ( parent.variants.presence || [parent.master] ).map do |v|
-            { :label => v.options_text.presence || v.name, :id => v.id }
-          end
-        end
-
     end
   end
 end
