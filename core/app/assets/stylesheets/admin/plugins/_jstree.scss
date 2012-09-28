@@ -1,0 +1,118 @@
+#taxonomy_tree {
+  > ul, .jstree-icon {
+    background-image: none;
+  }
+  
+  .jstree-icon {
+    @extend [class^="icon-"]:before;
+  }
+
+  .jstree-open > .jstree-icon {    
+    @extend .icon-caret-down;
+  }
+  .jstree-closed > .jstree-icon {    
+    @extend .icon-caret-right;
+  }
+
+  li {
+    background-image: none;
+
+    a {
+      background-color: lighten($c_blue1, 33);
+      border: 1px solid $color-border;
+      color: $color-body-text;
+      font-weight: bold;
+      text-shadow: none;
+      width: 90%;
+      height: auto;
+      line-height: inherit;
+      text-transform: uppercase;
+      padding: 5px 0 5px 10px;
+      margin-bottom: 10px;
+
+      .jstree-icon {
+        padding-left: 0px;
+        @extend .icon-move;   
+      }
+    }
+  }
+}
+
+#vakata-dragged.jstree-apple .jstree-invalid, 
+#vakata-dragged.jstree-apple .jstree-ok,
+#jstree-marker {
+  background-image: none !important;
+  background-color: transparent !important;
+  @extend [class^="icon-"]:before;   
+}
+#vakata-dragged.jstree-apple .jstree-invalid {
+  @extend .icon-remove;  
+  color: $c_red1;
+}
+#vakata-dragged.jstree-apple .jstree-ok {
+  @extend .icon-ok;
+  color: $c_green1;
+}
+
+#jstree-marker {
+  @extend .icon-caret-right;
+  color: $color-body-text !important;
+  width: 4px !important;
+}
+
+#jstree-marker-line {  
+  height: 0px !important;
+  margin-left: 5px !important;
+  margin-top: -2px !important;
+  border: none !important;
+  border-bottom: 1px solid $color-body-text !important;
+  background-color:  lighten($c_blue1, 33) !important;
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  @include border-radius(0px !important);
+}
+
+#vakata-contextmenu {
+  background-color: $c_blue1 !important;
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  @include border-radius(3px !important);
+
+  &:before {
+    content: '';
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid $c_blue1;
+    top: 0px;
+    margin-top: -10px;
+    left: 25px;
+    z-index: 1;
+  }
+
+  a {
+    color: white !important;
+    line-height: inherit !important;
+    padding: 5px 10px !important;
+    margin: 0 !important;
+    font-size: 90% !important;
+
+    &:hover {
+      background-color: $c_green1 !important;
+      border: none !important;
+      -moz-box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      line-height: inherit !important;
+      padding: 5px 10px !important;
+      margin: 0 !important;
+      @include border-radius(3px !important);
+    }
+  }
+
+  li.vakata-separator {
+    display: none;
+  }
+}
