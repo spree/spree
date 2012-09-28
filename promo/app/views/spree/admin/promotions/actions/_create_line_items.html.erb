@@ -23,23 +23,19 @@
   </tbody>
 </table>
 
-<%= hidden_field_tag "#{param_prefix}[line_items_string]", promotion_action.line_items_string,
-                     :class => 'line_items_string' %>
+<% line_items = promotion_action.promotion_action_line_items %>
+<% line_items.build %>
 
-<div class="add-line-item block-table">
-  
-    <div class="field table-cell">
-      <%= label_tag :add_product_name, t(:name_or_sku) %>
-      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth product_autocomplete' %>
-      <%= hidden_field_tag :add_variant_id %>
-      <%= hidden_field_tag :add_line_item_variant_id %>
-    </div>
-    <div class="field table-cell">
-      <%= label_tag :add_quantity, t(:qty) %>
-      <%= number_field_tag :add_quantity, 1, :min =>  1, :size => '4' %>
-    </div>
-    <div class="field table-cell">     
-      <button class="icon-plus add small"><%= t(:add) %></button>
-    </div>
-  
-</div>
+<% line_items.each_with_index do |line_item, index| %>
+  <div id='promotion_action_line_item_<%= index %>'>
+    <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
+    <%= text_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :type => :number %>
+    <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id %>
+    <div class='options_placeholder'></div>
+    <script>
+      $("input[name='<%= "#{line_item_prefix}[variant_id]" %>']").variantPicker();
+    </script>
+  </div>
+<% end %>
+
+

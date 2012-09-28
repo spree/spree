@@ -82,21 +82,6 @@ $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
   });
 }
 
-
-$.fn.objectPicker = function(url){
-  $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
-    searchDelay          : 600,
-    hintText             : Spree.translations.type_to_search,
-    noResultsText        : Spree.translations.no_results,
-    searchingText        : Spree.translations.searching,
-    prePopulateFromInput : true
-  });
-};
-
-$.fn.productPicker = function(){
-  $(this).objectPicker(Spree.routes.product_search_basic);
-}
-
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
     dateFormat: Spree.translations.date_picker,
@@ -175,8 +160,6 @@ $(document).ready(function(){
     $(this).closest(".fields").hide();
     return false;
   });
-
-  $('.tokeninput.products').productPicker();
 
   $('body').on('click', '.select_properties_from_prototype', function(){
     $("#busy_indicator").show();

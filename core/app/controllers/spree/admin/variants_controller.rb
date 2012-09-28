@@ -9,11 +9,15 @@ module Spree
         respond_with(collection)
       end
 
+      def search
+        search_params = { :product_name_cont => params[:q], :sku_cont => params[:q] }
+        @variants = Spree::Variant.ransack(search_params.merge(:m => 'or')).result
+      end
+
       # override the destory method to set deleted_at value
       # instead of actually deleting the product.
       def destroy
         @variant = Variant.find(params[:id])
-
         @variant.deleted_at = Time.now()
         if @variant.save
           flash.notice = I18n.t('notice_messages.variant_deleted')
@@ -53,7 +57,7 @@ module Spree
         end
 
         def collection
-          @deleted = (params.key?(:deleted)  && params[:deleted] == "on") ? "checked" : ""
+          @deleted = (params.key?(:deleted) && params[:deleted] == "on") ? "checked" : ""
 
           if @deleted.blank?
             @collection ||= super

@@ -3,7 +3,7 @@ module Spree
     class ProductsController < ResourceController
       helper 'spree/products'
 
-      before_filter :check_json_authenticity, :only => :index
+#      before_filter :check_json_authenticity, :only => :index
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
@@ -68,27 +68,23 @@ module Spree
 
         def collection
           return @collection if @collection.present?
+          params[:q] ||= {}
+          params[:q][:deleted_at_null] ||= "1"
 
-          unless request.xhr?
-            params[:q] ||= {}
-            params[:q][:deleted_at_null] ||= "1"
+          params[:q][:s] ||= "name asc"
 
-            params[:q][:s] ||= "name asc"
+          @search = super.ransack(params[:q])
+          @collection = @search.result.
+            group_by_products_id.
+            includes(product_includes).
+            page(params[:page]).
+            per(Spree::Config[:admin_products_per_page])
 
-            @search = super.ransack(params[:q])
-            @collection = @search.result.
-              group_by_products_id.
-              includes(product_includes).
-              page(params[:page]).
-              per(Spree::Config[:admin_products_per_page])
-          else
-
-            @collection = super.ransack(:name_cont => params[:q]).result
-            @collection = @collection.includes(product_includes).limit(params[:limit] || 10)
-
-            tmp = super.ransack(:sku_cont => params[:q]).result
-            tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
-            @collection.concat(tmp)
+          if params[:q][:s].include?("master_price")
+            # By applying the group in the main query we get an undefined method gsub for Arel::Nodes::Descending
+            # It seems to only work when the price is actually being sorted in the query
+            # To be investigated later.
+            @collection = @collection.group("spree_variants.price")
           end
           @collection
         end
