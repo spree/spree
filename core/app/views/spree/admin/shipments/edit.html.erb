@@ -16,7 +16,7 @@
 <div data-hook="admin_shipment_edit_header">
   
   <% if @shipment.cost %>
-    <h3><%= t(:charges) %> <%= money @shipment.cost %></h3>
+    <h5><%= t(:charges) %> <span class="green"><%= money @shipment.cost %></span></h5>
   <% end %>
 
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>
@@ -27,14 +27,15 @@
       <%= render :partial => 'form', :locals => { :shipment_form => shipment_form } %>
 
       <div data-hook="admin_shipment_edit_form_buttons">
-        <p class="form-buttons">
+        <div class="form-buttons">
           <% if @shipment.editable_by?(try_spree_current_user) %>
-            <%= button @order.cart? ? t(:continue) : t(:update) %>
-            <%= t(:or) %> <%= link_to t(:cancel), admin_order_shipments_path(@order) %>
+            <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
+            <%= t(:or) %>
+            <%= button_link_to t(:cancel), admin_order_shipments_path(@order), :icon => 'icon-remove' %>
           <% else %>
-            <%= link_to raw("&laquo; #{t(:back)}"), edit_admin_order_shipment_path(@order) %>
+            <%= button_link_to t(:back), edit_admin_order_shipment_path(@order), :icon => 'icon-arrow-left' %>
           <% end %>
-        </p>
+        </div>
       </div>
   <% end %>
 </div>

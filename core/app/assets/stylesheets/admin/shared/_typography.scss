@@ -8,6 +8,8 @@
 >>>>>>> SCSS cleanup
 // Base
 //--------------------------------------------------------------
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
+
 body {
   font-family: $base-font-family;
   font-size: $body-font-size;
@@ -209,8 +211,9 @@ dl {
   display: inline-block;
   text-align: center;
 
-  &.complete, &.ready, &.paid {
+  &.complete, &.ready, &.paid, &.sold {
     background-color: $c_green1;
+
     &, a {
       color: white;
     }
