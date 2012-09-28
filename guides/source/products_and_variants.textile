@@ -253,7 +253,7 @@ NOTE: The "migration section":migration.html of the guides gives an overview on 
 
 
 "Steph Skardal":http://github.com/stephskardal has produced a useful blog post on
-"product optioning":http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html.
+"product optioning":http://blog.endpoint.com/2009/12/rails-ecommerce-product-optioning-in.html.
 This discusses how the variant option representation works and how she used it to build an
 extension for enhanced product option selection.
 The blog post appeared in the "End Point Blog":http://blog.endpoint.com/.
