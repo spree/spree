@@ -19,7 +19,7 @@ module Spree
             if params[:json_format] == 'basic'
               render :json => collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
             else
-              @collection = @collection.includes(:variants => :images, :master => :images)
+              @collection = @collection.includes(product_includes)
               render
             end
           end
@@ -79,7 +79,7 @@ module Spree
             @search = super.ransack(params[:q])
             @collection = @search.result.
               group_by_products_id.
-              includes([:master, {:variants => [:images, :option_values]}]).
+              includes(product_includes).
               page(params[:page]).
               per(Spree::Config[:admin_products_per_page])
 
@@ -90,12 +90,11 @@ module Spree
               @collection = @collection.group("spree_variants.price")
             end
           else
-            includes = [{:variants => [:images,  {:option_values => :option_type}]}, {:master => :images}]
 
-            @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
-            @collection = @collection.includes(includes).limit(params[:limit] || 10)
+            @collection = super.ransack(:name_cont => params[:q]).result
+            @collection = @collection.includes(product_includes).limit(params[:limit] || 10)
 
-            tmp = super.where(["#{Variant.table_name}.sku #{LIKE} ?", "%#{params[:q]}%"])
+            tmp = super.ransack(:sku_cont => params[:q]).result
             tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
             @collection.concat(tmp)
           end
@@ -112,6 +111,11 @@ module Spree
           return unless params[:clear_product_properties]
           params[:product] ||= {}
         end
+
+        def product_includes
+         [{:variants => [:images, {:option_values => :option_type}]}, {:master => :images}]
+        end
+
     end
   end
 end
