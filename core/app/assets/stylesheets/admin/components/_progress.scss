@@ -1,7 +1,6 @@
 #progress { 
   display: none;
   position: fixed;
-<<<<<<< HEAD
   top: 0;  
   z-index: 1000;
   opacity: 0.8;
@@ -33,15 +32,4 @@
     margin-top: 20px;
     text-transform: uppercase;
   }
-=======
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 20px;
-  background-color: $c_yellow1;
-  color: white;
-  text-align: center;
-  z-index: 1000;
-  opacity: 0.8;
->>>>>>> New admin design for Spree 2.0
 }

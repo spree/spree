@@ -1,21 +1,9 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-@import "../variables";
-@import "font-awesome";
-
-=======
->>>>>>> SCSS cleanup
 table {
   width: 100%;
   margin-bottom: 15px;
 
   th, td {
     padding: 15px 10px;
-<<<<<<< HEAD
-=======
-    border: 1px solid transparent;
->>>>>>> New admin design for Spree 2.0
     border-right: 1px solid $color-border;    
     vertical-align: middle;
     text-overflow: ellipsis;
@@ -126,12 +114,6 @@ table {
       border-top: 1px solid $color-border;
     }
     tr {
-<<<<<<< HEAD
-      &[class*="state"] {
-        border-left-width: 5px; 
-        border-left-style: solid;
-<<<<<<< HEAD
-=======
       &.even td {
         background-color: lighten($c_blue1, 33);
 
@@ -141,19 +123,11 @@ table {
       }
 
       &:hover td {
-<<<<<<< HEAD
-        background-color: lighten($c_blue1, 33);
-<<<<<<< HEAD
->>>>>>> More work tables styling
-=======
-=======
         background-color: lighten($c_blue1, 30);
->>>>>>> Order filter style fix
 
         img {
           border: 1px solid $color-border;
         }
->>>>>>> More admin styling ...
       }
 
       &.highlight {
@@ -210,57 +184,6 @@ table {
         }
       }
     }
-<<<<<<< HEAD
-=======
-=======
-@import "../variables";
-
->>>>>>> Inital stage of admin redesign in progress ...
-table {
-  border: 1px solid lighten($c_gray1, 35);
-  width: 100%;
-
-  th, td {
-<<<<<<< HEAD
-    padding: 10px;
->>>>>>> Initial admin redesign stage
-=======
-    padding: 15px 10px;
-    border: 1px solid lighten($c_gray1, 35);    
-
-    &.sort-active {
-      background-color: lighten($c_blue1, 45);
-      border-bottom: 1px solid lighten($c_blue1, 40);
-    }
-  }
-  
-  td.sort-active {
-    background-color: lighten($c_blue1, 50) !important;
-  }
-
-  thead {
-    background-color: lighten($c_blue1, 52);
-    
-    th {
-      text-transform: uppercase;
-      font-size: 80%;
-    }
-  }
-
-  tbody {
-    tr {
-      &.state-complete {
-        border-left: 5px solid $c_green1;
-=======
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-      }
-
-      &.state-complete { border-color: $c_green1 }
-      &.state-cart     { border-color: lighten($c_blue1, 30) }
-
-    }
->>>>>>> Inital stage of admin redesign in progress ...
-=======
 
     &.grand-total {
       td {
@@ -275,7 +198,6 @@ table {
         color: white;
       }
     }
->>>>>>> More admin styling...
   }
 
   tbody:last-child {

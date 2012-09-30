@@ -1,49 +1,9 @@
 // Basics
 //---------------------------------------------------
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
-=======
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
->>>>>>> More work tables styling
-
-=======
->>>>>>> Inital stage of admin redesign in progress ...
-=======
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
-
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-=======
->>>>>>> Shipment edit styles
-=======
-=======
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
-
->>>>>>> New admin design for Spree 2.0
->>>>>>> New admin design for Spree 2.0
 * { 
-<<<<<<< HEAD
-  -webkit-box-sizing: border-box; 
-     -moz-box-sizing: border-box; 
-          box-sizing: border-box; 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  text-rendering: optimizeLegibility; 
-}
-
-body {
-  font-family: $base-font-family;
-  font-size: $body-font-size;
-  color: $color-body-text;
-=======
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
->>>>>>> Various font style fixes
 }
 
 // Helpers
@@ -54,7 +14,6 @@ body {
   .table-cell {
     display: table-cell;
     vertical-align: middle;
-<<<<<<< HEAD
     padding: 0 10px;
 
     &:first-child {
@@ -63,8 +22,6 @@ body {
     &:last-child {
       padding-right: 0;
     }
-=======
->>>>>>> New admin design for Spree 2.0
   }
 }
 
@@ -78,40 +35,6 @@ body {
 //---------------------------------------------------
 #header {
   background-color: white;
-=======
-=======
-  }
-=======
-  text-rendering: optimizeLegibility; 
-}
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-
->>>>>>> Inital stage of admin redesign in progress ...
-body {
-  font-family: $base-font-family;
-  font-size: $body-font-size;
-  color: $color-body-text;
-}
-
-// Helpers
-.block-table {
-  display: table;
-  width: 100%;
-
-  .table-cell {
-    display: table-cell;
-  }
-}
-
-// Header
-//---------------------------------------------------
-#header {
-<<<<<<< HEAD
-  background-color: lighten($c_blue1, 50);
->>>>>>> Initial admin redesign stage
-=======
-  background-color: white;
->>>>>>> Inital stage of admin redesign in progress ...
 }
 #logo { height: 50px }
 [data-hook="admin-title"] { font-size: 14px }
@@ -130,10 +53,6 @@ body {
   -webkit-padding-start: 0;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Inital stage of admin redesign in progress ...
 [data-hook="admin_login_navigation_bar"] {
   ul {
     text-align: right;
@@ -159,18 +78,8 @@ body {
   }
 }
 
-<<<<<<< HEAD
 #admin-menu {
   background-color: $c_blue1;
-=======
-#admin-menu {
-  background-color: $c_blue1;
-  padding-bottom: 40px;
->>>>>>> Initial admin redesign stage
-=======
-#admin-menu {
-  background-color: $c_blue1;
->>>>>>> Inital stage of admin redesign in progress ...
 
   li {
     a {
@@ -181,19 +90,10 @@ body {
       position: relative;
       text-align: center;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Inital stage of admin redesign in progress ...
       i {
         display: inline;
       }
 
-<<<<<<< HEAD
-=======
->>>>>>> Initial admin redesign stage
-=======
->>>>>>> Inital stage of admin redesign in progress ...
       &:hover {
         background-color: $c_green1;
 
@@ -202,25 +102,9 @@ body {
           position: absolute;
           border-left: 10px solid transparent;
           border-right: 10px solid transparent;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-          border-top: 5px solid $c_green1;
-          bottom: 0px;
-          margin-bottom: -5px;
-=======
-          border-top: 10px solid $c_green1;
-          bottom: 0px;
-          margin-bottom: -10px;
->>>>>>> Initial admin redesign stage
-=======
-          border-top: 5px solid $c_green1;
-=======
           border-top: 5px solid $c_green1;          
->>>>>>> More admin styling...
           bottom: 0px;
           margin-bottom: -5px;
->>>>>>> Inital stage of admin redesign in progress ...
           left: 50%;
           margin-left: -10px;
           z-index: 1;
@@ -323,34 +207,6 @@ body {
 //---------------------------------------------------
 #content {
   background-color: white;
-<<<<<<< HEAD
-  overflow: auto;
-<<<<<<< HEAD
-<<<<<<< HEAD
-  position: relative;
-  z-index: 0;
-  padding: 15px 0;
-}
-
-#content-header {
-  padding: 15px 0;
-  background-color: lighten($c_blue1, 50);
-  border-bottom: 1px solid lighten($c_blue1, 45);
-
-  .page-title {
-    font-size: 130%;
-  }
-  .page-actions {
-    text-align: right;
-  }
-=======
-  margin-top: -40px;
-  position: relative;
-  z-index: 0;
->>>>>>> Initial admin redesign stage
-=======
-=======
->>>>>>> More amin styling
   position: relative;
   z-index: 0;
   padding: 0;
@@ -365,9 +221,6 @@ body {
   .page-title {
     font-size: 22px;
   }
-<<<<<<< HEAD
->>>>>>> Inital stage of admin redesign in progress ...
-=======
   .page-actions {
     text-align: right;
 
@@ -375,9 +228,6 @@ body {
       font-size: 85%;
     }
   }
-<<<<<<< HEAD
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-=======
 }
 
 // Footer
@@ -386,5 +236,4 @@ body {
   margin-top: 15px;
   border-top: 1px solid $color-border;
   padding: 10px 0;
->>>>>>> More admin styling...
 }

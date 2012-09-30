@@ -5,41 +5,12 @@ input[type="date"],
 input[type="datetime"],
 input[type="time"],
 input[type="url"],
-<<<<<<< HEAD
-<<<<<<< HEAD
 input[type="number"],
 input[type="tel"],
 textarea, fieldset {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-input[type="number"] {
->>>>>>> Inital stage of admin redesign in progress ...
-=======
-input[type="number"],
-textarea, fieldset {
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-  padding: 5px 10px;
-=======
-  padding: 6px 10px;
->>>>>>> More admin restyle & refactoring
-  border: 1px solid $color-border;
-  box-shadow: 0 0 0 3px lighten($c_blue1, 32);
-=======
-  padding: 9px 10px;
-=======
-  padding: 7px 10px;
->>>>>>> More admin styling ...
-  border-radius: 3px;
-  border: 1px solid $color-border;  
->>>>>>> More admin styling...
-=======
   @include border-radius(3px);
   padding: 7px 10px;  
   border: 1px solid $color-border;
->>>>>>> SCSS cleanup
   color: $color-body-text;
   font-size: 90%;
 
@@ -79,39 +50,12 @@ label {
 input[type="submit"], 
 input[type="button"], 
 button, .button {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  padding: 5px 10px;
-<<<<<<< HEAD
-  border: 1px solid $color-border;
-  background-color: lighten($color-border, 5);
-  color: $color-body-text;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-=======
-  border: 1px solid darken($c_blue1, 5);
-  box-shadow: 0 0 0 3px lighten($c_blue1, 32);
-=======
-  display: inline-block;
-  padding: 8px 15px;
-  border: none;
-<<<<<<< HEAD
-  border-radius: 3px;
->>>>>>> More admin styling...
-=======
-  @include border-radius(3px);
->>>>>>> SCSS cleanup
-=======
   @include border-radius(3px);
   display: inline-block;
   padding: 8px 15px;
   border: none;  
->>>>>>> Various font style fixes
   background-color: $c_blue1;
   color: white;
->>>>>>> More amin styling
   text-transform: uppercase;
   font-size: 85%;
   font-weight: bold;
@@ -126,14 +70,11 @@ button, .button {
   &:active {
     box-shadow: 0 0 8px 0 darken($c_green1, 5) inset;
   }
-<<<<<<< HEAD
 
   &.fullwidth {
     width: 100%;
     text-align: center;
   }
-=======
->>>>>>> New admin design for Spree 2.0
 }
 
 span.info {
@@ -262,45 +203,4 @@ fieldset {
 }
 .form-buttons {
   text-align: center;
-<<<<<<< HEAD
-}
-
-// Some fixes for fontwesome stylesheets
-[class^="icon-"], [class*=" icon-"] {
-  &.button, &.icon_link {
-    width: auto;
-
-    &:before {
-      padding-right: 5px;
-    }
-  }
-}
-[class^="icon-"]::before, [class*=" icon-"]::before {
-
-<<<<<<< HEAD
-=======
->>>>>>> Inital stage of admin redesign in progress ...
-=======
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-}
-
-.field {
-  margin-bottom: 10px;
-
-  ul {
-    border-top: 1px solid $color-border;
-    list-style: none;
-    padding-top: 5px;
-
-    li {
-      display: inline-block;
-
-      label {
-        font-weight: normal;
-        text-transform: none;
-      }
-    }
-  }
-=======
->>>>>>> SCSS cleanup
 }

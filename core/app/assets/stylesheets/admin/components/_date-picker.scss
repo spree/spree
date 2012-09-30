@@ -3,21 +3,13 @@
     padding: 0 6px 0 5px;
   }
   input.datepicker {
-<<<<<<< HEAD
     width: 96px !important;
-=======
-    width: 85px !important;
->>>>>>> New admin design for Spree 2.0
   }
 }
 
 #ui-datepicker-div {
   border-color: darken($c_blue1, 5);
-<<<<<<< HEAD
   @include border-radius(3px);
-=======
-  border-radius: 3px;
->>>>>>> New admin design for Spree 2.0
   padding: 0;
   margin-top: 10px;
 
@@ -50,11 +42,7 @@
       &:hover {
         border: none;
         background-image: none;
-<<<<<<< HEAD
         background-color: $c_blue1;
-=======
-        background-color: $c_green1;
->>>>>>> New admin design for Spree 2.0
         cursor: pointer;
       }
 
@@ -62,7 +50,6 @@
         background-image: none;
         text-indent: 0;
         color: white;
-<<<<<<< HEAD
         width: 10px;
         margin-left: -5px;
         @extend [class^="icon-"]:before;
@@ -70,11 +57,6 @@
         &:hover {
           color: lighten($c_green1, 20);
         }
-=======
-        width: 11px;
-        margin-left: -5px;
-        @extend [class^="icon-"]:before;
->>>>>>> New admin design for Spree 2.0
       }
     }
     .ui-datepicker-prev {
@@ -85,11 +67,7 @@
       }
     }
     .ui-datepicker-next {
-<<<<<<< HEAD
       right: 0;
-=======
-      right: 1;
->>>>>>> New admin design for Spree 2.0
 
       .ui-icon {
         @extend .icon-arrow-right;

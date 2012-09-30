@@ -1,18 +1,7 @@
-<<<<<<< HEAD
-@import "../variables";
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> SCSS cleanup
 // Base
 //--------------------------------------------------------------
-<<<<<<< HEAD
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
 
-=======
->>>>>>> New admin design for Spree 2.0
 body {
   font-family: $base-font-family;
   font-size: $body-font-size;
@@ -27,16 +16,6 @@ hr {
   border-left: none;
 }
 
-=======
->>>>>>> Initial admin redesign stage
-=======
-// Baseics
-=======
-// Base
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-//--------------------------------------------------------------
-
->>>>>>> Inital stage of admin redesign in progress ...
 // links
 //--------------------------------------------------------------
 a { 
@@ -89,16 +68,11 @@ ul {
       display: inline-block;
     }
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   &.fields {
     list-style: none;
     padding: 0;
     margin: 0;
   }
->>>>>>> More admin cleanup and fixes
 }
 
 dl {
@@ -156,63 +130,11 @@ dl {
 // States
 //--------------------------------------------------------------
 .state {
-<<<<<<< HEAD
   @include border-radius(3px);
-=======
->>>>>>> New admin design for Spree 2.0
   text-transform: uppercase;
-  font-size: 70%;
-  border: 1px solid transparent;
-  padding: 2px 5px;  
-  width: 100%;
-  display: inline-block;
-
-  &.complete {
-    background-color: $c_green1;
-    color: white;
-  }
-
-  &.pending {
-    background-color: $c_yellow1;
-    &, a { 
-      color: white
-    }
-  }
-
-  &.balance_due {
-    background-color: $c_blue2;
-  }
-  &.cart {
-    background-color: lighten($c_blue1, 30);
-    color: white;
-  }
-=======
->>>>>>> Initial admin redesign stage
-=======
-}
-
-// Helpers
-.align-center  { text-align: center  }
-.align-right   { text-align: right   }
-.align-left    { text-align: left    }
-.align-justify { text-align: justify }
-
-// States
-//--------------------------------------------------------------
-.state {
-  text-transform: uppercase;
-<<<<<<< HEAD
-<<<<<<< HEAD
-  font-size: 80%;
->>>>>>> Inital stage of admin redesign in progress ...
-=======
-  font-size: 70%;
-=======
   font-size: 80%;
   font-weight: bold;
->>>>>>> More work tables styling
   border: 1px solid transparent;
-<<<<<<< HEAD
   padding: 2px 5px;  
   width: 100%;
   display: inline-block;
@@ -221,15 +143,6 @@ dl {
   &.complete, &.ready, &.paid, &.sold {
     background-color: $c_green1;
 
-=======
-  border-radius: 10px;
-  padding: 2px 5px;  
-  width: 100%;
-  display: inline-block;
-
-  &.complete, &.ready, &.paid {
-    background-color: $c_green1;
->>>>>>> New admin design for Spree 2.0
     &, a {
       color: white;
     }
@@ -237,19 +150,9 @@ dl {
 
   &.pending {
     background-color: $c_yellow1;
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-    a {
-      color: white;
-=======
-    
-=======
-
->>>>>>> SCSS cleanup
     &, a { 
       color: white
->>>>>>> Various order payment style fixes in admin. Fixes related to select2 lib.
     }
   }
 
@@ -265,5 +168,4 @@ dl {
     background-color: lighten($c_blue1, 30);
     color: lighten($color-body-text, 15);
   }
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
 }

@@ -5,19 +5,7 @@
 
 // Fonts
 //--------------------------------------------------------------
-<<<<<<< HEAD
-// Font Settings
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-$base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-=======
-@import url(//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700&subset=latin,cyrillic,vietnamese,greek);
-
-=======
->>>>>>> Various font style fixes
 $base-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
->>>>>>> More admin cruft cleaning
 
 // Colors
 //--------------------------------------------------------------
@@ -26,51 +14,13 @@ $c_green1:  #9FC820;
 $c_blue1:   #5FA5E8;
 $c_blue2:   #D4F1F7;
 $c_blue3:   #6788A2;
-<<<<<<< HEAD
 $c_red1:    #C60F13;
 $c_yellow1: #FF9300;
 
 $color-body-text: $c_blue3;
 $color-headers:   $c_blue3;
 $color-links:     $c_blue1;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-$color-border:    lighten($c_gray1, 32);
-=======
-$base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif !default;
-=======
-$base-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
->>>>>>> Inital stage of admin redesign in progress ...
-
-// Colors
-//--------------------------------------------------------------
-$c_gray1:   #929292;
-$c_green1:  #9FC820;
-$c_blue1:   #0095EA;
-$c_blue2:   #D4F1F7;
-=======
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-$c_red1:    #C60F13;
-$c_yellow1: #FF9300;
-
-$color-body-text: $c_gray1;
-$color-headers:   $c_blue3;
-$color-links:     $c_blue1;
-<<<<<<< HEAD
->>>>>>> Initial admin redesign stage
-=======
-$color-border:    lighten($c_gray1, 32);
->>>>>>> Inital stage of admin redesign in progress ...
-=======
-$color-border:    lighten($c_blue1, 45);
->>>>>>> More amin styling
-=======
-$color-border:    lighten($c_blue1, 25);
->>>>>>> More work tables styling
-=======
 $color-border:    lighten($c_blue1, 27);
->>>>>>> Fieldset styles fixes
 
 // Gradients
 //--------------------------------------------------------------

@@ -14,16 +14,21 @@ $(document).ready(function() {
     $(this).parent().remove();
   });
 
-  $('.destroy_header').live("click", function(e) {
+  $('.destroy_new_attachment_styles').live("click", function(e) {
     e.preventDefault();
-    $(this).parent().remove();
+    $(this).closest('.new_attachment_styles').remove();
+  });
+
+  $('.destroy_new_s3_headers').live("click", function(e) {
+    e.preventDefault();
+    $(this).closest('.new_s3_headers').remove();
   });
 
   // Handle adding new styles
   var styles_hash_index = 1;
   $('.add_new_style').live("click", function(e) {
     e.preventDefault();
-    $('#styles_list').append(generate_html_for_hash("new_attachment_styles", styles_hash_index));
+    $('#new-styles').append(generate_html_for_hash("new_attachment_styles", styles_hash_index));
   });
 
   // Handle adding new headers
@@ -35,7 +40,7 @@ $(document).ready(function() {
 
   // Generates html for new paperclip styles form fields
   generate_html_for_hash = function(hash_name, index) {
-    var html = '<div class="field">';
+    var html = '<div class="' + hash_name + ' row"><div class="field">';
     html += '<div class="five columns">';
     html += '<label for="' + hash_name + '_' + index + '_name">';
     html += '<%= I18n.t(:name) %></label>';
@@ -45,8 +50,8 @@ $(document).ready(function() {
     html += '<%= I18n.t(:value) %></label>';
     html += '<input id="' + hash_name + '_' + index + '_value" name="' + hash_name + '[' + index + '][value]" type="text" class="fullwidth">';
     html += '</div><div class="two columns">'
-    html += '<a href="#" title="<%= I18n.t(:destroy) %>" class="destroy_style with-tip button" style="margin-top: 19px;"><i class="icon-trash"></i> &nbsp; <%= I18n.t(:destroy)%></a>';
-    html += '</div></div>';
+    html += '<a href="#" title="<%= I18n.t(:destroy) %>" class="destroy_' + hash_name + ' with-tip button" style="margin-top: 19px;"><i class="icon-trash"></i> &nbsp; <%= I18n.t(:destroy)%></a>';
+    html += '</div></div></div>';
 
     index += 1;
     return html;
