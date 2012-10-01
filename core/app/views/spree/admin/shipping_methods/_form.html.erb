@@ -30,7 +30,7 @@
 
     <%= f.field_container :shipping_category do %>
       <%= f.label :shipping_category, t(:shipping_category_choose) %>
-      <%= select(:shipping_method, :shipping_category_id, Spree::ShippingCategory.all.collect { |s| [s.name, s.id] }, { :include_blank => true }, {:class => 'select2 fullwidth'}) %>
+      <%= select(:shipping_method, :shipping_category_id, Spree::ShippingCategory.all.collect { |s| [s.name, s.id] }, { :include_blank => "None" }, {:class => 'select2 fullwidth'}) %>
     <% end %>
 
     <div class="field">
