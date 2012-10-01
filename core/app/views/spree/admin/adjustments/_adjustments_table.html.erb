@@ -13,7 +13,7 @@
          @delete_url = admin_order_adjustment_path(@order, adjustment)
     %>
       <tr id="<%= spree_dom_id(adjustment) %>" data-hook="adjustment_row" class="<%= cycle('odd', 'even')%>">
-        <td class="align-center"><%= adjustment.created_at.to_s(:date_time24) %></td>
+        <td class="align-center"><%= l(adjustment.created_at) %></td>
         <td class="align-center"><%= adjustment.label %></td>
         <td class="align-center"><%= adjustment.display_amount %></td>
         <td class='actions'>
