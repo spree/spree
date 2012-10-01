@@ -11,16 +11,16 @@
     <dl class="additional-info">
       <dt id="order_status" data-hook><%= t(:status) %>:</dt>
       <dd><span class="state <%= @order.state %>"><%= t(@order.state, :scope => :order_state) %></dd>
-      <dt id="order_total" data-hook><%= t(:total) %>:</dt>
-      <dd><%= money @order.total %></dd>
+      <dt data-hook><%= t(:total) %>:</dt>
+      <dd id='order_total'><%= money @order.total %></dd>
     
       <% if @order.completed? %>
-        <dt id="shipment_status"><%= t(:shipment) %>: </dt>
-        <dd><%= t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %></dd>
-        <dt id="payment_status"><%= t(:payment) %>: </dt>
-        <dd><span class="state <%= @order.payment_state %>"><%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></dd>
-        <dt id="date_completed" data-hook><%= t(:date_completed) %>:</dt>
-        <dd><%= pretty_time(@order.completed? ? @order.completed_at : @order.created_at) %></dd>
+        <dt><%= t(:shipment) %>: </dt>
+        <dd id='shipment_status'><%= t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %></dd>
+        <dt><%= t(:payment) %>: </dt>
+        <dd id='payment_status'><span class="state <%= @order.payment_state %>"><%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></dd>
+        <dt data-hook><%= t(:date_completed) %>:</dt>
+        <dd id='date_complete'><%= pretty_time(@order.completed? ? @order.completed_at : @order.created_at) %></dd>
       <% end %>
     </dl>
   </header>
