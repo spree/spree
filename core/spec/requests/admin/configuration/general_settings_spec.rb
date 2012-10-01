@@ -22,7 +22,7 @@ describe "General Settings" do
       fill_in "site_name", :with => "Spree Demo Site99"
       click_button "Update"
 
-      page.should have_content(I18n.t(:general_settings_updated))
+      assert_flash_notice(:general_settings_updated)
       find("#site_name").value.should == "Spree Demo Site99"
     end
   end
