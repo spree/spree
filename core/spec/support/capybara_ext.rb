@@ -19,6 +19,10 @@ module CapybaraExt
   def click_icon(type)
     find(".icon-#{type}").click
   end
+
+  def within_row(num, &block)
+    within("table.index tbody tr:nth-child(#{num})", &block)
+  end
 end
 
 RSpec.configure do |c|
