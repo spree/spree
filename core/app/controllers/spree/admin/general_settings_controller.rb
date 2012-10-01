@@ -16,7 +16,7 @@ module Spree
           next unless Spree::Config.has_preference? name
           Spree::Config[name] = value
         end
-        flash[:notice] = t(:general_settings_updated)
+        flash[:notice] = t(:successfully_updated, :resource => t(:general_settings))
 
         redirect_to edit_admin_general_settings_path
       end

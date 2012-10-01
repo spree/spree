@@ -448,7 +448,6 @@ en:
   gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "General Settings"
-  general_settings_updated: "General Settings successfully updated."
   edit_general_settings: "Edit General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
@@ -489,7 +488,6 @@ en:
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
   inventory_settings: "Inventory Settings"
-  inventory_settings_updated: "Inventory Settings successfully updated."
   is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Item
