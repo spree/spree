@@ -17,7 +17,7 @@ describe "Product Taxons" do
       visit spree.admin_path
       click_link "Products"
       within("table.index") do
-        click_link "Edit"
+        click_icon(:edit)
       end
 
       selected_taxons.should =~ [taxon_1.id]
