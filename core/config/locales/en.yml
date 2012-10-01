@@ -448,6 +448,7 @@ en:
   gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "General Settings"
+  general_settings_updated: "General Settings successfully updated."
   edit_general_settings: "Edit General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
