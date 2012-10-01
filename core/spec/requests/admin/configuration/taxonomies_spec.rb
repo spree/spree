@@ -13,8 +13,8 @@ describe "Taxonomies" do
       create(:taxonomy, :name => 'Brand')
       create(:taxonomy, :name => 'Categories')
       click_link "Taxonomies"
-      find('table#listing_taxonomies tr:nth-child(2) td:nth-child(1)').text.should include("Brand")
-      find('table#listing_taxonomies tr:nth-child(3) td:nth-child(1)').text.should include("Categories")
+      within_row(1) { page.should have_content("Brand") }
+      within_row(2) { page.should have_content("Categories") }
     end
   end
 
