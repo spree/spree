@@ -6,6 +6,8 @@
   <li>
     <%= button_link_to t(:new_order), new_admin_order_url, :icon => 'icon-plus', :id => 'admin_new_order' %>
   </li>
+<% end %>
+
 <% content_for :table_filter_title do %>
   <%= t(:search) %>
 <% end %>
@@ -33,18 +35,18 @@
           </div>
         </div>
         
-        <div class="alpha four columns">
+        <div class="four columns">
           <div class="field">
             <%= label_tag nil, t(:order_number) %>
-            <%= f.text_field :number_cont, :size => 25 %>
+            <%= f.text_field :number_cont %>
           </div>
           <div class="field">
             <%= label_tag nil, t(:email) %>
-            <%= f.text_field :email_cont, :size => 25 %>
+            <%= f.email_field :email_cont %>
           </div>
         </div>
         
-        <div class="alpha four columns">
+        <div class="four columns">
           <div class="field">
             <%= label_tag nil, t(:first_name_begins_with) %>
             <%= f.text_field :bill_address_firstname_start, :size => 25 %>
