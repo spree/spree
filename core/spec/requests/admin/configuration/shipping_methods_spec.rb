@@ -56,7 +56,7 @@ describe "Shipping Methods" do
     it "can change the calculator", :js => true do
       click_link "Shipping Methods"
       within("#listing_shipping_methods") do
-        click_link "Edit"
+        click_icon :edit
       end
 
       click_button "Update"
