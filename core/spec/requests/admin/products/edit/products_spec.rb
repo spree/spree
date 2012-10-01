@@ -12,20 +12,20 @@ describe 'Product Details' do
 
       visit spree.admin_path
       click_link 'Products'
-      within('table.index tr:nth-child(2)') { click_link 'Edit' }
-      click_link 'Product Details'
-
-      within('#content') do
-        find('h1').text.should == 'Editing Product “Bún thịt nướng”'
-        find('input#product_name').value.should == 'Bún thịt nướng'
-        find('input#product_permalink').value.should == 'bun-thit-nuong'
-        find('textarea#product_description').text.strip.should == 'lorem ipsum'
-        find('input#product_price').value.should == '19.99'
-        find('input#product_cost_price').value.should == '17.00'
-        find('input#product_available_on').value.should_not be_blank
-        find('input#product_sku').value.should == 'A100'
+      within('table.index tbody tr:nth-child(1)') do
+        click_icon(:edit)
       end
 
+      click_link 'Product Details'
+
+      find('.page-title').text.strip.should == 'Editing Product “Bún thịt nướng”'
+      find('input#product_name').value.should == 'Bún thịt nướng'
+      find('input#product_permalink').value.should == 'bun-thit-nuong'
+      find('textarea#product_description').text.strip.should == 'lorem ipsum'
+      find('input#product_price').value.should == '19.99'
+      find('input#product_cost_price').value.should == '17.00'
+      find('input#product_available_on').value.should_not be_blank
+      find('input#product_sku').value.should == 'A100'
     end
 
     it "should handle permalink changes" do
@@ -34,7 +34,9 @@ describe 'Product Details' do
 
       visit spree.admin_path
       click_link 'Products'
-      within('table.index tr:nth-child(2)') { click_link 'Edit' }
+      within('table.index tbody tr:nth-child(1)') do
+        click_icon(:edit)
+      end
 
       fill_in "product_permalink", :with => 'random-permalink-value'
       click_button "Update"
