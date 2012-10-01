@@ -12,10 +12,12 @@ jQuery(function($) {
   // Make main menu use full width
   $('.fullwidth-menu').horizontalNav();
 
-  // Make select beautiful
-  $('select.select2').select2({
-    allowClear: true
-  });
+  <% unless Rails.env.test? %>
+    // Make select beautiful
+    $('select.select2').select2({
+      allowClear: true
+    });
+  <% end %>
 
   // Add some tips
   $('.with-tip').powerTip({
