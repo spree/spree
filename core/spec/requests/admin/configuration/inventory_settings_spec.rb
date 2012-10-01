@@ -23,14 +23,14 @@ describe "Inventory Settings" do
     it "should be able to toggle displaying zero stock products" do
       uncheck "preferences_show_zero_stock_products"
       click_button "Update"
-      assert_flash_notice(:inventory_settings_updated)
+      assert_successful_update_message(:inventory_settings)
       assert_preference_unset(:show_zero_stock_products)
     end
 
     it "should be able to toggle allowing backorders" do
       uncheck "preferences_allow_backorders"
       click_button "Update"
-      assert_flash_notice(:inventory_settings_updated)
+      assert_successful_update_message(:inventory_settings)
       assert_preference_unset(:allow_backorders)
     end
   end
