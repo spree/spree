@@ -11,7 +11,7 @@
   <tbody>
     <% payments.each do |payment| %>
       <tr data-hook="payments_row" class="<%= cycle('odd', 'even')%>">
-        <td><%= payment.created_at.to_s(:date_time24) %></td>
+        <td><%= pretty_time(payment.created_at) %></td>
         <td><%= money(payment.amount) %></td>
         <td class="align-center"><%= link_to payment_method_name(payment), admin_order_payment_path(@order, payment) %></td>
         <td class="align-center"> <span class="state <%= payment.state %>"><%= t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></span></td>

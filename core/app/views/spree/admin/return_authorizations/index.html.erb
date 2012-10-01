@@ -25,7 +25,7 @@
           <td><%= return_authorization.number %></td>
           <td><%= t(return_authorization.state.downcase) %></td>
           <td><%= money return_authorization.amount %></td>
-          <td><%= return_authorization.created_at.to_s(:date_time24) %></td>
+          <td><%= pretty_time(return_authorization.created_at) %></td>
           <td class="actions">
             <%= link_to_edit return_authorization %>
             <% unless return_authorization.received? %>
