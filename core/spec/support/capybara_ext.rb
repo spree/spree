@@ -17,7 +17,7 @@ module CapybaraExt
   end
 
   def click_icon(type)
-    find("icon-#{type}").click
+    find(".icon-#{type}").click
   end
 end
 
