@@ -19,7 +19,7 @@ module Spree
         build_shipment
         assign_inventory_units
         if shipment.save
-          flash[:notice] = flash_message_for(shipment, :successfully_created)
+          flash[:success] = flash_message_for(shipment, :successfully_created)
           respond_with(shipment) do |format|
             format.html { redirect_to edit_admin_order_shipment_path(order, shipment) }
           end
@@ -41,7 +41,7 @@ module Spree
           order.shipping_method = order.shipment.shipping_method
           order.save
 
-          flash[:notice] = flash_message_for(shipment, :successfully_updated)
+          flash[:success] = flash_message_for(shipment, :successfully_updated)
           return_path = order.completed? ? edit_admin_order_shipment_path(order, shipment) : admin_order_adjustments_path(order)
           respond_with(@object) do |format|
             format.html { redirect_to return_path }
@@ -58,7 +58,7 @@ module Spree
 
       def fire
         if shipment.send("#{params[:e]}")
-          flash.notice = t(:shipment_updated)
+          flash[:success] = t(:shipment_updated)
         else
           flash[:error] = t(:cannot_perform_operation)
         end
