@@ -37,25 +37,26 @@ describe "Payments" do
     it "should be able to list and create payment methods for an order", :js => true do
 
       click_link "Payments"
-      within('#payment_status') { page.should have_content("Payment: balance due") }
-      find('table.index tbody tr:nth-child(2) td:nth-child(2)').text.should == "$49.98"
-      find('table.index tbody tr:nth-child(2) td:nth-child(3)').text.should == "Credit Card"
-      find('table.index tbody tr:nth-child(2) td:nth-child(4)').text.should == "pending"
+      find("#payment_status").text.should == "BALANCE DUE"
+      find('table.index tbody tr:nth-child(1) td:nth-child(2)').text.should == "$49.98"
+      find('table.index tbody tr:nth-child(1) td:nth-child(3)').text.should == "Credit Card"
+      find('table.index tbody tr:nth-child(1) td:nth-child(4)').text.should == "PENDING"
 
-      click_button "Void"
-      within('#payment_status') { page.should have_content("Payment: balance due") }
+      find(".icon-void").click
+      find("#payment_status").text.should == "BALANCE DUE"
       page.should have_content("Payment Updated")
-      find('table.index tbody tr:nth-child(2) td:nth-child(2)').text.should == "$49.98"
-      find('table.index tbody tr:nth-child(2) td:nth-child(3)').text.should == "Credit Card"
-      find('table.index tbody tr:nth-child(2) td:nth-child(4)').text.should == "void"
+      find('table.index tbody tr:nth-child(1) td:nth-child(2)').text.should == "$49.98"
+      find('table.index tbody tr:nth-child(1) td:nth-child(3)').text.should == "Credit Card"
+      find('table.index tbody tr:nth-child(1) td:nth-child(4)').text.should == "VOID"
 
       click_on "New Payment"
       page.should have_content("New Payment")
       click_button "Update"
       page.should have_content("successfully created!")
 
-      click_button "Capture"
-      within('#payment_status') { page.should have_content("Payment: paid") }
+      find(".icon-capture").click
+      find("#payment_status").text.should == "PAID"
+
       page.should_not have_css('#new_payment_section')
     end
 
@@ -81,14 +82,14 @@ describe "Payments" do
 
       it "capturing a check payment from a new order" do
         visit spree.admin_order_payments_path(@order)
-        click_button 'Capture'
+        find('.icon-capture').click
         page.should_not have_content("Cannot perform requested operation")
         page.should have_content("Payment Updated")
       end
 
       it "voids a check payment from a new order" do
         visit spree.admin_order_payments_path(@order)
-        click_button 'Void'
+        find('.icon-void').click
         page.should have_content("Payment Updated")
       end
     end
