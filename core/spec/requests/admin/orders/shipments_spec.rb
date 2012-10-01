@@ -39,7 +39,7 @@ describe "Shipments" do
       find('td:nth-child(1)').text.should == order.shipment.number
       find('td:nth-child(5)').text.should == "Pending"
 
-      find('.icon-edit').click
+      click_icon(:edit)
     end
 
     page.should have_content("Shipment ##{order.shipment.number}")

@@ -15,6 +15,10 @@ module CapybaraExt
     # Otherwise spec/requests/admin/products/edit/variants_spec breaks
     page.execute_script("$('.select2-highlighted').mouseup();")
   end
+
+  def click_icon(type)
+    find("icon-#{type}").click
+  end
 end
 
 RSpec.configure do |c|

@@ -45,7 +45,7 @@ describe "Payment Methods" do
       create(:payment_method)
       click_link "Payment Methods"
       within("table#listing_payment_methods") do
-        find(".icon-edit").click
+        click_icon(:edit)
       end
     end
 

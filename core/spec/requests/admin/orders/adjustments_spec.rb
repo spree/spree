@@ -48,7 +48,7 @@ describe "Adjustments" do
 
   context "admin editing an adjustment" do
     before(:each) do
-      within(:css, 'table.index tbody tr:nth-child(1)') { find('.icon-edit').click }
+      within(:css, 'table.index tbody tr:nth-child(1)') { click_icon(:edit) }
     end
 
     context "successfully" do

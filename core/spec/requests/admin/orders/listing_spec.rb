@@ -46,13 +46,13 @@ describe "Orders Listing" do
 
     it "should be able to search orders" do
       fill_in "q_number_cont", :with => "R200"
-      find('.icon-search').click
+      click_icon(:search)
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R200"
     end
 
     it "should be able to search orders using only completed at input" do
       fill_in "q_created_at_gt", :with => Date.today
-      find('.icon-search').click
+      click_icon(:search)
       find('table#listing_orders tbody tr:nth-child(1) td:nth-child(2)').text.should == "R100"
     end
   end

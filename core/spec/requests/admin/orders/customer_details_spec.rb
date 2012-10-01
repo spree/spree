@@ -29,7 +29,7 @@ describe "Customer Details" do
 
     visit spree.admin_path
     click_link "Orders"
-    within('table#listing_orders') { find('.icon-edit').click }
+    within('table#listing_orders') { click_icon(:edit) }
   end
 
   context "editing an order", :js => true do

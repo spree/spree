@@ -54,7 +54,7 @@ describe "Payments" do
       click_button "Update"
       page.should have_content("successfully created!")
 
-      find(".icon-capture").click
+      click_icon(:capture)
       find("#payment_status").text.should == "PAID"
 
       page.should_not have_css('#new_payment_section')
@@ -82,14 +82,14 @@ describe "Payments" do
 
       it "capturing a check payment from a new order" do
         visit spree.admin_order_payments_path(@order)
-        find('.icon-capture').click
+        click_icon(:capture)
         page.should_not have_content("Cannot perform requested operation")
         page.should have_content("Payment Updated")
       end
 
       it "voids a check payment from a new order" do
         visit spree.admin_order_payments_path(@order)
-        find('.icon-void').click
+        click_icon(:void)
         page.should have_content("Payment Updated")
       end
     end
