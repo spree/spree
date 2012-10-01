@@ -34,10 +34,14 @@ describe "Shipments" do
     order.shipments.count.should == 1
 
     click_link "Shipments"
-    find('table.index tr:nth-child(2) td:nth-child(1)').text.should == order.shipment.number
-    find('table.index tr:nth-child(2) td:nth-child(5)').text.should == "Pending"
 
-    within('table.index tr:nth-child(2) td:nth-child(7)') { click_link "Edit" }
+    within("table.index tbody tr:nth-child(1)") do
+      find('td:nth-child(1)').text.should == order.shipment.number
+      find('td:nth-child(5)').text.should == "Pending"
+
+      find('.icon-edit').click
+    end
+
     page.should have_content("Shipment ##{order.shipment.number}")
   end
 
