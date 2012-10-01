@@ -30,10 +30,12 @@ describe "Shipping Methods" do
       2.times { create(:shipping_method) }
       click_link "Shipping Methods"
 
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(1)').text.should == "UPS Ground"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(2)').text.should == "North America"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(3)').text.should == "Flat Rate (per order)"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(4)').text.should == "Both"
+      within_row(1) do
+        find('td:nth-child(1)').text.should == "UPS Ground"
+        find('td:nth-child(2)').text.should == "North America"
+        find('td:nth-child(3)').text.should == "Flat Rate (per order)"
+        find('td:nth-child(4)').text.should == "Both"
+      end
     end
   end
 
