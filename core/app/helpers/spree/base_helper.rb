@@ -152,6 +152,11 @@ module Spree
       Spree::Money.new(amount)
     end
 
+    def pretty_time(time)
+      [I18n.l(time.to_date, :format => :long),
+        time.strftime("%H:%m %p")].join(" ")
+    end
+
     def method_missing(method_name, *args, &block)
       if image_style = image_style_from_method_name(method_name)
         define_image_method(image_style)
