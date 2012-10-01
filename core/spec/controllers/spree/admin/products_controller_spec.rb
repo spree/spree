@@ -92,7 +92,7 @@ describe Spree::Admin::ProductsController do
     let!(:product) { create(:product) }
     specify do
       spree_put :update, :id => product.to_param, :product => { :product_properties_attributes => { "1" => { :property_name => "Foo", :value => "bar" } } }
-      flash[:notice].should == "Product #{product.name.inspect} has been successfully updated!"
+      flash[:success].should == "Product #{product.name.inspect} has been successfully updated!"
     end
 
   end
