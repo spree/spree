@@ -24,7 +24,4 @@ $(document).ready ->
 
   $(document).ajaxStop ->
     $("#progress").fadeOut()    
-    
-    $('select.select2').select2(
-      allowClear: true
-    )
+
