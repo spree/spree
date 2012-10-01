@@ -5,7 +5,7 @@
     <div class="alpha four columns">
       <div id="preference-settings" data-hook class="field">
         <%= f.label :type, t(:provider) %>
-        <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type', :class => 'select2 fullwidth'}) %>
+        <%= f.collection_select(:type, @providers, :to_s, :name, {}, {:id => 'gtwy-type', :class => 'select2 fullwidth'}) %>
 
         <% unless @object.new_record? %>
           <%= preference_fields(@object, f) %>
@@ -16,39 +16,38 @@
         <% end %>
       </div>      
       <div data-hook="environment" class="field">
-        <%= label_tag nil, t(:environment) %>
-        <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>        
+        <%= f.label :enviromment, t(:environment) %>
+        <%= f.collection_select(:environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>        
       </div>
       <div data-hook="display" class="field">
-        <%= label_tag nil, t(:display) %>
-        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
+        <%= f.label :display, t(:display) %>
+        <%= f.select(:display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
       </div>
       <div data-hook="active" class="field">
-        <%= label_tag nil, t(:active) %>
+        <%= f.label :active, t(:active) %>
         <ul>
           <li>
-            <%= radio_button :payment_method, :active, true %>
+            <%= f.radio_button :active, true %>
             <%= label_tag nil, t(:yes) %>
           </li>        
           <li>
-            <%= radio_button :payment_method, :active, false %>
+            <%= f.radio_button :active, false %>
             <%= label_tag nil, t(:no) %>
           </li>
         </ul>
       </div>
     </div>
-    
+
     <div class="omega eight columns">
       <div data-hook="name" class="field">
-        <%= label_tag nil, t(:name) %>
-        <%= text_field :payment_method, :name, :class => 'fullwidth' %>
+        <%= f.label :name, t(:name) %>
+        <%= f.text_field :name, :class => 'fullwidth' %>
       </div>
       <div data-hook="description" class="field">
-        <%= label_tag nil, t(:description) %>
-        <%= text_area :payment_method, :description, {:cols => 60, :rows => 6, :class => 'fullwidth'} %>
+        <%= f.label_tag t(:description) %>
+        <%= f.text_area :description, {:cols => 60, :rows => 6, :class => 'fullwidth'} %>
       </div>  
     </div>
-    
   </div>
 </div>
 
