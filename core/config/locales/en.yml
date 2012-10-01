@@ -489,6 +489,7 @@ en:
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
   inventory_settings: "Inventory Settings"
+  inventory_settings_updated: "Inventory Settings successfully updated."
   is_not_available_to_shipment_address: is not available to shipment address
   issue_number: Issue Number
   item: Item

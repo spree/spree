@@ -16,24 +16,22 @@ describe "Inventory Settings" do
 
     it "should have the right content" do
       page.should have_content("Inventory Settings")
-      page.should have_content("Products with a zero inventory will be displayed")
-      page.should have_content("Backordering allowed")
+      page.should have_content("Show out-of-stock products")
+      page.should have_content("Allow Backorders")
     end
 
     it "should be able to toggle displaying zero stock products" do
-      click_link "admin_inventory_settings_link"
       uncheck "preferences_show_zero_stock_products"
       click_button "Update"
-
-      page.should have_content("Products with a zero inventory will not be displayed")
+      assert_flash_notice(:inventory_settings_updated)
+      assert_preference_unset(:show_zero_stock_products)
     end
 
     it "should be able to toggle allowing backorders" do
-      click_link "admin_inventory_settings_link"
       uncheck "preferences_allow_backorders"
       click_button "Update"
-
-      page.should have_content("Backordering not allowed")
+      assert_flash_notice(:inventory_settings_updated)
+      assert_preference_unset(:allow_backorders)
     end
   end
 end

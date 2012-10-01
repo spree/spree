@@ -4,12 +4,9 @@ module Spree
 
       def update
         Spree::Config.set(params[:preferences])
+        flash[:notice] = I18n.t(:inventory_settings_updated)
 
-        respond_to do |format|
-          format.html {
-            redirect_to edit_admin_inventory_settings_path
-          }
-        end
+        redirect_to edit_admin_inventory_settings_path
       end
     end
   end
