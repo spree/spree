@@ -14,8 +14,10 @@ describe "Adjustments" do
 
   context "admin managing adjustments" do
     it "should display the correct values for existing order adjustments" do
-      find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Shipping"
-      find('table.index tr:nth-child(2) td:nth-child(3)').text.should == "$100.00"
+      within("table.index tbody tr:nth-child(1)") do
+        find('td:nth-child(2)').text.should == "Shipping"
+        find('td:nth-child(3)').text.should == "$100.00"
+      end
     end
   end
 
@@ -46,7 +48,7 @@ describe "Adjustments" do
 
   context "admin editing an adjustment" do
     before(:each) do
-      within(:css, 'table.index tr:nth-child(2)') { click_link "Edit" }
+      within(:css, 'table.index tbody tr:nth-child(1)') { find('.icon-edit').click }
     end
 
     context "successfully" do
