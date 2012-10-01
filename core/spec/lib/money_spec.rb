@@ -1,3 +1,4 @@
+#encoding: UTF-8
 require 'spec_helper'
 
 module Spree
@@ -43,6 +44,21 @@ module Spree
         Spree::Config[:currency_symbol_position] = :after
         money = Spree::Money.new(10)
         money.to_s.should == "10.00 $"
+      end
+    end
+
+    context "JPY" do
+      before do
+        reset_spree_preferences do |config|
+          config.currency = "JPY"
+          config.currency_symbol_position = :before
+          config.display_currency = false
+        end
+      end
+
+      it "formats correctly" do
+        money = Spree::Money.new(1000)
+        money.to_s.should == "¥1,000"
       end
     end
   end
