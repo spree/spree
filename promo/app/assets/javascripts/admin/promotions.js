@@ -9,6 +9,8 @@ var initProductActions = function(){
     }
   });
 
+  $(".variant_autocomplete").variantAutocomplete();
+
   $('.calculator-fields').each(function(){
     var $fields_container = $(this);
     var $type_select = $fields_container.find('.type-select');

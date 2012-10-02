@@ -4,8 +4,7 @@
     
     <div data-hook="add_product_name" class="field eight columns alpha">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
-      <%= text_field_tag :add_product_name, nil %>
-      <%= hidden_field_tag :add_variant_id %>
+      <%= hidden_field_tag :add_variant_id, "", :class => "variant_autocomplete" %>
     </div>
     
     <div data-hook="add_quantity" class="field two columns alpha">

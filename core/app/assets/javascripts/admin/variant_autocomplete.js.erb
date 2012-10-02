@@ -5,7 +5,7 @@ formatVariantResult = function(variant) {
   var html = "";
 
   var output_name = function(name) {
-    return "<h4>" + name + "</h4>";
+    return "<h5>" + name + "</h5>";
   }
 
   var output_sku = function(sku) {
@@ -20,21 +20,28 @@ formatVariantResult = function(variant) {
     return "<img src='" + variant['images'][0]['image']["mini_url"] + "'/>";
   }
 
-  var name = variant['options_text']
-
   if (variant['images'].length != 0){
-    html = output_image(variant);
+    html += output_image(variant);
   }
 
   html += "<div>";
-  html += output_name(name);
+  html += output_name(variant['name']);
+
+  if (variant['option_values'] != []) {
+    $.map(variant['option_values'], function(item) {
+      html += "<strong>" + item.option_value.option_type.presentation + ":</strong> " +
+      item.option_value.presentation + " "
+    })
+    html += "<br>";
+  }
+
   html += output_sku(variant['sku']);
   html += output_count_on_hand(variant['count_on_hand']);
 
   return html
 }
 
-$.fn.variantPicker = function() {
+$.fn.variantAutocomplete = function() {
   this.parent().children(".options_placeholder").attr('id', this.parent().data('index'))
   this.select2({
     placeholder: "Select a variant",
