@@ -24,7 +24,7 @@ describe "States" do
   context "creating and editing states" do
     it "should allow an admin to edit existing states", :js => true do
       click_link "States"
-      select country.name, :from => "country"
+      select country.name, :from => "Country"
       click_link "new_state_link"
       fill_in "state_name", :with => "Calgary"
       fill_in "Abbreviation", :with => "CL"
