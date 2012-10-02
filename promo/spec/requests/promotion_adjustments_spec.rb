@@ -61,11 +61,6 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
-      within('#rule_fields') { click_button "Add" }
-      fill_in "Order total meets these criteria", :with => "30"
-      within('#rule_fields') { click_button "Update" }
-
       select "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
       select "Flat Rate (per order)", :from => "Calculator"
@@ -132,7 +127,8 @@ describe "Promotion Adjustments" do
 
       select "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
-      fill_in "Order total meets these criteria", :with => "30"
+
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
       select "Create adjustment", :from => "Add action of type"
@@ -159,7 +155,7 @@ describe "Promotion Adjustments" do
 
       select "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
-      fill_in "Order total meets these criteria", :with => "30"
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "30"
       within('#rule_fields') { click_button "Update" }
 
       select "Create adjustment", :from => "Add action of type"
@@ -330,7 +326,7 @@ describe "Promotion Adjustments" do
 
       select "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
-      fill_in "Order total meets these criteria", :with => "50"
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "50"
       within('#rule_fields') { click_button "Update" }
 
       select "Create adjustment", :from => "Add action of type"
@@ -443,7 +439,7 @@ describe "Promotion Adjustments" do
 
       select "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
-      fill_in "Order total meets these criteria", :with => order_min
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => order_min
       within('#rule_fields') { click_button "Update" }
 
       select "Create adjustment", :from => "Add action of type"
