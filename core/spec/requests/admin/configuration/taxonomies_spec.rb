@@ -42,7 +42,7 @@ describe "Taxonomies" do
     it "should allow an admin to update an existing taxonomy" do
       create(:taxonomy)
       click_link "Taxonomies"
-      within_row(2) { click_icon :edit }
+      within_row(1) { click_icon :edit }
       fill_in "taxonomy_name", :with => "sports 99"
       click_button "Update"
       page.should have_content("successfully updated!")
