@@ -18,10 +18,10 @@
       <col style="width: 5%">
       <col style="width: 10%">
       <% if @product.has_variants? %>
-        <col style="width: 30%">
+        <col style="width: 25%">
       <% end %>
-      <col style="width: 45%">
-      <col style="width: 10%">
+      <col style="width: <% if @product.has_variants? %>45%<% else %>70%<% end %>">
+      <col style="width: 15%">
     </colgroup>
     <thead>
       <tr data-hook="images_header">
