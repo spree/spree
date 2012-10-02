@@ -150,7 +150,7 @@ module Spree
         name = '' if options[:no_text]
         options[:class] = '' unless options[:class]
         options[:class] += 'no-text with-tip' if options[:no_text]
-        link_to_with_icon('icon-trash', name, '#', :class => "remove_fields #{options[:class]}") + f.hidden_field(:_destroy)
+        link_to_with_icon('icon-trash', name, '#', :class => "remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)
