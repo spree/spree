@@ -44,6 +44,7 @@ describe "Checkout" do
 
         @order = create(:order_with_totals, :state => 'cart',
                                             :shipping_method => shipping_method)
+        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
 
         visit spree.root_path
         click_link "RoR Mug"
