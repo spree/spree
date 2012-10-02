@@ -18,8 +18,7 @@ describe "Shipments" do
 
     visit spree.admin_path
     click_link "Orders"
-    within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }
-
+    within_row(1) { click_link "R100" }
   end
 
   it "should be able to create and list shipments for an order", :js => true do
@@ -35,10 +34,9 @@ describe "Shipments" do
 
     click_link "Shipments"
 
-    within("table.index tbody tr:nth-child(1)") do
-      find('td:nth-child(1)').text.should == order.shipment.number
-      find('td:nth-child(5)').text.should == "Pending"
-
+    within_row(1) do
+      column_text(1).should == order.shipment.number
+      column_text(5).should == "Pending"
       click_icon(:edit)
     end
 

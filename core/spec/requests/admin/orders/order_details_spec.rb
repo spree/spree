@@ -27,7 +27,10 @@ describe "Order Details" do
       visit spree.admin_path
       click_link "Orders"
 
-      within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }
+      within_row(1) do
+        click_link "R100"
+      end
+
       page.should have_content("spree t-shirt")
       page.should have_content("$39.98")
       click_link "Edit"

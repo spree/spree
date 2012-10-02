@@ -31,23 +31,30 @@ describe "Payments" do
       create(:payment, :order => @order, :amount => @order.outstanding_balance, :payment_method => create(:bogus_payment_method, :environment => 'test'))
       visit spree.admin_path
       click_link "Orders"
-      within('table#listing_orders tbody tr:nth-child(1)') { click_link "R100" }
+      within_row(1) do
+        click_link "R100"
+      end
     end
 
     it "should be able to list and create payment methods for an order", :js => true do
 
       click_link "Payments"
       find("#payment_status").text.should == "BALANCE DUE"
-      find('table.index tbody tr:nth-child(1) td:nth-child(2)').text.should == "$49.98"
-      find('table.index tbody tr:nth-child(1) td:nth-child(3)').text.should == "Credit Card"
-      find('table.index tbody tr:nth-child(1) td:nth-child(4)').text.should == "PENDING"
+      within_row(1) do
+        column_text(2).should == "$49.98"
+        column_text(3).should == "Credit Card"
+        column_text(4).should == "PENDING"
+      end
 
-      find(".icon-void").click
+      click_icon :void
       find("#payment_status").text.should == "BALANCE DUE"
       page.should have_content("Payment Updated")
-      find('table.index tbody tr:nth-child(1) td:nth-child(2)').text.should == "$49.98"
-      find('table.index tbody tr:nth-child(1) td:nth-child(3)').text.should == "Credit Card"
-      find('table.index tbody tr:nth-child(1) td:nth-child(4)').text.should == "VOID"
+
+      within_row(1) do
+        column_text(2).should == "$49.98"
+        column_text(3).should == "Credit Card"
+        column_text(4).should == "VOID"
+      end
 
       click_on "New Payment"
       page.should have_content("New Payment")

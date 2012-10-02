@@ -12,9 +12,7 @@ describe 'Product Details' do
 
       visit spree.admin_path
       click_link 'Products'
-      within('table.index tbody tr:nth-child(1)') do
-        click_icon(:edit)
-      end
+      within_row(1) { click_icon :edit }
 
       click_link 'Product Details'
 

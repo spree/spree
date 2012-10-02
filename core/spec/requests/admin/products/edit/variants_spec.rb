@@ -13,9 +13,7 @@ describe "Product Variants" do
 
       click_link "Products"
 
-      within('table.index tbody tr:nth-child(1)') do
-        click_icon :edit
-      end
+      within_row(1) { click_icon :edit }
 
       within('#sidebar') { click_link "Variants" }
       page.should have_content("To add variants, you must first define")

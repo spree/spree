@@ -31,10 +31,10 @@ describe "Shipping Methods" do
       click_link "Shipping Methods"
 
       within_row(1) do
-        find('td:nth-child(1)').text.should == "UPS Ground"
-        find('td:nth-child(2)').text.should == "North America"
-        find('td:nth-child(3)').text.should == "Flat Rate (per order)"
-        find('td:nth-child(4)').text.should == "Both"
+        column_text(1).should == "UPS Ground"
+        column_text(2).should == "North America"
+        column_text(3).should == "Flate Rate (per order)"
+        column_text(4).should == "Both"
       end
     end
   end

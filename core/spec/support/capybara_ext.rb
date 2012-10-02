@@ -10,6 +10,10 @@ module CapybaraExt
   def within_row(num, &block)
     within("table.index tbody tr:nth-child(#{num})", &block)
   end
+
+  def column_text(num)
+    find("td:nth-child(#{num})").text
+  end
 end
 
 RSpec.configure do |c|
