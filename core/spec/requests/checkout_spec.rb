@@ -38,8 +38,12 @@ describe "Checkout" do
 
     context "defaults to use billing address" do
       before do
+        # Add country to shipping method's list so we can proceed to delivery
+        shipping_method = create(:shipping_method)
+        shipping_method.zone.zone_members << Spree::ZoneMember.create(:zoneable => country)
+
         @order = create(:order_with_totals, :state => 'cart',
-                                            :shipping_method => create(:shipping_method))
+                                            :shipping_method => shipping_method)
         @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
 
         visit spree.root_path

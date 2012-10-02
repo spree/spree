@@ -1,6 +1,6 @@
 module Spree
   class Zone < ActiveRecord::Base
-    has_many :zone_members, :dependent => :destroy
+    has_many :zone_members, :dependent => :destroy, :class_name => "Spree::ZoneMember"
     has_many :tax_rates, :dependent => :destroy
     has_many :shipping_methods, :dependent => :nullify
 
