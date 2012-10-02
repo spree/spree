@@ -7,6 +7,14 @@
 
 <% if @variants.any? %>
   <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+    <colgroup>
+      <col style="width: 5%" />
+      <col style="width: 25%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+    </colgroup>
     <thead data-hook="variants_header">
       <tr>
         <th colspan="2"><%= t(:options) %></th>
@@ -25,9 +33,9 @@
             <span class="handle"></span>
           </td>
           <td><%= variant.options_text %></td>
-          <td><%= money variant.price %></td>
-          <td><%= variant.sku %></td>
-          <td><%= variant.on_hand %></td>
+          <td class="align-center"><%= money variant.price %></td>
+          <td class="align-center"><%= variant.sku %></td>
+          <td class="align-center"><%= variant.on_hand %></td>
           <td class="actions">
             <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
             &nbsp;
@@ -41,7 +49,7 @@
     </tbody>
   </table>
 <% else %>
-  <!-- <div class="alpha twelve columns no-objects-found"><%= t(:nothing_found)%></div> -->
+  <div class="alpha twelve columns no-objects-found"><%= t(:no_variants_found)%>.</div>
 <% end %>
 
 <% if @product.empty_option_values? %>

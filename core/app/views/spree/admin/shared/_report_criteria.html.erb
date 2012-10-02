@@ -1,13 +1,13 @@
 <%= search_form_for @search, :url => spree.sales_total_admin_reports_path  do |s| %>
     <div class="date-range-filter field align-center">
         <%= label_tag nil, t(:start), :class => 'inline' %>
-        <%= s.text_field :created_at_gt, :class => 'datepicker' %>
+        <%= s.text_field :created_at_gt, :class => 'datepicker datepicker-from' %>
         
         <span class="range-divider">
           <i class="icon-arrow-right"></i>
         </span>
 
-        <%= s.text_field :created_at_lt, :class => 'datepicker' %>
+        <%= s.text_field :created_at_lt, :class => 'datepicker datepicker-to' %>
         <%= label_tag nil, t(:end), :class => 'inline' %>
     </div>
 
