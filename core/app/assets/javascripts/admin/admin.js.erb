@@ -1,6 +1,7 @@
 //= require_self
 //= require admin/product_autocomplete
 //= require select2
+//= reqiuire admin/spree-select2
 
 /**
 This is a collection of javascript functions and whatnot
@@ -12,12 +13,6 @@ jQuery(function($) {
   // Make main menu use full width
   $('.fullwidth-menu').horizontalNav();
 
-  <% unless Rails.env.test? %>
-    // Make select beautiful
-    $('select.select2').select2({
-      allowClear: true
-    });
-  <% end %>
 
   // Add some tips
   $('.with-tip').powerTip({
