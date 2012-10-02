@@ -52,7 +52,7 @@ describe "Prototypes" do
       click_button "Create"
       page.should have_content("successfully created!")
       click_link "Prototypes"
-      within('table#listing_prototypes tbody tr:nth-child(1)') { click_link "Edit" }
+      within_row(1) { click_icon :edit }
       fill_in "prototype_name", :with => "Shirt 99"
       click_button "Update"
       page.should have_content("successfully updated!")
