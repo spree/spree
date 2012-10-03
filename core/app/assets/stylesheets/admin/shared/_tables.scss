@@ -1,10 +1,12 @@
 table {
   width: 100%;
   margin-bottom: 15px;
+  border-collapse: separate;
 
   th, td {
     padding: 15px 10px;
-    border-right: 1px solid $color-border;    
+    border-right: 1px solid $color-border;
+    border-bottom: 1px solid $color-border;
     vertical-align: middle;
     text-overflow: ellipsis;
 
@@ -12,7 +14,7 @@ table {
       border: 1px solid transparent;
     }
 
-    &:first-child {
+    &:first-child {      
       border-left: 1px solid $color-border;
     }
 
@@ -27,7 +29,7 @@ table {
 
       [class*='icon-'].no-text {
         font-size: 120%;
-        background-color: lighten($c_blue1, 33);
+        background-color: very-light($color-3);
         border: 1px solid $color-border;
         border-radius: 15px;
         width: 29px;
@@ -46,24 +48,24 @@ table {
         }
       }
       .icon-envelope-alt {
-        color: $color-links;
+        color: $color-link;
 
         &:hover {
-          background-color: $c_blue1;
-          color: white;
+          background-color: $color-3;
+          color: $color-1;
         }
       }
       .icon-trash:hover, .icon-void:hover {
-        background-color: $c_red1;
-        color: white;
+        background-color: $color-error;
+        color: $color-1;
       }    
       .icon-edit:hover, .icon-capture:hover {
-        background-color: $c_green1;
-        color: white;
+        background-color: $color-success;
+        color: $color-1;
       }
       .icon-copy:hover {
-        background-color: $c_yellow1;
-        color: white;
+        background-color: $color-notice;
+        color: $color-1;
       }
     }
 
@@ -81,10 +83,6 @@ table {
       @extend .icon-reorder;
       cursor: move;
     }
-
-    a:hover {
-      color: $c_green1;
-    }
   }
 
   th {
@@ -95,71 +93,41 @@ table {
 
   thead {
     th {
-      background-color: lighten($c_blue1, 33);
+      border-bottom: none;
+      background-color: $color-tbl-thead;
       text-transform: uppercase;
       font-size: 85%;
-
-      a {
-        color: $color-links !important;
-
-        &:hover, &.desc, &.asc {
-          color: $c_green1 !important;
-        }
-      }
     }
   }
 
-  tbody {
-    &.with-border tr td {
-      border-top: 1px solid $color-border;
-    }
+  tbody {    
     tr {
+      &:first-child td {
+        border-top: 1px solid $color-border;
+      }
       &.even td {
-        background-color: lighten($c_blue1, 33);
+        background-color: $color-tbl-even;
 
         img {
-          border: 1px solid lighten($c_blue1, 30);
+          border: 1px solid very-light($color-3, 6);
         }
       }
 
       &:hover td {
-        background-color: lighten($c_blue1, 30);
+        background-color: very-light($color-3, 6);
 
         img {
           border: 1px solid $color-border;
         }
       }
 
-      &.highlight {
-        &.action-remove td, &.action-void td {
-          background-color: lighten($c_red1, 55);
-          text-decoration: line-through;
-
-          &.actions {
-            text-decoration: none;
-          }
-        }
-        &.action-edit td, &.action-capture td {
-          background-color: lighten($c_green1, 43);
-        }
-        &.action-clone td {
-          background-color: lighten($c_yellow1, 43);
-        }
+      &.deleted td {
+        background-color: very-light($color-error, 6);
+        border-color: very-light($color-error, 15);
       }
-
-      td.actions {
-        background-color: transparent !important;
-      }
-
-      &[class*="state"] td:first-child {
-        border-left-width: 3px;
-      }
-      &.state-complete td:first-child { border-left-color: $c_green1 }      
-      &.state-cart     td:first-child { border-left-color: lighten($c_blue1, 30) }
-      &.state-canceled td:first-child { border-left-color: lighten($c_red1, 30) }
 
       &.ui-sortable-placeholder td {
-        border: 1px solid $c_green1 !important;
+        border: 1px solid $color-2 !important;
         visibility: visible !important;
 
         &.actions {
@@ -167,7 +135,7 @@ table {
           border-right: none !important;
           border-top: none !important;
           border-bottom: none !important;
-          border-left: 1px solid $c_green1 !important;
+          border-left: 1px solid $color-2 !important;
         }
       }
 
@@ -175,7 +143,7 @@ table {
         width: 100%;
 
         td {
-          background-color: lighten($c_blue1, 33);
+          background-color: lighten($color-3, 33);
           border-bottom: 1px solid $color-border;          
 
           &.actions {
@@ -185,17 +153,21 @@ table {
       }
     }
 
+    &.no-border-top tr:first-child td {
+      border-top: none;
+    }
+
     &.grand-total {
       td {
-        border-color: $c_green1 !important;
+        border-color: $color-2 !important;
         text-transform: uppercase;
         font-size: 110%;
-        font-weight: bold;
-        background-color: lighten($c_green1, 50);
+        font-weight: 600;
+        background-color: lighten($color-2, 50);
       }
       .total {
-        background-color: $c_green1;
-        color: white;
+        background-color: $color-2;
+        color: $color-1;
       }
     }
   }

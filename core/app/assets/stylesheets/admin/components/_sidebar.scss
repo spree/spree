@@ -1,0 +1,52 @@
+// Sidebar
+//---------------------------------------------------
+#sidebar {
+  overflow: visible;
+  border-top: 1px solid $color-border;
+  margin-top: 17px;
+
+  .sidebar-title {
+    color: $color-2;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+
+    > span {
+      display: inline;
+      background: #fff;
+      padding: 5px 10px;
+      position: relative;
+      top: -14px;
+    }
+  }
+
+  .sidebar-menu {
+    ul {
+      list-style: none;
+
+      li {
+        a {
+          padding: 10px 0;
+          display: block;
+          position: relative;
+          text-align: left;
+          border: 1px solid transparent;
+          text-transform: uppercase;
+          font-weight: 600;
+          font-size: 90%;
+        }
+
+        &.active a {
+          color: $color-2;
+          border-left-width: 0;
+          border-bottom-color: $color-2;
+        }
+
+        &:hover a {
+          color: $color-2;
+        }
+      }
+    }
+  }
+}

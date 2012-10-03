@@ -8,10 +8,9 @@
 //= require jquery.powertip
 //= require spin
 //= require trunk8
-//= require flexmenu
+//= require jquery.adaptivemenu
 //= require equalize
 //= require responsive-tables
-//= require jquery.foundation.tooltips
 //= require jquery.horizontalNav
 //= require_tree .
 

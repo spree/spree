@@ -10,13 +10,13 @@ input[type="tel"],
 textarea, fieldset {
   @include border-radius(3px);
   padding: 7px 10px;  
-  border: 1px solid $color-border;
+  border: 1px solid $color-txt-brd;
   color: $color-body-text;
   font-size: 90%;
 
   &:focus {
     outline: none;
-    border-color: lighten($c_green1, 30);
+    border-color: $color-txt-hover-brd;
   }
 
   &[disabled] {
@@ -33,12 +33,12 @@ textarea {
 }
 
 label {
-  font-weight: bold;
+  font-weight: 600;
   text-transform: uppercase;
   font-size: 85%;
   display: inline;
   margin-bottom: 5px;
-  color: $c_blue3;
+  color: $color-4;
 
   &.inline {
     display: inline-block !important;
@@ -52,23 +52,23 @@ input[type="button"],
 button, .button {
   @include border-radius(3px);
   display: inline-block;
-  padding: 8px 15px;
+  padding: 9px 15px;
   border: none;  
-  background-color: $c_blue1;
-  color: white;
+  background-color: $color-btn-bg;
+  color: $color-btn-text;
   text-transform: uppercase;
   font-size: 85%;
-  font-weight: bold;
+  font-weight: 600;
 
-  &:visited, &:active, &:focus { color: white }
+  &:visited, &:active, &:focus { color: $color-btn-text }
+
   &:hover {
-    background-color: $c_green1;
-    border-color: darken($c_green1, 5);
-    color: white;
+    background-color: $color-btn-hover-bg;
+    color: $color-btn-hover-text;
   }
 
-  &:active {
-    box-shadow: 0 0 8px 0 darken($c_green1, 5) inset;
+  &:active:focus {    
+    box-shadow: 0 0 8px 0 darken($color-btn-hover-bg, 5) inset;
   }
 
   &.fullwidth {
@@ -78,7 +78,6 @@ button, .button {
 }
 
 span.info {
-  font-family: Georgia, "Times New Roman", serif;
   font-style: italic;
   font-size: 85%;
   color: lighten($color-body-text, 15);
@@ -104,12 +103,31 @@ span.info {
       }
     }
   }
+
+  &.withError {
+    .field_with_errors {
+      label { 
+        color: very-light($color-error, 30); 
+      }
+
+      input {
+        border-color: very-light($color-error, 15);
+      }
+    }
+    .formError {
+      color: very-light($color-error, 30);
+      font-style: italic;
+      font-size: 85%;
+    }
+  }
 }
 
 fieldset {
   box-shadow: none;
   box-sizing: border-box;
+  border-color: $color-border;
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   margin-left: 0;
   margin-right: 0;  
   position: relative;  
@@ -131,11 +149,10 @@ fieldset {
   }
 
   legend {
-    @include border-radius(3px);
-    background-color: white;    
-    color: $c_green1;    
+    background-color: $color-1;    
+    color: $color-2;    
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
     text-align: center;
     padding: 8px 15px;
@@ -146,20 +163,29 @@ fieldset {
   }
 
   .filter-actions {
-    margin-bottom: -45px;
+    margin-bottom: -32px;
+    text-align: center;
+
+    form {
+      display: inline-block;
+    }
 
     button, .button, input[type="submit"], input[type="button"], span.or {
-      border: 15px solid white;
-      border-radius: 18px;
-      margin-top: -5px;
+      @include border-radius($border-radius);
+      
+      -webkit-box-shadow: 0 0 0 15px $color-1;
+         -moz-box-shadow: 0 0 0 15px $color-1;
+          -ms-box-shadow: 0 0 0 15px $color-1;
+           -o-box-shadow: 0 0 0 15px $color-1;
+              box-shadow: 0 0 0 15px $color-1;
 
       &:hover {
-        border-color: white;
+        border-color: $color-1;
       }
     }
 
     span.or {
-      background-color: white;
+      background-color: $color-1;
       border-width: 5px;
       margin-left: -15px;
       margin-right: -15px;

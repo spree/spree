@@ -82,6 +82,8 @@
   background-color: $c_blue1;
 
   li {
+    min-width: 90px;
+
     a {
       display: block;
       padding: 25px 20px;
@@ -108,6 +110,21 @@
           left: 50%;
           margin-left: -10px;
           z-index: 1;
+        }
+      }
+    }
+
+    .dropdown {
+      width: 300px;
+      background-color: $c_blue1;
+      width: 200px;
+      z-index: 100000;
+
+      > li {
+        width: 200px !important;
+
+        a:after {
+          display: none;
         }
       }
     }
