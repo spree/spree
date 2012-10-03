@@ -74,4 +74,24 @@ describe Spree::BaseHelper do
     end
 
   end
+
+  # Regression test for #2034
+  context "flash_message" do
+    let(:flash) { {:notice => "ok", :foo => "foo", :bar => "bar"} }
+
+    it "should output all flash content" do
+      flash_messages
+      helper.output_buffer.should == "<div class=\"flash notice\">ok</div><div class=\"flash foo\">foo</div><div class=\"flash bar\">bar</div>"
+    end
+
+    it "should output flash content except one key" do
+      flash_messages(:ignore_types => :bar)
+      helper.output_buffer.should == "<div class=\"flash notice\">ok</div><div class=\"flash foo\">foo</div>"
+    end
+
+    it "should output flash content except some keys" do
+      flash_messages(:ignore_types => [:foo, :bar])
+      helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
+    end
+  end
 end
