@@ -1,5 +1,5 @@
 class Spree::Preference < ActiveRecord::Base
-  attr_accessible :key, :value_type, :value
+  attr_accessible :name, :key, :value_type, :value
 
   validates :key, :presence => true
   validates :value_type, :presence => true

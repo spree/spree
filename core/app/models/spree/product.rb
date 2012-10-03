@@ -87,6 +87,7 @@ module Spree
       master
     end
 
+
     def to_param
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end

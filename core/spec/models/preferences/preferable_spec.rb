@@ -119,12 +119,12 @@ describe Spree::Preferences::Preferable do
 
       it "retrieves a preference from the database before falling back to default" do
         preference = mock(:value => "chatreuse")
-        Spree::Preference.should_receive(:find_by_key).with(:color).and_return(preference)
+        Spree::Preference.should_receive(:find_by_name).with(:color).and_return(preference)
         @a.preferred_color.should == 'chatreuse'
       end
 
       it "defaults if no database key exists" do
-        Spree::Preference.should_receive(:find_by_key).and_return(nil)
+        Spree::Preference.should_receive(:find_by_name).and_return(nil)
         @a.preferred_color.should == 'green'
       end
     end
