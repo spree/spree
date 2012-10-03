@@ -10,7 +10,15 @@ Hopefully, this will evolve into a propper class.
 
 jQuery(function($) {
   // Make main menu use full width
-  $('.fullwidth-menu').horizontalNav();
+  $('.fullwidth-menu').horizontalNav({
+    tableDisplay: false,
+    responsiveDelay: 0
+  });
+
+  $('.main-menu-wrapper ul').AdaptiveMenu({
+    text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+    class: 'dropdown'
+  });
 
   // Add some tips
   $('.with-tip').powerTip({
