@@ -8,13 +8,13 @@
     </div>
     <div class="filter-actions actions">
       <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
-        <%= button t('clear_key', :scope => 'spree.api') %>
+        <%= button t('clear_key', :scope => 'spree.api'), 'icon-trash' %>
       <% end %>
 
       <span class="or"><%= t(:or)%></span>
     
       <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
-        <%= button t('regenerate_key', :scope => 'spree.api') %>
+        <%= button t('regenerate_key', :scope => 'spree.api'), 'icon-refresh' %>
       <% end %>      
     </div>    
 
@@ -22,7 +22,7 @@
 
     <div class="no-objects-found"><%= t('no_key', :scope => 'spree.api') %></div>
 
-    <div class="align-center">
+    <div class="filter-actions actions">
       <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
         <%= button t('generate_key', :scope => 'spree.api'), 'icon-key' %>
       <% end %>
