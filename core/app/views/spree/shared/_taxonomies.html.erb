@@ -1,6 +1,6 @@
 <nav id="taxonomies" class="sidebar-item" data-hook>
   <% get_taxonomies.each do |taxonomy| %>
-    <h6 class='taxonomy-root'><%= t(:shop_by_taxonomy, :taxonomy => taxonomy.name.singularize) %></h6>
+    <h6 class='taxonomy-root'><%= t(:shop_by_taxonomy, :taxonomy => taxonomy.name) %></h6>
     <%= taxons_tree(taxonomy.root, @taxon, Spree::Config[:max_level_in_taxons_menu] || 1) %>
   <% end %>
 </nav>

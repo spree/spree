@@ -152,7 +152,11 @@ to
 ```ruby
 Spree.user_class = "Spree::User"
 ```
-and then run `bundle exec rake spree_auth:admin:create` in order to set up the admin user for the application.
+
+In order to set up the admin user for the application you should then run:
+
+    $ bundle exec rake spree_auth:admin:create
+
 
 Running Tests
 -------------
