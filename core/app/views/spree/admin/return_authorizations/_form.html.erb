@@ -47,37 +47,34 @@
     <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>
     <%= f.error_message_on :reason %>
   <% end %>
-
-
-  <% content_for :head do %>
-    <%= javascript_tag do -%>
-      var variant_prices = new Array();
-      <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
-        variant_prices[<%= variant.id.to_s %>] = <%= variant.price %>;
-      <% end %>
-
-      function calculate_rma_price(object, value){
-        var rma_amount = 0;
-
-        $.each($("td.return_quantity input"), function(i, inpt){
-          var variant_id = $(inpt).attr('id').replace("return_quantity_", "");
-           rma_amount += variant_prices[variant_id] * $(inpt).val()
-        });
-
-        if(!isNaN(rma_amount)){
-          $("span#rma_value").html(rma_amount.toFixed(2));
-        }
-      }
-
-      $(document).ready(function(){
-        $.each($("td.return_quantity input"), function(i, inpt){
-          $(inpt).delayedObserver(function() {
-            calculate_rma_price();
-          }, 0.5);
-        });
-
-        calculate_rma_price();
-      });
-    <% end -%>
-  <% end %>
 </div>
+
+<script>
+  var variant_prices = {};
+  <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
+    variant_prices[<%= variant.id.to_s %>] = <%= variant.price %>;
+  <% end %>
+
+  function calculate_rma_price(object, value){
+    var rma_amount = 0;
+
+    $.each($("td.return_quantity input"), function(i, inpt){
+      var variant_id = $(inpt).attr('id').replace("return_quantity_", "");
+       rma_amount += variant_prices[variant_id] * $(inpt).val()
+    });
+
+    if(!isNaN(rma_amount)){
+      $("span#rma_value").html(rma_amount.toFixed(2));
+    }
+  }
+
+  $(document).ready(function(){
+    $.each($("td.return_quantity input"), function(i, inpt){
+      $(inpt).delayedObserver(function() {
+        calculate_rma_price();
+      }, 0.5);
+    });
+
+    calculate_rma_price();
+  });
+</script>
