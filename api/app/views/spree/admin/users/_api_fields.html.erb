@@ -1,19 +1,18 @@
-<% content_for :sidebar_title do %>
-  <%= t('access', :scope => 'spree.api') %>
-<% end %>
+<fieldset data-hook="admin_user_api_key" class="omega six columns">
+  <legend><%= t('access', :scope => 'spree.api') %></legend>
 
-<% content_for :sidebar do %>
   <% if @user.spree_api_key.present? %>
     <div class="field">
       <%= label_tag t('key', :scope => 'spree.api') %>:
       <%= @user.spree_api_key %>
     </div>
-    <div class="field">
+    <div class="filter-actions actions">
       <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
         <%= button t('clear_key', :scope => 'spree.api') %>
-      <% end %>  
-    </div>    
-    <div class="field">
+      <% end %>
+
+      <span class="or"><%= t(:or)%></span>
+    
       <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
         <%= button t('regenerate_key', :scope => 'spree.api') %>
       <% end %>      
@@ -29,4 +28,5 @@
       <% end %>
     </div>    
   <% end %>
-<% end %>
+
+</fieldset>

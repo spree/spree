@@ -147,6 +147,11 @@ fieldset {
 
   .filter-actions {
     margin-bottom: -45px;
+    text-align: center;
+
+    form {
+      display: inline-block;
+    }
 
     button, .button, input[type="submit"], input[type="button"], span.or {
       border: 15px solid white;
