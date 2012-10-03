@@ -77,13 +77,13 @@
 
     <%= f.field_container :shipping_categories do %>
       <%= f.label :shipping_category_id, t(:shipping_categories) %>
-      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => true }, { :class => 'select2' }) %>
+      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => 'None' }, { :class => 'select2' }) %>
       <%= f.error_message_on :shipping_category %>
     <% end %>
 
     <%= f.field_container :tax_category do %>
       <%= f.label :tax_category_id, t(:tax_category) %>
-      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => true }, { :class => 'select2' }) %>
+      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => 'None' }, { :class => 'select2' }) %>
       <%= f.error_message_on :tax_category %>
     <% end %>
   </div>
