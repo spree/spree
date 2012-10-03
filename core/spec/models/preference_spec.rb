@@ -118,3 +118,7 @@ describe Spree::Preference do
   end
 
 end
+
+
+
+
