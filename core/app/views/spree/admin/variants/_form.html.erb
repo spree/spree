@@ -10,8 +10,9 @@
             {}, {:class => 'select2 fullwidth'})
           %>
         <% else %>
-          <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
-          <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled', :class => 'fullwidth') %>
+          <% if opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.try(:presentation) %>
+            <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled', :class => 'fullwidth') %>
+          <% end %>
         <% end %>
       </div>
     <% end %>
