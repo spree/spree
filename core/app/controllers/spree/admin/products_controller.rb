@@ -81,13 +81,6 @@ module Spree
               includes(product_includes).
               page(params[:page]).
               per(Spree::Config[:admin_products_per_page])
-
-            if params[:q][:s].include?("master_price")
-              # By applying the group in the main query we get an undefined method gsub for Arel::Nodes::Descending
-              # It seems to only work when the price is actually being sorted in the query
-              # To be investigated later.
-              @collection = @collection.group("spree_variants.price")
-            end
           else
 
             @collection = super.ransack(:name_cont => params[:q]).result
