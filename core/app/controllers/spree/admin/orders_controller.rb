@@ -36,8 +36,7 @@ module Spree
         end
 
         @search = Order.ransack(params[:q])
-        @orders = @search.result(:distinct => true).
-          includes([:user, :shipments, :payments]).
+        @orders = @search.result.includes([:user, :shipments, :payments]).
           page(params[:page]).
           per(params[:per_page] || Spree::Config[:orders_per_page])
 
