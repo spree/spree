@@ -1,44 +1,16 @@
 <%#encoding: UTF-8%>
 // variant autocompletion
 
+$(document).ready(function() {
+  console.log("READY!")
+  window.variantTemplate = Handlebars.compile($('#variant_autocomplete_template').text());
+})
+
 formatVariantResult = function(variant) {
-  var html = "";
-
-  var output_name = function(name) {
-    return "<h5>" + name + "</h5>";
+  if (variant["images"][0] != undefined) {
+    variant.image = variant.images[0].image.mini_url
   }
-
-  var output_sku = function(sku) {
-    return "<span><strong>" + Spree.translations.sku + ":</strong> " + sku + " </span>";
-  }
-
-  var output_count_on_hand = function(count_on_hand) {
-    return "<span><strong>" + Spree.translations.on_hand + ":</strong> " + count_on_hand + "</span>";
-  }
-
-  var output_image = function(variant){
-    return "<img src='" + variant['images'][0]['image']["mini_url"] + "'/>";
-  }
-
-  if (variant['images'].length != 0){
-    html += output_image(variant);
-  }
-
-  html += "<div>";
-  html += output_name(variant['name']);
-
-  if (variant['option_values'] != []) {
-    $.map(variant['option_values'], function(item) {
-      html += "<strong>" + item.option_value.option_type.presentation + ":</strong> " +
-      item.option_value.presentation + " "
-    })
-    html += "<br>";
-  }
-
-  html += output_sku(variant['sku']);
-  html += output_count_on_hand(variant['count_on_hand']);
-
-  return html
+  return variantTemplate({ variant: variant, translations: Spree.translations })
 }
 
 $.fn.variantAutocomplete = function() {
@@ -61,7 +33,6 @@ $.fn.variantAutocomplete = function() {
     },
     formatResult: formatVariantResult,
     formatSelection: function (variant) {
-      console.log($(this.element).parent().children('.options_placeholder'))
       $(this.element).parent().children('.options_placeholder').html(variant.options_text)
       return variant.name;
     }

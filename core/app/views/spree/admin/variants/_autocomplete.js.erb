@@ -1,0 +1,18 @@
+<%= javascript_include_tag "handlebars" %>
+<script type='text/template' id='variant_autocomplete_template'>
+  {{#if variant.image }}
+    <img src='{{variant.image}}' />
+  {{/if}}
+
+  <h5>{{variant.name}}</h5>
+
+  {{#if variant.option_values}}
+    {{#each variant.option_values}}
+      <strong>{{option_value.option_type.presentation}}:</strong> {{option_value.presentation}}
+    {{/each}}
+    <br>
+  {{/if}}
+
+  <span><strong>{{translations.sku}}:</strong> {{variant.sku}}</span>
+  <span><strong>{{translations.on_hand}}:</strong> {{variant.count_on_hand}}</span>
+</script>

@@ -32,10 +32,10 @@
         <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
 
         <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, :class => "variant_autocomplete" %>
+        <div class='options_placeholder'></div>
       </div>
       <div class="field table-cell">
         <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :size => 4, :min => 1 %>
-        <div class='options_placeholder'></div>
       </div>
       <div class="field table-cell">
         <button class="icon-plus add small"><%= t(:add) %></button>
