@@ -11,13 +11,13 @@
             checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
             has_checked = true if checked %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders], 'data-price' => money(v.price) %>
               <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>
                 </span>
-                <% if variant_price_diff v %>
-                  <span class="price diff"><%= variant_price_diff v %></span>
+                <% if variant_price v %>
+                  <span class="price diff"><%= variant_price v %></span>
                 <% end %>
               </label>
             </li>

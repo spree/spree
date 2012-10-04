@@ -130,10 +130,24 @@ describe Spree::Order do
       context "without confirmation required" do
         before do
           order.stub :confirmation_required? => false
+          order.stub :payment_required? => true
         end
 
         it "transitions to complete" do
           order.should_receive(:process_payments!).once
+          order.next!
+          order.state.should == "complete"
+        end
+      end
+
+      # Regression test for #2028
+      context "when payment is not required" do
+        before do
+          order.stub :payment_required? => false
+        end
+
+        it "does not call process payments" do
+          order.should_not_receive(:process_payments!)
           order.next!
           order.state.should == "complete"
         end
@@ -153,6 +167,7 @@ describe Spree::Order do
 
     it "should only call default transitions once when checkout_flow is redefined" do
       order = SubclassedOrder.new
+      order.stub :payment_required? => true
       order.should_receive(:process_payments!).once
       order.state = "payment"
       order.next!

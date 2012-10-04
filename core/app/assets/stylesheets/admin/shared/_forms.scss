@@ -33,7 +33,7 @@ textarea {
 }
 
 label {
-  font-weight: bold;
+  font-weight: 600;
   text-transform: uppercase;
   font-size: 85%;
   display: inline;
@@ -58,7 +58,7 @@ button, .button {
   color: white;
   text-transform: uppercase;
   font-size: 85%;
-  font-weight: bold;
+  font-weight: 600;
 
   &:visited, &:active, &:focus { color: white }
   &:hover {
@@ -135,7 +135,7 @@ fieldset {
     background-color: white;    
     color: $c_green1;    
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
     text-align: center;
     padding: 8px 15px;

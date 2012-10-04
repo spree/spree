@@ -47,17 +47,17 @@ a {
 //--------------------------------------------------------------
 
 h1,h2,h3,h4,h5,h6 {
-  font-weight: bold; 
+  font-weight: 600;
   color: $color-headers; 
   line-height: 1.1; 
 }
 
-h1 { font-size: 44px; }
-h2 { font-size: 37px; }
-h3 { font-size: 27px; }
-h4 { font-size: 23px; }
-h5 { font-size: 17px; }
-h6 { font-size: 14px; }
+h1 { font-size: 44px; line-height: 34px }
+h2 { font-size: 37px; line-height: 30px }
+h3 { font-size: 27px; line-height: 27px }
+h4 { font-size: 23px; line-height: 25px }
+h5 { font-size: 17px; line-height: 25px }
+h6 { font-size: 14px; line-height: 25px }
 
 
 // Lists
@@ -90,7 +90,7 @@ dl {
 
   dt {
     width: 40%;
-    font-weight: bold;
+    font-weight: 600;
     padding-left: 0;
     text-transform: uppercase;
     font-size: 85%;
@@ -114,10 +114,12 @@ dl {
 .align-left    { text-align: left    }
 .align-justify { text-align: justify }
 
-.green { color: $c_green1 }
-.blue  { color: $c_blue1  }
-.red   { color: $c_red1   }
-.yellow{ color: $c_yellow1}
+.uppercase     { text-transform: uppercase }
+
+.green  { color: $c_green1  }
+.blue   { color: $c_blue1   }
+.red    { color: $c_red1    }
+.yellow { color: $c_yellow1 }
 
 .no-objects-found {
   text-align: center;
@@ -133,7 +135,7 @@ dl {
   @include border-radius(3px);
   text-transform: uppercase;
   font-size: 80%;
-  font-weight: bold;
+  font-weight: 600;
   border: 1px solid transparent;
   padding: 2px 5px;  
   width: 100%;
