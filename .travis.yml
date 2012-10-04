@@ -27,7 +27,7 @@ branches:
     - 1-1-stable
     - 1-2-stable
     - master
-    - admin-redesign
+    - refactor_product_autocomplete
 rvm:
   - 1.8.7
   - 1.9.3
