@@ -265,7 +265,7 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 60.0 # mug(40) + bag(20) - bag_discount(10) + shipping(10)
     end
 
-    pending "should allow an admin to create a promotion that adds a 'free' item to the cart" do
+    it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
       fill_in "Name", :with => "Bundle"
       select "Coupon code added", :from => "Event"
       fill_in "Code", :with => "5ZHED2DH"
