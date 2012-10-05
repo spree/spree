@@ -17,15 +17,12 @@
 <%= render :partial => 'add_product' %>
 
 <% unless @order.line_items.any? %>
-  <div class="no-objects-found">
-    <%= t(:add_some_products_to_order_first) %>
-  </div>
-<% else %>
   <div data-hook="admin_order_new_form">
     <div id="order-form-wrapper">
       <%= render :partial => 'form' %>
     </div>
   </div>
+<% else %>
 <% end %>
 
 <% content_for :head do %>

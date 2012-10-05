@@ -394,9 +394,21 @@ module Spree
       end
     end
 
+    def pending_payments
+      payments.with_state('checkout')
+    end
+
     def process_payments!
       begin
-        payments.each(&:process!)
+        pending_payments.each do |payment|
+          break if payment_total >= total
+
+          payment.process!
+
+          if payment.completed?
+            self.payment_total += payment.amount
+          end
+        end
       rescue Core::GatewayError
         !!Spree::Config[:allow_checkout_on_gateway_error]
       end

@@ -216,12 +216,4 @@ table {
       }
     }
   }
-
-  tbody:last-child {
-    tr:last-child {
-      td { 
-        border-bottom: 1px solid $color-border;
-      }
-    }
-  }
 }
