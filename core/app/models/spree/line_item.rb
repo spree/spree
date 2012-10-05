@@ -10,7 +10,7 @@ module Spree
     before_validation :copy_price
 
     validates :variant, :presence => true
-    validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int') }
+    validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int'), :greater_than => 0 }
     validates :price, :numericality => true
     validate :stock_availability
     validate :quantity_no_less_than_shipped
