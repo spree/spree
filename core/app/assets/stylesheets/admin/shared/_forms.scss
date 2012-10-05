@@ -16,7 +16,7 @@ textarea, fieldset {
 
   &:focus {
     outline: none;
-    border-color: lighten($c_green1, 30);
+    border-color: lighten($color-2, 30);
   }
 
   &[disabled] {
@@ -38,7 +38,7 @@ label {
   font-size: 85%;
   display: inline;
   margin-bottom: 5px;
-  color: $c_blue3;
+  color: $color-4;
 
   &.inline {
     display: inline-block !important;
@@ -54,7 +54,7 @@ button, .button {
   display: inline-block;
   padding: 8px 15px;
   border: none;  
-  background-color: $c_blue1;
+  background-color: $color-3;
   color: white;
   text-transform: uppercase;
   font-size: 85%;
@@ -62,13 +62,13 @@ button, .button {
 
   &:visited, &:active, &:focus { color: white }
   &:hover {
-    background-color: $c_green1;
-    border-color: darken($c_green1, 5);
+    background-color: $color-2;
+    border-color: darken($color-2, 5);
     color: white;
   }
 
   &:active {
-    box-shadow: 0 0 8px 0 darken($c_green1, 5) inset;
+    box-shadow: 0 0 8px 0 darken($color-2, 5) inset;
   }
 
   &.fullwidth {
@@ -133,7 +133,7 @@ fieldset {
   legend {
     @include border-radius(3px);
     background-color: white;    
-    color: $c_green1;    
+    color: $color-2;    
     font-size: 14px;
     font-weight: 600;
     text-transform: uppercase;

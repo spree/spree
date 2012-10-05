@@ -27,14 +27,14 @@
           <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
         <% end %>
       </tbody>
-      <tbody id="subtotal" data-hook="admin_order_form_subtotal" class="with-border">
+      <tbody id="subtotal" data-hook="admin_order_form_subtotal">
         <tr id="subtotal-row">
           <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
           <td class="total align-center"><span><%= money(@order.item_total) %></span></td>
           <td class="actions"></td>
         </tr>
       </tbody>
-      <tbody id="order-charges" data-hook="admin_order_form_adjustments" class="with-border">
+      <tbody id="order-charges" data-hook="admin_order_form_adjustments">
         <% @order.adjustments.each do |adjustment| %>
           <tr>
             <td colspan="3"><strong><%= adjustment.label %></strong></td>
@@ -43,7 +43,7 @@
           </tr>
         <% end %>
       </tbody>
-      <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total with-border">
+      <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total">
         <tr>
           <td colspan="3"><b><%= t(:order_total) %>:</b></td>
           <td class="total align-center"><span id="order_total"><%= @order.display_total %></span></td>

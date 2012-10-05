@@ -1,0 +1,12 @@
+// Make color very close to white
+@function very-light($color, $adjust: 3){  
+
+  @for $i from 0 through 100 {
+    @if lighten($color, $i) == white {
+      @for $l from 0 through 100 {
+        @return lighten($color, $i - $adjust)
+      }
+    }
+  }
+
+}

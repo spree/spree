@@ -1,86 +1,86 @@
 #powerTip {
-  background-color: $c_blue1;
+  background-color: $color-3;
   padding: 5px 15px;
   border-radius: 3px;
 
   &.n:before, &.ne:before, &.nw:before {
     border-top-width: 5px;
-    border-top-color: $c_blue1;
+    border-top-color: $color-3;
     bottom: -5px;
   }
 
   &.e:before {
     border-right-width: 5px;
-    border-right-color: $c_blue1;
+    border-right-color: $color-3;
     left: -5px;
   }
   &.s:before, &.se:before, &.sw:before {
     border-bottom-width: 5px;
-    border-bottom-color: $c_blue1;
+    border-bottom-color: $color-3;
     top: -5px; 
   }
   &.w:before {
     border-left-width: 5px;
-    border-left-color: $c_blue1;
+    border-left-color: $color-3;
     right: -5px;
   }
   &.ne:before, &.se:before {
     border-right-width: 5px;
-    border-right-color: $c_blue1;
+    border-right-color: $color-3;
     left: -5px;
   }
   &.nw:before, &.sw:before {
     border-left-width: 5px;
-    border-right-color: $c_blue1;
+    border-right-color: $color-3;
     right: -5px; 
   }   
 
   &.clone, &.yellow { 
-    background-color: $c_yellow1;
+    background-color: $color-6;
 
     &.n:before, &.ne:before, &.nw:before {
-      border-top-color: $c_yellow1;
+      border-top-color: $color-6;
     }
     &.e:before, &.nw:before, &.sw:before {
-      border-right-color: $c_yellow1; 
+      border-right-color: $color-6; 
     }
     &.s:before, &.se:before, &.sw:before {
-      border-bottom-color: $c_yellow1;
+      border-bottom-color: $color-6;
     }
     &.w:before {
-      border-left-color: $c_yellow1; 
+      border-left-color: $color-6; 
     }
   }
   &.edit, &.green, &.capture { 
-    background-color: $c_green1;
+    background-color: $color-2;
 
     &.n:before, &.ne:before, &.nw:before {
-      border-top-color: $c_green1;
+      border-top-color: $color-2;
     }
     &.e:before, &.nw:before, &.sw:before {
-      border-right-color: $c_green1; 
+      border-right-color: $color-2; 
     }
     &.s:before, &.se:before, &.sw:before {
-      border-bottom-color: $c_green1;
+      border-bottom-color: $color-2;
     }
     &.w:before {
-      border-left-color: $c_green1;
+      border-left-color: $color-2;
     }
   }
   &.remove, &.red, &.void { 
-    background-color: $c_red1;
+    background-color: $color-5;
 
     &.n:before, &.ne:before, &.nw:before {
-      border-top-color: $c_red1;
+      border-top-color: $color-5;
     }
     &.e:before, &.nw:before, &.sw:before {
-      border-right-color: $c_red1;
+      border-right-color: $color-5;
     }
     &.s:before, &.se:before, &.sw:before {
-      border-bottom-color: $c_red1;
+      border-bottom-color: $color-5;
     }
     &.w:before {
-      border-left-color: $c_red1;
+      border-left-color: $color-5;
     }
   }
 }

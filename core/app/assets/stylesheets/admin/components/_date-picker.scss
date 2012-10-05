@@ -8,7 +8,7 @@
 }
 
 #ui-datepicker-div {
-  border-color: darken($c_blue1, 5);
+  border-color: darken($color-3, 5);
   @include border-radius(3px);
   padding: 0;
   margin-top: 10px;
@@ -18,7 +18,7 @@
     position: absolute;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid $c_blue1;
+    border-bottom: 10px solid $color-3;
     top: 0px;
     margin-top: -10px;
     left: 25px;
@@ -28,9 +28,9 @@
   .ui-datepicker-header {
     padding: 0;
     background-image: none;
-    background-color: $c_blue1;
+    background-color: $color-3;
     border: none;
-    border-bottom: 1px solid darken($c_blue1, 5);
+    border-bottom: 1px solid darken($color-3, 5);
     border-radius: 0;
     height: 32px;
 
@@ -42,7 +42,7 @@
       &:hover {
         border: none;
         background-image: none;
-        background-color: $c_blue1;
+        background-color: $color-3;
         cursor: pointer;
       }
 
@@ -55,7 +55,7 @@
         @extend [class^="icon-"]:before;
 
         &:hover {
-          color: lighten($c_green1, 20);
+          color: lighten($color-2, 20);
         }
       }
     }
@@ -121,14 +121,14 @@
           color: $color-body-text;
 
           &.ui-state-active {
-            background-color: $c_green1;
+            background-color: $color-2;
             color: white;
           }
 
           &:hover {
-            background-color: $c_green1;
+            background-color: $color-2;
             color: white;
-            border-color: darken($c_green1, 5);
+            border-color: darken($color-2, 5);
 
           }
         }
@@ -143,9 +143,9 @@
 
         &.ui-datepicker-today {
           a {
-            background-color: $c_yellow1;
+            background-color: $color-6;
             color: white;
-            border: 1px solid darken($c_yellow1, 5);
+            border: 1px solid darken($color-6, 5);
           }
         }
       }      

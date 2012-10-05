@@ -34,7 +34,7 @@ a {
   }
 
   &:hover {
-    color: lighten($c_blue1, 10);
+    color: lighten($color-3, 10);
   }
   &:focus { 
     color: $color-links; 
@@ -116,10 +116,10 @@ dl {
 
 .uppercase     { text-transform: uppercase }
 
-.green  { color: $c_green1  }
-.blue   { color: $c_blue1   }
-.red    { color: $c_red1    }
-.yellow { color: $c_yellow1 }
+.green  { color: $color-2  }
+.blue   { color: $color-3   }
+.red    { color: $color-5    }
+.yellow { color: $color-6 }
 
 .no-objects-found {
   text-align: center;
@@ -142,8 +142,8 @@ dl {
   display: inline-block;
   text-align: center;
 
-  &.complete, &.ready, &.paid, &.sold {
-    background-color: $c_green1;
+  &.complete, &.ready, &.paid, &.sold, &.shipped, &.authorized {
+    background-color: $color-success;
 
     &, a {
       color: white;
@@ -151,23 +151,23 @@ dl {
   }
 
   &.pending {
-    background-color: $c_yellow1;
+    background-color: $color-notice;
 
     &, a { 
       color: white
     }
   }
 
-  &.canceled {
-    background-color: $c_red1;
+  &.canceled, &.void {
+    background-color: $color-error;
     color: white;
   }
 
   &.balance_due {
-    background-color: $c_blue2;
+    background-color: lighten($color-3, 32);
   }
   &.cart {
-    background-color: lighten($c_blue1, 30);
+    background-color: lighten($color-3, 30);
     color: lighten($color-body-text, 15);
   }
 }

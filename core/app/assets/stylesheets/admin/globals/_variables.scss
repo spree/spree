@@ -2,28 +2,27 @@
 //   Variables used in all other files   
 //--------------------------------------------------------------
 
-
 // Fonts
 //--------------------------------------------------------------
 $base-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 
 // Colors
 //--------------------------------------------------------------
-$c_gray1:   #929292;
-$c_green1:  #9FC820;
-$c_blue1:   #5FA5E8;
-$c_blue2:   #D4F1F7;
-$c_blue3:   #6788A2;
-$c_red1:    #C60F13;
-$c_yellow1: #FF9300;
+$color-1:             #929292;    // Gray
+$color-2:             #9FC820;    // Green
+$color-3:             #5FA5E8;    // Light Blue
+$color-4:             #6788A2;    // Dark Blue
+$color-5:             #C60F13;    // Red
+$color-6:             #FF9300;    // Yellow
 
-$color-body-text: $c_blue3;
-$color-headers:   $c_blue3;
-$color-links:     $c_blue1;
-$color-border:    lighten($c_blue1, 27);
+$color-body-text:     $color-4;
+$color-headers:       $color-4;
+$color-links:         $color-3;
+$color-border:        lighten($color-3, 27);
 
-// Gradients
-//--------------------------------------------------------------
+$color-success:       $color-2;
+$color-notice:        $color-6;
+$color-error:         $color-5;
 
 // Sizes
 //--------------------------------------------------------------

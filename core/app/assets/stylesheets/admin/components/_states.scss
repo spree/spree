@@ -1,0 +1,51 @@
+// States
+//--------------------------------------------------------------
+.state {
+  @include border-radius(3px);
+  text-transform: uppercase;
+  font-size: 80%;
+  font-weight: 600;
+  border: 1px solid transparent;
+  padding: 2px 5px;  
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+
+  &.complete, &.ready, &.paid, &.sold, &.shipped, &.authorized {
+    background-color: $color-success;
+
+    &, a {
+      color: white;
+    }
+  }
+
+  &.pending {
+    background-color: $color-notice;
+
+    &, a { 
+      color: white
+    }
+  }
+
+  &.canceled, &.void {
+    background-color: $color-error;
+    color: white;
+  }
+
+  &.balance_due {
+    background-color: lighten($color-3, 32);
+  }
+  &.cart {
+    background-color: lighten($color-3, 30);
+    color: lighten($color-body-text, 15);
+  }
+}
+
+table tbody tr {
+  &[class*="state"] td:first-child {
+    border-left-width: 3px;
+  }
+  &.state-complete td:first-child { border-left-color: $color-success }      
+  &.state-cart     td:first-child { border-left-color: very-light($color-error, 6) }
+  &.state-canceled td:first-child { border-left-color: very-light($color-error, 6) }
+}

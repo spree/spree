@@ -36,7 +36,7 @@ jQuery.fn.AdaptiveMenu = function(options){
 				.addClass(options.classLinckMore)
 				.attr({"id":"more"})
 				.html(options.text)
-				.click(function(){$(this).find('li').toggle()});
+				.click(function(){$(this).toggleClass('selected').find('li').toggle()});
 
 			var ul =  $("<ul>")
 				.css({"position":"absolute"})

@@ -42,10 +42,16 @@ jQuery(function($) {
   setTimeout('$(".flash").fadeOut()', 5000);
 
   // Highlight hovered table column
-  $('table tbody tr td.actions a').hover(function(){    
-    $(this).closest('tr').addClass('highlight action-' + $(this).attr('data-action'))
+  $('table tbody tr td.actions a').hover(function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.addClass(klass)
+    tr.prev().addClass('before-' + klass);
   }, function(){
-    $(this).closest('tr').removeClass('highlight action-' + $(this).attr('data-action'))
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.removeClass(klass)
+    tr.prev().removeClass('before-' + klass);
   });
 
   // Trunkate text in page_title that didn't fit

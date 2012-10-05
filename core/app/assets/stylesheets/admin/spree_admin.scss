@@ -1,5 +1,6 @@
 @import 'font-awesome';
 
+@import 'globals/functions';
 @import 'globals/variables';
 @import 'globals/mixins';
 
@@ -9,11 +10,14 @@
 @import 'shared/forms';
 @import 'shared/layout';
 
+@import 'components/states';
 @import 'components/date-picker';
 @import 'components/messages';
 @import 'components/pagination';
 @import 'components/progress';
 @import 'components/table-filter';
+@import 'components/navigation';
+@import 'components/sidebar';
 
 @import 'plugins/powertip';
 @import 'plugins/select2';

@@ -1,11 +1,11 @@
 .select2-container {
   &:hover .select2-choice, &.select2-container-active .select2-choice {
-    background-color: $c_green1 !important;
-    border-color: darken($c_green1, 5) !important;
+    background-color: $color-2 !important;
+    border-color: darken($color-2, 5) !important;
   }
   .select2-choice {
     background-image: none !important;
-    background-color: lighten($c_blue1, 10);
+    background-color: lighten($color-3, 10);
     border: none !important;
     box-shadow: none !important;
     @include border-radius(3px);
@@ -58,12 +58,12 @@
 }
 
 .select2-drop {
-  border-color: $c_green1;
+  border-color: $color-2;
   box-shadow: none !important;
   z-index: 1000000;
 
   &.select2-drop-above {
-    border-color: $c_green1;
+    border-color: $color-2;
   }
 }
 
@@ -117,14 +117,14 @@
   }
 
   .select2-highlighted {
-    background-color: lighten($c_blue1, 10);
+    background-color: lighten($color-3, 10);
   }
 }
 
 .select2-container-multi {
   &.select2-container-active, &.select2-dropdown-open {
     .select2-choices {
-      border-color: $c_green1 !important;
+      border-color: $color-2 !important;
       box-shadow: none;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -140,14 +140,14 @@
       @include border-radius(3px);
       margin: 0 0 3px 3px;
       background-image: none;
-      background-color: lighten($c_blue1, 10);
+      background-color: lighten($color-3, 10);
       border: none;
       box-shadow: none;      
       color: white !important;    
       font-size: 85%;            
 
       &:hover {
-        background-color: $c_green1;
+        background-color: $color-2;
       }
 
       .select2-search-choice-close {

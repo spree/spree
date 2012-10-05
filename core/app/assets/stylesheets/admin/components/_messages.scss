@@ -1,14 +1,14 @@
 .errorExplanation {
   padding: 5px;
-  border: 1px solid lighten($c_red1, 45);
-  background-color: lighten($c_red1, 55);
+  border: 1px solid lighten($color-5, 45);
+  background-color: lighten($color-5, 55);
   border-radius: 3px;
-  color: lighten($c_red1, 30);
+  color: lighten($color-5, 30);
   margin-bottom: 15px;
 
   h2 {
     font-size: 140%;
-    color: lighten($c_red1, 20);
+    color: lighten($color-5, 20);
     margin-bottom: 5px;
   }
 
@@ -37,7 +37,7 @@
   color: white;
   font-weight: bold;
 
-  &.notice  { background-color: rgba($c_yellow1, 0.8) }
-  &.success { background-color: rgba($c_green1, 0.8)  }
-  &.error   { background-color: rgba($c_red1, 0.8)    }
+  &.notice  { background-color: rgba($color-6, 0.8) }
+  &.success { background-color: rgba($color-2, 0.8)  }
+  &.error   { background-color: rgba($color-5, 0.8)    }
 }

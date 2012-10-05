@@ -15,6 +15,14 @@ jQuery(function($) {
       formatResult: function(item) { return item.text.replace(/->/g, ' <i class="icon-arrow-right"></i> ') }
     });
 
+    // TODO: Move tip options somewhere to have then in one place
+    // Adds powertips on already generated select2 inputs with some tags in it
+    $('.select2-search-choice .with-tip').powerTip({
+      smartPlacement: true,
+      fadeInTime: 50,
+      fadeOutTime: 50
+    })
+
     $("#product_taxon_ids").on({
       change: function(e){
         $('.select2-search-choice .with-tip').powerTip({
