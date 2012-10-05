@@ -1,0 +1,8 @@
+<script>
+  Spree.routes = <%== {
+    :product_search       => spree.admin_products_path(:format => 'json'),
+    :product_search_basic => spree.admin_products_path(:format => 'json', :json_format => 'basic', :limit => 10),
+    :user_search          => spree.admin_users_path(:format => 'json', :limit => 10)
+  }.to_json 
+%>
+</script>
