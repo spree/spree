@@ -23,6 +23,10 @@ notifications:
       - "irc.freenode.org#spree"
 branches:
   only:
+    - 1-0-stable
+    - 1-1-stable
+    - 1-2-stable
+    - master
     - refactor_product_autocomplete
 rvm:
   - 1.8.7
