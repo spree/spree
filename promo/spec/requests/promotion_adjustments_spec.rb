@@ -274,9 +274,13 @@ describe "Promotion Adjustments" do
 
       select "Create line items", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      fill_in "Name or SKU", :with => "RoR Mug"
-      find(:xpath, '//div/h4[contains(.,"RoR Mug")]').click
-      within('.add-line-item') { click_button "Add" }
+      # Forced narcolepsy, thanks to JavaScript
+      sleep(1)
+      page.execute_script "$('.create_line_items .select2-choice').mousedown();"
+      sleep(1)
+      page.execute_script "$('.select2-focused').val('RoR Mug').trigger('keyup-change');"
+      sleep(1)
+      page.execute_script "$('.select2-highlighted').mouseup();"
 
       within('#actions_container') { click_button "Update" }
 
