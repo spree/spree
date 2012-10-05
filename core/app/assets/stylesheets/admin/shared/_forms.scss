@@ -50,43 +50,10 @@ label {
 input[type="submit"], 
 input[type="button"], 
 button, .button {
-<<<<<<< HEAD
   @include border-radius(3px);
   display: inline-block;
   padding: 8px 15px;
   border: none;  
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-  padding: 5px 10px;
-<<<<<<< HEAD
-  border: 1px solid $color-border;
-  background-color: lighten($color-border, 5);
-  color: $color-body-text;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Rewrite navigation helpers to not include <i> tag for icons
-=======
-  border: 1px solid darken($c_blue1, 5);
-  box-shadow: 0 0 0 3px lighten($c_blue1, 32);
-=======
-  display: inline-block;
-  padding: 8px 15px;
-  border: none;
-<<<<<<< HEAD
-  border-radius: 3px;
->>>>>>> More admin styling...
-=======
-  @include border-radius(3px);
->>>>>>> SCSS cleanup
-=======
-  @include border-radius(3px);
-  display: inline-block;
-  padding: 8px 15px;
-  border: none;  
->>>>>>> Various font style fixes
->>>>>>> Various font style fixes
   background-color: $c_blue1;
   color: white;
   text-transform: uppercase;

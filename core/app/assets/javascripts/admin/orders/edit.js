@@ -10,4 +10,6 @@ $(document).ready(function(){
     return false;
   });
 
+  $(".variant_autocomplete").variantAutocomplete();
+
 });
