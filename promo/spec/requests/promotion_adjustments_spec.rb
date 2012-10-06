@@ -24,6 +24,24 @@ describe "Promotion Adjustments" do
 
     let!(:address) { create(:address, :state => Spree::State.first) }
 
+    it "should properly populate Spree::Product#possible_promotions" do
+      promotion = create_per_product_promotion 'RoR Mug', 5.0
+      promotion.update_column :advertise, true
+
+      mug = Spree::Product.find_by_name 'RoR Mug'
+      bag = Spree::Product.find_by_name 'RoR Bag'
+
+      mug.possible_promotions.size.should == 1
+      bag.possible_promotions.size.should == 0
+
+      # expire the promotion
+      promotion.expires_at = Date.today.beginning_of_week
+      promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
+      promotion.save!
+
+      mug.possible_promotions.size.should == 0
+    end
+
     it "should allow an admin to create a flat rate discount coupon promo" do
       create_per_order_coupon_promotion 30, 5, "ORDER_38"
 
@@ -404,12 +422,15 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 54.00
     end
 
-    def create_per_product_promotion product_name, discount_amount
+    def create_per_product_promotion product_name, discount_amount, event = "Add to cart"
+      promotion_name = "Bundle d#{discount_amount}"
+
       visit spree.admin_path
       click_link "Promotions"
       click_link "New Promotion"
-      fill_in "Name", :with => "Bundle"
-      select "Add to cart", :from => "Event"
+
+      fill_in "Name", :with => promotion_name
+      select event, :from => "Event"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -431,6 +452,8 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
       within('#actions_container') { click_button "Update" }
+
+      Spree::Promotion.find_by_name promotion_name
     end
 
     def create_per_order_coupon_promotion order_min, order_discount, coupon_code
