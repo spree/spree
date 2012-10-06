@@ -24,6 +24,17 @@ describe "Promotion Adjustments" do
 
     let!(:address) { create(:address, :state => Spree::State.first) }
 
+    it "should properly populate Spree::Product#possible_promotions" do
+      promotion = create_per_product_promotion 'RoR Mug', 5.0
+      promotion.update_column :advertise, true
+
+      mug = Spree::Product.find_by_name 'RoR Mug'
+      bag = Spree::Product.find_by_name 'RoR Bag'
+
+      mug.possible_promotions.size.should == 1
+      bag.possible_promotions.size.should == 0
+    end
+
     it "should allow an admin to create a flat rate discount coupon promo" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "100"
@@ -422,12 +433,15 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 54.00
     end
 
-    def create_per_product_promotion product_name, discount_amount
+    def create_per_product_promotion product_name, discount_amount, event = "Add to cart"
+      promotion_name = "Bundle d#{discount_amount}"
+
       visit spree.admin_path
       click_link "Promotions"
       click_link "New Promotion"
-      fill_in "Name", :with => "Bundle"
-      select "Add to cart", :from => "Event"
+
+      fill_in "Name", :with => promotion_name
+      select event, :from => "Event"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -449,6 +463,8 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
       within('#actions_container') { click_button "Update" }
+
+      Spree::Promotion.find_by_name promotion_name
     end
 
     def add_to_cart product_name
@@ -473,35 +489,6 @@ describe "Promotion Adjustments" do
       fill_in "card_number", :with => "4111111111111111"
       fill_in "card_code", :with => "123"
       click_button "Save and Continue"
-    end
-
-    def create_per_product_promotion product_name, discount_amount
-      visit spree.admin_path
-      click_link "Promotions"
-      click_link "New Promotion"
-      fill_in "Name", :with => "Bundle"
-      select "Add to cart", :from => "Event"
-      click_button "Create"
-      page.should have_content("Editing Promotion")
-
-      # add product_name to last promotion
-      promotion = Spree::Promotion.last
-      promotion.rules << Spree::Promotion::Rules::Product.new()
-      product = Spree::Product.find_by_name(product_name)
-      rule = promotion.rules.last
-      rule.products << product
-      if rule.save
-        puts "Created promotion: new price for #{product_name} is #{product.price - discount_amount} (was #{product.price})"
-      else
-        puts "Failed to create promotion: price for #{product_name} is still #{product.price}"
-      end
-
-      select "Create adjustment", :from => "Add action of type"
-      within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per item)", :from => "Calculator"
-      within('#actions_container') { click_button "Update" }
-      within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
-      within('#actions_container') { click_button "Update" }
     end
   end
 end
