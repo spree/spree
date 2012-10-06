@@ -33,6 +33,13 @@ describe "Promotion Adjustments" do
 
       mug.possible_promotions.size.should == 1
       bag.possible_promotions.size.should == 0
+
+      # expire the promotion
+      promotion.expires_at = Date.today.beginning_of_week
+      promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
+      promotion.save!
+
+      mug.possible_promotions.size.should == 0
     end
 
     it "should allow an admin to create a flat rate discount coupon promo" do
