@@ -3,7 +3,6 @@ require 'spec_helper'
 module Spree
   describe Order do
     let(:order) { stub_model(Order) }
-    let(:updater) { Spree::OrderUpdater.new(order) }
 
     before do
       # So that Payment#purchase! is called during processing
@@ -19,7 +18,7 @@ module Spree
       order.stub(:pending_payments).and_return([payment_1, payment_2])
 
       order.process_payments!
-      updater.update_payment_state
+      order.send(:update_payment_state)
       order.payment_state.should == 'paid'
 
       payment_1.should be_completed
@@ -33,7 +32,7 @@ module Spree
       order.stub(:pending_payments).and_return([payment_1, payment_2, payment_3])
 
       order.process_payments!
-      updater.update_payment_state
+      order.send(:update_payment_state)
       order.payment_state.should == 'paid'
 
       payment_1.should be_completed
