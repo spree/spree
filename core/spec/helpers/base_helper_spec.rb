@@ -81,16 +81,26 @@ describe Spree::BaseHelper do
 
     it "should output all flash content" do
       flash_messages
-      helper.output_buffer.should == "<div class=\"flash notice\">ok</div><div class=\"flash foo\">foo</div><div class=\"flash bar\">bar</div>"
+      html = Nokogiri::HTML(helper.output_buffer)
+      html.css(".notice").text.should == "ok"
+      html.css(".foo").text.should == "foo"
+      html.css(".bar").text.should == "bar"
     end
 
     it "should output flash content except one key" do
       flash_messages(:ignore_types => :bar)
-      helper.output_buffer.should == "<div class=\"flash notice\">ok</div><div class=\"flash foo\">foo</div>"
+      html = Nokogiri::HTML(helper.output_buffer)
+      html.css(".notice").text.should == "ok"
+      html.css(".foo").text.should == "foo"
+      html.css(".bar").text.should be_empty
     end
 
     it "should output flash content except some keys" do
       flash_messages(:ignore_types => [:foo, :bar])
+      html = Nokogiri::HTML(helper.output_buffer)
+      html.css(".notice").text.should == "ok"
+      html.css(".foo").text.should be_empty
+      html.css(".bar").text.should be_empty
       helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
     end
   end
