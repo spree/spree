@@ -1,4 +1,6 @@
 require_dependency 'spree/calculator'
+# For #to_d method on Ruby 1.8
+require 'bigdecimal/util'
 
 module Spree
   class Calculator::PriceSack < Calculator
@@ -17,9 +19,9 @@ module Spree
     # as object we always get line items, as calculable we have Coupon, ShippingMethod
     def compute(object)
       if object.is_a?(Array)
-        base = object.map { |o| o.respond_to?(:amount) ? o.amount : o.to_d }.sum
+        base = object.map { |o| o.respond_to?(:amount) ? o.amount : BigDecimal(o.to_s) }.sum
       else
-        base = object.respond_to?(:amount) ? object.amount : object.to_d
+        base = object.respond_to?(:amount) ? object.amount : BigDecimal(object.to_s)
       end
 
       if base < self.preferred_minimal_amount
