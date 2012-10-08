@@ -13,7 +13,7 @@ describe "Tax Rates" do
     tax_rate.tax_category.mark_deleted!
     lambda { click_link "Tax Rates" }.should_not raise_error
     within("table tbody td:nth-child(2)") do
-      page.should have_content("N/A")
+      page.should have_content("Not Available")
     end
   end
 
