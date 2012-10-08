@@ -15,13 +15,7 @@
 <%= javascript_include_tag 'admin/all' %>
 
 <%= render "spree/admin/shared/translations" %>
-
-<%= javascript_tag do %>
-  Spree.routes = <%== {
-    :variants_search       => spree.admin_search_variants_path(:format => 'json'),
-    :user_search          => spree.admin_search_users_path(:format => 'json', :limit => 10)
-  }.to_json %>;
-<% end %>
+<%= render "spree/admin/shared/routes" %>
 
 <%= javascript_tag do -%>
   jQuery.alerts.dialogClass = 'spree';
