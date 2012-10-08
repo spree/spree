@@ -22,7 +22,7 @@ module Spree
         base = object.respond_to?(:amount) ? object.amount : object.to_d
       end
 
-      if base >= self.preferred_minimal_amount
+      if base < self.preferred_minimal_amount
         self.preferred_normal_amount
       else
         self.preferred_discount_amount
