@@ -48,24 +48,24 @@ table {
         }
       }
       .icon-envelope-alt {
-        color: $color-links;
+        color: $color-link;
 
         &:hover {
           background-color: $color-3;
-          color: white;
+          color: $color-1;
         }
       }
       .icon-trash:hover, .icon-void:hover {
         background-color: $color-5;
-        color: white;
+        color: $color-1;
       }    
       .icon-edit:hover, .icon-capture:hover {
         background-color: $color-2;
-        color: white;
+        color: $color-1;
       }
       .icon-copy:hover {
         background-color: $color-6;
-        color: white;
+        color: $color-1;
       }
     }
 
@@ -83,10 +83,6 @@ table {
       @extend .icon-reorder;
       cursor: move;
     }
-
-    a:hover {
-      color: $color-2;
-    }
   }
 
   th {
@@ -97,17 +93,9 @@ table {
 
   thead {
     th {
-      background-color: very-light($color-3);
+      background-color: $color-tbl-thead;
       text-transform: uppercase;
       font-size: 85%;
-
-      a {
-        color: $color-links !important;
-
-        &:hover, &.desc, &.asc {
-          color: $color-2 !important;
-        }
-      }
     }
   }
 
@@ -117,7 +105,7 @@ table {
     }
     tr {
       &.even td {
-        background-color: very-light($color-3);
+        background-color: $color-tbl-even;
 
         img {
           border: 1px solid very-light($color-3, 6);
@@ -131,49 +119,6 @@ table {
           border: 1px solid $color-border;
         }
       }
-
-      &.highlight {
-        &.action-remove td, &.action-void td {
-          background-color: very-light($color-error, 5);
-          border-color: very-light($color-error, 10);
-          text-decoration: line-through;
-
-          &.actions {
-            text-decoration: none;
-          }
-        }
-        &.action-edit td, &.action-capture td {
-          background-color: very-light($color-success, 5);
-          border-color: very-light($color-success, 20);
-        }
-        &.action-clone td {
-          background-color: very-light($color-notice, 5);
-          border-color: very-light($color-notice, 15);
-        }
-      }
-
-      &.before-highlight {
-        &.action-remove td, &.action-void td {          
-          border-bottom-color: very-light($color-error, 10);          
-        }
-        &.action-edit td, &.action-capture td {
-          border-bottom-color: very-light($color-success, 20);
-        }
-        &.action-clone td {
-          border-bottom-color: very-light($color-notice, 15);
-        }
-      }
-
-      td.actions {
-        background-color: transparent !important;
-      }
-
-      &[class*="state"] td:first-child {
-        border-left-width: 3px;
-      }
-      &.state-complete td:first-child { border-left-color: $color-success }      
-      &.state-cart     td:first-child { border-left-color: very-light($color-error, 6) }
-      &.state-canceled td:first-child { border-left-color: very-light($color-error, 6) }
 
       &.ui-sortable-placeholder td {
         border: 1px solid $color-2 !important;
@@ -212,7 +157,7 @@ table {
       }
       .total {
         background-color: $color-2;
-        color: white;
+        color: $color-1;
       }
     }
   }

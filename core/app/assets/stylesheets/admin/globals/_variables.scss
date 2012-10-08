@@ -1,5 +1,5 @@
 // ------------------------------------------------------------- 
-//   Variables used in all other files   
+//   Variables used in all other files
 //--------------------------------------------------------------
 
 // Fonts
@@ -8,22 +8,114 @@ $base-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial,
 
 // Colors
 //--------------------------------------------------------------
-$color-1:             #929292;    // Gray
-$color-2:             #9FC820;    // Green
-$color-3:             #5FA5E8;    // Light Blue
-$color-4:             #6788A2;    // Dark Blue
-$color-5:             #C60F13;    // Red
-$color-6:             #FF9300;    // Yellow
 
-$color-body-text:     $color-4;
-$color-headers:       $color-4;
-$color-links:         $color-3;
-$color-border:        lighten($color-3, 27);
+// Basic color palette for admin 
+$color-1:                     #FFFFFF !default;    // White
+$color-2:                     #9FC820 !default;    // Green
+$color-3:                     #5FA5E8 !default;    // Light Blue
+$color-4:                     #6788A2 !default;    // Dark Blue
+$color-5:                     #C60F13 !default;    // Red
+$color-6:                     #FF9300 !default;    // Yellow
 
-$color-success:       $color-2;
-$color-notice:        $color-6;
-$color-error:         $color-5;
+// Body base colors
+$color-body-text:             $color-4;
+$color-headers:               $color-4;
+$color-link:                  $color-3;
+$color-link-hover:            $color-2;
+$color-link-active:           $color-2;
+$color-link-focus:            $color-2;
+$color-link-visited:          $color-3;
+$color-border:                very-light($color-3, 8);
+
+// Table colors
+$color-tbl-odd:               $color-1;
+$color-tbl-even:              very-light($color-3);
+$color-tbl-thead:             very-light($color-3);
+
+// Button colors
+$color-btn-bg:                $color-3;
+$color-btn-text:              $color-1;
+$color-btn-hover-bg:          $color-2;
+$color-btn-hover-text:        $color-1;
+
+// Actions colors
+$color-action-edit-bg:        very-light($color-2, 5);
+$color-action-edit-brd:       very-light($color-2, 20);
+$color-action-clone-bg:       very-light($color-6, 5);
+$color-action-clone-brd:      very-light($color-6, 15);
+$color-action-remove-bg:      very-light($color-5, 5);
+$color-action-remove-brd:     very-light($color-5, 10);
+$color-action-void-bg:        very-light($color-5, 10);
+$color-action-void-brd:       very-light($color-5, 20);
+$color-action-capture-bg:     very-light($color-2, 5);
+$color-action-capture-brd:    very-light($color-2, 20);
+$color-action-mail-bg:        very-light($color-2, 5);
+$color-action-mail-brd:       very-light($color-2, 20);
+
+// Select2 select field colors
+$color-sel-bg:                $color-3;
+$color-sel-text:              $color-1;
+$color-sel-hover-bg:          $color-2;
+$color-sel-hover-text:        $color-1;
+
+// Text inputs colors
+$color-txt-brd:               $color-border;
+$color-txt-text:              $color-4;
+$color-txt-hover-brd:         very-light($color-2, 20);
+
+// States label colors
+$color-ste-complete-bg:       $color-2;
+$color-ste-complete-text:     $color-1;
+$color-ste-pending-bg:        $color-6;
+$color-ste-pending-text:      $color-1;
+$color-ste-paid-bg:           $color-2;
+$color-ste-paid-text:         $color-1;
+$color-ste-shipped-bg:        $color-2;
+$color-ste-shipped-text:      $color-1;
+$color-ste-balance_due-bg:    $color-6;
+$color-ste-balance_due-text:  $color-1;
+$color-ste-backorder-bg:      $color-6;
+$color-ste-backorder-text:    $color-1;
+$color-ste-none-bg:           $color-5;
+$color-ste-none-text:         $color-1;
+$color-ste-ready-bg:          $color-2;
+$color-ste-ready-text:        $color-1;
+$color-ste-void-bg:           $color-5;
+$color-ste-void-text:         $color-1;
+$color-ste-canceled-bg:       $color-5;
+$color-ste-canceled-text:     $color-1;
+$color-ste-address-bg:        $color-5;
+$color-ste-address-text:      $color-1;
+$color-ste-cart-bg:           $color-5;
+$color-ste-cart-text:         $color-1;
+$color-ste-payment-bg:        $color-5;
+$color-ste-payment-text:      $color-1;
+$color-ste-delivery-bg:       $color-2;
+$color-ste-delivery-text:     $color-1;
+$color-ste-confirm-bg:        $color-5;
+$color-ste-confirm-text:      $color-1;
+
+// Avaliable states
+$states:                      complete,                 pending,                 paid,                 shipped,                 balance_due,                 backorder,                 cart,                 address,                 delivery,                 payment,                 confirm,                 canceled,                 ready,                 void;
+$states-bg-colors:            $color-ste-complete-bg,   $color-ste-pending-bg,   $color-ste-paid-bg,   $color-ste-shipped-bg,   $color-ste-balance_due-bg,   $color-ste-backorder-bg,   $color-ste-cart-bg,   $color-ste-address-bg,   $color-ste-delivery-bg,   $color-ste-payment-bg,   $color-ste-confirm-bg,   $color-ste-canceled-bg,   $color-ste-ready-bg,   $color-ste-void-bg;
+$states-text-colors:          $color-ste-complete-text, $color-ste-pending-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text, $color-ste-canceled-text, $color-ste-ready-text, $color-ste-void-text;
+
+// Avaliable actions
+$actions:                     edit,                   clone,                   remove,                   void,                   capture,                   mail;
+$actions-bg-colors:           $color-action-edit-bg,  $color-action-clone-bg,  $color-action-remove-bg,  $color-action-void-bg,  $color-action-capture-bg,  $color-action-mail-bg;
+$actions-brd-colors:          $color-action-edit-brd, $color-action-clone-brd, $color-action-remove-brd, $color-action-void-brd, $color-action-capture-brd, $color-action-mail-brd;
+
+// Basic flash colors
+$color-success:               $color-2;
+$color-notice:                $color-6;
+$color-error:                 $color-5;
 
 // Sizes
 //--------------------------------------------------------------
-$body-font-size: 13.037px;
+$body-font-size:              13px;
+$h6-size:                     $body-font-size + 2;
+$h5-size:                     $h6-size + 2;
+$h4-size:                     $h5-size + 2;
+$h3-size:                     $h4-size + 2;
+$h2-size:                     $h3-size + 2;
+$h1-size:                     $h2-size + 2;

@@ -1,15 +1,15 @@
 .select2-container {
   &:hover .select2-choice, &.select2-container-active .select2-choice {
-    background-color: $color-2 !important;
-    border-color: darken($color-2, 5) !important;
+    background-color: $color-sel-hover-bg !important;
+    border-color: $color-sel-hover-bg !important;
   }
   .select2-choice {
     background-image: none !important;
-    background-color: lighten($color-3, 10);
+    background-color: $color-sel-bg;
     border: none !important;
     box-shadow: none !important;
     @include border-radius(3px);
-    color: white !important;    
+    color: $color-1 !important;
     font-size: 90%;
     height: 33px;    
     line-height: inherit !important;
@@ -58,12 +58,12 @@
 }
 
 .select2-drop {
-  border-color: $color-2;
+  border-color: $color-sel-hover-bg;
   box-shadow: none !important;
   z-index: 1000000;
 
   &.select2-drop-above {
-    border-color: $color-2;
+    border-color: $color-sel-hover-bg;
   }
 }
 
@@ -85,7 +85,6 @@
     font-size: 90%;
     box-shadow: none;
     background-image: none;
-    width: 105% !important;
   }
 }
 
@@ -97,7 +96,7 @@
 
     &.select2-highlighted {
       .select2-result-label {
-        color: white !important;
+        color: $color-1 !important;
       }
     }
 
@@ -117,14 +116,14 @@
   }
 
   .select2-highlighted {
-    background-color: lighten($color-3, 10);
+    background-color: $color-sel-bg;
   }
 }
 
 .select2-container-multi {
   &.select2-container-active, &.select2-dropdown-open {
     .select2-choices {
-      border-color: $color-2 !important;
+      border-color: $color-sel-hover-bg !important;
       box-shadow: none;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -140,14 +139,14 @@
       @include border-radius(3px);
       margin: 0 0 3px 3px;
       background-image: none;
-      background-color: lighten($color-3, 10);
+      background-color: $color-sel-bg;
       border: none;
       box-shadow: none;      
-      color: white !important;    
+      color: $color-1 !important;    
       font-size: 85%;            
 
       &:hover {
-        background-color: $color-2;
+        background-color: $color-sel-hover-bg;
       }
 
       .select2-search-choice-close {
@@ -156,7 +155,7 @@
         @extend .icon-remove;
         @extend [class^="icon-"]:before;
         margin-left: 2px;
-        color: white;
+        color: $color-1;
       }
     }
   }

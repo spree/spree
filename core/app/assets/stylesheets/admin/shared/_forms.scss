@@ -10,13 +10,13 @@ input[type="tel"],
 textarea, fieldset {
   @include border-radius(3px);
   padding: 7px 10px;  
-  border: 1px solid $color-border;
+  border: 1px solid $color-txt-brd;
   color: $color-body-text;
   font-size: 90%;
 
   &:focus {
     outline: none;
-    border-color: lighten($color-2, 30);
+    border-color: $color-txt-hover-brd;
   }
 
   &[disabled] {
@@ -54,21 +54,21 @@ button, .button {
   display: inline-block;
   padding: 8px 15px;
   border: none;  
-  background-color: $color-3;
-  color: white;
+  background-color: $color-btn-bg;
+  color: $color-btn-text;
   text-transform: uppercase;
   font-size: 85%;
   font-weight: 600;
 
-  &:visited, &:active, &:focus { color: white }
+  &:visited, &:active, &:focus { color: $color-btn-text }
+
   &:hover {
-    background-color: $color-2;
-    border-color: darken($color-2, 5);
-    color: white;
+    background-color: $color-btn-hover-bg;
+    color: $color-btn-hover-text;
   }
 
   &:active {
-    box-shadow: 0 0 8px 0 darken($color-2, 5) inset;
+    box-shadow: 0 0 8px 0 darken($color-btn-hover-bg, 5) inset;
   }
 
   &.fullwidth {
@@ -132,7 +132,7 @@ fieldset {
 
   legend {
     @include border-radius(3px);
-    background-color: white;    
+    background-color: $color-1;    
     color: $color-2;    
     font-size: 14px;
     font-weight: 600;
@@ -159,12 +159,12 @@ fieldset {
       margin-top: -5px;
 
       &:hover {
-        border-color: white;
+        border-color: $color-1;
       }
     }
 
     span.or {
-      background-color: white;
+      background-color: $color-1;
       border-width: 5px;
       margin-left: -15px;
       margin-right: -15px;

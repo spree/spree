@@ -34,7 +34,7 @@
 // Header
 //---------------------------------------------------
 #header {
-  background-color: white;
+  background-color: $color-1;
 }
 #logo { height: 50px }
 [data-hook="admin-title"] { font-size: 14px }
@@ -48,7 +48,7 @@
 // Content
 //---------------------------------------------------
 #content {
-  background-color: white;
+  background-color: $color-1;
   position: relative;
   z-index: 0;
   padding: 0;

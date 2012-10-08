@@ -18,7 +18,7 @@
     background-image: none;
 
     a {
-      background-color: lighten($color-3, 33);
+      background-color: very-light($color-3);
       border: 1px solid $color-border;
       color: $color-body-text;
       font-weight: bold;
@@ -66,7 +66,7 @@
   margin-top: -2px !important;
   border: none !important;
   border-bottom: 1px solid $color-body-text !important;
-  background-color:  lighten($color-3, 33) !important;
+  background-color:  very-light($color-3) !important;
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
@@ -94,7 +94,7 @@
   }
 
   a {
-    color: white !important;
+    color: $color-1 !important;
     line-height: inherit !important;
     padding: 5px 10px !important;
     margin: 0 !important;

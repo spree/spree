@@ -1,5 +1,3 @@
-// States
-//--------------------------------------------------------------
 .state {
   @include border-radius(3px);
   text-transform: uppercase;
@@ -11,33 +9,14 @@
   display: inline-block;
   text-align: center;
 
-  &.complete, &.ready, &.paid, &.sold, &.shipped, &.authorized {
-    background-color: $color-success;
+  @each $state in $states {
+    &.#{$state} {
+      background-color: get-value($states, $states-bg-colors, $state);
 
-    &, a {
-      color: white;
+      &, a {
+        color: get-value($states, $states-text-colors, $state);
+      }
     }
-  }
-
-  &.pending {
-    background-color: $color-notice;
-
-    &, a { 
-      color: white
-    }
-  }
-
-  &.canceled, &.void {
-    background-color: $color-error;
-    color: white;
-  }
-
-  &.balance_due {
-    background-color: lighten($color-3, 32);
-  }
-  &.cart {
-    background-color: lighten($color-3, 30);
-    color: lighten($color-body-text, 15);
   }
 }
 

@@ -19,28 +19,22 @@ hr {
 // links
 //--------------------------------------------------------------
 a { 
-  color: $color-links;
+  color: $color-link;
   text-decoration: none;
   line-height: inherit;
 
-  &:active, &:visited, &:focus {
-    color: darken($color-links, 5);    
-  }
-
-  &.button {
-    &:active, &:visited, &:focus {
-      color: white !important;
-    }    
-  }
-
   &:hover {
-    color: lighten($color-3, 10);
+    color: $color-link-hover;
   }
-  &:focus { 
-    color: $color-links; 
-    outline: none; 
+  &:active {
+    color: $color-link-active;
   }
-
+  &:visited {
+    color: $color-link-visited;
+  }
+  &:focus {
+    color: $color-link-focus;
+  }
 }
 
 // Headings
@@ -52,12 +46,12 @@ h1,h2,h3,h4,h5,h6 {
   line-height: 1.1; 
 }
 
-h1 { font-size: 44px; line-height: 34px }
-h2 { font-size: 37px; line-height: 30px }
-h3 { font-size: 27px; line-height: 27px }
-h4 { font-size: 23px; line-height: 25px }
-h5 { font-size: 17px; line-height: 25px }
-h6 { font-size: 14px; line-height: 25px }
+h1 { font-size: $h1-size; line-height: $h1-size + 6 }
+h2 { font-size: $h2-size; line-height: $h1-size + 4 }
+h3 { font-size: $h3-size; line-height: $h1-size + 2 }
+h4 { font-size: $h4-size; line-height: $h1-size }
+h5 { font-size: $h5-size; line-height: $h1-size }
+h6 { font-size: $h6-size; line-height: $h1-size }
 
 
 // Lists
@@ -116,9 +110,9 @@ dl {
 
 .uppercase     { text-transform: uppercase }
 
-.green  { color: $color-2  }
-.blue   { color: $color-3   }
-.red    { color: $color-5    }
+.green  { color: $color-2 }
+.blue   { color: $color-3 }
+.red    { color: $color-5 }
 .yellow { color: $color-6 }
 
 .no-objects-found {
@@ -127,47 +121,4 @@ dl {
   text-transform: uppercase;
   padding: 40px 0px;
   color: lighten($color-body-text, 15);
-}
-
-// States
-//--------------------------------------------------------------
-.state {
-  @include border-radius(3px);
-  text-transform: uppercase;
-  font-size: 80%;
-  font-weight: 600;
-  border: 1px solid transparent;
-  padding: 2px 5px;  
-  width: 100%;
-  display: inline-block;
-  text-align: center;
-
-  &.complete, &.ready, &.paid, &.sold, &.shipped, &.authorized {
-    background-color: $color-success;
-
-    &, a {
-      color: white;
-    }
-  }
-
-  &.pending {
-    background-color: $color-notice;
-
-    &, a { 
-      color: white
-    }
-  }
-
-  &.canceled, &.void {
-    background-color: $color-error;
-    color: white;
-  }
-
-  &.balance_due {
-    background-color: lighten($color-3, 32);
-  }
-  &.cart {
-    background-color: lighten($color-3, 30);
-    color: lighten($color-body-text, 15);
-  }
 }
