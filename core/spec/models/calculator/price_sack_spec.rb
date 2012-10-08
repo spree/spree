@@ -11,7 +11,7 @@ describe Spree::Calculator::PriceSack do
   end
 
   # Regression test for #1156
-  it "computes with a snipment object" do
+  it "computes with a shipment object" do
     calculator.compute(shipment)
   end
 end
