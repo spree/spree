@@ -40,14 +40,6 @@ module Spree
       search(:code_cont => coupon_code).result
     end
 
-    # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
-    # is provided
-    def save(*)
-      if super
-        promotion_rules.each(&:save)
-      end
-    end
-
     def activate(payload)
       return unless order_activatable? payload[:order]
 
