@@ -88,6 +88,11 @@ module Spree
               includes([:master, {:variants => [:images, :option_values]}]).
               page(params[:page]).
               per(Spree::Config[:admin_products_per_page])
+
+              # PostgreSQL compatibility
+              if params[:q][:s].include?("master_price")
+                @collection = @collection.group("spree_variants.price")
+              end
           else
             includes = [{:variants => [:images,  {:option_values => :option_type}]}, {:master => :images}]
 
