@@ -74,4 +74,34 @@ describe Spree::BaseHelper do
     end
 
   end
+
+  # Regression test for #2034
+  context "flash_message" do
+    let(:flash) { {:notice => "ok", :foo => "foo", :bar => "bar"} }
+
+    it "should output all flash content" do
+      flash_messages
+      html = Nokogiri::HTML(helper.output_buffer)
+      html.css(".notice").text.should == "ok"
+      html.css(".foo").text.should == "foo"
+      html.css(".bar").text.should == "bar"
+    end
+
+    it "should output flash content except one key" do
+      flash_messages(:ignore_types => :bar)
+      html = Nokogiri::HTML(helper.output_buffer)
+      html.css(".notice").text.should == "ok"
+      html.css(".foo").text.should == "foo"
+      html.css(".bar").text.should be_empty
+    end
+
+    it "should output flash content except some keys" do
+      flash_messages(:ignore_types => [:foo, :bar])
+      html = Nokogiri::HTML(helper.output_buffer)
+      html.css(".notice").text.should == "ok"
+      html.css(".foo").text.should be_empty
+      html.css(".bar").text.should be_empty
+      helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
+    end
+  end
 end
