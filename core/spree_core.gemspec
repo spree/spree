@@ -33,5 +33,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'kaminari', '0.13.0'
   s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.3.2'
-  s.add_dependency 'cocaine', "<= 0.3.2"
+  s.add_dependency 'cocaine', "0.3.2"
 end
