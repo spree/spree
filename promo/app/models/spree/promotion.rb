@@ -40,23 +40,6 @@ module Spree
       search(:code_cont => coupon_code).result
     end
 
-    def self.handle_notifications(*args)
-      event_name, start_time, end_time, id, payload = args
-      payload[:event_name] = event_name
-
-      if payload[:order].present?
-        payload[:order].adjustments.promotion.each do |adjustment|
-          adjustment.delete if adjustment.originator.promotion.event_name == event_name
-        end
-        
-        payload[:order].update!
-      end
-
-      self.active.event_name_starts_with(event_name).each do |activator|
-        activator.activate(payload)
-      end
-    end
-
     def activate(payload)
       return unless order_activatable? payload[:order]
 
