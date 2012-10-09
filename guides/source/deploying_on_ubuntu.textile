@@ -1,0 +1,142 @@
+h2. Deploying Your Application
+
+This article will walk you through configuring and deploying your Spree application to an environment on Ubuntu 12.04. 
+
+This guide assumes an absolutely clean-slate Ubuntu 12.04 Server install, and covers setting up the following things:
+
+* A user for the application
+* Operating system dependencies required for Ruby, Rails and Spree
+* Ruby 1.9.3
+* Rails 3.2.8
+* A Spree application
+
+endprologue.
+
+h2. Initial Server Setup
+
+The first thing you will need on your server is a user account on the server which will be responsible for providing a container for your application's install.
+
+h3. A user account
+
+NOTE: For the purposes of this guide, the user's account on the system will be called "spree", but you may choose to call it whatever you wish.
+
+To set up this new user, run these commands on the server:
+
+<shell>
+useradd -d /home/spree -m -s /bin/bash spree
+passwd spree
+</shell>
+
+Set a new password for the user and remember it, as you will require it in just a moment.
+
+h4. Key-based authentication
+
+The next thing to set up is secure key-based authentication on the server. This will involve setting up a private key on your system, copying over the related public key to the server, asserting that you can now login without providing a password, and then disabling password authentication on the server to increase security.
+
+On the remote server, set up an +.ssh+ directory to contain the new public key for a user by running these commands:
+
+<shell>
+mkdir /home/spree/.ssh
+chown spree:spree /home/spree/.ssh
+chmod 700 /home/spree/.ssh
+</shell>
+
+This directory is used to authenticate key-based authentication when using SSH.
+
+On your local machine, generate a private key using +ssh-keygen+ like this:
+
+<shell>
+ssh-keygen -t rsa
+</shell>
+
+Set the filename to be [your home directory]/.ssh/spree_rsa.
+
+You can choose to enter a password if you wish. All that would mean is that you would need to provide that password to use the key.
+
+NOTE: If you already have a private key, you can use that one.
+
+Once you've finished generating this key, you will need to copy the public version of this key over to the new server. To do this, run this command:
+
+<shell>
+scp ~/.ssh/spree_rsa.pub spree@[your server's address]:~/.ssh/authorized_keys
+</shell>
+
+The password you will need to enter here is the password for the user account on the remote server.
+
+Once you've set this up, you will then be able to use key-based authentication to connect to the server:
+
+<shell>
+ssh spree@[your server's address] -i [your home directory]/.ssh/spree_rsa
+</shell>
+
+To save having to use the +i+ option here, you can place the following lines inside +.ssh/config+ on your local machine:
+
+<plain>
+Host [your server's address]
+  IdentityFile ~/.ssh/spree_rsa
+</plain>
+
+Once connected to the server as the deployment user, you will be able to begin to configure RVM.
+
+h3. Operating System Dependenices and Ruby
+
+To install Ruby, you are going to use the "RVM":http://rvm.io tool. This tool provides a simple way of installing a version of Ruby onto your server.
+
+To install it, run these command:
+
+<shell>
+curl -L https://get.rvm.io | bash -s stable
+. ~/.bashrc
+</shell>
+
+Next, you will need to install the operating system dependencies required for Ruby. When you run +rvm requirements+, these dependencies are listed underneath the heading "Additional Dependencies". For MRI Ruby, these dependencies are as follows:
+
+<shell>
+build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g 
+zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev 
+libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison 
+subversion pkg-config
+</shell>
+
+To install these dependencies, run these commands **as root**:
+
+<shell>
+apt-get update
+apt-get install -y build-essential openssl libreadline6 libreadline6-dev curl \
+git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 \
+libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison \
+subversion pkg-config
+</shell>
+
+Once these dependencies are installed, switch back into the +spree+ user and install Ruby 1.9.3 by running this command:
+
+<shell>
+rvm install 1.9.3
+</shell>
+
+This command will take a couple of minutes to finish running.
+
+Once it's finished running, run this command to make that version of Ruby the default for this user:
+
+<shell>
+rvm use 1.9.3
+</shell>
+
+Ensure that this version of Ruby is really the new default by running this command:
+
+<shell>
+ruby -v
+</shell>
+
+It should output something similar to this:
+
+<shell>
+ruby 1.9.3p194 (2012-04-20 revision 35410) [i686-linux]
+</shell>
+
+You now have a version of Ruby correctly configured on your server.
+
+h3. Deploying to the server
+
+The next step is to put your Spree application onto the server.
+
