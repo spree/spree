@@ -156,5 +156,135 @@ You now have a version of Ruby correctly configured on your server.
 
 h3. Deploying to the server
 
-The next step is to put your Spree application onto the server.
+The next step is to put your Spree application onto the server. To do this, you will use the deployment tool called "Capistrano":https://github.com/capistrano/capistrano/wiki.
+
+Install Capistrano on your local system by running this command:
+
+<shell>
+gem install capistrano
+</shell>
+
+Then, inside the directory for your Spree app, run this command to set up a Capistrano deploy configuration:
+
+<shell>
+capify .
+</shell>
+
+This command will create two files: a +Capfile+ and a +config/deploy.rb+. The +config/deploy.rb+ file is where you will be configuring how Capistrano chooses to deploy your application. Open this file now and you will see the following lines (comments removed):
+
+<ruby>
+set :application, "set your application name here"
+set :repository,  "set your repository location here"
+
+set :scm, :subversion
+# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
+
+role :web, "your web-server here"                          # Your HTTP server, Apache/etc
+role :app, "your app-server here"                          # This may be the same as your `Web` server
+role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
+role :db,  "your slave db-server here"
+</ruby>
+
+The contents of this file tell Capistrano about the deployment of your application.
+
+The +application+ variable tells Capistrano the name of your application, and the +repository+ variable tells it where it can find the source of your application. The +scm+ variable tells Capistrano the type of source control system you're using. If you're using Spree, there's a high chance that's going to be +:git+, so change that over now. Change the +application+ and +repository+ now to accurately reflect your application.
+
+The next batch of things to configure in this file are the different "roles". These tell Capistrano which servers play which roles within your server architecture. Within this guide, you've been working with a single server and will continue to do so. Therefore, these roles should look like this:
+
+<ruby>
+server = "[your server's address]"
+role :web, server
+role :app, server
+role :db,  server, :primary => true
+</ruby>
+
+After this, you will need to tell Capistrano the account name to use for deploying to your server. In this guide, we've used "spree" so far, but you may have chosen to use something different. To tell Capistrano the user to use, put this line inside your +config/deploy.rb+:
+
+<ruby>
+set :user, "spree"
+</ruby>
+
+You will also need to tell it the path to deploy at. By default in Capistrano, this path is +/u/apps/[application_name]+. There is no +/u/+ directory on the server, so that won't work for you immediately. You already have a self-contained user account on the server, so deploying the application to that user's home directory would make better sense. Add this line to +config/deploy.rb+ to do that:
+
+<ruby>
+set :deploy_to, "/home/spree/#{application_name}"
+</ruby>
+
+You will also need to tell Capistrano to never use sudo, since you're going to be operating as a user without sudo permission:
+
+<ruby>
+set :use_sudo, false
+</ruby>
+
+Along with this, you will also need to tell it to use the +bash+ shell, as you will need access to the commands for gems such as +bundler+, which are provided by RVM.
+
+<ruby>
+default_run_options[:shell] = '/bin/bash --login'
+</ruby> 
+
+With that configuration, your +config/deploy.rb+ should look like this:
+
+<ruby>
+set :application, "[name]"
+set :repository,  "[repository]"
+
+set :scm, :git
+
+server = "[your server's address]"
+
+role :web, server
+role :app, server
+role :db,  server, :primary => true # This is where Rails migrations will run
+
+set :user, "spree"
+
+set :deploy_to, "/home/spree/#{application}"
+set :use_sudo, false
+
+default_run_options[:shell] = '/bin/bash --login'
+</ruby>
+
+To set up the server for Capistrano, run +cap deploy:setup+. This will create the required Capistrano directories for your application inside +/home/spree/[name]+.
+
+You will need to add another two lines to the top of this file as well so that the application's gem dependencies are installed onto the server with Bundler, and the assets are precompiled. These two lines are this:
+
+<ruby>
+require "bundler/capistrano"
+load "deploy/assets"
+</ruby>
+
+To attempt to deploy the actual application to the server, run +cap deploy+. If the +repository+ option points to GitHub, this will fail because the server has never verified GitHub's host key.
+
+<plain>
+   [[your server's address]] executing command
+** [[your server's address] :: err] Host key verification failed.
+** [[your server's address] :: err] fatal: The remote end hung up unexpectedly
+</plain>
+
+To verify this, run this command:
+
+<ruby>
+ssh github.com
+</ruby>
+
+This will ask you to verify that GitHub's RSA key fingerprint is +16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48+. If that's correct, type "yes" to the prompt and GitHub's host key will now be verified.
+
+When you run +cap deploy+ again, you'll see this error:
+
+<plain>
+    [[your server's address]] executing command
+ ** [[your server's address] :: err] Permission denied (publickey).
+ ** [[your server's address] :: err] fatal: The remote end hung up unexpectedly
+</plain>
+
+This means that your application does not have a deploy key setup for it on GitHub. To set up a deploy key for the application, run this command as the "spree" user on the server:
+
+<shell>
+ssh-keygen -t rsa
+</shell>
+
+WARNING: Do not enter a password for this key. Otherwise you will need to use it every time you deploy.
+
+Run +cat ~/.ssh/id_rsa.pub+ on the server to get the deploy key. Go to your application's repository on GitHub and go to "Admin", then "Deploy Keys" and enter the whole key into the form there, giving it a memorable name if you ever need it again.
+
 
