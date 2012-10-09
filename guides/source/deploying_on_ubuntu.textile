@@ -76,7 +76,25 @@ Host [your server's address]
   IdentityFile ~/.ssh/spree_rsa
 </plain>
 
-Once connected to the server as the deployment user, you will be able to begin to configure RVM.
+You should now follow the same steps for the +root+ user on your server as well, so that you can authenticate with the same key to access both the deployment user and root accounts. You may choose to use a completely different key if you wish.
+
+Once you have verified -- by connecting via SSH to the remote server -- that both accounts work without password authentication, you can now disable password-based authentication.
+
+To disable password-based authentication, you will need to uncomment this line within +/etc/ssh/ssh_config+ and change the "yes" value to "no":
+
+<plain>
+#PasswordAuthentication yes
+</plain>
+
+Then you will need to restart the SSH daemon on the server, by running this command:
+
+<plain>
+service ssh restart
+</plain>
+
+After this, if you attempt to run +ssh spree@localhost+ from within the server itself, it will return "Permission denied (publickey)", indicating that it has not attempted to authenticate with a password, but instead with a publickey, which the server does not have configured.
+
+Now that the user is set up on your system and access to it and root's account are locked down a bit tighter, it's time to set up Ruby.
 
 h3. Operating System Dependenices and Ruby
 
