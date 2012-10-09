@@ -126,6 +126,20 @@ libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison \
 subversion pkg-config
 </shell>
 
+You will also need to install a JavaScript runtime. You can install the +nodejs+ package from apt-get:
+
+<shell>
+apt-get install -y nodejs
+</shell>
+
+Or, you can put a dependency for +therubyracer+ gem into your +Gemfile+:
+
+<ruby>
+group :production do
+  gem 'therubyracer'
+end
+</ruby>
+
 Once these dependencies are installed, switch back into the +spree+ user and install Ruby 1.9.3 by running this command:
 
 <shell>
@@ -137,7 +151,7 @@ This command will take a couple of minutes to finish running.
 Once it's finished running, run this command to make that version of Ruby the default for this user:
 
 <shell>
-rvm use 1.9.3
+rvm use 1.9.3 --default
 </shell>
 
 Ensure that this version of Ruby is really the new default by running this command:
@@ -287,4 +301,66 @@ WARNING: Do not enter a password for this key. Otherwise you will need to use it
 
 Run +cat ~/.ssh/id_rsa.pub+ on the server to get the deploy key. Go to your application's repository on GitHub and go to "Admin", then "Deploy Keys" and enter the whole key into the form there, giving it a memorable name if you ever need it again.
 
+When you run +cap deploy+ again, Capistrano will clone your application's code from GitHub to your server into a directory such as +/home/spree/[application's name]/releases/[timestamp]+. Inside this directory -- because you're requiring the +bundler/capistrano+ tasks at the top of the +config/deploy.rb+ file -- Capistrano will run +bundle install+ with a couple of options, pointing Bundler at the application's gemfile and placing the gems into a shared directory at +/home/spree/[application]/shared/bundle+. This is so that every release of your application can use the same bundle. This +bundle install+ command will also not install the development and test dependencies for your application, as you won't need them on your production server.
 
+The +cap deploy+ command this time will also run an asset precompilation step, thanks to the +deploy/assets+ loading at the top of +config/deploy.rb+. This step will compile the assets to the +public/assets+ directory in the current release's directory.
+
+The next step is to set up a database server for the data for your Rails app.
+
+h3. Setting up a database server
+
+The database server we will be using in this guide will be the "PostgreSQL":http://postgresql.org database server. Once this is setup, you will be able to tell capistrano to run the migrations on your application, creating the necessary tables for your Spree store.
+
+To install PostgreSQL, run this command:
+
+<shell>
+apt-get install -y postgresql
+</shell>
+
+You will also need to install its development headers, which the +pg+ gem will use to connect to the database:
+
+<shell>
+apt-get install -y libpq-dev
+</shell>
+
+Once those two packages are installed, you will need to create a new database for your application to use. This database should have the same name as the server's deploy user account, which in this guide has been "spree" so far. Yours could be different. To set up this database, run this command as +root+:
+
+<shell>
+sudo -u postgres createdb spree
+sudo -u postgres createuser spree
+</shell>
+
+To get your application to connect to this database, you will need to set up a +database.yml+ file on the server. This file needs to be kept on the server in a common location where it can be copied over into the latest deployed version of the application, and so you should place it at +/home/spree/[application's name]/shared/config/database.yml+. Inside this file, put this content:
+
+<plain>
+production:
+  adapter: postgresql
+  database: spree
+</plain>
+
+If you're not already using the PostgreSQL adapter on your application, as specified by +gem 'pg'+ in your +Gemfile+, you'll need to add this gem to your +Gemfile+ now, inside a +production+ group:
+
+<ruby>
+group :production do
+  gem 'pg'
+end
+</ruby>
+
+NOTE: If you need to add this gem, you will need to run +bundle install+ on your server and commit+push your +Gemfile+ and +Gemfile.lock+ to Git.
+
+Now when you run +cap deploy+, you will need Capistrano to automatically copy over the +database.yml+ file from the shared directory into the current deploy path. To make Capistrano do this, put these lines into +config/deploy.rb+ for your application:
+
+<ruby>
+task :symlink_database_yml do
+  run "rm #{release_path}/config/database.yml"
+  run "ln -sfn #{shared_path}/config/database.yml 
+       #{release_path}/config/database.yml"
+end
+after "bundle:install", "symlink_database_yml"
+</ruby>
+
+After +bundle install+ has finished running on the server, Capistrano will now copy over the +config/database.yml+ into the current path. In order for Capistrano to deploy *and* run your migrations, you will need to run +cap deploy+ and then +cap deploy:migrate+. Run those commands now. You should see the migrations run on the server.
+
+The next step is to set up the web server to serve requests for your application.
+
+h3. Setting up a web server
