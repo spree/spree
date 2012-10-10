@@ -33,15 +33,19 @@
 
       <p class="field" id="bcountry">
         <%= bill_form.label :country_id, t(:country) %><span class="required">*</span><br />
-        <span id="bcountry">
+        <span id="bcountry-required">
           <%= bill_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %>
-        </span>
+         </span>
       </p>
 
       <% if Spree::Config[:address_requires_state] %>
         <p class="field" id="bstate">
           <% have_states = !@order.bill_address.country.states.empty? %>
-          <%= bill_form.label :state, t(:state) %><span class="required">*</span><br />
+          <%= bill_form.label :state, t(:state) %>
+            <% if @order.bill_address.country.states_required %>
+              <span id="bstate-required" class="required">*</span>
+            <% end %>
+            <br/>
           <% state_elements = [
              bill_form.collection_select(:state_id, @order.bill_address.country.states,
                                 :id, :name,
@@ -120,7 +124,7 @@
 
       <p class="field" id="scountry">
         <%= ship_form.label :country_id, t(:country) %><span class="required">*</span><br />
-        <span id="scountry">
+        <span id="scountry-required">
           <%= ship_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required'} %>
         </span>
       </p>
@@ -128,7 +132,12 @@
       <% if Spree::Config[:address_requires_state] %>
         <p class="field" id="sstate">
           <% have_states = !@order.ship_address.country.states.empty? %>
-          <%= ship_form.label :state, t(:state) %><span class="required">*</span><br />
+          <%= ship_form.label :state, t(:state) %>
+          <% if @order.ship_address.country.states_required %>
+              <span id="sstate-required" class="required">*</span>
+            <% end %>
+          <br/>
+
           <% state_elements = [
              ship_form.collection_select(:state_id, @order.ship_address.country.states,
                                 :id, :name,
