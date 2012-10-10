@@ -123,7 +123,8 @@ module Spree
       end
 
       def configurations_sidebar_menu_item(link_text, url, options = {})
-        options.merge!(:class => url.include?(controller.controller_name) ? 'active' : nil)
+        is_active = url.ends_with?(controller.controller_name) || url.ends_with?( "#{controller.controller_name}/edit")
+        options.merge!(:class => is_active ? 'active' : nil)
         content_tag(:li, options) do
           link_to(link_text, url)
         end

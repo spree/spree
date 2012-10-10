@@ -1,0 +1,17 @@
+<div data-hook="admin_country_form_fields" class="row">
+  <div class="alpha omega twelve columns">
+    <div data-hook="name" class="field">
+      <%= f.label :name, t(:name) %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
+    </div>
+    <div data-hook="iso_name" class="field">
+          <%= f.label :iso_name, t(:iso_name) %>
+          <%= f.text_field :iso_name, :class => 'fullwidth' %>
+        </div>
+    <div data-hook="states_required" class="field">
+      <%= f.check_box :states_required %>
+      <%= f.label :states_required, t(:states_required) %><br>
+    </div>
+
+  </div>
+</div>

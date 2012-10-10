@@ -5,14 +5,24 @@
 $ ->
   if ($ '#checkout_form_address').is('*')
     ($ '#checkout_form_address').validate()
+
+    country_from_region = (region) ->
+      ($ 'p#' + region + 'country' + ' span#' + region + 'country-selection :only-child').val()
+
     get_states = (region) ->
-      country = ($ 'p#' + region + 'country' + ' span#' + region + 'country :only-child').val()
-      state_mapper[country]
+      state_mapper[country_from_region(region)]
+
+    get_states_required = (region) ->
+      states_required_mapper[country_from_region(region)]
 
     update_state = (region) ->
       states = get_states(region)
-      state_select = ($ 'p#' + region + 'state select')
-      state_input = ($ 'p#' + region + 'state input')
+      states_required  = get_states_required(region)
+
+      state_para = ($ 'p#' + region + 'state')
+      state_select = state_para.find('select')
+      state_input = state_para.find('input')
+      state_span_required = state_para.find('state-required')
       if states
         selected = parseInt state_select.val()
         state_select.html ''
@@ -24,9 +34,17 @@ $ ->
 
         state_select.prop('disabled', false).show()
         state_input.hide().prop 'disabled', true
+        state_span_required.show()
       else
-        state_input.prop('disabled', false).show()
         state_select.hide().prop 'disabled', true
+        state_input.show()
+        if states_required
+          state_span_required.show()
+        else
+          state_input.val ''
+          state_span_required.hide()
+        state_para.toggle(!!states_required)
+        state_input.prop('disabled', !states_required)
 
     ($ 'p#bcountry select').change ->
       update_state 'b'

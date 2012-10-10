@@ -46,7 +46,7 @@ describe Spree::Address do
       end
     end
 
-    let(:country) { mock_model(Spree::Country, :states => [state]) }
+    let(:country) { mock_model(Spree::Country, :states => [state], :states_required => true) }
     let(:state) { stub_model(Spree::State, :name => 'maryland', :abbr => 'md') }
     let(:address) { FactoryGirl.build(:address, :country => country) }
 
