@@ -140,6 +140,12 @@ group :production do
 end
 </ruby>
 
+You will also need the +imagemagick+ package, which is used to handle image manipulation which is used when you upload product images in your store:
+
+<shell>
+apt-get install -y imagemagick
+</shell>
+
 Once these dependencies are installed, switch back into the +spree+ user and install Ruby 1.9.3 by running this command:
 
 <shell>
@@ -476,6 +482,8 @@ namespace :unicorn do
     run "kill -s QUIT `cat /tmp/unicorn.[application's name].pid`"
   end
 end
+
+after "deploy:restart", "unicorn:restart"
 </ruby>
 
 Commit your +config/deploy.rb+ to Git, push the changes to Github and run +cap deploy+ again to ensure the latest code is available on your server. This will include the +unicorn+ gem which will be vital for the next step: setting up nginx and getting it to serve requests from your application.
@@ -628,3 +636,22 @@ That is all the SSL configuration you will need for your server. To verify that 
 
 h3. Loading seed data
 
+Now with the database and web servers set up for your Spree store correctly, the final thing you will need is seed data. This data contains things such as countries, states, zones, zone members and an admin role.
+
+To install this data, run this command on the server, inside the current directory:
+
+<plain>
+RAILS_ENV=production bundle exec rake db:seed
+</plain>
+
+If you have +spree_auth_devise+ installed, this command will also prompt you for a username and password for your admin user. If you're not using +spree_auth_devise+, then you will need to set up a new user account manually in the console and assign it the admin role, like this:
+
+<ruby>
+user = User.create!(:email => "email@example.com", :password => "topsekret")
+user.spree_roles << Spree::Role.find_by_name("admin")
+user.save!
+</ruby>
+
+Note that your `User` model may require additional attributes before it can be created.
+
+Once you have the data seeded by the +rake db:seed+ command, you will need to log into the admin interface and create a shipping method and a payment method so that orders can be delivered and paid for.
