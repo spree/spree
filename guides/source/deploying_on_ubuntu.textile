@@ -236,6 +236,12 @@ Along with this, you will also need to tell it to use the +bash+ shell, as you w
 default_run_options[:shell] = '/bin/bash --login'
 </ruby> 
 
+And because all the Rails-specific commands are going to need to run on the production environment, it'd be a great idea to add this to the configuration as well:
+
+<ruby>
+default_environment["RAILS_ENV"] = 'production'
+</ruby>
+
 With that configuration, your +config/deploy.rb+ should look like this:
 
 <ruby>
@@ -256,6 +262,7 @@ set :deploy_to, "/home/spree/#{application}"
 set :use_sudo, false
 
 default_run_options[:shell] = '/bin/bash --login'
+default_environment["RAILS_ENV"] = 'production'
 </ruby>
 
 To set up the server for Capistrano, run +cap deploy:setup+. This will create the required Capistrano directories for your application inside +/home/spree/[name]+.
@@ -364,3 +371,229 @@ After +bundle install+ has finished running on the server, Capistrano will now c
 The next step is to set up the web server to serve requests for your application.
 
 h3. Setting up a web server
+
+The web server you'll be using here will be the Unicorn web server which will run the Rails application instances, and then those instances will have an nginx frontend which will serve the requests coming from the people who are visiting your store.
+
+h4. Setting up Unicorn
+
+To set up unicorn for your application, add the +unicorn+ gem to your +Gemfile+, inside the +production+ group:
+
+<ruby>
+group :production do
+  gem 'pg'
+  gem 'unicorn'
+end
+</ruby>
+
+Unicorn requires some configuration in order to work, which belongs in +config/unicorn.rb+. This is the content required for Unicorn:
+
+<ruby>
+# config/unicorn.rb
+# Set environment to development unless something else is specified
+env = ENV["RAILS_ENV"] || "development"
+
+# See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
+# documentation.
+worker_processes 4
+
+# listen on both a Unix domain socket and a TCP port,
+# we use a shorter backlog for quicker failover when busy
+listen "/tmp/[application's name].socket", backlog: 64
+
+# Preload our app for more speed
+preload_app true
+
+# nuke workers after 30 seconds instead of 60 seconds (the default)
+timeout 30
+
+pid "/tmp/spree.[application's name].pid"
+
+# Production specific settings
+if env == "production"
+  # Help ensure your application will always spawn in the symlinked
+  # "current" directory that Capistrano sets up.
+  working_directory "/home/spree/[application's name]/current"
+
+  # feel free to point this anywhere accessible on the filesystem
+  user 'spree'
+  shared_path = "/home/spree/[application's name]/shared"
+
+  stderr_path "#{shared_path}/log/unicorn.stderr.log"
+  stdout_path "#{shared_path}/log/unicorn.stdout.log"
+end
+
+before_fork do |server, worker|
+  # the following is highly recomended for Rails + "preload_app true"
+  # as there's no need for the master process to hold a connection
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.connection.disconnect!
+  end
+
+  # Before forking, kill the master process that belongs to the .oldbin PID.
+  # This enables 0 downtime deploys.
+  old_pid = "/tmp/unicorn.[application's name].pid.oldbin"
+  if File.exists?(old_pid) && server.pid != old_pid
+    begin
+      Process.kill("QUIT", File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
+  end
+end
+
+after_fork do |server, worker|
+  # the following is *required* for Rails + "preload_app true",
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.establish_connection
+  end
+
+  # if preload_app is true, then you may also want to check and
+  # restart any other shared sockets/descriptors such as Memcached,
+  # and Redis.  TokyoCabinet file handles are safe to reuse
+  # between any number of forked children (assuming your kernel
+  # correctly implements pread()/pwrite() system calls)
+end
+</ruby>
+
+Remember to replace +[application's name]+ above with your actual application name. Run +bundle install+ and commit and push your +Gemfile+, +Gemfile.lock+ and +config/unicorn.rb+ files to Git.
+
+Next, you will need to add tasks to Capistrano to ensure that the Unicorn workers are restarted after a +cap deploy+. To do this, put these lines into your +config/deploy.rb+:
+
+<ruby>
+namespace :unicorn do
+  desc "Zero-downtime restart of Unicorn"
+  task :restart, except: { no_release: true } do
+    run "kill -s USR2 `cat /tmp/unicorn.[application's name].pid`"
+  end
+
+  desc "Start unicorn"
+  task :start, except: { no_release: true } do
+    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+  end
+
+  desc "Stop unicorn"
+  task :stop, except: { no_release: true } do
+    run "kill -s QUIT `cat /tmp/unicorn.[application's name].pid`"
+  end
+end
+</ruby>
+
+h4. Setting up nginx
+
+To install nginx, run this command as +root+:
+
+<shell>
+apt-get install nginx
+</shell>
+
+Once this command is installed, you will then need to configure nginx to serve requests from your unicorn workers. To do this, put this content inside +/etc/nginx/nginx.conf+:
+
+<plain>
+user spree;
+
+# Change this depending on your hardware
+worker_processes 4;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+    multi_accept on;
+}
+
+http {
+    types_hash_bucket_size 512;
+    types_hash_max_size 2048;
+
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay off;
+    # server_tokens off;
+
+    # server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    gzip on;
+    gzip_disable "msie6";
+
+    # gzip_vary on;
+    gzip_proxied any;
+    gzip_min_length 500;
+    # gzip_comp_level 6;
+    # gzip_buffers 16 8k;
+    # gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    ##
+    # Virtual Host Configs
+    ##
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+</plain>
+
+This file sets up nginx-specific settings. You will need another file to tell nginx where your application is. Create another file at +/etc/nginx/sites-enabled/[your application's name]+, and fill it with this content:
+
+<plain>
+upstream [your server's address] {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  # for UNIX domain socket setups:
+  server unix:/tmp/[your application's name].socket fail_timeout=0;
+}
+
+server {
+    # if you're running multiple servers, instead of "default" you should
+    # put your main domain name here
+    listen 80 default;
+
+    # you could put a list of other domain names this application answers
+    server_name [your server's address];
+
+    root /home/spree/[your application's name]/current/public;
+    access_log /var/log/nginx/[your server's address]_access.log;
+    rewrite_log on;
+
+    location / {
+        #all requests are sent to the UNIX socket
+        proxy_pass  http://[your server's address];
+        proxy_redirect     off;
+
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+
+        client_max_body_size       10m;
+        client_body_buffer_size    128k;
+
+        proxy_connect_timeout      90;
+        proxy_send_timeout         90;
+        proxy_read_timeout         90;
+
+        proxy_buffer_size          4k;
+        proxy_buffers              4 32k;
+        proxy_busy_buffers_size    64k;
+        proxy_temp_file_write_size 64k;
+    }
+
+    # if the request is for a static resource, nginx should serve it directly
+    # and add a far future expires header to it, making the browser
+    # cache the resource and navigate faster over the website
+    # this probably needs some work with Rails 3.1's asset pipeline
+    location ~ ^/(system|assets)/  {
+      root /home/deployer/apps/projectname.com/current/public;
+      expires max;
+      break;
+    }
+}
+</plain>
+
+
