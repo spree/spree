@@ -652,6 +652,6 @@ user.spree_roles << Spree::Role.find_by_name("admin")
 user.save!
 </ruby>
 
-Note that your `User` model may require additional attributes before it can be created.
+Note that your +User+ model may require additional attributes before it can be created.
 
 Once you have the data seeded by the +rake db:seed+ command, you will need to log into the admin interface and create a shipping method and a payment method so that orders can be delivered and paid for.
