@@ -478,6 +478,8 @@ namespace :unicorn do
 end
 </ruby>
 
+Commit your +config/deploy.rb+ to Git, push the changes to Github and run +cap deploy+ again to ensure the latest code is available on your server. This will include the +unicorn+ gem which will be vital for the next step: setting up nginx and getting it to serve requests from your application.
+
 h4. Setting up nginx
 
 To install nginx, run this command as +root+:
@@ -567,9 +569,10 @@ server {
         proxy_pass  http://[your server's address];
         proxy_redirect     off;
 
-        proxy_set_header   Host             $host;
-        proxy_set_header   X-Real-IP        $remote_addr;
-        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   Host               $host;
+        proxy_set_header   X-Real-IP          $remote_addr;
+        proxy_set_header   X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto  $scheme;
 
         client_max_body_size       10m;
         client_body_buffer_size    128k;
@@ -589,18 +592,39 @@ server {
     # cache the resource and navigate faster over the website
     # this probably needs some work with Rails 3.1's asset pipeline
     location ~ ^/(system|assets)/  {
-      root /home/deployer/apps/projectname.com/current/public;
+      root /home/spree/[application's name]/current/public;
       expires max;
       break;
     }
 }
 </plain>
 
-* Start nginx
-* Start Unicorn workers
-* Validate that it works
+With these settings in place, you can start up nginx by running +service nginx start+ as root on the remote server. Next, you can start the unicorn processes by running +cap unicorn:start+ from your local machine. Once these are running, you will be able to access your site at [your server's address]. You should see your store's homepage here if everything is correctly set up.
 
 h3. Setting up SSL
+
+NOTE: This part of the guide assumes you have the relevant SSL certificate files (a file ending in +.crt+, and another in +.key+) already and just need to know where to put them.
+
+The +*.crt+ file belongs in +/etc/ssl/certs+, and the +*.key+ file belongs in +/etc/ssl/private+. Put these files there now.
+
+To get nginx to work with SSL, you will need to edit +/etc/nginx/sites-enabled/[application's name]+ and inside the +server {+ block, put these lines:
+
+<plain>
+listen 443 ssl;
+
+ssl_certificate /etc/ssl/certs/[your certificate's name].crt;
+ssl_certificate_key /etc/ssl/private/[your key's name].key;
+</plain>
+
+Take this time to ensure that you definitely have this line inside this file as well:
+
+<plain>
+proxy_set_header X-Forwarded-Proto $scheme;
+</plain>
+
+Without this line, you would get a redirect loop when you attempted to login.
+
+That is all the SSL configuration you will need for your server. To verify that it works, attempt to visit the login page for your application, or the admin area.
 
 h3. Loading seed data
 
