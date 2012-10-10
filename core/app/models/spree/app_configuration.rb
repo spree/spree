@@ -26,7 +26,6 @@ module Spree
     preference :allow_backorders, :boolean, :default => true
     preference :allow_checkout_on_gateway_error, :boolean, :default => false
     preference :allow_guest_checkout, :boolean, :default => true
-    preference :allow_locale_switching, :boolean, :default => true
     preference :allow_ssl_in_development_and_test, :boolean, :default => false
     preference :allow_ssl_in_production, :boolean, :default => true
     preference :allow_ssl_in_staging, :boolean, :default => true
