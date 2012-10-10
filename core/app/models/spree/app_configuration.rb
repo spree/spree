@@ -56,7 +56,6 @@ module Spree
     preference :orders_per_page, :integer, :default => 15
     preference :prices_inc_tax, :boolean, :default => false
     preference :products_per_page, :integer, :default => 12
-    preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
     preference :shipment_inc_vat, :boolean, :default => false
     preference :shipping_instructions, :boolean, :default => false # Request instructions/info for shipping
     preference :show_descendents, :boolean, :default => true
