@@ -4,6 +4,8 @@ This article will walk you through configuring and deploying your Spree applicat
 
 This guide assumes that your application is deploy-ready and that you have a Heroku application already created on the Heroku stack for this application. If you don't have a Heroku app already, follow "this guide":https://devcenter.heroku.com/articles/creating-apps.
 
+endprologue.
+
 h2. Configuring your application
 
 There are two major things you will need to edit before you can deploy your application to Heroku: the asset pipeline's +initialize_on_precompile+ setting and S3 settings.
