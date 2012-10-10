@@ -1,4 +1,4 @@
-h2. Deploying Your Application
+h1. Deploying Your Application to Ubuntu
 
 This article will walk you through configuring and deploying your Spree application to an environment on Ubuntu 12.04. 
 
@@ -31,7 +31,7 @@ passwd spree
 
 Set a new password for the user and remember it, as you will require it in just a moment.
 
-h4. Key-based authentication
+h3. Key-based authentication
 
 The next thing to set up is secure key-based authentication on the server. This will involve setting up a private key on your system, copying over the related public key to the server, asserting that you can now login without providing a password, and then disabling password authentication on the server to increase security.
 
@@ -98,7 +98,7 @@ After this, if you attempt to run +ssh spree@localhost+ from within the server i
 
 Now that the user is set up on your system and access to it and root's account are locked down a bit tighter, it's time to set up Ruby.
 
-h2. Operating System Dependenices and Ruby
+h2. Operating System Dependencies and Ruby
 
 To install Ruby, you are going to use the "RVM":http://rvm.io tool. This tool provides a simple way of installing a version of Ruby onto your server.
 
