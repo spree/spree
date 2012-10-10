@@ -1,4 +1,4 @@
-h1. Deploying Your Application to Ubuntu
+h2. Deploying Your Application to Ubuntu
 
 This article will walk you through configuring and deploying your Spree application to an environment on Ubuntu 12.04. 
 
@@ -14,11 +14,11 @@ This guide assumes an absolutely clean-slate Ubuntu 12.04 Server install, and co
 
 endprologue.
 
-h2. Initial Server Setup
+h3. Initial Server Setup
 
 The first thing you will need on your server is a user account on the server which will be responsible for providing a container for your application's install.
 
-h3. A user account
+h4. A user account
 
 NOTE: For the purposes of this guide, the user's account on the system will be called "spree", but you may choose to call it whatever you wish.
 
@@ -31,7 +31,7 @@ passwd spree
 
 Set a new password for the user and remember it, as you will require it in just a moment.
 
-h3. Key-based authentication
+h4. Key-based authentication
 
 The next thing to set up is secure key-based authentication on the server. This will involve setting up a private key on your system, copying over the related public key to the server, asserting that you can now login without providing a password, and then disabling password authentication on the server to increase security.
 
@@ -98,7 +98,7 @@ After this, if you attempt to run +ssh spree@localhost+ from within the server i
 
 Now that the user is set up on your system and access to it and root's account are locked down a bit tighter, it's time to set up Ruby.
 
-h2. Operating System Dependencies and Ruby
+h3. Operating System Dependencies and Ruby
 
 To install Ruby, you are going to use the "RVM":http://rvm.io tool. This tool provides a simple way of installing a version of Ruby onto your server.
 
@@ -176,7 +176,7 @@ ruby 1.9.3p194 (2012-04-20 revision 35410) [i686-linux]
 
 You now have a version of Ruby correctly configured on your server.
 
-h2. Deploying to the server
+h3. Deploying to the server
 
 The next step is to put your Spree application onto the server. To do this, you will use the deployment tool called "Capistrano":https://github.com/capistrano/capistrano/wiki.
 
@@ -322,7 +322,7 @@ The +cap deploy+ command this time will also run an asset precompilation step, t
 
 The next step is to set up a database server for the data for your Rails app.
 
-h2. Setting up a database server
+h3. Setting up a database server
 
 The database server we will be using in this guide will be the "PostgreSQL":http://postgresql.org database server. Once this is setup, you will be able to tell capistrano to run the migrations on your application, creating the necessary tables for your Spree store.
 
@@ -378,11 +378,11 @@ After +bundle install+ has finished running on the server, Capistrano will now c
 
 The next step is to set up the web server to serve requests for your application.
 
-h2. Setting up a web server
+h3. Setting up a web server
 
 The web server you'll be using here will be the Unicorn web server which will run the Rails application instances, and then those instances will have an nginx frontend which will serve the requests coming from the people who are visiting your store.
 
-h3. Setting up Unicorn
+h4. Setting up Unicorn
 
 To set up unicorn for your application, add the +unicorn+ gem to your +Gemfile+, inside the +production+ group:
 
@@ -490,7 +490,7 @@ after "deploy:restart", "unicorn:restart"
 
 Commit your +config/deploy.rb+ to Git, push the changes to Github and run +cap deploy+ again to ensure the latest code is available on your server. This will include the +unicorn+ gem which will be vital for the next step: setting up nginx and getting it to serve requests from your application.
 
-h3. Setting up nginx
+h4. Setting up nginx
 
 To install nginx, run this command as +root+:
 
@@ -611,7 +611,7 @@ server {
 
 With these settings in place, you can start up nginx by running +service nginx start+ as root on the remote server. Next, you can start the unicorn processes by running +cap unicorn:start+ from your local machine. Once these are running, you will be able to access your site at [your server's address]. You should see your store's homepage here if everything is correctly set up.
 
-h3. Setting up SSL
+h4. Setting up SSL
 
 NOTE: This part of the guide assumes you have the relevant SSL certificate files (a file ending in +.crt+, and another in +.key+) already and just need to know where to put them.
 
@@ -636,7 +636,7 @@ Without this line, you would get a redirect loop when you attempted to login.
 
 That is all the SSL configuration you will need for your server. To verify that it works, attempt to visit the login page for your application, or the admin area.
 
-h2. Loading seed data
+h3. Loading seed data
 
 Now with the database and web servers set up for your Spree store correctly, the final thing you will need is seed data. This data contains things such as countries, states, zones, zone members and an admin role.
 

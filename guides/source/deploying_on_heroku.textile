@@ -1,4 +1,4 @@
-h1. Deploying your Application to Heroku
+h2. Deploying your Application to Heroku
 
 This article will walk you through configuring and deploying your Spree application to Heroku.
 
@@ -6,11 +6,11 @@ This guide assumes that your application is deploy-ready and that you have a Her
 
 endprologue.
 
-h2. Configuring your application
+h3. Configuring your application
 
 There are two major things you will need to edit before you can deploy your application to Heroku: the asset pipeline's +initialize_on_precompile+ setting and S3 settings.
 
-h3. Asset Pipeline
+h4. Asset Pipeline
 
 When deploying to Heroku by default Rails will attempt to intialize itself before the assets are precompiled. This step will fail because the application will attempt to establish a database connection, which Heroku will not have set up yet.
 
@@ -22,7 +22,7 @@ config.assets.initialize_on_precompile = false
 
 The assets for your application will still be precompiled, it's just that Rails won't be intialized during this process.
 
-h3. S3 Support
+h4. S3 Support
 
 Because Heroku's filesystem is readonly, you will need to configure Spree to upload the assets to an off-site server, such as S3. If you don't have an S3 account already, you can "set one up here":http://aws.amazon.com/s3/.
 
@@ -57,14 +57,14 @@ Paperclip.interpolates(:s3_eu_url) do |attachment, style|
 end
 </ruby>
 
-h2. Pushing to Heroku
+h3. Pushing to Heroku
 
 Once you have configured the above settings, you can push your Spree application to Heroku:
 
 <shell>
-git push heroku msater
+git push heroku master
 </shell>
 
-h2. SSL Support
+h3. SSL Support
 
 For information about SSL support with Heroku, please read their "SSL Guide":https://devcenter.heroku.com/articles/ssl.
