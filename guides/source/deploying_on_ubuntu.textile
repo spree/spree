@@ -8,7 +8,9 @@ This guide assumes an absolutely clean-slate Ubuntu 12.04 Server install, and co
 * Operating system dependencies required for Ruby, Rails and Spree
 * Ruby 1.9.3
 * Rails 3.2.8
-* A Spree application
+* PostgreSQL
+* Unicorn + nginx (with SSL)
+* Seed data for your store
 
 endprologue.
 
