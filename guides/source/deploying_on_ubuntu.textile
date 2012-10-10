@@ -596,4 +596,11 @@ server {
 }
 </plain>
 
+* Start nginx
+* Start Unicorn workers
+* Validate that it works
+
+h3. Setting up SSL
+
+h3. Loading seed data
 
