@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Checkout" do
-  let(:country) { create(:country, :name => "Kangaland") }
+  let(:country) { create(:country, :name => "Kangaland",:states_required => true) }
   before do
     Factory(:state, :name => "Victoria", :country => country)
   end

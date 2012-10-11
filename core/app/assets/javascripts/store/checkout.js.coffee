@@ -7,7 +7,7 @@ $ ->
     ($ '#checkout_form_address').validate()
 
     country_from_region = (region) ->
-      ($ 'p#' + region + 'country' + ' span#' + region + 'country :only-child').val()
+      ($ 'p#' + region + 'country' + ' span#' + region + 'country-selection :only-child').val()
 
     get_states = (region) ->
       state_mapper[country_from_region(region)]
@@ -33,6 +33,7 @@ $ ->
 
         state_select.prop('disabled', false).show()
         state_input.hide().prop 'disabled', true
+        state_span_required.show()
       else
         state_select.hide().prop 'disabled', true
         state_input.show()
