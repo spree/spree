@@ -27,7 +27,10 @@ module Spree
 
       file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
       send(file_action, 'config/initializers/spree.rb') do
-        %Q{require 'spree/authentication_helpers'\n}
+        %Q{
+          Rails.application.config.to_prepare do
+            require_dependency 'spree/authentication_helpers'
+          end\n}
       end
     end
 
