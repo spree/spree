@@ -21,6 +21,7 @@ module Spree
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
 
+    before_save :process_backorders
     after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
@@ -133,6 +134,12 @@ module Spree
 
 
     private
+
+      def process_backorders
+        if count_changes = changes['count_on_hand']
+          self.on_hand = count_changes.last
+        end
+      end
 
       # strips all non-price-like characters from the price, taking into account locale settings
       def parse_price(price)

@@ -28,6 +28,22 @@ describe Spree::Variant do
     variant.run_callbacks(:save)
   end
 
+  it "lock_version should prevent stale updates" do
+    copy = Spree::Variant.find(variant.id)
+
+    copy.count_on_hand = 200
+    copy.save!
+
+    variant.count_on_hand = 100
+    expect { variant.save }.to raise_error ActiveRecord::StaleObjectError
+
+    variant.reload.count_on_hand.should == 200
+    variant.count_on_hand = 100
+    variant.save
+
+    variant.reload.count_on_hand.should == 100
+  end
+
   context "on_hand=" do
     before { variant.stub(:inventory_units => mock('inventory-units')) }
 
@@ -128,6 +144,16 @@ describe Spree::Variant do
 
     end
 
+  end
+
+  context "count_on_hand" do
+    context "when setting count_on_hand directly" do
+      it "should pass new value to on_hand=" do
+        variant.count_on_hand = 20
+        variant.should_receive(:on_hand=).with(20)
+        variant.run_callbacks(:save)
+      end
+    end
   end
 
   context "in_stock?" do
