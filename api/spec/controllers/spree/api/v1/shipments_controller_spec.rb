@@ -9,8 +9,22 @@ describe Spree::Api::V1::ShipmentsController do
     stub_authentication!
   end
 
-  context "working with a shipment" do
-    let!(:resource_scoping) { { :order_id => shipment.order.to_param, :id => shipment.to_param } }
+  let!(:resource_scoping) { { :order_id => shipment.order.to_param, :id => shipment.to_param } }
+
+  context "as a non-admin" do
+    it "cannot make a shipment ready" do
+      api_put :ready
+      assert_unauthorized!
+    end
+
+    it "cannot make a shipment shipped" do
+      api_put :ship
+      assert_unauthorized!
+    end
+  end
+
+  context "as an admin" do
+    sign_in_as_admin!
 
     it "can make a shipment ready" do
       api_put :ready
