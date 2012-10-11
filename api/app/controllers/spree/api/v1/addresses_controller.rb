@@ -4,10 +4,12 @@ module Spree
       class AddressesController < Spree::Api::V1::BaseController
         def show
           @address = Address.find(params[:id])
+          authorize! :read, @address
         end
 
         def update
           @address = Address.find(params[:id])
+          authorize! :read, @address
           @address.update_attributes(params[:address])
           render :show, :status => 200
         end
