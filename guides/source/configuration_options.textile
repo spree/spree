@@ -4,19 +4,210 @@ This section lists all of the configuration options for the current version of S
 
 NOTE: Spree default configuration options can be viewed in *spree/core/app/models/app_configuration.rb*
 
-TODO
-
 endprologue.
 
-h3. Shipping Options
+h3. +address_requires_state+
 
-h4. Spree::Config[:shipping_instructions]
+Will determine if the state field should appear on the checkout page. Defaults to +true+.
 
-The option Spree::Config[:shipping_instructions] controls collection of additional shipping instructions. This is turned off by default. If an order has any shipping instructions attached, they will be shown in an order’s shipment admin page and can also be edited at that stage. Observe that instructions are currently attached to the order and not to actual shipments.
+h3. +admin_interface_logo+
 
-h3. Payment Options
+The path to the logo to display on the admin interface. Can be different from +Spree::Config[:logo]+. Defaults to +/admin/bg/spree_50.png+
 
-h4. Spree::Config[:auto_capture]
+h3. +admin_products_per_page+
 
-Depending on whether or not Spree is configured to “auto capture” the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway.)  Auto capture is disabled by default.
+How many products to display on the products listing in the admin interface. Defaults to 10.
+
+h3. +allow_backorder_shipping+
+
+Determines if an +InventoryUnit+ can ship or not. Defaults to +true+.
+
+h3. +allow_checkout_on_gateway_error+
+
+Continues the checkout process even if the payment gateway error failed. Defaults to +false+.
+
+h3. +allow_ssl_in_development_and_test+
+
+Enables SSL support in development and test environments. Defaults to +false+.
+
+h3. +allow_ssl_in_production+
+
+Enables SSL support in production environment. Defaults to +true+.
+
+h3. +allow_ssl_in_staging+
+
+Enables SSL support in production environment. Defaults to +true+.
+
+h3. +alternative_billing_phone+
+
+Determines if an alternative phone number should be present for the billing address on the checkout page. Defaults to +false+
+
+h3. +alternative_shipping_phone+
+
+Determines if an alternative phone number should be present for the shipping address on the checkout page. Defaults to +false+
+
+h3. +always_put_site_name_in_title+
+
+Determines if the site name (+Spree::Config[:site_name]+) should be placed into the title. Defaults to +true+.
+
+h3. +attachment_default_url+ 
+
+Tells paperclip the form of the URL to use for attachments which are missing.
+
+h3. +attachment_path+
+
+Tells Paperclip the path at which to store images. 
+
+h3. +attachment_styles+
+
+A JSON hash of different styles that are supported by attachments.
+
+h3. +attachment_default_style+
+
+A key from the list of styles from +Spree::Config[:attachment_styles]+ that is the default style for images.
+
+h3. +auto_capture+
+
+Depending on whether or not Spree is configured to “auto capture” the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway.)  Defaults to +false+.
+
+h3. +cache_static_content+
+
+Enables or disables caching of static content from +Spree::ContentController+. Defaults to +true+.
+
+h3. +checkout_zone+
+
+Limits the checkout to countries from a specific zone, by name. Defaults to +nil+.
+
+h3. +company+
+
+Determines whether or not a field for "Company" displays on the checkout pages for shipping and billing addresses. Defaults to +false+.
+
+h3. +create_inventory_units+
+
+Determines if inventory units will be created when products are purchased as part of an order. Defaults to +true+.
+
+h3. +currency+
+
+The three-letter currency code for the currency that prices will be dsiplayed in. Defaults to "USD".
+
+h3. +currency_symbol_position+ 
+
+The position of the symbol for a currency. Can be either "before" or "after"
+
+h3. +display_currency+
+
+Determines whether or not a currency is displayed with a price. Defaults to +false+.
+
+h3. +default_country_id+
+
+The default country's id. Defaults to 214, as this is the id for the United States within the seed data.
+
+h3. +default_meta_description+
+
+The meta description to include in the +head+ tag of the Spree layout. Defaults to "Spree demo site"
+
+h3. +default_meta_keywords+
+
+The meta keywords to include in the +head+ tag of the Spree layout. Defaults to "spree, demo".
+
+h3. +dismissed_spree_alerts+
+
+The list of alert IDs that you have dismissed.
+
+h3. +last_check_for_spree_alerts+
+
+Stores the last time that alerts were checked for. Alerts are checked for every 12 hours.
+
+h3. +layout+
+
+The path to the layout of your application, relative to the +app/views+ directory. Defaults to +spree/layouts/spree_application+
+
+h3. +logo+
+
+The logo which to display on your frontend. Defaults to +admin/bg/spree_50.png+.
+
+h3. +max_level_in_taxons_menu+
+
+The number of levels to descend when viewing a taxon menu. Defaults to +1+.
+
+h3. +orders_per_page+
+
+The number of orders to display on the orders listing in the admin backend. Defaults to +15+.
+
+h3. +prices_inc_tax+
+
+Determines if prices are labelled as including tax or not. Defaults to +false+
+
+h3. +shipment_inc_vat+
+
+Determines if shipments should include VAT calculations. Defaults to +false+
+
+h3. +shipping_instructions+
+
+Determines if shipping instructions are requested or not when checking out. Defaults to +false+.
+
+h3. +show_descendents+
+
+Determines if taxon descendants are shown when showing taxons. Defaults to +true+.
+
+h3. +show_only_complete_orders_by_default+
+
+Determines if, on the admin listing screen, only completed orders should be shown. Defaults to +true+
+
+h3. +show_zero_stock_products+
+
+Determines if zero stock products should be shown along side products with stock. Defaults to +true+.
+
+h3. +show_variant_full_price+
+
+Determines if the variant's full price or price difference from a product should be displayed on the product's show page. Defaults to +false+
+
+h3. +site_name+
+
+The name of your Spree Store. Defaults to "Spree Demo Site"
+
+h3. +site_url+
+
+The URL for your Spree Store. Defaults to "demo.spreecommere.com"
+
+h3. +tax_using_ship_address+
+
+Determines if tax information should be based on shipping address, rather than the billing address. Defaults to +true+
+
+h3. +track_inventory_levels+
+
+Determines if inventory levels should be tracked when products are purchased in the checkout. This option causes new +InventoryUnit+ objects to be created when a product is bought. Defaults to +true+.
+
+h3. S3 Support
+
+To configure Spree to upload images to S3, put these lines into +config/initializers/spree.rb+:
+
+<ruby>
+Spree.config do |config|
+  config.use_s3 = true
+  config.s3_bucket = '<bucket>'
+  config.s3_access_key = "<key>"
+  config.s3_secret = "<secret>"
+end
+</ruby>
+
+If you're using the Western Europe S3 server, you will need to set two additional options inside this block:
+
+<ruby>
+Spree.config do |config|
+  ...
+  config.attachment_url = ":s3_eu_url"
+  config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
+end
+</ruby>
+
+And additionally you will need to tell paperclip how to construct the URLs for your images by placing this code outside the +config+ block inside +config/initializers/spree.rb+:
+
+<ruby>
+Paperclip.interpolates(:s3_eu_url) do |attachment, style|
+  "#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/}, "")}"
+end
+</ruby>
+
+
 
