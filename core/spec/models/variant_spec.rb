@@ -98,7 +98,7 @@ describe Spree::Variant do
 
       end
 
-      context "and count is decreased" do
+      context "and count is negative" do
         before { variant.inventory_units.stub(:with_state).and_return([]) }
 
         it "should change count_on_hand to given value" do
@@ -144,16 +144,6 @@ describe Spree::Variant do
 
     end
 
-  end
-
-  context "count_on_hand" do
-    context "when setting count_on_hand directly" do
-      it "should pass new value to on_hand=" do
-        variant.count_on_hand = 20
-        variant.should_receive(:on_hand=).with(20)
-        variant.run_callbacks(:save)
-      end
-    end
   end
 
   context "in_stock?" do
