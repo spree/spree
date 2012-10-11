@@ -6,6 +6,10 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_api'
 
+      initializer "spree.api.environment", :before => :load_config_initializers do |app|
+        Spree::Api::Config = Spree::ApiConfiguration.new
+      end
+
       def self.activate
         Dir.glob(File.join(File.dirname(__FILE__), "../../../app/**/*_decorator*.rb")) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
