@@ -51,6 +51,11 @@ module Spree
           order.user == user || order.token && token == order.token
         end
         can :create, Order
+
+        can :read, Address do |address|
+          address.user == user
+        end
+
         #############################
         can :read, Product
         can :index, Product
