@@ -19,4 +19,9 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller
   config.extend Spree::Api::TestingSupport::Setup, :type => :controller
+  config.include Spree::Core::TestingSupport::Preferences, :type => :controller
+
+  config.before do
+    Spree::Api::Config[:requires_authentication] = true
+  end
 end

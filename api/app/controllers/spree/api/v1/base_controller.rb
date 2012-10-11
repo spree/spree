@@ -49,13 +49,22 @@ module Spree
         end
 
         def authenticate_user
-          unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key)
-            render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
+          if requires_authentication?
+            unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key)
+              render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
+            end
+          else
+            # Effectively, an anonymous user
+            @current_api_user = Spree.user_class.new
           end
         end
 
         def unauthorized
           render "spree/api/v1/errors/unauthorized", :status => 401 and return
+        end
+
+        def requires_authentication?
+          Spree::Api::Config[:requires_authentication]
         end
 
         def not_found
