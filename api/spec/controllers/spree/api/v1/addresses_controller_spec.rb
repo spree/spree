@@ -28,7 +28,7 @@ module Spree
 
     context "on somebody else's address" do
       before do
-        Address.any_instance.stub :user => stub_model(Spree::LegacyUser)
+        Address.any_instance.stub :user => stub_model(Spree::User)
       end
 
       it "cannot retreive address information" do
