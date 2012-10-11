@@ -6,7 +6,7 @@ module Spree
                         :tax_category_id, :shipping_category_id, :meta_description,
                         :meta_keywords, :tax_category
 
-    attr_accessible :name, :presentation, :cost_price,
+    attr_accessible :name, :presentation, :cost_price, :lock_version,
                     :position, :on_hand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
                     :weight, :height, :width, :depth, :sku
