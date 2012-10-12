@@ -1,9 +1,9 @@
 <!doctype html>
-<!--[if lt IE 7 ]> <html class="ie ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]>    <html class="ie ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]>    <html class="ie ie8" lang="en"> <![endif]-->
-<!--[if IE 9 ]>    <html class="ie ie9" lang="en"> <![endif]-->
-<!--[if gt IE 9]><!--><html lang="en"><!--<![endif]-->
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
   <head data-hook="admin_inside_head">
     <%= render :partial => 'spree/admin/shared/head' %>
   </head>
@@ -96,7 +96,7 @@
             <% if content_for?(:table_filter) %>
               <div id="table-filter" data-hook class="<%= if content_for?(:sidebar) then 'twelve' else 'sixteen' end %> columns">
                 <fieldset>
-                  <legend><%= yield :table_filter_title %></legend>
+                  <legend align="center"><%= yield :table_filter_title %></legend>
                   <%= yield :table_filter %>
                 </fieldset>
               </div>
@@ -111,7 +111,7 @@
               <aside id="sidebar" data-hook class="four columns">
 
                 <% if content_for?(:sidebar_title) %>
-                  <h5 class="sidebar-title"><span><%= yield :sidebar_title %></span></h5>
+                  <h5 class="sidebar-title"><span class="truncate"><%= yield :sidebar_title %></span></h5>
                 <% end %>
 
                 <%= yield :sidebar %>

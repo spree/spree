@@ -1,3 +1,5 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+
 <% content_for :page_actions do %>
   <% if @order.inventory_units.any? &:shipped? %>
     <li>
@@ -6,7 +8,10 @@
   <% end %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+<% content_for :page_title do %>
+   / <%= t(:return_authorizations) %>
+<% end %>
+
 
 <% if @order.inventory_units.any? &:shipped? %>
   <% if @return_authorizations.any? %>

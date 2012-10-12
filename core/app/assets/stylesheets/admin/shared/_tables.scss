@@ -100,10 +100,7 @@ table {
     }
   }
 
-  tbody {
-    &.with-border tr td {
-      border-top: 1px solid $color-border;
-    }
+  tbody {    
     tr {
       &:first-child td {
         border-top: 1px solid $color-border;
@@ -154,6 +151,10 @@ table {
           }
         }
       }
+    }
+
+    &.no-border-top tr:first-child td {
+      border-top: none;
     }
 
     &.grand-total {

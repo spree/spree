@@ -12,7 +12,8 @@
       </div>
       <div class="omega four columns">
         <div class="field">
-          <%= label_tag nil, t(:guest_checkout) %>:
+          <%= label_tag nil, t(:guest_checkout) + ':' %>
+          <br>
           <% if @order.completed? %>
             <%= @order.user.nil? ? t(:yes) : t(:no) %>
           <% else %>

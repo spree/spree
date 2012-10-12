@@ -18,6 +18,7 @@ $color-5:                     #C60F13 !default;    // Red
 $color-6:                     #FF9300 !default;    // Yellow
 
 // Body base colors
+$color-body-bg:               $color-1 !default;
 $color-body-text:             $color-4 !default;
 $color-headers:               $color-4 !default;
 $color-link:                  $color-3 !default;
@@ -123,5 +124,5 @@ $h1-size:                     $h2-size + 2 !default;
 
 $border-radius:               3px !default;
 
-$font-weight-bold:            600;
-$font-weight-normal:          400;
+$font-weight-bold:            600 !default;
+$font-weight-normal:          400 !default;

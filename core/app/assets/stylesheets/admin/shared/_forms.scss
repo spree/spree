@@ -52,7 +52,7 @@ input[type="button"],
 button, .button {
   @include border-radius(3px);
   display: inline-block;
-  padding: 8px 15px;
+  padding: 9px 15px;
   border: none;  
   background-color: $color-btn-bg;
   color: $color-btn-text;
@@ -78,7 +78,6 @@ button, .button {
 }
 
 span.info {
-  font-family: Georgia, "Times New Roman", serif;
   font-style: italic;
   font-size: 85%;
   color: lighten($color-body-text, 15);
@@ -102,6 +101,23 @@ span.info {
         font-weight: normal;
         text-transform: none;
       }
+    }
+  }
+
+  &.withError {
+    .field_with_errors {
+      label { 
+        color: very-light($color-error, 30); 
+      }
+
+      input {
+        border-color: very-light($color-error, 15);
+      }
+    }
+    .formError {
+      color: very-light($color-error, 30);
+      font-style: italic;
+      font-size: 85%;
     }
   }
 }
@@ -147,7 +163,7 @@ fieldset {
   }
 
   .filter-actions {
-    margin-bottom: -45px;
+    margin-bottom: -32px;
     text-align: center;
 
     form {
@@ -155,9 +171,13 @@ fieldset {
     }
 
     button, .button, input[type="submit"], input[type="button"], span.or {
-      border: 15px solid white;
-      border-radius: 18px;
-      margin-top: -5px;
+      @include border-radius($border-radius);
+      
+      -webkit-box-shadow: 0 0 0 15px $color-1;
+         -moz-box-shadow: 0 0 0 15px $color-1;
+          -ms-box-shadow: 0 0 0 15px $color-1;
+           -o-box-shadow: 0 0 0 15px $color-1;
+              box-shadow: 0 0 0 15px $color-1;
 
       &:hover {
         border-color: $color-1;
