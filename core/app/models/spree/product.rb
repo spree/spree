@@ -67,7 +67,7 @@ module Spree
 
     attr_accessible :name, :description, :available_on, :permalink, :meta_description,
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
-                    :option_values_hash, :on_hand, :weight, :height, :width, :depth,
+                    :option_values_hash, :on_demand, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
                     :variants_attributes, :taxon_ids, :option_type_ids
 
@@ -103,8 +103,16 @@ module Spree
 
     # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
     def on_hand=(new_level)
-      raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
-      master.on_hand = new_level
+      unless self.on_demand
+        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels] 
+        master.on_hand = new_level
+      end
+    end
+
+    def on_demand=(new_on_demand)
+      raise 'cannot set on_demand of product with variants'if has_variants? && Spree::Config[:track_inventory_levels]
+      master.on_demand=on_demand
+      self[:on_demand]=new_on_demand
     end
 
     # Returns true if there are inventory units (any variant) with "on_hand" state for this product
@@ -253,7 +261,7 @@ module Spree
       # the master on_hand is meaningless once a product has variants as the inventory
       # units are now "contained" within the product variants
       def set_master_on_hand_to_zero_when_product_has_variants
-        master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels]
+        master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels] && !self.on_demand
       end
 
       # ensures the master variant is flagged as such

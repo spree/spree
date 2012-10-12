@@ -7,7 +7,7 @@ module Spree
                         :meta_keywords, :tax_category
 
     attr_accessible :name, :presentation, :cost_price, :lock_version,
-                    :position, :on_hand, :option_value_ids,
+                    :position, :on_demand, :on_hand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
                     :weight, :height, :width, :depth, :sku
 
@@ -30,15 +30,19 @@ module Spree
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
-      Spree::Config[:track_inventory_levels] ? count_on_hand : (1.0 / 0) # Infinity
+      if Spree::Config[:track_inventory_levels] && !self.on_demand
+        count_on_hand 
+      else
+        (1.0 / 0) # Infinity
+      end
     end
 
     # set actual attribute
     def on_hand=(new_level)
-      if Spree::Config[:track_inventory_levels]
-        self.count_on_hand = new_level
-      else
+      if !Spree::Config[:track_inventory_levels]
         raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
+      else
+        self.count_on_hand = new_level unless self.on_demand
       end
     end
 
@@ -57,13 +61,17 @@ module Spree
 
     # returns true if at least one inventory unit of this variant is "on_hand"
     def in_stock?
-      Spree::Config[:track_inventory_levels] ? on_hand > 0 : true
+      if Spree::Config[:track_inventory_levels] && !self.on_demand
+        on_hand > 0 
+      else
+        true
+      end
     end
     alias in_stock in_stock?
 
     # returns true if this variant is allowed to be placed on a new order
     def available?
-      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock?) : true
+      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock? || self.on_demand) : true
     end
 
     def options_text
@@ -122,13 +130,20 @@ module Spree
       self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
     end
 
+    def on_demand=(on_demand)
+      self[:on_demand]=on_demand
+      if on_demand
+        inventory_units.with_state('backordered').each(&:fill_backorder)
+      end
+    end
+
     private
 
       def process_backorders
         if count_changes = changes['count_on_hand']
           new_level = count_changes.last
 
-          if Spree::Config[:track_inventory_levels]
+          if Spree::Config[:track_inventory_levels] && !self.on_demand
             new_level = new_level.to_i
 
             # update backorders if level is positive

@@ -88,6 +88,7 @@ en:
         master_price: "Master Price"
         name: Name
         on_hand: "On Hand"
+        on_demand: "On Demand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
       spree/property:

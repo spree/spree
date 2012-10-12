@@ -50,7 +50,7 @@ module Spree
       sold = quantity - back_order
 
       #set on_hand if configured
-      if Spree::Config[:track_inventory_levels]
+      if Spree::Config[:track_inventory_levels]&&!variant.on_demand
         variant.decrement!(:count_on_hand, quantity)
       end
 
@@ -61,7 +61,7 @@ module Spree
     end
 
     def self.decrease(order, variant, quantity)
-      if Spree::Config[:track_inventory_levels]
+      if Spree::Config[:track_inventory_levels]&&!variant.on_demand
         variant.increment!(:count_on_hand, quantity)
       end
 
@@ -113,7 +113,7 @@ module Spree
       end
 
       def restock_variant
-        if Spree::Config[:track_inventory_levels]
+        if Spree::Config[:track_inventory_levels]&&!variant.on_demand
           variant.on_hand += 1
           variant.save
         end
