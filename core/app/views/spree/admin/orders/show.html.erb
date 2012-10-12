@@ -14,7 +14,7 @@
 <div data-hook="admin_order_show_addresses" class="row">
   <% if @order.bill_address %>
     <fieldset class="alpha six columns no-border-bottom">
-      <legend><%= t(:bill_address) %></legend>
+      <legend align="center"><%= t(:bill_address) %></legend>
       <div class="align-center">
         <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.bill_address } %>  
       </div>
@@ -22,7 +22,7 @@
   <% end %>
   <% if @order.ship_address %>
     <fieldset class="omega six columns no-border-bottom">
-      <legend><%= t(:ship_address) %></legend>
+      <legend align="center"><%= t(:ship_address) %></legend>
       <div class="align-center">
         <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.ship_address } %>
       </div>

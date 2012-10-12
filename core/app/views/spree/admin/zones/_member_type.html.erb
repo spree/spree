@@ -1,7 +1,7 @@
 <%= javascript_tag "var #{type}_member='#{generate_template(zone_form, :zone_members, {:partial => type + "_member"})}';" %>
 
 <fieldset id="<%= type %>_members" data-hook="member" class="omega six columns no-border-bottom">
-  <legend><%= t(type) %></legend>
+  <legend align="center"><%= t(type) %></legend>
 
   <ul id="ul-nested-<%= type %>" class="member-list fields">
     <% members_of_type = zone_form.object.zone_members.select { |member| member.zoneable_type && member.zoneable_type == "Spree::#{type.capitalize}" } %>

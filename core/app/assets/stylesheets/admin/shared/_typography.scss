@@ -27,6 +27,10 @@ a {
   text-decoration: none;
   line-height: inherit;
 
+  &, &:hover, &:active, &:visited, &:focus {
+    outline: none;
+  }
+
   &:hover {
     color: $color-link-hover;
   }

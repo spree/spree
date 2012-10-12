@@ -10,7 +10,7 @@
 
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
   <fieldset data-hook="edit_image">
-    <legend><%= @image.attachment_file_name%></legend>
+    <legend align="center"><%= @image.attachment_file_name%></legend>
     <div data-hook="thumbnail" class="field alpha three columns align-center">
       <%= f.label t(:thumbnail) %><br>
       <%= link_to image_tag(@image.attachment.url(:small)), @image.attachment.url(:product) %>

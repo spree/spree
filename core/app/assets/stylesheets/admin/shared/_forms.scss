@@ -67,7 +67,7 @@ button, .button {
     color: $color-btn-hover-text;
   }
 
-  &:active {
+  &:active:focus {    
     box-shadow: 0 0 8px 0 darken($color-btn-hover-bg, 5) inset;
   }
 
