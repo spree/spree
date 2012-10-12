@@ -89,7 +89,9 @@ describe Spree::Order do
       order.create_shipment!
       order.stub(:paid? => true, :complete? => true)
       order.finalize!
+      order.reload # reload so we're sure the changes are persisted
       order.shipment.state.should == 'ready'
+      order.shipment_state.should == 'ready'
     end
 
     after { Spree::Config.set :track_inventory_levels => true }
@@ -122,8 +124,7 @@ describe Spree::Order do
     end
 
     it "should log state event" do
-      Spree::OrderUpdater.any_instance.stub(:update_payment_state => true)
-      order.state_changes.should_receive(:create)
+      order.state_changes.should_receive(:create).exactly(3).times #order, shipment & payment state changes
       order.finalize!
     end
   end
