@@ -14,7 +14,7 @@ table {
       border: 1px solid transparent;
     }
 
-    &:first-child {
+    &:first-child {      
       border-left: 1px solid $color-border;
     }
 
@@ -93,6 +93,7 @@ table {
 
   thead {
     th {
+      border-bottom: none;
       background-color: $color-tbl-thead;
       text-transform: uppercase;
       font-size: 85%;
@@ -104,6 +105,9 @@ table {
       border-top: 1px solid $color-border;
     }
     tr {
+      &:first-child td {
+        border-top: 1px solid $color-border;
+      }
       &.even td {
         background-color: $color-tbl-even;
 
@@ -118,6 +122,11 @@ table {
         img {
           border: 1px solid $color-border;
         }
+      }
+
+      &.deleted td {
+        background-color: very-light($color-error, 6);
+        border-color: very-light($color-error, 15);
       }
 
       &.ui-sortable-placeholder td {
