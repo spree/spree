@@ -6,7 +6,7 @@ module Spree
                         :tax_category_id, :shipping_category_id, :meta_description,
                         :meta_keywords, :tax_category
 
-    attr_accessible :name, :presentation, :cost_price,
+    attr_accessible :name, :presentation, :cost_price, :lock_version,
                     :position, :on_hand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
                     :weight, :height, :width, :depth, :sku
@@ -21,6 +21,7 @@ module Spree
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
 
+    after_save :process_backorders
     after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
@@ -32,19 +33,9 @@ module Spree
       Spree::Config[:track_inventory_levels] ? count_on_hand : (1.0 / 0) # Infinity
     end
 
-    # Adjusts the inventory units to match the given new level.
+    # set actual attribute
     def on_hand=(new_level)
       if Spree::Config[:track_inventory_levels]
-        new_level = new_level.to_i
-
-        # increase Inventory when
-        if new_level > on_hand
-          # fill backordered orders before creating new units
-          backordered_units = inventory_units.with_state('backordered')
-          backordered_units.slice(0, new_level).each(&:fill_backorder)
-          new_level -= backordered_units.length
-        end
-
         self.count_on_hand = new_level
       else
         raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
@@ -132,6 +123,26 @@ module Spree
     end
 
     private
+
+      def process_backorders
+        if count_changes = changes['count_on_hand']
+          new_level = count_changes.last
+
+          if Spree::Config[:track_inventory_levels]
+            new_level = new_level.to_i
+
+            # update backorders if level is positive
+            if new_level > 0
+              # fill backordered orders before creating new units
+              backordered_units = inventory_units.with_state('backordered')
+              backordered_units.slice(0, new_level).each(&:fill_backorder)
+              new_level -= backordered_units.length
+            end
+
+            self.update_attribute_without_callbacks(:count_on_hand, new_level)
+          end
+        end
+      end
 
       # strips all non-price-like characters from the price, taking into account locale settings
       def parse_price(price)

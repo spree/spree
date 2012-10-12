@@ -21,14 +21,11 @@ module Spree
     # Alphabetized to more easily lookup particular preferences
     preference :address_requires_state, :boolean, :default => true # should state/state_name be required
     preference :admin_interface_logo, :string, :default => 'admin/bg/spree_50.png'
-    preference :admin_pgroup_per_page, :integer, :default => 10
-    preference :admin_pgroup_preview_size, :integer, :default => 10
     preference :admin_products_per_page, :integer, :default => 10
     preference :allow_backorder_shipping, :boolean, :default => false # should only be true if you don't need to track inventory
     preference :allow_backorders, :boolean, :default => true
     preference :allow_checkout_on_gateway_error, :boolean, :default => false
     preference :allow_guest_checkout, :boolean, :default => true
-    preference :allow_locale_switching, :boolean, :default => true
     preference :allow_ssl_in_development_and_test, :boolean, :default => false
     preference :allow_ssl_in_production, :boolean, :default => true
     preference :allow_ssl_in_staging, :boolean, :default => true
@@ -56,7 +53,6 @@ module Spree
     preference :orders_per_page, :integer, :default => 15
     preference :prices_inc_tax, :boolean, :default => false
     preference :products_per_page, :integer, :default => 12
-    preference :select_taxons_from_tree, :boolean, :default => false # provide opportunity to select taxons from tree instead of search with autocomplete
     preference :shipment_inc_vat, :boolean, :default => false
     preference :shipping_instructions, :boolean, :default => false # Request instructions/info for shipping
     preference :show_descendents, :boolean, :default => true
