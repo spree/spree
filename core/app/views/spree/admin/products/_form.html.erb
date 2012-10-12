@@ -49,6 +49,10 @@
       <% end %>
 
       <% if Spree::Config[:track_inventory_levels] %>
+        <%= f.field_container :on_demand do %>
+          <%= f.label :on_demand, t(:on_demand) %>
+          <%= f.check_box :on_demand %>
+        <% end %>
         <%= f.field_container :on_hand do %>
           <%= f.label :on_hand, t(:on_hand) %>
           <%= f.number_field :on_hand, :min => 0 %>
