@@ -349,8 +349,14 @@ module Spree
     def finalize!
       touch :completed_at
       InventoryUnit.assign_opening_inventory(self)
+
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('locked', true) }
+
+      # update shipments (get their states set correctly)
+      update_payment_state
+      shipments.each { |shipment| shipment.update!(self) }
+
       deliver_order_confirmation_email
 
       self.state_changes.create({
@@ -531,7 +537,7 @@ module Spree
       #
       # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
       def update_payment_state
-        
+
         #line_item are empty when user empties cart
         if self.line_items.empty? || round_money(payment_total) < round_money(total)
           self.payment_state = 'balance_due'
