@@ -107,7 +107,6 @@
       min-height: 22px;
       clear: both;
       overflow: auto;
-      border-bottom: 1px solid $color-border;
     }
 
     &.select2-no-results, &.select2-searching {
@@ -115,7 +114,7 @@
       background-color: transparent;
       color: $color-body-text;
       text-align: center; 
-      font-weight: bold;
+      font-weight: $font-weight-bold;
       text-transform: uppercase;
     }
   }
