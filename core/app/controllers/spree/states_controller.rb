@@ -1,5 +1,5 @@
 module Spree
-  class StatesController < BaseController
+  class StatesController < Spree::FrontendController
     ssl_allowed :index
 
     respond_to :js
