@@ -11,7 +11,7 @@
     <div id='properties' data-hook>
       <%= f.field_container :property_ids do %>
         <%= f.label :property_ids, t(:properties) %><br>
-        <%= f.select :property_ids, Spree::Property.sorted.map { |p| [p.presentation, p.id] }, {}, { :multiple => true, :class => "select2", :style => "width:20em" } %>
+        <%= f.select :property_ids, Spree::Property.sorted.map { |p| [p.presentation, p.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
       <% end %>
     </div>
   </div>
@@ -20,7 +20,7 @@
     <div class="field">
       <%= f.field_container :option_type_ids do %>
         <%= f.label :option_type_ids, t(:option_types) %><br>
-        <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2", :style => "width:20em" } %>
+        <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
       <% end %>
     </div>
   </div>
