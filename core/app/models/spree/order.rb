@@ -321,8 +321,14 @@ module Spree
     def finalize!
       touch :completed_at
       InventoryUnit.assign_opening_inventory(self)
+
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('locked', true) }
+
+      # update shipments (get their states set correctly)
+      OrderUpdater.new(self).update_payment_state
+      shipments.each { |shipment| shipment.update!(self) }
+
       deliver_order_confirmation_email
 
       self.state_changes.create({

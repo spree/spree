@@ -6,7 +6,7 @@ describe Spree::Api::V1::ShipmentsController do
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at] }
 
   before do
-    Spree::Order.any_instance.stub(:paid? => true)
+    Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
     stub_authentication!
   end
 
