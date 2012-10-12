@@ -109,7 +109,9 @@ span.info {
 fieldset {
   box-shadow: none;
   box-sizing: border-box;
+  border-color: $color-border;
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   margin-left: 0;
   margin-right: 0;  
   position: relative;  
@@ -131,7 +133,6 @@ fieldset {
   }
 
   legend {
-    @include border-radius(3px);
     background-color: $color-1;    
     color: $color-2;    
     font-size: 14px;
