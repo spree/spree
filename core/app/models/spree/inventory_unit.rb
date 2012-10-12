@@ -107,8 +107,10 @@ module Spree
       end
 
       def restock_variant
-        variant.on_hand += 1
-        variant.save
+        if Spree::Config[:track_inventory_levels]
+          variant.on_hand += 1
+          variant.save
+        end
       end
   end
 end

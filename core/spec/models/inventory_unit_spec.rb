@@ -262,6 +262,17 @@ describe Spree::InventoryUnit do
       inventory_unit.variant.should_receive(:save)
       inventory_unit.return!
     end
+
+    # Regression test for #2074
+    context "with inventory tracking disabled" do
+      before { Spree::Config[:track_inventory_levels] = false }
+
+      it "does not update on_hand for variant" do
+        inventory_unit.variant.should_not_receive(:on_hand=).with(96)
+        inventory_unit.variant.should_not_receive(:save)
+        inventory_unit.return!
+      end
+    end
   end
 end
 
