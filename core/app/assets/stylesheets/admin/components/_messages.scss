@@ -30,12 +30,12 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding: 17px;
+  padding: 16px;
   text-align: center;
   z-index: 1000;
   font-size: 120%;
   color: $color-1;
-  font-weight: bold;
+  font-weight: 600;
 
   &.notice  { background-color: rgba($color-notice,  0.8) }
   &.success { background-color: rgba($color-success, 0.8) }

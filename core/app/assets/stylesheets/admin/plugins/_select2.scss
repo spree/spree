@@ -96,16 +96,21 @@
 
     &.select2-highlighted {
       .select2-result-label {
-        color: $color-1 !important;
+        &, h6 {
+          color: $color-1 !important;
+        }
       }
     }
 
     .select2-result-label {
       color: $color-body-text;
       min-height: 22px;
+      clear: both;
+      overflow: auto;
+      border-bottom: 1px solid $color-border;
     }
 
-    &.select2-no-results {
+    &.select2-no-results, &.select2-searching {
       padding: 5px;
       background-color: transparent;
       color: $color-body-text;

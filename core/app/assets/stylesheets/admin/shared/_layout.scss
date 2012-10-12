@@ -1,6 +1,6 @@
 // Basics
 //---------------------------------------------------
-* { 
+* {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
@@ -35,8 +35,11 @@
 //---------------------------------------------------
 #header {
   background-color: $color-1;
+  padding: 5px 0;
 }
-#logo { height: 50px }
+
+#logo { height: 40px }
+
 [data-hook="admin-title"] { font-size: 14px }
 
 .page-title {

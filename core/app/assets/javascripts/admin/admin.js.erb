@@ -55,10 +55,14 @@ jQuery(function($) {
   });
 
   // Trunkate text in page_title that didn't fit
-  var page_title = $('#content-header .page-title')
-  page_title.trunk8();
+  var truncate_elements = $('.truncate')
+  truncate_elements.each(function(){
+    $(this).trunk8();
+  });
   $(window).resize(function (event) {
-    page_title.trunk8();
+    truncate_elements.each(function(){
+      $(this).trunk8();
+    })
   });
 
   // Make height of dt/dd elements the same

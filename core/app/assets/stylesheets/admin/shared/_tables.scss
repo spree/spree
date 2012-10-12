@@ -56,15 +56,15 @@ table {
         }
       }
       .icon-trash:hover, .icon-void:hover {
-        background-color: $color-5;
+        background-color: $color-error;
         color: $color-1;
       }    
       .icon-edit:hover, .icon-capture:hover {
-        background-color: $color-2;
+        background-color: $color-success;
         color: $color-1;
       }
       .icon-copy:hover {
-        background-color: $color-6;
+        background-color: $color-notice;
         color: $color-1;
       }
     }

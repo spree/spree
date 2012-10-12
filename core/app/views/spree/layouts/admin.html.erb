@@ -33,11 +33,11 @@
       <header id="header" data-hook>
 
         <div class="container">
-          <figure data-hook="logo-wrapper" class="columns eight">
+          <figure data-hook="logo-wrapper" class="columns five">
             <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path %>
           </figure>
 
-          <nav data-hook="admin_login_navigation_bar" class="columns eight"></nav>
+          <nav data-hook="admin_login_navigation_bar" class="columns eleven"></nav>
         </div>
         
       </header>
@@ -72,7 +72,7 @@
                 <div class="block-table">
                   <% if content_for?(:page_title) %>
                     <div class="table-cell">
-                      <h1 class="page-title <%= yield :page_title_classes %>"><%= yield :page_title %></h1>
+                      <h1 class="page-title truncate <%= yield :page_title_classes %>"><%= yield :page_title %></h1>
                     </div>
                   <% end %>
                   <% if content_for?(:page_actions) %>

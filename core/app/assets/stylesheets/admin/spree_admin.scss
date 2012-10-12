@@ -1,6 +1,7 @@
 @import 'font-awesome';
 
 @import 'globals/functions';
+@import 'globals/variables_override';
 @import 'globals/variables';
 @import 'globals/mixins';
 
@@ -19,6 +20,7 @@
 @import 'components/table-filter';
 @import 'components/navigation';
 @import 'components/sidebar';
+@import 'components/product_autocomplete';
 
 @import 'plugins/powertip';
 @import 'plugins/select2';

@@ -1,0 +1,29 @@
+.select2-result-label {
+  .variant-autocomplete-item {
+    .variant-info {
+      padding: 0 10px;
+      float: left;
+    }
+
+    .variant-image {
+      margin-top: 5px;
+      background-color: white;
+      float: left;
+      margin-right: 10px;
+    }
+
+    ul.variant-options, ul.variant-data {
+      li {
+        display: inline-block;
+
+        &:after {
+          content: ' / ';
+        }
+
+        &:last-child:after {
+          content: '';
+        } 
+      }
+    }
+  }
+}

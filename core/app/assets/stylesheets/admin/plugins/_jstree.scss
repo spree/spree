@@ -70,7 +70,7 @@
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
-  @include border-radius(0px !important);
+  @include border-radius($border-radius !important);
 }
 
 #vakata-contextmenu {
@@ -79,7 +79,7 @@
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
   border: none !important;
-  @include border-radius(3px !important);
+  @include border-radius($border-radius !important);
 
   &:before {
     content: '';
@@ -108,7 +108,7 @@
       line-height: inherit !important;
       padding: 5px 10px !important;
       margin: 0 !important;
-      @include border-radius(3px !important);
+      @include border-radius($border-radius !important);
     }
   }
 

@@ -25,6 +25,6 @@ table tbody tr {
     border-left-width: 3px;
   }
   &.state-complete td:first-child { border-left-color: $color-success }      
-  &.state-cart     td:first-child { border-left-color: very-light($color-error, 6) }
-  &.state-canceled td:first-child { border-left-color: very-light($color-error, 6) }
+  &.state-cart     td:first-child { border-left-color: very-light($color-notice, 6) }
+  &.state-canceled td:first-child { border-left-color: $color-error }
 }
