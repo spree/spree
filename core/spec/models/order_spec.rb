@@ -90,7 +90,9 @@ describe Spree::Order do
       order.create_shipment!
       order.stub(:paid? => true, :complete? => true)
       order.finalize!
+      order.reload # reload so we're sure the changes are persisted
       order.shipment.state.should == 'ready'
+      order.shipment_state.should == 'ready'
     end
 
     after { Spree::Config.set :track_inventory_levels => true }

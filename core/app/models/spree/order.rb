@@ -353,9 +353,11 @@ module Spree
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('locked', true) }
 
-      # update shipments (get their states set correctly)
+      # update payment and shipment(s) states, and save
       update_payment_state
       shipments.each { |shipment| shipment.update!(self) }
+      update_shipment_state
+      save
 
       deliver_order_confirmation_email
 
