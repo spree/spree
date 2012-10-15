@@ -78,9 +78,20 @@ describe Spree::Order do
       order.should_receive(:touch).with(:completed_at)
       order.finalize!
     end
+
     it "should sell inventory units" do
       Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
       order.finalize!
+    end
+
+    it "should change the shipment state to ready if order is paid" do
+      order.stub :shipping_method => mock_model(Spree::ShippingMethod, :create_adjustment => true)
+      order.create_shipment!
+      order.stub(:paid? => true, :complete? => true)
+      order.finalize!
+      order.reload # reload so we're sure the changes are persisted
+      order.shipment.state.should == 'ready'
+      order.shipment_state.should == 'ready'
     end
 
     after { Spree::Config.set :track_inventory_levels => true }
@@ -113,7 +124,7 @@ describe Spree::Order do
     end
 
     it "should log state event" do
-      order.state_changes.should_receive(:create)
+      order.state_changes.should_receive(:create).exactly(3).times #order, shipment & payment state changes
       order.finalize!
     end
   end
