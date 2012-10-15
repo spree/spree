@@ -19,7 +19,7 @@
   <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') %>
   <span class="required">*</span>
 </p>
-<p class="field" data-hook="cart_code">
+<p class="field" data-hook="card_code">
   <%= label_tag nil, t(:card_code) %><br />
   <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:id => 'card_code', :class => 'required', :size => 5) %>
   <span class="required">*</span>
