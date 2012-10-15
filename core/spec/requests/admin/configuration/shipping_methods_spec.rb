@@ -81,7 +81,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -108,7 +108,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -137,7 +137,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -162,7 +162,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -198,7 +198,7 @@ describe "Shipping Methods" do
           click_link "Home"
           click_link "Shirt"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -226,7 +226,7 @@ describe "Shipping Methods" do
           click_link "Home"
           click_link "Shirt"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
