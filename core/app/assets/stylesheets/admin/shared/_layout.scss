@@ -1,6 +1,6 @@
 // Basics
 //---------------------------------------------------
-* { 
+* {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
@@ -34,179 +34,24 @@
 // Header
 //---------------------------------------------------
 #header {
-  background-color: white;
+  background-color: $color-1;
+  padding: 5px 0;
 }
-#logo { height: 50px }
+
+#logo { height: 40px }
+
 [data-hook="admin-title"] { font-size: 14px }
 
 .page-title {
   i {
-    color: $c_green1;
-  }
-}
-
-// Navigation
-//---------------------------------------------------
-.inline-menu { 
-  margin: 0;
-  -webkit-margin-before: 0;
-  -webkit-padding-start: 0;
-}
-
-[data-hook="admin_login_navigation_bar"] {
-  ul {
-    text-align: right;
-
-    li {
-      padding: 5px 0 5px 10px;
-      text-align: right;
-      font-size: 90%;
-      color: $color-links;
-      margin-top: 15px;
-
-      &[data-hook="user-logged-in-as"] {
-        width: 50%;
-        color: $color-body-text;
-      }
-
-      &:hover {
-        i {
-          color: $c_green1;
-        }
-      }
-    }
-  }
-}
-
-#admin-menu {
-  background-color: $c_blue1;
-
-  li {
-    a {
-      display: block;
-      padding: 25px 20px;
-      color: white !important;
-      text-transform: uppercase;
-      position: relative;
-      text-align: center;
-
-      i {
-        display: inline;
-      }
-
-      &:hover {
-        background-color: $c_green1;
-
-        &:after {
-          content: '';
-          position: absolute;
-          border-left: 10px solid transparent;
-          border-right: 10px solid transparent;
-          border-top: 5px solid $c_green1;          
-          bottom: 0px;
-          margin-bottom: -5px;
-          left: 50%;
-          margin-left: -10px;
-          z-index: 1;
-        }
-      }
-    }
-
-    &.selected a {
-      @extend a:hover;
-    }
-  }
-}
-
-#sub-menu {
-  background-color: $c_green1;
-  padding-bottom: 0;
-
-  li {
-    a {
-      display: block;
-      padding: 12px 20px;
-      color: white;      
-      text-align: center;
-      text-transform: uppercase;
-      position: relative;
-      font-size: 85%;      
-    }
-
-    &.selected a, a:hover {
-      &:after {
-        content: '';
-        position: absolute;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-top: 5px solid $c_green1;
-        bottom: 0px;
-        margin-bottom: -5px;
-        left: 50%;
-        margin-left: -10px;
-        z-index: 1;
-      }
-    }
-  }
-}
-
-// Sidebar
-//---------------------------------------------------
-#sidebar {
-  overflow: visible;
-  border-top: 1px solid $color-border; 
-  margin-top: 16px;
-
-  .sidebar-title {
-    color: $c_green1;
-    text-transform: uppercase;
-    text-align: center; 
-    font-size: 14px;
-    font-weight: bold;
-    
-    > span {
-      display: inline;
-      background: #fff; 
-      padding: 5px 10px; 
-      position: relative; 
-      top: -8px;
-    }
-  }
-
-  .sidebar-menu {
-    ul {
-      list-style: none;      
-
-      li {
-        a {
-          padding: 10px 0;
-          display: block;
-          position: relative;
-          text-align: left;          
-          border: 1px solid transparent;
-          text-transform: uppercase;
-          font-weight: bold;
-          font-size: 90%;
-        }
-
-        &.active a {
-          color: $c_green1;
-          border-left-width: 0;          
-          border-bottom-color: $c_green1;
-        }
-
-        &:hover a {
-          color: $c_green1;
-        }
-      }      
-    }
+    color: $color-2;
   }
 }
 
 // Content
 //---------------------------------------------------
 #content {
-  background-color: white;
+  background-color: $color-1;
   position: relative;
   z-index: 0;
   padding: 0;
@@ -215,7 +60,7 @@
 
 #content-header {
   padding: 15px 0;
-  background-color: lighten($c_blue1, 33);
+  background-color: very-light($color-3);
   border-bottom: 1px solid $color-border;
 
   .page-title {

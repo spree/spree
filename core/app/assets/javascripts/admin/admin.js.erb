@@ -10,7 +10,15 @@ Hopefully, this will evolve into a propper class.
 
 jQuery(function($) {
   // Make main menu use full width
-  $('.fullwidth-menu').horizontalNav();
+  $('.fullwidth-menu').horizontalNav({
+    tableDisplay: false,
+    responsiveDelay: 0
+  });
+
+  $('.main-menu-wrapper ul').AdaptiveMenu({
+    text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+    class: 'dropdown'
+  });
 
   // Add some tips
   $('.with-tip').powerTip({
@@ -34,17 +42,27 @@ jQuery(function($) {
   setTimeout('$(".flash").fadeOut()', 5000);
 
   // Highlight hovered table column
-  $('table tbody tr td.actions a').hover(function(){    
-    $(this).closest('tr').addClass('highlight action-' + $(this).attr('data-action'))
+  $('table tbody tr td.actions a').hover(function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.addClass(klass)
+    tr.prev().addClass('before-' + klass);
   }, function(){
-    $(this).closest('tr').removeClass('highlight action-' + $(this).attr('data-action'))
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.removeClass(klass)
+    tr.prev().removeClass('before-' + klass);
   });
 
   // Trunkate text in page_title that didn't fit
-  var page_title = $('#content-header .page-title')
-  page_title.trunk8();
+  var truncate_elements = $('.truncate')
+  truncate_elements.each(function(){
+    $(this).trunk8();
+  });
   $(window).resize(function (event) {
-    page_title.trunk8();
+    truncate_elements.each(function(){
+      $(this).trunk8();
+    })
   });
 
   // Make height of dt/dd elements the same

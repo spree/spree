@@ -1,3 +1,5 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
+
 <% content_for :page_actions do %>  
     <li id='new_shipment_section'>
       <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order), :icon => 'icon-plus' %>
@@ -5,7 +7,10 @@
     <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>  
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
+<% content_for :page_title do %>
+   / <%= t(:shipments) %>
+<% end %>
+
 <table class="index">
   <thead>
     <tr data-hook="admin_shipments_index_headers">

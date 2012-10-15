@@ -40,16 +40,16 @@ $(document).ready(function() {
 
   // Generates html for new paperclip styles form fields
   generate_html_for_hash = function(hash_name, index) {
-    var html = '<div class="' + hash_name + ' row"><div class="field">';
-    html += '<div class="five columns">';
+    var html = '<div class="' + hash_name + '"><div class="field block-table">';
+    html += '<div class="table-cell" style="width: 40%">';
     html += '<label for="' + hash_name + '_' + index + '_name">';
     html += Spree.translations.name + '</label>';
     html += '<input id="' + hash_name + '_' + index + '_name" name="' + hash_name + '[' + index + '][name]" type="text" class="fullwidth"><br>';
-    html += '</div><div class="five columns">'
+    html += '</div><div class="table-cell" style="width: 40%">'
     html += '<label for="' + hash_name + '_' + index + '_value">';
     html += Spree.translations.value + '</label>';
     html += '<input id="' + hash_name + '_' + index + '_value" name="' + hash_name + '[' + index + '][value]" type="text" class="fullwidth">';
-    html += '</div><div class="two columns">'
+    html += '</div><div class="table-cell" style="width: 20%">'
     html += '<a href="#" title="' + Spree.translations.destroy + '" class="destroy_' + hash_name + ' with-tip button" style="margin-top: 19px;"><i class="icon-trash"></i> &nbsp; ' + Spree.translations.destroy + '</a>';
     html += '</div></div></div>';
 

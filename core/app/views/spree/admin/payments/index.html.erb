@@ -1,3 +1,5 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
+
 <% content_for :page_actions do %>  
   <% if @order.outstanding_balance? %>
     <li id="new_payment_section">
@@ -7,7 +9,10 @@
   <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
+<% content_for :page_title do %>
+   / <%= t(:payments) %>
+<% end %>
+
 
 <% if @order.outstanding_balance? %>
   <h5 class="outstanding-balance"><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %>: <strong><%= money(@order.outstanding_balance) %></strong></h5>

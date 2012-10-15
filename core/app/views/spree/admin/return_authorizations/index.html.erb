@@ -1,3 +1,5 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+
 <% content_for :page_actions do %>
   <% if @order.inventory_units.any? &:shipped? %>
     <li>
@@ -6,42 +8,50 @@
   <% end %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+<% content_for :page_title do %>
+   / <%= t(:return_authorizations) %>
+<% end %>
+
 
 <% if @order.inventory_units.any? &:shipped? %>
-  <table class="index">
-    <thead data-hook="rma_header">
-      <tr>
-        <th><%= t(:rma_number) %></th>
-        <th><%= t(:status) %></th>
-        <th><%= t(:amount) %></th>
-        <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-        <th class="action"></th>
-      </tr>  
-    </thead>
-    <tbody>
-      <% @return_authorizations.each do |return_authorization| %>
-        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
-          <td><%= return_authorization.number %></td>
-          <td><%= t(return_authorization.state.downcase) %></td>
-          <td><%= money return_authorization.amount %></td>
-          <td><%= pretty_time(return_authorization.created_at) %></td>
-          <td class="actions">
-            <%= link_to_edit return_authorization %>
-            <% unless return_authorization.received? %>
-              &nbsp;
-              <%= link_to_delete return_authorization %>
-            <% end %>
-          </td>
-
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <% if @return_authorizations.any? %>
+    <table class="index">
+      <thead data-hook="rma_header">
+        <tr>
+          <th><%= t(:rma_number) %></th>
+          <th><%= t(:status) %></th>
+          <th><%= t(:amount) %></th>
+          <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+          <th class="actions"></th>
+        </tr>  
+      </thead>
+      <tbody>
+        <% @return_authorizations.each do |return_authorization| %>
+          <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
+            <td class="align-center"><%= return_authorization.number %></td>
+            <td class="align-center"><span class="state <%= return_authorization.state.downcase %>"><%= t(return_authorization.state.downcase) %><span></td>
+            <td class="align-center"><%= money return_authorization.amount %></td>
+            <td class="align-center"><%= pretty_time(return_authorization.created_at) %></td>
+            <td class="actions">
+              <%= link_to_edit return_authorization, :no_text => true %>
+              <% unless return_authorization.received? %>
+                <%= link_to_delete return_authorization, :no_text => true %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="no-objects-found">
+      <%= t(:no_return_authorizations_found) %>
+    </div>
+  <% end %>
 <% else %>
   <div data-hook="rma_cannont_create" class="no-objects-found">
     <%= t(:cannot_create_returns) %>
   </div>
 <% end %>
+
 
 <%= button_link_to t(:continue), admin_orders_url, :icon => 'icon-arrow-right' %>

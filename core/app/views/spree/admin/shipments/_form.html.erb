@@ -1,6 +1,6 @@
 <div data-hook="admin_shipment_form_fields">
   <% unless @shipment.order.cart? %>
-    <table class="index" style="width:100%;" data-hook="admin_shipment_form_inventory_units">
+    <table class="index" data-hook="admin_shipment_form_inventory_units">
       <thead>
         <tr data-hook="shipments_header">
           <th style="width:130px;"><%= t(:include_in_shipment) %></th>
@@ -20,8 +20,8 @@
                                 { :disabled => %w(shipped backordered returned).include?(inventory_unit.state),
                                   :class => 'inventory_unit'} %>
             </td>
-            <td style="vertical-align:top; width:120px;"><%= inventory_unit.variant.sku %></td>
-            <td style="width:300px;">
+            <td><%= inventory_unit.variant.sku %></td>
+            <td>
               <%=inventory_unit.variant.product.name %>
               <%= '(' + variant_options(inventory_unit.variant) + ')' unless inventory_unit.variant.option_values.empty? %>
             </td>
@@ -46,26 +46,26 @@
   </div>
 
   <fieldset data-hook="admin_shipment_form_details" class="no-border-bottom">
-      <legend><%= t(:shipment_details) %></legend>
+    <legend align="center"><%= t(:shipment_details) %></legend>
 
-      <div class="block-table">
-        <div class="field table-cell">
-          <%= shipment_form.label :shipping_method_id, t(:shipping_method) + ':' %>
-          <%= shipment_form.select :shipping_method_id, @shipping_methods.map {|sm| ["#{sm.name} - #{sm.zone.name}", sm.id] }, {}, {:class => 'select2 fullwidth'} %>
-        </div>
-
-        <div class="field table-cell">
-          <%= shipment_form.label :tracking, t(:tracking) + ':' %>
-          <%= shipment_form.text_field :tracking, :class => 'fullwidth' %>
-        </div>
-          
-        <% if Spree::Config[:shipping_instructions] %>
-          <div class="field table-cell">
-            <%= shipment_form.label :special_instructions, t(:special_instructions) + ':' %>
-            <%= shipment_form.text_area :special_instructions, :class => 'fullwidth' %>
-          </div>
-        <% end %>
+    <div class="block-table">
+      <div class="field table-cell">
+        <%= shipment_form.label :shipping_method_id, t(:shipping_method) + ':' %>
+        <%= shipment_form.select :shipping_method_id, @shipping_methods.map {|sm| ["#{sm.name} - #{sm.zone.name}", sm.id] }, {}, {:class => 'select2 fullwidth'} %>
       </div>
+
+      <div class="field table-cell">
+        <%= shipment_form.label :tracking, t(:tracking) + ':' %>
+        <%= shipment_form.text_field :tracking, :class => 'fullwidth' %>
+      </div>
+        
+      <% if Spree::Config[:shipping_instructions] %>
+        <div class="field table-cell">
+          <%= shipment_form.label :special_instructions, t(:special_instructions) + ':' %>
+          <%= shipment_form.text_area :special_instructions, :class => 'fullwidth' %>
+        </div>
+      <% end %>
+    </div>
     
-  </div>
+  </fieldset>
 </div>

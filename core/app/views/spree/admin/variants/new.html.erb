@@ -2,7 +2,7 @@
 
 <%= form_for [:admin, @product, @variant] do |f| %>
   <fieldset data-hook="admin_variant_new_form">
-    <legend><%= t(:new_variant) %></legend>
+    <legend align="center"><%= t(:new_variant) %></legend>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
   </fieldset>

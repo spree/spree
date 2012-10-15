@@ -42,13 +42,13 @@
   }
 
   &.action-remove {
-    background-color: lighten($c_red1, 50);
-    border-color: lighten($c_red1, 45);
+    background-color: lighten($color-5, 50);
+    border-color: lighten($color-5, 45);
     text-decoration: line-through;
 
     .promotion-title, input[type="text"], input[type="number"],
     .token-input-list {
-      border-color: lighten($c_red1, 45);
+      border-color: lighten($color-5, 45);
     }
   }
 
