@@ -91,7 +91,7 @@ describe "Checkout" do
           visit spree.root_path
           click_link "RoR Mug"
           click_button "add-to-cart-button"
-          click_link "Checkout"
+          click_button "Checkout"
           Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
 
           address = "order_bill_address_attributes"
