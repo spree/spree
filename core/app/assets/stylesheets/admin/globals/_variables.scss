@@ -1,7 +1,6 @@
-// ------------------------------------------------------------- 
-//   Variables used in all other files   
+// -------------------------------------------------------------
+//   Variables used in all other files
 //--------------------------------------------------------------
-
 
 // Fonts
 //--------------------------------------------------------------
@@ -9,22 +8,48 @@ $base-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial,
 
 // Colors
 //--------------------------------------------------------------
-$c_gray1:   #929292;
-$c_green1:  #9FC820;
-$c_blue1:   #5FA5E8;
-$c_blue2:   #D4F1F7;
-$c_blue3:   #6788A2;
-$c_red1:    #C60F13;
-$c_yellow1: #FF9300;
 
-$color-body-text: $c_blue3;
-$color-headers:   $c_blue3;
-$color-links:     $c_blue1;
-$color-border:    lighten($c_blue1, 27);
+// Basic color palette for admin
+$color-1:                     #FFFFFF !default;    // White
+$color-2:                     #9FC820 !default;    // Green
+$color-3:                     #5FA5E8 !default;    // Light Blue
+$color-4:                     #6788A2 !default;    // Dark Blue
+$color-5:                     #C60F13 !default;    // Red
+$color-6:                     #FF9300 !default;    // Yellow
 
-// Gradients
-//--------------------------------------------------------------
+// Body base colors
+$color-body-bg:               $color-1 !default;
+$color-body-text:             $color-4 !default;
+$color-headers:               $color-4 !default;
+$color-link:                  $color-3 !default;
+$color-link-hover:            $color-2 !default;
+$color-link-active:           $color-2 !default;
+$color-link-focus:            $color-2 !default;
+$color-link-visited:          $color-3 !default;
+$color-border:                very-light($color-3, 8) !default;
 
-// Sizes
-//--------------------------------------------------------------
-$body-font-size: 13.037px;
+// Basic flash colors
+$color-success:               $color-2 !default;
+$color-notice:                $color-6 !default;
+$color-error:                 $color-5 !default;
+
+// Table colors
+$color-tbl-odd:               $color-1 !default;
+$color-tbl-even:              very-light($color-3) !default;
+$color-tbl-thead:             very-light($color-3) !default;
+
+// Button colors
+$color-btn-bg:                $color-3 !default;
+$color-btn-text:              $color-1 !default;
+$color-btn-hover-bg:          $color-2 !default;
+$color-btn-hover-text:        $color-1 !default;
+
+// Actions colors
+$color-action-edit-bg:        very-light($color-success, 5  ) !default;
+$color-action-edit-brd:       very-light($color-success, 20 ) !default;
+$color-action-clone-bg:       very-light($color-notice,  5  ) !default;
+$color-action-clone-brd:      very-light($color-notice,  15 ) !default;
+$color-action-remove-bg:      very-light($color-error,   5  ) !default;
+$color-action-remove-brd:     very-light($color-error,   10 ) !default;
+$color-action-void-bg:        very-light($color-error,   10 ) !default;
+
