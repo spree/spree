@@ -48,7 +48,7 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
-      click_link "Checkout"
+      click_button "Checkout"
 
       fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
@@ -89,7 +89,7 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
-      click_link "Checkout"
+      click_button "Checkout"
 
       fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
@@ -115,7 +115,7 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
-      click_link "Checkout"
+      click_button "Checkout"
 
       fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
@@ -184,7 +184,7 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
-      click_link "Checkout"
+      click_button "Checkout"
 
       fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
@@ -207,7 +207,7 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
-      click_link "Checkout"
+      click_button "Checkout"
 
       str_addr = "bill_address"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -312,7 +312,7 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
-      click_link "Checkout"
+      click_button "Checkout"
 
       str_addr = "bill_address"
       fill_in "order_email", :with => "buyer@spreecommerce.com"
@@ -485,7 +485,7 @@ describe "Promotion Adjustments" do
     end
 
     def do_checkout
-      click_link "Checkout"
+      click_button "Checkout"
       str_addr = "bill_address"
       fill_in "order_email", :with => "buyer@spreecommerce.com"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
