@@ -9,9 +9,9 @@
     text-align: center;
 
     &.current {
-      background-color: $c_green1;
+      background-color: $color-2;
       border-radius: 3px;
-      color: white;
+      color: $color-1;
     }
   }
 }

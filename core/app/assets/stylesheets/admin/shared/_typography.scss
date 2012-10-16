@@ -16,48 +16,50 @@ hr {
   border-left: none;
 }
 
+strong, b {
+  font-weight: 600;
+}
+
 // links
 //--------------------------------------------------------------
 a { 
-  color: $color-links;
+  color: $color-link;
   text-decoration: none;
   line-height: inherit;
 
-  &:active, &:visited, &:focus {
-    color: darken($color-links, 5);    
-  }
-
-  &.button {
-    &:active, &:visited, &:focus {
-      color: white !important;
-    }    
+  &, &:hover, &:active, &:visited, &:focus {
+    outline: none;
   }
 
   &:hover {
-    color: lighten($c_blue1, 10);
+    color: $color-link-hover;
   }
-  &:focus { 
-    color: $color-links; 
-    outline: none; 
+  &:active {
+    color: $color-link-active;
   }
-
+  &:visited {
+    color: $color-link-visited;
+  }
+  &:focus {
+    color: $color-link-focus;
+  }
 }
 
 // Headings
 //--------------------------------------------------------------
 
 h1,h2,h3,h4,h5,h6 {
-  font-weight: bold; 
+  font-weight: 600;
   color: $color-headers; 
   line-height: 1.1; 
 }
 
-h1 { font-size: 44px; }
-h2 { font-size: 37px; }
-h3 { font-size: 27px; }
-h4 { font-size: 23px; }
-h5 { font-size: 17px; }
-h6 { font-size: 14px; }
+h1 { font-size: $h1-size; line-height: $h1-size + 6 }
+h2 { font-size: $h2-size; line-height: $h1-size + 4 }
+h3 { font-size: $h3-size; line-height: $h1-size + 2 }
+h4 { font-size: $h4-size; line-height: $h1-size }
+h5 { font-size: $h5-size; line-height: $h1-size }
+h6 { font-size: $h6-size; line-height: $h1-size }
 
 
 // Lists
@@ -90,7 +92,7 @@ dl {
 
   dt {
     width: 40%;
-    font-weight: bold;
+    font-weight: 600;
     padding-left: 0;
     text-transform: uppercase;
     font-size: 85%;
@@ -114,10 +116,12 @@ dl {
 .align-left    { text-align: left    }
 .align-justify { text-align: justify }
 
-.green { color: $c_green1 }
-.blue  { color: $c_blue1  }
-.red   { color: $c_red1   }
-.yellow{ color: $c_yellow1}
+.uppercase     { text-transform: uppercase }
+
+.green  { color: $color-2 }
+.blue   { color: $color-3 }
+.red    { color: $color-5 }
+.yellow { color: $color-6 }
 
 .no-objects-found {
   text-align: center;
@@ -125,47 +129,4 @@ dl {
   text-transform: uppercase;
   padding: 40px 0px;
   color: lighten($color-body-text, 15);
-}
-
-// States
-//--------------------------------------------------------------
-.state {
-  @include border-radius(3px);
-  text-transform: uppercase;
-  font-size: 80%;
-  font-weight: bold;
-  border: 1px solid transparent;
-  padding: 2px 5px;  
-  width: 100%;
-  display: inline-block;
-  text-align: center;
-
-  &.complete, &.ready, &.paid, &.sold {
-    background-color: $c_green1;
-
-    &, a {
-      color: white;
-    }
-  }
-
-  &.pending {
-    background-color: $c_yellow1;
-
-    &, a { 
-      color: white
-    }
-  }
-
-  &.canceled {
-    background-color: $c_red1;
-    color: white;
-  }
-
-  &.balance_due {
-    background-color: $c_blue2;
-  }
-  &.cart {
-    background-color: lighten($c_blue1, 30);
-    color: lighten($color-body-text, 15);
-  }
 }

@@ -18,7 +18,7 @@
     background-image: none;
 
     a {
-      background-color: lighten($c_blue1, 33);
+      background-color: very-light($color-3);
       border: 1px solid $color-border;
       color: $color-body-text;
       font-weight: bold;
@@ -47,11 +47,11 @@
 }
 #vakata-dragged.jstree-apple .jstree-invalid {
   @extend .icon-remove;  
-  color: $c_red1;
+  color: $color-5;
 }
 #vakata-dragged.jstree-apple .jstree-ok {
   @extend .icon-ok;
-  color: $c_green1;
+  color: $color-2;
 }
 
 #jstree-marker {
@@ -66,27 +66,27 @@
   margin-top: -2px !important;
   border: none !important;
   border-bottom: 1px solid $color-body-text !important;
-  background-color:  lighten($c_blue1, 33) !important;
+  background-color:  very-light($color-3) !important;
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
-  @include border-radius(0px !important);
+  @include border-radius($border-radius !important);
 }
 
 #vakata-contextmenu {
-  background-color: $c_blue1 !important;
+  background-color: $color-3 !important;
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
   border: none !important;
-  @include border-radius(3px !important);
+  @include border-radius($border-radius !important);
 
   &:before {
     content: '';
     position: absolute;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid $c_blue1;
+    border-bottom: 10px solid $color-3;
     top: 0px;
     margin-top: -10px;
     left: 25px;
@@ -94,21 +94,21 @@
   }
 
   a {
-    color: white !important;
+    color: $color-1 !important;
     line-height: inherit !important;
     padding: 5px 10px !important;
     margin: 0 !important;
     font-size: 90% !important;
 
     &:hover {
-      background-color: $c_green1 !important;
+      background-color: $color-2 !important;
       border: none !important;
       -moz-box-shadow: none !important;
       -webkit-box-shadow: none !important;
       line-height: inherit !important;
       padding: 5px 10px !important;
       margin: 0 !important;
-      @include border-radius(3px !important);
+      @include border-radius($border-radius !important);
     }
   }
 
@@ -117,7 +117,7 @@
     position: absolute;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid $c_green1;
+    border-bottom: 10px solid $color-2;
     top: 0px;
     margin-top: -10px;
     left: 25px;

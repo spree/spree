@@ -1,15 +1,15 @@
 .select2-container {
   &:hover .select2-choice, &.select2-container-active .select2-choice {
-    background-color: $c_green1 !important;
-    border-color: darken($c_green1, 5) !important;
+    background-color: $color-sel-hover-bg !important;
+    border-color: $color-sel-hover-bg !important;
   }
   .select2-choice {
     background-image: none !important;
-    background-color: lighten($c_blue1, 10);
+    background-color: $color-sel-bg;
     border: none !important;
     box-shadow: none !important;
     @include border-radius(3px);
-    color: white !important;    
+    color: $color-1 !important;
     font-size: 90%;
     height: 33px;    
     line-height: inherit !important;
@@ -58,12 +58,12 @@
 }
 
 .select2-drop {
-  border-color: $c_green1;
+  border-color: $color-sel-hover-bg;
   box-shadow: none !important;
   z-index: 1000000;
 
   &.select2-drop-above {
-    border-color: $c_green1;
+    border-color: $color-sel-hover-bg;
   }
 }
 
@@ -85,7 +85,6 @@
     font-size: 90%;
     box-shadow: none;
     background-image: none;
-    width: 105% !important;
   }
 }
 
@@ -97,34 +96,38 @@
 
     &.select2-highlighted {
       .select2-result-label {
-        color: white !important;
+        &, h6 {
+          color: $color-1 !important;
+        }
       }
     }
 
     .select2-result-label {
       color: $color-body-text;
       min-height: 22px;
+      clear: both;
+      overflow: auto;
     }
 
-    &.select2-no-results {
+    &.select2-no-results, &.select2-searching {
       padding: 5px;
       background-color: transparent;
       color: $color-body-text;
       text-align: center; 
-      font-weight: bold;
+      font-weight: $font-weight-bold;
       text-transform: uppercase;
     }
   }
 
   .select2-highlighted {
-    background-color: lighten($c_blue1, 10);
+    background-color: $color-sel-bg;
   }
 }
 
 .select2-container-multi {
   &.select2-container-active, &.select2-dropdown-open {
     .select2-choices {
-      border-color: $c_green1 !important;
+      border-color: $color-sel-hover-bg !important;
       box-shadow: none;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -140,14 +143,14 @@
       @include border-radius(3px);
       margin: 0 0 3px 3px;
       background-image: none;
-      background-color: lighten($c_blue1, 10);
+      background-color: $color-sel-bg;
       border: none;
       box-shadow: none;      
-      color: white !important;    
+      color: $color-1 !important;    
       font-size: 85%;            
 
       &:hover {
-        background-color: $c_green1;
+        background-color: $color-sel-hover-bg;
       }
 
       .select2-search-choice-close {
@@ -156,7 +159,7 @@
         @extend .icon-remove;
         @extend [class^="icon-"]:before;
         margin-left: 2px;
-        color: white;
+        color: $color-1;
       }
     }
   }
