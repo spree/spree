@@ -1,5 +1,5 @@
 module Spree
-  class LocaleController < Spree::FrontendController
+  class LocaleController < Spree::StoreController
     def set
       if request.referer && request.referer.starts_with?('http://' + request.host)
         session['user_return_to'] = request.referer

@@ -1,5 +1,5 @@
 module Spree
-  class OrdersController < Spree::FrontendController
+  class OrdersController < Spree::StoreController
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/products'
 

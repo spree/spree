@@ -1,5 +1,5 @@
 module Spree
-  class FrontendController < Spree::BaseController
+  class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
 
     # Convenience method for firing instrumentation events with the default payload hash

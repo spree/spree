@@ -1,5 +1,5 @@
 module Spree
-  class TaxonsController < BaseController
+  class TaxonsController < Spree::StoreController
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/products'
 
