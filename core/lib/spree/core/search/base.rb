@@ -3,6 +3,7 @@ module Spree
     module Search
       class Base
         attr_accessor :properties
+        attr_accessor :current_user
 
         def initialize(params)
           @properties = {}
