@@ -77,7 +77,6 @@ require 'spree/core/ext/active_record'
 require 'spree/core/delegate_belongs_to'
 
 require 'spree/core/responder'
-require 'spree/core/respond_with'
 require 'spree/core/ssl_requirement'
 require 'spree/core/store_helpers'
 require 'spree/core/calculated_adjustments'
