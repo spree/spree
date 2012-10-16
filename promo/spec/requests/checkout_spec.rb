@@ -16,7 +16,7 @@ describe "Checkout" do
       click_link "RoR Mug"
       click_button "add-to-cart-button"
 
-      click_link "Checkout"
+      click_button "Checkout"
       fill_in "order_email", :with => "spree@example.com"
       click_button "Continue"
 
