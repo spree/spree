@@ -221,6 +221,14 @@ describe Spree::Variant do
           variant.price.should == 1599.99
         end
       end
+
+      context "with a numeric price" do
+        it "uses the price as is" do
+          I18n.locale = :de
+          variant.price = 1599.99
+          variant.price.should == 1599.99
+        end
+      end
     end
 
     context "cost_price=" do
@@ -235,6 +243,14 @@ describe Spree::Variant do
         it "captures the proper amount for a formatted price" do
           I18n.locale = :de
           variant.cost_price = '1.599,99'
+          variant.cost_price.should == 1599.99
+        end
+      end
+
+      context "with a numeric price" do
+        it "uses the price as is" do
+          I18n.locale = :de
+          variant.cost_price = 1599.99
           variant.cost_price.should == 1599.99
         end
       end
