@@ -27,6 +27,7 @@ branches:
     - 1-1-stable
     - 1-2-stable
     - master
+    - 2079-refactor-controller-helpers
 rvm:
   - 1.8.7
   - 1.9.3

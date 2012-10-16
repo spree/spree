@@ -1,5 +1,5 @@
 module Spree
-  class HomeController < BaseController
+  class HomeController < Spree::StoreController
     helper 'spree/products'
     respond_to :html
 
