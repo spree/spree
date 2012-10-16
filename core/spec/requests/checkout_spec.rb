@@ -31,7 +31,7 @@ describe "Checkout" do
         @product.on_hand = 0
         @product.save
 
-        click_link "Checkout"
+        click_button "Checkout"
 
         within(:css, "span.out-of-stock") { page.should have_content("Out of Stock") }
       end
