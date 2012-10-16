@@ -146,7 +146,7 @@ module Spree
 
       # strips all non-price-like characters from the price, taking into account locale settings
       def parse_price(price)
-        price = price.to_s
+        return price unless price.is_a?(String)
 
         separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
         non_price_characters = /[^0-9\-#{separator}]/
