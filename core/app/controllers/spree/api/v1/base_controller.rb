@@ -14,7 +14,7 @@ module Spree
         rescue_from CanCan::AccessDenied, :with => :unauthorized
         rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
-        helper Spree::Api::ApiHelpers
+        helper Spree::ApiHelpers
 
         def set_jsonp_format
           if params[:callback] && request.get?
