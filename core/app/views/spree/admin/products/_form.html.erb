@@ -115,22 +115,8 @@
 <script>
 
 $("#product_taxon_ids").select2({
-  placeholder: "Add a taxon",
-  ajax: {
-    url: Spree.routes.taxons_search,
-    datatype: 'json',
-    data: function(term, page) {
-      return { q: term }
-    },
-    results: function (data, page) {
-      var taxons = $.map(data['taxons'], function(result) {
-        return result['taxon']
-      })
-      return { results: taxons }
-    }
-  },
-  //formatResult: formatTaxonResult,
-})
+  formatSelection: function(item) { return item.text.split(' -> ').slice(-1)[0] },
+});
 
 $("#product_option_type_ids").select2();
 </script>
