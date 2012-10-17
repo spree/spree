@@ -51,7 +51,7 @@ module Spree
               end
 
               event :return do
-                transition :to => :returned, :from => :awaiting_return
+                transition :to => :returned, :from => :awaiting_return, :unless=>:awaiting_returns?
               end
 
               event :resume do
