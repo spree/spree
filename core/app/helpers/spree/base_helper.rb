@@ -132,12 +132,8 @@ module Spree
       end.sort { |a, b| a.name <=> b.name }
     end
 
-    # generates nested url to product based on supplied taxon
-    def seo_url(taxon, product = nil)
-      return spree.nested_taxons_path(taxon.permalink) if product.nil?
-      warn "DEPRECATION: the /t/taxon-permalink/p/product-permalink urls are "+
-        "not used anymore. Use product_url instead. (called from #{caller[0]})"
-      return product_url(product)
+    def seo_url(taxon)
+      return spree.nested_taxons_path(taxon.permalink)
     end
 
     def gem_available?(name)
