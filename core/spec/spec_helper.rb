@@ -17,13 +17,14 @@ require 'spree/core/testing_support/authorization_helpers'
 require 'spree/core/testing_support/preferences'
 require 'spree/core/testing_support/flash'
 
+require 'spree/api/testing_support/helpers'
+require 'spree/api/testing_support/setup'
+
 require 'spree/core/url_helpers'
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
   config.mock_with :rspec
-
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   #config.include Devise::TestHelpers, :type => :controller
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
@@ -53,6 +54,16 @@ RSpec.configure do |config|
   config.include Spree::Core::TestingSupport::ControllerRequests
   config.include Spree::Core::TestingSupport::Preferences
   config.include Spree::Core::TestingSupport::Flash
+
+  api_controllers = config.escaped_path(%w[spec controllers spree api])
+  api_options = { :example_group => {
+                    :file_path => api_controllers
+                  }
+                }
+
+  config.include Spree::Api::TestingSupport::Helpers, api_options
+  config.extend Spree::Api::TestingSupport::Setup, api_options
+  config.include Spree::Api::TestingSupport::ControllerHacks, api_options
 
   config.include Paperclip::Shoulda::Matchers
 end

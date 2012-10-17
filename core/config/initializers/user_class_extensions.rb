@@ -20,6 +20,16 @@ Spree::Core::Engine.config.to_prepare do
       def last_incomplete_spree_order
         spree_orders.incomplete.order('created_at DESC').last
       end
+
+      def generate_spree_api_key!
+        self.spree_api_key = SecureRandom.hex(24)
+        save!
+      end
+
+      def clear_spree_api_key!
+        self.spree_api_key = nil
+        save!
+      end
     end
   end
 end
