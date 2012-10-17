@@ -69,7 +69,7 @@ module Spree
         transition :to => 'canceled', :if => :allow_cancel?
       end
       event :return do
-        transition :to => 'returned', :from => 'awaiting_return'
+        transition :to => 'returned', :from => 'awaiting_return', :unless=>:awaiting_returns?
       end
       event :resume do
         transition :to => 'resumed', :from => 'canceled', :if => :allow_resume?
@@ -277,6 +277,10 @@ module Spree
       # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
       return false if state_changes.empty? || state_changes.last.previous_state.nil?
       true
+    end
+
+    def awaiting_returns?
+      return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
 
     def add_variant(variant, quantity = 1)
