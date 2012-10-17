@@ -110,9 +110,9 @@ module Spree
     end
 
     def on_demand=(new_on_demand)
-      raise 'cannot set on_demand of product with variants'if has_variants? && Spree::Config[:track_inventory_levels]
-      master.on_demand=on_demand
-      self[:on_demand]=new_on_demand
+      raise 'cannot set on_demand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
+      master.on_demand = on_demand
+      self[:on_demand] = new_on_demand
     end
 
     # Returns true if there are inventory units (any variant) with "on_hand" state for this product

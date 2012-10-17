@@ -131,7 +131,7 @@ module Spree
     end
 
     def on_demand=(on_demand)
-      self[:on_demand]=on_demand
+      self[:on_demand] = on_demand
       if on_demand
         inventory_units.with_state('backordered').each(&:fill_backorder)
       end
