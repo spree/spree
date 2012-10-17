@@ -1,5 +1,5 @@
 module Spree
-  class ProductsController < BaseController
+  class ProductsController < Spree::StoreController
     before_filter :load_product, :only => :show
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/taxons'
@@ -8,6 +8,7 @@ module Spree
 
     def index
       @searcher = Config.searcher_class.new(params)
+      @searcher.current_user = try_spree_current_user
       @products = @searcher.retrieve_products
       respond_with(@products)
     end

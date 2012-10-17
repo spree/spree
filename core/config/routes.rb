@@ -63,7 +63,6 @@ Spree::Core::Engine.routes.draw do
     end
     resources :states
     resources :tax_categories
-    resources :configurations, :only => :index
     resources :products do
       resources :product_properties
       resources :images do
@@ -176,6 +175,7 @@ Spree::Core::Engine.routes.draw do
 
   match '/admin', :to => 'admin/orders#index', :as => :admin
 
+  match '/unauthorized', :to => 'home#unauthorized', :as => :unauthorized
   match '/content/cvv', :to => 'content#cvv', :as => :cvv
   match '/content/*path', :to => 'content#show', :via => :get, :as => :content
 end

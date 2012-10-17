@@ -77,7 +77,7 @@ module Spree
         @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
         if @taxon.update_attributes(params[:taxon])
-          flash.notice = flash_message_for(@taxon, :successfully_updated)
+          flash[:success] = flash_message_for(@taxon, :successfully_updated)
         end
 
         #rename child taxons

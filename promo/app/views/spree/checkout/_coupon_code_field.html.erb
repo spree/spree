@@ -1,6 +1,6 @@
 <% if Spree::Promotion.count > 0 %>
-<p>
-  <%= form.label :coupon_code %><br />
-  <%= form.text_field :coupon_code %>
-</p>
+  <p class='field' data-hook='coupon_code'>
+    <%= form.label :coupon_code %><br />
+    <%= form.text_field :coupon_code %>
+  </p>
 <% end %>

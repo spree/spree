@@ -1,5 +1,5 @@
 module Spree
-  class ContentController < BaseController
+  class ContentController < Spree::StoreController
     # Don't serve local files or static assets
     before_filter { render_404 if params[:path] =~ /(\.|\\)/ }
 

@@ -30,7 +30,7 @@ describe "Checkout" do
         @product.on_hand = 0
         @product.save
 
-        click_link "Checkout"
+        click_button "Checkout"
 
         within(:css, "span.out-of-stock") { page.should have_content("Out of Stock") }
       end
@@ -50,7 +50,7 @@ describe "Checkout" do
         click_link "RoR Mug"
         click_button "add-to-cart-button"
         Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
-        click_link "Checkout"
+        click_button "Checkout"
       end
 
       it "should default checkbox to checked" do
@@ -128,7 +128,7 @@ describe "Checkout" do
           visit spree.root_path
           click_link "RoR Mug"
           click_button "add-to-cart-button"
-          click_link "Checkout"
+          click_button "Checkout"
           Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
 
           address = "order_bill_address_attributes"

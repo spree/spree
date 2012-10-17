@@ -1,5 +1,5 @@
 module Spree
-  class OrdersController < BaseController
+  class OrdersController < Spree::StoreController
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/products'
 
@@ -15,7 +15,15 @@ module Spree
       if @order.update_attributes(params[:order])
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         fire_event('spree.order.contents_changed')
-        respond_with(@order) { |format| format.html { redirect_to cart_path } }
+        respond_with(@order) do |format|
+          format.html do
+            if params.has_key?(:checkout)
+              redirect_to checkout_state_path(@order.checkout_steps.first)
+            else
+              redirect_to cart_path
+            end
+          end
+        end
       else
         respond_with(@order)
       end
