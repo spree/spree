@@ -23,7 +23,7 @@
   <div class="right four columns omega" data-hook="admin_product_form_right">
     <div class="alpha two columns">
       <%= f.field_container :price do %>
-        <%= f.label :price, t(:master_price) %> <span class="required">*</span>
+        <%= f.label :price, raw("#{t(:master_price)} <span class='required'>*</span>"), :class => 'truncate' %>
         <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
         <%= f.error_message_on :price %>
       <% end %>

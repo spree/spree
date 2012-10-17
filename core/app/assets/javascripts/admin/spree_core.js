@@ -12,6 +12,7 @@
 //= require equalize
 //= require responsive-tables
 //= require jquery.horizontalNav
+//= require css_browser_selector_dev
 //= require_tree .
 
 var Spree = {};

@@ -1,4 +1,4 @@
-<tr class="option_value fields" id="spree_<%= dom_id(f.object) %>"  data-hook="option_value">
+<tr class="option_value fields <%= cycle('odd', 'even')%>" id="spree_<%= dom_id(f.object) %>"  data-hook="option_value">
   <td class="no-border">
     <span class="handle"></span>
     <%= f.hidden_field :id %>

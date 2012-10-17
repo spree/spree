@@ -83,6 +83,14 @@ table {
       @extend .icon-reorder;
       cursor: move;
     }
+
+  }
+
+  &.no-borders {
+    td, th {
+      border: none !important;
+    }
+
   }
 
   th {

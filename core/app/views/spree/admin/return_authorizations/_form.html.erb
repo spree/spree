@@ -12,19 +12,19 @@
       <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
         <tr id="<%= dom_id(variant) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td>
-            <h4 style="margin-bottom:0px;"><%= variant.name %></h4>
+            <h6><%= variant.name %></h6>
             <%= variant.options_text %>
           </td>
-          <td><%= units.select(&:shipped?).size %></td>
-          <td><%= units.select(&:returned?).size %></td>
-          <td class="return_quantity">
+          <td class="align-center"><%= units.select(&:shipped?).size %></td>
+          <td class="align-center"><%= units.select(&:returned?).size %></td>
+          <td class="return_quantity align-center">
             <% if @return_authorization.received? %>
               <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
             <% elsif units.select(&:shipped?).empty? %>
               0
             <% else %>
               <%= number_field_tag "return_quantity[#{variant.id}]",
-                @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:50px;', :min => 0} %>
+                @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:80px;', :min => 0} %>
             <% end %>
           </td>
         </tr>

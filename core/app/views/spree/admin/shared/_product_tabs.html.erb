@@ -7,7 +7,7 @@
 <% end %>
 
 <% content_for :sidebar do %>
-  <nav class="sidebar-menu">
+  <nav class="menu">
     <ul data-hook="admin_product_tabs">
       <li<%== ' class="active"' if current == 'Product Details' %>>
         <%= link_to_with_icon 'icon-edit', t(:product_details), edit_admin_product_url(@product) %>

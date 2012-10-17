@@ -2,14 +2,14 @@
 
 <div id="add-line-item" data-hook>
   <fieldset>
-    <legend><%= t(:add_product) %></legend>
+    <legend align="center"><%= t(:add_product) %></legend>
     
     <div data-hook="add_product_name" class="field eight columns alpha">
       <%= label_tag :add_product_name, t(:name_or_sku) %>
       <%= hidden_field_tag :add_variant_id, "", :class => "variant_autocomplete fullwidth" %>
     </div>
     
-    <div data-hook="add_quantity" class="field two columns alpha">
+    <div data-hook="add_quantity" class="field two columns">
       <%= label_tag :add_quantity, t(:qty) %>
       <%= number_field_tag :add_quantity,  1, :min => 0 %>
     </div>
