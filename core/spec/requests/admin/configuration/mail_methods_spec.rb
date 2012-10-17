@@ -33,8 +33,9 @@ describe "Mail Methods" do
   end
 
   context "edit" do
-    before(:each) do
-      create(:mail_method)
+    let!(:mail_method) { create(:mail_method, :preferred_smtp_password => "haxme") }
+
+    before do
       click_link "Mail Methods"
     end
 
@@ -48,5 +49,17 @@ describe "Mail Methods" do
       within_row(1) { click_icon :edit }
       find_field("mail_method_preferred_mail_bcc").value.should == "spree@example.com99"
     end
+
+    # Regression test for #2094
+    it "does not clear password if not provided" do
+      mail_method.preferred_smtp_password.should == "haxme"
+      within_row(1) { click_icon :edit }
+      click_button "Update"
+      page.should have_content("successfully updated!")
+
+      mail_method.reload
+      mail_method.preferred_smtp_password.should_not be_blank
+    end
+
   end
 end
