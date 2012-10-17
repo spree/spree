@@ -148,9 +148,12 @@ describe "Products" do
       it "can set the count on hand to a null value", :js => true do
         fill_in "product_name", :with => "Baseball Cap"
         fill_in "product_price", :with => "100"
-        fill_in "product_on_hand", :with => ""
         click_button "Create"
         page.should have_content("successfully created!")
+        fill_in "product_on_hand", :with => ""
+        click_button "Update"
+        page.should_not have_content("spree_products.count_on_hand may not be NULL")
+        page.should have_content("successfully updated!")
       end
     end
 
