@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "States", :js => true do
+describe "States" do
   stub_authorization!
 
   let!(:country) { create(:country) }
@@ -9,7 +9,6 @@ describe "States", :js => true do
     Spree::Config[:default_country_id] = country.id
 
     visit spree.admin_path
-    click_link "More"
     click_link "Configuration"
   end
 
@@ -23,7 +22,7 @@ describe "States", :js => true do
   end
 
   context "creating and editing states" do
-    it "should allow an admin to edit existing states" do
+    it "should allow an admin to edit existing states", :js => true do
       click_link "States"
       select country.name, :from => "Country"
       click_link "new_state_link"
@@ -34,7 +33,7 @@ describe "States", :js => true do
       page.should have_content("Calgary")
     end
 
-    it "should show validation errors" do
+    it "should show validation errors", :js => true do
       click_link "States"
       select country.name, :from => "country"
       click_link "new_state_link"
