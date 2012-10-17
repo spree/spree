@@ -49,7 +49,7 @@ describe "Mail Methods" do
     # Regression test for #2094
     it "does not clear password if not provided" do
       mail_method.preferred_smtp_password.should == "haxme"
-      within_row(1) { click_icon :edit }
+      within(:css, "table.index tbody tr") { click_link "Edit" }
       click_button "Update"
       page.should have_content("successfully updated!")
 
