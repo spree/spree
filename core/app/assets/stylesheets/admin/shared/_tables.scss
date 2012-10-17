@@ -85,6 +85,12 @@ table {
     }
   }
 
+  &.no-borders {
+    td, th {
+      border: none !important;
+    }
+  }
+
   th {
     padding: 10px;
     border-top: 1px solid $color-border;

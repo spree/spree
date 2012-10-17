@@ -20,33 +20,4 @@
       top: -14px;
     }
   }
-
-  .sidebar-menu {
-    ul {
-      list-style: none;      
-
-      li {
-        a {
-          padding: 10px 0;
-          display: block;
-          position: relative;
-          text-align: left;          
-          border: 1px solid transparent;
-          text-transform: uppercase;
-          font-weight: 600;
-          font-size: 90%;
-        }
-
-        &.active a {
-          color: $color-2;
-          border-left-width: 0;          
-          border-bottom-color: $color-2;
-        }
-
-        &:hover a {
-          color: $color-2;
-        }
-      }      
-    }
-  }
 }
