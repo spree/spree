@@ -2,6 +2,8 @@ module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
 
+    private
+
     # Convenience method for firing instrumentation events with the default payload hash
     def fire_event(name, extra_payload = {})
       ActiveSupport::Notifications.instrument(name, default_notification_payload.merge(extra_payload))
