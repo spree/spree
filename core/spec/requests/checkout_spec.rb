@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Checkout" do
   let(:country) { create(:country, :name => "Kangaland") }
   before do
-    Factory(:state, :name => "Victoria", :country => country)
+    create(:state, :name => "Victoria", :country => country)
   end
 
   context "visitor makes checkout as guest without registration" do
@@ -76,9 +76,9 @@ describe "Checkout" do
       # Regression test for #1596
       context "full checkout" do
         before do
-          Factory(:payment_method)
+          create(:payment_method)
           Spree::ShippingMethod.delete_all
-          shipping_method = Factory(:shipping_method)
+          shipping_method = create(:shipping_method)
           calculator = Spree::Calculator::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
           shipping_method.calculator = calculator
           shipping_method.save
