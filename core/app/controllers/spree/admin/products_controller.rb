@@ -16,6 +16,13 @@ module Spree
         respond_with(@collection)
       end
 
+      def update
+        if params[:product][:taxon_ids].present?
+          params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
+        end
+        super
+      end
+
       def destroy
         @product = Product.where(:permalink => params[:id]).first!
         @product.delete
