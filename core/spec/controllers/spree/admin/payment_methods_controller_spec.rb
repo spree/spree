@@ -10,8 +10,6 @@ end
 
 module Spree
   describe Admin::PaymentMethodsController do
-    stub_authorization!
-
     let(:payment_method) { Spree::GatewayWithPassword.create!(:name => "Bogus", :preferred_password => "haxme") }
 
     # regression test for #2094
