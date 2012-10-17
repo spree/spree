@@ -24,8 +24,8 @@ module Spree
         # to access the requested action.  For example, a popup window might simply close itself.
         def unauthorized
           if try_spree_current_user
-            flash.now[:error] = t(:authorization_failure)
-            render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
+            flash[:error] = t(:authorization_failure)
+            redirect_to '/unauthorized'
           else
             store_location
             url = respond_to?(:spree_login_path) ? spree_login_path : root_path

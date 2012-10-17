@@ -2,6 +2,10 @@ module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
 
+    def unauthorized
+      render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
+    end
+
     private
 
     # Convenience method for firing instrumentation events with the default payload hash
