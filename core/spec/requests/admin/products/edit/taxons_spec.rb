@@ -5,7 +5,7 @@ describe "Product Taxons" do
 
   context "managing taxons" do
     def selected_taxons
-      find("#product_taxon_ids").value.map(&:to_i)
+      find("#product_taxon_ids").value.split(',').map(&:to_i)
     end
 
     it "should allow an admin to manage taxons", :js => true do
@@ -20,6 +20,7 @@ describe "Product Taxons" do
         click_link "Edit"
       end
 
+      find(".select2-search-choice").text.should == taxon_1.name
       selected_taxons.should =~ [taxon_1.id]
       select2("#product_taxons_field", "Clothing")
       click_button "Update"
