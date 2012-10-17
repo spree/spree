@@ -7,7 +7,7 @@ module Spree
         attr_accessor :current_api_user
 
         before_filter :set_content_type
-        before_filter :check_for_api_key
+        before_filter :check_for_api_key, :if => :requires_authentication?
         before_filter :authenticate_user
         after_filter  :set_jsonp_format
 
