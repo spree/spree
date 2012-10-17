@@ -10,6 +10,8 @@ module Spree
             helper_method :current_order
 
             layout :get_layout
+
+            before_filter :set_user_language
           end
         end
 
@@ -51,7 +53,6 @@ module Spree
 
         def set_user_language
           locale = session[:locale]
-          locale ||= Spree::Config[:default_locale] unless Spree::Config[:default_locale].blank?
           locale ||= Rails.application.config.i18n.default_locale
           locale ||= I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
           I18n.locale = locale.to_sym
