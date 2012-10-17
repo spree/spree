@@ -151,6 +151,15 @@ describe "Products" do
         page.should have_content("Name can't be blank")
         page.should have_content("Price can't be blank")
       end
+
+      # Regression test for #2097
+      it "can set the count on hand to a null value", :js => true do
+        fill_in "product_name", :with => "Baseball Cap"
+        fill_in "product_price", :with => "100"
+        fill_in "product_count_on_hand", :with => ""
+        click_button "Create"
+        page.should have_content("successfully created!")
+      end
     end
 
     context "cloning a product", :js => true do
