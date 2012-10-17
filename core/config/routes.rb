@@ -63,7 +63,6 @@ Spree::Core::Engine.routes.draw do
     end
     resources :states
     resources :tax_categories
-    resources :configurations, :only => :index
     resources :products do
       resources :product_properties
       resources :images do
