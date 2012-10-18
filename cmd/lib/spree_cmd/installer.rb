@@ -98,7 +98,7 @@ module SpreeCmd
         end
 
         if @install_default_auth
-          gem :spree_auth_devise, :git => "git://github.com/spree/spree_auth_devise"
+          gem :spree_auth_devise, :github => "spree/spree_auth_devise", :branch => "edge"
         end
 
         run 'bundle install', :capture => true
