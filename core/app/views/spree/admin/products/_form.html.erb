@@ -112,9 +112,10 @@
   <div data-hook="admin_product_form_additional_fields"></div>
 </div>
 
-<script>
+<% unless Rails.env.test? %>
+  <script>
+  $("#product_option_type_ids").select2();
 
-$("#product_option_type_ids").select2();
-
-$('.select2-container').css({width: '20em'})
-</script>
+  $('.select2-container').css({width: '20em'})
+  </script>
+<% end %>
