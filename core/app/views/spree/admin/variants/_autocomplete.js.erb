@@ -1,17 +1,30 @@
 <script type='text/template' id='variant_autocomplete_template'>
-  {{#if variant.image }}
-    <img src='{{variant.image}}' />
-  {{/if}}
+  <div class='variant-autocomplete-item'>
+    <figure class='variant-image'>
+      {{#if variant.image }}
+        <img src='{{variant.image}}' />
+      {{ else }}
+        <img src='/assets/noimage/mini.png' />
+      {{/if}}
+    </figure>
 
-  <h5>{{variant.name}}</h5>
+    <div class='variant-details'>
 
-  {{#if variant.option_values}}
-    {{#each variant.option_values}}
-      <strong>{{option_value.option_type.presentation}}:</strong> {{option_value.presentation}}
-    {{/each}}
-    <br>
-  {{/if}}
+      <h6 class="variant-name">{{variant.name}}</h6>
 
-  <span><strong>{{translations.sku}}:</strong> {{variant.sku}}</span>
-  <span><strong>{{translations.on_hand}}:</strong> {{variant.count_on_hand}}</span>
+      <ul class='variant-data'>
+        <li class='variant-sku'><strong>{{translations.sku}}:</strong> {{variant.sku}}</li>
+        <li class='variant-on_hand'><strong>{{translations.on_hand}}:</strong> {{variant.count_on_hand}}</li>
+      </ul>
+
+      {{#if variant.option_values}}
+        <ul class='variant-options'>
+          {{#each variant.option_values}}
+            <li><strong>{{option_value.option_type.presentation}}:</strong> {{option_value.presentation}}</li>
+          {{/each}}
+        </ul>
+      {{/if}}
+
+    </div>
+  </div>
 </script>

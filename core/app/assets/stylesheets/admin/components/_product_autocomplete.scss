@@ -1,7 +1,6 @@
-
 .select2-result-label {
   .variant-autocomplete-item {
-    .variant-info {
+    .variant-details {
       padding: 0 10px;
       float: left;
     }
@@ -13,7 +12,7 @@
       margin-right: 10px;
     }
 
-    ul.variant-options, ul.variant-data {
+    ul.variant-details {
       li {
         display: inline-block;
 
