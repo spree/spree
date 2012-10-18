@@ -8,8 +8,8 @@ describe "Product scopes" do
       @taxonomy = create(:taxonomy)
       @root_taxon = @taxonomy.root
 
-      @parent_taxon = create(:taxon, name: 'Parent', :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
-      @child_taxon = create(:taxon, name: 'Child 1', :taxonomy_id => @taxonomy.id, :parent => @parent_taxon)
+      @parent_taxon = create(:taxon, :name => 'Parent', :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
+      @child_taxon = create(:taxon, :name =>'Child 1', :taxonomy_id => @taxonomy.id, :parent => @parent_taxon)
       @parent_taxon.reload # Need to reload for descendents to show up
 
       product.taxons << @parent_taxon
