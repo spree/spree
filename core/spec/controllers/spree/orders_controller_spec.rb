@@ -65,21 +65,6 @@ describe Spree::OrdersController do
       spree_put :update, {}, {:order_id => 1}
       response.should redirect_to(spree.cart_path)
     end
-
-    # Regression test for #2004
-    context "with a transition callback on first state" do
-      before do
-        first_state, _ = Spree::Order.checkout_steps.first
-        Spree::Order.state_machine.after_transition :to => first_state do |order|
-          puts "OMG!"
-        end
-      end
-
-      it "correctly calls the transition callback" do
-        order.stub(:update_attributes).and_return true
-        spree_put :update, { :checkout => "checkout" }, { :order_id => 1}
-      end
-    end
   end
 
   context "#empty" do
