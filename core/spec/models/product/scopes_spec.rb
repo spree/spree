@@ -17,7 +17,7 @@ describe "Product scopes" do
     end
 
     it "calling Product.in_taxon should not return duplicate records" do
-      Spree::Product.in_taxon(@parent_taxon).to_a.should == 1
+      Spree::Product.in_taxon(@parent_taxon).to_a.count.should == 1
     end
   end
 end
