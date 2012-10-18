@@ -1,8 +1,8 @@
 <div data-hook="admin_tax_rate_form_fields">
-  <fieldset data-hook="tax_rates" class="alpha ten columns no-border-bottom">
+  <fieldset data-hook="tax_rates" class="alpha twelve columns no-border-bottom">
     <legend><%= t(:general_settings) %></legend>
     
-    <div class="alpha five columns">
+    <div class="alpha six columns">
       <div data-hook="name" class="field">
         <%= f.label :name, t(:name) %>
         <%= f.text_field :name, :class => 'fullwidth' %>
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="omega five columns">
+    <div class="omega six columns">
       <div data-hook="zone" class="field">
         <%= f.label :zone, t(:zone) %>
         <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2 fullwidth'}) %>

@@ -13,9 +13,11 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment_method } %>
 
 <%= form_for @payment_method, :url => admin_payment_method_path(@payment_method) do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <div data-hook="buttons" class="align-center">
-    <%= button t(:update), 'icon-refresh' %>
-  </div>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <div data-hook="buttons" class="filter-actions actions">
+      <%= button t(:update), 'icon-refresh' %>
+    </div>
+  </fieldset>
 
 <% end %>

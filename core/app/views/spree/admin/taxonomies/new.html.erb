@@ -13,8 +13,10 @@
 <%= form_for [:admin, @taxonomy] do |f| %>
 
   <%= render :partial => 'form', :locals => { :f => f } %>
-
-  <div class="form-buttons" data-hook="buttons">
-    <%= button t(:create), 'icon-ok' %>
-  </div>
+  <fieldset class="no-border-top">
+    <br>
+    <div class="filter-actions actions" data-hook="buttons">
+      <%= button t(:create), 'icon-ok' %>
+    </div>
+  </fieldset>
 <% end %>

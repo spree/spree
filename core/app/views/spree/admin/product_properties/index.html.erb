@@ -18,29 +18,31 @@
 <% end %>
 
 <%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
-  <div class="add_product_properties" data-hook="add_product_properties"></div>
-  
-  <div id="prototypes" data-hook></div>
-  <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
-  
-  <table class="index">
-    <thead>
-      <tr data-hook="product_properties_header">
-        <th><%= t(:property) %></th>
-        <th><%= t(:value) %></th>
-        <th class="actions"></th>
-      </tr>
-    </thead>
-    <tbody id="product_properties" data-hook>
-      <%= f.fields_for :product_properties do |pp_form| %>
-        <%= render :partial => 'product_property_fields', :locals => { :f => pp_form } %>
-      <% end %>
-    </tbody>
-  </table>
+  <fieldset class="no-border-top">
+    <div class="add_product_properties" data-hook="add_product_properties"></div>
+    
+    <div id="prototypes" data-hook></div>
+    <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
+    
+    <table class="index">
+      <thead>
+        <tr data-hook="product_properties_header">
+          <th><%= t(:property) %></th>
+          <th><%= t(:value) %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody id="product_properties" data-hook>
+        <%= f.fields_for :product_properties do |pp_form| %>
+          <%= render :partial => 'product_property_fields', :locals => { :f => pp_form } %>
+        <% end %>
+      </tbody>
+    </table>
 
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 
-  <%= hidden_field_tag 'clear_product_properties', 'true' %>
+    <%= hidden_field_tag 'clear_product_properties', 'true' %>
+  </fieldset>
 <% end %>
 
 <%= javascript_tag do -%>

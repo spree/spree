@@ -11,7 +11,10 @@
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tracker } %>
+
 <%= form_for [:admin, @tracker] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>

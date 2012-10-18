@@ -1,4 +1,5 @@
 $("#new_product").html('<%= escape_javascript(render :template => "spree/admin/products/new", :formats => [:html], :handlers => [:erb]) %>');
 handle_date_picker_fields();
+$('.select2').select2();
 $("#table-filter").hide();
 $("#admin_new_product").parent().hide();
