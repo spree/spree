@@ -1,0 +1,35 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:listing_countries) %>
+<% end %>
+
+<table class="index" id='listing_countries' data-hook>
+  <colgroup>
+    <col style="width: 30%" />
+    <col style="width: 30%" />
+    <col style="width: 25%" />
+    <col style="width: 15%" />
+  </colgroup>
+  <thead>
+    <tr data-hook="tax_header">
+      <th><%= t(:name) %></th>
+      <th><%= t(:iso_name) %></th>
+      <th><%= t(:states_required) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @countries.each do |country|
+         @edit_url = edit_admin_country_path(country)
+    %>
+      <tr id="<%= spree_dom_id country %>" data-hook="country_row" class="<%= cycle('odd', 'even')%>">
+        <td><%= country.name %></td>
+        <td><%= country.iso_name %></td>
+        <td class="align-center"><%= country.states_required.to_s.titleize %></td>
+        <td class="actions">
+          <%= link_to_edit country, :no_text => true %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
