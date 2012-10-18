@@ -4,59 +4,61 @@
   <% end %>
   
   <%= form_for @order, :url => admin_order_url(@order), :method => :put do |f| %>
-    <%= f.hidden_field :number %>
-    <table class="index">
-      <colgroup>
-         <col style="width: 49%;">
-         <col style="width: 14%;">
-         <col style="width: 10%;">
-         <col style="width: 14%;">
-         <col style="width: 8%;">
-      </colgroup>
-      <thead id="line-items">
-        <tr data-hook="admin_order_form_line_items_headers">
-          <th><%= t(:item_description) %></th>
-          <th class="price"><%= t(:price) %></th>
-          <th class="qty"><%= t(:qty) %></th>
-          <th class="total"><span><%= t(:total) %></span></th>
-          <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
-        </tr>        
-      </thead>
-      <tbody data-hook="admin_order_form_line_items">
-        <%= f.fields_for :line_items do |li_form| %>
-          <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
-        <% end %>
-      </tbody>
-      <tbody id="subtotal" data-hook="admin_order_form_subtotal" class="with-border">
-        <tr id="subtotal-row">
-          <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-          <td class="total align-center"><span><%= money(@order.item_total) %></span></td>
-          <td class="actions"></td>
-        </tr>
-      </tbody>
-      <tbody id="order-charges" data-hook="admin_order_form_adjustments" class="with-border">
-        <% @order.adjustments.each do |adjustment| %>
-          <tr>
-            <td colspan="3"><strong><%= adjustment.label %></strong></td>
-            <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
+    <fieldset class="no-border-top">
+      <%= f.hidden_field :number %>
+      <table class="index">
+        <colgroup>
+           <col style="width: 49%;">
+           <col style="width: 14%;">
+           <col style="width: 10%;">
+           <col style="width: 14%;">
+           <col style="width: 8%;">
+        </colgroup>
+        <thead id="line-items">
+          <tr data-hook="admin_order_form_line_items_headers">
+            <th><%= t(:item_description) %></th>
+            <th class="price"><%= t(:price) %></th>
+            <th class="qty"><%= t(:qty) %></th>
+            <th class="total"><span><%= t(:total) %></span></th>
+            <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
+          </tr>        
+        </thead>
+        <tbody data-hook="admin_order_form_line_items">
+          <%= f.fields_for :line_items do |li_form| %>
+            <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
+          <% end %>
+        </tbody>
+        <tbody id="subtotal" data-hook="admin_order_form_subtotal" class="with-border">
+          <tr id="subtotal-row">
+            <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
+            <td class="total align-center"><span><%= money(@order.item_total) %></span></td>
             <td class="actions"></td>
           </tr>
-        <% end %>
-      </tbody>
-      <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total with-border">
-        <tr>
-          <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-          <td class="total align-center"><span id="order_total"><%= @order.display_total %></span></td>
-          <td class="actions"></td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+        <tbody id="order-charges" data-hook="admin_order_form_adjustments" class="with-border">
+          <% @order.adjustments.each do |adjustment| %>
+            <tr>
+              <td colspan="3"><strong><%= adjustment.label %></strong></td>
+              <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
+              <td class="actions"></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total with-border">
+          <tr>
+            <td colspan="3"><b><%= t(:order_total) %>:</b></td>
+            <td class="total align-center"><span id="order_total"><%= @order.display_total %></span></td>
+            <td class="actions"></td>
+          </tr>
+        </tbody>
+      </table>
 
-    <div class="form-buttons actions" data-hook="admin_order_form_buttons">
-      <%= button t(:update), 'icon-refresh' %>
-      <%= t(:or) %> <%= link_to_with_icon 'button icon-arrow-left', t(:back), admin_orders_url %>
-    </div>
-
+      <div class="filter-actions actions" data-hook="admin_order_form_buttons">
+        <%= button t(:update), 'icon-refresh' %>
+        <span class="or"><%= t(:or) %></span>
+        <%= link_to_with_icon 'button icon-arrow-left', t(:back), admin_orders_url %>
+      </div>
+    </fieldset>
   <% end %>
 
   <%= javascript_tag do -%>

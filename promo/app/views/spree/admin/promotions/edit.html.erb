@@ -9,8 +9,10 @@
 <% end %>
 
 <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>
 
 <div id="promotion-filters" class="row">

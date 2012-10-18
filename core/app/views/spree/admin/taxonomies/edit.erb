@@ -15,22 +15,26 @@
 <div id="ajax_error" class="errorExplanation" style="display:none;"></div>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <div>
-    <%= label_tag nil, t(:tree) %><br />
-    <div id="taxonomy_tree" class="tree" data-url="<%= admin_taxonomy_taxons_path @taxonomy %>"></div>
-  </div>
-  <div id="progress" style="display:none;">
-    <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
-  </div>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <div>
+      <%= label_tag nil, t(:tree) %><br />
+      <div id="taxonomy_tree" class="tree" data-url="<%= admin_taxonomy_taxons_path @taxonomy %>"></div>
+    </div>
+    <div id="progress" style="display:none;">
+      <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
+    </div>
 
-  <div class="info"><%= t(:taxonomy_tree_instruction) %></div>
+    <div class="info"><%= t(:taxonomy_tree_instruction) %></div>
 
-  <br>
+    <br>
 
-  <div class="form-buttons">
-    <%= button t(:update), 'icon-refresh' %> <%= t(:or) %> <%= button_link_to t(:cancel), admin_taxonomies_path, :icon => 'icon-remove' %>
-  </div>
+    <div class="filter-actions actions">
+      <%= button t(:update), 'icon-refresh' %>
+      <span class="or"><%= t(:or) %></span>
+      <%= button_link_to t(:cancel), admin_taxonomies_path, :icon => 'icon-remove' %>
+    </div>
+  </fieldset>
 <% end %>
 
 <% content_for :head do %>

@@ -12,7 +12,7 @@
 
 <% if @order.cart? %>
   <div id="add-line-item" data-hook>
-    <fieldset>
+    <fieldset class="no-border-bottom">
       <legend><%= t(:customer_search) %></legend>
       <%= label_tag :customer_search, t(:enter_at_least_five_letters) %>
       <%= text_field_tag :customer_search,  nil, :class => 'fullwidth title' %>

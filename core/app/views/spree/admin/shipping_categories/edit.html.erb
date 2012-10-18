@@ -1,3 +1,5 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 <% content_for :page_title do %>
   <%= t(:editing_shipping_category) %>
 <% end %>
@@ -11,6 +13,8 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipping_category } %>
 
 <%= form_for [:admin, @shipping_category] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>
