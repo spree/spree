@@ -92,18 +92,11 @@
     <% end %>
   </div>
 
-<<<<<<< HEAD
   <div class="twelve columns alpha omega">
     <%= f.field_container :taxons do %>
-      <%= f.label :taxon_ids, t(:taxons) %>
-      <%= f.select :taxon_ids, taxon_options_for(@product), {}, :class => "select2-taxons", :multiple => true %>
+      <%= f.label :taxon_ids, t(:taxons) %><br />
+      <%= f.hidden_field :taxon_ids, :value => @product.taxon_ids.join(',') %>
     <% end %>
-=======
-  <%= f.field_container :taxons do %>
-    <%= f.label :taxon_ids, t(:taxons) %><br />
-    <%= f.hidden_field :taxon_ids, :value => @product.taxon_ids.join(',') %>
-  <% end %>
->>>>>>> 424916f... AJAXify autocomplete for taxons on product autocomplete page
 
     <%= f.field_container :option_types do %>
       <%= f.label :option_type_ids, t(:option_types) %>
