@@ -1,7 +1,6 @@
 /*
 * This is a manifest file that includes stylesheets for spree_core  
- *= require html5reset
+ *= require normalize
  *= require skeleton
- *= require jquery.formalize
  *= require store/screen 
 */
