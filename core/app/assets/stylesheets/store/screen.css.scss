@@ -42,6 +42,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     &:hover {
       color: darken($link_text_color, 10) !important;
     }
+
+    &:active, &:focus {
+      outline: none;
+    }
   }
 
   /*--------------------------------------*/
@@ -51,6 +55,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     margin-left: 0;
     margin-top: 0;
     -webkit-padding-start: 0px;
+    padding-left: 0;
     list-style-position: inside;
 
     &.inline {
@@ -94,6 +99,8 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     color: $title_text_color;
     -webkit-margin-before: 0;
     -webkit-margin-after: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   /*--------------------------------------*/
@@ -329,10 +336,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
 
     .taxons-list {
-      padding-left: 20px;
-      margin-bottom: 20px;
-      list-style: disc outside;
-
       li {
         a {
           font-size: $main_navigation_font_size
