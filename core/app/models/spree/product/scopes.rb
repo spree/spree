@@ -65,10 +65,6 @@ module Spree
       taxons.first ? prepare_taxon_conditions(taxons) : scoped
     end
 
-    # def self.in_cached_group(product_group)
-    #   joins(:product_groups).where('spree_product_groups_products.product_group_id' => product_group)
-    # end
-
     # a scope that finds all products having property specified by name, object or id
     add_search_scope :with_property do |property|
       properties = Property.table_name
