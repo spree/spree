@@ -50,6 +50,19 @@ module Spree
     # If you need products only within one taxon use
     #
     #   Spree::Product.taxons_id_eq(x)
+    # 
+    # If you're using count on the result of this scope, you must use the
+    # `:distinct` option as well:
+    #
+    #   Spree::Product.in_taxon(taxon).count(:distinct => true)
+    #
+    # This is so that the count query is distinct'd:
+    #
+    #   SELECT COUNT(DISTINCT "spree_products"."id") ...
+    #
+    #   vs.
+    #
+    #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
       select("DISTINCT(spree_products.id), spree_products.*").
       joins(:taxons).
