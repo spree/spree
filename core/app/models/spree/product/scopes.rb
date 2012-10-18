@@ -193,7 +193,7 @@ module Spree
 
     add_search_scope :on_hand do
       variants_table = Variant.table_name
-      where("#{table_name}.id in (select product_id from #{variants_table} where product_id = #{table_name}.id group by product_id having sum(count_on_hand) > 0)")
+      where("#{table_name}.id in (select product_id from #{variants_table} where product_id = #{table_name}.id and #{variants_table}.deleted_at IS NULL group by product_id having sum(count_on_hand) > 0)")
     end
 
     add_search_scope :taxons_name_eq do |name|
