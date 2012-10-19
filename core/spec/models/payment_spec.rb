@@ -182,11 +182,6 @@ describe Spree::Payment do
           payment.state = 'pending'
         end
 
-        it "should not do anything" do
-          payment.payment_method.should_not_receive(:capture)
-          payment.log_entries.should_not_receive(:create)
-        end
-
         context "if sucessful" do
           before do
             payment.payment_method.should_receive(:capture).with(payment, card, anything).and_return(success_response)
@@ -211,6 +206,20 @@ describe Spree::Payment do
             payment.should_not_receive(:complete)
             lambda { payment.capture! }.should raise_error(Spree::Core::GatewayError)
           end
+        end
+      end
+
+      # Regression test for #2119
+      context "when payment is completed" do
+        before do
+          payment.state = 'completed'
+        end
+
+        it "should do nothing" do
+          payment.should_not_receive(:complete)
+          payment.payment_method.should_not_receive(:capture)
+          payment.log_entries.should_not_receive(:create)
+          payment.capture!
         end
       end
     end
