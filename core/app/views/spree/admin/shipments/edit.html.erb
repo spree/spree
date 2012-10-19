@@ -10,13 +10,13 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
 <% content_for :page_title do %>
-  / <%= t(:shipment) %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)
+  <i class="icon-arrow-right"></i> <%= t(:shipments) %> <i class="icon-arrow-right"></i> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)
 <% end %>
 
 <div data-hook="admin_shipment_edit_header">
   
   <% if @shipment.cost %>
-    <h5><%= t(:charges) %> <span class="green"><%= money @shipment.cost %></span></h5>
+    <h5 class="outstanding-balance"><%= t(:charges) %> <span class="green"><%= money @shipment.cost %></span></h5>
   <% end %>
 
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>
@@ -24,18 +24,20 @@
 
 <div data-hook="admin_shipment_edit_form">
   <%= form_for @shipment, :url => admin_order_shipment_path(@order, @shipment), :method => :put do |shipment_form| %>
+    <fieldset class="no-border-top">
       <%= render :partial => 'form', :locals => { :shipment_form => shipment_form } %>
 
       <div data-hook="admin_shipment_edit_form_buttons">
-        <div class="form-buttons">
+        <div class="filter-actions actions">
           <% if @shipment.editable_by?(try_spree_current_user) %>
             <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
-            <%= t(:or) %>
+            <span class="or"><%= t(:or) %></span>
             <%= button_link_to t(:cancel), admin_order_shipments_path(@order), :icon => 'icon-remove' %>
           <% else %>
             <%= button_link_to t(:back), edit_admin_order_shipment_path(@order), :icon => 'icon-arrow-left' %>
           <% end %>
         </div>
       </div>
+    </fieldset>
   <% end %>
 </div>

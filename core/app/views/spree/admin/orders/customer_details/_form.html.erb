@@ -13,11 +13,13 @@
       <div class="omega four columns">
         <div class="field">
           <%= label_tag nil, t(:guest_checkout) %>:
-          <% if @order.completed? %>
-            <%= @order.user.nil? ? t(:yes) : t(:no) %>
-          <% else %>
-            <% guest = @order.user.nil? || @order.user.anonymous? %>
-            <ul>                
+          <ul>
+            <% if @order.completed? %>
+              <li>
+                <%= @order.user.nil? ? t(:yes) : t(:no) %>
+              </li>
+            <% else %>
+              <% guest = @order.user.nil? || @order.user.anonymous? %>
               <li>
                 <%= radio_button_tag :guest_checkout, true, guest %>
                 <%= t(:yes) %>
@@ -25,10 +27,10 @@
               <li>
                 <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
                 <%= t(:no) %>  
-              </li>
-            </ul>
-            <%= hidden_field_tag :user_id, @order.user_id %>
-          <% end %>
+              </li>              
+              <%= hidden_field_tag :user_id, @order.user_id %>
+            <% end %>
+          </ul>
         </div>
       </div>
     </div>

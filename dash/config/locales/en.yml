@@ -3,3 +3,9 @@ en:
   agree_to_privacy_policy: Agree to Privacy Policy
   already_signed_up_for_analytics: You have already signed up for Spree Analytics
   successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
+  analytics_desc_header_1: Spree Analytics
+  analytics_desc_header_2: Live analytics integrated into your Spree dashboard
+  analytics_desc_list_1: Get live sales information as it happens
+  analytics_desc_list_2: Requires only a free Spree account to activate
+  analytics_desc_list_3: Absolutely no code to install
+  analytics_desc_list_4: It's completely free!
