@@ -2,7 +2,7 @@
   <fieldset id="billing" data-hook>
     <%= form.fields_for :bill_address do |bill_form| %>
       <legend><%= t(:billing_address) %></legend>
-      <%= render :partial => 'spree/checkout/address_part', :locals => {:form => bill_form, :address_type => 'billing', :address => @order.bill_address} %>
+      <%= render :partial => 'spree/address/form', :locals => {:form => bill_form, :address_type => 'billing', :address => @order.bill_address} %>
     <% end %>
   </fieldset>
 </div>
@@ -15,7 +15,7 @@
         <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) || @order.bill_address.same_as?(@order.ship_address)) %>
         <%= label_tag :order_use_billing, t(:use_billing_address), :id => 'use_billing' %>
       </p>
-      <%= render :partial => 'spree/checkout/address_part', :locals => {:form => ship_form, :address_type => 'shipping', :address => @order.ship_address} %>
+      <%= render :partial => 'spree/address/form', :locals => {:form => ship_form, :address_type => 'shipping', :address => @order.ship_address} %>
     <% end %>
   </fieldset>
 </div>

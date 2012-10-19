@@ -20,9 +20,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @countries.each do |country|
-         @edit_url = edit_admin_country_path(country)
-    %>
+    <% @countries.each do |country| %>
       <tr id="<%= spree_dom_id country %>" data-hook="country_row" class="<%= cycle('odd', 'even')%>">
         <td><%= country.name %></td>
         <td><%= country.iso_name %></td>
