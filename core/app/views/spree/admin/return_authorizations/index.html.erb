@@ -1,12 +1,17 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+
 <% content_for :page_actions do %>
   <% if @order.inventory_units.any? &:shipped? %>
     <li>
       <%= button_link_to t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'icon-plus' %>
     </li>
   <% end %>
+  <li><%= button_link_to t(:back_to_orders_list), spree.admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:return_authorizations) %>
+<% end %>
 
 <% if @order.inventory_units.any? &:shipped? %>
   <table class="index">
