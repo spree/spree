@@ -269,7 +269,22 @@ en:
   awaiting_return: Awaiting Return
   back: Back
   back_end: Back End
+  back_to_images_list: "Back To Images List"
+  back_to_mail_methods_list: "Back To Mail Methods List"
+  back_to_option_tyles_list: "Back To Option Types List"
+  back_to_payment_methods_list: "Back To Payment Methods List"
+  back_to_products_list: "Back To Products List"
+  back_to_properties_list: "Back To Products List"
+  back_to_prototypes_list: "Back To Prototypes List"
+  back_to_reports_list: "Back To Reports List"
+  back_to_shipping_categories: "Back To Shipping Categories"
+  back_to_shipping_methods_list: "Back To Shipping Methods List"  
+  back_to_states_list: "Back To States List"
   back_to_store: "Go Back To Store"
+  back_to_tax_categories_list: "Back To Tax Categories List"
+  back_to_taxonomies_list: "Back To Taxonomies List"
+  back_to_trackers_list: "Back To Trackers List"
+  back_to_zones_list: "Back To Zones List"  
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
   balance_due: "Balance Due"
@@ -311,6 +326,7 @@ en:
   configuration: Configuration
   configuration_options: "Configuration Options"
   configurations: Configurations
+  configure_s3: "Configure S3"
   configured: Configured
   confirm: Confirm
   confirm_delete: "Confirm Deletion"
@@ -338,6 +354,7 @@ en:
   current: Current
   currency: Currency
   currency_symbol_position: "Put currency symbol before or after dollar amount?"
+  currency_settings: "Currency Settings"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
@@ -900,6 +917,7 @@ en:
   searching: Searching
   secure_connection_type: Secure Connection Type
   secure_credit_card: Secure Credit Card
+  security_settings: "Security Settings"
   select: Select
   select_from_prototype: "Select From Prototype"
   select_preferred_shipping_option: "Select preferred shipping option"
