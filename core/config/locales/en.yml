@@ -608,6 +608,7 @@ en:
   or: or
   or_over_price: "%{price} or over"
   order: Order
+  order_adjustments: "Order adjustments"
   order_confirmation_note: ""
   order_date: "Order Date"
   order_details: "Order Details"
