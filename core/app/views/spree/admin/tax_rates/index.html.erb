@@ -12,8 +12,7 @@
 
 <% unless @tax_rates.any? %>
   <div class="no-objects-found">
-    <%= t(:no_tax_rates_found) %>.
-    <%= link_to t(:add_one), new_object_url %>!
+    <%= t(:no_results) %>
   </div>
 <% else %>
   <table class="index">
