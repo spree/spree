@@ -45,8 +45,7 @@ describe "Address" do
   it "shows a disabled state input field for a country where states are not required", :js => true do
      select france.name, :from => @country_css
      page.find(@state_select_css).should_not be_visible
-     page.find(@state_name_css).should be_visible
-     page.should have_selector("input#{@state_name_css}[disabled]")
+     page.find(@state_name_css).should_not be_visible
   end
 
   it "should clear the state name when selecting a country without states required", :js =>true do
