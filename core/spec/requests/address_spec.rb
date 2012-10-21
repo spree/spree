@@ -21,7 +21,7 @@ describe "Address" do
     click_link "RoR Mug"
     click_button "add-to-cart-button"
     Spree::Order.last.update_column(:email, "funk@groove.com")
-    click_link "Checkout"
+    click_button "Checkout"
 
     address = "order_bill_address_attributes"
     @country_css = "#{address}_country_id"
