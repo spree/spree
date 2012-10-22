@@ -8,7 +8,7 @@
   
   <fieldset class="no-border-top">
     <fieldset class="no-border-bottom">
-      <legend><%= t(:general_settings)%></legend>
+      <legend align="center"><%= t(:general_settings)%></legend>
       
       <div class="field">
         <div class="warning note"><%= t(:image_settings_warning) %></div>
@@ -42,7 +42,7 @@
     </fieldset>
 
     <fieldset class="no-border-bottom" id="attachment_styles" data-hook="attachment_styles">
-      <legend><%= t(:attachment_styles) %></legend>
+      <legend align="center"><%= t(:attachment_styles) %></legend>
 
       <div id="styles_list" class="row frameless">      
         <% @styles.each_with_index do |(style_name, style_value), index| %>        
@@ -63,7 +63,7 @@
     
     <div class="row">
       <fieldset class="alpha six columns no-border-bottom" id="s3_settings" data-hook="s3_settings" style="display: none">
-        <legend><%= t(:configure_s3) %></legend>
+        <legend align="center"><%= t(:configure_s3) %></legend>
 
         <div data-hook="s3_access_key" class="field">
           <%= label_tag 'preferences[s3_access_key]', t(:s3_access_key) %>
@@ -87,7 +87,7 @@
       </fieldset>
 
       <fieldset class="omega six columns no-border-bottom" id="s3_headers" data-hook="s3_headers" style="display: none">
-        <legend><%= t(:s3_headers) %></legend>
+        <legend align="center"><%= t(:s3_headers) %></legend>
 
         <div id="headers_list">
           <% @headers.each do |header_name, header_value| %>

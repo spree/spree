@@ -8,7 +8,7 @@
   <div id="preferences" data-hook>
     
     <fieldset class="general">
-      <legend><%= t(:general_settings)%></legend>
+      <legend align="center"><%= t(:general_settings)%></legend>
       <% @preferences_general.each do |key|
           type = Spree::Config.preference_type(key) %>
           <div class="field">
@@ -22,7 +22,7 @@
       <div class="row">
         <div class="alpha six columns">
           <fieldset class="security no-border-bottom">
-            <legend><%= t(:security_settings)%></legend>
+            <legend align="center"><%= t(:security_settings)%></legend>
             <% @preferences_security.each do |key|
                 type = Spree::Config.preference_type(key) %>
                 <div class="field">
@@ -35,7 +35,7 @@
         </div>
         <div class="omega six columns">
           <fieldset class="currency no-border-bottom">
-            <legend><%= t(:currency_settings)%></legend>
+            <legend align="center"><%= t(:currency_settings)%></legend>
             <% @preferences_currency.each do |key|
                 type = Spree::Config.preference_type(key) %>
                 <div class="field">
