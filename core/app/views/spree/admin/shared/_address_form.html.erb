@@ -8,7 +8,7 @@
   
 <% end %>
   
-<div id="<%= name == t(:shipping_address) ? 'shipping' : 'billing' %>" style="display: <%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? 'none' : '' %>" data-hook="address_fields">
+<div id="<%= name == t(:shipping_address) ? 'shipping' : 'billing' %>" style="display: <%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? 'none' : 'block' %>" data-hook="address_fields">
   <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">    
     <%= f.label :firstname, t(:first_name) + ':' %>    
     <%= f.text_field :firstname, :class => 'fullwidth' %>

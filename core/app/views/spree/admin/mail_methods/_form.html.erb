@@ -3,7 +3,7 @@
       
     <div class="alpha six columns" data-hook="general">
       <fieldset class="no-border-bottom">
-        <legend><%= t(:general) %></legend>
+        <legend align="center"><%= t(:general) %></legend>
         <div class="field">
           <%= f.label :environment, t(:environment) %><br />
           <%= f.collection_select(:environment,
@@ -48,7 +48,7 @@
 
     <div class="six columns omega" data-hook="smtp">
       <fieldset class="no-border-bottom">
-        <legend><%= t(:smtp) %></legend>
+        <legend align="center"><%= t(:smtp) %></legend>
         <div class="field">
           <%= f.label :preferred_mail_domain, t(:smtp_domain) %><br />
           <%= f.text_field :preferred_mail_domain, :class => 'fullwidth' %>

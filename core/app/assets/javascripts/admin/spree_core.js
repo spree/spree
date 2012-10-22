@@ -6,6 +6,7 @@
 //= require jquery.jstree/jquery.jstree
 //= require jquery.alerts/jquery.alerts
 //= require jquery.powertip
+//= require css_browser_selector_dev
 //= require spin
 //= require trunk8
 //= require jquery.adaptivemenu

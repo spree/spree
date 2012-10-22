@@ -1,5 +1,5 @@
 <fieldset id="payment" data-hook>
-  <legend><%= t(:payment_information) %></legend>
+  <legend align="center"><%= t(:payment_information) %></legend>
   <div data-hook="checkout_payment_step">
     <% @order.available_payment_methods.each do |method| %>
     <p>

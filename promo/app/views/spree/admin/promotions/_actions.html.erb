@@ -1,6 +1,6 @@
 <fieldset id="action_fields" class="eight columns omega no-border-bottom">
 
-  <legend><%= t(:promotion_actions) %></legend>
+  <legend align="center"><%= t(:promotion_actions) %></legend>
 
   <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
     <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
