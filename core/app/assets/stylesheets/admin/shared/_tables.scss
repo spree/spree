@@ -93,22 +93,19 @@ table {
 
   }
 
-  th {
-    padding: 10px;
-    border-top: 1px solid $color-border;
-    border-bottom: 1px solid $color-border;
-  }
-
   thead {
     th {
-      border-bottom: none;
       background-color: $color-tbl-thead;
       text-transform: uppercase;
-      font-size: 85%;
+      font-size: 95%;
+      padding: 10px;
+      border-top: 1px solid $color-border;
+      border-bottom: none;
+      font-weight: $font-weight-bold;
     }
   }
 
-  tbody {    
+  tbody {
     tr {
       &:first-child td {
         border-top: 1px solid $color-border;
@@ -161,21 +158,34 @@ table {
       }
     }
 
-    &.no-border-top tr:first-child td {
-      border-top: none;
+    &.no-border-top td {
+      border-top: none !important;
     }
 
-    &.grand-total {
+    &.grand-total {      
       td {
+        border-top: 1px solid !important;
         border-color: $color-2 !important;
         text-transform: uppercase;
         font-size: 110%;
         font-weight: 600;
-        background-color: lighten($color-2, 50);
+        background-color: very-light($color-success, 6);
+
+        &.actions {
+          border: none !important;
+        }
       }
       .total {
-        background-color: $color-2;
+        background-color: $color-success;
         color: $color-1;
+      }
+
+      &:hover td {
+        background-color: very-light($color-success, 9);
+
+        &.total {
+          background-color: $color-success;
+        }
       }
     }
   }

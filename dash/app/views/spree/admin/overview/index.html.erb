@@ -26,11 +26,26 @@
     }, 10000);
   <% end %>
 <% else %>
-  <div class="analytics_splash"></div>
-  
-  <div class="preview-buttons">
-    <%= link_to_with_icon 'icon-ok', t(:activate), admin_analytics_sign_up_path, :class => 'button' %>
-    <%= t(:or) %>
-    <%= link_to_with_icon 'icon-info-sign', t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => 'button', :target => '_blank' %>
+  <div class="no-border-top analytics-description">
+    <div class="description-text">
+      <hgroup>
+        <h1><%= t(:analytics_desc_header_1)%></h1>
+        <h6><%= t(:analytics_desc_header_2)%></h6>
+      </hgroup>
+
+      <ul>
+        <li><%= t(:analytics_desc_list_1)%></li>
+        <li><%= t(:analytics_desc_list_2)%></li>
+        <li><%= t(:analytics_desc_list_3)%></li>
+        <li><%= t(:analytics_desc_list_4)%></li>
+      </ul>
+    </div>
+    <div class="preview-buttons filter-actions actions">
+      <%= link_to_with_icon 'icon-ok', t(:activate), admin_analytics_sign_up_path, :class => 'button' %>
+      <span class="or">&nbsp; <%= t(:or) %> &nbsp;</span>
+      <%= link_to_with_icon 'icon-info-sign', t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => 'button', :target => '_blank' %>
+    </div>
   </div>
+
+  <div class="analytics_splash"></div>
 <% end %>

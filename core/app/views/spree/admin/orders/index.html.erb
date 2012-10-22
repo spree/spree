@@ -81,49 +81,55 @@
   </div>
 <% end %>
 
-<table class="index responsive" id="listing_orders" data-hook>
-  <colgroup>
-     <col style="width: 16%;">
-     <col style="width: 10%;">
-     <col style="width: 13%;">
-     <col style="width: 13%;">
-     <col style="width: 13%;">
-     <col style="width: 17%;">
-     <col style="width: 10%;">
-     <col style="width: 8%;">
-  </colgroup>
-  <thead>
-    <tr data-hook="admin_orders_index_headers">
-      <% if @show_only_completed %>
-        <th><%= sort_link @search, :completed_at, t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
-      <% else %>
-        <th><%= sort_link @search, :created_at,   t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
-      <% end %>
-      <th><%= sort_link @search, :number,         t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
-      <th><%= sort_link @search, :state,          t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
-      <th><%= sort_link @search, :payment_state,  t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-      <th><%= sort_link @search, :shipment_state, t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-      <th><%= sort_link @search, :email,          t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
-      <th><%= sort_link @search, :total,          t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
-      <th data-hook="admin_orders_index_header_actions" class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-  <% @orders.each do |order| %>
-    <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-      <td class="align-center"><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
-      <td><%= link_to order.number, admin_order_path(order) %></td>
-      <td class="align-center"><span class="state <%= order.state.downcase %>"><%= t("order_state.#{order.state.downcase}") %></span></td>
-      <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
-      <td class="align-center"><span class="state <%= order.shipment_state %>"><%= link_to t("shipment_states.#{order.shipment_state}"), admin_order_shipments_path(order) if order.shipment_state %></span></td>
-      <td><%= mail_to order.email %></td>
-      <td class="align-center"><%= order.display_total %></td>
-      <td class='actions align-center' data-hook="admin_orders_index_row_actions">
-        <%= link_to_edit_url edit_admin_order_path(order), :title => "admin_edit_#{dom_id(order)}", :no_text => true %>
-      </td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<% if @orders.any? %>
+  <table class="index responsive" id="listing_orders" data-hook>
+    <colgroup>
+       <col style="width: 16%;">
+       <col style="width: 10%;">
+       <col style="width: 13%;">
+       <col style="width: 13%;">
+       <col style="width: 13%;">
+       <col style="width: 17%;">
+       <col style="width: 10%;">
+       <col style="width: 8%;">
+    </colgroup>
+    <thead>
+      <tr data-hook="admin_orders_index_headers">
+        <% if @show_only_completed %>
+          <th><%= sort_link @search, :completed_at, t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
+        <% else %>
+          <th><%= sort_link @search, :created_at,   t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
+        <% end %>
+        <th><%= sort_link @search, :number,         t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :state,          t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :payment_state,  t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :shipment_state, t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :email,          t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :total,          t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th data-hook="admin_orders_index_header_actions" class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @orders.each do |order| %>
+      <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
+        <td class="align-center"><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
+        <td><%= link_to order.number, admin_order_path(order) %></td>
+        <td class="align-center"><span class="state <%= order.state.downcase %>"><%= t("order_state.#{order.state.downcase}") %></span></td>
+        <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
+        <td class="align-center"><span class="state <%= order.shipment_state %>"><%= link_to t("shipment_states.#{order.shipment_state}"), admin_order_shipments_path(order) if order.shipment_state %></span></td>
+        <td><%= mail_to order.email %></td>
+        <td class="align-center"><%= order.display_total %></td>
+        <td class='actions align-center' data-hook="admin_orders_index_row_actions">
+          <%= link_to_edit_url edit_admin_order_path(order), :title => "admin_edit_#{dom_id(order)}", :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="no-objects-found">
+    <%= t(:no_results) %>
+  </div>
+<% end %>
 
 <%= paginate @orders %>
