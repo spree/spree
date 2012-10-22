@@ -88,10 +88,6 @@ require 'spree/core/permalinks'
 require 'spree/core/token_resource'
 require 'spree/core/s3_support'
 
-silence_warnings do
-  require 'spree/core/authorize_net_cim_hack'
-end
-
 require 'spree/core/version'
 
 require 'spree/core/engine'
