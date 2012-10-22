@@ -80,6 +80,7 @@ module Spree
 
       def update_order
         # update the order totals, etc.
+        order.create_tax_charge!
         order.update!
       end
 
