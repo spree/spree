@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Core::Search::Base do
 
   before do
-    include ::Spree::ProductFilters
+    include Spree::Models::ProductFilters
     @product1 = create(:product, :name => "RoR Mug", :price => 9.00, :on_hand => 1)
     @product2 = create(:product, :name => "RoR Shirt", :price => 11.00, :on_hand => 1)
   end
