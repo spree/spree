@@ -62,46 +62,50 @@
     </fieldset>
     
     <div class="row">
-      <fieldset class="alpha six columns no-border-bottom" id="s3_settings" data-hook="s3_settings" style="display: none">
-        <legend align="center"><%= t(:configure_s3) %></legend>
+      <div class="alpha six columns" id="s3_settings" data-hook="s3_settings" style="display: none">
+        <fieldset class="no-border-bottom">
+          <legend align="center"><%= t(:configure_s3) %></legend>
 
-        <div data-hook="s3_access_key" class="field">
-          <%= label_tag 'preferences[s3_access_key]', t(:s3_access_key) %>
-          <%= preference_field_tag 'preferences[s3_access_key]', Spree::Config[:s3_access_key], :type => :string %>
-        </div>
+          <div data-hook="s3_access_key" class="field">
+            <%= label_tag 'preferences[s3_access_key]', t(:s3_access_key) %>
+            <%= preference_field_tag 'preferences[s3_access_key]', Spree::Config[:s3_access_key], :type => :string %>
+          </div>
 
-        <div data-hook="s3_secret" class="field">
-          <%= label_tag 'preferences[s3_secret]', t(:s3_secret) %>
-          <%= preference_field_tag 'preferences[s3_secret]', Spree::Config[:s3_secret], :type => :string %>
-        </div>
+          <div data-hook="s3_secret" class="field">
+            <%= label_tag 'preferences[s3_secret]', t(:s3_secret) %>
+            <%= preference_field_tag 'preferences[s3_secret]', Spree::Config[:s3_secret], :type => :string %>
+          </div>
 
-        <div data-hook="s3_bucket" class="field">
-          <%= label_tag 'preferences[s3_bucket]', t(:s3_bucket) %>
-          <%= preference_field_tag 'preferences[s3_bucket]', Spree::Config[:s3_bucket], :type => :string %>
-        </div>
+          <div data-hook="s3_bucket" class="field">
+            <%= label_tag 'preferences[s3_bucket]', t(:s3_bucket) %>
+            <%= preference_field_tag 'preferences[s3_bucket]', Spree::Config[:s3_bucket], :type => :string %>
+          </div>
 
-        <div data-hook="s3_protocol" class="field">
-          <%= label_tag 'preferences[s3_protocol]', t(:s3_protocol) %>
-          <%= preference_field_tag 'preferences[s3_protocol]', Spree::Config[:s3_protocol], :type => :string %>
-        </div>
-      </fieldset>
+          <div data-hook="s3_protocol" class="field">
+            <%= label_tag 'preferences[s3_protocol]', t(:s3_protocol) %>
+            <%= preference_field_tag 'preferences[s3_protocol]', Spree::Config[:s3_protocol], :type => :string %>
+          </div>
+        </fieldset>
+      </div>
 
-      <fieldset class="omega six columns no-border-bottom" id="s3_headers" data-hook="s3_headers" style="display: none">
-        <legend align="center"><%= t(:s3_headers) %></legend>
+      <div class="omega six columns" id="s3_headers" data-hook="s3_headers" style="display: none">
+        <fieldset class="no-border-bottom">
+          <legend align="center"><%= t(:s3_headers) %></legend>
 
-        <div id="headers_list">
-          <% @headers.each do |header_name, header_value| %>
-            <div class="field">
-              <%= label_tag "s3_headers[#{header_name}]", header_name %>
-              <a href="#" alt="<%= t(:destroy) %>" title="<%= t(:destroy) %>" class="destroy_header with-tip"><i class="icon-trash"></i></a>
-              <%= text_field_tag "s3_headers[#{header_name}]", header_value, :class => 'fullwidth' %>
-            </div>
-          <% end %>
-        </div>
+          <div id="headers_list">
+            <% @headers.each do |header_name, header_value| %>
+              <div class="field">
+                <%= label_tag "s3_headers[#{header_name}]", header_name %>
+                <a href="#" alt="<%= t(:destroy) %>" title="<%= t(:destroy) %>" class="destroy_header with-tip"><i class="icon-trash"></i></a>
+                <%= text_field_tag "s3_headers[#{header_name}]", header_value, :class => 'fullwidth' %>
+              </div>
+            <% end %>
+          </div>
 
-        <%= link_to_with_icon 'icon-plus', t(:add_new_header), '#', :class => 'add_header button' %>
-        
-      </fiedlset>  
+          <%= link_to_with_icon 'icon-plus', t(:add_new_header), '#', :class => 'add_header button' %>
+          
+        </fiedlset>  
+      </div>
     </div>
     
 

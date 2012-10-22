@@ -34,19 +34,23 @@
     </div>
   </fieldset>
 
-  <fieldset class="alpha six columns no-border-bottom">
-    <legend align="center"><%= t(:billing_address) %></legend>
-    <%= f.fields_for :bill_address do |ba_form| %>
-      <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => ba_form, :name => t(:billing_address), :use_billing => false } %>
-    <% end %>
-  </fieldset>
-
-  <fieldset class="omega six columns no-border-bottom">
-    <legend align="center"><%= t(:shipping_address) %></legend>
-    <%= f.fields_for :ship_address do |sa_form| %>
-      <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => t(:shipping_address), :use_billing => true } %>
-    <% end %>
-  </fieldset>
+  <div data-hook="bill_address_wrapper" class="alpha six columns">
+    <fieldset class="no-border-bottom">
+      <legend align="center"><%= t(:billing_address) %></legend>
+      <%= f.fields_for :bill_address do |ba_form| %>
+        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => ba_form, :name => t(:billing_address), :use_billing => false } %>
+      <% end %>
+    </fieldset>
+  </div>
+  
+  <div class="omega six columns" data-hook="ship_address_wrapper">
+    <fieldset class="no-border-bottom">
+      <legend align="center"><%= t(:shipping_address) %></legend>
+      <%= f.fields_for :ship_address do |sa_form| %>
+        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => t(:shipping_address), :use_billing => true } %>
+      <% end %>    
+    </fieldset>
+  </div>
 
   <div class="clear"></div>
 
