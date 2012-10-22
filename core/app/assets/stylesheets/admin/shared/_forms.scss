@@ -87,7 +87,7 @@ span.info {
 }
 
 .field {
-  margin-bottom: 10px;
+  padding: 10px 0;
 
   ul {
     border-top: 1px solid $color-border;
@@ -166,6 +166,7 @@ fieldset {
 
   .filter-actions {
     margin-bottom: -32px;
+    margin-top: 15px;
     text-align: center;
 
     form {
@@ -200,11 +201,6 @@ fieldset {
               box-shadow: 0 0 0 5px $color-1;
     }
   }
-  
-
-  .field {
-    padding: 10px 0;
-  }  
 
   &.labels-inline {
     .field {

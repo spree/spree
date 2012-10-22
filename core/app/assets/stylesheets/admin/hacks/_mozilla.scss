@@ -5,4 +5,34 @@ html.firefox {
     margin-top: 18px;
   }
 
+  // Properly align icons in circle
+  table td.actions .no-text.icon-edit {
+    padding-left: 1px;
+  }
+
+  // Fix select2 tag input size
+  input.select2-input {
+    padding: 0px 10px !important;
+  }
+
+  // Fix select2 tag input container padding
+  .select2-container-multi .select2-choices {
+    padding-bottom: 0 !important;
+  }
+
+  // Fix select2 search input left padding to not overlap search icon
+  .select2-search input.select2-input {
+    padding-left: 25px !important;
+  }
+
+  // Fix image file upload width
+  input#image_attachment {
+    width: 80%;
+  }
+
+  // Fix button height
+  input[type="submit"], input[type="button"], button, .button {
+    padding: 8px 15px;
+  }
+
 }
