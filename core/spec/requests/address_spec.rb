@@ -31,7 +31,6 @@ describe "Address" do
 
   it "shows the state collection selection for a country having states", :js => true do
     select canada.name, :from => @country_css
-    sleep(1)
     page.find(@state_select_css).should be_visible
     page.find(@state_name_css).should_not be_visible
   end
@@ -45,7 +44,6 @@ describe "Address" do
 
   it "shows a disabled state input field for a country where states are not required", :js => true do
      select france.name, :from => @country_css
-     sleep(1)
      page.find(@state_select_css).should_not be_visible
      page.find(@state_name_css).should_not be_visible
   end
