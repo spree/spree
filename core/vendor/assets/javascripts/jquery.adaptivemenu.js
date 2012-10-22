@@ -40,7 +40,7 @@ jQuery.fn.AdaptiveMenu = function(options){
 
 			var ul =  $("<ul>")
 				.css({"position":"absolute"})
-				.addClass(options.class)
+				.addClass(options.klass)
 				.html(hideLi.clone()).prepend(lastLi.clone().hide());
 
 			more.append(ul);

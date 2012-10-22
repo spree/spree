@@ -1,32 +1,34 @@
-<fieldset class="alpha six columns no-border-bottom" data-hook="admin_zone_form_fields">
-  <legend><%= t(:general_settings)%></legend>
+<div class="alpha six columns" data-hook="admin_zone_form_fields">
+  <fieldset class="no-border-bottom">
+    <legend align="center"><%= t(:general_settings)%></legend>
 
-  <%= zone_form.field_container :name do %>
-    <%= zone_form.label :name, t(:name) %><br />
-    <%= zone_form.text_field :name, :class => 'fullwidth' %>
-  <% end %>
+    <%= zone_form.field_container :name do %>
+      <%= zone_form.label :name, t(:name) %><br />
+      <%= zone_form.text_field :name, :class => 'fullwidth' %>
+    <% end %>
 
-  <%= zone_form.field_container :description do %>
-    <%= zone_form.label :description, t(:description) %><br />
-    <%= zone_form.text_field :description, :class => 'fullwidth' %>
-  <% end %>
+    <%= zone_form.field_container :description do %>
+      <%= zone_form.label :description, t(:description) %><br />
+      <%= zone_form.text_field :description, :class => 'fullwidth' %>
+    <% end %>
 
-  <div data-hook="default" class="field">
-    <%= zone_form.check_box :default_tax %>
-    <%= label_tag t(:default_tax_zone) %>      
-  </div>
+    <div data-hook="default" class="field">
+      <%= zone_form.check_box :default_tax %>
+      <%= label_tag t(:default_tax_zone) %>      
+    </div>
 
-  <div data-hook="type" class="field">
-    <%= label_tag t(:type) %>
-    <ul>
-      <li>
-        <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
-        <%= label_tag t(:country_based) %>
-      </li>
-      <li>
-        <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
-        <%= label_tag t(:state_based) %>
-      </li>
-    </ul>      
-  </div>
-</fieldset>
+    <div data-hook="type" class="field">
+      <%= label_tag t(:type) %>
+      <ul>
+        <li>
+          <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
+          <%= label_tag t(:country_based) %>
+        </li>
+        <li>
+          <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
+          <%= label_tag t(:state_based) %>
+        </li>
+      </ul>      
+    </div>
+  </fieldset>
+</div>

@@ -21,7 +21,7 @@ jQuery(function($) {
   <% unless Rails.env.test? %>
     $('.main-menu-wrapper ul').AdaptiveMenu({
       text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
-      class: 'dropdown'
+      klass: "dropdown"
     });
   <% end %>
 
@@ -60,7 +60,8 @@ jQuery(function($) {
   });
 
   // Trunkate text in page_title that didn't fit
-  var truncate_elements = $('.truncate')
+  var truncate_elements = $('.truncate');
+
   truncate_elements.each(function(){
     $(this).trunk8();
   });

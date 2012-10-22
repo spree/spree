@@ -1,0 +1,17 @@
+html.opera {
+
+  // Fix legend center align
+  legend {
+    margin: 0 auto;
+  }
+
+  // Properly align icons in circle
+  table td.actions .no-text.icon-edit {
+    padding-left: 1px;
+  }
+
+  // Fix sidebar margin
+  #sidebar  {
+    margin-top: 18px;
+  }
+}

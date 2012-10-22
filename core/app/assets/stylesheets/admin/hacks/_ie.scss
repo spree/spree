@@ -1,0 +1,73 @@
+// IE general hacks
+html.ie {
+
+  // Properly align icons in circle
+  table td.actions .no-text.icon-edit {
+    padding-top: 3px !important;
+  }
+  table td.actions .no-text.icon-envelope-alt {
+    padding-top: 4px !important;
+  }
+
+  // Fix select2 background gradient. (It uses filter gradients for IE)
+  .select2-choice, .select2-choice div, 
+  .select2-container-multi .select2-search-choice,
+  .select2-container:hover .select2-choice,
+  .select2-container.select2-container-active .select2-choice {
+    filter: none;
+  }
+  .select2-search {
+    &:before {
+      position: relative;
+      z-index: 10000;
+      content: '\f002' !important;
+    }
+    input {
+      position: relative;
+      z-index: 0;
+    }
+  }
+
+  // Fix margin-top for destroy paperclip styles background
+  .destroy_new_attachment_styles {
+    margin-top: 17px !important;
+  }
+}
+
+// IE8 Hacks
+html.ie8 {
+
+  // Fix italic font
+  body {
+    font-style: normal;
+  }
+
+  // Fix white border around filter-actions 
+  .filter-actions {
+    margin-bottom: -45px;
+
+    button, .button, input[type="submit"], input[type="button"], span.or {
+      border: 15px solid $color-1;
+    }
+    span.or {
+      border-width: 5px;
+      margin-left: -10px;
+      margin-right: -10px;
+    }
+  }
+
+  // Fix legend align center 
+  legend {
+    display: table;
+  }
+
+  // Sidebar align with fieldsets 
+  #sidebar {
+    margin-top: 27px;
+
+    .sidebar-title span {
+      margin-left: 7px;
+    }
+  }
+
+}

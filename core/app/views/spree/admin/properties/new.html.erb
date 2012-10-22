@@ -4,7 +4,7 @@
 
 <%= form_for [:admin, @property] do |f| %>
 <fieldset data-hook="new_property">
-  <legend><%= t(:new_property) %></legend>
+  <legend align="center"><%= t(:new_property) %></legend>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <div class="filter-actions">
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
