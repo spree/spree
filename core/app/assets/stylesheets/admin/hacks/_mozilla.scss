@@ -29,10 +29,4 @@ html.firefox {
   input#image_attachment {
     width: 80%;
   }
-
-  // Fix button height
-  input[type="submit"], input[type="button"], button, .button {
-    padding: 8px 15px;
-  }
-
 }

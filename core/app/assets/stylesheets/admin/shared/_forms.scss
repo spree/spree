@@ -52,7 +52,7 @@ input[type="button"],
 button, .button {
   @include border-radius(3px);
   display: inline-block;
-  padding: 9px 15px;
+  padding: 8px 15px;
   border: none;  
   background-color: $color-btn-bg;
   color: $color-btn-text;
