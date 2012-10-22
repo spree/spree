@@ -51,7 +51,11 @@ $ ->
     ).triggerHandler 'click'
 
   if ($ '#checkout_form_payment').is('*')
+    # Activate already checked payment method if form is re-rendered
+    # i.e. if user enters invalid data
+    ($ 'input[type="radio"]:checked').click()
+
     ($ 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(->
       ($ '#payment-methods li').hide()
       ($ '#payment_method_' + @value).show() if @checked
-    ).triggerHandler 'click'
+    )
