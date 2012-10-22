@@ -28,13 +28,6 @@
 #--
 require 'rails/all'
 require 'rails/generators'
-require 'state_machine'
-require 'paperclip'
-require 'kaminari'
-require 'awesome_nested_set'
-require 'acts_as_list'
-require 'active_merchant'
-require 'ransack'
 require 'jquery-rails'
 require 'deface'
 require 'cancan'
@@ -42,61 +35,21 @@ require 'select2-rails'
 require 'spree/money'
 require 'rabl'
 
-module Spree
-
-  mattr_accessor :user_class
-
-  def self.user_class
-    if @@user_class.is_a?(Class)
-      raise "Spree.user_class MUST be a String object, not a Class object."
-    elsif @@user_class.is_a?(String)
-      @@user_class.constantize
-    end
-  end
-
-  module Core
-  end
-
-  # Used to configure Spree.
-  #
-  # Example:
-  #
-  #   Spree.config do |config|
-  #     config.site_name = "An awesome Spree site"
-  #   end
-  #
-  # This method is defined within the core gem on purpose.
-  # Some people may only wish to use the Core part of Spree.
-  def self.config(&block)
-    yield(Spree::Config)
-  end
-end
-
-require 'spree/core/ext/active_record'
-
-require 'spree/core/delegate_belongs_to'
+require 'spree/models'
 
 require 'spree/core/responder'
 require 'spree/core/ssl_requirement'
 require 'spree/core/store_helpers'
-require 'spree/core/calculated_adjustments'
 require 'spree/core/mail_settings'
 require 'spree/core/mail_interceptor'
 require 'spree/core/middleware/redirect_legacy_product_url'
 require 'spree/core/middleware/seo_assist'
-require 'spree/core/permalinks'
-require 'spree/core/token_resource'
 require 'spree/core/s3_support'
 
 require 'spree/core/version'
 
 require 'spree/core/engine'
 require 'generators/spree/dummy/dummy_generator'
-
-ActiveRecord::Base.class_eval do
-  include Spree::Core::CalculatedAdjustments
-  include CollectiveIdea::Acts::NestedSet
-end
 
 if defined?(ActionView)
   require 'awesome_nested_set/helper'

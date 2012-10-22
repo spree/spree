@@ -18,21 +18,13 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'acts_as_list', '= 0.1.4'
-  s.add_dependency 'awesome_nested_set', '2.1.4'
+  s.add_dependency 'spree_models', version
+  s.add_dependency 'spree_api', version
 
   s.add_dependency 'jquery-rails', '~> 2.0'
   s.add_dependency 'select2-rails', '~> 3.2'
 
-  s.add_dependency 'highline', '= 1.6.11'
-  s.add_dependency 'state_machine', '= 1.1.2'
-  s.add_dependency 'ffaker', '~> 1.12.0'
-  s.add_dependency 'paperclip', '~> 2.8'
-  s.add_dependency 'aws-sdk', '~> 1.3.4'
-  s.add_dependency 'ransack', '~> 0.7.0'
-  s.add_dependency 'activemerchant', '= 1.28.0'
   s.add_dependency 'rails', '~> 3.2.8'
-  s.add_dependency 'kaminari', '0.13.0'
   s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.3.2'
   s.add_dependency 'cancan', '1.6.7'

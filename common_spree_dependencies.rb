@@ -31,6 +31,14 @@ group :test do
   # gem 'debugger'
 end
 
+if Dir.pwd =~ /spree$/
+  testing_support_path = 'testing_support'
+else
+  testing_support_path = '../testing_support'
+end
+
+gem 'spree_testing_support', :path => testing_support_path 
+
 gemspec
 
 
