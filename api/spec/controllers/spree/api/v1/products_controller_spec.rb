@@ -187,7 +187,7 @@ module Spree
       it "can delete a product" do
         product.deleted_at.should be_nil
         api_delete :destroy, :id => product.to_param
-        response.status.should == 200
+        response.status.should == 204
         product.reload.deleted_at.should_not be_nil
       end
     end
