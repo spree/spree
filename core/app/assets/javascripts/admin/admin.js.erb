@@ -16,6 +16,9 @@ jQuery(function($) {
     responsiveDelay: 0
   });
 
+  // Vertical align of checkbox fields
+  $('.field.checkbox label').vAlign()
+
   <% # Re-adjusting admin menu during test causes tests to fail,
      # like states_spec and shipping_methods_spec. Let's not do this. %>
   <% unless Rails.env.test? %>

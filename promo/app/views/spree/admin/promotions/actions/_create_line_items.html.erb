@@ -1,5 +1,5 @@
 <% promotion_action.promotion_action_line_items.each do |item| %>
-  <strong><%= item.quantity %> x <%= item.variant.product.name %></strong><br> 
+  <strong><%= item.quantity %> x <%= item.variant.product.name %></strong>
   <%= item.variant.options_text %>
 <% end %>
 
@@ -8,15 +8,14 @@
   <% line_items.build %>
 
   <% line_items.each_with_index do |line_item, index| %>
-    <div class="add-line-item block-table">
-        <div class="field table-cell">
+    <div class="add-line-item row">
+        <div class="field alpha four columns">
           <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
-
-          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, :class => "variant_autocomplete" %>
+          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, :class => "variant_autocomplete fullwidth" %>
           <div class='options_placeholder'></div>
         </div>
-        <div class="field table-cell">
-          <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :size => 4, :min => 1 %>
+        <div class="field omega four columns">
+          <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :min => 1, :class => 'fullwidth' %>
         </div>
     </div>
   <% end %>

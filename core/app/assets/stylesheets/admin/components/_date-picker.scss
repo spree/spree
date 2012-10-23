@@ -8,7 +8,7 @@
 }
 
 #ui-datepicker-div {
-  @include border-radius(3px);
+  @include border-radius($border-radius);
   border-color: $color-3;
   padding: 0;
   margin-top: 10px;

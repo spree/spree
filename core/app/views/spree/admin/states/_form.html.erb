@@ -1,11 +1,14 @@
-<div data-hook="admin_state_form_fields" class="align-center">
-  <%= f.field_container :name do %>
-    <%= f.label :name, t(:name) %><br />
-    <%= f.text_field :name %>
-  <% end %>
-
-  <%= f.field_container :abbr do %>
-    <%= f.label :abbr, t(:abbreviation) %><br />
-    <%= f.text_field :abbr %>
-  <% end %>
+<div data-hook="admin_state_form_fields" class="row">
+  <div class="alpha six columns">
+    <%= f.field_container :name do %>
+      <%= f.label :name, t(:name) %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+  <div class="omega six columns">
+    <%= f.field_container :abbr do %>
+      <%= f.label :abbr, t(:abbreviation) %>
+      <%= f.text_field :abbr, :class => 'fullwidth' %>
+    <% end %>
+  </div>
 </div>

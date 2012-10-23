@@ -1,14 +1,13 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:edit_general_settings) %>
+  <%= t(:general_settings) %>
 <% end %>
 
 <%= form_tag admin_general_settings_path, :method => :put do %>
   <div id="preferences" data-hook>
     
-    <fieldset class="general">
-      <legend align="center"><%= t(:general_settings)%></legend>
+    <fieldset class="general no-border-top">
       <% @preferences_general.each do |key|
           type = Spree::Config.preference_type(key) %>
           <div class="field">
@@ -51,13 +50,16 @@
             <div class="field">
               <%= label_tag t(:currency_symbol_position) %><br>
               <div class="choices">
-                
-                  <%= radio_button_tag :currency_symbol_position, "before" %>
-                  <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %>    
-                
-                  <%= radio_button_tag :currency_symbol_position, "after" %>
-                  <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
-                
+                <ul>
+                  <li>
+                    <%= radio_button_tag :currency_symbol_position, "before" %>
+                    <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %>
+                  </li>
+                  <li>
+                    <%= radio_button_tag :currency_symbol_position, "after" %>
+                    <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
+                  </li>
+                </ul>
               </div>
             </div>
           </fieldset>    

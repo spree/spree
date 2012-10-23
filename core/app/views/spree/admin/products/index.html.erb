@@ -40,8 +40,10 @@
           </div>
           <div class="three columns omega">
             <div class="field checkbox">
-              <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null].blank?}, '', '1' %>
-              <%= f.label :deleted_at_null, t(:show_deleted) %>
+              <label>
+                <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null].blank?}, '', '1' %>
+                <%= t(:show_deleted) %>  
+              </label>
             </div>
           </div>
         </div>

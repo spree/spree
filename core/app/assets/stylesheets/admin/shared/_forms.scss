@@ -8,7 +8,7 @@ input[type="url"],
 input[type="number"],
 input[type="tel"],
 textarea, fieldset {
-  @include border-radius(3px);
+  @include border-radius($border-radius);
   padding: 7px 10px;  
   border: 1px solid $color-txt-brd;
   color: $color-body-text;
@@ -50,7 +50,7 @@ label {
 input[type="submit"], 
 input[type="button"], 
 button, .button {
-  @include border-radius(3px);
+  @include border-radius($border-radius);
   display: inline-block;
   padding: 8px 15px;
   border: none;  
@@ -88,6 +88,20 @@ span.info {
 
 .field {
   padding: 10px 0;
+
+  &.checkbox {
+    min-height: 73px;
+    
+    input[type="checkbox"] {
+      display: inline-block;
+      width: auto;
+    }
+
+    label {
+      cursor: pointer;
+      display: block;
+    }
+  }
 
   ul {
     border-top: 1px solid $color-border;

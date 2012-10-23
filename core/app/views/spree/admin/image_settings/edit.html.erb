@@ -19,20 +19,21 @@
         <%= preference_field_tag 'preferences[attachment_path]', Spree::Config[:attachment_path], :type => :string %>
       </div>
 
-      <div class="row">
-        <div class="alpha eight columns">
-          <div data-hook="attachment_default_url" class="field">
-            <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
-            <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string %>
-          </div>
-        </div>
-        <div class="omega four columns">
-          <div data-hook="attachment_default_style" class="field">
-            <%= label_tag 'preferences[attachment_default_style]', t(:attachment_default_style) %>
-            <%= collection_select 'preferences', 'attachment_default_style', @styles, :first, :first, {:selected => Spree::Config[:attachment_default_style] }, :class => 'select2 fullwidth' %> 
-          </div>
+      
+      <div class="alpha eight columns">
+        <div data-hook="attachment_default_url" class="field">
+          <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
+          <%= preference_field_tag 'preferences[attachment_default_url]', Spree::Config[:attachment_default_url], :type => :string %>
         </div>
       </div>
+      <div class="omega four columns">
+        <div data-hook="attachment_default_style" class="field">
+          <%= label_tag 'preferences[attachment_default_style]', t(:attachment_default_style) %>
+          <%= collection_select 'preferences', 'attachment_default_style', @styles, :first, :first, {:selected => Spree::Config[:attachment_default_style] }, :class => 'select2 fullwidth' %> 
+        </div>
+      </div>
+
+      <div class="clear"></div>
 
       <div data-hook="use_s3" class="field">
         <%= preference_field_tag 'preferences[use_s3]', Spree::Config[:use_s3], :type => :boolean %>

@@ -14,9 +14,11 @@
   </div>
 
   <div class="three columns omega">
-    <%= f.field_container :is_default do %>
-      <%= f.check_box :is_default %>
-      <%= f.label :is_default, t(:default) %>      
+    <%= f.field_container :is_default, :class => ['checkbox'] do %>
+      <label>
+        <%= f.check_box :is_default %>
+        <%= t(:default) %>
+      </label>
     <% end %>
   </div>
 </div>

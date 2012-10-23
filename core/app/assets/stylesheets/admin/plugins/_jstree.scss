@@ -21,7 +21,7 @@
       background-color: very-light($color-3);
       border: 1px solid $color-border;
       color: $color-body-text;
-      font-weight: bold;
+      font-weight: $font-weight-bold;
       text-shadow: none;
       width: 90%;
       height: auto;
@@ -60,17 +60,19 @@
   width: 4px !important;
 }
 
-#jstree-marker-line {  
+#jstree-marker-line {
+  @include border-radius($border-radius !important);
   height: 0px !important;
   margin-left: 5px !important;
   margin-top: -2px !important;
   border: none !important;
   border-bottom: 1px solid $color-body-text !important;
   background-color:  very-light($color-3) !important;
-  -moz-box-shadow: none !important;
+
   -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-  @include border-radius($border-radius !important);
+     -moz-box-shadow: none !important;
+          box-shadow: none !important;
+  
 }
 
 #vakata-contextmenu {
@@ -101,14 +103,14 @@
     font-size: 90% !important;
 
     &:hover {
+      @include border-radius($border-radius !important);
       background-color: $color-2 !important;
       border: none !important;
       -moz-box-shadow: none !important;
       -webkit-box-shadow: none !important;
       line-height: inherit !important;
       padding: 5px 10px !important;
-      margin: 0 !important;
-      @include border-radius($border-radius !important);
+      margin: 0 !important;      
     }
   }
 
