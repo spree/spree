@@ -8,7 +8,7 @@
     background-color: $color-sel-bg;
     border: none !important;
     box-shadow: none !important;
-    @include border-radius(3px);
+    @include border-radius($border-radius);
     color: $color-1 !important;
     font-size: 90%;
     height: 33px;    
@@ -140,7 +140,7 @@
     background-image: none;
 
     .select2-search-choice {
-      @include border-radius(3px);
+      @include border-radius($border-radius);
       margin: 0 0 3px 3px;
       background-image: none;
       background-color: $color-sel-bg;

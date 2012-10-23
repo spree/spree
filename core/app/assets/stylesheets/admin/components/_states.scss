@@ -1,5 +1,5 @@
 .state {
-  @include border-radius(3px);
+  @include border-radius($border-radius);
   text-transform: uppercase;
   font-size: 80%;
   font-weight: 600;

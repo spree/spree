@@ -33,7 +33,7 @@ li.token-input-token {
     margin: 3px;
     padding: 3px 5px;
     color: #000;
-    font-weight: bold;
+    font-weight: $font-weight-bold;
     cursor: default;
     display: block;
 }
@@ -76,7 +76,7 @@ div.token-input-dropdown {
 div.token-input-dropdown p {
     margin: 0;
     padding: 5px;
-    font-weight: bold;
+    font-weight: $font-weight-bold;
     color: #777;
 }
 
@@ -100,7 +100,7 @@ div.token-input-dropdown ul li.token-input-dropdown-item2 {
 }
 
 div.token-input-dropdown ul li em {
-    font-weight: bold;
+    font-weight: $font-weight-bold;
     font-style: normal;
 }
 
