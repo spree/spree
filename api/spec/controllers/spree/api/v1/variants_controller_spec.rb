@@ -20,14 +20,34 @@ module Spree
       stub_authentication!
     end
 
-    it "can see a list of all variants" do
+    it "can see a paginated list of variants" do
       api_get :index
-      json_response.first.should have_attributes(attributes)
-      option_values = json_response.last["variant"]["option_values"]
+      json_response["variants"].first.should have_attributes(attributes)
+      json_response["count"].should == 1
+      json_response["current_page"].should == 1
+      json_response["pages"].should == 1
+    end
+
+    it "variants returned contain option values data" do
+      api_get :index
+      option_values = json_response["variants"].last["variant"]["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
                                                  :option_type_id])
+    end
+
+    context "pagination" do
+      default_per_page(1)
+
+      it "can select the next page of variants" do
+        second_variant = create(:variant)
+        api_get :index, :page => 2
+        json_response["variants"].first.should have_attributes(attributes)
+        json_response["count"].should == 3
+        json_response["current_page"].should == 2
+        json_response["pages"].should == 3
+      end
     end
 
     it "can see a single variant" do
