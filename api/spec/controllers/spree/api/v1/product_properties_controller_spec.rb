@@ -23,7 +23,7 @@ module Spree
     end
     
     it "can see a single product_property" do
-      api_get :show, :property_name => property_1.property_name
+      api_get :show, :id => property_1.property_name
       json_response.count.should eq 1
       json_response.should have_attributes(attributes)
     end
@@ -40,7 +40,7 @@ module Spree
     end
     
     it "cannot update a product property" do
-      api_put :update, :property_name => property_1.property_name, :product_property => { :value => "my value 456" }
+      api_put :update, :id => property_1.property_name, :product_property => { :value => "my value 456" }
       assert_unauthorized!
     end
     
@@ -62,12 +62,12 @@ module Spree
       end
 
       it "can update a product property" do
-        api_put :update, :property_name => property_1.property_name, :product_property => { :value => "my value 456" }
+        api_put :update, :id => property_1.property_name, :product_property => { :value => "my value 456" }
         response.status.should == 200
       end
 
       it "can delete a variant" do
-        api_delete :destroy, :property_name => property_1.property_name
+        api_delete :destroy, :id => property_1.property_name
         response.status.should == 200
         lambda { property_1.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end

@@ -51,7 +51,7 @@ module Spree
           end
           
           def product_property
-            @product_property = @product.product_properties.find(:first, :joins => :property, :conditions => {'spree_properties.name' => params['property_name']},:readonly => false)
+            @product_property = @product.product_properties.find(:first, :joins => :property, :conditions => {'spree_properties.name' => params['id']},:readonly => false)
           end
       end
     end
