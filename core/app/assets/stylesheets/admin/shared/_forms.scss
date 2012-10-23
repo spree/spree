@@ -89,6 +89,20 @@ span.info {
 .field {
   padding: 10px 0;
 
+  &.checkbox {
+    min-height: 73px;
+    
+    input[type="checkbox"] {
+      display: inline-block;
+      width: auto;
+    }
+
+    label {
+      cursor: pointer;
+      display: block;
+    }
+  }
+
   ul {
     border-top: 1px solid $color-border;
     list-style: none;

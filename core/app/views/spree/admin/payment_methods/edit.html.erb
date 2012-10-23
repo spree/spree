@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:editing_payment_method) %>
+  <%= t(:editing_payment_method) %> <i class="icon-arrow-right"></i> <%= @payment_method.name %>
 <% end %>
 
 <% content_for :page_actions do %>

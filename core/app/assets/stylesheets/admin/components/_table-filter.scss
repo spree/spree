@@ -6,22 +6,6 @@
     input[type="url"] {
       width: 100%;
     }
-
-    input[type="checkbox"] {
-      display: inline-block;
-    }
-
-    label {
-      display: block;
-    }
-
-    &.checkbox {
-      padding: 0;
-
-      label {
-        display: inline-block;
-      }
-    }
   }
 
   .actions {
