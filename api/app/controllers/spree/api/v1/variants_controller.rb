@@ -5,7 +5,7 @@ module Spree
         before_filter :product
 
         def index
-          @variants = scope.includes(:option_values).scoped
+          @variants = scope.includes(:option_values).page(params[:page])
         end
 
         def show
