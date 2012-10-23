@@ -37,6 +37,23 @@ module Spree
                                                  :option_type_id])
     end
 
+    # Regression test for #2141
+    context "a deleted variant" do
+      before do
+        variant.update_column(:deleted_at, Time.now)
+      end
+
+      it "is not returned in the results" do
+        api_get :index
+        json_response["variants"].count.should == 0
+      end
+
+      it "is not returned even when show_deleted is passed" do
+        api_get :index, :show_deleted => true
+        json_response["variants"].count.should == 0
+      end
+    end
+
     context "pagination" do
       default_per_page(1)
 
@@ -85,6 +102,18 @@ module Spree
     context "as an admin" do
       sign_in_as_admin!
       let(:resource_scoping) { { :product_id => variant.product.to_param } }
+
+      # Test for #2141
+      context "deleted variants" do
+        before do
+          variant.update_column(:deleted_at, Time.now)
+        end
+
+        it "are visible by admin" do
+          api_get :index, :show_deleted => 1
+          json_response["variants"].count.should == 1
+        end
+      end
 
       it "can create a new variant" do
         api_post :create, :variant => { :sku => "12345" }
