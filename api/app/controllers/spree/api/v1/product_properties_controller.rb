@@ -48,10 +48,14 @@ module Spree
         private
           def product
             @product ||= Spree::Product.find_by_permalink(params[:product_id]) if params[:product_id]
+            @product ||= Spree::Product.find_by_id(params[:product_id]) if params[:product_id]
           end
           
           def product_property
-            @product_property = @product.product_properties.find(:first, :joins => :property, :conditions => {'spree_properties.name' => params['property_name']},:readonly => false)
+            if @product
+              @product_property ||= @product.product_properties.find(:first, :joins => :property, :conditions => {'spree_properties.name' => params[:id]},:readonly => false)
+              @product_property ||= @product.product_properties.find_by_id(params[:id])
+            end
           end
       end
     end
