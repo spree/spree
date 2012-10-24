@@ -524,4 +524,16 @@ describe Spree::Payment do
       payment.source.should have(1).error_on(:verification_value)
     end
   end
+
+  context "#currency" do
+    it "returns the globally configured currency" do
+      payment.currency.should == "USD"
+    end
+  end
+
+  context "#display_amount" do
+    it "returns a Spree::Money for this amount" do
+      payment.display_amount.should == Spree::Money.new(payment.amount)
+    end
+  end
 end

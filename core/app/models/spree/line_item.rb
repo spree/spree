@@ -35,10 +35,19 @@ module Spree
       self.quantity -= 1
     end
 
+    def currency
+      Spree::Config[:currency]
+    end
+
     def amount
       price * quantity
     end
     alias total amount
+
+    def display_amount
+      Spree::Money.new(amount, { :currency => currency })
+    end
+    alias display_total display_amount
 
     def adjust_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0

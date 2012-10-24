@@ -82,7 +82,7 @@
             <td class="align-center"><%= product.sku rescue '' %></td>
             <td class="align-center"><%= mini_image(product) %></td>
             <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
-            <td class="align-center"><%= money(product.price) rescue '' %></td>
+            <td class="align-center"><%= product.display_price rescue '' %></td>
             <td class="actions" data-hook="admin_products_index_row_actions">
               <%= link_to_edit product, :no_text => true, :class => 'edit' unless product.deleted? %>
               &nbsp;

@@ -16,7 +16,7 @@
 <div data-hook="admin_shipment_edit_header">
   
   <% if @shipment.cost %>
-    <h5 class="outstanding-balance"><%= t(:charges) %> <span class="green"><%= money @shipment.cost %></span></h5>
+    <h5 class="outstanding-balance"><%= t(:charges) %> <span class="green"><%= @shipment.display_cost %></span></h5>
   <% end %>
 
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>

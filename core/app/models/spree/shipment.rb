@@ -42,12 +42,21 @@ module Spree
       self.shipped_at = Time.now
     end
 
+    def currency
+      Spree::Config[:currency]
+    end
+
     # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match
     # the shipment but there should never really be more than one.
     def cost
       adjustment ? adjustment.amount : 0
     end
     alias_method :amount, :cost
+
+    def display_cost
+      Spree::Money.new(cost, { :currency => currency })
+    end
+    alias_method :display_amount, :display_cost
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'pending', :use_transactions => false do

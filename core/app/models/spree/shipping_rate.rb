@@ -1,5 +1,5 @@
 module Spree
-  class ShippingRate < Struct.new(:id, :shipping_method, :name, :cost)
+  class ShippingRate < Struct.new(:id, :shipping_method, :name, :cost, :currency)
     def initialize(attributes = {})
       attributes.each do |k, v|
         self.send("#{k}=", v)
@@ -13,7 +13,7 @@ module Spree
         price = cost
       end
 
-      Spree::Money.new(price)
+      Spree::Money.new(price, { :currency => currency })
     end
   end
 end

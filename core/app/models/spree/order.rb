@@ -106,8 +106,24 @@ module Spree
       line_items.sum(&:amount)
     end
 
+    def currency
+      Spree::Config[:currency]
+    end
+
+    def display_outstanding_balance
+      Spree::Money.new(outstanding_balance, { :currency => currency })
+    end
+
+    def display_item_total
+      Spree::Money.new(item_total, { :currency => currency })
+    end
+
+    def display_adjustment_total
+      Spree::Money.new(adjustment_total, { :currency => currency })
+    end
+
     def display_total
-      Spree::Money.new(total)
+      Spree::Money.new(total, { :currency => currency })
     end
 
     def to_param
@@ -384,7 +400,8 @@ module Spree
         ShippingRate.new( :id => ship_method.id,
                           :shipping_method => ship_method,
                           :name => ship_method.name,
-                          :cost => cost)
+                          :cost => cost,
+                          :currency => currency)
       end.compact.sort_by { |r| r.cost }
     end
 

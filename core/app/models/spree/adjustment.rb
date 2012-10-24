@@ -65,8 +65,12 @@ module Spree
       set_eligibility
     end
 
+    def currency
+      Spree::Config[:currency]
+    end
+
     def display_amount
-      Spree::Money.new(amount).to_s
+      Spree::Money.new(amount, { :currency => currency }).to_s
     end
 
     private

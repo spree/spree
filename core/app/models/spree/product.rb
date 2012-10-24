@@ -46,7 +46,7 @@ module Spree
 
     has_many :variants_including_master_and_deleted, :class_name => 'Spree::Variant'
 
-    delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
+    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
     after_create :set_master_variant_defaults
@@ -238,7 +238,7 @@ module Spree
     end
 
     def display_price
-      Spree::Money.new(price).to_s
+      Spree::Money.new(price, { :currency => currency }).to_s
     end
 
     private

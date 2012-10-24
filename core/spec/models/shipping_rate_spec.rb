@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 
 describe Spree::ShippingRate do
@@ -16,6 +18,14 @@ describe Spree::ShippingRate do
       before { Spree::Config[:shipment_inc_vat] = false }
       it "displays the correct price" do
         shipping_rate.display_price.to_s.should == "$10.55"
+      end
+    end
+
+    context "when the currency is JPY" do
+      let(:shipping_rate) { Spree::ShippingRate.new(:cost => 205, :currency => "JPY") }
+
+      it "displays the price in yen" do
+        shipping_rate.display_price.to_s.should == "¥205"
       end
     end
   end
