@@ -12,7 +12,7 @@
       <dt id="order_status" data-hook><%= t(:status) %>:</dt>
       <dd><span class="state <%= @order.state %>"><%= t(@order.state, :scope => :order_state) %></span></dd>
       <dt data-hook><%= t(:total) %>:</dt>
-      <dd id='order_total'><%= money @order.total %></dd>
+      <dd id='order_total'><%= @order.display_total %></dd>
     
       <% if @order.completed? %>
         <dt><%= t(:shipment) %>: </dt>

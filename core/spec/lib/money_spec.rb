@@ -29,6 +29,22 @@ module Spree
       end
     end
 
+    context "currency parameter" do
+      context "when currency is specified in Canadian Dollars" do
+        it "uses the currency param over the global configuration" do
+          money = Spree::Money.new(10, :currency => 'CAD', :with_currency => true)
+          money.to_s.should == "$10.00 CAD"
+        end
+      end
+
+      context "when currency is specified in Japanese Yen" do
+        it "uses the currency param over the global configuration" do
+          money = Spree::Money.new(100, :currency => 'JPY')
+          money.to_s.should == "¥100"
+        end
+      end
+    end
+
     context "symbol positioning" do
       it "passed in option" do
         money = Spree::Money.new(10, :symbol_position => :after)

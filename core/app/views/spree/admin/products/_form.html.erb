@@ -21,18 +21,24 @@
   </div>
 
   <div class="right four columns omega" data-hook="admin_product_form_right">
+    <%= f.field_container :price do %>
+      <%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
+      <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
+      <%= f.error_message_on :price %>
+    <% end %>
+
     <div class="alpha two columns">
-      <%= f.field_container :price do %>
-        <%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
-        <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
-        <%= f.error_message_on :price %>
-      <% end %>
-    </div>
-    <div class="omega two columns">
       <%= f.field_container :cost_price do %>
         <%= f.label :cost_price, t(:cost_price) %>
         <%= f.text_field :cost_price, :value => number_to_currency(@product.cost_price, :unit => '') %>
         <%= f.error_message_on :cost_price %>
+      <% end %>
+    </div>
+    <div class="omega two columns">
+      <%= f.field_container :cost_currency do %>
+        <%= f.label :cost_currency, t(:cost_currency) %>
+        <%= f.text_field :cost_currency %>
+        <%= f.error_message_on :cost_currency %>
       <% end %>
     </div>
 

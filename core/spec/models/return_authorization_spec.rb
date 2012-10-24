@@ -109,4 +109,17 @@ describe Spree::ReturnAuthorization do
     end
   end
 
+  context "currency" do
+    before { order.stub(:currency) { "ABC" } }
+    it "returns the order currency" do
+      return_authorization.currency.should == "ABC"
+    end
+  end
+
+  context "display_amount" do
+    it "retuns a Spree::Money" do
+      return_authorization.amount = 21.22
+      return_authorization.display_amount.should == Spree::Money.new(21.22)
+    end
+  end
 end

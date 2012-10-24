@@ -524,4 +524,17 @@ describe Spree::Payment do
       payment.source.should have(1).error_on(:verification_value)
     end
   end
+
+  context "#currency" do
+    before { order.stub(:currency) { "ABC" } }
+    it "returns the order currency" do
+      payment.currency.should == "ABC"
+    end
+  end
+
+  context "#display_amount" do
+    it "returns a Spree::Money for this amount" do
+      payment.display_amount.should == Spree::Money.new(payment.amount)
+    end
+  end
 end

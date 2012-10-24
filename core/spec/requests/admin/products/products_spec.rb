@@ -149,7 +149,6 @@ describe "Products" do
       it "should show validation errors", :js => true do
         click_button "Create"
         page.should have_content("Name can't be blank")
-        page.should have_content("Price can't be blank")
       end
 
       # Regression test for #2097
