@@ -64,8 +64,8 @@ module Spree
 
         private
 
-        def map_nested_attributes
-          @nested_params = map_nested_attributes_keys Order, params[:order]
+        def nested_params
+          map_nested_attributes_keys Order, params[:order] || {}
         end
 
         def order
