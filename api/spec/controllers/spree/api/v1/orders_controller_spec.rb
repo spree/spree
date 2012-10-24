@@ -172,6 +172,14 @@ module Spree
     context "as an admin" do
       sign_in_as_admin!
 
+      context "with no orders" do
+        before { Spree::Order.delete_all }
+        it "still returns a root :orders key" do
+          api_get :index
+          json_response["orders"].should == []
+        end
+      end
+
       context "with two orders" do
         before { create(:order) }
 

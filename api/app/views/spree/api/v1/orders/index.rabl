@@ -1,5 +1,5 @@
 object false
-child(@orders) do
+child(@orders => :orders) do
   attributes *order_attributes
 end
 node(:count) { @orders.count }
