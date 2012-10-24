@@ -274,6 +274,18 @@ describe Spree::Payment do
           lambda { payment.void_transaction! }.should raise_error(Spree::Core::GatewayError)
         end
       end
+
+      # Regression test for #2119
+      context "if payment is already voided" do
+        before do
+          payment.state = 'void'
+        end
+
+        it "should not void the payment" do
+          payment.payment_method.should_not_receive(:void)
+          payment.void_transaction!
+        end
+      end
     end
 
     context "#credit" do
