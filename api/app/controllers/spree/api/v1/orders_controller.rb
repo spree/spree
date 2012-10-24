@@ -20,7 +20,7 @@ module Spree
 
         def create
           @order = Order.build_from_api(current_api_user, nested_params)
-          next!
+          next!(:status => 201)
         end
 
         def update
@@ -71,9 +71,9 @@ module Spree
           @order ||= Order.find_by_number!(params[:id])
         end
 
-        def next!
+        def next!(options={})
           if @order.valid? && @order.next
-            render :show, :status => 200
+            render :show, :status => options[:status] || 200
           else
             render :could_not_transition, :status => 422
           end
