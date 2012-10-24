@@ -111,6 +111,15 @@ module Spree
         json_response["order"]["shipping_methods"].should_not be_empty
       end
 
+      it "can add just shipping address information to an order" do
+        api_put :address, :id => order.to_param, :shipping_address => shipping_address
+        response.status.should == 200
+        order.reload
+        order.shipping_address.reload
+        order.shipping_address.firstname.should == shipping_address[:firstname]
+        order.bill_address.should be_nil
+      end
+
       it "cannot use an address that has no valid shipping methods" do
         shipping_method.destroy
         api_put :address, :id => order.to_param, :shipping_address => shipping_address, :billing_address => billing_address

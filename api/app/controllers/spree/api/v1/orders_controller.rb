@@ -34,8 +34,8 @@ module Spree
         end
 
         def address
-          order.build_ship_address(params[:shipping_address])
-          order.build_bill_address(params[:billing_address])
+          order.build_ship_address(params[:shipping_address]) if params[:shipping_address]
+          order.build_bill_address(params[:billing_address]) if params[:billing_address]
           next!
         end
 
