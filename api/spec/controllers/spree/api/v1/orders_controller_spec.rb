@@ -61,11 +61,18 @@ module Spree
     it "can create an order" do
       variant = create(:variant)
       api_post :create, :order => { :line_items => [{ :variant_id => variant.to_param, :quantity => 5 }] }
-      response.status.should == 200
+      response.status.should == 201
       order = Order.last
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
+      json_response["order"]["state"].should == "address"
+    end
+
+    it "can create an order without any parameters" do
+      lambda { api_post :create }.should_not raise_error(NoMethodError)
+      response.status.should == 201
+      order = Order.last
       json_response["order"]["state"].should == "address"
     end
 
