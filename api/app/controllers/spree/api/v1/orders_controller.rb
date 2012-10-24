@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class OrdersController < Spree::Api::V1::BaseController
-        before_filter :map_nested_attributes, :only => [:create, :update]
         before_filter :authorize_read!, :except => [:index, :search, :create]
 
         def index
@@ -20,13 +19,13 @@ module Spree
         end
 
         def create
-          @order = Order.build_from_api(current_api_user, @nested_params)
+          @order = Order.build_from_api(current_api_user, nested_params)
           next!
         end
 
         def update
           authorize! :update, Order
-          if order.update_attributes(@nested_params)
+          if order.update_attributes(nested_params)
             order.update!
             render :show
           else
