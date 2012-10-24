@@ -22,7 +22,7 @@ module Spree
 
         it "can view the payments for their order" do
           api_get :index
-          json_response.first.should have_attributes(attributes)
+          json_response["payments"].first.should have_attributes(attributes)
         end
 
         it "can learn how to create a new payment" do
@@ -67,7 +67,7 @@ module Spree
       it "can view the payments on any order" do
         api_get :index
         response.status.should == 200
-        json_response.first.should have_attributes(attributes)
+        json_response["payments"].first.should have_attributes(attributes)
       end
 
       context "for a given payment" do
