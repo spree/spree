@@ -10,7 +10,7 @@ Chapter 1 contains a description of the work that has been completed to address 
 
 h4. Relevant, Meaningful URLs
 
-Several improvements have been made to improve the URLs used for products and taxonomies since the release of Spree 0.4.0. The helper method <tt>seo_url(taxon, product)</tt> yields SEO friendly URLs such as "demo.spreecommerce.com/products/xm-direct2-interface-adapter":http://demo.spreecommerce.com/products/xm-direct2-interface-adapter and "demo.spreecommerce.com/t/categories/headphones":http://demo.spreecommerce.com/t/categories/headphones. Rails config/routes.rb is configured to serve the content using these keyword relevant, meaningful URLs.
+The helper method <tt>seo_url(taxon, product)</tt> yields SEO friendly URLs such as "demo.spreecommerce.com/products/xm-direct2-interface-adapter":http://demo.spreecommerce.com/products/xm-direct2-interface-adapter and "demo.spreecommerce.com/t/categories/headphones":http://demo.spreecommerce.com/t/categories/headphones. Each controller is configured to serve the content using these keyword relevant, meaningful URLs.
 
 h4. On Page Keyword Targeting
 
@@ -18,7 +18,7 @@ Several enhancements have been made to improve on-page keyword targeting. The ad
 
 h4. Clean Content
 
-The release of Spree 0.8.0 brought a complete overhaul of the frontend including the move to tableless layout. Having clean HTML with minimal inline JavaScript and CSS is considered to be a factor in search engine optimization.
+Spree uses Skeleton, a responsive CSS framework that allows clean HTML that also responds well to any screen size. Having clean HTML with minimal inline JavaScript and CSS is considered to be a factor in search engine optimization.
 
 h4. On Site Performance Optimization
 
@@ -26,15 +26,15 @@ Spree has been configured to serve one CSS and one JavaScript file on every page
 
 h4. Google Analytics integration
 
-Google Analytics has been integrated into the Spree core and can be managed by a Rails preference setting in RAILS_ROOT/app/models/app-configuration.rb. Google Analytics is not included if this preference is set to an empty string. The Google Analytics setup includes conversion tracking. 
+Google Analytics has been integrated into the Spree core and can be managed from the "Analytics Trackers" section of the admin. Google Analytics is not included on your store if this preference is not set. The Google Analytics setup includes e-commerce conversion tracking. 
 
 h3. Planned Search Engine Optimization Features
 
-Although several common search engine optimization issues have been addressed, remaining known issues are discussed in Chapter 2. While solutions for several of the issues are in development, contributions to address the other issues will be very welcome. Visit the "contributing to spree section":contributing_to_spree.html to learn more about contributing.
+Although several common search engine optimization issues have been addressed, we are always looking for the new best practices in SEO. Contributions to address issues will be very welcome. Visit the "contributing to spree section":contributing_to_spree.html to learn more about contributing.
 
 h4. Product and Taxonomy Page Title Enhancements
 
-Currently, the Spree core does not include functionality for page title management. The Spree demo has "Spree" as the page title for all pages that use the 'application' layout. Page titles are an important part of search engine optimization and should be meaningful and relevant to the page content. Page title templating is in development and can be reviewed at "the spree-user group":http://groups.google.com/group/spree-user for more information. Discussion of the solution includes creating a templating solution, where &nbsp;<tt>%PRODUCT%</tt><tt> from </tt><tt>%STORE%</tt>&nbsp; would yield a page title with the product and store name for all product pages (e.g., Ruby on Rails Bag from Spree) and &nbsp;<tt>%SECTION%</tt><tt> at </tt><tt>%STORE%</tt>&nbsp; would yield a page title with the taxonomy name and store name for all taxonomy pages (e.g., Apache at Spree). Also included in this discussion is the intended functionality to allow page titles to be overridden at the page level.
+Page titles are an important part of search engine optimization and should be meaningful and relevant to the page content. There are a few configuration settings for getting the best page titles possible. "Site Name" will appear in the beginning of each of your titles. When possible, we assign an appropriate title after that (product name, taxon name, etc), but when we can't do that, we use the "Default Seo Title".
 
 h4. Alt Attribute on Product Images
 
@@ -50,17 +50,16 @@ There has been quite a bit of interest in development of "CMS integration into S
 
 h4. Tool Integration
 
-In addition to integration of Google Analytics, several other tools can be implemented for SEO purposes such as Yahoo Site Explorer, Google Webmaster Tools and Quantcast. Social media optimization tools such as Digg, del.icio.us, Facebook, MySpace, and Twitter may also be integrated to improve social networking site performance.
+In addition to integration of Google Analytics, several other tools can be implemented for SEO purposes such as Bing Webmaster Tools, Google Webmaster Tools and Quantcast. Social media optimization tools such as Pinterest, Reddit, Digg, Delicious, Facebook, Google Plus and Twitter may also be integrated to improve social networking site performance.
 
 h3. Spree SEO Extensions
 
 The following list shows extensions that can improve search engine performance. Refer to the GitHub README for developer notes.
 
-* "Google Base Integration":https://github.com/stephskardal/spree-google-base/tree/master
-* "Spree Sitemap Generation":https://github.com/stephskardal/spree-sitemaps/tree/master
 * "Static Content Management":https://github.com/spree/spree_static_content
-* "Product Reviews":https://github.com/paulcc/spree-reviews/tree/master
-* "Product Reviews and Ratings":https://github.com/stephskardal/spree-product-reviews-ratings/tree/master
+* "Google Base Integration":https://github.com/jumph4x/spree-google-base
+* "Spree Sitemap Generation":https://github.com/romul/spree_dynamic_sitemaps
+* "Product Reviews":https://github.com/spree/spree_reviews
 
 h3. External Search Engine Optimization Efforts
 
