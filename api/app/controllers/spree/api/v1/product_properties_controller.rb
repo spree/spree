@@ -53,7 +53,7 @@ module Spree
           
           def product_property
             if @product
-              @product_property ||= @product.product_properties.find(:first, :joins => :property, :conditions => {'spree_properties.name' => params[:id]},:readonly => false)
+              @product_property ||= @product.product_properties.joins(:property).where('spree_properties.name' => params[:id]).readonly(false)
               @product_property ||= @product.product_properties.find_by_id(params[:id])
             end
           end
