@@ -46,7 +46,7 @@ module Spree
 
       it "can delete a zone" do
         api_delete :destroy, :id => @zone.id
-        response.status.should == 200
+        response.status.should == 204
         lambda { @zone.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end

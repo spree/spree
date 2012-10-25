@@ -152,6 +152,25 @@ module Spree
         response.status.should == 201
       end
 
+      # Regression test for #2140
+      context "with authentication_required set to false" do
+        before do
+          Spree::Api::Config.requires_authentication = false
+        end
+
+        after do
+          Spree::Api::Config.requires_authentication = true
+        end
+
+        it "can still create a product" do
+          api_post :create, :product => { :name => "The Other Product",
+                                          :price => 19.99 },
+                            :token => "fake"
+          json_response.should have_attributes(attributes)
+          response.status.should == 201
+        end
+      end
+
       it "cannot create a new product with invalid attributes" do
         api_post :create, :product => {}
         response.status.should == 422
@@ -176,7 +195,7 @@ module Spree
       it "can delete a product" do
         product.deleted_at.should be_nil
         api_delete :destroy, :id => product.to_param
-        response.status.should == 200
+        response.status.should == 204
         product.reload.deleted_at.should_not be_nil
       end
     end

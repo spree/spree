@@ -32,7 +32,7 @@ module Spree
         def destroy
           authorize! :delete, Zone
           zone.destroy
-          render :text => nil, :status => 200
+          render :text => nil, :status => 204
         end
 
         private

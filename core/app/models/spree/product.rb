@@ -44,6 +44,8 @@ module Spree
       :conditions => { :deleted_at => nil },
       :dependent => :destroy
 
+    has_many :variants_including_master_and_deleted, :class_name => 'Spree::Variant'
+
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
