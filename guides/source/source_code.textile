@@ -24,7 +24,7 @@ NOTE: If the official GitHub repo is down you can try our mirror at "repo.or.cz"
 
 h4. Browsing the Repository and/or Downloading the Source Code
 
-You can easily browse the repository through GitHub's excellent "visual interface":http://github.com/spree/spree/tree/master. GitHub also contains a link to download a tarball copy of the latest source code as well as links to "previous versions":http://github.com/spree/spree/downloads.
+You can easily browse the repository through GitHub's excellent "visual interface":http://github.com/spree/spree/tree/master. GitHub also contains a link to download a tarball copy of the latest source code as well as links to "previous versions":http://github.com/spree/spree/tags.
 
 h4. Git on Windows
 

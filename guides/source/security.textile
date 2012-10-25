@@ -12,9 +12,13 @@ h3. General
 
 Proper application design, intelligent programming, and secure infrastructure are all essential in creating a secure e-commerce store using any software (Spree included.)  The Spree team has done its best to provide you with the tools to create a secure and profitable web presence but it is up to you to take these tools and put them in good practice. We highly recommend reading and understanding the "Rails Security Guide":http://guides.rubyonrails.org/security.html and to keep up with the "Ruby on Rails Security Project":http://www.rorsecurity.info/.
 
+h3. Reporting Security Issues
+
+Please do not announce potential security vulnerabilities in public. We have a "dedicated email address":mailto:security@spreecommerce.com for reporting these concerns. We will work quickly to determine the severity of the issue and provide a fix for the appropriate versions. 
+
 h3. Authentication
 
-Spree uses a third party authentication library for Ruby known as "Devise":https://github.com/plataformatec/devise.  This library provides a host of useful functionality that is in turn available to Spree, including the following features:
+If you install spree_auth_devise when setting up your app, we use a third party authentication library for Ruby known as "Devise":https://github.com/plataformatec/devise. This library provides a host of useful functionality that is in turn available to Spree, including the following features:
 
 * Authentication
 * Strong password encryption (with the ability to specify your own algorithms)
@@ -24,7 +28,7 @@ Spree uses a third party authentication library for Ruby known as "Devise":https
 
 h4. Devise Configuration
 
-We have configure Devise to handle only what is needed to authenticate with a Spree site. The following details cover the default configurations:
+We have configure Devised to handle only what is needed to authenticate with a Spree site. The following details cover the default configurations:
 
 * Passwords are stored in the database encrypted with the salt.
 * User authentication is done through the database query.

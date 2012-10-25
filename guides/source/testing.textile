@@ -46,6 +46,10 @@ Or you can also do
   $ bundle exec rspec spec
 </shell>
 
+We also set up a build script that mimics what Travis-CI, you can run it from the root of the spree project like this:
+<shell>
+	$ bash build.sh
+</shell>
 
 If you wish to run spec for a single file then you can do so like this:
 
