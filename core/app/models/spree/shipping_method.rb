@@ -23,10 +23,6 @@ module Spree
       (self.display_on == display_on.to_s || self.display_on.blank?)
     end
 
-    def calculator_available?(order)
-      caluclator.available?(order)
-    end
-
     def within_zone?(order)
       zone && zone.include?(order.ship_address)
     end
