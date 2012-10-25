@@ -38,7 +38,7 @@ module Spree
           authorize! :delete, ProductProperty
           if(@product_property)
             @product_property.destroy
-            render :text => nil, :status => 200
+            render :text => nil, :status => 204
           else
             invalid_resource!(@product_property)
           end

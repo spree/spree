@@ -78,7 +78,7 @@ module Spree
 
       it "can delete a variant" do
         api_delete :destroy, :id => property_1.property_name
-        response.status.should == 200
+        response.status.should == 204
         lambda { property_1.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end

@@ -47,7 +47,7 @@ module Spree
       it "can delete a line item on the order" do
         line_item = order.line_items.first
         api_delete :destroy, :id => line_item.id
-        response.status.should == 200
+        response.status.should == 204
         lambda { line_item.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end

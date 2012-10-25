@@ -23,7 +23,7 @@ module Spree
           authorize! :delete, Image
           @image = Image.find(params[:id])
           @image.destroy
-          render :text => nil
+          render :text => nil, :status => 204
         end
 
       end

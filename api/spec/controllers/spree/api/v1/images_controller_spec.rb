@@ -40,7 +40,7 @@ module Spree
 
         it "can delete an image" do
           api_delete :destroy, :id => product_image.id
-          response.status.should == 200
+          response.status.should == 204
           lambda { product_image.reload }.should raise_error(ActiveRecord::RecordNotFound)
         end
       end
