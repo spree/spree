@@ -29,6 +29,10 @@ module Spree
           perform_payment_action(:authorize)
         end
 
+        def capture
+          perform_payment_action(:capture)
+        end
+
         def purchase
           perform_payment_action(:purchase)
         end
