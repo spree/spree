@@ -86,17 +86,6 @@ If you need to change any of the above default settings, it is also recommended 
 config.allow_ssl_in_staging = false
 </ruby>
 
-h5. SSL with Mongrel
-
-Mongrel relies on Apache to tell it which requests are HTTP and which are HTTPS.  If you do not set things up correctly you're likely to experience an infinite loop.  You will need to change the Port 443 configuration of your Apache virtual host (NOTE: Port 443 not Port 80) and add the following line:
-
-<shell>
-RequestHeader set X_FORWARDED_PROTO 'https'
-</shell>
-
-You can read more about this topic (and more on testing SSL locally on your development machine) in Mike Subelsky’s excellent "blog post":http://www.subelsky.com/2007/11/testing-rails-ssl-requirements-on-your.html
-
-[TODO: Verify this is still necessary with Mongrel since this issue was discovered a long time ago]
 
 h4. Configuring Email Options
 

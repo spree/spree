@@ -10,7 +10,7 @@ endprologue.
 
 h3. Overview
 
-Spree can be deployed like any other Rails application using any combination of the usual software components like Apache, Nginx, Unicorn, Passenger, Ruby, etc.
+Spree can be deployed like any other Rails application using any combination of the usual software components like Apache, Nginx, Unicorn, Passenger, Ruby, Capistrano etc.
 
 Normally the first concern when deploying your store is choosing the correct software stack, server sizes and roles. 
 
@@ -25,7 +25,7 @@ h3. Server Sizing & Configurations
 
 While most smaller Spree installations can operate extremely well on relatively modest single server configurations, stores that need to handle a larger number of concurrent users frequently chose a multi-server configuration to distribute the workload and simplify server configurations. 
 
-NOTE: Setting an actual limit on how many concurrent users any configuration is capable of handling it entirely dependant on the specific application, and it's use of extensions and customizations. All server sizing guidelines provided here are purely estimates based on basic Spree instances.
+NOTE: Determining how many concurrent users any server configuration is capable of handling is entirely dependant on the specific application and its use of extensions and customizations. All server sizing guidelines provided here are purely estimates based on basic Spree instances.
 
 
 h4. Memory (RAM) requirements
