@@ -8,13 +8,13 @@ module Spree
         def index
           @product_properties = @product.product_properties
         end
-        
+
         def show
         end
-        
+
         def new
         end
-        
+
         def create
           authorize! :create, ProductProperty
           @product_property = @product.product_properties.new(params[:product_property])
@@ -24,7 +24,7 @@ module Spree
             invalid_resource!(@product_property)
           end
         end
-        
+
         def update
           authorize! :update, ProductProperty
           if @product_property  && @product_property.update_attributes(params[:product_property])
@@ -33,7 +33,7 @@ module Spree
             invalid_resource!(@product_property)
           end
         end
-        
+
         def destroy
           authorize! :delete, ProductProperty
           if(@product_property)
@@ -42,15 +42,15 @@ module Spree
           else
             invalid_resource!(@product_property)
           end
-          
+
         end
-        
+
         private
           def product
             @product ||= Spree::Product.find_by_permalink(params[:product_id]) if params[:product_id]
             @product ||= Spree::Product.find_by_id(params[:product_id]) if params[:product_id]
           end
-          
+
           def product_property
             if @product
               @product_property ||= @product.product_properties.joins(:property).where('spree_properties.name' => params[:id]).readonly(false)
