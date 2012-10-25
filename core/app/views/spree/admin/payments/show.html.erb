@@ -1,7 +1,14 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>
+  <i class="icon-arrow-right"></i> 
+  <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %> 
+  <i class="icon-arrow-right"></i>
+  <%= payment_method_name(@payment) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_payments_list), spree.admin_order_payments_url(@order), :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => "spree/admin/payments/source_views/#{@payment.payment_method.method_type}", :locals => { :payment => @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment } %>

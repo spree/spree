@@ -10,17 +10,11 @@
   fieldset {
     position: static !important;
   }
-
-  .promotion-update {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-  }
 }
 
 #actions_container {
   .edit_promotion {
-    margin-top: 44px;
+    margin-top: 73px;
   }
 }
 
@@ -29,16 +23,29 @@
 }
 
 .promotion-block {
-  padding: 5px;
+  // padding: 0 5px 5px;
   background-color: lighten($color-border, 5);
   border: 1px solid $color-border;
   border-radius: 3px;
   margin-bottom: 15px;
-  position: relative;  
+  position: relative;
 
-  label {
-    text-transform: none;
-    font-weight: normal;
+  .row {
+    margin-bottom: 0;
+  }
+
+  .field {
+    padding-bottom: 10px;
+
+    &.alpha {
+      margin-left: -1px;
+      padding-left: 11px;
+    }
+
+    &.omega {
+      margin-right: -1px;
+      padding-right: 11px;
+    }
   }
 
   &.action-remove {
@@ -68,10 +75,14 @@
   }
 
   a.delete {
-   position: absolute;
-   top: 3px;
-   right: 5px;
-   cursor: pointer;
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-error;
+    }
   }
 }
 
@@ -80,7 +91,7 @@
   text-align: left;
   font-size: 85%;
   border-bottom: 1px solid $color-border;
-  padding-bottom: 5px;
+  padding: 0 10px;
 
   &.no-text {
     border: none;
