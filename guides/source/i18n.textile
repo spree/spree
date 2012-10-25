@@ -117,30 +117,13 @@ The default locale for Spree is +en+. This can be changed by editing the :defaul
 
 h4. Setting the Default Currency
 
-Spree makes use of the rails +NumberHelper+ module to format numbers into the form of currency, otherwise prices within spree are simply regarded as numbers with no special properties. Currency formatting is therefore dictated by the current user locale (if locale is allowed to change) or the default locale (as above) if locale is fixed. To specify a currency format therefore you should do the following:
+INFO: This functionality is new in Spree 1.2. Please refer to the appropriate guide if you are using an older version. 
 
-For each locale you support (just the default if you don't allow locale switching) you must make a file, in the style +<locale>_numbers.yml+, within +#{Rails.root}/config/locales+ following the format:
+In earlier versions of Spree, we used +number_to_currency+ to display prices for products. This caused a problem when somebody selected a different I18n locale, as the prices would be displayed in their currency: 20 Japanese Yen, rather than 20 American Dollars, for instance.
 
-<shell>
----
-en-GB:
-  number:
-    currency:
-      format:
-        format: "%u%n"
-        unit: "£"
-        precision: 2
-        separator: '.'
-        delimiter: ','
-</shell>
+To fix this problem, we're now parsing the prices through the Money gem which will display prices consistently across all I18n locales. To now change the currency for your site, go to Admin, then Configuration, then General Settings. Changing the currency will only change the currency symbol across all prices of your store.
 
-To ensure that currency stays consistent when a user changes their locale the same currency details should be provided for each of the supported locales.
-
-INFO: By default Spree stores prices in only a single currency.
-
-The single currency limitation means that if you do not change the default Rails currency settings for your locales the prices will be incorrect.  For instance, $1 in +:en+ locale will become £1 in +en-GB+.  In this case it makes sense to pick a single currency and then to override the Rails defaults for the other locales so that the prices are in a consistent currency.
-
-INFO: Multiple currency support and other pricing related improvements are being considered for future versions of Spree.
+Note: After the 1.2.0 release, more options to format the currency output have been introduced. Specifically the position of the currency symbol which is fixed to :before in 1.2.0 can be adjusted. To achieve this in the 1.2.0, you may wish to override the Spree::Money.to_s function.
 
 
 h3. Creating and Modifying Locales
