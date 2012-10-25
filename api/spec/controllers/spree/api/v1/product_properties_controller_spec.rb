@@ -16,6 +16,17 @@ module Spree
       stub_authentication!
     end
 
+    context "if product is deleted" do
+      before do
+        product.update_column(:deleted_at, Time.now)
+      end
+
+      it "can not see a list of product properties" do
+        api_get :index
+        response.status.should == 404
+      end
+    end
+
     it "can see a list of all product properties" do
       api_get :index
       json_response.count.should eq 2
@@ -24,7 +35,6 @@ module Spree
 
     it "can see a single product_property" do
       api_get :show, :id => property_1.property_name
-      json_response.count.should eq 1
       json_response.should have_attributes(attributes)
     end
 
