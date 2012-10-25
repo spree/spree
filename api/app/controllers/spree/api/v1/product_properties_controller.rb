@@ -2,7 +2,7 @@ module Spree
   module Api
     module V1
       class ProductPropertiesController < Spree::Api::V1::BaseController
-        before_filter :product
+        before_filter :find_product
         before_filter :product_property, :only => [:show, :update, :destroy]
 
         def index
@@ -46,14 +46,13 @@ module Spree
         end
 
         private
-          def product
-            @product ||= Spree::Product.find_by_permalink(params[:product_id]) if params[:product_id]
-            @product ||= Spree::Product.find_by_id(params[:product_id]) if params[:product_id]
+          def find_product
+            @product = super(params[:product_id])
           end
 
           def product_property
             if @product
-              @product_property ||= @product.product_properties.joins(:property).where('spree_properties.name' => params[:id]).readonly(false)
+              @product_property ||= @product.product_properties.joins(:property).where('spree_properties.name' => params[:id]).readonly(false).first
               @product_property ||= @product.product_properties.find_by_id(params[:id])
             end
           end
