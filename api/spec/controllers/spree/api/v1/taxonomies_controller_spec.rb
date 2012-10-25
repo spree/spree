@@ -82,7 +82,11 @@ module Spree
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
         errors = json_response["errors"]
       end
-    end
 
+      it "can destroy" do
+        api_delete :destroy, :id => taxonomy.id
+        response.status.should == 204
+      end
+    end
   end
 end

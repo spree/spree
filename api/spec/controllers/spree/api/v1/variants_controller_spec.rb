@@ -130,7 +130,7 @@ module Spree
 
       it "can delete a variant" do
         api_delete :destroy, :id => variant.to_param
-        response.status.should == 200
+        response.status.should == 204
         lambda { variant.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end

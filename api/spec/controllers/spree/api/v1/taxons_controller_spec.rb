@@ -76,6 +76,11 @@ module Spree
 
         taxon.reload.children.count.should eq 1
       end
+
+      it "can destroy" do
+        api_delete :destroy, :taxonomy_id => taxonomy.id, :id => taxon.id
+        response.status.should == 204
+      end
     end
 
   end

@@ -39,7 +39,7 @@ module Spree
           authorize! :delete, Variant
           @variant = scope.find(params[:id])
           @variant.destroy
-          render :text => nil, :status => 200
+          render :text => nil, :status => 204
         end
 
         private
