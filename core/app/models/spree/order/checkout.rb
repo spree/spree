@@ -62,6 +62,10 @@ module Spree
                 transition :to => :awaiting_return
               end
 
+              event :repair do
+                transition :to => :repairing, :from => :awaiting_return
+              end
+
               before_transition :to => :complete do |order|
                 begin
                   order.process_payments! if order.payment_required?

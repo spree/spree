@@ -10,7 +10,7 @@ module Spree
     validates :amount, :numericality => true
     validate :must_have_shipped_units
 
-    attr_accessible :amount, :reason
+    attr_accessible :amount, :reason, :for_repair
 
     state_machine :initial => 'authorized' do
       after_transition :to => 'received', :do => :process_return
@@ -67,12 +67,17 @@ module Spree
       end
 
       def process_return
-        inventory_units.each &:return!
-        credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
-        credit.source = self
-        credit.adjustable = order
-        credit.save
-        order.return if inventory_units.all?(&:returned?)
+        if for_repair?
+          inventory_units.each &:repair!
+          order.repair
+        else
+          inventory_units.each &:return!
+          credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
+          credit.source = self
+          credit.adjustable = order
+          credit.save
+          order.return if inventory_units.all?(&:returned?)
+        end
       end
 
       def allow_receive?
@@ -81,6 +86,10 @@ module Spree
 
       def force_positive_amount
         self.amount = amount.abs
+      end
+
+      def for_repair?
+        self.for_repair
       end
   end
 end

@@ -42,6 +42,11 @@
     <% end %>
   <% end %>
 
+  <%= f.field_container :for_repair, :class => ["return-for-repair"] do %>
+    <%= f.check_box :for_repair, :disabled => @return_authorization.received? %>
+    <%= f.label :for_repair, t(:for_repair, :scope => "activerecord.attributes.spree/return_authorization") %>
+  <% end %>
+
   <%= f.field_container :reason do %>
     <%= f.label :reason, t(:reason) %>
     <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>

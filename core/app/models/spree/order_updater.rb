@@ -83,7 +83,6 @@ module Spree
           'partial'
         end
       end
-
       order.state_changed('shipment')
     end
 

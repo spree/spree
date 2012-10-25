@@ -98,6 +98,7 @@ en:
         name: Name
       spree/return_authorization:
         amount: Amount
+        for_repair: "For Repairs?"
       spree/role:
         name: Name
       spree/state:
@@ -894,6 +895,7 @@ en:
   return_authorizations: Return Authorizations
   return_quantity: Return Quantity
   returned: Returned
+  repairing: Repairing
   review: Review
   rma_credit: RMA Credit
   rma_number: RMA Number
