@@ -89,6 +89,24 @@ module Spree
           payment.state.should == "failed"
         end
 
+        it "can capture" do
+          api_put :capture, :id => payment.to_param
+          response.status.should == 200
+          payment.reload
+          payment.state.should == "completed"
+        end
+
+        it "returns a 422 status when purchasing fails" do
+          fake_response = stub(:success? => false, :to_s => "Insufficient funds")
+          Spree::Gateway::Bogus.any_instance.should_receive(:capture).and_return(fake_response)
+          api_put :capture, :id => payment.to_param
+          response.status.should == 422
+          json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
+
+          payment.reload
+          payment.state.should == "pending"
+        end
+
         it "can purchase" do
           api_put :purchase, :id => payment.to_param
           response.status.should == 200
