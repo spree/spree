@@ -37,8 +37,10 @@ index:
     - title: Spree Deployment Service
       url: deployment_service
       text: Detailed walkthrough of using the Deployment Service to build a production environment.
-    - title: Deploying your application
-      url: deploying_your_application
+    - title: Deploying on Heroku
+      url: deploying_on_heroku
+    - title: Deploying on Ubuntu 
+      url: deploying_on_ubuntu
       text: Explains how to deploy your application to servers that have been configured by the Deployment Service
     - title: Server Config. & Customization
       url: server_configuration_and_customization
