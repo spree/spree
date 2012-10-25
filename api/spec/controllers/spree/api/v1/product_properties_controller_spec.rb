@@ -29,8 +29,8 @@ module Spree
 
     it "can see a list of all product properties" do
       api_get :index
-      json_response.count.should eq 2
-      json_response.first.should have_attributes(attributes)
+      json_response["product_properties"].count.should eq 2
+      json_response["product_properties"].first.should have_attributes(attributes)
     end
 
     it "can see a single product_property" do
@@ -87,13 +87,13 @@ module Spree
       let(:resource_scoping) { { :product_id => product.id } }
       it "can see a list of all product properties" do
         api_get :index
-        json_response.count.should eq 2
-        json_response.first.should have_attributes(attributes)
+        json_response["product_properties"].count.should eq 2
+        json_response["product_properties"].first.should have_attributes(attributes)
       end
+
       it "can see a single product_property by id" do
         api_get :show, :id => property_1.id
         json_response.count.should eq 1
-        puts "Response: #{json_response}"
         json_response.should have_attributes(attributes)
       end
     end
