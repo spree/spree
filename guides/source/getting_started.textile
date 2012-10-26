@@ -234,10 +234,12 @@ h4. Configuring Spree Analytics
 
 Spree Analytics shows your stores ecommerce performance on the admin overview page. It provides deep insight into your visitors' behavior and sales conversions. You will have to register your store for this free service.
 
-You will have to "register your store":http://spreecommerce.com/stores/new with Spree Commerce. This requires a user account.
+You will have to activate this free service using the simple form available on your store. 
 
-On "spreecommerce.com":http://spreecommerce.com/stores configure the Analytics Add On for your store to generate your token. The service requires a strict url in the format "http://www.mystore.com". This does not have to be a live url and may be changed later.
+!images/analytics/signup.png(Admin welcome screenshot)!
 
-You will need the App Id, Site Id and Token to configure your Spree Store. The token should be entered on the Overview tab in the admin section. (/admin).
+On your store, go to the Admin Overview and click Activate. Fill out the form, and you're all set.
 
-!images/analytics/token.png(Admin welcome screenshot)!
+!images/analytics/dashboard.png(Admin welcome screenshot)!
+
+Data will begin to populate as soon as people visit your site, but no historical data is loaded.
