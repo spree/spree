@@ -4,17 +4,21 @@
   <i class="icon-arrow-right"></i> <%= t(:new) %> <%= t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>  
 <% end %>
 
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_payments_list), spree.admin_order_payments_url(@order), :icon => 'icon-arrow-left' %></li>
+<% end %>
+
 <% if @payment_methods.any? %>
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment } %>
 
   <%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
+    <fieldset class="no-border-top">
+      <%= render :partial => 'form', :locals => { :f => f } %>
 
-    <%= render :partial => 'form', :locals => { :f => f } %>
-
-    <div class="form-buttons" data-hook="buttons">
-      <%= button @order.cart? ? t(:continue) : t(:update) %>
-    </div>
-
+      <div class="filter-actions actions" data-hook="buttons">
+        <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
+      </div>
+    </fieldset>
   <% end %>
 <% else %>
   <%= t(:cannot_create_payment_without_payment_methods) %>

@@ -33,9 +33,11 @@
     </div>
 
     <% if Spree::Config[:track_inventory_levels] %>
-      <div class="field" data-hook="on_hand">
-        <%= f.label :on_demand, t(:on_demand) %>
-        <%= f.check_box :on_demand, :class => 'fullwidth' %>
+      <div class="field checkbox" data-hook="on_hand">
+        <label>
+          <%= f.check_box :on_demand %>
+          <%= t(:on_demand) %>
+        </label>
       </div>
       <div class="field" data-hook="on_hand">
         <%= f.label :on_hand, t(:on_hand) %>

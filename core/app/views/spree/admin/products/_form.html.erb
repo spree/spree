@@ -2,20 +2,20 @@
   
   <div class="left eight columns alpha" data-hook="admin_product_form_left">    
     <%= f.field_container :name do %>
-      <%= f.label :name, t(:name) %> <span class="required">*</span>
+      <%= f.label :name, raw(t(:name) + content_tag(:span, ' *', :class => 'required')) %>
       <%= f.text_field :name, :class => 'fullwidth title' %>
       <%= f.error_message_on :name %>
     <% end %>
 
     <%= f.field_container :permalink do %>
-      <%= f.label :permalink, t(:permalink) %> <span class="required">*</span>
+      <%= f.label :permalink, raw(t(:permalink) + content_tag(:span, ' *',  :class => "required")) %>
       <%= f.text_field :permalink, :class => 'fullwidth title' %>
       <%= f.error_message_on :permalink %>
     <% end %>
 
     <%= f.field_container :description do %>
       <%= f.label :description, t(:description) %>
-      <%= f.text_area :description, {:rows => 17, :class => 'fullwidth'} %>
+      <%= f.text_area :description, {:rows => "#{unless @product.has_variants? then '20' else '13' end}", :class => 'fullwidth'} %>
       <%= f.error_message_on :description %>
     <% end %>
   </div>
@@ -23,7 +23,7 @@
   <div class="right four columns omega" data-hook="admin_product_form_right">
     <div class="alpha two columns">
       <%= f.field_container :price do %>
-        <%= f.label :price, t(:master_price) %> <span class="required">*</span>
+        <%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
         <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
         <%= f.error_message_on :price %>
       <% end %>
@@ -32,9 +32,11 @@
       <%= f.field_container :cost_price do %>
         <%= f.label :cost_price, t(:cost_price) %>
         <%= f.text_field :cost_price, :value => number_to_currency(@product.cost_price, :unit => '') %>
-      <%= f.error_message_on :cost_price %>
+        <%= f.error_message_on :cost_price %>
+      <% end %>
     </div>
-    <% end %>
+
+    <div class="clear"></div>
 
     <%= f.field_container :available_on do %>
       <%= f.label :available_on, t(:available_on) %>
@@ -48,15 +50,23 @@
         <%= f.text_field :sku, :size => 16 %>
       <% end %>
 
-      <% if Spree::Config[:track_inventory_levels] %>
-        <%= f.field_container :on_demand do %>
-          <%= f.label :on_demand, t(:on_demand) %>
-          <%= f.check_box :on_demand %>
-        <% end %>
-        <%= f.field_container :on_hand do %>
-          <%= f.label :on_hand, t(:on_hand) %>
-          <%= f.number_field :on_hand, :min => 0 %>
-        <% end %>
+      <% if Spree::Config[:track_inventory_levels] %>        
+        <div class="alpha two columns">
+          <%= f.field_container :on_hand do %>
+            <%= f.label :on_hand, t(:on_hand) %>
+            <%= f.number_field :on_hand, :min => 0 %>
+          <% end %>
+        </div>
+        <div class="omega two columns">
+          <%= f.field_container :on_demand, :class => ['checkbox'] do %>
+            <label>
+              <%= f.check_box :on_demand %>
+              <%= t(:on_demand) %>
+            </label>
+          <% end %>
+        </div>
+
+        <div class="clear"></div>
       <% end %>
 
       <ul id="shipping_specs">

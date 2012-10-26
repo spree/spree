@@ -1,18 +1,18 @@
-<div class="calculator-fields block-table field">
+<div class="calculator-fields row">
 
-  <div class="field table-cell">
+  <div class="field alpha four columns">
     <% field_name = "#{param_prefix}[calculator_type]" %>
-    <%= label_tag field_name, t(:calculator) %><br>
+    <%= label_tag field_name, t(:calculator) %>
     <%= select_tag field_name,
                    options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
-                   :class => 'type-select select2' %>
+                   :class => 'type-select select2 fullwidth' %>
     <% if promotion_action.calculator.respond_to?(:preferences) %>
-      &nbsp; <span class="warning info"><%= t(:calculator_settings_warning) %></span>
+      <span class="warning info"><%= t(:calculator_settings_warning) %></span>
     <% end %>
   </div>
 
   <% unless promotion_action.new_record? %>
-    <div class="settings field table-cell">
+    <div class="settings field omega four columns">
       <% promotion_action.calculator.preferences.keys.map do |key| %>
         <% field_name = "#{param_prefix}[calculator_attributes][preferred_#{key}]" %>
         <%= label_tag field_name, t(key.to_s) %>
@@ -23,5 +23,4 @@
       <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
     </div>
   <% end %>
-
 </div>

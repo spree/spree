@@ -4,13 +4,19 @@
   <i class="icon-arrow-right"></i> <%= t(:edit) %> <%= t(:adjustment) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_adjustments_list), spree.admin_order_adjustments_url(@order), :icon => 'icon-arrow-left' %></li>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @adjustment } %>
 <%= form_for @adjustment, :url => admin_order_adjustment_path(@order, @adjustment), :method => :put do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
 
-  <div class="form-buttons" data-hook="buttons">
-    <%= button t(:continue), 'icon-arrow-right' %>
-    <%= t(:or) %>
-    <%= link_to_with_icon 'icon-remove', t('actions.cancel'), admin_order_adjustments_url(@order), :class => 'button' %>
-  </div>
+    <div class="filter-actions actions" data-hook="buttons">
+      <%= button t(:continue), 'icon-arrow-right' %>
+      <span class="or"><%= t(:or) %></span>
+      <%= link_to_with_icon 'icon-remove', t('actions.cancel'), admin_order_adjustments_url(@order), :class => 'button' %>
+    </div>
+  </fieldset>
 <% end %>

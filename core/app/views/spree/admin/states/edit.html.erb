@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:editing_state) %>
+  <%= t(:editing_state) %> <i class="icon-arrow-right"></i> <%= @state.name %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -13,6 +13,8 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @state } %>
 
 <%= form_for [:admin, @country, @state] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>

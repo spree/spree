@@ -49,6 +49,7 @@ table {
       }
       .icon-envelope-alt {
         color: $color-link;
+        padding-left: 0px;
 
         &:hover {
           background-color: $color-3;
@@ -93,18 +94,15 @@ table {
 
   }
 
-  th {
-    padding: 10px;
-    border-top: 1px solid $color-border;
-    border-bottom: 1px solid $color-border;
-  }
-
   thead {
     th {
+      padding: 10px;
+      border-top: 1px solid $color-border;
       border-bottom: none;
       background-color: $color-tbl-thead;
       text-transform: uppercase;
       font-size: 85%;
+      font-weight: $font-weight-bold;
     }
   }
 
@@ -122,7 +120,7 @@ table {
       }
 
       &:hover td {
-        background-color: very-light($color-3, 6);
+        background-color: very-light($color-3, 5);
 
         img {
           border: 1px solid $color-border;
