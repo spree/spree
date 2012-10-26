@@ -27,21 +27,38 @@ module Spree
       sign_in_as_admin!
 
       it "can create a new zone" do
-        api_post :create, :zone => { :name => "North Pole",
-                                     :zone_members => [ :zone_member => {
-                                                        :zoneable_id => 1 }] }
+        params = {
+          :name => "North Pole",
+          :zone_members => [
+            { 
+              :zoneable_type => "Spree::Country",
+              :zoneable_id => 1
+            }
+          ]
+        }
+
         response.status.should == 201
         json_response.should have_attributes(attributes)
+        json_response["zone"]["zone_members"].should_not be_empty
       end
 
       it "updates a zone" do
-        api_put :update, :id => @zone.id,
-                         :zone => { :name => "Americas",
-                                    :zone_members => [ :zone_member => {
-                                                       :zoneable_type => 'Spree::Country',
-                                                       :zoneable_id => 1 }]}
+        params = { :id => 1,
+          :zone => {
+            :name => "North Pole",
+            :zone_members => [
+              {
+                :zoneable_type => "Spree::Country",
+                :zoneable_id => 1
+              }
+            ]
+          }
+        }
+
+        api_put :update, params 
         response.status.should == 200
         json_response['zone']['name'].should eq 'Americas'
+        json_response['zone']['zone_members'].should_not be_blank
       end
 
       it "can delete a zone" do
