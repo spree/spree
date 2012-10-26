@@ -191,6 +191,18 @@ Spree.config do |config|
 end
 </ruby>
 
+It's also a good idea to not include the +rails_root+ path inside the +attachment_path+ configuration option, which by default is this:
+
+<ruby>
+:rails_root/public/spree/products/:id/:style/:basename.:extension
+</ruby>
+
+To change, this add this line underneath the +s3_secret+ configuration setting:
+
+<ruby>
+config.attachment_path = '/spree/products/:id/:style/:basename.:extension'
+</ruby>
+
 If you're using the Western Europe S3 server, you will need to set two additional options inside this block:
 
 <ruby>
