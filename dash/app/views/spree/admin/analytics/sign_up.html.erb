@@ -3,11 +3,11 @@
     <legend><%= t(:analytics_sign_up) %></legend>
     <p>
       <%= check_box_tag 'store[terms_of_service]', @store[:terms_of_service], @store.has_key?(:terms_of_service), :size => 50 %>
-      <%= label_tag 'store[terms_of_service]', t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/terms" target="_new"><%= t(:review) %></a>)
+      <%= label_tag 'store[terms_of_service]', t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/about/terms" target="_new"><%= t(:review) %></a>)
     </p>
     <p>
       <%= check_box_tag 'store[privacy_policy]', @store[:privacy_policy], @store.has_key?(:privacy_policy), :size => 50 %>
-      <%= label_tag 'store[privacy_policy]', t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/privacy" target="_new"><%= t(:review) %></a>)
+      <%= label_tag 'store[privacy_policy]', t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/about/privacy" target="_new"><%= t(:review) %></a>)
     </p>
     <p>
       <%= label_tag :first_name %><br>
