@@ -135,6 +135,9 @@ index:
     - title: Contributing to Spree
       url: contributing_to_spree
       text: Do you enjoy Spree and want to "give something back?" This guide contains information on how to contribute to the Spree project.
+    - title: After Launch
+      url: after_launch
+      text: Launching your store isn't the end. Besides fulfilling orders, this guide covers other things you can do to help your store. 
   Best Practices:
     - title: Developer Tips
       url: developer_tips
