@@ -10,10 +10,6 @@ jQuery(function($) {
       new_taxon = taxon.text.replace('->', '<i class="icon-arrow-right">')
       return new_taxon;
     }
-    $("#product_taxon_ids").select2({
-      formatSelection: function(item) { return "<span class='with-tip' title='"+item.text.replace(/->/g, ' <i class="icon-arrow-right"></i> ')+"'>" + item.text.split(' -> ').slice(-1)[0] + "</span>"},
-      formatResult: function(item) { return item.text.replace(/->/g, ' <i class="icon-arrow-right"></i> ') }
-    });
 
     $("#product_taxon_ids").on({
       change: function(e){
