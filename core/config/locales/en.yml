@@ -666,6 +666,7 @@ en:
     resumed: resumed
     returned: returned
     skrill: skrill
+    repairing: repairing
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to %{event} this order?"
   order_total: "Order Total"
