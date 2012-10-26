@@ -24,7 +24,7 @@ module Spree
     end
 
     def calculator_available?(order)
-      caluclator.available?(order)
+      calculator.available?(order)
     end
 
     def within_zone?(order)
