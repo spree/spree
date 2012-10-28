@@ -40,7 +40,7 @@ describe "Shipments" do
       click_icon(:edit)
     end
 
-    page.should have_content("Shipment ##{order.shipment.number}")
+    page.should have_content("##{order.shipment.number}")
   end
 
 end
