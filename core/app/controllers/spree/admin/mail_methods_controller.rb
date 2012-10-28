@@ -20,7 +20,7 @@ module Spree
       rescue Exception => e
         flash[:error] = t('admin.mail_methods.testmail.error') % {:e => e}
       ensure
-        respond_with(@mail_method) { |format| format.html { redirect_to :back } }
+        redirect_to :back
       end
 
       private

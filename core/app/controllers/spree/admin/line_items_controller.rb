@@ -12,12 +12,10 @@ module Spree
         variant = Variant.find(params[:line_item][:variant_id])
         @line_item = @order.add_variant(variant, params[:line_item][:quantity].to_i)
 
-        if @order.save
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
-          end
-        else
-          respond_with(@line_item) do |format|
+        respond_with(@line_item) do |format|
+          if @order.save
+            format.html { render 'spree/admin/orders/form', :order => @order.reload }
+          else
             format.js { render :action => 'create', :locals => { :order => @order.reload } }
           end
         end
@@ -26,20 +24,13 @@ module Spree
       def destroy
         @line_item.destroy
         respond_with(@line_item) do |format|
-          format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
+          format.html { render 'spree/admin/orders/form', :order => @order.reload }
         end
       end
 
       def update
-        if @line_item.update_attributes(params[:line_item])
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
-          end
-        else
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
-          end
-        end
+        @line_item.update_attributes(params[:line_item])
+        render 'spree/admin/orders/form', :order => @order.reload
       end
 
       private

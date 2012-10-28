@@ -2,7 +2,6 @@ module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
 
-      respond_to :html, :json, :js
 
       def search
         if params[:ids]
@@ -31,8 +30,6 @@ module Spree
         @taxonomy = Taxonomy.find(params[:taxonomy_id])
         @taxon = @taxonomy.taxons.find(params[:id])
         @permalink_part = @taxon.permalink.split("/").last
-
-        respond_with(:admin, @taxon)
       end
 
       def update

@@ -10,9 +10,6 @@ module Spree
     before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
-    respond_to :html
-
-    # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
@@ -21,19 +18,19 @@ module Spree
           state_callback(:after)
         else
           flash[:error] = t(:payment_processing_failed)
-          respond_with(@order, :location => checkout_state_path(@order.state))
+          redirect_to checkout_state_path(@order.state)
           return
         end
 
         if @order.state == "complete" || @order.completed?
           flash.notice = t(:order_processed_successfully)
           flash[:commerce_tracking] = "nothing special"
-          respond_with(@order, :location => completion_route)
+          redirect_to completion_route
         else
-          respond_with(@order, :location => checkout_state_path(@order.state))
+          redirect_to checkout_state_path(@order.state)
         end
       else
-        respond_with(@order) { |format| format.html { render :edit } }
+        render :edit
       end
     end
 

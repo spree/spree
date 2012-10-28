@@ -20,8 +20,6 @@ module Spree
       def select
         @prototype ||= Prototype.find(params[:id])
         @prototype_properties = @prototype.properties
-
-        respond_with(@prototypes)
       end
 
     end

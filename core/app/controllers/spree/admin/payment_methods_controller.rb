@@ -11,10 +11,9 @@ module Spree
         if @payment_method.save
           invoke_callbacks(:create, :after)
           flash[:success] = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
-          respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
+          redirect_to edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:create, :fails)
-          respond_with(@payment_method)
         end
       end
 
@@ -36,10 +35,9 @@ module Spree
         if @payment_method.update_attributes(attributes)
           invoke_callbacks(:update, :after)
           flash[:success] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
-          respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
+          redirect_to edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:update, :fails)
-          respond_with(@payment_method)
         end
       end
 

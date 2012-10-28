@@ -13,7 +13,6 @@ module Spree
       end
 
       def index
-        respond_with(@collection)
       end
 
       def update
@@ -44,7 +43,7 @@ module Spree
           flash.notice = I18n.t('notice_messages.product_not_cloned')
         end
 
-        respond_with(@new) { |format| format.html { redirect_to edit_admin_product_url(@new) } }
+        redirect_to edit_admin_product_url(@new)
       end
 
       protected
