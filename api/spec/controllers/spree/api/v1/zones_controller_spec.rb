@@ -28,22 +28,25 @@ module Spree
 
       it "can create a new zone" do
         params = {
-          :name => "North Pole",
-          :zone_members => [
-            { 
-              :zoneable_type => "Spree::Country",
-              :zoneable_id => 1
-            }
-          ]
+          :zone => {
+            :name => "North Pole",
+            :zone_members => [
+              {
+                :zoneable_type => "Spree::Country",
+                :zoneable_id => 1
+              }
+            ]
+          }
         }
 
+        api_post :create, params
         response.status.should == 201
         json_response.should have_attributes(attributes)
         json_response["zone"]["zone_members"].should_not be_empty
       end
 
       it "updates a zone" do
-        params = { :id => 1,
+        params = { :id => @zone.id,
           :zone => {
             :name => "North Pole",
             :zone_members => [
@@ -57,7 +60,7 @@ module Spree
 
         api_put :update, params 
         response.status.should == 200
-        json_response['zone']['name'].should eq 'Americas'
+        json_response['zone']['name'].should eq 'North Pole'
         json_response['zone']['zone_members'].should_not be_blank
       end
 
