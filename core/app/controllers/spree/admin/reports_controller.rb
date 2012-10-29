@@ -1,6 +1,7 @@
 module Spree
   module Admin
     class ReportsController < Spree::Admin::BaseController
+      respond_to :html
 
       AVAILABLE_REPORTS = {
         :sales_total => { :name => I18n.t(:sales_total), :description => I18n.t(:sales_total_description) }
@@ -8,6 +9,7 @@ module Spree
 
       def index
         @reports = AVAILABLE_REPORTS
+        respond_with(@reports)
       end
 
       def sales_total
@@ -36,6 +38,8 @@ module Spree
         @item_total = @orders.sum(:item_total)
         @adjustment_total = @orders.sum(:adjustment_total)
         @sales_total = @orders.sum(:total)
+
+        respond_with
       end
 
     end

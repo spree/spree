@@ -5,6 +5,7 @@ module Spree
 
       def new
         @zone.zone_members.build
+        respond_with(@zone)
       end
 
       protected
