@@ -32,6 +32,7 @@ module Spree
       end
     end
 
+
     # Shows the current incomplete order from the session
     def edit
       @order = current_order(true)
