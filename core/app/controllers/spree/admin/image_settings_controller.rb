@@ -16,7 +16,7 @@ module Spree
         respond_to do |format|
           format.html {
             flash[:success] = t(:image_settings_updated)
-            redirect_to edit_admin_image_settings_path
+            redirect_to spree.edit_admin_image_settings_path
           }
         end
       end

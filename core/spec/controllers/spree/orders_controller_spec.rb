@@ -7,12 +7,6 @@ describe Spree::OrdersController do
     # Don't care about IP address being set here
     order.stub(:last_ip_address=)
     Spree::Order.stub(:find).with(1).and_return(order)
-    #ensure no respond_overrides are in effect
-    if Spree::BaseController.spree_responders[:OrdersController].present?
-      Spree::BaseController.spree_responders[:OrdersController].clear
-    end
-
-    controller.stub(:try_spree_current_user => user)
   end
 
   context "#populate" do
