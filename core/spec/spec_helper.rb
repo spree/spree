@@ -121,9 +121,3 @@ shared_context "product prototype" do
   end
 
 end
-
-
-
-PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
-SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
-ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
