@@ -54,7 +54,7 @@ module Spree
         end
 
         def location_after_save
-          edit_admin_product_url(@product)
+          spree.edit_admin_product_url(@product)
         end
 
         def load_data
