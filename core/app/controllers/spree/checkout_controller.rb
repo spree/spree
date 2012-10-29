@@ -18,7 +18,7 @@ module Spree
           state_callback(:after)
         else
           flash[:error] = t(:payment_processing_failed)
-          redirect_to checkout_state_path(@order.state)
+          redirect_to spree.checkout_state_path(@order.state)
           return
         end
 
@@ -27,7 +27,7 @@ module Spree
           flash[:commerce_tracking] = "nothing special"
           redirect_to completion_route
         else
-          redirect_to checkout_state_path(@order.state)
+          redirect_to spree.checkout_state_path(@order.state)
         end
       else
         render :edit
@@ -53,16 +53,16 @@ module Spree
 
       def load_order
         @order = current_order
-        redirect_to cart_path and return unless @order and @order.checkout_allowed?
+        redirect_to spree.cart_path and return unless @order and @order.checkout_allowed?
         raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
-        redirect_to cart_path and return if @order.completed?
+        redirect_to spree.cart_path and return if @order.completed?
         @order.state = params[:state] if params[:state]
         state_callback(:before)
       end
 
       # Provides a route to redirect after order completion
       def completion_route
-        order_path(@order)
+        spree.order_path(@order)
       end
 
       def object_params
@@ -80,7 +80,7 @@ module Spree
 
       def raise_insufficient_quantity
         flash[:error] = t(:spree_inventory_error_flash_for_insufficient_quantity)
-        redirect_to cart_path
+        redirect_to spree.cart_path
       end
 
       def state_callback(before_or_after = :before)
