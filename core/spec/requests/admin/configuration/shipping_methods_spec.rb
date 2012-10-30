@@ -3,21 +3,16 @@ require 'active_record/fixtures'
 
 describe "Shipping Methods" do
   stub_authorization!
-
-  before(:all) do
-    fixtures_dir = File.expand_path('../../../../../db/default', __FILE__)
-    ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
-  end
+  let!(:country) { create(:country) }
+  let!(:state) { create(:state, :country => country) }
+  let!(:zone) { create(:global_zone) }
+  let!(:product) { create(:product, :name => "Mug") }
 
   before(:each) do
     # HACK: To work around no email prompting on check out
     Spree::Order.any_instance.stub(:require_email => false)
-    PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
-    SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
-    ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
     create(:payment_method, :environment => 'test')
-    create(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
-    @product = create(:product, :name => "Mug")
+    create(:shipping_method, :zone => zone)
 
     visit spree.admin_path
     click_link "Configuration"
@@ -32,7 +27,7 @@ describe "Shipping Methods" do
 
       within_row(1) do
         column_text(1).should == "UPS Ground"
-        column_text(2).should == "North America"
+        column_text(2).should == zone.name
         column_text(3).should == "Flat Rate (per order)"
         column_text(4).should == "Both"
       end
@@ -75,7 +70,7 @@ describe "Shipping Methods" do
       context "when match rules are satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select "North America", :from => "shipping_method_zone_id"
+          select zone.name, :from => "shipping_method_zone_id"
           select "Default", :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_none"
           click_button "Create"
@@ -98,11 +93,11 @@ describe "Shipping Methods" do
       end
 
       context "when match rules aren't satisfied" do
-        before { @product.shipping_category = @shipping_category; @product.save }
+        before { product.shipping_category = @shipping_category; product.save }
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select "North America", :from => "shipping_method_zone_id"
+          select zone.name, :from => "shipping_method_zone_id"
           select "Default", :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_none"
           click_button "Create"
@@ -127,11 +122,11 @@ describe "Shipping Methods" do
 
     context "when rule is all products match" do
       context "when match rules are satisfied" do
-        before { @product.shipping_category = @shipping_category; @product.save }
+        before { product.shipping_category = @shipping_category; product.save }
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select "North America", :from => "shipping_method_zone_id"
+          select zone.name, :from => "shipping_method_zone_id"
           select "Default", :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_all"
           click_button "Create"
@@ -156,7 +151,7 @@ describe "Shipping Methods" do
       context "when match rules aren't satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select "North America", :from => "shipping_method_zone_id"
+          select zone.name, :from => "shipping_method_zone_id"
           select "Default", :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_all"
           click_button "Create"
@@ -185,11 +180,11 @@ describe "Shipping Methods" do
       end
 
       context "when match rules are satisfied" do
-        before { @product.shipping_category = @shipping_category; @product.save }
+        before { product.shipping_category = @shipping_category; product.save }
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select "North America", :from => "shipping_method_zone_id"
+          select zone.name, :from => "shipping_method_zone_id"
           select "Default", :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_one"
           click_button "Create"
@@ -217,7 +212,7 @@ describe "Shipping Methods" do
       context "when match rules aren't satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select "North America", :from => "shipping_method_zone_id"
+          select zone.name, :from => "shipping_method_zone_id"
           select "Default", :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_one"
           click_button "Create"
