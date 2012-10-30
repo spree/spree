@@ -3685,11 +3685,6 @@
 							this.show_contextmenu(e.currentTarget, e.pageX, e.pageY);
 						}
 					}, this))
-				.delegate("a", "click.jstree", $.proxy(function (e) {
-						if(this.data.contextmenu) {
-							$.vakata.context.hide();
-						}
-					}, this))
 				.bind("destroy.jstree", $.proxy(function () {
 						// TODO: move this to descruct method
 						if(this.data.contextmenu) {
