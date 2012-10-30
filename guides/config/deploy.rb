@@ -1,12 +1,12 @@
-$:.unshift(File.expand_path('./lib', ENV['rvm_path'])) # Add RVM's lib directory to the load path.
-require "rvm/capistrano"                  # Load RVM's capistrano plugin.
 require "bundler/capistrano"
+$:.unshift(File.expand_path('./lib', ENV['rvm_path'])) # Add RVM's lib directory to the load path.
 
 set :application, "#{'edge-' if exists?(:edge)}guides"
 set :user, 'spree'
 set :group, 'www-data'
 set :domain, 'www.spreecommerce.com'
 
+set :rvm_type, :system
 set :rvm_ruby_string, 'ruby-1.9.2-p290'
 
 set :scm, :git
@@ -26,6 +26,13 @@ end
 set :deploy_to,   "/data/#{application}"
 set :deploy_via,  :remote_cache
 set :use_sudo,    false
+
+set :default_environment, {
+  'PATH' => "/usr/local/rvm/gems/ruby-1.9.2-p290/bin:/usr/local/rvm/gems/ruby-1.9.2-p290@global/bin:/usr/local/rvm/rubies/ruby-1.9.2-p290/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH",
+  'RUBY_VERSION' => 'ruby 1.9.2p290',
+  'GEM_HOME'     => '/usr/local/rvm/gems/ruby-1.9.2-p290',
+  'GEM_PATH'     => '/usr/local/rvm/gems/ruby-1.9.2-p290:/usr/local/rvm/gems/ruby-1.9.2-p290@global'
+}
 
 default_run_options[:pty] = true
 set :ssh_options, { :forward_agent => true }
