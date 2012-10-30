@@ -3,16 +3,16 @@ require 'active_record/fixtures'
 
 describe "Shipping Methods" do
   stub_authorization!
-
-  let!(:address) { create(:address, :state => create(:state)) }
-  let!(:zone) { Spree::Zone.find_by_name("GlobalZone") || create(:global_zone) }
-  let!(:shipping_method) { create(:shipping_method, :zone => zone) }
+  let!(:country) { create(:country) }
+  let!(:state) { create(:state, :country => country) }
+  let!(:zone) { create(:global_zone) }
+  let!(:product) { create(:product, :name => "Mug") }
 
   before(:each) do
     # HACK: To work around no email prompting on check out
     Spree::Order.any_instance.stub(:require_email => false)
     create(:payment_method, :environment => 'test')
-    @product = create(:product, :name => "Mug")
+    create(:shipping_method, :zone => zone)
 
     visit spree.admin_path
     click_link "Configuration"
@@ -91,7 +91,7 @@ describe "Shipping Methods" do
       end
 
       context "when match rules aren't satisfied" do
-        before { @product.shipping_category = @shipping_category; @product.save }
+        before { product.shipping_category = @shipping_category; product.save }
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
@@ -120,7 +120,7 @@ describe "Shipping Methods" do
 
     context "when rule is all products match" do
       context "when match rules are satisfied" do
-        before { @product.shipping_category = @shipping_category; @product.save }
+        before { product.shipping_category = @shipping_category; product.save }
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
@@ -178,7 +178,7 @@ describe "Shipping Methods" do
       end
 
       context "when match rules are satisfied" do
-        before { @product.shipping_category = @shipping_category; @product.save }
+        before { product.shipping_category = @shipping_category; product.save }
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
