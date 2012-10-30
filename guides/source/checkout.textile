@@ -164,7 +164,7 @@ This callback would prevent transitioning to the +delivery+ step if +valid_zip_c
 
 h5. Customizing the View for a Particular Step
 
-Each of the default checkout steps has its own partial defined in the spree_core's +app/views/spree/checkout+ directory.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  Its also possible the default partial in question defines a usable theme hook, in which case you could add your functionality by using "Deface":https://github.com/railsdog/deface.html
+Each of the default checkout steps has its own partial defined in the spree_core's +app/views/spree/checkout+ directory.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  Its also possible the default partial in question defines a usable theme hook, in which case you could add your functionality by using "Deface":https://github.com/spree/deface.html
 
 INFO: See also the brief discussion in "checkout partials":#checkout-partials for additional information.
 

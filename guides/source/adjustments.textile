@@ -43,7 +43,7 @@ The following Ruby console output helps to illustrate this fact.
 => #<Spree::Adjustment id: 684130, source_id: 968652773, amount: #<BigDecimal:7fff25851228,'0.5E1',9(36)>, label: "Shipping", source_type: "Spree::Shipment", adjustable_id: 0, created_at: "2012-03-25 04:12:08", updated_at: "2012-03-25 04:12:08", mandatory: true, locked: true, originator_id: 574015644, originator_type: "Spree::ShippingMethod", eligible: true, adjustable_type: "Spree::Order">
 </shell>
 
-This may seem somewhat simplistic at first but our experience has shown that most scenarios can be handled with adequate labels and a few other tricks (including providing some handy "scopes":http://api.rubyonrails.org/classes/ActiveRecord/NamedScope/ClassMethods.html#method-i-scope at the model level.)
+This may seem somewhat simplistic at first but our experience has shown that most scenarios can be handled with adequate labels and a few other tricks (including providing some handy "scopes":http://api.rubyonrails.org/classes/ActiveRecord/Scoping.html at the model level.)
 
 h4. Taxation
 
