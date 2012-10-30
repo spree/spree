@@ -8,6 +8,18 @@ describe Spree::Api::V1::BaseController do
     end
   end
 
+  context "signed in as a user using an authentication extension" do
+    before do
+      controller.stub :try_spree_current_user => stub(:email => "spree@example.com")
+    end
+
+    it "can make a request" do
+      api_get :index
+      json_response.should == { "products" => [] }
+      response.status.should == 200
+    end
+  end
+
   context "cannot make a request to the API" do
     it "without an API key" do
       api_get :index
