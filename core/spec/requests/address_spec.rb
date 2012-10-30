@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe "Address" do
-  let!(:canada) { create(:country, :name => "Canada",:states_required => true) }
+  let!(:canada) do 
+    country = create(:country, :name => "Canada",:states_required => true)
+    create(:state, :name => "Ontario", :country => country)
+    country
+  end
+
   let!(:france) { create(:country, :name => "France",:states_required => false) }
   let!(:italy) { create(:country, :name => "Italy",:states_required => true) }
 
-  before(:all) do
-    Factory(:state, :name => "Ontario", :country => canada)
-  end
-
   before do
-    Spree::Product.delete_all
     @product = create(:product, :name => "RoR Mug", :on_hand => 1)
     @product.save
 
