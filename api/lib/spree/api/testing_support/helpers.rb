@@ -12,7 +12,7 @@ module Spree
         end
 
         def stub_authentication!
-          controller.stub :check_for_api_key
+          controller.stub :check_for_user_or_api_key
           Spree::LegacyUser.stub :find_by_spree_api_key => current_api_user
         end
 
