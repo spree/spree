@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'active_record/fixtures'
 
 describe "Shipping Methods" do
   stub_authorization!
