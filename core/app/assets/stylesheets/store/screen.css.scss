@@ -1,4 +1,4 @@
-@import "./variables.css.scss";
+@import "./variables.css.scss"; // Must call explicit path or else extension integration tests cannot import file.
 
 /*--------------------------------------*/
 /* Basic styles 
