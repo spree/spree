@@ -1,9 +1,9 @@
-[<% @taxons.each_with_index do |t,i| %>
-  { "attr" :
-    { "id" : "<%= t.id %>" },
-    "data" : "<%= escape_javascript(raw(t.name)) %>"
-    <% unless t.children.empty? %>
-      ,"state" : "closed"
-    <% end %>
-  }<%= "," if i < (@taxons.size - 1) %>
-<% end %>]
+<% @taxons = @taxons.map do |taxon|
+  { :id => taxon.id,
+    :name => taxon.name,
+    :state => taxon.children.empty? ? "open" : "closed"
+  }
+end
+%>
+
+<%= raw(@taxons.to_json) %>
