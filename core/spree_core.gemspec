@@ -41,4 +41,6 @@ Gem::Specification.new do |s|
 
   # Frozen to 5.0.0 because 5.1.0 is not compatible with Ruby 1.8.
   s.add_dependency 'money', '5.0.0'
+
+  s.add_development_dependency 'email_spec', '~> 1.2.1'
 end
