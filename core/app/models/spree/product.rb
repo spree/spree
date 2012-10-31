@@ -99,6 +99,16 @@ module Spree
       variants.any?
     end
 
+    # should product be displayed on products pages and search
+    def on_display?
+      has_stock? || Spree::Config[:show_zero_stock_products]
+    end
+
+    # is this product actually available for purchase
+    def on_sale?
+      has_stock? || Spree::Config[:allow_backorders]
+    end
+
     # returns the number of inventory units "on_hand" for this product
     def on_hand
       has_variants? ? variants.sum(&:on_hand) : master.on_hand
