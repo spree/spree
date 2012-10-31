@@ -152,7 +152,6 @@ Spree::Core::Engine.routes.draw do
       member do
         get :get_children
       end
-
       resources :taxons
     end
 

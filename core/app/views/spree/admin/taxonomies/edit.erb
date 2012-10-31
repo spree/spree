@@ -19,7 +19,10 @@
     <%= render :partial => 'form', :locals => { :f => f } %>
     <div>
       <%= label_tag nil, t(:tree) %><br />
-      <div id="taxonomy_tree" class="tree" data-url="<%= admin_taxonomy_taxons_path @taxonomy %>"></div>
+      <script>
+        Spree.routes.taxonomy_taxons_path = "<%= spree.api_taxonomy_taxons_path(@taxonomy) %>"
+      </script>
+      <div id="taxonomy_tree" class="tree"></div>
     </div>
     <div id="progress" style="display:none;">
       <%= image_tag 'spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= t(:updating) %>..
@@ -35,28 +38,4 @@
       <%= button_link_to t(:cancel), admin_taxonomies_path, :icon => 'icon-remove' %>
     </div>
   </fieldset>
-<% end %>
-
-<% content_for :head do %>
-  <%= javascript_tag do -%>
-    var initial = [
-      { "attr" :
-      { "id" : "<%= @taxonomy.root.id %>", "rel" : "root" },
-      "data" : "<%= escape_javascript(raw(@taxonomy.root.name)) %>",
-      "state" : "open",
-      "children" : [
-        <% @taxonomy.root.children.each_with_index do |taxon,i| %>
-          {
-            "attr" :
-            { "id" : "<%= taxon.id %>"},
-            "data" : "<%= escape_javascript(raw(taxon.name)) %>"
-            <% unless taxon.children.empty? %>
-              ,"state" : "closed"
-            <% end %>
-          }<%= ',' if i < (@taxonomy.root.children.size - 1) %>
-        <% end %>
-      ]
-        }
-    ];
-  <% end -%>
 <% end %>
