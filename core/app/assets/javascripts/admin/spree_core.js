@@ -14,6 +14,7 @@
 //= require equalize
 //= require responsive-tables
 //= require jquery.horizontalNav
+//= require_self
 //= require_tree .
 
 var Spree = {};
