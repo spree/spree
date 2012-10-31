@@ -24,7 +24,10 @@ module Spree
     after_destroy :update_order
 
     def copy_price
-      self.price = variant.price if variant && price.nil?
+      if variant
+        self.price = variant.price if price.nil?
+        self.currency = variant.currency if currency.nil?
+      end
     end
 
     def increment_quantity
@@ -35,19 +38,21 @@ module Spree
       self.quantity -= 1
     end
 
-    def currency
-      Spree::Config[:currency]
-    end
-
     def amount
       price * quantity
     end
     alias total amount
 
-    def display_amount
+    def single_money
+      Spree::Money.new(price, { :currency => currency })
+    end
+    alias single_display_amount single_money
+
+    def money
       Spree::Money.new(amount, { :currency => currency })
     end
-    alias display_total display_amount
+    alias display_total money
+    alias display_amount money
 
     def adjust_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0

@@ -81,8 +81,8 @@ module Spree
 
       it "should be nil when all variant prices are equal" do
         product.price = 10
-        @variant1.update_column(:price, 10)
-        @variant2.update_column(:price, 10)
+        @variant1.default_price.update_column(:amount, 10)
+        @variant2.default_price.update_column(:amount, 10)
         helper.variant_price(@variant1).should be_nil
         helper.variant_price(@variant2).should be_nil
       end

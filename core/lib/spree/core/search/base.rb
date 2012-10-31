@@ -14,7 +14,7 @@ module Spree
           @products_scope = get_base_scope
           curr_page = page || 1
 
-          @products = @products_scope.includes([:master]).page(curr_page).per(per_page)
+          @products = @products_scope.includes([:master => :default_price]).where("spree_prices.amount IS NOT NULL").page(curr_page).per(per_page)
         end
 
         def method_missing(name)

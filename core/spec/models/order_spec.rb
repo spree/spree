@@ -369,8 +369,20 @@ describe Spree::Order do
   end
 
   context "#currency" do
-    it "returns the globally configured currency" do
-      order.currency.should == "USD"
+    context "when object currency is ABC" do
+      before { order.currency = "ABC" }
+
+      it "returns the currency from the object" do
+        order.currency.should == "ABC"
+      end
+    end
+
+    context "when object currency is nil" do
+      before { order.currency = nil }
+
+      it "returns the globally configured currency" do
+        order.currency.should == "USD"
+      end
     end
   end
 

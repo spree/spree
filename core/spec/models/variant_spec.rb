@@ -279,7 +279,17 @@ describe Spree::Variant do
   context "#display_amount" do
     it "retuns a Spree::Money" do
       variant.price = 21.22
-      variant.display_amount.should == Spree::Money.new(21.22)
+      variant.display_amount.should == "$21.22"
+    end
+  end
+
+  context "#cost_currency" do
+    context "when cost currency is nil" do
+      before { variant.cost_currency = nil }
+      it "populates cost currency with the default value on save" do
+        variant.save!
+        variant.cost_currency.should == "USD"
+      end
     end
   end
 end

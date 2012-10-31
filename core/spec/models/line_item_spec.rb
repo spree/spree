@@ -18,6 +18,7 @@ describe Spree::LineItem do
 
   before do
     line_item.stub(:order => order, :variant => variant, :new_record? => false)
+    variant.stub(:currency => "USD")
     Spree::Config.set :allow_backorders => true
   end
 
@@ -245,10 +246,17 @@ describe Spree::LineItem do
     end
   end
 
-  describe ".display_amount" do
+  describe ".money" do
     before { line_item.price = 3.50 }
     it "returns a Spree::Money representing the total for this line item" do
-      line_item.display_amount.to_s.should == "$17.50"
+      line_item.money.to_s.should == "$17.50"
+    end
+  end
+
+  describe '.single_money' do
+    before { line_item.price = 3.50 }
+    it "returns a Spree::Money representing the price for one variant" do
+      line_item.single_money.to_s.should == "$3.50"
     end
   end
 end

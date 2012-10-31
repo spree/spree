@@ -126,7 +126,11 @@ describe Spree::Product do
       end
 
       context "with currency set to JPY" do
-        before { product.master.stub(:currency) { 'JPY' } }
+        before do
+          product.master.default_price.currency = 'JPY'
+          product.master.default_price.save!
+          Spree::Config[:currency] = 'JPY'
+        end
 
         it "displays the currency in yen" do
           product.display_price.to_s.should == "¥11"

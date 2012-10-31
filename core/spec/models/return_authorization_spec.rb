@@ -110,8 +110,9 @@ describe Spree::ReturnAuthorization do
   end
 
   context "currency" do
-    it "returns the globally configured currency" do
-      return_authorization.currency.should == "USD"
+    before { order.stub(:currency) { "ABC" } }
+    it "returns the order currency" do
+      return_authorization.currency.should == "ABC"
     end
   end
 

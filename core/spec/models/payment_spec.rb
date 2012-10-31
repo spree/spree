@@ -526,8 +526,9 @@ describe Spree::Payment do
   end
 
   context "#currency" do
-    it "returns the globally configured currency" do
-      payment.currency.should == "USD"
+    before { order.stub(:currency) { "ABC" } }
+    it "returns the order currency" do
+      payment.currency.should == "ABC"
     end
   end
 

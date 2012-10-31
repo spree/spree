@@ -25,7 +25,7 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions
+                    :shipping_method_id, :email, :use_billing, :special_instructions, :currency
 
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
@@ -56,6 +56,7 @@ module Spree
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
+    before_validation :set_currency
     before_validation :generate_order_number, :on => :create
     before_validation :clone_billing_address, :if => :use_billing?
     attr_accessor :use_billing
@@ -107,7 +108,7 @@ module Spree
     end
 
     def currency
-      Spree::Config[:currency]
+      self[:currency] || Spree::Config[:currency]
     end
 
     def display_outstanding_balance
@@ -231,15 +232,21 @@ module Spree
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
     
-    def add_variant(variant, quantity = 1)
+    def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
         current_item.quantity += quantity
+        current_item.currency = currency unless currency.nil?
         current_item.save
       else
         current_item = LineItem.new(:quantity => quantity)
         current_item.variant = variant
-        current_item.price   = variant.price
+        if currency
+          current_item.currency = currency unless currency.nil?
+          current_item.price    = variant.price_in(currency).amount
+        else
+          current_item.price    = variant.price
+        end
         self.line_items << current_item
       end
 
@@ -467,7 +474,7 @@ module Spree
 
     def merge!(order)
       order.line_items.each do |line_item|
-        self.add_variant(line_item.variant, line_item.quantity)
+        self.add_variant(line_item.variant, line_item.quantity) if line_item.currency == currency
       end
       order.destroy
     end
@@ -551,6 +558,10 @@ module Spree
 
       def use_billing?
         @use_billing == true || @use_billing == "true" || @use_billing == "1"
+      end
+
+      def set_currency
+        self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
   end
 end

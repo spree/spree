@@ -66,7 +66,7 @@ module Spree
     end
 
     def currency
-      Spree::Config[:currency]
+      adjustable.nil? ? Spree::Config[:currency] : adjustable.currency
     end
 
     def display_amount

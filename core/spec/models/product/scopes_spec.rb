@@ -25,7 +25,7 @@ describe "Product scopes" do
     # Regression test for #2111
     context "A product with a deleted variant" do
       before do
-        variant = product.variants.create({:count_on_hand => 300}, :without_protection => true)
+        variant = product.variants.create!({:price => 10, :count_on_hand => 300}, :without_protection => true)
         variant.update_column(:deleted_at, Time.now)
       end
 

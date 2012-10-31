@@ -78,9 +78,9 @@ module Spree
             page(params[:page]).
             per(Spree::Config[:admin_products_per_page])
 
-          if params[:q][:s].include?("master_price")
+          if params[:q][:s].include?("master_default_price_amount")
             # PostgreSQL compatibility
-            @collection = @collection.group("spree_variants.price")
+            @collection = @collection.group("spree_prices.amount")
           end
           @collection
         end
@@ -97,7 +97,7 @@ module Spree
         end
 
         def product_includes
-         [{:variants => [:images, {:option_values => :option_type}]}, {:master => :images}]
+         [{:variants => [:images, {:option_values => :option_type}]}, {:master => [:images, :default_price]}]
         end
 
     end

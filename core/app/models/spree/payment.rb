@@ -48,7 +48,7 @@ module Spree
     end
 
     def currency
-      Spree::Config[:currency]
+      order.currency
     end
 
     def display_amount

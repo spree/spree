@@ -43,7 +43,7 @@ module Spree
     end
 
     def currency
-      Spree::Config[:currency]
+      order.nil? ? Spree::Config[:currency] : order.currency
     end
 
     # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match

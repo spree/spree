@@ -24,7 +24,7 @@ module Spree
     end
 
     def currency
-      Spree::Config[:currency]
+      order.nil? ? Spree::Config[:currency] : order.currency
     end
 
     def display_amount

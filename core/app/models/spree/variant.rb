@@ -9,19 +9,32 @@ module Spree
     attr_accessible :name, :presentation, :cost_price, :lock_version,
                     :position, :on_demand, :on_hand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
-                    :weight, :height, :width, :depth, :sku
+                    :weight, :height, :width, :depth, :sku, :cost_currency
 
     has_many :inventory_units
     has_many :line_items
     has_and_belongs_to_many :option_values, :join_table => :spree_option_values_variants
     has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
+    has_one :default_price,
+      :class_name => 'Spree::Price',
+      :conditions => proc { { :currency => Spree::Config[:currency] } },
+      :dependent => :destroy
+
+    delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency if Spree::Price.table_exists?
+
+    has_many :prices,
+      :class_name => 'Spree::Price',
+      :dependent => :destroy
+
     validate :check_price
-    validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true
+    validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true, :if => proc { Spree::Config[:require_master_price] }
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
 
+    before_validation :set_cost_currency
     after_save :process_backorders
+    after_save :save_default_price
     after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
@@ -44,19 +57,6 @@ module Spree
       else
         self.count_on_hand = new_level unless self.on_demand
       end
-    end
-
-    def currency
-      Spree::Config[:currency]
-    end
-
-    def display_amount
-      Spree::Money.new(price, { :currency => currency })
-    end
-    alias :display_price :display_amount
-
-    def price=(price)
-      self[:price] = parse_price(price) if price.present?
     end
 
     def cost_price=(price)
@@ -146,6 +146,14 @@ module Spree
       end
     end
 
+    def has_default_price?
+      !self.default_price.nil?
+    end
+
+    def price_in(currency)
+      prices.select{ |price| price.currency == currency }.first || Spree::Price.new(:variant_id => self.id, :currency => currency)
+    end
+
     private
 
       def process_backorders
@@ -168,6 +176,18 @@ module Spree
         end
       end
 
+      # Ensures a new variant takes the product master price when price is not supplied
+      def check_price
+        if price.nil? && Spree::Config[:require_master_price]
+          raise 'No master variant found to infer price' unless (product && product.master)
+          raise 'Must supply price for variant or master.price for product.' if self == product.master
+          self.price = product.master.price
+        end
+        if currency.nil?
+          self.currency = Spree::Config[:currency]
+        end
+      end
+
       # strips all non-price-like characters from the price, taking into account locale settings
       def parse_price(price)
         return price unless price.is_a?(String)
@@ -180,19 +200,19 @@ module Spree
         price.to_d
       end
 
-      # Ensures a new variant takes the product master price when price is not supplied
-      def check_price
-        if price.nil?
-          raise 'Must supply price for variant or master.price for product.' if self == product.master
-          self.price = product.master.price
-        end
-      end
-
       def recalculate_product_on_hand
         on_hand = product.on_hand
         if Spree::Config[:track_inventory_levels] && on_hand != (1.0 / 0) # Infinity
           product.update_column(:count_on_hand, on_hand)
         end
+      end
+
+      def save_default_price
+        default_price.save if default_price && (default_price.changed? || default_price.new_record?)
+      end
+
+      def set_cost_currency
+        self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
       end
   end
 end

@@ -5,7 +5,7 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
@@ -199,8 +199,8 @@ describe Spree::Shipment do
   end
 
   context "currency" do
-    it "returns the globally configured currency" do
-      shipment.currency.should == "USD"
+    it "returns the order currency" do
+      shipment.currency.should == order.currency
     end
   end
 
