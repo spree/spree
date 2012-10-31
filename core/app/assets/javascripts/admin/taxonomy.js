@@ -13,7 +13,7 @@ var handle_move = function(e, data) {
   $.ajax({
     type: "POST",
     dataType: "json",
-    url: base_url + node.attr("id"),
+    url: base_url + '/' + node.attr("id"),
     data: ({_method: "put", "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
@@ -49,7 +49,7 @@ var handle_rename = function(e, data) {
   $.ajax({
     type: "POST",
     dataType: "json",
-    url: base_url + node.attr("id"),
+    url: base_url + '/' + node.attr("id"),
     data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
