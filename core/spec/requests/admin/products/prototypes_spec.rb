@@ -35,9 +35,9 @@ describe "Prototypes" do
       click_link "Products"
       click_link "Prototypes"
 
-      find('table#listing_prototypes tbody tr:nth-child(1) td:nth-child(1)').text.should == "Shirt"
-      find('table#listing_prototypes tbody tr:nth-child(2) td:nth-child(1)').text.should == "Mug"
-      find('table#listing_prototypes tbody tr:nth-child(3) td:nth-child(1)').text.should == "Bag"
+      within_row(1) { column_text(1).should == "Shirt" }
+      within_row(2) { column_text(1).should == "Mug" }
+      within_row(3) { column_text(1).should == "Bag" }
     end
   end
 
@@ -52,7 +52,7 @@ describe "Prototypes" do
       click_button "Create"
       page.should have_content("successfully created!")
       click_link "Prototypes"
-      within('table#listing_prototypes tbody tr:nth-child(1)') { click_link "Edit" }
+      within_row(1) { click_icon :edit }
       fill_in "prototype_name", :with => "Shirt 99"
       click_button "Update"
       page.should have_content("successfully updated!")
@@ -62,8 +62,8 @@ describe "Prototypes" do
 
   context "editing a prototype" do
     it "should allow to empty its properties" do
-      create(:property, :name => "model", :presentation => "Model")
-      create(:property, :name => "brand", :presentation => "Brand")
+      model_property = create(:property, :name => "model", :presentation => "Model")
+      brand_property = create(:property, :name => "brand", :presentation => "Brand")
 
       shirt_prototype = create(:prototype, :name => "Shirt", :properties => [])
       %w( brand model ).each do |prop|
@@ -75,19 +75,17 @@ describe "Prototypes" do
       click_link "Prototypes"
 
       click_on "Edit"
+      property_ids = find_field("prototype_property_ids").value.map(&:to_i)
+      property_ids.should =~ [model_property.id, brand_property.id]
 
-      page.should have_checked_field('brand')
-      page.should have_checked_field('model')
-
-      page.uncheck('brand')
-      page.uncheck('model')
+      unselect "Brand", :from => "prototype_property_ids"
+      unselect "Model", :from => "prototype_property_ids"
 
       click_button 'Update'
 
       click_on "Edit"
 
-      page.should have_unchecked_field('brand')
-      page.should have_unchecked_field('model')
+      find_field("prototype_property_ids").value.should be_empty
     end
   end
 end

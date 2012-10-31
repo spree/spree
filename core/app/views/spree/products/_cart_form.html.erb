@@ -1,4 +1,4 @@
-<%= form_for :order, :url => populate_orders_url do |f| %>
+<%= form_for :order, :url => populate_orders_path do |f| %>
   <div id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
     <% if @product.has_variants? %>
@@ -11,13 +11,13 @@
             checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
             has_checked = true if checked %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders] %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders], 'data-price' => money(v.price) %>
               <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>
                 </span>
-                <% if variant_price_diff v %>
-                  <span class="price diff"><%= variant_price_diff v %></span>
+                <% if variant_price v %>
+                  <span class="price diff"><%= variant_price v %></span>
                 <% end %>
               </label>
             </li>
@@ -31,13 +31,13 @@
         
         <div id="product-price">
           <h6 class="product-section-title"><%= t(:price) %></h6>
-          <div><span class="price selling" itemprop="price"><%= number_to_currency @product.price %></span></div>
+          <div><span class="price selling" itemprop="price"><%= money @product.price %></span></div>
         </div>
 
         <div class="add-to-cart">
           <% if @product.has_stock? || Spree::Config[:allow_backorders] %>      
             <%= number_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
-              1, :class => 'title', :in => 1..@product.on_hand %>
+              1, :class => 'title', :in => 1..@product.on_hand, :min => 1 %>
             <%= button_tag :class => 'large primary', :id => 'add-to-cart-button', :type => :submit do %>
               <%= t(:add_to_cart) %>
             <% end %>

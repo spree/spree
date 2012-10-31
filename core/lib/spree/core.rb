@@ -39,6 +39,8 @@ require 'jquery-rails'
 require 'deface'
 require 'cancan'
 require 'select2-rails'
+require 'spree/money'
+require 'rabl'
 
 module Spree
 
@@ -75,12 +77,9 @@ require 'spree/core/ext/active_record'
 require 'spree/core/delegate_belongs_to'
 
 require 'spree/core/responder'
-require 'spree/core/respond_with'
 require 'spree/core/ssl_requirement'
 require 'spree/core/store_helpers'
-require 'spree/core/file_utilz'
 require 'spree/core/calculated_adjustments'
-require 'spree/core/current_order'
 require 'spree/core/mail_settings'
 require 'spree/core/mail_interceptor'
 require 'spree/core/middleware/redirect_legacy_product_url'
@@ -88,10 +87,6 @@ require 'spree/core/middleware/seo_assist'
 require 'spree/core/permalinks'
 require 'spree/core/token_resource'
 require 'spree/core/s3_support'
-
-silence_warnings do
-  require 'spree/core/authorize_net_cim_hack'
-end
 
 require 'spree/core/version'
 

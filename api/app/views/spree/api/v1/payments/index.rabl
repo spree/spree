@@ -1,2 +1,2 @@
-collection @payments
+collection @payments => :payments
 attributes *payment_attributes

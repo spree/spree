@@ -1,2 +1,5 @@
 $("#new_prototype").html('<%= escape_javascript(render :template => "spree/admin/prototypes/new", :formats=>[:html], :handlers=>[:erb]) %>');
+<% unless Rails.env.test? %>
+  $('.select2').select2();
+<% end %>
 $("#new_prototype_link").parent().hide();

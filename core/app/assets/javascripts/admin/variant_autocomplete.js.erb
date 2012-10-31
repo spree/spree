@@ -1,0 +1,40 @@
+//= require handlebars
+<%#encoding: UTF-8%>
+// variant autocompletion
+
+$(document).ready(function() {
+  window.variantTemplate = Handlebars.compile($('#variant_autocomplete_template').text());
+})
+
+formatVariantResult = function(variant) {
+  if (variant["images"][0] != undefined) {
+    variant.image = variant.images[0].image.mini_url
+  }
+  return variantTemplate({ variant: variant, translations: Spree.translations })
+}
+
+$.fn.variantAutocomplete = function() {
+  this.parent().children(".options_placeholder").attr('id', this.parent().data('index'))
+  this.select2({
+    placeholder: "Select a variant",
+    minimumInputLength: 4,
+    ajax: {
+      url: Spree.routes.variants_search,
+      datatype: 'json',
+      data: function(term, page) {
+        return { q: term }
+      },
+      results: function (data, page) {
+        var variants = $.map(data['variants'], function(result) {
+          return result['variant']
+        })
+        return { results: variants }
+      }
+    },
+    formatResult: formatVariantResult,
+    formatSelection: function (variant) {
+      $(this.element).parent().children('.options_placeholder').html(variant.options_text)
+      return variant.name;
+    }
+  })
+}

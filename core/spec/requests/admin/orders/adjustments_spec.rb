@@ -8,14 +8,16 @@ describe "Adjustments" do
     order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
     create(:adjustment, :adjustable => order)
     click_link "Orders"
-    within(:css, 'table#listing_orders tbody tr:nth-child(1)') { click_link "Edit" }
+    within_row(1) { click_icon :edit }
     click_link "Adjustments"
   end
 
   context "admin managing adjustments" do
     it "should display the correct values for existing order adjustments" do
-      find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Shipping"
-      find('table.index tr:nth-child(2) td:nth-child(3)').text.should == "$100.00"
+      within_row(1) do
+        column_text(2).should == "Shipping"
+        column_text(3).should == "$100.00"
+      end
     end
   end
 
@@ -46,7 +48,7 @@ describe "Adjustments" do
 
   context "admin editing an adjustment" do
     before(:each) do
-      within(:css, 'table.index tr:nth-child(2)') { click_link "Edit" }
+      within_row(1) { click_icon :edit }
     end
 
     context "successfully" do

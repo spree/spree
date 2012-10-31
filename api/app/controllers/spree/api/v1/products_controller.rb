@@ -44,7 +44,7 @@ module Spree
           @product = find_product(params[:id])
           @product.update_attribute(:deleted_at, Time.now)
           @product.variants_including_master.update_all(:deleted_at => Time.now)
-          render :text => nil, :status => 200
+          render :text => nil, :status => 204
         end
       end
     end

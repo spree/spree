@@ -1,19 +1,25 @@
-@import "store/variables";
+@import "./variables.css.scss"; // Must call explicit path or else extension integration tests cannot import file.
 
 /*--------------------------------------*/
 /* Basic styles 
 /*--------------------------------------*/
 body {
   font-family: $ff_base;
-  color: $body_text_color;
-  line-height: 18px;
   font-size: $base_font_size;
+  font-weight: 400;
+  color: $body_text_color;
+  line-height: 18px;  
   background-color: $layout_background_color;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Line style */
 hr {
-  border-color: lighten($body_text_color, 60);
+  height: 0;
+  background-color: transparent;
+  color: transparent;
+  border: none;
+  border-bottom: 1px solid $border_color;
 }
 
 /* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
@@ -36,12 +42,22 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     &:hover {
       color: darken($link_text_color, 10) !important;
     }
+
+    &:active, &:focus {
+      outline: none;
+    }
   }
 
   /*--------------------------------------*/
   /* Lists
   /*--------------------------------------*/
   ul, ol {
+    margin-left: 0;
+    margin-top: 0;
+    -webkit-padding-start: 0px;
+    padding-left: 0;
+    list-style-position: inside;
+
     &.inline {
       li {
         display: inline-block;
@@ -79,8 +95,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   h6 { font-size: $sub_heading_font_size - 2; line-height: $sub_heading_font_size - 2 + 10; }
 
   h1, h2, h3, h4, h5, h6 {    
-    font-weight: bold;
+    font-weight: 700;
     color: $title_text_color;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   /*--------------------------------------*/
@@ -92,8 +112,8 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   input[type="password"], input[type="search"], input[type="tel"],
   input[type="text"], input[type="time"], input[type="url"], 
   input[type="week"] {
-    border: 1px solid lighten($body_text_color, 60);
-    padding: 2px 5px;    
+    border: $default_border;
+    padding: 5px 10px;    
     font-family: $ff_base;
     font-size: $input_box_font_size;
 
@@ -111,18 +131,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
-  select {
-    border: 1px solid lighten($body_text_color, 60);
-    font-family: $ff_base;
-    background-image: url('select_arrow.gif');
-    background-repeat: no-repeat;
-    background-position: right center;
-
-    &:active, &:focus {
-      @extend input[type="text"]:focus  
-    }
-  }
-
   label.error {
     display: block;
     font-size: $base_font_size - 1;
@@ -136,6 +144,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     font-size: 1.2em;
   }
 
+  fieldset {
+    margin: 0;
+  }
+
   input[type="submit"], input[type="button"],
   input[type= "reset"], button, a.button {
     background-color: $link_text_color;
@@ -146,6 +158,11 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     font-size: $button_font_size;
     font-family: $ff_base;
     border: 1px solid $button_border_color;
+    padding: 6px 10px 5px;
+    vertical-align:  top;
+
+    -webkit-font-smoothing: antialiased;
+
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
      -khtml-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
        -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
@@ -157,7 +174,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
         -ms-border-radius: 0px;
          -o-border-radius: 0px;
             border-radius: 0px;
-    vertical-align:  text-top;
 
     &.large {
       padding: 7px 10px;
@@ -183,9 +199,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   } 
 
-  input[type="checkbox"], input[type="button"],
-  input[type="submit"], input[type="reset"], 
-  button, label {
+  input[type="checkbox"], label {
     vertical-align: middle;
   }
 
@@ -322,10 +336,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
 
     .taxons-list {
-      padding-left: 20px;
-      margin-bottom: 20px;
-      list-style: disc outside;
-
       li {
         a {
           font-size: $main_navigation_font_size
@@ -416,8 +426,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       margin-right: 3px;
       width: 60px;
       vertical-align: middle;
-      padding: 5px;
-      height: 35px;
+      padding: 8px 10px;
     }
   }
 
@@ -470,7 +479,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       }
 
       .product-image {
-        border: 1px solid lighten($body_text_color, 60);
+        border: $default_border;
         padding: 5px;        
         min-height: 110px;
         background-color: $product_background_color;
@@ -528,7 +537,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #product-images {
     #main-image {
       text-align: center;
-      border: 1px solid lighten($body_text_color, 60);
+      border: $default_border;
       background-color: $product_background_color;
 
       img {
@@ -561,7 +570,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
     li {
       margin-right: 6px;
-      border: 1px solid lighten($body_text_color, 60);
+      border: $default_border;
 
       img {
         padding: 5px;
@@ -574,8 +583,9 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #product-properties {
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
+    width: 100%;
   }
 
   #product-variants {
@@ -641,9 +651,20 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
+  #payment-methods {
+    list-style: none;
+
+    li {
+      fieldset {
+        border: none;
+        padding: 0;
+      }
+    }
+  }
+
   #checkout-summary {
     text-align: center;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     margin-top: 23px;
     margin-left: 0;
 
@@ -678,7 +699,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #billing, #shipping, #shipping_method, 
   #payment, #order_details, #order_summary {
     margin-top: 10px;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
 
     legend {
@@ -842,7 +863,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #user-info {
     margin-bottom: 15px;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
   }
 

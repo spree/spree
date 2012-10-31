@@ -1,13 +1,17 @@
-<div data-hook="admin_option_type_form_fields">
-  <%= f.field_container :name do %>
-    <%= f.label :name, t(:name) %> <span class="required">*</span><br />
-    <%= f.text_field :name %>
-    <%= f.error_message_on :name %>
-  <% end %>
+<div data-hook="admin_option_type_form_fields" class="align-center row">
+  <div class="alpha eight columns">
+    <%= f.field_container :name do %>
+      <%= f.label :name, t(:name) %> <span class="required">*</span><br />
+      <%= f.text_field :name, :class => "fullwidth" %>
+      <%= f.error_message_on :name %>
+    <% end %>
+  </div>
 
-  <%= f.field_container :presentation do %>
-    <%= f.label :presentation, t(:presentation) %> <span class="required">*</span><br />
-    <%= f.text_field :presentation %>
-    <%= f.error_message_on :presentation %>
-  <% end %>
+  <div class="omega eight columns">
+    <%= f.field_container :presentation do %>
+      <%= f.label :presentation, t(:presentation) %> <span class="required">*</span><br />
+      <%= f.text_field :presentation, :class => "fullwidth" %>
+      <%= f.error_message_on :presentation %>
+    <% end %>
+  </div>
 </div>

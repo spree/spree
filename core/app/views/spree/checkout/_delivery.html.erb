@@ -1,16 +1,12 @@
 <fieldset id='shipping_method' data-hook>
-  <legend><%= t(:shipping_method) %></legend>
+  <legend align="center"><%= t(:shipping_method) %></legend>
   <div class="inner" data-hook="shipping_method_inner">
     <div id="methods">
       <p class="field radios">
         <% @order.rate_hash.each do |shipping_method| %>
           <label>
             <%= radio_button(:order, :shipping_method_id, shipping_method[:id]) %>
-            <% if Spree::Config[:shipment_inc_vat] %>
-              <%= shipping_method[:name] %> <%= format_price (1 + Spree::TaxRate.default) * shipping_method[:cost] %>
-            <% else %>
-            <%= shipping_method[:name] %> <%= number_to_currency shipping_method[:cost] %>
-            <% end %>
+            <%= shipping_method.name %> <%= shipping_method.display_price %>
           </label>
         <% end %>
       </p>

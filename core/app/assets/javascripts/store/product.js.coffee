@@ -28,8 +28,13 @@ show_variant_images = (variant_id) ->
     ($ '#main-image').data 'selectedThumb', newImg
     ($ '#main-image').data 'selectedThumbId', thumb.attr('id')
 
+update_variant_price = (variant) ->
+  variant_price = variant.data('price')
+  ($ '.price.selling').text(variant_price) if variant_price
+
 $ ->
   add_image_handlers()
   show_variant_images ($ '#product-variants input[type="radio"]').eq(0).attr('value') if ($ '#product-variants input[type="radio"]').length > 0
   ($ '#product-variants input[type="radio"]').click (event) ->
     show_variant_images @value
+    update_variant_price ($ this)

@@ -7,12 +7,10 @@ describe Spree::ProductsController do
 
   before do
     I18n.stub(:available_locales => [:en, :de])
-    Spree::Config[:default_locale] = nil
     Rails.application.config.i18n.default_locale = :de
   end
 
   after do
-    Spree::Config[:default_locale] = :en
     Rails.application.config.i18n.default_locale = :en
     I18n.locale = :en
   end

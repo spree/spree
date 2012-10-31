@@ -1,5 +1,9 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Creditcards' } %>
 
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:refund) %>
+<% end %>
+
 <%= form_tag do %>
   <h3><%= t(:refund) %></h3>
   <fieldset data-hook="credit">

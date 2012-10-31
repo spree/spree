@@ -10,7 +10,7 @@ module Spree
     before_validation :copy_price
 
     validates :variant, :presence => true
-    validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int') }
+    validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int'), :greater_than => -1 }
     validates :price, :numericality => true
     validate :stock_availability
     validate :quantity_no_less_than_shipped
@@ -80,6 +80,7 @@ module Spree
 
       def update_order
         # update the order totals, etc.
+        order.create_tax_charge!
         order.update!
       end
 
@@ -97,7 +98,7 @@ module Spree
       end
 
       def quantity_no_less_than_shipped
-        already_shipped = order.shipments.reduce(0) { |acc,s| acc + s.inventory_units.select { |i| i.variant == variant }.count }
+        already_shipped = order.shipments.reduce(0) { |acc, s| acc + s.inventory_units.shipped.where(:variant_id => variant_id).count }
         unless quantity >= already_shipped
           errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units'))
         end

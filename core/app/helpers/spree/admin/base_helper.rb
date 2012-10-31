@@ -3,10 +3,11 @@ module Spree
     module BaseHelper
       def field_container(model, method, options = {}, &block)
         css_classes = options[:class].to_a
+        css_classes << 'field'
         if error_message_on(model, method).present?
           css_classes << 'withError'
         end
-        content_tag('p', capture(&block), :class => css_classes.join(' '), :id => "#{model}_#{method}_field")
+        content_tag(:div, capture(&block), :class => css_classes.join(' '), :id => "#{model}_#{method}_field")
       end
 
       def error_message_on(object, method, options = {})
@@ -18,11 +19,6 @@ module Spree
           content_tag(:span, errors, :class => 'formError')
         else
           ''
-        end
-      end
-
-      def class_for_error(model, method)
-        if error_message_on :product, :name
         end
       end
 
@@ -106,16 +102,17 @@ module Spree
           {}
         when :string
           { :size => 10,
-            :class => 'input_string' }
+            :class => 'input_string fullwidth' }
         when :password
           { :size => 10,
-            :class => 'password_string' }
+            :class => 'password_string fullwidth' }
         when :text
           { :rows => 15,
-            :cols => 85 }
+            :cols => 85,
+            :class => 'fullwidth' }
         else
           { :size => 10,
-            :class => 'input_string' }
+            :class => 'input_string fullwidth' }
         end
 
         field_options.merge!({
@@ -142,13 +139,18 @@ module Spree
         %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
       end
 
-      def link_to_add_fields(name, target)
-        link_to icon('add') + name, 'javascript:', :data => { :target => target }, :class => "add_fields"
+      def link_to_add_fields(name, target, options = {})
+        name = '' if options[:no_text]
+        css_classes = options[:class] ? options[:class] + " add_fields" : "add_fields"
+        link_to_with_icon('icon-plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
       end
 
       # renders hidden field and link to remove record using nested_attributes
-      def link_to_remove_fields(name, f)
-        f.hidden_field(:_destroy) + link_to_with_icon(:delete, name, '#', :class => 'remove_fields')
+      def link_to_remove_fields(name, f, options = {})
+        name = '' if options[:no_text]
+        options[:class] = '' unless options[:class]
+        options[:class] += 'no-text with-tip' if options[:no_text]
+        link_to_with_icon('icon-trash', name, '#', :class => "remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)

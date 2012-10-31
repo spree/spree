@@ -44,6 +44,8 @@ module Spree
       :conditions => { :deleted_at => nil },
       :dependent => :destroy
 
+    has_many :variants_including_master_and_deleted, :class_name => 'Spree::Variant'
+
     delegate_belongs_to :master, :sku, :price, :weight, :height, :width, :depth, :is_master
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
@@ -67,7 +69,7 @@ module Spree
 
     attr_accessible :name, :description, :available_on, :permalink, :meta_description,
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
-                    :option_values_hash, :on_hand, :weight, :height, :width, :depth,
+                    :option_values_hash, :on_demand, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
                     :variants_attributes, :taxon_ids, :option_type_ids
 
@@ -87,7 +89,6 @@ module Spree
       master
     end
 
-
     def to_param
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end
@@ -104,8 +105,16 @@ module Spree
 
     # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
     def on_hand=(new_level)
-      raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
-      master.on_hand = new_level
+      unless self.on_demand
+        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels] 
+        master.on_hand = new_level
+      end
+    end
+
+    def on_demand=(new_on_demand)
+      raise 'cannot set on_demand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
+      master.on_demand = on_demand
+      self[:on_demand] = new_on_demand
     end
 
     # Returns true if there are inventory units (any variant) with "on_hand" state for this product
@@ -179,6 +188,10 @@ module Spree
       !!deleted_at
     end
 
+    def available?
+      !(available_on.nil? || available_on.future?)
+    end
+
     # split variants list into hash which shows mapping of opt value onto matching variants
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
@@ -214,6 +227,10 @@ module Spree
       end
     end
 
+    def display_price
+      Spree::Money.new(price).to_s
+    end
+
     private
 
       # Builds variants from a hash of option types & values
@@ -246,7 +263,7 @@ module Spree
       # the master on_hand is meaningless once a product has variants as the inventory
       # units are now "contained" within the product variants
       def set_master_on_hand_to_zero_when_product_has_variants
-        master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels]
+        master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels] && !self.on_demand
       end
 
       # ensures the master variant is flagged as such

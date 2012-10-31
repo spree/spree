@@ -4,7 +4,6 @@ describe Spree::Adjustment do
 
   let(:order) { mock_model(Spree::Order, :update! => nil) }
   let(:adjustment) { Spree::Adjustment.new }
-  it "should accept a negative amount"
 
   context "#update!" do
     context "when originator present" do
@@ -101,5 +100,23 @@ describe Spree::Adjustment do
     end
   end
 
+  context "#display_amount" do
+    before { adjustment.amount = 10.55 }
 
+    context "with display_currency set to true" do
+      before { Spree::Config[:display_currency] = true }
+
+      it "shows the currency" do
+        adjustment.display_amount.should == "$10.55 USD"
+      end
+    end
+
+    context "with display_currency set to false" do
+      before { Spree::Config[:display_currency] = false }
+
+      it "does not include the currency" do
+        adjustment.display_amount.should == "$10.55"
+      end
+    end
+  end
 end

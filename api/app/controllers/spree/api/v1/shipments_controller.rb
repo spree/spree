@@ -6,6 +6,7 @@ module Spree
         before_filter :find_and_update_shipment, :only => [:ship, :ready]
 
         def ready
+          authorize! :read, Shipment
           unless @shipment.ready?
             @shipment.ready!
           end
@@ -13,6 +14,7 @@ module Spree
         end
 
         def ship
+          authorize! :read, Shipment
           unless @shipment.shipped?
             @shipment.ship!
           end
@@ -23,6 +25,7 @@ module Spree
 
         def find_order
           @order = Spree::Order.find_by_number!(params[:order_id])
+          authorize! :read, @order
         end
 
         def find_and_update_shipment

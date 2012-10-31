@@ -1,10 +1,19 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Details' } %>
+
 <%= csrf_meta_tags %>
+
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:customer_details) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
 
 <% if @order.cart? %>
   <div id="add-line-item" data-hook>
-    <fieldset>
-      <legend><%= t(:customer_search) %></legend>
+    <fieldset class="no-border-bottom">
+      <legend align="center"><%= t(:customer_search) %></legend>
       <%= label_tag :customer_search, t(:enter_at_least_five_letters) %>
       <%= text_field_tag :customer_search,  nil, :class => 'fullwidth title' %>
     </fieldset>

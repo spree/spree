@@ -14,6 +14,7 @@ en:
         usage_limit: Usage Limit
   add_action_of_type: Add action of type
   add_rule_of_type: Add rule of type
+  back_to_promotions_list: "Back To Promotions List"
   coupon: Coupon
   coupon_code: Coupon code
   coupon_code_applied: The coupon code was successfully applied to your order.
@@ -34,6 +35,7 @@ en:
     path: Path
   new_promotion: New Promotion
   no_rules_added: No rules added
+  percent_per_item: Percent Per Item
   product_rule:
     choose_products: Choose products
     label: "Order must contain %{select} of these products"
@@ -52,7 +54,7 @@ en:
       description: Creates a promotion credit adjustment on the order
     create_line_items:
       name: Create line items
-      description: Populates the cart with the specified variants and quantities
+      description: Populates the cart with the specified quantity of variant
     give_store_credit:
       name: Give store credit
       description: Gives the user store credit of the amount specified

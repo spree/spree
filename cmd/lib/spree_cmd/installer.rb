@@ -25,9 +25,6 @@ module SpreeCmd
     class_option :branch, :type => :string, :desc => 'Spree gem git branch'
     class_option :tag, :type => :string, :desc => 'Spree gem git tag'
 
-    class_option :precompile_assets, :type => :boolean, :default => true,
-                 :desc => 'Precompile spree assets to public/assets'
-
     def verify_rails
       unless rails_project?
         say "#{@app_path} is not a rails project."
@@ -70,6 +67,8 @@ module SpreeCmd
         if @user_class.blank?
           @user_class = "User"
         end
+      else
+        @user_class = "Spree::User"
       end
 
       if options[:skip_install_data]
@@ -86,8 +85,6 @@ module SpreeCmd
           @load_sample_data = false
         end
       end
-
-      @precompile_assets = options[:precompile_assets] && ask_with_default('Would you like to precompile assets?')
     end
 
     def add_gems
@@ -101,7 +98,7 @@ module SpreeCmd
         end
 
         if @install_default_auth
-          gem :spree_auth_devise, :git => "git://github.com/spree/spree_auth_devise"
+          gem :spree_auth_devise, :github => "spree/spree_auth_devise", :branch => "edge"
         end
 
         run 'bundle install', :capture => true
@@ -118,15 +115,6 @@ module SpreeCmd
 
       inside @app_path do
         run "rails generate spree:install #{spree_options.join(' ')}", :verbose => false
-      end
-    end
-
-    def precompile_assets
-      if @precompile_assets
-        say_status :precompiling, 'assets'
-        inside @app_path do
-          run 'bundle exec rake assets:precompile', :verbose => false
-        end
       end
     end
 
@@ -190,7 +178,7 @@ module SpreeCmd
 
       def image_magick_installed?
         cmd = 'identify -version'
-        if RUBY_PLATFORM =~ /mswin/ #windows
+        if RUBY_PLATFORM =~ /mingw|mswin/ #windows
           cmd += " >nul"
         else
           cmd += " >/dev/null"

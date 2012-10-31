@@ -23,9 +23,11 @@ describe "States" do
 
   context "creating and editing states" do
     it "should allow an admin to edit existing states", :js => true do
-      pending "Need to investigate this failing spec on Travis causing false-negatives randomly on 1-1-stable and master"
       click_link "States"
-      select country.name, :from => "country"
+      wait_until do
+        find_field("Country")
+      end
+      select country.name, :from => "Country"
       click_link "new_state_link"
       fill_in "state_name", :with => "Calgary"
       fill_in "Abbreviation", :with => "CL"

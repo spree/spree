@@ -25,7 +25,7 @@ however, to use only the pieces you are interested in.  So for example, you coul
 and perhaps combine it with your own custom promotion scheme instead of using spree_promo.
 
 [![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
-
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/spree/spree)
 Installation
 ------------
 
@@ -137,12 +137,26 @@ Add the following to your Gemfile
 
 Then run `bundle install`. Authentication will then work exactly as it did in previous versions of Spree.
 
+This line is automatically added by the `spree install` command.
+
 If you're installing this in a new Spree 1.2+ application, you'll need to install and run the migrations with
 
     $ bundle exec rake spree_auth:install:migrations
     $ bundle exec rake db:migrate
 
-and then run `bundle exec rake spree_auth:admin:create` in order to set up the admin user for the application.
+change the following line in `config/initializers/spree.rb`
+```ruby
+Spree.user_class = "Spree::LegacyUser"
+```
+to
+```ruby
+Spree.user_class = "Spree::User"
+```
+
+In order to set up the admin user for the application you should then run:
+
+    $ bundle exec rake spree_auth:admin:create
+
 
 Running Tests
 -------------
@@ -174,15 +188,7 @@ If you want to run a particular line of spec
 
     $ bundle exec rspec spec/models/state_spec.rb:7
 
-Travis, the continuous integration service, runs the test suite for each gem one at a time.
-
-    $ alias set_gemfile='export BUNDLE_GEMFILE="`pwd`/Gemfile"'
-    $ bundle exec rake test_app
-    $ cd api; set_gemfile; bundle install; bundle exec rspec spec
-    $ cd ../core; set_gemfile; bundle install; bundle exec rspec spec
-    $ cd ../dash; set_gemfile; bundle install; bundle exec rspec spec
-    $ cd ../promo; set_gemfile; bundle install; bundle exec rspec spec
-
+Travis, the continuous integration service, runs the test suite for each gem one at a time, using the same commands as contained within [`build.sh`](https://github.com/spree/spree/tree/master/build.sh).
 
 Contributing
 ------------

@@ -1,6 +1,6 @@
 module Spree
   class CreditCard < ActiveRecord::Base
-    has_many :payments
+    has_many :payments, :as => :source
 
     before_save :set_last_digits
     after_validation :set_card_type
@@ -17,7 +17,7 @@ module Spree
     def number=(num)
       @number = num.gsub(/[^0-9]/, '') rescue nil
     end
-    
+
     def set_last_digits
       number.to_s.gsub!(/\s/,'')
       verification_value.to_s.gsub!(/\s/,'')
@@ -67,7 +67,7 @@ module Spree
       cc_type
     end
 
-    scope :with_payment_profile, where('gateway_customer_profile_id IS NOT NULL')
+    scope :with_payment_profile, lambda { where('gateway_customer_profile_id IS NOT NULL') }
 
     def actions
       %w{capture void credit}

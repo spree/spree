@@ -4,7 +4,17 @@ describe Spree::OrdersController do
 
   let(:user) { create(:user) }
   let(:order) { user.spree_orders.create }
-  let(:promotion) { Spree::Promotion.create(:name => "TestPromo", :code => "TEST1", :expires_at => Time.now + 86400, :usage_limit => 99, :event_name => "spree.checkout.coupon_code_added", :match_policy => "any") }
+  let(:promotion) do
+    Spree::Promotion.create({
+      :name => "TestPromo",
+      :code => "TEST1",
+      :expires_at => 1.day.from_now,
+      :created_at => 1.day.ago,
+      :event_name => "spree.checkout.coupon_code_added",
+      :match_policy => "any"
+    }, :without_protection => true)
+  end
+
   let(:coupon_code) { promotion.code }
   let(:invalid_coupon_code) { "12345" }
 

@@ -1,0 +1,34 @@
+function cleanTaxons(data) {
+  var taxons = $.map(data['taxons'], function(result) {
+    return result['taxon']
+  })
+  return taxons;
+}
+
+$(document).ready(function() {
+  $("#product_taxon_ids").select2({
+    placeholder: "Add a taxon",
+    multiple: true,
+    initSelection: function(element, callback) {
+      return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
+        return callback(self.cleanTaxons(data));
+      })
+    },
+    ajax: {
+      url: Spree.routes.taxon_search,
+      datatype: 'json',
+      data: function(term, page) {
+        return { q: term }
+      },
+      results: function (data, page) {
+        return { results: self.cleanTaxons(data) }
+      }
+    },
+    formatResult: function(taxon) {
+      return taxon.name
+    },
+    formatSelection: function(taxon) {
+      return taxon.name
+    }
+  })
+})

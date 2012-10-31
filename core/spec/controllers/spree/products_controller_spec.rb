@@ -14,4 +14,12 @@ describe Spree::ProductsController do
     spree_get :show, :id => product.to_param
     response.status.should == 404
   end
+
+  it "should provide the current user to the searcher class" do
+    user = stub(:last_incomplete_spree_order => nil)
+    controller.stub :spree_current_user => user
+    Spree::Config.searcher_class.any_instance.should_receive(:current_user=).with(user)
+    spree_get :index
+    response.status.should == 200
+  end
 end

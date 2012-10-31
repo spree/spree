@@ -1,45 +1,52 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+
+<% content_for :page_actions do %>
+  <% if @order.inventory_units.any? &:shipped? %>
+    <li>
+      <%= button_link_to t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'icon-plus' %>
+    </li>
+  <% end %>
+  <li><%= button_link_to t(:back_to_orders_list), spree.admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
+
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:return_authorizations) %>
+<% end %>
+
 <% if @order.inventory_units.any? &:shipped? %>
-  <div class="toolbar" data-hook="toolbar">
-    <ul class="actions">
-      <li>
-        <%= button_link_to t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'add' %>
-      </li>
-    </ul>
-    <br class="clear" />
+  <table class="index">
+    <thead data-hook="rma_header">
+      <tr>
+        <th><%= t(:rma_number) %></th>
+        <th><%= t(:status) %></th>
+        <th><%= t(:amount) %></th>
+        <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+        <th class="action"></th>
+      </tr>  
+    </thead>
+    <tbody>
+      <% @return_authorizations.each do |return_authorization| %>
+        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
+          <td><%= return_authorization.number %></td>
+          <td><%= t(return_authorization.state.downcase) %></td>
+          <td><%= money return_authorization.amount %></td>
+          <td><%= pretty_time(return_authorization.created_at) %></td>
+          <td class="actions">
+            <%= link_to_edit return_authorization %>
+            <% unless return_authorization.received? %>
+              &nbsp;
+              <%= link_to_delete return_authorization %>
+            <% end %>
+          </td>
+
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div data-hook="rma_cannont_create" class="no-objects-found">
+    <%= t(:cannot_create_returns) %>
   </div>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
-
-<table class="index">
-  <tr data-hook="rma_header">
-    <th><%= t(:rma_number) %></th>
-    <th><%= t(:status) %></th>
-    <th><%= t(:amount) %></th>
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th></th>
-  </tr>
-  <% @return_authorizations.each do |return_authorization| %>
-    <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
-      <td><%= return_authorization.number %></td>
-      <td><%= t(return_authorization.state.downcase) %></td>
-      <td><%= number_to_currency return_authorization.amount %></td>
-      <td><%= return_authorization.created_at.to_s(:date_time24) %></td>
-      <td>
-        <%= link_to_edit return_authorization %>
-        <% unless return_authorization.received? %>
-          &nbsp;
-          <%= link_to_delete return_authorization %>
-        <% end %>
-      </td>
-
-    </tr>
-  <% end %>
-  <% unless @order.inventory_units.any? &:shipped? %>
-    <tr data-hook="rma_cannont_create">
-      <td colspan="5"><%= t(:cannot_create_returns) %></td>
-    </tr>
-  <% end %>
-</table>
-
-<%= button_link_to t(:continue), admin_orders_url %>
+<%= button_link_to t(:continue), admin_orders_url, :icon => 'icon-arrow-right' %>

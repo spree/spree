@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/protect_product_actions'
 
 module Spree
   describe Spree::Api::V1::ProductsController do
@@ -36,6 +37,14 @@ module Spree
           json_response["count"].should == 2
           json_response["current_page"].should == 2
           json_response["pages"].should == 2
+        end
+      end
+
+      context "jsonp" do
+        it "retrieves a list of products of jsonp" do
+          api_get :index, {:callback => 'callback'}
+          response.body.should =~ /^callback\(.*\)$/
+          response.header['Content-Type'].should include('application/javascript')
         end
       end
 
@@ -105,20 +114,7 @@ module Spree
         required_attributes.should include("price")
       end
 
-      it "cannot create a new product if not an admin" do
-        api_post :create, :product => { :name => "Brand new product!" }
-        assert_unauthorized!
-      end
-
-      it "cannot update a product" do
-        api_put :update, :id => product.to_param, :product => { :name => "I hacked your store!" }
-        assert_unauthorized!
-      end
-
-      it "cannot delete a product" do
-        api_delete :destroy, :id => product.to_param
-        assert_unauthorized!
-      end
+      it_behaves_like "modifying product actions are restricted"
     end
 
     context "as an admin" do
@@ -156,6 +152,25 @@ module Spree
         response.status.should == 201
       end
 
+      # Regression test for #2140
+      context "with authentication_required set to false" do
+        before do
+          Spree::Api::Config.requires_authentication = false
+        end
+
+        after do
+          Spree::Api::Config.requires_authentication = true
+        end
+
+        it "can still create a product" do
+          api_post :create, :product => { :name => "The Other Product",
+                                          :price => 19.99 },
+                            :token => "fake"
+          json_response.should have_attributes(attributes)
+          response.status.should == 201
+        end
+      end
+
       it "cannot create a new product with invalid attributes" do
         api_post :create, :product => {}
         response.status.should == 422
@@ -180,7 +195,7 @@ module Spree
       it "can delete a product" do
         product.deleted_at.should be_nil
         api_delete :destroy, :id => product.to_param
-        response.status.should == 200
+        response.status.should == 204
         product.reload.deleted_at.should_not be_nil
       end
     end

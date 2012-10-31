@@ -26,9 +26,10 @@ module Spree
 
     make_permalink :field => :number
 
-    scope :shipped, where(:state => 'shipped')
-    scope :ready,   where(:state => 'ready')
-    scope :pending, where(:state => 'pending')
+    scope :with_state, lambda { |s| where(:state => s) }
+    scope :shipped, with_state('shipped')
+    scope :ready,   with_state('ready')
+    scope :pending, with_state('pending')
 
     def to_param
       number if number
@@ -114,10 +115,11 @@ module Spree
 
       # Determines the appropriate +state+ according to the following logic:
       #
-      # pending    unless +order.payment_state+ is +paid+
+      # pending    unless order is complete and +order.payment_state+ is +paid+
       # shipped    if already shipped (ie. does not change the state)
       # ready      all other cases
       def determine_state(order)
+        return 'pending' unless order.complete?
         return 'pending' if inventory_units.any? &:backordered?
         return 'shipped' if state == 'shipped'
         order.paid? ? 'ready' : 'pending'

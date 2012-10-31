@@ -28,6 +28,13 @@ module Spree
       json_response.should have_attributes(attributes)
     end
 
+    # Regression test for #1992
+    it "can view an order not in a standard state" do
+      Order.any_instance.stub :user => current_api_user
+      order.update_column(:state, 'shipped')
+      api_get :show, :id => order.to_param
+    end
+
     it "can not view someone else's order" do
       Order.any_instance.stub :user => stub_model(Spree::LegacyUser)
       api_get :show, :id => order.to_param
@@ -54,11 +61,18 @@ module Spree
     it "can create an order" do
       variant = create(:variant)
       api_post :create, :order => { :line_items => [{ :variant_id => variant.to_param, :quantity => 5 }] }
-      response.status.should == 200
+      response.status.should == 201
       order = Order.last
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
+      json_response["order"]["state"].should == "address"
+    end
+
+    it "can create an order without any parameters" do
+      lambda { api_post :create }.should_not raise_error(NoMethodError)
+      response.status.should == 201
+      order = Order.last
       json_response["order"]["state"].should == "address"
     end
 
@@ -95,6 +109,15 @@ module Spree
         order.billing_address.firstname.should == billing_address[:firstname]
         order.state.should == "delivery"
         json_response["order"]["shipping_methods"].should_not be_empty
+      end
+
+      it "can add just shipping address information to an order" do
+        api_put :address, :id => order.to_param, :shipping_address => shipping_address
+        response.status.should == 200
+        order.reload
+        order.shipping_address.reload
+        order.shipping_address.firstname.should == shipping_address[:firstname]
+        order.bill_address.should be_nil
       end
 
       it "cannot use an address that has no valid shipping methods" do
@@ -164,6 +187,14 @@ module Spree
 
     context "as an admin" do
       sign_in_as_admin!
+
+      context "with no orders" do
+        before { Spree::Order.delete_all }
+        it "still returns a root :orders key" do
+          api_get :index
+          json_response["orders"].should == []
+        end
+      end
 
       context "with two orders" do
         before { create(:order) }

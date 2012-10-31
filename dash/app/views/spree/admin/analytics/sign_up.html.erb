@@ -1,45 +1,61 @@
+<% content_for :page_title do %>
+  <%= t(:analytics_sign_up) %>
+<% end %>
+
+<% content_for :page_title_classes do %>
+  align-center
+<% end %>
+
 <%= form_tag admin_analytics_register_path do %>
-  <fieldset id="analytics_signup" data-hook>
-    <legend><%= t(:analytics_sign_up) %></legend>
-    <p>
-      <%= check_box_tag 'store[terms_of_service]', @store[:terms_of_service], @store.has_key?(:terms_of_service), :size => 50 %>
-      <%= label_tag 'store[terms_of_service]', t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/terms" target="_new"><%= t(:review) %></a>)
-    </p>
-    <p>
-      <%= check_box_tag 'store[privacy_policy]', @store[:privacy_policy], @store.has_key?(:privacy_policy), :size => 50 %>
-      <%= label_tag 'store[privacy_policy]', t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/privacy" target="_new"><%= t(:review) %></a>)
-    </p>
-    <p>
-      <%= label_tag :first_name %><br>
+  <div id="analytics_signup" data-hook class="align-center label-block">
+    <div class="field">
+      <%= label_tag :first_name %>
       <%= text_field_tag 'store[first_name]', @store[:first_name], :size => 50 %>
-    </p>
-    <p>
-      <%= label_tag :last_name %><br>
+    </div>
+    
+    <div class="field">
+      <%= label_tag :last_name %>
       <%= text_field_tag 'store[last_name]', @store[:last_name], :size => 50 %>
-    </p>
-    <p>
-      <%= label_tag :email %><br>
+    </div>
+
+    <div class="field">
+      <%= label_tag :email %>
       <%= email_field_tag 'store[email]', @store[:email], :size => 50 %>
-    </p>
-    <p>
-      <%= label_tag :store_name %><br>
+    </div>
+    
+    <div class="field">
+      <%= label_tag :store_name %>
       <%= text_field_tag 'store[name]', @store[:name], :size => 50 %>
-    </p>
-    <p>
-      <%= label_tag :store_url %><br>
+    </div>
+    
+    <div class="field">
+      <%= label_tag :store_url %>
       <%= url_field_tag 'store[url]', @store[:url], :size => 50 %>
-    </p>
-    <p>
-      <%= label_tag :currency %><br>
-      <%= select_tag 'store[currency]', options_for_select(Spree::AnalyticsHelper::CURRENCIES, @store[:currency]) %>
-    </p>
-    <p>
-      <%= label_tag :time_zone %><br>
-      <%= select_tag 'store[time_zone]', time_zone_options_for_select(@store[:time_zone]) %>
-    </p>
-  </fieldset>
-  <p class="form-buttons" data-hook="buttons">
-    <%= button t(:activate) %>
-    <%= t(:or) %> <%= link_to t(:cancel), admin_path %>
-  </p>
+    </div>
+
+    <div class="field">
+      <%= label_tag :currency %>
+      <%= select_tag 'store[currency]', options_for_select(Spree::AnalyticsHelper::CURRENCIES, @store[:currency]), :class => 'select2' %>
+    </div>
+
+    <div class="field">
+      <%= label_tag :time_zone %>
+      <%= select_tag 'store[time_zone]', time_zone_options_for_select(@store[:time_zone]), :class => 'select2' %>
+    </div>
+
+    <div class="field">
+      <%= check_box_tag 'store[terms_of_service]', @store[:terms_of_service], @store.has_key?(:terms_of_service), :size => 50 %>
+      <%= label_tag 'store[terms_of_service]', t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/about/terms" target="_new"><%= t(:review) %></a>)
+    </div>
+    
+    <div class="field">
+      <%= check_box_tag 'store[privacy_policy]', @store[:privacy_policy], @store.has_key?(:privacy_policy), :size => 50 %>
+      <%= label_tag 'store[privacy_policy]', t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/about/privacy" target="_new"><%= t(:review) %></a>)
+    </div>
+  </div>
+  <div class="form-buttons" data-hook="buttons">
+    <%= button t(:activate), 'icon-ok' %>
+    <%= t(:or) %>
+    <%= link_to_with_icon 'icon-remove', t(:cancel), admin_path, :class => 'button' %>
+  </div>
 <% end %>

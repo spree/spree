@@ -1,6 +1,7 @@
 //= require_self
-//= require admin/product_autocomplete
-//= require select2
+//= require admin/variant_autocomplete
+//= require admin/taxon_autocomplete
+//= require admin/spree-select2
 
 /**
 This is a collection of javascript functions and whatnot
@@ -8,13 +9,76 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-$(document).ajaxStart(function(){
-  $("#progress").slideDown();
+jQuery(function($) {
+  // Make main menu use full width
+  $('.fullwidth-menu').horizontalNav({
+    tableDisplay: false,
+    responsiveDelay: 0
+  });
+
+  // Vertical align of checkbox fields
+  $('.field.checkbox label').vAlign()
+
+  <% # Re-adjusting admin menu during test causes tests to fail,
+     # like states_spec and shipping_methods_spec. Let's not do this. %>
+  <% unless Rails.env.test? %>
+    $('.main-menu-wrapper ul').AdaptiveMenu({
+      text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+      klass: "dropdown"
+    });
+  <% end %>
+
+  // Add some tips
+  $('.with-tip').powerTip({
+    smartPlacement: true,
+    fadeInTime: 50,
+    fadeOutTime: 50,
+    intentPollInterval: 300
+  });
+
+  $('.with-tip').on({
+    powerTipPreRender: function(){
+      $('#powerTip').addClass($(this).attr("data-action"));
+      $('#powerTip').addClass($(this).attr("data-tip-color"));
+    },
+    powerTipClose: function(){
+      $('#powerTip').removeClass($(this).attr("data-action"))
+    }
+  });
+
+  // Make flash messages dissapear
+  setTimeout('$(".flash").fadeOut()', 5000);
+
+  // Highlight hovered table column
+  $('table tbody tr td.actions a').hover(function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.addClass(klass)
+    tr.prev().addClass('before-' + klass);
+  }, function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.removeClass(klass)
+    tr.prev().removeClass('before-' + klass);
+  });
+
+  // Trunkate text in page_title that didn't fit
+  var truncate_elements = $('.truncate');
+
+  truncate_elements.each(function(){
+    $(this).trunk8();
+  });
+  $(window).resize(function (event) {
+    truncate_elements.each(function(){
+      $(this).trunk8();
+    })
+  });
+
+  // Make height of dt/dd elements the same
+  $("dl").equalize('outerHeight');
+
 });
 
-$(document).ajaxStop(function(){
-  $("#progress").slideUp();
-});
 
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
@@ -45,32 +109,23 @@ $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
   });
 }
 
-
-$.fn.objectPicker = function(url){
-  $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
-    searchDelay          : 600,
-    hintText             : strings.type_to_search,
-    noResultsText        : strings.no_results,
-    searchingText        : strings.searching,
-    prePopulateFromInput : true
-  });
-};
-
-$.fn.productPicker = function(){
-  $(this).objectPicker(Spree.routes.product_search_basic);
-}
-
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
-    dateFormat: "<%= ::I18n.t(:format, :scope => 'spree.date_picker', :default => 'yy/mm/dd') %>",
-    dayNames: <%= ::I18n.t(:day_names, :scope => :date).to_json %>,
-    dayNamesMin: <%= ::I18n.t(:abbr_day_names, :scope => :date).to_json %>,
-    monthNames: <%= (::I18n.t(:month_names, :scope => :date).delete_if(&:blank?)).to_json %>,
-    prevText: '<%= ::I18n.t(:previous) %>',
-    nextText: '<%= ::I18n.t(:next) %>',
-    showOn: "button",
-    buttonImage: "<%= asset_path 'datepicker/cal.gif' %>",
-    buttonImageOnly: true
+    dateFormat: Spree.translations.date_picker,
+    dayNames: Spree.translations.abbr_day_names,
+    dayNamesMin: Spree.translations.abbr_day_names,
+    monthNames: Spree.translations.month_names, 
+    prevText: Spree.translations.previous,
+    nextText: Spree.translations.next,
+    showOn: "focus"
+  });
+
+  // Correctly display range dates
+  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-to" ).datepicker( "option", "minDate", selectedDate );
+  });
+  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-from" ).datepicker( "option", "maxDate", selectedDate );
   });
 }
 
@@ -102,7 +157,7 @@ $(document).ready(function(){
       el.attr("id", el.attr("id").replace(/\d+/, new_id))
       el.attr("name", el.attr("name").replace(/\d+/, new_id))
     })
-    $(target).append(new_table_row);
+    $(target).prepend(new_table_row);
   })
 
   $('body').on('click', '.delete-resource', function() {
@@ -133,8 +188,6 @@ $(document).ready(function(){
     return false;
   });
 
-  $('.tokeninput.products').productPicker();
-
   $('body').on('click', '.select_properties_from_prototype', function(){
     $("#busy_indicator").show();
     var clicked_link = $(this);
@@ -147,11 +200,21 @@ $(document).ready(function(){
     return false;
   });
 
+  // Fix sortable helper
+  var fixHelper = function(e, ui) {
+      ui.children().each(function() {
+          $(this).width($(this).width());
+      });
+      return ui;
+  };
 
   $('table.sortable').ready(function(){
+    var td_count = $(this).find('tbody tr:first-child td').length
     $('table.sortable tbody').sortable(
       {
         handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
         update: function(event, ui) {
           $("#progress").show();
           positions = {};
@@ -168,9 +231,21 @@ $(document).ready(function(){
             url: $(ui.item).closest("table.sortable").data("sortable-link"),
             data: positions,
             success: function(data){ $("#progress").hide(); }
-          });
+          });                    
+        },
+        start: function (event, ui) {          
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $("table.sortable tr:even").removeClass("odd even").addClass("even");
+          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
         }
-      });
+
+      }).disableSelection();
   });
 
   $('a.dismiss').click(function() {

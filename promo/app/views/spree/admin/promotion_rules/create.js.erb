@@ -1,7 +1,13 @@
 $('#rules').append('<%= escape_javascript( render(:partial => 'spree/admin/promotions/promotion_rule', :object => @promotion_rule) ) %>');
+$('#rules .no-objects-found').hide();
+
 $('#<%= dom_id @promotion_rule %>').hide();
 $('#<%= dom_id @promotion_rule %>').fadeIn();
 $('#<%= dom_id @promotion_rule %> .tokeninput.products').productPicker();
 $('#<%= dom_id @promotion_rule %> .tokeninput.users').userPicker();
 
 $('#promotion_rule_type').html('<%= escape_javascript options_for_promotion_rule_types(@promotion) %>');
+
+<% unless Rails.env.test? %>
+  $('.select_item_total.select2, .select_product.select2').select2();
+<% end %>

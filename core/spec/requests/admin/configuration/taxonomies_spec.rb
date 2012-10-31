@@ -13,8 +13,8 @@ describe "Taxonomies" do
       create(:taxonomy, :name => 'Brand')
       create(:taxonomy, :name => 'Categories')
       click_link "Taxonomies"
-      find('table#listing_taxonomies tr:nth-child(2) td:nth-child(1)').text.should include("Brand")
-      find('table#listing_taxonomies tr:nth-child(3) td:nth-child(1)').text.should include("Categories")
+      within_row(1) { page.should have_content("Brand") }
+      within_row(2) { page.should have_content("Categories") }
     end
   end
 
@@ -42,8 +42,7 @@ describe "Taxonomies" do
     it "should allow an admin to update an existing taxonomy" do
       create(:taxonomy)
       click_link "Taxonomies"
-      within(:css, 'table#listing_taxonomies tr:nth-child(2)') { click_link "Edit" }
-      page.should have_content("Edit taxonomy")
+      within_row(1) { click_icon :edit }
       fill_in "taxonomy_name", :with => "sports 99"
       click_button "Update"
       page.should have_content("successfully updated!")

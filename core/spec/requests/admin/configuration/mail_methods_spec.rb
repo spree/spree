@@ -15,8 +15,10 @@ describe "Mail Methods" do
     end
 
     it "should be able to display information about existing mail methods" do
-      find("table.index tbody tr td:nth-child(1)").text.should == "Test"
-      find("table.index tbody tr td:nth-child(2)").text.should == "Yes"
+      within_row(1) do
+        column_text(1).should == "Test"
+        column_text(2).should == "Yes"
+      end
     end
   end
 
@@ -31,18 +33,33 @@ describe "Mail Methods" do
   end
 
   context "edit" do
-    before(:each) do
-      create(:mail_method)
+    let!(:mail_method) { create(:mail_method, :preferred_smtp_password => "haxme") }
+
+    before do
       click_link "Mail Methods"
     end
 
     it "should be able to edit an existing mail method" do
-      within(:css, "table.index tbody tr") { click_link "Edit" }
+      within_row(1) { click_icon :edit }
+
       fill_in "mail_method_preferred_mail_bcc", :with => "spree@example.com99"
       click_button "Update"
       page.should have_content("successfully updated!")
-      within(:css, "table.index tbody tr") { click_link "Edit" }
+
+      within_row(1) { click_icon :edit }
       find_field("mail_method_preferred_mail_bcc").value.should == "spree@example.com99"
     end
+
+    # Regression test for #2094
+    it "does not clear password if not provided" do
+      mail_method.preferred_smtp_password.should == "haxme"
+      within_row(1) { click_icon :edit }
+      click_button "Update"
+      page.should have_content("successfully updated!")
+
+      mail_method.reload
+      mail_method.preferred_smtp_password.should_not be_blank
+    end
+
   end
 end

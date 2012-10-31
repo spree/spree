@@ -2,7 +2,7 @@ module Spree
   # Handles checkout logic.  This is somewhat contrary to standard REST convention since there is not actually a
   # Checkout object.  There's enough distinct logic specific to checkout which has nothing to do with updating an
   # order that this approach is waranted.
-  class CheckoutController < BaseController
+  class CheckoutController < Spree::StoreController
     ssl_required
 
     before_filter :load_order
@@ -10,9 +10,6 @@ module Spree
     before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
-    respond_to :html
-
-    # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
@@ -21,29 +18,37 @@ module Spree
           state_callback(:after)
         else
           flash[:error] = t(:payment_processing_failed)
-          respond_with(@order, :location => checkout_state_path(@order.state))
+          redirect_to checkout_state_path(@order.state)
           return
         end
 
         if @order.state == "complete" || @order.completed?
           flash.notice = t(:order_processed_successfully)
           flash[:commerce_tracking] = "nothing special"
-          respond_with(@order, :location => completion_route)
+          redirect_to completion_route
         else
-          respond_with(@order, :location => checkout_state_path(@order.state))
+          redirect_to checkout_state_path(@order.state)
         end
       else
-        respond_with(@order) { |format| format.html { render :edit } }
+        render :edit
       end
     end
 
     private
       def ensure_valid_state
-        if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
-           (!params[:state] && !@order.checkout_steps.include?(@order.state))
-          @order.state = 'cart'
-          redirect_to checkout_state_path(@order.checkout_steps.first)
+        unless skip_state_validation?
+          if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
+             (!params[:state] && !@order.checkout_steps.include?(@order.state))
+            @order.state = 'cart'
+            redirect_to checkout_state_path(@order.checkout_steps.first)
+          end
         end
+      end
+
+      # Should be overriden if you have areas of your checkout that don't match
+      # up to a step within checkout_steps, such as a registration step
+      def skip_state_validation?
+        false
       end
 
       def load_order

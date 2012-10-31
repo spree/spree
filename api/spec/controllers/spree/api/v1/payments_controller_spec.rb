@@ -2,6 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Api::V1::PaymentsController do
+    render_views
     let!(:order) { create(:order) }
     let!(:payment) { create(:payment, :order => order) }
     let!(:attributes) { [:id, :source_type, :source_id, :amount,
@@ -21,7 +22,7 @@ module Spree
 
         it "can view the payments for their order" do
           api_get :index
-          json_response.first.should have_attributes(attributes)
+          json_response["payments"].first.should have_attributes(attributes)
         end
 
         it "can learn how to create a new payment" do
@@ -66,7 +67,7 @@ module Spree
       it "can view the payments on any order" do
         api_get :index
         response.status.should == 200
-        json_response.first.should have_attributes(attributes)
+        json_response["payments"].first.should have_attributes(attributes)
       end
 
       context "for a given payment" do
@@ -86,6 +87,24 @@ module Spree
           json_response["error"].should == "There was a problem with the payment gateway: Could not authorize card"
           payment.reload
           payment.state.should == "failed"
+        end
+
+        it "can capture" do
+          api_put :capture, :id => payment.to_param
+          response.status.should == 200
+          payment.reload
+          payment.state.should == "completed"
+        end
+
+        it "returns a 422 status when purchasing fails" do
+          fake_response = stub(:success? => false, :to_s => "Insufficient funds")
+          Spree::Gateway::Bogus.any_instance.should_receive(:capture).and_return(fake_response)
+          api_put :capture, :id => payment.to_param
+          response.status.should == 422
+          json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
+
+          payment.reload
+          payment.state.should == "pending"
         end
 
         it "can purchase" do

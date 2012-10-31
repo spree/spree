@@ -7,15 +7,16 @@ describe "Checkout" do
       create(:zone)
       create(:shipping_method)
       create(:payment_method)
-      create(:promotion)
     end
+
+    let!(:promotion) { create(:promotion, :code => "onetwo") }
 
     it "informs about an invalid coupon code", :js => true do
       visit spree.root_path
       click_link "RoR Mug"
       click_button "add-to-cart-button"
 
-      click_link "Checkout"
+      click_button "Checkout"
       fill_in "order_email", :with => "spree@example.com"
       click_button "Continue"
 
@@ -38,7 +39,27 @@ describe "Checkout" do
       click_button "Save and Continue"
       page.should have_content("The coupon code you entered doesn't exist. Please try again.")
     end
+
+    context "on the cart page" do
+      before do
+        visit spree.root_path
+        click_link "RoR Mug"
+        click_button "add-to-cart-button"
+      end
+
+      it "cannot enter a promotion code that was created after the order" do
+        promotion.update_column(:created_at, 1.day.from_now)
+        fill_in "Coupon code", :with => "onetwo"
+        click_button "Apply"
+        page.should have_content("The coupon code you entered doesn't exist. Please try again.")
+      end
+
+      it "can enter a promotion code with both upper and lower case letters" do
+        promotion.update_column(:created_at, 1.minute.ago)
+        fill_in "Coupon code", :with => "ONETWO"
+        click_button "Apply"
+        page.should have_content("The coupon code was successfully applied to your order.")
+      end
+    end
   end
 end
-
-

@@ -5,7 +5,13 @@ module Spree
     belongs_to :shipment
     belongs_to :return_authorization
 
-    scope :backorder, where(:state => 'backordered')
+    scope :backordered, lambda { where(:state => 'backordered') }
+    scope :shipped, lambda { where(:state => 'shipped') }
+
+    def self.backorder
+      warn "[SPREE] Spree::InventoryUnit.backorder will be deprecated in Spree 1.3. Please use Spree::Product.backordered instead."
+      backordered
+    end
 
     attr_accessible :shipment
 
@@ -44,7 +50,7 @@ module Spree
       sold = quantity - back_order
 
       #set on_hand if configured
-      if Spree::Config[:track_inventory_levels]
+      if self.track_levels?(variant)
         variant.decrement!(:count_on_hand, quantity)
       end
 
@@ -55,13 +61,17 @@ module Spree
     end
 
     def self.decrease(order, variant, quantity)
-      if Spree::Config[:track_inventory_levels]
+      if self.track_levels?(variant)
         variant.increment!(:count_on_hand, quantity)
       end
 
       if Spree::Config[:create_inventory_units]
         destroy_units(order, variant, quantity)
       end
+    end
+
+    def self.track_levels?(variant)
+      Spree::Config[:track_inventory_levels] && !variant.on_demand
     end
 
     private
@@ -107,8 +117,10 @@ module Spree
       end
 
       def restock_variant
-        variant.on_hand += 1
-        variant.save
+        if self.class.track_levels?(variant)
+          variant.on_hand += 1
+          variant.save
+        end
       end
   end
 end

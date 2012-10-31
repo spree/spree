@@ -1,20 +1,22 @@
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions" data-hook="admin_shipment_edit_buttons">
+<% content_for :page_actions do %>
+  <% if @shipment.can_ship? %>
     <li>
-      <% if @shipment.can_ship? %>
-        <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
-      <% end %>
+      <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
     </li>
-  </ul>
-  <br class="clear" />
-</div>
+  <% end %>  
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:shipments) %> <i class="icon-arrow-right"></i> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)
+<% end %>
+
 <div data-hook="admin_shipment_edit_header">
-  <h2><%= t(:shipment) %> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)</h2>
+  
   <% if @shipment.cost %>
-    <h3><%= t(:charges) %> <%= number_to_currency @shipment.cost %></h3>
+    <h5 class="outstanding-balance"><%= t(:charges) %> <span class="green"><%= money @shipment.cost %></span></h5>
   <% end %>
 
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>
@@ -22,17 +24,20 @@
 
 <div data-hook="admin_shipment_edit_form">
   <%= form_for @shipment, :url => admin_order_shipment_path(@order, @shipment), :method => :put do |shipment_form| %>
+    <fieldset class="no-border-top">
       <%= render :partial => 'form', :locals => { :shipment_form => shipment_form } %>
 
       <div data-hook="admin_shipment_edit_form_buttons">
-        <p class="form-buttons">
+        <div class="filter-actions actions">
           <% if @shipment.editable_by?(try_spree_current_user) %>
-            <%= button @order.cart? ? t(:continue) : t(:update) %>
-            <%= t(:or) %> <%= link_to t(:cancel), admin_order_shipments_path(@order) %>
+            <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
+            <span class="or"><%= t(:or) %></span>
+            <%= button_link_to t(:cancel), admin_order_shipments_path(@order), :icon => 'icon-remove' %>
           <% else %>
-            <%= link_to raw("&laquo; #{t(:back)}"), edit_admin_order_shipment_path(@order) %>
+            <%= button_link_to t(:back), edit_admin_order_shipment_path(@order), :icon => 'icon-arrow-left' %>
           <% end %>
-        </p>
+        </div>
       </div>
+    </fieldset>
   <% end %>
 </div>

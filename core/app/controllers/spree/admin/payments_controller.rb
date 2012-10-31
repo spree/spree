@@ -5,17 +5,12 @@ module Spree
       before_filter :load_payment, :except => [:create, :new, :index]
       before_filter :load_data
 
-      respond_to :html
-
       def index
         @payments = @order.payments
-
-        respond_with(@payments)
       end
 
       def new
         @payment = @order.payments.build
-        respond_with(@payment)
       end
 
       def create
@@ -26,27 +21,26 @@ module Spree
 
         begin
           unless @payment.save
-            respond_with(@payment) { |format| format.html { redirect_to admin_order_payments_path(@order) } }
+            redirect_to admin_order_payments_path(@order)
             return
           end
 
           if @order.completed?
             @payment.process!
-            flash.notice = flash_message_for(@payment, :successfully_created)
-
-            respond_with(@payment) { |format| format.html { redirect_to admin_order_payments_path(@order) } }
+            flash[:success] = flash_message_for(@payment, :successfully_created)
+            redirect_to admin_order_payments_path(@order)
           else
             #This is the first payment (admin created order)
             until @order.completed?
               @order.next!
             end
-            flash.notice = t(:new_order_completed)
-            respond_with(@payment) { |format| format.html { redirect_to admin_order_url(@order) } }
+            flash[:success] = t(:new_order_completed)
+            redirect_to admin_order_url(@order)
           end
 
         rescue Spree::Core::GatewayError => e
           flash[:error] = "#{e.message}"
-          respond_with(@payment) { |format| format.html { redirect_to new_admin_order_payment_path(@order) } }
+          redirect_to new_admin_order_payment_path(@order)
         end
       end
 
@@ -56,14 +50,14 @@ module Spree
         # Because we have a transition method also called void, we do this to avoid conflicts.
         event = "void_transaction" if event == "void"
         if @payment.send("#{event}!")
-          flash.notice = t(:payment_updated)
+          flash[:success] = t(:payment_updated)
         else
           flash[:error] = t(:cannot_perform_operation)
         end
       rescue Spree::Core::GatewayError => ge
         flash[:error] = "#{ge.message}"
       ensure
-        respond_with(@payment) { |format| format.html { redirect_to admin_order_payments_path(@order) } }
+        redirect_to admin_order_payments_path(@order)
       end
 
       private

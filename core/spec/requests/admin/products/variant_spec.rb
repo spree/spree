@@ -13,7 +13,7 @@ describe "Variants" do
 
       visit spree.admin_path
       click_link "Products"
-      within('table.index tr:nth-child(2)') { click_link "Edit" }
+      within_row(1) { click_icon :edit }
       click_link "Variants"
       click_on "New Variant"
       find('input#variant_price').value.should == "1.99"

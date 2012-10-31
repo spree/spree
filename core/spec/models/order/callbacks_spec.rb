@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe Spree::Order do
   let(:order) { stub_model(Spree::Order) }
+  before do
+    Spree::Order.define_state_machine!
+  end
 
   context "validations" do
     context "email validation" do

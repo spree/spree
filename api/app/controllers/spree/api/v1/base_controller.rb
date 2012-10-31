@@ -7,13 +7,21 @@ module Spree
         attr_accessor :current_api_user
 
         before_filter :set_content_type
-        before_filter :check_for_api_key
+        before_filter :check_for_api_key, :if => :requires_authentication?
         before_filter :authenticate_user
+        after_filter  :set_jsonp_format
 
         rescue_from CanCan::AccessDenied, :with => :unauthorized
         rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
         helper Spree::Api::ApiHelpers
+
+        def set_jsonp_format
+          if params[:callback] && request.get?
+            self.response_body = "#{params[:callback]}(#{self.response_body})"
+            headers["Content-Type"] = 'application/javascript'
+          end
+        end
 
         def map_nested_attributes_keys(klass, attributes)
           nested_keys = klass.nested_attributes_options.keys
@@ -41,13 +49,22 @@ module Spree
         end
 
         def authenticate_user
-          unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key)
-            render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
+          if requires_authentication? || api_key.present?
+            unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key)
+              render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
+            end
+          else
+            # Effectively, an anonymous user
+            @current_api_user = Spree.user_class.new
           end
         end
 
         def unauthorized
           render "spree/api/v1/errors/unauthorized", :status => 401 and return
+        end
+
+        def requires_authentication?
+          Spree::Api::Config[:requires_authentication]
         end
 
         def not_found

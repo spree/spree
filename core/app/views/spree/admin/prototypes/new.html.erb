@@ -4,7 +4,7 @@
 
 <%= form_for [:admin, @prototype] do |f| %>
 <fieldset data-hook="new_prototype">
-  <legend><%= t(:new_prototype) %></legend>
+  <legend align="center"><%= t(:new_prototype) %></legend>
   <%= render :partial => 'form', :locals => { :f => f } %>
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
 </fieldset>

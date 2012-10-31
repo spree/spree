@@ -21,6 +21,7 @@ describe Spree::Order do
        context "when credit card payment fails" do
          before do
            order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
+           order.stub :payment_required? => true
          end
 
          context "when not configured to allow failed payments" do
@@ -40,7 +41,6 @@ describe Spree::Order do
            end
 
            it "should complete the order" do
-             pending
               order.next
               order.state.should == "complete"
             end
@@ -168,8 +168,6 @@ describe Spree::Order do
         end
       end
     end
-
-    it "should change shipment status (unless shipped)"
   end
 
 
@@ -179,12 +177,6 @@ describe Spree::Order do
       order.stub :email => "user@spreecommerce.com"
       order.stub :state => "canceled"
       order.stub :allow_resume? => true
-    end
-
-    it "should send a resume email" do
-      pending "Pending test for #818"
-      order.stub :unstock_items!
-      order.resume!
     end
 
     context "unstocks inventory" do

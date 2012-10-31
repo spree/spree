@@ -19,14 +19,16 @@
         </div>
 
         <div id="subtotal" data-hook class="columns sixteen alpha omega">
-          <h5><%= t(:subtotal) %>: <span class="order-total"><%= order_subtotal(@order) %></span></h5>
+          <h5><%= t(:subtotal) %>: <span class="order-total"><%= @order.display_total %></span></h5>
         </div>
 
         <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
             <%= t(:update) %>
           <% end %>
-         <%= link_to t(:checkout), checkout_state_path(@order.checkout_steps.first), :class => 'button checkout primary', :id => 'checkout-link' %>
+          <%= button_tag :class => 'button checkout primary', :id => 'checkout-link', :name => 'checkout' do %>
+            <%= t(:checkout) %>
+          <% end %>
         </div>
 
       </div>

@@ -8,8 +8,8 @@ describe "Homepage" do
       visit spree.admin_path
     end
 
-    it "should have the header text 'Administration'" do
-      within(:css, 'h1') { page.should have_content("Administration") }
+    it "should have the header text 'Listing Orders'" do
+      within('h1') { page.should have_content("Listing Orders") }
     end
 
     it "should have a link to overview" do
@@ -39,19 +39,19 @@ describe "Homepage" do
     end
 
     it "should have a link to products" do
-      within(:css, '#sub-menu') { page.find_link("Products")['/admin/products'] }
+      within('#sub-menu') { page.find_link("Products")['/admin/products'] }
     end
 
     it "should have a link to option types" do
-      within(:css, '#sub-menu') { page.find_link("Option Types")['/admin/option_types'] }
+      within('#sub-menu') { page.find_link("Option Types")['/admin/option_types'] }
     end
 
     it "should have a link to properties" do
-      within(:css, '#sub-menu') { page.find_link("Properties")['/admin/properties'] }
+      within('#sub-menu') { page.find_link("Properties")['/admin/properties'] }
     end
 
     it "should have a link to prototypes" do
-      within(:css, '#sub-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
+      within('#sub-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
     end
 
   end

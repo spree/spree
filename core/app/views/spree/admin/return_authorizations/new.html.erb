@@ -1,13 +1,15 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
 
-<h2><%= t(:new_return_authorization) %></h2>
+<% content_for :page_title do %>
+  <%= t(:new_return_authorization) %>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @return_authorization } %>
 <%= form_for [:admin, @order, @return_authorization] do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
 
-  <p class="form-buttons" data-hook="buttons">
+  <div class="form-buttons" data-hook="buttons">
     <%= button t(:continue) %>
     <%= t(:or) %> <%= link_to t('actions.cancel'), admin_order_return_authorizations_url(@order) %>
-  </p>
+  </div>
 <% end %>

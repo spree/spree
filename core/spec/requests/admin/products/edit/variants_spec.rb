@@ -12,7 +12,9 @@ describe "Product Variants" do
       create(:product)
 
       click_link "Products"
-      within('table.index tr:nth-child(2)') { click_link "Edit" }
+
+      within_row(1) { click_icon :edit }
+
       within('#sidebar') { click_link "Variants" }
       page.should have_content("To add variants, you must first define")
     end
@@ -36,8 +38,11 @@ describe "Product Variants" do
 
       visit spree.admin_path
       click_link "Products"
-      within('table.index tr:nth-child(2)') { click_link "Edit" }
-      select2('#product_option_types_field', 'color')
+      within('table.index tbody tr:nth-child(1)') do
+        click_icon :edit
+      end
+
+      select "color", :from => "Option Types"
       click_button "Update"
       page.should have_content("successfully updated!")
 

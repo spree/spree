@@ -46,7 +46,7 @@ describe Spree::Address do
       end
     end
 
-    let(:country) { mock_model(Spree::Country, :states => [state]) }
+    let(:country) { mock_model(Spree::Country, :states => [state], :states_required => true) }
     let(:state) { stub_model(Spree::State, :name => 'maryland', :abbr => 'md') }
     let(:address) { FactoryGirl.build(:address, :country => country) }
 
@@ -105,7 +105,6 @@ describe Spree::Address do
     end
 
     it "address_requires_state preference is false" do
-      pending "Broken on CI server, but not on dev machines. To be investigated later."
       Spree::Config.set :address_requires_state => false
       address.state = nil
       address.state_name = nil

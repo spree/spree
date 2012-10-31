@@ -1,15 +1,14 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
-    <li>
-      <%= button_link_to t(:new_taxonomy), new_admin_taxonomy_url, :icon => 'add', :id => 'admin_new_taxonomy_link' %></p>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
+<% content_for :page_title do %>
+  <%= t(:taxonomies) %>
+<% end %>
 
-<h1><%= t(:taxonomies) %></h1>
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:new_taxonomy), spree.new_admin_taxonomy_url, :icon => 'icon-plus', :id => 'admin_new_taxonomy_link' %></p>
+  </li>
+<% end %>
 
 <div id='list-taxonomies' data-hook>
   <%= render :partial => 'list' %>

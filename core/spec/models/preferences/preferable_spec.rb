@@ -79,7 +79,6 @@ describe Spree::Preferences::Preferable do
 
   describe "preference access" do
     it "handles ghost methods for preferences" do
-      #pending("TODO: cmar to look at this test to figure out why it's failing on 1.9")
       @a.preferred_color = 'blue'
       @a.preferred_color.should eq 'blue'
 
@@ -112,6 +111,24 @@ describe Spree::Preferences::Preferable do
       @b.preferences[:flavor].should eq 'strawberry'
       @b.preferences[:color].should eq 'green' #default from A
     end
+
+    context "database fallback" do
+      before do
+        @a.instance_variable_set("@pending_preferences", {})
+      end
+
+      it "retrieves a preference from the database before falling back to default" do
+        preference = mock(:value => "chatreuse")
+        Spree::Preference.should_receive(:find_by_key).with(:color).and_return(preference)
+        @a.preferred_color.should == 'chatreuse'
+      end
+
+      it "defaults if no database key exists" do
+        Spree::Preference.should_receive(:find_by_key).and_return(nil)
+        @a.preferred_color.should == 'green'
+      end
+    end
+
 
     context "converts integer preferences to integer values" do
       before do

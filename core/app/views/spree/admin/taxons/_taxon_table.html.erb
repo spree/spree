@@ -8,7 +8,7 @@
   </thead>
   <tbody>
     <% taxons.each do |taxon| %>
-      <tr id="<%= spree_dom_id(taxon) %>" data-hook="taxons_row">
+      <tr id="<%= spree_dom_id(taxon) %>" data-hook="taxons_row" class="<%= cycle('odd', 'even')%>">
         <td><%= taxon.name %></td>
         <td><%= taxon_path taxon %></td>
         <td class="actions">

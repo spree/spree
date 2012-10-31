@@ -1,0 +1,38 @@
+// Customize orders filter
+[data-hook="admin_orders_index_search"] {
+  select[data-placeholder="Status"] {
+    width: 100%;
+  }
+
+  .select2-container {
+    width: 100% !important;
+  }
+
+  // .field.checkbox {
+  //   margin-top: 35px;
+
+  //   &:first-child {
+  //     margin-bottom: 60px !important;
+  //   }
+  // }
+}
+
+// Customize orduct add fieldset
+#add-line-item {
+  fieldset {
+    padding: 10px 0;
+
+    .field {
+      margin-bottom: 0;
+      
+      input[type="text"], input[type="number"] {
+        width: 100%;
+      }     
+    }
+    .actions {
+      .button {
+        margin-top: 28px;
+      }
+    }
+  }
+}

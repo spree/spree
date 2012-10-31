@@ -3,8 +3,8 @@ module Spree
     class BaseController < Spree::BaseController
       ssl_required
 
-      helper 'spree/search'
       helper 'spree/admin/navigation'
+      helper 'spree/admin/tables'
       layout '/spree/layouts/admin'
 
       before_filter :check_alerts

@@ -3,9 +3,10 @@ module Spree
     DISPLAY = [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
-    scope :production, where(:environment => 'production')
+    scope :production, lambda { where(:environment => 'production') }
 
     attr_accessible :name, :description, :environment, :display_on, :active
+    validates :name, :presence => true
 
     def self.providers
       Rails.application.config.spree.payment_methods
@@ -23,7 +24,11 @@ module Spree
     end
 
     def self.available(display_on = 'both')
-      all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) && (p.environment == Rails.env || p.environment.blank?) }
+      all.select do |p|
+        p.active &&
+        (p.display_on == display_on.to_s || p.display_on.blank?) &&
+        (p.environment == Rails.env || p.environment.blank?)
+      end
     end
 
     def self.active?

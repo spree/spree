@@ -1,16 +1,24 @@
-<div data-hook="admin_tax_category_form_fields">
-  <%= f.field_container :name do %>
-    <%= f.label :name, t(:name) %><br />
-    <%= f.text_field :name %>
-  <% end %>
+<div data-hook="admin_tax_category_form_fields" class="row">
+  <div class="alpha four columns">
+    <%= f.field_container :name do %>
+      <%= f.label :name, t(:name) %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
+    <% end %>  
+  </div>
+  
+  <div class="five columns">
+    <%= f.field_container :description do %>
+      <%= f.label :description, t(:description) %><br>
+      <%= f.text_field :description, :class => 'fullwidth' %>
+    <% end %>
+  </div>
 
-  <%= f.field_container :description do %>
-    <%= f.label :description, t(:description) %><br />
-    <%= f.text_field :description %>
-  <% end %>
-
-  <%= f.field_container :is_default do %>
-    <%= f.label :is_default, t(:default) %><br />
-    <%= f.check_box :is_default %>
-  <% end %>
+  <div class="three columns omega">
+    <%= f.field_container :is_default, :class => ['checkbox'] do %>
+      <label>
+        <%= f.check_box :is_default %>
+        <%= t(:default) %>
+      </label>
+    <% end %>
+  </div>
 </div>

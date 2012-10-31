@@ -5,7 +5,7 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
@@ -39,6 +39,14 @@ describe Spree::Shipment do
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
         shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)] )
+        shipment.should_receive(:update_column).with("state", "pending")
+        shipment.update!(order)
+      end
+    end
+
+    context "when order is incomplete" do
+      before { order.stub :complete? => false }
+      it "should result in a 'pending' state" do
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
@@ -93,7 +101,6 @@ describe Spree::Shipment do
     after { Spree::Config.set :track_inventory_levels => true }
 
     it "should not use the line items from order when track_inventory_levels is false" do
-      pending
       line_items = [mock_model(Spree::LineItem)]
       order.stub :complete? => true
       order.stub :line_items => line_items
@@ -129,7 +136,6 @@ describe Spree::Shipment do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should validate with no inventory" do
-        pending
         shipment.valid?.should be_true
       end
     end

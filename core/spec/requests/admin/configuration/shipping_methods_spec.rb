@@ -30,10 +30,12 @@ describe "Shipping Methods" do
       2.times { create(:shipping_method) }
       click_link "Shipping Methods"
 
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(1)').text.should == "UPS Ground"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(2)').text.should == "North America"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(3)').text.should == "Flat Rate (per order)"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(4)').text.should == "Both"
+      within_row(1) do
+        column_text(1).should == "UPS Ground"
+        column_text(2).should == "North America"
+        column_text(3).should == "Flat Rate (per order)"
+        column_text(4).should == "Both"
+      end
     end
   end
 
@@ -54,7 +56,7 @@ describe "Shipping Methods" do
     it "can change the calculator", :js => true do
       click_link "Shipping Methods"
       within("#listing_shipping_methods") do
-        click_link "Edit"
+        click_icon :edit
       end
 
       click_button "Update"
@@ -81,7 +83,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -108,7 +110,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -137,7 +139,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -162,7 +164,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -198,7 +200,7 @@ describe "Shipping Methods" do
           click_link "Home"
           click_link "Shirt"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -226,7 +228,7 @@ describe "Shipping Methods" do
           click_link "Home"
           click_link "Shirt"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"

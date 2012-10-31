@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Tracker do
   describe "current" do
-    before(:each) { @tracker = Factory(:tracker) }
+    before(:each) { @tracker = create(:tracker) }
 
     it "returns the first active tracker for the environment" do
       Spree::Tracker.current.should == @tracker

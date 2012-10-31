@@ -1,5 +1,5 @@
 <li data-hook="country_member">
   <%= f.hidden_field :zoneable_type, :value => 'Spree::Country' %>
-  <%= f.collection_select(:zoneable_id, @countries, :id, :name, :include_blank => true) %>
+  <%= f.collection_select(:zoneable_id, @countries, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth'}) %>
   <%= remove_nested f %>
 </li>

@@ -3,47 +3,51 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
 <%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
+
 <fieldset data-hook="new_product">
-  
+
+  <legend align="center"><%= t(:new_product) %></legend>
+
   <%= f.field_container :name do %>
     <%= f.label :name, t(:name) %> <span class="required">*</span><br />
     <%= f.text_field :name, :class => 'fullwidth title' %>
     <%= f.error_message_on :name %>
   <% end %>
 
-  <div class="clearfix" data-hook="new_product_attrs">
-    <div class="left">
-
-      <% unless @product.has_variants? %>
+  <div data-hook="new_product_attrs" class="row">
+    <% unless @product.has_variants? %>
+      <div class="alpha four columns">
         <%= f.field_container :sku do %>
           <%= f.label :sku, t(:sku) %><br />
-          <%= f.text_field :sku, :size => 16 %>
+          <%= f.text_field :sku, :size => 16, :class => 'fullwidth' %>
           <%= f.error_message_on :sku %>
-        <% end %>
-      <% end %>
+        <% end %>  
+      </div>      
+    <% end %>
 
+    <div class="four columns">
       <%= f.field_container :prototype do %>
         <%= f.label :prototype_id, t(:prototype) %><br />
-        <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, :include_blank => true %>
+        <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth'} %>
       <% end %>
-
     </div>
-    <div class="right">
-
+      
+    <div class="four columns">
       <%= f.field_container :price do %>
         <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
-        <%= f.text_field :price %>
+        <%= f.text_field :price, :class => 'fullwidth' %>
         <%= f.error_message_on :price %>
       <% end %>
-
-      <p>
-        <%= f.label :available_on, t(:available_on) %><br />
-        <%= f.error_message_on :available_on %>
-        <%= f.text_field :available_on, :class => 'datepicker', :style => "width:150px" %>
-      </p>
-
-
     </div>
+
+    <div class="omega four columns">
+      <%= f.field_container :available_on do %>
+        <%= f.label :available_on, t(:available_on) %>
+        <%= f.error_message_on :available_on %>
+        <%= f.text_field :available_on, :class => 'datepicker fullwidth' %>
+      <% end %>
+    </div>
+    
   </div>
   
   <div class="clearfix" data-hook="product-from-prototype" id="product-from-prototype">

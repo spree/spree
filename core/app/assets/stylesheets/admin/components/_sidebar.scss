@@ -1,0 +1,23 @@
+// Sidebar
+//---------------------------------------------------
+#sidebar {
+  overflow: visible;
+  border-top: 1px solid $color-border; 
+  margin-top: 17px;
+
+  .sidebar-title {
+    color: $color-2;
+    text-transform: uppercase;
+    text-align: center; 
+    font-size: 14px;
+    font-weight: 600;
+    
+    > span {
+      display: inline;
+      background: #fff; 
+      padding: 5px 10px; 
+      position: relative; 
+      top: -14px;
+    }
+  }
+}

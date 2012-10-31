@@ -1,8 +1,25 @@
-<h1><%= t(:new_tax_rate) %></h1>
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:new_tax_rate) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_tax_rates_list), spree.admin_tax_rates_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_rate } %>
 
 <%= form_for [:admin, @tax_rate] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+  <fieldset class="no-border-top">
+    
+    <%= render :partial => 'form', :locals => { :f => f } %>
+
+    <div class="clear"></div>
+
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+
+  </fieldset>
 <% end %>

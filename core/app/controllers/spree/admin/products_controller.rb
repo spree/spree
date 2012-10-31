@@ -3,7 +3,7 @@ module Spree
     class ProductsController < ResourceController
       helper 'spree/products'
 
-      before_filter :check_json_authenticity, :only => :index
+#      before_filter :check_json_authenticity, :only => :index
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
@@ -13,10 +13,13 @@ module Spree
       end
 
       def index
-        respond_with(@collection) do |format|
-          format.html
-          format.json { render :json => json_data }
+      end
+
+      def update
+        if params[:product][:taxon_ids].present?
+          params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
         end
+        super
       end
 
       def destroy
@@ -40,7 +43,7 @@ module Spree
           flash.notice = I18n.t('notice_messages.product_not_cloned')
         end
 
-        respond_with(@new) { |format| format.html { redirect_to edit_admin_product_url(@new) } }
+        redirect_to edit_admin_product_url(@new)
       end
 
       protected
@@ -53,19 +56,6 @@ module Spree
           edit_admin_product_url(@product)
         end
 
-        # Allow different formats of json data to suit different ajax calls
-        def json_data
-          json_format = params[:json_format] or 'default'
-          case json_format
-          when 'basic'
-            collection.map {|p| {'id' => p.id, 'name' => p.name}}.to_json
-          else
-            collection.to_json(:include => {:variants => {:include => {:option_values => {:include => :option_type},
-                                                          :images => {:only => [:id], :methods => :mini_url}}},
-                                                          :images => {:only => [:id], :methods => :mini_url}, :master => {}})
-          end
-        end
-
         def load_data
           @taxons = Taxon.order(:name)
           @option_types = OptionType.order(:name)
@@ -75,35 +65,21 @@ module Spree
 
         def collection
           return @collection if @collection.present?
+          params[:q] ||= {}
+          params[:q][:deleted_at_null] ||= "1"
 
-          unless request.xhr?
-            params[:q] ||= {}
-            params[:q][:deleted_at_null] ||= "1"
+          params[:q][:s] ||= "name asc"
 
-            params[:q][:s] ||= "name asc"
+          @search = super.ransack(params[:q])
+          @collection = @search.result.
+            group_by_products_id.
+            includes(product_includes).
+            page(params[:page]).
+            per(Spree::Config[:admin_products_per_page])
 
-            @search = super.ransack(params[:q])
-            @collection = @search.result.
-              group_by_products_id.
-              includes([:master, {:variants => [:images, :option_values]}]).
-              page(params[:page]).
-              per(Spree::Config[:admin_products_per_page])
-
-            if params[:q][:s].include?("master_price")
-              # By applying the group in the main query we get an undefined method gsub for Arel::Nodes::Descending
-              # It seems to only work when the price is actually being sorted in the query
-              # To be investigated later.
-              @collection = @collection.group("spree_variants.price")
-            end
-          else
-            includes = [{:variants => [:images,  {:option_values => :option_type}]}, {:master => :images}]
-
-            @collection = super.where(["name #{LIKE} ?", "%#{params[:q]}%"])
-            @collection = @collection.includes(includes).limit(params[:limit] || 10)
-
-            tmp = super.where(["#{Variant.table_name}.sku #{LIKE} ?", "%#{params[:q]}%"])
-            tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
-            @collection.concat(tmp)
+          if params[:q][:s].include?("master_price")
+            # PostgreSQL compatibility
+            @collection = @collection.group("spree_variants.price")
           end
           @collection
         end
@@ -118,6 +94,11 @@ module Spree
           return unless params[:clear_product_properties]
           params[:product] ||= {}
         end
+
+        def product_includes
+         [{:variants => [:images, {:option_values => :option_type}]}, {:master => :images}]
+        end
+
     end
   end
 end

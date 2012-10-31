@@ -1,17 +1,28 @@
-<div data-hook="admin_payment_form_fields">
-  <p>
-    <%= f.label :amount, t(:amount) %>
-    <%= f.text_field :amount, :size => 8, :value => @order.outstanding_balance %>
-  </p>
-
-  <% @payment_methods.each do |method| %>
-
-    <label data-hook="payment_method_field">
-      <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method %>
-      <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
-    </label>
-
-    <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
-
-  <% end %>
+<div data-hook="admin_payment_form_fields" class="row">
+  <div class="alpha three columns">
+    <div class="field">
+      <%= f.label :amount, t(:amount) %>
+      <%= f.text_field :amount, :value => @order.outstanding_balance, :class => 'fullwidth' %>
+    </div>
+  </div>
+  <div class="omega nine columns">
+    <div class="field">
+      <label><%= t(:payment_method) %></label>
+      <ul>
+        <% @payment_methods.each do |method| %>
+          <li>
+            <label data-hook="payment_method_field">
+              <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method %>
+              <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+      <div class="payment-method-settings">
+        <% @payment_methods.each do |method| %>
+          <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>

@@ -4,42 +4,49 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
+<% content_for :page_actions do %>
+  <ul class="tollbar inline-menu">
+    <li>
+      <%= link_to_add_fields t(:add_product_properties), 'tbody#product_properties', :class => 'icon-plus button' %>
+    </li>
+    <li>
+      <span id="new_ptype_link">
+        <%= link_to t(:select_from_prototype), available_admin_prototypes_url, :remote => true, 'data-update' => 'prototypes', :class => 'button icon-copy' %>
+      </span>  
+    </li>
+  </ul>
+<% end %>
+
 <%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
-  <table class="index">
-    <thead>
-      <tr data-hook="product_properties_header">
-        <th><%= t(:property) %></th>
-        <th><%= t(:value) %></th>
-        <th><%= t(:action) %></th>
-      </tr>
-    </thead>
-    <tbody id="product_properties" data-hook>
-      <%= f.fields_for :product_properties do |pp_form| %>
-        <%= render :partial => 'product_property_fields', :locals => { :f => pp_form } %>
-      <% end %>
-    </tbody>
-  </table>
-
-  <%= hidden_field_tag 'clear_product_properties', 'true' %>
-
-  <p class="add_product_properties" data-hook="add_product_properties">
-  <%= link_to_add_fields t(:add_product_properties), 'tbody#product_properties' %>
-
-    &nbsp;&nbsp;
-
-    <span id="new_ptype_link">
-      <%= link_to t(:select_from_prototype), available_admin_prototypes_url,
-                  :remote => true, 'data-update' => 'prototypes' %>
-    </span>
-  </p>
-  <div id="prototypes" data-hook></div>
+  <fieldset class="no-border-top">
+    <div class="add_product_properties" data-hook="add_product_properties"></div>
+    
+    <div id="prototypes" data-hook></div>
     <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
-    <br />
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    
+    <table class="index">
+      <thead>
+        <tr data-hook="product_properties_header">
+          <th><%= t(:property) %></th>
+          <th><%= t(:value) %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody id="product_properties" data-hook>
+        <%= f.fields_for :product_properties do |pp_form| %>
+          <%= render :partial => 'product_property_fields', :locals => { :f => pp_form } %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+
+    <%= hidden_field_tag 'clear_product_properties', 'true' %>
+  </fieldset>
 <% end %>
 
 <%= javascript_tag do -%>
-  var properties = [<%= @properties.map{|id| "'#{id}'"}.join(', ') %>];
+  var properties = <%= raw(@properties.to_json) %>;
 
   $("#product_properties input.autocomplete").live("keydown", function(){
     already_auto_completed = $(this).is('ac_input');

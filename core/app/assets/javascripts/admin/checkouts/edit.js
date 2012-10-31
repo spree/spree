@@ -33,7 +33,7 @@ $(document).ready(function(){
   }
 
   prep_user_autocomplete_data = function(data){
-    return $.map(eval(data), function(row) {
+    return $.map(eval(data['users']), function(row) {
       return {
           data: row['user'],
           value: row['user']['email'],
@@ -45,10 +45,10 @@ $(document).ready(function(){
   if ($("#customer_search").length > 0) {
     $("#customer_search").autocomplete({
       minChars: 5,
-      delay: 1500,
+      delay: 500,
       source: function(request, response) {
         var params = { q: $('#customer_search').val(),
-                       authenticity_token: encodeURIComponent($('meta[name=csrf-token]').attr("content")) }
+                       authenticity_token: AUTH_TOKEN }
         $.get(Spree.routes.user_search + '&' + jQuery.param(params), function(data) {
           result = prep_user_autocomplete_data(data)
           response(result);
@@ -81,7 +81,7 @@ $(document).ready(function(){
         $('#user_id').val(ui.item.data['id']);
         $('#guest_checkout_true').prop("checked", false);
         $('#guest_checkout_false').prop("checked", true);
-        $('#guest_checkout_false').prob("disabled", false);
+        $('#guest_checkout_false').prop("disabled", false);
         return true;
       }
     }).data("autocomplete")._renderItem = function(ul, item) {

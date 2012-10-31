@@ -1,43 +1,22 @@
-<table class="index">
-  <tr>
-    <th><%= t(:product) %></th>
-    <th><%= t(:qty) %></th>
-    <th>&nbsp;</th>
-  </tr>
-  <% promotion_action.promotion_action_line_items.each do |item| %>
-    <tr>
-      <td>
-        <%= item.variant.product.name %> <%= item.variant.options_text %>
-      </td>
-      <td>
-        <%= item.quantity %>
-      </td>
-      <td>
-        <%= image_tag 'admin/icons/cross.png', :class => "remove_promotion_line_item", :data => { :variant_id => item.variant_id } %>
-      </td>
-    </tr>
+<% promotion_action.promotion_action_line_items.each do |item| %>
+  <strong><%= item.quantity %> x <%= item.variant.product.name %></strong>
+  <%= item.variant.options_text %>
+<% end %>
+
+<% if promotion_action.promotion_action_line_items.empty? %>
+  <% line_items = promotion_action.promotion_action_line_items %>
+  <% line_items.build %>
+
+  <% line_items.each_with_index do |line_item, index| %>
+    <div class="add-line-item row">
+        <div class="field alpha four columns">
+          <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
+          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, :class => "variant_autocomplete fullwidth" %>
+          <div class='options_placeholder'></div>
+        </div>
+        <div class="field omega four columns">
+          <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :min => 1, :class => 'fullwidth' %>
+        </div>
+    </div>
   <% end %>
-</table>
-
-<%= hidden_field_tag "#{param_prefix}[line_items_string]", promotion_action.line_items_string,
-                     :class => 'line_items_string' %>
-
-<div class="add-line-item">
-  <fieldset>
-    <legend><%= t(:add_product) %></legend>
-    <div style="float:left; width:50%; margin-right:5%;">
-      <%= label_tag :add_product_name, t(:name_or_sku) %>
-      <%= text_field_tag :add_product_name, nil, :class => 'fullwidth product_autocomplete' %>
-      <%= hidden_field_tag :add_variant_id %>
-      <%= hidden_field_tag :add_line_item_variant_id %>
-    </div>
-    <div style="float:left; width:10%; margin-right:5%;">
-      <%= label_tag :add_quantity, t(:qty) %>
-      <%= text_field_tag :add_quantity, 1 %>
-    </div>
-    <div style="float:left; width:j0%">
-      &nbsp;<br />
-      <button class="add small"> <%= t(:add) %></button>
-    </div>
-  </fieldset>
-</div>
+<% end %>

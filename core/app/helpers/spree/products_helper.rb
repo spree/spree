@@ -1,14 +1,31 @@
 module Spree
   module ProductsHelper
-    # returns the formatted change in price (from the master price) for the specified variant (or simply return
-    # the variant price if no master price was supplied)
+    # returns the formatted price for the specified variant as a full price or a difference depending on configuration
+    def variant_price(variant)
+      if Spree::Config[:show_variant_full_price]
+        variant_full_price(variant)
+      else
+        variant_price_diff(variant)
+      end
+    end
+
+
+    # returns the formatted price for the specified variant as a difference from product price
     def variant_price_diff(variant)
       diff = variant.price - variant.product.price
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{number_to_currency diff.abs})"
+        "(#{t(:add)}: #{Spree::Money.new(diff.abs)})"
       else
-        "(#{t(:subtract)}: #{number_to_currency diff.abs})"
+        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs)})"
+      end
+    end
+
+    # returns the formatted full price for the variant, if at least one variant price differs from product price
+    def variant_full_price(variant)
+      product = variant.product
+      unless product.variants.active.all? { |v| v.price == product.price }
+        Spree::Money.new(variant.price).to_s
       end
     end
 

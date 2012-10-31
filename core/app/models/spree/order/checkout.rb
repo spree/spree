@@ -51,7 +51,7 @@ module Spree
               end
 
               event :return do
-                transition :to => :returned, :from => :awaiting_return
+                transition :to => :returned, :from => :awaiting_return, :unless => :awaiting_returns?
               end
 
               event :resume do
@@ -64,7 +64,7 @@ module Spree
 
               before_transition :to => :complete do |order|
                 begin
-                  order.process_payments!
+                  order.process_payments! if order.payment_required?
                 rescue Spree::Core::GatewayError
                   !!Spree::Config[:allow_checkout_on_gateway_error]
                 end
@@ -83,15 +83,12 @@ module Spree
 
           def self.go_to_state(name, options={})
             self.checkout_steps[name] = options
+            previous_states.each do |state|
+              add_transition({:from => state, :to => name}.merge(options))
+            end
             if options[:if]
-              previous_states.each do |state|
-                add_transition({:from => state, :to => name}.merge(options))
-              end
               self.previous_states << name
             else
-              previous_states.each do |state|
-                add_transition({:from => state, :to => name}.merge(options))
-              end
               self.previous_states = [name]
             end
           end

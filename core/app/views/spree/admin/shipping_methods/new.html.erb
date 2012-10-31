@@ -1,17 +1,29 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<div data-hook="admin_shipping_method_new_form_header">
-  <h1><%= t(:new_shipping_method) %></h1>
+<% content_for :page_title do %>
+  <%= t(:new_shipping_method) %>
+<% end %>
 
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_shipping_methods_list), spree.admin_shipping_methods_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
+
+<div data-hook="admin_shipping_method_new_form_header">
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipping_method } %>
 </div>
 
 <div data-hook="admin_shipping_method_new_form">
   <%= form_for [:admin, @shipping_method] do |f| %>
-    <%= render :partial => 'form', :locals => { :f => f } %>
+    <fieldset class="no-border-top">
+      <%= render :partial => 'form', :locals => { :f => f } %>
 
-    <div data-hook="admin_shipping_method_new_form_buttons">
-      <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-    </div>
+      <div class="clear"></div>
+
+      <div data-hook="admin_shipping_method_new_form_buttons">
+        <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+      </div>
+    </fieldset>
   <% end %>
 </div>

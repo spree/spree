@@ -1,0 +1,25 @@
+//************************************************************************//
+// Default: Webkit, moz, spec
+// Example: @include prefixer(border-radius, $radii, $o: true);
+//
+// Source : https://github.com/thoughtbot/bourbon/blob/master/app/assets/stylesheets/css3/_prefixer.scss
+//************************************************************************//
+@mixin prefixer ($property, $value,
+                 $webkit: true,
+                    $moz: true,
+                     $ms: false,
+                      $o: false,
+                   $spec: true) {
+  @if $webkit { -webkit-#{$property}: $value; }
+  @if $moz    {    -moz-#{$property}: $value; }
+  @if $ms     {     -ms-#{$property}: $value; }
+  @if $o      {      -o-#{$property}: $value; }
+  @if $spec   {         #{$property}: $value; }
+}
+
+//************************************************************************//
+// Source : https://github.com/thoughtbot/bourbon/blob/master/app/assets/stylesheets/css3/_border-radius.scss
+//************************************************************************//
+@mixin border-radius ($radii) {
+  @include prefixer(border-radius, $radii, webkit, moz, ms, o);
+}

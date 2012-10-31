@@ -1,9 +1,18 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:editing_mail_method) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_mail_method) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon 'icon-arrow-left', t(:back_to_mail_methods_list), admin_mail_methods_path, :class => 'button' %></li>
+<% end %>
+
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @mail_method } %>
 
 <%= form_for [:admin, @mail_method] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <p class="form-buttons" data-hook="buttons"><%= button t(:update) %></p>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <div class="form-buttons filter-actions actions" data-hook="buttons"><%= button t(:update), 'icon-refresh' %></div>
+  </fieldset>
 <% end %>

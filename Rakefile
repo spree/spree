@@ -2,7 +2,12 @@ require 'rake'
 require 'rubygems/package_task'
 require 'thor/group'
 require File.expand_path('../core/lib/generators/spree/install/install_generator', __FILE__)
-require 'spree/core/testing_support/common_rake'
+begin
+  require 'spree/core/testing_support/common_rake'
+rescue LoadError
+  raise "Could not find spree/core/testing_support/common_rake. You need to run this command using Bundler."
+  exit
+end
 
 spec = eval(File.read('spree.gemspec'))
 Gem::PackageTask.new(spec) do |pkg|
@@ -87,5 +92,7 @@ end
 
 desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  exec("lib/sandbox.sh")
+  Bundler.with_clean_env do
+    exec("lib/sandbox.sh")
+  end
 end

@@ -14,21 +14,46 @@ module Spree
       it "should be correct positive value when variant is more than master" do
         product.price = 10
         @variant.price = 15
-        helper.variant_price_diff(@variant).should == "(Add: $5.00)"
+        helper.variant_price(@variant).should == "(Add: $5.00)"
       end
 
       it "should be nil when variant is same as master" do
         product.price = 10
         @variant.price = 10
-        helper.variant_price_diff(@variant).should be_nil
+        helper.variant_price(@variant).should be_nil
       end
 
       it "should be correct negative value when variant is less than master" do
         product.price = 15
         @variant.price = 10
-        helper.variant_price_diff(@variant).should == "(Subtract: $5.00)"
+        helper.variant_price(@variant).should == "(Subtract: $5.00)"
       end
     end
+
+    context "#variant_price_full" do
+      before do
+        Spree::Config[:show_variant_full_price] = true
+        @variant1 = create(:variant, :product => product)
+        @variant2 = create(:variant, :product => product)
+      end
+
+      it "should return the variant price if the price is different than master" do
+        product.price = 10
+        @variant1.price = 15
+        @variant2.price = 20
+        helper.variant_price(@variant1).should == "$15.00"
+        helper.variant_price(@variant2).should == "$20.00"
+      end
+
+      it "should be nil when all variant prices are equal" do
+        product.price = 10
+        @variant1.update_column(:price, 10)
+        @variant2.update_column(:price, 10)
+        helper.variant_price(@variant1).should be_nil
+        helper.variant_price(@variant2).should be_nil
+      end
+    end
+
 
     context "#product_description" do
       # Regression test for #1607

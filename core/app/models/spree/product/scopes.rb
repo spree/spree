@@ -50,8 +50,23 @@ module Spree
     # If you need products only within one taxon use
     #
     #   Spree::Product.taxons_id_eq(x)
+    # 
+    # If you're using count on the result of this scope, you must use the
+    # `:distinct` option as well:
+    #
+    #   Spree::Product.in_taxon(taxon).count(:distinct => true)
+    #
+    # This is so that the count query is distinct'd:
+    #
+    #   SELECT COUNT(DISTINCT "spree_products"."id") ...
+    #
+    #   vs.
+    #
+    #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
-      joins(:taxons).where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+      select("DISTINCT(spree_products.id), spree_products.*").
+      joins(:taxons).
+      where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -62,10 +77,6 @@ module Spree
       taxons = get_taxons(taxons)
       taxons.first ? prepare_taxon_conditions(taxons) : scoped
     end
-
-    # def self.in_cached_group(product_group)
-    #   joins(:product_groups).where('spree_product_groups_products.product_group_id' => product_group)
-    # end
 
     # a scope that finds all products having property specified by name, object or id
     add_search_scope :with_property do |property|
@@ -113,7 +124,7 @@ module Spree
       end
 
       conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-      select("DISTINCT spree_products.id").joins(:variants_including_master => :option_values).where(conditions)
+      group("spree_products.id").joins(:variants_including_master => :option_values).where(conditions)
     end
 
     # Finds all products which have either:
@@ -188,11 +199,11 @@ module Spree
 
     add_search_scope :on_hand do
       variants_table = Variant.table_name
-      where("#{table_name}.id in (select product_id from #{variants_table} where product_id = #{table_name}.id group by product_id having sum(count_on_hand) > 0)")
+      where("#{table_name}.id in (select product_id from #{variants_table} where product_id = #{table_name}.id and #{variants_table}.deleted_at IS NULL group by product_id having sum(count_on_hand) > 0)")
     end
 
     add_search_scope :taxons_name_eq do |name|
-      select("DISTINCT spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
     if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')

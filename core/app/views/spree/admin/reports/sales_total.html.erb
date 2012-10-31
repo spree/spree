@@ -1,23 +1,33 @@
-<h1><%= t(:sales_totals) %> </h1>
+<% content_for :page_title do %>
+  <%= t(:sales_totals) %>
+<% end %>
 
-<table class="admin-report" data-hook="sales_total">
-  <tbody>
-    <tr>
-      <th scope="row"><%= t(:item_total) %>:</th>
-      <td align="right"><%= number_to_currency @item_total %></td>
-    </tr>
-    <tr>
-      <th scope="row"><%= t(:adjustment_total) %>:</th>
-      <td align="right"><%= number_to_currency @adjustment_total %></td>
-    </tr>
-    <tr>
-      <th scope="row"><%= t(:sales_total) %>:</th>
-      <td align="right"><%= number_to_currency @sales_total %></td>
-    </tr>
-  </tbody>
-</table>
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon 'icon-arrow-left', t(:back_to_reports_list), spree.admin_reports_url, :class => 'button' %></li>
+<% end %>
 
-<% content_for :sidebar do %>
+
+<% content_for :table_filter_title do %>
+  <%= t(:date_range) %>
+<% end %>
+
+<% content_for :table_filter do %>
   <%= render :partial => 'spree/admin/shared/report_criteria', :locals => {} %>
 <% end %>
 
+<table class="admin-report" data-hook="sales_total">
+  <thead>
+    <tr>
+      <th><%= t(:item_total) %></th>
+      <th><%= t(:adjustment_total) %></th>
+      <th><%= t(:sales_total) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="align-center">
+      <td><%= money @item_total %></td>    
+      <td><%= money @adjustment_total %></td>
+      <td><%= money @sales_total %></td>
+    </tr>
+  </tbody>
+</table>

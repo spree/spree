@@ -1,24 +1,30 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
+<% content_for :page_title do %>
+  <%= t(:listing_tax_categories) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
     <li>
-      <p><%= button_link_to t(:new_tax_category), new_object_url, :icon => 'add', :id => 'admin_new_tax_categories_link' %>
-    </p>
+      <%= button_link_to t(:new_tax_category), new_object_url, :icon => 'icon-plus', :id => 'admin_new_tax_categories_link' %>
     </li>
   </ul>
-  <br class="clear" />
-</div>
+<% end %>
 
-
-<h1><%= t(:listing_tax_categories) %></h1>
 <table class="index" id='listing_tax_categories' data-hook>
+  <colgroup>
+    <col style="width: 30%" />
+    <col style="width: 40%" />
+    <col style="width: 15%" />
+    <col style="width: 15%" />
+  </colgroup>
   <thead>
     <tr data-hook="tax_header">
       <th><%= t(:name) %></th>
       <th><%= t(:description) %></th>
       <th><%= t(:default) %></th>
-      <th></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
@@ -26,13 +32,13 @@
          @edit_url = edit_admin_tax_category_path(tax_category)
          @delete_url = admin_tax_category_path(tax_category)
     %>
-      <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row">
+      <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row" class="<%= cycle('odd', 'even')%>">
         <td><%= tax_category.name %></td>
         <td><%= tax_category.description %></td>
-        <td><%= tax_category.is_default.to_s.titleize %></td>
+        <td class="align-center"><%= tax_category.is_default.to_s.titleize %></td>
         <td class="actions">
-          <%= link_to_edit tax_category, :class => 'edit' %> &nbsp;
-          <%= link_to_delete tax_category %>
+          <%= link_to_edit tax_category, :no_text => true %>
+          <%= link_to_delete tax_category, :no_text => true %>
       </tr>
     <% end %>
     <% if @tax_categories.empty? %>
@@ -40,4 +46,3 @@
     <% end %>
   </tbody>
 </table>
-

@@ -36,7 +36,7 @@ module Spree
     end
 
     def state_text
-      state.try(:abbr) || state.try(:name) || state_name 
+      state.try(:abbr) || state.try(:name) || state_name
     end
 
     def same_as?(other)
@@ -87,6 +87,7 @@ module Spree
         # Skip state validation without country (also required)
         # or when disabled by preference
         return if country.blank? || !Spree::Config[:address_requires_state]
+        return unless country.states_required
 
         # ensure associated state belongs to country
         if state.present?

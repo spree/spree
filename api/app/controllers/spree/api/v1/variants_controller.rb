@@ -5,7 +5,7 @@ module Spree
         before_filter :product
 
         def index
-          @variants = scope.includes(:option_values).scoped
+          @variants = scope.includes(:option_values).page(params[:page])
         end
 
         def show
@@ -39,7 +39,7 @@ module Spree
           authorize! :delete, Variant
           @variant = scope.find(params[:id])
           @variant.destroy
-          render :text => nil, :status => 200
+          render :text => nil, :status => 204
         end
 
         private
@@ -48,7 +48,23 @@ module Spree
           end
 
           def scope
-            @product ? @product.variants_including_master : Variant
+            if @product
+              unless current_api_user.has_spree_role?("admin") || params[:show_deleted]
+                variants = @product.variants_including_master
+              else
+                variants = @product.variants_including_master_and_deleted
+              end
+            else
+              variants = Variant.scoped
+              if current_api_user.has_spree_role?("admin")
+                unless params[:show_deleted]
+                  variants = Variant.active
+                end
+              else
+                variants = variants.active
+              end
+            end
+            variants
           end
       end
     end

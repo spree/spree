@@ -1,21 +1,25 @@
+<% content_for :sidebar_title do %>
+  <%= t(:configurations) %>
+<% end %>
+
 <% content_for :sidebar do %>
-
-  <h3><%= t(:configurations) %></h3>
-  <br class="clear" />
-
-  <ul class="sidebar" data-hook="admin_configurations_sidebar_menu">
-    <%= configurations_sidebar_menu_item t(:general_settings), admin_general_settings_path %>
-    <%= configurations_sidebar_menu_item t(:mail_methods), admin_mail_methods_path %>
-    <%= configurations_sidebar_menu_item t(:tax_categories), admin_tax_categories_path %>
-    <%= configurations_sidebar_menu_item t(:zones), admin_zones_path %>
-    <%= configurations_sidebar_menu_item t(:states), admin_country_states_path(Spree::Config[:default_country_id]) %>
-    <%= configurations_sidebar_menu_item t(:payment_methods), admin_payment_methods_path %>
-    <%= configurations_sidebar_menu_item t(:taxonomies), admin_taxonomies_path %>
-    <%= configurations_sidebar_menu_item t(:shipping_methods), admin_shipping_methods_path %>
-    <%= configurations_sidebar_menu_item t(:inventory_settings), admin_inventory_settings_path %>
-    <%= configurations_sidebar_menu_item t(:analytics_trackers), admin_trackers_path %>
-  </ul>
-  <ul class="sidebar">
-    <li id="complete_settings_list"><%= link_to t(:complete_list), admin_configurations_path %>
-  </ul>
+  <nav class="menu">
+    <ul class="sidebar" data-hook="admin_configurations_sidebar_menu">
+      <%= configurations_sidebar_menu_item t(:general_settings), edit_admin_general_settings_path %>
+      <%= configurations_sidebar_menu_item t(:mail_methods), admin_mail_methods_path %>
+      <%= configurations_sidebar_menu_item t(:image_settings), edit_admin_image_settings_path %>
+      <%= configurations_sidebar_menu_item t(:tax_categories), admin_tax_categories_path %>
+      <%= configurations_sidebar_menu_item t(:tax_rates), admin_tax_rates_path %>
+      <%= configurations_sidebar_menu_item t(:tax_settings), edit_admin_tax_settings_path %>
+      <%= configurations_sidebar_menu_item t(:zones), admin_zones_path %>
+      <%= configurations_sidebar_menu_item t(:countries), admin_countries_path %>
+      <%= configurations_sidebar_menu_item t(:states), admin_country_states_path(Spree::Config[:default_country_id]) %>
+      <%= configurations_sidebar_menu_item t(:payment_methods), admin_payment_methods_path %>
+      <%= configurations_sidebar_menu_item t(:taxonomies), admin_taxonomies_path %>
+      <%= configurations_sidebar_menu_item t(:shipping_methods), admin_shipping_methods_path %>
+      <%= configurations_sidebar_menu_item t(:shipping_categories), admin_shipping_categories_path %>
+      <%= configurations_sidebar_menu_item t(:inventory_settings), edit_admin_inventory_settings_path %>
+      <%= configurations_sidebar_menu_item t(:analytics_trackers), admin_trackers_path %>
+    </ul>
+  </nav>
 <% end %>

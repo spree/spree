@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class OrdersController < Spree::Api::V1::BaseController
-        before_filter :map_nested_attributes, :only => [:create, :update]
         before_filter :authorize_read!, :except => [:index, :search, :create]
 
         def index
@@ -20,13 +19,13 @@ module Spree
         end
 
         def create
-          @order = Order.build_from_api(current_api_user, @nested_params)
-          next!
+          @order = Order.build_from_api(current_api_user, nested_params)
+          next!(:status => 201)
         end
 
         def update
           authorize! :update, Order
-          if order.update_attributes(@nested_params)
+          if order.update_attributes(nested_params)
             order.update!
             render :show
           else
@@ -35,8 +34,8 @@ module Spree
         end
 
         def address
-          order.build_ship_address(params[:shipping_address])
-          order.build_bill_address(params[:billing_address])
+          order.build_ship_address(params[:shipping_address]) if params[:shipping_address]
+          order.build_bill_address(params[:billing_address]) if params[:billing_address]
           next!
         end
 
@@ -64,17 +63,17 @@ module Spree
 
         private
 
-        def map_nested_attributes
-          @nested_params = map_nested_attributes_keys Order, params[:order]
+        def nested_params
+          map_nested_attributes_keys Order, params[:order] || {}
         end
 
         def order
           @order ||= Order.find_by_number!(params[:id])
         end
 
-        def next!
+        def next!(options={})
           if @order.valid? && @order.next
-            render :show, :status => 200
+            render :show, :status => options[:status] || 200
           else
             render :could_not_transition, :status => 422
           end

@@ -27,7 +27,7 @@ module Spree
               end
               @order.save
               @order.create_shipment!
-              flash[:notice] = t('customer_details_updated')
+              flash[:success] = t('customer_details_updated')
               redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
             else
               flash[:error] = t('errors.messages.no_shipping_methods_available')

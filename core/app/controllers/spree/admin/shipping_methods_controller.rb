@@ -7,7 +7,7 @@ module Spree
       def destroy
         @object.touch :deleted_at
 
-        flash.notice = flash_message_for(@object, :successfully_removed)
+        flash[:success] = flash_message_for(@object, :successfully_removed)
 
         respond_with(@object) do |format|
           format.html { redirect_to collection_url }

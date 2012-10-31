@@ -3,34 +3,27 @@ module Spree
     class ShipmentsController < Spree::Admin::BaseController
       before_filter :load_shipping_methods, :except => [:country_changed, :index]
 
-      respond_to :html
-
       def index
         @shipments = order.shipments
-        respond_with(@shipments)
       end
 
       def new
         build_shipment
-        respond_with(shipment)
       end
 
       def create
         build_shipment
         assign_inventory_units
         if shipment.save
-          flash[:notice] = flash_message_for(shipment, :successfully_created)
-          respond_with(shipment) do |format|
-            format.html { redirect_to edit_admin_order_shipment_path(order, shipment) }
-          end
+          flash[:success] = flash_message_for(shipment, :successfully_created)
+          redirect_to edit_admin_order_shipment_path(order, shipment)
         else
-          respond_with(shipment) { |format| format.html { render :action => 'new' } }
+          render :action => 'new'
         end
       end
 
       def edit
         shipment.special_instructions = order.special_instructions
-        respond_with(shipment)
       end
 
       def update
@@ -41,29 +34,27 @@ module Spree
           order.shipping_method = order.shipment.shipping_method
           order.save
 
-          flash[:notice] = flash_message_for(shipment, :successfully_updated)
+          flash[:success] = flash_message_for(shipment, :successfully_updated)
           return_path = order.completed? ? edit_admin_order_shipment_path(order, shipment) : admin_order_adjustments_path(order)
-          respond_with(@object) do |format|
-            format.html { redirect_to return_path }
-          end
+          redirect_to return_path
         else
-          respond_with(shipment) { |format| format.html { render :action => 'edit' } }
+          render :action => 'edit'
         end
       end
 
       def destroy
         shipment.destroy
-        respond_with(shipment) { |format| format.js { render_js_for_destroy } }
+        render_js_for_destroy
       end
 
       def fire
         if shipment.send("#{params[:e]}")
-          flash.notice = t(:shipment_updated)
+          flash[:success] = t(:shipment_updated)
         else
           flash[:error] = t(:cannot_perform_operation)
         end
 
-        respond_with(shipment) { |format| format.html { redirect_to :back } }
+        redirect_to :back
       end
 
       private

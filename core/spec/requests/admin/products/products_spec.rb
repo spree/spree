@@ -17,23 +17,27 @@ describe "Products" do
 
         it "should list existing products with correct sorting by name" do
           click_link "Products"
-          within('table.index tr:nth-child(2)') { page.should have_content("apache baseball cap") }
-          within('table.index tr:nth-child(3)') { page.should have_content("zomg shirt") }
+          # Name ASC
+          within_row(1) { page.should have_content('apache baseball cap') }
+          within_row(2) { page.should have_content("zomg shirt") }
 
+          # Name DESC
           click_link "admin_products_listing_name_title"
-          within('table.index tr:nth-child(2)') { page.should have_content("zomg shirt") }
-          within('table.index tr:nth-child(3)') { page.should have_content("apache baseball cap") }
+          within_row(1) { page.should have_content("zomg shirt")  }
+          within_row(2) { page.should have_content('apache baseball cap') }
         end
 
         it "should list existing products with correct sorting by price" do
           click_link "Products"
 
-          within('table.index tr:nth-child(2)') { page.should have_content("apache baseball cap") }
-          within('table.index tr:nth-child(3)') { page.should have_content("zomg shirt") }
+          # Name ASC (default)
+          within_row(1) { page.should have_content('apache baseball cap') }
+          within_row(2) { page.should have_content("zomg shirt") }
 
+          # Price DESC
           click_link "admin_products_listing_price_title"
-          within('table.index tr:nth-child(2)') { page.should have_content("zomg shirt") }
-          within('table.index tr:nth-child(3)') { page.should have_content("apache baseball cap") }
+          within_row(1) { page.should have_content("zomg shirt") }
+          within_row(2) { page.should have_content('apache baseball cap') }
         end
       end
     end
@@ -47,11 +51,11 @@ describe "Products" do
         page.should have_content("zomg shirt")
         page.should_not have_content("apache baseball cap")
         check "Show Deleted"
-        click_button "Search"
+        click_icon :search
         page.should have_content("zomg shirt")
         page.should have_content("apache baseball cap")
         uncheck "Show Deleted"
-        click_button "Search"
+        click_icon :search
         page.should have_content("zomg shirt")
         page.should_not have_content("apache baseball cap")
       end
@@ -63,13 +67,13 @@ describe "Products" do
 
         click_link "Products"
         fill_in "q_name_cont", :with => "ap"
-        click_button "Search"
+        click_icon :search
         page.should have_content("apache baseball cap")
         page.should have_content("apache baseball cap2")
         page.should_not have_content("zomg shirt")
 
         fill_in "q_variants_including_master_sku_cont", :with => "A1"
-        click_button "Search"
+        click_icon :search
         page.should have_content("apache baseball cap")
         page.should_not have_content("apache baseball cap2")
         page.should_not have_content("zomg shirt")
@@ -81,10 +85,12 @@ describe "Products" do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, :name => "Random") 
+        @property_prototype = create(:prototype, :name => "Random")
         click_link "Products"
         click_link "admin_new_product"
-        within('#new_product') { page.should have_content("SKU") }
+        within('#new_product') do
+         page.should have_content("SKU")
+        end
       end
 
       it "should allow an admin to create a new product and variants from a prototype", :js => true do
@@ -123,7 +129,9 @@ describe "Products" do
       before(:each) do
         click_link "Products"
         click_link "admin_new_product"
-        within('#new_product') { page.should have_content("SKU") }
+        within('#new_product') do
+         page.should have_content("SKU")
+        end
       end
 
       it "should allow an admin to create a new product", :js => true do
@@ -143,6 +151,18 @@ describe "Products" do
         page.should have_content("Name can't be blank")
         page.should have_content("Price can't be blank")
       end
+
+      # Regression test for #2097
+      it "can set the count on hand to a null value", :js => true do
+        fill_in "product_name", :with => "Baseball Cap"
+        fill_in "product_price", :with => "100"
+        click_button "Create"
+        page.should have_content("successfully created!")
+        fill_in "product_on_hand", :with => ""
+        click_button "Update"
+        page.should_not have_content("spree_products.count_on_hand may not be NULL")
+        page.should have_content("successfully updated!")
+      end
     end
 
     context "cloning a product", :js => true do
@@ -150,7 +170,10 @@ describe "Products" do
         create(:product)
 
         click_link "Products"
-        within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
+        within_row(1) do
+          click_icon :copy
+        end
+
         page.should have_content("Product has been cloned")
       end
 
@@ -163,7 +186,11 @@ describe "Products" do
           click_button "Search"
 
           page.should have_content("apache baseball cap")
-          within('table#listing_products tr:nth-child(2)') { click_link "Clone" }
+
+          within_row(1) do
+            click_icon :copy
+          end
+
           page.should have_content("Product has been cloned")
         end
       end

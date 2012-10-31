@@ -1,24 +1,33 @@
-<div class="toolbar order-links" data-hook="admin_order_show_buttons">
-  <%= button_link_to t(:cancel), fire_admin_order_url(@order.number, { :e => 'cancel' }), :icon => 'delete', :data => { :confirm => t(:are_you_sure) } if @order.can_cancel? %>
-  <%= button_link_to t(:edit), edit_admin_order_url(@order.number), :icon => 'edit' %>
-</div>
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:cancel), fire_admin_order_url(@order.number, { :e => 'cancel' }), :icon => 'icon-trash', :data => { :confirm => t(:are_you_sure) } if @order.can_cancel? %>  
+  </li>
+  <li>
+    <%= button_link_to t(:edit), edit_admin_order_url(@order.number), :icon => 'icon-edit' %>
+  </li>
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
+
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
 
-<div data-hook="admin_order_show_addresses">
+<div data-hook="admin_order_show_addresses" class="row">
   <% if @order.bill_address %>
-    <div class="adr">
-      <h4><%= t(:bill_address) %></h4>
-      <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.bill_address } %>
-    </div>
+    <fieldset class="alpha six columns no-border-bottom">
+      <legend align="center"><%= t(:bill_address) %></legend>
+      <div class="align-center">
+        <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.bill_address } %>  
+      </div>
+    </fieldset>
   <% end %>
   <% if @order.ship_address %>
-    <div class='adr'>
-      <h4><%= t(:ship_address) %></h4>
-      <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.ship_address } %>
-    </div>
+    <fieldset class="omega six columns no-border-bottom">
+      <legend align="center"><%= t(:ship_address) %></legend>
+      <div class="align-center">
+        <%= render :partial => 'spree/admin/shared/address', :locals => { :address => @order.ship_address } %>
+      </div>
+    </fieldset>
     <% end %>
-  <hr />
 </div>
 
 <div data-hook="admin_order_show_details">

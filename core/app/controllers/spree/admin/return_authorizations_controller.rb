@@ -8,8 +8,8 @@ module Spree
 
       def fire
         @return_authorization.send("#{params[:e]}!")
-        flash.notice = t(:return_authorization_updated)
-        respond_with(@return_authorization) { |format| format.html { redirect_to :back } }
+        flash[:success] = t(:return_authorization_updated)
+        redirect_to :back
       end
 
       protected

@@ -6,8 +6,8 @@ module Spree
                         :tax_category_id, :shipping_category_id, :meta_description,
                         :meta_keywords, :tax_category
 
-    attr_accessible :name, :presentation, :cost_price,
-                    :position, :on_hand, :option_value_ids,
+    attr_accessible :name, :presentation, :cost_price, :lock_version,
+                    :position, :on_demand, :on_hand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
                     :weight, :height, :width, :depth, :sku
 
@@ -21,48 +21,37 @@ module Spree
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
     validates :count_on_hand, :numericality => true
 
+    after_save :process_backorders
     after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
-    scope :active, where(:deleted_at => nil)
-    scope :deleted, where('deleted_at IS NOT NULL')
+    scope :active, lambda { where(:deleted_at => nil) }
+    scope :deleted, lambda { where('deleted_at IS NOT NULL') }
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
-      Spree::Config[:track_inventory_levels] ? count_on_hand : (1.0 / 0) # Infinity
-    end
-
-    # Adjusts the inventory units to match the given new level.
-    def on_hand=(new_level)
-      if Spree::Config[:track_inventory_levels]
-        new_level = new_level.to_i
-
-        # increase Inventory when
-        if new_level > on_hand
-          # fill backordered orders before creating new units
-          backordered_units = inventory_units.with_state('backordered')
-          backordered_units.slice(0, new_level).each(&:fill_backorder)
-          new_level -= backordered_units.length
-        end
-
-        self.count_on_hand = new_level
+      if Spree::Config[:track_inventory_levels] && !self.on_demand
+        count_on_hand 
       else
+        (1.0 / 0) # Infinity
+      end
+    end
+
+    # set actual attribute
+    def on_hand=(new_level)
+      if !Spree::Config[:track_inventory_levels]
         raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
+      else
+        self.count_on_hand = new_level unless self.on_demand
       end
     end
 
-    # strips all non-price-like characters from the price.
     def price=(price)
-      if price.present?
-        self[:price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
-      end
+      self[:price] = parse_price(price) if price.present?
     end
 
-    # and cost_price
     def cost_price=(price)
-      if price.present?
-        self[:cost_price] = price.to_s.gsub(/[^0-9\.-]/, '').to_f
-      end
+      self[:cost_price] = parse_price(price) if price.present?
     end
 
     # returns number of units currently on backorder for this variant.
@@ -72,13 +61,17 @@ module Spree
 
     # returns true if at least one inventory unit of this variant is "on_hand"
     def in_stock?
-      Spree::Config[:track_inventory_levels] ? on_hand > 0 : true
+      if Spree::Config[:track_inventory_levels] && !self.on_demand
+        on_hand > 0 
+      else
+        true
+      end
     end
     alias in_stock in_stock?
 
     # returns true if this variant is allowed to be placed on a new order
     def available?
-      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock?) : true
+      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock? || self.on_demand) : true
     end
 
     def options_text
@@ -137,8 +130,46 @@ module Spree
       self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
     end
 
+    def on_demand=(on_demand)
+      self[:on_demand] = on_demand
+      if on_demand
+        inventory_units.with_state('backordered').each(&:fill_backorder)
+      end
+    end
 
     private
+
+      def process_backorders
+        if count_changes = changes['count_on_hand']
+          new_level = count_changes.last
+
+          if Spree::Config[:track_inventory_levels] && !self.on_demand
+            new_level = new_level.to_i
+
+            # update backorders if level is positive
+            if new_level > 0
+              # fill backordered orders before creating new units
+              backordered_units = inventory_units.with_state('backordered')
+              backordered_units.slice(0, new_level).each(&:fill_backorder)
+              new_level -= backordered_units.length
+            end
+
+            self.update_attribute_without_callbacks(:count_on_hand, new_level)
+          end
+        end
+      end
+
+      # strips all non-price-like characters from the price, taking into account locale settings
+      def parse_price(price)
+        return price unless price.is_a?(String)
+
+        separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
+        non_price_characters = /[^0-9\-#{separator}]/
+        price.gsub!(non_price_characters, '') # strip everything else first
+        price.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
+
+        price.to_d
+      end
 
       # Ensures a new variant takes the product master price when price is not supplied
       def check_price

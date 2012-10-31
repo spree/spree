@@ -1,38 +1,45 @@
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
-    <li id='new_shipment_section'>
-      <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order), :icon => 'add' %>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
-<table class="index">
-  <tr data-hook="admin_shipments_index_headers">
-    <th><%= t(:shipment_number) %></th>
-    <th><%= t(:shipping_method) %></th>
-    <th><%= t(:shipping_cost) %></th>
-    <th><%= t(:tracking) %></th>
-    <th><%= t(:status) %></th>
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th data-hook="admin_shipments_index_header_actions">
-      <%= t(:action) %>
-    </th>
-  </tr>
-  <% @shipments.each do |shipment| %>
-    <tr id="<%= spree_dom_id shipment %>" data-hook="admin_shipments_index_rows">
-      <td><%= shipment.number %></td>
-      <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
-      <td><%= number_to_currency shipment.cost %></td>
-      <td><%= shipment.tracking %></td>
-      <td><%= t(shipment.state.to_sym, :scope => :state_names, :default => shipment.state.to_s.humanize) %></td>
-      <td><%= shipment.shipped_at.to_s(:date_time24) if shipment.shipped_at %></td>
-      <td class="actions" data-hook="admin_shipments_index_row_actions">
-        <%= link_to_with_icon 'edit', t(:edit), edit_admin_order_shipment_url(@order, shipment) %>
-        <%= link_to_delete shipment, :url => admin_order_shipment_url(@order, shipment) %>
-      </td>
-    </tr>
-  <% end %>
-</table>
 
-<%= button_link_to t(:continue), admin_orders_url %>
+<% content_for :page_actions do %>  
+    <li id='new_shipment_section'>
+      <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order), :icon => 'icon-plus' %>
+    </li>
+    <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>  
+<% end %>
+
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:shipments) %>
+<% end %>
+
+<table class="index">
+  <thead>
+    <tr data-hook="admin_shipments_index_headers">
+      <th><%= t(:shipment_number) %></th>
+      <th><%= t(:shipping_method) %></th>
+      <th><%= t(:shipping_cost) %></th>
+      <th><%= t(:tracking) %></th>
+      <th><%= t(:status) %></th>
+      <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+      <th data-hook="admin_shipments_index_header_actions" class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shipments.each do |shipment| %>
+      <tr id="<%= spree_dom_id shipment %>" data-hook="admin_shipments_index_rows" class="<%= cycle('odd', 'even') %>">
+        <td><%= shipment.number %></td>
+        <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
+        <td><%= money shipment.cost %></td>
+        <td><%= shipment.tracking %></td>
+        <td><%= t(shipment.state.to_sym, :scope => :state_names, :default => shipment.state.to_s.humanize) %></td>
+        <td><%= shipment.shipped_at.to_s(:date_time24) if shipment.shipped_at %></td>
+        <td class="actions" data-hook="admin_shipments_index_row_actions">
+          <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_order_shipment_url(@order, shipment), :no_text => true, :data => {:action => 'edit'} %>
+          <%= link_to_delete shipment, :url => admin_order_shipment_url(@order, shipment), :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<div class="form-actions">
+  <%= button_link_to t(:continue), admin_orders_url, :icon => 'icon-arrow-right' %>
+</div>

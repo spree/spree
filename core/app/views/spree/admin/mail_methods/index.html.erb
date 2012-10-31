@@ -1,37 +1,41 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
-    <li>
-      <%= button_link_to t(:new_mail_method), new_object_url, :icon => 'add', :id => 'admin_new_mail_method_link' %>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
+<% content_for :page_title do %>
+  <%= t(:mail_methods) %>
+<% end %>
 
-<h1><%= t(:mail_methods) %></h1>
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:new_mail_method), new_object_url, :icon => 'icon-plus', :id => 'admin_new_mail_method_link' %>
+  </li>
+<% end %>
 
-<table class="index" id="mail_methods_listing">
-  <thead data-hook="admin_mail_methods_index_headers">
-    <th><%= t(:environment) %></th>
-    <th><%= t(:active) %></th>
-    <th data-hook="admin_mail_methods_index_header_actions">
-    </th>
-  </thead>
-  <tbody>
-    <% @mail_methods.each do |method|%>
-      <tr id="<%= spree_dom_id method %>" data-hook="admin_mail_methods_index_rows">
-        <td width="100px"><%= method.environment.to_s.titleize %></td>
-        <td width="60px"><%= method.active ? t(:yes) : t(:no) %></td>
-        <td width="140px" data-hook="admin_mail_methods_index_row_actions">
-          <%= link_to_edit method, :class => 'edit' %> &nbsp;
-          <%= link_to_delete method %>
-          <%= link_to testmail_admin_mail_method_path(method), :method => :post, :class => 'send_mail' do %>
-            <%= image_tag('admin/icons/send-email.png') %>
-            <%= t('admin.mail_methods.send_testmail') %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<% unless @mail_methods.any? %>
+  <div class="no-objects-found"><%= t(:no_mail_methods_defined)%></div>
+<% else %>
+  <table class="index" id="mail_methods_listing">
+    <colgroup>
+      <col style="width: 60%">
+      <col style="width: 17%">
+      <col style="width: 23%">
+    </colgroup> 
+    <thead data-hook="admin_mail_methods_index_headers">
+      <th><%= t(:environment) %></th>
+      <th><%= t(:active) %></th>
+      <th data-hook="admin_mail_methods_index_header_actions" class="actions"></th>
+    </thead>
+    <tbody class="align-center">
+      <% @mail_methods.each do |method|%>
+        <tr id="<%= spree_dom_id method %>" data-hook="admin_mail_methods_index_rows" class="<%= cycle('odd', 'even')%>">
+          <td><%= method.environment.to_s.titleize %></td>
+          <td><%= method.active ? t(:yes) : t(:no) %></td>
+          <td data-hook="admin_mail_methods_index_row_actions" class="actions">
+            <%= link_to_edit method, :no_text => true%>
+            <%= link_to_delete method, :no_text => true %>
+            <%= link_to_with_icon 'icon-envelope-alt', '', testmail_admin_mail_method_path(method), :method => :post, :title => t('admin.mail_methods.send_testmail'), :class => 'send_mail button no-text' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end%>

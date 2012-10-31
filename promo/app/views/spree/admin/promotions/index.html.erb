@@ -1,38 +1,52 @@
-<div class='toolbar'>
-  <ul class='actions'>
-    <li>
-      <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'add' %>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
+<% content_for :page_title do %>
+  <%= t(:promotions) %>
+<% end %>
 
-<h1><%= t(:promotions) %></h1>
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'icon-plus' %>
+  </li>
+<% end %>
 
-<table class="index">
-  <thead>
-    <tr>
-      <th><%= t(:name) %></th>
-      <th><%= t(:code) %></th>
-      <th><%= t(:description) %></th>
-      <th><%= t(:usage_limit) %></th>
-      <th><%= t(:expiration) %></th>
-      <th style="width:150px;"><%= t(:action) %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @promotions.each do |promotion| %>
-      <tr id="<%= spree_dom_id promotion %>">
-        <td><%= promotion.name %></td>
-        <td><%= promotion.code %></td>
-        <td><%= promotion.description %></td>
-        <td><%= promotion.usage_limit %></td>
-        <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-        <td>
-          <%= link_to_edit promotion %> &nbsp;
-          <%= link_to_delete promotion %>
-        </td>
+<% unless @promotions.any? %>
+  <div class="no-objects-found">
+    <%= t(:no_promotions_found) %>.
+    <%= link_to t(:add_one), spree.new_admin_promotion_path %>!
+  </div>
+<% else %>
+  <table class="index">
+    <colgroup>
+      <col style="width: 20%">
+      <col style="width: 10%">
+      <col style="width: 35%">
+      <col style="width: 10%">
+      <col style="width: 15%">
+      <col style="width: 10%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th><%= t(:name) %></th>
+        <th><%= t(:code) %></th>
+        <th><%= t(:description) %></th>
+        <th><%= t(:usage_limit) %></th>
+        <th><%= t(:expiration) %></th>
+        <th class="actions"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @promotions.each do |promotion| %>
+        <tr id="<%= spree_dom_id promotion %>" class="<%= cycle('odd', 'even')%>">
+          <td><%= promotion.name %></td>
+          <td class="align-center"><%= promotion.code %></td>
+          <td><%= promotion.description %></td>
+          <td class="align-center"><%= promotion.usage_limit %></td>
+          <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
+          <td class="actions">
+            <%= link_to_edit promotion, :no_text => true %>
+            <%= link_to_delete promotion, :no_text => true %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

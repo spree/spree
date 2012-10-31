@@ -1,16 +1,16 @@
-Dear Customer,
+<%= t('order_mailer.cancel_email.dear_customer') %>
 
-Your order has been CANCELED.  Please retain this cancellation information for your records.
+<%= t('order_mailer.cancel_email.instructions') %>
 
 ============================================================
-Order Summary [CANCELED]
+<%= t('order_mailer.cancel_email.order_summary_canceled') %>
 ============================================================
 <% @order.line_items.each do |item| %>
-  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= number_to_currency item.price %> = <%= number_to_currency(item.price * item.quantity) %>
+  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= money item.price %> = <%= money(item.price * item.quantity) %>
 <% end %>
 ============================================================
-Subtotal: <%= number_to_currency @order.item_total %>
+<%= t('order_mailer.cancel_email.subtotal') %> <%= money @order.item_total %>
 <% @order.adjustments.eligible.each do |adjustment| %>
-  <%= raw(adjustment.label) %> <%= number_to_currency(adjustment.amount) %>
+  <%= raw(adjustment.label) %> <%= money(adjustment.amount) %>
 <% end %>
-Order Total: <%= number_to_currency(@order.total) %>
+<%= t('order_mailer.cancel_email.total') %> <%= money(@order.total) %>

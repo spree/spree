@@ -1,35 +1,40 @@
+<% content_for :page_title do %>
+  <%= t(:option_types) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li id="new_ot_link">
+    <%= button_link_to t(:new_option_type), new_admin_option_type_url, { :remote => true, :icon => 'icon-plus', :id => 'new_option_type_link' } %>
+  </li>
+<% end %>
+
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
-    <li id="new_ot_link">
-      <%= button_link_to t(:new_option_type), new_admin_option_type_url, { :remote => true, :icon => 'add', :id => 'new_option_type_link' } %>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
-
-<h1><%= t(:option_types) %></h1>
 
 <div id="new_option_type"></div>
 
 <table class="index sortable" id="listing_option_types" data-hook data-sortable-link="<%= update_positions_admin_option_types_url %>">
-  <tr data-hook="option_header">
-    <th><%= t(:name) %></th>
-    <th><%= t(:presentation) %></th>
-    <th></th>
-  </tr>
-  <tbody>
-  <% @option_types.each do |option_type| %>
-    <tr class="spree_option_type" id="<%= spree_dom_id option_type %>" data-hook="option_row">
-      <td><span class="handle"></span> <%= option_type.name %></td>
-      <td class="presentation"><%= option_type.presentation %></td>
-      <td class="actions">
-        <%= link_to_edit(option_type, :class => 'admin_edit_option_type') %>
-        &nbsp;
-        <%= link_to_delete(option_type) %>
-      </td>
+  <colgroup>
+    <col style="width: 44%">
+    <col style="width: 44%">
+    <col style="width: 12%">
+  </colgroup>
+  <thead>
+    <tr data-hook="option_header">
+      <th><%= t(:name) %></th>
+      <th><%= t(:presentation) %></th>
+      <th class="actions"></th>
     </tr>
-  <% end %>
+  </thead>
+  <tbody>
+    <% @option_types.each do |option_type| %>
+      <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
+        <td><span class="handle"></span> <%= option_type.name %></td>
+        <td class="presentation"><%= option_type.presentation %></td>
+        <td class="actions">
+          <%= link_to_edit(option_type, :class => 'admin_edit_option_type', :no_text => true) %>
+          <%= link_to_delete(option_type, :no_text => true) %>
+        </td>
+      </tr>
+    <% end %>
   </tbody>
 </table>

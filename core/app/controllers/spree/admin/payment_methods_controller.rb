@@ -4,17 +4,18 @@ module Spree
       skip_before_filter :load_resource, :only => [:create]
       before_filter :load_data
 
+      respond_to :html
+
       def create
         @payment_method = params[:payment_method].delete(:type).constantize.new(params[:payment_method])
         @object = @payment_method
         invoke_callbacks(:create, :before)
         if @payment_method.save
           invoke_callbacks(:create, :after)
-          flash.notice = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
-          respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
+          flash[:success] = I18n.t(:successfully_created, :resource => I18n.t(:payment_method))
+          redirect_to edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:create, :fails)
-          respond_with(@payment_method)
         end
       end
 
@@ -27,10 +28,17 @@ module Spree
         end
 
         payment_method_params = params[ActiveModel::Naming.param_key(@payment_method)] || {}
-        if @payment_method.update_attributes(params[:payment_method].merge(payment_method_params))
+        attributes = params[:payment_method].merge(payment_method_params)
+        attributes.each do |k,v|
+          if k.include?("password") && attributes[k].blank?
+            attributes.delete(k)
+          end
+        end
+
+        if @payment_method.update_attributes(attributes)
           invoke_callbacks(:update, :after)
-          flash.notice = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
-          respond_with(@payment_method, :location => edit_admin_payment_method_path(@payment_method))
+          flash[:success] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
+          redirect_to edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:update, :fails)
           respond_with(@payment_method)

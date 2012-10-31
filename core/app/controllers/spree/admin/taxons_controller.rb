@@ -2,7 +2,14 @@ module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
 
-      respond_to :html, :json, :js
+
+      def search
+        if params[:ids]
+          @taxons = Spree::Taxon.where(:id => params[:ids].split(','))
+        else
+          @taxons = Spree::Taxon.limit(20).search(:name_cont => params[:q]).result
+        end
+      end
 
       def create
         @taxonomy = Taxonomy.find(params[:taxonomy_id])
@@ -23,8 +30,6 @@ module Spree
         @taxonomy = Taxonomy.find(params[:taxonomy_id])
         @taxon = @taxonomy.taxons.find(params[:id])
         @permalink_part = @taxon.permalink.split("/").last
-
-        respond_with(:admin, @taxon) 
       end
 
       def update
@@ -59,7 +64,7 @@ module Spree
           end
           # Reset legacy position, if any extensions still rely on it
           new_parent.children.reload.each{|t| t.update_column(:position, t.position)}
-      
+
           if parent_id
             @taxon.reload
             @taxon.set_permalink
@@ -77,7 +82,7 @@ module Spree
         @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
         if @taxon.update_attributes(params[:taxon])
-          flash.notice = flash_message_for(@taxon, :successfully_updated)
+          flash[:success] = flash_message_for(@taxon, :successfully_updated)
         end
 
         #rename child taxons
@@ -88,7 +93,7 @@ module Spree
             taxon.save!
           end
         end
-    
+
         respond_with(@taxon) do |format|
           format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
           format.json {render :json => @taxon.to_json }
