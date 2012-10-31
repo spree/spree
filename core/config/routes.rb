@@ -90,6 +90,12 @@ Spree::Core::Engine.routes.draw do
       end
     end
 
+    resources :properties do
+      collection do
+        get :filtered
+      end
+    end
+
     resources :prototypes do
       member do
         get :select
