@@ -59,6 +59,13 @@ module Spree
         children.first['taxon'].key?('taxons').should be_true
       end
 
+      it "gets the jstree-friendly version of a taxonomy" do
+        api_get :jstree, :id => taxonomy.id
+        json_response["data"].should eq(taxonomy.root.name)
+        json_response["attr"].should eq({ "id" => taxonomy.root.id, "name" => taxonomy.root.name})
+        json_response["state"].should eq("open")
+      end
+
       it "can learn how to create a new taxonomy" do
         api_get :new
         json_response["attributes"].should == attributes.map(&:to_s)

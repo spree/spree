@@ -6,6 +6,10 @@ module Spree
           @taxons = taxonomy.root.children
         end
 
+        def jstree
+          show
+        end
+
         def show
           @taxon = taxon
         end

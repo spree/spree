@@ -1,9 +1,0 @@
-<% @taxons = @taxons.map do |taxon|
-  { :id => taxon.id,
-    :name => taxon.name,
-    :state => taxon.children.empty? ? "open" : "closed"
-  }
-end
-%>
-
-<%= raw(@taxons.to_json) %>
