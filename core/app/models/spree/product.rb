@@ -55,7 +55,6 @@ module Spree
     after_create :add_properties_and_option_types_from_prototype
     after_create :build_variants_from_option_values_hash, :if => :option_values_hash
     before_save :recalculate_count_on_hand
-
     after_save :save_master
     after_save :set_master_on_hand_to_zero_when_product_has_variants
 

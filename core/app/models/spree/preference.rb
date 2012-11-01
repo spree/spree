@@ -32,5 +32,4 @@ class Spree::Preference < ActiveRecord::Base
   def raw_value
     self[:value]
   end
-
 end
