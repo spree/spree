@@ -13,8 +13,6 @@ module Spree
       @searcher.current_user = try_spree_current_user
       @searcher.current_currency = current_currency
       @products = @searcher.retrieve_products
-
-      respond_with(@taxon)
     end
 
     private

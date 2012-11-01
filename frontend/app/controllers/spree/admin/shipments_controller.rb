@@ -7,12 +7,10 @@ module Spree
 
       def index
         @shipments = order.shipments
-        respond_with(@shipments)
       end
 
       def new
         build_shipment
-        respond_with(shipment)
       end
 
       def create
@@ -20,17 +18,15 @@ module Spree
         assign_inventory_units
         if shipment.save
           flash[:success] = flash_message_for(shipment, :successfully_created)
-          respond_with(shipment) do |format|
-            format.html { redirect_to edit_admin_order_shipment_path(order, shipment) }
+            redirect_to edit_admin_order_shipment_path(order, shipment)
           end
         else
-          respond_with(shipment) { |format| format.html { render :action => 'new' } }
+          render :action => 'new'
         end
       end
 
       def edit
         shipment.special_instructions = order.special_instructions
-        respond_with(shipment)
       end
 
       def update
@@ -43,11 +39,10 @@ module Spree
 
           flash[:success] = flash_message_for(shipment, :successfully_updated)
           return_path = order.completed? ? edit_admin_order_shipment_path(order, shipment) : admin_order_adjustments_path(order)
-          respond_with(@object) do |format|
-            format.html { redirect_to return_path }
+            redirect_to return_path
           end
         else
-          respond_with(shipment) { |format| format.html { render :action => 'edit' } }
+          render :action => 'edit'
         end
       end
 
@@ -63,7 +58,7 @@ module Spree
           flash[:error] = t(:cannot_perform_operation)
         end
 
-        respond_with(shipment) { |format| format.html { redirect_to :back } }
+        redirect_to :back
       end
 
       private

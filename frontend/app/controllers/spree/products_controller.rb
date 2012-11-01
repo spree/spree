@@ -11,7 +11,6 @@ module Spree
       @searcher.current_user = try_spree_current_user
       @searcher.current_currency = current_currency
       @products = @searcher.retrieve_products
-      respond_with(@products)
     end
 
     def show
@@ -33,8 +32,6 @@ module Spree
           end
         end
       end
-
-      respond_with(@product)
     end
 
     private
