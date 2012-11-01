@@ -144,7 +144,7 @@ A calculator is selected when configuring the 'Create Adjustment' action and thi
 
 INFO: Please be sure to read the section on "calculators":adjustments.html#calculators for a more complete understanding of this crucial concept.
 
-Spree will only allow an order to have one promotion adjustment active at a time. Each time the order is updated, e.g. when adding to the card or updating quantities, the eligibility of all the promotion created adjustments is re-checked and only the most valuable promotion adjustment that is still eligible will be counted.
+Spree will only allow an order to have one promotion adjustment active at a time. Each time the order is updated, e.g. when adding to the cart or updating quantities, the eligibility of all the promotion created adjustments is re-checked and only the most valuable promotion adjustment that is still eligible will be counted.
 
 In a similar vein, you can only have one active promotion for a product as well.
 
