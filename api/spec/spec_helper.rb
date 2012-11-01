@@ -8,8 +8,8 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 
-require 'spree/models/testing_support/factories'
-require 'spree/models/testing_support/preferences'
+require 'spree/testing_support/factories'
+require 'spree/testing_support/preferences'
 
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/setup'
@@ -20,7 +20,7 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller
   config.extend Spree::Api::TestingSupport::Setup, :type => :controller
-  config.include Spree::Models::TestingSupport::Preferences, :type => :controller
+  config.include Spree::TestingSupport::Preferences, :type => :controller
 
   config.before do
     Spree::Api::Config[:requires_authentication] = true
