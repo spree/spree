@@ -42,21 +42,16 @@ module Spree
         # Restore dates
         params[:q][:created_at_gt] = created_at_gt
         params[:q][:created_at_lt] = created_at_lt
-
-        respond_with(@orders)
       end
 
       def show
-        respond_with(@order)
       end
 
       def new
         @order = Order.create
-        respond_with(@order)
       end
 
       def edit
-        respond_with(@order)
       end
 
       def update
@@ -74,14 +69,10 @@ module Spree
           @order.errors.add(:line_items, t('errors.messages.blank')) if @order.line_items.empty?
         end
 
-        respond_with(@order) do |format|
-          format.html do
-            if return_path
-              redirect_to return_path
-            else
-              render :action => :edit
-            end
-          end
+        if return_path
+          redirect_to return_path
+        else
+          render :action => :edit
         end
       end
 
@@ -97,14 +88,14 @@ module Spree
       rescue Spree::Core::GatewayError => ge
         flash[:error] = "#{ge.message}"
       ensure
-        respond_with(@order) { |format| format.html { redirect_to :back } }
+        redirect_to :back
       end
 
       def resend
         OrderMailer.confirm_email(@order, true).deliver
         flash[:success] = t(:order_email_resent)
 
-        respond_with(@order) { |format| format.html { redirect_to :back } }
+        redirect_to :back
       end
 
       private

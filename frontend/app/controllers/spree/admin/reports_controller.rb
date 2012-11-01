@@ -9,7 +9,6 @@ module Spree
 
       def index
         @reports = AVAILABLE_REPORTS
-        respond_with(@reports)
       end
 
       def sales_total
@@ -38,8 +37,6 @@ module Spree
         @item_total = @orders.sum(:item_total)
         @adjustment_total = @orders.sum(:adjustment_total)
         @sales_total = @orders.sum(:total)
-
-        respond_with
       end
 
     end
