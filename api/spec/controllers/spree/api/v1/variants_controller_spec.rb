@@ -20,14 +20,51 @@ module Spree
       stub_authentication!
     end
 
-    it "can see a list of all variants" do
+    it "can see a paginated list of variants" do
       api_get :index
-      json_response.first.should have_attributes(attributes)
-      option_values = json_response.last["variant"]["option_values"]
+      json_response["variants"].first.should have_attributes(attributes)
+      json_response["count"].should == 1
+      json_response["current_page"].should == 1
+      json_response["pages"].should == 1
+    end
+
+    it "variants returned contain option values data" do
+      api_get :index
+      option_values = json_response["variants"].last["variant"]["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
                                                  :option_type_id])
+    end
+
+    # Regression test for #2141
+    context "a deleted variant" do
+      before do
+        variant.update_column(:deleted_at, Time.now)
+      end
+
+      it "is not returned in the results" do
+        api_get :index
+        json_response["variants"].count.should == 0
+      end
+
+      it "is not returned even when show_deleted is passed" do
+        api_get :index, :show_deleted => true
+        json_response["variants"].count.should == 0
+      end
+    end
+
+    context "pagination" do
+      default_per_page(1)
+
+      it "can select the next page of variants" do
+        second_variant = create(:variant)
+        api_get :index, :page => 2
+        json_response["variants"].first.should have_attributes(attributes)
+        json_response["count"].should == 3
+        json_response["current_page"].should == 2
+        json_response["pages"].should == 3
+      end
     end
 
     it "can see a single variant" do
@@ -66,6 +103,18 @@ module Spree
       sign_in_as_admin!
       let(:resource_scoping) { { :product_id => variant.product.to_param } }
 
+      # Test for #2141
+      context "deleted variants" do
+        before do
+          variant.update_column(:deleted_at, Time.now)
+        end
+
+        it "are visible by admin" do
+          api_get :index, :show_deleted => 1
+          json_response["variants"].count.should == 1
+        end
+      end
+
       it "can create a new variant" do
         api_post :create, :variant => { :sku => "12345" }
         json_response.should have_attributes(attributes)
@@ -81,7 +130,7 @@ module Spree
 
       it "can delete a variant" do
         api_delete :destroy, :id => variant.to_param
-        response.status.should == 200
+        response.status.should == 204
         lambda { variant.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end

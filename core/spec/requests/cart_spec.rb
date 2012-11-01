@@ -33,4 +33,15 @@ describe "Cart" do
       page.should have_content(I18n.t(:populate_get_error))
     end
   end
+
+  it 'allows you to remove an item from the cart', :js => true do
+    create(:product, :name => "RoR Mug", :on_hand => 1)
+    visit spree.root_path
+    click_link "RoR Mug"
+    click_button "add-to-cart-button"
+    within("#line_items") do
+      click_link "delete_line_item_1"
+    end
+    page.should_not have_content("Line items quantity must be an integer")
+  end
 end

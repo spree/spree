@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Checkout" do
   let(:country) { create(:country, :name => "Kangaland") }
   before do
-    Factory(:state, :name => "Victoria", :country => country)
+    create(:state, :name => "Victoria", :country => country)
   end
 
   context "visitor makes checkout as guest without registration" do
@@ -31,7 +31,7 @@ describe "Checkout" do
         @product.on_hand = 0
         @product.save
 
-        click_link "Checkout"
+        click_button "Checkout"
 
         within(:css, "span.out-of-stock") { page.should have_content("Out of Stock") }
       end
@@ -76,9 +76,9 @@ describe "Checkout" do
       # Regression test for #1596
       context "full checkout" do
         before do
-          Factory(:payment_method)
+          create(:payment_method)
           Spree::ShippingMethod.delete_all
-          shipping_method = Factory(:shipping_method)
+          shipping_method = create(:shipping_method)
           calculator = Spree::Calculator::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
           shipping_method.calculator = calculator
           shipping_method.save
@@ -91,7 +91,7 @@ describe "Checkout" do
           visit spree.root_path
           click_link "RoR Mug"
           click_button "add-to-cart-button"
-          click_link "Checkout"
+          click_button "Checkout"
           Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
 
           address = "order_bill_address_attributes"

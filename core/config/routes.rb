@@ -150,6 +150,12 @@ Spree::Core::Engine.routes.draw do
       resources :taxons
     end
 
+    resources :taxons, :only => [] do
+      collection do
+        get :search
+      end
+    end
+
     resources :reports, :only => [:index, :show] do
       collection do
         get :sales_total

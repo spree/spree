@@ -4,9 +4,9 @@ module Spree
   describe Api::V1::TaxonsController do
     render_views
 
-    let(:taxonomy) { Factory(:taxonomy) }
-    let(:taxon) { Factory(:taxon, :name => "Ruby", :taxonomy => taxonomy) }
-    let(:taxon2) { Factory(:taxon, :name => "Rails", :taxonomy => taxonomy) }
+    let(:taxonomy) { create(:taxonomy) }
+    let(:taxon) { create(:taxon, :name => "Ruby", :taxonomy => taxonomy) }
+    let(:taxon2) { create(:taxon, :name => "Rails", :taxonomy => taxonomy) }
     let(:attributes) { ["id", "name", "permalink", "position", "parent_id", "taxonomy_id"] }
 
     before do
@@ -75,6 +75,11 @@ module Spree
         errors = json_response["errors"]
 
         taxon.reload.children.count.should eq 1
+      end
+
+      it "can destroy" do
+        api_delete :destroy, :taxonomy_id => taxonomy.id, :id => taxon.id
+        response.status.should == 204
       end
     end
 

@@ -16,13 +16,13 @@ Spree::Core::Engine.routes.prepend do
         end
 
         resources :variants
+        resources :product_properties
       end
 
       resources :images
-
       resources :variants, :only => [:index] do
       end
-
+      
       resources :orders do
         collection do
           get :search

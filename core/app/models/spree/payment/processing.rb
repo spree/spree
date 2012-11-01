@@ -28,6 +28,7 @@ module Spree
       end
 
       def capture!
+        return true if completed?
         protect_from_connection_error do
           check_environment
 
@@ -47,6 +48,7 @@ module Spree
       end
 
       def void_transaction!
+        return true if void?
         protect_from_connection_error do
           check_environment
 

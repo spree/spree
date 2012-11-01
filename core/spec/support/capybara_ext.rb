@@ -11,8 +11,10 @@ module CapybaraExt
     }
     page.execute_script(script)
 
-    # In separate executions as it needs that break between
-    # Otherwise spec/requests/admin/products/edit/variants_spec breaks
+    # Wait for list to populate...
+    wait_until do
+      page.find(".select2-highlighted").visible?
+    end
     page.execute_script("$('.select2-highlighted').mouseup();")
   end
 end
