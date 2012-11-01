@@ -18,6 +18,11 @@ en:
   coupon: Coupon
   coupon_code: Coupon code
   coupon_code_applied: The coupon code was successfully applied to your order.
+  coupon_code_expired: The coupon code is expired
+  coupon_code_already_applied: The coupon code has already been applied to this order
+  coupon_code_better_exists: The previously applied coupon code results in a better deal
+  coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
+  coupon_code_max_usage: Coupon code usage limit exceeded
   editing_promotion: Editing Promotion
   events:
     spree:
@@ -44,7 +49,6 @@ en:
     product_source:
       group: From product group
       manual: Manually choose
-  promotion_not_found: The coupon code you entered doesn't exist. Please try again.
   promotion: Promotion
   promotion_action: Promotion Action
   promotion_actions: Actions

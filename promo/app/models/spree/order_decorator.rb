@@ -1,6 +1,10 @@
 Spree::Order.class_eval do
   attr_accessible :coupon_code
-  attr_accessor :coupon_code
+  attr_reader :coupon_code
+
+  def coupon_code=(code)
+    @coupon_code = code.strip.downcase rescue nil
+  end
 
   # Tells us if there if the specified promotion is already associated with the order
   # regardless of whether or not its currently eligible.  Useful because generally
