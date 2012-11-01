@@ -1,4 +1,5 @@
 require 'rails/all'
+require 'cancan'
 require 'state_machine'
 require 'paperclip'
 require 'kaminari'
@@ -36,6 +37,8 @@ end
 
 require 'spree/core/version'
 require 'spree/core/engine'
+
+require 'spree/money'
 
 require 'spree/core/delegate_belongs_to'
 require 'spree/core/ext/active_record'

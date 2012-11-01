@@ -1,6 +1,6 @@
 # Make redirects for SEO needs
 module Spree
-  module Core
+  module Frontend
     module Middleware
       class SeoAssist
         def initialize(app)

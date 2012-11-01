@@ -1,3 +1,5 @@
+require 'spree/core/ssl_requirement'
+
 module Spree
   module Core
     module ControllerHelpers
