@@ -1,14 +1,17 @@
-module Spree
-  class Alert < ActiveResource::Base
-    self.site = 'http://alerts.spreecommerce.com/'
-    self.format = :json
+require'httparty'
 
+module Spree
+  class Alert
     def self.current(host)
-      find(:all, :params => { :version => Spree.version,
-                              :name => Spree::Config[:site_name],
-                              :host => host,
-                              :rails_env => Rails.env,
-                              :rails_version => Rails.version })
+      params = {
+        :version => Spree.version,
+        :name => Spree::Config[:site_name],
+        :host => host,
+        :rails_env => Rails.env,
+        :rails_version => Rails.version
+      }
+
+      HTTParty.get("http://alerts.spreecommerce.com/alerts.json", :body => params).parsed_response
     end
   end
 end
