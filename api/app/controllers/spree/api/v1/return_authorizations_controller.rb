@@ -2,6 +2,19 @@ module Spree
   module Api
     module V1
       class ReturnAuthorizationsController < Spree::Api::V1::BaseController
+
+        def index
+          authorize! :read, order
+          @return_authorizations = order.return_authorizations
+          render :index, :status => 201
+        end
+
+        def show
+          authorize! :read, order
+          @return_authorization = order.return_authorizations.find(params[:id])
+          render :show, :status => 201
+        end
+
         def create
           authorize! :read, order
           @return_authorization = order.return_authorizations.build(params[:return_authorization], :as => :api)

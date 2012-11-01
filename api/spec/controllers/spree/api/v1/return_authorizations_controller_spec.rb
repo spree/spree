@@ -40,6 +40,25 @@ module Spree
         json_response.should have_attributes(attributes)
         json_response["return_authorization"]["state"].should_not be_blank
       end
+      
+      it "can show return authorization" do
+        order.return_authorizations << create(:return_authorization)
+        return_authorization = order.return_authorizations.first
+        api_get :show, :order_id => order.id, :id => return_authorization.id
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+        json_response["return_authorization"]["state"].should_not be_blank
+      end
+
+      it "can get a list of return authorization" do
+        order.return_authorizations << create(:return_authorization)
+        order.return_authorizations << create(:return_authorization)
+        return_authorizations = order.return_authorizations
+        api_get :index, { :order_id => order.id }  
+        response.status.should == 201
+        json_response.first.should have_attributes(attributes)
+        json_response.first.should_not == json_response.last
+      end
 
       it "can update a return authorization on the order" do
         order.return_authorizations << create(:return_authorization)

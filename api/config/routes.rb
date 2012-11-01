@@ -24,6 +24,7 @@ Spree::Core::Engine.routes.prepend do
       end
       
       resources :orders do
+        resources :return_authorizations
         collection do
           get :search
         end
