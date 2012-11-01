@@ -1,6 +1,10 @@
 module Spree
   class OrderMailer < ActionMailer::Base
-    helper 'spree/base'
+
+    def money(amount)
+      Spree::Money.new(amount).to_s
+    end
+    helper_method :money
 
     def confirm_email(order, resend = false)
       @order = order
