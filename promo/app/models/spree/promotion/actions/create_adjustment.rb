@@ -2,7 +2,7 @@ module Spree
   class Promotion
     module Actions
       class CreateAdjustment < PromotionAction
-        include Spree::Models::CalculatedAdjustments
+        include Spree::Core::CalculatedAdjustments
 
         delegate :eligible?, :to => :promotion
 
