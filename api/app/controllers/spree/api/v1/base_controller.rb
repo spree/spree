@@ -1,7 +1,9 @@
 module Spree
   module Api
     module V1
-      class BaseController < Spree::BaseController
+      class BaseController < ApplicationController
+        include Spree::Core::ControllerHelpers::Auth
+
         respond_to :json
 
         attr_accessor :current_api_user

@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'spree/models/product_filters'
+require 'spree/core/product_filters'
 
 describe 'product filters' do
   # Regression test for #1709

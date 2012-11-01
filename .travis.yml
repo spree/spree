@@ -11,6 +11,7 @@ script:
   - "cd api; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../core; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../dash; set_gemfile; bundle install --quiet; bundle exec rspec spec"
+  - "cd ../frontend; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../promo; set_gemfile; bundle install --quiet; bundle exec rspec spec"
 
 notifications:

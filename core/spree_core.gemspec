@@ -3,16 +3,16 @@ version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_models'
+  s.name        = 'spree_core'
   s.version     = version
-  s.summary     = 'ActiveRecord models for Spree.'
-  s.description = 'Required dependency for Spree'
+  s.summary     = 'The barebones necessary for Spree.'
+  s.description = 'The barebones necessary for Spree.'
 
   s.required_ruby_version = '>= 1.8.7'
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
-  s.rubyforge_project = 'spree_models'
+  s.rubyforge_project = 'spree_core'
 
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'

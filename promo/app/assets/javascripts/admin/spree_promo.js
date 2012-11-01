@@ -1,2 +1,2 @@
-//= require admin/spree_core
+//= require admin/spree_frontend
 //= require_tree .

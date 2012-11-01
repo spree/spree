@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = version
 
-  gem.add_dependency 'spree_models', version
+  gem.add_dependency 'spree_core', version
 
   gem.add_development_dependency 'rspec-rails', '2.9.0'
   gem.add_development_dependency 'database_cleaner'
