@@ -38,4 +38,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'stringex', '~> 1.3.2'
   s.add_dependency 'cancan', '1.6.7'
   s.add_dependency 'money', '5.0.0'
+
+  # For checking for alerts
+  s.add_dependency 'httparty', '0.9.0'
+
+  # For testing alerts
+  s.add_dependency 'webmock', '1.8.11'
 end
