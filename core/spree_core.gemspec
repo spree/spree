@@ -3,9 +3,9 @@ version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_core'
+  s.name        = 'spree_models'
   s.version     = version
-  s.summary     = 'Core e-commerce functionality for the Spree project.'
+  s.summary     = 'ActiveRecord models for Spree.'
   s.description = 'Required dependency for Spree'
 
   s.required_ruby_version = '>= 1.8.7'
@@ -19,13 +19,17 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_models', version
-  s.add_dependency 'spree_api', version
-
-  s.add_dependency 'jquery-rails', '~> 2.2.0'
-  s.add_dependency 'select2-rails', '~> 3.2'
-
+  # Necessary for the install generator
   s.add_dependency 'highline', '= 1.6.11'
+
+  s.add_dependency 'acts_as_list', '= 0.1.4'
+  s.add_dependency 'awesome_nested_set', '2.1.4'
+  s.add_dependency 'railties', '~> 3.2.8'
+  s.add_dependency 'activerecord', '~> 3.2.8'
+  s.add_dependency 'actionmailer', '~> 3.2.8'
+  # Frozen to 0.13.0 due to: https://github.com/amatsuda/kaminari/pull/282
+  s.add_dependency 'kaminari', '0.13.0'
+
   s.add_dependency 'state_machine', '= 1.1.2'
   s.add_dependency 'ffaker', '~> 1.12.0'
   s.add_dependency 'paperclip', '~> 2.8'
@@ -42,5 +46,9 @@ Gem::Specification.new do |s|
   # Frozen to 5.0.0 because 5.1.0 is not compatible with Ruby 1.8.
   s.add_dependency 'money', '5.0.0'
 
-  s.add_development_dependency 'email_spec', '~> 1.2.1'
+  # For checking for alerts
+  s.add_dependency 'httparty', '0.9.0'
+
+  # For testing alerts
+  s.add_dependency 'webmock', '1.8.11'
 end

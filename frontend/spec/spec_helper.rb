@@ -10,19 +10,21 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'database_cleaner'
 
-require 'spree/core/testing_support/factories'
-require 'spree/core/testing_support/capybara_ext'
-require 'spree/core/testing_support/controller_requests'
-require 'spree/core/testing_support/authorization_helpers'
-require 'spree/core/testing_support/preferences'
-require 'spree/core/testing_support/flash'
+require 'spree/models/testing_support/preferences'
+require 'spree/models/testing_support/factories'
 
+require 'spree/testing_support/env'
+require 'spree/testing_support/controller_requests'
+require 'spree/testing_support/authorization_helpers'
+require 'spree/testing_support/flash'
+
+require 'spree/core/url_helpers'
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
   config.mock_with :rspec
 
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
+  config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   #config.include Devise::TestHelpers, :type => :controller
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
@@ -47,9 +49,9 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.include FactoryGirl::Syntax::Methods
+  config.include Spree::Models::TestingSupport::Preferences
 
-  config.include Spree::TestingSupport::Preferences
+  config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests
   config.include Spree::TestingSupport::Flash
@@ -59,7 +61,7 @@ end
 
 shared_context "custom products" do
   before(:each) do
-    configure_spree_preferences do |config|
+    reset_spree_preferences do |config|
       config.allow_backorders = true
     end
 
@@ -102,7 +104,7 @@ shared_context "product prototype" do
   let(:product_attributes) do
     # FactoryGirl.attributes_for is un-deprecated!
     #   https://github.com/thoughtbot/factory_girl/issues/274#issuecomment-3592054
-    FactoryGirl.attributes_for(:base_product)
+    FactoryGirl.attributes_for(:simple_product)
   end
 
   let(:prototype) do
@@ -119,9 +121,3 @@ shared_context "product prototype" do
   end
 
 end
-
-
-
-PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
-SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
-ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
