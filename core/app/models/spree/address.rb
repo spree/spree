@@ -7,6 +7,7 @@ module Spree
 
     validates :firstname, :lastname, :address1, :city, :zipcode, :country, :presence => true
     validates :phone, :presence => true, :if => :require_phone?
+
     validate :state_validate
 
     attr_accessible :firstname, :lastname, :address1, :address2,

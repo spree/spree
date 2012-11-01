@@ -10,18 +10,19 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'database_cleaner'
 
-require 'spree/testing_support/preferences'
 require 'spree/testing_support/factories'
+require 'spree/testing_support/preferences'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
+
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
   config.mock_with :rspec
 
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
 
   #config.include Devise::TestHelpers, :type => :controller
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
@@ -45,7 +46,6 @@ RSpec.configure do |config|
   config.after(:each) do
     DatabaseCleaner.clean
   end
-
 
   config.include FactoryGirl::Syntax::Methods
 

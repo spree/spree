@@ -68,6 +68,7 @@ module Spree
           shipment.determine_state(shipment.order) == 'ready'
         }
       end
+
       event :pend do
         transition :from => 'ready', :to => 'pending'
       end
