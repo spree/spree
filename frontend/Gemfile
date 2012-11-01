@@ -1,3 +1,6 @@
 eval(File.read(File.dirname(__FILE__) + '/../common_spree_dependencies.rb'))
 
+gem 'spree_models', :path => '../models'
+gem 'spree_api', :path => '../api'
+
 gemspec
