@@ -46,11 +46,7 @@ end
 namespace :gem do
   desc "run rake gem for all gems"
   task :build do
-<<<<<<< HEAD
-    %w(core api dash promo sample cmd models testing_support).each do |gem_name|
-=======
-    %w(core api dash frontend promo sample cmd).each do |gem_name|
->>>>>>> ee4b70b... Add frontend to Rakefile
+    %w(core api dash frontend sample cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
@@ -67,11 +63,7 @@ namespace :gem do
   task :install do
     version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
 
-<<<<<<< HEAD
-    %w(core api dash promo sample cmd models testing_support).each do |gem_name|
-=======
-    %w(core api dash frontend promo sample cmd).each do |gem_name|
->>>>>>> ee4b70b... Add frontend to Rakefile
+    %w(core api dash frontend sample cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
@@ -90,11 +82,7 @@ namespace :gem do
   task :release do
     version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
 
-<<<<<<< HEAD
-    %w(core api dash promo sample cmd models testing_support).each do |gem_name|
-=======
-    %w(core api dash frontend promo sample cmd).each do |gem_name|
->>>>>>> ee4b70b... Add frontend to Rakefile
+    %w(core api dash frontend sample cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       cmd = "cd #{gem_name}/pkg && gem push spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
     end
