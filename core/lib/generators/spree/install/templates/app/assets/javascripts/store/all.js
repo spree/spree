@@ -7,7 +7,7 @@
 //= require jquery
 //= require jquery_ujs
 <% if options[:lib_name] == 'spree' %>
-//= require store/spree_core
+//= require store/spree_frontend
 //= require store/spree_promo
 <% else %>
 //= require store/<%= options[:lib_name].gsub("/", "_") %>

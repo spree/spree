@@ -1,4 +1,4 @@
-require 'spree/core/action_callbacks'
+require 'spree/frontend/action_callbacks'
 
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
