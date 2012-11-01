@@ -63,7 +63,7 @@ module Spree
         api_get :jstree, :id => taxonomy.id
         json_response["data"].should eq(taxonomy.root.name)
         json_response["attr"].should eq({ "id" => taxonomy.root.id, "name" => taxonomy.root.name})
-        json_response["state"].should eq("open")
+        json_response["state"].should eq("closed")
       end
 
       it "can learn how to create a new taxonomy" do
