@@ -20,7 +20,6 @@ describe "Checkout" do
     # let!(:promotion) { create(:promotion, :code => "onetwo") }
     let(:promotion) { @promotion }
 
-    # OrdersController
     context "on the payment page" do
       before do
         click_button "Checkout"
@@ -113,10 +112,10 @@ describe "Checkout" do
         promotion.expires_at = Date.today.beginning_of_week
         promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
         promotion.save!
-        
+
         fill_in "Coupon code", :with => "onetwo"
         click_button "Apply"
-        page.should have_content(I18n.t(:coupon_code_expired))        
+        page.should have_content(I18n.t(:coupon_code_expired))
       end
     end
   end
