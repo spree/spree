@@ -4,7 +4,7 @@ module Spree
       # Responsible for the creation and management of an adjustment since an
       # an adjustment uses its originator to also update its eligiblity and amount
       class CreateAdjustment < PromotionAction
-        include Spree::Models::CalculatedAdjustments
+        include Spree::Core::CalculatedAdjustments
 
         has_many :adjustments, :as => :originator
 
