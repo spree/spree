@@ -9,7 +9,6 @@ module Spree
 
       def index
         @reports = AVAILABLE_REPORTS
-        respond_with(@reports)
       end
 
       def sales_total
