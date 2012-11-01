@@ -1,11 +1,7 @@
 module Spree
   module Frontend
     class Engine < ::Rails::Engine
-      isolate_namespace Spree
-      engine_name 'spree'
-
-      config.middleware.use "Spree::Core::Middleware::SeoAssist"
-      config.middleware.use "Spree::Core::Middleware::RedirectLegacyProductUrl"
+      config.middleware.use "Spree::Frontend::Middleware::SeoAssist"
 
       config.autoload_paths += %W(#{config.root}/lib)
 
