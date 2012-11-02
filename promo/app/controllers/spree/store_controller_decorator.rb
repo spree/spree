@@ -11,8 +11,7 @@ Spree::StoreController.class_eval do
           event_name = "spree.checkout.coupon_code_added"
 
           # TODO should restrict to payload's event name?
-          # case insensitive coupon name
-          promotion = Spree::Promotion.find(:first, :conditions => [ "lower(code) = ?", @order.coupon_code ])
+          promotion = Spree::Promotion.find_by_code(@order.coupon_code)
 
           if promotion.present?
             if promotion.expired?
