@@ -23,6 +23,7 @@ en:
   coupon_code_better_exists: The previously applied coupon code results in a better deal
   coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
   coupon_code_max_usage: Coupon code usage limit exceeded
+  coupon_code_not_eligible: This coupon code is not eligible for this order
   editing_promotion: Editing Promotion
   events:
     spree:
