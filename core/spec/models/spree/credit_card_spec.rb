@@ -4,6 +4,10 @@ describe Spree::CreditCard do
 
   let(:valid_credit_card_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
 
+  def self.payment_states
+    Spree::Payment.state_machine.states.keys
+  end
+
   def stub_rails_env(environment)
     Rails.stub(:env => ActiveSupport::StringInquirer.new(environment))
   end
@@ -61,7 +65,7 @@ describe Spree::CreditCard do
         credit_card.can_credit?(payment).should be_false
       end
 
-      (PAYMENT_STATES - ['completed']).each do |state|
+      (payment_states - ['completed']).each do |state|
         it "should be false if payment state is #{state}" do
           payment.stub :state => state
           credit_card.can_credit?(payment).should be_false
@@ -71,7 +75,7 @@ describe Spree::CreditCard do
     end
 
     context "#can_void?" do
-      (PAYMENT_STATES - ['void']).each do |state|
+      (payment_states - ['void']).each do |state|
         it "should be true if payment state is #{state}" do
           payment.stub :state => state
           payment.stub :void? => false
@@ -90,7 +94,7 @@ describe Spree::CreditCard do
     let(:payment) { mock_model(Spree::Payment, :state => 'completed') }
 
     context "#can_void?" do
-      (PAYMENT_STATES - ['void']).each do |state|
+      (payment_states - ['void']).each do |state|
         it "should be true if payment state is #{state}" do
           payment.stub :state => state
           credit_card.can_void?(payment).should be_true
