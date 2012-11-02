@@ -19,9 +19,9 @@ describe Spree::Admin::BaseController do
 
     it "saves alerts into session" do
       controller.stub(:should_check_alerts? => true)
-      Spree::Alert.should_receive(:current).and_return([Spree::Alert.new(:message => "test alert", :severity => 'release')])
+      Spree::Alert.should_receive(:current).and_return([{"id" => "1", "message" => "test alert", "severity" => 'release'}])
       process :index
-      session[:alerts].first.message.should eq "test alert"
+      session[:alerts].first["message"].should eq "test alert"
     end
 
     describe "should_check_alerts?" do

@@ -67,7 +67,7 @@ module Spree
         def filter_dismissed_alerts
           return unless session[:alerts]
           dismissed = (Spree::Config[:dismissed_spree_alerts] || '').split(',')
-          session[:alerts].reject! { |a| dismissed.include? a.id.to_s }
+          session[:alerts].reject! { |a| dismissed.include? a["id"].to_s }
         end
     end
   end
