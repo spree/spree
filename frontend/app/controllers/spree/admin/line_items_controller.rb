@@ -14,7 +14,6 @@ module Spree
 
         if @order.save
           render_order_form
-          end
         else
           respond_with(@line_item) do |format|
             format.js { render :action => 'create', :locals => { :order => @order.reload } }
