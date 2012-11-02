@@ -38,7 +38,7 @@ module Spree
         if @payment_method.update_attributes(attributes)
           invoke_callbacks(:update, :after)
           flash[:success] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
-          redirect_to edit_admin_payment_method_path(@payment_method))
+          redirect_to edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:update, :fails)
         end

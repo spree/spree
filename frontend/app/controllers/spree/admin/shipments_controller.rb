@@ -18,8 +18,7 @@ module Spree
         assign_inventory_units
         if shipment.save
           flash[:success] = flash_message_for(shipment, :successfully_created)
-            redirect_to edit_admin_order_shipment_path(order, shipment)
-          end
+          redirect_to edit_admin_order_shipment_path(order, shipment)
         else
           render :action => 'new'
         end
@@ -39,8 +38,7 @@ module Spree
 
           flash[:success] = flash_message_for(shipment, :successfully_updated)
           return_path = order.completed? ? edit_admin_order_shipment_path(order, shipment) : admin_order_adjustments_path(order)
-            redirect_to return_path
-          end
+          redirect_to return_path
         else
           render :action => 'edit'
         end
