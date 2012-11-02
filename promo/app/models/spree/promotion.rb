@@ -36,16 +36,12 @@ module Spree
       where(:advertise => true)
     end
 
-    def self.with_coupon_code(coupon_code)
-      search(:code_cont => coupon_code).result
-    end
-
     def activate(payload)
       return unless order_activatable? payload[:order]
 
       if code.present?
-        event_code = payload[:coupon_code].to_s.strip.downcase
-        return unless event_code == self.code.to_s.strip.downcase
+        event_code = payload[:coupon_code]
+        return unless event_code == self.code
       end
 
       if path.present?
@@ -99,6 +95,10 @@ module Spree
 
     def credits_count
       credits.count
+    end
+
+    def code=(coupon_code)
+      write_attribute(:code, (coupon_code.downcase.strip rescue nil))
     end
 
   end
