@@ -10,6 +10,6 @@ Spree::Order.class_eval do
   end
 
   def promo_total
-    adjustments.promotion.map(&:amount).sum
+    adjustments.eligible.promotion.map(&:amount).sum
   end
 end
