@@ -14,7 +14,7 @@ namespace :common do
     Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--auto-accept", "--migrate=false", "--seed=false", "--sample=false", "--quiet", "--user_class=#{args[:user_class]}"]
 
     puts "Setting up dummy database..."
-    cmd = "bundle exec rake db:drop db:create db:migrate db:test:prepare --trace"
+    cmd = "bundle exec rake db:drop db:create db:migrate db:test:prepare"
 
     if RUBY_PLATFORM =~ /mswin/ #windows
       cmd += " >nul"
