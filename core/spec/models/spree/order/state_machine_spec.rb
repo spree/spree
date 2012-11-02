@@ -91,7 +91,7 @@ describe Spree::Order do
       end
     end
 
-    (SHIPMENT_STATES - %w(pending backorder ready)).each do |shipment_state|
+    (Spree::Shipment.state_machine.states.keys - %w(pending backorder ready)).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
         order.stub :completed? => true
         order.shipment_state = shipment_state
