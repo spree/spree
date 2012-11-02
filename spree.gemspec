@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_core', version
   s.add_dependency 'spree_api', version
   s.add_dependency 'spree_dash', version
+  s.add_dependency 'spree_frontend', version
   s.add_dependency 'spree_sample', version
   s.add_dependency 'spree_promo', version
   s.add_dependency 'spree_cmd', version
