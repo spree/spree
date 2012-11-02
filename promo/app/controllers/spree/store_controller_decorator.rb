@@ -32,11 +32,11 @@ Spree::StoreController.class_eval do
             if promo.present? and promo.eligible
               flash[:success] = t(:coupon_code_applied)
               true
+            elsif previous_promo.present? and promo.present?
+              flash[:error] = t(:coupon_code_better_exists)
+              false
             elsif promo.present?
               flash[:error] = t(:coupon_code_not_eligible)
-              false
-            elsif previous_promo.present?
-              flash[:error] = t(:coupon_code_better_exists)
               false
             else
               # if the promotion was created after the order

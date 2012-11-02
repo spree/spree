@@ -48,7 +48,8 @@ module PromotionCreation
 
     select "Item total", :from => "Add rule of type"
     within('#rule_fields') { click_button "Add" }
-    eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => order_min
+
+    eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount", :with => order_min
     within('#rule_fields') { click_button "Update" }
 
     select "Create adjustment", :from => "Add action of type"

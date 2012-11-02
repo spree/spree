@@ -20,8 +20,9 @@ describe "Checkout" do
     # let!(:promotion) { create(:promotion, :code => "onetwo") }
     let(:promotion) { @promotion }
 
+    # OrdersController
     context "on the payment page" do
-      it "informs about an invalid coupon code" do
+      before do
         click_button "Checkout"
         fill_in "order_email", :with => "spree@example.com"
         click_button "Continue"
@@ -40,13 +41,22 @@ describe "Checkout" do
         click_button "Save and Continue"
         # To payment screen
         click_button "Save and Continue"
+      end
 
+      it "informs about an invalid coupon code" do
         fill_in "Coupon code", :with => "coupon_codes_rule_man"
         click_button "Save and Continue"
-        page.should have_content("The coupon code you entered doesn't exist. Please try again.")
+        page.should have_content(I18n.t(:coupon_code_not_found))
+      end
+
+      it "applies a promotion to an order" do
+        fill_in "Coupon code", :with => "onetwo"
+        click_button "Save and Continue"
+        page.should have_content(I18n.t(:coupon_code_applied))
       end
     end
 
+    # CheckoutController
     context "on the cart page" do
       it "can enter a coupon code and receives success notification" do
         fill_in "Coupon code", :with => "onetwo"
@@ -74,6 +84,39 @@ describe "Checkout" do
         fill_in "Coupon code", :with => "onetwo"
         click_button "Apply"
         page.should have_content(I18n.t(:coupon_code_max_usage))
+      end
+
+      it "informs the user if the previous promotion is better" do
+        big_promotion = create_per_order_coupon_promotion 1, 5, 'onefive'
+        big_promotion.update_column(:created_at, 1.day.ago)
+
+        visit spree.cart_path
+
+        fill_in "Coupon code", :with => "onefive"
+        click_button "Apply"
+        page.should have_content(I18n.t(:coupon_code_applied))
+
+        fill_in "Coupon code", :with => "onetwo"
+        click_button "Apply"
+        page.should have_content(I18n.t(:coupon_code_better_exists))
+      end
+
+      it "informs the user if the coupon code is not eligible" do
+        promotion.rules.first.preferred_amount = 100
+
+        fill_in "Coupon code", :with => "onetwo"
+        click_button "Apply"
+        page.should have_content(I18n.t(:coupon_code_not_eligible))
+      end
+
+      it "informs the user if the coupon is expired" do
+        promotion.expires_at = Date.today.beginning_of_week
+        promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
+        promotion.save!
+        
+        fill_in "Coupon code", :with => "onetwo"
+        click_button "Apply"
+        page.should have_content(I18n.t(:coupon_code_expired))        
       end
     end
   end
