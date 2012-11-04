@@ -1,5 +1,5 @@
 <div class="row steps-data">
-  
+
   <% if order.has_step?("address") %>
     <div class="columns alpha four">
       <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
@@ -75,7 +75,7 @@
         <td data-hook="order_item_description">
           <h4><%= item.variant.product.name %></h4>
           <%= truncate(item.variant.product.description, :length => 100, :omission => "...") %>
-          <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %>
+          <%= "(" + item.variant.options_text + ")" unless item.variant .option_values.empty? %>
         </td>
         <td data-hook="order_item_price" class="price"><span><%= money item.price %></span></td>
         <td data-hook="order_item_qty"><%= item.quantity %></td>
