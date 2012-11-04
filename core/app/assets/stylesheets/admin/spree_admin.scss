@@ -1,4 +1,4 @@
-@import 'font-awesome.css';  // Must call .css extension or else extension integration tests cannot import file.
+@import '../font-awesome.css';  // Must call .css extension or else extension integration tests cannot import file.
 
 @import 'globals/functions';
 @import 'globals/variables_override';
