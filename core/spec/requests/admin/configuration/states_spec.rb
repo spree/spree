@@ -25,7 +25,7 @@ describe "States" do
     it "should allow an admin to edit existing states", :js => true do
       click_link "States"
       wait_until do
-        find_field("Country")
+        page.should have_selector('#country', visible: true)
       end
       select country.name, :from => "Country"
       click_link "new_state_link"
