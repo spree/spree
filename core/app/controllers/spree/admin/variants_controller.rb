@@ -6,6 +6,7 @@ module Spree
       new_action.before :new_before
 
       def index
+        respond_with(collection)
       end
 
       def search

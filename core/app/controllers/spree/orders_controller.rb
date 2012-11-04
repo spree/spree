@@ -7,6 +7,7 @@ module Spree
 
     def show
       @order = Order.find_by_number!(params[:id])
+      respond_with(@order)
     end
 
     def update
@@ -61,7 +62,7 @@ module Spree
 
       fire_event('spree.cart.add')
       fire_event('spree.order.contents_changed')
-      redirect_to cart_path
+      respond_with(@order) { |format| format.html { redirect_to cart_path } }
     end
 
     def empty
