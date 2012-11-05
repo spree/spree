@@ -26,7 +26,7 @@
         </tr>
       </tbody>
       <tbody id="order-charges" data-hook="admin_order_form_adjustments">
-        <% @order.adjustments.each do |adjustment| %>
+        <% @order.adjustments.eligible.each do |adjustment| %>
           <tr>
             <td colspan="3"><strong><%= adjustment.label %></strong></td>
             <td class="total"><span><%= adjustment.display_amount %></span></td>
