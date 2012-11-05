@@ -2,7 +2,12 @@ module Spree
   # Handles checkout logic.  This is somewhat contrary to standard REST convention since there is not actually a
   # Checkout object.  There's enough distinct logic specific to checkout which has nothing to do with updating an
   # order that this approach is waranted.
-  class CheckoutController < BaseController
+  #
+  # Much of this file, especially the update action is overriden in the promo gem.
+  # This is to allow for the promo behavior but also allow the promo gem to be 
+  # removed if the functionality is not needed. 
+
+  class CheckoutController < Spree::BaseController
     ssl_required
 
     before_filter :load_order
@@ -13,6 +18,7 @@ module Spree
     respond_to :html
 
     # Updates the order and advances to the next state (when possible.)
+    # Overriden by the promo gem if it exists. 
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
