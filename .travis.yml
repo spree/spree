@@ -23,8 +23,3 @@ notifications:
       - "irc.freenode.org#spree"
 rvm:
   - 1.9.3
-  - 2.0.0-preview1
-
-matrix:
-  allow_failures:
-    - rvm: 2.0.0-preview1
