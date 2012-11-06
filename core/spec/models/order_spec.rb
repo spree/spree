@@ -136,7 +136,6 @@ describe Spree::Order do
       payment = stub_model(Spree::Payment)
       payments = [payment]
       order.stub(:payments).and_return(payments)
-      payments.should_receive(:with_state).with('checkout').and_return(payments)
       payments.first.should_receive(:process!)
       order.process_payments!
     end
