@@ -18,6 +18,7 @@ en:
   coupon_code: Coupon code
   coupon_code_applied: The coupon code was successfully applied to your order.
   editing_promotion: Editing Promotion
+  current_promotion_usage: 'Current Usage: '
   events:
     spree:
       checkout:
