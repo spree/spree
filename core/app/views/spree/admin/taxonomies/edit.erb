@@ -25,24 +25,6 @@
 
 <% content_for :head do %>
   <%= javascript_tag do -%>
-    var initial = [
-      { "attr" :
-      { "id" : "<%= @taxonomy.root.id %>", "rel" : "root" },
-      "data" : "<%= escape_javascript(raw(@taxonomy.root.name)) %>",
-      "state" : "open",
-      "children" : [
-        <% @taxonomy.root.children.each_with_index do |taxon,i| %>
-          {
-            "attr" :
-            { "id" : "<%= taxon.id %>"},
-            "data" : "<%= escape_javascript(raw(taxon.name)) %>"
-            <% unless taxon.children.empty? %>
-              ,"state" : "closed"
-            <% end %>
-          }<%= ',' if i < (@taxonomy.root.children.size - 1) %>
-        <% end %>
-      ]
-        }
-    ];
+    var initial = <%= raw(@taxonomy.to_js_tree) %>;
   <% end -%>
 <% end %>

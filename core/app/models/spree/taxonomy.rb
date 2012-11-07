@@ -10,6 +10,10 @@ module Spree
 
     after_save :set_name
 
+    def to_js_tree(max_depth=1)
+      "[#{self.root.to_js_tree(max_depth, current_depth=0)}]";
+    end
+    
     private
       def set_name
         if root
