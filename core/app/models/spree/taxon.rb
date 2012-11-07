@@ -65,8 +65,9 @@ module Spree
 
       if current_depth < max_depth
         children_js = ", 'children' : [#{self.children.map{|t| t.to_js_tree(max_depth, current_depth+1)}.join(',')}]"
-        self.children.empty? ? "" : "closed"
       end
+      
+      state = self.children.empty? ? "" : "closed"
 
       if current_depth == 0
         rel = ", 'rel' : 'root'"
