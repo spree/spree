@@ -39,7 +39,8 @@
   <div id="expiry_fields" class="three columns omega">
     <%= f.field_container :usage_limit do %>
       <%= f.label :usage_limit %><br />
-      <%= f.number_field :usage_limit, :min => 0, :class => 'fullwidth' %>
+      <%= f.number_field :usage_limit, :min => 0, :class => 'fullwidth' %><br>
+      <%= t(:current_promotion_usage, :count => @promotion.credits_count) %>
     <% end %>
     
     <div id="starts_at_field" class="field">
