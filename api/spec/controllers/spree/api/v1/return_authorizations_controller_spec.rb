@@ -22,25 +22,11 @@ module Spree
       stub_authentication!
     end
 
-    it "can learn how to create a new return authorization" do
-      api_get :new
-      json_response["attributes"].should == ["id", "number", "state", "amount", "order_id", "reason", "created_at", "updated_at"]
-      required_attributes = json_response["required_attributes"]
-      required_attributes.should include("order")
-    end
-
     context "as the order owner" do
       before do
         Order.any_instance.stub :user => current_api_user
       end
 
-      it "can add a new return authorization to an existing order" do
-        api_post :create, :return_autorization => { :order_id => order.id, :amount => 14.22, :reason => "Defective" }
-        response.status.should == 201
-        json_response.should have_attributes(attributes)
-        json_response["return_authorization"]["state"].should_not be_blank
-      end
-      
       it "can show return authorization" do
         order.return_authorizations << create(:return_authorization)
         return_authorization = order.return_authorizations.first
@@ -50,7 +36,7 @@ module Spree
         json_response["return_authorization"]["state"].should_not be_blank
       end
 
-      it "can get a list of return authorization" do
+      it "can get a list of return authorizations" do
         order.return_authorizations << create(:return_authorization)
         order.return_authorizations << create(:return_authorization)
         return_authorizations = order.return_authorizations
@@ -59,6 +45,37 @@ module Spree
         return_authorizations = json_response["return_authorizations"]
         return_authorizations.first.should have_attributes(attributes)
         return_authorizations.first.should_not == return_authorizations.last
+      end
+
+      it "cannot learn how to create a new return authorization" do
+        api_get :new
+        assert_unauthorized!
+      end
+
+      it "cannot create a new return authorization" do
+        api_post :create
+        assert_unauthorized!
+      end
+
+      it "cannot update a return authorization" do
+        api_put :update
+        assert_unauthorized!
+      end
+
+      it "cannot delete a return authorization" do
+        api_delete :destroy
+        assert_unauthorized!
+      end
+    end
+
+    context "as an admin" do
+      sign_in_as_admin!
+
+      it "can learn how to create a new return authorization" do
+        api_get :new
+        json_response["attributes"].should == ["id", "number", "state", "amount", "order_id", "reason", "created_at", "updated_at"]
+        required_attributes = json_response["required_attributes"]
+        required_attributes.should include("order")
       end
 
       it "can update a return authorization on the order" do
@@ -76,6 +93,14 @@ module Spree
         response.status.should == 204
         lambda { return_authorization.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
+
+      it "can add a new return authorization to an existing order" do
+        api_post :create, :return_autorization => { :order_id => order.id, :amount => 14.22, :reason => "Defective" }
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+        json_response["return_authorization"]["state"].should_not be_blank
+      end
+      
     end
 
     context "as just another user" do
