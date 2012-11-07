@@ -119,9 +119,10 @@ module Spree
       # shipped    if already shipped (ie. does not change the state)
       # ready      all other cases
       def determine_state(order)
+        return 'shipped' if state == 'shipped'
+        return 'ready' if order.repairing? && order.paid?
         return 'pending' unless order.complete?
         return 'pending' if inventory_units.any? &:backordered?
-        return 'shipped' if state == 'shipped'
         order.paid? ? 'ready' : 'pending'
       end
 
@@ -137,6 +138,10 @@ module Spree
         inventory_units.each &:ship!
         send_shipped_email
         touch :shipped_at
+        unless order.inventory_units.any? &:repairing?
+          order.state = 'complete'
+          order.save!
+        end
       end
 
       def send_shipped_email

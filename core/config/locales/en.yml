@@ -98,6 +98,7 @@ en:
         name: Name
       spree/return_authorization:
         amount: Amount
+        for_repair: "For Repairs?"
       spree/role:
         name: Name
       spree/state:
@@ -667,6 +668,7 @@ en:
     resumed: resumed
     returned: returned
     skrill: skrill
+    repairing: repairing
   order_summary: Order Summary
   order_sure_want_to: "Are you sure you want to %{event} this order?"
   order_total: "Order Total"
@@ -896,6 +898,7 @@ en:
   return_authorizations: Return Authorizations
   return_quantity: Return Quantity
   returned: Returned
+  repairing: Repairing
   review: Review
   rma_credit: RMA Credit
   rma_number: RMA Number
