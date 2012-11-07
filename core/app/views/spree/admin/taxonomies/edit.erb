@@ -26,5 +26,8 @@
 <% content_for :head do %>
   <%= javascript_tag do -%>
     var initial = <%= raw(@taxonomy.to_js_tree) %>;
+    $(document).ready(function(){
+      setup_taxonomy_tree(initial);
+    });
   <% end -%>
 <% end %>
