@@ -13,8 +13,12 @@ module Spree
           @return_authorization = order.return_authorizations.find(params[:id])
         end
 
+        def new
+          authorize! :admin, order
+        end
+
         def create
-          authorize! :read, order
+          authorize! :manage, Spree::Order
           @return_authorization = order.return_authorizations.build(params[:return_authorization], :as => :api)
           if @return_authorization.save
             render :show, :status => 201
@@ -24,7 +28,7 @@ module Spree
         end
 
         def update
-          authorize! :read, order
+          authorize! :manage, Spree::Order
           @return_authorization = order.return_authorizations.find(params[:id])
           if @return_authorization.update_attributes(params[:return_authorization])
             render :show
@@ -34,7 +38,8 @@ module Spree
         end
 
         def destroy
-          authorize! :read, order
+          authorize! :manage, Spree::Order
+          @return_authorization = order.return_authorizations.find(params[:id])
           @return_authorization = order.return_authorizations.find(params[:id])
           @return_authorization.destroy
           render :text => nil, :status => 204
