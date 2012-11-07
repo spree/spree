@@ -27,24 +27,14 @@ module Spree
         Order.any_instance.stub :user => current_api_user
       end
 
-      it "can show return authorization" do
-        order.return_authorizations << create(:return_authorization)
-        return_authorization = order.return_authorizations.first
-        api_get :show, :order_id => order.id, :id => return_authorization.id
-        response.status.should == 200
-        json_response.should have_attributes(attributes)
-        json_response["return_authorization"]["state"].should_not be_blank
+      it "cannot see any return authorizations" do
+        api_get :index
+        assert_unauthorized!
       end
 
-      it "can get a list of return authorizations" do
-        order.return_authorizations << create(:return_authorization)
-        order.return_authorizations << create(:return_authorization)
-        return_authorizations = order.return_authorizations
-        api_get :index, { :order_id => order.id }  
-        response.status.should == 200
-        return_authorizations = json_response["return_authorizations"]
-        return_authorizations.first.should have_attributes(attributes)
-        return_authorizations.first.should_not == return_authorizations.last
+      it "cannot see a single return authorization" do
+        api_get :show, :id => 1
+        assert_unauthorized!
       end
 
       it "cannot learn how to create a new return authorization" do
@@ -70,6 +60,26 @@ module Spree
 
     context "as an admin" do
       sign_in_as_admin!
+
+      it "can show return authorization" do
+        order.return_authorizations << create(:return_authorization)
+        return_authorization = order.return_authorizations.first
+        api_get :show, :order_id => order.id, :id => return_authorization.id
+        response.status.should == 200
+        json_response.should have_attributes(attributes)
+        json_response["return_authorization"]["state"].should_not be_blank
+      end
+
+      it "can get a list of return authorizations" do
+        order.return_authorizations << create(:return_authorization)
+        order.return_authorizations << create(:return_authorization)
+        return_authorizations = order.return_authorizations
+        api_get :index, { :order_id => order.id }  
+        response.status.should == 200
+        return_authorizations = json_response["return_authorizations"]
+        return_authorizations.first.should have_attributes(attributes)
+        return_authorizations.first.should_not == return_authorizations.last
+      end
 
       it "can learn how to create a new return authorization" do
         api_get :new
@@ -100,7 +110,6 @@ module Spree
         json_response.should have_attributes(attributes)
         json_response["return_authorization"]["state"].should_not be_blank
       end
-      
     end
 
     context "as just another user" do
@@ -125,6 +134,5 @@ module Spree
         lambda { return_authorization.reload }.should_not raise_error(ActiveRecord::RecordNotFound)
       end
     end
-
   end
 end
