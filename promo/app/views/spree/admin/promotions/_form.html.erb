@@ -37,7 +37,8 @@
   <legend><%= t(:expiry) %></legend>
   <p>
     <%= f.label :usage_limit %><br />
-    <%= f.text_field :usage_limit %>
+    <%= f.text_field :usage_limit %><br/>
+    <%= t(:current_promotion_usage) %> <%= @promotion.credits_count %>
   </p>
 
   <p id="starts_at_field">
