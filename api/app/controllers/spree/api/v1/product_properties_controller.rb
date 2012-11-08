@@ -6,7 +6,7 @@ module Spree
         before_filter :product_property, :only => [:show, :update, :destroy]
 
         def index
-          @product_properties = @product.product_properties
+          @product_properties = @product.product_properties.page(params[:page]).per(params[:per_page])
         end
 
         def show
