@@ -6,7 +6,7 @@ module Spree
         before_filter :find_payment, :only => [:show, :authorize, :purchase, :capture, :void, :credit]
 
         def index
-          @payments = @order.payments
+          @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         end
 
         def new

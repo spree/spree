@@ -218,6 +218,25 @@ module Spree
         end
       end
 
+      context "search" do
+        before do
+          create(:order)
+          Spree::Order.last.update_attribute(:email, 'spree@spreecommerce.com')
+        end
+
+        let(:expected_result) { Spree::Order.last }
+
+        it "can query the results through a parameter" do
+          api_get :index, :q => { :email_cont => 'spree' }
+          json_response["orders"].count.should == 1
+          json_response["orders"].first.should have_attributes(attributes)
+          json_response["orders"].first["order"]["email"].should == expected_result.email
+          json_response["count"].should == 1
+          json_response["current_page"].should == 1
+          json_response["pages"].should == 1
+        end
+      end
+
       context "can cancel an order" do
         before do
           order.completed_at = Time.now
