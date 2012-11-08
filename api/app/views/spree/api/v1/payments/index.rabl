@@ -1,2 +1,5 @@
-collection @payments => :payments
-attributes *payment_attributes
+object false
+child(@payments => :payments) do
+  attributes *payment_attributes
+end
+node(:count) { @payments.count }

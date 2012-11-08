@@ -6,7 +6,7 @@ module Spree
     let!(:order) { create(:order) }
     let!(:payment) { create(:payment, :order => order) }
     let!(:attributes) { [:id, :source_type, :source_id, :amount,
-                         :payment_method_id, :response_code, :state, :avs_response, 
+                         :payment_method_id, :response_code, :state, :avs_response,
                          :created_at, :updated_at] }
 
     let(:resource_scoping) { { :order_id => order.to_param } }
@@ -68,6 +68,15 @@ module Spree
         api_get :index
         response.status.should == 200
         json_response["payments"].first.should have_attributes(attributes)
+      end
+
+      context "multiple payments" do
+        before { create(:payment, :order => order) }
+
+        it "can view all payments on an order" do
+          api_get :index
+          json_response["count"].should == 2
+        end
       end
 
       context "for a given payment" do
