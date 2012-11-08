@@ -19,6 +19,7 @@ module Spree
     def default_notification_payload
       {:user => try_spree_current_user, :order => current_order}
     end
+
   end
 end
 
