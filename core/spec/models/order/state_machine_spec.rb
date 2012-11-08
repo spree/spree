@@ -191,12 +191,6 @@ describe Spree::Order do
       order.stub :has_available_shipment
     end
 
-    it "should send a resume email" do
-      pending "Pending test for #818"
-      order.stub :unstock_items!
-      order.resume!
-    end
-
     context "unstocks inventory" do
       let(:variant) { stub_model(Spree::Variant) }
 
