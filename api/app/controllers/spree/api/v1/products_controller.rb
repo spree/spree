@@ -3,7 +3,7 @@ module Spree
     module V1
       class ProductsController < Spree::Api::V1::BaseController
         def index
-          @products = product_scope.ransack(params[:q]).result.page(params[:page])
+          @products = product_scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         end
 
         def show

@@ -34,9 +34,18 @@ module Spree
           second_product = create(:product)
           api_get :index, :page => 2
           json_response["products"].first.should have_attributes(attributes)
-          json_response["count"].should == 2
+          json_response["total_count"].should == 2
           json_response["current_page"].should == 2
           json_response["pages"].should == 2
+        end
+
+        it 'can control the page size through a parameter' do
+          create(:product)
+          api_get :index, :per_page => 1
+          json_response['count'].should == 1
+          json_response['total_count'].should == 2
+          json_response['current_page'].should == 1
+          json_response['pages'].should == 2
         end
       end
 
