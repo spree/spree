@@ -115,6 +115,10 @@ describe Spree::Order do
     end
 
     it "should freeze all adjustments" do
+      # Stub this method as it's called due to a callback
+      # and it's irrelevant to this test
+      order.stub :has_available_shipment
+
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
       adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
