@@ -32,6 +32,13 @@ module Spree
         json_response['pages'].should == 2
       end
 
+      it 'can query the results through a paramter' do
+        expected_result = create(:taxonomy, :name => 'Style')
+        api_get :index, :q => { :name_cont => 'style' }
+        json_response['count'].should == 1
+        json_response['taxonomies'].first['taxonomy']['name'].should eq expected_result.name
+      end
+
       it "gets a single taxonomy" do
         api_get :show, :id => taxonomy.id
 
