@@ -84,6 +84,12 @@ module Spree
           json_response['current_page'].should == 1
           json_response['pages'].should == 2
         end
+
+        it 'can query the results through a paramter' do
+          api_get :index, :q => { :response_code_cont => '999' }
+          json_response['count'].should == 1
+          json_response['payments'].first['payment']['response_code'].should eq @payment.response_code
+        end
       end
 
       context "for a given payment" do
