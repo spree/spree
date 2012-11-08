@@ -11,10 +11,6 @@ Spree::Core::Engine.routes.prepend do
   namespace :api do
     scope :module => :v1 do
       resources :products do
-        collection do
-          get :search
-        end
-
         resources :variants
         resources :product_properties
       end

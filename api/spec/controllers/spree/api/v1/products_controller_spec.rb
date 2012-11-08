@@ -50,7 +50,7 @@ module Spree
 
       it "can search for products" do
         create(:product, :name => "The best product in the world")
-        api_get :search, :q => { :name_cont => "best" }
+        api_get :index, :q => { :name_cont => "best" }
         json_response["products"].first.should have_attributes(attributes)
         json_response["count"].should == 1
       end
