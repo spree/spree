@@ -121,6 +121,8 @@ describe Spree::Order do
     end
 
     it "should send a cancel email" do
+      # Stub methods that cause side-effects in this test
+      order.stub :has_available_shipment
       order.stub :restock_items!
       mail_message = mock "Mail::Message"
       Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
@@ -134,6 +136,8 @@ describe Spree::Order do
         shipment.stub(:update_order)
         Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
         mail_message.stub :deliver
+
+        order.stub :has_available_shipment
       end
 
       # Regression fix for #729
@@ -146,8 +150,10 @@ describe Spree::Order do
     context "resets payment state" do
       before do
         # TODO: This is ugly :(
+        # Stubs methods that cause unwanted side effects in this test
         Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
         mail_message.stub :deliver
+        order.stub :has_available_shipment
       end
 
       context "without shipped items" do
@@ -177,6 +183,9 @@ describe Spree::Order do
       order.stub :email => "user@spreecommerce.com"
       order.stub :state => "canceled"
       order.stub :allow_resume? => true
+
+      # Stubs method that cause unwanted side effects in this test
+      order.stub :has_available_shipment
     end
 
     context "unstocks inventory" do
