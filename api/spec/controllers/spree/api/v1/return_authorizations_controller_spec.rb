@@ -73,12 +73,29 @@ module Spree
       it "can get a list of return authorizations" do
         order.return_authorizations << create(:return_authorization)
         order.return_authorizations << create(:return_authorization)
-        return_authorizations = order.return_authorizations
-        api_get :index, { :order_id => order.id }  
+        api_get :index, { :order_id => order.id }
         response.status.should == 200
         return_authorizations = json_response["return_authorizations"]
         return_authorizations.first.should have_attributes(attributes)
         return_authorizations.first.should_not == return_authorizations.last
+      end
+
+      it 'can control the page size through a parameter' do
+        order.return_authorizations << create(:return_authorization)
+        order.return_authorizations << create(:return_authorization)
+        api_get :index, :order_id => order.id, :per_page => 1
+        json_response['count'].should == 1
+        json_response['current_page'].should == 1
+        json_response['pages'].should == 2
+      end
+
+      it 'can query the results through a paramter' do
+        order.return_authorizations << create(:return_authorization)
+        expected_result = create(:return_authorization, :reason => 'damaged')
+        order.return_authorizations << expected_result
+        api_get :index, :q => { :reason_cont => 'damage' }
+        json_response['count'].should == 1
+        json_response['return_authorizations'].first['return_authorization']['reason'].should eq expected_result.reason
       end
 
       it "can learn how to create a new return authorization" do
