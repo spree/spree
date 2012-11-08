@@ -440,6 +440,10 @@ module Spree
       line_items.map { |li| li.variant.product }
     end
 
+    def variants
+      line_items.map(&:variant)
+    end
+
     def insufficient_stock_lines
       line_items.select &:insufficient_stock?
     end
