@@ -598,4 +598,22 @@ describe Spree::Order do
       end
     end
   end
+
+  # Regression test for #2191
+  context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
+    let!(:persisted_order) { create(:order) }
+    let!(:line_item) { create(:line_item) }
+    let!(:shipping_method) { create(:shipping_method) }
+
+    before do
+      persisted_order.line_items << line_item
+      persisted_order.adjustments.create(:amount => 19.99, :label => "Promotion")
+      persisted_order.state = 'delivery'
+    end
+
+    it "transitions from delivery to payment" do
+      persisted_order.shipping_method = shipping_method
+      persisted_order.next_transition.to.should == "payment"
+    end
+  end
 end
