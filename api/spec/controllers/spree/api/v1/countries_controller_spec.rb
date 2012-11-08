@@ -12,16 +12,30 @@ module Spree
 
     it "gets all countries" do
       api_get :index
-      json_response.first['country']['iso3'].should eq @country.iso3
+      json_response["countries"].first['country']['iso3'].should eq @country.iso3
     end
 
-    context "search" do
+    context "with two countries" do
       before { @zambia = create(:country, :name => "Zambia") }
 
-      it "can query the results through a paramter" do
+      it "can view all countries" do
+        api_get :index
+        json_response['count'].should == 2
+        json_response['current_page'].should == 1
+        json_response['pages'].should == 1
+      end
+
+      it 'can query the results through a paramter' do
         api_get :index, :q => { :name_cont => 'zam' }
-        json_response.count.should == 1
-        json_response.first['country']['name'].should eq @zambia.name
+        json_response['count'].should == 1
+        json_response['countries'].first['country']['name'].should eq @zambia.name
+      end
+
+      it 'can control the page size through a parameter' do
+        api_get :index, :per_page => 1
+        json_response['count'].should == 1
+        json_response['current_page'].should == 1
+        json_response['pages'].should == 2
       end
     end
 
