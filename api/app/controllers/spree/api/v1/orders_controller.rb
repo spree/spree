@@ -7,15 +7,10 @@ module Spree
         def index
           # should probably look at turning this into a CanCan step
           raise CanCan::AccessDenied unless current_api_user.has_spree_role?("admin")
-          @orders = Order.page(params[:page]).per(params[:per_page])
+          @orders = Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         end
 
         def show
-        end
-
-        def search
-          @orders = Order.ransack(params[:q]).result.page(params[:page])
-          render :index
         end
 
         def create

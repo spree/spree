@@ -22,12 +22,9 @@ Spree::Core::Engine.routes.prepend do
       resources :images
       resources :variants, :only => [:index] do
       end
-      
+
       resources :orders do
         resources :return_authorizations
-        collection do
-          get :search
-        end
         member do
           put :address
           put :delivery
