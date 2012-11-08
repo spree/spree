@@ -20,8 +20,16 @@ module Spree
       it "gets all taxonomies" do
         api_get :index
 
-        json_response.first['taxonomy']['name'].should eq taxonomy.name
-        json_response.first['taxonomy']['root']['taxons'].count.should eq 1
+        json_response["taxonomies"].first['taxonomy']['name'].should eq taxonomy.name
+        json_response["taxonomies"].first['taxonomy']['root']['taxons'].count.should eq 1
+      end
+
+      it 'can control the page size through a parameter' do
+        create(:taxonomy)
+        api_get :index, :per_page => 1
+        json_response['count'].should == 1
+        json_response['current_page'].should == 1
+        json_response['pages'].should == 2
       end
 
       it "gets a single taxonomy" do
