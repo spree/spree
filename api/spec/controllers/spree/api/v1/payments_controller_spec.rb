@@ -71,11 +71,18 @@ module Spree
       end
 
       context "multiple payments" do
-        before { create(:payment, :order => order) }
+        before { @payment = create(:payment, :order => order, :response_code => '99999') }
 
         it "can view all payments on an order" do
           api_get :index
           json_response["count"].should == 2
+        end
+
+        it 'can control the page size through a parameter' do
+          api_get :index, :per_page => 1
+          json_response['count'].should == 1
+          json_response['current_page'].should == 1
+          json_response['pages'].should == 2
         end
       end
 
