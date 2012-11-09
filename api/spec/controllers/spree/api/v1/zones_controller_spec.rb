@@ -13,7 +13,15 @@ module Spree
 
     it "gets list of zones" do
       api_get :index
-      json_response.first.should have_attributes(attributes)
+      json_response['zones'].first.should have_attributes(attributes)
+    end
+
+    it 'can control the page size through a parameter' do
+      create(:zone)
+      api_get :index, :per_page => 1
+      json_response['count'].should == 1
+      json_response['current_page'].should == 1
+      json_response['pages'].should == 2
     end
 
     it "gets a zone" do
@@ -58,7 +66,7 @@ module Spree
           }
         }
 
-        api_put :update, params 
+        api_put :update, params
         response.status.should == 200
         json_response['zone']['name'].should eq 'North Pole'
         json_response['zone']['zone_members'].should_not be_blank
