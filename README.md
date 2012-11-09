@@ -26,33 +26,11 @@ and perhaps combine it with your own custom promotion scheme instead of using sp
 
 [![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/spree/spree)
+
 Installation
 ------------
 
-The fastest way to get started is by using the spree command line tool
-available in the spree gem which will add Spree to an existing Rails application.
-
-    $ gem install rails -v 3.2.8
-    $ gem install spree
-    $ rails _3.2.8_ new my_store
-    $ spree install my_store
-
-This will add the Spree gem to your Gemfile, create initializers, copy migrations and
-optionally generate sample products and orders.
-
-If you get an "Unable to resolve dependencies" error when installing the Spree gem then you can try installing just the spree_cmd gem which should avoid any circular dependency issues.
-
-    $ gem install spree_cmd
-
-To auto accept all prompts while running the install generator, pass -A as an option
-
-    $ spree install my_store -A
-
-Using the Gem
--------------
-
-You can manually add Spree to your Rails 3.2.x application. Add Spree to
-your Gemfile.
+Add Spree to your Gemfile. You should run it on Rails 3.2.x.
 
 ```ruby
 gem 'spree', :git => 'git://github.com/spree/spree.git'
