@@ -24,6 +24,13 @@ module Spree
       json_response['pages'].should == 2
     end
 
+    it 'can query the results through a paramter' do
+      expected_result = create(:zone, :name => 'South America')
+      api_get :index, :q => { :name_cont => 'south' }
+      json_response['count'].should == 1
+      json_response['zones'].first['zone']['name'].should eq expected_result.name
+    end
+
     it "gets a zone" do
       api_get :show, :id => @zone.id
       json_response.should have_attributes(attributes)

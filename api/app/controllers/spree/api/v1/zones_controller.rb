@@ -3,7 +3,7 @@ module Spree
     module V1
       class ZonesController < Spree::Api::V1::BaseController
         def index
-          @zones = Zone.order('name ASC').page(params[:page]).per(params[:per_page])
+          @zones = Zone.order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         end
 
         def show
