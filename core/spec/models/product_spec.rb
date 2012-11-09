@@ -415,7 +415,7 @@ describe Spree::Product do
     let(:product) { create(:product) }
 
     before do
-      image = File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__))
+      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
       Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
       Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
       Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
