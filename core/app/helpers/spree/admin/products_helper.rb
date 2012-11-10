@@ -18,7 +18,7 @@ module Spree
           content_tag(:option,
                       :value    => option_type.id,
                       :selected => ('selected' if selected)) do
-            option_type.presentation
+            option_type.name
           end
         end.join("").html_safe
       end
