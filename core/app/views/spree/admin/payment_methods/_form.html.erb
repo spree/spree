@@ -21,10 +21,6 @@
         <%= label_tag nil, t(:environment) %>
         <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>        
       </div>
-      <div data-hook="display" class="field">
-        <%= label_tag nil, t(:display) %>
-        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
-      </div>
       <div data-hook="active" class="field">
         <%= label_tag nil, t(:active) %>
         <ul>
