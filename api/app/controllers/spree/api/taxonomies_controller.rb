@@ -1,8 +1,6 @@
 module Spree
   module Api
     class TaxonomiesController < Spree::Api::BaseController
-      respond_to :json
-
       def index
         @taxonomies = Taxonomy.order('name').includes(:root => :children).
                       ransack(params[:q]).result.
@@ -13,6 +11,11 @@ module Spree
       def show
         @taxonomy = Taxonomy.find(params[:id])
         respond_with(@taxonomy)
+      end
+
+      # Because JSTree wants parameters in a *slightly* different format
+      def jstree
+        show
       end
 
       def create

@@ -1,8 +1,6 @@
 module Spree
   module Api
     class ReturnAuthorizationsController < Spree::Api::BaseController
-      respond_to :json
-
       before_filter :authorize_admin!
 
       def index

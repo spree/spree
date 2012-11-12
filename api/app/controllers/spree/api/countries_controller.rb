@@ -1,7 +1,6 @@
 module Spree
   module Api
     class CountriesController < Spree::Api::BaseController
-      respond_to :json
 
       def index
         @countries = Country.ransack(params[:q]).result.

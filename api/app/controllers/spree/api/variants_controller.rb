@@ -1,8 +1,6 @@
 module Spree
   module Api
     class VariantsController < Spree::Api::BaseController
-      respond_to :json
-
       before_filter :product
 
       def index

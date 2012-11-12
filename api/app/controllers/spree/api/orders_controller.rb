@@ -1,8 +1,6 @@
 module Spree
   module Api
     class OrdersController < Spree::Api::BaseController
-      respond_to :json
-
       before_filter :authorize_read!, :except => [:index, :search, :create]
 
       def index
