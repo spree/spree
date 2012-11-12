@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class PaymentsController < Spree::Api::V1::BaseController
+      class PaymentsController < Spree::Api::BaseController
         before_filter :find_order
         before_filter :find_payment, :only => [:show, :authorize, :purchase, :capture, :void, :credit]
 

@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class TaxonomiesController < Spree::Api::V1::BaseController
+      class TaxonomiesController < Spree::Api::BaseController
         def index
           @taxonomies = Taxonomy.order('name').includes(:root => :children).ransack(params[:q]).result
             .page(params[:page]).per(params[:per_page])

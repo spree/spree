@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class LineItemsController < Spree::Api::V1::BaseController
+      class LineItemsController < Spree::Api::BaseController
         def create
           authorize! :read, order
           @line_item = order.line_items.build(params[:line_item], :as => :api)

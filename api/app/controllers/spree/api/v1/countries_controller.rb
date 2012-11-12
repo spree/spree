@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class CountriesController < Spree::Api::V1::BaseController
+      class CountriesController < Spree::Api::BaseController
         def index
           @countries = Country.ransack(params[:q]).result.includes(:states).order('name ASC')
             .page(params[:page]).per(params[:per_page])

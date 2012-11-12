@@ -6,6 +6,9 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_api'
 
+      config.view_versions = [1, 2]
+      config.view_version_extraction_strategy = :http_parameter
+
       initializer "spree.api.environment", :before => :load_config_initializers do |app|
         Spree::Api::Config = Spree::ApiConfiguration.new
       end
@@ -20,7 +23,6 @@ module Spree
       def self.root
         @root ||= Pathname.new(File.expand_path('../../../../', __FILE__))
       end
-
     end
   end
 end

@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class OrdersController < Spree::Api::V1::BaseController
+      class OrdersController < Spree::Api::BaseController
         before_filter :authorize_read!, :except => [:index, :search, :create]
 
         def index

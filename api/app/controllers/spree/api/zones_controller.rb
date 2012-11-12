@@ -1,6 +1,6 @@
 module Spree
   module Api
-    class ZonesController < Spree::Api::V1::BaseController
+    class ZonesController < Spree::Api::BaseController
       def index
         @zones = Zone.order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
       end

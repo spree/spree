@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class ImagesController < Spree::Api::V1::BaseController
+      class ImagesController < Spree::Api::BaseController
         def show
           @image = Image.find(params[:id])
         end

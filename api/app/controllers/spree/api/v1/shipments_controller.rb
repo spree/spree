@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class ShipmentsController < BaseController
+      class ShipmentsController < Spree::Api::BaseController
         before_filter :find_order
         before_filter :find_and_update_shipment, :only => [:ship, :ready]
 

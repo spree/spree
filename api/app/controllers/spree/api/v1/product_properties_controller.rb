@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class ProductPropertiesController < Spree::Api::V1::BaseController
+      class ProductPropertiesController < Spree::Api::BaseController
         before_filter :find_product
         before_filter :product_property, :only => [:show, :update, :destroy]
 

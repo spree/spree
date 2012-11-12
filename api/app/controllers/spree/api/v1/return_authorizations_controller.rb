@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class ReturnAuthorizationsController < Spree::Api::V1::BaseController
+      class ReturnAuthorizationsController < Spree::Api::BaseController
         before_filter :authorize_admin!
 
         def index

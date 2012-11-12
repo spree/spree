@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V1
-      class AddressesController < Spree::Api::V1::BaseController
+      class AddressesController < Spree::Api::BaseController
         def show
           @address = Address.find(params[:id])
           authorize! :read, @address
