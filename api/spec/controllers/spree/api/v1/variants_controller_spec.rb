@@ -28,6 +28,21 @@ module Spree
       json_response["pages"].should == 1
     end
 
+    it 'can control the page size through a parameter' do
+      create(:variant)
+      api_get :index, :per_page => 1
+      json_response['count'].should == 1
+      json_response['current_page'].should == 1
+      json_response['pages'].should == 3
+    end
+
+    it 'can query the results through a paramter' do
+      expected_result = create(:variant, :sku => 'FOOBAR')
+      api_get :index, :q => { :sku_cont => 'FOO' }
+      json_response['count'].should == 1
+      json_response['variants'].first['variant']['sku'].should eq expected_result.sku
+    end
+
     it "variants returned contain option values data" do
       api_get :index
       option_values = json_response["variants"].last["variant"]["option_values"]
@@ -61,7 +76,7 @@ module Spree
         second_variant = create(:variant)
         api_get :index, :page => 2
         json_response["variants"].first.should have_attributes(attributes)
-        json_response["count"].should == 3
+        json_response["total_count"].should == 3
         json_response["current_page"].should == 2
         json_response["pages"].should == 3
       end
