@@ -20,8 +20,8 @@ module Spree
       it "gets all taxonomies" do
         api_get :index
 
-        json_response["taxonomies"].first['taxonomy']['name'].should eq taxonomy.name
-        json_response["taxonomies"].first['taxonomy']['root']['taxons'].count.should eq 1
+        json_response["taxonomies"].first['name'].should eq taxonomy.name
+        json_response["taxonomies"].first['root']['taxons'].count.should eq 1
       end
 
       it 'can control the page size through a parameter' do
@@ -36,27 +36,27 @@ module Spree
         expected_result = create(:taxonomy, :name => 'Style')
         api_get :index, :q => { :name_cont => 'style' }
         json_response['count'].should == 1
-        json_response['taxonomies'].first['taxonomy']['name'].should eq expected_result.name
+        json_response['taxonomies'].first['name'].should eq expected_result.name
       end
 
       it "gets a single taxonomy" do
         api_get :show, :id => taxonomy.id
 
-        json_response['taxonomy']['name'].should eq taxonomy.name
+        json_response['name'].should eq taxonomy.name
 
-        children = json_response['taxonomy']['root']['taxons']
+        children = json_response['root']['taxons']
         children.count.should eq 1
-        children.first['taxon']['name'].should eq taxon.name
-        children.first['taxon'].key?('taxons').should be_false
+        children.first['name'].should eq taxon.name
+        children.first.key?('taxons').should be_false
       end
 
       it "gets a single taxonomy with set=nested" do
         api_get :show, :id => taxonomy.id, :set => 'nested'
 
-        json_response['taxonomy']['name'].should eq taxonomy.name
+        json_response['name'].should eq taxonomy.name
 
-        children = json_response['taxonomy']['root']['taxons']
-        children.first['taxon'].key?('taxons').should be_true
+        children = json_response['root']['taxons']
+        children.first.key?('taxons').should be_true
       end
 
       it "can learn how to create a new taxonomy" do
