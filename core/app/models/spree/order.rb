@@ -19,6 +19,8 @@ module Spree
       go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
       go_to_state :complete
       remove_transition :from => :delivery, :to => :confirm
+
+      before_transition_callbacks[:delivery] << lambda { |order| p order; order.create_shipment! }
     end
 
     token_resource
