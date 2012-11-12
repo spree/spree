@@ -11,6 +11,9 @@ module Spree
         config.include_child_root = false
       end
 
+      config.view_versions = [1]
+      config.view_version_extraction_strategy = :http_header
+
       initializer "spree.api.environment", :before => :load_config_initializers do |app|
         Spree::Api::Config = Spree::ApiConfiguration.new
       end
@@ -25,7 +28,6 @@ module Spree
       def self.root
         @root ||= Pathname.new(File.expand_path('../../../../', __FILE__))
       end
-
     end
   end
 end
