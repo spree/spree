@@ -66,14 +66,14 @@ module Spree
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
-      json_response["order"]["state"].should == "address"
+      json_response["state"].should == "address"
     end
 
     it "can create an order without any parameters" do
       lambda { api_post :create }.should_not raise_error(NoMethodError)
       response.status.should == 201
       order = Order.last
-      json_response["order"]["state"].should == "address"
+      json_response["state"].should == "address"
     end
 
     context "working with an order" do
@@ -108,7 +108,7 @@ module Spree
         order.shipping_address.firstname.should == shipping_address[:firstname]
         order.billing_address.firstname.should == billing_address[:firstname]
         order.state.should == "delivery"
-        json_response["order"]["shipping_methods"].should_not be_empty
+        json_response["shipping_methods"].should_not be_empty
       end
 
       it "can add just shipping address information to an order" do
@@ -147,7 +147,7 @@ module Spree
         api_put :update, :id => order.to_param, :order => { :line_items => [{:variant_id => create(:variant).id, :quantity => 2}] }
 
         response.status.should == 200
-        json_response['order']['item_total'].to_f.should_not == order.item_total.to_f
+        json_response['item_total'].to_f.should_not == order.item_total.to_f
       end
 
       context "with a line item" do
@@ -230,7 +230,7 @@ module Spree
           api_get :index, :q => { :email_cont => 'spree' }
           json_response["orders"].count.should == 1
           json_response["orders"].first.should have_attributes(attributes)
-          json_response["orders"].first["order"]["email"].should == expected_result.email
+          json_response["orders"].first["email"].should == expected_result.email
           json_response["count"].should == 1
           json_response["current_page"].should == 1
           json_response["pages"].should == 1
@@ -247,7 +247,7 @@ module Spree
 
         specify do
           api_put :cancel, :id => order.to_param
-          json_response["order"]["state"].should == "canceled"
+          json_response["state"].should == "canceled"
         end
       end
     end
