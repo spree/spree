@@ -6,7 +6,7 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_api'
 
-      config.view_versions = [1, 2]
+      config.view_versions = [1]
       config.view_version_extraction_strategy = :http_parameter
 
       initializer "spree.api.environment", :before => :load_config_initializers do |app|
