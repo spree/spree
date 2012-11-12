@@ -12,7 +12,7 @@ module Spree
 
     it "gets all countries" do
       api_get :index
-      json_response["countries"].first['country']['iso3'].should eq @country.iso3
+      json_response['countries'].first['iso3'].should eq @country.iso3
     end
 
     context "with two countries" do
@@ -28,7 +28,7 @@ module Spree
       it 'can query the results through a paramter' do
         api_get :index, :q => { :name_cont => 'zam' }
         json_response['count'].should == 1
-        json_response['countries'].first['country']['name'].should eq @zambia.name
+        json_response['countries'].first['name'].should eq @zambia.name
       end
 
       it 'can control the page size through a parameter' do
@@ -41,8 +41,8 @@ module Spree
 
     it "includes states" do
       api_get :show, :id => @country.id
-      states = json_response['country']['states']
-      states.first['state']['name'].should eq @state.name
+      states = json_response['states']
+      states.first['name'].should eq @state.name
     end
   end
 end
