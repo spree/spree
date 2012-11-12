@@ -44,13 +44,13 @@ module Spree
       end
 
       def check_for_api_key
-        render "spree/api/v1/errors/must_specify_api_key", :status => 401 and return if api_key.blank?
+        render "spree/api/errors/must_specify_api_key", :status => 401 and return if api_key.blank?
       end
 
       def authenticate_user
         if requires_authentication? || api_key.present?
           unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key)
-            render "spree/api/v1/errors/invalid_api_key", :status => 401 and return
+            render "spree/api/errors/invalid_api_key", :status => 401 and return
           end
         else
           # Effectively, an anonymous user
@@ -59,7 +59,7 @@ module Spree
       end
 
       def unauthorized
-        render "spree/api/v1/errors/unauthorized", :status => 401 and return
+        render "spree/api/errors/unauthorized", :status => 401 and return
       end
 
       def requires_authentication?
@@ -67,7 +67,7 @@ module Spree
       end
 
       def not_found
-        render "spree/api/v1/errors/not_found", :status => 404 and return
+        render "spree/api/errors/not_found", :status => 404 and return
       end
 
       def current_ability
@@ -76,7 +76,7 @@ module Spree
 
       def invalid_resource!(resource)
         @resource = resource
-        render "spree/api/v1/errors/invalid_resource", :status => 422
+        render "spree/api/errors/invalid_resource", :status => 422
       end
 
       def api_key
