@@ -67,7 +67,7 @@ module Spree
         api_get :show, :order_id => order.id, :id => return_authorization.id
         response.status.should == 200
         json_response.should have_attributes(attributes)
-        json_response["return_authorization"]["state"].should_not be_blank
+        json_response["state"].should_not be_blank
       end
 
       it "can get a list of return authorizations" do
@@ -95,7 +95,7 @@ module Spree
         order.return_authorizations << expected_result
         api_get :index, :q => { :reason_cont => 'damage' }
         json_response['count'].should == 1
-        json_response['return_authorizations'].first['return_authorization']['reason'].should eq expected_result.reason
+        json_response['return_authorizations'].first['reason'].should eq expected_result.reason
       end
 
       it "can learn how to create a new return authorization" do
@@ -125,7 +125,7 @@ module Spree
         api_post :create, :return_autorization => { :order_id => order.id, :amount => 14.22, :reason => "Defective" }
         response.status.should == 201
         json_response.should have_attributes(attributes)
-        json_response["return_authorization"]["state"].should_not be_blank
+        json_response["state"].should_not be_blank
       end
     end
 

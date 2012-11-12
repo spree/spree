@@ -20,11 +20,11 @@ module Spree
       it "gets all taxons for a taxonomy" do
         api_get :index, :taxonomy_id => taxonomy.id
 
-        json_response.first['taxon']['name'].should eq taxon.name
-        children = json_response.first['taxon']['taxons']
+        json_response.first['name'].should eq taxon.name
+        children = json_response.first['taxons']
         children.count.should eq 1
-        children.first['taxon']['name'].should eq taxon2.name
-        children.first['taxon']['taxons'].count.should eq 1
+        children.first['name'].should eq taxon2.name
+        children.first['taxons'].count.should eq 1
       end
 
       it "gets all taxons" do
@@ -47,8 +47,8 @@ module Spree
       it "gets a single taxon" do
         api_get :show, :id => taxon.id, :taxonomy_id => taxonomy.id
 
-        json_response['taxon']['name'].should eq taxon.name
-        json_response['taxon']['taxons'].count.should eq 1
+        json_response['name'].should eq taxon.name
+        json_response['taxons'].count.should eq 1
       end
 
       it "gets all taxons in JSTree form" do
