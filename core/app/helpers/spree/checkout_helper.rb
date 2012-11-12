@@ -4,6 +4,16 @@ module Spree
       @order.checkout_steps
     end
 
+    def state_required_class
+      'required' if state_required?
+    end
+
+    def state_required_label
+      if state_required?
+        content_tag :span, '*', :class => state_required_class
+      end
+    end
+
     def checkout_progress
       states = checkout_states
       items = states.map do |state|
@@ -26,6 +36,11 @@ module Spree
         content_tag('li', content_tag('span', text), :class => css_classes.join('-'))
       end
       content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@order.state}")
+    end
+
+    private
+    def state_required?
+      Spree::Config[:address_requires_state]
     end
   end
 end
