@@ -7,7 +7,6 @@ module Spree
           class_attribute :previous_states
           class_attribute :checkout_flow
           class_attribute :checkout_steps
-          class_attribute :before_transition_callbacks
 
           def self.checkout_flow(&block)
             if block_given?
@@ -39,7 +38,7 @@ module Spree
             # On first definition, state_machines will not be defined
             state_machines.clear if respond_to?(:state_machines)
             state_machine :state, :initial => :cart do
-              klass.next_event_transitions.each { |t| transition(t.merge(:on => :next_without_callbacks)) }
+              klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
 
               # Persist the state on the order
               after_transition do |order|
@@ -118,10 +117,6 @@ module Spree
             self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
           end
 
-          def self.before_transition_callbacks
-            @before_transition_callbacks ||= Hash.new{|h, k| h[k] = []}
-          end
-
           def checkout_steps
             checkout_steps = []
             # TODO: replace this with each_with_object once Ruby 1.9 is standard
@@ -132,16 +127,6 @@ module Spree
               checkout_steps << step
             end
             checkout_steps.map(&:to_s)
-          end
-
-          def next
-            before_transition_callbacks[state.to_sym].each { |c| c.call(self) }
-            next_without_callbacks
-          end
-
-          def next!
-            before_transition_callbacks[state.to_sym].each { |c| c.call(self) }
-            next_without_callbacks!
           end
         end
       end
