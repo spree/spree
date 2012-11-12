@@ -179,7 +179,6 @@ describe Spree::Order do
     it "should change shipment status (unless shipped)"
   end
 
-
   # Another regression test for #729
   context "#resume" do
     before do
