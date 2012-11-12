@@ -9,6 +9,8 @@ Spree::Core::Engine.routes.prepend do
   end
 
   namespace :api do
+    resources :zones
+
     scope :module => :v1 do
       resources :products do
         resources :variants
@@ -46,7 +48,6 @@ Spree::Core::Engine.routes.prepend do
         end
       end
 
-      resources :zones
       resources :countries, :only => [:index, :show]
       resources :addresses, :only => [:show, :update]
       resources :taxonomies do
