@@ -9,7 +9,7 @@ module Spree
       attr_accessor :current_api_user
 
       before_filter :set_content_type
-      before_filter :check_for_api_key, :if => :requires_authentication?
+      before_filter :check_for_user_or_api_key, :if => :requires_authentication?
       before_filter :authenticate_user
       after_filter  :set_jsonp_format
 
@@ -47,8 +47,13 @@ module Spree
         headers["Content-Type"] = content_type
       end
 
-      def check_for_api_key
-        render "spree/api/errors/must_specify_api_key", :status => 401 and return if api_key.blank?
+      def check_for_user_or_api_key
+        # User is already authenticated with Spree, make request this way instead.
+        return true if @current_api_user = try_spree_current_user
+
+        if api_key.blank?
+          render "spree/api/errors/must_specify_api_key", :status => 401 and return
+        end
       end
 
       def authenticate_user

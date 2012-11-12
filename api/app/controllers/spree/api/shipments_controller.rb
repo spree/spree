@@ -1,8 +1,6 @@
 module Spree
   module Api
     class ShipmentsController < Spree::Api::BaseController
-      respond_to :json
-
       before_filter :find_order
       before_filter :find_and_update_shipment, :only => [:ship, :ready]
 

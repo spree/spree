@@ -52,6 +52,7 @@ Spree::Core::Engine.routes.prepend do
     resources :zones
     resources :countries, :only => [:index, :show]
     resources :addresses, :only => [:show, :update]
+
     resources :taxonomies do
       member do
         get :jstree
@@ -61,9 +62,9 @@ Spree::Core::Engine.routes.prepend do
           get :jstree
         end
       end
-
-      resources :taxons, :only => [:index]
     end
+    resources :taxons, :only => [:index]
+
     resources :inventory_units, :only => [:show, :update]
     resources :users
   end
