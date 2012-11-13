@@ -10,7 +10,7 @@ module Spree
         end
 
         def edit
-          country_id = Address.default.country
+          country_id = Address.default.country.id
           @order.build_bill_address(:country_id => country_id) if @order.bill_address.nil?
           @order.build_ship_address(:country_id => country_id) if @order.ship_address.nil?
         end
