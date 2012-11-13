@@ -28,6 +28,13 @@ module CapybaraExt
     end
     page.execute_script("$('.select2-highlighted').mouseup();")
   end
+
+  def eventually_fill_in(field, options={})
+    Capybara.wait_until do
+      find_field field
+    end
+    fill_in field, options
+  end
 end
 
 RSpec.configure do |c|

@@ -20,6 +20,7 @@ module Spree
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
+        render :edit and return unless apply_coupon_code
 
         if @order.next
           state_callback(:after)

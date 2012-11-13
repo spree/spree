@@ -77,6 +77,10 @@ module Spree
       res || payment_method
     end
 
+    def promo_total
+      order.promo_total * 100
+    end
+
     private
       def amount_is_valid_for_outstanding_balance_or_credit
         return unless order

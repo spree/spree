@@ -25,7 +25,9 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions
+                    :shipping_method_id, :email, :use_billing, :special_instructions, :coupon_code
+
+    attr_reader :coupon_code
 
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
@@ -478,6 +480,21 @@ module Spree
           :user_id        => self.user_id
         }, :without_protection => true)
       end
+    end
+
+    def coupon_code=(code)
+      @coupon_code = code.strip.downcase rescue nil
+    end
+
+    # Tells us if there if the specified promotion is already associated with the order
+    # regardless of whether or not its currently eligible.  Useful because generally
+    # you would only want a promotion to apply to order no more than once.
+    def promotion_credit_exists?(promotion)
+      !! adjustments.promotion.reload.detect { |credit| credit.originator.promotion.id == promotion.id }
+    end
+
+    def promo_total
+      adjustments.eligible.promotion.map(&:amount).sum
     end
 
     private

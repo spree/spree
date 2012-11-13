@@ -75,5 +75,31 @@ describe Spree::OrdersController do
     end
   end
 
-  #TODO - move some of the assigns tests based on session, etc. into a shared example group once new block syntax released
+  context "does not apply invalid coupon code" do
+    let(:persisted_order) { create(:order) }
+
+    let(:promotion) do
+      Spree::Promotion.create({
+        :name => "TestPromo",
+        :code => "TEST1",
+        :expires_at => 1.day.from_now,
+        :created_at => 1.day.ago,
+        :event_name => "spree.checkout.coupon_code_added",
+        :match_policy => "any"
+      }, :without_protection => true)
+    end
+
+    before do
+      controller.stub :current_user => user
+      controller.stub :current_order => persisted_order
+    end
+
+    it "and informs of invalidity" do
+      controller.should_not_receive(:fire_event).
+                 with('spree.checkout.coupon_code_added', hash_including(:coupon_code => 12345))
+      spree_put :update, :order => { :coupon_code => 12345 }
+      flash[:error].should == I18n.t(:coupon_code_not_found)
+      response.should render_template :edit
+    end
+  end
 end

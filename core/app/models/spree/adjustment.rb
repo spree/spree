@@ -103,7 +103,10 @@ module Spree
         def credit
           where('amount < 0')
         end
-      end
 
+        def promotion
+          where(:originator_type => 'Spree::PromotionAction')
+        end
+      end
   end
 end

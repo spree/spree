@@ -1,12 +1,21 @@
 require 'spec_helper'
+
 describe Spree::ContentController do
-  it "should not display a local file" do
-    spree_get :show, :path => "../../Gemfile"
-    response.response_code.should == 404
+  before :each do
+    controller.stub :spree_current_user => create(:user)
   end
 
-  it "should display CVV page" do
+  it "fires event for #show" do
+    # we are using cvv because the file exists in core/views/content
+    controller.should_receive(:fire_event).
+               with('spree.content.visited', hash_including(:path => "content/cvv"))
+    spree_get :show, :path => "cvv"
+ end
+
+  it "fires event for content actions like #cvv" do
+    controller.should_receive(:fire_event).
+               with('spree.content.visited', hash_including(:path => "content/cvv"))
     spree_get :cvv
-    response.response_code.should == 200
   end
+
 end

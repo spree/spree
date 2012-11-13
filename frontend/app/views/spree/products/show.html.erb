@@ -16,7 +16,28 @@
       <div data-hook="product_properties">
         <%= render :partial => 'properties' %>
       </div>
-    
+
+      <% promotions = @product.possible_promotions %>
+      <% if promotions.any? %>
+      <div id="promotions">
+        <h3><%= t(:promotions) %></h3>
+
+        <% promotions.each do |promotion| %>
+        <div>
+          <h4><%= promotion.name %></h4>
+          <p><%= promotion.description %></p>
+          <% if promotion.products.any? %>
+          <ul>
+            <% promotion.products.each do |product| %>
+              <li><%= link_to product.name, product_path(product) %></li>
+            <% end %>
+          </ul>
+          <% end %>
+        </div>
+        <% end %>
+
+      </div>
+      <% end %>
     </div>
   </div>
 

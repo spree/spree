@@ -91,6 +91,16 @@ en:
         on_demand: "On Demand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
+      spree/promotion:
+        advertise: Advertise
+        code: Code
+        description: Description
+        event_name: Event Name
+        expires_at: Expires At
+        name: Name
+        path: Path
+        starts_at: Starts At
+        usage_limit: Usage Limit
       spree/property:
         name: Name
         presentation: Presentation
@@ -1121,3 +1131,89 @@ en:
   zone_based: "Zone Based"
   zone_setting_description: "Collections of countries, states or other zones to be used in various calculations."
   zones: Zones
+
+  # Promotion translations
+  add_action_of_type: Add action of type
+  add_rule_of_type: Add rule of type
+  back_to_promotions_list: "Back To Promotions List"
+  coupon: Coupon
+  coupon_code: Coupon code
+  coupon_code_applied: The coupon code was successfully applied to your order.
+  coupon_code_expired: The coupon code is expired
+  coupon_code_already_applied: The coupon code has already been applied to this order
+  coupon_code_better_exists: The previously applied coupon code results in a better deal
+  coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
+  coupon_code_max_usage: Coupon code usage limit exceeded
+  coupon_code_not_eligible: This coupon code is not eligible for this order
+  editing_promotion: Editing Promotion
+  current_promotion_usage: 'Current Usage: %{count}'
+  events:
+    spree:
+      checkout:
+        coupon_code_added: Coupon code added
+      content:
+        visited: Visit static content page
+  expiry: Expiry
+  free_shipping: Free Shipping
+  item_total_rule:
+    operators:
+      gt: greater than
+      gte: greater than or equal to
+  landing_page_rule:
+    path: Path
+  new_promotion: New Promotion
+  no_rules_added: No rules added
+  percent_per_item: Percent Per Item
+  product_rule:
+    choose_products: Choose products
+    label: "Order must contain %{select} of these products"
+    match_any: at least one
+    match_all: all
+    product_source:
+      group: From product group
+      manual: Manually choose
+  promotion: Promotion
+  promotion_action: Promotion Action
+  promotion_actions: Actions
+  promotion_action_types:
+    create_adjustment:
+      name: Create adjustment
+      description: Creates a promotion credit adjustment on the order
+    create_line_items:
+      name: Create line items
+      description: Populates the cart with the specified quantity of variant
+    give_store_credit:
+      name: Give store credit
+      description: Gives the user store credit of the amount specified
+  promotion_form:
+    match_policies:
+      all: Match all of these rules
+      any: Match any of these rules
+  promotions: Promotions
+  promotions_description: Manage offers and coupons with promotions
+  promotion_rule: Promotion Rule
+  promotion_rule_types:
+    first_order:
+      name: First order
+      description: "Must be the customer's first order"
+    item_total:
+      name: Item total
+      description: Order total meets these criteria
+    landing_page:
+      name: Landing Page
+      description: Customer must have visited the specified page
+    product:
+      name: Product(s)
+      description: Order includes specified product(s)
+    user:
+      name: User
+      description: Available only to the specified users
+    user_logged_in:
+      name: User Logged In
+      description: Available only to logged in users
+  rules: Rules
+  spree/order:
+    coupon_code: Coupon Code
+  user_rule:
+    choose_users: Choose users
+

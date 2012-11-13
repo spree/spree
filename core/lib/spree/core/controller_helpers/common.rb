@@ -26,7 +26,7 @@ module Spree
         # add additional keys as appropriate. Override this method if you need additional data when
         # responding to a notification
         def default_notification_payload
-          {:user => try_spree_current_user, :order => current_order}
+          {:user => try_spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
         end
 
         # can be used in views as well as controllers.

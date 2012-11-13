@@ -651,6 +651,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
+  .coupon-code-field {
+    margin-bottom: 10px;
+  }
+
   #payment-methods {
     list-style: none;
 
@@ -1049,13 +1053,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       float: none !important;
     }
   }
-  
-  @media only screen and (min-width: 768px) and (max-width: 959px) {
-    .container .offset-by-nine.coupon-code-field {
-      padding-left: 380px;
-    }
-  }
-  
 
   /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
   @media only screen and (max-width: 479px) {

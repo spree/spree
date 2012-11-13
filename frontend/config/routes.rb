@@ -174,6 +174,11 @@ Spree::Core::Engine.routes.prepend do
         post :testmail
       end
     end
+
+    resources :promotions do
+      resources :promotion_rules
+      resources :promotion_actions
+    end
   end
 
   match '/admin', :to => 'admin/orders#index', :as => :admin

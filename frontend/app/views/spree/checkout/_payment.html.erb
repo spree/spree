@@ -19,8 +19,13 @@
         </li>
       <% end %>
     </ul>
-    <br style="clear:both;" />
-    <div data-hook="coupon_code_field" data-hook></div>
+    <% unless @order.adjustments.promotion.exists? %>
+      <div class="coupon-code-field" data-hook="coupon_code_field">
+        <%= form.label :coupon_code %><br />
+        <%= form.text_field :coupon_code, :size => 10 %>
+        <%= form.submit I18n.t(:apply) %>
+      </div>
+    <% end %>
   </div>
 </fieldset>
 

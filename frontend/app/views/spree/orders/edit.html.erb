@@ -23,6 +23,12 @@
         </div>
 
         <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
+          <div class="coupon-code-field">
+            <strong><%= order_form.label :coupon_code %></strong><br>
+            <%= order_form.text_field :coupon_code, :size => 10 %>
+            <%= order_form.submit I18n.t(:apply) %>
+          </div>
+
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
             <%= t(:update) %>
           <% end %>
