@@ -49,5 +49,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'httparty', '0.9.0'
 
   # For testing alerts
-  s.add_dependency 'webmock', '1.8.11'
+  s.add_development_dependency 'webmock', '1.8.11'
 end
