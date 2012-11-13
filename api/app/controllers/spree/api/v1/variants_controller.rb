@@ -5,8 +5,9 @@ module Spree
         before_filter :product
 
         def index
-          @variants = scope.includes(:option_values).ransack(params[:q]).result.
-            page(params[:page]).per(params[:per_page])
+          @variants = scope.
+                      includes(:option_values).ransack(params[:q]).result.
+                      page(params[:page]).per(params[:per_page])
         end
 
         def show
