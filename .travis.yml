@@ -22,9 +22,5 @@ notifications:
     skip_join: true
     channels:
       - "irc.freenode.org#spree"
-branches:
-  only:
-    - 1-1-stable
-    - master
 rvm:
-  - 1.8.7
+  - 1.9.3
