@@ -649,6 +649,7 @@ describe Spree::Order do
         Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
         mail_message.stub :deliver
         order.stub :shipment_state => 'pending'
+        order.stub :restock_items!
       end
 
       context "without shipped items" do
