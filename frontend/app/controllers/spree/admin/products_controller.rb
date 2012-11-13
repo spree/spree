@@ -26,7 +26,7 @@ module Spree
         @product = Product.where(:permalink => params[:id]).first!
         @product.delete
 
-        flash.notice = I18n.t('notice_messages.product_deleted')
+        flash.success = I18n.t('notice_messages.product_deleted')
 
         respond_with(@product) do |format|
           format.html { redirect_to collection_url }
@@ -38,9 +38,9 @@ module Spree
         @new = @product.duplicate
 
         if @new.save
-          flash.notice = I18n.t('notice_messages.product_cloned')
+          flash.success = I18n.t('notice_messages.product_cloned')
         else
-          flash.notice = I18n.t('notice_messages.product_not_cloned')
+          flash.success = I18n.t('notice_messages.product_not_cloned')
         end
 
         redirect_to edit_admin_product_url(@new)
