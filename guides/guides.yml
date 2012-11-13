@@ -104,6 +104,9 @@ index:
     - title: Creating Extensions
       url: creating_extensions
       text: This guide covers how to create an extension.
+    - title: Custom Authentication
+      url: authentication
+      text: This guide covers how to use a custom authentication setup with Spree. 
   Digging Deeper:
     - title: Spree Checkout Process
       url: checkout
