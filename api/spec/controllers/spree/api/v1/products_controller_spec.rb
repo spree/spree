@@ -69,18 +69,17 @@ module Spree
         product.set_property("spree", "rocks")
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
-        product_json = json_response["product"]
-        product_json["variants"].first.should have_attributes([:name,
+        json_response['variants'].first.should have_attributes([:name,
                                                               :is_master,
                                                               :count_on_hand,
                                                               :price])
 
-        product_json["images"].first.should have_attributes([:attachment_file_name,
+        json_response["images"].first.should have_attributes([:attachment_file_name,
                                                             :attachment_width,
                                                             :attachment_height,
                                                             :attachment_content_type])
 
-        product_json["product_properties"].first.should have_attributes([:value,
+        json_response["product_properties"].first.should have_attributes([:value,
                                                                          :product_id,
                                                                          :property_name])
       end
@@ -95,11 +94,11 @@ module Spree
 
         specify do
           api_get :show, :id => product.to_param
-          json_response["product"]["permalink"].should =~ /and-1-ways/
+          json_response["permalink"].should =~ /and-1-ways/
           product.destroy
 
           api_get :show, :id => other_product.id
-          json_response["product"]["permalink"].should =~ /droids/
+          json_response["permalink"].should =~ /droids/
         end
       end
 

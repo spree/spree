@@ -30,7 +30,7 @@ describe Spree::Api::V1::ShipmentsController do
     it "can make a shipment ready" do
       api_put :ready
       json_response.should have_attributes(attributes)
-      json_response["shipment"]["state"].should == "ready"
+      json_response["state"].should == "ready"
       shipment.reload.state.should == "ready"
     end
 
@@ -44,7 +44,7 @@ describe Spree::Api::V1::ShipmentsController do
         shipment.reload
         api_put :ship, :order_id => shipment.order.to_param, :id => shipment.to_param, :shipment => { :tracking => "123123" }
         json_response.should have_attributes(attributes)
-        json_response["shipment"]["state"].should == "shipped"
+        json_response["state"].should == "shipped"
       end
     end
   end

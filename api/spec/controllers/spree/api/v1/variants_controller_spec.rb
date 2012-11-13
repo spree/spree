@@ -40,12 +40,12 @@ module Spree
       expected_result = create(:variant, :sku => 'FOOBAR')
       api_get :index, :q => { :sku_cont => 'FOO' }
       json_response['count'].should == 1
-      json_response['variants'].first['variant']['sku'].should eq expected_result.sku
+      json_response['variants'].first['sku'].should eq expected_result.sku
     end
 
     it "variants returned contain option values data" do
       api_get :index
-      option_values = json_response["variants"].last["variant"]["option_values"]
+      option_values = json_response["variants"].last["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
@@ -85,7 +85,7 @@ module Spree
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
       json_response.should have_attributes(attributes)
-      option_values = json_response["variant"]["option_values"]
+      option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
