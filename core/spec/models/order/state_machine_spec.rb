@@ -155,6 +155,7 @@ describe Spree::Order do
         Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
         mail_message.stub :deliver
         order.stub :has_available_shipment
+        order.stub :restock_items!
       end
 
       context "without shipped items" do
@@ -178,7 +179,6 @@ describe Spree::Order do
 
     it "should change shipment status (unless shipped)"
   end
-
 
   # Another regression test for #729
   context "#resume" do
