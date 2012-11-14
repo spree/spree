@@ -17,8 +17,7 @@ describe "Payment Methods" do
         find('th:nth-child(1)').text.should == "Name"
         find('th:nth-child(2)').text.should == "Provider"
         find('th:nth-child(3)').text.should == "Environment"
-        find('th:nth-child(4)').text.should == "Display"
-        find('th:nth-child(5)').text.should == "Active"
+        find('th:nth-child(4)').text.should == "Active"
       end
 
       within('table#listing_payment_methods') do
