@@ -1,0 +1,43 @@
+h2. Spree 1.2.1 Release Notes
+
+Spree 1.2.1 is the latest Spree release in the 1.2.x branch. This release contains minor improvements and bug fixes. Compatibility with extensions is mostly guaranteed, however there may be edge cases. If you find one of these, please "file an issue":https://github.com/spree/spree/blob/master/CONTRIBUTING.md.
+
+h3. Major changes
+
+h4. API changes
+
+We have changed some aspects of the API component in Spree. For a detailed list of these changes, please refer to the "Changes page on our API site":http://api.spreecommerce.com/changes/
+
+h3. Other changes
+
+* Switched from using the +acts_as_nested_set+ gem to using +awesome_nested_set_gem+, which is an optimized version of the same gem. "#1927":https://github.com/spree/spree/issues/1927
+* Renamed InventoryUnit.backorder to InventoryUnit.backordered "commit":https://github.com/spree/spree/commit/6cc3da52daa3ef57423c0ddbeb4211980ea3103d
+* Fix issue with installer when running on +i386-mingw32+ platform PCs. "#1903":https://github.com/spree/spree/issues/1903
+* All adjustments, not just optional ones, are locked on an order completion. "commit":https://github.com/spree/spree/commit/1a9b25c0a4232f02f25ab0d7bc80250e045bf8fa
+* Fix issue where currently selected currency wasn't displayed correctly on the "General Settings" page. "commit":https://github.com/spree/spree/commit/a46455afd8e4691aaf789b4639da8967277f1916
+* Added +:currency_symbol_position+ configuration option, to configure if currency symbol goes before or after amount. "commit":https://github.com/spree/spree/commit/575af696f39f9ea408fc9f4082bccff4e7fa4e05 "#1911":https://github.com/spree/spree/issues/1911
+* Allow for calling +save_permalink+ manually to recalculate a permalink. "#1920":https://github.com/spree/spree/issues/1920
+* Disable double-clicking delete links on line items. "#1934":https://github.com/spree/spree/issues/1934
+* Add +per_page+ parameter for API orders. "#1949":https://github.com/spree/spree/issues/1949
+* Fixed payment banner not being dismissed when asked. "#1952":https://github.com/spree/spree/issues/1952
+* Prevent double-submit on checkout confirm step. "commit":https://github.com/spree/spree/commit/84f91aa875d41fa1e77646c9cc25b321dab050cc
+* Allow an order with no shipments to be canceled. "#1989":https://github.com/spree/spree/issues/1989
+* Added +Product#available?+ "#2002":https://github.com/spree/spree/issues/2002
+* Allow case-insensitive coupon codes "#2009":https://github.com/spree/spree/issues/2009 and "#2012":https://github.com/spree/spree/issues/2012
+* Fix problem with currencies whose sub-units are not in hundreds. "#2030":https://github.com/spree/spree/issues/2030
+* Payments are no longer processed if +Order#payment_required?+ returns false. "#2028":https://github.com/spree/spree/issues/2028
+* Expired promotions are now excluded from +Product#possible_promotions+ "#2058":https://github.com/spree/spree/issues/2058
+* Load +Spree::AuthenticationHelpers+ during a +to_prepare+ hook "#2076":https://github.com/spree/spree/issues/2076
+* Updating a line item's quantity and then clicking the checkout button will now persist the update. "#2086":https://github.com/spree/spree/issues/2086
+* +with_option_value+ and +taxons_name_eq+ scopes on +Product+ will now return +Product+ objects, rather than IDs. "#2082":https://github.com/spree/spree/issues/2082 
+* Searcher class instances in +HomeController+, +ProductsController+ and +TaxonsController+ will now have access to the current user object. "#2089":https://github.com/spree/spree/issues/2089
+* +spree_products.count_on_hand+ and +spree_variants.count_on_hand+ columns can now be set to +NULL+ to indicate an infinite supply. "#2096":https://github.com/spree/spree/issues/2096
+* Orders are marked "returned" if all return authorizations are received "#1714":https://github.com/spree/spree/issues/1714 "#2099":https://github.com/spree/spree/issues/2099
+* Unique products are returned from +Product.in_taxon+ scope "#1917":https://github.com/spree/spree/issues/1917 "#1974":https://github.com/spree/spree/issues/1974 "#1962":https://github.com/spree/spree/issues/1962
+* +Product.on_hand+ scope no longer sums deleted variants. "#2112":https://github.com/spree/spree/issues/2112
+* +Payment#capture+ now does nothing for payments marked as "completed" "#2119":https://github.com/spree/spree/issues/2119
+* I18nify "Order Adjustments" text "#2123":https://github.com/spree/spree/issues/2123
+* EXIF data is now stripped from JPEGs "#2142":https://github.com/spree/spree/issues/2142 "#2145":https://github.com/spree/spree/issues/2145
+* Only eligible promotions are now included in +promo_total+ on +Order+ objects. "commit":https://github.com/spree/spree/commit/74a7914903b9d7dac77e0cbd38b1919fb3396254
+* Promotion usage count is now visible on a promotion's edit page. "#2193":https://github.com/spree/spree/issues/2193
+* The user picker for the promotions backend is now functional again, after being broken accidentally in the previous release. "#1890":https://github.com/spree/spree/issues/1890
