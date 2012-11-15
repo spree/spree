@@ -35,7 +35,12 @@
       <%= f.field_container :available_on do %>
         <%= f.label :available_on, t(:available_on) %><br />
         <%= f.error_message_on :available_on %>
-        <%= f.text_field :available_on, :class => 'datepicker' %>
+        <% if @product.available_on? %>
+          <% available_on = l(@product.available_on, :format => t('spree.date_picker.format')) %>
+        <% else %>
+          <% available_on = nil %>
+        <% end %>
+        <%= f.text_field :available_on, :value => available_on, :class => 'datepicker' %>
       <% end %>
 
       <% unless @product.has_variants? %>
