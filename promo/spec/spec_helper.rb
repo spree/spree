@@ -12,7 +12,6 @@ require 'ffaker'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'spree/core/testing_support/factories'
-require 'spree/core/testing_support/env'
 require 'spree/core/testing_support/authorization_helpers'
 
 require 'factories'
