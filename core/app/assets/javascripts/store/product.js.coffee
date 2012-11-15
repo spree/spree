@@ -1,18 +1,19 @@
 add_image_handlers = ->
+  thumbnails = ($ '#product-images ul.thumbnails')
   ($ '#main-image').data 'selectedThumb', ($ '#main-image img').attr('src')
-  ($ 'ul.thumbnails li').eq(0).addClass 'selected'
-  ($ 'ul.thumbnails a').on 'click', (event) ->
+  thumbnails.find('li').eq(0).addClass 'selected'
+  thumbnails.find('a').on 'click', (event) ->
     ($ '#main-image').data 'selectedThumb', ($ event.currentTarget).attr('href')
     ($ '#main-image').data 'selectedThumbId', ($ event.currentTarget).parent().attr('id')
     ($ this).mouseout ->
-      ($ 'ul.thumbnails li').removeClass 'selected'
+      thumbnails.find('li').removeClass 'selected'
       ($ event.currentTarget).parent('li').addClass 'selected'
     false
 
-  ($ 'ul.thumbnails li').on 'mouseenter', (event) ->
+  thumbnails.find('li').on 'mouseenter', (event) ->
     ($ '#main-image img').attr 'src', ($ event.currentTarget).find('a').attr('href')
 
-  ($ 'ul.thumbnails li').on 'mouseleave', (event) ->
+  thumbnails.find('li').on 'mouseleave', (event) ->
     ($ '#main-image img').attr 'src', ($ '#main-image').data('selectedThumb')
 
 show_variant_images = (variant_id) ->
@@ -20,9 +21,9 @@ show_variant_images = (variant_id) ->
   ($ 'li.vtmb-' + variant_id).show()
   currentThumb = ($ '#' + ($ '#main-image').data('selectedThumbId'))
   if not currentThumb.hasClass('vtmb-' + variant_id) and not currentThumb.hasClass('tmb-all')
-    thumb = ($ ($ 'ul.thumbnails li:visible').eq(0))
+    thumb = $(thumbnails).find('li:visible').first()
     newImg = thumb.find('a').attr('href')
-    ($ 'ul.thumbnails li').removeClass 'selected'
+    $(thumbnails).find('li').removeClass 'selected'
     thumb.addClass 'selected'
     ($ '#main-image img').attr 'src', newImg
     ($ '#main-image').data 'selectedThumb', newImg
