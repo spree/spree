@@ -33,6 +33,21 @@ module Spree
       json_response["product_properties"].first.should have_attributes(attributes)
     end
 
+    it "can control the page size through a parameter" do
+      api_get :index, :per_page => 1
+      json_response['product_properties'].count.should == 1
+      json_response['current_page'].should == 1
+      json_response['pages'].should == 2
+    end
+
+    it 'can query the results through a paramter' do
+      Spree::ProductProperty.last.update_attribute(:value, 'loose')
+      property = Spree::ProductProperty.last
+      api_get :index, :q => { :value_cont => 'loose' }
+      json_response['count'].should == 1
+      json_response['product_properties'].first['product_property']['value'].should eq property.value
+    end
+
     it "can see a single product_property" do
       api_get :show, :id => property_1.property_name
       json_response.should have_attributes(attributes)

@@ -397,7 +397,7 @@ module Spree
     end
 
     def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available(:front_end)
+      @available_payment_methods ||= PaymentMethod.available
     end
 
     def payment_method
@@ -438,6 +438,10 @@ module Spree
 
     def products
       line_items.map { |li| li.variant.product }
+    end
+
+    def variants
+      line_items.map(&:variant)
     end
 
     def insufficient_stock_lines

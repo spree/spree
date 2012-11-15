@@ -5,7 +5,9 @@ module Spree
         before_filter :authorize_admin!
 
         def index
-          @return_authorizations = order.return_authorizations
+          @return_authorizations = order.return_authorizations.
+                                   ransack(params[:q]).result.
+                                   page(params[:page]).per(params[:per_page])
         end
 
         def show

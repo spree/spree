@@ -16,10 +16,10 @@ describe Spree::ShipmentMailer do
     shipment
   end
 
-  it "doesn't include out of stock html span in the email body" do
-    Spree::Config.allow_backorders = false
+  # Regression test for #2196
+  it "doesn't include out of stock in the email body" do
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
-    shipment_email.body.should_not include(%Q{span class="out-of-stock"})
+    shipment_email.body.should_not include(%Q{Out of Stock})
   end
 
   context "emails must be translatable" do

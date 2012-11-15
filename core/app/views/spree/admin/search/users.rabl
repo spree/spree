@@ -1,6 +1,6 @@
 object false
 child @users => :users do
-  attributes :email
+  attributes :email, :id
   address_fields = [:firstname, :lastname,
                     :address1, :address2,
                     :city, :zipcode,
