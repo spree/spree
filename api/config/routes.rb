@@ -32,6 +32,7 @@ Spree::Core::Engine.routes.prepend do
         resources :payments do
           member do
             put :authorize
+            put :capture
             put :purchase
             put :void
             put :credit
