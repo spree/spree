@@ -146,9 +146,10 @@ module Spree
       def ensure_correct_adjustment
         if adjustment
           adjustment.originator = shipping_method
+          adjustment.label = shipping_method.adjustment_label
           adjustment.save
         else
-          shipping_method.create_adjustment(I18n.t(:shipping), order, self, true)
+          shipping_method.create_adjustment(shipping_method.adjustment_label, order, self, true)
           reload #ensure adjustment is present on later saves
         end
       end

@@ -15,6 +15,10 @@ module Spree
 
     calculated_adjustments
 
+    def adjustment_label
+      I18n.t(:shipping)
+    end
+
     def available?(order, display_on = nil)
       displayable?(display_on) && calculator.available?(order)
     end
