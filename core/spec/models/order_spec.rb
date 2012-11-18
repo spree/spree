@@ -138,7 +138,7 @@ describe Spree::Order do
       order.stub(:total).and_return(10)
       payment = stub_model(Spree::Payment)
       payments = [payment]
-      order.stub(:payments).and_return(payments)
+      order.stub(:pending_payments).and_return(payments)
       payments.first.should_receive(:process!)
       order.process_payments!
     end
