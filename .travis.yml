@@ -1,5 +1,3 @@
-before_install:
-  - gem install bundler
 before_script:
   - "sh -e /etc/init.d/xvfb start"
   - "bundle exec rake test_app"
@@ -14,6 +12,7 @@ script:
   - "cd ../core; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../dash; set_gemfile; bundle install --quiet; bundle exec rspec spec"
   - "cd ../promo; set_gemfile; bundle install --quiet; bundle exec rspec spec"
+
 notifications:
   email:
     - ryan@spreecommerce.com
@@ -24,7 +23,3 @@ notifications:
       - "irc.freenode.org#spree"
 rvm:
   - 1.9.3
-  - 2.0.0
-matrix:
-  allow_failures:
-    - rvm: 2.0.0
