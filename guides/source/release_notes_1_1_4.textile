@@ -14,6 +14,39 @@ h4. Rails dependency upgraded
 
 Due to a "security bug":http://weblog.rubyonrails.org/2012/11/12/ann-rails-3-2-9-has-been-released/ within Rails, we have upgraded the dependency of Rails to be 3.2.9. You will not be able to use Rails 3.2.8 with Spree 1.1.4. It's highly encouraged you upgrade your Rails version.
 
+h4. JavaScript changes
+
+If you are upgrading from an older version of Spree 1.1, please make sure that your JavaScript requires are correct within `app/assets/javascripts`.
+
+Inside `app/assets/javascripts/admin/all.js`, the directives should be this:
+
+<plain>
+//= require jquery
+//= require jquery_ujs
+
+//= require admin/spree_core
+//= require admin/spree_auth
+//= require admin/spree_promo
+
+//= require_tree .
+</plain>
+
+Inside `app/assets/javascripts/store/all.js`, the directives should be this:
+
+<plain>
+//
+//= require jquery
+//= require jquery_ujs
+
+//= require store/spree_core
+//= require store/spree_auth
+//= require store/spree_promo
+
+//= require_tree .
+</plain>
+
+These changes are important, as they fix "Issue #1854":https://github.com/spree/spree/issues/1854.
+
 h3. Minor fixes
 
 * Ensure there is a valid state during the checkout. "#1770":https://github.com/spree/spree/issues/1770
