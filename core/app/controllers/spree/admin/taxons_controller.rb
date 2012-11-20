@@ -63,7 +63,7 @@ module Spree
           elsif new_position < new_siblings.index(@taxon)
             @taxon.move_to_left_of(new_siblings[new_position]) # we move up
           else
-            @taxon.move_to_right_of(new_siblings[new_position]) # we move down
+            @taxon.move_to_right_of(new_siblings[new_position-1]) # we move down
           end
           # Reset legacy position, if any extensions still rely on it
           new_parent.children.reload.each{|t| t.update_column(:position, t.position)}
