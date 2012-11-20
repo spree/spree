@@ -1,0 +1,1589 @@
+--- 
+countries_039: 
+  name: Chad
+  iso3: TCD
+  iso: TD
+  iso_name: CHAD
+  id: "39"
+  numcode: "148"
+countries_065: 
+  name: Faroe Islands
+  iso3: FRO
+  iso: FO
+  iso_name: FAROE ISLANDS
+  id: "65"
+  numcode: "234"
+countries_092: 
+  name: India
+  iso3: IND
+  iso: IN
+  iso_name: INDIA
+  id: "92"
+  numcode: "356"
+countries_146: 
+  name: Nicaragua
+  iso3: NIC
+  iso: NI
+  iso_name: NICARAGUA
+  id: "146"
+  numcode: "558"
+countries_172: 
+  name: Saint Lucia
+  iso3: LCA
+  iso: LC
+  iso_name: SAINT LUCIA
+  id: "172"
+  numcode: "662"
+countries_066: 
+  name: Fiji
+  iso3: FJI
+  iso: FJ
+  iso_name: FIJI
+  id: "66"
+  numcode: "242"
+countries_093: 
+  name: Indonesia
+  iso3: IDN
+  iso: ID
+  iso_name: INDONESIA
+  id: "93"
+  numcode: "360"
+countries_147: 
+  name: Niger
+  iso3: NER
+  iso: NE
+  iso_name: NIGER
+  id: "147"
+  numcode: "562"
+countries_173: 
+  name: Saint Pierre and Miquelon
+  iso3: SPM
+  iso: PM
+  iso_name: SAINT PIERRE AND MIQUELON
+  id: "173"
+  numcode: "666"
+countries_067: 
+  name: Finland
+  iso3: FIN
+  iso: FI
+  iso_name: FINLAND
+  id: "67"
+  numcode: "246"
+countries_148: 
+  name: Nigeria
+  iso3: NGA
+  iso: NG
+  iso_name: NIGERIA
+  id: "148"
+  numcode: "566"
+countries_174: 
+  name: Saint Vincent and the Grenadines
+  iso3: VCT
+  iso: VC
+  iso_name: SAINT VINCENT AND THE GRENADINES
+  id: "174"
+  numcode: "670"
+countries_068: 
+  name: France
+  iso3: FRA
+  iso: FR
+  iso_name: FRANCE
+  id: "68"
+  numcode: "250"
+countries_094: 
+  name: Iran, Islamic Republic of
+  iso3: IRN
+  iso: IR
+  iso_name: IRAN, ISLAMIC REPUBLIC OF
+  id: "94"
+  numcode: "364"
+countries_149: 
+  name: Niue
+  iso3: NIU
+  iso: NU
+  iso_name: NIUE
+  id: "149"
+  numcode: "570"
+countries_175: 
+  name: Samoa
+  iso3: WSM
+  iso: WS
+  iso_name: SAMOA
+  id: "175"
+  numcode: "882"
+countries_069: 
+  name: French Guiana
+  iso3: GUF
+  iso: GF
+  iso_name: FRENCH GUIANA
+  id: "69"
+  numcode: "254"
+countries_095: 
+  name: Iraq
+  iso3: IRQ
+  iso: IQ
+  iso_name: IRAQ
+  id: "95"
+  numcode: "368"
+countries_176: 
+  name: San Marino
+  iso3: SMR
+  iso: SM
+  iso_name: SAN MARINO
+  id: "176"
+  numcode: "674"
+countries_096: 
+  name: Ireland
+  iso3: IRL
+  iso: IE
+  iso_name: IRELAND
+  id: "96"
+  numcode: "372"
+countries_177: 
+  name: Sao Tome and Principe
+  iso3: STP
+  iso: ST
+  iso_name: SAO TOME AND PRINCIPE
+  id: "177"
+  numcode: "678"
+countries_097: 
+  name: Israel
+  iso3: ISR
+  iso: IL
+  iso_name: ISRAEL
+  id: "97"
+  numcode: "376"
+countries_178: 
+  name: Saudi Arabia
+  iso3: SAU
+  iso: SA
+  iso_name: SAUDI ARABIA
+  id: "178"
+  numcode: "682"
+countries_098: 
+  name: Italy
+  iso3: ITA
+  iso: IT
+  iso_name: ITALY
+  id: "98"
+  numcode: "380"
+countries_179: 
+  name: Senegal
+  iso3: SEN
+  iso: SN
+  iso_name: SENEGAL
+  id: "179"
+  numcode: "686"
+countries_099: 
+  name: Jamaica
+  iso3: JAM
+  iso: JM
+  iso_name: JAMAICA
+  id: "99"
+  numcode: "388"
+countries_100: 
+  name: Japan
+  iso3: JPN
+  iso: JP
+  iso_name: JAPAN
+  id: "100"
+  numcode: "392"
+countries_101: 
+  name: Jordan
+  iso3: JOR
+  iso: JO
+  iso_name: JORDAN
+  id: "101"
+  numcode: "400"
+countries_020: 
+  name: Belgium
+  iso3: BEL
+  iso: BE
+  iso_name: BELGIUM
+  id: "20"
+  numcode: "56"
+countries_021: 
+  name: Belize
+  iso3: BLZ
+  iso: BZ
+  iso_name: BELIZE
+  id: "21"
+  numcode: "84"
+countries_102: 
+  name: Kazakhstan
+  iso3: KAZ
+  iso: KZ
+  iso_name: KAZAKHSTAN
+  id: "102"
+  numcode: "398"
+countries_210: 
+  name: Uganda
+  iso3: UGA
+  iso: UG
+  iso_name: UGANDA
+  id: "210"
+  numcode: "800"
+countries_022: 
+  name: Benin
+  iso3: BEN
+  iso: BJ
+  iso_name: BENIN
+  id: "22"
+  numcode: "204"
+countries_103: 
+  name: Kenya
+  iso3: KEN
+  iso: KE
+  iso_name: KENYA
+  id: "103"
+  numcode: "404"
+countries_211: 
+  name: Ukraine
+  iso3: UKR
+  iso: UA
+  iso_name: UKRAINE
+  id: "211"
+  numcode: "804"
+countries_023: 
+  name: Bermuda
+  iso3: BMU
+  iso: BM
+  iso_name: BERMUDA
+  id: "23"
+  numcode: "60"
+countries_104: 
+  name: Kiribati
+  iso3: KIR
+  iso: KI
+  iso_name: KIRIBATI
+  id: "104"
+  numcode: "296"
+countries_130: 
+  name: Mexico
+  iso3: MEX
+  iso: MX
+  iso_name: MEXICO
+  id: "130"
+  numcode: "484"
+countries_212: 
+  name: United Arab Emirates
+  iso3: ARE
+  iso: AE
+  iso_name: UNITED ARAB EMIRATES
+  id: "212"
+  numcode: "784"
+countries_024: 
+  name: Bhutan
+  iso3: BTN
+  iso: BT
+  iso_name: BHUTAN
+  id: "24"
+  numcode: "64"
+countries_050: 
+  name: Cuba
+  iso3: CUB
+  iso: CU
+  iso_name: CUBA
+  id: "50"
+  numcode: "192"
+countries_105: 
+  name: North Korea
+  iso3: PRK
+  iso: KP
+  iso_name: KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF
+  id: "105"
+  numcode: "408"
+countries_131: 
+  name: Micronesia, Federated States of
+  iso3: FSM
+  iso: FM
+  iso_name: MICRONESIA, FEDERATED STATES OF
+  id: "131"
+  numcode: "583"
+countries_213: 
+  name: United Kingdom
+  iso3: GBR
+  iso: GB
+  iso_name: UNITED KINGDOM
+  id: "213"
+  numcode: "826"
+countries_025: 
+  name: Bolivia
+  iso3: BOL
+  iso: BO
+  iso_name: BOLIVIA
+  id: "25"
+  numcode: "68"
+countries_051: 
+  name: Cyprus
+  iso3: CYP
+  iso: CY
+  iso_name: CYPRUS
+  id: "51"
+  numcode: "196"
+countries_106: 
+  name: South Korea
+  iso3: KOR
+  iso: KR
+  iso_name: KOREA, REPUBLIC OF
+  id: "106"
+  numcode: "410"
+countries_132: 
+  name: Moldova, Republic of
+  iso3: MDA
+  iso: MD
+  iso_name: MOLDOVA, REPUBLIC OF
+  id: "132"
+  numcode: "498"
+countries_214: 
+  name: United States
+  iso3: USA
+  iso: US
+  iso_name: UNITED STATES
+  id: "214"
+  numcode: "840"
+countries_026: 
+  name: Bosnia and Herzegovina
+  iso3: BIH
+  iso: BA
+  iso_name: BOSNIA AND HERZEGOVINA
+  id: "26"
+  numcode: "70"
+countries_052: 
+  name: Czech Republic
+  iso3: CZE
+  iso: CZ
+  iso_name: CZECH REPUBLIC
+  id: "52"
+  numcode: "203"
+countries_107: 
+  name: Kuwait
+  iso3: KWT
+  iso: KW
+  iso_name: KUWAIT
+  id: "107"
+  numcode: "414"
+countries_133: 
+  name: Monaco
+  iso3: MCO
+  iso: MC
+  iso_name: MONACO
+  id: "133"
+  numcode: "492"
+countries_215: 
+  name: Uruguay
+  iso3: URY
+  iso: UY
+  iso_name: URUGUAY
+  id: "215"
+  numcode: "858"
+countries_027: 
+  name: Botswana
+  iso3: BWA
+  iso: BW
+  iso_name: BOTSWANA
+  id: "27"
+  numcode: "72"
+countries_053: 
+  name: Denmark
+  iso3: DNK
+  iso: DK
+  iso_name: DENMARK
+  id: "53"
+  numcode: "208"
+countries_080: 
+  name: Guadeloupe
+  iso3: GLP
+  iso: GP
+  iso_name: GUADELOUPE
+  id: "80"
+  numcode: "312"
+countries_108: 
+  name: Kyrgyzstan
+  iso3: KGZ
+  iso: KG
+  iso_name: KYRGYZSTAN
+  id: "108"
+  numcode: "417"
+countries_134: 
+  name: Mongolia
+  iso3: MNG
+  iso: MN
+  iso_name: MONGOLIA
+  id: "134"
+  numcode: "496"
+countries_160: 
+  name: Philippines
+  iso3: PHL
+  iso: PH
+  iso_name: PHILIPPINES
+  id: "160"
+  numcode: "608"
+countries_028: 
+  name: Brazil
+  iso3: BRA
+  iso: BR
+  iso_name: BRAZIL
+  id: "28"
+  numcode: "76"
+countries_054: 
+  name: Djibouti
+  iso3: DJI
+  iso: DJ
+  iso_name: DJIBOUTI
+  id: "54"
+  numcode: "262"
+countries_081: 
+  name: Guam
+  iso3: GUM
+  iso: GU
+  iso_name: GUAM
+  id: "81"
+  numcode: "316"
+countries_109: 
+  name: Lao People's Democratic Republic
+  iso3: LAO
+  iso: LA
+  iso_name: LAO PEOPLE'S DEMOCRATIC REPUBLIC
+  id: "109"
+  numcode: "418"
+countries_135: 
+  name: Montserrat
+  iso3: MSR
+  iso: MS
+  iso_name: MONTSERRAT
+  id: "135"
+  numcode: "500"
+countries_161: 
+  name: Pitcairn
+  iso3: PCN
+  iso: PN
+  iso_name: PITCAIRN
+  id: "161"
+  numcode: "612"
+countries_216: 
+  name: Uzbekistan
+  iso3: UZB
+  iso: UZ
+  iso_name: UZBEKISTAN
+  id: "216"
+  numcode: "860"
+countries_029: 
+  name: Brunei Darussalam
+  iso3: BRN
+  iso: BN
+  iso_name: BRUNEI DARUSSALAM
+  id: "29"
+  numcode: "96"
+countries_055: 
+  name: Dominica
+  iso3: DMA
+  iso: DM
+  iso_name: DOMINICA
+  id: "55"
+  numcode: "212"
+countries_082: 
+  name: Guatemala
+  iso3: GTM
+  iso: GT
+  iso_name: GUATEMALA
+  id: "82"
+  numcode: "320"
+countries_136: 
+  name: Morocco
+  iso3: MAR
+  iso: MA
+  iso_name: MOROCCO
+  id: "136"
+  numcode: "504"
+countries_162: 
+  name: Poland
+  iso3: POL
+  iso: PL
+  iso_name: POLAND
+  id: "162"
+  numcode: "616"
+countries_217: 
+  name: Vanuatu
+  iso3: VUT
+  iso: VU
+  iso_name: VANUATU
+  id: "217"
+  numcode: "548"
+countries_056: 
+  name: Dominican Republic
+  iso3: DOM
+  iso: DO
+  iso_name: DOMINICAN REPUBLIC
+  id: "56"
+  numcode: "214"
+countries_137: 
+  name: Mozambique
+  iso3: MOZ
+  iso: MZ
+  iso_name: MOZAMBIQUE
+  id: "137"
+  numcode: "508"
+countries_163: 
+  name: Portugal
+  iso3: PRT
+  iso: PT
+  iso_name: PORTUGAL
+  id: "163"
+  numcode: "620"
+countries_190: 
+  name: Sudan
+  iso3: SDN
+  iso: SD
+  iso_name: SUDAN
+  id: "190"
+  numcode: "736"
+countries_218: 
+  name: Venezuela
+  iso3: VEN
+  iso: VE
+  iso_name: VENEZUELA
+  id: "218"
+  numcode: "862"
+countries_057: 
+  name: Ecuador
+  iso3: ECU
+  iso: EC
+  iso_name: ECUADOR
+  id: "57"
+  numcode: "218"
+countries_083: 
+  name: Guinea
+  iso3: GIN
+  iso: GN
+  iso_name: GUINEA
+  id: "83"
+  numcode: "324"
+countries_138: 
+  name: Myanmar
+  iso3: MMR
+  iso: MM
+  iso_name: MYANMAR
+  id: "138"
+  numcode: "104"
+countries_164: 
+  name: Puerto Rico
+  iso3: PRI
+  iso: PR
+  iso_name: PUERTO RICO
+  id: "164"
+  numcode: "630"
+countries_191: 
+  name: Suriname
+  iso3: SUR
+  iso: SR
+  iso_name: SURINAME
+  id: "191"
+  numcode: "740"
+countries_219: 
+  name: Viet Nam
+  iso3: VNM
+  iso: VN
+  iso_name: VIET NAM
+  id: "219"
+  numcode: "704"
+countries_058: 
+  name: Egypt
+  iso3: EGY
+  iso: EG
+  iso_name: EGYPT
+  id: "58"
+  numcode: "818"
+countries_084: 
+  name: Guinea-Bissau
+  iso3: GNB
+  iso: GW
+  iso_name: GUINEA-BISSAU
+  id: "84"
+  numcode: "624"
+countries_139: 
+  name: Namibia
+  iso3: NAM
+  iso: NA
+  iso_name: NAMIBIA
+  id: "139"
+  numcode: "516"
+countries_165: 
+  name: Qatar
+  iso3: QAT
+  iso: QA
+  iso_name: QATAR
+  id: "165"
+  numcode: "634"
+countries_192: 
+  name: Svalbard and Jan Mayen
+  iso3: SJM
+  iso: SJ
+  iso_name: SVALBARD AND JAN MAYEN
+  id: "192"
+  numcode: "744"
+countries_059: 
+  name: El Salvador
+  iso3: SLV
+  iso: SV
+  iso_name: EL SALVADOR
+  id: "59"
+  numcode: "222"
+countries_085: 
+  name: Guyana
+  iso3: GUY
+  iso: GY
+  iso_name: GUYANA
+  id: "85"
+  numcode: "328"
+countries_166: 
+  name: Reunion
+  iso3: REU
+  iso: RE
+  iso_name: REUNION
+  id: "166"
+  numcode: "638"
+countries_086: 
+  name: Haiti
+  iso3: HTI
+  iso: HT
+  iso_name: HAITI
+  id: "86"
+  numcode: "332"
+countries_167: 
+  name: Romania
+  iso3: ROM
+  iso: RO
+  iso_name: ROMANIA
+  id: "167"
+  numcode: "642"
+countries_193: 
+  name: Swaziland
+  iso3: SWZ
+  iso: SZ
+  iso_name: SWAZILAND
+  id: "193"
+  numcode: "748"
+countries_087: 
+  name: Holy See (Vatican City State)
+  iso3: VAT
+  iso: VA
+  iso_name: HOLY SEE (VATICAN CITY STATE)
+  id: "87"
+  numcode: "336"
+countries_168: 
+  name: Russian Federation
+  iso3: RUS
+  iso: RU
+  iso_name: RUSSIAN FEDERATION
+  id: "168"
+  numcode: "643"
+countries_194: 
+  name: Sweden
+  iso3: SWE
+  iso: SE
+  iso_name: SWEDEN
+  id: "194"
+  numcode: "752"
+countries_088: 
+  name: Honduras
+  iso3: HND
+  iso: HN
+  iso_name: HONDURAS
+  id: "88"
+  numcode: "340"
+countries_169: 
+  name: Rwanda
+  iso3: RWA
+  iso: RW
+  iso_name: RWANDA
+  id: "169"
+  numcode: "646"
+countries_195: 
+  name: Switzerland
+  iso3: CHE
+  iso: CH
+  iso_name: SWITZERLAND
+  id: "195"
+  numcode: "756"
+countries_089: 
+  name: Hong Kong
+  iso3: HKG
+  iso: HK
+  iso_name: HONG KONG
+  id: "89"
+  numcode: "344"
+countries_196: 
+  name: Syrian Arab Republic
+  iso3: SYR
+  iso: SY
+  iso_name: SYRIAN ARAB REPUBLIC
+  id: "196"
+  numcode: "760"
+countries_197: 
+  name: Taiwan
+  iso3: TWN
+  iso: TW
+  iso_name: TAIWAN, PROVINCE OF CHINA
+  id: "197"
+  numcode: "158"
+countries_198: 
+  name: Tajikistan
+  iso3: TJK
+  iso: TJ
+  iso_name: TAJIKISTAN
+  id: "198"
+  numcode: "762"
+countries_199: 
+  name: Tanzania, United Republic of
+  iso3: TZA
+  iso: TZ
+  iso_name: TANZANIA, UNITED REPUBLIC OF
+  id: "199"
+  numcode: "834"
+countries_010: 
+  name: Armenia
+  iso3: ARM
+  iso: AM
+  iso_name: ARMENIA
+  id: "10"
+  numcode: "51"
+countries_011: 
+  name: Aruba
+  iso3: ABW
+  iso: AW
+  iso_name: ARUBA
+  id: "11"
+  numcode: "533"
+countries_012: 
+  name: Australia
+  iso3: AUS
+  iso: AU
+  iso_name: AUSTRALIA
+  id: "12"
+  numcode: "36"
+countries_200: 
+  name: Thailand
+  iso3: THA
+  iso: TH
+  iso_name: THAILAND
+  id: "200"
+  numcode: "764"
+countries_013: 
+  name: Austria
+  iso3: AUT
+  iso: AT
+  iso_name: AUSTRIA
+  id: "13"
+  numcode: "40"
+countries_120: 
+  name: Madagascar
+  iso3: MDG
+  iso: MG
+  iso_name: MADAGASCAR
+  id: "120"
+  numcode: "450"
+countries_201: 
+  name: Togo
+  iso3: TGO
+  iso: TG
+  iso_name: TOGO
+  id: "201"
+  numcode: "768"
+countries_014: 
+  name: Azerbaijan
+  iso3: AZE
+  iso: AZ
+  iso_name: AZERBAIJAN
+  id: "14"
+  numcode: "31"
+countries_040: 
+  name: Chile
+  iso3: CHL
+  iso: CL
+  iso_name: CHILE
+  id: "40"
+  numcode: "152"
+countries_121: 
+  name: Malawi
+  iso3: MWI
+  iso: MW
+  iso_name: MALAWI
+  id: "121"
+  numcode: "454"
+countries_202: 
+  name: Tokelau
+  iso3: TKL
+  iso: TK
+  iso_name: TOKELAU
+  id: "202"
+  numcode: "772"
+countries_015: 
+  name: Bahamas
+  iso3: BHS
+  iso: BS
+  iso_name: BAHAMAS
+  id: "15"
+  numcode: "44"
+countries_041: 
+  name: China
+  iso3: CHN
+  iso: CN
+  iso_name: CHINA
+  id: "41"
+  numcode: "156"
+countries_122: 
+  name: Malaysia
+  iso3: MYS
+  iso: MY
+  iso_name: MALAYSIA
+  id: "122"
+  numcode: "458"
+countries_203: 
+  name: Tonga
+  iso3: TON
+  iso: TO
+  iso_name: TONGA
+  id: "203"
+  numcode: "776"
+countries_016: 
+  name: Bahrain
+  iso3: BHR
+  iso: BH
+  iso_name: BAHRAIN
+  id: "16"
+  numcode: "48"
+countries_042: 
+  name: Colombia
+  iso3: COL
+  iso: CO
+  iso_name: COLOMBIA
+  id: "42"
+  numcode: "170"
+countries_123: 
+  name: Maldives
+  iso3: MDV
+  iso: MV
+  iso_name: MALDIVES
+  id: "123"
+  numcode: "462"
+countries_204: 
+  name: Trinidad and Tobago
+  iso3: TTO
+  iso: TT
+  iso_name: TRINIDAD AND TOBAGO
+  id: "204"
+  numcode: "780"
+countries_017: 
+  name: Bangladesh
+  iso3: BGD
+  iso: BD
+  iso_name: BANGLADESH
+  id: "17"
+  numcode: "50"
+countries_043: 
+  name: Comoros
+  iso3: COM
+  iso: KM
+  iso_name: COMOROS
+  id: "43"
+  numcode: "174"
+countries_070: 
+  name: French Polynesia
+  iso3: PYF
+  iso: PF
+  iso_name: FRENCH POLYNESIA
+  id: "70"
+  numcode: "258"
+countries_124: 
+  name: Mali
+  iso3: MLI
+  iso: ML
+  iso_name: MALI
+  id: "124"
+  numcode: "466"
+countries_150: 
+  name: Norfolk Island
+  iso3: NFK
+  iso: NF
+  iso_name: NORFOLK ISLAND
+  id: "150"
+  numcode: "574"
+countries_205: 
+  name: Tunisia
+  iso3: TUN
+  iso: TN
+  iso_name: TUNISIA
+  id: "205"
+  numcode: "788"
+countries_018: 
+  name: Barbados
+  iso3: BRB
+  iso: BB
+  iso_name: BARBADOS
+  id: "18"
+  numcode: "52"
+countries_044: 
+  name: Congo
+  iso3: COG
+  iso: CG
+  iso_name: CONGO
+  id: "44"
+  numcode: "178"
+countries_071: 
+  name: Gabon
+  iso3: GAB
+  iso: GA
+  iso_name: GABON
+  id: "71"
+  numcode: "266"
+countries_125: 
+  name: Malta
+  iso3: MLT
+  iso: MT
+  iso_name: MALTA
+  id: "125"
+  numcode: "470"
+countries_151: 
+  name: Northern Mariana Islands
+  iso3: MNP
+  iso: MP
+  iso_name: NORTHERN MARIANA ISLANDS
+  id: "151"
+  numcode: "580"
+countries_206: 
+  name: Turkey
+  iso3: TUR
+  iso: TR
+  iso_name: TURKEY
+  id: "206"
+  numcode: "792"
+countries_045: 
+  name: Congo, the Democratic Republic of the
+  iso3: COD
+  iso: CD
+  iso_name: CONGO, THE DEMOCRATIC REPUBLIC OF THE
+  id: "45"
+  numcode: "180"
+countries_126: 
+  name: Marshall Islands
+  iso3: MHL
+  iso: MH
+  iso_name: MARSHALL ISLANDS
+  id: "126"
+  numcode: "584"
+countries_152: 
+  name: Norway
+  iso3: NOR
+  iso: "NO"
+  iso_name: NORWAY
+  id: "152"
+  numcode: "578"
+countries_207: 
+  name: Turkmenistan
+  iso3: TKM
+  iso: TM
+  iso_name: TURKMENISTAN
+  id: "207"
+  numcode: "795"
+countries_019: 
+  name: Belarus
+  iso3: BLR
+  iso: BY
+  iso_name: BELARUS
+  id: "19"
+  numcode: "112"
+countries_046: 
+  name: Cook Islands
+  iso3: COK
+  iso: CK
+  iso_name: COOK ISLANDS
+  id: "46"
+  numcode: "184"
+countries_072: 
+  name: Gambia
+  iso3: GMB
+  iso: GM
+  iso_name: GAMBIA
+  id: "72"
+  numcode: "270"
+countries_127: 
+  name: Martinique
+  iso3: MTQ
+  iso: MQ
+  iso_name: MARTINIQUE
+  id: "127"
+  numcode: "474"
+countries_153: 
+  name: Oman
+  iso3: OMN
+  iso: OM
+  iso_name: OMAN
+  id: "153"
+  numcode: "512"
+countries_180: 
+  name: Seychelles
+  iso3: SYC
+  iso: SC
+  iso_name: SEYCHELLES
+  id: "180"
+  numcode: "690"
+countries_208: 
+  name: Turks and Caicos Islands
+  iso3: TCA
+  iso: TC
+  iso_name: TURKS AND CAICOS ISLANDS
+  id: "208"
+  numcode: "796"
+countries_073: 
+  name: Georgia
+  iso3: GEO
+  iso: GE
+  iso_name: GEORGIA
+  id: "73"
+  numcode: "268"
+countries_128: 
+  name: Mauritania
+  iso3: MRT
+  iso: MR
+  iso_name: MAURITANIA
+  id: "128"
+  numcode: "478"
+countries_154: 
+  name: Pakistan
+  iso3: PAK
+  iso: PK
+  iso_name: PAKISTAN
+  id: "154"
+  numcode: "586"
+countries_181: 
+  name: Sierra Leone
+  iso3: SLE
+  iso: SL
+  iso_name: SIERRA LEONE
+  id: "181"
+  numcode: "694"
+countries_209: 
+  name: Tuvalu
+  iso3: TUV
+  iso: TV
+  iso_name: TUVALU
+  id: "209"
+  numcode: "798"
+countries_047: 
+  name: Costa Rica
+  iso3: CRI
+  iso: CR
+  iso_name: COSTA RICA
+  id: "47"
+  numcode: "188"
+countries_074: 
+  name: Germany
+  iso3: DEU
+  iso: DE
+  iso_name: GERMANY
+  id: "74"
+  numcode: "276"
+countries_129: 
+  name: Mauritius
+  iso3: MUS
+  iso: MU
+  iso_name: MAURITIUS
+  id: "129"
+  numcode: "480"
+countries_155: 
+  name: Palau
+  iso3: PLW
+  iso: PW
+  iso_name: PALAU
+  id: "155"
+  numcode: "585"
+countries_048: 
+  name: Cote D'Ivoire
+  iso3: CIV
+  iso: CI
+  iso_name: COTE D'IVOIRE
+  id: "48"
+  numcode: "384"
+countries_156: 
+  name: Panama
+  iso3: PAN
+  iso: PA
+  iso_name: PANAMA
+  id: "156"
+  numcode: "591"
+countries_182: 
+  name: Singapore
+  iso3: SGP
+  iso: SG
+  iso_name: SINGAPORE
+  id: "182"
+  numcode: "702"
+countries_049: 
+  name: Croatia
+  iso3: HRV
+  iso: HR
+  iso_name: CROATIA
+  id: "49"
+  numcode: "191"
+countries_075: 
+  name: Ghana
+  iso3: GHA
+  iso: GH
+  iso_name: GHANA
+  id: "75"
+  numcode: "288"
+countries_157: 
+  name: Papua New Guinea
+  iso3: PNG
+  iso: PG
+  iso_name: PAPUA NEW GUINEA
+  id: "157"
+  numcode: "598"
+countries_183: 
+  name: Slovakia
+  iso3: SVK
+  iso: SK
+  iso_name: SLOVAKIA
+  id: "183"
+  numcode: "703"
+countries_076: 
+  name: Gibraltar
+  iso3: GIB
+  iso: GI
+  iso_name: GIBRALTAR
+  id: "76"
+  numcode: "292"
+countries_158: 
+  name: Paraguay
+  iso3: PRY
+  iso: PY
+  iso_name: PARAGUAY
+  id: "158"
+  numcode: "600"
+countries_184: 
+  name: Slovenia
+  iso3: SVN
+  iso: SI
+  iso_name: SLOVENIA
+  id: "184"
+  numcode: "705"
+countries_077: 
+  name: Greece
+  iso3: GRC
+  iso: GR
+  iso_name: GREECE
+  id: "77"
+  numcode: "300"
+countries_159: 
+  name: Peru
+  iso3: PER
+  iso: PE
+  iso_name: PERU
+  id: "159"
+  numcode: "604"
+countries_185: 
+  name: Solomon Islands
+  iso3: SLB
+  iso: SB
+  iso_name: SOLOMON ISLANDS
+  id: "185"
+  numcode: "90"
+countries_078: 
+  name: Greenland
+  iso3: GRL
+  iso: GL
+  iso_name: GREENLAND
+  id: "78"
+  numcode: "304"
+countries_186: 
+  name: Somalia
+  iso3: SOM
+  iso: SO
+  iso_name: SOMALIA
+  id: "186"
+  numcode: "706"
+countries_079: 
+  name: Grenada
+  iso3: GRD
+  iso: GD
+  iso_name: GRENADA
+  id: "79"
+  numcode: "308"
+countries_187: 
+  name: South Africa
+  iso3: ZAF
+  iso: ZA
+  iso_name: SOUTH AFRICA
+  id: "187"
+  numcode: "710"
+countries_188: 
+  name: Spain
+  iso3: ESP
+  iso: ES
+  iso_name: SPAIN
+  id: "188"
+  numcode: "724"
+countries_189: 
+  name: Sri Lanka
+  iso3: LKA
+  iso: LK
+  iso_name: SRI LANKA
+  id: "189"
+  numcode: "144"
+countries_001: 
+  name: Afghanistan
+  iso3: AFG
+  iso: AF
+  iso_name: AFGHANISTAN
+  id: "1"
+  numcode: "4"
+countries_002: 
+  name: Albania
+  iso3: ALB
+  iso: AL
+  iso_name: ALBANIA
+  id: "2"
+  numcode: "8"
+countries_003: 
+  name: Algeria
+  iso3: DZA
+  iso: DZ
+  iso_name: ALGERIA
+  id: "3"
+  numcode: "12"
+countries_110: 
+  name: Latvia
+  iso3: LVA
+  iso: LV
+  iso_name: LATVIA
+  id: "110"
+  numcode: "428"
+countries_004: 
+  name: American Samoa
+  iso3: ASM
+  iso: AS
+  iso_name: AMERICAN SAMOA
+  id: "4"
+  numcode: "16"
+countries_030: 
+  name: Bulgaria
+  iso3: BGR
+  iso: BG
+  iso_name: BULGARIA
+  id: "30"
+  numcode: "100"
+countries_111: 
+  name: Lebanon
+  iso3: LBN
+  iso: LB
+  iso_name: LEBANON
+  id: "111"
+  numcode: "422"
+countries_005: 
+  name: Andorra
+  iso3: AND
+  iso: AD
+  iso_name: ANDORRA
+  id: "5"
+  numcode: "20"
+countries_031: 
+  name: Burkina Faso
+  iso3: BFA
+  iso: BF
+  iso_name: BURKINA FASO
+  id: "31"
+  numcode: "854"
+countries_112: 
+  name: Lesotho
+  iso3: LSO
+  iso: LS
+  iso_name: LESOTHO
+  id: "112"
+  numcode: "426"
+countries_006: 
+  name: Angola
+  iso3: AGO
+  iso: AO
+  iso_name: ANGOLA
+  id: "6"
+  numcode: "24"
+countries_032: 
+  name: Burundi
+  iso3: BDI
+  iso: BI
+  iso_name: BURUNDI
+  id: "32"
+  numcode: "108"
+countries_113: 
+  name: Liberia
+  iso3: LBR
+  iso: LR
+  iso_name: LIBERIA
+  id: "113"
+  numcode: "430"
+countries_220: 
+  name: Virgin Islands, British
+  iso3: VGB
+  iso: VG
+  iso_name: VIRGIN ISLANDS, BRITISH
+  id: "220"
+  numcode: "92"
+countries_007: 
+  name: Anguilla
+  iso3: AIA
+  iso: AI
+  iso_name: ANGUILLA
+  id: "7"
+  numcode: "660"
+countries_033: 
+  name: Cambodia
+  iso3: KHM
+  iso: KH
+  iso_name: CAMBODIA
+  id: "33"
+  numcode: "116"
+countries_060: 
+  name: Equatorial Guinea
+  iso3: GNQ
+  iso: GQ
+  iso_name: EQUATORIAL GUINEA
+  id: "60"
+  numcode: "226"
+countries_114: 
+  name: Libyan Arab Jamahiriya
+  iso3: LBY
+  iso: LY
+  iso_name: LIBYAN ARAB JAMAHIRIYA
+  id: "114"
+  numcode: "434"
+countries_140: 
+  name: Nauru
+  iso3: NRU
+  iso: NR
+  iso_name: NAURU
+  id: "140"
+  numcode: "520"
+countries_221: 
+  name: Virgin Islands, U.S.
+  iso3: VIR
+  iso: VI
+  iso_name: VIRGIN ISLANDS, U.S.
+  id: "221"
+  numcode: "850"
+countries_008: 
+  name: Antigua and Barbuda
+  iso3: ATG
+  iso: AG
+  iso_name: ANTIGUA AND BARBUDA
+  id: "8"
+  numcode: "28"
+countries_034: 
+  name: Cameroon
+  iso3: CMR
+  iso: CM
+  iso_name: CAMEROON
+  id: "34"
+  numcode: "120"
+countries_115: 
+  name: Liechtenstein
+  iso3: LIE
+  iso: LI
+  iso_name: LIECHTENSTEIN
+  id: "115"
+  numcode: "438"
+countries_141: 
+  name: Nepal
+  iso3: NPL
+  iso: NP
+  iso_name: NEPAL
+  id: "141"
+  numcode: "524"
+countries_222: 
+  name: Wallis and Futuna
+  iso3: WLF
+  iso: WF
+  iso_name: WALLIS AND FUTUNA
+  id: "222"
+  numcode: "876"
+countries_223: 
+  name: Western Sahara
+  iso3: ESH
+  iso: EH
+  iso_name: WESTERN SAHARA
+  id: "223"
+  numcode: "732"
+countries_009: 
+  name: Argentina
+  iso3: ARG
+  iso: AR
+  iso_name: ARGENTINA
+  id: "9"
+  numcode: "32"
+countries_035: 
+  name: Canada
+  iso3: CAN
+  iso: CA
+  iso_name: CANADA
+  id: "35"
+  numcode: "124"
+countries_061: 
+  name: Eritrea
+  iso3: ERI
+  iso: ER
+  iso_name: ERITREA
+  id: "61"
+  numcode: "232"
+countries_116: 
+  name: Lithuania
+  iso3: LTU
+  iso: LT
+  iso_name: LITHUANIA
+  id: "116"
+  numcode: "440"
+countries_142: 
+  name: Netherlands
+  iso3: NLD
+  iso: NL
+  iso_name: NETHERLANDS
+  id: "142"
+  numcode: "528"
+countries_224: 
+  name: Yemen
+  iso3: YEM
+  iso: YE
+  iso_name: YEMEN
+  id: "224"
+  numcode: "887"
+countries_036: 
+  name: Cape Verde
+  iso3: CPV
+  iso: CV
+  iso_name: CAPE VERDE
+  id: "36"
+  numcode: "132"
+countries_062: 
+  name: Estonia
+  iso3: EST
+  iso: EE
+  iso_name: ESTONIA
+  id: "62"
+  numcode: "233"
+countries_117: 
+  name: Luxembourg
+  iso3: LUX
+  iso: LU
+  iso_name: LUXEMBOURG
+  id: "117"
+  numcode: "442"
+countries_143: 
+  name: Netherlands Antilles
+  iso3: ANT
+  iso: AN
+  iso_name: NETHERLANDS ANTILLES
+  id: "143"
+  numcode: "530"
+countries_170: 
+  name: Saint Helena
+  iso3: SHN
+  iso: SH
+  iso_name: SAINT HELENA
+  id: "170"
+  numcode: "654"
+countries_225: 
+  name: Zambia
+  iso3: ZMB
+  iso: ZM
+  iso_name: ZAMBIA
+  id: "225"
+  numcode: "894"
+countries_037: 
+  name: Cayman Islands
+  iso3: CYM
+  iso: KY
+  iso_name: CAYMAN ISLANDS
+  id: "37"
+  numcode: "136"
+countries_063: 
+  name: Ethiopia
+  iso3: ETH
+  iso: ET
+  iso_name: ETHIOPIA
+  id: "63"
+  numcode: "231"
+countries_090: 
+  name: Hungary
+  iso3: HUN
+  iso: HU
+  iso_name: HUNGARY
+  id: "90"
+  numcode: "348"
+countries_118: 
+  name: Macao
+  iso3: MAC
+  iso: MO
+  iso_name: MACAO
+  id: "118"
+  numcode: "446"
+countries_144: 
+  name: New Caledonia
+  iso3: NCL
+  iso: NC
+  iso_name: NEW CALEDONIA
+  id: "144"
+  numcode: "540"
+countries_226: 
+  name: Zimbabwe
+  iso3: ZWE
+  iso: ZW
+  iso_name: ZIMBABWE
+  id: "226"
+  numcode: "716"
+countries_038: 
+  name: Central African Republic
+  iso3: CAF
+  iso: CF
+  iso_name: CENTRAL AFRICAN REPUBLIC
+  id: "38"
+  numcode: "140"
+countries_064: 
+  name: Falkland Islands (Malvinas)
+  iso3: FLK
+  iso: FK
+  iso_name: FALKLAND ISLANDS (MALVINAS)
+  id: "64"
+  numcode: "238"
+countries_091: 
+  name: Iceland
+  iso3: ISL
+  iso: IS
+  iso_name: ICELAND
+  id: "91"
+  numcode: "352"
+countries_119: 
+  name: Macedonia
+  iso3: MKD
+  iso: MK
+  iso_name: MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF
+  id: "119"
+  numcode: "807"
+countries_145: 
+  name: New Zealand
+  iso3: NZL
+  iso: NZ
+  iso_name: NEW ZEALAND
+  id: "145"
+  numcode: "554"
+countries_171: 
+  name: Saint Kitts and Nevis
+  iso3: KNA
+  iso: KN
+  iso_name: SAINT KITTS AND NEVIS
+  id: "171"
+  numcode: "659"
+countries_998:
+  name: Serbia
+  iso3: SRB
+  iso: RS
+  id: "998"
+  numcode: "999"
