@@ -10,6 +10,15 @@ This will be the final release of the 1.1.x branch for Spree. We would recommend
 
 h3. Major fixes
 
+h4. Migrations
+
+This new version of Spree most likely contains new migrations. Please install them and run them with this command:
+
+<plain>
+bundle exec rake railties:install:migrations
+bundle exec rake db:migrate
+</plain>
+
 h4. Rails dependency upgraded
 
 Due to a "security bug":http://weblog.rubyonrails.org/2012/11/12/ann-rails-3-2-9-has-been-released/ within Rails, we have upgraded the dependency of Rails to be 3.2.9. You will not be able to use Rails 3.2.8 with Spree 1.1.4. It's highly encouraged you upgrade your Rails version.

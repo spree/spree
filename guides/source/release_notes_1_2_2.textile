@@ -1,10 +1,19 @@
-h2. Spree 1.2.1 Release Notes
+h2. Spree 1.2.2 Release Notes
 
-Spree 1.2.1 is the latest Spree release in the 1.2.x branch. This release contains minor improvements and bug fixes. Compatibility with extensions is mostly guaranteed, however there may be edge cases. If you find one of these, please "file an issue":https://github.com/spree/spree/blob/master/CONTRIBUTING.md.
+Spree 1.2.2 is the latest Spree release in the 1.2.x branch. This release contains minor improvements and bug fixes. Compatibility with extensions is mostly guaranteed, however there may be edge cases. If you find one of these, please "file an issue":https://github.com/spree/spree/blob/master/CONTRIBUTING.md.
 
 endprologue.
 
 h3. Major changes
+
+h4. Migrations
+
+This new version of Spree contains new migrations. Please install them and run them with this command:
+
+<plain>
+bundle exec rake railties:install:migrations
+bundle exec rake db:migrate
+</plain>
 
 h4. API changes
 
