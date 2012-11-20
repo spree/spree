@@ -28,7 +28,9 @@ If you install spree_auth_devise when setting up your app, we use a third party 
 
 h4. Devise Configuration
 
-We have configure Devised to handle only what is needed to authenticate with a Spree site. The following details cover the default configurations:
+NOTE: A default Spree install comes with the "spree_auth_devise":https://github.com/spree/spree_auth_devise gem, which provides authentication for Spree using Devise. This section of the guide covers the default setup. If you're using your own authentication, please consult the manual for that authentication engine.
+
+We have configure Devise to handle only what is needed to authenticate with a Spree site. The following details cover the default configurations:
 
 * Passwords are stored in the database encrypted with the salt.
 * User authentication is done through the database query.
@@ -37,14 +39,6 @@ We have configure Devised to handle only what is needed to authenticate with a S
 * +http_auth_basic+ is enable to accommodate the API query interface. (See below for security notes relating to the API)
 
 INFO: These configurations represent a reasonable starting point for a typical e-commerce site.  Devise can be configured extensively to allow for a different feature set but that is currently beyond the scope of this document.  Developers are encouraged to visit the Devise wiki for more details.
-
-h4. Encryption Algorithm
-
-By default, Spree supports the same encryption scheme as the one used by the "Authlogic":https://github.com/binarylogic/authlogic gem.  This encryption scheme is sufficient but its not the best choice currently available.  We have chosen it to allow existing Spree sites (based on 0.11.x and earlier) to more easily migrate to newer versions of Spree.
-
-If you have a brand new site (and password migration is not a concern) you may want to consider the more powerful "bcrypt":http://bcrypt.sourceforge.net/ algorithm.
-
-INFO: Currently this requires modifying the +spree_auth+ gem directly.  We're working with the Devise team to come up with a more convenient solution for handling this and other customizations to Devise.
 
 h4. REST API
 
