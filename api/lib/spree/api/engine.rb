@@ -6,6 +6,11 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_api'
 
+      Rabl.configure do |config|
+        config.include_json_root = false
+        config.include_child_root = false
+      end
+
       initializer "spree.api.environment", :before => :load_config_initializers do |app|
         Spree::Api::Config = Spree::ApiConfiguration.new
       end

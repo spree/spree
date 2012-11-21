@@ -45,7 +45,7 @@ module Spree
       property = Spree::ProductProperty.last
       api_get :index, :q => { :value_cont => 'loose' }
       json_response['count'].should == 1
-      json_response['product_properties'].first['product_property']['value'].should eq property.value
+      json_response['product_properties'].first['value'].should eq property.value
     end
 
     it "can see a single product_property" do
@@ -108,7 +108,6 @@ module Spree
 
       it "can see a single product_property by id" do
         api_get :show, :id => property_1.id
-        json_response.count.should eq 1
         json_response.should have_attributes(attributes)
       end
     end
