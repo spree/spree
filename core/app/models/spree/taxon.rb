@@ -58,5 +58,33 @@ module Spree
       ancestor_chain + "#{name}"
     end
 
+    def to_js_tree(max_depth, current_depth)
+      rel = ""
+      state = ""
+      children_js = ""
+
+      if current_depth < max_depth
+        children_js = ", 'children' : [#{self.children.map{|t| t.to_js_tree(max_depth, current_depth+1)}.join(',')}]"
+      end
+      
+      state = self.children.empty? ? "" : "closed"
+
+      if current_depth == 0
+        rel = ", 'rel' : 'root'"
+        state = "open"
+      end
+
+      <<-END
+
+          { "attr" :
+          { "id" : "#{self.id}" #{rel}},
+          "data" : "#{self.name.gsub('"','\"')}",
+          "state" : "#{state}"
+          #{children_js}
+          }
+
+      END
+    end
+
   end
 end
