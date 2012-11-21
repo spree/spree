@@ -8,11 +8,6 @@ module Spree
       def index
       end
 
-      def search
-        search_params = { :product_name_cont => params[:q], :sku_cont => params[:q] }
-        @variants = Spree::Variant.ransack(search_params.merge(:m => 'or')).result
-      end
-
       # override the destory method to set deleted_at value
       # instead of actually deleting the product.
       def destroy

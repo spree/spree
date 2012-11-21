@@ -22,7 +22,11 @@ $.fn.variantAutocomplete = function() {
       url: Spree.routes.variants_search,
       datatype: 'json',
       data: function(term, page) {
-        return { q: term }
+        return {
+          q: {
+            "product_name_or_sku": term
+          }
+        }
       },
       results: function (data, page) {
         var variants = $.map(data['variants'], function(result) {

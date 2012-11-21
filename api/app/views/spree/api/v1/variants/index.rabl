@@ -7,4 +7,5 @@ node(:pages) { @variants.num_pages }
 child(@variants => :variants) do
   attributes *variant_attributes
   child(:option_values => :option_values) { attributes *option_value_attributes }
+  child(:images => :images) { attributes *image_attributes }
 end
