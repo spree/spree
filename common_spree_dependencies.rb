@@ -25,6 +25,7 @@ group :test do
   gem 'selenium-webdriver', '2.27.1'
   gem 'database_cleaner', '0.7.1'
   gem 'launchy'
+  gem 'jasmine', '1.2.1'
   # gem 'debugger'
 end
 
