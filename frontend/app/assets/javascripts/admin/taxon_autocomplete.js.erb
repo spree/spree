@@ -1,10 +1,3 @@
-function cleanTaxons(data) {
-  var taxons = $.map(data, function(result) {
-    return result['taxon']
-  })
-  return taxons;
-}
-
 $(document).ready(function() {
   if ($("#product_taxon_ids").length > 0) {
     $("#product_taxon_ids").select2({
