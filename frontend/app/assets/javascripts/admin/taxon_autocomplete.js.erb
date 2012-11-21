@@ -1,17 +1,10 @@
-function cleanTaxons(data) {
-  var taxons = $.map(data, function(result) {
-    return result['taxon']
-  })
-  return taxons;
-}
-
 $(document).ready(function() {
   $("#product_taxon_ids").select2({
     placeholder: "Add a taxon",
     multiple: true,
     initSelection: function(element, callback) {
       return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
-        return callback(self.cleanTaxons(data));
+        return callback(data);
       })
     },
     ajax: {
@@ -25,7 +18,7 @@ $(document).ready(function() {
         }
       },
       results: function (data, page) {
-        return { results: self.cleanTaxons(data) }
+        return { results: data }
       }
     },
     formatResult: function(taxon) {
