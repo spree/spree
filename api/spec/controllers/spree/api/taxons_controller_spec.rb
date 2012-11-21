@@ -7,7 +7,7 @@ module Spree
     let(:taxonomy) { create(:taxonomy) }
     let(:taxon) { create(:taxon, :name => "Ruby", :taxonomy => taxonomy) }
     let(:taxon2) { create(:taxon, :name => "Rails", :taxonomy => taxonomy) }
-    let(:attributes) { ["id", "name", "permalink", "position", "parent_id", "taxonomy_id"] }
+    let(:attributes) { ["id", "name", "pretty_name", "permalink", "position", "parent_id", "taxonomy_id"] }
 
     before do
       stub_authentication!
@@ -30,18 +30,18 @@ module Spree
       it "gets all taxons" do
         api_get :index
 
-        json_response.first['taxon']['name'].should eq taxonomy.root.name
-        children = json_response.first['taxon']['taxons']
+        json_response.first['name'].should eq taxonomy.root.name
+        children = json_response.first['taxons']
         children.count.should eq 1
-        children.first['taxon']['name'].should eq taxon.name
-        children.first['taxon']['taxons'].count.should eq 1
+        children.first['name'].should eq taxon.name
+        children.first['taxons'].count.should eq 1
       end
 
       it "can search for a single taxon" do
         api_get :index, :q => { :name_cont => "Ruby" }
 
         json_response.count.should == 1
-        json_response.first['taxon']['name'].should eq "Ruby"
+        json_response.first['name'].should eq "Ruby"
       end
 
       it "gets a single taxon" do
