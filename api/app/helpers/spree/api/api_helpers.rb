@@ -61,7 +61,7 @@ module Spree
       end
 
       def taxon_attributes
-        [:id, :name, :permalink, :position, :parent_id, :taxonomy_id]
+        [:id, :name, :pretty_name, :permalink, :position, :parent_id, :taxonomy_id]
       end
 
       def return_authorization_attributes

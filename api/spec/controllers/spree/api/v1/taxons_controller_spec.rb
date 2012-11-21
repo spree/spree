@@ -17,7 +17,7 @@ module Spree
     end
 
     context "as a normal user" do
-      it "gets all taxons" do
+      it "gets all taxons for a taxonomy" do
         api_get :index, :taxonomy_id => taxonomy.id
 
         json_response.first['taxon']['name'].should eq taxon.name
@@ -25,6 +25,23 @@ module Spree
         children.count.should eq 1
         children.first['taxon']['name'].should eq taxon2.name
         children.first['taxon']['taxons'].count.should eq 1
+      end
+
+      it "gets all taxons" do
+        api_get :index
+
+        json_response.first['taxon']['name'].should eq taxonomy.root.name
+        children = json_response.first['taxon']['taxons']
+        children.count.should eq 1
+        children.first['taxon']['name'].should eq taxon.name
+        children.first['taxon']['taxons'].count.should eq 1
+      end
+
+      it "can search for a single taxon" do
+        api_get :index, :q => { :name_cont => "Ruby" }
+
+        json_response.count.should == 1
+        json_response.first['taxon']['name'].should eq "Ruby"
       end
 
       it "gets a single taxon" do

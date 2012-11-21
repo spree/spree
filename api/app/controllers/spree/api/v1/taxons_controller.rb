@@ -3,7 +3,15 @@ module Spree
     module V1
       class TaxonsController < Spree::Api::V1::BaseController
         def index
-          @taxons = taxonomy.root.children
+          if taxonomy
+            @taxons = taxonomy.root.children
+          else
+            if params[:ids]
+              @taxons = Taxon.where(:id => params[:ids].split(","))
+            else
+              @taxons = Taxon.ransack(params[:q]).result
+            end
+          end
         end
 
         def jstree
@@ -42,7 +50,9 @@ module Spree
         private
 
         def taxonomy
-          @taxonomy ||= Taxonomy.find(params[:taxonomy_id])
+          if params[:taxonomy_id].present?
+            @taxonomy ||= Taxonomy.find(params[:taxonomy_id])
+          end
         end
 
         def taxon

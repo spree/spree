@@ -53,12 +53,15 @@ Spree::Core::Engine.routes.prepend do
         member do
           get :jstree
         end
+
         resources :taxons do
           member do
             get :jstree
           end
         end
       end
+
+      resources :taxons, :only => [:index]
     end
   end
 end

@@ -1,5 +1,5 @@
 function cleanTaxons(data) {
-  var taxons = $.map(data['taxons'], function(result) {
+  var taxons = $.map(data, function(result) {
     return result['taxon']
   })
   return taxons;
@@ -18,7 +18,11 @@ $(document).ready(function() {
       url: Spree.routes.taxon_search,
       datatype: 'json',
       data: function(term, page) {
-        return { q: term }
+        return {
+          q: {
+            name_cont: term
+          }
+        }
       },
       results: function (data, page) {
         return { results: self.cleanTaxons(data) }
