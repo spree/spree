@@ -1,6 +1,6 @@
 function cleanTaxons(data) {
-  var taxons = $.map(data['taxons'], function(result) {
-    return result
+  var taxons = $.map(data, function(result) {
+    return result['taxon']
   })
   return taxons;
 }
