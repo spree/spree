@@ -83,6 +83,7 @@ en:
         name: Name
       spree/product:
         available_on: "Available On"
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         description: Description
         master_price: "Master Price"
@@ -121,6 +122,7 @@ en:
         password: "Password"
         password_confirmation: "Password Confirmation"
       spree/variant:
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         depth: Depth
         height: Height
@@ -336,6 +338,7 @@ en:
   continue: Continue
   continue_shopping: "Continue shopping"
   copy_all_mails_to: Copy All Mails To
+  cost_currency: "Cost Currency"
   cost_price: "Cost Price"
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   country: Country

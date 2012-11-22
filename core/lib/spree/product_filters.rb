@@ -61,7 +61,7 @@ module Spree
       conds.each do |new_scope|
         scope = scope.or(new_scope)
       end
-      Spree::Product.joins(:master).where(scope)
+      Spree::Product.joins(:master => :default_price).where(scope)
     end
 
     def ProductFilters.format_price(amount)
@@ -69,12 +69,12 @@ module Spree
     end
 
     def ProductFilters.price_filter
-      v = Spree::Variant.arel_table
-      conds = [ [ I18n.t(:under_price, :price => format_price(10))   , v[:price].lteq(10)],
-                [ "#{format_price(10)} - #{format_price(15)}"        , v[:price].in(10..15)],
-                [ "#{format_price(15)} - #{format_price(18)}"        , v[:price].in(15..18)],
-                [ "#{format_price(18)} - #{format_price(20)}"        , v[:price].in(18..20)],
-                [ I18n.t(:or_over_price, :price => format_price(20)) , v[:price].gteq(20)]]
+      v = Spree::Price.arel_table
+      conds = [ [ I18n.t(:under_price, :price => format_price(10))   , v[:amount].lteq(10)],
+                [ "#{format_price(10)} - #{format_price(15)}"        , v[:amount].in(10..15)],
+                [ "#{format_price(15)} - #{format_price(18)}"        , v[:amount].in(15..18)],
+                [ "#{format_price(18)} - #{format_price(20)}"        , v[:amount].in(18..20)],
+                [ I18n.t(:or_over_price, :price => format_price(20)) , v[:amount].gteq(20)]]
       { :name   => I18n.t(:price_range),
         :scope  => :price_range_any,
         :conds  => Hash[*conds.flatten],

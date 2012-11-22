@@ -1,3 +1,6 @@
+# encoding: utf-8
+#
+
 require 'spec_helper'
 
 describe Spree::Adjustment do
@@ -117,6 +120,31 @@ describe Spree::Adjustment do
       it "does not include the currency" do
         adjustment.display_amount.should == "$10.55"
       end
+    end
+
+    context "with currency set to JPY" do
+      context "when adjustable is set to an order" do
+        before do
+          order.stub(:currency) { 'JPY' }
+          adjustment.adjustable = order
+        end
+
+        it "displays in JPY" do
+          adjustment.display_amount.should == "¥11"
+        end
+      end
+
+      context "when adjustable is nil" do
+        it "displays in the default currency" do
+          adjustment.display_amount.should == "$10.55"
+        end
+      end
+    end
+  end
+
+  context '#currency' do
+    it 'returns the globally configured currency' do
+      adjustment.currency.should == 'USD'
     end
   end
 end

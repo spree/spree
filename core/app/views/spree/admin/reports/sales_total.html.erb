@@ -18,16 +18,20 @@
 <table class="admin-report" data-hook="sales_total">
   <thead>
     <tr>
+      <th><%= t(:currency) %></th>
       <th><%= t(:item_total) %></th>
       <th><%= t(:adjustment_total) %></th>
       <th><%= t(:sales_total) %></th>
     </tr>
   </thead>
   <tbody>
-    <tr class="align-center">
-      <td><%= money @item_total %></td>    
-      <td><%= money @adjustment_total %></td>
-      <td><%= money @sales_total %></td>
-    </tr>
+    <% @totals.each do |key, row| %>
+      <tr class="align-center">
+        <td><%= key %></td>
+        <td><%= row[:item_total].format %></td>
+        <td><%= row[:adjustment_total].format %></td>
+        <td><%= row[:sales_total].format %></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>

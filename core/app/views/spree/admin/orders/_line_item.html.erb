@@ -1,8 +1,8 @@
 <tr id="<%= spree_dom_id(f.object) %>" data-hook="admin_order_form_line_item_row" class="<%= cycle('odd', 'even')%>">
   <td><%=f.object.variant.product.name%> <%= "(#{f.object.variant.options_text})" unless f.object.variant.option_values.empty? %></td>
-  <td class="price align-center"><%= money(f.object.price) %></td>
+  <td class="price align-center"><%= f.object.variant.display_amount %></td>
   <td class="qty"><%= f.number_field :quantity, :min => 0, :class => "qty" %></td>
-  <td class="total align-center"><%= money(f.object.price * f.object.quantity) %></td>
+  <td class="total align-center"><%= f.object.display_amount %></td>
   <td data-hook="admin_order_form_line_item_actions" class="actions">
     <%= link_to_delete f.object, {:url => admin_order_line_item_url(@order.number, f.object), :no_text => true} %>
   </td>

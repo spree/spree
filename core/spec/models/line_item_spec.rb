@@ -18,6 +18,7 @@ describe Spree::LineItem do
 
   before do
     line_item.stub(:order => order, :variant => variant, :new_record? => false)
+    variant.stub(:currency => "USD")
     Spree::Config.set :allow_backorders => true
   end
 
@@ -236,6 +237,26 @@ describe Spree::LineItem do
       adjustment = line_item.adjustments.create(:amount => 10, :label => "test")
       line_item.destroy
       lambda { adjustment.reload }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe '.currency' do
+    it 'returns the globally configured currency' do
+      line_item.currency == 'USD'
+    end
+  end
+
+  describe ".money" do
+    before { line_item.price = 3.50 }
+    it "returns a Spree::Money representing the total for this line item" do
+      line_item.money.to_s.should == "$17.50"
+    end
+  end
+
+  describe '.single_money' do
+    before { line_item.price = 3.50 }
+    it "returns a Spree::Money representing the price for one variant" do
+      line_item.single_money.to_s.should == "$3.50"
     end
   end
 end

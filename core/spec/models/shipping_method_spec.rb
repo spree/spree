@@ -94,6 +94,14 @@ describe Spree::ShippingMethod do
       end
     end
 
+    context "when currency_check is false" do
+      before { @shipping_method.stub(:currency_match? => false) }
+
+      it "should be false" do
+        @shipping_method.available_to_order?(@order).should be_false
+      end
+    end
+
     context "when all checks are true" do
       it "should be true" do
         @shipping_method.available_to_order?(@order).should be_true

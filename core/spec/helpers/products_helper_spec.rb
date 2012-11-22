@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 
 module Spree
@@ -11,22 +13,42 @@ module Spree
         @variant = create(:variant, :product => product)
       end
 
-      it "should be correct positive value when variant is more than master" do
-        product.price = 10
-        @variant.price = 15
-        helper.variant_price(@variant).should == "(Add: $5.00)"
-      end
-
       it "should be nil when variant is same as master" do
         product.price = 10
         @variant.price = 10
         helper.variant_price(@variant).should be_nil
       end
 
-      it "should be correct negative value when variant is less than master" do
-        product.price = 15
-        @variant.price = 10
-        helper.variant_price(@variant).should == "(Subtract: $5.00)"
+      context "when currency is default" do
+        it "should be correct positive value when variant is more than master" do
+          product.price = 10
+          @variant.price = 15
+          helper.variant_price(@variant).should == "(Add: $5.00)"
+        end
+
+        it "should be correct negative value when variant is less than master" do
+          product.price = 15
+          @variant.price = 10
+          helper.variant_price(@variant).should == "(Subtract: $5.00)"
+        end
+      end
+
+      context "when currency is JPY" do
+        before do
+          @variant.stub(:currency) { 'JPY' }
+        end
+
+        it "should be correct positive value when variant is more than master" do
+          product.price = 100
+          @variant.price = 150
+          helper.variant_price(@variant).should == "(Add: ¥50)"
+        end
+
+        it "should be correct negative value when variant is less than master" do
+          product.price = 150
+          @variant.price = 100
+          helper.variant_price(@variant).should == "(Subtract: ¥50)"
+        end
       end
     end
 
@@ -37,18 +59,30 @@ module Spree
         @variant2 = create(:variant, :product => product)
       end
 
-      it "should return the variant price if the price is different than master" do
-        product.price = 10
-        @variant1.price = 15
-        @variant2.price = 20
-        helper.variant_price(@variant1).should == "$15.00"
-        helper.variant_price(@variant2).should == "$20.00"
+      context "when currency is default" do
+        it "should return the variant price if the price is different than master" do
+          product.price = 10
+          @variant1.price = 15
+          @variant2.price = 20
+          helper.variant_price(@variant1).should == "$15.00"
+          helper.variant_price(@variant2).should == "$20.00"
+        end
+      end
+
+      context "when currency is JPY" do
+        it "should return the variant price if the price is different than master" do
+          product.price = 100
+          @variant1.price = 150
+          @variant1.stub(:currency) { 'JPY' }
+
+          helper.variant_price(@variant1).should == "¥150"
+        end
       end
 
       it "should be nil when all variant prices are equal" do
         product.price = 10
-        @variant1.update_column(:price, 10)
-        @variant2.update_column(:price, 10)
+        @variant1.default_price.update_column(:amount, 10)
+        @variant2.default_price.update_column(:amount, 10)
         helper.variant_price(@variant1).should be_nil
         helper.variant_price(@variant2).should be_nil
       end

@@ -5,7 +5,7 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
@@ -195,6 +195,19 @@ describe Spree::Shipment do
       shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
       shipment.run_callbacks(:save, :after)
+    end
+  end
+
+  context "currency" do
+    it "returns the order currency" do
+      shipment.currency.should == order.currency
+    end
+  end
+
+  context "display_cost" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:cost) { 21.22 }
+      shipment.display_cost.should == Spree::Money.new(21.22)
     end
   end
 end
