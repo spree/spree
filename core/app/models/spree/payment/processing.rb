@@ -165,10 +165,6 @@ module Spree
       end
     end
 
-    def record_log(response)
-      log_entries.create({:details => response.to_yaml}, :without_protection => true)
-    end
-
     def gateway_error(error)
       if error.is_a? ActiveMerchant::Billing::Response
         text = error.params['message'] || error.params['response_reason_text'] || error.message
