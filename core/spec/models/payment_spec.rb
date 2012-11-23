@@ -75,7 +75,7 @@ describe Spree::Payment do
       end
 
       it "should call authorize on the gateway with the currency code" do
-        gateway.stub :preferences => {:currency_code => 'GBP'}
+        payment.stub :currency => 'GBP'
         payment.payment_method.should_receive(:authorize).with(amount_in_cents,
                                                                card,
                                                                hash_including({:currency => "GBP"})).and_return(success_response)
