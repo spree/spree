@@ -8,6 +8,7 @@ module Spree
             helper_method :title=
             helper_method :accurate_title
             helper_method :current_order
+            helper_method :current_currency
 
             layout :get_layout
 
@@ -55,12 +56,8 @@ module Spree
           Spree::Config[:default_seo_title]
         end
 
-        def supported_currencies
-          Spree::Money.supported_currencies
-        end
-
-        def selected_currency
-          session[:currency] || Spree::Config[:currency]
+        def current_currency
+          Spree::Config[:currency]
         end
 
         def render_404(exception = nil)
