@@ -1,4 +1,4 @@
-<table class="index" id='listing_taxonomies' data-hook>
+<table class="index sortable" id='listing_taxonomies' data-hook data-sortable-link="<%= update_positions_admin_taxonomies_url %>">
   <tr data-hook="taxonomies_header">
     <th><%= t(:name) %></th>
     <th></th>
@@ -6,6 +6,7 @@
 <% @taxonomies.each do |taxonomy| %>
   <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
     <td>
+    	<span class="handle"></span>
       <%= taxonomy.name %>
     </td>
     <td class="actions">
