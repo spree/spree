@@ -31,17 +31,6 @@ module Spree
         end
       end
 
-      def update_positions
-        params[:positions].each do |id, index|
-          Variant.where(:id => id).update_all(:position => index)
-        end
-
-        respond_with(@variant) do |format|
-          format.html { redirect_to admin_product_variants_url(params[:product_id]) }
-          format.js  { render :text => 'Ok' }
-        end
-      end
-
       protected
 
         def create_before
