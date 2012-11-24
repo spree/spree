@@ -81,7 +81,7 @@ describe "Products" do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, :name => "Random") 
+        @property_prototype = create(:prototype, :name => "Random")
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') { page.should have_content("SKU") }
@@ -180,5 +180,18 @@ describe "Products" do
         end
       end
     end
+
+    context 'updating a product', :js => true do
+      let(:product) { create(:product) }
+
+      it 'should parse correctly available_on' do
+        visit spree.admin_product_path(product)
+        fill_in "product_available_on", :with => "2012/12/25"
+        click_button "Update"
+        page.should have_content("successfully updated!")
+        Spree::Product.last.available_on.should == 'Tue, 25 Dec 2012 00:00:00 UTC +00:00'
+      end
+    end
+
   end
 end
