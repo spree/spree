@@ -16,7 +16,7 @@
     
       <% if @order.completed? %>
         <dt><%= t(:shipment) %>: </dt>
-        <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %></span></dd>
+        <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>
         <dt><%= t(:payment) %>: </dt>
         <dd id='payment_status'><span class="state <%= @order.payment_state %>"><%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></span></dd>
         <dt data-hook><%= t(:date_completed) %>:</dt>
