@@ -12,20 +12,20 @@ module Spree
 
     # returns the formatted price for the specified variant as a difference from product price
     def variant_price_diff(variant)
-      diff = variant.price - variant.product.price
+      diff = variant.amount_in(current_currency) - variant.product.amount_in(current_currency)
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{Spree::Money.new(diff.abs, { :currency => variant.currency })})"
+        "(#{t(:add)}: #{Spree::Money.new(diff.abs, { :currency => current_currency })})"
       else
-        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs, { :currency => variant.currency })})"
+        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs, { :currency => current_currency })})"
       end
     end
 
     # returns the formatted full price for the variant, if at least one variant price differs from product price
     def variant_full_price(variant)
       product = variant.product
-      unless product.variants.active.all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price, { :currency => variant.currency }).to_s
+      unless product.variants.active(current_currency).all? { |v| v.price == product.price }
+        Spree::Money.new(variant.price, { :currency => current_currency }).to_s
       end
     end
 

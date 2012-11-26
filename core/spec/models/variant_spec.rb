@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 
 describe Spree::Variant do
@@ -289,6 +291,70 @@ describe Spree::Variant do
       it "populates cost currency with the default value on save" do
         variant.save!
         variant.cost_currency.should == "USD"
+      end
+    end
+  end
+
+  describe '.price_in' do
+    before do
+      variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
+    end
+
+    subject { variant.price_in(currency).display_amount }
+
+    context "when currency is not specified" do
+      let(:currency) { nil }
+
+      it "returns nil" do
+        subject.should be_nil
+      end
+    end
+
+    context "when currency is EUR" do
+      let(:currency) { 'EUR' }
+
+      it "returns the value in the EUR" do
+        subject.should == "€33.33"
+      end
+    end
+
+    context "when currency is USD" do
+      let(:currency) { 'USD' }
+
+      it "returns the value in the USD" do
+        subject.should == "$19.99"
+      end
+    end
+  end
+
+  describe '.amount_in' do
+    before do
+      variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
+    end
+
+    subject { variant.amount_in(currency) }
+
+    context "when currency is not specified" do
+      let(:currency) { nil }
+
+      it "returns nil" do
+        subject.should be_nil
+      end
+    end
+
+    context "when currency is EUR" do
+      let(:currency) { 'EUR' }
+
+      it "returns the value in the EUR" do
+        subject.should == 33.33
+      end
+    end
+
+    context "when currency is USD" do
+      let(:currency) { 'USD' }
+
+      it "returns the value in the USD" do
+        subject.should == 19.99
       end
     end
   end

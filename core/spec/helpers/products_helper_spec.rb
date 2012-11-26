@@ -7,47 +7,59 @@ module Spree
     include ProductsHelper
 
     let(:product) { create(:product) }
+    let(:currency) { 'USD' }
+
+    before do
+      helper.stub(:current_currency) { currency }
+    end
 
     context "#variant_price_diff" do
+      let(:product_price) { 10 }
+      let(:variant_price) { 10 }
+
       before do
         @variant = create(:variant, :product => product)
+        product.price = 15
+        @variant.price = 10
+        product.stub(:amount_in) { product_price }
+        @variant.stub(:amount_in) { variant_price }
       end
 
-      it "should be nil when variant is same as master" do
-        product.price = 10
-        @variant.price = 10
-        helper.variant_price(@variant).should be_nil
+      subject { helper.variant_price(@variant) }
+
+      context "when variant is same as master" do
+        it { should be_nil }
       end
 
       context "when currency is default" do
-        it "should be correct positive value when variant is more than master" do
-          product.price = 10
-          @variant.price = 15
-          helper.variant_price(@variant).should == "(Add: $5.00)"
+        context "when variant is more than master" do
+          let(:variant_price) { 15 }
+
+          it { should == "(Add: $5.00)" }
         end
 
-        it "should be correct negative value when variant is less than master" do
-          product.price = 15
-          @variant.price = 10
-          helper.variant_price(@variant).should == "(Subtract: $5.00)"
+        context "when variant is less than master" do
+          let(:product_price) { 15 }
+
+          it { should == "(Subtract: $5.00)" }
         end
       end
 
       context "when currency is JPY" do
-        before do
-          @variant.stub(:currency) { 'JPY' }
+        let(:variant_price) { 100 }
+        let(:product_price) { 100 }
+        let(:currency) { 'JPY' }
+
+        context "when variant is more than master" do
+          let(:variant_price) { 150 }
+
+          it { should == "(Add: ¥50)" }
         end
 
-        it "should be correct positive value when variant is more than master" do
-          product.price = 100
-          @variant.price = 150
-          helper.variant_price(@variant).should == "(Add: ¥50)"
-        end
+        context "when variant is less than master" do
+          let(:product_price) { 150 }
 
-        it "should be correct negative value when variant is less than master" do
-          product.price = 150
-          @variant.price = 100
-          helper.variant_price(@variant).should == "(Subtract: ¥50)"
+          it { should == "(Subtract: ¥50)" }
         end
       end
     end
@@ -70,11 +82,20 @@ module Spree
       end
 
       context "when currency is JPY" do
+        let(:currency) { 'JPY' }
+
+        before do
+          product.variants.active.each do |variant|
+            variant.prices.each do |price|
+              price.currency = currency
+              price.save!
+            end
+          end
+        end
+
         it "should return the variant price if the price is different than master" do
           product.price = 100
           @variant1.price = 150
-          @variant1.stub(:currency) { 'JPY' }
-
           helper.variant_price(@variant1).should == "¥150"
         end
       end
