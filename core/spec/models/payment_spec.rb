@@ -554,4 +554,13 @@ describe Spree::Payment do
       payment.display_amount.should == Spree::Money.new(payment.amount)
     end
   end
+
+  # Regression test for #2216
+  context "#gateway_options" do
+    before { order.stub(:last_ip_address => "192.168.1.1") }
+
+    it "contains an IP" do
+      payment.gateway_options[:ip].should == order.last_ip_address
+    end
+  end
 end
