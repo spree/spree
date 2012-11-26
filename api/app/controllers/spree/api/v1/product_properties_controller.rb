@@ -7,8 +7,8 @@ module Spree
 
         def index
           @product_properties = @product.product_properties.
-                                ransack(params[:q]).result
-                                .page(params[:page]).per(params[:per_page])
+                                ransack(params[:q]).result.
+                                page(params[:page]).per(params[:per_page])
         end
 
         def show
