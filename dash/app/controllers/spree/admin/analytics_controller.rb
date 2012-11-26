@@ -48,6 +48,7 @@ module Spree
       if Spree::Dash::Config.configured?
         flash[:success] = t(:already_signed_up_for_analytics)
         redirect_to admin_path
+      end
     end
 
     def format_url(url)
