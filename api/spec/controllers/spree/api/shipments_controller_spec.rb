@@ -6,7 +6,6 @@ describe Spree::Api::ShipmentsController do
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at] }
 
   before do
-    Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
     stub_authentication!
   end
 
@@ -28,14 +27,22 @@ describe Spree::Api::ShipmentsController do
     sign_in_as_admin!
 
     it "can make a shipment ready" do
+      Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
       api_put :ready
       json_response.should have_attributes(attributes)
       json_response["state"].should == "ready"
       shipment.reload.state.should == "ready"
     end
 
+    it "cannot make a shipment ready if the order is unpaid" do
+      Spree::Order.any_instance.stub(:paid? => false)
+      api_put :ready
+      json_response["error"].should == "Cannot ready shipment."
+    end
+
     context "can transition a shipment from ready to ship" do
       before do
+        Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
       end
