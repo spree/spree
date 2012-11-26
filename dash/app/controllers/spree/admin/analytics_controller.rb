@@ -34,7 +34,8 @@ module Spree
         Spree::Dash::Config.app_token = @store[:app_token]
         Spree::Dash::Config.site_id = @store[:site_id]
         Spree::Dash::Config.token = @store[:site_token]
-        redirect_to admin_path, :notice => t(:successfully_signed_up_for_analytics)
+        flash[:notice] = t(:successfully_signed_up_for_analytics)
+        redirect_to admin_path
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
         render :sign_up
@@ -44,7 +45,9 @@ module Spree
     private
 
     def redirect_if_registered
-      redirect_to admin_path, :notice => t(:already_signed_up_for_analytics) if Spree::Dash::Config.configured?
+      if Spree::Dash::Config.configured?
+        flash[:success] = t(:already_signed_up_for_analytics)
+        redirect_to admin_path
     end
 
     def format_url(url)
