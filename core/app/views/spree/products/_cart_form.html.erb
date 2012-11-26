@@ -11,7 +11,7 @@
             checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
             has_checked = true if checked %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders], 'data-price' => money(v.price) %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders], 'data-price' => v.display_price %>
               <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>
@@ -31,11 +31,11 @@
         
         <div id="product-price">
           <h6 class="product-section-title"><%= t(:price) %></h6>
-          <div><span class="price selling" itemprop="price"><%= money @product.price %></span></div>
+          <div><span class="price selling" itemprop="price"><%= @product.display_price %></span></div>
         </div>
 
         <div class="add-to-cart">
-          <% if @product.has_stock? || Spree::Config[:allow_backorders] %>      
+          <% if @product.on_sale? %>      
             <%= number_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
               1, :class => 'title', :in => 1..@product.on_hand, :min => 1 %>
             <%= button_tag :class => 'large primary', :id => 'add-to-cart-button', :type => :submit do %>

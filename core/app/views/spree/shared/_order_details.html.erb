@@ -1,5 +1,5 @@
 <div class="row steps-data">
-  
+
   <% if order.has_step?("address") %>
     <div class="columns alpha four">
       <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
@@ -77,18 +77,18 @@
         <td data-hook="order_item_description">
           <h4><%= item.variant.product.name %></h4>
           <%= truncate(item.variant.product.description, :length => 100, :omission => "...") %>
-          <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %>
+          <%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %>
         </td>
-        <td data-hook="order_item_price" class="price"><span><%= money item.price %></span></td>
+        <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount %></span></td>
         <td data-hook="order_item_qty"><%= item.quantity %></td>
-        <td data-hook="order_item_total" class="total"><span><%= money(item.price * item.quantity) %></span></td>
+        <td data-hook="order_item_total" class="total"><span><%= item.display_amount %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tfoot id="order-total" data-hook="order_details_total">
     <tr class="total">
       <td colspan="4"><b><%= t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= money @order.total %></span></td>
+      <td class="total"><span id="order_total"><%= @order.display_total %></span></td>
     </tr>
   </tfoot>
   <% if order.price_adjustment_totals.present? %>
@@ -96,7 +96,7 @@
       <% @order.price_adjustment_totals.keys.each do |key| %>
         <tr class="total">
           <td colspan="4"><strong><%= key %></strong></td>
-          <td class="total"><span><%= money @order.price_adjustment_totals[key] %></span></td>
+          <td class="total"><span><%= @order.price_adjustment_totals[key].display_amount %></span></td>
         </tr>
       <% end %>
     </tfoot>
@@ -104,7 +104,7 @@
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= money @order.item_total %></span></td>
+      <td class="total"><span><%= @order.display_item_total %></span></td>
     </tr>
   </tfoot>
   <tfoot id="order-charges" data-hook="order_details_adjustments">
@@ -112,7 +112,7 @@
     <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="4"><strong><%= adjustment.label %></strong></td>
-        <td class="total"><span><%= money adjustment.amount %></span></td>
+        <td class="total"><span><%= adjustment.display_amount %></span></td>
       </tr>
     <% end %>
   </tfoot>

@@ -9,55 +9,48 @@ Spree::Core::Engine.routes.prepend do
   end
 
   namespace :api do
-    scope :module => :v1 do
-      resources :products do
-        collection do
-          get :search
-        end
+    resources :products do
+      resources :variants
+      resources :product_properties
+    end
 
-        resources :variants
-        resources :product_properties
+    resources :images
+    resources :variants, :only => [:index] do
+    end
+
+    resources :orders do
+      resources :return_authorizations
+      member do
+        put :address
+        put :delivery
+        put :cancel
+        put :empty
       end
 
-      resources :images
-      resources :variants, :only => [:index] do
-      end
-      
-      resources :orders do
-        collection do
-          get :search
-        end
+      resources :line_items
+      resources :payments do
         member do
-          put :address
-          put :delivery
-          put :cancel
-          put :empty
-        end
-
-        resources :line_items
-        resources :payments do
-          member do
-            put :authorize
-            put :purchase
-            put :void
-            put :credit
-          end
-        end
-
-        resources :shipments do
-          member do
-            put :ready
-            put :ship
-          end
+          put :authorize
+          put :capture
+          put :purchase
+          put :void
+          put :credit
         end
       end
 
-      resources :zones
-      resources :countries, :only => [:index, :show]
-      resources :addresses, :only => [:show, :update]
-      resources :taxonomies do
-        resources :taxons
+      resources :shipments do
+        member do
+          put :ready
+          put :ship
+        end
       end
+    end
+
+    resources :zones
+    resources :countries, :only => [:index, :show]
+    resources :addresses, :only => [:show, :update]
+    resources :taxonomies do
+      resources :taxons
     end
   end
 end

@@ -2,5 +2,5 @@
 * This is a manifest file that includes stylesheets for spree_core  
  *= require normalize
  *= require skeleton
- *= require store/screen 
+ *= require store/screen
 */

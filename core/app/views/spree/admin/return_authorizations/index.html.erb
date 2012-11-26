@@ -29,7 +29,7 @@
         <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td><%= return_authorization.number %></td>
           <td><%= t(return_authorization.state.downcase) %></td>
-          <td><%= money return_authorization.amount %></td>
+          <td><%= return_authorization.display_amount %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>
           <td class="actions">
             <%= link_to_edit return_authorization %>

@@ -15,9 +15,9 @@ module Spree
       diff = variant.price - variant.product.price
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{Spree::Money.new(diff.abs)})"
+        "(#{t(:add)}: #{Spree::Money.new(diff.abs, { :currency => variant.currency })})"
       else
-        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs)})"
+        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs, { :currency => variant.currency })})"
       end
     end
 
@@ -25,7 +25,7 @@ module Spree
     def variant_full_price(variant)
       product = variant.product
       unless product.variants.active.all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price).to_s
+        Spree::Money.new(variant.price, { :currency => variant.currency }).to_s
       end
     end
 

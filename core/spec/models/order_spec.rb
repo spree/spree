@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 
 class FakeCalculator < Spree::Calculator
@@ -114,6 +116,10 @@ describe Spree::Order do
     end
 
     it "should freeze all adjustments" do
+      # Stub this method as it's called due to a callback
+      # and it's irrelevant to this test
+      order.stub :has_available_shipment
+
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
       adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
@@ -135,7 +141,6 @@ describe Spree::Order do
       payment = stub_model(Spree::Payment)
       payments = [payment]
       order.stub(:payments).and_return(payments)
-      payments.should_receive(:with_state).with('checkout').and_return(payments)
       payments.first.should_receive(:process!)
       order.process_payments!
     end
@@ -335,23 +340,73 @@ describe Spree::Order do
     end
   end
 
+  context "#display_outstanding_balance" do
+    it "returns the value as a spree money" do
+      order.stub(:outstanding_balance) { 10.55 }
+      order.display_outstanding_balance.should == Spree::Money.new(10.55)
+    end
+  end
+
+  context "#display_item_total" do
+    it "returns the value as a spree money" do
+      order.stub(:item_total) { 10.55 }
+      order.display_item_total.should == Spree::Money.new(10.55)
+    end
+  end
+
+  context "#display_adjustment_total" do
+    it "returns the value as a spree money" do
+      order.adjustment_total = 10.55
+      order.display_adjustment_total.should == Spree::Money.new(10.55)
+    end
+  end
+
   context "#display_total" do
-    before { order.total = 10.55 }
+    it "returns the value as a spree money" do
+      order.total = 10.55
+      order.display_total.should == Spree::Money.new(10.55)
+    end
+  end
 
-    context "with display_currency set to true" do
-      before { Spree::Config[:display_currency] = true }
+  context "#currency" do
+    context "when object currency is ABC" do
+      before { order.currency = "ABC" }
 
-      it "shows the currency" do
-        order.display_total.to_s.should == "$10.55 USD"
+      it "returns the currency from the object" do
+        order.currency.should == "ABC"
       end
     end
 
-    context "with display_currency set to false" do
-      before { Spree::Config[:display_currency] = false }
+    context "when object currency is nil" do
+      before { order.currency = nil }
 
-      it "does not include the currency" do
-        order.display_total.to_s.should == "$10.55"
+      it "returns the globally configured currency" do
+        order.currency.should == "USD"
       end
+    end
+  end
+
+  # Regression test for #2191
+  context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
+    let!(:persisted_order) { create(:order) }
+    let!(:line_item) { create(:line_item) }
+    let!(:shipping_method) do
+      sm = create(:shipping_method)
+      sm.calculator.preferred_amount = 10
+      sm.save
+      sm
+    end
+
+    before do
+      persisted_order.line_items << line_item
+      persisted_order.adjustments.create(:amount => -line_item.amount, :label => "Promotion")
+      persisted_order.state = 'delivery'
+    end
+
+    it "transitions from delivery to payment" do
+      persisted_order.shipping_method = shipping_method
+      persisted_order.next!
+      persisted_order.state.should == "payment"
     end
   end
 end

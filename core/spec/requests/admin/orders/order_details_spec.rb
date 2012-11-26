@@ -41,6 +41,7 @@ describe "Order Details" do
 
     it "should render details properly" do
       order.state = :complete
+      order.currency = 'GBP'
       order.save!
 
       visit spree.edit_admin_order_path(order)
@@ -56,8 +57,6 @@ describe "Order Details" do
       I18n.backend.store_translations I18n.locale,
         :shipment_state => { :missing => 'some text' },
         :payment_states => { :missing => 'other text' }
-
-      Spree::Config[:currency] = "GBP"
 
       visit spree.edit_admin_order_path(order)
 

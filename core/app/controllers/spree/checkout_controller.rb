@@ -2,6 +2,11 @@ module Spree
   # Handles checkout logic.  This is somewhat contrary to standard REST convention since there is not actually a
   # Checkout object.  There's enough distinct logic specific to checkout which has nothing to do with updating an
   # order that this approach is waranted.
+
+  # Much of this file, especially the update action is overriden in the promo gem.
+  # This is to allow for the promo behavior but also allow the promo gem to be 
+  # removed if the functionality is not needed. 
+
   class CheckoutController < Spree::StoreController
     ssl_required
 
@@ -13,6 +18,7 @@ module Spree
     respond_to :html
 
     # Updates the order and advances to the next state (when possible.)
+    # Overriden by the promo gem if it exists. 
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
@@ -56,16 +62,16 @@ module Spree
 
       def load_order
         @order = current_order
-        redirect_to spree.cart_path and return unless @order and @order.checkout_allowed?
+        redirect_to cart_path and return unless @order and @order.checkout_allowed?
         raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
-        redirect_to spree.cart_path and return if @order.completed?
+        redirect_to cart_path and return if @order.completed?
         @order.state = params[:state] if params[:state]
         state_callback(:before)
       end
 
       # Provides a route to redirect after order completion
       def completion_route
-        spree.order_path(@order)
+        order_path(@order)
       end
 
       def object_params
@@ -83,7 +89,7 @@ module Spree
 
       def raise_insufficient_quantity
         flash[:error] = t(:spree_inventory_error_flash_for_insufficient_quantity)
-        redirect_to spree.cart_path
+        redirect_to cart_path
       end
 
       def state_callback(before_or_after = :before)

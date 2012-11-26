@@ -1,13 +1,17 @@
-ups_ground:
-  calculable: ups_ground
+ups_ground_usd:
+  calculable: ups_ground_usd
   calculable_type: Spree::ShippingMethod
   type: Spree::Calculator::FlatRate
-ups_two_day:
-  calculable: ups_two_day
+ups_two_day_usd:
+  calculable: ups_two_day_usd
   calculable_type: Spree::ShippingMethod
   type: Spree::Calculator::FlatRate
-ups_one_day:
-  calculable: ups_one_day
+ups_one_day_usd:
+  calculable: ups_one_day_usd
+  calculable_type: Spree::ShippingMethod
+  type: Spree::Calculator::FlatRate
+ups_ground_eur:
+  calculable: ups_ground_eur
   calculable_type: Spree::ShippingMethod
   type: Spree::Calculator::FlatRate
 flat_rate_coupon_calculator:

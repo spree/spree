@@ -25,7 +25,7 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions
+                    :shipping_method_id, :email, :use_billing, :special_instructions, :currency
 
     if Spree.user_class
       belongs_to :user, :class_name => Spree.user_class.to_s
@@ -56,6 +56,7 @@ module Spree
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
+    before_validation :set_currency
     before_validation :generate_order_number, :on => :create
     before_validation :clone_billing_address, :if => :use_billing?
     attr_accessor :use_billing
@@ -63,7 +64,8 @@ module Spree
     before_create :link_by_email
     after_create :create_tax_charge!
 
-    validates :email, :presence => true, :email => true, :if => :require_email
+    validates :email, :presence => true, :if => :require_email
+    validates :email, :email => true, :if => :require_email, :allow_blank => true
     validate :has_available_shipment
     validate :has_available_payment
 
@@ -106,8 +108,24 @@ module Spree
       line_items.sum(&:amount)
     end
 
+    def currency
+      self[:currency] || Spree::Config[:currency]
+    end
+
+    def display_outstanding_balance
+      Spree::Money.new(outstanding_balance, { :currency => currency })
+    end
+
+    def display_item_total
+      Spree::Money.new(item_total, { :currency => currency })
+    end
+
+    def display_adjustment_total
+      Spree::Money.new(adjustment_total, { :currency => currency })
+    end
+
     def display_total
-      Spree::Money.new(total)
+      Spree::Money.new(total, { :currency => currency })
     end
 
     def to_param
@@ -127,6 +145,7 @@ module Spree
 
     # Is this a free order in which case the payment step should be skipped
     def payment_required?
+      Spree::OrderUpdater.new(self).update_totals
       total.to_f > 0.0
     end
 
@@ -214,15 +233,21 @@ module Spree
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
     
-    def add_variant(variant, quantity = 1)
+    def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
         current_item.quantity += quantity
+        current_item.currency = currency unless currency.nil?
         current_item.save
       else
         current_item = LineItem.new(:quantity => quantity)
         current_item.variant = variant
-        current_item.price   = variant.price
+        if currency
+          current_item.currency = currency unless currency.nil?
+          current_item.price    = variant.price_in(currency).amount
+        else
+          current_item.price    = variant.price
+        end
         self.line_items << current_item
       end
 
@@ -383,7 +408,8 @@ module Spree
         ShippingRate.new( :id => ship_method.id,
                           :shipping_method => ship_method,
                           :name => ship_method.name,
-                          :cost => cost)
+                          :cost => cost,
+                          :currency => currency)
       end.compact.sort_by { |r| r.cost }
     end
 
@@ -396,7 +422,7 @@ module Spree
     end
 
     def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available(:front_end)
+      @available_payment_methods ||= PaymentMethod.available
     end
 
     def payment_method
@@ -408,7 +434,7 @@ module Spree
     end
 
     def pending_payments
-      payments.with_state('checkout')
+      payments.select {|p| p.state == "checkout"}
     end
 
     def process_payments!
@@ -439,13 +465,17 @@ module Spree
       line_items.map { |li| li.variant.product }
     end
 
+    def variants
+      line_items.map(&:variant)
+    end
+
     def insufficient_stock_lines
       line_items.select &:insufficient_stock?
     end
 
     def merge!(order)
       order.line_items.each do |line_item|
-        self.add_variant(line_item.variant, line_item.quantity)
+        self.add_variant(line_item.variant, line_item.quantity) if line_item.currency == currency
       end
       order.destroy
     end
@@ -529,6 +559,10 @@ module Spree
 
       def use_billing?
         @use_billing == true || @use_billing == "true" || @use_billing == "1"
+      end
+
+      def set_currency
+        self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
   end
 end

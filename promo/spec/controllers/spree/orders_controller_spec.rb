@@ -24,23 +24,11 @@ describe Spree::OrdersController do
   end
 
   describe "#update" do
-
-    it "applies a promotion to an order" do
-      controller.should_receive(:fire_event).
-                 with('spree.order.contents_changed')
-      controller.should_receive(:fire_event).
-                 with('spree.checkout.coupon_code_added', hash_including(:coupon_code => coupon_code))
-      spree_put :update, :order => { :coupon_code => coupon_code }
-      order.coupon_code.should == coupon_code
-      flash[:notice].should == I18n.t(:coupon_code_applied)
-      response.should redirect_to(spree.cart_path)
-    end
-
     it "renders orders#edit when coupon code is invalid" do
       controller.should_not_receive(:fire_event).
                  with('spree.checkout.coupon_code_added', hash_including(:coupon_code => invalid_coupon_code))
       spree_put :update, :order => { :coupon_code => invalid_coupon_code }
-      flash[:error].should == I18n.t(:promotion_not_found)
+      flash[:error].should == I18n.t(:coupon_code_not_found)
       response.should render_template :edit
     end
 

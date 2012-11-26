@@ -269,4 +269,27 @@ describe Spree::Variant do
       end
     end
   end
+
+  context "#currency" do
+    it "returns the globally configured currency" do
+      variant.currency.should == "USD"
+    end
+  end
+
+  context "#display_amount" do
+    it "retuns a Spree::Money" do
+      variant.price = 21.22
+      variant.display_amount.should == "$21.22"
+    end
+  end
+
+  context "#cost_currency" do
+    context "when cost currency is nil" do
+      before { variant.cost_currency = nil }
+      it "populates cost currency with the default value on save" do
+        variant.save!
+        variant.cost_currency.should == "USD"
+      end
+    end
+  end
 end

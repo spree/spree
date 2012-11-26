@@ -6,15 +6,15 @@
 <%= t('order_mailer.confirm_email.order_summary') %>
 ============================================================
 <% @order.line_items.each do |item| %>
-  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= money item.price %> = <%= money(item.price * item.quantity) %>
+  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= item.variant.display_amount %> = <%= item.display_amount %>
 <% end %>
 ============================================================
-<%= t('order_mailer.confirm_email.subtotal') %>: <%= money @order.item_total %>
+<%= t('order_mailer.confirm_email.subtotal') %>: <%= @order.display_item_total %>
 
 <% @order.adjustments.eligible.each do |adjustment| %>
-  <%= raw(adjustment.label) %> <%= money(adjustment.amount) %>
+  <%= raw(adjustment.label) %> <%= adjustment.display_amount %>
 <% end %>
 
-<%= t('order_mailer.confirm_email.total') %>: <%= money(@order.total) %>
+<%= t('order_mailer.confirm_email.total') %>: <%= @order.display_total %>
 
 <%= t('order_mailer.confirm_email.thanks') %>

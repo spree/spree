@@ -50,6 +50,17 @@ describe Spree::Order do
       order.adjustments.eligible.promotion.first.amount.to_i.should == -200
     end
 
+    it "should only include eligible adjustments in promo_total" do
+      create_adjustment("Promotion A", -100)
+      create(:adjustment, :adjustable => order,
+                          :originator => nil,
+                          :amount     => -1000,
+                          :locked     => true,
+                          :eligible   => false,
+                          :label      => 'Bad promo')
+
+      order.promo_total.to_f.should == -100.to_f
+    end
   end
 
 end

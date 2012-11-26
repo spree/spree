@@ -4,6 +4,8 @@ module Spree
       skip_before_filter :load_resource, :only => [:create]
       before_filter :load_data
 
+      respond_to :html
+
       def create
         @payment_method = params[:payment_method].delete(:type).constantize.new(params[:payment_method])
         @object = @payment_method
@@ -33,6 +35,7 @@ module Spree
             attributes.delete(k)
           end
         end
+
         if @payment_method.update_attributes(attributes)
           invoke_callbacks(:update, :after)
           flash[:success] = I18n.t(:successfully_updated, :resource => I18n.t(:payment_method))
