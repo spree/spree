@@ -38,6 +38,7 @@ describe Spree::Api::ShipmentsController do
       Spree::Order.any_instance.stub(:paid? => false)
       api_put :ready
       json_response["error"].should == "Cannot ready shipment."
+      response.status.should == 422
     end
 
     context "can transition a shipment from ready to ship" do

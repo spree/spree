@@ -10,7 +10,7 @@ module Spree
           if @shipment.can_ready?
             @shipment.ready!
           else
-            render "spree/api/shipments/cannot_ready_shipment" and return
+            render "spree/api/shipments/cannot_ready_shipment", :status => 422 and return
           end
         end
         render :show
