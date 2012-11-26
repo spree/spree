@@ -8,7 +8,11 @@ module Spree
         def ready
           authorize! :read, Shipment
           unless @shipment.ready?
-            @shipment.ready!
+            if @shipment.can_ready?
+              @shipment.ready!
+            else
+              render "spree/api/v1/shipments/cannot_ready_shipment" and return
+            end
           end
           render :show
         end
