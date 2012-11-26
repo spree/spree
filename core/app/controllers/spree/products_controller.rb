@@ -17,7 +17,7 @@ module Spree
     def show
       return unless @product
 
-      @variants = @product.variants_including_master.active.includes([:option_values, :images])
+      @variants = @product.variants_including_master.active(current_currency).includes([:option_values, :images])
       @product_properties = @product.product_properties.includes(:property)
 
       referer = request.env['HTTP_REFERER']
@@ -40,7 +40,7 @@ module Spree
         if try_spree_current_user.try(:has_spree_role?, "admin")
           @product = Product.find_by_permalink!(params[:id])
         else
-          @product = Product.active.find_by_permalink!(params[:id])
+          @product = Product.active(current_currency).find_by_permalink!(params[:id])
         end
       end
   end

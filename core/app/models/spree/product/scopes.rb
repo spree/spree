@@ -188,14 +188,15 @@ module Spree
     end
 
     # Can't use add_search_scope for this as it needs a default argument
-    def self.available(available_on = nil)
-      joins(:master).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now)
+    def self.available(available_on = nil, currency = nil)
+      joins(:master => :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
     search_scopes << :available
 
-    add_search_scope :active do
-      not_deleted.available
+    def self.active(currency = nil)
+      not_deleted.available(nil, currency)
     end
+    search_scopes << :active
 
     add_search_scope :on_hand do
       variants_table = Variant.table_name

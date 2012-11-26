@@ -38,8 +38,11 @@ module Spree
     after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
-    scope :active, lambda { where(:deleted_at => nil) }
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
+
+    def self.active(currency = nil)
+      joins(:prices).where(:deleted_at => nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
+    end
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
@@ -152,6 +155,10 @@ module Spree
 
     def price_in(currency)
       prices.select{ |price| price.currency == currency }.first || Spree::Price.new(:variant_id => self.id, :currency => currency)
+    end
+
+    def amount_in(currency)
+      price_in(currency).try(:amount)
     end
 
     private
