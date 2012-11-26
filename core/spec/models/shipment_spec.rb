@@ -166,7 +166,14 @@ describe Spree::Shipment do
       mail_message.should_receive :deliver
       shipment.ship!
     end
+  end
 
+  context "#ready" do
+    # Regression test for #2040
+    it "cannot ready a shipment for an order if the order is unpaid" do
+      order.stub(:paid? => false)
+      assert !shipment.can_ready?
+    end
   end
 
   context "ensure_correct_adjustment" do
