@@ -9,9 +9,11 @@ module Spree
       @options = {}
       @options[:with_currency] = true if Spree::Config[:display_currency]
       @options[:symbol_position] = Spree::Config[:currency_symbol_position].to_sym
+      @options[:no_cents] = true if Spree::Config[:hide_cents]
       @options.merge!(options)
       # Must be a symbol because the Money gem doesn't do the conversion
       @options[:symbol_position] = @options[:symbol_position].to_sym
+
     end
 
     def to_s
