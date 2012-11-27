@@ -29,6 +29,7 @@ module Spree
 
       def capture!
         return true if completed?
+        started_processing!
         protect_from_connection_error do
           check_environment
 
@@ -115,8 +116,8 @@ module Spree
       options.merge!({ :shipping => order.ship_total * 100,
                        :tax      => order.tax_total * 100,
                        :subtotal => order.item_total * 100 })
-      
-      options.merge!({ :currency => payment_method.preferences[:currency_code] }) if payment_method && payment_method.preferences[:currency_code]
+
+      options.merge!({ :currency => currency })
 
       options.merge!({ :billing_address  => order.bill_address.try(:active_merchant_hash),
                       :shipping_address => order.ship_address.try(:active_merchant_hash) })
@@ -163,10 +164,6 @@ module Spree
       rescue ActiveMerchant::ConnectionError => e
         gateway_error(e)
       end
-    end
-
-    def record_log(response)
-      log_entries.create({:details => response.to_yaml}, :without_protection => true)
     end
 
     def gateway_error(error)

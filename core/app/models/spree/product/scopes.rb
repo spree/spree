@@ -27,23 +27,23 @@ module Spree
     end
 
     add_search_scope :ascend_by_master_price do
-      joins(:master).order("#{variant_table_name}.price ASC")
+      joins(:master => :default_price).order("#{price_table_name}.amount ASC")
     end
 
     add_search_scope :descend_by_master_price do
-      joins(:master).order("#{variant_table_name}.price DESC")
+      joins(:master => :default_price).order("#{price_table_name}.amount DESC")
     end
 
     add_search_scope :price_between do |low, high|
-      joins(:master).where(Variant.table_name => { :price => low..high })
+      joins(:master => :default_price).where(Price.table_name => { :amount => low..high })
     end
 
     add_search_scope :master_price_lte do |price|
-      joins(:master).where("#{variant_table_name}.price <= ?", price)
+      joins(:master => :default_price).where("#{price_table_name}.amount <= ?", price)
     end
 
     add_search_scope :master_price_gte do |price|
-      joins(:master).where("#{variant_table_name}.price >= ?", price)
+      joins(:master => :default_price).where("#{price_table_name}.amount >= ?", price)
     end
 
     # This scope selects products in taxon AND all its descendants
@@ -188,14 +188,15 @@ module Spree
     end
 
     # Can't use add_search_scope for this as it needs a default argument
-    def self.available(available_on = nil)
-      where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now)
+    def self.available(available_on = nil, currency = nil)
+      joins(:master => :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
     search_scopes << :available
 
-    add_search_scope :active do
-      not_deleted.available
+    def self.active(currency = nil)
+      not_deleted.available(nil, currency)
     end
+    search_scopes << :active
 
     add_search_scope :on_hand do
       variants_table = Variant.table_name
@@ -217,8 +218,8 @@ module Spree
 
     private
 
-      def self.variant_table_name
-        Variant.quoted_table_name
+      def self.price_table_name
+        Price.quoted_table_name
       end
 
       # specifically avoid having an order for taxon search (conflicts with main order)

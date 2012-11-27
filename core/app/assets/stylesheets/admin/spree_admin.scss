@@ -1,5 +1,3 @@
-@import 'font-awesome.css';  // Must call .css extension or else extension integration tests cannot import file.
-
 @import 'globals/functions';
 @import 'globals/variables_override';
 @import 'globals/variables';
@@ -22,6 +20,7 @@
 @import 'components/sidebar';
 @import 'components/product_autocomplete';
 
+@import 'plugins/font-awesome';
 @import 'plugins/powertip';
 @import 'plugins/select2';
 @import 'plugins/token-input';

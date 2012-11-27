@@ -4,8 +4,10 @@ module Spree
       class Base
         attr_accessor :properties
         attr_accessor :current_user
+        attr_accessor :current_currency
 
         def initialize(params)
+          self.current_currency = Spree::Config[:currency]
           @properties = {}
           prepare(params)
         end
@@ -14,7 +16,7 @@ module Spree
           @products_scope = get_base_scope
           curr_page = page || 1
 
-          @products = @products_scope.includes([:master]).page(curr_page).per(per_page)
+          @products = @products_scope.includes([:master => :prices]).where("spree_prices.amount IS NOT NULL").where("spree_prices.currency" => current_currency).page(curr_page).per(per_page)
         end
 
         def method_missing(name)

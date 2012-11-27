@@ -6,12 +6,12 @@
         <h6 class="product-section-title"><%= t(:variants) %></h6>
         <ul>
           <% has_checked = false
-          @product.variants.active.each_with_index do |v,index|
+          @product.variants.active(current_currency).each_with_index do |v,index|
             next if v.option_values.empty? || (!v.in_stock && !Spree::Config[:show_zero_stock_products])
             checked = !has_checked && (v.in_stock || Spree::Config[:allow_backorders])
             has_checked = true if checked %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders], 'data-price' => money(v.price) %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !v.in_stock && !Spree::Config[:allow_backorders], 'data-price' => v.price_in(current_currency).display_price %>
               <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>
@@ -31,7 +31,7 @@
         
         <div id="product-price">
           <h6 class="product-section-title"><%= t(:price) %></h6>
-          <div><span class="price selling" itemprop="price"><%= money @product.price %></span></div>
+          <div><span class="price selling" itemprop="price"><%= @product.price_in(current_currency).display_price %></span></div>
         </div>
 
         <div class="add-to-cart">

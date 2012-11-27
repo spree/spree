@@ -6,6 +6,7 @@ module Spree
       new_action.before :new_before
 
       def index
+        respond_with(collection)
       end
 
       def search
@@ -30,17 +31,6 @@ module Spree
         end
       end
 
-      def update_positions
-        params[:positions].each do |id, index|
-          Variant.where(:id => id).update_all(:position => index)
-        end
-
-        respond_with(@variant) do |format|
-          format.html { redirect_to admin_product_variants_url(params[:product_id]) }
-          format.js  { render :text => 'Ok' }
-        end
-      end
-
       protected
 
         def create_before
@@ -53,6 +43,8 @@ module Spree
         def new_before
           @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
                                                                         'sku', 'is_master', 'count_on_hand')
+          # Shallow Clone of the default price to populate the price field.
+          @object.default_price = @object.product.master.default_price.clone
         end
 
         def collection

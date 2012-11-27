@@ -5,18 +5,7 @@ Spree::CheckoutController.class_eval do
     if @order.update_attributes(object_params)
 
       fire_event('spree.checkout.update')
-
-      if @order.coupon_code.present?
-        event_name = "spree.checkout.coupon_code_added"
-        if promo = Spree::Promotion.with_coupon_code(@order.coupon_code).where(:event_name => event_name).first
-          fire_event(event_name, :coupon_code => @order.coupon_code)
-          # If it doesn't exist, raise an error!
-          # Giving them another chance to enter a valid coupon code
-        else
-          flash[:error] = t(:promotion_not_found)
-          render :edit and return
-        end
-      end
+      render :edit and return unless apply_coupon_code
 
       if @order.next
         state_callback(:after)

@@ -261,10 +261,10 @@ describe Spree::Preferences::Preferable do
 
       it "saves preferences for serialized object" do
         pr = PrefTest.new
-        pr[:pref_test_any] = [1, 2]
-        pr[:pref_test_any].should == [1, 2]
+        pr.set_preference(:pref_test_any, [1, 2])
+        pr.get_preference(:pref_test_any).should == [1, 2]
         pr.save!
-        pr[:pref_test_any].should == [1, 2]
+        pr.get_preference(:pref_test_any).should == [1, 2]
       end
     end
 

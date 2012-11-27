@@ -83,6 +83,7 @@ en:
         name: Name
       spree/product:
         available_on: "Available On"
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         description: Description
         master_price: "Master Price"
@@ -121,6 +122,7 @@ en:
         password: "Password"
         password_confirmation: "Password Confirmation"
       spree/variant:
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         depth: Depth
         height: Height
@@ -272,7 +274,7 @@ en:
   back_to_adjustments_list: "Back To Adjustments List"
   back_to_images_list: "Back To Images List"
   back_to_mail_methods_list: "Back To Mail Methods List"
-  back_to_option_tyles_list: "Back To Option Types List"
+  back_to_option_types_list: "Back To Option Types List"
   back_to_payment_methods_list: "Back To Payment Methods List"
   back_to_payments_list: "Back To Payments List"
   back_to_products_list: "Back To Products List"
@@ -336,6 +338,7 @@ en:
   continue: Continue
   continue_shopping: "Continue shopping"
   copy_all_mails_to: Copy All Mails To
+  cost_currency: "Cost Currency"
   cost_price: "Cost Price"
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   country: Country
@@ -999,7 +1002,8 @@ en:
   spree:
     date: Date
     date_picker:
-      format: 'yy/mm/dd'
+      format: ! '%Y/%m/%d'
+      js_format: 'yy/mm/dd'
     time: Time
   spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
   spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."

@@ -7,7 +7,7 @@
   <% @order.adjustments.eligible.each do |adjustment| %>
     <tr>
       <td colspan="4"><%= adjustment.label %></td>
-      <td><%= money(adjustment.amount) %></td>
+      <td><%= adjustment.display_amount %></td>
       <td></td>
     </tr>
   <% end %>

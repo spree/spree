@@ -32,7 +32,7 @@ module Spree
       end
       # When processing during checkout fails
       event :failure do
-        transition :from => 'processing', :to => 'failed'
+        transition :from => ['pending', 'processing'], :to => 'failed'
       end
       # With card payments this represents authorizing the payment
       event :pend do
@@ -45,6 +45,14 @@ module Spree
       event :void do
         transition :from => ['pending', 'completed', 'checkout'], :to => 'void'
       end
+    end
+
+    def currency
+      order.currency
+    end
+
+    def display_amount
+      Spree::Money.new(amount, { :currency => currency })
     end
 
     def offsets_total

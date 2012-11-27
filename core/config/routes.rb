@@ -145,6 +145,9 @@ Spree::Core::Engine.routes.draw do
     end
 
     resources :taxonomies do
+    	collection do
+    		post :update_positions
+    	end
       member do
         get :get_children
       end

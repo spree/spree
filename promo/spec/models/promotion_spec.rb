@@ -85,8 +85,8 @@ describe Spree::Promotion do
     end
 
     it "should check code if present" do
-      promotion.code = 'XXX'
-      @payload[:coupon_code] = 'XXX'
+      promotion.code = 'xxx'
+      @payload[:coupon_code] = 'xxx'
       @action1.should_receive(:perform).with(@payload)
       @action2.should_receive(:perform).with(@payload)
       promotion.activate(@payload)

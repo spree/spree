@@ -1,6 +1,6 @@
 function cleanTaxons(data) {
   var taxons = $.map(data['taxons'], function(result) {
-    return result['taxon']
+    return result
   })
   return taxons;
 }
@@ -25,10 +25,10 @@ $(document).ready(function() {
       }
     },
     formatResult: function(taxon) {
-      return taxon.name
+      return taxon.pretty_name
     },
     formatSelection: function(taxon) {
-      return taxon.name
+      return taxon.pretty_name
     }
   })
 })

@@ -5,7 +5,7 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
@@ -164,7 +164,14 @@ describe Spree::Shipment do
       mail_message.should_receive :deliver
       shipment.ship!
     end
+  end
 
+  context "#ready" do
+    # Regression test for #2040
+    it "cannot ready a shipment for an order if the order is unpaid" do
+      order.stub(:paid? => false)
+      assert !shipment.can_ready?
+    end
   end
 
   context "ensure_correct_adjustment" do
@@ -195,6 +202,19 @@ describe Spree::Shipment do
       shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
       shipment.run_callbacks(:save, :after)
+    end
+  end
+
+  context "currency" do
+    it "returns the order currency" do
+      shipment.currency.should == order.currency
+    end
+  end
+
+  context "display_cost" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:cost) { 21.22 }
+      shipment.display_cost.should == Spree::Money.new(21.22)
     end
   end
 end

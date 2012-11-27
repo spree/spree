@@ -30,7 +30,8 @@ module Spree
     def available_to_order?(order, display_on= nil)
       available?(order, display_on) &&
       within_zone?(order) &&
-      category_match?(order)
+      category_match?(order) &&
+      currency_match?(order)
     end
 
     # Indicates whether or not the category rules for this shipping method
@@ -45,6 +46,14 @@ module Spree
       elsif match_none
         order.products.all? { |p| p.shipping_category != shipping_category }
       end
+    end
+
+    def currency_match?(order)
+      calculator_currency.nil? || calculator_currency == order.currency
+    end
+
+    def calculator_currency
+      calculator.preferences[:currency]
     end
 
     def self.all_available(order, display_on = nil)

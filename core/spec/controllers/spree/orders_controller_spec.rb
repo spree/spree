@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrdersController do
   let(:user) { create(:user) }
-  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code => nil, :user => user, :completed? => false)}
+  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code => nil, :user => user, :completed? => false, :currency => "USD")}
   before do
     Spree::Order.stub(:find).with(1).and_return(order)
     #ensure no respond_overrides are in effect
@@ -27,17 +27,17 @@ describe Spree::OrdersController do
       end
 
       it "should handle single variant/quantity pair" do
-        order.should_receive(:add_variant).with(@variant, 2)
+        order.should_receive(:add_variant).with(@variant, 2, order.currency)
         spree_post :populate, {:order_id => 1, :variants => {@variant.id => 2}}
       end
       it "should handle multiple variant/quantity pairs with shared quantity" do
         @variant.stub(:product_id).and_return(10)
-        order.should_receive(:add_variant).with(@variant, 1)
+        order.should_receive(:add_variant).with(@variant, 1, order.currency)
         spree_post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => 1}
       end
       it "should handle multiple variant/quantity pairs with specific quantity" do
         @variant.stub(:product_id).and_return(10)
-        order.should_receive(:add_variant).with(@variant, 3)
+        order.should_receive(:add_variant).with(@variant, 3, order.currency)
         spree_post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => {@variant.id.to_s => 3}}
       end
     end
@@ -48,7 +48,7 @@ describe Spree::OrdersController do
       order.stub(:update_attributes).and_return true
       order.stub(:line_items).and_return([])
       order.stub(:line_items=).with([])
-      Spree::Order.stub(:find_by_id).and_return(order)
+      Spree::Order.stub(:find_by_id_and_currency).and_return(order)
     end
 
     it "should not result in a flash success" do

@@ -63,6 +63,14 @@ module Spree
       def taxon_attributes
         [:id, :name, :permalink, :position, :parent_id, :taxonomy_id]
       end
+
+      def return_authorization_attributes
+        [:id, :number, :state, :amount, :order_id, :reason, :created_at, :updated_at]
+      end
+
+      def country_attributes
+        [:id, :iso_name, :iso, :iso3, :name, :numcode]
+      end
     end
   end
 end

@@ -4,16 +4,20 @@ module Spree
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/taxons'
 
+    respond_to :html
+
     def index
       @searcher = Config.searcher_class.new(params)
       @searcher.current_user = try_spree_current_user
+      @searcher.current_currency = current_currency
       @products = @searcher.retrieve_products
+      respond_with(@products)
     end
 
     def show
       return unless @product
 
-      @variants = @product.variants_including_master.active.includes([:option_values, :images])
+      @variants = @product.variants_including_master.active(current_currency).includes([:option_values, :images])
       @product_properties = @product.product_properties.includes(:property)
 
       referer = request.env['HTTP_REFERER']
@@ -23,6 +27,8 @@ module Spree
           @taxon = Taxon.find_by_permalink($1)
         end
       end
+
+      respond_with(@product)
     end
 
     private
@@ -34,7 +40,7 @@ module Spree
         if try_spree_current_user.try(:has_spree_role?, "admin")
           @product = Product.find_by_permalink!(params[:id])
         else
-          @product = Product.active.find_by_permalink!(params[:id])
+          @product = Product.active(current_currency).find_by_permalink!(params[:id])
         end
       end
   end

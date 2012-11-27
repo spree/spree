@@ -14,7 +14,7 @@
 <% end %>
 
 <% if @order.outstanding_balance? %>
-  <h5 class="outstanding-balance"><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %>: <strong><%= money(@order.outstanding_balance) %></strong></h5>
+  <h5 class="outstanding-balance"><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %>: <strong><%= @order.display_outstanding_balance %></strong></h5>
 <% end %>
 
 <%= render :partial => 'list', :locals => { :payments => @payments } %>
