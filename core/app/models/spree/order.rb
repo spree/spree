@@ -214,6 +214,7 @@ module Spree
 
     def updater
       OrderUpdater.new(self)
+    end
 
     def update!
       updater.update
