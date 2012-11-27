@@ -221,7 +221,7 @@ module Spree
     end
 
     def update_totals
-      update_totals
+      updater.update_totals
     end
 
     def clone_billing_address
