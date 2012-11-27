@@ -246,7 +246,7 @@ module Spree
     def awaiting_returns?
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
-    
+
     def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
@@ -410,7 +410,7 @@ module Spree
       # create all the threads and kick off their execution
       threads = available_shipping_methods(:front_end).each_with_index.map do |ship_method, index|
         Thread.new { computed_costs[index] = [ship_method, ship_method.calculator.compute(self)] }
-      end      
+      end
 
       # wait for all threads to finish
       threads.map(&:join)
@@ -588,5 +588,6 @@ module Spree
       def set_currency
         self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
+    end
   end
 end
