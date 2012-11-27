@@ -10,7 +10,8 @@ $(document).ready(function() {
     placeholder: "Add a taxon",
     multiple: true,
     initSelection: function(element, callback) {
-      return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
+      var param_separator = (Spree.routes.taxon_search.indexOf("?") !== -1) ? '&' : '?';
+      return $.getJSON(Spree.routes.taxon_search + param_separator + "ids=" + (element.val()), null, function(data) {
         return callback(self.cleanTaxons(data));
       })
     },
