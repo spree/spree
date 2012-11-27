@@ -19,7 +19,7 @@ module Spree
         # Fix for #2191
         if order.shipping_method
           order.create_shipment!
-          Spree::OrderUpdater.new(order).update_totals
+          order.update_totals
         end
         order.payment_required?
       }
@@ -152,7 +152,7 @@ module Spree
 
     # Is this a free order in which case the payment step should be skipped
     def payment_required?
-      Spree::OrderUpdater.new(self).update_totals
+      update_totals
       total.to_f > 0.0
     end
 
@@ -212,8 +212,15 @@ module Spree
       totals
     end
 
+    def updater
+      OrderUpdater.new(self)
+
     def update!
-      OrderUpdater.new(self).update
+      updater.update
+    end
+
+    def update_totals
+      update_totals
     end
 
     def clone_billing_address
