@@ -46,6 +46,7 @@ module Spree
     preference :default_meta_keywords, :string, :default => 'spree, demo'
     preference :default_seo_title, :string, :default => ''
     preference :dismissed_spree_alerts, :string, :default => ''
+    preference :hide_cents, :boolean, :default => false
     preference :last_check_for_spree_alerts, :string, :default => nil
     preference :layout, :string, :default => 'spree/layouts/spree_application'
     preference :logo, :string, :default => 'admin/bg/spree_50.png'

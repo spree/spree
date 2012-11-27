@@ -6,7 +6,7 @@
 
 <%= form_tag admin_general_settings_path, :method => :put do %>
   <div id="preferences" data-hook>
-    
+
     <fieldset class="general no-border-top">
       <% @preferences_general.each do |key|
           type = Spree::Config.preference_type(key) %>
@@ -16,7 +16,7 @@
             <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
           </div>
       <% end %>
-    
+
 
       <div class="row">
         <div class="alpha six columns">
@@ -30,7 +30,7 @@
                   <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
                 </div>
             <% end %>
-          </fieldset>    
+          </fieldset>
         </div>
         <div class="omega six columns">
           <fieldset class="currency no-border-bottom">
@@ -62,7 +62,7 @@
                 </ul>
               </div>
             </div>
-          </fieldset>    
+          </fieldset>
         </div>
       </div>
 
@@ -73,10 +73,10 @@
       </div>
 
     </fieldset>
-     
+
   </div>
 
-  
+
 <% end %>
 
 <script>
