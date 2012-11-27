@@ -445,9 +445,12 @@ describe Spree::Order do
     end
 
     before do
+      # Don't care about available payment methods in this test
+      persisted_order.stub(:has_available_payment => false)
       persisted_order.line_items << line_item
       persisted_order.adjustments.create(:amount => -line_item.amount, :label => "Promotion")
       persisted_order.state = 'delivery'
+      persisted_order.save # To ensure new state_change event
     end
 
     it "transitions from delivery to payment" do
