@@ -653,9 +653,12 @@ describe Spree::Order do
     let!(:shipping_method) { create(:shipping_method) }
 
     before do
+      # Don't care about available payment methods in this test
+      persisted_order.stub(:has_available_payment => false)
       persisted_order.line_items << line_item
       persisted_order.adjustments.create(:amount => 19.99, :label => "Promotion")
       persisted_order.state = 'delivery'
+      persisted_order.save # To ensure new state_change event
     end
 
     it "transitions from delivery to payment" do
