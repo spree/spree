@@ -11,10 +11,10 @@ module Spree
       protected
 
         def collection
-          params[:search] ||= {}
-          params[:search][:meta_sort] ||= "ascend_by_name"
-          @search = super.metasearch(params[:search])
-          @zones = @search.relation.page(params[:page]).per(Spree::Config[:orders_per_page])
+          params[:q] ||= {}
+          params[:q][:s] ||= "ascend_by_name"
+          @search = super.ransack(params[:q])
+          @zones = @search.result.page(params[:page]).per(Spree::Config[:orders_per_page])
         end
 
         def load_data

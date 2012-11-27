@@ -7,8 +7,10 @@ module Spree
     preference :server, :string, :default => 'test'
     preference :test_mode, :boolean, :default => true
 
+    attr_accessible :preferred_server, :preferred_test_mode
+
     def payment_source_class
-      Creditcard
+      CreditCard
     end
 
     # instantiates the selected gateway and configures with the options stored in the database
@@ -24,11 +26,7 @@ module Spree
     end
 
     def options
-      options_hash = {}
-      self.preferences.each do |key,value|
-        options_hash[key.to_sym] = value
-      end
-      options_hash
+      self.preferences.inject({}){ |memo, (key, value)| memo[key.to_sym] = value; memo }
     end
 
     def method_missing(method, *args)

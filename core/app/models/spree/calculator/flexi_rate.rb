@@ -1,8 +1,13 @@
+require_dependency 'spree/calculator'
+
 module Spree
   class Calculator::FlexiRate < Calculator
     preference :first_item,      :decimal, :default => 0.0
     preference :additional_item, :decimal, :default => 0.0
     preference :max_items,       :integer, :default => 0
+    preference :currency,        :string,  :default => Spree::Config[:currency]
+
+    attr_accessible :preferred_first_item, :preferred_additional_item, :preferred_max_items, :preferred_currency
 
     def self.description
       I18n.t(:flexible_rate)

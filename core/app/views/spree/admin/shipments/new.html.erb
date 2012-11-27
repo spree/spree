@@ -1,5 +1,9 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
+<% content_for :page_actions do %>
+    <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>  
+<% end %>
+
 <div data-hook="admin_shipment_new_header">
   <h1><%= t(:new_shipment) %></h1>
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipment } %>

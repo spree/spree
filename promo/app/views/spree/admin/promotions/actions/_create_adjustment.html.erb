@@ -1,27 +1,26 @@
-<div class="calculator-fields">
+<div class="calculator-fields row">
 
-  <p class="field">
+  <div class="field alpha four columns">
     <% field_name = "#{param_prefix}[calculator_type]" %>
     <%= label_tag field_name, t(:calculator) %>
     <%= select_tag field_name,
                    options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
-                   :class => 'type-select' %>
+                   :class => 'type-select select2 fullwidth' %>
     <% if promotion_action.calculator.respond_to?(:preferences) %>
-      &nbsp; <span class="warning"><%= t(:calculator_settings_warning) %></span>
+      <span class="warning info"><%= t(:calculator_settings_warning) %></span>
     <% end %>
-  </p>
+  </div>
 
   <% unless promotion_action.new_record? %>
-    <div class="settings">
+    <div class="settings field omega four columns">
       <% promotion_action.calculator.preferences.keys.map do |key| %>
         <% field_name = "#{param_prefix}[calculator_attributes][preferred_#{key}]" %>
-        <%= label_tag field_name, key.to_s.titleize %>
+        <%= label_tag field_name, t(key.to_s) %>
         <%= preference_field_tag(field_name,
                                  promotion_action.calculator.get_preference(key),
                                  :type => promotion_action.calculator.preference_type(key)) %>
-        <% end %>
-        <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
+      <% end %>
+      <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
     </div>
   <% end %>
-
 </div>

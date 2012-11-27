@@ -1,23 +1,26 @@
+<div id="new_state" data-hook></div>
+
 <table class="index" id='listing_states' data-hook>
+  <colgroup>
+    <col style="width: 70%" />
+    <col style="width: 15%" />
+    <col style="width: 15%" />
+  </colgroup>
   <thead>
     <tr data-hook="states_header">
       <th><%= t(:name) %></th>
       <th><%= t(:abbreviation) %></th>
-      <th></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
-    <% @states.each do |state|
-         @edit_url = admin_country_state_path(@country, state)
-         @delete_url = admin_country_state_path(@country, state)
-    %>
-      <tr id="<%= dom_id state %>" data-hook="states_row">
+    <% @states.each do |state| %>
+      <tr id="<%= spree_dom_id state %>" data-hook="states_row" class="<%= cycle('odd', 'even')%>">
         <td><%= state.name %></td>
-        <td><%= state.abbr %></td>
+        <td class="align-center"><%= state.abbr %></td>
         <td class="actions">
-          <%= link_to_with_icon 'edit', t(:edit), edit_admin_country_state_url(@country, state), :class => 'edit' %>
-          &nbsp;
-          <%= link_to_delete state %>
+          <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_country_state_url(@country, state), :no_text => true %>
+          <%= link_to_delete state, :no_text => true %>
         </td>
       </tr>
     <% end %>
@@ -26,7 +29,3 @@
     <% end %>
   </tbody>
 </table>
-<div id="new_state" data-hook></div>
-<p data-hook="buttons">
-  <%= button_link_to t(:new_state), new_admin_country_state_url(@country), {:remote => true, :icon => 'add', :id => 'new_state_link'} %>
-</p>

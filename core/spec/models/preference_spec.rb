@@ -65,7 +65,7 @@ describe Spree::Preference do
       pref.value.should eq value
       pref.value_type.should == value_type.to_s
     end
-    
+
     it ":text" do
       value_type = :text
       value = "This is a string stored as text"
@@ -79,6 +79,15 @@ describe Spree::Preference do
       value_type = :password
       value = "This is a password"
       key = "password_key"
+      pref = round_trip_preference(key, value, value_type)
+      pref.value.should eq value
+      pref.value_type.should == value_type.to_s
+    end
+
+    it ":any" do
+      value_type = :any
+      value = [1, 2]
+      key = "any_key"
       pref = round_trip_preference(key, value, value_type)
       pref.value.should eq value
       pref.value_type.should == value_type.to_s
@@ -109,7 +118,3 @@ describe Spree::Preference do
   end
 
 end
-
-
-
-

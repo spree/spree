@@ -1,0 +1,24 @@
+//= require select2
+jQuery(function($) {
+  <% unless Rails.env.test? %>
+    // Make select beautiful
+    $('select.select2').select2({
+      allowClear: true
+    });
+
+    function format_taxons(taxon) {
+      new_taxon = taxon.text.replace('->', '<i class="icon-arrow-right">')
+      return new_taxon;
+    }
+
+    $("#product_taxon_ids").on({
+      change: function(e){
+        $('.select2-search-choice .with-tip').powerTip({
+          smartPlacement: true,
+          fadeInTime: 50,
+          fadeOutTime: 50
+        })
+      }
+    })
+  <% end %>
+})

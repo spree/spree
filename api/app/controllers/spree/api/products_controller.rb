@@ -1,14 +1,45 @@
-class Spree::Api::ProductsController < Spree::Api::BaseController
-  include Spree::Core::Search
+module Spree
+  module Api
+    class ProductsController < Spree::Api::BaseController
+      def index
+        @products = product_scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+      end
 
-  private
-    def collection
-      params[:per_page] ||= 100
-      @searcher = Spree::Config.searcher_class.new(params)
-      @collection = @searcher.retrieve_products
-    end
+      def show
+        @product = find_product(params[:id])
+      end
 
-    def object_serialization_options
-      { :include => [:master, :variants, :taxons] }
+      def new
+      end
+
+      def create
+        authorize! :create, Product
+        params[:product][:available_on] ||= Time.now
+        @product = Product.new(params[:product])
+        if @product.save
+          render :show, :status => 201
+        else
+          invalid_resource!(@product)
+        end
+      end
+
+      def update
+        authorize! :update, Product
+        @product = find_product(params[:id])
+        if @product.update_attributes(params[:product])
+          render :show, :status => 200
+        else
+          invalid_resource!(@product)
+        end
+      end
+
+      def destroy
+        authorize! :delete, Product
+        @product = find_product(params[:id])
+        @product.update_attribute(:deleted_at, Time.now)
+        @product.variants_including_master.update_all(:deleted_at => Time.now)
+        render :text => nil, :status => 204
+      end
     end
+  end
 end

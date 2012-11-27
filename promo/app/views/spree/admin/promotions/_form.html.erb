@@ -1,51 +1,56 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @promotion } %>
-<fieldset id="general_fields">
-  <legend><%= t(:general) %></legend>
-  <%= f.field_container :name do %>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  <% end %>
+<div class="row">
+  <div id="general_fields" class="alpha thirteen columns">
+    <div class="alpha four columns">
+      <%= f.field_container :name do %>
+        <%= f.label :name %>
+        <%= f.text_field :name, :class => 'fullwidth' %>
+      <% end %>
 
-  <%= f.field_container :event_name do %>
-    <%= f.label :event_name, t(:event) %><br />
-    <%= f.select :event_name, Spree::Activator.event_names.map{|name| [t("events.#{name}"), name] } %>
-  <% end %>
+      <%= f.field_container :event_name do %>
+        <%= f.label :event_name %>
+        <%= f.select :event_name, Spree::Activator.event_names.map{|name| [t("events.#{name}"), name] }, {}, {:class => 'select2 fullwidth'} %>
+      <% end %>
 
-  <%= f.field_container :code do %>
-    <%= f.label :code, t(:code) %><br />
-    <%= f.text_field :code %>
-  <% end %>
+      <%= f.field_container :code do %>
+        <%= f.label :code %>
+        <%= f.text_field :code, :class => 'fullwidth' %>
+      <% end %>
 
-  <%= f.field_container :path do %>
-    <%= f.label :path, t(:path) %><br />
-    <%= f.text_field :path %>
-  <% end %>
+      <%= f.field_container :path do %>
+        <%= f.label :path %>
+        <%= f.text_field :path, :class => 'fullwidth' %>
+      <% end %>
 
-  <%= f.field_container :description do %>
-    <%= f.label :description %><br />
-    <%= f.text_area :description, :style => 'height:50px;' %>
-  <% end %>
+      <%= f.field_container :advertise do %>
+        <%= f.check_box :advertise %>
+        <%= f.label :advertise %>
+      <% end %>
+    </div>
 
-  <%= f.field_container :advertise do %>
-    <%= f.check_box :advertise %>
-    <%= f.label :advertise, t(:advertise) %>
-  <% end %>
+    <div class="omega nine columns">
+      <%= f.field_container :description do %>
+        <%= f.label :description %><br />
+        <%= f.text_area :description, :rows => 7, :class => 'fullwidth' %>
+      <% end %>      
+    </div>
+  </div>
 
-</fieldset>
+  <div id="expiry_fields" class="three columns omega">
+    <%= f.field_container :usage_limit do %>
+      <%= f.label :usage_limit %><br />
+      <%= f.number_field :usage_limit, :min => 0, :class => 'fullwidth' %><br>
+      <%= t(:current_promotion_usage, :count => @promotion.credits_count) %>
+    <% end %>
+    
+    <div id="starts_at_field" class="field">
+      <%= f.label :starts_at %>
+      <%= f.text_field :starts_at, :class => 'datepicker datepicker-from fullwidth' %>
+    </div>
 
-<fieldset id="expiry_fields">
-  <legend><%= t(:expiry) %></legend>
-  <p>
-    <%= f.label :usage_limit, t(:usage_limit) %><br />
-    <%= f.text_field :usage_limit %>
-  </p>
-
-  <p id="starts_at_field">
-    <%= f.label :starts_at %>
-    <%= f.text_field :starts_at, :class => 'datepicker' %>
-  </p>
-  <p id="expires_at_field">
-    <%= f.label :expires_at %>
-    <%= f.text_field :expires_at, :class => 'datepicker' %>
-  </p>
-</fieldset>
+    <div id="expires_at_field" class="field">
+      <%= f.label :expires_at %>
+      <%= f.text_field :expires_at, :class => 'datepicker datepicker-top fullwidth' %>
+    </div>  
+  </div>
+</div>

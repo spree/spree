@@ -1,32 +1,45 @@
-<fieldset id="rule_fields">
-  <legend><%= t(:rules) %></legend>
+<fieldset id="rule_fields" class ="alpha eight columns no-border-bottom no-border-top">
 
-  <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
-    <p>
-      <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
-        <label><%= f.radio_button :match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label> &nbsp;
-      <% end %>
-    </p>
-    <div id="rules" class="filter_list">
-      <% if @promotion.rules.any? %>
-        <%= render :partial => 'promotion_rule', :collection => @promotion.rules, :locals => {} %>
-      <% else %>
-        <!-- <p><%= t(:no_rules_added) %></p> -->
-      <% end %>
-    </div>
-    <p class="form-buttons">
-      <%= button t(:update) %>
-    </p>
+  <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), :remote => true, :id => 'new_product_rule_form' do %>
+    <fieldset>
+      <legend align="center"><%= t(:rules) %></legend>
+
+      <div class="field">
+        <%= label_tag :promotion_rule_type, t(:add_rule_of_type) %>  
+        <%= select_tag('promotion_rule[type]', options_for_promotion_rule_types(@promotion), :class => 'select2 fullwidth') %>
+      </div>
+      <div class="filter-actions actions">
+        <%= button t(:add), 'icon-plus' %>
+      </div>
+    </fieldset>
   <% end %>
 
-  <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), :remote => true,
-                                                                 :id => 'new_product_rule_form' do %>
+  
+    <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
+      <fieldset class="no-border-top">
+        <div id="promotion-pilicy-select" class="align-center row">
+          <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
+            <div class="alpha four columns">
+              <label><%= f.radio_button :match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label>  
+            </div>
+          <% end %>
+        </div>
+        
+        <div id="rules" class="filter_list row">
+          <% if @promotion.rules.any? %>
+            <%= render :partial => 'promotion_rule', :collection => @promotion.rules, :locals => {} %>
+          <% else %>
+            <div class="no-objects-found">
+              <%= t(:no_rules_added) %>
+            </div>
+          <% end %>
+        </div>
 
-    <p>
-      <%= label_tag :promotion_rule_type, t(:add_rule_of_type) %>
-      <%= select_tag('promotion_rule[type]', options_for_promotion_rule_types(@promotion)) %>
-      <%= submit_tag t(:add) %>
-    </p>
-  <% end %>
+        <div class="promotion-update filter-actions actions">
+          <%= button t(:update), 'icon-refresh' %>
+        </div>
+      </fieldset>
+    <% end %>
+  
 
 </fieldset>

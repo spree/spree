@@ -1,43 +1,51 @@
 <% content_for :head do %>
-  <link type="text/css" rel="stylesheet" href="https://api.jirafe.com/dashboard/css/spree_ui.css" media="all" />
-  <script type="text/javascript" src="https://api.jirafe.com/dashboard/js/spree_ui.js"></script>
+  <%= stylesheet_link_tag 'https://api.jirafe.com/dashboard/css/spree_ui.css', :media => 'all' %>
+  <%= javascript_include_tag 'https://jirafe.com/dashboard/js/spree_namespaced_ui.js' %>
 <% end %>
 
-<% if params[:dash_edit] %>
-  <%= render 'form' %>
-<% else %>
-  <% if Spree::Dash::Config.configured? %>
-    <h1><%= t(:overview) %></h1>
-    <div id="jirafe"></div>
-    <script type="text/javascript" defer="defer">
-        if (typeof jQuery != 'undefined') { 
-            (function($) {
-             $('#jirafe').jirafe({
-                api_url:    'https://api.jirafe.com/v1',
-                api_token:  '<%= Spree::Dash::Config.token %>',
-                app_id:     '<%= Spree::Dash::Config.app_id %>',
-                version:    'spree-v0.1.0'
-                });
-             })(jQuery);
-        }
-        setTimeout(function() {
-                if ($('mod-jirafe') == undefined){
-                $('messages').insert ("<ul class=\"messages\"><li class=\"error-msg\">We're unable to connect with the Jirafe service for the moment. Please wait a few minutes and refresh this page later.</li></ul>");
-                }
-                }, 10000);
-    </script>
-  <% else %>
-    <div class="analytics_splash">
-      <%= image_tag 'analytics_dashboard_preview.png', :alt => 'Spree Analytics' %>
-    </div>
-  <% end %>
-  <br>
-  <div class="preview-buttons">
-    <%= link_to t(:enter_token), admin_path(:dash_edit => true), :class => "button green" %>
-    <%= t(:or) %> &nbsp;
-    <%= link_to t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => "button", :target => "_blank" %>
-  </div>
+<% if Spree::Dash::Config.configured? %>
   
+  <% content_for :page_actions do %>
+    <li id="jirafe_locales">
+      <i class="icon-globe"></i> <%= t(:choose_dashboard_locale) %>: <%= raw jirafe_locale_links.join(' ') %>
+    </li>
+  <% end %>
+
+  <div id="jirafe"></div>
+  <%= javascript_tag :defer => 'defer' do %>
+    jirafe.jQuery('#jirafe').jirafe({
+       api_url: 'https://api.jirafe.com/v1',
+       api_token: '<%= Spree::Dash::Config.token %>',
+       app_id: '<%= Spree::Dash::Config.app_id %>',
+       version: 'spree-v0.1.0',
+       locale: '<%= Spree::Dash::Config.locale %>' });
+    setTimeout(function() {
+      if ($('mod-jirafe') == undefined) {
+        $('messages').insert ("<ul class=\"messages\"><li class=\"error-msg\">We're unable to connect with the Jirafe service for the moment. Please wait a few minutes and refresh this page later.</li></ul>");
+        }
+    }, 10000);
+  <% end %>
+<% else %>
+  <div class="no-border-top analytics-description">
+    <div class="description-text">
+      <hgroup>
+        <h1><%= t(:analytics_desc_header_1)%></h1>
+        <h6><%= t(:analytics_desc_header_2)%></h6>
+      </hgroup>
+
+      <ul>
+        <li><%= t(:analytics_desc_list_1)%></li>
+        <li><%= t(:analytics_desc_list_2)%></li>
+        <li><%= t(:analytics_desc_list_3)%></li>
+        <li><%= t(:analytics_desc_list_4)%></li>
+      </ul>
+    </div>
+    <div class="preview-buttons filter-actions actions">
+      <%= link_to_with_icon 'icon-ok', t(:activate), admin_analytics_sign_up_path, :class => 'button' %>
+      <span class="or">&nbsp; <%= t(:or) %> &nbsp;</span>
+      <%= link_to_with_icon 'icon-info-sign', t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => 'button', :target => '_blank' %>
+    </div>
+  </div>
+
+  <div class="analytics_splash"></div>
 <% end %>
-
-

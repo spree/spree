@@ -1,22 +1,23 @@
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
-<% if @order.outstanding_balance? %>
-    <li id="new_payment_section">
-      <%= button_link_to t(:new_payment), new_admin_order_payment_url(@order), :icon => 'add' %>
-    </li>
-<% end %>
-  </ul>
-  <br class="clear" />
-</div>
-
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
-<% if @order.outstanding_balance? %>
-  <p><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %> <strong><%= number_to_currency @order.outstanding_balance %></strong></p>
+<% content_for :page_actions do %>  
+  <% if @order.outstanding_balance? %>
+    <li id="new_payment_section">
+      <%= button_link_to t(:new_payment), new_admin_order_payment_url(@order), :icon => 'icon-plus' %>
+    </li>
+  <% end %>  
+  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
-<h2><%= t(:payments) %></h2>
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:payments) %>
+<% end %>
+
+<% if @order.outstanding_balance? %>
+  <h5 class="outstanding-balance"><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %>: <strong><%= @order.display_outstanding_balance %></strong></h5>
+<% end %>
+
 <%= render :partial => 'list', :locals => { :payments => @payments } %>
 
 
-<%= button_link_to t(:continue), admin_orders_url %>
+<%= button_link_to t(:continue), admin_orders_url, :icon => 'icon-arrow-right' %>

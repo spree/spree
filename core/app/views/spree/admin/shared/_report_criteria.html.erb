@@ -1,15 +1,17 @@
-<%= form_for @search, :url => sales_total_admin_reports_path  do |s| %>
-    <%= label_tag nil, t(:date_range) %><br />
-    <div class="date-range-filter">
-      <div class="left sub-field">
-        <%= s.text_field :created_at_greater_than, :class => 'datepicker' %><br />
-        <%= label_tag nil, t(:start), :class => 'sub' %>
-      </div>
-      <div class="right sub-field">
-        <%= s.text_field :created_at_less_than, :class => 'datepicker' %><br />
-        <%= label_tag nil, t(:stop) %>
-      </div>
+<%= search_form_for @search, :url => spree.sales_total_admin_reports_path  do |s| %>
+    <div class="date-range-filter field align-center">
+        <%= label_tag nil, t(:start), :class => 'inline' %>
+        <%= s.text_field :created_at_gt, :class => 'datepicker datepicker-from' %>
+        
+        <span class="range-divider">
+          <i class="icon-arrow-right"></i>
+        </span>
+
+        <%= s.text_field :created_at_lt, :class => 'datepicker datepicker-to' %>
+        <%= label_tag nil, t(:end), :class => 'inline' %>
     </div>
 
-    <p><%= button t(:search) %></p>
+    <div class="actions filter-actions">
+      <%= button t(:search), 'icon-search'  %>
+    </div>
 <% end %>

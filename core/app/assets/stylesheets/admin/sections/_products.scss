@@ -1,0 +1,26 @@
+[data-hook="admin_products_sidebar"] {
+  // .field.checkbox:first-child {
+  //   margin-top: 36px;
+  // }
+  .actions {
+    padding: 0 !important;
+  }
+}
+
+[data-hook="admin_product_form_fields"] {
+  label {
+    display: inline-block;      
+  }
+  input, select, textarea, .select2-container {
+    width: 100%;
+  }
+}
+
+.outstanding-balance {
+  margin-bottom: 15px;
+  text-transform: uppercase;
+
+  strong {
+    color: $color-2;
+  }
+}

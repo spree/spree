@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe "Zones" do
+  stub_authorization!
+
   before(:each) do
-    sign_in_as!(Factory(:admin_user))
     Spree::Zone.delete_all
     visit spree.admin_path
     click_link "Configuration"
@@ -10,16 +11,17 @@ describe "Zones" do
 
   context "show" do
     it "should display existing zones" do
-      Factory(:zone, :name => "eastern", :description => "zone is eastern")
-      Factory(:zone, :name => "western", :description => "cool san fran")
+      create(:zone, :name => "eastern", :description => "zone is eastern")
+      create(:zone, :name => "western", :description => "cool san fran")
       click_link "Zones"
 
-      find('table#listing_zones tbody tr:nth-child(1) td:nth-child(1)').text.should == "eastern"
-      find('table#listing_zones tbody tr:nth-child(2) td:nth-child(1)').text.should == "western"
+      within_row(1) { page.should have_content("eastern") }
+      within_row(2) { page.should have_content("western") }
 
       click_link "zones_order_by_description_title"
-      find('table#listing_zones tbody tr:nth-child(1) td:nth-child(1)').text.should == "western"
-      find('table#listing_zones tbody tr:nth-child(2) td:nth-child(1)').text.should == "eastern"
+
+      within_row(1) { page.should have_content("western") }
+      within_row(2) { page.should have_content("eastern") }
     end
   end
 

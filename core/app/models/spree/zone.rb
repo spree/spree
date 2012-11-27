@@ -1,6 +1,6 @@
 module Spree
   class Zone < ActiveRecord::Base
-    has_many :zone_members, :dependent => :destroy
+    has_many :zone_members, :dependent => :destroy, :class_name => "Spree::ZoneMember"
     has_many :tax_rates, :dependent => :destroy
     has_many :shipping_methods, :dependent => :nullify
 
@@ -11,28 +11,15 @@ module Spree
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, :allow_destroy => true, :reject_if => proc { |a| a['zoneable_id'].blank? }
 
-    # WARNING during tets class method .global is declared to indicate global Zone to use with tests
+    attr_accessible :name, :description, :default_tax, :kind, :zone_members, :zone_members_attributes
 
-    #attr_accessor :type
     def kind
-      member = self.members.last
-
-      case member && member.zoneable_type
-      when 'Spree::State' then 'state'
-      else
-        'country'
-      end
+      return nil if members.empty? || members.any? { |member| member.try(:zoneable_type).nil? }
+      members.last.zoneable_type.demodulize.downcase
     end
 
     def kind=(value)
       # do nothing - just here to satisfy the form
-    end
-
-    # TODO: Remove this method after 1.0
-    # alias to the new include? method
-    def in_zone?(address)
-      ActiveSupport::Deprecation.warn '#in_zone? is deprecated and will be removed in Spree > 1.0. Use #include? instead.'
-      include?(address)
     end
 
     def include?(address)
@@ -54,7 +41,7 @@ module Spree
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
     def self.match(address)
-      return unless matches = self.order("created_at").select { |zone| zone.include? address }
+      return unless matches = self.includes(:zone_members).order('zone_members_count', 'created_at').select { |zone| zone.include? address }
 
       ['state', 'country'].each do |zone_kind|
         if match = matches.detect { |zone| zone_kind == zone.kind }
@@ -66,62 +53,62 @@ module Spree
 
     # convenience method for returning the countries contained within a zone
     def country_list
-      members.map { |zone_member|
-        case zone_member.zoneable_type
-        when 'Spree::Country'
-          zone_member.zoneable
-        when 'Spree::State'
-          zone_member.zoneable.country
-        else
-          nil
-        end
-      }.flatten.compact.uniq
+      @countries ||=
+      case kind
+      when 'country'
+        zoneables
+      when 'state'
+        zoneables.collect(&:country)
+      else
+        nil
+      end.flatten.compact.uniq
     end
 
     def <=>(other)
       name <=> other.name
     end
 
-    # All zoneables belonging to the zone members.  Will be a colelction of either
+    # All zoneables belonging to the zone members.  Will be a collection of either
     # countries or states depending on the zone type.
     def zoneables
-      members.collect { |m| m.zoneable }
+      members.collect(&:zoneable)
     end
 
     def self.default_tax
-      Zone.where(:default_tax => true).first
+      where(:default_tax => true).first
     end
 
     # Indicates whether the specified zone falls entirely within the zone performing
     # the check.
     def contains?(target)
-      return false if self.kind == "state" && target.kind == "country"
-      return false if self.zone_members.empty? || target.zone_members.empty?
+      return false if kind == 'state' && target.kind == 'country'
+      return false if zone_members.empty? || target.zone_members.empty?
 
-      if self.kind == target.kind
+      if kind == target.kind
         target.zoneables.each do |target_zoneable|
-          return false unless self.zoneables.include?(target_zoneable)
+          return false unless zoneables.include?(target_zoneable)
         end
       else
         target.zoneables.each do |target_state|
-          return false unless self.zoneables.include?(target_state.country)
+          return false unless zoneables.include?(target_state.country)
         end
       end
       true
     end
 
     private
+
       def remove_defunct_members
         zone_members.each do |zone_member|
-          zone_member.destroy if zone_member.zoneable_id.nil? || zone_member.zoneable_type != "Spree::#{self.kind.capitalize}"
+          zone_member.destroy if zone_member.zoneable_id.nil? || zone_member.zoneable_type != "Spree::#{kind.capitalize}"
         end
       end
 
       def remove_previous_default
-        return unless self.default_tax
+        return unless default_tax
 
-        Zone.all.each do |zone|
-          zone.update_attribute "default_tax", false unless zone == self
+        self.class.all.each do |zone|
+          zone.update_column 'default_tax', false unless zone == self
         end
       end
   end

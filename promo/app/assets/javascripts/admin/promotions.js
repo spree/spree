@@ -1,28 +1,15 @@
-
-var initProductRuleSourceField = function(){
-
-  $products_source_field = jQuery('.products_rule_products_source_field input');
-  $products_source_field.click(function() {
-    $rule_container = jQuery(this).parents('.promotion_rule');
-    if(this.checked){
-      if(this.value == 'manual'){
-        $rule_container.find('.products_rule_products').show();
-        $rule_container.find('.products_rule_product_group').hide();
-      } else {
-        $rule_container.find('.products_rule_products').hide();
-        $rule_container.find('.products_rule_product_group').show();
-      }
-    }
-  });
-  $products_source_field.each(function() {
-    $(this).triggerHandler('click');
-  });
-
-};
-
 var initProductActions = function(){
 
-  $("#add_product_name").product_autocomplete();
+  // Add classes on promotion items for design
+  $('a.delete').live('mouseover mouseout', function(event) {
+    if (event.type == 'mouseover') {
+      $(this).parent().addClass('action-remove');
+    } else {
+      $(this).parent().removeClass('action-remove');
+    }
+  });
+
+  $(".variant_autocomplete").variantAutocomplete();
 
   $('.calculator-fields').each(function(){
     var $fields_container = $(this);
@@ -62,19 +49,15 @@ var initProductActions = function(){
 
     // Remove line item
     var setupRemoveLineItems = function(){
-      $(".promotion_action.create_line_items table img").unbind('click').click(function(){
-        var $container = $(this).parents('.promotion_action');
-        var $hiddenField = $container.find("input[type='hidden']");
-        var $row = $(this).parents('tr');
-        var index = $row.parents('table').find('tr').index($row.get(0));
-        // Remove variant_id quantity pair from the string
-        var items = _($hiddenField.val().split(',')).compact();
-        items.splice(index - 1, 1);
-        $hiddenField.val(items.join(','));
+      $(".remove_promotion_line_item").click(function(){
+        line_items_el = $($('.line_items_string')[0])
+        finder = RegExp($(this).data("variant-id") + "x\\d+")
+        line_items_el.val(line_items_el.val().replace(finder, ""))
         $(this).parents('tr').remove();
         hideOrShowItemTables();
       });
     };
+
     setupRemoveLineItems();
     // Add line item to list
     $(".promotion_action.create_line_items button.add").unbind('click').click(function(e){
@@ -100,7 +83,6 @@ var initProductActions = function(){
 }
 
 $(document).ready(function() {
-  initProductRuleSourceField();
   initProductActions();
 
   // toggle fields for specific events

@@ -9,28 +9,48 @@ Spree::Core::Engine.routes.prepend do
   end
 
   namespace :api do
-    resources :shipments, :except => [:new,:edit] do
-      put :event, :on => :member
-      resources :inventory_units, :except => [:new,:edit] do
-        put :event, :on => :member
-      end
+    resources :products do
+      resources :variants
+      resources :product_properties
     end
-    resources :orders, :except => [:new,:edit] do
-      put :event, :on => :member
-      resources :shipments, :except => [:new,:edit]
-      resources :line_items, :except => [:new,:edit]
-      resources :inventory_units, :except => [:new,:edit] do
-        put :event, :on => :member
-      end
-    end
-    resources :inventory_units, :except => [:new,:edit] do
-      put :event, :on => :member
-    end
-    resources :products, :except => [:new,:edit]
-    resources :countries, :except => [:new,:edit] do
-      resources :states, :except => [:new,:edit]
-    end
-    resources :states, :except => [:new,:edit]
-  end
 
+    resources :images
+    resources :variants, :only => [:index] do
+    end
+
+    resources :orders do
+      resources :return_authorizations
+      member do
+        put :address
+        put :delivery
+        put :cancel
+        put :empty
+      end
+
+      resources :line_items
+      resources :payments do
+        member do
+          put :authorize
+          put :capture
+          put :purchase
+          put :void
+          put :credit
+        end
+      end
+
+      resources :shipments do
+        member do
+          put :ready
+          put :ship
+        end
+      end
+    end
+
+    resources :zones
+    resources :countries, :only => [:index, :show]
+    resources :addresses, :only => [:show, :update]
+    resources :taxonomies do
+      resources :taxons
+    end
+  end
 end

@@ -6,13 +6,20 @@ module Spree
     Activator.event_names << 'spree.checkout.coupon_code_added'
     Activator.event_names << 'spree.content.visited'
 
-    has_many :promotion_rules, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
+    has_many :promotion_rules, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
     alias_method :rules, :promotion_rules
     accepts_nested_attributes_for :promotion_rules
 
-    has_many :promotion_actions, :foreign_key => 'activator_id', :autosave => true, :dependent => :destroy
+    has_many :promotion_actions, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
     alias_method :actions, :promotion_actions
     accepts_nested_attributes_for :promotion_actions
+
+    validates_associated :rules
+
+    attr_accessible :name, :event_name, :code, :match_policy,
+                    :path, :advertise, :description, :usage_limit,
+                    :starts_at, :expires_at, :promotion_rules_attributes,
+                    :promotion_actions_attributes
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
@@ -29,20 +36,12 @@ module Spree
       where(:advertise => true)
     end
 
-    # TODO: Remove that after fix for https://rails.lighthouseapp.com/projects/8994/tickets/4329-has_many-through-association-does-not-link-models-on-association-save
-    # is provided
-    def save(*)
-      if super
-        promotion_rules.each { |p| p.save }
-      end
-    end
-
     def activate(payload)
       return unless order_activatable? payload[:order]
 
       if code.present?
-        event_code = payload[:coupon_code].to_s.strip.downcase
-        return unless event_code == self.code.to_s.strip.downcase
+        event_code = payload[:coupon_code]
+        return unless event_code == self.code
       end
 
       if path.present?
@@ -78,7 +77,7 @@ module Spree
 
     # Products assigned to all product rules
     def products
-      @products ||= rules.of_type('Promotion::Rules::Product').map(&:products).flatten.uniq
+      @products ||= rules.of_type('Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(order = nil)
@@ -96,6 +95,10 @@ module Spree
 
     def credits_count
       credits.count
+    end
+
+    def code=(coupon_code)
+      write_attribute(:code, (coupon_code.downcase.strip rescue nil))
     end
 
   end

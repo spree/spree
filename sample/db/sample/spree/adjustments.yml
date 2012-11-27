@@ -18,7 +18,7 @@ ship_<%= i %>:
   amount: 5
   source: shipment_<%= i %>
   source_type: Spree::Shipment
-  originator: ups_ground
+  originator: ups_ground_usd
   originator_type: Spree::ShippingMethod
   label: Shipping
   locked: true

@@ -1,0 +1,62 @@
+$(document).ready(function() {
+
+  if ($('input#preferences_use_s3[type="checkbox"]:checked').length > 0) {
+    $('#s3_settings, #s3_headers').show();
+  }
+
+  // Toggle display of S3 settings based on value of use_s3 checkbox
+  $('input#preferences_use_s3[type="checkbox"]').click(function() {
+    $('#s3_settings, #s3_headers').toggle();
+  });
+
+  $('.destroy_style').live("click", function(e) {
+    e.preventDefault();
+    $(this).parent().remove();
+  });
+
+  $('.destroy_new_attachment_styles').live("click", function(e) {
+    e.preventDefault();
+    $(this).closest('.new_attachment_styles').remove();
+  });
+
+  $('.destroy_new_s3_headers').live("click", function(e) {
+    e.preventDefault();
+    $(this).closest('.new_s3_headers').remove();
+  });
+
+  // Handle adding new styles
+  var styles_hash_index = 1;
+  $('.add_new_style').live("click", function(e) {
+    e.preventDefault();
+    $('#new-styles').append(generate_html_for_hash("new_attachment_styles", styles_hash_index));
+  });
+
+  // Handle adding new headers
+  var headers_hash_index = 1;
+  $('.add_header').live("click", function(e) {
+    e.preventDefault();
+    $('#headers_list').append(generate_html_for_hash("new_s3_headers", headers_hash_index));
+  });
+
+  // Generates html for new paperclip styles form fields
+  generate_html_for_hash = function(hash_name, index) {
+    var html = '<div class="' + hash_name + ' row"><div class="field">';
+    html += '<div class="five columns">';
+    html += '<label for="' + hash_name + '_' + index + '_name">';
+    html += Spree.translations.name + '</label>';
+    html += '<input id="' + hash_name + '_' + index + '_name" name="' + hash_name + '[' + index + '][name]" type="text" class="fullwidth"><br>';
+    html += '</div><div class="five columns">'
+    html += '<label for="' + hash_name + '_' + index + '_value">';
+    html += Spree.translations.value + '</label>';
+    html += '<input id="' + hash_name + '_' + index + '_value" name="' + hash_name + '[' + index + '][value]" type="text" class="fullwidth">';
+    html += '</div><div class="two columns">'
+    html += '<a href="#" title="' + Spree.translations.destroy + '" class="destroy_' + hash_name + ' with-tip button" style="margin-top: 19px;"><i class="icon-trash"></i> &nbsp; ' + Spree.translations.destroy + '</a>';
+    html += '</div></div></div>';
+
+    index += 1;
+    return html;
+  };
+
+
+
+});

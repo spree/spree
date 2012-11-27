@@ -15,7 +15,9 @@ en:
     listing: Listing
     new: New
     update: Update
+    cancel: Cancel
   active: "Active"
+  activate: "Activate"
   activerecord:
     attributes:
       spree/address:
@@ -24,9 +26,7 @@ en:
         city: City
         country: "Country"
         firstname: "First Name"
-        first_name_begins_with: "First Name Begins With"
         lastname: "Last Name"
-        last_name_begins_with: "Last Name Begins With"
         phone: Phone
         state: "State"
         zipcode: "Zip Code"
@@ -36,7 +36,7 @@ en:
         iso_name: "ISO Name"
         name: Name
         numcode: "ISO Code"
-      spree/creditcard:
+      spree/credit_card:
         cc_type: Type
         month: Month
         number: Number
@@ -83,22 +83,15 @@ en:
         name: Name
       spree/product:
         available_on: "Available On"
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         description: Description
         master_price: "Master Price"
         name: Name
         on_hand: "On Hand"
+        on_demand: "On Demand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
-      spree/product_group:
-        name: Name
-        product_count: "Product count"
-        product_scopes: "Product scopes"
-        products: "Products"
-        url: URL
-      spree/product_scope:
-        arguments: "Arguments"
-        description: "Description"
       spree/property:
         name: Name
         presentation: Presentation
@@ -117,6 +110,7 @@ en:
       spree/tax_rate:
         amount: Rate
         included_in_price: Included in Price
+        show_rate_in_label: Show rate in label
       spree/taxon:
         name: Name
         permalink: Permalink
@@ -128,6 +122,7 @@ en:
         password: "Password"
         password_confirmation: "Password Confirmation"
       spree/variant:
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         depth: Depth
         height: Height
@@ -148,7 +143,7 @@ en:
       spree/country:
         one: Country
         other: Countries
-      spree/creditcard:
+      spree/credit_card:
         one: "Credit Card"
         other: "Credit Cards"
       spree/creditcard_payment:
@@ -172,9 +167,6 @@ en:
       spree/product:
         one: Product
         other: Products
-      spree/product_group:
-        one: "Product group"
-        other: "Product groups"
       spree/property:
         one: Property
         other: Properties
@@ -267,6 +259,7 @@ en:
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
+  attachment_default_style: "Attachments Style"
   attachment_default_url: "Attachments URL"
   attachment_path: "Attachments Path"
   attachment_styles: "Paperclip Styles"
@@ -278,7 +271,24 @@ en:
   awaiting_return: Awaiting Return
   back: Back
   back_end: Back End
+  back_to_adjustments_list: "Back To Adjustments List"
+  back_to_images_list: "Back To Images List"
+  back_to_mail_methods_list: "Back To Mail Methods List"
+  back_to_option_types_list: "Back To Option Types List"
+  back_to_payment_methods_list: "Back To Payment Methods List"
+  back_to_payments_list: "Back To Payments List"
+  back_to_products_list: "Back To Products List"
+  back_to_properties_list: "Back To Products List"
+  back_to_prototypes_list: "Back To Prototypes List"
+  back_to_reports_list: "Back To Reports List"
+  back_to_shipping_categories: "Back To Shipping Categories"
+  back_to_shipping_methods_list: "Back To Shipping Methods List"  
+  back_to_states_list: "Back To States List"
   back_to_store: "Go Back To Store"
+  back_to_tax_categories_list: "Back To Tax Categories List"
+  back_to_taxonomies_list: "Back To Taxonomies List"
+  back_to_trackers_list: "Back To Trackers List"
+  back_to_zones_list: "Back To Zones List"  
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
   balance_due: "Balance Due"
@@ -292,7 +302,8 @@ en:
   cancel_my_account: Cancel my account
   cancel_my_account_description: "Unhappy?"
   canceled: Canceled
-  cannot_create_returns: Cannot create returns as this order no shipped units.
+  cannot_create_payment_without_payment_methods: You cannot create a payment for an order without any payment methods defined.
+  cannot_create_returns: Cannot create returns as this order has no shipped units.
   cannot_perform_operation: "Cannot perform requested operation"
   capture: Capture
   card_code: "Card Code"
@@ -319,6 +330,7 @@ en:
   configuration: Configuration
   configuration_options: "Configuration Options"
   configurations: Configurations
+  configure_s3: "Configure S3"
   configured: Configured
   confirm: Confirm
   confirm_delete: "Confirm Deletion"
@@ -326,13 +338,13 @@ en:
   continue: Continue
   continue_shopping: "Continue shopping"
   copy_all_mails_to: Copy All Mails To
+  cost_currency: "Cost Currency"
   cost_price: "Cost Price"
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   country: Country
   country_based: "Country Based"
   create: Create
   create_a_new_account: "Create a new account"
-  create_product_group_from_products: Create a new product group from these products
   create_user_account: Create User Account
   created_successfully: "Created Successfully"
   credit: Credit
@@ -341,15 +353,20 @@ en:
   credit_card_payment: "Credit Card Payment"
   credit_owed: "Credit Owed"
   credit_total: Credit Total
-  creditcard: Creditcard
-  creditcards: Creditcards
+  credit_card: Credit Card
+  credit_cards: Credit Cards
   credits: Credits
   current: Current
+  currency: Currency
+  currency_symbol_position: "Put currency symbol before or after dollar amount?"
+  currency_settings: "Currency Settings"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
   customer_search: "Customer Search"
+  cut: Cut
   date_created: Date created
+  date_completed: Date Completed
   date_range: "Date Range"
   debit: Debit
   default: Default
@@ -358,6 +375,7 @@ en:
   default_seo_title: Default Seo Title
   default_tax: Default Tax
   default_tax_zone: Default Tax Zone
+  defined_paperclip_styles: Defined Paperclip Styles
   delete: Delete
   delivery: Delivery
   depth: Depth
@@ -367,7 +385,9 @@ en:
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
   discount_amount: "Discount Amount"
   display: Display
+  display_currency: "Display currency"
   dismiss_banner: "No. Thanks! I'm not interested, do not display this message again"
+  dollar_amounts_displayed_as: "Dollar amounts displayed as %{example}"
   edit: Edit
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
@@ -399,6 +419,7 @@ en:
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   enter_at_least_five_letters: Enter at least five letters of customer name
   enter_password_to_confirm: "(we need your current password to confirm your changes)"
+  enter_token: Enter Token
   environment: "Environment"
   error: error
   errors:
@@ -471,6 +492,7 @@ en:
   images: Images
   images_for: "Images for"
   image_settings: "Image Settings"
+  image_settings_description: "Image Settings Description"
   image_settings_updated: "Image Settings successfully updated."
   image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails to do this."
   in_progress: "In Progress"
@@ -496,6 +518,7 @@ en:
   item_total: "Item Total"
   last_name: "Last Name"
   last_name_begins_with: "Last Name Begins With"
+  learn_more: Learn More
   leave_blank_to_not_change: "(leave blank if you don't want to change it)"
   list: List
   listing_categories: "Listing Categories"
@@ -538,6 +561,7 @@ en:
   missing_required_information: "Missing Required Information"
   minimal_amount: "Minimal Amount"
   month: "Month"
+  more: More
   my_account: "My Account"
   my_orders: "My Orders"
   name: Name
@@ -583,6 +607,7 @@ en:
   none_available: "None Available"
   normal_amount: "Normal Amount"
   not: not
+  not_available: "N/A"
   not_found: "%{resource} is not found"
   not_shown: "Not Shown"
   note: Note
@@ -605,6 +630,7 @@ en:
   or: or
   or_over_price: "%{price} or over"
   order: Order
+  order_adjustments: "Order adjustments"
   order_confirmation_note: ""
   order_date: "Order Date"
   order_details: "Order Details"
@@ -612,8 +638,19 @@ en:
   order_mailer:
     confirm_email:
       subject:  "Order Confirmation"
+      dear_customer: "Dear Customer,"
+      instructions: "Please review and retain the following order information for your records."
+      order_summary: "Order Summary"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
+      thanks: "Thank you for your business."
     cancel_email:
       subject: "Cancellation of Order"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been CANCELED.  Please retain this cancellation information for your records."
+      order_summary_canceled: "Order Summary [CANCELED]"
+      subtotal: "Subtotal:"
+      total: "Order Total:"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
@@ -656,6 +693,7 @@ en:
   password_reset_instructions_are_mailed: "Instructions to reset your password have been emailed to you. Please check your email."
   password_reset_token_not_found: "We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process."
   password_updated: "Password successfully updated"
+  paste: Paste
   path: Path
   pay: pay
   payment: Payment
@@ -686,7 +724,9 @@ en:
   phone: Phone
   place_order: Place Order
   please_create_user: "Please create a user account"
+  please_define_payment_methods: "Please define some payment methods first."
   powered_by: "Powered by"
+  populate_get_error: "Something went wrong. Please try adding the item again."
   presentation: Presentation
   preview: Preview
   previous: Previous
@@ -720,18 +760,12 @@ en:
         description: "Scopes for selecting products based on option and property values"
         name: Values
     scopes:
-      ascend_by_master_price:
-        name: Ascend by product master price
       ascend_by_name:
         name: Ascend by product name
       ascend_by_updated_at:
         name: Ascend by actualization date
-      descend_by_master_price:
-        name: Descend by product master price
       descend_by_name:
         name: Descend by product name
-      descend_by_popularity:
-        name: Sort by popularity(most popular first)
       descend_by_updated_at:
         name: Descend by actualization date
       in_name:
@@ -844,6 +878,7 @@ en:
   registration: Registration
   remember_me: "Remember me"
   remove: Remove
+  rename: Rename
   reports: Reports
   required_for_solo_and_maestro: Required for Solo and Maestro cards.
   resend: Resend
@@ -864,6 +899,7 @@ en:
   return_authorizations: Return Authorizations
   return_quantity: Return Quantity
   returned: Returned
+  review: Review
   rma_credit: RMA Credit
   rma_number: RMA Number
   rma_value: RMA Value
@@ -872,6 +908,7 @@ en:
   s3_bucket: "Bucket"
   s3_headers: "S3 Headers"
   s3_secret: "Secret Key"
+  s3_protocol: "S3 Protocol"
   s3_used_for_product_images: "S3 is being used for product images"
   s3_not_used_for_product_images: "S3 is not being used for product images"
   sales_tax: "Sales Tax"
@@ -885,7 +922,8 @@ en:
   search_results: "Search results for '%{keywords}'"
   searching: Searching
   secure_connection_type: Secure Connection Type
-  secure_creditcard: Secure Creditcard
+  secure_credit_card: Secure Credit Card
+  security_settings: "Security Settings"
   select: Select
   select_from_prototype: "Select From Prototype"
   select_preferred_shipping_option: "Select preferred shipping option"
@@ -905,6 +943,11 @@ en:
   shipment_mailer:
     shipped_email:
       subject: "Shipment Notification"
+      dear_customer: "Dear Customer,"
+      instructions: "Your order has been shipped"
+      shipment_summary: "Shipment Summary"
+      track_information: "Tracking Information: %{tracking}"
+      thanks: "Thank you for your business."
   shipment_number: "Shipment #"
   shipment_state: Shipment State
   shipment_states:
@@ -938,6 +981,7 @@ en:
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
   show_out_of_stock_products: "Show out-of-stock products"
+  show_only_unfulfilled_orders: "Show only unfulfilled orders"
   showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"
@@ -957,6 +1001,9 @@ en:
   special_instructions: "Special Instructions"
   spree:
     date: Date
+    date_picker:
+      format: ! '%Y/%m/%d'
+      js_format: 'yy/mm/dd'
     time: Time
   spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
   spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."

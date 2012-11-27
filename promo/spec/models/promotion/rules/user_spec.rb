@@ -14,8 +14,8 @@ describe Spree::Promotion::Rules::User do
     end
 
     it "should be eligible if users include user placing the order" do
-      user = mock_model(Spree::User)
-      users = [user, mock_model(Spree::User)]
+      user = mock_model(Spree::LegacyUser)
+      users = [user, mock_model(Spree::LegacyUser)]
       users.stub(:none? => false)
       rule.stub(:users => users)
       order.stub(:user => user)
@@ -24,8 +24,8 @@ describe Spree::Promotion::Rules::User do
     end
 
     it "should not be eligible if user placing the order is not listed" do
-      order.stub(:user => mock_model(Spree::User))
-      users = [mock_model(Spree::User), mock_model(Spree::User)]
+      order.stub(:user => mock_model(Spree::LegacyUser))
+      users = [mock_model(Spree::LegacyUser), mock_model(Spree::LegacyUser)]
       users.stub(:none? => false)
       rule.stub(:users => users)
 

@@ -1,20 +1,23 @@
 require 'spec_helper'
 
 describe "Tax Categories" do
+  stub_authorization!
+
   before(:each) do
-    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Configuration"
   end
 
   context "admin visiting tax categories list" do
     it "should display the existing tax categories" do
-      Factory(:tax_category, :name => "Clothing", :description => "For Clothing")
+      create(:tax_category, :name => "Clothing", :description => "For Clothing")
       click_link "Tax Categories"
       page.should have_content("Listing Tax Categories")
-      find('table#listing_tax_categories tbody tr td:nth-child(1)').text.should == "Clothing"
-      find('table#listing_tax_categories tbody tr td:nth-child(2)').text.should == "For Clothing"
-      find('table#listing_tax_categories tbody tr td:nth-child(3)').text.should == "False"
+      within_row(1) do
+        column_text(1).should == "Clothing"
+        column_text(2).should == "For Clothing"
+        column_text(3).should == "False"
+      end
     end
   end
 
@@ -40,9 +43,9 @@ describe "Tax Categories" do
 
   context "admin editing a tax category" do
     it "should be able to update an existing tax category" do
-      Factory(:tax_category)
+      create(:tax_category)
       click_link "Tax Categories"
-      within(:css, 'table#listing_tax_categories tbody tr:nth-child(1)') { click_link "Edit" }
+      within_row(1) { click_icon :edit }
       fill_in "tax_category_description", :with => "desc 99"
       click_button "Update"
       page.should have_content("successfully updated!")

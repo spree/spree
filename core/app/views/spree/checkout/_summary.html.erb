@@ -4,27 +4,27 @@
   <tbody>
     <tr data-hook="item_total">
       <td><strong><%= t(:item_total) %>:</strong></td>
-      <td><strong><%= number_to_currency order.item_total %></strong></td>
+      <td><strong><%= order.display_item_total %></strong></td>
     </tr>
     <tbody id="summary-order-charges" data-hook>
       <% order.adjustments.eligible.each do |adjustment| %>
       <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
         <tr>
           <td><%= adjustment.label %>: </td>
-          <td><%= number_to_currency adjustment.amount %></td>
+          <td><%= adjustment.display_amount %></td>
         </tr>
       <% end %>
     </tbody>
     <tr data-hook="order_total">
       <td><strong><%= t(:order_total) %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= number_to_currency @order.total %></span></strong></td>
+      <td><strong><span id='summary-order-total'><%= @order.display_total %></span></strong></td>
     </tr>
     <% if order.price_adjustment_totals.present? %>
       <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
         <% @order.price_adjustment_totals.keys.each do |key| %>
           <tr class="total">
             <td><strong><%= key %></strong></td>
-            <td><strong><span><%= number_to_currency @order.price_adjustment_totals[key] %></span></strong></td>
+            <td><strong><span><%= @order.price_adjustment_totals[key].display_total %></span></strong></td>
           </tr>
         <% end %>
       </tbody>

@@ -1,5 +1,9 @@
-<tr class="option_value fields" id="<%= dom_id(f.object) %>"  data-hook="option_value">
+<tr class="option_value fields" id="spree_<%= dom_id(f.object) %>"  data-hook="option_value" class="<%= cycle('odd', 'even')%>">
+  <td class="no-border">
+    <span class="handle"></span>
+    <%= f.hidden_field :id %>
+  </td>
   <td class="name"><%= f.text_field :name %></td>
   <td class="presentation"><%= f.text_field :presentation %></td>
-  <td class="actions"><%= link_to_remove_fields t(:remove), f %></td>
+  <td class="actions"><%= link_to_remove_fields t(:remove), f, :no_text => true %></td>
 </tr>

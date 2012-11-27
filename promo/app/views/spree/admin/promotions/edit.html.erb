@@ -1,12 +1,28 @@
-<h1><%= t(:editing_promotion) %></h1>
-
-<%= form_for @promotion, :url => object_url, :method => :put do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+<% content_for :page_title do %>
+  <%= t(:editing_promotion) %>
 <% end %>
 
-<%= render :partial => 'rules' %>
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_promotions_list), admin_promotions_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
 
-<div id="actions_container">
-  <%= render :partial => 'actions' %>
+<%= form_for @promotion, :url => object_url, :method => :put do |f| %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
+<% end %>
+
+<div id="promotion-filters" class="row">
+  <div id="rules_container" class="alpha eight columns">
+    <%= render :partial => 'rules' %>
+  </div>
+
+  <div id="actions_container" class="omega eight columns">
+    <%= render :partial => 'actions' %>
+  </div>
 </div>
+
+<%= render :partial => "spree/admin/variants/autocomplete", :formats => [:js] %>

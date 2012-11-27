@@ -1,6 +1,0 @@
-$('#product_scopes').append('<%= escape_javascript( render('spree/admin/product_groups/product_scope', :product_scope => @product_scope) ) %>');
-$('#<%= dom_id @product_scope %>').hide();
-$('#<%= dom_id @product_scope %>').fadeIn();
-if(!$('.token-input-list').is('*')){
-  $('.tokeninput.products').productPicker();
-}

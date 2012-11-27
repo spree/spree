@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment do
-  let(:order) { Factory(:order) }
-  let(:promotion) { Factory(:promotion) }
+  let(:order) { create(:order) }
+  let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
 
   # From promotion spec:
@@ -16,9 +16,8 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
 
     it "should create a discount with correct negative amount when order is eligible" do
-      order.stub(:ship_total => 5, :item_total => 5000, :reload => nil)
+      order.stub(:ship_total => 2500, :item_total => 5000, :reload => nil)
       promotion.stub(:eligible? => true)
-      action.calculator.stub(:compute => 2500)
 
       action.perform(:order => order)
       promotion.credits_count.should == 1

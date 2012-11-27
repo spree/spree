@@ -1,0 +1,7 @@
+<script>
+  Spree.routes = <%== {
+    :variants_search       => spree.admin_search_variants_path(:format => 'json'),
+    :taxon_search         => spree.search_admin_taxons_path(:format => 'json'),
+    :user_search          => spree.admin_search_users_path(:format => 'json')
+  }.to_json %>;
+</script>

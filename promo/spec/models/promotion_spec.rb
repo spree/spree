@@ -43,8 +43,8 @@ describe Spree::Promotion do
   end
 
   describe ".advertised" do
-    let(:promotion) { Factory(:promotion) }
-    let(:advertised_promotion) { Factory(:promotion, :advertise => true) }
+    let(:promotion) { create(:promotion) }
+    let(:advertised_promotion) { create(:promotion, :advertise => true) }
 
     it "only shows advertised promotions" do
       advertised = Spree::Promotion.advertised
@@ -79,14 +79,14 @@ describe Spree::Promotion do
       promotion.promotion_actions = [@action1, @action2]
       promotion.created_at = 2.days.ago
 
-      @user = stub_model(Spree::User, :email => "spree@example.com")
+      @user = stub_model(Spree::LegacyUser, :email => "spree@example.com")
       @order = stub_model(Spree::Order, :user => @user, :created_at => DateTime.now)
       @payload = { :order => @order, :user => @user }
     end
 
     it "should check code if present" do
-      promotion.code = 'XXX'
-      @payload[:coupon_code] = 'XXX'
+      promotion.code = 'xxx'
+      @payload[:coupon_code] = 'xxx'
       @action1.should_receive(:perform).with(@payload)
       @action2.should_receive(:perform).with(@payload)
       promotion.activate(@payload)
@@ -173,14 +173,32 @@ describe Spree::Promotion do
     end
   end
 
+  context "#products" do
+    context "when it has product rules with products associated" do
+      let(:promotion) { create(:promotion) }
+
+      before do
+        promotion_rule = Spree::Promotion::Rules::Product.new
+        promotion_rule.promotion = promotion
+        promotion_rule.products << create(:product)
+        promotion_rule.save
+      end
+
+      it "should have products" do
+        promotion.products.size.should == 1
+      end
+    end
+  end
+
   context "#eligible?" do
     before do
-      @order = Factory(:order)
+      @order = create(:order)
       promotion.event_name = 'spree.checkout.coupon_code_added'
       promotion.name = "Foo"
       promotion.code = "XXX"
       calculator = Spree::Calculator::FlatRate.new
-      @action = Spree::Promotion::Actions::CreateAdjustment.create(:promotion => promotion, :calculator => calculator)
+      action_params = { :promotion => promotion, :calculator => calculator }
+      @action = Spree::Promotion::Actions::CreateAdjustment.create(action_params, :without_protection => true)
     end
 
     context "when it is expired" do
@@ -199,10 +217,10 @@ describe Spree::Promotion do
       before do
         promotion.save!
 
-        @order.adjustments.create(:amount => 1,
+        @order.adjustments.create({:amount => 1,
                                   :source => @order,
                                   :originator => @action,
-                                  :label => "Foo")
+                                  :label => "Foo"}, :without_protection => true)
       end
 
       it "should be eligible" do
@@ -242,9 +260,9 @@ describe Spree::Promotion do
       end
 
       it "should have eligible rules if any of the rules is eligible" do
-        true_rule = Spree::PromotionRule.create(:promotion => @promotion)
+        true_rule = Spree::PromotionRule.create({:promotion => @promotion}, :without_protection => true)
         true_rule.stub(:eligible?).and_return(true)
-        false_rule = Spree::PromotionRule.create(:promotion => @promotion)
+        false_rule = Spree::PromotionRule.create({:promotion => @promotion}, :without_protection => true)
         false_rule.stub(:eligible?).and_return(false)
         @promotion.rules << true_rule
         @promotion.rules_are_eligible?(@order).should be_true

@@ -1,0 +1,86 @@
+.preview-buttons {
+  position: absolute;  
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+
+  a {
+    font-size: 100%;
+  }
+}
+
+.analytics_splash {
+  position: absolute;
+  top: 0;
+  opacity: 0.5; 
+  min-height: 880px; 
+  background: url('/assets/analytics_dashboard_preview.jpg') no-repeat center top;
+  width: 1280px;
+  left: -160px;
+  z-index: 0;
+}
+
+.analytics-description {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+
+  ul {
+    margin: 20px 0;
+    list-style: none;
+    color: $color-2;
+
+    li {
+      padding: 10px 0;
+      font-weight: $font-weight-bold;
+      text-transform: uppercase;
+    }
+  }
+}
+
+#analytics_signup {
+  .select2-choice {
+    width: 296px;
+
+    span {
+      margin-right: 0;
+    }
+  }
+}
+
+// Jirafe styles
+#jirafe {
+  margin-left: -140px;
+
+  #mod-jirafe {
+    background-color: transparent;
+    color: lighten($color-body-text, 10);
+
+    .jBox {
+      box-shadow: none;
+      border-radius: 3px;
+    }
+
+    .boxHed, .cartDataBars, .jBox, .cartBar,  #boxAbandon .pieDataHed {
+      border-color: $color-border;
+    }
+
+    h3.boxHeader, .valHeader {
+      color: $color-body-text;
+    }
+
+    #acctMenuRpts {
+      left: inherit !important;
+      right: 0 !important;
+    }
+
+    #purchaseFunnel {
+      text {
+        fill: $color-body-text;
+      }
+      path {
+        stroke: $color-border;
+      }
+    }
+  }
+}

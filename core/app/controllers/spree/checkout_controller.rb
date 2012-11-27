@@ -2,15 +2,23 @@ module Spree
   # Handles checkout logic.  This is somewhat contrary to standard REST convention since there is not actually a
   # Checkout object.  There's enough distinct logic specific to checkout which has nothing to do with updating an
   # order that this approach is waranted.
-  class CheckoutController < BaseController
+
+  # Much of this file, especially the update action is overriden in the promo gem.
+  # This is to allow for the promo behavior but also allow the promo gem to be 
+  # removed if the functionality is not needed. 
+
+  class CheckoutController < Spree::StoreController
     ssl_required
 
     before_filter :load_order
+    before_filter :ensure_valid_state
+    before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     respond_to :html
 
     # Updates the order and advances to the next state (when possible.)
+    # Overriden by the promo gem if it exists. 
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
@@ -36,6 +44,31 @@ module Spree
     end
 
     private
+      def ensure_valid_state
+        unless skip_state_validation?
+          if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
+             (!params[:state] && !@order.checkout_steps.include?(@order.state))
+            @order.state = 'cart'
+            redirect_to checkout_state_path(@order.checkout_steps.first)
+          end
+        end
+      end
+
+      # Should be overriden if you have areas of your checkout that don't match
+      # up to a step within checkout_steps, such as a registration step
+      def skip_state_validation?
+        false
+      end
+
+      def load_order
+        @order = current_order
+        redirect_to cart_path and return unless @order and @order.checkout_allowed?
+        raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
+        redirect_to cart_path and return if @order.completed?
+        @order.state = params[:state] if params[:state]
+        state_callback(:before)
+      end
+
       # Provides a route to redirect after order completion
       def completion_route
         order_path(@order)
@@ -52,15 +85,6 @@ module Spree
           end
         end
         params[:order]
-      end
-
-      def load_order
-        @order = current_order
-        redirect_to cart_path and return unless @order and @order.checkout_allowed?
-        raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
-        redirect_to cart_path and return if @order.completed?
-        @order.state = params[:state] if params[:state]
-        state_callback(:before)
       end
 
       def raise_insufficient_quantity

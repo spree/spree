@@ -1,22 +1,28 @@
 require 'spec_helper'
 
 describe "Properties" do
+  stub_authorization!
+
   before(:each) do
-    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Products"
   end
 
   context "listing product properties" do
     it "should list the existing product properties" do
-      Factory(:property, :name => 'shirt size', :presentation => 'size')
-      Factory(:property, :name => 'shirt fit', :presentation => 'fit')
+      create(:property, :name => 'shirt size', :presentation => 'size')
+      create(:property, :name => 'shirt fit', :presentation => 'fit')
 
       click_link "Properties"
-      find('table#listing_properties tbody tr:nth-child(1) td:nth-child(1)').text.should == "shirt size"
-      find('table#listing_properties tbody tr:nth-child(1) td:nth-child(2)').text.should == "size"
-      find('table#listing_properties tbody tr:nth-child(2) td:nth-child(1)').text.should == "shirt fit"
-      find('table#listing_properties tbody tr:nth-child(2) td:nth-child(2)').text.should == "fit"
+      within_row(1) do
+        column_text(1).should == "shirt size"
+        column_text(2).should == "size"
+      end
+
+      within_row(2) do
+        column_text(1).should == "shirt fit"
+        column_text(2).should == "fit"
+      end
     end
   end
 
@@ -35,9 +41,9 @@ describe "Properties" do
 
   context "editing a property" do
     before(:each) do
-      Factory(:property)
+      create(:property)
       click_link "Properties"
-      within('table#listing_properties tbody tr:nth-child(1)') { click_link "Edit" }
+      within_row(1) { click_icon :edit }
     end
 
     it "should allow an admin to edit an existing product property" do

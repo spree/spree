@@ -1,59 +1,71 @@
-<h1><%= t(:order) %> <%= @order.number %></h1>
+<% content_for :page_title do %>
+  <%= t(:order) %> #<%= @order.number %>
+<% end %>
+
+<% content_for :sidebar_title do %>
+  <%= t(:order_information) %>
+<% end %>
 
 <% content_for :sidebar do %>
-  <div id="order_tab_summary" data-hook>
-    <h3 id="order_number" data-hook><%= t(:order) %> #<%= @order.number%></h3>
-    <h5 id="order_status" data-hook><%= t(:status) %>: <%= t(@order.state, :scope => :order_state) %></h5>
-    <h5 id="order_total" data-hook><%= t(:total) %>: <%= number_to_currency @order.total %></h5>
-    <% if @order.completed? %>
-      <h5 id="shipment_status"><%= t(:shipment) %>: <%= t(@order.shipment_state, :scope => :shipment_state, :default => [:missing, "none"]) %></h5>
-      <h5 id="payment_status"><%= t(:payment) %>: <%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></h5>
-    <% end %>
-    <br class="clear" />
-  </div>
-  <br class="clear" />
+  <header id="order_tab_summary" data-hook>
+    <dl class="additional-info">
+      <dt id="order_status" data-hook><%= t(:status) %>:</dt>
+      <dd><span class="state <%= @order.state %>"><%= t(@order.state, :scope => :order_state) %></span></dd>
+      <dt data-hook><%= t(:total) %>:</dt>
+      <dd id='order_total'><%= @order.display_total %></dd>
+    
+      <% if @order.completed? %>
+        <dt><%= t(:shipment) %>: </dt>
+        <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>
+        <dt><%= t(:payment) %>: </dt>
+        <dd id='payment_status'><span class="state <%= @order.payment_state %>"><%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></span></dd>
+        <dt data-hook><%= t(:date_completed) %>:</dt>
+        <dd id='date_complete'><%= pretty_time(@order.completed? ? @order.completed_at : @order.created_at) %></dd>
+      <% end %>
+    </dl>
+  </header>
 
-  <ul class="sidebar" data-hook="admin_order_tabs">
-    <% unless @order.completed? %>
-      <li<%== ' class="active"' if current == 'Order Details' %>>
-        <%= link_to t(:order_details), edit_admin_order_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Customer Details' %>>
-          <%= link_to t(:customer_details), admin_order_customer_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Shipments' %>>
-         <%= link_to t(:shipment), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : edit_admin_order_shipment_url(@order, @order.shipment) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Adjustments' %>>
-         <%= link_to t(:adjustments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : admin_order_adjustments_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Payments' %>>
-         <%= link_to t(:payment), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : new_admin_order_payment_url(@order) %>
-      </li>
+  <nav class="menu">
+    <ul data-hook="admin_order_tabs">
+      <% unless @order.completed? %>
+        <li<%== ' class="active"' if current == 'Order Details' %>>
+          <%= link_to_with_icon 'icon-edit', t(:order_details), edit_admin_order_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Customer Details' %>>
+          <%= link_to_with_icon 'icon-user', t(:customer_details), admin_order_customer_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Shipments' %>>
+          <%=link_to_with_icon 'icon-road', t(:shipments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : edit_admin_order_shipment_url(@order, @order.shipment) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Adjustments' %>>
+           <%= link_to_with_icon 'icon-cogs', t(:adjustments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : admin_order_adjustments_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Payments' %>>
+           <%= link_to_with_icon 'icon-credit-card', t(:payments), @order.line_items.empty? || !@order.completed? ? 'javascript:$("form").submit();' : new_admin_order_payment_url(@order) %>
+        </li>
 
-    <% else %>
-      <li<%== ' class="active"' if current == 'Order Details' %>>
-        <%= link_to t(:order_details), admin_order_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Customer Details' %>>
-        <%= link_to t(:customer_details), admin_order_customer_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Adjustments' %>>
-         <%= link_to t(:adjustments), admin_order_adjustments_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Payments' %>>
-         <%= link_to t(:payments), admin_order_payments_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Shipments' %>>
-         <%= link_to t(:shipments), admin_order_shipments_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'Return Authorizations' %>>
-         <%= link_to t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
-      </li>
-      <li<%== ' class="active"' if current == 'History' %>>
-         <%= link_to t(:history), history_admin_order_url(@order) %>
-      </li>
-    <% end %>
-  </ul>
+      <% else %>
+        <li<%== ' class="active"' if current == 'Order Details' %>>
+          <%= link_to_with_icon 'icon-edit', t(:order_details), edit_admin_order_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Customer Details' %>>
+          <%= link_to_with_icon 'icon-user', t(:customer_details), admin_order_customer_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Adjustments' %>>
+          <%= link_to_with_icon 'icon-cogs', t(:adjustments), admin_order_adjustments_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Payments' %>>
+          <%= link_to_with_icon 'icon-credit-card', t(:payments), admin_order_payments_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Shipments' %>>          
+          <%= link_to_with_icon 'icon-road', t(:shipments), admin_order_shipments_url(@order) %>
+        </li>
+        <li<%== ' class="active"' if current == 'Return Authorizations' %>>          
+          <%= link_to_with_icon 'icon-share-alt', t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
+        </li>
+      <% end %>
+    </ul>  
+  </nav>
+  
 
 <% end %>

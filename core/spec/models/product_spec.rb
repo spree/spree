@@ -19,11 +19,46 @@ describe Spree::Product do
     product.master.should_not be_nil
   end
 
-  context "product instance" do
-    let(:product) do
-      product = stub_model(Spree::Product)
-      product.stub :master => stub_model(Spree::Variant)
-      product
+  context 'product instance' do
+    let(:product) { create(:product) }
+
+    context '#duplicate' do
+      before do
+        product.stub :taxons => [create(:taxon)]
+      end
+
+      it 'duplicates product' do
+        clone = product.duplicate
+        clone.name.should == 'COPY OF ' + product.name
+        clone.master.sku.should == 'COPY OF ' + product.master.sku
+        clone.taxons.should == product.taxons
+        clone.images.size.should == product.images.size
+      end
+    end
+
+    context "product has no variants" do
+      context "#delete" do
+        it "should set deleted_at value" do
+          product.delete
+          product.reload
+          product.deleted_at.should_not be_nil
+          product.master.deleted_at.should_not be_nil
+        end
+      end
+    end
+
+    context "product has variants" do
+      before do
+        create(:variant, :product => product)
+      end
+
+      context "#delete" do
+        it "should set deleted_at value" do
+          product.delete
+          product.deleted_at.should_not be_nil
+          product.variants_including_master.all? { |v| !v.deleted_at.nil? }.should be_true
+        end
+      end
     end
 
     context "#on_hand" do
@@ -37,6 +72,32 @@ describe Spree::Product do
       end
     end
 
+    # Test for #2167
+    context "#on_display?" do
+      it "is on display if product has stock" do
+        product.stub :has_stock? => true
+        assert product.on_display?
+      end
+
+      it "is on display if show_zero_stock_products preference is set to true" do
+        Spree::Config[:show_zero_stock_products] = true
+        assert product.on_display?
+      end
+    end
+
+    # Test for #2167
+    context "#on_sale?" do
+      it "is on sale if the product has stock" do
+        product.stub :has_stock? => true
+        assert product.on_sale?
+      end
+
+      it "is on sale if allow_backorders preference is set to true" do
+        Spree::Config[:allow_backorders] = true
+        assert product.on_sale?
+      end
+    end
+
     context "#price" do
       # Regression test for #1173
       it 'strips non-price characters' do
@@ -44,25 +105,53 @@ describe Spree::Product do
         product.price.should == 10.0
       end
     end
-  end
 
-  context "shoulda validations" do
-    let(:product) {Factory(:product)}
-    it { should belong_to(:tax_category) }
-    it { should belong_to(:shipping_category) }
-    it { should have_many(:product_option_types) }
-    it { should have_many(:option_types) }
-    it { should have_many(:product_properties) }
-    it { should have_many(:properties) }
-    it { should have_many(:images) }
-    it { should have_and_belong_to_many(:product_groups) }
-    it { should have_and_belong_to_many(:taxons) }
-    it "should validate price" do
-      product.should be_valid
+    context "#display_price" do
+      before { product.price = 10.55 }
+
+      context "with display_currency set to true" do
+        before { Spree::Config[:display_currency] = true }
+
+        it "shows the currency" do
+          product.display_price.should == "$10.55 USD"
+        end
+      end
+
+      context "with display_currency set to false" do
+        before { Spree::Config[:display_currency] = false }
+
+        it "does not include the currency" do
+          product.display_price.should == "$10.55"
+        end
+      end
+
+      context "with currency set to JPY" do
+        before do
+          product.master.default_price.currency = 'JPY'
+          product.master.default_price.save!
+          Spree::Config[:currency] = 'JPY'
+        end
+
+        it "displays the currency in yen" do
+          product.display_price.to_s.should == "¥11"
+        end
+      end
     end
-    # it { should validate_presence_of(:price) }
-    it { should validate_presence_of(:permalink) }
-    it { should have_valid_factory(:product) }
+
+    context "#available?" do
+      it "should be available if date is in the past" do
+        product.available_on = 1.day.ago
+        product.should be_available
+      end
+
+      it "should not be available if date is nil or in the future" do
+        product.available_on = nil
+        product.should_not be_available
+
+        product.available_on = 1.day.from_now
+        product.should_not be_available
+      end
+    end
   end
 
   context "validations" do
@@ -70,10 +159,10 @@ describe Spree::Product do
 
       context "permalink should be incremented until the value is not taken" do
         before do
-          @other_product = Factory(:product, :name => 'zoo')
-          @product1 = Factory(:product, :name => 'foo')
-          @product2 = Factory(:product, :name => 'foo')
-          @product3 = Factory(:product, :name => 'foo')
+          @other_product = create(:product, :name => 'zoo')
+          @product1 = create(:product, :name => 'foo')
+          @product2 = create(:product, :name => 'foo')
+          @product3 = create(:product, :name => 'foo')
         end
         it "should have valid permalink" do
           @product1.permalink.should == 'foo'
@@ -85,7 +174,7 @@ describe Spree::Product do
       context "permalink should be incremented until the value is not taken when there are more than 10 products" do
         before do
           @products = 0.upto(11).map do
-            Factory(:product, :name => 'foo')
+            create(:product, :name => 'foo')
           end
         end
         it "should have valid permalink" do
@@ -93,10 +182,54 @@ describe Spree::Product do
         end
       end
 
+      context "permalink should be incremented until the value is not taken for similar names" do
+        before do
+          @other_product = create(:product, :name => 'foo bar')
+          @product1 = create(:product, :name => 'foo')
+          @product2 = create(:product, :name => 'foo')
+          @product3 = create(:product, :name => 'foo')
+        end
+        it "should have valid permalink" do
+          @product1.permalink.should == 'foo-1'
+          @product2.permalink.should == 'foo-2'
+          @product3.permalink.should == 'foo-3'
+        end
+      end
+
+      context "permalink should be incremented until the value is not taken for similar names when there are more than 10 products" do
+        before do
+          @other_product = create(:product, :name => 'foo a')
+          @products = 0.upto(11).map do
+            create(:product, :name => 'foo')
+          end
+        end
+        it "should have valid permalink" do
+          @products[11].permalink.should == 'foo-12'
+        end
+      end
+
+      context "permalink with quotes" do
+        it "should be saved correctly" do
+          product = create(:product, :name => "Joe's", :permalink => "joe's")
+          product.permalink.should == "joe's"
+        end
+
+        context "existing" do
+          before do
+            create(:product, :name => "Joe's", :permalink => "joe's")
+          end
+
+          it "should be detected" do
+            product = create(:product, :name => "Joe's", :permalink => "joe's")
+            product.permalink.should == "joe's-1"
+          end
+        end
+      end
+
       context "make_permalink should declare validates_uniqueness_of" do
         before do
-          @product1 = Factory(:product, :name => 'foo')
-          @product2 = Factory(:product, :name => 'foo')
+          @product1 = create(:product, :name => 'foo')
+          @product2 = create(:product, :name => 'foo')
           @product2.update_attributes(:permalink => 'foo')
         end
 
@@ -114,29 +247,65 @@ describe Spree::Product do
 
   context "permalink generation" do
     it "supports Chinese" do
-      @product = Factory(:product, :name => "你好")
+      @product = create(:product, :name => "你好")
       @product.permalink.should == "ni-hao"
     end
   end
 
-  context "scopes" do
-    context ".group_by_products_id.count" do
-      let(:product) { Factory(:product) }
-      it 'produces a properly formed ordered-hash key' do
-        expected_key = (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL') ?
-          Spree::Product.column_names.map{|col_name| product.send(col_name)} :
-          product.id
-        count_key = Spree::Product.group_by_products_id.count.keys.first
-        [expected_key, count_key].each{|val| val.map!{|e| e.is_a?(Time) ? e.strftime("%Y-%m-%d %H:%M:%S") : e} if val.respond_to?(:map!)}
-        count_key.should == expected_key
-      end
+  context "manual permalink override" do
+    it "calling save_permalink with a parameter" do
+      @product = create(:product, :name => "foo")
+      @product.permalink.should == "foo"
+      @product.name = "foobar"
+      @product.save
+      @product.permalink.should == "foo"
+      @product.save_permalink(@product.name)
+      @product.permalink.should == "foobar"
     end
 
+    it "should be incremented until not taken with a parameter" do
+      @product = create(:product, :name => "foo")
+      @product2 = create(:product, :name => "foobar")
+      @product.permalink.should == "foo"
+      @product.name = "foobar"
+      @product.save
+      @product.permalink.should == "foo"
+      @product.save_permalink(@product.name)
+      @product.permalink.should == "foobar-1"
+    end
+  end
+
+  context "properties" do
+    it "should properly assign properties" do
+      product = FactoryGirl.create :product
+      product.set_property('the_prop', 'value1')
+      product.property('the_prop').should == 'value1'
+
+      product.set_property('the_prop', 'value2')
+      product.property('the_prop').should == 'value2'
+    end
+
+    it "should not create duplicate properties when set_property is called" do
+      product = FactoryGirl.create :product
+
+      lambda {
+        product.set_property('the_prop', 'value2')
+        product.save
+        product.reload
+      }.should_not change(product.properties, :length)
+
+      lambda {
+        product.set_property('the_prop_new', 'value')
+        product.save
+        product.reload
+        product.property('the_prop_new').should == 'value'
+      }.should change { product.properties.length }.by(1)
+    end
   end
 
   context '#create' do
     before do
-      @prototype = Factory(:prototype)
+      @prototype = create(:prototype)
       @product = Spree::Product.new(:name => "Foo", :price => 1.99)
     end
 
@@ -147,32 +316,32 @@ describe Spree::Product do
         @product.save
         @product.properties.count.should == 1
       end
-      
+
     end
-    
+
     context "when prototype with option types is supplied" do
-      
+
       include_context "product prototype"
-      
+
       before { @product.prototype_id = prototype.id }
-      
+
       it "should create option types based on the prototype" do
         @product.save
         @product.option_type_ids.length.should == 1
         @product.option_type_ids.should == prototype.option_type_ids
       end
-      
-      it "should create product option types based on the prototype" do  
+
+      it "should create product option types based on the prototype" do
         @product.save
         @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
       end
-      
+
       it "should create variants from an option values hash with one option type" do
         @product.option_values_hash = option_values_hash
         @product.save
         @product.variants.length.should == 3
       end
-      
+
       it "should still create variants when option_values_hash is given but prototype id is nil" do
         @product.option_values_hash = option_values_hash
         @product.prototype_id = nil
@@ -181,7 +350,7 @@ describe Spree::Product do
         @product.option_type_ids.should == prototype.option_type_ids
         @product.variants.length.should == 3
       end
-      
+
       it "should create variants from an option values hash with multiple option types" do
         color = build_option_type_with_values("color", %w(Red Green Blue))
         logo  = build_option_type_with_values("logo", %w(Ruby Rails Nginx))
@@ -193,7 +362,6 @@ describe Spree::Product do
         @product.option_type_ids.length.should == 3
         @product.variants.length.should == 27
       end
-      
     end
 
   end
@@ -224,25 +392,29 @@ describe Spree::Product do
       before do
         Spree::Config.set :track_inventory_levels => true
         product.master.stub :on_hand => 0
-        product.stub :variants => [stub_model(Spree::Variant, :on_hand => 100)]
+        product.variants.build(:on_hand => 100)
+        product.stub :has_variants? => true
       end
       specify { product.has_stock?.should be_true }
     end
   end
 
-  context '#effective_tax_rate' do
-    let(:product) { stub_model(Spree::Product) }
+  context "#images" do
+    let(:product) { create(:product) }
 
-    it 'should check tax category for applicable rates' do
-      tax_category = double("Tax Category")
-      product.stub :tax_category => tax_category
-      tax_category.should_receive(:effective_amount)
-      product.effective_tax_rate
+    before do
+      image = File.open(File.expand_path('../../../app/assets/images/noimage/product.png', __FILE__))
+      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
+      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
+      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
     end
 
-    it 'should return default tax rate when no tax category is defined' do
-      product.stub :tax_category => nil
-      product.effective_tax_rate.should == Spree::TaxRate.default
+    it "should only look for variant images to support third-party extensions" do
+      product.images.size.should == 2
+    end
+
+    it "should be sorted by position" do
+      product.images.map(&:alt).should eq(["position 1", "position 2"])
     end
 
   end

@@ -5,8 +5,7 @@ module Spree
 
       # helper to determine if its appropriate to show the store menu
       def store_menu?
-        return true unless %w{thank_you}.include? @current_action
-        false
+        %w{thank_you}.exclude? params[:action]
       end
 
     end

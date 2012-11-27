@@ -1,46 +1,21 @@
 module Spree
   module Admin
     class OptionTypesController < ResourceController
-      before_filter :load_product, :only => [:selected, :available, :remove]
+      before_filter :setup_new_option_value, :only => [:edit]
 
-      def available
-        set_available_option_types
-        render :layout => false
-      end
-
-      def selected
-        @option_types = @product.option_types
-      end
-
-      def remove
-        @product.option_types.delete(@option_type)
-        @product.save
-        flash.notice = I18n.t('notice_messages.option_type_removed')
-        redirect_to selected_admin_product_option_types_url(@product)
-      end
-
-      def update_positions
+      def update_values_positions
         params[:positions].each do |id, index|
-          OptionType.where(:id => id).update_all(:position => index)
+          OptionValue.where(:id => id).update_all(:position => index)
         end
-    
+
         respond_to do |format|
           format.html { redirect_to admin_product_variants_url(params[:product_id]) }
           format.js  { render :text => 'Ok' }
         end
       end
 
-      # AJAX method for selecting an existing option type and associating with the current product
-      def select
-        @product = Product.find_by_param!(params[:product_id])
-        @product.option_types << OptionType.find(params[:id])
-        @product.reload
-        @option_types = @product.option_types
-        set_available_option_types
-      end
-
       protected
-    
+
         def location_after_save
           if @option_type.created_at == @option_type.updated_at
             edit_admin_option_type_url(@option_type)
@@ -54,14 +29,17 @@ module Spree
         def load_product
           @product = Product.find_by_param!(params[:product_id])
         end
-  
+
+        def setup_new_option_value
+          @option_type.option_values.build if @option_type.option_values.empty?
+        end
+
         def set_available_option_types
-          @available_option_types = OptionType.all
-          selected_option_types = []
-          @product.options.each do |option|
-            selected_option_types << option.option_type
+          @available_option_types = if @product.option_type_ids.any?
+            OptionType.where('id NOT IN (?)', @product.option_type_ids)
+          else
+            OptionType.all
           end
-          @available_option_types.delete_if {|ot| selected_option_types.include? ot}
         end
     end
   end

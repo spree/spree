@@ -1,34 +1,29 @@
-<fieldset data-hook="creditcard">
-  <legend><%= t(:creditcard) %></legend>
+<fieldset data-hook="credit_card">
+  <legend align="center"><%= t(:credit_card) %></legend>
 
-  <table class="index">
-    <tr>
-      <th colspan="6"><%= t(:card_details) %></th>
-    </tr>
-    <tr>
-      <td><%= label_tag nil, t(:card_number) %>:</td>
-      <td>
-        <%= payment.source.display_number %>
-      </td>
-      <td><%= label_tag nil, t(:expiration) %>:</td>
-      <td>
-        <%= payment.source.month %>/<%= payment.source.year %>
-      </td>
-      <td><%= label_tag nil, t(:card_code) %>:</td>
-      <td>
-        <%= payment.source.verification_value %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= label_tag nil, t(:maestro_or_solo_cards) %>:</td>
-      <td>
-        <%= payment.source.issue_number %>
-      </td>
-      <td><%= label_tag nil, t(:start_date) %>:</td>
-      <td colspan="3">
-        <%= payment.source.start_month %>/<%= payment.source.start_year %>
-      </td>
-    </tr>
-  </table>
+  <div class="row">
+    <div class="alpha six columns">      
+      <dl>
+        <dt><%= t(:card_number) %>:</dt>
+        <dd><%= payment.source.display_number %></dd>
+
+        <dt><%= t(:expiration) %>:</dt>
+        <dd><%= payment.source.month %>/<%= payment.source.year %></dd>
+
+        <dt><%= t(:card_code) %>:</dt>
+        <dd><%= payment.source.verification_value %></dd>
+      </dl>
+    </div>
+
+    <div class="omega six columns">
+      <dl>
+        <dt><%= t(:maestro_or_solo_cards) %>:</dt>
+        <dd><%= payment.source.issue_number %></dd>
+
+        <dt><%= t(:start_date) %>:</dt>
+        <dd><%= payment.source.start_month %>/<%= payment.source.start_year %></dd>
+      </dl>
+    </div>    
+  </div>
+
 </fieldset>
-

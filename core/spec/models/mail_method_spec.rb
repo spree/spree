@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::MailMethod do
-
-  context 'validation' do
-    it { should have_valid_factory(:mail_method) }
-  end
-
   context "current" do
     it "should return the first active mail method corresponding to the current environment" do
       method = Spree::MailMethod.create(:environment => "test")

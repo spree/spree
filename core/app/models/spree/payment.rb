@@ -1,10 +1,11 @@
 module Spree
   class Payment < ActiveRecord::Base
+    include Spree::Payment::Processing
     belongs_to :order
     belongs_to :source, :polymorphic => true, :validate => true
     belongs_to :payment_method
 
-    has_many :offsets, :class_name => 'Spree::Payment', :foreign_key => 'source_id', :conditions => "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
+    has_many :offsets, :class_name => "Spree::Payment", :foreign_key => :source_id, :conditions => "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
     has_many :log_entries, :as => :source
 
     after_save :create_payment_profile, :if => :profiles_supported?
@@ -15,7 +16,9 @@ module Spree
     attr_accessor :source_attributes
     after_initialize :build_source
 
-    scope :from_creditcard, where(:source_type => 'Spree::Creditcard')
+    attr_accessible :amount, :payment_method_id, :source_attributes
+
+    scope :from_credit_card, lambda { where(:source_type => 'Spree::CreditCard') }
     scope :with_state, lambda { |s| where(:state => s) }
     scope :completed, with_state('completed')
     scope :pending, with_state('pending')
@@ -25,23 +28,31 @@ module Spree
     state_machine :initial => 'checkout' do
       # With card payments, happens before purchase or authorization happens
       event :started_processing do
-        transition :from => ['checkout', 'pending', 'completed'], :to => 'processing'
+        transition :from => ['checkout', 'pending', 'completed', 'processing'], :to => 'processing'
       end
       # When processing during checkout fails
       event :failure do
-        transition :from => 'processing', :to => 'failed'
+        transition :from => ['pending', 'processing'], :to => 'failed'
       end
       # With card payments this represents authorizing the payment
       event :pend do
-        transition :from => 'processing', :to => 'pending'
+        transition :from => ['checkout', 'processing'], :to => 'pending'
       end
       # With card payments this represents completing a purchase or capture transaction
       event :complete do
-        transition :from => ['processing', 'pending'], :to => 'completed'
+        transition :from => ['processing', 'pending', 'checkout'], :to => 'completed'
       end
       event :void do
-        transition :from => ['pending', 'completed'], :to => 'void'
+        transition :from => ['pending', 'completed', 'checkout'], :to => 'void'
       end
+    end
+
+    def currency
+      order.currency
+    end
+
+    def display_amount
+      Spree::Money.new(amount, { :currency => currency })
     end
 
     def offsets_total
@@ -56,31 +67,11 @@ module Spree
       credit_allowed > 0
     end
 
-    def credit(amount)
-      return if amount > credit_allowed
-      started_processing!
-      source.credit(self, amount)
-    end
-    
     # see https://github.com/spree/spree/issues/981
     def build_source
       return if source_attributes.nil?
-
       if payment_method and payment_method.payment_source_class
         self.source = payment_method.payment_source_class.new(source_attributes)
-      end
-    end
-
-    def process!
-      if payment_method && payment_method.source_required?
-        if source
-          if !processing? && source.respond_to?(:process!)
-            started_processing!
-            source.process!(self) # source is responsible for updating the payment state when it's done processing
-          end
-        else
-          raise Core::GatewayError.new(I18n.t(:payment_processing_failed))
-        end
       end
     end
 
@@ -107,7 +98,7 @@ module Spree
       end
 
       def create_payment_profile
-        return unless source.is_a?(Creditcard) && source.number && !source.has_payment_profile?
+        return unless source.is_a?(CreditCard) && source.number && !source.has_payment_profile?
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e

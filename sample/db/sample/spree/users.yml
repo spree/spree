@@ -1,8 +1,0 @@
-<%
-1.upto(100) do |i|
-%>
-user_<%= i %>:
-  email: <%= Faker::Internet.email %>
-  ship_address: ship_address_<%= i %>
-  bill_address: bill_address_<%= i %>
-<% end %>

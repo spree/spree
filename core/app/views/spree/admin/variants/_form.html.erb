@@ -1,40 +1,61 @@
-<div class="clearfix">
-  <div class="left" data-hook="variants">
-
+<div data-hook="admin_variant_form_fields" class="label-block left six columns alpha">
+  
+  <div data-hook="variants">
     <% @product.options.each do |option| %>
-      <p data-hook="presentation">
-        <%= label :new_variant, option.option_type.presentation %><br />
+      <div class="field" data-hook="presentation">
+        <%= label :new_variant, option.option_type.presentation %>
         <% if @variant.new_record? %>
           <%= select(:new_variant, option.option_type.presentation,
             option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
-            {})
+            {}, {:class => 'select2 fullwidth'})
           %>
         <% else %>
-          <% opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.presentation %>
-          <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled') %>
+          <% if opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.try(:presentation) %>
+            <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled', :class => 'fullwidth') %>
+          <% end %>
         <% end %>
-      </p>
+      </div>
     <% end %>
 
-    <p data-hook="sku"><%= f.label :sku, t(:sku) %><br />
-    <%= f.text_field :sku %></p>
+    <div class="field" data-hook="sku">
+      <%= f.label :sku, t(:sku) %>
+      <%= f.text_field :sku, :class => 'fullwidth' %>
+    </div>
 
-    <p data-hook="price"><%= f.label :price, t(:price) %>:<br />
-    <%= f.text_field :price, :value => number_with_precision(@variant.price, :precision => 2) %></p>
+    <div class="field" data-hook="price">
+      <%= f.label :price, t(:price) %>
+      <%= f.text_field :price, :value => number_to_currency(@variant.price, :unit => ''), :class => 'fullwidth' %>
+    </div>
 
-    <p data-hook="cost_price"><%= f.label :cost_price, t(:cost_price) %>:<br />
-    <%= f.text_field :cost_price, :value => number_with_precision(@variant.cost_price, :precision => 2) %></p>
+    <div class="field" data-hook="cost_price">
+      <%= f.label :cost_price, t(:cost_price) %>
+      <%= f.text_field :cost_price, :value => number_to_currency(@variant.cost_price, :unit => ''), :class => 'fullwidth' %>
+    </div>
 
     <% if Spree::Config[:track_inventory_levels] %>
-      <p data-hook="on_hand"><%= f.label :on_hand, t(:on_hand) %>: <br />
-      <%= f.text_field :on_hand %></p>
+      <div class="field checkbox" data-hook="on_hand">
+        <label>
+          <%= f.check_box :on_demand %>
+          <%= t(:on_demand) %>
+        </label>
+      </div>
+      <div class="field" data-hook="on_hand">
+        <%= f.label :on_hand, t(:on_hand) %>
+        <%= f.text_field :on_hand, :class => 'fullwidth' %>
+      </div>
     <% end %>
-  </div>
-  <div class="right">
-
-    <% Spree::Variant.additional_fields.select{|af| af[:only].nil? || af[:only].include?(:variant) }.each do |field| %>
-      <%= render :partial => 'spree/admin/shared/additional_field', :locals => { :field => field, :f => f } %>
-    <% end %>
-
   </div>
 </div>
+
+
+
+<div class="right six columns omega label-block" data-hook="admin_variant_form_additional_fields">
+  <% [:weight, :height, :width, :depth].each do |field| %>
+    <div class="field" data-hook="<%= field %>"><%= f.label field, t(field) %>
+      <% value = number_with_precision(@variant.send(field), :precision => 2) %>
+      <%= f.text_field field, :value => value, :class => 'fullwidth' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="clear"></div>

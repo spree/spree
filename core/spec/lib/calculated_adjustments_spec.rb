@@ -11,7 +11,7 @@ describe Spree::Core::CalculatedAdjustments do
     assert Spree::ShippingMethod.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
   end
 
-  let(:tax_rate) { Spree::TaxRate.new(:calculator => calculator) }
+  let(:tax_rate) { Spree::TaxRate.new({:calculator => calculator}, :without_protection => true) }
 
   context "#create_adjustment and its resulting adjustment" do
     let(:order) { Spree::Order.create }

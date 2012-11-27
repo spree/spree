@@ -9,18 +9,24 @@ Spree::Core::Engine.routes.draw do
   resources :tax_categories
 
   resources :states, :only => :index
+  resources :countries, :only => :index
 
   # non-restful checkout stuff
-  match '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
-  match '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
-  match '/checkout', :to => 'checkout#edit', :state => 'address', :as => :checkout
+  put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
+  get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
+  get '/checkout', :to => 'checkout#edit' , :as => :checkout
+
+  populate_redirect = redirect do |params, request|
+    request.flash[:error] = I18n.t(:populate_get_error)
+    request.referer || '/cart'
+  end
+
+  get '/orders/populate', :via => :get, :to => populate_redirect
 
   resources :orders do
     post :populate, :on => :collection
 
     resources :line_items
-    resources :creditcards
-    resources :creditcard_payments
 
     resources :shipments do
       member do
@@ -40,26 +46,17 @@ Spree::Core::Engine.routes.draw do
     end
   end
 
-  #   # Search routes
-  match 's/*product_group_query', :to => 'products#index', :as => :simple_search
-  match '/pg/:product_group_name', :to => 'products#index', :as => :pg_search
-  match '/t/*id/s/*product_group_query', :to => 'taxons#show', :as => :taxons_search
-  match 't/*id/pg/:product_group_name', :to => 'taxons#show', :as => :taxons_pg_search
-
-  #   # route globbing for pretty nested taxon and product paths
+  # route globbing for pretty nested taxon and product paths
   match '/t/*id', :to => 'taxons#show', :as => :nested_taxons
-  #
-  #   #moved old taxons route to after nested_taxons so nested_taxons will be default route
-  #   #this route maybe removed in the near future (no longer used by core)
-  #   map.resources :taxons
-  #
 
   namespace :admin do
+    get '/search/users', :to => "search#users", :as => :search_users
+
     resources :adjustments
     resources :zones
-    resources :users do
+    resources :banners do
       member do
-        post :dismiss_banner
+        post :dismiss
       end
     end
     resources :countries do
@@ -67,7 +64,6 @@ Spree::Core::Engine.routes.draw do
     end
     resources :states
     resources :tax_categories
-    resources :configurations, :only => :index
     resources :products do
       resources :product_properties
       resources :images do
@@ -83,33 +79,14 @@ Spree::Core::Engine.routes.draw do
           post :update_positions
         end
       end
-      resources :option_types do
-        member do
-          get :select
-          get :remove
-        end
-        collection do
-          get :available
-          get :selected
-          post :update_positions
-        end
-      end
-      resources :taxons do
-        member do
-          get :select
-          delete :remove
-        end
-        collection do
-          post :available
-          post :batch_select
-          get  :selected
-        end
-      end
     end
+
+    get '/variants/search', :to => "variants#search", :as => :search_variants
 
     resources :option_types do
       collection do
         post :update_positions
+        post :update_values_positions
       end
     end
 
@@ -138,7 +115,6 @@ Spree::Core::Engine.routes.draw do
         put :fire
         get :fire
         post :resend
-        get :history
       end
 
       resource :customer, :controller => "orders/customer_details"
@@ -169,6 +145,9 @@ Spree::Core::Engine.routes.draw do
     end
 
     resources :taxonomies do
+    	collection do
+    		post :update_positions
+    	end
       member do
         get :get_children
       end
@@ -176,22 +155,24 @@ Spree::Core::Engine.routes.draw do
       resources :taxons
     end
 
-    resources :reports, :only => [:index, :show] do
+    resources :taxons, :only => [] do
       collection do
-        get :sales_total
+        get :search
       end
     end
 
-    resources :shipments
+    resources :reports, :only => [:index, :show] do
+      collection do
+        get :sales_total
+        post :sales_total
+      end
+    end
+
     resources :shipping_methods
     resources :shipping_categories
     resources :tax_rates
     resource  :tax_settings
     resources :calculators
-    resources :product_groups do
-      resources :product_scopes
-    end
-
 
     resources :trackers
     resources :payment_methods
@@ -204,6 +185,7 @@ Spree::Core::Engine.routes.draw do
 
   match '/admin', :to => 'admin/orders#index', :as => :admin
 
-  match '/content/cvv', :to => 'content#cvv'
+  match '/unauthorized', :to => 'home#unauthorized', :as => :unauthorized
+  match '/content/cvv', :to => 'content#cvv', :as => :cvv
   match '/content/*path', :to => 'content#show', :via => :get, :as => :content
 end

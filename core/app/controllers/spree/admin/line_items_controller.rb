@@ -1,6 +1,7 @@
 module Spree
   module Admin
-    class LineItemsController < BaseController
+    class LineItemsController < Spree::Admin::BaseController
+      layout nil, :only => [:create, :destroy, :update]
 
       before_filter :load_order
       before_filter :load_line_item, :only => [:destroy, :update]
@@ -13,52 +14,43 @@ module Spree
 
         if @order.save
           respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload }, :layout => false }
+            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
           end
         else
           respond_with(@line_item) do |format|
-            format.js { render :action => 'create', :locals => { :order => @order.reload }, :layout => false }
+            format.js { render :action => 'create', :locals => { :order => @order.reload } }
           end
         end
       end
 
       def destroy
-        if @line_item.destroy
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload }, :layout => false }
-          end
-        else
-          respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload }, :layout => false }
-          end
-        end
-      end
-
-      def new
-        respond_with do |format|
-          format.html { render :action => :new, :layout => false }
+        @line_item.destroy
+        respond_with(@line_item) do |format|
+          format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
         end
       end
 
       def update
         if @line_item.update_attributes(params[:line_item])
           respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload }, :layout => false}
+            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
           end
         else
           respond_with(@line_item) do |format|
-            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload }, :layout => false}
+            format.html { render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload } }
           end
         end
       end
 
-      def load_order
-        @order = Order.find_by_number! params[:order_id]
-      end
+      private
 
-      def load_line_item
-        @line_item = @order.line_items.find params[:id]
-      end
+        def load_order
+          @order = Order.find_by_number!(params[:order_id])
+        end
+
+        def load_line_item
+          @line_item = @order.line_items.find(params[:id])
+        end
     end
   end
 end

@@ -1,75 +1,25 @@
-/*--------------------------------------*/
-/* Colors
-/*--------------------------------------*/
-$c_green:       #8dba53;  /* Spree green    */
-$c_red:         #e45353;  /* Error red      */
-
-$layout_background_color:   #FFFFFF;
-$title_text_color:          #404042;
-$body_text_color:           #404042;
-$link_text_color:           #00ADEE;
-
-$product_background_color:  #FFFFFF;
-$product_title_text_color:  #404042;
-$product_body_text_color:   #404042;
-$product_link_text_color:   #BBBBBB;
-
-/*--------------------------------------*/
-/* Fonts import from remote
-/*--------------------------------------*/
-@import url(//fonts.googleapis.com/css?family=Ubuntu:400,700,400italic,700italic|&subset=latin,cyrillic,greek,greek-ext,latin-ext,cyrillic-ext);
-
-/*--------------------------------------*/
-/* Font families
-/*--------------------------------------*/
-$ff_base:       'Ubuntu', sans-serif;
-
-/*--------------------------------------
-  | Font sizes
-  |--------------------------------------
-  |- Navigation                         
-  |                                    */
-      $header_navigation_font_size:           14px;
-      $horizontal_navigation_font_size:       16px;
-      $main_navigation_header_font_size:      14px;
-      $main_navigation_font_size:             12px;
-/*|------------------------------------
-  |- Product Listing                         
-  |                                  */
-      $product_list_name_font_size:           12px;
-      $product_list_price_font_size:          16px;
-      $product_list_header_font_size:         20px;
-      $product_list_search_font_size:         14px;
-/*|------------------------------------
-  |- Product Details
-  |                                  */
-      $product_detail_name_font_size:         24px;
-      $product_detail_description_font_size:  12px;
-      $product_detail_price_font_size:        20px;
-      $product_detail_title_font_size:        14px;
-/*|------------------------------------
-  |- Basic
-  |                                  */
-      $heading_font_size:                     24px;
-      $sub_heading_font_size:                 14px;
-      $button_font_size:                      12px;
-      $input_box_font_size:                   13px;
-      $base_font_size:                        12px;
+@import "./variables.css.scss"; // Must call explicit path or else extension integration tests cannot import file.
 
 /*--------------------------------------*/
 /* Basic styles 
 /*--------------------------------------*/
 body {
   font-family: $ff_base;
-  color: $body_text_color;
-  line-height: 18px;
   font-size: $base_font_size;
+  font-weight: 400;
+  color: $body_text_color;
+  line-height: 18px;  
   background-color: $layout_background_color;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Line style */
 hr {
-  border-color: lighten($body_text_color, 60);
+  height: 0;
+  background-color: transparent;
+  color: transparent;
+  border: none;
+  border-bottom: 1px solid $border_color;
 }
 
 /* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
@@ -92,15 +42,21 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     &:hover {
       color: darken($link_text_color, 10) !important;
     }
+
+    &:active, &:focus {
+      outline: none;
+    }
   }
 
   /*--------------------------------------*/
   /* Lists
   /*--------------------------------------*/
   ul, ol {
-    li {
-      
-    }
+    margin-left: 0;
+    margin-top: 0;
+    -webkit-padding-start: 0px;
+    padding-left: 0;
+    list-style-position: inside;
 
     &.inline {
       li {
@@ -139,8 +95,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   h6 { font-size: $sub_heading_font_size - 2; line-height: $sub_heading_font_size - 2 + 10; }
 
   h1, h2, h3, h4, h5, h6 {    
-    font-weight: bold;
+    font-weight: 700;
     color: $title_text_color;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   /*--------------------------------------*/
@@ -152,8 +112,8 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   input[type="password"], input[type="search"], input[type="tel"],
   input[type="text"], input[type="time"], input[type="url"], 
   input[type="week"] {
-    border: 1px solid lighten($body_text_color, 60);
-    padding: 2px 5px;    
+    border: $default_border;
+    padding: 5px 10px;    
     font-family: $ff_base;
     font-size: $input_box_font_size;
 
@@ -171,18 +131,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
-  select {
-    border: 1px solid lighten($body_text_color, 60);
-    font-family: $ff_base;
-    background-image: url('select_arrow.gif');
-    background-repeat: no-repeat;
-    background-position: right center;
-
-    &:active, &:focus {
-      @extend input[type="text"]:focus  
-    }
-  }
-
   label.error {
     display: block;
     font-size: $base_font_size - 1;
@@ -190,16 +138,31 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     margin-top: 3px;
   }
 
+  span.required {
+    color: $c_red;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  fieldset {
+    margin: 0;
+  }
+
   input[type="submit"], input[type="button"],
   input[type= "reset"], button, a.button {
-    background-color: $link_text_color;;
+    background-color: $link_text_color;
     background-image: none;
     text-shadow: none;
     color: $layout_background_color;
     font-weight: bold;
     font-size: $button_font_size;
     font-family: $ff_base;
-    border: 1px solid rgba(0, 138, 189, .75);
+    border: 1px solid $button_border_color;
+    padding: 6px 10px 5px;
+    vertical-align:  top;
+
+    -webkit-font-smoothing: antialiased;
+
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
      -khtml-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
        -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
@@ -211,11 +174,15 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
         -ms-border-radius: 0px;
          -o-border-radius: 0px;
             border-radius: 0px;
-    vertical-align:  text-top;
 
     &.large {
       padding: 7px 10px;
       font-size: $button_font_size + 2;
+    }
+
+    &.gray {
+      background-color: lighten($body_text_color, 20);
+      border-color: lighten($body_text_color, 10);
     }
 
     &:hover {
@@ -232,9 +199,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   } 
 
-  input[type="checkbox"], input[type="button"],
-  input[type="submit"], input[type="reset"], 
-  button, label {
+  input[type="checkbox"], label {
     vertical-align: middle;
   }
 
@@ -371,10 +336,6 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
 
     .taxons-list {
-      padding-left: 20px;
-      margin-bottom: 20px;
-      list-style: disc outside;
-
       li {
         a {
           font-size: $main_navigation_font_size
@@ -462,10 +423,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     margin-top: 15px;
 
     input[type="number"] {
+      margin-right: 3px;
       width: 60px;
       vertical-align: middle;
-      padding: 5px;
-      height: 35px;
+      padding: 8px 10px;
     }
   }
 
@@ -513,11 +474,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
           font-size: $product_list_name_font_size;
           color: $product_link_text_color;
           border-bottom: 1px solid lighten($body_text_color, 60);
+          overflow: hidden;
         }
       }
 
       .product-image {
-        border: 1px solid lighten($body_text_color, 60);
+        border: $default_border;
         padding: 5px;        
         min-height: 110px;
         background-color: $product_background_color;
@@ -556,7 +518,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       margin-bottom: 15px;
     }
 
-    span.category {
+    .filter-title {
       display: block;
       font-weight: bold;
       text-transform: uppercase;
@@ -575,8 +537,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #product-images {
     #main-image {
       text-align: center;
-      border: 1px solid lighten($body_text_color, 60);
+      border: $default_border;
       background-color: $product_background_color;
+
+      img {
+        min-height: 240px;
+      }
     }
     #product-thumbnails {
       li {
@@ -604,7 +570,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
     li {
       margin-right: 6px;
-      border: 1px solid lighten($body_text_color, 60);
+      border: $default_border;
 
       img {
         padding: 5px;
@@ -617,8 +583,9 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #product-properties {
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
+    width: 100%;
   }
 
   #product-variants {
@@ -684,9 +651,20 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
+  #payment-methods {
+    list-style: none;
+
+    li {
+      fieldset {
+        border: none;
+        padding: 0;
+      }
+    }
+  }
+
   #checkout-summary {
     text-align: center;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     margin-top: 23px;
     margin-left: 0;
 
@@ -721,7 +699,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #billing, #shipping, #shipping_method, 
   #payment, #order_details, #order_summary {
     margin-top: 10px;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
 
     legend {
@@ -844,6 +822,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   div[data-hook="inside_cart_form"] {
     .links {
       margin-top: 15px;
+      text-align: right;
     }
     
     #subtotal {
@@ -858,8 +837,8 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #empty-cart {
-    margin-top: 15px;
-    float: right;
+    margin-top: -75px !important;
+    float: left !important;
   }
 
   /*--------------------------------------*/
@@ -884,7 +863,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #user-info {
     margin-bottom: 15px;
-    border: 1px solid lighten($body_text_color, 60);
+    border: $default_border;
     padding: 10px;
   }
 
@@ -1063,6 +1042,20 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   }
 
+  @media only screen and (max-width: 767px) {
+    #empty-cart {
+      clear: both;
+      margin-top: 0 !important;
+      float: none !important;
+    }
+  }
+  
+  @media only screen and (min-width: 768px) and (max-width: 959px) {
+    .container .offset-by-nine.coupon-code-field {
+      padding-left: 380px;
+    }
+  }
+  
 
   /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
   @media only screen and (max-width: 479px) {

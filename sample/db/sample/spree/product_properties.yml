@@ -134,3 +134,131 @@ mug_size_b:
   product: ror_stein
   property: prop_mug_size
   value: 6.75" tall, 3.75" dia. base, 3" dia. rim
+spree_mug_size_a:
+  product: spree_mug
+  property: prop_mug_size
+  value: 4.5" tall, 3.25" dia.
+spree_mug_size_b:
+  product: spree_stein
+  property: prop_mug_size
+  value: 6.75" tall, 3.75" dia. base, 3" dia. rim
+s_mug_type_a:
+  product: spree_mug
+  property: prop_mug_type
+  value: Mug
+s_mug_type_b:
+  product: spree_stein
+  property: prop_mug_type
+  value: Stein
+s_bag_type_a:
+  product: spree_tote
+  property: prop_bag_type
+  value: Tote
+s_bag_type_b:
+  product: spree_bag
+  property: prop_bag_type
+  value: Messenger
+s_bag_size_a:
+  product: spree_tote
+  property: prop_bag_size
+  value: 15" x 18" x 6"
+s_bag_size_b:
+  product: spree_bag
+  property: prop_bag_size
+  value: 14 1/2" x 12" x 5"
+s_shirt_man_a:
+  product: spree_baseball_jersey
+  property: prop_manufacturer
+  value: Wilson
+s_shirt_man_b:
+  product: spree_jr_spaghetti
+  property: prop_manufacturer
+  value: Jerseys
+s_shirt_man_c:
+  product: spree_ringer
+  property: prop_manufacturer
+  value: Jerseys
+s_shirt_brand_a:
+  product: spree_baseball_jersey
+  property: prop_brand
+  value: Wannabe Sports
+s_shirt_brand_b:
+  product: spree_jr_spaghetti
+  property: prop_brand
+  value: Resilance
+s_shirt_brand_c:
+  product: spree_ringer
+  property: prop_brand
+  value: Conditioned
+s_shirt_model_a:
+  product: spree_baseball_jersey
+  property: prop_model
+  value: JK1002
+s_shirt_model_b:
+  product: spree_jr_spaghetti
+  property: prop_model
+  value: TL174
+s_shirt_model_c:
+  product: spree_ringer
+  property: prop_model
+  value: TL9002
+s_shirt_type_a:
+  product: spree_baseball_jersey
+  property: prop_shirt_type
+  value: Baseball Jersey
+s_shirt_type_b:
+  product: spree_jr_spaghetti
+  property: prop_shirt_type
+  value: Jr Spaghetti T
+s_shirt_type_c:
+  product: spree_ringer
+  property: prop_shirt_type
+  value: Ringer T
+s_shirt_sleeve_a:
+  product: spree_baseball_jersey
+  property: prop_shirt_sleeve_type
+  value: long
+s_shirt_sleeve_b:
+  product: spree_jr_spaghetti
+  property: prop_shirt_sleeve_type
+  value: none
+s_shirt_sleeve_c:
+  product: spree_ringer
+  property: prop_shirt_sleeve_type
+  value: short
+s_shirt_fab_a:
+  product: spree_baseball_jersey
+  property: prop_shirt_fabric
+  value: 100% Cotton
+s_shirt_fab_b:
+  product: spree_jr_spaghetti
+  property: prop_shirt_fabric
+  value: 90% Cotton, 10% Nylon
+s_shirt_fab_c:
+  product: spree_ringer
+  property: prop_shirt_fabric
+  value: 100% Vellum
+s_shirt_fit_a:
+  product: spree_baseball_jersey
+  property: prop_shirt_fit
+  value: loose
+s_shirt_fit_b:
+  product: spree_jr_spaghetti
+  property: prop_shirt_fit
+  value: form
+s_shirt_fit_c:
+  product: spree_ringer
+  property: prop_shirt_fit
+  value: loose
+s_shirt_gender_a:
+  product: spree_baseball_jersey
+  property: prop_gender
+  value: Men's
+s_shirt_gender_b:
+  product: spree_jr_spaghetti
+  property: prop_gender
+  value: Women's
+s_shirt_gender_c:
+  product: spree_ringer
+  property: prop_gender
+  value: Men's

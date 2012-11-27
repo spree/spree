@@ -2,35 +2,40 @@ require 'spec_helper'
 require 'active_record/fixtures'
 
 describe "Shipping Methods" do
+  stub_authorization!
+
   before(:all) do
     fixtures_dir = File.expand_path('../../../../../db/default', __FILE__)
     ActiveRecord::Fixtures.create_fixtures(fixtures_dir, ['spree/countries', 'spree/zones', 'spree/zone_members', 'spree/states', 'spree/roles'])
   end
 
   before(:each) do
+    # HACK: To work around no email prompting on check out
+    Spree::Order.any_instance.stub(:require_email => false)
     PAYMENT_STATES = Spree::Payment.state_machine.states.keys unless defined? PAYMENT_STATES
     SHIPMENT_STATES = Spree::Shipment.state_machine.states.keys unless defined? SHIPMENT_STATES
     ORDER_STATES = Spree::Order.state_machine.states.keys unless defined? ORDER_STATES
-    Factory(:payment_method, :environment => 'test')
-    Factory(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
-    @product = Factory(:product, :name => "Mug")
+    create(:payment_method, :environment => 'test')
+    create(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
+    @product = create(:product, :name => "Mug")
 
-    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Configuration"
   end
 
-  let!(:address) { Factory(:address, :state => Spree::State.first) }
+  let!(:address) { create(:address, :state => Spree::State.first) }
 
   context "show" do
     it "should display exisiting shipping methods" do
-      2.times { Factory(:shipping_method) }
+      2.times { create(:shipping_method) }
       click_link "Shipping Methods"
 
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(1)').text.should == "UPS Ground"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(2)').text.should == "North America"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(3)').text.should == "Flat Rate (per order)"
-      find('table#listing_shipping_methods tbody tr:nth-child(1) td:nth-child(4)').text.should == "Both"
+      within_row(1) do
+        column_text(1).should == "UPS Ground"
+        column_text(2).should == "North America"
+        column_text(3).should == "Flat Rate (per order)"
+        column_text(4).should == "Both"
+      end
     end
   end
 
@@ -46,9 +51,22 @@ describe "Shipping Methods" do
     end
   end
 
+  # Regression test for #1331
+  context "update" do
+    it "can change the calculator", :js => true do
+      click_link "Shipping Methods"
+      within("#listing_shipping_methods") do
+        click_icon :edit
+      end
+
+      click_button "Update"
+      page.should_not have_content("Shipping method is not found")
+    end
+  end
+
   context "availability", :js => true do
     before(:each) do
-      @shipping_category = Factory(:shipping_category, :name => "Default")
+      @shipping_category = create(:shipping_category, :name => "Default")
       click_link "Shipping Methods"
       click_link "admin_new_shipping_method_link"
     end
@@ -65,7 +83,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -92,7 +110,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -121,7 +139,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -146,7 +164,7 @@ describe "Shipping Methods" do
           visit spree.root_path
           click_link "Mug"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -163,7 +181,7 @@ describe "Shipping Methods" do
 
     context "when rule is at least one products match" do
       before(:each) do
-        Factory(:product, :name => "Shirt")
+        create(:product, :name => "Shirt")
       end
 
       context "when match rules are satisfied" do
@@ -182,7 +200,7 @@ describe "Shipping Methods" do
           click_link "Home"
           click_link "Shirt"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"
@@ -210,7 +228,7 @@ describe "Shipping Methods" do
           click_link "Home"
           click_link "Shirt"
           click_button "Add To Cart"
-          click_link "Checkout"
+          click_button "Checkout"
 
           str_addr = "bill_address"
           select "United States", :from => "order_#{str_addr}_attributes_country_id"

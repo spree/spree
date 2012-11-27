@@ -5,9 +5,13 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
-  let(:shipment) { Spree::Shipment.new :order => order, :state => 'pending', :shipping_method => shipping_method }
+  let(:shipment) do
+    shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
+    shipment.state = 'pending'
+    shipment
+  end
 
   let(:charge) { mock_model Spree::Adjustment, :amount => 10, :source => shipment }
 
@@ -27,7 +31,7 @@ describe Spree::Shipment do
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
         shipment.state = "shipped"
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "shipped")
+        shipment.should_receive(:update_column).with("state", "shipped")
         shipment.update!(order)
       end
     end
@@ -35,15 +39,23 @@ describe Spree::Shipment do
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
         shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)] )
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
+        shipment.should_receive(:update_column).with("state", "pending")
+        shipment.update!(order)
+      end
+    end
+
+    context "when order is incomplete" do
+      before { order.stub :complete? => false }
+      it "should result in a 'pending' state" do
+        shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
     end
 
     context "when order is paid" do
-      before { order.stub :payment_state => 'paid' }
+      before { order.stub :paid? => true }
       it "should result in a 'ready' state" do
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "ready")
+        shipment.should_receive(:update_column).with("state", "ready")
         shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
@@ -51,10 +63,10 @@ describe Spree::Shipment do
     end
 
     context "when order has balance due" do
-      before { order.stub :payment_state => 'balance_due' }
+      before { order.stub :paid? => false }
       it "should result in a 'pending' state" do
         shipment.state = 'ready'
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "pending")
+        shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
@@ -62,10 +74,10 @@ describe Spree::Shipment do
     end
 
     context "when order has a credit owed" do
-      before { order.stub :payment_state => 'credit_owed' }
+      before { order.stub :payment_state => 'credit_owed', :paid? => true }
       it "should result in a 'ready' state" do
         shipment.state = 'pending'
-        shipment.should_receive(:update_attribute_without_callbacks).with("state", "ready")
+        shipment.should_receive(:update_column).with("state", "ready")
         shipment.update!(order)
       end
       it_should_behave_like "immutable once shipped"
@@ -77,6 +89,7 @@ describe Spree::Shipment do
         shipment.state = "pending"
         shipment.should_receive :after_ship
         shipment.stub :determine_state => 'shipped'
+        shipment.should_receive(:update_column).with("state", "shipped")
         shipment.update!(order)
       end
     end
@@ -88,7 +101,6 @@ describe Spree::Shipment do
     after { Spree::Config.set :track_inventory_levels => true }
 
     it "should not use the line items from order when track_inventory_levels is false" do
-      pending
       line_items = [mock_model(Spree::LineItem)]
       order.stub :complete? => true
       order.stub :line_items => line_items
@@ -114,7 +126,7 @@ describe Spree::Shipment do
       end
 
       it "should validate with inventory" do
-        shipment.inventory_units = [Factory(:inventory_unit)]
+        shipment.inventory_units = [create(:inventory_unit)]
         shipment.valid?.should be_true
       end
 
@@ -124,7 +136,6 @@ describe Spree::Shipment do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should validate with no inventory" do
-        pending
         shipment.valid?.should be_true
       end
     end
@@ -138,13 +149,29 @@ describe Spree::Shipment do
       shipping_method.stub(:create_adjustment)
     end
 
+    it "should update shipped_at timestamp" do
+      shipment.stub(:send_shipped_email)
+      shipment.ship!
+      shipment.shipped_at.should_not be_nil
+      # Ensure value is persisted
+      shipment.reload
+      shipment.shipped_at.should_not be_nil
+    end
+
     it "should send a shipment email" do
       mail_message = mock "Mail::Message"
       Spree::ShipmentMailer.should_receive(:shipped_email).with(shipment).and_return mail_message
       mail_message.should_receive :deliver
       shipment.ship!
     end
+  end
 
+  context "#ready" do
+    # Regression test for #2040
+    it "cannot ready a shipment for an order if the order is unpaid" do
+      order.stub(:paid? => false)
+      assert !shipment.can_ready?
+    end
   end
 
   context "ensure_correct_adjustment" do
@@ -175,6 +202,19 @@ describe Spree::Shipment do
       shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
       shipment.run_callbacks(:save, :after)
+    end
+  end
+
+  context "currency" do
+    it "returns the order currency" do
+      shipment.currency.should == order.currency
+    end
+  end
+
+  context "display_cost" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:cost) { 21.22 }
+      shipment.display_cost.should == Spree::Money.new(21.22)
     end
   end
 end

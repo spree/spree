@@ -1,16 +1,23 @@
----
 en:
-  api: "API"
-  api:
-    access: "API Access"
-    clear_key: "Clear API key"
-    errors:
-      invalid_event: "Invalid event name, valid names are %{events}"
-      invalid_event_for_object: "Valid event name but not allowed for this object, valid names are %{events}"
-      missing_event: "No event name supplied"
-    generate_key: "Generate API key"
-    key: "API Key"
-    regenerate_key: "Regenerate API key"
-    no_key: "No key defined"
-    key_generated: "API key generated"
-    key_cleared: "API key cleared"
+  spree:
+    api:
+      must_specify_api_key: "You must specify an API key."
+      invalid_api_key: "Invalid API key (%{key}) specified."
+      unauthorized: "You are not authorized to perform that action."
+      invalid_resource: "Invalid resource. Please fix errors and try again."
+      resource_not_found: "The resource you were looking for could not be found."
+      gateway_error: "There was a problem with the payment gateway: %{text}"
+      credit_over_limit: "This payment can only be credited up to %{limit}. Please specify an amount less than or equal to this number."
+      access: "API Access"
+      key: "Key"
+      clear_key: "Clear key"
+      regenerate_key: "Regenerate Key"
+      no_key: "No key"
+      generate_key: "Generate API key"
+      key_generated: "Key generated"
+      key_cleared: "Key cleared"
+      order:
+        could_not_transition: "The order could not be transitioned. Please fix the errors and try again."
+        invalid_shipping_method: "Invalid shipping method specified."
+      shipment:
+        cannot_ready: "Cannot ready shipment."

@@ -2,63 +2,77 @@
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Variants'} %>
 
-<table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
-  <tr data-hook="variants_header">
-    <th><%= t(:options) %></th>
-    <th><%= t(:price) %></th>
-    <th><%= t(:sku) %></th>
-    <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-      <th><%= t('activerecord.attributes.variant.' + field[:name].downcase, :default => field[:name].titleize) %></th>
-    <% end %>
-    <th><%= t(:on_hand) %></th>
-    <th><%= t(:action) %></th>
-  </tr>
-  <% @variants.each do |variant| %>
-    <!-- you can skip variant with no options: that's just the default variant that all products have -->
-    <% next if variant.option_values.empty? %>
-    <tr id="spree_variant_<%= variant.id %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
-      <td><span class="handle"></span> <%= variant.options_text %></td>
-      <td><%= number_to_currency variant.price %></td>
-      <td><%= variant.sku %></td>
-      <% Spree::Variant.additional_fields.select { |f| f[:only].nil? || f[:only].include?(:variant) }.each do |field| %>
-        <td><%= variant[field[:name].gsub(" ", "_").downcase] %></td>
+<%# Place for new variant form %>
+<div id="new_variant" data-hook></div>
+
+<% if @variants.any? %>
+  <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+    <colgroup>
+      <col style="width: 5%" />
+      <col style="width: 25%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+    </colgroup>
+    <thead data-hook="variants_header">
+      <tr>
+        <th colspan="2"><%= t(:options) %></th>
+        <th><%= t(:price) %></th>
+        <th><%= t(:sku) %></th>
+        <th><%= t(:on_hand) %></th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @variants.each do |variant| %>
+      <!-- you can skip variant with no options: that's just the default variant that all products have -->
+      <% next if variant.option_values.empty? %>
+        <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="<%= cycle('odd', 'even')%>">
+          <td class="no-border">
+            <span class="handle"></span>
+          </td>
+          <td><%= variant.options_text %></td>
+          <td class="align-center"><%= variant.display_price %></td>
+          <td class="align-center"><%= variant.sku %></td>
+          <td class="align-center"><%= variant.on_hand %></td>
+          <td class="actions">
+            <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
+            &nbsp;
+            <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
+          </td>
+        </tr>
       <% end %>
-      <td><%= variant.on_hand %></td>
-      <td valign="top">
-        <%= link_to_edit(variant) unless variant.deleted? %>
-        &nbsp;
-        <%= link_to_delete(variant) unless variant.deleted? %>
-      </td>
-    </tr>
-  <% end %>
-  <% unless @product.has_variants? %>
-    <tr><td colspan="9"><%= t(:none) %></td></tr>
-  <% end %>
-</table>
+      <% unless @product.has_variants? %>
+        <tr><td colspan="5"><%= t(:none) %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found"><%= t(:no_results)%>.</div>
+<% end %>
 
 <% if @product.empty_option_values? %>
-
-  <p class='first_add_option_types' data-hook="first_add_option_types">
+  <p class='first_add_option_types no-objects-found' data-hook="first_add_option_types">
     <%= t(:to_add_variants_you_must_first_define) %>
-    <%= link_to t(:option_types), selected_admin_product_option_types_url(@product) %>
+    <%= link_to t(:option_types), admin_product_url(@product) %>
     <%= t(:and) %>
     <%= link_to t(:option_values), admin_option_types_url %>
   </p>
-
 <% else %>
+  <% content_for :page_actions do %>
+    <ul class="inline-menu" data-hook="toolbar">
+      <li id="new_var_link" data-hook>
+        <%= link_to_with_icon('icon-plus', 
+                              t(:new_variant), 
+                              new_admin_product_variant_url(@product), 
+                              :remote => :true, 
+                              :'data-update' => 'new_variant', 
+                              :class => 'button'
+                             ) %>
+      </li>
+      <li><%= link_to_with_icon('icon-filter', @deleted.blank? ? t(:show_deleted) : t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
+    </ul>
+  <% end %>
 
-  <div id="new_variant" data-hook></div>
-
-  <br />
-
-  <p id="new_var_link" data-hook>
-
-    <%= link_to icon('add') + ' ' + t(:new_variant), new_admin_product_variant_url(@product), :remote => :true, 'data-update' => 'new_variant', :class => 'iconlink new' %>
-
-    &nbsp;|&nbsp;
-
-    <%= link_to @deleted.blank? ? t(:show_deleted) : t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off") %>
-  </p>
-
-  <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
 <% end %>

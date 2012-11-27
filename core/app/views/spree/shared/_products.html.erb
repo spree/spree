@@ -1,5 +1,5 @@
 <%
-  paginated_products = @searcher.products if params.key?(:keywords)
+  paginated_products = @searcher.retrieve_products if params.key?(:keywords)
   paginated_products ||= products
 %>
 <% if products.empty? %>
@@ -11,20 +11,20 @@
 <% if products.any? %>
 <ul id="products" class="inline product-listing" data-hook>
   <% products.each do |product| %>
-    <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
-      <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+    <% if product.on_display? %>
+      <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary", :name => "classes") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
         <div class="product-image">
-          <%= link_to small_image(product, :itemprop => "name"), product %>
+          <%= link_to small_image(product, :itemprop => "image"), product, :itemprop => 'url' %>
         </div>
         <%= link_to truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name %>
-        <span class="price selling" itemprop="price"><%= number_to_currency product.price %></span>
+        <span class="price selling" itemprop="price"><%= product.price_in(current_currency).display_price %></span>
       </li>
     <% end %>
   <% end %>
+  <% reset_cycle("classes") %>
 </ul>
 <% end %>
 
-<% if paginated_products.respond_to?(:num_pages)
-      params.delete(:search)
-      params.delete(:taxon)
-%><%= paginate paginated_products %><% end %>
+<% if paginated_products.respond_to?(:num_pages) %>
+  <%= paginate paginated_products %>
+<% end %>

@@ -1,8 +1,16 @@
 module Spree
   module Admin
-    class TaxonsController < BaseController
+    class TaxonsController < Spree::Admin::BaseController
 
       respond_to :html, :json, :js
+
+      def search
+        if params[:ids]
+          @taxons = Spree::Taxon.where(:id => params[:ids].split(','))
+        else
+          @taxons = Spree::Taxon.limit(20).search(:name_cont => params[:q]).result
+        end
+      end
 
       def create
         @taxonomy = Taxonomy.find(params[:taxonomy_id])
@@ -24,7 +32,7 @@ module Spree
         @taxon = @taxonomy.taxons.find(params[:id])
         @permalink_part = @taxon.permalink.split("/").last
 
-        respond_with(:admin, @taxon) 
+        respond_with(:admin, @taxon)
       end
 
       def update
@@ -55,11 +63,11 @@ module Spree
           elsif new_position < new_siblings.index(@taxon)
             @taxon.move_to_left_of(new_siblings[new_position]) # we move up
           else
-            @taxon.move_to_right_of(new_siblings[new_position]) # we move down
+            @taxon.move_to_right_of(new_siblings[new_position-1]) # we move down
           end
           # Reset legacy position, if any extensions still rely on it
-          new_parent.children.reload.each{|t| t.update_attribute(:position, t.position)}
-      
+          new_parent.children.reload.each{|t| t.update_column(:position, t.position)}
+
           if parent_id
             @taxon.reload
             @taxon.set_permalink
@@ -77,7 +85,7 @@ module Spree
         @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
         if @taxon.update_attributes(params[:taxon])
-          flash.notice = flash_message_for(@taxon, :successfully_updated)
+          flash[:success] = flash_message_for(@taxon, :successfully_updated)
         end
 
         #rename child taxons
@@ -88,7 +96,7 @@ module Spree
             taxon.save!
           end
         end
-    
+
         respond_with(@taxon) do |format|
           format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
           format.json {render :json => @taxon.to_json }
@@ -99,49 +107,6 @@ module Spree
         @taxon = Taxon.find(params[:id])
         @taxon.destroy
         respond_with(@taxon) { |format| format.json { render :json => '' } }
-      end
-
-      def selected
-        @product = load_product
-        @taxons = @product.taxons
-
-        respond_with(:admin, @taxons)
-      end
-
-      def available
-        @product = load_product
-        @taxons = params[:q].blank? ? [] : Taxon.where('lower(name) LIKE ?', "%#{params[:q].mb_chars.downcase}%")
-        @taxons.delete_if { |taxon| @product.taxons.include?(taxon) }
-
-        respond_with(:admin, @taxons)
-      end
-
-      def remove
-        @product = load_product
-        @taxon = Taxon.find(params[:id])
-        @product.taxons.delete(@taxon)
-        @product.save
-        @taxons = @product.taxons
-
-        respond_with(@taxon) { |format| format.js { render_js_for_destroy } }
-      end
-
-      def select
-        @product = load_product
-        @taxon = Taxon.find(params[:id])
-        @product.taxons << @taxon
-        @product.save
-        @taxons = @product.taxons
-
-        respond_with(:admin, @taxons)
-      end
-
-      def batch_select
-        @product = load_product
-        @taxons = params[:taxon_ids].map{|id| Taxon.find(id)}.compact
-        @product.taxons = @taxons
-        @product.save
-        redirect_to selected_admin_product_taxons_url(@product)
       end
 
       private

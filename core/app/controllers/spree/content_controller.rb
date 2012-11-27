@@ -1,5 +1,5 @@
 module Spree
-  class ContentController < BaseController
+  class ContentController < Spree::StoreController
     # Don't serve local files or static assets
     before_filter { render_404 if params[:path] =~ /(\.|\\)/ }
 
@@ -16,7 +16,7 @@ module Spree
 
     def cvv
       respond_with do |format|
-        format.html { render 'cvv', :layout => false }
+        format.html { render :layout => false }
       end
     end
   end

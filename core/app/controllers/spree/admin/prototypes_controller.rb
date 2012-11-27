@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class PrototypesController < ResourceController
-      after_filter :set_habtm_associations, :only => [:create, :update]
-
       def show
         if request.xhr?
           render :layout => false
@@ -26,12 +24,6 @@ module Spree
         respond_with(@prototypes)
       end
 
-      private
-
-        def set_habtm_associations
-          @prototype.property_ids = params[:property][:id] if params[:property]
-          @prototype.option_type_ids = params[:option_type][:id] if params[:option_type]
-        end
     end
   end
 end

@@ -1,24 +1,26 @@
 <table class="index" data-hook="adjustments">
-  <tr data-hook="adjustmment_head">
-    <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-    <th><%= t(:description) %></th>
-    <th><%= t(:amount) %></th>
-    <th></th>
-  </tr>
-  <% @order.adjustments.each do |adjustment|
-       @edit_url = edit_admin_order_adjustment_path(@order, adjustment)
-       @delete_url = admin_order_adjustment_path(@order, adjustment)
-  %>
-    <tr id="<%= dom_id(adjustment) %>" data-hook="adjustment_row">
-      <td><%= adjustment.created_at.to_s(:date_time24) %></td>
-      <td><%= adjustment.label %></td>
-      <td><%= number_to_currency adjustment.amount %></td>
-      <td class='actions'>
-        <%= link_to_edit adjustment, :class => 'edit' %>
-        &nbsp;
-        <%= link_to_delete adjustment, {}, :class => 'delete' %>
-      </td>
-
+  <thead data-hook="adjustmment_head">
+    <tr>
+      <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+      <th><%= t(:description) %></th>
+      <th><%= t(:amount) %></th>
+      <th class="actions"></th>
     </tr>
-  <% end %>
+  </thead>
+  <tbody>
+    <% @order.adjustments.each do |adjustment|
+         @edit_url = edit_admin_order_adjustment_path(@order, adjustment)
+         @delete_url = admin_order_adjustment_path(@order, adjustment)
+    %>
+      <tr id="<%= spree_dom_id(adjustment) %>" data-hook="adjustment_row" class="<%= cycle('odd', 'even')%>">
+        <td class="align-center"><%= pretty_time(adjustment.created_at) %></td>
+        <td class="align-center"><%= adjustment.label %></td>
+        <td class="align-center"><%= adjustment.display_amount %></td>
+        <td class='actions'>
+          <%= link_to_edit adjustment, :no_text => true %>
+          <%= link_to_delete adjustment, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>

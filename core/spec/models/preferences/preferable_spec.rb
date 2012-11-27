@@ -79,7 +79,6 @@ describe Spree::Preferences::Preferable do
 
   describe "preference access" do
     it "handles ghost methods for preferences" do
-      #pending("TODO: cmar to look at this test to figure out why it's failing on 1.9")
       @a.preferred_color = 'blue'
       @a.preferred_color.should eq 'blue'
 
@@ -112,6 +111,24 @@ describe Spree::Preferences::Preferable do
       @b.preferences[:flavor].should eq 'strawberry'
       @b.preferences[:color].should eq 'green' #default from A
     end
+
+    context "database fallback" do
+      before do
+        @a.instance_variable_set("@pending_preferences", {})
+      end
+
+      it "retrieves a preference from the database before falling back to default" do
+        preference = mock(:value => "chatreuse")
+        Spree::Preference.should_receive(:find_by_key).with(:color).and_return(preference)
+        @a.preferred_color.should == 'chatreuse'
+      end
+
+      it "defaults if no database key exists" do
+        Spree::Preference.should_receive(:find_by_key).and_return(nil)
+        @a.preferred_color.should == 'green'
+      end
+    end
+
 
     context "converts integer preferences to integer values" do
       before do
@@ -179,6 +196,25 @@ describe Spree::Preferences::Preferable do
       end
     end
 
+    context "converts any preferences to any values" do
+      before do
+        A.preference :product_ids, :any, :default => []
+        A.preference :product_attributes, :any, :default => {}
+      end
+
+      it "with array" do
+        @a.preferences[:product_ids].should == []
+        @a.set_preference(:product_ids, [1, 2])
+        @a.preferences[:product_ids].should == [1, 2]
+      end
+
+      it "with hash" do
+        @a.preferences[:product_attributes].should == {}
+        @a.set_preference(:product_attributes, {:id => 1, :name => 2})
+        @a.preferences[:product_attributes].should == {:id => 1, :name => 2}
+      end
+    end
+
   end
 
   describe "persisted preferables" do
@@ -201,6 +237,7 @@ describe Spree::Preferences::Preferable do
 
       class PrefTest < ActiveRecord::Base
         preference :pref_test_pref, :string, :default => 'abc'
+        preference :pref_test_any, :any, :default => []
       end
     end
 
@@ -220,6 +257,14 @@ describe Spree::Preferences::Preferable do
         pr.get_preference(:pref_test_pref).should == 'XXX'
         pr.save!
         pr.get_preference(:pref_test_pref).should == 'XXX'
+      end
+
+      it "saves preferences for serialized object" do
+        pr = PrefTest.new
+        pr.set_preference(:pref_test_any, [1, 2])
+        pr.get_preference(:pref_test_any).should == [1, 2]
+        pr.save!
+        pr.get_preference(:pref_test_any).should == [1, 2]
       end
     end
 
@@ -256,7 +301,7 @@ describe Spree::Preferences::Preferable do
       @pt.preferred_pref_test_pref = 'lmn'
       @pt.save!
       @pt.destroy
-      @pt1 = PrefTest.new(:col => 'aaaa')
+      @pt1 = PrefTest.new({:col => 'aaaa'}, :without_protection => true)
       @pt1.id = @pt.id
       @pt1.save!
       @pt1.get_preference(:pref_test_pref).should_not == 'lmn'
@@ -275,6 +320,7 @@ describe Spree::Preferences::Preferable do
     @a.has_preference?(:test_temp).should be_false
     @a.respond_to?(:preferred_test_temp).should be_false
   end
+
 end
 
 

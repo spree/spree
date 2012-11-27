@@ -4,7 +4,7 @@
 
 <%= form_for [:admin, @option_type] do |f| %>
   <fieldset>
-    <legend><%= t(:new_option_type) %></legend>
+    <legend align="center"><%= t(:new_option_type) %></legend>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
   </fieldset>

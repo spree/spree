@@ -9,10 +9,10 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
 
-        # Include list of visited paths in notification payload hash
-        Spree::Core::ControllerHelpers.class_eval do
+        Spree::StoreController.class_eval do
+          # Include list of visited paths in notification payload hash
           def default_notification_payload
-            { :user => current_user, :order => current_order, :visited_paths => session[:visited_paths] }
+            { :user => try_spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
           end
         end
       end
@@ -32,6 +32,7 @@ module Spree
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
           Spree::Calculator::PerItem,
+          Spree::Calculator::PercentPerItem,
           Spree::Calculator::FreeShipping
         ]
       end

@@ -1,26 +1,32 @@
-<fieldset id="action_fields">
-  <legend><%= t(:promotion_actions) %></legend>
+<fieldset id="action_fields" class="eight columns omega no-border-top">
+
+  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
+    <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
+    <fieldset>
+      <legend align="center"><%= t(:promotion_actions) %></legend>
+      <div class="field">
+        <%= label_tag :action_type, t(:add_action_of_type)%>
+        <%= select_tag 'action_type', options, :class => 'select2 fullwidth' %>  
+      </div>
+      <div class="filter-actions actions">
+        <%= button t(:add), 'icon-plus', :class => 'fullwidth' %>
+      </div>
+    </fieldset>
+  <% end %>
 
   <%= form_for @promotion, :url => spree.admin_promotion_path(@promotion), :method => :put do |f| %>
     <div id="actions" class="filter_list">
       <% if @promotion.actions.any? %>
         <%= render :partial => 'promotion_action',  :collection => @promotion.actions %>
       <% else %>
-        <!-- <p><%= t(:no_actions_added) %></p> -->
+        <div class="no-objects-found">
+          <%= t(:no_actions_added) %>
+        </div>
       <% end %>
     </div>
-    <p class="form-buttons">
-      <%= button t(:update) %>
-    </p>
-  <% end %>
-
-  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
-    <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
-    <p>
-      <%= label_tag :action_type, t(:add_action_of_type) %>
-      <%= select_tag 'action_type', options %>
-      <%= submit_tag t(:add) %>
-    </p>
+    <div class="filter-actions actions promotion-update">
+      <%= button t(:update), 'icon-refresh' %>
+    </div>
   <% end %>
 
 </fieldset>

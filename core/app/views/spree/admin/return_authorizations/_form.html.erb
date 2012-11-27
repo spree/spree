@@ -1,77 +1,72 @@
-<table class="index">
-  <tr data-hook="rma_header">
-    <th><%= t(:product) %></th>
-    <th><%= t(:quantity_shipped) %></th>
-    <th><%= t(:quantity_returned) %></th>
-    <th><%= t(:return_quantity) %></th>
-  </tr>
-  <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
-    <tr id="<%= dom_id(variant) %>" data-hook="rma_row">
-      <td>
-        <h4 style="margin-bottom:0px;"><%= variant.name %></h4>
-        <%= variant.options_text %>
-      </td>
-      <td><%= units.select(&:shipped?).size %></td>
-      <td><%= units.select(&:returned?).size %></td>
-      <td class="return_quantity">
-        <% if @return_authorization.received? %>
-          <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
-        <% elsif units.select(&:shipped?).empty? %>
-          0
-        <% else %>
-          <%= text_field_tag "return_quantity[#{variant.id}]",
-              @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:30px;'} %>
-        <% end %>
-      </td>
-    </tr>
-  <% end %>
-</table>
+<div data-hook="admin_return_authorization_form_fields">
+  <table class="index">
+    <thead>
+      <tr data-hook="rma_header">
+        <th><%= t(:product) %></th>
+        <th><%= t(:quantity_shipped) %></th>
+        <th><%= t(:quantity_returned) %></th>
+        <th><%= t(:return_quantity) %></th>
+      </tr>  
+    </thead>
+    <tbody>
+      <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
+        <tr id="<%= dom_id(variant) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
+          <td>
+            <h4 style="margin-bottom:0px;"><%= variant.name %></h4>
+            <%= variant.options_text %>
+          </td>
+          <td><%= units.select(&:shipped?).size %></td>
+          <td><%= units.select(&:returned?).size %></td>
+          <td class="return_quantity">
+            <% if @return_authorization.received? %>
+              <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
+            <% elsif units.select(&:shipped?).empty? %>
+              0
+            <% else %>
+              <%= number_field_tag "return_quantity[#{variant.id}]",
+                @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:50px;', :min => 0} %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= f.field_container :amount do %>
-  <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
-  <% if @return_authorization.received? %>
-    <%= number_to_currency @return_authorization.amount %>
-  <% else %>
-    <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= t(:rma_value) %>: <span id="rma_value"></span>
-    <%= f.error_message_on :amount %>
-  <% end %>
-<% end %>
-
-<%= f.field_container :reason do %>
-  <%= f.label :reason, t(:reason) %>
-  <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>
-  <%= f.error_message_on :reason %>
-<% end %>
-
-
-<% content_for :head do %>
-  <%= javascript_tag do -%>
-    var variant_prices = new Array();
-    <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
-      variant_prices[<%= variant.id.to_s %>] = <%= variant.price %>;
+  <%= f.field_container :amount do %>
+    <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
+    <% if @return_authorization.received? %>
+      <%= @return_authorization.display_amount %>
+    <% else %>
+      <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= t(:rma_value) %>: <span id="rma_value">0.00</span>
+      <%= f.error_message_on :amount %>
     <% end %>
+  <% end %>
 
-    function calculate_rma_price(object, value){
+  <%= f.field_container :reason do %>
+    <%= f.label :reason, t(:reason) %>
+    <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>
+    <%= f.error_message_on :reason %>
+  <% end %>
+</div>
+
+<script>
+  var variant_prices = {};
+  <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
+    variant_prices[<%= variant.id.to_s %>] = <%= variant.price %>;
+  <% end %>
+
+  $(document).ready(function(){
+    var rma_amount = 0;
+    $("td.return_quantity input").on('change', function() {
       var rma_amount = 0;
-
-      $.each($("td.return_quantity input"), function(i, inpt){
-        var variant_id = $(inpt).attr('id').replace("return_quantity_", "");
-         rma_amount += variant_prices[variant_id] * $(inpt).val()
+      $.each($("td.return_quantity input"), function(i, input) {
+        var variant_id = $(input).attr('id').replace("return_quantity_", "");
+         rma_amount += variant_prices[variant_id] * $(input).val()
       });
 
       if(!isNaN(rma_amount)){
         $("span#rma_value").html(rma_amount.toFixed(2));
       }
-    }
-
-    $(document).ready(function(){
-      $.each($("td.return_quantity input"), function(i, inpt){
-        $(inpt).delayedObserver(function() {
-          calculate_rma_price();
-        }, 0.5);
-      });
-
-      calculate_rma_price();
-    });
-  <% end -%>
-<% end %>
+    })
+  });
+</script>

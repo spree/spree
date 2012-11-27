@@ -1,22 +1,22 @@
 <fieldset id="order_summary" data-hook>
-  <legend><%= t(:order) + " #" + @order.number %></legend>
+  <legend align="center"><%= t(:order) + " #" + @order.number %></legend>
   <h1><%= accurate_title %></h1>
 
-<div id="order" data-hook>
-  <% if params.has_key? :checkout_complete %>
-    <h3><%= t(:thank_you_for_your_order) %></h3>
-  <% end %>
-  <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
-
-  <br class="clear" />
-
-  <p data-hook="links">
-    <%= link_to t(:back_to_store), spree.root_path, :class => "button" %>
-    <% unless params.has_key? :checkout_complete %>
-      <% if current_user %>
-        <%= link_to t(:my_account), spree.account_path, :class => "button" %>
-      <% end %>
+  <div id="order" data-hook>
+    <% if params.has_key? :checkout_complete %>
+      <h1><%= t(:thank_you_for_your_order) %></h1>
     <% end %>
-  </p>
-</div>
+    <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
+
+    <br class="clear" />
+
+    <p data-hook="links">
+      <%= link_to t(:back_to_store), spree.root_path, :class => "button" %>
+      <% unless params.has_key? :checkout_complete %>
+        <% if try_spree_current_user && respond_to?(:spree_account_path) %>
+          <%= link_to t(:my_account), spree_account_path, :class => "button" %>
+        <% end %>
+      <% end %>
+    </p>
+  </div>
 </fieldset>

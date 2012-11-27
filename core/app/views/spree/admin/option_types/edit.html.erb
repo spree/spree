@@ -1,32 +1,50 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-<h1><%= t(:editing_option_type) %></h1>
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @option_type } %>
-<%= form_for [:admin, @option_type] do |f| %>
-<fieldset>
-  <legend><%= t(:editing_option_type) %></legend>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <h3><%= t(:option_values) %></h3>
-  <table class="index">
-    <thead data-hook="option_header">
-      <tr>
-        <th><%= t(:name) %></th>
-        <th><%= t(:display) %></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="option_values">
-      <tr id="none" data-hook="option_none">
-        <td colspan="3"><%= @option_type.option_values.empty? ? t(:none) : '' %></td>
-      </tr>
-      <%= f.fields_for :option_values do |option_value_form| %>
-        <%= render :partial => 'option_value_fields', :locals => { :f => option_value_form } %>
-      <% end %>
-    </tbody>
-  </table>
-  <span id="new_add_option_value" data-hook>
-    <%= link_to_add_fields t(:add_option_value), "tbody#option_values", f, :option_values %>
-  </span>
 
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
-</fieldset>
+<% content_for :page_title do %>
+  <%= t(:editing_option_type) %> <span class="green">"<%= @option_type.name %>"</span>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <span id="new_add_option_value" data-hook>
+      <%= link_to_add_fields t(:add_option_value), "tbody#option_values", :class => 'button icon-plus' %>
+    </span>      
+  </li>
+  <li>
+    <%= button_link_to t(:back_to_option_types_list), spree.admin_option_types_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
+
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @option_type } %>
+
+<%= form_for [:admin, @option_type] do |f| %>
+  <fieldset>
+    <legend align="center"><%= t(:option_values) %></legend>
+    
+    <%= render :partial => 'form', :locals => { :f => f } %>
+
+    <table class="index sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
+      <thead data-hook="option_header">
+        <tr>
+          <th colspan="2"><%= t(:name) %></th>
+          <th><%= t(:display) %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody id="option_values">
+        <% if @option_type.option_values.empty? %>
+          <tr id="none" data-hook="option_none" class="<%= cycle('odd', 'even')%>">
+            <td colspan="2"><%= t(:none) %></td>
+            <td class="actions"></td>
+          </tr>
+        <% else %>
+          <%= f.fields_for :option_values do |option_value_form| %>
+            <%= render :partial => 'option_value_fields', :locals => { :f => option_value_form } %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>

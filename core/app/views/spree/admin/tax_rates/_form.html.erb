@@ -1,20 +1,41 @@
-<table data-hook="tax_rates">
-  <tr data-hook="zone">
-    <td><%= t(:zone) %>:</td>
-    <td><%= f.collection_select(:zone_id, @available_zones, :id, :name) %></td>
-  </tr>
-  <tr data-hook="category">
-    <td><%= t(:tax_category) %>:</td>
-    <td><%= f.collection_select(:tax_category_id, @available_categories,:id, :name) %></td>
-  </tr>
-  <tr data-hook="included">
-    <td><%= t(:included_in_price) %></td>
-    <td><%= f.check_box :included_in_price %></td>
-  </tr>
-  <tr="rate">
-    <td><%= t(:rate) %>:</td>
-    <td><%= f.text_field :amount %></td>
-  </tr>
-</table>
+<div data-hook="admin_tax_rate_form_fields">
+  <div class="alpha twelve columns">
+    <fieldset data-hook="tax_rates" class=" no-border-bottom">
+      <legend align="center"><%= t(:general_settings) %></legend>
+      
+      <div class="alpha six columns">
+        <div data-hook="name" class="field">
+          <%= f.label :name, t(:name) %>
+          <%= f.text_field :name, :class => 'fullwidth' %>
+        </div>
+        <div data-hook="rate" class="field">
+          <%= f.label :amount, t(:rate) %>
+          <%= f.text_field :amount, :class => 'fullwidth' %>
+        </div>
+        <div data-hook="included" class="field">
+          <%= f.check_box :included_in_price %>
+          <%= f.label :included_in_price, t(:included_in_price) %>      
+        </div>
+      </div>
 
-<%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
+      <div class="omega six columns">
+        <div data-hook="zone" class="field">
+          <%= f.label :zone, t(:zone) %>
+          <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2 fullwidth'}) %>
+        </div>      
+        <div data-hook="category" class="field">
+          <%= f.label :tax_category_id, t(:tax_category) %>
+          <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, {:class => 'select2 fullwidth'}) %>
+        </div>
+        <div data-hook="show_rate" class="field">
+          <%= f.check_box :show_rate_in_label %>
+          <%= f.label :show_rate_in_label, t(:show_rate_in_label) %>      
+        </div>  
+      </div>
+    </fieldset>
+  </div>
+  
+  <div class="clear"></div>
+
+  <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
+</div>

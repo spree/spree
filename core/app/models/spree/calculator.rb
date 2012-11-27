@@ -11,7 +11,7 @@ module Spree
 
     # overwrite to provide description for your calculators
     def self.description
-      "Base Caclulator"
+      'Base Calculator'
     end
 
     ###################################################################

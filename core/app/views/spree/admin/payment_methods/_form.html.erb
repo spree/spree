@@ -1,50 +1,53 @@
-<table data-hook="payment_method">
-  <tr data-hook="name">
-    <td><%= label_tag nil, t(:name) %></td>
-    <td><%= text_field :payment_method, :name, {'style' => 'width:200px;'} %></td>
-  </tr>
-  <tr data-hook="description">
-    <td><%= label_tag nil, t(:description) %></td>
-    <td><%= text_area :payment_method, :description, {:cols => 60, :rows => 4} %></td>
-  </tr>
-  <tr data-hook="environment">
-    <td><%= label_tag nil, t(:environment) %></td>
-    <td>
-      <%= collection_select(:payment_method, :environment, Spree::Configuration.configurations.keys, :to_s, :titleize, {}, {:id => 'gtwy-env'}) %>
-    </td>
-  </tr>
-  <tr data-hook="display">
-    <td><%= label_tag nil, t(:display) %></td>
-    <td>
-      <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }) %>
-    </td>
-  </tr>
-  <tr data-hook="active">
-    <td><%= label_tag nil, t(:active) %></td>
-    <td>
-      <label class="sub">
-        <%= radio_button :payment_method, :active, true %>
-        <%= t(:yes) %>
-      </label> &nbsp;
-      <label class="sub">
-        <%= radio_button :payment_method, :active, false %>
-        <%= t(:no) %>
-      </label>
-    </td>
-  </tr>
-</table>
+<% # Usage of old-style form helpers in this file is INTENTIONAL
+   # For reasons, see commit 3e981c7. %>
+<div data-hook="admin_payment_method_form_fields">
 
-<h2><%= t(:settings) %></h2>
+  <div data-hook="payment_method">
 
-<div id="preference-settings" data-hook>
-  <%= f.label :type, t(:provider) %>
-  <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type'}) %>
+    <div class="alpha four columns">
+      <div id="preference-settings" data-hook class="field">
+        <%= f.label :type, t(:provider) %>
+        <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type', :class => 'select2 fullwidth'}) %>
 
-  <% unless @object.new_record? %>
-    <%= preference_fields(@object, f) %>
+        <% unless @object.new_record? %>
+          <%= preference_fields(@object, f) %>
 
-    <% if @object.respond_to?(:preferences) %>
-      <div id="gateway-settings-warning" style="color:#FF0000;"><%= t(:provider_settings_warning) %></div>
-    <% end %>
-  <% end %>
+          <% if @object.respond_to?(:preferences) %>
+            <div id="gateway-settings-warning" class="info warning"><%= t(:provider_settings_warning) %></div>
+          <% end %>
+        <% end %>
+      </div>      
+      <div data-hook="environment" class="field">
+        <%= label_tag nil, t(:environment) %>
+        <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>        
+      </div>
+      <div data-hook="active" class="field">
+        <%= label_tag nil, t(:active) %>
+        <ul>
+          <li>
+            <%= radio_button :payment_method, :active, true %>
+            <%= label_tag nil, t(:yes) %>
+          </li>        
+          <li>
+            <%= radio_button :payment_method, :active, false %>
+            <%= label_tag nil, t(:no) %>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="omega eight columns">
+      <div data-hook="name" class="field">
+        <%= label_tag nil, t(:name) %>
+        <%= text_field :payment_method, :name, :class => 'fullwidth' %>
+      </div>
+      <div data-hook="description" class="field">
+        <%= label_tag nil, t(:description) %>
+        <%= text_area :payment_method, :description, {:cols => 60, :rows => 6, :class => 'fullwidth'} %>
+      </div>  
+    </div>
+    
+  </div>
 </div>
+
+<div class="clear"></div>

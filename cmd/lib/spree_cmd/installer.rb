@@ -1,18 +1,21 @@
+require 'rbconfig'
+require 'active_support/core_ext/string'
+
 module SpreeCmd
 
   class Installer < Thor::Group
     include Thor::Actions
 
-    desc "Creates a new rails project with a spree store"
+    desc 'Creates a new rails project with a spree store'
     argument :app_path, :type => :string, :desc => 'rails app_path', :default => '.'
 
-    class_option :auto_accept, :type => :boolean, :aliases => '-A', :desc => "Answer yes to all prompts"
+    class_option :auto_accept, :type => :boolean, :aliases => '-A',
+                               :desc => 'Answer yes to all prompts'
 
     class_option :skip_install_data, :type => :boolean, :default => false,
                  :desc => 'Skip running migrations and loading seed and sample data'
 
-    class_option :version, :type => :string, :default => 'current',
-                 :desc => 'Spree Version to use (current, edge, local)'
+    class_option :version, :type => :string, :desc => 'Spree Version to use'
 
     class_option :edge, :type => :boolean
 
@@ -23,9 +26,16 @@ module SpreeCmd
     class_option :tag, :type => :string, :desc => 'Spree gem git tag'
 
     def verify_rails
-      unless is_rails_project?
-        say "#{@app_path} rails project not found"
-        exit(1)
+      unless rails_project?
+        say "#{@app_path} is not a rails project."
+        exit 1
+      end
+    end
+
+    def verify_image_magick
+      unless image_magick_installed?
+        say "Image magick must be installed."
+        exit 1
       end
     end
 
@@ -41,41 +51,54 @@ module SpreeCmd
         @spree_gem_options[:ref] = options[:ref] if options[:ref]
         @spree_gem_options[:branch] = options[:branch] if options[:branch]
         @spree_gem_options[:tag] = options[:tag] if options[:tag]
+      elsif options[:version]
+        @spree_gem_options[:version] = options[:version]
+      else
+        version = Gem.loaded_specs['spree_cmd'].version
+        @spree_gem_options[:version] = version.to_s
       end
     end
 
     def ask_questions
-      @install_default_gateways = ask_with_default("Would you like to install the default gateways?")
+      @install_default_gateways = ask_with_default('Would you like to install the default gateways?')
+      @install_default_auth = ask_with_default('Would you like to install the default authentication system?')
+      unless @install_default_auth
+        @user_class = ask("What is the name of the class representing users within your application? [User]")
+        if @user_class.blank?
+          @user_class = "User"
+        end
+      else
+        @user_class = "Spree::User"
+      end
 
       if options[:skip_install_data]
         @run_migrations = false
         @load_seed_data = false
         @load_sample_data = false
       else
-        @run_migrations = ask_with_default("Would you like to run the migrations?")
+        @run_migrations = ask_with_default('Would you like to run the migrations?')
         if @run_migrations
-          @load_seed_data = ask_with_default("Would you like to load the seed data?")
-          @load_sample_data = ask_with_default("Would you like to load the sample data?")
+          @load_seed_data = ask_with_default('Would you like to load the seed data?')
+          @load_sample_data = ask_with_default('Would you like to load the sample data?')
         else
           @load_seed_data = false
           @load_sample_data = false
         end
       end
-
-      if @load_seed_data
-        @admin_email = ask_string('Admin Email', 'spree@example.com', /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i)
-        @admin_password = ask_string('Admin Password', 'spree123', /^\S{5,32}$/)
-      end
     end
 
     def add_gems
-      inside @app_path  do
+      inside @app_path do
 
         gem :spree, @spree_gem_options
 
         if @install_default_gateways
           gem :spree_usa_epay
           gem :spree_skrill
+        end
+
+        if @install_default_auth
+          gem :spree_auth_devise, :github => "spree/spree_auth_devise", :branch => "edge"
         end
 
         run 'bundle install', :capture => true
@@ -87,69 +110,83 @@ module SpreeCmd
       spree_options << "--migrate=#{@run_migrations}"
       spree_options << "--seed=#{@load_seed_data}"
       spree_options << "--sample=#{@load_sample_data}"
+      spree_options << "--user_class=#{@user_class}"
       spree_options << "--auto_accept" if options[:auto_accept]
-      spree_options << "--admin_email=#{@admin_email}" if @admin_email
-      spree_options << "--admin_password=#{@admin_password}" if @admin_password
 
       inside @app_path do
         run "rails generate spree:install #{spree_options.join(' ')}", :verbose => false
       end
     end
 
-    def precompile_assets
-      say_status :precompiling, "assets"
-      inside @app_path do
-        run 'bundle exec rake assets:precompile', :verbose => false
-      end
-    end
-
     private
 
-    def gem(name, options={})
-      say_status :gemfile, name
-      parts = ["'#{name}'"]
-      options.each {|key, value| parts << ":#{key} => '#{value}'" }
-      append_file "Gemfile", "gem #{parts.join(', ')}\n", :verbose => false
-    end
-
-    def ask_with_default(message, default='yes')
-      return true if options[:auto_accept]
-
-      valid = false
-      until valid
-        response = ask "#{message} (yes/no) [#{default}]"
-        response = default if response.empty?
-        valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
+      def gem(name, gem_options={})
+        say_status :gemfile, name
+        parts = ["'#{name}'"]
+        parts << ["'#{gem_options.delete(:version)}'"] if gem_options[:version]
+        gem_options.each { |key, value| parts << ":#{key} => '#{value}'" }
+        append_file 'Gemfile', "gem #{parts.join(', ')}\n", :verbose => false
       end
-      response.downcase[0] == ?y
-    end
 
-    def ask_string(message, default, valid_regex=/\w/)
-      return default if options[:auto_accept]
-      valid = false
-      until valid
-        response = ask "#{message} [#{default}]"
-        response = default if response.empty?
-        valid = (response  =~ valid_regex)
+      def ask_with_default(message, default = 'yes')
+        return true if options[:auto_accept]
+
+        valid = false
+        until valid
+          response = ask "#{message} (yes/no) [#{default}]"
+          response = default if response.empty?
+          valid = (response  =~ /\Ay(?:es)?|no?\Z/i)
+        end
+        response.downcase[0] == ?y
       end
-      response
-    end
 
-    def create_rails_app
-      say :create, @app_path
-
-      rails_cmd = "rails new #{@app_path} --skip-bundle"
-      if options[:template]
-        rails_cmd += " -m #{options[:template]}"
+      def ask_string(message, default, valid_regex = /\w/)
+        return default if options[:auto_accept]
+        valid = false
+        until valid
+          response = ask "#{message} [#{default}]"
+          response = default if response.empty?
+          valid = (valid_regex === response)
+        end
+        response
       end
-      if options[:database]
-        rails_cmd += " -d #{options[:database]}"
-      end
-      run(rails_cmd)
-    end
 
-    def is_rails_project?
-      File.exists? File.join(@app_path, 'script', 'rails')
-    end
+      def create_rails_app
+        say :create, @app_path
+
+        rails_cmd = "rails new #{@app_path} --skip-bundle"
+        rails_cmd << " -m #{options[:template]}" if options[:template]
+        rails_cmd << " -d #{options[:database]}" if options[:database]
+        run(rails_cmd)
+      end
+
+      def rails_project?
+        File.exists? File.join(@app_path, 'script', 'rails')
+      end
+
+      def linux?
+        /linux/i === RbConfig::CONFIG['host_os']
+      end
+
+      def mac?
+        /darwin/i === RbConfig::CONFIG['host_os']
+      end
+
+      def windows?
+        %r{msdos|mswin|djgpp|mingw} === RbConfig::CONFIG['host_os']
+      end
+
+      def image_magick_installed?
+        cmd = 'identify -version'
+        if RUBY_PLATFORM =~ /mingw|mswin/ #windows
+          cmd += " >nul"
+        else
+          cmd += " >/dev/null"
+        end
+        # true if command executed succesfully
+        # false for non zero exit status
+        # nil if command execution fails
+        system(cmd)
+      end
   end
 end

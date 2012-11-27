@@ -1,5 +1,5 @@
 <p class="actions" data-hook="actions">
-<%= link_to t(:edit), edit_object_url %> |
-<%= link_to t(:back), collection_url %> |
-<%= link_to t(:delete), object_url, :confirm => t(:are_you_sure_you_want_to_delete_this_record), :method => :delete %>
+  <%= link_to t(:edit), edit_object_url %> |
+  <%= link_to t(:back), collection_url %> |
+  <%= link_to t(:delete), object_url, :method => :delete, :data => { :confirm => t(:are_you_sure_you_want_to_delete_this_record) } %>
 </p>

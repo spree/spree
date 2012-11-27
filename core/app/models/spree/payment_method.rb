@@ -1,10 +1,11 @@
 module Spree
   class PaymentMethod < ActiveRecord::Base
-
-    DISPLAY =  [:both, :front_end, :back_end]
     default_scope where(:deleted_at => nil)
 
-    scope :production, where(:environment => 'production')
+    scope :production, lambda { where(:environment => 'production') }
+
+    attr_accessible :name, :description, :environment, :active
+    validates :name, :presence => true
 
     def self.providers
       Rails.application.config.spree.payment_methods
@@ -15,24 +16,20 @@ module Spree
     end
 
     # The class that will process payments for this payment type, used for @payment.source
-    # e.g. Creditcard in the case of a the Gateway payment type
+    # e.g. CreditCard in the case of a the Gateway payment type
     # nil means the payment method doesn't require a source e.g. check
     def payment_source_class
       raise 'You must implement payment_source_class method for this gateway.'
     end
 
-    def self.available(display_on='both')
-      all.select { |p| p.active && (p.display_on == display_on.to_s || p.display_on.blank?) && (p.environment == Rails.env || p.environment.blank?) }
+    def self.available
+      all.select do |p|
+        p.active && (p.environment == Rails.env || p.environment.blank?)
+      end
     end
 
     def self.active?
-      self.count(:conditions => { :type => self.to_s, :environment => Rails.env, :active => true }) > 0
-    end
-
-    # TODO: Remove this method by 1.0
-    def self.current
-      ActiveSupport::Deprecation.warn "Gateway.current is deprecated and will be removed in Spree > 1.0. Use current_order.payment_method instead."
-      first(:conditions => { :active => true, :environment => Rails.env })
+      where(:type => self.to_s, :environment => Rails.env, :active => true).count > 0
     end
 
     def method_type
@@ -40,7 +37,7 @@ module Spree
     end
 
     def destroy
-      self.update_attribute(:deleted_at, Time.now.utc)
+      touch :deleted_at
     end
 
     def self.find_with_destroyed *args

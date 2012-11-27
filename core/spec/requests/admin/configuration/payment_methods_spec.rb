@@ -1,24 +1,25 @@
 require 'spec_helper'
 
 describe "Payment Methods" do
+  stub_authorization!
+
   before(:each) do
-    sign_in_as!(Factory(:admin_user))
     visit spree.admin_path
     click_link "Configuration"
   end
 
   context "admin visiting payment methods listing page" do
     it "should display existing payment methods" do
-      2.times { Factory(:payment_method) }
+      create(:payment_method)
       click_link "Payment Methods"
 
-      find('table#listing_payment_methods th:nth-child(1)').text.should == "Name"
-      find('table#listing_payment_methods th:nth-child(2)').text.should == "Provider"
-      find('table#listing_payment_methods th:nth-child(3)').text.should == "Environment"
-      find('table#listing_payment_methods th:nth-child(4)').text.should == "Display"
-      find('table#listing_payment_methods th:nth-child(5)').text.should == "Active"
+      within("table#listing_payment_methods") do
+        find('th:nth-child(1)').text.should == "Name"
+        find('th:nth-child(2)').text.should == "Provider"
+        find('th:nth-child(3)').text.should == "Environment"
+        find('th:nth-child(4)').text.should == "Active"
+      end
 
-      # Ensure that it displays the two payment methods we have created
       within('table#listing_payment_methods') do
         page.should have_content("Spree::PaymentMethod::Check")
       end
@@ -40,9 +41,11 @@ describe "Payment Methods" do
 
   context "admin editing a payment method" do
     before(:each) do
-      2.times { Factory(:payment_method) }
+      create(:payment_method)
       click_link "Payment Methods"
-      within(:css, 'table#listing_payment_methods tbody:nth-child(2) tr:nth-child(1)') { click_link "Edit" }
+      within("table#listing_payment_methods") do
+        click_icon(:edit)
+      end
     end
 
     it "should be able to edit an existing payment method" do
@@ -55,7 +58,7 @@ describe "Payment Methods" do
     it "should display validation errors" do
       fill_in "payment_method_name", :with => ""
       click_button "Update"
-      #page.should have_content("Name can't be blank")
+      page.should have_content("Name can't be blank")
     end
   end
 end

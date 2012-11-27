@@ -1,38 +1,44 @@
 <div class="row steps-data">
-  
-  <div class="columns alpha four">
-    <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
-      <%= order.ship_address %>
-    </div>
-  </div>
 
-  <div class="columns alpha four">
-    <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-    <div class="address">
-      <%= order.bill_address %>
+  <% if order.has_step?("address") %>
+    <div class="columns alpha four">
+      <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+      <div class="address">
+        <%= order.ship_address %>
+      </div>
     </div>
-  </div>
 
-  <div class="columns alpha four">
-    <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
-    <div class="delivery">
-      <%= order.shipping_method.name %>
+    <div class="columns alpha four">
+      <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+      <div class="address">
+        <%= order.bill_address %>
+      </div>
     </div>
-  </div>
+
+    <% if @order.has_step?("delivery") %>
+      <div class="columns alpha four">
+        <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
+        <div class="delivery">
+          <%= order.shipping_method.name %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 
   <div class="columns omega four">
     <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
     <div class="payment-info">
-      <% unless order.creditcards.empty? %>
+      <% if order.credit_cards.empty? %>
+        <%= content_tag(:span, order.payment.payment_method.name) if order.payment %>
+      <% else %>
         <span class="cc-type">
-          <%= image_tag "creditcards/icons/#{order.creditcards.first.cc_type}.png" %>
-          <%= t(:ending_in)%> <%= order.creditcards.first.last_digits %>
+          <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
+          <%= t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
         </span>
         <br />
         <span class="full-name">
-          <%= order.creditcards.first.first_name %>
-          <%= order.creditcards.first.last_name %>
+          <%= order.credit_cards.first.first_name %>
+          <%= order.credit_cards.first.last_name %>
         </span>
       <% end %>
     </div>
@@ -71,18 +77,18 @@
         <td data-hook="order_item_description">
           <h4><%= item.variant.product.name %></h4>
           <%= truncate(item.variant.product.description, :length => 100, :omission => "...") %>
-          <%= "(" + variant_options(item.variant) + ")" unless item.variant .option_values.empty? %>
+          <%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %>
         </td>
-        <td data-hook="order_item_price" class="price"><span><%= number_to_currency item.price %></span></td>
+        <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount %></span></td>
         <td data-hook="order_item_qty"><%= item.quantity %></td>
-        <td data-hook="order_item_total" class="total"><span><%= number_to_currency (item.price * item.quantity) %></span></td>
+        <td data-hook="order_item_total" class="total"><span><%= item.display_amount %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tfoot id="order-total" data-hook="order_details_total">
     <tr class="total">
       <td colspan="4"><b><%= t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= number_to_currency @order.total %></span></td>
+      <td class="total"><span id="order_total"><%= @order.display_total %></span></td>
     </tr>
   </tfoot>
   <% if order.price_adjustment_totals.present? %>
@@ -90,7 +96,7 @@
       <% @order.price_adjustment_totals.keys.each do |key| %>
         <tr class="total">
           <td colspan="4"><strong><%= key %></strong></td>
-          <td class="total"><span><%= number_to_currency @order.price_adjustment_totals[key] %></span></td>
+          <td class="total"><span><%= @order.price_adjustment_totals[key].display_amount %></span></td>
         </tr>
       <% end %>
     </tfoot>
@@ -98,7 +104,7 @@
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= number_to_currency @order.item_total %></span></td>
+      <td class="total"><span><%= @order.display_item_total %></span></td>
     </tr>
   </tfoot>
   <tfoot id="order-charges" data-hook="order_details_adjustments">
@@ -106,7 +112,7 @@
     <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="4"><strong><%= adjustment.label %></strong></td>
-        <td class="total"><span><%= number_to_currency adjustment.amount %></span></td>
+        <td class="total"><span><%= adjustment.display_amount %></span></td>
       </tr>
     <% end %>
   </tfoot>

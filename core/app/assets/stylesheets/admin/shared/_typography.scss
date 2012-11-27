@@ -1,0 +1,132 @@
+// Base
+//--------------------------------------------------------------
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, th, td { margin: 0; padding: 0; font-size: 13px; }
+
+body {
+  font-family: $base-font-family;
+  font-size: $body-font-size;
+  font-weight: 400;
+  color: $color-body-text;
+  text-rendering: optimizeLegibility;
+}
+
+hr {
+  border-top: 1px solid $color-border;
+  border-bottom: 1px solid white;
+  border-left: none;
+}
+
+strong, b {
+  font-weight: 600;
+}
+
+// links
+//--------------------------------------------------------------
+a { 
+  color: $color-link;
+  text-decoration: none;
+  line-height: inherit;
+
+  &, &:hover, &:active, &:visited, &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    color: $color-link-hover;
+  }
+  &:active {
+    color: $color-link-active;
+  }
+  &:visited {
+    color: $color-link-visited;
+  }
+  &:focus {
+    color: $color-link-focus;
+  }
+}
+
+// Headings
+//--------------------------------------------------------------
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 600;
+  color: $color-headers; 
+  line-height: 1.1; 
+}
+
+h1 { font-size: $h1-size; line-height: $h1-size + 6 }
+h2 { font-size: $h2-size; line-height: $h1-size + 4 }
+h3 { font-size: $h3-size; line-height: $h1-size + 2 }
+h4 { font-size: $h4-size; line-height: $h1-size }
+h5 { font-size: $h5-size; line-height: $h1-size }
+h6 { font-size: $h6-size; line-height: $h1-size }
+
+
+// Lists
+//--------------------------------------------------------------
+ul {
+  &.inline-menu {
+    li {
+      display: inline-block;
+    }
+  }
+  &.fields {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+dl {
+  width: 100%;
+  overflow: hidden;
+  margin: 5px 0;
+  color: lighten($color-body-text, 15);
+
+  dt, dd {
+    float: left;
+    line-height: 16px;
+    padding: 5px;
+    text-align: justify;
+  }
+
+  dt {
+    width: 40%;
+    font-weight: 600;
+    padding-left: 0;
+    text-transform: uppercase;
+    font-size: 85%;
+  }
+
+  dd {
+    width: 60%;
+    padding-right: 0;
+  }
+
+  dd:after {
+    content: '';
+    clear: both;
+  }
+
+}
+
+// Helpers
+.align-center  { text-align: center  }
+.align-right   { text-align: right   }
+.align-left    { text-align: left    }
+.align-justify { text-align: justify }
+
+.uppercase     { text-transform: uppercase }
+
+.green  { color: $color-2 }
+.blue   { color: $color-3 }
+.red    { color: $color-5 }
+.yellow { color: $color-6 }
+
+.no-objects-found {
+  text-align: center;
+  font-size: 120%;
+  text-transform: uppercase;
+  padding: 40px 0px;
+  color: lighten($color-body-text, 15);
+}

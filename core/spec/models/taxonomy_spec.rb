@@ -1,20 +1,11 @@
 require 'spec_helper'
 
 describe Spree::Taxonomy do
-
-  context "validation" do
-    it { should have_valid_factory(:taxonomy) }
-  end
-
-  context "shoulda validations" do
-    it {should validate_presence_of(:name) }
-  end
-
   context "#destroy" do
     before do
-       @taxonomy = Factory(:taxonomy)
+       @taxonomy = create(:taxonomy)
        @root_taxon = @taxonomy.root
-       @child_taxon = Factory(:taxon, :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
+       @child_taxon = create(:taxon, :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
     end
 
     it "should destroy all associated taxons" do

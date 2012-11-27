@@ -1,32 +1,27 @@
-module Spree
-  module ControllerHacks
-    def get(action, parameters = nil, session = nil, flash = nil)
-      process_spree_action(action, parameters, session, flash, "GET")
-    end
+require 'active_support/all'
+module ControllerHacks
+  def api_get(action, params={}, session=nil, flash=nil)
+    api_process(action, params, session, flash, "GET")
+  end
 
-    # Executes a request simulating POST HTTP method and set/volley the response
-    def post(action, parameters = nil, session = nil, flash = nil)
-      process_spree_action(action, parameters, session, flash, "POST")
-    end
+  def api_post(action, params={}, session=nil, flash=nil)
+    api_process(action, params, session, flash, "POST")
+  end
 
-    # Executes a request simulating PUT HTTP method and set/volley the response
-    def put(action, parameters = nil, session = nil, flash = nil)
-      process_spree_action(action, parameters, session, flash, "PUT")
-    end
+  def api_put(action, params={}, session=nil, flash=nil)
+    api_process(action, params, session, flash, "PUT")
+  end
 
-    # Executes a request simulating DELETE HTTP method and set/volley the response
-    def delete(action, parameters = nil, session = nil, flash = nil)
-      process_spree_action(action, parameters, session, flash, "DELETE")
-    end
+  def api_delete(action, params={}, session=nil, flash=nil)
+    api_process(action, params, session, flash, "DELETE")
+  end
 
-    private
-      def process_spree_action(action, parameters = nil, session = nil, flash = nil, method = "GET")
-        parameters ||= {}
-        process(action, parameters.merge!(:use_route => :spree), session, flash, method)
-      end
+  def api_process(action, params={}, session=nil, flash=nil, method="get")
+    scoping = respond_to?(:resource_scoping) ? resource_scoping : {}
+    process(action, params.merge(scoping).reverse_merge!(:use_route => :spree, :format => :json), session, flash, method)
   end
 end
 
-RSpec.configure do |c|
-  c.include Spree::ControllerHacks, :type => :controller
+RSpec.configure do |config|
+  config.include ControllerHacks, :type => :controller
 end

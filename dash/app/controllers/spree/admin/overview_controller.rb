@@ -1,14 +1,15 @@
 module Spree
   class Admin::OverviewController < Admin::BaseController
 
-    def index
-    end
+    JIRAFE_LOCALES = { :english => 'en_US',
+                       :french => 'fr_FR',
+                       :german => 'de_DE',
+                       :japanese => 'ja_JA' }
 
-    def preferences
-      [:app_id, :site_id, :token].each do |key|
-        Spree::Dash::Config[key] = params[key]
+    def index
+      if JIRAFE_LOCALES.values.include? params[:locale]
+        Spree::Dash::Config.locale = params[:locale]
       end
-      redirect_to admin_path
     end
 
   end

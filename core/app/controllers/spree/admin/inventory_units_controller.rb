@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class InventoryUnitsController < BaseController
+    class InventoryUnitsController < Spree::Admin::BaseController
     end
   end
 end

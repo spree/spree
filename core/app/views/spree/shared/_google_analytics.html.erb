@@ -1,37 +1,39 @@
 <% if tracker = Spree::Tracker.current %>
 
-  <%= javascript_tag do -%>
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  <% end -%>
+  <%= javascript_tag do %>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', '<%= tracker.analytics_id %>']);
+    _gaq.push(['_trackPageview']);
 
-  <%= javascript_tag do -%>
-    var pageTracker = _gat._getTracker("<%= tracker.analytics_id %>");
-    pageTracker._initData();
-    pageTracker._trackPageview();
-  <% end -%>
-
-  <% if flash[:commerce_tracking] %>
-
-    <%= javascript_tag do -%>
-      // report e-commerce transaction information when applicable
-      pageTracker._addTrans(
-      "<%= @order.number %>",    //Order Number
-      "",    //Affiliation
-      "<%= @order.total %>",    //Order total
-      "<%= @order.adjustments.tax.sum(:amount).to_s %>",    //Tax Amount
-      "<%= @order.adjustments.shipping.sum(:amount).to_s %>",    //Ship Amount
-      "",    //City
-      "",    //State
-      ""    //Country
-      );
+    <% if flash[:commerce_tracking] %>
+      <%# more info: https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiEcommerce %>
+      _gaq.push(['_addTrans',
+        "<%= @order.number %>",
+        "",
+        "<%= @order.total %>",
+        "<%= @order.adjustments.tax.sum(:amount) %>",
+        "<%= @order.adjustments.shipping.sum(:amount) %>",
+        "<%= @order.bill_address.city %>",
+        "<%= @order.bill_address.state_text %>",
+        "<%= @order.bill_address.country.name %>"
+      ]);
       <% @order.line_items.each do |line_item| %>
-        pageTracker._addItem("<%= @order.number %>", "<%= line_item.variant.sku %>", "<%= line_item.variant.product.name %>",
-          "" /*Product Category*/, "<%= line_item.price %>", "<%= line_item.quantity %>");
+        _gaq.push(['_addItem',
+          "<%= @order.number %>",
+          "<%= line_item.variant.sku %>",
+          "<%= line_item.variant.product.name %>",
+          "",
+          "<%= line_item.price %>",
+          "<%= line_item.quantity %>"
+        ]);
       <% end %>
-      pageTracker._trackTrans();
-    <% end -%>
+      _gaq.push(['_trackTrans']);
+    <% end %>
 
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
   <% end %>
-
 <% end %>

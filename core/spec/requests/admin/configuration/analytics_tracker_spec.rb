@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe "Analytics Tracker" do
+  stub_authorization!
+
   context "index" do
     before(:each) do
-      2.times { Factory(:tracker, :environment => "test") }
-      sign_in_as!(Factory(:admin_user))
+      2.times { create(:tracker, :environment => "test") }
       visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
@@ -15,19 +16,22 @@ describe "Analytics Tracker" do
     end
 
     it "should have the right tabular values displayed" do
-      find('table.index tr:nth-child(1) td:nth-child(1)').text.should == "A100"
-      find('table.index tr:nth-child(1) td:nth-child(2)').text.should == "Test"
-      find('table.index tr:nth-child(1) td:nth-child(3)').text.should == "Yes"
+      within_row(1) do
+        column_text(1).should == "A100"
+        column_text(2).should == "Test"
+        column_text(3).should == "Yes"
+      end
 
-      find('table.index tr:nth-child(2) td:nth-child(1)').text.should == "A100"
-      find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Test"
-      find('table.index tr:nth-child(2) td:nth-child(3)').text.should == "Yes"
+      within_row(2) do
+        column_text(1).should == "A100"
+        column_text(2).should == "Test"
+        column_text(3).should == "Yes"
+      end
     end
-  end
+   end
 
   context "create" do
     before(:each) do
-      sign_in_as!(Factory(:admin_user))
       visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
@@ -40,9 +44,11 @@ describe "Analytics Tracker" do
       click_button "Create"
 
       page.should have_content("successfully created!")
-      find('table.index tr:nth-child(1) td:nth-child(1)').text.should == "A100"
-      find('table.index tr:nth-child(1) td:nth-child(2)').text.should == "Test"
-      find('table.index tr:nth-child(1) td:nth-child(3)').text.should == "Yes"
+      within_row(1) do
+        column_text(1).should == "A100"
+        column_text(2).should == "Test"
+        column_text(3).should == "Yes"
+      end
     end
   end
 end

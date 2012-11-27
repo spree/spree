@@ -1,15 +1,10 @@
 require 'spec_helper'
 
 describe Spree::TaxRate do
-
-  context 'validation' do
-    it { should validate_presence_of(:tax_category_id) }
-  end
-
   context "match" do
-    let(:order) { Factory(:order) }
-    let(:country) { Factory(:country) }
-    let(:tax_category) { Factory(:tax_category) }
+    let(:order) { create(:order) }
+    let(:country) { create(:country) }
+    let(:tax_category) { create(:tax_category) }
     let(:calculator) { Spree::Calculator::FlatRate.new }
 
 
@@ -20,33 +15,33 @@ describe Spree::TaxRate do
 
     context "when no rate zones match the tax zone" do
       before do
-        Spree::TaxRate.create :amount => 1, :zone => Factory(:zone, :name => 'other_zone')
+        Spree::TaxRate.create({:amount => 1, :zone => create(:zone, :name => 'other_zone')}, :without_protection => true)
       end
 
       context "when there is no default tax zone" do
         before do
-          @zone = Spree::Zone.create(:name => "Country Zone", :default_tax => false)
+          @zone = create(:zone, :name => "Country Zone", :default_tax => false, :zone_members => [])
           @zone.zone_members.create(:zoneable => country)
         end
 
-        it "should return an emtpy array" do
+        it "should return an empty array" do
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == []
         end
 
         it "should return the rate that matches the rate zone" do
-          rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                       :calculator => calculator
+          rate = Spree::TaxRate.create({ :amount => 1, :zone => @zone, :tax_category => tax_category,
+                                       :calculator => calculator }, :without_protection => true)
 
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == [rate]
         end
 
         it "should return all rates that match the rate zone" do
-          rate1 = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                        :calculator => calculator
-          rate2 = Spree::TaxRate.create :amount => 2, :zone => @zone, :tax_category => tax_category,
-                                        :calculator => Spree::Calculator::FlatRate.new
+          rate1 = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
+                                        :calculator => calculator}, :without_protection => true)
+          rate2 = Spree::TaxRate.create({:amount => 2, :zone => @zone, :tax_category => tax_category,
+                                        :calculator => Spree::Calculator::FlatRate.new}, :without_protection => true)
 
           order.stub :tax_zone => @zone
           Spree::TaxRate.match(order).should == [rate1, rate2]
@@ -54,11 +49,11 @@ describe Spree::TaxRate do
 
         context "when the tax_zone is contained within a rate zone" do
           before do
-            sub_zone = Spree::Zone.create(:name => "State Zone")
-            sub_zone.zone_members.create(:zoneable => Factory(:state, :country => country))
+            sub_zone = create(:zone, :name => "State Zone", :zone_members => [])
+            sub_zone.zone_members.create(:zoneable => create(:state, :country => country))
             order.stub :tax_zone => sub_zone
-            @rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                          :calculator => calculator
+            @rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
+                                          :calculator => calculator}, :without_protection => true)
           end
 
           it "should return the rate zone" do
@@ -70,30 +65,43 @@ describe Spree::TaxRate do
 
       context "when there is a default tax zone" do
         before do
-          @zone = Spree::Zone.create(:name => "Country Zone", :default_tax => true)
+          @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
           @zone.zone_members.create(:zoneable => country)
         end
 
         context "when there order has a different tax zone" do
-          before { order.stub :tax_zone => Spree::Zone.create(:name => "Other Zone") }
+          before { order.stub :tax_zone => create(:zone, :name => "Other Zone") }
 
           it "should return the rates associated with the default tax zone" do
-            rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category,
-                                         :calculator => calculator
+            rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category,
+                                         :calculator => calculator}, :without_protection => true)
 
             Spree::TaxRate.match(order).should == [rate]
           end
         end
-
       end
+    end
+  end
 
+  context "adjust" do
+    let(:order) { stub_model(Spree::Order) }
+    let(:rate_1) { stub_model(Spree::TaxRate) }
+    let(:rate_2) { stub_model(Spree::TaxRate) }
+
+    before do
+      Spree::TaxRate.stub :match => [rate_1, rate_2]
     end
 
+    it "should apply adjustments for two tax rates to the order" do
+      rate_1.should_receive(:adjust)
+      rate_2.should_receive(:adjust)
+      Spree::TaxRate.adjust(order)
+    end
   end
 
   context "default" do
-    let(:tax_category) { Factory(:tax_category) }
-    let(:country) { Factory(:country) }
+    let(:tax_category) { create(:tax_category) }
+    let(:country) { create(:country) }
     let(:calculator) { Spree::Calculator::FlatRate.new }
 
     context "when there is no default tax_category" do
@@ -105,14 +113,14 @@ describe Spree::TaxRate do
     end
 
     context "when there is a default tax_category" do
-      before { tax_category.update_attribute :is_default, true }
+      before { tax_category.update_column :is_default, true }
 
       context "when the default category has tax rates in the default tax zone" do
         before(:each) do
           Spree::Config[:default_country_id] = country.id
-          @zone = Spree::Zone.create(:name => "Country Zone", :default_tax => true)
+          @zone = create(:zone, :name => "Country Zone", :default_tax => true)
           @zone.zone_members.create(:zoneable => country)
-          rate = Spree::TaxRate.create :amount => 1, :zone => @zone, :tax_category => tax_category, :calculator => calculator
+          rate = Spree::TaxRate.create({:amount => 1, :zone => @zone, :tax_category => tax_category, :calculator => calculator}, :without_protection => true)
         end
 
         it "should return the correct tax_rate" do
@@ -133,10 +141,10 @@ describe Spree::TaxRate do
       @category    = Spree::TaxCategory.create :name => "Taxable Foo"
       @category2   = Spree::TaxCategory.create(:name => "Non Taxable")
       @calculator  = Spree::Calculator::DefaultTax.new
-      @rate        = Spree::TaxRate.create(:amount => 0.10, :calculator => @calculator, :tax_category => @category)
+      @rate        = Spree::TaxRate.create({:amount => 0.10, :calculator => @calculator, :tax_category => @category}, :without_protection => true)
       @order       = Spree::Order.create!
-      @taxable     = Factory(:product, :tax_category => @category)
-      @nontaxable  = Factory(:product, :tax_category => @category2)
+      @taxable     = create(:product, :tax_category => @category)
+      @nontaxable  = create(:product, :tax_category => @category2)
     end
 
     context "when order has no taxable line items" do
@@ -227,7 +235,7 @@ describe Spree::TaxRate do
 
     context "when order has multiple taxable line items" do
       before do
-        @taxable2 = Factory(:product, :tax_category => @category)
+        @taxable2 = create(:product, :tax_category => @category)
         @order.add_variant @taxable.master
         @order.add_variant @taxable2.master
       end

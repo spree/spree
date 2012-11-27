@@ -1,71 +1,104 @@
+<% content_for :page_title do %>
+  <%= t(:listing_products) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <div class="toolbar" data-hook="toolbar">
+    <ul class="actions header-action-links inline-menu">
+      <li id="new_product_link">
+        <%= button_link_to t(:new_product), new_object_url, { :remote => true, :icon => 'icon-plus', :id => 'admin_new_product' } %>
+      </li>
+    </ul>
+  </div>
+<% end %>
+
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<div class="toolbar" data-hook="toolbar">
-  <ul class="actions">
-    <li id="new_product_link">
-      <%= button_link_to t(:new_product), new_object_url, {:remote => true, :icon => 'add', :id => 'admin_new_product'} %>
-    </li>
-  </ul>
-  <br class="clear" />
-</div>
-
-<h1><%= t(:listing_products) %></h1>
-
-<div id="new_product" data-hook></div>
-
-<table class="index" id="listing_products">
-  <tr data-hook="admin_products_index_headers">
-    <th><%= t(:sku) %></th>
-    <th><%= sort_link @search,:name, t(:name), {}, {:title => 'admin_products_listing_name_title'} %></th>
-    <th><%= sort_link @search,:master_price, t(:master_price) %></th>
-    <th data-hook="admin_products_index_header_actions"></th>
-  </tr>
-<% @collection.each do |product| %>
-  <tr <%= "style='color: red;'" if product.deleted? %> id="<%= dom_id product %>" data-hook="admin_products_index_rows">
-    <td><%= product.sku rescue '' %></td>
-    <td><%= product.name rescue '' %></td>
-    <td><%= number_to_currency product.price rescue '' %></td>
-    <td class="actions" data-hook="admin_products_index_row_actions">
-      <%= link_to_edit product, :class => 'edit' unless product.deleted? %>
-      &nbsp;
-      <%= link_to_clone product, :class => 'clone' %>
-      &nbsp;
-      <%= link_to_delete product unless product.deleted? %>
-    </td>
-  </tr>
+<% content_for :table_filter_title do %>
+  <%= t(:search) %>
 <% end %>
-</table>
-<%= paginate @products %>
 
-<% content_for :sidebar do %>
+<% content_for :table_filter do %>
   <div data-hook="admin_products_sidebar">
-    <%= form_for [:admin, @search] do |f| %>
-      <div class="box">
-        <h3><%= t(:search) %></h3>
+    
+    <%= search_form_for [:admin, @search] do |f| %>      
 
         <%- locals = {:f => f} %>
-        <div data-hook="admin_products_index_search">
-          <p>
-            <%= f.label :name_contains, t(:name) %><br />
-            <%= f.text_field :name_contains, :size => 15 %>
-          </p>
-          <p>
-            <%= f.label :variants_including_master_sku_contains, t(:sku) %><br />
-            <%= f.text_field :variants_including_master_sku_contains, :size => 15 %>
-          </p>
-          <p>
-            <%= f.label :deleted_at_is_null, t(:show_deleted) %><br />
-            <%= f.check_box :deleted_at_is_null, {:checked => params[:search][:deleted_at_is_null].blank?}, '', '1' %>
-          </p>
-        </div>
 
-        <div data-hook="admin_products_index_search_buttons">
-          <p class="form-buttons">
-            <%= button t(:search) %>
-          </p>
+        <div data-hook="admin_products_index_search">
+          <div class="alpha nine columns">
+            <div class="field">
+              <%= f.label :name_cont, t(:name) %>
+              <%= f.text_field :name_cont, :size => 15 %>
+            </div>  
+          </div>
+          <div class="four columns">
+            <div class="field">
+              <%= f.label :variants_including_master_sku_cont, t(:sku) %>
+              <%= f.text_field :variants_including_master_sku_cont, :size => 15 %>
+            </div>
+          </div>
+          <div class="three columns omega">
+            <div class="field checkbox">
+              <label>
+                <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null].blank?}, '', '1' %>
+                <%= t(:show_deleted) %>  
+              </label>
+            </div>
+          </div>
         </div>
-      </div>
+        
+        <div class="clear"></div>
+
+        <div class="form-buttons actions filter-actions" data-hook="admin_products_index_search_buttons">
+          <%= button t(:search), 'icon-search' %>
+        </div>
     <% end %>
   </div>
 <% end %>
+
+<div id="new_product" data-hook></div>
+
+<% if @collection.any? %>
+  <table class="index" id="listing_products">
+    <colgroup>
+       <col style="width: 15%;">
+       <col style="width: 10%;">
+       <col style="width: 48%;">
+       <col style="width: 10%;">
+       <col style="width: 17%;">
+    </colgroup>
+    <thead>
+      <tr data-hook="admin_products_index_headers">
+        <th><%= t(:sku) %></th>
+        <th colspan="2"><%= sort_link @search,:name, t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
+        <th><%= sort_link @search,:master_default_price_amount, t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
+        <th data-hook="admin_products_index_header_actions" class="actions"></th>
+      </tr>  
+    </thead>  
+    <tbody>
+      <% @collection.each do |product| %>
+          <tr <%= "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
+            <td class="align-center"><%= product.sku rescue '' %></td>
+            <td class="align-center"><%= mini_image(product) %></td>
+            <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
+            <td class="align-center"><%= product.display_price rescue '' %></td>
+            <td class="actions" data-hook="admin_products_index_row_actions">
+              <%= link_to_edit product, :no_text => true, :class => 'edit' unless product.deleted? %>
+              &nbsp;
+              <%= link_to_clone product, :no_text => true, :class => 'clone' %>
+              &nbsp;
+              <%= link_to_delete product, :no_text => true unless product.deleted? %>
+            </td>
+          </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="no-objects-found">
+    <%= t(:no_results) %>
+  </div>
+<% end %>
+
+<%= paginate @collection %>
 

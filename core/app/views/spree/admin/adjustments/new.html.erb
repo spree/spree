@@ -1,14 +1,23 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
 
-<h2><%= t(:new_adjustment) %></h2>
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:new_adjustment) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_adjustments_list), spree.admin_order_adjustments_url(@order), :icon => 'icon-arrow-left' %></li>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @adjustment } %>
 
 <%= form_for @adjustment, :url => admin_order_adjustments_path do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
 
-  <p class="form-buttons" data-hook="buttons">
-    <%= button t(:continue) %>
-    <%= t(:or) %> <%= link_to t('actions.cancel'), admin_order_adjustments_url(@order) %>
-  </p>
+    <div class="filter-actions actions" data-hook="buttons">
+      <%= button t(:continue), 'icon-arrow-right' %>
+      <span class="or"><%= t(:or) %></span>
+      <%= button_link_to t('actions.cancel'), admin_order_adjustments_url(@order), :icon => 'icon-remove' %>
+    </div>
+  </fieldset>
 <% end %>

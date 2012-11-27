@@ -1,0 +1,31 @@
+table tbody tr {
+  &.highlight {
+
+    @each $action in $actions {
+      &.action-#{$action} td {
+        background-color: get-value($actions, $actions-bg-colors, $action);
+        border-color: get-value($actions, $actions-brd-colors, $action);
+      }
+    }
+
+    &.action-remove td, &.action-void td {          
+      text-decoration: line-through;
+
+      &.actions {
+        text-decoration: none;
+      }
+    }
+  }
+
+  &.before-highlight {
+    @each $action in $actions {
+      &.action-#{$action} td {
+        border-bottom-color: get-value($actions, $actions-brd-colors, $action);
+      }
+    }
+  }
+
+  td.actions {
+    background-color: transparent !important;
+  }
+}

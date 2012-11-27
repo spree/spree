@@ -1,24 +1,37 @@
 module Spree
   class ShippingMethod < ActiveRecord::Base
-    DISPLAY =  [:both, :front_end, :back_end]
-    belongs_to :zone
+    DISPLAY = [:both, :front_end, :back_end]
+
+    default_scope where(:deleted_at => nil)
+
     has_many :shipments
-    validates :name, :calculator, :zone, :presence => true
+    validates :name, :zone, :presence => true
+
     belongs_to :shipping_category
+    belongs_to :zone
+
+    attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
+                    :match_none, :match_one, :match_all
 
     calculated_adjustments
 
-    def available?(order, display_on=nil)
-      display_check = (self.display_on == display_on.to_s || self.display_on.blank?)
-      calculator_check = calculator.available?(order)
-      display_check && calculator_check
+    def available?(order, display_on = nil)
+      displayable?(display_on) && calculator.available?(order)
     end
 
-    def available_to_order?(order, display_on=nil)
-      availability_check = available?(order,display_on)
-      zone_check = zone && zone.include?(order.ship_address)
-      category_check = category_match?(order)
-      availability_check && zone_check && category_check
+    def displayable?(display_on)
+      (self.display_on == display_on.to_s || self.display_on.blank?)
+    end
+
+    def within_zone?(order)
+      zone && zone.include?(order.ship_address)
+    end
+
+    def available_to_order?(order, display_on= nil)
+      available?(order, display_on) &&
+      within_zone?(order) &&
+      category_match?(order) &&
+      currency_match?(order)
     end
 
     # Indicates whether or not the category rules for this shipping method
@@ -35,7 +48,15 @@ module Spree
       end
     end
 
-    def self.all_available(order, display_on=nil)
+    def currency_match?(order)
+      calculator_currency.nil? || calculator_currency == order.currency
+    end
+
+    def calculator_currency
+      calculator.preferences[:currency]
+    end
+
+    def self.all_available(order, display_on = nil)
       all.select { |method| method.available_to_order?(order,display_on) }
     end
   end

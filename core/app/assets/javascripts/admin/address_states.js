@@ -1,9 +1,9 @@
 var update_state = function(region) {
-  var country        = $('span#' + region + 'country :only-child').val();
+  var country        = $('span#' + region + 'country .select2').select2('val');
   var states         = state_mapper[country];
 
-  var state_select = $('span#' + region + 'state select');
-  var state_input = $('span#' + region + 'state input');
+  var state_select   = $('span#' + region + 'state .select2');
+  var state_input    = $('span#' + region + 'state input');
 
   if(states) {
     state_select.html('');
@@ -15,11 +15,12 @@ var update_state = function(region) {
       state_select.append(opt);
     });
     state_select.prop("disabled", false).show();
+    state_select.select2();
     state_input.hide().prop("disabled", true);
 
   } else {
     state_input.prop("disabled", false).show();
-    state_select.hide().prop("disabled", true);
+    state_select.select2('destroy').hide();
   }
 
 };

@@ -1,7 +1,19 @@
 module Spree
   module BaseHelper
+
+    # Defined because Rails' current_page? helper is not working when Spree is mounted at root.
+    def current_spree_page?(url)
+      path = request.fullpath.gsub(/^\/\//, '/')
+      if url.is_a?(String)
+        return path == url
+      elsif url.is_a?(Hash)
+        return path == spree.url_for(url)
+      end
+      return false
+    end
+
     def link_to_cart(text = nil)
-      return "" if current_page?(cart_path)
+      return "" if current_spree_page?(cart_path)
 
       text = text ? h(text) : t('cart')
       css_class = nil
@@ -10,39 +22,21 @@ module Spree
         text = "#{text}: (#{t('empty')})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{order_subtotal(current_order)}</span>".html_safe
+        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total}</span>".html_safe
         css_class = 'full'
       end
 
       link_to text, cart_path, :class => css_class
     end
 
-    def order_subtotal(order, options={})
-      options.assert_valid_keys(:format_as_currency, :show_vat_text)
-      options.reverse_merge! :format_as_currency => true, :show_vat_text => true
-
-      amount =  order.total
-
-      options.delete(:format_as_currency) ? number_to_currency(amount) : amount
-    end
-
-    def todays_short_date
-      utc_to_local(Time.now.utc).to_ordinalized_s(:stub)
-    end
-
-    def yesterdays_short_date
-      utc_to_local(Time.now.utc.yesterday).to_ordinalized_s(:stub)
-    end
-
     # human readable list of variant options
-    def variant_options(v, allow_back_orders = Spree::Config[:allow_backorders], include_style = true)
-      ActiveSupport::Deprecation.warn('variant_options method is deprecated, and will be removed in 0.80.0', caller)
+    def variant_options(v, options={})
       list = v.options_text
 
       # We shouldn't show out of stock if the product is infact in stock
       # or when we're not allowing backorders.
-      unless (allow_back_orders || v.in_stock?)
-        list = if include_style
+      unless v.in_stock?
+        list = if options[:include_style]
           content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => 'out-of-stock')
         else
           "#{t(:out_of_stock)} #{list}"
@@ -52,27 +46,23 @@ module Spree
       list
     end
 
-    Spree::Image.attachment_definitions[:attachment][:styles].each do |style, v|
-      define_method "#{style}_image" do |product, *options|
-        options = options.first || {}
-        if product.images.empty?
-          image_tag "noimage/#{style}.png", options
-        else
-          image = product.images.first
-          options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
-          image_tag image.attachment.url(style), options
-        end
-      end
-    end
-
     def meta_data_tags
       object = instance_variable_get('@'+controller_name.singularize)
-      meta = { :keywords => Spree::Config[:default_meta_keywords], :description => Spree::Config[:default_meta_description] }
+      meta = {}
 
-      if object.kind_of?(ActiveRecord::Base)
+      if object.kind_of? ActiveRecord::Base
         meta[:keywords] = object.meta_keywords if object[:meta_keywords].present?
         meta[:description] = object.meta_description if object[:meta_description].present?
       end
+
+      if meta[:description].blank? && object.kind_of?(Spree::Product)
+        meta[:description] = strip_tags(object.description)
+      end
+
+      meta.reverse_merge!({
+        :keywords => Spree::Config[:default_meta_keywords],
+        :description => Spree::Config[:default_meta_description]
+      })
 
       meta.map do |name, content|
         tag('meta', :name => name, :content => content)
@@ -88,14 +78,15 @@ module Spree
       link_to image_tag(image_path), root_path
     end
 
-    def flash_messages
-      [:notice, :error].map do |msg_type|
-        if flash[msg_type]
-          content_tag :div, flash[msg_type], :class => "flash #{msg_type}"
-        else
-          ''
+    def flash_messages(opts = {})
+      opts[:ignore_types] = [:commerce_tracking].concat(Array(opts[:ignore_types]) || [])
+
+      flash.each do |msg_type, text|
+        unless opts[:ignore_types].include?(msg_type)
+          concat(content_tag :div, text, :class => "flash #{msg_type}")
         end
-      end.join("\n").html_safe
+      end
+      nil
     end
 
     def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
@@ -110,7 +101,7 @@ module Spree
         crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
       crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), :class => 'inline')
-      content_tag(:div, crumb_list, :id => 'breadcrumbs')
+      content_tag(:nav, crumb_list, :id => 'breadcrumbs', :class => 'sixteen columns')
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
@@ -127,37 +118,73 @@ module Spree
     end
 
     def available_countries
-      countries = Zone.find_by_name(Spree::Config[:checkout_zone]).try(:country_list) || Country.all
-      countries.collect do |c| 
-        c.name = I18n.t(c.name, :scope => 'countries', :default => c.name)
-        c 
-      end.sort{ |a,b| a.name <=> b.name }
+      checkout_zone = Zone.find_by_name(Spree::Config[:checkout_zone])
+
+      if checkout_zone && checkout_zone.kind == 'country'
+        countries = checkout_zone.country_list
+      else
+        countries = Country.all
+      end
+
+      countries.collect do |country|
+        country.name = I18n.t(country.iso, :scope => 'countries', :default => country.name)
+        country
+      end.sort { |a, b| a.name <=> b.name }
     end
 
-    def format_price(price, options={})
-      options.assert_valid_keys(:show_vat_text)
-      formatted_price = number_to_currency price
-      if options[:show_vat_text]
-        I18n.t(:price_with_vat_included, :price => formatted_price)
+    def seo_url(taxon)
+      return spree.nested_taxons_path(taxon.permalink)
+    end
+
+    def gem_available?(name)
+       Gem::Specification.find_by_name(name)
+    rescue Gem::LoadError
+       false
+    rescue
+       Gem.available?(name)
+    end
+
+    def money(amount)
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::BaseHelper#money will be deprecated.  It relies upon a single master currency.  You can instead create a Spree::Money.new(amount, { :currency => your_currency}) or see if the object you're working with returns a Spree::Money object to use.")
+      Spree::Money.new(amount)
+    end
+
+    def pretty_time(time)
+      [I18n.l(time.to_date, :format => :long),
+        time.strftime("%H:%m %p")].join(" ")
+    end
+
+    def method_missing(method_name, *args, &block)
+      if image_style = image_style_from_method_name(method_name)
+        define_image_method(image_style)
+        self.send(method_name, *args)
       else
-        formatted_price
+        super
       end
     end
 
-    # generates nested url to product based on supplied taxon
-    def seo_url(taxon, product = nil)
-      return spree.nested_taxons_path(taxon.permalink) if product.nil?
-      warn "DEPRECATION: the /t/taxon-permalink/p/product-permalink urls are "+
-        "not used anymore. Use product_url instead. (called from #{caller[0]})"
-      return product_url(product)
-    end
+    private
 
-    def current_orders_product_count
-      if current_order.blank? || current_order.item_count < 1
-        return 0
-      else
-        return current_order.item_count
+    # Returns style of image or nil
+    def image_style_from_method_name(method_name)
+      if style = method_name.to_s.sub(/_image$/, '')
+        possible_styles = Spree::Image.attachment_definitions[:attachment][:styles]
+        style if style.in? possible_styles.with_indifferent_access
       end
     end
+
+    def define_image_method(style)
+      self.class.send :define_method, "#{style}_image" do |product, *options|
+        options = options.first || {}
+        if product.images.empty?
+          image_tag "noimage/#{style}.png", options
+        else
+          image = product.images.first
+          options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
+          image_tag image.attachment.url(style), options
+        end
+      end
+    end
+
   end
 end

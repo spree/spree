@@ -1,7 +1,7 @@
 require "rails/generators/rails/app/app_generator"
 
 module Spree
-  class DummyGenerator  < Rails::Generators::Base
+  class DummyGenerator < Rails::Generators::Base
     desc "Creates blank Rails application, installs Spree and all sample data"
 
     class_option :lib_name, :default => ''
@@ -42,6 +42,7 @@ module Spree
       template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
       template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
       template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
+      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
     end
 
     def test_dummy_clean
@@ -51,11 +52,13 @@ module Spree
         remove_file "Gemfile"
         remove_file "lib/tasks"
         remove_file "app/assets/images/rails.png"
+        remove_file "app/assets/javascripts/application.js"
         remove_file "public/index.html"
         remove_file "public/robots.txt"
         remove_file "README"
         remove_file "test"
         remove_file "vendor"
+        remove_file "spec"
       end
     end
 

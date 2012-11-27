@@ -1,44 +1,25 @@
-<%= f.field_container :name do %>
-  <%= f.label :name, t(:name) %><br />
-  <%= f.text_field :name %>
-  <%= f.error_message_on :name %>
-<% end %>
+<div data-hook="admin_prototype_form_fields" class="row">
+  <div class="alpha four columns">
+    <%= f.field_container :name do %>
+      <%= f.label :name, t(:name) %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.error_message_on :name %>
+    <% end %>
+  </div>
 
-<h3><%= t(:properties) %></h3>
+  <div class="six columns">
+    <div id='properties' data-hook>
+      <%= f.field_container :property_ids do %>
+        <%= f.label :property_ids, t(:properties) %><br>
+        <%= f.select :property_ids, Spree::Property.sorted.map { |p| [p.presentation, p.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+      <% end %>
+    </div>
+  </div>
 
-<ul class='checkbox-list' id='properties' data-hook>
-<% Spree::Property.sorted.each do |property| %>
-  <% selected = if @prototype.new_record?
-    (params[:property] and params[:property][:id] and params[:property][:id].include?(property.id.to_s))
-  else
-    @prototype.properties.include?(property)
-  end %>
-  <li>
-    <label>
-      <%= check_box_tag 'property[id][]', "#{property.id}", selected %>
-      <%= property.name %>
-    </label>
-  </li>
-<% end %>
-</ul>
-
-<hr />
-
-<h3><%= t(:option_types) %></h3>
-
-<ul class="checkbox-list" id="option_types" data-hook>
-<% Spree::OptionType.all.each do |option_type| %>
-  <% selected = if @prototype.new_record?
-    (params[:option_type] and params[:option_type][:id] and params[:option_type][:id].include?(option_type.id.to_s))
-  else
-    @prototype.option_types.include?(option_type)
-  end %>
-  <li>
-    <label>
-      <%= check_box_tag 'option_type[id][]', "#{option_type.id}", selected %>
-      <%= option_type.name %>
-    </label>
-  </li>
-<% end %>
-</ul>
-<hr />
+  <div class="six columns omega">
+    <%= f.field_container :option_type_ids do %>
+      <%= f.label :option_type_ids, t(:option_types) %><br>
+      <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+    <% end %>
+  </div>
+</div>

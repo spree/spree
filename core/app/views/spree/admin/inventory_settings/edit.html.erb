@@ -1,27 +1,25 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:inventory_settings) %></h1>
+<% content_for :page_title do %>
+  <%= t(:inventory_settings) %>
+<% end %>
 
 <%= form_tag admin_inventory_settings_path, :method => :put do %>
 
-  <p data-hook="show_zero_stock">
-    <label>
-      <%= hidden_field_tag 'preferences[show_zero_stock_products]', '0' %>
-      <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
-      <%= t(:show_out_of_stock_products) %>
-    </label>
-  </p>
+  <div data-hook="show_zero_stock" class="field">
+    <%= hidden_field_tag 'preferences[show_zero_stock_products]', '0' %>
+    <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
+    <%= t(:show_out_of_stock_products) %>
+  </div>
   
-  <p data-hook="allow_backorders">
-    <label>
-      <%= hidden_field_tag 'preferences[allow_backorders]', '0' %>
-      <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
-      <%= t(:allow_backorders) %>
-    </label>
-  </p>
+  <div data-hook="allow_backorders"  class="field">
+    <%= hidden_field_tag 'preferences[allow_backorders]', '0' %>
+    <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
+    <%= t(:allow_backorders) %>
+  </div>
 
-  <p class="form-buttons" data-hook="buttons">
-    <%= button t(:update) %>
-  </p>
+  <div class="form-buttons" data-hook="buttons">
+    <%= button t(:update), 'icon-refresh' %>
+  </div>
 
 <% end %>

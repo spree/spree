@@ -1,4 +1,17 @@
 /*
  *= require store/spree_core
- *= require store/spree_auth
+ *= require_self
 */
+
+#update-cart .coupon-code-field {
+  /* yes, this is ugly... */
+  margin-top: -42px !important;
+}
+
+@media only screen and (max-width: 767px) {
+  #empty-cart,
+  #update-cart .coupon-code-field {
+    /* yes, this is ugly... */
+    margin-top: 0 !important;
+  }
+}

@@ -1,3 +1,5 @@
+require_dependency 'spree/calculator'
+
 module Spree
   class Calculator::DefaultTax < Calculator
     def self.description
@@ -40,7 +42,7 @@ module Spree
       def round_to_two_places(amount)
         BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
       end
-      
+
       def deduced_total_by_rate(total, rate)
         round_to_two_places(total - ( total / (1 + rate.amount) ) )
       end

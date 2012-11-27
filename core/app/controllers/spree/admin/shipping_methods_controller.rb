@@ -4,6 +4,17 @@ module Spree
       before_filter :load_data, :except => [:index]
       before_filter :set_shipping_category, :only => [:create, :update]
 
+      def destroy
+        @object.touch :deleted_at
+
+        flash[:success] = flash_message_for(@object, :successfully_removed)
+
+        respond_with(@object) do |format|
+          format.html { redirect_to collection_url }
+          format.js  { render_js_for_destroy }
+        end
+      end
+
       private
 
       def set_shipping_category

@@ -1,10 +1,23 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:editing_zone) %></h1>
+<% content_for :page_title do %>
+  <%= t(:editing_zone) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:back_to_zones_list), admin_zones_path, :icon => 'icon-arrow-left' %>
+  </li>
+<% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @zone } %>
 
 <%= form_for [:admin, @zone] do |zone_form| %>
-  <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
+    <%= render :partial => 'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
+    <%= render :partial => 'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
+    <div class="clear"></div>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>

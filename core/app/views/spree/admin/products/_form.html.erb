@@ -1,69 +1,99 @@
-<div class="clearfix">
-  <div class="left" data-hook="admin_product_form_left">
+<div data-hook="admin_product_form_fields">
+  
+  <div class="left eight columns alpha" data-hook="admin_product_form_left">    
     <%= f.field_container :name do %>
-      <%= f.label :name, t(:name) %> <span class="required">*</span><br />
+      <%= f.label :name, raw(t(:name) + content_tag(:span, ' *', :class => 'required')) %>
       <%= f.text_field :name, :class => 'fullwidth title' %>
       <%= f.error_message_on :name %>
     <% end %>
 
     <%= f.field_container :permalink do %>
-      <%= f.label :permalink, t(:permalink) %> <span class="required">*</span><br />
+      <%= f.label :permalink, raw(t(:permalink) + content_tag(:span, ' *',  :class => "required")) %>
       <%= f.text_field :permalink, :class => 'fullwidth title' %>
       <%= f.error_message_on :permalink %>
     <% end %>
 
     <%= f.field_container :description do %>
-      <%= f.label :description, t(:description) %><br />
-      <%= f.text_area :description, {:cols => 60, :rows => 4, :class => 'fullwidth'} %>
+      <%= f.label :description, t(:description) %>
+      <%= f.text_area :description, {:rows => "#{unless @product.has_variants? then '20' else '13' end}", :class => 'fullwidth'} %>
       <%= f.error_message_on :description %>
     <% end %>
   </div>
-  <div class="right" data-hook="admin_product_form_right">
-      <%= f.field_container :price do %>
-        <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
-        <%= f.text_field :price, :value => number_with_precision(@product.price, :precision => 2) %>
-        <%= f.error_message_on :price %>
-      <% end %>
 
-      <%= f.field_container :cost_price do %>
-        <%= f.label :cost_price, t(:cost_price) %><br />
-        <%= f.text_field :cost_price, :value => number_with_precision(@product.cost_price, :precision => 2) %>
-      <%= f.error_message_on :cost_price %>
+  <div class="right four columns omega" data-hook="admin_product_form_right">
+    <%= f.field_container :price do %>
+      <%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
+      <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
+      <%= f.error_message_on :price %>
     <% end %>
 
+    <div class="alpha two columns">
+      <%= f.field_container :cost_price do %>
+        <%= f.label :cost_price, t(:cost_price) %>
+        <%= f.text_field :cost_price, :value => number_to_currency(@product.cost_price, :unit => '') %>
+        <%= f.error_message_on :cost_price %>
+      <% end %>
+    </div>
+    <div class="omega two columns">
+      <%= f.field_container :cost_currency do %>
+        <%= f.label :cost_currency, t(:cost_currency) %>
+        <%= f.text_field :cost_currency %>
+        <%= f.error_message_on :cost_currency %>
+      <% end %>
+    </div>
+
+    <div class="clear"></div>
+
     <%= f.field_container :available_on do %>
-      <%= f.label :available_on, t(:available_on) %><br />
+      <%= f.label :available_on, t(:available_on) %>
       <%= f.error_message_on :available_on %>
-      <%= f.text_field :available_on, :class => 'datepicker' %>
+      <% if @product.available_on? %>
+        <% available_on = l(@product.available_on, :format => t('date_picker.format')) %>
+      <% else %>
+        <% available_on = nil %>
+      <% end %>
+      <%= f.text_field :available_on, :value => available_on, :class => 'datepicker' %>
     <% end %>
 
     <% unless @product.has_variants? %>
       <%= f.field_container :sku do %>
-        <%= f.label :sku, t(:sku) %><br />
+        <%= f.label :sku, t(:sku) %>
         <%= f.text_field :sku, :size => 16 %>
       <% end %>
 
-      <% if Spree::Config[:track_inventory_levels] %>
-        <%= f.field_container :on_hand do %>
-          <%= f.label :on_hand, t(:on_hand) %><br />
-          <%= f.number_field :on_hand, :min => 0 %>
-        <% end %>
+      <% if Spree::Config[:track_inventory_levels] %>        
+        <div class="alpha two columns">
+          <%= f.field_container :on_hand do %>
+            <%= f.label :on_hand, t(:on_hand) %>
+            <%= f.number_field :on_hand, :min => 0 %>
+          <% end %>
+        </div>
+        <div class="omega two columns">
+          <%= f.field_container :on_demand, :class => ['checkbox'] do %>
+            <label>
+              <%= f.check_box :on_demand %>
+              <%= t(:on_demand) %>
+            </label>
+          <% end %>
+        </div>
+
+        <div class="clear"></div>
       <% end %>
 
       <ul id="shipping_specs">
-        <li id="shipping_specs_weight_field">
+        <li id="shipping_specs_weight_field" class="field alpha two columns">
           <%= f.label :weight, t(:weight) %>
           <%= f.text_field :weight, :size => 4 %>
         </li>
-        <li id="shipping_specs_height_field">
+        <li id="shipping_specs_height_field" class="field omega two columns">
           <%= f.label :height, t(:height) %>
           <%= f.text_field :height, :size => 4 %>
         </li>
-        <li id="shipping_specs_width_field">
+        <li id="shipping_specs_width_field" class="field alpha two columns">
           <%= f.label :width, t(:width) %>
           <%= f.text_field :width, :size => 4 %>
         </li>
-        <li id="shipping_specs_depth_field">
+        <li id="shipping_specs_depth_field" class="field omega two columns">
           <%= f.label :depth, t(:depth) %>
           <%= f.text_field :depth, :size => 4 %>
         </li>
@@ -71,34 +101,54 @@
     <% end %>
 
     <%= f.field_container :shipping_categories do %>
-      <%= f.label :shipping_category_id, t(:shipping_categories) %><br />
-      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => true }, { 'style' => 'width:200px' }) %>
+      <%= f.label :shipping_category_id, t(:shipping_categories) %>
+      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => 'None' }, { :class => 'select2' }) %>
       <%= f.error_message_on :shipping_category %>
     <% end %>
 
     <%= f.field_container :tax_category do %>
-      <%= f.label :tax_category_id, t(:tax_category) %><br />
-      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => true }, { 'style' => 'width:200px' }) %>
+      <%= f.label :tax_category_id, t(:tax_category) %>
+      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => 'None' }, { :class => 'select2' }) %>
       <%= f.error_message_on :tax_category %>
     <% end %>
   </div>
+
+  <div class="twelve columns alpha omega">
+    <%= f.field_container :taxons do %>
+      <%= f.label :taxon_ids, t(:taxons) %><br />
+      <%= f.hidden_field :taxon_ids, :value => @product.taxon_ids.join(',') %>
+    <% end %>
+
+    <%= f.field_container :option_types do %>
+      <%= f.label :option_type_ids, t(:option_types) %>
+      <%= f.select :option_type_ids, option_types_options_for(@product), {}, :class => "select2", :multiple => true %>
+    <% end %>
+  </div>
+
+  <!-- <h2><%= t(:metadata) %></h2> -->
+  <div data-hook="admin_product_form_meta" class="alpha omega twelve columns">
+    <%= f.field_container :meta_keywords do %>
+      <%= f.label :meta_keywords, t(:meta_keywords) %>
+      <%= f.text_field :meta_keywords, :class => 'fullwidth' %>
+    <% end %>
+
+    <%= f.field_container :meta_description do %>
+      <%= f.label :meta_description, t(:meta_description) %>
+      <%= f.text_field :meta_description, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+
+  <div class="clear"></div>
+
+  <div data-hook="admin_product_form_additional_fields"></div>
+
+  <div class="clear"></div>
 </div>
 
-<h2><%= t(:metadata) %></h2>
-<div data-hook="admin_product_form_meta">
-  <%= f.field_container :meta_keywords do %>
-    <%= f.label :meta_keywords, t(:meta_keywords) %><br />
-    <%= f.text_field :meta_keywords, :class => 'fullwidth' %>
-  <% end %>
+<% unless Rails.env.test? %>
+  <script>
+  $("#product_option_type_ids").select2();
 
-  <%= f.field_container :meta_description do %>
-    <%= f.label :meta_description, t(:meta_description) %><br />
-    <%= f.text_field :meta_description, :class => 'fullwidth' %>
-  <% end %>
-</div>
-
-<div data-hook="admin_product_form_additional_fields">
-  <% Spree::Variant.additional_fields.select { |af| af[:only].nil? || af[:only].include?(:product) }.each do |field| %>
-    <%= render :partial => 'spree/admin/shared/additional_field', :locals => { :field => field, :f => f } %>
-  <% end %>
-</div>
+  $('.select2-container').css({width: '20em'})
+  </script>
+<% end %>

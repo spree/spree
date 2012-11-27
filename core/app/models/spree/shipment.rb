@@ -5,6 +5,7 @@ module Spree
     belongs_to :order
     belongs_to :shipping_method
     belongs_to :address
+
     has_many :state_changes, :as => :stateful
     has_many :inventory_units, :dependent => :nullify
     has_one :adjustment, :as => :source, :dependent => :destroy
@@ -13,6 +14,10 @@ module Spree
     after_save :ensure_correct_adjustment, :update_order
 
     attr_accessor :special_instructions
+
+    attr_accessible :order, :shipping_method, :special_instructions,
+                    :shipping_method_id, :tracking, :address, :inventory_units
+
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
@@ -21,19 +26,24 @@ module Spree
 
     make_permalink :field => :number
 
-    scope :shipped, where(:state => 'shipped')
-    scope :ready, where(:state => 'ready')
-    scope :pending, where(:state => 'pending')
+    scope :with_state, lambda { |s| where(:state => s) }
+    scope :shipped, with_state('shipped')
+    scope :ready,   with_state('ready')
+    scope :pending, with_state('pending')
 
     def to_param
-      self.number if self.number
-      generate_shipment_number unless self.number
-      self.number.to_s.to_url.upcase
+      number if number
+      generate_shipment_number unless number
+      number.to_s.to_url.upcase
     end
 
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.now
+    end
+
+    def currency
+      order.nil? ? Spree::Config[:currency] : order.currency
     end
 
     # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match
@@ -43,10 +53,18 @@ module Spree
     end
     alias_method :amount, :cost
 
+    def display_cost
+      Spree::Money.new(cost, { :currency => currency })
+    end
+    alias_method :display_amount, :display_cost
+
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'pending', :use_transactions => false do
       event :ready do
-        transition :from => 'pending', :to => 'ready'
+        transition :from => 'pending', :to => 'ready', :if => lambda { |shipment|
+          # Fix for #2040
+          shipment.determine_state(shipment.order) == 'ready'
+        }
       end
       event :pend do
         transition :from => 'ready', :to => 'pending'
@@ -80,15 +98,27 @@ module Spree
     # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
     # yield the correct results.
     def update!(order)
-      old_state = self.state
+      old_state = state
       new_state = determine_state(order)
-      update_attribute_without_callbacks 'state', determine_state(order)
+      update_column 'state', new_state
       after_ship if new_state == 'shipped' and old_state != 'shipped'
+    end
+
+    # Determines the appropriate +state+ according to the following logic:
+    #
+    # pending    unless order is complete and +order.payment_state+ is +paid+
+    # shipped    if already shipped (ie. does not change the state)
+    # ready      all other cases
+    def determine_state(order)
+      return 'pending' unless order.complete?
+      return 'pending' if inventory_units.any? &:backordered?
+      return 'shipped' if state == 'shipped'
+      order.paid? ? 'ready' : 'pending'
     end
 
     private
       def generate_shipment_number
-        return self.number unless self.number.blank?
+        return number unless number.blank?
         record = true
         while record
           random = "H#{Array.new(11){rand(9)}.join}"
@@ -101,27 +131,10 @@ module Spree
         "#{I18n.t(:shipping)} (#{shipping_method.name})"
       end
 
-      # def transition_order
-      #   update_attribute(:shipped_at, Time.now)
-      #   # transition order to shipped if all shipments have been shipped
-      #   order.ship! if order.shipments.all?(&:shipped?)
-      # end
-
       def validate_shipping_method
         unless shipping_method.nil?
           errors.add :shipping_method, I18n.t(:is_not_available_to_shipment_address) unless shipping_method.zone.include?(address)
         end
-      end
-
-      # Determines the appropriate +state+ according to the following logic:
-      #
-      # pending    unless +order.payment_state+ is +paid+
-      # shipped    if already shipped (ie. does not change the state)
-      # ready      all other cases
-      def determine_state(order)
-        return 'pending' if self.inventory_units.any? { |unit| unit.backordered? }
-        return 'shipped' if state == 'shipped'
-        order.payment_state == 'balance_due' ? 'pending' : 'ready'
       end
 
       # Determines whether or not inventory units should be associated with the shipment.  This is always +false+ when
@@ -134,6 +147,11 @@ module Spree
 
       def after_ship
         inventory_units.each &:ship!
+        send_shipped_email
+        touch :shipped_at
+      end
+
+      def send_shipped_email
         ShipmentMailer.shipped_email(self).deliver
       end
 

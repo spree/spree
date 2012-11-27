@@ -1,16 +1,20 @@
 <table class="index">
+  <colgroup>
+    <col style="width: 80%" />
+    <col style="width: 20%" />
+  </colgroup>
   <thead>
     <tr data-hook="avilable_header">
       <th><%= t(:name) %></th>
-      <th></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
     <% @prototypes.each do |prototype| %>
-      <tr id="row_<%= prototype.id %>" data-hook="available_row">
+      <tr id="row_<%= prototype.id %>" data-hook="available_row" class="<%= cycle('odd', 'even')%>">
         <td><%= prototype.name %></td>
         <td class="actions">
-          <%= link_to icon('add') + ' ' + t(:select), select_admin_prototype_url(prototype), :class => 'ajax iconlink select_properties_from_prototype' %>
+          <%= link_to t(:select), select_admin_prototype_url(prototype), :class => 'ajax button select_properties_from_prototype icon-ok' %>
         </td>
       </tr>
     <% end %>

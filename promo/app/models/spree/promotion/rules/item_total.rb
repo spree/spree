@@ -1,14 +1,21 @@
-# A rule to limit a promotion to a specific user.
+# A rule to apply to an order greater than (or greater than or equal to)
+# a specific amount
 module Spree
-  class Promotion::Rules::ItemTotal < PromotionRule
-    preference :amount, :decimal, :default => 100.00
-    preference :operator, :string, :default => '>'
+  class Promotion
+    module Rules
+      class ItemTotal < PromotionRule
+        preference :amount, :decimal, :default => 100.00
+        preference :operator, :string, :default => '>'
 
-    OPERATORS = ['gt', 'gte']
+        attr_accessible :preferred_amount, :preferred_operator
 
-    def eligible?(order, options = {})
-      item_total = order.line_items.map(&:amount).sum
-      item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
+        OPERATORS = ['gt', 'gte']
+
+        def eligible?(order, options = {})
+          item_total = order.line_items.map(&:amount).sum
+          item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
+        end
+      end
     end
   end
 end

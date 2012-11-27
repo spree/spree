@@ -9,25 +9,25 @@ module SpreeCmd
     source_root File.expand_path('../templates/extension', __FILE__)
 
     def generate
-      use_prefix "spree_"
+      use_prefix 'spree_'
 
       empty_directory file_name
 
-      directory "app", "#{file_name}/app"
-      directory "lib", "#{file_name}/lib"
-      directory "script", "#{file_name}/script"
+      directory 'app', "#{file_name}/app"
+      directory 'lib', "#{file_name}/lib"
+      directory 'script', "#{file_name}/script"
 
-      template "extension.gemspec", "#{file_name}/#{file_name}.gemspec"
-      template "Gemfile", "#{file_name}/Gemfile"
-      template "gitignore", "#{file_name}/.gitignore"
-      template "LICENSE", "#{file_name}/LICENSE"
-      template "Rakefile", "#{file_name}/Rakefile"
-      template "README.md", "#{file_name}/README.md"
-      template "config/routes.rb", "#{file_name}/config/routes.rb"
-      template "config/locales/en.yml", "#{file_name}/config/locales/en.yml"
-      template "rspec", "#{file_name}/.rspec"
-      template "spec/spec_helper.rb.tt", "#{file_name}/spec/spec_helper.rb"
-      template "Versionfile", "#{file_name}/Versionfile"
+      template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
+      template 'Gemfile', "#{file_name}/Gemfile"
+      template 'gitignore', "#{file_name}/.gitignore"
+      template 'LICENSE', "#{file_name}/LICENSE"
+      template 'Rakefile', "#{file_name}/Rakefile"
+      template 'README.md', "#{file_name}/README.md"
+      template 'config/routes.rb', "#{file_name}/config/routes.rb"
+      template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
+      template 'rspec', "#{file_name}/.rspec"
+      template 'spec/spec_helper.rb.tt', "#{file_name}/spec/spec_helper.rb"
+      template 'Versionfile', "#{file_name}/Versionfile"
     end
 
     def final_banner
@@ -36,7 +36,7 @@ module SpreeCmd
 
         Your extension has been generated with a gemspec dependency on Spree #{spree_version}.
 
-        Please update the Versionfile to designate compatibilty with different versions of Spree.
+        Please update the Versionfile to designate compatibility with different versions of Spree.
         See http://spreecommerce.com/documentation/extensions.html#versionfile
 
         Consider listing your extension in the official extension registry http://spreecommerce.com/extensions"
@@ -51,12 +51,12 @@ module SpreeCmd
       end
 
       def spree_version
-        '1.0.0'
+        '1.2.0.rc2'
       end
 
       def use_prefix(prefix)
         unless file_name =~ /^#{prefix}/
-          @file_name = prefix + file_name
+          @file_name = prefix + Thor::Util.snake_case(file_name)
         end
       end
     end

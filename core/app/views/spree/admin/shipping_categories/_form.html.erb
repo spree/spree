@@ -1,6 +1,6 @@
-<table data-hook="name">
-  <tr>
-    <td><%= t(:name) %>:</td>
-    <td><%= f.text_field :name, {'style' => 'width:200px'} %></td>
-  </tr>
-</table>
+<div data-hook="admin_shipping_category_form_fields">
+  <div data-hook="name" class="field align-center">
+    <%= label_tag t(:name) %><br>
+    <%= f.text_field :name %>    
+  </div>
+</div>

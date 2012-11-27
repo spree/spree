@@ -1,4 +1,7 @@
 //= require_self
+//= require admin/variant_autocomplete
+//= require admin/taxon_autocomplete
+//= require admin/spree-select2
 
 /**
 This is a collection of javascript functions and whatnot
@@ -6,13 +9,76 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-$(document).ajaxStart(function(){
-  $("#progress").slideDown();
+jQuery(function($) {
+  // Make main menu use full width
+  $('.fullwidth-menu').horizontalNav({
+    tableDisplay: false,
+    responsiveDelay: 0
+  });
+
+  // Vertical align of checkbox fields
+  $('.field.checkbox label').vAlign()
+
+  <% # Re-adjusting admin menu during test causes tests to fail,
+     # like states_spec and shipping_methods_spec. Let's not do this. %>
+  <% unless Rails.env.test? %>
+    $('.main-menu-wrapper ul').AdaptiveMenu({
+      text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+      klass: "dropdown"
+    });
+  <% end %>
+
+  // Add some tips
+  $('.with-tip').powerTip({
+    smartPlacement: true,
+    fadeInTime: 50,
+    fadeOutTime: 50,
+    intentPollInterval: 300
+  });
+
+  $('.with-tip').on({
+    powerTipPreRender: function(){
+      $('#powerTip').addClass($(this).attr("data-action"));
+      $('#powerTip').addClass($(this).attr("data-tip-color"));
+    },
+    powerTipClose: function(){
+      $('#powerTip').removeClass($(this).attr("data-action"))
+    }
+  });
+
+  // Make flash messages dissapear
+  setTimeout('$(".flash").fadeOut()', 5000);
+
+  // Highlight hovered table column
+  $('table tbody tr td.actions a').hover(function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.addClass(klass)
+    tr.prev().addClass('before-' + klass);
+  }, function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.removeClass(klass)
+    tr.prev().removeClass('before-' + klass);
+  });
+
+  // Trunkate text in page_title that didn't fit
+  var truncate_elements = $('.truncate');
+
+  truncate_elements.each(function(){
+    $(this).trunk8();
+  });
+  $(window).resize(function (event) {
+    truncate_elements.each(function(){
+      $(this).trunk8();
+    })
+  });
+
+  // Make height of dt/dd elements the same
+  $("dl").equalize('outerHeight');
+
 });
 
-$(document).ajaxStop(function(){
-  $("#progress").slideUp();
-});
 
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
@@ -43,184 +109,86 @@ $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
   });
 }
 
-// Product autocompletion
-image_html = function(item){
-  return "<img src='" + item['images'][0]["mini_url"] + "'/>";
-}
-
-format_product_autocomplete = function(item){
-  var html = "";
-
-  var product = item.data['product'];
-
-  if(item.data['variant']==undefined){
-    if(product['images'].length!=0){
-      html = image_html(product);
-    }
-
-    html += "<div><h4>" + product['name'] + "</h4>";
-    html += "<span><strong>Sku: </strong>" + product['master']['sku'] + "</span>";
-    html += "<span><strong>On Hand: </strong>" + product['count_on_hand'] + "</span></div>";
-  }else{
-    // variant
-    var variant = item.data['variant'];
-    var name = item.data.product['name'];
-
-    if(variant['images'].length!=0){
-      html = image_html(variant);
-    }else{
-      if(product['images'].length!=0){
-        html = image_html(product);
-      }
-    }
-
-    name += " - " + $.map(variant['option_values'], function(option_value){
-      return option_value["option_type"]["presentation"] + ": " + option_value['name'];
-    }).join(", ")
-
-    html += "<div><h4>" + name + "</h4>";
-    html += "<span><strong>Sku: </strong>" + variant['sku'] + "</span>";
-    html += "<span><strong>On Hand: </strong>" + variant['count_on_hand'] + "</span></div>";
-  }
-
-  return html
-}
-
-prep_product_autocomplete_data = function(data){
-  return $.map(eval(data), function(row) {
-
-    var product = row['product'];
-
-    if(product['variants'].length>0 && ['expand_variants']){
-      //variants
-      return $.map(product['variants'], function(variant){
-
-        var name = product['name'];
-        name += " - " + $.map(variant['option_values'], function(option_value){
-          return option_value["option_type"]["presentation"] + ": " + option_value['name'];
-        }).join(", ");
-
-        return {
-            data: {product: product, variant: variant},
-            value: name,
-            result: name
-        }
-      });
-    }else{
-      return {
-          data: {product: product},
-          value: product['name'],
-          result: product['name']
-      }
-    }
-  });
-}
-
-$.fn.product_autocomplete = function(){
-  return this.each(function() {
-    $(this).autocomplete({
-      source: function(request, response) {
-        $.get("/admin/products.json?q=" + $('#add_product_name').val() + "&authenticity_token=" + encodeURIComponent($('meta[name=csrf-token]').attr("content")), function(data) {
-          result = prep_product_autocomplete_data(data)
-          response(result);
-        });
-      },
-      minLength: 4,
-      focus: function(event, ui) {
-        $('#add_product_name').val(ui.item.label);
-        return false;
-      },
-      select: function(event, ui) {
-        $('#add_product_name').val(ui.item.label);
-        product = ui.item.data;
-        if (product['variant'] == undefined) {
-          // product
-          $('#add_variant_id').val(product['product']['master']['id']);
-        } else {
-          // variant
-          $('#add_variant_id').val(product['variant']['id']);
-        }
-        return false;
-      }
-    }).data("autocomplete")._renderItem = function(ul, item) {
-      $(ul).addClass('ac_results');
-      html = format_product_autocomplete(item);
-      return $("<li></li>")
-              .data("item.autocomplete", item)
-              .append("<a>" + html + "</a>")
-              .appendTo(ul);
-    }
-
-    $(this).data("autocomplete")._resizeMenu = function() {
-      var ul = this.menu.element;
-      ul.outerWidth(this.element.outerWidth());
-    }
-  });
-}
-
-$.fn.objectPicker = function(url){
-  $(this).tokenInput(url + "&authenticity_token=" + escape(AUTH_TOKEN), {
-    searchDelay          : 600,
-    hintText             : strings.type_to_search,
-    noResultsText        : strings.no_results,
-    searchingText        : strings.searching,
-    prePopulateFromInput : true
-  });
-};
-
-$.fn.productPicker = function(){
-  $(this).objectPicker(ajax_urls.product_search_basic_json);
-}
-$.fn.userPicker = function(){
-  $(this).objectPicker(ajax_urls.user_search_basic_json);
-}
-
-// Possible defunct
-add_fields = function(target, association, content) {
-  var new_id = new Date().getTime();
-  var regexp = new RegExp("new_" + association, "g");
-  $(target).append(content.replace(regexp, new_id));
-}
-
-$('a.remove_fields').live('click', function() {
-  $(this).prev("input[type=hidden]").val("1");
-  $(this).closest(".fields").hide();
-  return false;
-});
-
-$(".observe_field").live('change', function() {
-  target = $(this).attr("data-update");
-  ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
-  $(target).hide();
-  $(ajax_indicator).show();
-  $.ajax({ dataType: 'html',
-           url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
-           type: 'get',
-           success: function(data){
-             $(target).html(data);
-             $(ajax_indicator).hide();
-             $(target).show();
-           }
-  });
-});
-
 handle_date_picker_fields = function(){
   $('.datepicker').datepicker({
-    dateFormat: 'yy/mm/dd',
-    showOn: "button",
-    buttonImage: "<%= asset_path 'datepicker/cal.gif' %>",
-    buttonImageOnly: true
+    dateFormat: Spree.translations.date_picker,
+    dayNames: Spree.translations.abbr_day_names,
+    dayNamesMin: Spree.translations.abbr_day_names,
+    monthNames: Spree.translations.month_names, 
+    prevText: Spree.translations.previous,
+    nextText: Spree.translations.next,
+    showOn: "focus"
+  });
+
+  // Correctly display range dates
+  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-to" ).datepicker( "option", "minDate", selectedDate );
+  });
+  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-from" ).datepicker( "option", "maxDate", selectedDate );
   });
 }
 
 $(document).ready(function(){
-
-  $('.tokeninput.products').productPicker();
-  $('.tokeninput.users').userPicker();
-
   handle_date_picker_fields();
+  $(".observe_field").on('change', function() {
+    target = $(this).attr("data-update");
+    ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
+    $(target).hide();
+    $(ajax_indicator).show();
+    $.ajax({ dataType: 'html',
+             url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
+             type: 'get',
+             success: function(data){
+               $(target).html(data);
+               $(ajax_indicator).hide();
+               $(target).show();
+             }
+    });
+  });
 
-  $(".select_properties_from_prototype").live("click", function(){
+  $('.add_fields').click(function() {
+    var target = $(this).data("target");
+    var new_table_row = $(target + ' tr:visible:last').clone();
+    var new_id = new Date().getTime();
+    new_table_row.find("input").each(function () {
+      var el = $(this);
+      el.val("");
+      el.attr("id", el.attr("id").replace(/\d+/, new_id))
+      el.attr("name", el.attr("name").replace(/\d+/, new_id))
+    })
+    $(target).prepend(new_table_row);
+  })
+
+  $('body').on('click', '.delete-resource', function() {
+    var el = $(this);
+    if (confirm(el.data("confirm"))) {
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr("href"),
+        data: {
+          _method: 'delete',
+          authenticity_token: AUTH_TOKEN
+        },
+        dataType: 'script',
+        success: function(response) {
+          el.parents("tr").fadeOut('hide');
+        },
+        error: function(response, textStatus, errorThrown) {
+          show_flash_error(response.responseText);
+        }
+      });
+    }
+    return false;
+  });
+
+  $('body').on('click', 'a.remove_fields', function() {
+    $(this).prev("input[type=hidden]").val("1");
+    $(this).closest(".fields").hide();
+    return false;
+  });
+
+  $('body').on('click', '.select_properties_from_prototype', function(){
     $("#busy_indicator").show();
     var clicked_link = $(this);
     $.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
@@ -232,11 +200,21 @@ $(document).ready(function(){
     return false;
   });
 
+  // Fix sortable helper
+  var fixHelper = function(e, ui) {
+      ui.children().each(function() {
+          $(this).width($(this).width());
+      });
+      return ui;
+  };
 
   $('table.sortable').ready(function(){
+    var td_count = $(this).find('tbody tr:first-child td').length
     $('table.sortable tbody').sortable(
       {
         handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
         update: function(event, ui) {
           $("#progress").show();
           positions = {};
@@ -253,14 +231,23 @@ $(document).ready(function(){
             url: $(ui.item).closest("table.sortable").data("sortable-link"),
             data: positions,
             success: function(data){ $("#progress").hide(); }
-          });
+          });                    
+        },
+        start: function (event, ui) {          
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $("table.sortable tr:even").removeClass("odd even").addClass("even");
+          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
         }
-      });
+
+      }).disableSelection();
   });
 
-});
-
-jQuery(document).ready(function() {
   $('a.dismiss').click(function() {
     $(this).parent().fadeOut();
   });

@@ -16,6 +16,13 @@ module Spree
     preference :mail_bcc, :string, :default => 'spree@example.com'
     preference :intercept_email, :string, :default => nil
 
+    attr_accessible :environment, :preferred_enable_mail_delivery,
+                    :preferred_mails_from, :preferred_mail_bcc,
+                    :preferred_intercept_email, :preferred_mail_domain,
+                    :preferred_mail_host, :preferred_mail_port,
+                    :preferred_secure_connection_type, :preferred_mail_auth_type,
+                    :preferred_smtp_username, :preferred_smtp_password
+
     validates :environment, :presence => true
 
     def self.current

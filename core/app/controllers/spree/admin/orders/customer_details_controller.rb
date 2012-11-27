@@ -10,8 +10,9 @@ module Spree
         end
 
         def edit
-          @order.build_bill_address(:country_id => Spree::Config[:default_country_id]) if @order.bill_address.nil?
-          @order.build_ship_address(:country_id => Spree::Config[:default_country_id]) if @order.ship_address.nil?
+          country_id = Address.default.country.id
+          @order.build_bill_address(:country_id => country_id) if @order.bill_address.nil?
+          @order.build_ship_address(:country_id => country_id) if @order.ship_address.nil?
         end
 
         def update
@@ -20,13 +21,13 @@ module Spree
             if shipping_method
               @order.shipping_method = shipping_method
 
-              if params[:guest_checkout] == 'false' && params[:user_id].present?
+              if params[:user_id].present?
                 @order.user_id = params[:user_id]
                 @order.user true
               end
               @order.save
               @order.create_shipment!
-              flash[:notice] = t('customer_details_updated')
+              flash[:success] = t('customer_details_updated')
               redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
             else
               flash[:error] = t('errors.messages.no_shipping_methods_available')
@@ -40,9 +41,9 @@ module Spree
 
         private
 
-        def load_order
-          @order = Order.find_by_number(params[:order_id], :include => :adjustments)
-        end
+          def load_order
+            @order = Order.find_by_number!(params[:order_id], :include => :adjustments)
+          end
 
       end
     end

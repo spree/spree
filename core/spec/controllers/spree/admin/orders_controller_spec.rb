@@ -1,25 +1,33 @@
 require 'spec_helper'
 
 describe Spree::Admin::OrdersController do
+  stub_authorization!
 
   let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100) }
 
   before do
-    controller.stub :current_user => Factory(:admin_user)
-    Spree::Order.stub :find_by_number => order
+    Spree::Order.stub :find_by_number! => order
     request.env["HTTP_REFERER"] = "http://localhost:3000"
   end
 
   context "#fire" do
     it "should fire the requested event on the payment" do
       order.should_receive(:foo).and_return true
-      put :fire, {:id => "R1234567", :e => "foo"}
+      spree_put :fire, {:id => "R1234567", :e => "foo"}
     end
+
     it "should respond with a flash message if the event cannot be fired" do
       order.stub :foo => false
-      put :fire, {:id => "R1234567", :e => "foo"}
+      spree_put :fire, {:id => "R1234567", :e => "foo"}
       flash[:error].should_not be_nil
     end
   end
 
+  context "pagination" do
+    it "can page through the orders" do
+      spree_get :index, :page => 2, :per_page => 10
+      assigns[:orders].offset_value.should == 10
+      assigns[:orders].limit_value.should == 10
+    end
+  end
 end

@@ -1,27 +1,34 @@
-<table>
-  <tr data-hook="analytics_id">
-    <td><%= label_tag nil, t(:google_analytics_id) %></td>
-    <td><%= text_field :tracker, :analytics_id, {'style' => 'width:200px;'} %></td>
-  </tr>
-  <tr data-hook="environment">
-    <td><%= label_tag nil, t(:environment) %></td>
-    <td>
-      <%= collection_select(:tracker, :environment, Spree::Configuration.configurations.keys, :to_s, :titleize, {}, {:id => 'tracker-env'}) %>
-    </td>
-  </tr>
-  <tr data-hook="active">
-    <td><%= label_tag nil, t(:active) %></td>
-    <td>
-      <label class="sub">
-        <%= radio_button(:tracker, :active, true) %>
-        <%= t(:yes) %>
-      </label> &nbsp;
-      <label class="sub">
-        <%= radio_button(:tracker, :active, false) %>
-        <%= t(:no) %>
-      </label>
-    </td>
-  </tr>
-  <tbody data-hook="additional_tracker_fields">
-  </tbody>
-</table>
+<div data-hook="admin_tracker_form_fields" class="row">
+  <div class="alpha four columns">
+    <div data-hook="analytics_id" class="field">
+      <%= label_tag nil, t(:google_analytics_id) %>
+      <%= text_field :tracker, :analytics_id, :class => 'fullwidth' %>
+    </div>
+  </div>
+  <div class="four columns">
+    <div data-hook="environment" class="field">
+      <%= label_tag nil, t(:environment) %>
+      <%= collection_select(:tracker, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'tracker-env', :class => 'select2 fullwidth'}) %>
+    </div>
+  </div>
+  <div class="omega four columns">
+    <div data-hook="active" class="field">
+      <%= label_tag nil, t(:active) %>
+      <ul>
+        <li>
+          <%= radio_button(:tracker, :active, true) %>
+          <%= t(:yes) %>
+        </li>
+        <li>
+          <%= radio_button(:tracker, :active, false) %>
+          <%= t(:no) %>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="clear"></div>
+
+  <div data-hook="additional_tracker_fields"></div>
+  
+</div>

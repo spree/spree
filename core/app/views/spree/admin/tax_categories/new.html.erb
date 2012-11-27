@@ -1,10 +1,19 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
-<h1><%= t(:new_tax_category) %></h1>
+<% content_for :page_title do %>
+  <%= t(:new_tax_category) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon 'icon-arrow-left', t(:back_to_tax_categories_list), admin_tax_categories_path, :class => 'button' %></li>
+<% end %>
+
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_category } %>
 
 <%= form_for [:admin, @tax_category] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
 <% end %>
