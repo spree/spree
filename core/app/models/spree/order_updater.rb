@@ -74,7 +74,12 @@ module Spree
         when 0
           nil
         when shipments.shipped.count
-          'shipped'
+          if order.inventory_units.where(:shipment_id => nil).exists?
+            # unassigned inventory units
+            'partial'
+          else
+            'shipped'
+          end
         when shipments.ready.count
           'ready'
         when shipments.pending.count
