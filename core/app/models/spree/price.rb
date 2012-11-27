@@ -22,25 +22,15 @@ module Spree
     end
 
     def price=(price)
-      self[:amount] = parse_price(price) if price.present?
+      self[:amount] = parse_price(price)
     end
 
     private
     def check_price
       raise "Price must belong to a variant" if variant.nil?
-      if amount.nil?
-        if variant.is_master? || variant.product.master.nil? || variant.product.master.default_price.nil?
-          self.amount = nil
-        else
-          self.amount = variant.product.master.default_price.amount
-        end
-      end
+
       if currency.nil?
-        if variant.product.master.default_price.nil?
-          self.currency = Spree::Config[:currency]
-        else
-          self.currency = variant.product.master.default_price.currency
-        end
+        self.currency = Spree::Config[:currency]
       end
     end
 
