@@ -386,6 +386,53 @@ describe Spree::Order do
     end
   end
 
+  # Regression tests for #2179
+  context "#merge!" do
+    let(:variant) { Factory(:variant) }
+    let(:order_1) { Spree::Order.create }
+    let(:order_2) { Spree::Order.create }
+
+    it "destroys the other order" do
+      order_1.merge!(order_2)
+      lambda { order_2.reload }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    context "merging together two orders with line items for the same variant" do
+      before do
+        order_1.add_variant(variant)
+        order_2.add_variant(variant)
+      end
+
+      specify do
+        order_1.merge!(order_2)
+        order_1.line_items.count.should == 1
+
+        line_item = order_1.line_items.first
+        line_item.quantity.should == 2
+        line_item.variant_id.should == variant.id
+      end
+    end
+
+    context "merging together two orders with different line items" do
+      let(:variant_2) { Factory(:variant) }
+
+      before do
+        order_1.add_variant(variant)
+        order_2.add_variant(variant_2)
+      end
+
+      specify do
+        order_1.merge!(order_2)
+        line_items = order_1.line_items
+        line_items.count.should == 2
+
+        # No guarantee on ordering of line items, so we do this:
+        line_items.map(&:quantity).should =~ [1,1]
+        line_items.map(&:variant_id).should =~ [variant.id, variant_2.id]
+      end
+    end
+  end
+
   # Regression test for #2191
   context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
     let!(:persisted_order) { create(:order) }

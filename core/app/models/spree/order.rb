@@ -475,8 +475,18 @@ module Spree
 
     def merge!(order)
       order.line_items.each do |line_item|
-        self.add_variant(line_item.variant, line_item.quantity) if line_item.currency == currency
+        next unless line_item.currency == currency
+        current_line_item = self.line_items.find_by_variant_id(line_item.variant_id)
+        if current_line_item
+          current_line_item.quantity += line_item.quantity
+          current_line_item.save
+        else
+          line_item.order_id = self.id
+          line_item.save
+        end
       end
+      # So that the destroy doesn't take out line items which may have been re-assigned
+      order.line_items.reload
       order.destroy
     end
 
