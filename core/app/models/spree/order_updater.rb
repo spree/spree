@@ -69,23 +69,18 @@ module Spree
       if order.backordered?
         order.shipment_state = 'backorder'
       else
-        order.shipment_state =
-        case shipments.count
-        when 0
-          nil
-        when shipments.shipped.count
-          if order.inventory_units.where(:shipment_id => nil).exists?
-            # unassigned inventory units
-            'partial'
-          else
-            'shipped'
-          end
-        when shipments.ready.count
-          'ready'
-        when shipments.pending.count
-          'pending'
+        # get all the shipment states for this order
+        shipment_states = shipments.pluck(:state).uniq
+        if shipment_states.size > 1
+          # multiple shiment states means it's most likely partially shipped
+          order.shipment_state = 'partial'
         else
-          'partial'
+          # will return nil if no shipments are found
+          order.shipment_state = shipment_states.first
+          if order.shipment_state && order.inventory_units.where(:shipment_id => nil).exists?
+            # shipments exist but there are unassigned inventory units
+            order.shipment_state = 'partial'
+          end
         end
       end
 
