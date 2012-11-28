@@ -1,7 +1,10 @@
+require 'spree/api/responders'
 module Spree
   module Api
     class BaseController < ActionController::Metal
       include Spree::Api::ControllerSetup
+
+      self.responder = Spree::Api::Responders::AppResponder
 
       attr_accessor :current_api_user
 

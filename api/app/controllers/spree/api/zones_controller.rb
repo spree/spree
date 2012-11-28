@@ -1,19 +1,22 @@
 module Spree
   module Api
     class ZonesController < Spree::Api::BaseController
+      respond_to :json
+
       def index
         @zones = Zone.order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        respond_with(@zones)
       end
 
       def show
-        zone
+        respond_with(zone)
       end
 
       def create
         authorize! :create, Zone
         @zone = Zone.new(map_nested_attributes_keys(Spree::Zone, params[:zone]))
         if @zone.save
-          render :show, :status => 201
+          respond_with(@zone, :status => 201, :default_template => :show)
         else
           invalid_resource!(@zone)
         end
@@ -22,7 +25,7 @@ module Spree
       def update
         authorize! :update, Zone
         if zone.update_attributes(map_nested_attributes_keys(Spree::Zone, params[:zone]))
-          render :show, :status => 200
+          respond_with(zone, :status => 200)
         else
           invalid_resource!(@zone)
         end
