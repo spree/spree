@@ -1,6 +1,8 @@
 module Spree
   module Api
     class TaxonsController < Spree::Api::BaseController
+      respond_to :json
+
       def index
         if taxonomy
           @taxons = taxonomy.root.children
@@ -15,6 +17,7 @@ module Spree
 
       def show
         @taxon = taxon
+        respond_with(@taxon)
       end
 
       def jstree
@@ -25,7 +28,7 @@ module Spree
         authorize! :create, Taxon
         @taxon = Taxon.new(params[:taxon])
         if @taxon.save
-          render :show, :status => 201
+          respond_with(@taxon, :status => 201, :default_template => :show)
         else
           invalid_resource!(@taxon)
         end
@@ -34,7 +37,7 @@ module Spree
       def update
         authorize! :update, Taxon
         if taxon.update_attributes(params[:taxon])
-          render :show, :status => 200
+          respond_with(taxon, :status => 200, :default_template => :show)
         else
           invalid_resource!(taxon)
         end
@@ -43,7 +46,7 @@ module Spree
       def destroy
         authorize! :delete, Taxon
         taxon.destroy
-        render :text => nil, :status => 204
+        respond_with(taxon, :status => 204)
       end
 
       private

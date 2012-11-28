@@ -1,8 +1,10 @@
+require 'spree/api/responders'
 module Spree
   module Api
     class BaseController < ApplicationController
       include Spree::Core::ControllerHelpers::Auth
 
+      self.responder = Spree::Api::Responders::AppResponder
       respond_to :json
 
       attr_accessor :current_api_user

@@ -1,13 +1,17 @@
 module Spree
   module Api
     class TaxonomiesController < Spree::Api::BaseController
+      respond_to :json
+
       def index
         @taxonomies = Taxonomy.order('name').includes(:root => :children).ransack(params[:q]).result
           .page(params[:page]).per(params[:per_page])
+        respond_with(@taxonomies)
       end
 
       def show
         @taxonomy = Taxonomy.find(params[:id])
+        respond_with(@taxonomy)
       end
 
       # Because JSTree wants parameters in a *slightly* different format
@@ -19,7 +23,7 @@ module Spree
         authorize! :create, Taxonomy
         @taxonomy = Taxonomy.new(params[:taxonomy])
         if @taxonomy.save
-          render :show, :status => 201
+          respond_with(@taxonomy, :status => 201, :default_template => :show)
         else
           invalid_resource!(@taxonomy)
         end
@@ -28,7 +32,7 @@ module Spree
       def update
         authorize! :update, Taxonomy
         if taxonomy.update_attributes(params[:taxonomy])
-          render :show, :status => 200
+          respond_with(taxonomy, :status => 200, :default_template => :show)
         else
           invalid_resource!(taxonomy)
         end
@@ -37,7 +41,7 @@ module Spree
       def destroy
         authorize! :delete, Taxonomy
         taxonomy.destroy
-        render :text => nil, :status => 204
+        respond_with(taxonomy, :status => 204)
       end
 
       private
