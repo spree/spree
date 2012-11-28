@@ -1,6 +1,8 @@
 module Spree
   module Api
     class LineItemsController < Spree::Api::BaseController
+      respond_to :json
+
       def create
         authorize! :read, order
         @line_item = order.line_items.build(params[:line_item], :as => :api)

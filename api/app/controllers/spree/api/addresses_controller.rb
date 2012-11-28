@@ -1,6 +1,8 @@
 module Spree
   module Api
     class AddressesController < Spree::Api::BaseController
+      respond_to :json
+
       def show
         @address = Address.find(params[:id])
         authorize! :read, @address

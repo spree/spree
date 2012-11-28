@@ -1,6 +1,8 @@
 module Spree
   module Api
     class ProductsController < Spree::Api::BaseController
+      respond_to :json
+
       def index
         @products = product_scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         respond_with(@products)

@@ -1,6 +1,8 @@
 module Spree
   module Api
     class ProductPropertiesController < Spree::Api::BaseController
+      respond_to :json
+
       before_filter :find_product
       before_filter :product_property, :only => [:show, :update, :destroy]
 
