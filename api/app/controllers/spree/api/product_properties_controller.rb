@@ -1,15 +1,19 @@
 module Spree
   module Api
     class ProductPropertiesController < Spree::Api::BaseController
+      respond_to :json
+
       before_filter :find_product
       before_filter :product_property, :only => [:show, :update, :destroy]
 
       def index
         @product_properties = @product.product_properties.ransack(params[:q]).result
           .page(params[:page]).per(params[:per_page])
+        respond_with(@product_properties)
       end
 
       def show
+        respond_with(@product_property)
       end
 
       def new
@@ -19,7 +23,7 @@ module Spree
         authorize! :create, ProductProperty
         @product_property = @product.product_properties.new(params[:product_property])
         if @product_property.save
-          render :show, :status => 201
+          respond_with(@product_property, :status => 201, :default_template => :show)
         else
           invalid_resource!(@product_property)
         end
@@ -28,7 +32,7 @@ module Spree
       def update
         authorize! :update, ProductProperty
         if @product_property  && @product_property.update_attributes(params[:product_property])
-          render :show, :status => 200
+          respond_with(@product_property, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product_property)
         end
@@ -38,7 +42,7 @@ module Spree
         authorize! :delete, ProductProperty
         if(@product_property)
           @product_property.destroy
-          render :text => nil, :status => 204
+          respond_with(@product_property, :status => 204)
         else
           invalid_resource!(@product_property)
         end
