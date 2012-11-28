@@ -6,29 +6,31 @@ function cleanTaxons(data) {
 }
 
 $(document).ready(function() {
-  $("#product_taxon_ids").select2({
-    placeholder: "Add a taxon",
-    multiple: true,
-    initSelection: function(element, callback) {
-      return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
-        return callback(self.cleanTaxons(data));
-      })
-    },
-    ajax: {
-      url: Spree.routes.taxon_search,
-      datatype: 'json',
-      data: function(term, page) {
-        return { q: term }
+  if ($("#product_taxon_ids").length > 0) {
+    $("#product_taxon_ids").select2({
+      placeholder: "Add a taxon",
+      multiple: true,
+      initSelection: function(element, callback) {
+        return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
+          return callback(self.cleanTaxons(data));
+        })
       },
-      results: function (data, page) {
-        return { results: self.cleanTaxons(data) }
+      ajax: {
+        url: Spree.routes.taxon_search,
+        datatype: 'json',
+        data: function(term, page) {
+          return { q: term }
+        },
+        results: function (data, page) {
+          return { results: self.cleanTaxons(data) }
+        }
+      },
+      formatResult: function(taxon) {
+        return taxon.pretty_name
+      },
+      formatSelection: function(taxon) {
+        return taxon.pretty_name
       }
-    },
-    formatResult: function(taxon) {
-      return taxon.pretty_name
-    },
-    formatSelection: function(taxon) {
-      return taxon.pretty_name
-    }
-  })
+    })
+  }
 })
