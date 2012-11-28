@@ -19,6 +19,8 @@ This guide is designed for beginners who want to get started with a Spree applic
 * The "Ruby on Rails":http://rubyonrails.org/download gems
 * A working installation of "SQLite":http://www.sqlite.org (preferred), "MySQL":http://www.mysql.com, or "PostgreSQL":http://www.postgresql.org
 
+NOTE: The SQLite database system is preferred for development, since it is relatively easy to set up compared to MySQL or PostgreSQL. For a production system, we would recommend MySQL or PostgreSQL.
+
 It is highly recommended that you *familiarize yourself with Ruby on Rails before diving into Spree*. You will find it much easier to follow what’s going on with a Spree application if you understand basic Ruby syntax.
 
 There are many excellent online resources for learning Ruby on Rails, including:
