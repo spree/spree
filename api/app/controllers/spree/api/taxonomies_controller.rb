@@ -1,6 +1,8 @@
 module Spree
   module Api
     class TaxonomiesController < Spree::Api::BaseController
+      respond_to :json
+
       def index
         @taxonomies = Taxonomy.order('name').includes(:root => :children).
                       ransack(params[:q]).result.

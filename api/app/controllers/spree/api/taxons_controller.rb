@@ -1,6 +1,8 @@
 module Spree
   module Api
     class TaxonsController < Spree::Api::BaseController
+      respond_to :json
+
       def index
         if taxonomy
           @taxons = taxonomy.root.children
