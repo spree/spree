@@ -126,7 +126,7 @@ module Spree
           json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
 
           payment.reload
-          payment.state.should == "pending"
+          payment.state.should == "failed"
         end
 
         it "can purchase" do
