@@ -1,27 +1,32 @@
 module Spree
   module Api
     class PaymentsController < Spree::Api::BaseController
+      respond_to :json
+
       before_filter :find_order
       before_filter :find_payment, :only => [:show, :authorize, :purchase, :capture, :void, :credit]
 
       def index
         @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        respond_with(@payments)
       end
 
       def new
         @payment_methods = Spree::PaymentMethod.where(:environment => Rails.env)
+        respond_with(@payment_method)
       end
 
       def create
         @payment = @order.payments.build(params[:payment])
         if @payment.save
-          render :show, :status => 201
+          respond_with(@payment, :status => 201, :default_template => :show)
         else
           invalid_resource!(@payment)
         end
       end
 
       def show
+        respond_with(@payment)
       end
 
       def authorize
@@ -64,7 +69,7 @@ module Spree
 
         begin
           @payment.send("#{action}!", *args)
-          render :show
+          respond_with(@payment, :default_template => :show)
         rescue Spree::Core::GatewayError => e
           @error = e.message
           render "spree/api/errors/gateway_error", :status => 422
