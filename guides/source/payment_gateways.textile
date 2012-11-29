@@ -2,7 +2,6 @@ h2. Payment Gateways
 
 This guide covers how to manage and configure payment gateways within Spree. After reading it, you should be familiar with:
 
-* The Spree Commerce supported default gateways
 * The community supported gateways available in the Spree Gateway gem
 * The functionality provided by payment gateways
 * How to configure an existing gateway
@@ -16,14 +15,9 @@ h3. Overview
 Payment gateways are web-based services which support secure processing of
 payment information.
 
-Spree comes with two default payment gateways for stores both inside the United States
-and Internationally. We have partnered with USA ePay and Skrill (Moneybookers) to provide
-low transaction rates for all Spree stores. These solutions are supported by Spree Commerce
-and 100% compatible with Spree.
+The Spree community maintains support for a wide variety of payment providers both in the USA and internationally. Many of the popular payment gateways are provided by the "Spree Gateway Gem":https://github.com/spree/spree_gateway. 
 
-Additionally, many of the popular payment gateways and provided by the "Spree Gateway Gem":https://github.com/spree/spree_gateway. These are community supported.
-
-The default and community payment gateways are easy to set up in Spree and ready
+The community payment gateways are easy to set up in Spree and ready
 for immediate use. They just need to be configured via the administrator interface.
 
 If your gateway is not available, you can easily add it with Active Merchant. We encourage you
@@ -35,24 +29,14 @@ h3. Installation
 
 h4. Default Gateways
 
-When you install Spree from the command line, you are prompted to install the default gateways. This will add the USA Epay and Skrill (Moneybookers) gems to your Gemfile.
+When you install Spree from the command line, you are prompted to install gateways. This will add the Spree Gateway gem to your Gemfile.
 
 <shell>
   $ rails new my_store
   $ spree install my_store
-  Would you like to install the default gateways? (yes/no) [yes]
+  Would you like to install the default gateways? (recommended) (yes/no) [yes]
 </shell>
 
-h4. Additional Gateways
-
-If you are using one of the payment gateways available in the "Spree Gateway Gem":https://github.com/spree/spree_gateway. You can add it to your Gemfile and install it with bundler.
-
-<ruby>
-gem 'spree'
-
-# add to your Gemfile after the Spree gem
-gem 'spree_gateway'
-</ruby>
 
 <shell>
 $ bundle install
@@ -105,62 +89,6 @@ Most gateway providers require additional information to be provided during conf
 INFO: After you change the gateway (or assign one for the first time) you will need to save the configuration and click the link to edit it.  Only after a successful save will you see the configuration settings specific to the new gateway.
 
 Gateway configurations can also be temporarily deactivated.  This would allow you to configure a production gateway with all of the live settings and then disable it until you're ready to launch.  Only one gateway can be active per environment.
-
-h3. Configuring Default Gateways
-
-h4. USA ePay Configuration
-
-"Add a payment gateway":#configuring-an-installed-gateway and select **Spree::Gateway::UsaEpay** as the provider.
-
-You will need a Source Key and Pin from USA ePay. You can create these in your Mechant Console under the settings menu.  Spree requires all Source Keys to have the optional pin.
-
-You can find "test credit card numbers":http://wiki.usaepay.com/developer/testcards in the developer documentation.
-
-!images/payments/usa_epay.png(USA EPay)!
-
-If you are using the "USA ePay Sandbox":https://sandbox.usaepay.com then check the "Test Mode" checkbox.
-
-h4. Skrill Configuration
-
-"Add a payment gateway":#configuring-an-installed-gateway and select **Spree::BillingIntegration::Skrill::QuickCheckout** as the provider.
-
-Skrill will provide you with a Merchant Id. The defaults will let users enter a credit card or login in with their Skrill account.
-
-Some typical Payment Options:
-
-* *ACC* - All Credit Cards
-* *OBT,GIR,DID,SFT,ENT,EBT,SO2,IDL,NPY,PLI,PWY,EPY,MZM* - local payment options
-* *WLT* - Skrill Wallet
-
-You can find additional options for Language, Currency and Payments in the Skrill documentation.
-
-!images/payments/skrill.png(Skrill)!
-
-h5. Skrill Test Credit Card Numbers
-
-* VISA:
-** 4000001234567890 (No BIN country)
-** 4255251234567890 (Bulgaria)
-** 4779271234567890 (Germany)
-** 4042811234567890 (Malta)
-** 4483951234567890 (Sweden)
-** 4544356892455550 (United Kingdom)
-** 4016671298391830 (USA)
-* MASTERCARD:
-** 5463332183823220 (Belgium)
-** 5474381234567890 (Bulgaria)
-** 5232000000123456, 5584011231231330 (Germany)
-** 5422011234567890 (Malta)
-** 5438311234567890 (Sweden)
-** 5485081234567890 (United Kingdom)
-* AMEX: 371234500012340, 377616655655440
-* DISCOVER: 6011123456789000
-* DINERS: 36123456789000
-* LASER: 5612345678900001
-* MAESTRO: 51234567912345670
-* SOLO: 631234567891234560, 6767676767676767671
-* JCB: 3555123456789120
-* CARTEBLEUE: 5817840047112340
 
 h4. Other Gateways
 
@@ -245,13 +173,13 @@ h4. Other Architecture Implications
 
 This approach to implementing and configuring gateways is extremely flexible.  It makes it trivial to implement a new gateway that is already supported by Active Merchant.  There are other useful benefits to this approach that a developer may be interested in knowing.
 
-h5. Support of Non Active Merchant Gateways
+h5. Support of Non ActiveMerchant Gateways
 
 This architecture allows Spree to support gateways that are not officially supported by Active Merchant.  Many times a new gateway is donated by someone in the community but its languishing in the queue waiting for someone to test and accept the patch.  You have the option of taking that code (or writing your own from scratch) and implementing it within Spree.  Instead of delegating to an Active Merchant class, you can simply implement that functionality yourself.  You could also include the new gateway code from an Active Merchant fork inside your implementation and delegate the standard authorize, capture, etc operations to it.
 
-h5. Ability to "Patch" Active Merchant Gateways
+h5. Ability to "Patch" ActiveMerchant Gateways
 
-We've noticed that sometimes it takes a while for a crucial Active Merchant patch to be applied.  That's certainly understandable, the "Shopify":http://shopify.com guys have a business to run and its probably not a high priority for them to make sure that the latest obscure gateway patch is applied in a timely fashion.  Fortunately, the Spree approach to wrapping these gateways provides you with a convenient option.
+We've noticed that sometimes it takes a while for a crucial Active Merchant patch to be applied.  That's certainly understandable, the "Shopify":http://shopify.com team has a business to run and its probably not a high priority for them to make sure that the latest obscure gateway patch is applied in a timely fashion.  Fortunately, the Spree approach to wrapping these gateways provides you with a convenient option.
 
 Lets say there is a bug with the +authorize+ method.  You could simply provide an implementation of the gateway that has the patched version of the +authorize+ method and then delegates to the Active Merchant class for everything else (since that works just fine.)
 
