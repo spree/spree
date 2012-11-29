@@ -15,8 +15,8 @@
 </p>
 <p class="field" data-hook="card_expiration">
   <%= label_tag nil, t(:expiration) %><br />
-  <%= select_month(Date.today, :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true, :class => 'required') %>
-  <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required') %>
+  <%= select_month(Date.today, { :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true }, :class => 'required') %>
+  <%= select_year(Date.today, { :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15 }, :class => 'required') %>
   <span class="required">*</span>
 </p>
 <p class="field" data-hook="card_code">
