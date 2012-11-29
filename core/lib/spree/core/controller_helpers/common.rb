@@ -66,6 +66,11 @@ module Spree
             type.all  { render :status => :not_found, :nothing => true }
           end
         end
+
+        def ip_address
+          request.env['HTTP_X_REAL_IP'] || request.env['REMOTE_ADDR']
+        end
+
         private
 
         def set_user_language
