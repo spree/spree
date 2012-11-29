@@ -1,15 +1,19 @@
 module Spree
   module Api
     class OrdersController < Spree::Api::BaseController
+      respond_to :json
+
       before_filter :authorize_read!, :except => [:index, :search, :create]
 
       def index
         # should probably look at turning this into a CanCan step
         raise CanCan::AccessDenied unless current_api_user.has_spree_role?("admin")
         @orders = Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        respond_with(@orders)
       end
 
       def show
+        respond_with(@order)
       end
 
       def create
@@ -21,7 +25,7 @@ module Spree
         authorize! :update, Order
         if order.update_attributes(nested_params)
           order.update!
-          render :show
+          respond_with(order, :default_template => :show)
         else
           invalid_resource!(order)
         end
