@@ -13,6 +13,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'spree/core/testing_support/factories'
 require 'spree/core/testing_support/controller_requests'
+require 'spree/core/testing_support/authorization_helpers'
 
 require 'active_record/fixtures'
 fixtures_dir = File.expand_path('../../../core/db/default', __FILE__)
