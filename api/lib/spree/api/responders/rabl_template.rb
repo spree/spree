@@ -3,7 +3,7 @@ module Spree
     module Responders
       module RablTemplate
         def to_format
-          if template = controller.params[:template] || options[:default_template]
+          if template
             render template.to_sym, :status => options[:status] || 200
           else
             super
@@ -11,6 +11,10 @@ module Spree
 
         rescue ActionView::MissingTemplate => e
           api_behavior(e)
+        end
+
+        def template
+          request.headers['X-Spree-Template'] || controller.params[:template] || options[:default_template]
         end
       end
     end

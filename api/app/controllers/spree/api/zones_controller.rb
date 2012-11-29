@@ -25,16 +25,16 @@ module Spree
       def update
         authorize! :update, Zone
         if zone.update_attributes(map_nested_attributes_keys(Spree::Zone, params[:zone]))
-          respond_with(zone, :status => 200)
+          respond_with(zone, :status => 200, :default_template => :show)
         else
-          invalid_resource!(@zone)
+          invalid_resource!(zone)
         end
       end
 
       def destroy
         authorize! :delete, Zone
         zone.destroy
-        render :text => nil, :status => 204
+        respond_with(zone, :status => 204)
       end
 
       private
