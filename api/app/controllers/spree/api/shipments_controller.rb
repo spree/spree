@@ -1,6 +1,8 @@
 module Spree
   module Api
     class ShipmentsController < Spree::Api::BaseController
+      respond_to :json
+
       before_filter :find_order
       before_filter :find_and_update_shipment, :only => [:ship, :ready]
 
@@ -13,7 +15,7 @@ module Spree
             render "spree/api/shipments/cannot_ready_shipment", :status => 422 and return
           end
         end
-        render :show
+        respond_with(@shipment, :default_template => :show)
       end
 
       def ship
@@ -21,7 +23,7 @@ module Spree
         unless @shipment.shipped?
           @shipment.ship!
         end
-        render :show
+        respond_with(@shipment, :default_template => :show)
       end
 
       private
