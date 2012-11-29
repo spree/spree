@@ -38,6 +38,28 @@ module Spree
       json_response['zone_members'].size.should eq @zone.zone_members.count
     end
 
+    context "specifying a rabl template to use" do
+      before do
+        Spree::Api::ZonesController.class_eval do
+          def custom_show
+            respond_with(zone)
+          end
+        end
+      end
+
+      it "uses the specified template" do
+        request.env['X-Spree-Template'] = 'show'
+        api_get :custom_show, :id => @zone.id
+        response.should render_template('spree/api/zones/show')
+      end
+
+      it "falls back to the default template if the specified template does not exist" do
+        request.env['X-Spree-Template'] = 'invoice'
+        api_get :show, :id => @zone.id
+        response.should render_template('spree/api/zones/show')
+      end
+    end
+
     context "as an admin" do
       sign_in_as_admin!
 
