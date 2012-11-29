@@ -55,8 +55,8 @@ describe "Order Details" do
       end
 
       I18n.backend.store_translations I18n.locale,
-        :shipment_state => { :missing => 'some text' },
-        :payment_states => { :missing => 'other text' }
+        :shipment_states => { :missing => 'some text' },
+        :payment_states  => { :missing => 'other text' }
 
       visit spree.edit_admin_order_path(order)
 
