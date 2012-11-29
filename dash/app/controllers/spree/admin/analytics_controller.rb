@@ -1,8 +1,8 @@
 module Spree
   class Admin::AnalyticsController < Admin::BaseController
-    before_filter :redirect_if_registered
 
     def sign_up
+      redirect_if_registered and return
       @store = {
         :first_name => '',
         :last_name => '',
@@ -15,6 +15,7 @@ module Spree
     end
 
     def register
+      redirect_if_registered and return
       @store = params[:store]
       @store[:url] = format_url(@store[:url])
 
@@ -42,12 +43,25 @@ module Spree
       end
     end
 
+    def edit
+
+    end
+
+    def update
+      Spree::Dash::Config.app_id = params[:app_id]
+      Spree::Dash::Config.app_token = params[:app_token]
+      Spree::Dash::Config.site_id = params[:site_id]
+      Spree::Dash::Config.token = params[:token]
+      flash[:success] = t(:jirafe_settings_updated, :scope => "spree.dash")
+      redirect_to admin_analytics_path
+    end
+
     private
 
     def redirect_if_registered
       if Spree::Dash::Config.configured?
         flash[:success] = t(:already_signed_up_for_analytics)
-        redirect_to admin_path
+        redirect_to admin_path and return true
       end
     end
 

@@ -9,3 +9,14 @@ en:
   analytics_desc_list_2: Requires only a free Spree account to activate
   analytics_desc_list_3: Absolutely no code to install
   analytics_desc_list_4: It's completely free!
+
+  spree:
+    dash:
+      jirafe:
+        header: Jirafe Analytics Settings
+        app_id: App ID
+        app_token: App Token
+        site_id: Site ID
+        token: Token
+        explanation: The fields below may already be populated if you chose to register with Jirafe from the admin dashboard.
+      jirafe_settings_updated: Jirafe Settings have been updated.

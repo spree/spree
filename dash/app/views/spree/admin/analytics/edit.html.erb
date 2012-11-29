@@ -1,0 +1,26 @@
+<h2><%= t(:header, :scope => "spree.dash.jirafe") %></h2>
+
+<p><%= t(:explanation, :scope => "spree.dash.jirafe") %></p>
+
+<%= form_tag admin_analytics_path, :method => :put do %>
+  <div class="field">
+    <%= label_tag 'app_id', t(:app_id, :scope => "spree.dash.jirafe") %><br>
+    <%= text_field_tag 'app_id', Spree::Dash::Config.app_id %> 
+  </div>
+  <div class="field">
+    <%= label_tag 'app_token', t(:app_token, :scope => "spree.dash.jirafe") %><br>
+    <%= text_field_tag 'app_token', Spree::Dash::Config.app_token, :size => 40 %> 
+  </div>
+  <div class="field">
+    <%= label_tag 'site_id', t(:site_id, :scope => "spree.dash.jirafe") %><br>
+    <%= text_field_tag 'site_id', Spree::Dash::Config.site_id %> 
+  </div>
+  <div class="field">
+    <%= label_tag 'token', t(:token, :scope => "spree.dash.jirafe") %><br>
+    <%= text_field_tag 'token', Spree::Dash::Config.token, :size => 40 %> 
+  </div>
+  <div class="form-buttons" data-hook="buttons">
+    <%= submit_tag "Update" %>
+  </div>
+<% end %>
+
