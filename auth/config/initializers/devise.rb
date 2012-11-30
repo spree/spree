@@ -140,4 +140,7 @@ Devise.setup do |config|
   config.reset_password_within = 6.hours
 
   config.sign_out_via = :get
+
+  # Downcasing email keys to work with the unique database key
+  config.case_insensitive_keys = [:email]
 end
