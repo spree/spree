@@ -9,9 +9,7 @@ describe "Payments" do
       config.allow_backorders = true
     end
 
-    Spree::Zone.delete_all
-    shipping_method = create(:shipping_method, :zone => create(:zone, :name => 'North America'))
-    @order = create(:completed_order_with_totals, :number => "R100", :state => "complete",  :shipping_method => shipping_method)
+    @order = create(:completed_order_with_totals, :number => "R100", :state => "complete")
     product = create(:product, :name => 'spree t-shirt', :on_hand => 5)
     product.master.count_on_hand = 5
     product.master.save
