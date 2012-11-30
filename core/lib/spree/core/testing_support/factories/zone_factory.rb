@@ -11,7 +11,7 @@ FactoryGirl.define do
   end
 
   factory :zone, :class => Spree::Zone do
-    name { Faker::Lorem.words }
+    name { Faker::Lorem.sentence }
     description { Faker::Lorem.sentence }
   end
 end
