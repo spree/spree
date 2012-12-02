@@ -48,7 +48,7 @@ describe "Order Details" do
       end
 
       I18n.backend.store_translations I18n.locale,
-        :shipment_state => { :missing => 'some text' },
+        :shipment_states => { :missing => 'some text' },
         :payment_states => { :missing => 'other text' },
         :number => { :currency => { :format => {
           :format => "%n&mdash;%u",
