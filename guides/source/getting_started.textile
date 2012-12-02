@@ -224,7 +224,13 @@ To stop the web server, hit Ctrl-C in the terminal window where it's running. In
 
 h4. Logging into the Backend
 
-The next thing you'll probably want to do is to log into the admin interface. User your browser window to navigate to +http://localhost:3000/admin+. You can login with the username and password you entered during the database setup step. If you just accepted the defaults, the username is +spree@example.com+ and the password is +spree123+.
+The next thing you'll probably want to do is to log into the admin interface. User your browser window to navigate to +http://localhost:3000/admin+. You can login with the username and password you entered during the database setup step.
+
+If you just accepted the defaults, the username is +spree@example.com+ and the password is +spree123+. Otherwise, you can use a simple rake task, to create your own admin user:
+
+<shell>
+$ rake spree_auth:admin:create
+</shell>
 
 Upon successful authentication you should see the admin screen:
 
