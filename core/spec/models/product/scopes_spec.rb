@@ -370,12 +370,13 @@ describe "product scopes" do
     products.should_not include(other_product)
   end
 
-  context "on_hand" do
+  context ".on_hand" do
     # Regression test for #2111
     context "A product with a deleted variant" do
       before do
-        variant = product.variants.create({:count_on_hand => 300}, :without_protection => true)
-        variant.update_column(:deleted_at, Time.now)
+        product = Factory(:product)
+        variant = Factory(:variant, :product => product, :on_hand => 100, :deleted_at => Time.now)
+        product.save!
       end
 
       it "does not include the deleted variant in on_hand summary" do
