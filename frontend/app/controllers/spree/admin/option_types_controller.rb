@@ -3,17 +3,6 @@ module Spree
     class OptionTypesController < ResourceController
       before_filter :setup_new_option_value, :only => [:edit]
 
-      def update_positions
-        params[:positions].each do |id, index|
-          OptionType.where(:id => id).update_all(:position => index)
-        end
-
-        respond_to do |format|
-          format.html { redirect_to admin_product_variants_url(params[:product_id]) }
-          format.js  { render :text => 'Ok' }
-        end
-      end
-
       def update_values_positions
         params[:positions].each do |id, index|
           OptionValue.where(:id => id).update_all(:position => index)

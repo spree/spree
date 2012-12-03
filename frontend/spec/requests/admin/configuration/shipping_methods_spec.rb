@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'active_record/fixtures'
 
 describe "Shipping Methods" do
   stub_authorization!
@@ -17,15 +18,13 @@ describe "Shipping Methods" do
     click_link "Configuration"
   end
 
-  let!(:address) { create(:address, :state => Spree::State.first) }
 
   context "show" do
     it "should display exisiting shipping methods" do
-      2.times { create(:shipping_method) }
       click_link "Shipping Methods"
 
       within_row(1) do
-        column_text(1).should == "UPS Ground"
+        column_text(1).should == shipping_method.name 
         column_text(2).should == zone.name
         column_text(3).should == "Flat Rate (per order)"
         column_text(4).should == "Both"
@@ -69,8 +68,8 @@ describe "Shipping Methods" do
       context "when match rules are satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select zone.name, :from => "shipping_method_zone_id"
-          select "Default", :from => "shipping_method_shipping_category_id"
+          select shipping_method.zone.name, :from => "shipping_method_zone_id"
+          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_none"
           click_button "Create"
 
@@ -80,7 +79,7 @@ describe "Shipping Methods" do
           click_button "Checkout"
 
           str_addr = "bill_address"
-          select "United States", :from => "order_#{str_addr}_attributes_country_id"
+          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
           ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
             fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
           end
@@ -96,8 +95,8 @@ describe "Shipping Methods" do
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select zone.name, :from => "shipping_method_zone_id"
-          select "Default", :from => "shipping_method_shipping_category_id"
+          select shipping_method.zone.name, :from => "shipping_method_zone_id"
+          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_none"
           click_button "Create"
 
@@ -107,7 +106,7 @@ describe "Shipping Methods" do
           click_button "Checkout"
 
           str_addr = "bill_address"
-          select "United States", :from => "order_#{str_addr}_attributes_country_id"
+          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
           ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
             fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
           end
@@ -125,8 +124,8 @@ describe "Shipping Methods" do
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select zone.name, :from => "shipping_method_zone_id"
-          select "Default", :from => "shipping_method_shipping_category_id"
+          select shipping_method.zone.name, :from => "shipping_method_zone_id"
+          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_all"
           click_button "Create"
 
@@ -136,7 +135,7 @@ describe "Shipping Methods" do
           click_button "Checkout"
 
           str_addr = "bill_address"
-          select "United States", :from => "order_#{str_addr}_attributes_country_id"
+          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
           ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
             fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
           end
@@ -150,8 +149,8 @@ describe "Shipping Methods" do
       context "when match rules aren't satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select zone.name, :from => "shipping_method_zone_id"
-          select "Default", :from => "shipping_method_shipping_category_id"
+          select shipping_method.zone.name, :from => "shipping_method_zone_id"
+          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_all"
           click_button "Create"
 
@@ -161,7 +160,7 @@ describe "Shipping Methods" do
           click_button "Checkout"
 
           str_addr = "bill_address"
-          select "United States", :from => "order_#{str_addr}_attributes_country_id"
+          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
           ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
             fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
           end
@@ -184,7 +183,7 @@ describe "Shipping Methods" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
           select zone.name, :from => "shipping_method_zone_id"
-          select "Default", :from => "shipping_method_shipping_category_id"
+          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_one"
           click_button "Create"
 
@@ -197,7 +196,7 @@ describe "Shipping Methods" do
           click_button "Checkout"
 
           str_addr = "bill_address"
-          select "United States", :from => "order_#{str_addr}_attributes_country_id"
+          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
           ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
             fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
           end
@@ -212,7 +211,7 @@ describe "Shipping Methods" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
           select zone.name, :from => "shipping_method_zone_id"
-          select "Default", :from => "shipping_method_shipping_category_id"
+          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
           check "shipping_method_match_one"
           click_button "Create"
 
@@ -225,7 +224,7 @@ describe "Shipping Methods" do
           click_button "Checkout"
 
           str_addr = "bill_address"
-          select "United States", :from => "order_#{str_addr}_attributes_country_id"
+          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
           ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
             fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
           end

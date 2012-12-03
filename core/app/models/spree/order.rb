@@ -15,9 +15,16 @@ module Spree
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
-      go_to_state :payment, :if => lambda { |order| order.payment_required? }
+      go_to_state :payment, :if => lambda { |order|
+        # Fix for #2191
+        if order.shipping_method
+          order.create_shipment!
+          order.update_totals
+        end
+        order.payment_required?
+      }
       go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
-      go_to_state :complete
+      go_to_state :complete, :if => lambda { |order| (order.payment_required? && order.paid?) || !order.payment_required? }
       remove_transition :from => :delivery, :to => :confirm
     end
 
@@ -25,7 +32,8 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions, :coupon_code
+                    :shipping_method_id, :email, :use_billing, :special_instructions, :coupon_code,
+                    :currency
 
     attr_reader :coupon_code
 
@@ -58,6 +66,7 @@ module Spree
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
+    before_validation :set_currency
     before_validation :generate_order_number, :on => :create
     before_validation :clone_billing_address, :if => :use_billing?
     attr_accessor :use_billing
@@ -65,7 +74,8 @@ module Spree
     before_create :link_by_email
     after_create :create_tax_charge!
 
-    validates :email, :presence => true, :email => true, :if => :require_email
+    validates :email, :presence => true, :if => :require_email
+    validates :email, :email => true, :if => :require_email, :allow_blank => true
     validate :has_available_shipment
     validate :has_available_payment
 
@@ -108,8 +118,24 @@ module Spree
       line_items.sum(&:amount)
     end
 
+    def currency
+      self[:currency] || Spree::Config[:currency]
+    end
+
+    def display_outstanding_balance
+      Spree::Money.new(outstanding_balance, { :currency => currency })
+    end
+
+    def display_item_total
+      Spree::Money.new(item_total, { :currency => currency })
+    end
+
+    def display_adjustment_total
+      Spree::Money.new(adjustment_total, { :currency => currency })
+    end
+
     def display_total
-      Spree::Money.new(total)
+      Spree::Money.new(total, { :currency => currency })
     end
 
     def to_param
@@ -129,7 +155,7 @@ module Spree
 
     # Is this a free order in which case the payment step should be skipped
     def payment_required?
-      Spree::OrderUpdater.new(self).update_totals
+      update_totals
       total.to_f > 0.0
     end
 
@@ -189,8 +215,16 @@ module Spree
       totals
     end
 
+    def updater
+      OrderUpdater.new(self)
+    end
+
     def update!
-      OrderUpdater.new(self).update
+      updater.update
+    end
+
+    def update_totals
+      updater.update_totals
     end
 
     def clone_billing_address
@@ -217,15 +251,21 @@ module Spree
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
     
-    def add_variant(variant, quantity = 1)
+    def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
         current_item.quantity += quantity
+        current_item.currency = currency unless currency.nil?
         current_item.save
       else
         current_item = LineItem.new(:quantity => quantity)
         current_item.variant = variant
-        current_item.price   = variant.price
+        if currency
+          current_item.currency = currency unless currency.nil?
+          current_item.price    = variant.price_in(currency).amount
+        else
+          current_item.price    = variant.price
+        end
         self.line_items << current_item
       end
 
@@ -386,7 +426,8 @@ module Spree
         ShippingRate.new( :id => ship_method.id,
                           :shipping_method => ship_method,
                           :name => ship_method.name,
-                          :cost => cost)
+                          :cost => cost,
+                          :currency => currency)
       end.compact.sort_by { |r| r.cost }
     end
 
@@ -452,8 +493,18 @@ module Spree
 
     def merge!(order)
       order.line_items.each do |line_item|
-        self.add_variant(line_item.variant, line_item.quantity)
+        next unless line_item.currency == currency
+        current_line_item = self.line_items.find_by_variant_id(line_item.variant_id)
+        if current_line_item
+          current_line_item.quantity += line_item.quantity
+          current_line_item.save
+        else
+          line_item.order_id = self.id
+          line_item.save
+        end
       end
+      # So that the destroy doesn't take out line items which may have been re-assigned
+      order.line_items.reload
       order.destroy
     end
 
@@ -551,6 +602,10 @@ module Spree
 
       def use_billing?
         @use_billing == true || @use_billing == "true" || @use_billing == "1"
+      end
+
+      def set_currency
+        self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
   end
 end

@@ -1,9 +1,12 @@
-ups_ground:
-  name: UPS Ground
+ups_ground_usd:
+  name: UPS Ground (USD)
   zone_id: 2
-ups_two_day:
-  name: UPS Two Day
+ups_two_day_usd:
+  name: UPS Two Day (USD)
   zone_id: 2
-ups_one_day:
-  name: UPS One Day
+ups_one_day_usd:
+  name: UPS One Day (USD)
+  zone_id: 2
+ups_ground_eur:
+  name: UPS Ground (EUR)
   zone_id: 2

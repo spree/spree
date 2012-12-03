@@ -6,6 +6,19 @@ module Spree
 
       config.autoload_paths += %W(#{config.root}/lib)
 
+<<<<<<< HEAD
+=======
+      def self.activate
+      end
+
+      config.to_prepare &method(:activate).to_proc
+
+      Rabl.configure do |config|
+        config.include_json_root = false
+        config.include_child_root = false
+      end
+
+>>>>>>> master
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args

@@ -53,6 +53,16 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
   end
 
+  def update_positions
+    params[:positions].each do |id, index|
+      model_class.where(:id => id).update_all(:position => index)
+    end
+
+    respond_to do |format|
+      format.js  { render :text => 'Ok' }
+    end
+  end
+
   def destroy
     invoke_callbacks(:destroy, :before)
     if @object.destroy

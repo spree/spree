@@ -57,7 +57,6 @@ module Spree
       def taxon
         @taxon ||= taxonomy.taxons.find(params[:id])
       end
-
     end
   end
 end

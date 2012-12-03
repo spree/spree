@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 
 class FakeCalculator < Spree::Calculator
@@ -338,22 +340,95 @@ describe Spree::Order do
     end
   end
 
+  context "#display_outstanding_balance" do
+    it "returns the value as a spree money" do
+      order.stub(:outstanding_balance) { 10.55 }
+      order.display_outstanding_balance.should == Spree::Money.new(10.55)
+    end
+  end
+
+  context "#display_item_total" do
+    it "returns the value as a spree money" do
+      order.stub(:item_total) { 10.55 }
+      order.display_item_total.should == Spree::Money.new(10.55)
+    end
+  end
+
+  context "#display_adjustment_total" do
+    it "returns the value as a spree money" do
+      order.adjustment_total = 10.55
+      order.display_adjustment_total.should == Spree::Money.new(10.55)
+    end
+  end
+
   context "#display_total" do
-    before { order.total = 10.55 }
+    it "returns the value as a spree money" do
+      order.total = 10.55
+      order.display_total.should == Spree::Money.new(10.55)
+    end
+  end
 
-    context "with display_currency set to true" do
-      before { Spree::Config[:display_currency] = true }
+  context "#currency" do
+    context "when object currency is ABC" do
+      before { order.currency = "ABC" }
 
-      it "shows the currency" do
-        order.display_total.to_s.should == "$10.55 USD"
+      it "returns the currency from the object" do
+        order.currency.should == "ABC"
       end
     end
 
-    context "with display_currency set to false" do
-      before { Spree::Config[:display_currency] = false }
+    context "when object currency is nil" do
+      before { order.currency = nil }
 
-      it "does not include the currency" do
-        order.display_total.to_s.should == "$10.55"
+      it "returns the globally configured currency" do
+        order.currency.should == "USD"
+      end
+    end
+  end
+
+  # Regression tests for #2179
+  context "#merge!" do
+    let(:variant) { Factory(:variant) }
+    let(:order_1) { Spree::Order.create }
+    let(:order_2) { Spree::Order.create }
+
+    it "destroys the other order" do
+      order_1.merge!(order_2)
+      lambda { order_2.reload }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    context "merging together two orders with line items for the same variant" do
+      before do
+        order_1.add_variant(variant)
+        order_2.add_variant(variant)
+      end
+
+      specify do
+        order_1.merge!(order_2)
+        order_1.line_items.count.should == 1
+
+        line_item = order_1.line_items.first
+        line_item.quantity.should == 2
+        line_item.variant_id.should == variant.id
+      end
+    end
+
+    context "merging together two orders with different line items" do
+      let(:variant_2) { Factory(:variant) }
+
+      before do
+        order_1.add_variant(variant)
+        order_2.add_variant(variant_2)
+      end
+
+      specify do
+        order_1.merge!(order_2)
+        line_items = order_1.line_items
+        line_items.count.should == 2
+
+        # No guarantee on ordering of line items, so we do this:
+        line_items.map(&:quantity).should =~ [1,1]
+        line_items.map(&:variant_id).should =~ [variant.id, variant_2.id]
       end
     end
   end
@@ -370,9 +445,12 @@ describe Spree::Order do
     end
 
     before do
+      # Don't care about available payment methods in this test
+      persisted_order.stub(:has_available_payment => false)
       persisted_order.line_items << line_item
       persisted_order.adjustments.create(:amount => -line_item.amount, :label => "Promotion")
       persisted_order.state = 'delivery'
+      persisted_order.save # To ensure new state_change event
     end
 
     it "transitions from delivery to payment" do

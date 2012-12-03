@@ -31,7 +31,7 @@
         <tbody id="subtotal" data-hook="admin_order_form_subtotal" class="no-border-top">
           <tr id="subtotal-row">
             <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-            <td class="total align-center"><span><%= money(@order.item_total) %></span></td>
+            <td class="total align-center"><span><%= @order.display_item_total %></span></td>
             <td class="actions"></td>
           </tr>
         </tbody>

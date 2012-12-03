@@ -23,11 +23,11 @@ module Spree
         def current_order(create_order_if_necessary = false)
           return @current_order if @current_order
           if session[:order_id]
-            current_order = Spree::Order.find_by_id(session[:order_id], :include => :adjustments)
+            current_order = Spree::Order.find_by_id_and_currency(session[:order_id], current_currency, :include => :adjustments)
             @current_order = current_order unless current_order.try(:completed?)
           end
           if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
-            @current_order = Spree::Order.new
+            @current_order = Spree::Order.new(currency: current_currency)
             before_save_new_order
             @current_order.save!
             after_save_new_order
@@ -37,6 +37,7 @@ module Spree
         end
 
         def associate_user
+          @order ||= current_order
           if try_spree_current_user && @order
             if @order.user.blank? || @order.email.blank?
               @order.associate_user!(try_spree_current_user)

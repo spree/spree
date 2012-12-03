@@ -41,7 +41,8 @@ describe Spree::Order do
            end
 
            it "should complete the order" do
-              order.next
+              order.stub :paid? => true
+              order.next!
               order.state.should == "complete"
             end
 

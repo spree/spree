@@ -35,9 +35,9 @@ $(document).ready(function(){
   prep_user_autocomplete_data = function(data){
     return $.map(eval(data['users']), function(row) {
       return {
-          data: row['user'],
-          value: row['user']['email'],
-          result: row['user']['email']
+          data: row,
+          value: row['email'],
+          result: row['email']
       }
     });
   }

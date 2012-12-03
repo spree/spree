@@ -83,6 +83,7 @@ en:
         name: Name
       spree/product:
         available_on: "Available On"
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         description: Description
         master_price: "Master Price"
@@ -131,6 +132,7 @@ en:
         password: "Password"
         password_confirmation: "Password Confirmation"
       spree/variant:
+        cost_currency: "Cost Currency"
         cost_price: "Cost Price"
         depth: Depth
         height: Height
@@ -290,13 +292,13 @@ en:
   back_to_prototypes_list: "Back To Prototypes List"
   back_to_reports_list: "Back To Reports List"
   back_to_shipping_categories: "Back To Shipping Categories"
-  back_to_shipping_methods_list: "Back To Shipping Methods List"  
+  back_to_shipping_methods_list: "Back To Shipping Methods List"
   back_to_states_list: "Back To States List"
   back_to_store: "Go Back To Store"
   back_to_tax_categories_list: "Back To Tax Categories List"
   back_to_taxonomies_list: "Back To Taxonomies List"
   back_to_trackers_list: "Back To Trackers List"
-  back_to_zones_list: "Back To Zones List"  
+  back_to_zones_list: "Back To Zones List"
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
   balance_due: "Balance Due"
@@ -346,6 +348,7 @@ en:
   continue: Continue
   continue_shopping: "Continue shopping"
   copy_all_mails_to: Copy All Mails To
+  cost_currency: "Cost Currency"
   cost_price: "Cost Price"
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   country: Country
@@ -491,6 +494,7 @@ en:
   has_no_shipped_units: has no shipped units
   height: Height
   hello_user: "Hello User"
+  hide_cents: "Hide cents"
   history: History
   home: "Home"
   icon: "Icon"
@@ -1009,7 +1013,8 @@ en:
   spree:
     date: Date
     date_picker:
-      format: 'yy/mm/dd'
+      format: ! '%Y/%m/%d'
+      js_format: 'yy/mm/dd'
     time: Time
   spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
   spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."

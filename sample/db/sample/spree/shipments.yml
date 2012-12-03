@@ -2,7 +2,7 @@
 shipment_<%= i %>:
   number: H<%= Array.new(11){rand(11)}.join %>
   order: order_<%= i %>
-  shipping_method: ups_ground
+  shipping_method: ups_ground_usd
   address: ship_address_<%= i %>
   state: pending
 <% end %>

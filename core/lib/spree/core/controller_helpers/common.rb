@@ -8,6 +8,7 @@ module Spree
             helper_method :title=
             helper_method :accurate_title
             helper_method :current_order
+            helper_method :current_currency
 
             layout :get_layout
 
@@ -53,6 +54,10 @@ module Spree
         # this is a hook for subclasses to provide title
         def accurate_title
           Spree::Config[:default_seo_title]
+        end
+
+        def current_currency
+          Spree::Config[:currency]
         end
 
         def render_404(exception = nil)

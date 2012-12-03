@@ -145,6 +145,7 @@ module Spree
     end
 
     def money(amount)
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::BaseHelper#money will be deprecated.  It relies upon a single master currency.  You can instead create a Spree::Money.new(amount, { :currency => your_currency}) or see if the object you're working with returns a Spree::Money object to use.")
       Spree::Money.new(amount)
     end
 

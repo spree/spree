@@ -1,4 +1,4 @@
-Spree::Core::Engine.routes.prepend do
+Spree::Core::Engine.routes.draw do
 
   root :to => 'home#index'
 
@@ -90,12 +90,6 @@ Spree::Core::Engine.routes.prepend do
       end
     end
 
-    resources :properties do
-      collection do
-        get :filtered
-      end
-    end
-
     resources :prototypes do
       member do
         get :select
@@ -145,6 +139,12 @@ Spree::Core::Engine.routes.prepend do
     end
 
     resources :taxonomies do
+    	collection do
+    		post :update_positions
+    	end
+      member do
+        get :get_children
+      end
       resources :taxons
     end
 
@@ -173,11 +173,6 @@ Spree::Core::Engine.routes.prepend do
       member do
         post :testmail
       end
-    end
-
-    resources :promotions do
-      resources :promotion_rules
-      resources :promotion_actions
     end
   end
 

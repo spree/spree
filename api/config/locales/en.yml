@@ -19,3 +19,5 @@ en:
       order:
         could_not_transition: "The order could not be transitioned. Please fix the errors and try again."
         invalid_shipping_method: "Invalid shipping method specified."
+      shipment:
+        cannot_ready: "Cannot ready shipment."

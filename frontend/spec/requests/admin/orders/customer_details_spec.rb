@@ -4,7 +4,7 @@ describe "Customer Details" do
   stub_authorization!
 
   let(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
-  let(:order) { create(:order_with_inventory_unit_shipped, :completed_at => 1.year.ago, :shipping_method => shipping_method) }
+  let(:order) { create(:completed_order_with_totals) }
   let(:country) do
     create(:country, :name => "Kangaland")
   end
