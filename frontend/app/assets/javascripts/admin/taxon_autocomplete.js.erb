@@ -21,6 +21,12 @@ $(document).ready(function() {
         results: function (data, page) {
           return { results: data }
         }
+      },
+      formatResult: function(taxon) {
+        return taxon.pretty_name
+      },
+      formatSelection: function(taxon) {
+        return taxon.pretty_name
       }
     })
   }
