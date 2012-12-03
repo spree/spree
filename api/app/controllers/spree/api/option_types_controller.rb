@@ -2,7 +2,11 @@ module Spree
   module Api
     class OptionTypesController < Spree::Api::BaseController
       def index
-        @option_types = Spree::OptionType.all
+        if params[:ids]
+          @option_types = Spree::OptionType.where(:id => params[:ids])
+        else
+          @option_types = Spree::OptionType.scoped.ransack(params[:q]).result
+        end
         respond_with(@option_types)
       end
 
