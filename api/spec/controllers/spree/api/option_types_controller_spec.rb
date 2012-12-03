@@ -40,6 +40,22 @@ module Spree
       json_response.count.should == 2
     end
 
+    it "can search for an option type" do
+      Factory(:option_type, :name => "buzz")
+      api_get :index, :q => { :name_cont => option_type.name }
+      option_types = json_response["option_types"]
+      option_types.count.should == 1
+      option_types.first.should have_attributes(attributes)
+    end
+
+    it "can retreive a list of option types" do
+      option_type_1 = Factory(:option_type)
+      option_type_2 = Factory(:option_type)
+      api_get :index, :ids => [option_type, option_type_1]
+      option_types = json_response["option_types"]
+      option_types.count.should == 2
+    end
+
     it "can list a single option type" do
       api_get :show, :id => option_type.id
       json_response.should have_attributes(attributes)
