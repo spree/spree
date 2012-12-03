@@ -3,6 +3,8 @@ module Spree
     class BaseController < ApplicationController
       include Spree::Core::ControllerHelpers::Auth
 
+      respond_to :json
+
       attr_accessor :current_api_user
 
       before_filter :set_content_type
