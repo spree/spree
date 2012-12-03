@@ -64,7 +64,6 @@ Spree::Core::Engine.routes.prepend do
       end
     end
     resources :taxons, :only => [:index]
-
     resources :inventory_units, :only => [:show, :update]
     resources :users
   end
