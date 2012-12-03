@@ -18,6 +18,8 @@ Spree::Core::Engine.routes.prepend do
     resources :variants, :only => [:index] do
     end
 
+    resources :option_types
+
     resources :orders do
       resources :return_authorizations
       member do
