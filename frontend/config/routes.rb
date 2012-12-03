@@ -52,6 +52,11 @@ Spree::Core::Engine.routes.draw do
   namespace :admin do
     get '/search/users', :to => "search#users", :as => :search_users
 
+    resources :promotions do
+      resources :promotion_rules
+      resources :promotion_actions
+    end
+
     resources :adjustments
     resources :zones
     resources :banners do
@@ -87,6 +92,12 @@ Spree::Core::Engine.routes.draw do
       collection do
         post :update_positions
         post :update_values_positions
+      end
+    end
+
+    resources :properties do
+      collection do
+        get :filtered
       end
     end
 
