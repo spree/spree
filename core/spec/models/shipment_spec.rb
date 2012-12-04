@@ -6,7 +6,7 @@ describe Spree::Shipment do
   end
 
   let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
-  let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
+  let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator'), :adjustment_label => "Shipping" }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
     shipment.state = 'pending'
@@ -186,6 +186,7 @@ describe Spree::Shipment do
       shipment.stub_chain(:adjustment, :originator)
       shipment.adjustment.should_receive(:originator=).with(shipping_method)
       shipment.adjustment.should_receive(:save)
+      shipment.adjustment.should_receive(:label=).with("Shipping")
       shipment.send(:ensure_correct_adjustment)
     end
   end
