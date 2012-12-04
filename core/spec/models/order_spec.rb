@@ -87,7 +87,7 @@ describe Spree::Order do
     end
 
     it "should change the shipment state to ready if order is paid" do
-      order.stub :shipping_method => mock_model(Spree::ShippingMethod, :create_adjustment => true)
+      order.stub :shipping_method => mock_model(Spree::ShippingMethod, :create_adjustment => true, :adjustment_label => "Shipping")
       order.create_shipment!
       order.stub(:paid? => true, :complete? => true)
       order.finalize!
