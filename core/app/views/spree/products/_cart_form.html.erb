@@ -26,7 +26,7 @@
       </div>
     <% end%>
 
-    <% if @product.price %>
+    <% if @product.price_in(current_currency) %>
       <div data-hook="product_price" class="columns five <% if !@product.has_variants? %> alpha <% else %> omega <% end %>">
         
         <div id="product-price">
