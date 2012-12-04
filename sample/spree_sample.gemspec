@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
+  s.license     = %q{BSD-3}
 
   s.files        = Dir['LICENSE', 'README.md', 'lib/**/*', 'db/**/*']
   s.require_path = 'lib'
