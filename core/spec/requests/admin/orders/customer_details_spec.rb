@@ -37,7 +37,7 @@ describe "Customer Details" do
       click_link "Customer Details"
       fill_in "customer_search", :with => "foobar"
       sleep(3)
-      page.execute_script %Q{ $('.ui-menu-item a:contains("foobar@example.com")').trigger("mouseenter").click(); }
+      page.execute_script %Q{ $('.ui-menu-item a').last().click(); }
 
       ["ship_address", "bill_address"].each do |address|
         find_field("order_#{address}_attributes_firstname").value.should == "John"
