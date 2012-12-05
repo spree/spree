@@ -32,7 +32,9 @@
         <%= content_tag(:span, order.payment.payment_method.name) if order.payment %>
       <% else %>
         <span class="cc-type">
-          <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
+          <% unless (cc_type = order.credit_cards.first.cc_type).blank? %>
+            <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
+          <% end %>
           <%= t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
         </span>
         <br />
