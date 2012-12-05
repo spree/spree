@@ -34,6 +34,21 @@ describe "States" do
       page.should have_content("Calgary")
     end
 
+    it "should allow an admin to create states for non default countries", :js => true do
+      click_link "States"
+      wait_until do
+        page.should have_selector('#country', :visible => true)
+      end
+      select "Hungary", :from => "Country"
+      click_link "new_state_link"
+      fill_in "state_name", :with => "Pest megye"
+      fill_in "Abbreviation", :with => "PE"
+      click_button "Create"
+      page.should have_content("successfully created!")
+      page.should have_content("Pest megye")
+      find("select option\[selected\]").text.should == "Hungary"
+    end
+
     it "should show validation errors", :js => true do
       click_link "States"
       set_select2_field("country", country.id)
