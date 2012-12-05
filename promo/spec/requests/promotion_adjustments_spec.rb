@@ -111,6 +111,9 @@ describe "Promotion Adjustments" do
       Spree::Order.first.total.to_f.should == 45.00
 
       click_button "Place Order"
+      # Really make sure that the order has been processed
+      # Rather than blindly clicking on "Place Order" and hoping for the best
+      page.should have_content("Your order has been processed successfully")
 
       visit spree.root_path
       click_link "RoR Mug"
