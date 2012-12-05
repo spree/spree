@@ -59,4 +59,22 @@ describe "Properties" do
       page.should have_content("Name can't be blank")
     end
   end
+
+  context "linking a property to a product", :js => true do
+    before do
+      create(:product)
+      visit spree.admin_products_path
+      click_icon :edit
+      click_link "Product Properties"
+    end
+
+    # Regression test for #2279
+    specify do 
+      fill_in "product_product_properties_attributes_0_property_name", :with => "A Property"
+      fill_in "product_product_properties_attributes_0_value", :with => "A Value"
+      click_button "Update"
+      click_link "Product Properties"
+      all("tbody#product_properties tr").count.should == 2
+    end
+  end
 end
