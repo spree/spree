@@ -25,10 +25,7 @@ $.fn.variantAutocomplete = function() {
         return { q: term }
       },
       results: function (data, page) {
-        var variants = $.map(data['variants'], function(result) {
-          return result['variant']
-        })
-        return { results: variants }
+        return { results: data }
       }
     },
     formatResult: formatVariantResult,
