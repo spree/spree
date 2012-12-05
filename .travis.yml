@@ -1,22 +1,25 @@
 before_script:
-  - 'sh -e /etc/init.d/xvfb start'
-  - 'export DISPLAY=:99.0'
+  - sh -e /etc/init.d/xvfb start
+  - export DISPLAY=:99.0
 bundler_args: --without development production --quiet
 env:
-  - GEM='api:sqlite'
-  - GEM='api:mysql'
-  - GEM='api:postgres'
-  - GEM='core:sqlite'
-  - GEM='core:mysql'
-  - GEM='core:postgres'
-  - GEM='dash:sqlite'
-  - GEM='dash:mysql'
-  - GEM='dash:postgres'
-  - GEM='promo:sqlite'
-  - GEM='promo:mysql'
-  - GEM='promo:postgres'
+  - GEM=api DB=sqlite
+  - GEM=api DB=mysql
+  - GEM=api DB=postgres
+  - GEM=core DB=sqlite
+  - GEM=core DB=mysql
+  - GEM=core DB=postgres
+  - GEM=dash DB=sqlite
+  - GEM=dash DB=mysql
+  - GEM=dash DB=postgres
+  - GEM=promo DB=sqlite
+  - GEM=promo DB=mysql
+  - GEM=promo DB=postgres
+before_install:
+  - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
-  - 'ci/travis.sh'
+  - bundle exec rake test_app
+  - bundle exec rspec spec
 notifications:
   email:
     - ryan@spreecommerce.com
