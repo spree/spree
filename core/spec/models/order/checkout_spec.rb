@@ -131,7 +131,7 @@ describe Spree::Order do
         before do
           order.stub :confirmation_required? => false
           order.stub :payment_required? => true
-          order.stub :paid? => true
+          order.stub_chain(:payments, :exists?).and_return(true)
         end
 
         it "transitions to complete" do

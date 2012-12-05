@@ -11,9 +11,16 @@ describe Spree::Order do
 
   context "#next!" do
     context "when current state is confirm" do
-      before { order.state = "confirm" }
-      it "should finalize order when transitioning to complete state" do
+      before do 
+        order.state = "confirm"
         order.run_callbacks(:create)
+        order.stub :payment_required? => true
+        order.stub_chain(:payments, :exists?).and_return(true)
+        order.stub :process_payments!
+        order.stub :has_available_shipment
+      end
+
+      it "should finalize order when transitioning to complete state" do
         order.should_receive(:finalize!)
         order.next!
       end
@@ -21,7 +28,6 @@ describe Spree::Order do
        context "when credit card payment fails" do
          before do
            order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
-           order.stub :payment_required? => true
          end
 
          context "when not configured to allow failed payments" do
@@ -38,10 +44,10 @@ describe Spree::Order do
          context "when configured to allow failed payments" do
            before do
              Spree::Config.set :allow_checkout_on_gateway_error => true
+             order.stub :finalize!
            end
 
            it "should complete the order" do
-              order.stub :paid? => true
               order.next!
               order.state.should == "complete"
             end
