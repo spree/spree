@@ -96,6 +96,8 @@ Spree::Core::Engine.routes.draw do
       end
     end
 
+    delete '/product_properties/:id', :to => "product_properties#destroy", :as => :product_property
+
     resources :prototypes do
       member do
         get :select
