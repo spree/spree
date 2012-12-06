@@ -25,6 +25,10 @@ module CapybaraExt
     sleep(1)
     page.execute_script "$('.select2-highlighted').mouseup();"
   end
+
+  def set_select2_field(field, value)
+    page.execute_script %Q{$('#{field}').select2('val', '#{value}')}
+  end
 end
 
 RSpec.configure do |c|
