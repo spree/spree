@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'orders' do
-  let(:order) { create(:order, :shipping_method => create(:shipping_method)) }
+  let(:order) { OrderWalkthrough.up_to(:complete) }
 
   it "can visit an order" do
     # Regression test for current_user call on orders/show
