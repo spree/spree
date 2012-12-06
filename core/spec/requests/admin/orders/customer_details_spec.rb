@@ -23,9 +23,9 @@ describe "Customer Details" do
     create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
     ship_address = create(:address, :country => country, :state => state)
     bill_address = create(:address, :country => country, :state => state)
-    create(:user, :email => 'foobar@example.com',
-                  :ship_address => ship_address,
-                  :bill_address => bill_address)
+    @user = create(:user, :email => 'foobar@example.com',
+                          :ship_address => ship_address,
+                          :bill_address => bill_address)
 
     visit spree.admin_path
     click_link "Orders"
@@ -35,9 +35,7 @@ describe "Customer Details" do
   context "editing an order", :js => true do
     it "should be able to populate customer details for an existing order" do
       click_link "Customer Details"
-      fill_in "customer_search", :with => "foobar"
-      sleep(3)
-      page.execute_script %Q{ $('.ui-menu-item a').last().click(); }
+      select2("#select-customer", "foobar")
 
       ["ship_address", "bill_address"].each do |address|
         find_field("order_#{address}_attributes_firstname").value.should == "John"

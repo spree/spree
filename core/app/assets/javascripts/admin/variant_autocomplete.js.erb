@@ -1,4 +1,3 @@
-//= require handlebars
 <%#encoding: UTF-8%>
 // variant autocompletion
 
@@ -10,7 +9,7 @@ formatVariantResult = function(variant) {
   if (variant["images"][0] != undefined) {
     variant.image = variant.images[0].image.mini_url
   }
-  return variantTemplate({ variant: variant, translations: Spree.translations })
+  return variantTemplate({ variant: variant })
 }
 
 $.fn.variantAutocomplete = function() {

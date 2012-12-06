@@ -16,17 +16,13 @@ module CapybaraExt
   end
 
   def select2(within, value)
-    script = %Q{
-      $('#{within} .select2-search-field input').val('#{value}')
-      $('#{within} .select2-search-field input').keydown();
-    }
-    page.execute_script(script)
-
-    # Wait for list to populate...
-    wait_until do
-      page.find(".select2-highlighted").visible?
-    end
-    page.execute_script("$('.select2-highlighted').mouseup();")
+    # Forced narcolepsy, thanks to JavaScript
+    sleep(1)
+    page.execute_script "$('#{within} .select2-choice').mousedown();"
+    sleep(1)
+    page.execute_script "$('.select2-focused').val('foobar').trigger('keyup-change');"
+    sleep(1)
+    page.execute_script "$('.select2-highlighted').mouseup();"
   end
 end
 
