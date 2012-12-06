@@ -9,7 +9,7 @@ function cleanUsers(data) {
 }
 
 $(document).ready(function() {
-  if ($('user_picker').length > 0) {
+  if ($('.user_picker').length > 0) {
     $('.user_picker').select2({
       minimumInputLength: 1,
       multiple: true,
