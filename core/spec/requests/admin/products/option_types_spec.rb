@@ -59,16 +59,16 @@ describe "Option Types" do
     create(:option_value)
     click_link "Option Types"
     within('table#listing_option_types') { click_link "Edit" }
-    all("tbody#option_values tr").count.should == 1
+    all("tbody#option_values tr.option_value").count.should == 1
     within("tbody#option_values") do
       find('.remove_fields').click
     end
     # Assert that the field is hidden automatically
-    all("tbody#option_values tr").select(&:visible?).count.should == 0
+    all("tbody#option_values tr.option_value").select(&:visible?).count.should == 0
 
     # Then assert that on a page refresh that it's still not visible
     visit page.current_url
     # What *is* visible is a new option value field, with blank values
-    all("tbody#option_values tr input").all? { |input| input.value.blank? }
+    all("tbody#option_values tr.option_value input").all? { |input| input.value.blank? }
   end
 end
