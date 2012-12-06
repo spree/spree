@@ -24,10 +24,8 @@ describe "States" do
   context "creating and editing states" do
     it "should allow an admin to edit existing states", :js => true do
       click_link "States"
-      wait_until do
-        page.should have_selector('#country', :visible => true)
-      end
-      select country.name, :from => "Country"
+      set_select2_field("country", country.id)
+
       click_link "new_state_link"
       fill_in "state_name", :with => "Calgary"
       fill_in "Abbreviation", :with => "CL"
@@ -38,7 +36,7 @@ describe "States" do
 
     it "should show validation errors", :js => true do
       click_link "States"
-      select country.name, :from => "country"
+      set_select2_field("country", country.id)
 
       wait_until do
         page.should have_selector("#new_state_link", :visible => true)
