@@ -7,13 +7,13 @@ describe Spree::Admin::AnalyticsController do
     controller.stub :spree_current_user => @user
   end
 
-  it "redirects if previously registered" do
+  it "redirects if already registered" do
     Spree::Dash::Config.should_receive(:configured?).and_return(true)
-    spree_get :sign_up
+    spree_get :register
     response.should redirect_to(spree.admin_path)
   end
 
-  describe 'Allows sign up if not registered' do
+  describe 'Allows registration if not registered' do
     before :each do
       Spree::Dash::Config.app_id = nil
       Spree::Dash::Config.app_token = nil
@@ -21,26 +21,19 @@ describe Spree::Admin::AnalyticsController do
       Spree::Dash::Config.token = nil
     end
 
-    it "sets the defaults to preferences" do
+    it "redirects after registration" do
       Spree::Config.site_name = "test_site"
       Spree::Config.site_url = "http://test_site.com"
-      spree_get :sign_up
-      response.should render_template("sign_up")
-      assigns(:store)[:url].should eq 'http://test_site.com'
-      assigns(:store)[:email].should eq @user.email
+      spree_get :register
+      response.should redirect_to(spree.admin_path)
     end
 
-    it "must agree to terms of service" do
-      params = { :store => {:url => 'http://test.com' } }
-      spree_post :register, params
-      flash[:error].should match /Terms of Service/
+    it "configures dash during registration" do
+      Spree::Dash::Jirafe.should_receive(:register).
+                          and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
+      spree_get :register
+      Spree::Dash::Config.configured?.should be_true
+      response.should redirect_to(spree.admin_path)
     end
-
-    it "must agree to privacy policy" do
-      params = { :store => {:terms_of_service => 'on', :url => 'http://test.com' } }
-      spree_post :register, params
-      flash[:error].should match /Privacy Policy/
-    end
-
   end
 end
