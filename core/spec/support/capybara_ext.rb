@@ -19,8 +19,9 @@ module CapybaraExt
     # Forced narcolepsy, thanks to JavaScript
     sleep(1)
     page.execute_script "$('#{within} .select2-choice').mousedown();"
+    page.execute_script "$('#{within} .select2-choices').mousedown();"
     sleep(1)
-    page.execute_script "$('.select2-focused').val('foobar').trigger('keyup-change');"
+    page.execute_script "$('.select2-search-field input.select2-input').val('#{value}').trigger('keyup-change');"
     sleep(1)
     page.execute_script "$('.select2-highlighted').mouseup();"
   end
