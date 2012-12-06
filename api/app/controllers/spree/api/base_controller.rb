@@ -1,4 +1,3 @@
-require 'spree/api/responders'
 module Spree
   module Api
     class BaseController < ActionController::Metal
