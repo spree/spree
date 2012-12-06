@@ -58,7 +58,7 @@ describe "Option Types" do
   it "can remove an option value from an option type", :js => true do
     create(:option_value)
     click_link "Option Types"
-    within('table#listing_option_types') { click_icon :edit }
+    within('table#listing_option_types') { click_link "Edit" }
     all("tbody#option_values tr").count.should == 1
     within("tbody#option_values") do
       find('.remove_fields').click
