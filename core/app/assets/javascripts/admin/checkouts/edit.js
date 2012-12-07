@@ -26,17 +26,26 @@ $(document).ready(function() {
       formatSelection: function (customer) {
         _.each(['bill_address', 'ship_address'], function(address) {
           var data = customer[address];
+          address_parts = ['firstname', 'lastname',
+                           'company', 'address1',
+                           'address2', 'city',
+                           'zipcode', 'phone']
+          var attribute_wrapper = '#order_' + address + '_attributes_'
           if(data != undefined) {
-            $('#order_' + address + '_attributes_firstname').val(data['firstname']);
-            $('#order_' + address + '_attributes_lastname').val(data['lastname']);
-            $('#order_' + address + '_attributes_company').val(data['company']);
-            $('#order_' + address + '_attributes_address1').val(data['address1']);
-            $('#order_' + address + '_attributes_address2').val(data['address2']);
-            $('#order_' + address + '_attributes_city').val(data['city']);
-            $('#order_' + address + '_attributes_zipcode').val(data['zipcode']);
-            $('#order_' + address + '_attributes_state_id').select2("val", data['state_id']);
-            $('#order_' + address + '_attributes_country_id').select2("val", data['country_id']);
-            $('#order_' + address + '_attributes_phone').val(data['phone']);
+            _.each(address_parts, function(part) {
+              $(attribute_wrapper + part).val(data[part]);
+            })
+
+            $(attribute_wrapper + 'state_id').select2("val", data['state_id']);
+            $(attribute_wrapper + 'country_id').select2("val", data['country_id']);
+          }
+          else {
+            _.each(address_parts, function(part) {
+              $(attribute_wrapper + part).val("");
+            })
+
+            $(attribute_wrapper + 'state_id').select2("val", '');
+            $(attribute_wrapper + 'country_id').select2("val", '');
           }
         });
 
