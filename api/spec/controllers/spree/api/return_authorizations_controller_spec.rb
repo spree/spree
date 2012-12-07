@@ -9,8 +9,8 @@ module Spree
      order.line_items << create(:line_item)
      order.shipments << create(:shipment, :state => 'shipped')
      order.finalize!
-     order.shipments.each(&:ready!)
-     order.shipments.each(&:ship!)
+     order.shipments.update_all(:state => 'shipped')
+     order.inventory_units.update_all(:state => 'shipped')
      order
     end
 
@@ -62,18 +62,18 @@ module Spree
       sign_in_as_admin!
 
       it "can show return authorization" do
-        order.return_authorizations << create(:return_authorization)
+        FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
-        api_get :show, :order_id => order.id, :id => return_authorization.id
+        api_get :show, :order_id => order.number, :id => return_authorization.id
         response.status.should == 200
         json_response.should have_attributes(attributes)
         json_response["state"].should_not be_blank
       end
 
       it "can get a list of return authorizations" do
-        order.return_authorizations << create(:return_authorization)
-        order.return_authorizations << create(:return_authorization)
-        api_get :index, { :order_id => order.id }
+        FactoryGirl.create(:return_authorization, :order => order)
+        FactoryGirl.create(:return_authorization, :order => order)
+        api_get :index, { :order_id => order.number }
         response.status.should == 200
         return_authorizations = json_response["return_authorizations"]
         return_authorizations.first.should have_attributes(attributes)
@@ -81,16 +81,16 @@ module Spree
       end
 
       it 'can control the page size through a parameter' do
-        order.return_authorizations << create(:return_authorization)
-        order.return_authorizations << create(:return_authorization)
-        api_get :index, :order_id => order.id, :per_page => 1
+        FactoryGirl.create(:return_authorization, :order => order)
+        FactoryGirl.create(:return_authorization, :order => order)
+        api_get :index, :order_id => order.number, :per_page => 1
         json_response['count'].should == 1
         json_response['current_page'].should == 1
         json_response['pages'].should == 2
       end
 
       it 'can query the results through a paramter' do
-        order.return_authorizations << create(:return_authorization)
+        FactoryGirl.create(:return_authorization, :order => order)
         expected_result = create(:return_authorization, :reason => 'damaged')
         order.return_authorizations << expected_result
         api_get :index, :q => { :reason_cont => 'damage' }
@@ -106,7 +106,7 @@ module Spree
       end
 
       it "can update a return authorization on the order" do
-        order.return_authorizations << create(:return_authorization)
+        FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
         response.status.should == 200
@@ -114,7 +114,7 @@ module Spree
       end
 
       it "can delete a return authorization on the order" do
-        order.return_authorizations << create(:return_authorization)
+        FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
         response.status.should == 204
@@ -122,7 +122,7 @@ module Spree
       end
 
       it "can add a new return authorization to an existing order" do
-        api_post :create, :return_autorization => { :order_id => order.id, :amount => 14.22, :reason => "Defective" }
+        api_post :create, :return_autorization => { :order_id => order.number, :amount => 14.22, :reason => "Defective" }
         response.status.should == 201
         json_response.should have_attributes(attributes)
         json_response["state"].should_not be_blank
@@ -131,12 +131,12 @@ module Spree
 
     context "as just another user" do
       it "cannot add a return authorization to the order" do
-        api_post :create, :return_autorization => { :order_id => order.id, :amount => 14.22, :reason => "Defective" }
+        api_post :create, :return_autorization => { :order_id => order.number, :amount => 14.22, :reason => "Defective" }
         assert_unauthorized!
       end
 
       it "cannot update a return authorization on the order" do
-        order.return_authorizations << create(:return_authorization)
+        FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
         assert_unauthorized!
@@ -144,7 +144,7 @@ module Spree
       end
 
       it "cannot delete a return authorization on the order" do
-        order.return_authorizations << create(:return_authorization)
+        FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
         assert_unauthorized!

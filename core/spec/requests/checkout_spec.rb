@@ -38,12 +38,10 @@ describe "Checkout" do
 
     context "defaults to use billing address" do
       before do
-        # Add country to shipping method's list so we can proceed to delivery
         shipping_method = create(:shipping_method)
         shipping_method.zone.zone_members << Spree::ZoneMember.create(:zoneable => country)
 
-        @order = create(:order_with_totals, :state => 'cart',
-                                            :shipping_method => shipping_method)
+        @order = OrderWalkthrough.up_to(:address)
         @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
 
         visit spree.root_path
@@ -76,15 +74,13 @@ describe "Checkout" do
 
     context "and likes to double click buttons" do
       before(:each) do
-        @order = create(:order_with_totals, :state => 'payment',
-                                            :bill_address => create(:address),
-                                            :ship_address => create(:address),
-                                            :shipping_method => create(:shipping_method))
-        @order.reload
-        @order.update!
+        order = OrderWalkthrough.up_to(:delivery)
+        order.stub :confirmation_required? => true
 
-        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
-        Spree::CheckoutController.any_instance.stub(:current_order => @order)
+        order.reload
+        order.update!
+
+        Spree::CheckoutController.any_instance.stub(:current_order => order)
         Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
       end
 

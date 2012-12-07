@@ -6,7 +6,7 @@ describe Spree::Shipment do
   end
 
   let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
-  let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
+  let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator'), :adjustment_label => "Shipping" }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
     shipment.state = 'pending'
@@ -164,7 +164,14 @@ describe Spree::Shipment do
       mail_message.should_receive :deliver
       shipment.ship!
     end
+  end
 
+  context "#ready" do
+    # Regression test for #2040
+    it "cannot ready a shipment for an order if the order is unpaid" do
+      order.stub(:paid? => false)
+      assert !shipment.can_ready?
+    end
   end
 
   context "ensure_correct_adjustment" do
@@ -179,6 +186,7 @@ describe Spree::Shipment do
       shipment.stub_chain(:adjustment, :originator)
       shipment.adjustment.should_receive(:originator=).with(shipping_method)
       shipment.adjustment.should_receive(:save)
+      shipment.adjustment.should_receive(:label=).with("Shipping")
       shipment.send(:ensure_correct_adjustment)
     end
   end

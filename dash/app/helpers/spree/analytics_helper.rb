@@ -42,7 +42,7 @@ module Spree
     end
 
     def completed_analytics_tags
-      return {} unless @order and @order.complete?
+      return {} unless flash[:commerce_tracking] and @order and @order.complete?
       { :confirm => { :orderid => @order.number,
                       :total => @order.total,
                       :shipping => @order.ship_total,

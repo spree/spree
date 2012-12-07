@@ -11,6 +11,7 @@ module Spree
 
       @searcher = Spree::Config.searcher_class.new(params.merge(:taxon => @taxon.id))
       @searcher.current_user = try_spree_current_user
+      @searcher.current_currency = current_currency
       @products = @searcher.retrieve_products
 
       respond_with(@taxon)

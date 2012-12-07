@@ -40,6 +40,23 @@ describe Spree::Payment do
     payment.log_entries.stub(:create)
   end
 
+  # Regression test for https://github.com/spree/spree/pull/2224
+  context 'failure' do
+
+    it 'should transition to failed from pending state' do
+      payment.state = 'pending'
+      payment.failure
+      payment.state.should eql('failed')
+    end
+
+    it 'should transition to failed from processing state' do
+      payment.state = 'processing'
+      payment.failure
+      payment.state.should eql('failed')
+    end
+
+  end
+
   context "processing" do
     before do
       payment.stub(:update_order)
@@ -94,7 +111,7 @@ describe Spree::Payment do
         end
       end
 
-      context "if sucesssful" do
+      context "if successful" do
         before do
           payment.payment_method.should_receive(:authorize).with(amount_in_cents,
                                                                  card,
@@ -113,7 +130,7 @@ describe Spree::Payment do
         end
       end
 
-      context "if unsucessful" do
+      context "if unsuccessful" do
         it "should mark payment as failed" do
           gateway.stub(:authorize).and_return(failed_response)
           payment.should_receive(:failure)
@@ -143,11 +160,11 @@ describe Spree::Payment do
         end
       end
 
-      context "if sucessfull" do
+      context "if successful" do
         before do
           payment.payment_method.should_receive(:purchase).with(amount_in_cents,
                                                                 card,
-                                                               anything).and_return(success_response)
+                                                                anything).and_return(success_response)
         end
 
         it "should store the response_code and avs_response" do
@@ -162,7 +179,7 @@ describe Spree::Payment do
         end
       end
 
-      context "if unsucessfull" do
+      context "if unsuccessful" do
         it "should make payment failed" do
           gateway.stub(:purchase).and_return(failed_response)
           payment.should_receive(:failure)
@@ -182,7 +199,7 @@ describe Spree::Payment do
           payment.state = 'pending'
         end
 
-        context "if sucessful" do
+        context "if successful" do
           before do
             payment.payment_method.should_receive(:capture).with(payment, card, anything).and_return(success_response)
           end
@@ -199,7 +216,7 @@ describe Spree::Payment do
           end
         end
 
-        context "if unsucessful" do
+        context "if unsuccessful" do
           it "should not make payment complete" do
             gateway.stub :capture => failed_response
             payment.should_receive(:failure)
@@ -258,7 +275,7 @@ describe Spree::Payment do
         end
       end
 
-      context "if sucessfull" do
+      context "if successful" do
         it "should update the response_code with the authorization from the gateway" do
           # Change it to something different
           payment.response_code = 'abc'
@@ -267,7 +284,7 @@ describe Spree::Payment do
         end
       end
 
-      context "if unsucesful" do
+      context "if unsuccessful" do
         it "should not void the payment" do
           gateway.stub :void => failed_response
           payment.should_not_receive(:void)
@@ -340,7 +357,7 @@ describe Spree::Payment do
         end
       end
 
-      context "when response is sucesssful" do
+      context "when response is successful" do
         it "should create an offsetting payment" do
           Spree::Payment.should_receive(:create)
           payment.credit!
@@ -360,7 +377,7 @@ describe Spree::Payment do
     end
   end
 
-  context "when response is unsucessful" do
+  context "when response is unsuccessful" do
     it "should not create a payment" do
       gateway.stub :credit => failed_response
       Spree::Payment.should_not_receive(:create)

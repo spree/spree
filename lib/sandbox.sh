@@ -7,4 +7,3 @@ echo "gem 'spree', :path => '..'" >> Gemfile
 echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => 'edge'" >> Gemfile
 bundle install --gemfile Gemfile
 rails g spree:install --auto-accept --user_class=Spree::User
-bundle exec rake spree_auth:admin:create

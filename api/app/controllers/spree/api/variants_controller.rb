@@ -1,15 +1,19 @@
 module Spree
   module Api
     class VariantsController < Spree::Api::BaseController
+      respond_to :json
+
       before_filter :product
 
       def index
         @variants = scope.includes(:option_values).ransack(params[:q]).result.
           page(params[:page]).per(params[:per_page])
+        respond_with(@variants)
       end
 
       def show
         @variant = scope.includes(:option_values).find(params[:id])
+        respond_with(@variant)
       end
 
       def new
@@ -19,7 +23,7 @@ module Spree
         authorize! :create, Variant
         @variant = scope.new(params[:product])
         if @variant.save
-          render :show, :status => 201
+          respond_with(@variant, :status => 201, :default_template => :show)
         else
           invalid_resource!(@variant)
         end
@@ -29,7 +33,7 @@ module Spree
         authorize! :update, Variant
         @variant = scope.find(params[:id])
         if @variant.update_attributes(params[:variant])
-          render :show, :status => 200
+          respond_with(@variant, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
         end
@@ -39,7 +43,7 @@ module Spree
         authorize! :delete, Variant
         @variant = scope.find(params[:id])
         @variant.destroy
-        render :text => nil, :status => 204
+        respond_with(@variant, :status => 204)
       end
 
       private

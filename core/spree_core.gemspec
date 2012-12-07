@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
+  s.license     = %q{BSD-3}
   s.rubyforge_project = 'spree_core'
 
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
@@ -19,7 +20,7 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'acts_as_list', '= 0.1.4'
-  s.add_dependency 'awesome_nested_set', '2.1.4'
+  s.add_dependency 'awesome_nested_set', '2.1.5'
 
   s.add_dependency 'jquery-rails', '~> 2.0'
   s.add_dependency 'select2-rails', '~> 3.2'

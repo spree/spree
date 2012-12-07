@@ -8,7 +8,7 @@ Spree::Core::Engine.routes.prepend do
     end
   end
 
-  namespace :api do
+  namespace :api, :defaults => { :format => 'json' } do
     resources :products do
       resources :variants
       resources :product_properties
@@ -17,6 +17,8 @@ Spree::Core::Engine.routes.prepend do
     resources :images
     resources :variants, :only => [:index] do
     end
+
+    resources :option_types
 
     resources :orders do
       resources :return_authorizations

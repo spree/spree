@@ -29,6 +29,20 @@ module Spree
       end
     end
 
+    context "hide cents" do
+      it "hides cents suffix" do
+        Spree::Config[:hide_cents] = true
+        money = Spree::Money.new(10)
+        money.to_s.should == "$10"
+      end
+
+      it "shows cents suffix" do
+        Spree::Config[:hide_cents] = false
+        money = Spree::Money.new(10)
+        money.to_s.should == "$10.00"
+      end
+    end
+
     context "currency parameter" do
       context "when currency is specified in Canadian Dollars" do
         it "uses the currency param over the global configuration" do

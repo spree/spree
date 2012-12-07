@@ -32,7 +32,7 @@ module Spree
       end
       # When processing during checkout fails
       event :failure do
-        transition :from => 'processing', :to => 'failed'
+        transition :from => ['pending', 'processing'], :to => 'failed'
       end
       # With card payments this represents authorizing the payment
       event :pend do

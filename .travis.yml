@@ -1,18 +1,25 @@
 before_script:
-  - "sh -e /etc/init.d/xvfb start"
-  - "bundle exec rake test_app"
+  - sh -e /etc/init.d/xvfb start
+  - export DISPLAY=:99.0
+bundler_args: --without development production --quiet
 env:
-  - DB=sqlite
-  - DB=mysql
-  - DB=postgres
+  - GEM=api DB=sqlite
+  - GEM=api DB=mysql
+  - GEM=api DB=postgres
+  - GEM=core DB=sqlite
+  - GEM=core DB=mysql
+  - GEM=core DB=postgres
+  - GEM=dash DB=sqlite
+  - GEM=dash DB=mysql
+  - GEM=dash DB=postgres
+  - GEM=promo DB=sqlite
+  - GEM=promo DB=mysql
+  - GEM=promo DB=postgres
+before_install:
+  - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
-  - "export DISPLAY=:99.0"
-  - "alias set_gemfile='export BUNDLE_GEMFILE=\"`pwd`/Gemfile\"'"
-  - "cd api; set_gemfile; bundle install --quiet; bundle exec rspec spec"
-  - "cd ../core; set_gemfile; bundle install --quiet; bundle exec rspec spec"
-  - "cd ../dash; set_gemfile; bundle install --quiet; bundle exec rspec spec"
-  - "cd ../promo; set_gemfile; bundle install --quiet; bundle exec rspec spec"
-
+  - bundle exec rake test_app
+  - bundle exec rspec spec
 notifications:
   email:
     - ryan@spreecommerce.com

@@ -48,7 +48,7 @@
       <%= f.label :available_on, t(:available_on) %>
       <%= f.error_message_on :available_on %>
       <% if @product.available_on? %>
-        <% available_on = l(@product.available_on, :format => t('date_picker.format')) %>
+        <% available_on = l(@product.available_on, :format => t('spree.date_picker.format')) %>
       <% else %>
         <% available_on = nil %>
       <% end %>

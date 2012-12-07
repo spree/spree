@@ -14,6 +14,11 @@ module Spree
 
       config.to_prepare &method(:activate).to_proc
 
+      Rabl.configure do |config|
+        config.include_json_root = false
+        config.include_child_root = false
+      end
+
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args

@@ -15,9 +15,16 @@ module Spree
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
-      go_to_state :payment, :if => lambda { |order| order.payment_required? }
+      go_to_state :payment, :if => lambda { |order|
+        # Fix for #2191
+        if order.shipping_method
+          order.create_shipment!
+          order.update_totals
+        end
+        order.payment_required?
+      }
       go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
-      go_to_state :complete
+      go_to_state :complete, :if => lambda { |order| (order.payment_required? && order.payments.exists?) || !order.payment_required? }
       remove_transition :from => :delivery, :to => :confirm
     end
 
@@ -145,7 +152,7 @@ module Spree
 
     # Is this a free order in which case the payment step should be skipped
     def payment_required?
-      Spree::OrderUpdater.new(self).update_totals
+      update_totals
       total.to_f > 0.0
     end
 
@@ -205,8 +212,16 @@ module Spree
       totals
     end
 
+    def updater
+      OrderUpdater.new(self)
+    end
+
     def update!
-      OrderUpdater.new(self).update
+      updater.update
+    end
+
+    def update_totals
+      updater.update_totals
     end
 
     def clone_billing_address
@@ -475,8 +490,18 @@ module Spree
 
     def merge!(order)
       order.line_items.each do |line_item|
-        self.add_variant(line_item.variant, line_item.quantity) if line_item.currency == currency
+        next unless line_item.currency == currency
+        current_line_item = self.line_items.find_by_variant_id(line_item.variant_id)
+        if current_line_item
+          current_line_item.quantity += line_item.quantity
+          current_line_item.save
+        else
+          line_item.order_id = self.id
+          line_item.save
+        end
       end
+      # So that the destroy doesn't take out line items which may have been re-assigned
+      order.line_items.reload
       order.destroy
     end
 

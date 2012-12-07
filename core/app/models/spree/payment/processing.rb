@@ -29,6 +29,7 @@ module Spree
 
       def capture!
         return true if completed?
+        started_processing!
         protect_from_connection_error do
           check_environment
 
