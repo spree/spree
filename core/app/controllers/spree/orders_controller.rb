@@ -18,9 +18,9 @@ module Spree
     def update
       @order = current_order
       if @order.update_attributes(params[:order])
-        update_hooks.each { |h| render :edit and return unless self.send(h) }
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         fire_event('spree.order.contents_changed')
+        update_hooks.each { |h| render :edit and return unless self.send(h) }
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
