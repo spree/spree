@@ -27,9 +27,11 @@ module Spree::Preferences
       should_persist? && Spree::Preference.where(:key => key).exists?
     end
 
-    def get(key)
+    def get(key,fallback=nil)
       # return the retrieved value, if it's in the cache
-      if (val = @cache.read(key)).present?
+      # use unless nil? incase the value is actually boolean false
+      #
+      unless (val = @cache.read(key)).nil?
         return val
       end
 
@@ -39,13 +41,22 @@ module Spree::Preferences
       # has been cleared from the cache
 
       # does it exist in the database?
-      if preference = Spree::Preference.find_by_key(key)
+      if Spree::Preference.table_exists? && preference = Spree::Preference.find_by_key(key)
         # it does exist, so let's put it back into the cache
         @cache.write(preference.key, preference.value)
 
         # and return the value
-        preference.value
+        return preference.value
       end
+
+      unless fallback.nil?
+        # cache fallback so we won't hit the db above on
+        # subsequent queries for the same key
+        #
+        @cache.write(key, fallback)
+      end
+
+      return fallback
     end
 
     def delete(key)

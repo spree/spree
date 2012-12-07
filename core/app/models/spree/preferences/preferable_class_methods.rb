@@ -10,16 +10,13 @@ module Spree::Preferences
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
       define_method preference_getter_method(name) do
-        if preference_cache_key(name) && preference_store.exist?(preference_cache_key(name))
-          preference_store.get preference_cache_key(name)
+
+        # perference_cache_key will only be nil/false for new records
+        #
+        if preference_cache_key(name)
+          preference_store.get(preference_cache_key(name), default)
         else
-          if get_pending_preference(name)
-            get_pending_preference(name)
-          elsif Spree::Preference.table_exists? && preference = Spree::Preference.find_by_key(name.to_s)
-            preference.value
-          else
-            send self.class.preference_default_getter_method(name)
-          end
+          get_pending_preference(name) || default
         end
       end
       alias_method prefers_getter_method(name), preference_getter_method(name)
