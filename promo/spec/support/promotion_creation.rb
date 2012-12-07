@@ -1,4 +1,14 @@
 module PromotionCreation
+  def select2_select(text, options)
+    page.find("#s2id_#{options[:from]} a").click
+    page.all("ul.select2-results li").each do |e|
+      if e.text == text
+        e.click
+        return
+      end
+    end
+  end
+
   def create_per_product_promotion product_name, discount_amount, event = "Add to cart"
     promotion_name = "Bundle d#{discount_amount}"
 
@@ -7,7 +17,7 @@ module PromotionCreation
     click_link "New Promotion"
 
     fill_in "Name", :with => promotion_name
-    select event, :from => "Event"
+    select2_select event, :from => "promotion_event_name"
     click_button "Create"
     page.should have_content("Editing Promotion")
 
@@ -41,7 +51,7 @@ module PromotionCreation
     promotion_name = "Order's total > $#{order_min}, Discount #{order_discount}"
     fill_in "Name", :with => promotion_name
     fill_in "Usage Limit", :with => "100"
-    select "Coupon code added", :from => "Event"
+    select2_select "Coupon code added", :from => "promotion_event_name"
     fill_in "Code", :with => coupon_code
     click_button "Create"
     page.should have_content("Editing Promotion")
