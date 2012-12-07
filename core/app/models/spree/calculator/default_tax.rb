@@ -28,7 +28,7 @@ module Spree
         end
 
         line_items_total = matched_line_items.sum(&:total)
-        round_to_two_places(line_items_total * rate.amount)
+        round_to_two_digits(line_items_total * rate.amount)
       end
 
       def compute_line_item(line_item)
@@ -39,12 +39,12 @@ module Spree
         end
       end
 
-      def round_to_two_places(amount)
+      def round_to_two_digits(amount)
         BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
       end
 
       def deduced_total_by_rate(total, rate)
-        round_to_two_places(total - ( total / (1 + rate.amount) ) )
+        round_to_two_digits(total - ( total / (1 + rate.amount) ) )
       end
 
   end
