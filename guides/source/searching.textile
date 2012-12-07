@@ -54,7 +54,7 @@ h4. Standard interface
 
 See the existing search implementations for concrete examples, e.g.
 the "base implementation":https://github.com/spree/spree/blob/master/core/lib/spree/core/search/base.rb
-or "spree-solr-search":http://github.com/romul/spree-solr-search.
+or "spree-solr-search":https://github.com/romul/spree-solr-search.
 
 
 h5. +new+
@@ -107,7 +107,7 @@ h4. The Solr instance
 "Solr":http://lucene.apache.org/solr/ is an industrial-scale search platform, with many features and
 settings.
 
-Roman Smirnov has produced an extension "spree-solr-search":http://github.com/romul/spree-solr-search
+Roman Smirnov has produced an extension "spree-solr-search":https://github.com/romul/spree-solr-search
 for a direct connection into Spree. It contains a +searcher+ instance, and configures Solr for
 indexing on certain attributes of the +Product+ model. There is also code for declaring facets
 and for enabling drill-down by those facets (with the +_facets+ partial).
@@ -122,7 +122,7 @@ h5. Installation
 
 You also need a running Solr server (or several, if you want to isolate development/testing work
 from production data). There are several options for this. For development and testing, we recommend
-Diego Carrion's "jetty-solr":http://github.com/dcrec1/jetty-solr project (NB he also wrote the
+Diego Carrion's "jetty-solr":https://github.com/dcrec1/jetty-solr project (NB he also wrote the
 +acts-as-solr-reloaded+ plugin). Once you have cloned the project, just run +./start+ in the
 base directory to run a development server on port 8982. Other options and configurations are given
 in the documentation. You can also start the server from your rails project via
@@ -180,7 +180,7 @@ Solr directly supports faceting, and can index declared facets alongside the con
 include facet constraints in a Solr query, and can obtain information about the available facets
 that can be used to drill down in a given query.
 
-"Smirnov's extension":http://github.com/romul/spree-solr-search makes it easy to incorporate facet
+"Smirnov's extension":https://github.com/romul/spree-solr-search makes it easy to incorporate facet
 functionality into Spree. By default it generates facets for the following:
 
 * product brand (via a "brand" property)

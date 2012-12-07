@@ -194,7 +194,7 @@ h4. Custom Payment Source
 
 If you are creating a new +PaymentMethod+ you may well need to also have a corresponding Rails model to represent that method's "source":payments.html#source. If you look at an existing +PaymentMethod+ in Spree you can see an example of this in how Spree handles credit card payments. In this case +Gateway+ is the +PaymentMethod+ and the payments it creates have a source instance of the +Creditcard+ model.
 
-Lets consider another example where a +PaymentMethod+ might require its own payment source class as well.  The "spree_paypal_express":http://github.com/spree/spree_paypal_express extension has a +PaymentMethod+ of +BillingIntegration::PaypalExpress+ and this class creates a +Payment+ with a source of +PaypalAccount+.
+Lets consider another example where a +PaymentMethod+ might require its own payment source class as well.  The "spree_paypal_express":https://github.com/spree/spree_paypal_express extension has a +PaymentMethod+ of +BillingIntegration::PaypalExpress+ and this class creates a +Payment+ with a source of +PaypalAccount+.
 
 h4. Custom Actions
 
@@ -202,7 +202,7 @@ The +Payment#actions+ method is responsible for listing the actions associated w
 
 Along with a method for each action you must define a "can_...?" method to indicate if that particular action is possible based on the state of the payment or other rules. Both your custom action methods and their "can_" predicates must be defined with a payment parameter.
 
-Lets return to the "spree_paypal_express":http://github.com/spree/spree_paypal_express example once again to see how all of this is done.
+Lets return to the "spree_paypal_express":https://github.com/spree/spree_paypal_express example once again to see how all of this is done.
 
 <ruby>
   class PaypalAccount < ActiveRecord::Base

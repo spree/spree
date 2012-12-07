@@ -13,7 +13,7 @@ endprologue.
 
 h3. The Basics
 
-Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stylesheets, JavaScript files, etc), but the technical differences between the two are negligible:
+Spree uses two terms: **extensions** and **themes** when referring to discrete packages of code (ruby, stylesheets, JavaScripts, etc), but the technical differences between the two are negligible:
 
 * **Extensions** refer to discrete packages of code that provide new functionality to a Spree application. While extensions may affect the appearance of a Spree application they generally only provide additional interfaces to enable users to interact with the new functionality provided.
 

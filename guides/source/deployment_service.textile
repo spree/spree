@@ -28,7 +28,7 @@ Available roles currently include:
 
 * *Utility Server* - Installs and configures Ruby. A deployment can have as many Utility Servers as needed, but a Utility Server role cannot be shared with any other role. Utility Servers generally run Delayed Job workers, Solr indexes, Redis or Memcache services but these applications must be configured manually and will not be installed by the Deployment Service.
 
-* *Load Balancer* - Can only be applied to an Application Server and configures Nginx to load balance Rails requests to all applications servers unicorn back ends. The Load Balancer will handle all requests for static assets (stylesheets, javascripts, images, etc).
+* *Load Balancer* - Can only be applied to an Application Server and configures Nginx to load balance Rails requests to all applications servers unicorn back ends. The Load Balancer will handle all requests for static assets (stylesheets, JavaScript files, images, etc).
 
 NOTE: Every server will get some basic configuration, such as Rails Environment environment variable, placeholder directories for your Spree application, automatically generated database.yml and Procfile files, and more.
 

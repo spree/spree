@@ -488,7 +488,7 @@ end
 after "deploy:restart", "unicorn:restart"
 </ruby>
 
-Commit your +config/deploy.rb+ to Git, push the changes to Github and run +cap deploy+ again to ensure the latest code is available on your server. This will include the +unicorn+ gem which will be vital for the next step: setting up nginx and getting it to serve requests from your application.
+Commit your +config/deploy.rb+ to Git, push the changes to GitHub and run +cap deploy+ again to ensure the latest code is available on your server. This will include the +unicorn+ gem which will be vital for the next step: setting up nginx and getting it to serve requests from your application.
 
 h4. Setting up nginx
 

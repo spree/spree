@@ -252,7 +252,7 @@ h3. Further Reading
 NOTE: The "migration section":migration.html of the guides gives an overview on how to import data programmatically into Spree.
 
 
-"Steph Skardal":http://github.com/stephskardal has produced a useful blog post on
+"Steph Skardal":https://github.com/stephskardal has produced a useful blog post on
 "product optioning":http://blog.endpoint.com/2009/12/rails-ecommerce-product-optioning-in.html.
 This discusses how the variant option representation works and how she used it to build an
 extension for enhanced product option selection.

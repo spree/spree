@@ -15,8 +15,8 @@ Spree uses the standard Rails approach to internationalization so we suggest tak
 
 h4. The spree_i18n project
 
-Spree now stores all of the translation information in a separate Github project known as "spree_i18n":http://github.com/spree/spree_i18n.  This is a stand alone project with a large number of volunteer committers who maintain the locale files.  This is basically the same approach
-followed by the Rails project which keeps their localizations in "rails-i18n":http://github.com/svenfuchs/i18n.
+Spree now stores all of the translation information in a separate GitHub project known as "spree_i18n":https://github.com/spree/spree_i18n.  This is a stand alone project with a large number of volunteer committers who maintain the locale files.  This is basically the same approach
+followed by the Rails project which keeps their localizations in "rails-i18n":https://github.com/svenfuchs/i18n.
 
 The project is actually a Spree extension.  This extension contains translations only.  The rest of code needed to support the i18n features is part of the Spree core.
 
@@ -50,7 +50,7 @@ h5. Localization Files
 
 Spree maintains its localization information in a YAML file using a naming convention similar to that of the Rails project.  Each of the localization filenames contains a prefix representing the language code of the locale. For example, the Russian translation is contained in +config/ru-RU.yml+.
 
-INFO: Spree has over 25 locale files and counting.  See the "Github Repository":https://github.com/spree/spree_i18n/tree/master/config/locales for a complete list.
+INFO: Spree has over 25 locale files and counting.  See the "GitHub Repository":https://github.com/spree/spree_i18n/tree/master/config/locales for a complete list.
 
 h5. Required Files
 

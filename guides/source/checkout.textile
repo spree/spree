@@ -53,7 +53,7 @@ This step allows the customer to add both their billing and shipping information
 
 The address fields include a select box for choosing state/province.  The list of states will be populated via JavaScript and will contain all of the states listed in the database for the currently selected country.  If there are no states configured for a particular country, or if the user has JavaScript disabled, the select box will be replaced by a text field instead.
 
-INFO: The default "seed" data for Spree only includes the U.S. states.  Its easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":http://gist.github.com.)
+INFO: The default "seed" data for Spree only includes the U.S. states.  Its easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":https://gist.github.com/.)
 
 NOTE: The state field can be disabled entirely by using the +address_requires_state+ preference.  You can also allow for an "alternate phone" field by using the +alternative_billing_phone+ and +alternative_shipping+ fields.
 
@@ -129,13 +129,13 @@ The +spree_core+ and the default authentication gem (+spree_auth_devise+) gems d
 
 h4. The Order Model and State Machine
 
- The +Spree::Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":http://github.com/pluginaweek/state_machine gem in the +Spree::Order+ model as well as in several other places (such as +Spree::Shipment+ and +Spree::InventoryUnit+.)
+ The +Spree::Order+ state machine is the foundation of the checkout process.  Spree makes use of the "state_machine":https://github.com/pluginaweek/state_machine gem in the +Spree::Order+ model as well as in several other places (such as +Spree::Shipment+ and +Spree::InventoryUnit+.)
 
 The default checkout flow for the +Spree::Order+ model is defined in +app/models/spree/order/checkout.rb+ of spree_core.
 
 An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart. What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
 
-INFO: For more information on the state machine gem please see the "README":http://github.com/pluginaweek/state_machine
+INFO: For more information on the state machine gem please see the "README":https://github.com/pluginaweek/state_machine
 
 h3. Checkout Customization
 

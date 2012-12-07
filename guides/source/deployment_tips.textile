@@ -12,7 +12,7 @@ endprologue.
 
 h4. Serving Static Assets
 
-Rails applications (including Spree) use the convention of storing public assets (images, javascripts, stylesheets, etc.) in a directory named +public+.  In development environments, Rails itself will automatically handle requests for this static content by serving it from the +public+ directory.  In production mode, however, Rails is not configured to serve public assets unless specifically enabled.  This leaves you with two options.
+Rails applications (including Spree) use the convention of storing public assets (images, JavaScripts, stylesheets, etc.) in a directory named +public+.  In development environments, Rails itself will automatically handle requests for this static content by serving it from the +public+ directory.  In production mode, however, Rails is not configured to serve public assets unless specifically enabled.  This leaves you with two options.
 
 h5. Configure Rails to Serve Public Assets
 
@@ -51,7 +51,7 @@ Each web server will have its own method for doing this so please consult the ap
 
 h4. Enabling SSL
 
-Spree supports SSL and contains a special filter to require SSL for certain sensitive pages (checkout and admin-related.)  It also has the ability to redirect SSL requests that do not require SSL back to standard unencrypted HTTP.  The code for this is built right into Spree and is based on the "ssl_requirement":http://github.com/rails/ssl_requirement/tree/master by David Heinemeier Hansson.
+Spree supports SSL and contains a special filter to require SSL for certain sensitive pages (checkout and admin-related.)  It also has the ability to redirect SSL requests that do not require SSL back to standard unencrypted HTTP.  The code for this is built right into Spree and is based on the "ssl_requirement":https://github.com/rails/ssl_requirement/tree/master by David Heinemeier Hansson.
 
 The default behavior for Spree depends on the Rails environment are as follows:
 
@@ -105,7 +105,7 @@ To properly enable email delivery, you need to provide valid SMTP information. T
 
 Note that mail settings are configured on a per-environment basis.  This will allow you to configure the settings differently for staging or production mode.  For example, you might want to intercept all outgoing email in the staging environment and re-route it to test@yourstore.com.  This would prevent someone from accidentally sending an email to a real world customer when testing operations such as canceling an order or marking it shipped.
 
-NOTE: Its generally considered a bad idea to send email on the same "thread" as a web request.  Many web applications (including e-commerce ones) manage to get by doing this but high volume stores should consider using standard Rails techniques such as "Delayed Job":http://github.com/tobi/delayed_job for handling email delivery as a separate process.
+NOTE: Its generally considered a bad idea to send email on the same "thread" as a web request.  Many web applications (including e-commerce ones) manage to get by doing this but high volume stores should consider using standard Rails techniques such as "Delayed Job":https://github.com/tobi/delayed_job for handling email delivery as a separate process.
 
 INFO: The Spree core team is actively working on a solution for improved email processing - perhaps involving an optional extension for Delayed Job support.
 

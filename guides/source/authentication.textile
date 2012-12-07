@@ -18,7 +18,7 @@ By having this authentication component outside of Spree, applications that wish
 
 h4. The User Model
 
-This guide assumes that you have a pre-existing model inside your application that represents the users of your application already. This model could be provided by gems such as "Devise":http://github.com/plataformatec/devise or "Sorcery":https://github.com/NoamB/sorcery. This guide also assumes that the application that this +User+ model exists in is already a Spree application.
+This guide assumes that you have a pre-existing model inside your application that represents the users of your application already. This model could be provided by gems such as "Devise":https://github.com/plataformatec/devise or "Sorcery":https://github.com/NoamB/sorcery. This guide also assumes that the application that this +User+ model exists in is already a Spree application.
 
 This model *does not* need to be called +User+, but for the purposes of this guide the model we will be referring to *will* be called +User+. If your model is called something else, do some mental substitution wherever you see +User+.
 

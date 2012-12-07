@@ -34,7 +34,7 @@ NOTE: The important thing is that you communicate your intention in advance of d
 
 h3. Filing an Issue
 
-If you would like to file a bug report, please create an issue in our "Github Issues Tracker":https://github.com/spree/spree/issues.  You should do a basic search of the issues database before creating a new issue to ensure that you are not creating a duplicate issue.
+If you would like to file a bug report, please create an issue in our "GitHub Issues Tracker":https://github.com/spree/spree/issues.  You should do a basic search of the issues database before creating a new issue to ensure that you are not creating a duplicate issue.
 
 When filing an issue, please include steps to reproduce the issue along with details about what version of Rails and Spree that you're using.
 
@@ -42,7 +42,7 @@ INFO: Please do not assign labels or create new labels to your issue.  We will a
 
 h4. When to File an Issue
 
-You should file an issue if you have found (or suspect) a bug in the "core" functionality of Spree.  If you have found a bug in one of the extensions, please file an issue with the appropriate project in Github.  If you're not sure if the behavior you're experiencing is intentional just ask on the mailing list and someone will encourage you to file a ticket if your issue sounds like a bug (as opposed to a feature.)
+You should file an issue if you have found (or suspect) a bug in the "core" functionality of Spree.  If you have found a bug in one of the extensions, please file an issue with the appropriate project in GitHub.  If you're not sure if the behavior you're experiencing is intentional just ask on the mailing list and someone will encourage you to file a ticket if your issue sounds like a bug (as opposed to a feature.)
 
 h4. Providing a Patch
 
@@ -56,7 +56,7 @@ Fixed a problem with Facebook authentication.
 [Fixes #123]
 </shell>
 
-Github will automatically detect this commit message when you push it and link the issue.  Please see the detailed "Github Issues":http://github.com/blog/831-issues-2-0-the-next-generation blog post for more details.
+GitHub will automatically detect this commit message when you push it and link the issue.  Please see the detailed "GitHub Issues":https://github.com/blog/831-issues-2-0-the-next-generation blog post for more details.
 
 h4. Feature Requests
 
@@ -82,17 +82,17 @@ NOTE: You need to include a brief description of the problem and simple steps ne
 
 h3. Creating a Pull Request
 
-If you are going to contribute code to the Spree project, the best mechanism for doing this is to create a pull request in Github.  If you're unfamiliar with the general concept of pull requests you may want to read more on "pull requests in Github":http://help.github.com/pull-requests/.
+If you are going to contribute code to the Spree project, the best mechanism for doing this is to create a pull request in GitHub.  If you're unfamiliar with the general concept of pull requests you may want to read more on "pull requests in GitHub":https://help.github.com/articles/using-pull-requests.
 
 NOTE: If your code is associated with an existing issue then you can "provide a patch":#providing-a-patch instead of creating a pull request.
 
 h4. Creating a Fork
 
-The official Spree source code is maintained in Github under the "spree/spree":http://github.com/spree/spree project. There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code. Your changes will ultimately need to be merged into the official project by a core member.
+The official Spree source code is maintained in GitHub under the "spree/spree":https://github.com/spree/spree project. There is a "core team":http://spreecommerce.com/core_team of developers who are responsible for maintaining the quality of the source code. Your changes will ultimately need to be merged into the official project by a core member.
 
-Thanks to "Github":http://github.com, however, you do not have to wait for a core member to get started with your fix.  You simply need to "fork" the project and then start hacking.
+Thanks to "GitHub":https://github.com/, however, you do not have to wait for a core member to get started with your fix.  You simply need to "fork" the project and then start hacking.
 
-INFO: See the Github guide on "creating forks":http://help.github.com/fork-a-repo/ for more details.
+INFO: See the GitHub guide on "creating forks":https://help.github.com/articles/fork-a-repo for more details.
 
 h4. Topic Branches
 
@@ -108,7 +108,7 @@ $ git checkout -b fix-css-for-error-flash --track upstream/master
 
 The fetch command will grab all of the latest commits from the Spree master branch. Don’t worry, it doesn’t alter your working repository in a harmful way.  The track part of the command will tell git that this branch should track with the remote version of the upstream master.  This is another way of saying that the branch should be based on a clean copy of the latest official source code (without any of your unrelated local changes.)
 
-You can then do work locally on this topic branch and push it up to your Github fork when you are done.  So in our previous example we do something like:
+You can then do work locally on this topic branch and push it up to your GitHub fork when you are done.  So in our previous example we do something like:
 
 <shell>
 $ git push origin fix-css-for-error-flash
@@ -121,7 +121,7 @@ $ git checkout master
 $ git merge fix-css-for-error-flash
 </shell>
 
-You should probably also clean up after yourself a little.  The branch has been pushed to Github and you've merged it locally so you don't really need a local copy of the branch laying around.
+You should probably also clean up after yourself a little.  The branch has been pushed to GitHub and you've merged it locally so you don't really need a local copy of the branch laying around.
 
 <shell>
 $ git branch -D fix-css-for-error-flash
@@ -152,13 +152,13 @@ INFO: Pull requests with tests are given top priority.  Failure to include a tes
 
 h4. Creating the Pull Request
 
-Once your code is ready to go and you have pushed your "topic branch":#topic-branches to Github then you are ready to create the pull request and notify the Spree team that your contribution is ready.  You do this by browsing your project in Github and changing to the topic branch you just pushed.  Once you are on the topic branch simply create a pull request by pressing the "Pull Request" button.
+Once your code is ready to go and you have pushed your "topic branch":#topic-branches to GitHub then you are ready to create the pull request and notify the Spree team that your contribution is ready.  You do this by browsing your project in GitHub and changing to the topic branch you just pushed.  Once you are on the topic branch simply create a pull request by pressing the "Pull Request" button.
 
-INFO: The Github guide on "pull requests":http://help.github.com/pull-requests/ describes this in more detail with screenshots if you're still confused on this part.
+INFO: The GitHub guide on "pull requests":https://help.github.com/articles/using-pull-requests describes this in more detail with screenshots if you're still confused on this part.
 
 h3. Contributing to the Documentation
 
-Improvements to the documentation is encouraged.  The primary source of documentation are the guides (_HINT: You are reading one now._)  The documentation is in its own GitHub project called "spree-guides":http://github.com/spree/spree-guides/tree/master. You may make edits to the guide in your fork and then pull request for them to be updated to this site. 
+Improvements to the documentation is encouraged.  The primary source of documentation are the guides (_HINT: You are reading one now._)  The documentation is in its own GitHub project called "spree-guides":https://github.com/spree/spree-guides/tree/master. You may make edits to the guide in your fork and then pull request for them to be updated to this site. 
 
 To build the documentation normally simply clone and install.
 
@@ -169,7 +169,7 @@ To build the documentation normally simply clone and install.
   $ bundle exec guides build
 </shell>
 
-You do not need to fork the spree-guides project in order to contribute.  Just send an email to "spree-user":http://groups.google.com/group/spree-user (be sure to include your github username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.
+You do not need to fork the spree-guides project in order to contribute.  Just send an email to "spree-user":http://groups.google.com/group/spree-user (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the list so you can commit directly to the guides project.
 
 NOTE: The guides are generated using Yehuda Katz's convenient guides gem.  It is an abstraction of the process used to create the official guides for Ruby on Rails.
 

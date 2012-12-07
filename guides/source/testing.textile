@@ -101,9 +101,9 @@ Then its time to write some specs/tests for your extension.  We're not going to 
 
 h4. Testing Standalone Extensions
 
-Most extensions that you'll be working with (including all of the ones in the extension registry) are so-called isolated extensions.  They exist in their own Github repositories independent of any specific Rails application.  Fortunately we have devised a way to test these extensions as well.
+Most extensions that you'll be working with (including all of the ones in the extension registry) are so-called isolated extensions.  They exist in their own GitHub repositories independent of any specific Rails application.  Fortunately we have devised a way to test these extensions as well.
 
-Lets start by creating a new extension - although the procedure is basically the same for an extension that you've cloned from Github.
+Lets start by creating a new extension - although the procedure is basically the same for an extension that you've cloned from GitHub.
 
 <shell>
   $ spree extension foofah

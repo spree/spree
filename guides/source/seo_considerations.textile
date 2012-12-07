@@ -50,7 +50,7 @@ There has been quite a bit of interest in development of "CMS integration into S
 
 h4. Tool Integration
 
-In addition to integration of Google Analytics, several other tools can be implemented for SEO purposes such as Bing Webmaster Tools, Google Webmaster Tools and Quantcast. Social media optimization tools such as Pinterest, Reddit, Digg, Delicious, Facebook, Google Plus and Twitter may also be integrated to improve social networking site performance.
+In addition to integration of Google Analytics, several other tools can be implemented for SEO purposes such as Bing Webmaster Tools, Google Webmaster Tools and Quantcast. Social media optimization tools such as Pinterest, Reddit, Digg, Delicious, Facebook, Google+ and Twitter may also be integrated to improve social networking site performance.
 
 h3. Spree SEO Extensions
 

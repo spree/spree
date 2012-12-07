@@ -107,7 +107,7 @@ h3. Sharing Your Extension
 
 h4. Publishing Your Source
 
-The first order of business is to get your extension on "GitHub":http://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  GitHub provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
+The first order of business is to get your extension on "GitHub":https://github.com where everybody can see it.  Most importantly, you will want to allow others to have access to the source code.  GitHub provides a convenient (and free) place to store your source code along with the ability to track issues and accept code patches.
 
 INFO: It is convention to use the +spree-+ naming convention for your GitHub repository and +spree_+ for your gem name.  So for example, if you are creating a "foofah" extension the GitHub project would be named +spree-foofah+ and the gem would be +spree_foofah+.
 
@@ -251,7 +251,7 @@ h3. Testing Against a Release Candidate
 
 The Spree core team will often announce a so-called "release candidate":http://en.wikipedia.org/wiki/Software_release_life_cycle#Release_candidate shortly before an official release.  This is to allow Spree developers to test their sites and extensions against the upcoming release code.
 
-In order to test your extension against the release candidate you will need to first update your gemspec file.  Let's look at how we would update the "spree_social":http://github.com/spree/spree_social gem to use the new 0.60.0.rc1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
+In order to test your extension against the release candidate you will need to first update your gemspec file.  Let's look at how we would update the "spree_social":https://github.com/spree/spree_social gem to use the new 0.60.0.rc1 version of Spree.  We'll need to modify +spree_social.gemspec+ as follows:
 
 <ruby>
 Gem::Specification.new do |s|

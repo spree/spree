@@ -173,7 +173,7 @@ spree install --edge
 #Using a local clone
 spree install --path
 
-#Using a github clone
+#Using a GitHub clone
 spree install --git=git@github.com:cmar/spree.git --branch=my_changes
 
 #Answer yes to all questions
