@@ -51,14 +51,15 @@ module Spree
       url = Spree::Config.site_url || "http://demo.spreecommerce.com"
       email = "junk@spreecommerce.com"
       name = Spree::Config.site_name || "Spree Store"
+      platform_type = Rails.env.production? ? "spree" : "spree-#{Rails.env}"
 
       store = {
         :first_name    => 'Spree',
         :last_name     => 'User',
         :email         => email,
-        :name          => 'Spree Store Dos',
+        :name          => 'Spree Store',
         :url           => format_url(url),
-        :platform_type => 'spree-development',
+        :platform_type => platform_type,
         :currency      => 'USD',
         :time_zone     => ActiveSupport::TimeZone::MAPPING['Eastern Time (US & Canada)'],
       }
