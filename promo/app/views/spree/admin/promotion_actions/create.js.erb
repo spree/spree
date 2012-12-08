@@ -1,5 +1,8 @@
 $('#actions').append('<%= escape_javascript( render(:partial => 'spree/admin/promotions/promotion_action', :object => @promotion_action) ) %>');
 $('#actions .no-objects-found').hide();
+$(document).ready(function(){
+  $(".variant_autocomplete").variantAutocomplete();
+});
 initProductActions();
 
 <% unless Rails.env.test? %>
@@ -9,4 +12,4 @@ initProductActions();
 $('#<%= dom_id @promotion_action %>').hide();
 $('#<%= dom_id @promotion_action %>').fadeIn();
 $('#<%= dom_id @promotion_action %> .tokeninput.products').productPicker();
-$('.product_autocomplete').product_autocomplete();
+
