@@ -32,7 +32,7 @@ describe Spree::Order do
         end
 
         specify do
-          order.checkout_steps.should == %w(address delivery payment)
+          order.checkout_steps.should == %w(address delivery payment complete)
         end
       end
 
@@ -43,7 +43,7 @@ describe Spree::Order do
         end
 
         specify do
-          order.checkout_steps.should == %w(address delivery payment confirm)
+          order.checkout_steps.should == %w(address delivery payment confirm complete)
         end
       end
 
@@ -57,7 +57,7 @@ describe Spree::Order do
       context "when payment required" do
         before { order.stub :payment_required? => true }
         specify do
-          order.checkout_steps.should == %w(address delivery payment)
+          order.checkout_steps.should == %w(address delivery payment complete)
         end
       end
     end
