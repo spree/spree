@@ -59,6 +59,11 @@ describe "Option Types" do
     create(:option_value)
     click_link "Option Types"
     within('table#listing_option_types') { click_link "Edit" }
+
+    wait_until do
+      page.find("tbody#option_values", :visible => true)
+    end
+
     all("tbody#option_values tr.option_value").count.should == 1
     within("tbody#option_values") do
       find('.remove_fields').click
