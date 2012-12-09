@@ -17,10 +17,11 @@ module CapybaraExt
 
   def select2(within, value)
     # Forced narcolepsy, thanks to JavaScript
-    sleep(1)
+    sleep(0.25)
     page.execute_script "$('#{within} .select2-choice').mousedown();"
     page.execute_script "$('#{within} .select2-choices').mousedown();"
-    page.execute_script "$('.select2-search-field input.select2-input').val('#{value}').trigger('keyup-change');"
+    sleep(0.25)
+    page.execute_script "$('input.select2-input').val('#{value}').trigger('keyup-change');"
     sleep(0.25)
     page.execute_script "$('.select2-highlighted').mouseup();"
   end
