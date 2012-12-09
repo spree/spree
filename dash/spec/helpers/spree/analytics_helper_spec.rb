@@ -78,6 +78,7 @@ module Spree
       end
 
       it "for completed order" do
+        flash[:commerce_tracking] = "nothing special"
         @order.should_receive(:complete?).and_return(true)
         assign :order, @order
         helper.should_receive(:products_for_order).and_return([{:name => "product1"}])
