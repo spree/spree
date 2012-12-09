@@ -21,8 +21,9 @@ describe "Customer Details" do
 
     create(:shipping_method, :display_on => "front_end")
     create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
-    ship_address = create(:address, :country => country, :state => state)
-    bill_address = create(:address, :country => country, :state => state)
+    # We need a unique name that will appear for the customer dropdown
+    ship_address = create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin")
+    bill_address = create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin")
     @user = create(:user, :email => 'foobar@example.com',
                           :ship_address => ship_address,
                           :bill_address => bill_address)
@@ -35,10 +36,10 @@ describe "Customer Details" do
   context "editing an order", :js => true do
     it "should be able to populate customer details for an existing order" do
       click_link "Customer Details"
-      select2("#select-customer", "foobar")
+      select2("#select-customer", "Rumpelstiltskin")
 
       ["ship_address", "bill_address"].each do |address|
-        find_field("order_#{address}_attributes_firstname").value.should == "John"
+        find_field("order_#{address}_attributes_firstname").value.should == "Rumpelstiltskin"
         find_field("order_#{address}_attributes_lastname").value.should == "Doe"
         find_field("order_#{address}_attributes_company").value.should == "Company"
         find_field("order_#{address}_attributes_address1").value.should == "10 Lovely Street"
