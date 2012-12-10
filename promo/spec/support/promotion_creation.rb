@@ -41,7 +41,10 @@ module PromotionCreation
     promotion_name = "Order's total > $#{order_min}, Discount #{order_discount}"
     fill_in "Name", :with => promotion_name
     fill_in "Usage Limit", :with => "100"
-    select "Coupon code added", :from => "Event"
+    set_select2_field "#promotion_event_name", "spree.checkout.coupon_code_added"
+    # Just so the change event actually gets triggered in this spec
+    # It is definitely triggered in the "real world"
+    page.execute_script("$('#promotion_event_name').trigger('change');")
     fill_in "Code", :with => coupon_code
     click_button "Create"
     page.should have_content("Editing Promotion")
