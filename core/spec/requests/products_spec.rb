@@ -23,6 +23,14 @@ describe "Visiting Products" do
     page.all('ul.product-listing li').size.should == 1
   end
 
+  it "should be able to hide products without price" do
+    page.all('ul.product-listing li').size.should == 9
+    Spree::Config.show_products_without_price = false
+    Spree::Config.currency = "CAN"
+    visit spree.root_path
+    page.all('ul.product-listing li').size.should == 0
+  end
+  
   it "should be able to visit brand Ruby on Rails" do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
 
@@ -143,4 +151,13 @@ describe "Visiting Products" do
     click_button 'add-to-cart-button'
     page.should have_content "This product has no description"
   end
+
+  it "shouldn't be able to put a product without a current price in the cart" do
+    product = FactoryGirl.create(:simple_product, :description => nil, :name => 'Sample', :price => '19.99') 
+    Spree::Config.currency = "CAN"
+    Spree::Config.show_products_without_price = true
+    visit spree.product_path(product)
+    page.should have_content "This product is not available in the selected currency."
+    page.should_not have_content "add-to-cart-button"
+  end  
 end

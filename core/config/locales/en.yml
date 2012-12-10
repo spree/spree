@@ -859,6 +859,7 @@ en:
         sentence: with property <em>%s</em> and value <em>%s</em>
   products: Products
   products_with_zero_inventory_display: "Products with a zero inventory will %{not} be displayed"
+  product_not_available_in_this_currency: "This product is not available in the selected currency."
   properties: Properties
   property: Property
   prototype: Prototype
