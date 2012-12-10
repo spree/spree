@@ -74,6 +74,9 @@ describe "Properties" do
       fill_in "product_product_properties_attributes_0_value", :with => "A Value"
       click_button "Update"
       click_link "Product Properties"
+      wait_until do
+        page.find("tbody#product_properties", :visible => true)
+      end
       all("tbody#product_properties tr").count.should == 2
     end
   end
