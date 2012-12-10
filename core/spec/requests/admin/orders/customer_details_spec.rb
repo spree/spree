@@ -36,7 +36,7 @@ describe "Customer Details" do
   context "editing an order", :js => true do
     it "should be able to populate customer details for an existing order" do
       click_link "Customer Details"
-      select2_search("foobar", :from => "select-customer")
+      select2_search("#select-customer", "foobar")
 
       ["ship_address", "bill_address"].each do |address|
         find_field("order_#{address}_attributes_firstname").value.should == "Rumpelstiltskin"
