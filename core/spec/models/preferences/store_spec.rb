@@ -33,6 +33,13 @@ describe Spree::Preferences::Store do
     Rails.cache.read(:test).should be_false
   end
 
+  it "should return and cache fallback value when persistence is disabled (i.e. during bootstrap)" do
+    Rails.cache.clear
+    @store.stub(:should_persist? => false)
+    @store.get(:test, true).should be_true
+    Rails.cache.read(:test).should be_true
+  end
+
   it "should return nil when key can't be found and fallback value is not supplied" do
     @store.get(:random_key).should be_nil
   end
