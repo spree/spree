@@ -292,11 +292,10 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
       fill_in "Name", :with => "Bundle"
-      set_select2_field "#promotion_event_name", "spree.order.coupon_code_added"
+      set_select2_field "#promotion_event_name", "spree.checkout.coupon_code_added"
       # Just so the change event actually gets triggered in this spec
       # It is definitely triggered in the "real world"
       page.execute_script("$('#promotion_event_name').trigger('change');")
-      sleep(1)
       fill_in "Code", :with => "5ZHED2DH"
       click_button "Create"
       page.should have_content("Editing Promotion")
