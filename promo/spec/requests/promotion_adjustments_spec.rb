@@ -296,6 +296,7 @@ describe "Promotion Adjustments" do
       # Just so the change event actually gets triggered in this spec
       # It is definitely triggered in the "real world"
       page.execute_script("$('#promotion_event_name').trigger('change');")
+      sleep(1)
       fill_in "Code", :with => "5ZHED2DH"
       click_button "Create"
       page.should have_content("Editing Promotion")
