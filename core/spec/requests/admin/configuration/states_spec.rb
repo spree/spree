@@ -6,7 +6,7 @@ describe "States" do
   let!(:country) { create(:country) }
 
   before(:each) do
-    @hungary = Spree::Country.create(:name => "Hungary", :iso_name => "Hungary")
+    @hungary = Spree::Country.create!(:name => "Hungary", :iso_name => "Hungary")
     Spree::Config[:default_country_id] = country.id
 
     visit spree.admin_path
@@ -55,9 +55,6 @@ describe "States" do
       click_link "States"
       set_select2_field("country", country.id)
 
-      wait_until do
-        page.should have_selector("#new_state_link", :visible => true)
-      end
       click_link "new_state_link"
 
       fill_in "state_name", :with => ""
