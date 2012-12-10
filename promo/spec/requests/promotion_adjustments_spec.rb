@@ -74,7 +74,7 @@ describe "Promotion Adjustments" do
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "1"
-      select "Coupon code added", :from => "Event"
+      select2_select "Coupon code added", :from => "promotion_event_name"
       fill_in "Code", :with => "SINGLE_USE"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -142,7 +142,7 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Order's total > $30"
-      select "Order contents changed", :from => "Event"
+      select2_select "Order contents changed", :from => "promotion_event_name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -232,7 +232,7 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Deal"
-      select "Visit static content page", :from => "Event"
+      select2_select "Visit static content page", :from => "promotion_event_name"
       fill_in "Path", :with => "content/cvv"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -288,12 +288,11 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
       fill_in "Name", :with => "Bundle"
-      select "Coupon code added", :from => "Event"
+      select2_select "Coupon code added", :from => "promotion_event_name"
       fill_in "Code", :with => "5ZHED2DH"
       click_button "Create"
       page.should have_content("Editing Promotion")
-
-      select "Create line items", :from => "Add action of type"
+      select2_select "Create line items", :from => "action_type"
       within('#action_fields') { click_button "Add" }
       # Forced narcolepsy, thanks to JavaScript
       sleep(1)
@@ -334,7 +333,6 @@ describe "Promotion Adjustments" do
 
       fill_in "order_coupon_code", :with => "5ZHED2DH"
       click_button "Save and Continue"
-
       last_order = Spree::Order.last
       last_order.line_items.count.should == 2
       last_order.line_items.map(&:price).should =~ [20.00, 40.00]
@@ -345,7 +343,7 @@ describe "Promotion Adjustments" do
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Spend over $50 and save $5"
-      select "Order contents changed", :from => "Event"
+      select2_select "Order contents changed", :from => "promotion_event_name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -388,7 +386,7 @@ describe "Promotion Adjustments" do
 
     it "only counting the most valuable promotion adjustment in an order" do
       fill_in "Name", :with => "$5 off"
-      select "Order contents changed", :from => "Event"
+      select2_select "Order contents changed", :from => "promotion_event_name"
       click_button "Create"
       page.should have_content("Editing Promotion")
       select "Create adjustment", :from => "Add action of type"
@@ -401,7 +399,7 @@ describe "Promotion Adjustments" do
       visit spree.admin_promotions_path
       click_link "New Promotion"
       fill_in "Name", :with => "10% off"
-      select "Order contents changed", :from => "Event"
+      select2_select "Order contents changed", :from => "promotion_event_name"
       click_button "Create"
       page.should have_content("Editing Promotion")
       select "Create adjustment", :from => "Add action of type"

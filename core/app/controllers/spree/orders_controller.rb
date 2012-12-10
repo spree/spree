@@ -7,6 +7,9 @@ module Spree
 
     respond_to :html
 
+    class_attribute :update_hooks
+    self.update_hooks = Set.new
+
     def show
       @order = Order.find_by_number!(params[:id])
       respond_with(@order)
@@ -17,10 +20,11 @@ module Spree
       if @order.update_attributes(params[:order])
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         fire_event('spree.order.contents_changed')
+        update_hooks.each { |h| render :edit and return unless self.send(h) }
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
-              @order.next_transition.run_callbacks
+              # @order.next_transition.run_callbacks
               redirect_to checkout_state_path(@order.checkout_steps.first)
             else
               redirect_to cart_path

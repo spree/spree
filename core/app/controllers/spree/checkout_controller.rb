@@ -17,11 +17,15 @@ module Spree
 
     respond_to :html
 
+    class_attribute :update_hooks
+    self.update_hooks = Set.new
+
     # Updates the order and advances to the next state (when possible.)
     # Overriden by the promo gem if it exists. 
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
+        update_hooks.each { |h| render :edit and return unless self.send(h) }
 
         if @order.next
           state_callback(:after)
