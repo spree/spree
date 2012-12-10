@@ -6,6 +6,7 @@ describe "States" do
   let!(:country) { create(:country) }
 
   before(:each) do
+    @hungary = Spree::Country.create(:name => "Hungary", :iso_name => "Hungary")
     Spree::Config[:default_country_id] = country.id
 
     visit spree.admin_path
@@ -36,10 +37,7 @@ describe "States" do
 
     it "should allow an admin to create states for non default countries", :js => true do
       click_link "States"
-      wait_until do
-        page.should have_selector('#country', :visible => true)
-      end
-      select "Hungary", :from => "Country"
+      set_select2_field "#country", @hungary.id
       click_link "new_state_link"
       fill_in "state_name", :with => "Pest megye"
       fill_in "Abbreviation", :with => "PE"
