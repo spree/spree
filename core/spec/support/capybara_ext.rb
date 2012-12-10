@@ -22,7 +22,11 @@ module CapybaraExt
     page.execute_script "$('#{within} .select2-choices').mousedown();"
     sleep(0.25)
     page.execute_script "$('input.select2-input').val('#{value}').trigger('keyup-change');"
-    sleep(0.25)
+
+    wait_until do
+      page.find(".select2-highlighted", :visible => true)
+    end
+
     page.execute_script "$('.select2-highlighted').mouseup();"
   end
 
