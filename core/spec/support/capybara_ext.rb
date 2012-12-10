@@ -17,7 +17,7 @@ module CapybaraExt
 
   def select2(within, value)
     # Forced narcolepsy, thanks to JavaScript
-    sleep(0.25)
+    sleep(1)
     page.execute_script "$('#{within} .select2-choice').mousedown();"
     page.execute_script "$('#{within} .select2-choices').mousedown();"
     sleep(0.25)
