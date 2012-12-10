@@ -5,7 +5,7 @@ module Spree
         if payment_method && payment_method.source_required?
           if source
             if !processing?
-              if Spree::Config[:auto_capture]
+              if payment_method.auto_capture?
                 purchase!
               else
                 authorize!
