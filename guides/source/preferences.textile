@@ -41,7 +41,7 @@ You can add additional preferences under the spree/app_configuration namespace o
  # These will be saved with key: spree/app_configuration/hot_salsa
  Spree::AppConfiguration.class_eval do
    preference :hot_salsa, :boolean
-   preference :dark_chocolate, :default => true
+   preference :dark_chocolate, :boolean, :default => true
    preference :color, :string
    preference :favorite_number
    preference :language, :string, :default => 'English'
@@ -71,7 +71,7 @@ You can define preferences for a model within the model itself:
 <shell>
  class User < ActiveRecord::Base
    preference :hot_salsa, :boolean
-   preference :dark_chocolate, :default => true
+   preference :dark_chocolate, :boolean, :default => true
    preference :color, :string
    preference :favorite_number, :integer
    preference :language, :string, :default => 'English'
