@@ -59,7 +59,7 @@ describe "Properties" do
     before do
       create(:product)
       visit spree.admin_products_path
-      click_icon :edit
+      click_link "Edit"
       click_link "Product Properties"
     end
 
