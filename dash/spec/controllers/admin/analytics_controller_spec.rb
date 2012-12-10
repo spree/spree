@@ -22,6 +22,8 @@ describe Spree::Admin::AnalyticsController do
     end
 
     it "redirects after registration" do
+      Spree::Dash::Jirafe.should_receive(:register).
+                          and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
       Spree::Config.site_name = "test_site"
       Spree::Config.site_url = "http://test_site.com"
       spree_get :register
@@ -33,7 +35,6 @@ describe Spree::Admin::AnalyticsController do
                           and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
       spree_get :register
       Spree::Dash::Config.configured?.should be_true
-      response.should redirect_to(spree.admin_path)
     end
   end
 end
