@@ -51,5 +51,9 @@ module Spree
     def source_required?
       true
     end
+
+    def auto_capture?
+      Spree::Config[:auto_capture]
+    end
   end
 end
