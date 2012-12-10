@@ -65,7 +65,7 @@ describe "Customer Details" do
         fill_in "order_#{type}_address_attributes_address2",   :with => "#101"
         fill_in "order_#{type}_address_attributes_city",       :with => "Bethesda"
         fill_in "order_#{type}_address_attributes_zipcode",    :with => "20170"
-        select "Alabama", :from => "order_#{type}_address_attributes_state_id"
+        set_select2_field "#order_#{type}_address_attributes_state_id", state.id
         fill_in "order_#{type}_address_attributes_phone",     :with => "123-456-7890"
       end
 
