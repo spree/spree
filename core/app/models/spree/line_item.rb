@@ -108,7 +108,7 @@ module Spree
       # Validation
       def stock_availability
         return if sufficient_stock?
-        errors.add(:quantity, I18n.t('validation.cannot_be_greater_than_available_stock'))
+        errors.add(:quantity, I18n.t('validation.exceeds_available_stock'))
       end
 
       def quantity_no_less_than_shipped
