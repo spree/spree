@@ -100,7 +100,7 @@ module Spree
 
       def ensure_not_shipped
         if order.try(:inventory_units).to_a.any?{ |unit| unit.variant_id == variant_id && unit.shipped? }
-          errors.add :base, I18n.t('validation.cannot_destory_line_item_as_inventory_units_have_shipped')
+          errors.add :base, I18n.t('validation.cannot_destroy_line_item_as_inventory_units_have_shipped')
           return false
         end
       end
