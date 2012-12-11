@@ -65,13 +65,13 @@ describe Spree::Payment do
 
     context "#process!" do
       it "should purchase if with auto_capture" do
-        Spree::Config[:auto_capture] = true
+        payment.payment_method.should_receive(:auto_capture?).and_return(true)
         payment.should_receive(:purchase!)
         payment.process!
       end
 
       it "should authorize without auto_capture" do
-        Spree::Config[:auto_capture] = false
+        payment.payment_method.should_receive(:auto_capture?).and_return(false)
         payment.should_receive(:authorize!)
         payment.process!
       end
