@@ -61,6 +61,7 @@ module Spree
     preference :show_only_complete_orders_by_default, :boolean, :default => true
     preference :show_zero_stock_products, :boolean, :default => true
     preference :show_variant_full_price, :boolean, :default => false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
+    preference :show_products_without_price, :boolean, :default => false
     preference :site_name, :string, :default => 'Spree Demo Site'
     preference :site_url, :string, :default => 'demo.spreecommerce.com'
     preference :tax_using_ship_address, :boolean, :default => true

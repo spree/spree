@@ -26,7 +26,7 @@
       </div>
     <% end%>
 
-    <% if @product.price_in(current_currency) %>
+    <% if @product.price_in(current_currency) and !@product.price.nil? %>
       <div data-hook="product_price" class="columns five <% if !@product.has_variants? %> alpha <% else %> omega <% end %>">
         
         <div id="product-price">
@@ -45,8 +45,12 @@
             <%= content_tag('strong', t(:out_of_stock)) %>
           <% end %>
         </div>
-
       </div>
+    <% else %>
+        <div id="product-price">
+          <br>
+          <div><span class="price selling" itemprop="price"><%= t('product_not_available_in_this_currency') %></span></div>
+        </div>
     <% end %>    
 
   </div>
