@@ -1099,12 +1099,12 @@ en:
   users: Users
   validate_on_profile_create: Validate on profile create
   validation:
-    cannot_be_greater_than_available_stock: "cannot be greater than available stock."
     cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
     cannot_destory_line_item_as_inventory_units_have_shipped: "Cannot destory line item as some inventory units have shipped."
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"
+    exceeds_available_stock: "exceeds available stock. Please ensure line items have a valid quantity."
   value: Value
   variant: Variant
   variants: Variants
