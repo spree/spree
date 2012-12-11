@@ -13,6 +13,21 @@ describe "States" do
     click_link "Configuration"
   end
 
+  # TODO: For whatever reason, rendering of the states page takes a non-trivial amount of time
+  # Therefore we navigate to it, and wait until what we see is visible
+  def go_to_states_page
+    click_link "States"
+    counter = 0
+    until page.has_css?("#new_state_link")
+      if counter < 10
+        sleep(2)
+        counter += 1
+      else
+        raise "Could not see new state link!"
+      end
+    end
+  end
+
   context "admin visiting states listing" do
     let!(:state) { create(:state, :country => country) }
 
@@ -24,7 +39,7 @@ describe "States" do
 
   context "creating and editing states" do
     it "should allow an admin to edit existing states", :js => true do
-      click_link "States"
+      go_to_states_page
       set_select2_field("country", country.id)
 
       click_link "new_state_link"
@@ -36,7 +51,7 @@ describe "States" do
     end
 
     it "should allow an admin to create states for non default countries", :js => true do
-      click_link "States"
+      go_to_states_page
       set_select2_field "#country", @hungary.id
       # Just so the change event actually gets triggered in this spec
       # It is definitely triggered in the "real world"
@@ -52,7 +67,7 @@ describe "States" do
     end
 
     it "should show validation errors", :js => true do
-      click_link "States"
+      go_to_states_page
       set_select2_field("country", country.id)
 
       click_link "new_state_link"
