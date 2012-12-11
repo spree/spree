@@ -10,6 +10,7 @@ module Spree
         before_filter :check_for_api_key, :if => :requires_authentication?
         before_filter :authenticate_user
 
+        rescue_from Exception, :with => :error_during_processing
         rescue_from CanCan::AccessDenied, :with => :unauthorized
         rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
@@ -61,6 +62,11 @@ module Spree
 
         def not_found
           render "spree/api/v1/errors/not_found", :status => 404 and return
+        end
+
+        def error_during_processing(exception)
+          render :text => { exception: exception.message }.to_json,
+                 :status => 200 and return
         end
 
         def current_ability
