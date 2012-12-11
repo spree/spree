@@ -6,7 +6,6 @@ module Spree
     module Rules
       class Product < PromotionRule
         has_and_belongs_to_many :products, :class_name => '::Spree::Product', :join_table => 'spree_products_promotion_rules', :foreign_key => 'promotion_rule_id'
-        validate :only_one_promotion_per_product
 
         MATCH_POLICIES = %w(any all)
         preference :match_policy, :string, :default => MATCH_POLICIES.first
@@ -33,13 +32,6 @@ module Spree
           self.product_ids = s.to_s.split(',').map(&:strip)
         end
 
-        private
-
-          def only_one_promotion_per_product
-            if Spree::Promotion::Rules::Product.all.map(&:products).flatten.uniq!
-              errors[:base] << "You can't create two promotions for the same product"
-            end
-          end
       end
     end
   end

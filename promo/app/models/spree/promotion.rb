@@ -57,7 +57,7 @@ module Spree
       end
     end
 
-    # called anytime order.update! happens
+    # called anytime order.update! happens via Spree::Adjustment#eligible_for_originator?
     def eligible?(order)
       return false if expired? || usage_limit_exceeded?(order)
       rules_are_eligible?(order, {})
@@ -75,7 +75,6 @@ module Spree
 
     def order_activatable?(order)
       order &&
-      created_at.to_i < order.created_at.to_i &&
       !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
