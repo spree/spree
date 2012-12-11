@@ -64,6 +64,11 @@ module Spree
         [:id, :name, :permalink, :position, :parent_id, :taxonomy_id]
       end
 
+      def inventory_unit_attributes
+        [:id, :lock_version, :state, :variant_id, :order_id,
+         :shipment_id, :return_authorization_id]
+      end
+
       def return_authorization_attributes
         [:id, :number, :state, :amount, :order_id, :reason, :created_at, :updated_at]
       end
