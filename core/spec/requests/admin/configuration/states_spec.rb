@@ -8,15 +8,12 @@ describe "States" do
   before(:each) do
     @hungary = Spree::Country.create!(:name => "Hungary", :iso_name => "Hungary")
     Spree::Config[:default_country_id] = country.id
-
-    visit spree.admin_path
-    click_link "Configuration"
   end
 
   # TODO: For whatever reason, rendering of the states page takes a non-trivial amount of time
   # Therefore we navigate to it, and wait until what we see is visible
   def go_to_states_page
-    click_link "States"
+    visit spree.admin_country_states_path(country)
     counter = 0
     until page.has_css?("#new_state_link")
       if counter < 10
@@ -32,7 +29,7 @@ describe "States" do
     let!(:state) { create(:state, :country => country) }
 
     it "should correctly display the states" do
-      click_link "States"
+      visit spree.admin_country_states_path(country)
       page.should have_content(state.name)
     end
   end
