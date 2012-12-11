@@ -27,6 +27,10 @@ module CapybaraExt
   end
 
   def select2_search(within, value)
+    wait_until do
+      page.find(within, :visible => true)
+    end
+
     # Forced narcolepsy, thanks to JavaScript
     sleep(0.25)
     page.execute_script "$('#{within} .select2-choice').mousedown();"
