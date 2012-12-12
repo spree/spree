@@ -66,7 +66,7 @@ module Spree
 
         def error_during_processing(exception)
           render :text => { exception: exception.message }.to_json,
-                 :status => 200 and return
+                 :status => 422 and return
         end
 
         def current_ability
