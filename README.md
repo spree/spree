@@ -75,9 +75,6 @@ You can always perform the steps later.
 
     $ bundle exec rake db:migrate
     $ bundle exec rake db:seed
-
-To manually load sample products, orders, etc., run the following rake task
-
     $ bundle exec rake spree_sample:load
 
 Browse Store
