@@ -4,7 +4,15 @@ module Spree
       module Auth
         def self.included(base)
           base.class_eval do
-            include SslRequirement
+            def self.ssl_supported?
+              return Spree::Config[:allow_ssl_in_production] if Rails.env.production?
+              return Spree::Config[:allow_ssl_in_staging] if Rails.env.staging?
+              return Spree::Config[:allow_ssl_in_development_and_test] if (Rails.env.development? or Rails.env.test?)
+            end
+
+            def self.ssl_required(*actions)
+              force_ssl actions if ssl_supported?
+            end
 
             helper_method :try_spree_current_user
 
