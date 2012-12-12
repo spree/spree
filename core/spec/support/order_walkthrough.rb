@@ -5,9 +5,12 @@ class OrderWalkthrough
       Factory(:payment_method)
     end
 
-    # A payment method must exist for an order to proceed through the Address state
+    # A shipping method must exist for an order to proceed through the Delivery state
     unless Spree::ShippingMethod.exists?
-      Factory(:shipping_method)
+      shipping_method = Factory(:shipping_method)
+      calculator = Spree::Calculator::PerItem.create!({:preferred_amount => 10, :calculable => shipping_method}, :without_protection => true)
+      shipping_method.calculator = calculator
+      shipping_method.save
     end
 
     order = Spree::Order.create!(:email => "spree@example.com")

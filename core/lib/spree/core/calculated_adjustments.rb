@@ -33,7 +33,8 @@ module Spree
                                     :source => calculable,
                                     :originator => self,
                                     :label => label,
-                                    :mandatory => mandatory}, :without_protection => true)
+                                    :mandatory => mandatory,
+                                    :locked => true }, :without_protection => true)
       end
 
       # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
