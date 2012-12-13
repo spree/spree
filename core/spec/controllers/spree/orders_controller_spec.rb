@@ -48,6 +48,7 @@ describe Spree::OrdersController do
       order.stub(:update_attributes).and_return true
       order.stub(:line_items).and_return([])
       order.stub(:line_items=).with([])
+      order.stub(:last_ip_address=)
       Spree::Order.stub(:find_by_id_and_currency).and_return(order)
     end
 
