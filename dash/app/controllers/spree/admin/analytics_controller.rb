@@ -21,7 +21,6 @@ module Spree
       begin
         store = Spree::Dash::Jirafe.synchronize_resources(store_hash)
         session[:last_jirafe_sync] = DateTime.now
-        flash[:notice] = "Updated"
         redirect_to admin_path
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
@@ -64,9 +63,10 @@ module Spree
         :time_zone     => ActiveSupport::TimeZone::MAPPING['Eastern Time (US & Canada)'],
       }
 
-      if Spree::Dash::Config.app_id.present? && Spree::Dash::Config.app_token.present?
+      if Spree::Dash::Config.configured?
         store[:app_id] = Spree::Dash::Config.app_id
         store[:app_token] = Spree::Dash::Config.app_token
+        store[:site_id] = Spree::Dash::Config.site_id
       end
       store
     end
