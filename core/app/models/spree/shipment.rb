@@ -110,7 +110,7 @@ module Spree
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
-      return 'pending' unless order.complete?
+      return 'pending' unless order.complete? || order.resumed?
       return 'pending' if inventory_units.any? &:backordered?
       return 'shipped' if state == 'shipped'
       order.paid? ? 'ready' : 'pending'

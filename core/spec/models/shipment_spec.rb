@@ -45,7 +45,11 @@ describe Spree::Shipment do
     end
 
     context "when order is incomplete" do
-      before { order.stub :complete? => false }
+      before do
+         order.stub :complete? => false
+         order.stub :resumed? => false
+      end
+
       it "should result in a 'pending' state" do
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
@@ -71,6 +75,19 @@ describe Spree::Shipment do
       end
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
+    end
+
+    context "when a paid order has been resumed" do
+      before do
+        order.stub :complete? => false
+        order.stub :resumed? => true
+        order.stub :paid? =>true
+      end
+
+      it "should result in 'ready' state" do
+        shipment.should_receive(:update_column).with("state", "ready")
+        shipment.update!(order)
+      end
     end
 
     context "when order has a credit owed" do
