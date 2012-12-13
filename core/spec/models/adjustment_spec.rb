@@ -13,10 +13,15 @@ describe Spree::Adjustment do
       let(:originator) { mock("originator", :update_adjustment => nil) }
       before do
         originator.stub :update_amount => true
-        adjustment.stub :originator => originator
+        adjustment.stub :originator => originator, :label => 'adjustment', :amount => 0
       end
-      it "should do nothing when locked" do
-        adjustment.locked = true
+      it "should do nothing when closed" do
+        adjustment.close
+        originator.should_not_receive(:update_adjustment)
+        adjustment.update!
+      end
+      it "should do nothing when finalized" do
+        adjustment.finalize
         originator.should_not_receive(:update_adjustment)
         adjustment.update!
       end
@@ -80,6 +85,37 @@ describe Spree::Adjustment do
     end
   end
 
+  context "adjustment state" do
+    let(:adjustment) { Factory(:adjustment, :state => 'open') }
+
+    context "#immutable?" do
+      it "is true when adjustment state isn't open" do
+        adjustment.state = "closed"
+        adjustment.should be_immutable
+        adjustment.state = "finalized"
+        adjustment.should be_immutable
+      end
+
+      it "is false when adjustment state is open" do
+        adjustment.state = "open"
+        adjustment.should_not be_immutable
+      end
+    end
+
+    context "#finalized?" do
+      it "is true when adjustment state is finalized" do
+        adjustment.state = "finalized"
+        adjustment.should be_finalized
+      end
+
+      it "is false when adjustment state isn't finalized" do
+        adjustment.state = "closed"
+        adjustment.should_not be_finalized
+        adjustment.state = "open"
+        adjustment.should_not be_finalized
+      end
+    end
+  end
 
   context "#eligible_for_originator?" do
     context "with no originator" do

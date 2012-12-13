@@ -18,7 +18,7 @@ describe Spree::Order do
       create(:adjustment, :adjustable => order,
                           :originator => originator,
                           :amount     => amount,
-                          :locked     => true,
+                          :state      => "closed",
                           :label      => label)
     end
 
@@ -28,9 +28,9 @@ describe Spree::Order do
       create_adjustment("Promotion C", -300)
       create(:adjustment, :adjustable => order,
                           :originator => nil,
-                          :amount => -500,
-                          :locked => true,
-                          :label => "Some other credit")
+                          :amount     => -500,
+                          :state      => "closed",
+                          :label      => "Some other credit")
       order.adjustments.each {|a| a.update_attribute_without_callbacks(:eligible, true)}
 
       updater.update_adjustments
@@ -55,7 +55,7 @@ describe Spree::Order do
       create(:adjustment, :adjustable => order,
                           :originator => nil,
                           :amount     => -1000,
-                          :locked     => true,
+                          :state      => "closed",
                           :eligible   => false,
                           :label      => 'Bad promo')
 
