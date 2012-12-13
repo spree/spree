@@ -62,7 +62,7 @@ module Spree
           order.adjustments.create({ :amount => amount,
                                      :source => order,
                                      :originator => self,
-                                     :locked => true,
+                                     :state => "closed",
                                      :label => label }, :without_protection => true)
         end
       else

@@ -227,6 +227,8 @@ en:
   address: Address
   address_information: "Address Information"
   adjustment: Adjustment
+  adjustment_successfully_closed: "Adjustment has been successfully closed!"
+  adjustment_successfully_opened: "Adjustment has been successfully opened!"
   adjustment_total: Adjustment Total
   adjustments: Adjustments
   administration: Administration
@@ -238,6 +240,8 @@ en:
         delivery_success: 'Testmail sent successfully'
         error: 'Testmail error: %{e}'
   all: "All"
+  all_adjustments_opened: "All adjustments successfully opened!"
+  all_adjustments_closed: "All adjustments successfully closed!"
   all_departments: All departments
   allow_backorders: "Allow Backorders"
   allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
@@ -254,7 +258,6 @@ en:
   are_you_sure: "Are you sure?"
   are_you_sure_category: "Are you sure you want to delete this category?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
-  are_you_sure_delete_image: "Are you sure you want to delete this image?"
   are_you_sure_option_type: "Are you sure you want to delete this option type?"
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
@@ -325,6 +328,8 @@ en:
   choose_a_customer: "Choose a customer"
   city: City
   clone: Clone
+  close: Close
+  close_all_adjustments: "Close All Adjustments"
   code: Code
   combine: Combine
   complete: complete
@@ -533,6 +538,15 @@ en:
   live: "Live"
   loading: Loading
   locale_changed: "Locale Changed"
+  lock: Lock
+  logged_in_as: "Logged in as"
+  logged_in_succesfully: "Logged in successfully"
+  logged_out: "You have been logged out."
+  login: Login
+  login_as_existing: "Login as Existing Customer"
+  login_failed: "Login authentication failed."
+  login_name: Login
+  logout: Logout
   look_for_similar_items: Look for similar items
   maestro_or_solo_cards: Maestro/Solo cards
   mail_delivery_enabled: "Mail delivery is enabled"
@@ -614,6 +628,8 @@ en:
     variant_not_deleted: "Variant could not be deleted"
   on_hand: "On Hand"
   one_default_category_with_default_tax_rate: "You should configure exactly one default category with your countries default tax rate"
+  open: Open
+  open_all_adjustments: "Open All Adjustments"
   operation: Operation
   option_type: "Option Type"
   option_types: "Option Types"
@@ -1073,6 +1089,7 @@ en:
   unable_to_save_order: "Unable to Save Order"
   under_price: "Under %{price}"
   under_paid: "Under Paid"
+  unlock: Unlock
   unrecognized_card_type: Unrecognized card type
   update: Update
   update_password: "Update my password and log me in"

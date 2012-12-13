@@ -6,7 +6,7 @@ describe "Adjustments" do
   before(:each) do
     visit spree.admin_path
     order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
-    create(:adjustment, :adjustable => order)
+    create(:adjustment, :adjustable => order, :state => 'open')
     click_link "Orders"
     within_row(1) { click_icon :edit }
     click_link "Adjustments"
@@ -70,6 +70,22 @@ describe "Adjustments" do
         page.should have_content("Label can't be blank")
         page.should have_content("Amount is not a number")
       end
+    end
+  end
+
+  context "changing an adjustment's state" do
+    it "can toggle an adjustment's state" do
+      within_row(1) do
+        page.should have_css('.icon-lock')
+        click_icon :lock
+        page.should have_css('.icon-unlock')
+      end
+      page.should have_content("successfully closed!")
+
+      within_row(1) do
+        click_icon :unlock
+      end
+      page.should have_content("successfully opened!")
     end
   end
 end

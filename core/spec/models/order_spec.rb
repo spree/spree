@@ -143,8 +143,8 @@ describe Spree::Order do
       adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
       adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
       order.stub :adjustments => [adjustment1, adjustment2]
-      adjustment1.should_receive(:update_column).with("locked", true)
-      adjustment2.should_receive(:update_column).with("locked", true)
+      adjustment1.should_receive(:update_column).with("state", "closed")
+      adjustment2.should_receive(:update_column).with("state", "closed")
       order.finalize!
     end
 
