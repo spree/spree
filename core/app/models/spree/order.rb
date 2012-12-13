@@ -352,6 +352,10 @@ module Spree
       end
     end
 
+    def can_ship?
+      self.complete? || self.resumed?
+    end
+
     def credit_cards
       credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
       CreditCard.scoped(:conditions => { :id => credit_card_ids })

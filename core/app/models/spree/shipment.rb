@@ -28,7 +28,7 @@ module Spree
 
     scope :with_state, lambda { |s| where(:state => s) }
     scope :shipped, with_state('shipped')
-    scope :ready,   with_state('ready')
+    scope :ready, with_state('ready')
     scope :pending, with_state('pending')
 
     def to_param
@@ -47,6 +47,7 @@ module Spree
     def cost
       adjustment ? adjustment.amount : 0
     end
+
     alias_method :amount, :cost
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
@@ -101,7 +102,7 @@ module Spree
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
-      return 'pending' unless order.complete?
+      return 'pending' unless order.can_ship?
       return 'pending' if inventory_units.any? &:backordered?
       return 'shipped' if state == 'shipped'
       order.paid? ? 'ready' : 'pending'
@@ -112,7 +113,7 @@ module Spree
         return number unless number.blank?
         record = true
         while record
-          random = "H#{Array.new(11){rand(9)}.join}"
+          random = "H#{Array.new(11) { rand(9) }.join}"
           record = self.class.where(:number => random).first
         end
         self.number = random
