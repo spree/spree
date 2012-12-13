@@ -5,7 +5,7 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :can_ship? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator'), :adjustment_label => "Shipping" }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
@@ -38,18 +38,14 @@ describe Spree::Shipment do
 
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
-        shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)] )
+        shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)])
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
     end
 
     context "when order is incomplete" do
-      before do
-         order.stub :complete? => false
-         order.stub :resumed? => false
-      end
-
+      before { order.stub :can_ship? => false }
       it "should result in a 'pending' state" do
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
@@ -75,19 +71,6 @@ describe Spree::Shipment do
       end
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
-    end
-
-    context "when a paid order has been resumed" do
-      before do
-        order.stub :complete? => false
-        order.stub :resumed? => true
-        order.stub :paid? =>true
-      end
-
-      it "should result in 'ready' state" do
-        shipment.should_receive(:update_column).with("state", "ready")
-        shipment.update!(order)
-      end
     end
 
     context "when order has a credit owed" do
