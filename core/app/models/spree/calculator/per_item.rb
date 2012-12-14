@@ -33,7 +33,9 @@ module Spree
       # Shipping methods do not have promotions attached, but promotions do
       # Therefore we must check for promotions
       if self.calculable.respond_to?(:promotion)
-        self.calculable.promotion.rules.map(&:products).flatten
+        self.calculable.promotion.rules.map do |rule|
+          rule.respond_to?(:products) ? rule.products : []
+        end.flatten
       end
     end
   end
