@@ -132,13 +132,6 @@ module Spree
         }.join("<br />").html_safe
       end
 
-      def product_picker_field(name, value)
-        products = Product.with_ids(value.split(','))
-        product_names = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
-        product_rules = products.collect{ |p| { :id => p.id, :name => p.name } }
-        %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
-      end
-
       def link_to_add_fields(name, target, options = {})
         name = '' if options[:no_text]
         css_classes = options[:class] ? options[:class] + " add_fields" : "add_fields"

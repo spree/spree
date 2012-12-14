@@ -26,36 +26,50 @@ module CapybaraExt
     page.execute_script %Q{$('#{field}').select2('val', '#{value}')}
   end
 
-  def select2_search(within, value)
-    # Forced narcolepsy, thanks to JavaScript
-    sleep(0.25)
-    page.execute_script "$('#{within} .select2-choice').mousedown();"
-    page.execute_script "$('#{within} .select2-choices').mousedown();"
-    sleep(0.25)
-    page.execute_script "$('input.select2-input').val('#{value}').trigger('keyup-change');"
+  def select2_search(value, options)
+    id = find_label_by_text(options[:from])
 
-    wait_until do
-      page.find(".select2-highlighted", :visible => true)
-    end
-
-    page.execute_script "$('.select2-highlighted').mouseup();"
+    select2_id = "#s2id_#{id}"
+    find(select2_id).find(".select2-choices").click
+    page.execute_script "$('#{select2_id} input.select2-input').val('#{value}').trigger('keyup-change');"
+    select_select2_result(value)
   end
 
-
   def select2(value, options)
-    # find label and its for attribute
-    label = first(:xpath, "//label[text()='#{options[:from]}']")
-    id = label ? label['for'] : options[:from]
+    id = find_label_by_text(options[:from])
 
     # generate select2 id
     select2_id = "#s2id_#{id}"
 
     # find select2 element and click it
     find("#{select2_id}").find('a').click
+    select_select2_result(value)
+  end
 
-    # search results and click
-    res = find("ul.select2-results")
-    res.find(:xpath, %Q{//div[@class="select2-result-label" and text()="#{value}"]}).click()
+  def select_select2_result(value)
+    find(:xpath, %Q{//div[@class="select2-result-label" and text()="#{value}"]}).click
+  end
+
+  def find_label_by_text(text)
+    label = find_label(text)
+    counter = 0
+
+    # Because JavaScript testing is prone to errors...
+    while label.nil? && counter < 10
+      sleep(1)
+      counter += 1
+      label = find_label(text)
+    end
+
+    if label.nil?
+      raise "Could not find label by text #{text}"
+    end
+
+    label ? label['for'] : text
+  end
+
+  def find_label(text)
+    first(:xpath, "//label[text()='#{text}']")
   end
 
 end
