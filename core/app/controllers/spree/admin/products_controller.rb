@@ -3,7 +3,6 @@ module Spree
     class ProductsController < ResourceController
       helper 'spree/products'
 
-#      before_filter :check_json_authenticity, :only => :index
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
