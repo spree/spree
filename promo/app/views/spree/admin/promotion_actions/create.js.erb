@@ -5,11 +5,8 @@ $(document).ready(function(){
 });
 initProductActions();
 
-<% unless Rails.env.test? %>
-  $('.type-select.select2').select2();
-<% end %>
+$('.type-select.select2').select2();
 
 $('#<%= dom_id @promotion_action %>').hide();
 $('#<%= dom_id @promotion_action %>').fadeIn();
-$('#<%= dom_id @promotion_action %> .tokeninput.products').productPicker();
 
