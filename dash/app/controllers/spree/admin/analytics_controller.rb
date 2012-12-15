@@ -18,9 +18,9 @@ module Spree
     end
 
     def sync
+      session[:last_jirafe_sync] = DateTime.now
       begin
         store = Spree::Dash::Jirafe.synchronize_resources(store_hash)
-        session[:last_jirafe_sync] = DateTime.now
         redirect_to admin_path
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
