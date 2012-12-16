@@ -22,7 +22,8 @@ describe "Product Taxons" do
 
       find(".select2-search-choice").text.should == taxon_1.name
       selected_taxons.should =~ [taxon_1.id]
-      select2_search("#product_taxons_field", "Clothing")
+
+      select2_search "Clothing", :from => "#product_taxons_field"
       click_button "Update"
       selected_taxons.should =~ [taxon_1.id, taxon_2.id]
 

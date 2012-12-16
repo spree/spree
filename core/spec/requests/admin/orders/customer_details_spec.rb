@@ -36,7 +36,7 @@ describe "Customer Details" do
   context "editing an order", :js => true do
     it "should be able to populate customer details for an existing order" do
       click_link "Customer Details"
-      select2_search("#select-customer", "foobar")
+      select2_search "foobar", :from => "#select-customer"
 
       ["ship_address", "bill_address"].each do |address|
         find_field("order_#{address}_attributes_firstname").value.should == "Rumpelstiltskin"
@@ -65,7 +65,7 @@ describe "Customer Details" do
         fill_in "order_#{type}_address_attributes_address2",   :with => "#101"
         fill_in "order_#{type}_address_attributes_city",       :with => "Bethesda"
         fill_in "order_#{type}_address_attributes_zipcode",    :with => "20170"
-        select2 "Alabama", :from => "order_#{type}_address_attributes_state_id"
+        select2 "Alabama", :from => "#order_#{type}_address_attributes_state_id"
         fill_in "order_#{type}_address_attributes_phone",     :with => "123-456-7890"
       end
 
