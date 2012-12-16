@@ -47,7 +47,16 @@ module CapybaraExt
   end
 
   def select_select2_result(value)
-    find(:xpath, %Q{//div[@class="select2-result-label" and text()="#{value}"]}).click
+    begin
+      find(:xpath, %Q{//div[@class="select2-result-label" and text()[contains(.,"#{value}")]]}).click
+    rescue Capybara::ElementNotFound
+      results = all(:xpath, %Q{//div[@class="select2-result-label"]})
+      if results.count == 1
+        results.first.click
+      else
+        raise "Couldn't disambiguate select2 result."
+      end
+    end
   end
 
   def find_label_by_text(text)
