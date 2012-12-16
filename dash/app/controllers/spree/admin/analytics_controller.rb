@@ -13,7 +13,7 @@ module Spree
         redirect_to admin_path
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
-        redirect_to root_path
+        redirect_to admin_path
       end
     end
 
