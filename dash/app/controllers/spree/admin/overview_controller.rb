@@ -18,7 +18,7 @@ module Spree
     private
 
     def check_last_jirafe_sync_time
-      if Spree::Dash.configured?
+      if Spree::Dash::Config.configured?
         if session[:last_jirafe_sync]
           hours_since_last_sync = ((DateTime.now - session[:last_jirafe_sync]) * 24).to_i
           redirect_to admin_analytics_sync_path if hours_since_last_sync > 24
