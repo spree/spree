@@ -33,8 +33,11 @@ module CapybaraExt
   end
 
   def targetted_select2_search(value, options)
+    #p %Q{$('#{options[:from]}').select2('open')}
     page.execute_script %Q{$('#{options[:from]}').select2('open')}
-    page.execute_script "$('#{options[:dropdown_css]} input.select2-input').val('#{value}').trigger('keyup-change');"
+    container = options[:dropdown_css] || ".select2-with-searchbox"
+    #p "$('#{container} input.select2-input').val('#{value}').trigger('keyup-change');"
+    page.execute_script "$('#{container} input.select2-input').val('#{value}').trigger('keyup-change');"
     select_select2_result(value)
   end
 
@@ -42,17 +45,18 @@ module CapybaraExt
     id = find_label_by_text(options[:from])
 
     # generate select2 id
-    select2_id = "#s2id_#{id}"
+    options[:from] = "#s2id_#{id}"
+    targetted_select2(value, options)
+  end
 
+  def targetted_select2(value, options)
     # find select2 element and click it
-    find("#{select2_id}").find('a').click
+    find(options[:from]).find('a').click
     select_select2_result(value)
   end
 
   def select_select2_result(value)
-    wait_until do
-      page.find("div.select2-result-label")
-    end
+    #p %Q{$("div.select2-result-label:contains('#{value}')").mouseup()}
     page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
   end
 

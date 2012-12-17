@@ -57,16 +57,28 @@ describe "Customer Details" do
       order.save!
 
       click_link "Customer Details"
-      ["ship", "bill"].each do |type|
-        fill_in "order_#{type}_address_attributes_firstname",  :with => "John 99"
-        fill_in "order_#{type}_address_attributes_lastname",   :with => "Doe"
-        fill_in "order_#{type}_address_attributes_lastname",   :with => "Company"
-        fill_in "order_#{type}_address_attributes_address1",   :with => "100 first lane"
-        fill_in "order_#{type}_address_attributes_address2",   :with => "#101"
-        fill_in "order_#{type}_address_attributes_city",       :with => "Bethesda"
-        fill_in "order_#{type}_address_attributes_zipcode",    :with => "20170"
-        select2 "Alabama", :from => "#order_#{type}_address_attributes_state_id"
-        fill_in "order_#{type}_address_attributes_phone",     :with => "123-456-7890"
+      within "#shipping" do
+        fill_in "First Name",              :with => "John 99"
+        fill_in "Last Name",               :with => "Doe"
+        fill_in "Company",                 :with => "Company"
+        fill_in "Street Address",          :with => "100 first lane"
+        fill_in "Street Address (cont'd)", :with => "#101"
+        fill_in "City",                    :with => "Bethesda"
+        fill_in "Zip",                     :with => "20170"
+        fill_in "Phone",                   :with => "123-456-7890"
+        targetted_select2_search "Alabama", :from => "#order_ship_address_attributes_state_id"
+      end
+
+      within "#billing" do
+        fill_in "First Name",              :with => "John 99"
+        fill_in "Last Name",               :with => "Doe"
+        fill_in "Company",                 :with => "Company"
+        fill_in "Street Address",          :with => "100 first lane"
+        fill_in "Street Address (cont'd)", :with => "#101"
+        fill_in "City",                    :with => "Bethesda"
+        fill_in "Zip",                     :with => "20170"
+        fill_in "Phone",                   :with => "123-456-7890"
+        targetted_select2_search "Alabama", :from => "#order_bill_address_attributes_state_id"
       end
 
       click_button "Continue"
