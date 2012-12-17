@@ -79,9 +79,9 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('#action_fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -146,15 +146,15 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
+      select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
 
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Percent", :from => "Calculator"
+      select2 "Flat Percent", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
@@ -174,14 +174,14 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
+      select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "30"
       within('#rule_fields') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Free Shipping", :from => "Calculator"
+      select2 "Free Shipping", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
 
       visit spree.root_path
@@ -237,9 +237,9 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "4" }
       within('#actions_container') { click_button "Update" }
@@ -254,13 +254,6 @@ describe "Promotion Adjustments" do
       click_link "RoR Mug"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 76.00
-    end
-
-    it "should not allow an admin to create two automatic promo for the same specific product" do
-      create_per_product_promotion("RoR Mug", 5.0)
-      create_per_product_promotion("RoR Mug", 10.0)
-
-      Spree::Promotion.last.should_not be_valid
     end
 
     # Regression test for #1416
@@ -306,9 +299,9 @@ describe "Promotion Adjustments" do
 
       within('#actions_container') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#new_promotion_action_form') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "40.00" }
       within('#actions_container') { click_button "Update" }
@@ -350,14 +343,14 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
+      select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "50"
       within('#rule_fields') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -392,9 +385,9 @@ describe "Promotion Adjustments" do
       select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -405,9 +398,9 @@ describe "Promotion Adjustments" do
       select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Percent", :from => "Calculator"
+      select2 "Flat Percent", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
