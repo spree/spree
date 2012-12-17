@@ -30,19 +30,16 @@ module Spree
       end
     end
 
-    # Calculates the discount value of each line item. Returns zero 
-    # unless the product is included in the promotion rules.
     def value_for_line_item(line_item)
       if compute_on_promotion?
         return 0 unless matching_products.include?(line_item.product)
       end
-      line_item.price * line_item.quantity * preferred_percent
+      ((line_item.price * line_item.quantity) * preferred_percent) / 100
     end
 
     # Determines wether or not the calculable object is a promotion
     def compute_on_promotion?
       @compute_on_promotion ||= self.calculable.respond_to?(:promotion)
     end
-
   end
 end
