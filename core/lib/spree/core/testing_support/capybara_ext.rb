@@ -57,6 +57,7 @@ module CapybaraExt
 
   def select_select2_result(value)
     #p %Q{$("div.select2-result-label:contains('#{value}')").mouseup()}
+    sleep(1)
     page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
   end
 
