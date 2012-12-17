@@ -169,6 +169,36 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 54.00
     end
 
+    it "should allow an admin to create an product promo with percent per item discount" do
+      visit spree.admin_path
+      click_link "Promotions"
+      click_link "New Promotion"
+
+      fill_in "Name", :with => "Percent Per Item"
+      select2 "Add to cart", :from => "Event Name"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select2 "Product(s)", :from => "Add rule of type"
+      within("#rule_fields") { click_button "Add" }
+      select2_search "RoR Mug", :from => "Choose products"
+      within('#rule_fields') { click_button "Update" }
+
+      select2 "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select2 "Percent Per Item", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+      within('.calculator-fields') { fill_in "Percent", :with => "10" }
+      within('#actions_container') { click_button "Update" }
+
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "Add To Cart"
+
+      # A $40,00 product should get a $4,00 discount
+      Spree::Order.last.total.to_f.should == 36.00
+    end
+
     it "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Free Shipping"
       click_button "Create"
