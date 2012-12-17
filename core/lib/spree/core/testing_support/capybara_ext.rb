@@ -28,10 +28,19 @@ module CapybaraExt
 
   def select2_search(value, options)
     id = find_label_by_text(options[:from])
+    options[:from] = "#s2id_#{id}"
+    targetted_select2_search(value, options)
+  end
 
-    select2_id = "#s2id_#{id}"
-    find(select2_id).find(".select2-choices").click
-    page.execute_script "$('#{select2_id} input.select2-input').val('#{value}').trigger('keyup-change');"
+  def targetted_select2_search(value, options)
+    scope = find(options[:from])
+    begin
+      find(".select2-choices").click
+    rescue Capybara::ElementNotFound
+      find(".select2-choice").click
+    end
+
+    page.execute_script "$('#{options[:from]} input.select2-input').val('#{value}').trigger('keyup-change');"
     select_select2_result(value)
   end
 
