@@ -39,10 +39,13 @@ module CapybaraExt
     id = find_label_by_text(options[:from])
 
     # generate select2 id
-    select2_id = "#s2id_#{id}"
+    options[:from] = "#s2id_#{id}"
+    targetted_select2(value, options)
+  end
 
+  def targetted_select2(value, options)
     # find select2 element and click it
-    find("#{select2_id}").find('a').click
+    find(options[:from]).find('a').click
     select_select2_result(value)
   end
 
@@ -78,7 +81,7 @@ module CapybaraExt
   end
 
   def find_label(text)
-    first(:xpath, "//label[text()='#{text}']")
+    first(:xpath, "//label[text()[contains(.,'#{text}')]]")
   end
 
 end
