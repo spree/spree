@@ -13,7 +13,7 @@ module PromotionCreation
 
     select2 "Product(s)", :from => "Add rule of type"
     within("#rule_fields") { click_button "Add" }
-    select2_search product_name, :from => "Choose products"
+    select2_search product_name, :from => "Choose products", :dropdown_css => ".product_picker"
     within('#rule_fields') { click_button "Update" }
 
     select2 "Create adjustment", :from => "Add action of type"
@@ -39,15 +39,15 @@ module PromotionCreation
     click_button "Create"
     page.should have_content("Editing Promotion")
 
-    select "Item total", :from => "Add rule of type"
+    select2 "Item total", :from => "Add rule of type"
     within('#rule_fields') { click_button "Add" }
 
     eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount", :with => order_min
     within('#rule_fields') { click_button "Update" }
 
-    select "Create adjustment", :from => "Add action of type"
+    select2 "Create adjustment", :from => "Add action of type"
     within('#action_fields') { click_button "Add" }
-    select "Flat Rate (per order)", :from => "Calculator"
+    select2 "Flat Rate (per order)", :from => "Calculator"
     within('#actions_container') { click_button "Update" }
 
     within('.calculator-fields') { fill_in "Amount", :with => order_discount }
