@@ -33,14 +33,8 @@ module CapybaraExt
   end
 
   def targetted_select2_search(value, options)
-    scope = find(options[:from])
-    begin
-      find(".select2-choices").click
-    rescue Capybara::ElementNotFound
-      find(".select2-choice").click
-    end
-
-    page.execute_script "$('#{options[:from]} input.select2-input').val('#{value}').trigger('keyup-change');"
+    page.execute_script %Q{$('#{options[:from]}').select2('open')}
+    page.execute_script "$('#{options[:dropdown_css]} input.select2-input').val('#{value}').trigger('keyup-change');"
     select_select2_result(value)
   end
 
@@ -59,16 +53,10 @@ module CapybaraExt
   end
 
   def select_select2_result(value)
-    begin
-      find(:xpath, %Q{//div[@class="select2-result-label" and text()[contains(.,"#{value}")]]}).click
-    rescue Capybara::ElementNotFound
-      results = all(:xpath, %Q{//div[@class="select2-result-label"]})
-      if results.count == 1
-        results.first.click
-      else
-        raise "Couldn't disambiguate select2 result."
-      end
+    wait_until do
+      page.find("div.select2-result-label")
     end
+    page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
   end
 
   def find_label_by_text(text)
