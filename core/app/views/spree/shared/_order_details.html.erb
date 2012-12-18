@@ -95,10 +95,10 @@
   </tfoot>
   <% if order.price_adjustment_totals.present? %>
     <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
-      <% @order.price_adjustment_totals.keys.each do |key| %>
+      <% @order.price_adjustment_totals.each do |key, total| %>
         <tr class="total">
           <td colspan="4"><strong><%= key %></strong></td>
-          <td class="total"><span><%= @order.price_adjustment_totals[key].display_amount %></span></td>
+          <td class="total"><span><%= total %></span></td>
         </tr>
       <% end %>
     </tfoot>
