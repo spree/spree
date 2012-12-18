@@ -21,10 +21,10 @@
     </tr>
     <% if order.price_adjustment_totals.present? %>
       <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
-        <% @order.price_adjustment_totals.keys.each do |key| %>
+        <% @order.price_adjustment_totals.each do |label, total| %>
           <tr class="total">
-            <td><strong><%= key %></strong></td>
-            <td><strong><span><%= @order.price_adjustment_totals[key].display_total %></span></strong></td>
+            <td><strong><%= label %></strong></td>
+            <td><strong><span><%= total %></span></strong></td>
           </tr>
         <% end %>
       </tbody>
