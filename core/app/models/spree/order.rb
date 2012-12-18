@@ -204,15 +204,10 @@ module Spree
     # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
     # invoice.  For example, you can display tax breakout for cases where tax is included in price.
     def price_adjustment_totals
-      totals = {}
-
-      price_adjustments.each do |adjustment|
-        label = adjustment.label
-        totals[label] ||= 0
-        totals[label] = totals[label] + adjustment.amount
-      end
-
-      totals
+      Hash[price_adjustments.group_by(&:label).map do |label, adjustments|
+        total = adjustments.sum(&:amount)
+        [label, Spree::Money.new(total, { :currency => currency })]
+      end]
     end
 
     def updater
@@ -356,6 +351,10 @@ module Spree
       if (address = bill_address || ship_address)
         "#{address.firstname} #{address.lastname}"
       end
+    end
+
+    def can_ship?
+      self.complete? || self.resumed?
     end
 
     def credit_cards

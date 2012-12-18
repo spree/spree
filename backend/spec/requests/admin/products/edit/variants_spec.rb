@@ -42,7 +42,7 @@ describe "Product Variants" do
         click_icon :edit
       end
 
-      select "color", :from => "Option Types"
+      select2_search "shirt", :from => "Option Types"
       click_button "Update"
       page.should have_content("successfully updated!")
 

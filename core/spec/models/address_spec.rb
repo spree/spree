@@ -39,6 +39,20 @@ describe Spree::Address do
     end
   end
 
+  context "aliased attributes" do
+    let(:address) { Spree::Address.new }
+
+    it "first_name" do
+      address.firstname = "Ryan"
+      address.first_name.should == "Ryan"
+    end
+
+    it "last_name" do
+      address.lastname = "Bigg"
+      address.last_name.should == "Bigg"
+    end
+  end
+
   context "validation" do
     before do
       reset_spree_preferences do |config|

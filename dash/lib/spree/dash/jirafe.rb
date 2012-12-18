@@ -10,8 +10,6 @@ module Spree
       class << self
         def register(store)
           validate_required_keys! store
-          store[:time_zone] = ActiveSupport::TimeZone::MAPPING[store[:time_zone]] # jirafe expects 'America/New_York'
-
           store = register_application(store)
           store = synchronize_resources(store)
         end
@@ -55,9 +53,7 @@ module Spree
                         :timezone => store[:time_zone],
                         :external_id => 1,
                         :site_id => store[:site_id] }],
-              :users => [{ :email => store[:email],
-                        :first_name => store[:first_name],
-                        :last_name => store[:last_name] }]
+              :users => users_hash
             }.to_json
           }
           response = post "/applications/#{store[:app_id]}/resources", options
@@ -67,6 +63,18 @@ module Spree
           store[:site_id] = response["sites"].first["site_id"]
           store[:site_token] = response["users"].first["token"]
           store
+        end
+
+        def users_hash
+          users = []
+          Spree.user_class.includes(:spree_roles).where("spree_roles.name = 'admin'").each do |user|
+            users << {
+              :email => user.email,
+              :first_name => 'Spree',
+              :last_name => 'User'
+            }
+          end
+          users
         end
       end
     end

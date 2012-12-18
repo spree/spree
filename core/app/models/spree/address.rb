@@ -13,6 +13,9 @@ module Spree
                     :country, :state, :phone, :state_name,
                     :company, :alternative_phone
 
+    alias_attribute :first_name, :firstname
+    alias_attribute :last_name, :lastname
+
     # Disconnected since there's no code to display error messages yet OR matching client-side validation
     def phone_validate
       return if phone.blank?

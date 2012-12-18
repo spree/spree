@@ -40,6 +40,13 @@ describe Spree::Api::BaseController do
     end
   end
 
+  it 'handles exceptions' do
+    subject.should_receive(:authenticate_user).and_return(true)
+    subject.should_receive(:index).and_raise(Exception.new("no joy"))
+    get :index, :token => "fake_key"
+    json_response.should == { "exception" => "no joy" }
+  end
+
   it "maps symantec keys to nested_attributes keys" do
     klass = stub(:nested_attributes_options => { :line_items => {},
                                                   :bill_address => {} })

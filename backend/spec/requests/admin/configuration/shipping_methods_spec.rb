@@ -68,8 +68,8 @@ describe "Shipping Methods" do
       context "when match rules are satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select shipping_method.zone.name, :from => "shipping_method_zone_id"
-          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
+          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
+          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_none"
           click_button "Create"
 
@@ -95,8 +95,8 @@ describe "Shipping Methods" do
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select shipping_method.zone.name, :from => "shipping_method_zone_id"
-          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
+          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
+          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_none"
           click_button "Create"
 
@@ -124,8 +124,8 @@ describe "Shipping Methods" do
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select shipping_method.zone.name, :from => "shipping_method_zone_id"
-          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
+          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
+          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_all"
           click_button "Create"
 
@@ -149,8 +149,8 @@ describe "Shipping Methods" do
       context "when match rules aren't satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select shipping_method.zone.name, :from => "shipping_method_zone_id"
-          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
+          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
+          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_all"
           click_button "Create"
 
@@ -182,8 +182,8 @@ describe "Shipping Methods" do
 
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select zone.name, :from => "shipping_method_zone_id"
-          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
+          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
+          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_one"
           click_button "Create"
 
@@ -210,8 +210,8 @@ describe "Shipping Methods" do
       context "when match rules aren't satisfied" do
         it "shows the right shipping method on checkout" do
           fill_in "shipping_method_name", :with => "Standard"
-          select zone.name, :from => "shipping_method_zone_id"
-          select @shipping_category.name, :from => "shipping_method_shipping_category_id"
+          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
+          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_one"
           click_button "Create"
 

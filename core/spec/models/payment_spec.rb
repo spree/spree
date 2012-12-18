@@ -65,13 +65,13 @@ describe Spree::Payment do
 
     context "#process!" do
       it "should purchase if with auto_capture" do
-        Spree::Config[:auto_capture] = true
+        payment.payment_method.should_receive(:auto_capture?).and_return(true)
         payment.should_receive(:purchase!)
         payment.process!
       end
 
       it "should authorize without auto_capture" do
-        Spree::Config[:auto_capture] = false
+        payment.payment_method.should_receive(:auto_capture?).and_return(false)
         payment.should_receive(:authorize!)
         payment.process!
       end
@@ -552,6 +552,15 @@ describe Spree::Payment do
   context "#display_amount" do
     it "returns a Spree::Money for this amount" do
       payment.display_amount.should == Spree::Money.new(payment.amount)
+    end
+  end
+
+  # Regression test for #2216
+  context "#gateway_options" do
+    before { order.stub(:last_ip_address => "192.168.1.1") }
+
+    it "contains an IP" do
+      payment.gateway_options[:ip].should == order.last_ip_address
     end
   end
 end

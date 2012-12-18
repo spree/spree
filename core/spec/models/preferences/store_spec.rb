@@ -16,9 +16,32 @@ describe Spree::Preferences::Store do
     @store.get(:test).should be_false
   end
 
-  it "returns the correct preference value when the cache is empty" do
-    @store.set :test, "1", :string
+  it "will return db value when cache is emtpy and cache the db value" do
+    preference = Spree::Preference.where(:key => 'test').first_or_initialize
+    preference.value = '123'
+    preference.value_type = 'string'
+    preference.save
+
     Rails.cache.clear
-    @store.get(:test).should == "1"
+    @store.get(:test).should eq '123'
+    Rails.cache.read(:test).should eq '123'
   end
+
+  it "should return and cache fallback value when supplied" do
+    Rails.cache.clear
+    @store.get(:test, false).should be_false
+    Rails.cache.read(:test).should be_false
+  end
+
+  it "should return and cache fallback value when persistence is disabled (i.e. during bootstrap)" do
+    Rails.cache.clear
+    @store.stub(:should_persist? => false)
+    @store.get(:test, true).should be_true
+    Rails.cache.read(:test).should be_true
+  end
+
+  it "should return nil when key can't be found and fallback value is not supplied" do
+    @store.get(:random_key).should be_nil
+  end
+
 end

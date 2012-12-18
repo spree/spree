@@ -5,7 +5,7 @@ module Spree
         if payment_method && payment_method.source_required?
           if source
             if !processing?
-              if Spree::Config[:auto_capture]
+              if payment_method.auto_capture?
                 purchase!
               else
                 authorize!
@@ -110,7 +110,7 @@ module Spree
     def gateway_options
       options = { :email    => order.email,
                   :customer => order.email,
-                  :ip       => '192.168.1.100', # TODO: Use an actual IP
+                  :ip       => order.last_ip_address,
                   :order_id => order.number }
 
       options.merge!({ :shipping => order.ship_total * 100,

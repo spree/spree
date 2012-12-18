@@ -3,7 +3,6 @@ module Spree
     class ProductsController < ResourceController
       helper 'spree/products'
 
-#      before_filter :check_json_authenticity, :only => :index
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
@@ -13,6 +12,15 @@ module Spree
       end
 
       def index
+      end
+
+      def search
+        if params[:ids]
+          @products = Spree::Product.where(:id => params[:ids].split(","))
+        else
+          search_params = { :name_cont => params[:q], :sku_cont => params[:q] }
+          @products = Spree::Product.ransack(search_params.merge(:m => 'or')).result
+        end
       end
 
       def update

@@ -5,23 +5,23 @@
     _gaq.push(['_setAccount', '<%= tracker.analytics_id %>']);
     _gaq.push(['_trackPageview']);
 
-    <% if flash[:commerce_tracking] %>
+    <% if flash[:commerce_tracking] && @order.present? %>
       <%# more info: https://developers.google.com/analytics/devguides/collection/gajs/methods/gaJSApiEcommerce %>
       _gaq.push(['_addTrans',
-        "<%= @order.number %>",
+        "<%= j @order.number %>",
         "",
         "<%= @order.total %>",
         "<%= @order.adjustments.tax.sum(:amount) %>",
         "<%= @order.adjustments.shipping.sum(:amount) %>",
-        "<%= @order.bill_address.city %>",
-        "<%= @order.bill_address.state_text %>",
-        "<%= @order.bill_address.country.name %>"
+        "<%= j @order.bill_address.city %>",
+        "<%= j @order.bill_address.state_text %>",
+        "<%= j @order.bill_address.country.name %>"
       ]);
       <% @order.line_items.each do |line_item| %>
         _gaq.push(['_addItem',
-          "<%= @order.number %>",
-          "<%= line_item.variant.sku %>",
-          "<%= line_item.variant.product.name %>",
+          "<%= j @order.number %>",
+          "<%= j line_item.variant.sku %>",
+          "<%= j line_item.variant.product.name %>",
           "",
           "<%= line_item.price %>",
           "<%= line_item.quantity %>"

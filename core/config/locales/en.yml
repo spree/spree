@@ -331,6 +331,7 @@ en:
   charges: Charges
   checkout: Checkout
   cheque: Cheque
+  choose_a_customer: "Choose a customer"
   city: City
   clone: Clone
   code: Code
@@ -652,16 +653,16 @@ en:
       dear_customer: "Dear Customer,"
       instructions: "Please review and retain the following order information for your records."
       order_summary: "Order Summary"
-      subtotal: "Subtotal:"
-      total: "Order Total:"
+      subtotal: "Subtotal: %{subtotal}"
+      total: "Order Total: %{total}"
       thanks: "Thank you for your business."
     cancel_email:
       subject: "Cancellation of Order"
       dear_customer: "Dear Customer,"
       instructions: "Your order has been CANCELED.  Please retain this cancellation information for your records."
       order_summary_canceled: "Order Summary [CANCELED]"
-      subtotal: "Subtotal:"
-      total: "Order Total:"
+      subtotal: "Subtotal: %{subtotal}"
+      total: "Order Total: %{total}"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
@@ -868,6 +869,7 @@ en:
         sentence: with property <em>%s</em> and value <em>%s</em>
   products: Products
   products_with_zero_inventory_display: "Products with a zero inventory will %{not} be displayed"
+  product_not_available_in_this_currency: "This product is not available in the selected currency."
   properties: Properties
   property: Property
   prototype: Prototype
@@ -1055,6 +1057,7 @@ en:
   tax_type: "Tax Type"
   taxon: Taxon
   taxon_edit: Edit Taxon
+  taxon_placeholder: "Add a Taxon"
   taxonomy: Taxonomy
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies."
@@ -1071,7 +1074,6 @@ en:
   test_mode: Test Mode
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   there_were_problems_with_the_following_fields: "There were problems with the following fields"
-  this_file_language: "English (US)"
   thumbnail: "Thumbnail"
   to_add_variants_you_must_first_define: "To add variants, you must first define"
   to_state: "To State"
@@ -1107,12 +1109,12 @@ en:
   users: Users
   validate_on_profile_create: Validate on profile create
   validation:
-    cannot_be_greater_than_available_stock: "cannot be greater than available stock."
     cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
     cannot_destory_line_item_as_inventory_units_have_shipped: "Cannot destory line item as some inventory units have shipped."
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"
+    exceeds_available_stock: "exceeds available stock. Please ensure line items have a valid quantity."
   value: Value
   variant: Variant
   variants: Variants
