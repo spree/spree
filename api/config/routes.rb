@@ -56,11 +56,9 @@ Spree::Core::Engine.routes.prepend do
     resources :taxonomies do
       resources :taxons
     end
-<<<<<<< HEAD
 
     resources :taxons, :only => [:index]
-=======
+
     resources :inventory_units, :only => [:show, :update]
->>>>>>> master
   end
 end
