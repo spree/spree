@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Spree::Admin::SearchController do
   stub_authorization!
-  let(:user) { create(:user) }
+  # Regression test for ernie/ransack#176
+  let(:user) { create(:user, :email => "spree_commerce@example.com") }
 
   before do
     user.ship_address = create(:address)
