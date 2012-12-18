@@ -65,8 +65,8 @@ describe Spree::Order do
       end
 
       it "should return the correct totals" do
-        @order.price_adjustment_totals["Foo"].should == 10
-        @order.price_adjustment_totals["Bar"].should == 20
+        @order.price_adjustment_totals["Foo"].should == Spree::Money.new(10)
+        @order.price_adjustment_totals["Bar"].should == Spree::Money.new(20)
       end
     end
 
@@ -83,8 +83,8 @@ describe Spree::Order do
         @order.price_adjustment_totals.size.should == 2
       end
       it "should return the correct totals" do
-        @order.price_adjustment_totals["Foo"].should == 10
-        @order.price_adjustment_totals["Bar"].should == 60
+        @order.price_adjustment_totals["Foo"].should == Spree::Money.new(10)
+        @order.price_adjustment_totals["Bar"].should == Spree::Money.new(60)
       end
     end
   end
