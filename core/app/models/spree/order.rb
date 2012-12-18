@@ -174,8 +174,7 @@ module Spree
     # Returns the relevant zone (if any) to be used for taxation purposes.
     # Uses default tax zone unless there is a specific match
     def tax_zone
-      zone_address = Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
-      Zone.match(zone_address) || Zone.default_tax
+      Zone.match(tax_address) || Zone.default_tax
     end
 
     # Indicates whether tax should be backed out of the price calcualtions in
@@ -186,6 +185,13 @@ module Spree
       return tax_zone != Zone.default_tax
     end
 
+    # Returns the address for taxation based on configuration
+    def tax_address
+      Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
+    end
+
+    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
+    # include tax (ex. VAT) and you need to record the tax amount separately.
     def price_adjustments
       ActiveSupport::Deprecation.warn("Order#price_adjustments will be deprecated in Spree 2.1, please use Order#line_item_adjustments instead.")
       self.line_item_adjustments

@@ -90,17 +90,34 @@ describe Spree::TaxRate do
         end
 
         context "when there order has a different tax zone" do
-          before { order.stub :tax_zone => create(:zone, :name => "Other Zone") }
+          before do
+            order.stub :tax_zone => create(:zone, :name => "Other Zone")
+            order.stub :tax_address => tax_address
+          end
 
-          it "should return the rates associated with the default tax zone" do
-            rate = Spree::TaxRate.create(
-              :amount => 1,
-              :zone => @zone,
-              :tax_category => tax_category,
-              :calculator => calculator
-            )
+          let!(:rate) do
+            Spree::TaxRate.create(:amount => 1,
+                                  :zone => @zone,
+                                  :tax_category => tax_category,
+                                  :calculator => calculator)
+          end
 
-            Spree::TaxRate.match(order).should == [rate]
+          subject { Spree::TaxRate.match(order) }
+
+          context "when the order has a tax_address" do
+            let(:tax_address) { stub_model(Spree::Address) }
+
+            it "returns no tax rate" do
+              subject.should be_empty
+            end
+          end
+
+          context "when the order does not have a tax_address" do
+            let(:tax_address) { nil}
+
+            it "should return the rates associated with the default tax zone" do
+              subject.should == [rate]
+            end
           end
         end
       end
