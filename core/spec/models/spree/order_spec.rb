@@ -571,4 +571,25 @@ describe Spree::Order do
       expect(order.state).to eql "address"
     end
   end
+
+  describe ".tax_address" do
+    before { Spree::Config[:tax_using_ship_address] = tax_using_ship_address }
+    subject { order.tax_address }
+
+    context "when tax_using_ship_address is true" do
+      let(:tax_using_ship_address) { true }
+
+      it 'returns ship_address' do
+        subject.should == order.ship_address
+      end
+    end
+
+    context "when tax_using_ship_address is not true" do
+      let(:tax_using_ship_address) { false }
+
+      it "returns bill_address" do
+        subject.should == order.bill_address
+      end
+    end
+  end
 end
