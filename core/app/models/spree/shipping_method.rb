@@ -14,8 +14,6 @@ module Spree
     attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
                     :match_none, :match_one, :match_all
 
-    calculated_adjustments
-
     def adjustment_label
       I18n.t(:shipping)
     end
