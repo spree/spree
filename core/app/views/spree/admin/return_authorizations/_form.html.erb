@@ -50,9 +50,9 @@
 </div>
 
 <script>
-  var variant_prices = {};
-  <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>
-    variant_prices[<%= variant.id.to_s %>] = <%= variant.price %>;
+  var line_item_prices = {};
+  <% @return_authorization.order.line_items.group_by(&:variant).each do | variant, items| %>
+    line_item_prices[<%= variant.id.to_s %>] = <%= items.first.price %>;
   <% end %>
 
   $(document).ready(function(){
@@ -61,7 +61,7 @@
       var rma_amount = 0;
       $.each($("td.return_quantity input"), function(i, input) {
         var variant_id = $(input).attr('id').replace("return_quantity_", "");
-         rma_amount += variant_prices[variant_id] * $(input).val()
+         rma_amount += line_item_prices[variant_id] * $(input).val()
       });
 
       if(!isNaN(rma_amount)){
