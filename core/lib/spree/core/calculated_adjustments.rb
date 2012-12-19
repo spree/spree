@@ -41,6 +41,8 @@ module Spree
           end
 
           # Calculate the amount to be used when creating an adjustment
+          # NOTE: May be overriden by classes where this module is included into.
+          # Such as Spree::Promotion::Action::CreateAdjustment.
           def compute_amount(calculable)
             self.calculator.compute(calculable)
           end
