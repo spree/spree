@@ -20,7 +20,7 @@ set :repository,  "git://github.com/spree/spree-guides.git"
 if exists?(:edge)
   set :branch, "master"
 else
-  set :branch, "1-2-x"
+  set :branch, "1-3-x"
 end
 
 set :deploy_to,   "/data/#{application}"
