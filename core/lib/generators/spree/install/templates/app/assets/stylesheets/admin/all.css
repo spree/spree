@@ -4,8 +4,7 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *
 <% if options[:lib_name] == 'spree' %>
- *= require admin/spree_frontend
- *= require admin/spree_promo
+ *= require admin/spree_backend
 <% else %>
  *= require admin/<%= options[:lib_name].gsub("/", "_") %>
 <% end %>

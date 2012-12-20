@@ -23,6 +23,17 @@ module Spree
         end
       end
 
+      # We need to reload the routes here due to how Spree sets them up.
+      # The different facets of Spree (auth, promo, etc.) append/prepend routes to Core
+      # *after* Core has been loaded.
+      #
+      # So we wait until after initialization is complete to do one final reload.
+      # This then makes the appended/prepended routes available to the application.
+      config.after_initialize do
+        Rails.application.routes_reloader.reload!
+      end
+
+
       initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access
@@ -56,6 +67,37 @@ module Spree
           Spree::Core::MailSettings.init
           Mail.register_interceptor(Spree::Core::MailInterceptor)
         end
+      end
+
+      initializer 'spree.promo.register.promotion.calculators' do |app|
+        app.config.spree.calculators.add_class('promotion_actions_create_adjustments')
+        app.config.spree.calculators.promotion_actions_create_adjustments = [
+          Spree::Calculator::FlatPercentItemTotal,
+          Spree::Calculator::FlatRate,
+          Spree::Calculator::FlexiRate,
+          Spree::Calculator::PerItem,
+          Spree::Calculator::PercentPerItem,
+          Spree::Calculator::FreeShipping
+        ]
+      end
+
+      initializer 'spree.promo.register.promotions.rules' do |app|
+        app.config.spree.promotions.rules = [
+          Spree::Promotion::Rules::ItemTotal,
+          Spree::Promotion::Rules::Product,
+          Spree::Promotion::Rules::User,
+          Spree::Promotion::Rules::FirstOrder,
+          Spree::Promotion::Rules::UserLoggedIn]
+      end
+
+      initializer 'spree.promo.register.promotions.actions' do |app|
+        app.config.spree.promotions.actions = [Spree::Promotion::Actions::CreateAdjustment,
+          Spree::Promotion::Actions::CreateLineItems]
+      end
+
+      # filter sensitive information during logging
+      initializer "spree.params.filter" do |app|
+        app.config.filter_parameters += [:password, :password_confirmation, :number]
       end
     end
   end
