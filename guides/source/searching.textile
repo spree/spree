@@ -65,7 +65,7 @@ a new instance of your search class.
 
 h5. +get_products_conditions_for(query)+
 
-This is the main call. Its purpose is to format the query appropriately and retrieve information from
+This is the main call. It's purpose is to format the query appropriately and retrieve information from
 the search platform, then return it in the form of a named scope.
 Typically, you will retrieve a list of product ids +i1, i2, ...+
 from the platform and produce the result +{:conditions => "products.id IN (i1, i2, ...)"}+ (though

@@ -78,7 +78,7 @@ The generator used by Spree to create new extensions will do all of the work to 
 
 h4. Testing Integrated Extensions
 
-When you first start out coding a new extension, you may want to work with it right alongside the Spree project that you plan to use it in.  Even if you're eventually planning to break it out into a gem and share the source code its sometimes easier to develop with it side by side with your application.
+When you first start out coding a new extension, you may want to work with it right alongside the Spree project that you plan to use it in.  Even if you're eventually planning to break it out into a gem and share the source code it's sometimes easier to develop with it side by side with your application.
 
 If you've read the "Creating Extensions Guide":/creating_extensions.html you know by now how easy it is to create a Spree extension within the context of a Rails/Spree application:
 
@@ -86,14 +86,14 @@ If you've read the "Creating Extensions Guide":/creating_extensions.html you kno
   $ spree extension foofah
 </shell>
 
-This generator automatically creates a +spec+ directory along with a +spec_helper.rb+ file.  If you're not a fan of RSpec you can feel free to switch to a test framework of your choosing.  You'll also need to add the rspec-rails gem to your Gemfile if its not already present.
+This generator automatically creates a +spec+ directory along with a +spec_helper.rb+ file.  If you're not a fan of RSpec you can feel free to switch to a test framework of your choosing.  You'll also need to add the rspec-rails gem to your Gemfile if it's not already present.
 
 <ruby>
   #Gemfile
   gem 'rspec-rails'
 </ruby>
 
-Then its time to write some specs/tests for your extension.  We're not going to cover how to write tests here - there's already plenty of resources that cover this topic in depth.  Once your tests are written you simply use the standard rspec command to verify them.
+Then it's time to write some specs/tests for your extension.  We're not going to cover how to write tests here - there's already plenty of resources that cover this topic in depth.  Once your tests are written you simply use the standard rspec command to verify them.
 
 <shell>
   $ bundle exec rspec spec
@@ -103,7 +103,7 @@ h4. Testing Standalone Extensions
 
 Most extensions that you'll be working with (including all of the ones in the extension registry) are so-called isolated extensions.  They exist in their own GitHub repositories independent of any specific Rails application.  Fortunately we have devised a way to test these extensions as well.
 
-Lets start by creating a new extension - although the procedure is basically the same for an extension that you've cloned from GitHub.
+Let's start by creating a new extension - although the procedure is basically the same for an extension that you've cloned from GitHub.
 
 <shell>
   $ spree extension foofah

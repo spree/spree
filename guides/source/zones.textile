@@ -39,7 +39,7 @@ The following is an example of this method as visible in the Rails console:
 
 h3. Building a Zone
 
-Lets examine the steps for building a new zone more closely.
+Let's examine the steps for building a new zone more closely.
 
 # Click on the "Configuration" tab in the admin menu.
 # Click the "Zones" link.

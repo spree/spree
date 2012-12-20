@@ -110,6 +110,6 @@ end
 
 The -c (or --concurrency) switch accepts the process type and an integer for the number of processes to start up. You specify mulitple types by comma separating as follows: processname=2,processname=4
 
-WARNING: Its important to not export more than one :web process when using the default unicorn configuration, as this refers to the master process and not the workers, the worker count can be configured via the Deployment's Service UI.
+WARNING: It's important to not export more than one :web process when using the default unicorn configuration, as this refers to the master process and not the workers, the worker count can be configured via the Deployment's Service UI.
 
 .

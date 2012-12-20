@@ -26,13 +26,13 @@ INFO: There is a good reason why this is disabled by default in Rails which is t
 
 h5. Configure the Web Server to Use the +public+ Directory
 
-The recommended approach for handling static assets is to allow your web server to handle serving these files.  If you want to follow this approach just make sure that its configured properly in the +config/environments/production.rb+ of your Rails app.
+The recommended approach for handling static assets is to allow your web server to handle serving these files.  If you want to follow this approach just make sure that it's configured properly in the +config/environments/production.rb+ of your Rails app.
 
 <ruby>
   config.serve_static_assets = false
 </ruby>
 
-INFO: This is the default setting of Rails so its also fine if this setting is missing or commented out.
+INFO: This is the default setting of Rails so it's also fine if this setting is missing or commented out.
 
 The following is an example of how to configure Apache so that its document root is pointing to the +public+ folder.
 
@@ -105,7 +105,7 @@ To properly enable email delivery, you need to provide valid SMTP information. T
 
 Note that mail settings are configured on a per-environment basis.  This will allow you to configure the settings differently for staging or production mode.  For example, you might want to intercept all outgoing email in the staging environment and re-route it to test@yourstore.com.  This would prevent someone from accidentally sending an email to a real world customer when testing operations such as canceling an order or marking it shipped.
 
-NOTE: Its generally considered a bad idea to send email on the same "thread" as a web request.  Many web applications (including e-commerce ones) manage to get by doing this but high volume stores should consider using standard Rails techniques such as "Delayed Job":https://github.com/tobi/delayed_job for handling email delivery as a separate process.
+NOTE: It's generally considered a bad idea to send email on the same "thread" as a web request.  Many web applications (including e-commerce ones) manage to get by doing this but high volume stores should consider using standard Rails techniques such as "Delayed Job":https://github.com/tobi/delayed_job for handling email delivery as a separate process.
 
 INFO: The Spree core team is actively working on a solution for improved email processing - perhaps involving an optional extension for Delayed Job support.
 

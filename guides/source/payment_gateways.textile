@@ -145,7 +145,7 @@ INFO: It is important that you use the exact spelling of the Active Merchant gat
 
 If you examine the source code for the Active Merchant gateway that you are trying to configure, you will likely notice some specific options documented in the Active Merchant source code.  It is these options that you need to expose to the Spree system for configuration in the admin screen.
 
-Lets take the Authorize.net implementation as an example.  The Active Merchant implementation reveals that there are two important configuration options: +login+ and +password+.
+Let's take the Authorize.net implementation as an example.  The Active Merchant implementation reveals that there are two important configuration options: +login+ and +password+.
 
 NOTE: You can ignore the +test+ option.  This is a standard preference for all gateways that is already provided for you by the base +Gateway+ class.
 
@@ -175,13 +175,13 @@ This approach to implementing and configuring gateways is extremely flexible.  I
 
 h5. Support of Non ActiveMerchant Gateways
 
-This architecture allows Spree to support gateways that are not officially supported by Active Merchant.  Many times a new gateway is donated by someone in the community but its languishing in the queue waiting for someone to test and accept the patch.  You have the option of taking that code (or writing your own from scratch) and implementing it within Spree.  Instead of delegating to an Active Merchant class, you can simply implement that functionality yourself.  You could also include the new gateway code from an Active Merchant fork inside your implementation and delegate the standard authorize, capture, etc operations to it.
+This architecture allows Spree to support gateways that are not officially supported by Active Merchant.  Many times a new gateway is donated by someone in the community but it's languishing in the queue waiting for someone to test and accept the patch.  You have the option of taking that code (or writing your own from scratch) and implementing it within Spree.  Instead of delegating to an Active Merchant class, you can simply implement that functionality yourself.  You could also include the new gateway code from an Active Merchant fork inside your implementation and delegate the standard authorize, capture, etc operations to it.
 
 h5. Ability to "Patch" ActiveMerchant Gateways
 
-We've noticed that sometimes it takes a while for a crucial Active Merchant patch to be applied.  That's certainly understandable, the "Shopify":http://shopify.com team has a business to run and its probably not a high priority for them to make sure that the latest obscure gateway patch is applied in a timely fashion.  Fortunately, the Spree approach to wrapping these gateways provides you with a convenient option.
+We've noticed that sometimes it takes a while for a crucial Active Merchant patch to be applied.  That's certainly understandable, the "Shopify":http://shopify.com team has a business to run and it's probably not a high priority for them to make sure that the latest obscure gateway patch is applied in a timely fashion.  Fortunately, the Spree approach to wrapping these gateways provides you with a convenient option.
 
-Lets say there is a bug with the +authorize+ method.  You could simply provide an implementation of the gateway that has the patched version of the +authorize+ method and then delegates to the Active Merchant class for everything else (since that works just fine.)
+Let's say there is a bug with the +authorize+ method.  You could simply provide an implementation of the gateway that has the patched version of the +authorize+ method and then delegates to the Active Merchant class for everything else (since that works just fine.)
 
 h5. Gateways supporting payment profiles
 
@@ -212,7 +212,7 @@ Note that capture is called differently for gateways supporting payment profiles
 
 h5. Additional Functionality Beyond Active Merchant
 
-Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  Its designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  Its providing multiple gateways for you to choose from and so its desirable to have a standard method for operations such as this.
+Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  It's designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  It's providing multiple gateways for you to choose from and so it's desirable to have a standard method for operations such as this.
 
 INFO: Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
 

@@ -28,7 +28,7 @@ You must also create a tax zone before your products can be taxed. A tax zone is
 
 h5. Basic Examples
 
-Lets say you need to charge 5% tax for all items that ship to New York and 6% on only clothing items that ship to Pennsylvania. This will mean you need to construct two different zones.  One zone containing just the state of New York and another zone consistng of the single state of Pennsylvania.
+Let's say you need to charge 5% tax for all items that ship to New York and 6% on only clothing items that ship to Pennsylvania. This will mean you need to construct two different zones.  One zone containing just the state of New York and another zone consistng of the single state of Pennsylvania.
 
 Here's another hypothetical scenario.  You would like to charge 10% tax on all electronic items and 5% tax on everything else. This tax should apply to all countries in the European Union (EU.) In this case you would construct just a single zone consisting of all the countries in the EU. The fact that you want to charge two different rates depending on the type of good does not mean you need two zones.
 
@@ -80,7 +80,7 @@ Tax rates are set up through the admin interface (Configurations | Tax Rates). A
 * The zone in which the order address must fall within
 * The tax category that a product must belong to in order to be considered taxable.
 
-Spree will calculate tax based on the best matching zone for the order. Its also possible to have more than one applicable tax rate for a single zone. In order for a tax rate to apply to a particular product, that product must have a tax category that matches the tax category of the tax rate.
+Spree will calculate tax based on the best matching zone for the order. It's also possible to have more than one applicable tax rate for a single zone. In order for a tax rate to apply to a particular product, that product must have a tax category that matches the tax category of the tax rate.
 
 h3. Tax Types
 
@@ -92,9 +92,9 @@ In some cases you may need to charge one type of tax for orders falling within o
 
 h4. Sales Tax
 
-Sales tax is the default tax type for any tax rate in Spree. Its the simplest type of tax to calculate and it is the method by which your tax will be determined assuming you leave the "Included in Price" checkbox unchecked.
+Sales tax is the default tax type for any tax rate in Spree. It's the simplest type of tax to calculate and it is the method by which your tax will be determined assuming you leave the "Included in Price" checkbox unchecked.
 
-Lets take an example of a 5% tax on clothing items for a zone that covers all of North America. If the customer purchases a single clothing item for $17.99 and they live in the United States (which is within the North America zone we defined) they are eligible to pay sales tax.
+Let's take an example of a 5% tax on clothing items for a zone that covers all of North America. If the customer purchases a single clothing item for $17.99 and they live in the United States (which is within the North America zone we defined) they are eligible to pay sales tax.
 
 The sales tax calculation is $17.99 x 0.05 for a total tax of $0.90. Note that in the case of sales tax the tax is added to the item total an adjustment.
 
@@ -102,11 +102,11 @@ The sales tax calculation is $17.99 x 0.05 for a total tax of $0.90. Note that i
 
 INFO: See the "Adjustments Guide":adjustments.html if you need more information on adjustments.
 
-Now lets change the quantity on that clothing item from 1 to 2. The tax is now $35.98 x 0.05 for a total of $1.80.
+Now let's change the quantity on that clothing item from 1 to 2. The tax is now $35.98 x 0.05 for a total of $1.80.
 
 !images/taxes/sales_tax_applied2.png(Sales Tax Applied)!
 
-Now lets add a coffee mug that costs $13.99 to the order. Since the coffe mug is not clothing its not taxable. The tax total therefore should not change ($35.98 x 0.05)
+Now let's add a coffee mug that costs $13.99 to the order. Since the coffe mug is not clothing it's not taxable. The tax total therefore should not change ($35.98 x 0.05)
 
 !images/taxes/sales_tax_applied3.png(Sales Tax Applied)!
 
@@ -130,7 +130,7 @@ WARNING: Prior versions of Spree handled VAT differently. If you are upgrading t
 
 When tax is included in the price there is no order adjustment needed (unlike the sales tax case.) Stores are, however, typically interested in showing the amount of tax the user paid. These totals are for informational purposes only and do not affect the order total.
 
-Lets start by looking at an example where there is a 5% included on all products and its included in the price. We'll further assume that this tax should only apply to orders within the United Kingdom (UK).
+Let's start by looking at an example where there is a 5% included on all products and it's included in the price. We'll further assume that this tax should only apply to orders within the United Kingdom (UK).
 
 In the case where the order address is within the UK and we purchase a single clothing item for £17.99 we see an order total of £17.99. We also see an additional line included for the customer's reference that shows they paid a total of £0.90 in tax.
 
@@ -140,7 +140,7 @@ INFO: Notice how the tax is included below the order total. This is because the 
 
 NOTE: These informational totals are considered adjustments to the @LineItem@ class. This allows us to preserve them for reporting purposes and to avoid including them in the @Order#adjustment_total@.
 
-Now lets increase the quantity on the item from 1 to 2. The order total changes to £35.98 with a tax total of £1.80.
+Now let's increase the quantity on the item from 1 to 2. The order total changes to £35.98 with a tax total of £1.80.
 
 !images/taxes/vat_tax_breakout2.png(VAT tax breakout)!
 
@@ -148,7 +148,7 @@ Next we'll add a different clothing item costing £19.99 to our order. The order
 
 !images/taxes/vat_tax_breakout3.png(VAT tax breakout)!
 
-Now lets assume an additional tax rate of 10% on consumer electronics. When we add a product of this category to our order with a price of £16.99 we will now also see a second tax total of £1.70.
+Now let's assume an additional tax rate of 10% on consumer electronics. When we add a product of this category to our order with a price of £16.99 we will now also see a second tax total of £1.70.
 
 !images/taxes/vat_tax_breakout4.png(VAT tax breakout)!
 

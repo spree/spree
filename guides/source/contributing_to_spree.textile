@@ -46,7 +46,7 @@ You should file an issue if you have found (or suspect) a bug in the "core" func
 
 h4. Providing a Patch
 
-If you are filing and issue and supplying a patch at the same time, please file a "Pull Request":#creating-a-pull-request instead.  The pull request will also create an issue at the same time but its superior to just creating an issue because the code and issue can be linked.
+If you are filing and issue and supplying a patch at the same time, please file a "Pull Request":#creating-a-pull-request instead.  The pull request will also create an issue at the same time but it's superior to just creating an issue because the code and issue can be linked.
 
 If the ticket already exists, however, and you want to supply a patch after the fact, you can simply reference the issue number in your commit message. For example, if your commit fixed issue #123 you could use the following commit message:
 
@@ -96,7 +96,7 @@ INFO: See the GitHub guide on "creating forks":https://help.github.com/articles/
 
 h4. Topic Branches
 
-Git branches are “cheap.” Creating branches in Git is incredibly easy and its an ideal way to isolate a specific set of changes. You may be fixing several things at one time but by keeping your changes isolated it will help us to find and apply only the changes we’re interested in. You should create a clean branch based on the latest spree/master when doing this. It is important you follow these steps exactly, it will prevent you from accidentally including unrelated changes from your local repository into the branch.
+Git branches are “cheap.” Creating branches in Git is incredibly easy and it's an ideal way to isolate a specific set of changes. You may be fixing several things at one time but by keeping your changes isolated it will help us to find and apply only the changes we’re interested in. You should create a clean branch based on the latest spree/master when doing this. It is important you follow these steps exactly, it will prevent you from accidentally including unrelated changes from your local repository into the branch.
 
 For example, if we were submitting a patch to fix an issue with the CSS in the flash error message you could create a branch as follows:
 

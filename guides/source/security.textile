@@ -92,7 +92,7 @@ The above rule set has the following practical effects for Spree users
 
 h4. Enforcing the Rules
 
-CanCan is only effective in enforcing authorization rules if its asked.  In other words, if the source code does not check permissions there is no way to deny access based on those permissions.  This is generally handled by adding the appropriate code to your Rails controllers.
+CanCan is only effective in enforcing authorization rules if it's asked.  In other words, if the source code does not check permissions there is no way to deny access based on those permissions.  This is generally handled by adding the appropriate code to your Rails controllers.
 
 h4. Custom Authorization Rules
 

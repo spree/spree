@@ -47,7 +47,7 @@ This may seem somewhat simplistic at first but our experience has shown that mos
 
 h4. Taxation
 
-Tax adjustments are any adjustments with a label of "Tax."  This is just a naming convention but its a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's tax adjustments:
+Tax adjustments are any adjustments with a label of "Tax."  This is just a naming convention but it's a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's tax adjustments:
 
 <shell>
 >> Spree::Order.last.adjustments.tax
@@ -58,7 +58,7 @@ INFO: Tax related charges are considered "frozen":adjustments.html#frozen-adjust
 
 h4. Shipping
 
-Shipping adjustments are any adjustments with a label of "Shipping."  This is just a naming convention but its a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's shipping adjustments:
+Shipping adjustments are any adjustments with a label of "Shipping."  This is just a naming convention but it's a standard enough case that we have a built in scope for them in Spree.  You can use the following console command to list an order's shipping adjustments:
 
 <shell>
 >> Spree::Order.last.adjustments.shipping
@@ -159,7 +159,7 @@ When a Spree class uses this helper method it automatically adds the following c
 * The ability to associate a calculator with an instance of that class (through a +has_one :calculator+ association)
 * Validation rules and the ability to accept configuration params through Rails +accepts_nested_attributes_for+
 
-Lets look at how this works with a specific example taken from the Spree source code itself.  Specifically we'll be looking at +Spree::ShippingMethod+.
+Let's look at how this works with a specific example taken from the Spree source code itself.  Specifically we'll be looking at +Spree::ShippingMethod+.
 
 <ruby>
 module Spree
@@ -171,16 +171,16 @@ module Spree
 end
 </ruby>
 
-Here we see that +Spree::ShippingMethod+ declares that its going to be involved in calculations by declaring +calculated_adjustments+ in the class definition.  What does that give us exactly?
+Here we see that +Spree::ShippingMethod+ declares that it's going to be involved in calculations by declaring +calculated_adjustments+ in the class definition.  What does that give us exactly?
 
-Lets start by firing up the Ruby console and creating a new instance of +Spree::ShippingMethod+.
+Let's start by firing up the Ruby console and creating a new instance of +Spree::ShippingMethod+.
 
 <shell>
 >> s = Spree::ShippingMethod.new
 => #<Spree::ShippingMethod id: nil, name: nil, zone_id: nil, created_at: nil, updated_at: nil, display_on: nil, shipping_category_id: nil, match_none: nil, match_all: nil, match_one: nil>
 </shell>
 
-Now we can verify that this instance of +Spree::ShippingMethod+ in fact has a +Spree::Calculator+ association (although its currently nil because we haven't assigned anything to it.)
+Now we can verify that this instance of +Spree::ShippingMethod+ in fact has a +Spree::Calculator+ association (although it's currently nil because we haven't assigned anything to it.)
 
 <shell>
 >> s.calculator
@@ -230,7 +230,7 @@ Use of the +calculated_adjustments+ helper also provides additional methods to i
 |+update_adjustment+|Updates the amount of the adjustment using the instance's +Calculator+|
 |+calculator_type+|Utility method to help with admin screens that need to set the +Calculator+ for a particular instance of the class.|
 
-The +create_adjustment+ is the process by which all adjustments should be created.  Lets take a look at how this mechanism works inside the +Spree::Order+ class.
+The +create_adjustment+ is the process by which all adjustments should be created.  Let's take a look at how this mechanism works inside the +Spree::Order+ class.
 
 <ruby>
 def create_tax_charge!
@@ -256,7 +256,7 @@ def compute(object = nil)
 end
 </ruby>
 
-This calculator basically just returns the same amount every time its called (note the amount is configurable of course.)  Other calculators (such as +Spree::Calculator::DefaultTax+) are a bit more interesting.
+This calculator basically just returns the same amount every time it's called (note the amount is configurable of course.)  Other calculators (such as +Spree::Calculator::DefaultTax+) are a bit more interesting.
 
 <ruby>
 def compute(computable)
@@ -296,7 +296,7 @@ h4. Locked Adjustments
 
 Spree also has the notion of so-called "locked" adjustments.  The concept behind this is there are certain types of adjustments which should never be changed once calculated.  There are also situations where it is appropriate for an adjustment that was once subject to recalculation to be recalculated.
 
-WARNING: Locked adjustments are currently considered experimental.  We're currently exploring the ability to configure Spree to honor certain locking strategies.  For instance, locking a promotion calculation in place so that its not lost if the order is updated after the promotion expires.  There are also some interesting options to allow admins with the appropriate permissions to have the ability to lock/unlock adjustments when appropriate.
+WARNING: Locked adjustments are currently considered experimental.  We're currently exploring the ability to configure Spree to honor certain locking strategies.  For instance, locking a promotion calculation in place so that it's not lost if the order is updated after the promotion expires.  There are also some interesting options to allow admins with the appropriate permissions to have the ability to lock/unlock adjustments when appropriate.
 
 h3. Configuration
 

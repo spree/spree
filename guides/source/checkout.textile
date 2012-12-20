@@ -12,7 +12,7 @@ endprologue.
 
 h3. Overview
 
-The Spree checkout process has been designed for maximum flexibility.  Its been redesigned several times now, each iteration has benefited from the feedback of real world deployment experience.  It is relatively simple to customize the checkout process to suit your needs.  Secure transmission of customer information is possible via SSL and credit card information is never stored in the database.
+The Spree checkout process has been designed for maximum flexibility.  It's been redesigned several times now, each iteration has benefited from the feedback of real world deployment experience.  It is relatively simple to customize the checkout process to suit your needs.  Secure transmission of customer information is possible via SSL and credit card information is never stored in the database.
 
 h3. Default Checkout Steps
 
@@ -53,7 +53,7 @@ This step allows the customer to add both their billing and shipping information
 
 The address fields include a select box for choosing state/province.  The list of states will be populated via JavaScript and will contain all of the states listed in the database for the currently selected country.  If there are no states configured for a particular country, or if the user has JavaScript disabled, the select box will be replaced by a text field instead.
 
-INFO: The default "seed" data for Spree only includes the U.S. states.  Its easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":https://gist.github.com/.)
+INFO: The default "seed" data for Spree only includes the U.S. states.  It's easy enough to add states or provinces for other countries but beyond the scope of the project to maintain such a list.  Feel free to add your own seed data for the states you require (and to share your seed scripts with others via "Gist":https://gist.github.com/.)
 
 NOTE: The state field can be disabled entirely by using the +address_requires_state+ preference.  You can also allow for an "alternate phone" field by using the +alternative_billing_phone+ and +alternative_shipping+ fields.
 
@@ -69,13 +69,13 @@ h4. Payment
 
 This step is where the customer provides payment information.  This step is intentionally placed last in order to minimize security issues with credit card information.  Credit card information is never stored in the database so it would be impossible to have a subsequent step and still be able to submit the information to the "payment gateway":payment_gateways.html.  Spree submits the information to the gateway before saving the model so that the sensitive information can be discarded before saving the checkout information.
 
-WARNING: Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before its time to authorize the card.
+WARNING: Spree discards the credit card number after this step is processed.  If you do not have a gateway with payment profiles enabled then your card information will be lost before it's time to authorize the card.
 
 INFO: Spree stores only the last four digits of the credit card number along with the expiration information.  The full credit card number and verification code are never stored in the Spree database.
 
 NOTE: Several gateways such as ActiveMerchant and Beanstream provide a secure method for storing a "payment profile" in your database.  This approach typically involves the use of a "token" which can be used for subsequent purchases but only with your merchant account.  If you are using a secure payment profile it would then be possible to show a final "confirmation" step after payment information is entered.
 
-NOTE: If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the order is saved.  This is perfectly secure because the credit card information is not ever saved.  Its transmitted to the gateway and then discarded like normal.
+NOTE: If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information.  You can then perform an authorization before the order is saved.  This is perfectly secure because the credit card information is not ever saved.  It's transmitted to the gateway and then discarded like normal.
 
 h4. Confirmation
 
@@ -133,7 +133,7 @@ h4. The Order Model and State Machine
 
 The default checkout flow for the +Spree::Order+ model is defined in +app/models/spree/order/checkout.rb+ of spree_core.
 
-An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart. What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and its also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
+An +Spree::Order+ object has an initial state of 'cart'.  From there any number of events transition the +Spree::Order+ to different states.  Spree does not have a separate model or database table for the shopping cart. What the user considers a "shopping cart" is actually an in-progress +Spree::Order+.  An order is considered in-progress, or incomplete when its +completed_at+ attribute is null.  Incomplete orders can be easily filtered during reporting and it's also simple enough to write a quick script to periodically purge incomplete orders from the system.  The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
 
 INFO: For more information on the state machine gem please see the "README":https://github.com/pluginaweek/state_machine
 
@@ -164,7 +164,7 @@ This callback would prevent transitioning to the +delivery+ step if +valid_zip_c
 
 h5. Customizing the View for a Particular Step
 
-Each of the default checkout steps has its own partial defined in the spree_core's +app/views/spree/checkout+ directory.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  Its also possible the default partial in question defines a usable theme hook, in which case you could add your functionality by using "Deface":https://github.com/spree/deface.html
+Each of the default checkout steps has its own partial defined in the spree_core's +app/views/spree/checkout+ directory.  Changing the view for an existing step is as simple as overriding the relevant partial in your site extension.  It's also possible the default partial in question defines a usable theme hook, in which case you could add your functionality by using "Deface":https://github.com/spree/deface.html
 
 INFO: See also the brief discussion in "checkout partials":#checkout-partials for additional information.
 

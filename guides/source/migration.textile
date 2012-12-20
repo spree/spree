@@ -10,7 +10,7 @@ know:
 
 endprologue.
 
-WARNING: This documentation on this topic is out of date and we're working to update it. In the meantime if you see things in here that are confusing its possible that they no longer apply, etc.
+WARNING: This documentation on this topic is out of date and we're working to update it. In the meantime if you see things in here that are confusing it's possible that they no longer apply, etc.
 
 h3. Overview
 

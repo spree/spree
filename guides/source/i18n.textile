@@ -134,7 +134,7 @@ WARNING: These instructions pertain to the use of the +spree_18n+ gem.  They ass
 
 h4. Refreshing the Default Locale
 
-The default Spree locale is actually maintained as part of the Spree project (and not part of +spree_i18n+ project.)  A copy of the default locale information is, however, available in the +spree_i18n+ source. Before you run any of the other rake tasks, its a good idea to "refresh" the localization information for +en.yml+.
+The default Spree locale is actually maintained as part of the Spree project (and not part of +spree_i18n+ project.)  A copy of the default locale information is, however, available in the +spree_i18n+ source. Before you run any of the other rake tasks, it's a good idea to "refresh" the localization information for +en.yml+.
 
 <shell>
 $ bundle exec rake spree_i18n:update_default
@@ -201,7 +201,7 @@ h4. Default Values
 
 You will notice in some of the locales (especially newly created ones), that there are default values in English that are commented out.  These commented values are provided as a guide to help people performing the translations since the translation key does not always give you the best idea of the complete English phrase in question.
 
-Lets fire up the Rails console and test our new locale.
+Let's fire up the Rails console and test our new locale.
 
 <shell>
 >> I18n.locale = "es-PE"

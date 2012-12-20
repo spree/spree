@@ -121,7 +121,7 @@ Let's start by creating a standard Rails application using the following command
 rails new mystore
 </shell>
 
-This creates a new Rails application using all of the default options (including a Sqlite3 database.)  If you wish to create your application with a different database you can use the +-d+ option (again this is not specific to Spree - its standard Rails at this point.)
+This creates a new Rails application using all of the default options (including a Sqlite3 database.)  If you wish to create your application with a different database you can use the +-d+ option (again this is not specific to Spree - it's standard Rails at this point.)
 
 For example, to create your application using Mysql you use the following command instead:
 
@@ -152,7 +152,7 @@ After you create the store application, switch to its folder to continue work di
 cd mystore
 </shell>
 
-Now lets add Spree to our Rails application:
+Now let's add Spree to our Rails application:
 
 <shell>
 spree install
