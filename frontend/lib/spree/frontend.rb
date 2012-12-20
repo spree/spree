@@ -21,7 +21,3 @@ if defined?(ActionView)
     include CollectiveIdea::Acts::NestedSet::Helper
   end
 end
-
-ActiveSupport.on_load(:action_view) do
-  include Spree::Core::StoreHelpers
-end
