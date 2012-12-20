@@ -13,6 +13,13 @@
     </label>
   </p>
 
+  <p data-hook="attachment_url">
+    <label>
+      <%= label_tag 'preferences[attachment_url]', t(:attachment_url) %>
+      <%= preference_field_tag 'preferences[attachment_url]', Spree::Config[:attachment_url], :type => :string, :size => 60 %>
+    </label>
+  </p>
+
   <p data-hook="attachment_default_url">
     <label>
       <%= label_tag 'preferences[attachment_default_url]', t(:attachment_default_url) %>
