@@ -260,9 +260,10 @@ en:
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
   attachment_default_style: "Attachments Style"
-  attachment_default_url: "Attachments URL"
+  attachment_default_url: "Attachments Default URL"
   attachment_path: "Attachments Path"
   attachment_styles: "Paperclip Styles"
+  attachment_url: "Attachments URL"
   authorization_failure: "Authorization Failure"
   authorized: Authorized
   availability: "Availability"
