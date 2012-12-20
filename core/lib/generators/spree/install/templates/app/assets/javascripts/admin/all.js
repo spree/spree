@@ -7,8 +7,7 @@
 //= require jquery
 //= require jquery_ujs
 <% if options[:lib_name] == 'spree' %>
-//= require admin/spree_frontend
-//= require admin/spree_promo
+//= require admin/spree_backend
 <% else %>
 //= require admin/<%= options[:lib_name].gsub("/", "_") %>
 <% end %>
