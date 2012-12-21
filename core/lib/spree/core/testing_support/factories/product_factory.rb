@@ -7,11 +7,13 @@ FactoryGirl.define do
     sku 'ABC'
     available_on 1.year.ago
     deleted_at nil
+    on_hand 5
   end
 
   factory :product, :parent => :simple_product do
     tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
+    on_hand 5
   end
 
   factory :product_with_option_types, :parent => :product do
@@ -22,6 +24,7 @@ FactoryGirl.define do
     name "Custom Product"
     price "17.99"
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
+    on_hand 5
 
     # associations:
     tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
