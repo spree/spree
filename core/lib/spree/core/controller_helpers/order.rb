@@ -27,7 +27,7 @@ module Spree
             @current_order = current_order unless current_order.try(:completed?)
           end
           if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
-            @current_order = Spree::Order.new(currency: current_currency)
+            @current_order = Spree::Order.new(:currency => current_currency)
             before_save_new_order
             @current_order.save!
             after_save_new_order
