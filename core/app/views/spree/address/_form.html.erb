@@ -50,7 +50,7 @@
          ].join.gsub('"', "'").gsub("\n", "")
       %>
       <%= javascript_tag do -%>
-        document.write("<%== state_elements %>");
+        $('#<%="#{address_id}state" %>').append("<%== state_elements %>");
       <% end %>
     </p>
       <noscript>
