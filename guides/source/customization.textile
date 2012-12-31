@@ -17,7 +17,7 @@ h4. Application Specific
 
 Application specific customizations are the most common type of customization applied to Spree. It's generally used by developers and designers to tweak Spree's behaviour or appearance to match a particular business's operating procedures, branding, or provide a unique feature.
 
-All application specific customizations are stored within the host application where Spree is installed (please see the Installation section of the "Getting Started with Spree":getting_started.html guide, for how to setup the host application). Application customizations are not generally shared or re-used in anyway.
+All application specific customizations are stored within the host application where Spree is installed (please see the Installation section of the "Getting Started with Spree":getting_started.html guide, for how to setup the host application). Application customizations are not generally shared or re-used in any way.
 
 h4. Extension
 
