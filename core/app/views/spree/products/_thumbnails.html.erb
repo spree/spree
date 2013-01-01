@@ -1,16 +1,16 @@
-<!-- no need for thumnails unless there is more then one image -->
-<% if product.images.size > 1 || product.variant_images.size > 0 %>
+<%# no need for thumnails unless there is more then one image %>
+<% if (@product.images + @product.variant_images).uniq.size > 1 %>
   <ul id="product-thumbnails" class="thumbnails inline" data-hook>
-    <% product.images.each do |i| %>
-      <li class="tmb-all" id="tmb-<%= i.id.to_s %>"><%= link_to image_tag(i.attachment.url(:mini)), i.attachment.url(:product) %></li>
-    <% end %>
-    <% if @product.has_variants?
-      @variants.each do |v|
-        if v.available?
-          v.images.each do |i| %>
-            <li class="vtmb-<%= v.id.to_s %> vtmb" id="tmb-<%= i.id.to_s %>"><%= link_to image_tag(i.attachment.url(:mini)), i.attachment.url(:product) %></li>
-          <%
-          end
+    <%
+    @product.images.each do |i|
+      concat(content_tag(:li, link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)), :class => 'tmb-all', :id => "tmb-#{i.id}"))
+    end
+
+    if @product.has_variants?
+      @variants.select(&:available?).each do |v|
+        v.images.each do |i|
+          next if @product.images.include? i
+          concat(content_tag(:li, link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)), :class => "vtmb-#{v.id} vtmb", :id => "tmb-#{i.id}"))
         end
       end
     end
