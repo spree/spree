@@ -1,7 +1,7 @@
 namespace :spree do
   desc "Resets all taxon permalinks"
   task :reset_taxon_permalinks => :environment do
-    Taxon.where(:parent_id => nil).each {|taxon| redo_permalinks(taxon) }
+    Spree::Taxon.where(:parent_id => nil).each {|taxon| redo_permalinks(taxon) }
   end
 
   def redo_permalinks(taxon)
