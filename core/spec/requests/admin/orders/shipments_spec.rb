@@ -22,7 +22,10 @@ describe "Shipments" do
     click_link "Shipments"
 
     click_on "New Shipment"
-    check "inventory_units_1"
+    within "table.index" do
+      # Check the first inventory unit box
+      find("input.inventory_unit").set(true)
+    end
     click_button "Create"
     page.should have_content("successfully created!")
     order.reload
