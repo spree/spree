@@ -98,6 +98,22 @@ module Spree
         redirect_to :back
       end
 
+      def open_adjustments
+        adjustments = @order.adjustments.where(:state => 'closed')
+        adjustments.update_all(:state => 'open')
+        flash[:success] = t(:all_adjustments_opened)
+
+        respond_with(@order) { |format| format.html { redirect_to :back } }
+      end
+
+      def close_adjustments
+        adjustments = @order.adjustments.where(:state => 'open')
+        adjustments.update_all(:state => 'closed')
+        flash[:success] = t(:all_adjustments_closed)
+
+        respond_with(@order) { |format| format.html { redirect_to :back } }
+      end
+
       private
 
         def load_order

@@ -127,11 +127,17 @@ Spree::Core::Engine.routes.draw do
         put :fire
         get :fire
         post :resend
+        get :open_adjustments
+        get :close_adjustments
       end
 
       resource :customer, :controller => "orders/customer_details"
 
-      resources :adjustments
+      resources :adjustments do
+        member do
+          get :toggle_state
+        end
+      end
       resources :line_items
       resources :shipments do
         member do

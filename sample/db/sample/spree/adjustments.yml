@@ -8,7 +8,7 @@ tax_<%= i %>:
   originator: tax_rate_north_america
   originator_type: Spree::TaxRate
   label: Tax
-  locked: false
+  state: open
   mandatory: true
 <% end %>
 <% 1.upto(100) do |i| %>
@@ -21,6 +21,6 @@ ship_<%= i %>:
   originator: ups_ground_usd
   originator_type: Spree::ShippingMethod
   label: Shipping
-  locked: true
+  state: closed
   mandatory: true
 <% end %>

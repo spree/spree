@@ -237,6 +237,8 @@ en:
   address: Address
   address_information: "Address Information"
   adjustment: Adjustment
+  adjustment_successfully_closed: "Adjustment has been successfully closed!"
+  adjustment_successfully_opened: "Adjustment has been successfully opened!"
   adjustment_total: Adjustment Total
   adjustments: Adjustments
   administration: Administration
@@ -248,6 +250,8 @@ en:
         delivery_success: 'Testmail sent successfully'
         error: 'Testmail error: %{e}'
   all: "All"
+  all_adjustments_opened: "All adjustments successfully opened!"
+  all_adjustments_closed: "All adjustments successfully closed!"
   all_departments: All departments
   allow_backorders: "Allow Backorders"
   allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
@@ -264,15 +268,15 @@ en:
   are_you_sure: "Are you sure?"
   are_you_sure_category: "Are you sure you want to delete this category?"
   are_you_sure_delete: "Are you sure you want to delete this record?"
-  are_you_sure_delete_image: "Are you sure you want to delete this image?"
   are_you_sure_option_type: "Are you sure you want to delete this option type?"
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
   attachment_default_style: "Attachments Style"
-  attachment_default_url: "Attachments URL"
+  attachment_default_url: "Attachments Default URL"
   attachment_path: "Attachments Path"
   attachment_styles: "Paperclip Styles"
+  attachment_url: "Attachments URL"
   authorization_failure: "Authorization Failure"
   authorized: Authorized
   availability: "Availability"
@@ -334,6 +338,8 @@ en:
   choose_a_customer: "Choose a customer"
   city: City
   clone: Clone
+  close: Close
+  close_all_adjustments: "Close All Adjustments"
   code: Code
   combine: Combine
   complete: complete
@@ -423,8 +429,6 @@ en:
   email_server_settings_description: "Set email server settings."
   empty: "Empty"
   empty_cart: "Empty Cart"
-  enable_login_via_login_password: "Use standard email/password"
-  enable_login_via_openid: "Use OpenID instead"
   enable_mail_delivery: Enable Mail Delivery
   ending_in: "Ending in"
   enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
@@ -506,7 +510,7 @@ en:
   image_settings: "Image Settings"
   image_settings_description: "Image Settings Description"
   image_settings_updated: "Image Settings successfully updated."
-  image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails to do this."
+  image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails CLASS=Spree::Image to do this."
   in_progress: "In Progress"
   include_in_shipment: Include in Shipment
   included_in_other_shipment: Included in another Shipment
@@ -544,6 +548,7 @@ en:
   live: "Live"
   loading: Loading
   locale_changed: "Locale Changed"
+  lock: Lock
   logged_in_as: "Logged in as"
   logged_in_succesfully: "Logged in successfully"
   logged_out: "You have been logged out."
@@ -633,6 +638,8 @@ en:
     variant_not_deleted: "Variant could not be deleted"
   on_hand: "On Hand"
   one_default_category_with_default_tax_rate: "You should configure exactly one default category with your countries default tax rate"
+  open: Open
+  open_all_adjustments: "Open All Adjustments"
   operation: Operation
   option_type: "Option Type"
   option_types: "Option Types"
@@ -1092,6 +1099,7 @@ en:
   unable_to_save_order: "Unable to Save Order"
   under_price: "Under %{price}"
   under_paid: "Under Paid"
+  unlock: Unlock
   unrecognized_card_type: Unrecognized card type
   update: Update
   update_password: "Update my password and log me in"

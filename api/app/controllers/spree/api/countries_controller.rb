@@ -4,8 +4,10 @@ module Spree
       respond_to :json
 
       def index
-        @countries = Country.ransack(params[:q]).result.includes(:states).order('name ASC')
-          .page(params[:page]).per(params[:per_page])
+        @countries = Country.ransack(params[:q]).result.
+                     includes(:states).order('name ASC').
+                     page(params[:page]).per(params[:per_page])
+
         respond_with(@countries)
       end
 

@@ -19,24 +19,21 @@ describe Spree::OrdersController do
     end
 
     context "with Variant" do
+      let(:populator) { double('OrderPopulator') }
       before do
-        @variant = mock_model(Spree::Variant)
-        Spree::Variant.should_receive(:find).and_return @variant
+        Spree::OrderPopulator.should_receive(:new).and_return(populator)
       end
 
       it "should handle single variant/quantity pair" do
-        order.should_receive(:add_variant).with(@variant, 2, order.currency)
-        spree_post :populate, {:order_id => 1, :variants => {@variant.id => 2}}
+        populator.should_receive(:populate).with("variants" => { 1 => "2" }).and_return(true)
+        spree_post :populate, { :order_id => 1, :variants => { 1 => 2 } }
+        response.should redirect_to spree.cart_path
       end
+
       it "should handle multiple variant/quantity pairs with shared quantity" do
-        @variant.stub(:product_id).and_return(10)
-        order.should_receive(:add_variant).with(@variant, 1, order.currency)
-        spree_post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => 1}
-      end
-      it "should handle multiple variant/quantity pairs with specific quantity" do
-        @variant.stub(:product_id).and_return(10)
-        order.should_receive(:add_variant).with(@variant, 3, order.currency)
-        spree_post :populate, {:order_id => 1, :products => {@variant.product_id => @variant.id}, :quantity => {@variant.id.to_s => 3}}
+        populator.should_receive(:populate).with("products" => { 1 => "2" }, "quantity" => "1").and_return(true)
+        spree_post :populate, { :order_id => 1, :products => { 1 => 2 }, :quantity => 1 }
+        response.should redirect_to spree.cart_path
       end
     end
   end

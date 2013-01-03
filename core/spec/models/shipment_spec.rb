@@ -13,7 +13,7 @@ describe Spree::Shipment do
     shipment
   end
 
-  let(:charge) { mock_model Spree::Adjustment, :amount => 10, :source => shipment }
+  let(:charge) { Factory(:adjustment) }
 
   context "#cost" do
     it "should return the amount of any shipping charges that it originated" do
@@ -146,6 +146,7 @@ describe Spree::Shipment do
     before do
       order.stub(:update!)
       shipment.stub(:require_inventory => false, :update_order => true, :state => 'ready')
+      shipment.stub(:adjustment => charge)
       shipping_method.stub(:create_adjustment)
     end
 
@@ -163,6 +164,13 @@ describe Spree::Shipment do
       Spree::ShipmentMailer.should_receive(:shipped_email).with(shipment).and_return mail_message
       mail_message.should_receive :deliver
       shipment.ship!
+    end
+
+    it "should finalize the shipment's adjustment" do
+      shipment.stub(:send_shipped_email)
+      shipment.ship!
+      shipment.adjustment.state.should == "finalized"
+      shipment.adjustment.should be_immutable
     end
   end
 

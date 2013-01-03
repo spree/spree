@@ -34,6 +34,20 @@ module Spree
     after_save :update_adjustable
     after_destroy :update_adjustable
 
+    state_machine :state, :initial => :open do
+      event :close do
+        transition :open => :closed
+      end
+
+      event :open do
+        transition :closed => :open
+      end
+
+      event :finalize do
+        transition [:open, :closed] => :finalized
+      end
+    end
+
     # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
     # adjustment_total.
     def set_eligibility
@@ -58,7 +72,7 @@ module Spree
     # current values. If we used source it would load the old record from db for the association
     def update!(src = nil)
       src ||= source
-      return if locked?
+      return if immutable?
       if originator.present?
         originator.update_adjustment(self, src)
       end
@@ -71,6 +85,14 @@ module Spree
 
     def display_amount
       Spree::Money.new(amount, { :currency => currency }).to_s
+    end
+
+    def immutable?
+      state == "open" ? false : true
+    end
+
+    def finalized?
+      state == "finalized" ? true : false
     end
 
     private
