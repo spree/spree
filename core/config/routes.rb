@@ -6,8 +6,6 @@ Spree::Core::Engine.routes.draw do
 
   match '/locale/set', :to => 'locale#set'
 
-  resources :tax_categories
-
   resources :states, :only => :index
   resources :countries, :only => :index
 
@@ -25,26 +23,11 @@ Spree::Core::Engine.routes.draw do
 
   resources :orders do
     post :populate, :on => :collection
-
-    resources :line_items
-
-    resources :shipments do
-      member do
-        get :shipping_method
-      end
-    end
-
   end
+
   get '/cart', :to => 'orders#edit', :as => :cart
   put '/cart', :to => 'orders#update', :as => :update_cart
   put '/cart/empty', :to => 'orders#empty', :as => :empty_cart
-
-  resources :shipments do
-    member do
-      get :shipping_method
-      put :shipping_method
-    end
-  end
 
   # route globbing for pretty nested taxon and product paths
   match '/t/*id', :to => 'taxons#show', :as => :nested_taxons
