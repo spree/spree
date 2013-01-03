@@ -476,7 +476,7 @@ module Spree
     end
 
     def products
-      line_items.map { |li| li.variant.product }
+      line_items.map { |li| li.product }
     end
 
     def variants
