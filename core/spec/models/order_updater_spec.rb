@@ -145,7 +145,7 @@ module Spree
         create(:adjustment, :adjustable => order,
                             :originator => originator,
                             :amount     => amount,
-                            :locked     => true,
+                            :state      => "closed",
                             :label      => label,
                             :mandatory  => false)
       end
@@ -158,7 +158,7 @@ module Spree
         create(:adjustment, :adjustable => order,
                             :originator => nil,
                             :amount => -500,
-                            :locked => true,
+                            :state => "closed",
                             :label => "Some other credit")
         order.adjustments.each {|a| a.update_attribute_without_callbacks(:eligible, true)}
 
@@ -186,7 +186,7 @@ module Spree
         create(:adjustment, :adjustable => order,
                             :originator => nil,
                             :amount     => -1000,
-                            :locked     => true,
+                            :state      => "closed",
                             :eligible   => false,
                             :label      => 'Bad promo')
 
