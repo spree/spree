@@ -24,16 +24,8 @@ Spree::Core::Engine.routes.prepend do
 
   resources :orders do
     post :populate, :on => :collection
-
-    resources :line_items
-
-    resources :shipments do
-      member do
-        get :shipping_method
-      end
-    end
-
   end
+
   get '/cart', :to => 'orders#edit', :as => :cart
   put '/cart', :to => 'orders#update', :as => :update_cart
   put '/cart/empty', :to => 'orders#empty', :as => :empty_cart
