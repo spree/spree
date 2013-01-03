@@ -51,10 +51,10 @@ module Spree
       display_name += %Q{ (#{variant.options_text})} unless variant.options_text.blank?
 
       if variant.in_stock?
-        if variant.count_on_hand >= quantity
+        if variant.on_hand >= quantity
           return true
         else
-          errors.add(:base, %Q{There are only #{variant.count_on_hand} of #{display_name.inspect} remaining.} + 
+          errors.add(:base, %Q{There are only #{variant.on_hand} of #{display_name.inspect} remaining.} + 
                             %Q{ Please select a quantity less than or equal to this value.})
           return false
         end

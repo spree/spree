@@ -29,17 +29,35 @@ describe Spree::OrderPopulator do
         subject.errors.full_messages.join("").should == %Q{"T-Shirt (Size: M)" is out of stock.}
       end
 
-      it "should add an error if the variant does not have enough stock on hand" do
-        variant.stub :in_stock? => true
-        variant.stub :count_on_hand => 2
+      context "when :track_inventory_levels is true" do
 
-        order.should_not_receive(:add_variant)
-        subject.populate(:products => { 1 => 2 }, :quantity => 3)
-        subject.should_not be_valid
-        output = %Q{There are only 2 of \"T-Shirt (Size: M)\" remaining.} +
-                 %Q{ Please select a quantity less than or equal to this value.}
-        subject.errors.full_messages.join("").should == output
+        it "should add an error if the variant does not have enough stock on hand" do
+          variant.stub :in_stock? => true
+          variant.stub :on_hand => 2
+
+          order.should_not_receive(:add_variant)
+          subject.populate(:products => { 1 => 2 }, :quantity => 3)
+          subject.should_not be_valid
+          output = %Q{There are only 2 of \"T-Shirt (Size: M)\" remaining.} +
+                   %Q{ Please select a quantity less than or equal to this value.}
+          subject.errors.full_messages.join("").should == output
+        end
+
       end
+
+      context "when :track_inventory_levels is false" do
+
+        it "should return nil" do
+          variant.stub :in_stock? => true
+          variant.stub :on_hand => (1.0/0) # Infinity when :track_inventory_levels is false
+
+          order.should_receive(:add_variant)
+          subject.populate(:products => { 1 => 2 }, :quantity => 3000)
+          subject.should be_valid
+        end
+
+      end
+
     end
 
     context "with variant parameters" do
