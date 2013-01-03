@@ -5,7 +5,8 @@ module Spree
 
     has_many :shipments
 
-    validates :firstname, :lastname, :address1, :city, :zipcode, :country, :phone, :presence => true
+    validates :firstname, :lastname, :address1, :city, :zipcode, :country, :presence => true
+    validates :phone, :presence => true, :if => :require_phone?
     validate :state_validate
 
     attr_accessible :firstname, :lastname, :address1, :address2,
@@ -82,6 +83,10 @@ module Spree
     end
 
     private
+
+      def require_phone?
+        true
+      end
 
       def state_validate
         # Skip state validation without country (also required)

@@ -111,6 +111,23 @@ describe Spree::Address do
       address.should be_valid
     end
 
+    it "phone is set" do
+      address.phone = "123"
+      address.should have(:no).errors_on(:phone)
+    end
+
+    it "phone is blank" do
+      address.phone = ""
+      address.valid?
+      address.errors["phone"].should == ["can't be blank"]
+    end
+
+    it "require_phone? returns false and phone is blank" do
+      address.instance_eval{ self.stub :require_phone? => false }
+      address.phone = ""
+      address.should have(:no).errors_on(:phone)
+    end
+
   end
 
   context ".default" do
@@ -174,6 +191,10 @@ describe Spree::Address do
       let(:address) { stub_model(Spree::Address, :state => state) }
       specify { address.state_text.should == 'virginia' }
     end
+  end
 
+  context "defines require_phone? helper method" do
+    let(:address) { stub_model(Spree::Address) }
+    specify { address.instance_eval{ require_phone? }.should be_true}
   end
 end
