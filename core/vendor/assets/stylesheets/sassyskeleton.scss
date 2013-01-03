@@ -1,0 +1,163 @@
+//---------------------------------------------------------------------------------------------------
+// a sassier grid for spree
+// fixed-width - html whitespace not removed.
+// intended to be used as magic-classes, coupling markup&style.
+// based on skeleton v1.1 by dave gamache - thanks dude
+//
+//---------------------------------------------------------------------------------------------------
+//- Contents
+//--- Grid classes
+//--- Grid Variables
+//--- Grid Mixin
+//--- Desktop
+//--- Tablet
+//--- Mobile
+
+//-------------------------------------------------------------------------------------------------------
+// grid classes
+// to add another column, add a  class this list here.
+// ONLY here.
+
+$column-classes: (
+  one,
+  two,
+  three,
+  four,
+  five,
+  six,
+  seven,
+  eight,
+  nine,
+  ten,
+  eleven,
+  twelve,
+  thirteen,
+  fourteen,
+  fifteen,
+  sixteen
+  );
+
+//-------------------------------------------------------------------------------------------------------
+// grid variables
+
+// get the count of the column classes.
+$column-count: length($column-classes);
+$gutter: 20px;
+$desktop-container-width: 960px;
+$tablet-container-width: 768px;
+$mobile-container-width: 90%;
+$mobile-column-width: 100%;
+
+//--------------------------------------------------------------------------------------------------------
+// grid mixin
+@mixin sassy-grid($grid-container-width, $grid-column-count:$column-count, $grid-gutter:$gutter) {
+
+  $grid-column-width: $grid-container-width/$grid-column-count;
+
+  .container {
+    width: $grid-container-width;
+
+    .columns, .column {
+      @for $i from 1 through $column-count {
+        $current-column-class: nth($column-classes, $i);
+        &.#{$current-column-class} { width: #{$i*$grid-column-width - $grid-gutter}; }
+      }//@for
+
+      &.one-third    { width: ($grid-container-width/3) - $grid-gutter; }
+      &.two-thirds   { width: (($grid-container-width/3)*2) - $grid-gutter; }
+    }//.columns
+
+
+    // offsets
+    @for $i from 1 through $column-count {
+      $current-column-class: nth($column-classes, $i);
+      &.offset-by-#{$current-column-class} { padding-left: #{$i*$grid-column-width}; }
+    }//@for
+
+  }//.container
+}//@mixin
+
+//---------------------------------------------------------------------------------
+// desktop
+.container {
+  position: relative;
+  margin: 0 auto;
+  padding: 0;
+}//.container
+
+.column, .columns {
+  float: left;
+  display: inline;
+  margin-left: $gutter/2;
+  margin-right: $gutter/2;
+  &.alpha { margin-left: 0; }
+  &.omega { margin-right: 0; }
+}//.column,.columns
+
+.row { margin-bottom: $gutter; }
+
+@include sassy-grid($desktop-container-width, $column-count, $gutter);
+
+//-----------------------------------------------------------------------
+// #Tablet
+@media only screen and (max-width: 959px) {
+  @include sassy-grid($tablet-container-width, $column-count, $gutter);
+
+  .container { width: $tablet-container-width; }
+
+  .column, .columns {
+    &.alpha { margin-right: 10px; }
+    &.omega { margin-left: 10px; } }//.column,.columns
+
+  .alpha.omega {
+    margin-right: 0;
+    margin-left: 0; }//.alpha.omega
+}//@media
+
+//--------------------------------------------------------------------
+// #Mobile
+@media only screen and (max-width: 767px) {
+  .container {
+    width: $mobile-container-width;
+
+    .column, .columns {
+      margin: 0;
+      @for $i from 1 through $column-count {
+        $current-column-class: nth($column-classes, $i);
+        &.#{$current-column-class} { width: $mobile-column-width; }
+      }//@for
+
+    }//.column,.columns
+
+    // offsets
+    // offsets
+    @for $i from 1 through $column-count {
+      $current-column-class: nth($column-classes, $i);
+      &.offset-by-#{$current-column-class} { padding-left: 0; }
+    }//@for
+
+  }//.container
+}//@media
+
+
+//------------------------------------------------------------
+// Use clearfix class on parent to clear nested columns,
+// or wrap each row of columns in a <div class="row">
+// You can also use a <br class="clear" /> to clear columns
+@mixin clearfix {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}//@mixin
+
+.clear { @include clearfix; }
+
+.clearfix, .row, .container {
+  &:before, &:after { content: ' '; @include clearfix; }
+}//.clearfix, .row
+// Note that the clearfix could be better placed in a utilities file.
+// However the context of grid layout does give some justification for the coupling.
+//---------------------------------------------------------------------------------------------------

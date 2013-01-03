@@ -1,6 +1,6 @@
 /*
-* This is a manifest file that includes stylesheets for spree_core  
+* This is a manifest file that includes stylesheets for spree_core
  *= require normalize
- *= require skeleton
+ *= require sassyskeleton
  *= require store/screen
 */
