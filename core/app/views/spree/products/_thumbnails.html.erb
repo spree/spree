@@ -1,4 +1,4 @@
-<%# no need for thumbnails unless there is more then one image %>
+<%# no need for thumbnails unless there is more than one image %>
 <% if (@product.images + @product.variant_images).uniq.size > 1 %>
   <ul id="product-thumbnails" class="thumbnails inline" data-hook>
     <% @product.images.each do |i| %>
