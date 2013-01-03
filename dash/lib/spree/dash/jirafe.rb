@@ -52,8 +52,8 @@ module Spree
                         :currency => store[:currency],
                         :timezone => store[:time_zone],
                         :external_id => 1,
-                        :platform_type => store[:platform_type],
                         :site_id => store[:site_id] }],
+              :platform_type => 'spree',
               :users => users_hash
             }.to_json
           }
