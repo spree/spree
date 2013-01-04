@@ -137,6 +137,13 @@ describe Spree::Address do
       address.errors["phone"].should == ["can't be blank"]
     end
 
+    it "require_phone? returns false and phone is blank" do
+      Spree::Config.set :address_requires_state => false
+      address.instance_eval{ self.stub :require_phone? => false }
+      address.phone = ""
+      address.should be_valid
+    end
+
   end
 
   context ".default" do
