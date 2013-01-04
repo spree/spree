@@ -30,11 +30,11 @@ describe Spree::OrderPopulator do
       end
 
       context "when :track_inventory_levels is true" do
+        before { Spree::Config.set :track_inventory_levels => true }
 
         it "should add an error if the variant does not have enough stock on hand" do
-          variant.stub :in_stock? => true
-          variant.stub :on_hand => 2
-
+          variant.should_receive(:in_stock?).and_return(true)
+          variant.should_receive(:on_hand).twice.and_return(2)
           order.should_not_receive(:add_variant)
           subject.populate(:products => { 1 => 2 }, :quantity => 3)
           subject.should_not be_valid
@@ -46,11 +46,11 @@ describe Spree::OrderPopulator do
       end
 
       context "when :track_inventory_levels is false" do
+        before { Spree::Config.set :track_inventory_levels => false }
 
-        it "should return nil" do
-          variant.stub :in_stock? => true
-          variant.stub :on_hand => (1.0/0) # Infinity when :track_inventory_levels is false
-
+        it "can add any number of products to order regardless of on_hand" do
+          variant.should_receive(:in_stock?).and_return(true)
+          variant.should_receive(:on_hand).and_return((1.0 / 0))
           order.should_receive(:add_variant)
           subject.populate(:products => { 1 => 2 }, :quantity => 3000)
           subject.should be_valid
