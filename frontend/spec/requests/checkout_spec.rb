@@ -170,12 +170,10 @@ describe "Checkout" do
           click_button "Save and Continue"
         end
 
-        context "with no promotions" do
-          it "informs about an invalid coupon code" do
-            fill_in "Coupon code", :with => "coupon_codes_rule_man"
-            click_button "Save and Continue"
-            page.should have_content(I18n.t(:coupon_code_not_found))
-          end
+        it "informs about an invalid coupon code" do
+          fill_in "Coupon code", :with => "coupon_codes_rule_man"
+          click_button "Save and Continue"
+          page.should have_content(I18n.t(:coupon_code_not_found))
         end
 
         context "with a promotion" do
@@ -193,6 +191,8 @@ describe "Checkout" do
 
       # CheckoutController
       context "on the cart page" do
+        let!(:promotion) { create_basic_coupon_promotion("onetwo") }
+
         before do
           visit spree.root_path
           click_link "RoR Mug"
@@ -227,27 +227,42 @@ describe "Checkout" do
           page.should have_content(I18n.t(:coupon_code_max_usage))
         end
 
-        it "informs the user if the previous promotion is better" do
-          big_promotion = create_per_order_coupon_promotion 1, 5, 'onefive'
-          big_promotion.update_column(:created_at, 1.day.ago)
+        context "informs the user if the previous promotion is better" do
+          before do
+            better_promotion = create_basic_coupon_promotion("50off")
+            calculator = better_promotion.actions.first.calculator
+            calculator.preferred_amount = 50
+            calculator.save
+          end
 
-          visit spree.cart_path
+          specify do
+            visit spree.cart_path
 
-          fill_in "Coupon code", :with => "onefive"
-          click_button "Apply"
-          page.should have_content(I18n.t(:coupon_code_applied))
+            fill_in "Coupon code", :with => "50off"
+            click_button "Apply"
+            page.should have_content(I18n.t(:coupon_code_applied))
 
-          fill_in "Coupon code", :with => "onetwo"
-          click_button "Apply"
-          page.should have_content(I18n.t(:coupon_code_better_exists))
+            fill_in "Coupon code", :with => "onetwo"
+            click_button "Apply"
+            page.should have_content(I18n.t(:coupon_code_better_exists))
+          end
         end
 
-        it "informs the user if the coupon code is not eligible" do
-          promotion.rules.first.preferred_amount = 100
+        context "informs the user if the coupon code is not eligible" do
+          before do
+            rule = Spree::Promotion::Rules::ItemTotal.new
+            rule.promotion = promotion
+            rule.preferred_amount = 100
+            rule.save
+          end
 
-          fill_in "Coupon code", :with => "onetwo"
-          click_button "Apply"
-          page.should have_content(I18n.t(:coupon_code_not_eligible))
+          specify do
+            visit spree.cart_path
+
+            fill_in "Coupon code", :with => "onetwo"
+            click_button "Apply"
+            page.should have_content(I18n.t(:coupon_code_not_eligible))
+          end
         end
 
         it "informs the user if the coupon is expired" do

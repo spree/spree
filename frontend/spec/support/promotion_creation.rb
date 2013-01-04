@@ -58,17 +58,20 @@ module PromotionCreation
 
   def create_basic_coupon_promotion(code)
     promo = Spree::Promotion.create!({
-      :name => "One Two",
+      :name => "A promotion",
       :event_name => "spree.checkout.coupon_code_added",
-      :code => "onetwo",
+      :code => code,
       # So that we don't get caught out by the feature where a promotion
       # cannot be applied to an order when an order is older than the promotion
       :created_at => 1.day.ago,
       :starts_at => 1.day.ago,
     }, :without_protection => true)
-    action = Spree::Promotion::Actions::CreateAdjustment.create!({:activator_id => promo.id}, :without_protection => true)
+    action = Spree::Promotion::Actions::CreateAdjustment.new
+    action.promotion = promo
     action.calculator = create(:calculator)
     action.save!
+    promo.actions.reload # this makes the actions available
+    promo
   end
 
 end
