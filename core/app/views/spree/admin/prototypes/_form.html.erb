@@ -11,7 +11,7 @@
     <div id='properties' data-hook>
       <%= f.field_container :property_ids do %>
         <%= f.label :property_ids, t(:properties) %><br>
-        <%= f.select :property_ids, Spree::Property.sorted.map { |p| [p.presentation, p.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+        <%= f.select :property_ids, Spree::Property.all.map { |p| [p.presentation, p.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
       <% end %>
     </div>
   </div>
