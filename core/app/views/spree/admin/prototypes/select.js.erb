@@ -1,4 +1,4 @@
-<% @prototype_properties.each do |prop| %>
+<% @prototype_properties.sort_by{|id| -id[:id]}.each do |prop| %>
   $("a.add_fields").click();
-  $(".product_property.fields:last input:first").val("<%= prop.name %>");
+  $(".product_property.fields:first input:first").val("<%= prop.name %>");
 <% end %>

@@ -9,7 +9,7 @@ module Spree
 
     validates :name, :presentation, :presence => true
 
-    scope :sorted, lambda { order(:name) }
+    scope :sorted
 
     def self.find_all_by_prototype(prototype)
       id = prototype
