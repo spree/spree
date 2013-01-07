@@ -88,6 +88,10 @@ module Spree
       def user_attributes
         [:id, :email, :created_at, :updated_at]
       end
+
+      def property_attributes
+        [:id, :name, :presentation]
+      end
     end
   end
 end

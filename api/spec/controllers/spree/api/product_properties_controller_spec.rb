@@ -40,7 +40,7 @@ module Spree
       json_response['pages'].should == 2
     end
 
-    it 'can query the results through a paramter' do
+    it 'can query the results through a parameter' do
       Spree::ProductProperty.last.update_attribute(:value, 'loose')
       property = Spree::ProductProperty.last
       api_get :index, :q => { :value_cont => 'loose' }
@@ -91,7 +91,7 @@ module Spree
         response.status.should == 200
       end
 
-      it "can delete a variant" do
+      it "can delete a product property" do
         api_delete :destroy, :id => property_1.property_name
         response.status.should == 204
         lambda { property_1.reload }.should raise_error(ActiveRecord::RecordNotFound)
