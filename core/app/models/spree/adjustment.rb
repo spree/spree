@@ -1,25 +1,27 @@
-# Adjustments represent a change to the +item_total+ of an Order.  Each adjustment has an +amount+ that be either
-# positive or negative.  Adjustments have two useful boolean flags
+# Adjustments represent a change to the +item_total+ of an Order. Each adjustment
+# has an +amount+ that can be either positive or negative.
+#
+# Adjustments can be open/closed/finalized
+#
+# Once an adjustment is finalized, it cannot be changed, but an adjustment can
+# toggle between open/closed as needed
+#
+# Boolean attributes:
 #
 # +mandatory+
 #
-# If this flag is set to true then it means the the charge is required and will not be removed from the
-# order, even if the amount is zero.  In other words a record will be created even if the amount is zero.
-# This is  useful for representing things such as shipping and tax charges where you may want to make it explicitly
-# clear that no charge was made for such things.
-#
-# +locked+
-#
-# The charge is never to be udpated.  Typically you would want to freeze certain adjustments after checkout.
-# One use case for this is if you want to lock a shipping adjustment so that its value does not change
-# in the future when making other trivial edits to the order (like an email change).
+# If this flag is set to true then it means the the charge is required and will not
+# be removed from the order, even if the amount is zero. In other words a record
+# will be created even if the amount is zero. This is useful for representing things
+# such as shipping and tax charges where you may want to make it explicitly clear
+# that no charge was made for such things.
 #
 # +eligible?+
 #
-#  This boolean attributes stores whether this adjustment is currently eligible for its order. Only eligible
-#  adjustments count towards the order's adjustment total. This allows an adjustment to be preserved if it
-#  becomes ineligible so it might be reinstated.
-#
+# This boolean attributes stores whether this adjustment is currently eligible
+# for its order. Only eligible adjustments count towards the order's adjustment
+# total. This allows an adjustment to be preserved if it becomes ineligible so
+# it might be reinstated.
 module Spree
   class Adjustment < ActiveRecord::Base
     attr_accessible :amount, :label
@@ -48,12 +50,20 @@ module Spree
       end
     end
 
-    # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
-    # adjustment_total.
+    scope :tax, where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
+    scope :price, where(:adjustable_type => 'Spree::LineItem')
+    scope :shipping, where(:originator_type => 'Spree::ShippingMethod')
+    scope :optional, where(:mandatory => false)
+    scope :eligible, where(:eligible => true)
+    scope :charge, where('amount >= 0')
+    scope :credit, where('amount < 0')
+    scope :promotion, where(:originator_type => 'Spree::PromotionAction')
+
+    # Update the boolean _eligible_ attribute which determines which adjustments
+    # count towards the order's adjustment_total.
     def set_eligibility
-      update_attribute_without_callbacks(:eligible,
-                                         mandatory ||
-                                         (amount != 0 && eligible_for_originator?))
+      result = self.mandatory || (self.amount != 0 && self.eligible_for_originator?)
+      update_attribute_without_callbacks(:eligible, result)
     end
 
     # Allow originator of the adjustment to perform an additional eligibility of the adjustment
@@ -63,13 +73,13 @@ module Spree
       !originator.respond_to?(:eligible?) || originator.eligible?(source)
     end
 
-    # Update both the eligibility and amount of the adjustment. Adjustments delegate updating of amount to their Originator
-    # when present, but only if +locked+ is false.  Adjustments that are +locked+ will never change their amount.
-    # The new adjustment amount will be set by by the +originator+ and is not automatically saved.  This makes it save
-    # to use this method in an after_save hook for other models without causing an infinite recursion problem.
+    # Update both the eligibility and amount of the adjustment. Adjustments 
+    # delegate updating of amount to their Originator when present, but only if
+    # +locked+ is false. Adjustments that are +locked+ will never change their amount.
     #
-    # order#update_adjustments passes self as the src, this is so calculations can be performed on the
-    # current values. If we used source it would load the old record from db for the association
+    # order#update_adjustments passes self as the src, this is so calculations can
+    # be performed on the # current values. If we used source it would load the old
+    # record from db for the association
     def update!(src = nil)
       src ||= source
       return if immutable?
@@ -96,43 +106,8 @@ module Spree
     end
 
     private
-
       def update_adjustable
         adjustable.update! if adjustable.is_a? Order
-      end
-
-      class << self
-        def tax
-          where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
-        end
-
-        def price
-          where(:adjustable_type => 'Spree::LineItem')
-        end
-
-        def shipping
-          where(:originator_type => 'Spree::ShippingMethod')
-        end
-
-        def optional
-          where(:mandatory => false)
-        end
-
-        def eligible
-          where(:eligible => true)
-        end
-
-        def charge
-          where('amount >= 0')
-        end
-
-        def credit
-          where('amount < 0')
-        end
-
-        def promotion
-          where(:originator_type => 'Spree::PromotionAction')
-        end
       end
   end
 end
