@@ -79,7 +79,7 @@ module Spree
     # Products assigned to all product rules
     def products
       @products ||= self.rules.all.inject([]) do |products, rule|
-        products << rule.products if rule.respond_to?(:products)
+        rule.respond_to?(:products) ? products << rule.products : products
       end.flatten.uniq
     end
 

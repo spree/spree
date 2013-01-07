@@ -31,7 +31,9 @@ describe Spree::OrderPopulator do
 
       it "should add an error if the variant does not have enough stock on hand" do
         variant.stub :in_stock? => true
-        variant.stub :count_on_hand => 2
+
+        # Regression test for #2382
+        variant.should_receive(:on_hand).and_return(2)
 
         order.should_not_receive(:add_variant)
         subject.populate(:products => { 1 => 2 }, :quantity => 3)

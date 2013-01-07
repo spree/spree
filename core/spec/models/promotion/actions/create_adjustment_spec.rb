@@ -7,17 +7,15 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
   # From promotion spec:
   context "#perform" do
-
     before do
       action.calculator = Spree::Calculator::FreeShipping.new
       promotion.promotion_actions = [action]
       action.stub(:promotion => promotion)
     end
 
-
-    it "should create a discount with correct negative amount when order is eligible" do
-      order.stub(:ship_total => 2500, :item_total => 5000, :reload => nil)
-      promotion.stub(:eligible? => true)
+    it "should create a discount with correct negative amount" do
+      order = create(:line_item, price: 5000).order
+      order.stub(:ship_total => 2500)
 
       action.perform(:order => order)
       promotion.credits_count.should == 1
@@ -34,7 +32,6 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.perform(:order => order)
       promotion.credits_count.should == 1
     end
-
   end
 
   context "#compute_amount" do
