@@ -148,7 +148,6 @@ module Spree
       end
 
       it "should make all but the most valuable promotion adjustment ineligible, leaving non promotion adjustments alone" do
-        pending "Failing only in the core_split branch"
         create_adjustment("Promotion A", -100)
         create_adjustment("Promotion B", -200)
         create_adjustment("Promotion C", -300)
@@ -167,7 +166,6 @@ module Spree
       end
 
       it "should only leave one adjustment even if 2 have the same amount" do
-        pending "Failing only in the core_split branch"
         create_adjustment("Promotion A", -100)
         create_adjustment("Promotion B", -200)
         create_adjustment("Promotion C", -200)
