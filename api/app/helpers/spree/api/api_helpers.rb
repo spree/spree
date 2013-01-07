@@ -76,6 +76,10 @@ module Spree
       def country_attributes
         [:id, :iso_name, :iso, :iso3, :name, :numcode]
       end
+
+      def property_attributes
+        [:id, :name, :presentation]
+      end
     end
   end
 end
