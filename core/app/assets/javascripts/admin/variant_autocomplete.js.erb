@@ -6,7 +6,7 @@ $(document).ready(function() {
 })
 
 formatVariantResult = function(variant) {
-  if (variant["images"][0] != undefined) {
+  if (variant["images"][0] != undefined && variant["images"][0].image != undefined) {
     variant.image = variant.images[0].image.mini_url
   }
   return variantTemplate({ variant: variant })
