@@ -50,7 +50,6 @@ module Spree
       end
     end
 
-<<<<<<< HEAD
     scope :tax, where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
     scope :price, where(:adjustable_type => 'Spree::LineItem')
     scope :shipping, where(:originator_type => 'Spree::ShippingMethod')
@@ -61,10 +60,6 @@ module Spree
 
     # Update the boolean _eligible_ attribute which determines which adjustments
     # count towards the order's adjustment_total.
-=======
-    # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
-    # adjustment_total.
->>>>>>> Adjustments can now be open/closed/finalized
     def set_eligibility
       result = self.mandatory || (self.amount != 0 && self.eligible_for_originator?)
       update_attribute_without_callbacks(:eligible, result)
