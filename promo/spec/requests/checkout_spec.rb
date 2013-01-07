@@ -70,13 +70,6 @@ describe "Checkout" do
         page.should have_content(I18n.t(:coupon_code_applied))
       end
 
-      it "cannot enter a promotion code that was created after the order" do
-        promotion.update_column(:created_at, 1.day.from_now)
-        fill_in "Coupon code", :with => "onetwo"
-        click_button "Apply"
-        page.should have_content(I18n.t(:coupon_code_not_found))
-      end
-
       it "informs the user about a coupon code which has exceeded its usage" do
         promotion.update_column(:usage_limit, 5)
         promotion.class.any_instance.stub(:credits_count => 10)
