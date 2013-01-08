@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', version
-  s.add_dependency 'httparty', '~> 0.8.1'
+  s.add_dependency 'spree_backend', version
+  s.add_dependency 'httparty', '~> 0.9.0'
 end

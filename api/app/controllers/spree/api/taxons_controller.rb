@@ -4,13 +4,24 @@ module Spree
       respond_to :json
 
       def index
-        @taxons = taxonomy.root.children
-        respond_with(@taxons)
+        if taxonomy
+          @taxons = taxonomy.root.children
+        else
+          if params[:ids]
+            @taxons = Taxon.where(:id => params[:ids].split(","))
+          else
+            @taxons = Taxon.ransack(params[:q]).result
+          end
+        end
       end
 
       def show
         @taxon = taxon
         respond_with(@taxon)
+      end
+
+      def jstree
+        show
       end
 
       def create
@@ -41,13 +52,14 @@ module Spree
       private
 
       def taxonomy
-        @taxonomy ||= Taxonomy.find(params[:taxonomy_id])
+        if params[:taxonomy_id].present?
+          @taxonomy ||= Taxonomy.find(params[:taxonomy_id])
+        end
       end
 
       def taxon
         @taxon ||= taxonomy.taxons.find(params[:id])
       end
-
     end
   end
 end

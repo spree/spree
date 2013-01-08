@@ -24,7 +24,8 @@ module Spree
     has_many :product_properties, :dependent => :destroy
     has_many :properties, :through => :product_properties
 
-    has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
+    has_and_belongs_to_many :taxons, :join_table => :spree_products_taxons
+    has_and_belongs_to_many :promotion_rules, :join_table => :spree_products_promotion_rules
 
     belongs_to :tax_category
     belongs_to :shipping_category
@@ -240,6 +241,15 @@ module Spree
         product_property.value = property_value
         product_property.save!
       end
+    end
+
+    def display_price
+      Spree::Money.new(price).to_s
+    end
+
+    def possible_promotions
+      promotion_ids = promotion_rules.map(&:activator_id).uniq
+      Spree::Promotion.advertised.where(:id => promotion_ids).reject(&:expired?)
     end
 
     private

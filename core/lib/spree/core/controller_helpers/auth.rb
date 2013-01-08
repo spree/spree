@@ -1,3 +1,5 @@
+require 'spree/core/ssl_requirement'
+
 module Spree
   module Core
     module ControllerHelpers
@@ -28,7 +30,7 @@ module Spree
             redirect_to '/unauthorized'
           else
             store_location
-            url = respond_to?(:spree_login_path) ? spree_login_path : root_path
+            url = spree.respond_to?(:spree_login_path) ? spree.spree_login_path : spree.root_path
             redirect_to url
           end
         end

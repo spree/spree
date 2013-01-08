@@ -1,0 +1,281 @@
+//= require_self
+//= require admin/handlebar_extensions
+//= require admin/variant_autocomplete
+//= require admin/taxon_autocomplete
+//= require admin/option_type_autocomplete
+//= require admin/spree-select2
+
+/**
+This is a collection of javascript functions and whatnot
+under the spree namespace that do stuff we find helpful.
+Hopefully, this will evolve into a propper class.
+**/
+
+jQuery(function($) {
+  // Make main menu use full width
+  $('.fullwidth-menu').horizontalNav({
+    tableDisplay: false,
+    responsiveDelay: 0
+  });
+
+  // Vertical align of checkbox fields
+  $('.field.checkbox label').vAlign()
+
+  <% # Re-adjusting admin menu during test causes tests to fail,
+     # like states_spec and shipping_methods_spec. Let's not do this. %>
+  <% unless Rails.env.test? %>
+    $('.main-menu-wrapper ul').AdaptiveMenu({
+      text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+      klass: "dropdown"
+    });
+  <% end %>
+
+  // Add some tips
+  $('.with-tip').powerTip({
+    smartPlacement: true,
+    fadeInTime: 50,
+    fadeOutTime: 50,
+    intentPollInterval: 300
+  });
+
+  $('.with-tip').on({
+    powerTipPreRender: function(){
+      $('#powerTip').addClass($(this).attr("data-action"));
+      $('#powerTip').addClass($(this).attr("data-tip-color"));
+    },
+    powerTipClose: function(){
+      $('#powerTip').removeClass($(this).attr("data-action"))
+    }
+  });
+
+  // Make flash messages dissapear
+  setTimeout('$(".flash").fadeOut()', 5000);
+
+  // Highlight hovered table column
+  $('table tbody tr td.actions a').hover(function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.addClass(klass)
+    tr.prev().addClass('before-' + klass);
+  }, function(){
+    var tr = $(this).closest('tr');
+    var klass = 'highlight action-' + $(this).attr('data-action')
+    tr.removeClass(klass)
+    tr.prev().removeClass('before-' + klass);
+  });
+
+  // Trunkate text in page_title that didn't fit
+  var truncate_elements = $('.truncate');
+
+  truncate_elements.each(function(){
+    $(this).trunk8();
+  });
+  $(window).resize(function (event) {
+    truncate_elements.each(function(){
+      $(this).trunk8();
+    })
+  });
+
+  // Make height of dt/dd elements the same
+  $("dl").equalize('outerHeight');
+
+});
+
+
+$.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
+
+show_flash_error = function(message) {
+  error_div = $('.flash.error');
+  if (error_div.length > 0) {
+    error_div.html(message);
+    error_div.show();
+  } else {
+    if ($("#content .toolbar").length > 0) {
+      $("#content .toolbar").before('<div class="flash error">' + message + '</div>');
+    } else {
+      $("#content h1").before('<div class="flash error">' + message + '</div>');
+    }
+  }
+}
+
+// Apply to individual radio button that makes another element visible when checked
+$.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
+  if(!this.get(0)){ return  }
+  showValue = this.get(0).value;
+  radioGroup = $("input[name='" + this.get(0).name + "']");
+  radioGroup.each(function(){
+    $(this).click(function(){
+      $(dependentElementSelector).visible(this.checked && this.value == showValue)
+    });
+    if(this.checked){ this.click() }
+  });
+}
+
+handle_date_picker_fields = function(){
+  $('.datepicker').datepicker({
+    dateFormat: Spree.translations.date_picker,
+    dayNames: Spree.translations.abbr_day_names,
+    dayNamesMin: Spree.translations.abbr_day_names,
+    monthNames: Spree.translations.month_names, 
+    prevText: Spree.translations.previous,
+    nextText: Spree.translations.next,
+    showOn: "focus"
+  });
+
+  // Correctly display range dates
+  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-to" ).datepicker( "option", "minDate", selectedDate );
+  });
+  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function(selectedDate) {
+    $(".date-range-filter .datepicker-from" ).datepicker( "option", "maxDate", selectedDate );
+  });
+}
+
+$(document).ready(function(){
+  handle_date_picker_fields();
+  $(".observe_field").on('change', function() {
+    target = $(this).attr("data-update");
+    ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
+    $(target).hide();
+    $(ajax_indicator).show();
+    $.ajax({ dataType: 'html',
+             url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
+             type: 'get',
+             success: function(data){
+               $(target).html(data);
+               $(ajax_indicator).hide();
+               $(target).show();
+             }
+    });
+  });
+
+  $('.add_fields').click(function() {
+    var target = $(this).data("target");
+    var new_table_row = $(target + ' tr:visible:last').clone();
+    var new_id = new Date().getTime();
+    new_table_row.find("input").each(function () {
+      var el = $(this);
+      el.val("");
+      el.attr("id", el.attr("id").replace(/\d+/, new_id))
+      el.attr("name", el.attr("name").replace(/\d+/, new_id))
+    })
+    // When cloning a new row, set the href of all icons to be an empty "#"
+    // This is so that clicking on them does not perform the actions for the
+    // duplicated row
+    new_table_row.find("a").each(function () {
+      var el = $(this);
+      el.attr('href', '#');
+    })
+    $(target).prepend(new_table_row);
+  })
+
+  $('body').on('click', '.delete-resource', function() {
+    var el = $(this);
+    if (confirm(el.data("confirm"))) {
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr("href"),
+        data: {
+          _method: 'delete',
+          authenticity_token: AUTH_TOKEN
+        },
+        dataType: 'script',
+        success: function(response) {
+          el.parents("tr").fadeOut('hide');
+        },
+        error: function(response, textStatus, errorThrown) {
+          show_flash_error(response.responseText);
+        }
+      });
+    }
+    return false;
+  });
+
+  $('body').on('click', 'a.remove_fields', function() {
+    el = $(this);
+    el.prev("input[type=hidden]").val("1");
+    el.closest(".fields").hide();
+    if (el.attr("href")) {
+      $.ajax({
+        type: 'POST',
+        url: el.attr("href"),
+        data: { 
+          _method: 'delete',
+          authenticity_token: AUTH_TOKEN
+        },
+        success: function(response) {
+          el.parents("tr").fadeOut('hide');
+        },
+        error: function(response, textStatus, errorThrown) {
+          show_flash_error(response.responseText);
+        }
+
+      })
+    }
+    return false;
+  });
+
+  $('body').on('click', '.select_properties_from_prototype', function(){
+    $("#busy_indicator").show();
+    var clicked_link = $(this);
+    $.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
+        success: function(data){
+          clicked_link.parent("td").parent("tr").hide();
+          $("#busy_indicator").hide();
+        }
+    });
+    return false;
+  });
+
+  // Fix sortable helper
+  var fixHelper = function(e, ui) {
+      ui.children().each(function() {
+          $(this).width($(this).width());
+      });
+      return ui;
+  };
+
+  $('table.sortable').ready(function(){
+    var td_count = $(this).find('tbody tr:first-child td').length
+    $('table.sortable tbody').sortable(
+      {
+        handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
+        update: function(event, ui) {
+          $("#progress").show();
+          positions = {};
+          $.each($('table.sortable tbody tr'), function(position, obj){
+            reg = /spree_(\w+_?)+_(\d+)/;
+            parts = reg.exec($(obj).attr('id'));
+            if (parts) {
+              positions['positions['+parts[2]+']'] = position;
+            }
+          });
+          $.ajax({
+            type: 'POST',
+            dataType: 'script',
+            url: $(ui.item).closest("table.sortable").data("sortable-link"),
+            data: positions,
+            success: function(data){ $("#progress").hide(); }
+          });                    
+        },
+        start: function (event, ui) {          
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $("table.sortable tr:even").removeClass("odd even").addClass("even");
+          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
+        }
+
+      }).disableSelection();
+  });
+
+  $('a.dismiss').click(function() {
+    $(this).parent().fadeOut();
+  });
+});

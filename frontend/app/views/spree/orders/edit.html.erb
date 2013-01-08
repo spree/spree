@@ -1,0 +1,54 @@
+<% @body_id = 'cart' %>
+
+<h1><%= t(:shopping_cart) %></h1>
+
+<% if @order.line_items.empty? %>
+
+  <div data-hook="empty_cart">
+    <p><%= t(:your_cart_is_empty) %></p>
+    <p><%= link_to t(:continue_shopping), products_path, :class => 'button continue' %></p>
+  </div>
+
+<% else %>
+  <div data-hook="outside_cart_form">
+    <%= form_for @order, :url => update_cart_path, :html => {:id => 'update-cart'} do |order_form| %>
+      <div data-hook="inside_cart_form">
+
+        <div data-hook="cart_items">
+          <%= render :partial => 'form', :locals => { :order_form => order_form } %>
+        </div>
+
+        <div id="subtotal" data-hook class="columns sixteen alpha omega">
+          <h5><%= t(:subtotal) %>: <span class="order-total"><%= @order.display_total %></span></h5>
+        </div>
+
+        <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
+          <div class="coupon-code-field">
+            <strong><%= order_form.label :coupon_code %></strong><br>
+            <%= order_form.text_field :coupon_code, :size => 10 %>
+            <%= order_form.submit I18n.t(:apply) %>
+          </div>
+
+          <%= button_tag :class => 'primary', :id => 'update-button' do %>
+            <%= t(:update) %>
+          <% end %>
+          <%= button_tag :class => 'button checkout primary', :id => 'checkout-link', :name => 'checkout' do %>
+            <%= t(:checkout) %>
+          <% end %>
+        </div>
+
+      </div>
+    <% end %>
+  </div>
+
+  <div id="empty-cart" data-hook>
+    <%= form_tag empty_cart_path, :method => :put do %>
+      <p id="clear_cart_link" data-hook>
+        <%= submit_tag t(:empty_cart), :class => 'button gray' %>
+        <%= t(:or) %>
+        <%= link_to t(:continue_shopping), products_path, :class => 'continue button gray' %>
+      </p>
+    <% end %>
+  </div>
+
+<% end %>

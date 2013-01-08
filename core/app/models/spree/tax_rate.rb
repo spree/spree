@@ -10,6 +10,7 @@ end
 
 module Spree
   class TaxRate < ActiveRecord::Base
+    include Spree::Core::CalculatedAdjustments
     belongs_to :zone, :class_name => "Spree::Zone"
     belongs_to :tax_category, :class_name => "Spree::TaxCategory"
 
@@ -17,7 +18,6 @@ module Spree
     validates :tax_category_id, :presence => true
     validates_with DefaultTaxZoneValidator
 
-    calculated_adjustments
     scope :by_zone, lambda { |zone| where(:zone_id => zone) }
 
     attr_accessible :amount, :tax_category_id, :calculator, :zone_id, :included_in_price, :name, :show_rate_in_label

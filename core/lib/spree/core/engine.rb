@@ -4,20 +4,7 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
-      config.middleware.use "Spree::Core::Middleware::SeoAssist"
-      config.middleware.use "Spree::Core::Middleware::RedirectLegacyProductUrl"
-
       config.autoload_paths += %W(#{config.root}/lib)
-
-      def self.activate
-      end
-
-      config.to_prepare &method(:activate).to_proc
-
-      Rabl.configure do |config|
-        config.include_json_root = false
-        config.include_child_root = false
-      end
 
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
@@ -43,6 +30,9 @@ module Spree
       initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access
+
+        app.config.spree.add_class('promotions')
+        app.config.spree.promotions = Spree::Promo::Environment.new
       end
 
       initializer "spree.load_preferences", :before => "spree.environment" do
@@ -68,29 +58,42 @@ module Spree
             Spree::PaymentMethod::Check ]
       end
 
-      # filter sensitive information during logging
-      initializer "spree.params.filter" do |app|
-        app.config.filter_parameters += [:password, :password_confirmation, :number]
-      end
-
-      # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
-      initializer "spree.assets.precompile", :group => :all do |app|
-        app.config.assets.precompile += %w[
-          store/all.*
-          admin/all.*
-          admin/orders/edit_form.js
-          admin/address_states.js
-          jqPlot/excanvas.min.js
-          admin/images/new.js
-          jquery.jstree/themes/apple/*
-        ]
-      end
-
       initializer "spree.mail.settings" do |app|
         if Spree::MailMethod.table_exists?
           Spree::Core::MailSettings.init
           Mail.register_interceptor(Spree::Core::MailInterceptor)
         end
+      end
+
+      initializer 'spree.promo.register.promotion.calculators' do |app|
+        app.config.spree.calculators.add_class('promotion_actions_create_adjustments')
+        app.config.spree.calculators.promotion_actions_create_adjustments = [
+          Spree::Calculator::FlatPercentItemTotal,
+          Spree::Calculator::FlatRate,
+          Spree::Calculator::FlexiRate,
+          Spree::Calculator::PerItem,
+          Spree::Calculator::PercentPerItem,
+          Spree::Calculator::FreeShipping
+        ]
+      end
+
+      initializer 'spree.promo.register.promotions.rules' do |app|
+        app.config.spree.promotions.rules = [
+          Spree::Promotion::Rules::ItemTotal,
+          Spree::Promotion::Rules::Product,
+          Spree::Promotion::Rules::User,
+          Spree::Promotion::Rules::FirstOrder,
+          Spree::Promotion::Rules::UserLoggedIn]
+      end
+
+      initializer 'spree.promo.register.promotions.actions' do |app|
+        app.config.spree.promotions.actions = [Spree::Promotion::Actions::CreateAdjustment,
+          Spree::Promotion::Actions::CreateLineItems]
+      end
+
+      # filter sensitive information during logging
+      initializer "spree.params.filter" do |app|
+        app.config.filter_parameters += [:password, :password_confirmation, :number]
       end
     end
   end

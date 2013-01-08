@@ -1,9 +1,0 @@
-[<% @taxons.each_with_index do |t,i| %>
-  { "attr" :
-    { "id" : "<%= t.id %>" },
-    "data" : "<%= escape_javascript(raw(t.name)) %>"
-    <% unless t.children.empty? %>
-      ,"state" : "closed"
-    <% end %>
-  }<%= "," if i < (@taxons.size - 1) %>
-<% end %>]

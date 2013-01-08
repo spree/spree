@@ -21,7 +21,7 @@ module Spree
     include Spree::Core::S3Support
     supports_s3 :icon
 
-    include ::Spree::ProductFilters  # for detailed defs of filters
+    include Spree::Core::ProductFilters  # for detailed defs of filters
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
@@ -30,8 +30,8 @@ module Spree
       # fs << ProductFilters.taxons_below(self)
       ## unless it's a root taxon? left open for demo purposes
 
-      fs << ProductFilters.price_filter if ProductFilters.respond_to?(:price_filter)
-      fs << ProductFilters.brand_filter if ProductFilters.respond_to?(:brand_filter)
+      fs << Spree::Core::ProductFilters.price_filter if Spree::Core::ProductFilters.respond_to?(:price_filter)
+      fs << Spree::Core::ProductFilters.brand_filter if Spree::Core::ProductFilters.respond_to?(:brand_filter)
       fs
     end
 

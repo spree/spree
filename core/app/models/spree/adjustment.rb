@@ -57,6 +57,7 @@ module Spree
     scope :eligible, where(:eligible => true)
     scope :charge, where('amount >= 0')
     scope :credit, where('amount < 0')
+    scope :promotion, where(:originator_type => 'Spree::PromotionAction')
 
     # Update the boolean _eligible_ attribute which determines which adjustments
     # count towards the order's adjustment_total.

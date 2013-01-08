@@ -1,6 +1,10 @@
 module Spree
   class ShipmentMailer < ActionMailer::Base
-    helper 'spree/base'
+
+    def money(amount)
+      Spree::Money.new(amount).to_s
+    end
+    helper_method :money
 
     def shipped_email(shipment, resend = false)
       @shipment = shipment

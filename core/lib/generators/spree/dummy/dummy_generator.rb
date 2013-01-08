@@ -1,4 +1,6 @@
 require "rails/generators/rails/app/app_generator"
+require 'active_support/core_ext/hash'
+require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
@@ -22,7 +24,9 @@ module Spree
     ]
 
     def generate_test_dummy
-      opts = (options || {}).slice(*PASSTHROUGH_OPTIONS)
+      # calling slice on a Thor::CoreExtensions::HashWithIndifferentAccess
+      # object has been known to return nil
+      opts = {}.merge(options).slice(*PASSTHROUGH_OPTIONS)
       opts[:database] = 'sqlite3' if opts[:database].blank?
       opts[:force] = true
       opts[:skip_bundle] = true
@@ -60,6 +64,7 @@ module Spree
         remove_file "vendor"
         remove_file "spec"
       end
+
     end
 
     attr :lib_name
