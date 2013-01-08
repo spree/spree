@@ -34,7 +34,7 @@ module Spree
 
           unless inventory_unit.respond_to?(can_event) &&
                  inventory_unit.send(can_event)
-            render :text => { exception: "cannot transition to #{@event}" }.to_json,
+            render :text => { :exception => "cannot transition to #{@event}" }.to_json,
                     :status => 200
             false
           end
