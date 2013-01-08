@@ -104,4 +104,18 @@ describe Spree::BaseHelper do
       helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
     end
   end
+
+  # Regression test for #2396
+  context "meta_data_tags" do
+    it "truncates a product description to 160 characters" do
+      # Because the controller_name method returns "test"
+      # controller_name is used by this method to infer what it is supposed
+      # to be generating meta_data_tags for
+      text = Faker::Lorem.paragraphs(2).join(" ")
+      @test = Spree::Product.new(:description => text)
+      tags = Nokogiri::HTML.parse(meta_data_tags)
+      content = tags.css("meta[name=description]").first["content"]
+      assert content.length < 159, "content length is not truncated to 160 characters"
+    end
+  end
 end
