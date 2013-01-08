@@ -10,7 +10,7 @@ describe Spree::Admin::BaseHelper do
     end
 
     it "should return a formatted date when date is present" do
-      date = Time.new(2013,8,14)
+      date = "2013-08-14".to_time
       datepicker_field_value(date).should == "2013/08/14"
     end
   end
