@@ -4,7 +4,14 @@ module Spree
       respond_to :json
 
       def index
-        @products = product_scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        if params[:ids]
+          @products = product_scope.where(:id => params[:ids])
+        else
+          @products = product_scope.ransack(params[:q]).result
+        end
+
+        @products = @products.page(params[:page]).per(params[:per_page])
+
         respond_with(@products)
       end
 
