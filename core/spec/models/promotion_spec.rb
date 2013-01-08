@@ -111,8 +111,8 @@ describe Spree::Promotion do
       promotion.activate(@payload)
     end
 
-    it "does not activate if newer then order" do
-      @action1.should_not_receive(:perform).with(@payload)
+    it "does activate if newer then order" do
+      @action1.should_receive(:perform).with(@payload)
       promotion.created_at = DateTime.now + 2
       promotion.activate(@payload)
     end
@@ -211,13 +211,11 @@ describe Spree::Promotion do
 
     context "when it is expired" do
       before { promotion.stub(:expired? => true) }
-
       specify { promotion.should_not be_eligible(@order) }
     end
 
     context "when it is not expired" do
       before { promotion.expires_at = Time.now + 1.day }
-
       specify { promotion.should be_eligible(@order) }
     end
 

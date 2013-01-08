@@ -37,6 +37,7 @@ module Spree
       end
 
       it "is nil" do
+        order.stub_chain(:shipments, :states).and_return([])
         order.stub_chain(:shipments, :count).and_return(0)
 
         updater.update_shipment_state
@@ -44,21 +45,16 @@ module Spree
       end
 
 
-      [:shipped, :ready, :pending].each do |state|
+      ["shipped", "ready", "pending"].each do |state|
         it "is #{state}" do
-          order.stub_chain(:shipments, :count).and_return(1)
-          order.stub_chain(:shipments, state, :count).and_return(1)
-
+          order.stub_chain(:shipments, :states).and_return([state])
           updater.update_shipment_state
           order.shipment_state.should == state.to_s
         end
       end
 
       it "is partial" do
-        order.stub_chain(:shipments, :count).and_return(2)
-        order.stub_chain(:shipments, :ready, :count).and_return(1)
-        order.stub_chain(:shipments, :pending, :count).and_return(1)
-
+        order.stub_chain(:shipments, :states).and_return(["pending", "ready"])
         updater.update_shipment_state
         order.shipment_state.should == 'partial'
       end
@@ -117,6 +113,7 @@ module Spree
       shipment = stub_model(Shipment)
       shipments = [shipment]
       order.stub :shipments => shipments
+      shipments.stub :states => []
       shipments.stub :ready => []
       shipments.stub :pending => []
       shipments.stub :shipped => []

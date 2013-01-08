@@ -36,7 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'aws-sdk', '~> 1.3.4'
   s.add_dependency 'ransack', '~> 0.7.2'
   s.add_dependency 'activemerchant', '~> 1.29.3'
-
   s.add_dependency 'stringex', '~> 1.3.2'
   s.add_dependency 'cancan', '1.6.8'
   s.add_dependency 'money', '5.1.0'
