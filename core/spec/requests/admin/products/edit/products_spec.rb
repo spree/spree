@@ -5,10 +5,9 @@ describe 'Product Details' do
   stub_authorization!
 
   context 'editing a product' do
-    let(:available_on) { Time.now }
     it 'should list the product details' do
       create(:product, :name => 'Bún thịt nướng', :permalink => 'bun-thit-nuong', :sku => 'A100',
-              :description => 'lorem ipsum', :available_on => available_on, :count_on_hand => 10)
+              :description => 'lorem ipsum', :available_on => '2013-08-14 01:02:03', :count_on_hand => 10)
 
       visit spree.admin_path
       click_link 'Products'
@@ -22,7 +21,7 @@ describe 'Product Details' do
       find('textarea#product_description').text.strip.should == 'lorem ipsum'
       find('input#product_price').value.should == '19.99'
       find('input#product_cost_price').value.should == '17.00'
-      find('input#product_available_on').value.should_not be_blank
+      find('input#product_available_on').value.should == "2013/08/14"
       find('input#product_sku').value.should == 'A100'
     end
 
