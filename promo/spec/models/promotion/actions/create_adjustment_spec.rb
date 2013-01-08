@@ -14,7 +14,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
 
     it "should create a discount with correct negative amount" do
-      order = create(:line_item, price: 5000).order
+      order = create(:line_item, :price => 5000).order
       order.stub(:ship_total => 2500)
 
       action.perform(:order => order)
