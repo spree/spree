@@ -89,7 +89,7 @@ $(document).ready(function(){
       html = format_user_autocomplete(item);
       return $("<li></li>")
               .data("item.autocomplete", item)
-              .append("<a class='ui-menu-item'>" + html + "</a>")
+              .append("<a>" + html + "</a>")
               .appendTo(ul);
     }
 
