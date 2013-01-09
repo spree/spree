@@ -51,6 +51,13 @@ describe Spree::Admin::ProductsController do
       assigns[:collection].should_not be_empty
       assigns[:collection].should include(product)
     end
+
+    it "should not return duplicate results if name contains SKU" do
+      product = create(:product, :sku => "ABC123", :name => "ABC product")
+      spree_xhr_get :index, { :q => "ABC", :format => :json }
+      assigns[:collection].should_not be_empty
+      assigns[:collection].length.should == 1
+    end
   end
 
   context "creating a product" do

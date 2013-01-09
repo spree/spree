@@ -108,7 +108,7 @@ module Spree
 
             tmp = super.where(["#{Variant.table_name}.sku #{LIKE} ?", "%#{params[:q]}%"])
             tmp = tmp.includes(:variants_including_master).limit(params[:limit] || 10)
-            @collection.concat(tmp)
+            @collection.concat(tmp).uniq!
           end
           @collection
         end
