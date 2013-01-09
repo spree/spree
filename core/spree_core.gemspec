@@ -39,4 +39,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'cancan', '1.6.8'
   s.add_dependency 'money', '5.0.0'
   s.add_dependency 'rabl', '0.7.2'
+
+  s.add_dependency 'decorators', '~> 1.0.0'
 end

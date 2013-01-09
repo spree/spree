@@ -5,16 +5,20 @@ module Spree
       engine_name 'spree_promo'
 
       def self.activate
-        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
-          Rails.configuration.cache_classes ? require(c) : load(c)
-        end
+        require 'decorators'
+        Decorators.register! root
 
+        # Why isn't this in a decorator?
         Spree::StoreController.class_eval do
           # Include list of visited paths in notification payload hash
           def default_notification_payload
             { :user => try_spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
           end
         end
+      end
+
+      def self.root
+        @root ||= Pathname.new(File.expand_path('../../../../', __FILE__))
       end
 
       config.autoload_paths += %W(#{config.root}/lib)
