@@ -7,7 +7,7 @@ module Spree
     it 'can build an order from API parameters' do
       product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 33.22)
       variant_id = product.master.id
-      order = Order.build_from_api(user, { :line_items_attributes => [{ :variant_id => variant_id, :quantity => 5 }]})
+      order = Order.build_from_api(user, { :line_items_attributes => { "0" => { :variant_id => variant_id, :quantity => 5 }}})
 
       order.user.should == user
       line_item = order.line_items.first

@@ -31,23 +31,6 @@ module Spree
         end
       end
 
-      def address
-        order.build_ship_address(params[:shipping_address]) if params[:shipping_address]
-        order.build_bill_address(params[:billing_address]) if params[:billing_address]
-        next!
-      end
-
-      def delivery
-        begin
-          ShippingMethod.find(params[:shipping_method_id])
-        rescue ActiveRecord::RecordNotFound
-          render :invalid_shipping_method, :status => 422
-        else
-          order.update_attribute(:shipping_method_id, params[:shipping_method_id])
-          next!
-        end
-      end
-
       def cancel
         order.cancel!
         render :show
