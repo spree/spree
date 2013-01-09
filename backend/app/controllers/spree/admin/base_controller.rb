@@ -64,6 +64,10 @@ module Spree
           dismissed = (Spree::Config[:dismissed_spree_alerts] || '').split(',')
           session[:alerts].reject! { |a| dismissed.include? a["id"].to_s }
         end
+
+        def config_locale
+          Spree::Backend::Config[:locale]
+        end
     end
   end
 end
