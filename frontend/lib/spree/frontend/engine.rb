@@ -10,6 +10,10 @@ module Spree
         ]
       end
 
+      initializer "spree.frontend.environment", :before => :load_config_initializers do |app|
+        Spree::Frontend::Config = Spree::FrontendConfiguration.new
+      end
+
     end
   end
 end
