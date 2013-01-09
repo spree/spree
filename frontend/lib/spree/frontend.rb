@@ -6,7 +6,6 @@ require 'select2-rails'
 
 require 'spree/core'
 
-require 'spree/core/ssl_requirement'
 require 'spree/core/mail_settings'
 require 'spree/core/mail_interceptor'
 
