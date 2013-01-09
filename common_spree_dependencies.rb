@@ -18,7 +18,7 @@ end
 group :test do
   gem 'guard'
   gem 'guard-rspec', '~> 0.5.0'
-  gem 'rspec-rails', '~> 2.12.0'
+  gem 'rspec-rails', '2.12.0'
   gem 'factory_girl_rails', '~> 1.7.0'
   gem 'email_spec', '~> 1.2.1'
 
