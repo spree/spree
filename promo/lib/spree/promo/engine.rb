@@ -7,14 +7,6 @@ module Spree
       def self.activate
         require 'decorators'
         Decorators.register! root
-
-        # Why isn't this in a decorator?
-        Spree::StoreController.class_eval do
-          # Include list of visited paths in notification payload hash
-          def default_notification_payload
-            { :user => try_spree_current_user, :order => current_order, :visited_paths => session[:visited_paths] }
-          end
-        end
       end
 
       def self.root
