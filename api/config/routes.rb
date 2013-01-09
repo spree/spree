@@ -15,6 +15,7 @@ Spree::Core::Engine.routes.prepend do
     end
 
     resources :images
+    resources :checkouts
     resources :variants, :only => [:index] do
     end
 
