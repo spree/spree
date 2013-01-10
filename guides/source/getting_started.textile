@@ -162,9 +162,9 @@ INFO: This requires that you have the latest Spree gem installed already.
 
 Spree will then ask you a few questions about installing sample data, etc. It is recommended you hit 'Enter' and accept the default answers unless you know what you're doing.
 
-NOTE: You can always the optional @--auto_accept@ argument which will accept the defaults automatically
+NOTE: You can always use the optional @--auto_accept@ argument which will accept the defaults automatically
 
-This will used the latest stable release of Spree.  If you want to use the edge version of Spree or one of the other options consider one of the following commands instead.
+This will use the latest stable release of Spree.  If you want to use the edge version of Spree or one of the other options consider one of the following commands instead.
 
 <shell>
 # Use latest edge version of Spree
@@ -224,7 +224,7 @@ To stop the web server, hit Ctrl-C in the terminal window where it's running. In
 
 h4. Logging into the Backend
 
-The next thing you'll probably want to do is to log into the admin interface. User your browser window to navigate to +http://localhost:3000/admin+. You can login with the username and password you entered during the database setup step.
+The next thing you'll probably want to do is to log into the admin interface. Use your browser to navigate to +http://localhost:3000/admin+. You can login with the username and password you entered during the database setup step.
 
 If you just accepted the defaults, the username is +spree@example.com+ and the password is +spree123+. Otherwise, you can use a simple rake task, to create your own admin user:
 
@@ -240,7 +240,7 @@ Feel free to explore some of the backend features that Spree has to offer and to
 
 h4. Configuring Spree Analytics
 
-Spree Analytics shows your stores ecommerce performance on the admin overview page. It provides deep insight into your visitors' behavior and sales conversions. You will have to register your store for this free service.
+Spree Analytics shows your store's ecommerce performance on the admin overview page. It provides deep insight into your visitors' behavior and sales conversions. You will have to register your store for this free service.
 
 You will have to activate this free service using the simple form available on your store. 
 
