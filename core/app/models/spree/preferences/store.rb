@@ -14,7 +14,6 @@ module Spree::Preferences
     def initialize
       @cache = Rails.cache
       @persistence = true
-      load_preferences
     end
 
     def set(key, value, type)
@@ -80,15 +79,6 @@ module Spree::Preferences
 
       preference = Spree::Preference.find_by_key(cache_key)
       preference.destroy if preference
-    end
-
-    def load_preferences
-      return unless should_persist?
-
-      Spree::Preference.valid.each do |p|
-        Spree::Preference.convert_old_value_types(p) # see comment
-        @cache.write(p.key, p.value)
-      end
     end
 
     def should_persist?
