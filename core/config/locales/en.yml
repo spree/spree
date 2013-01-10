@@ -1,7 +1,5 @@
 ---
 en:
-  no: "No"
-  yes: "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
@@ -9,205 +7,205 @@ en:
   account_updated: "Account updated!"
   action: Action
   actions:
+    cancel: Cancel
     create: Create
     destroy: Destroy
     list: List
     listing: Listing
     new: New
     update: Update
-    cancel: Cancel
-  active: "Active"
   activate: "Activate"
+  active: "Active"
   activerecord:
     attributes:
       spree/address:
+        abbr: Abbreviation
         address1: Address
         address2: "Address (contd.)"
-        city: City
-        country: "Country"
-        firstname: "First Name"
-        lastname: "Last Name"
-        phone: Phone
-        state: "State"
-        zipcode: "Zip Code"
-      spree/country:
-        iso: ISO
-        iso3: ISO3
-        iso_name: "ISO Name"
-        name: Name
-        numcode: "ISO Code"
-      spree/credit_card:
+        amount: Amount
+      spree/role:
+        amount: Rate
+        available_on: "Available On"
         cc_type: Type
-        month: Month
-        number: Number
-        verification_value: "Verification Value"
-        year: Year
-      spree/inventory_unit:
-        state: State
-      spree/line_item:
-        price: Price
-        quantity: Quantity
-      spree/order:
         checkout_complete: "Checkout Complete"
+        city: City
         completed_at: "Completed At"
-        ip_address: "IP Address"
-        item_total: "Item Total"
-        number: Number
-        special_instructions: "Special Instructions"
-        state: State
-        total: Total
+        cost_currency: "Cost Currency"
+        cost_currency: "Cost Currency"
+        cost_price: "Cost Price"
+        cost_price: "Cost Price"
+        country: "Country"
         created_at: Order Date
-        payment_state: Payment State
-        shipment_state: Shipment State
+        depth: Depth
+        description: Description
+        description: Description
+        description: Description
         email: Customer E-Mail
       spree/order/bill_address:
           address1: "Billing address street"
+          address1: "Shipping address street"
           city: "Billing address city"
+          city: "Shipping address city"
           firstname: "Billing address first name"
+          firstname: "Shipping address first name"
           lastname: "Billing address last name"
+          lastname: "Shipping address last name"
           phone: "Billing address phone"
+          phone: "Shipping address phone"
           state: "Billing address state"
+          state: "Shipping address state"
           zipcode: "Billing address zipcode"
       spree/order/ship_address:
-          address1: "Shipping address street"
-          city: "Shipping address city"
-          firstname: "Shipping address first name"
-          lastname: "Shipping address last name"
-          phone: "Shipping address phone"
-          state: "Shipping address state"
           zipcode: "Shipping address zipcode"
       spree/option_type:
+        email: Email
+        firstname: "First Name"
+        height: Height
+        included_in_price: Included in Price
+        ip_address: "IP Address"
+        iso: ISO
+        iso3: ISO3
+        iso_name: "ISO Name"
+        item_total: "Item Total"
+        lastname: "Last Name"
+        master_price: "Master Price"
+        month: Month
         name: Name
-        presentation: Presentation
-      spree/payment_method:
+        name: Name
+        name: Name
+        name: Name
+        name: Name
+        name: Name
         name: Name
       spree/product:
-        available_on: "Available On"
-        cost_currency: "Cost Currency"
-        cost_price: "Cost Price"
-        description: Description
-        master_price: "Master Price"
-        name: Name
-        on_hand: "On Hand"
-        on_demand: "On Demand"
-        shipping_category: "Shipping Category"
-        tax_category: "Tax Category"
-      spree/property:
-        name: Name
-        presentation: Presentation
-      spree/prototype:
         name: Name
       spree/return_authorization:
-        amount: Amount
-      spree/role:
         name: Name
       spree/state:
-        abbr: Abbreviation
         name: Name
       spree/tax_category:
-        description: Description
         name: Name
       spree/tax_rate:
-        amount: Rate
-        included_in_price: Included in Price
-        show_rate_in_label: Show rate in label
-      spree/taxon:
-        name: Name
-        permalink: Permalink
-        position: Position
-      spree/taxonomy:
         name: Name
       spree/user:
-        email: Email
+        number: Number
+        number: Number
+        numcode: "ISO Code"
+      spree/credit_card:
+        on_demand: "On Demand"
+        on_hand: "On Hand"
         password: "Password"
         password_confirmation: "Password Confirmation"
       spree/variant:
-        cost_currency: "Cost Currency"
-        cost_price: "Cost Price"
-        depth: Depth
-        height: Height
+        payment_state: Payment State
+        permalink: Permalink
+        phone: Phone
+        position: Position
+      spree/taxonomy:
+        presentation: Presentation
+      spree/payment_method:
+        presentation: Presentation
+      spree/prototype:
         price: Price
+        price: Price
+        quantity: Quantity
+      spree/order:
+        shipment_state: Shipment State
+        shipping_category: "Shipping Category"
+        show_rate_in_label: Show rate in label
+      spree/taxon:
         sku: SKU
+        special_instructions: "Special Instructions"
+        state: "State"
+        state: State
+        state: State
+      spree/line_item:
+        tax_category: "Tax Category"
+      spree/property:
+        total: Total
+        verification_value: "Verification Value"
         weight: Weight
         width: Width
       spree/zone:
-        description: Description
-        name: Name
+        year: Year
+      spree/inventory_unit:
+        zipcode: "Zip Code"
+      spree/country:
     models:
       spree/address:
-        one: Address
-        other: Addresses
-      spree/cheque_payment:
-        one: Cheque Payment
-        other: Cheque Payments
-      spree/country:
-        one: Country
-        other: Countries
-      spree/credit_card:
-        one: "Credit Card"
-        other: "Credit Cards"
-      spree/creditcard_payment:
         one: "Credit Card Payment"
+        one: "Credit Card Transaction"
+        one: "Credit Card"
+        one: "Inventory Unit"
+        one: "Line Item"
+        one: "Shipping Category"
+        one: "Tax Category"
+        one: "Tax Rate"
+        one: Address
+        one: Cheque Payment
+        one: Country
+        one: Order
+        one: Payment
+        one: Product
+        one: Property
+        one: Prototype
+        one: Return Authorization
+        one: Roles
+        one: Shipment
+        one: State
+        one: Taxon
+        one: Taxonomy
+        one: User
+        one: Variant
+        one: Zone
         other: "Credit Card Payments"
       spree/creditcard_txn:
-        one: "Credit Card Transaction"
         other: "Credit Card Transactions"
       spree/inventory_unit:
-        one: "Inventory Unit"
+        other: "Credit Cards"
+      spree/creditcard_payment:
         other: "Inventory Units"
       spree/line_item:
-        one: "Line Item"
         other: "Line Items"
       spree/order:
-        one: Order
-        other: Orders
-      spree/payment:
-        one: Payment
-        other: Payments
-      spree/product:
-        one: Product
-        other: Products
-      spree/property:
-        one: Property
-        other: Properties
-      spree/prototype:
-        one: Prototype
-        other: Prototypes
-      spree/return_authorization:
-        one: Return Authorization
-        other: Return Authorizations
-      spree/role:
-        one: Roles
-        other: Roles
-      spree/shipment:
-        one: Shipment
-        other: Shipments
-      spree/shipping_category:
-        one: "Shipping Category"
         other: "Shipping Categories"
       spree/state:
-        one: State
-        other: States
-      spree/tax_category:
-        one: "Tax Category"
         other: "Tax Categories"
       spree/tax_rate:
-        one: "Tax Rate"
         other: "Tax Rates"
       spree/taxon:
-        one: Taxon
-        other: Taxons
-      spree/taxonomy:
-        one: Taxonomy
+        other: Addresses
+      spree/cheque_payment:
+        other: Cheque Payments
+      spree/country:
+        other: Countries
+      spree/credit_card:
+        other: Orders
+      spree/payment:
+        other: Payments
+      spree/product:
+        other: Products
+      spree/property:
+        other: Properties
+      spree/prototype:
+        other: Prototypes
+      spree/return_authorization:
+        other: Return Authorizations
+      spree/role:
+        other: Roles
+      spree/shipment:
+        other: Shipments
+      spree/shipping_category:
+        other: States
+      spree/tax_category:
         other: Taxonomies
       spree/user:
-        one: User
+        other: Taxons
+      spree/taxonomy:
         other: Users
       spree/variant:
-        one: Variant
         other: Variants
       spree/zone:
-        one: Zone
         other: Zones
   add: Add
   add_category: "Add Category"
@@ -231,7 +229,6 @@ en:
   adjustment_successfully_opened: "Adjustment has been successfully opened!"
   adjustment_total: Adjustment Total
   adjustments: Adjustments
-  administration: Administration
   admin:
     mail_methods:
       send_testmail: 'Send Testmail'
@@ -239,14 +236,15 @@ en:
         delivery_error: 'Testmail delivery error'
         delivery_success: 'Testmail sent successfully'
         error: 'Testmail error: %{e}'
+  administration: Administration
   all: "All"
-  all_adjustments_opened: "All adjustments successfully opened!"
   all_adjustments_closed: "All adjustments successfully closed!"
+  all_adjustments_opened: "All adjustments successfully opened!"
   all_departments: All departments
   allow_backorders: "Allow Backorders"
   allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
-  allow_ssl_in_staging: Allow SSL to be used in staging mode
   allow_ssl_in_production: Allow SSL to be used in production mode
+  allow_ssl_in_staging: Allow SSL to be used in staging mode
   allowed_ssl_in_production_mode: "SSL will %{not} be used in production"
   already_registered: Already Registered?
   alt_text: Alternative Text
@@ -356,24 +354,24 @@ en:
   created_successfully: "Created Successfully"
   credit: Credit
   credit_card: "Credit Card"
+  credit_card: Credit Card
   credit_card_capture_complete: "Credit Card Was Captured"
   credit_card_payment: "Credit Card Payment"
+  credit_cards: Credit Cards
   credit_owed: "Credit Owed"
   credit_total: Credit Total
-  credit_card: Credit Card
-  credit_cards: Credit Cards
   credits: Credits
-  current: Current
   currency: Currency
-  currency_symbol_position: "Put currency symbol before or after dollar amount?"
   currency_settings: "Currency Settings"
+  currency_symbol_position: "Put currency symbol before or after dollar amount?"
+  current: Current
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
   customer_search: "Customer Search"
   cut: Cut
-  date_created: Date created
   date_completed: Date Completed
+  date_created: Date created
   date_range: "Date Range"
   debit: Debit
   default: Default
@@ -391,11 +389,12 @@ en:
   didnt_receive_confirmation_instructions: "Didn't receive confirmation instructions?"
   didnt_receive_unlock_instructions: "Didn't receive unlock instructions?"
   discount_amount: "Discount Amount"
+  dismiss_banner: "No. Thanks! I'm not interested, do not display this message again"
   display: Display
   display_currency: "Display currency"
-  dismiss_banner: "No. Thanks! I'm not interested, do not display this message again"
   dollar_amounts_displayed_as: "Dollar amounts displayed as %{example}"
   edit: Edit
+  edit_general_settings: "Edit General Settings"
   editing_billing_integration: Editing Billing Integration
   editing_category: "Editing Category"
   editing_mail_method: Editing Mail Method
@@ -421,21 +420,21 @@ en:
   empty_cart: "Empty Cart"
   enable_mail_delivery: Enable Mail Delivery
   ending_in: "Ending in"
-  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   enter_at_least_five_letters: Enter at least five letters of customer name
+  enter_exactly_as_shown_on_card: Please enter exactly as shown on the card
   enter_password_to_confirm: "(we need your current password to confirm your changes)"
   enter_token: Enter Token
   environment: "Environment"
   error: error
+  error_user_destroy_with_orders: "Users with completed orders may not be deleted"
   errors:
     messages:
       could_not_create_taxon: "Could not create taxon"
-      no_shipping_methods_available: "No shipping methods available for selected location, please change your address and try again."
       no_payment_methods_available: "No payment methods are configured for this environment"
+      no_shipping_methods_available: "No shipping methods available for selected location, please change your address and try again."
   errors_prohibited_this_record_from_being_saved:
     one: "1 error prohibited this record from being saved"
     other: "%{count} errors prohibited this record from being saved"
-  error_user_destroy_with_orders: "Users with completed orders may not be deleted"
   event: Event
   events:
     spree:
@@ -443,9 +442,9 @@ en:
         add: 'Add to cart'
       order:
         contents_changed: "Order contents changed"
+      page_view: "Static page viewed"
       user:
         signup: 'User signup'
-      page_view: "Static page viewed"
   existing_customer: "Existing Customer"
   expiration: "Expiration"
   expiration_month: "Expiration Month"
@@ -469,14 +468,13 @@ en:
   front_end: Front End
   full_name: "Full Name"
   gateway: Gateway
-  gateway_configuration: "Gateway configuration"
   gateway_config_unavailable: "Gateway unavailable for environment"
+  gateway_configuration: "Gateway configuration"
   gateway_error: "Gateway Error"
   gateway_setting_description: "Select a payment gateway and configure its settings."
   gateway_settings_warning: "If you are changing the gateway type, you must save first before you can edit the gateway settings"
   general: "General"
   general_settings: "General Settings"
-  edit_general_settings: "Edit General Settings"
   general_settings_description: "Configure general Spree settings."
   google_analytics: "Google Analytics"
   google_analytics_active: "Active"
@@ -495,12 +493,12 @@ en:
   icon: "Icon"
   icons_by: "Icons by"
   image: Image
-  images: Images
-  images_for: "Images for"
   image_settings: "Image Settings"
   image_settings_description: "Image Settings Description"
   image_settings_updated: "Image Settings successfully updated."
   image_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails CLASS=Spree::Image to do this."
+  images: Images
+  images_for: "Images for"
   in_progress: "In Progress"
   include_in_shipment: Include in Shipment
   included_in_other_shipment: Included in another Shipment
@@ -557,16 +555,16 @@ en:
   mark_shipped: "Mark Shipped"
   master_price: "Master Price"
   match_choices:
+    all: "All"
     none: "None"
     one: "One"
-    all: "All"
   match_rule: "Products That Must Match:"
   max_items: Max Items
   meta_description: "Meta Description"
   meta_keywords: "Meta Keywords"
   metadata: "Metadata"
-  missing_required_information: "Missing Required Information"
   minimal_amount: "Minimal Amount"
+  missing_required_information: "Missing Required Information"
   month: "Month"
   more: More
   my_account: "My Account"
@@ -605,6 +603,7 @@ en:
   new_variant: "New Variant"
   new_zone: "New Zone"
   next: Next
+  no: "No"
   no_items_in_cart: ""
   no_match_found: "No Match Found"
   no_products_found: "No products found"
@@ -645,20 +644,20 @@ en:
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
   order_mailer:
-    confirm_email:
-      subject:  "Order Confirmation"
-      dear_customer: "Dear Customer,"
-      instructions: "Please review and retain the following order information for your records."
-      order_summary: "Order Summary"
-      subtotal: "Subtotal: %{subtotal}"
-      total: "Order Total: %{total}"
-      thanks: "Thank you for your business."
     cancel_email:
-      subject: "Cancellation of Order"
       dear_customer: "Dear Customer,"
       instructions: "Your order has been CANCELED.  Please retain this cancellation information for your records."
       order_summary_canceled: "Order Summary [CANCELED]"
+      subject: "Cancellation of Order"
       subtotal: "Subtotal: %{subtotal}"
+      total: "Order Total: %{total}"
+    confirm_email:
+      dear_customer: "Dear Customer,"
+      instructions: "Please review and retain the following order information for your records."
+      order_summary: "Order Summary"
+      subject:  "Order Confirmation"
+      subtotal: "Subtotal: %{subtotal}"
+      thanks: "Thank you for your business."
       total: "Order Total: %{total}"
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
@@ -692,8 +691,8 @@ en:
   page_only_viewable_when_logged_in: You attempted to visit a page which can only be viewed when you are logged in
   page_only_viewable_when_logged_out: You attempted to visit a page which can only be viewed when you are logged out
   pagination:
-    previous_page: "&laquo; previous page"
     next_page: "next page &raquo;"
+    previous_page: "&laquo; previous page"
     truncate: "&hellip;"
   paid: Paid
   parent_category: "Parent Category"
@@ -718,8 +717,8 @@ en:
   payment_state: Payment State
   payment_states:
     balance_due: balance due
-    completed: completed
     checkout: checkout
+    completed: completed
     credit_owed: credit owed
     failed: failed
     paid: paid
@@ -734,14 +733,14 @@ en:
   place_order: Place Order
   please_create_user: "Please create a user account"
   please_define_payment_methods: "Please define some payment methods first."
-  powered_by: "Powered by"
   populate_get_error: "Something went wrong. Please try adding the item again."
+  powered_by: "Powered by"
   presentation: Presentation
   preview: Preview
   previous: Previous
   price: Price
-  price_sack: Price Sack
   price_range: Price Range
+  price_sack: Price Sack
   problem_authorizing_card: "Problem authorizing credit card"
   problem_capturing_card: "Problem capturing credit card"
   problems_processing_order: "We had problems processing your order"
@@ -753,6 +752,7 @@ en:
   product_group_invalid: Product Group has invalid scopes
   product_groups: Product Groups
   product_has_no_description: This product has no description
+  product_not_available_in_this_currency: "This product is not available in the selected currency."
   product_properties: "Product Properties"
   product_scopes:
     groups:
@@ -866,7 +866,6 @@ en:
         sentence: with property <em>%s</em> and value <em>%s</em>
   products: Products
   products_with_zero_inventory_display: "Products with a zero inventory will %{not} be displayed"
-  product_not_available_in_this_currency: "This product is not available in the selected currency."
   properties: Properties
   property: Property
   prototype: Prototype
@@ -874,8 +873,8 @@ en:
   provider: "Provider"
   provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
   qty: Qty
-  quantity_shipped: Quantity Shipped
   quantity_returned: Quantity Returned
+  quantity_shipped: Quantity Shipped
   range: "Range"
   rate: Rate
   reason: Reason
@@ -917,10 +916,10 @@ en:
   s3_access_key: "Access Key"
   s3_bucket: "Bucket"
   s3_headers: "S3 Headers"
-  s3_secret: "Secret Key"
-  s3_protocol: "S3 Protocol"
-  s3_used_for_product_images: "S3 is being used for product images"
   s3_not_used_for_product_images: "S3 is not being used for product images"
+  s3_protocol: "S3 Protocol"
+  s3_secret: "Secret Key"
+  s3_used_for_product_images: "S3 is being used for product images"
   sales_tax: "Sales Tax"
   sales_total: "Sales Total"
   sales_total_description: "Sales Total For All Orders"
@@ -952,12 +951,12 @@ en:
   shipment_inc_vat: "Shipment including VAT"
   shipment_mailer:
     shipped_email:
-      subject: "Shipment Notification"
       dear_customer: "Dear Customer,"
       instructions: "Your order has been shipped"
       shipment_summary: "Shipment Summary"
-      track_information: "Tracking Information: %{tracking}"
+      subject: "Shipment Notification"
       thanks: "Thank you for your business."
+      track_information: "Tracking Information: %{tracking}"
   shipment_number: "Shipment #"
   shipment_state: Shipment State
   shipment_states:
@@ -990,8 +989,8 @@ en:
   show_deleted: "Show Deleted"
   show_incomplete_orders: "Show Incomplete Orders"
   show_only_complete_orders: "Only show complete orders"
-  show_out_of_stock_products: "Show out-of-stock products"
   show_only_unfulfilled_orders: "Show only unfulfilled orders"
+  show_out_of_stock_products: "Show out-of-stock products"
   showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"
@@ -1015,6 +1014,8 @@ en:
       format: ! '%Y/%m/%d'
       js_format: 'yy/mm/dd'
     time: Time
+  spree_alert_checking: "Check for Spree security and release alerts"
+  spree_alert_not_checking: "Not checking for Spree security and release alerts"
   spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
   spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."
   ssl_will_be_used_in_development_and_test_modes: "SSL will be used in development and test mode if necessary."
@@ -1023,8 +1024,6 @@ en:
   ssl_will_not_be_used_in_development_and_test_modes: "SSL will not be used in development and test mode if necessary."
   ssl_will_not_be_used_in_production_mode: "SSL will not be used in production mode"
   ssl_will_not_be_used_in_staging_mode: "SSL will not be used in staging mode"
-  spree_alert_checking: "Check for Spree security and release alerts"
-  spree_alert_not_checking: "Not checking for Spree security and release alerts"
   start: Start
   start_date: Valid from
   state: State
@@ -1055,9 +1054,9 @@ en:
   taxon: Taxon
   taxon_edit: Edit Taxon
   taxon_placeholder: "Add a Taxon"
-  taxonomy: Taxonomy
   taxonomies: Taxonomies
   taxonomies_setting_description: "Create and manage taxonomies."
+  taxonomy: Taxonomy
   taxonomy_edit: "Edit taxonomy"
   taxonomy_tree_error: "The requested change has not been accepted and the tree has been returned to its previous state, please try again."
   taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
@@ -1087,8 +1086,8 @@ en:
   unable_to_capture_credit_card: "Unable to Capture Credit Card"
   unable_to_connect_to_gateway: "Unable to connect to gateway."
   unable_to_save_order: "Unable to Save Order"
-  under_price: "Under %{price}"
   under_paid: "Under Paid"
+  under_price: "Under %{price}"
   unlock: Unlock
   unrecognized_card_type: Unrecognized card type
   update: Update
@@ -1109,10 +1108,10 @@ en:
   validation:
     cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
     cannot_destory_line_item_as_inventory_units_have_shipped: "Cannot destory line item as some inventory units have shipped."
+    exceeds_available_stock: "exceeds available stock. Please ensure line items have a valid quantity."
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"
-    exceeds_available_stock: "exceeds available stock. Please ensure line items have a valid quantity."
   value: Value
   variant: Variant
   variants: Variants
@@ -1128,6 +1127,7 @@ en:
   whats_this: "What's this"
   width: Width
   year: "Year"
+  yes: "Yes"
   you_have_been_logged_out: "You have been logged out."
   you_have_no_orders_yet: "You have no orders yet."
   your_cart_is_empty: "Your cart is empty"
