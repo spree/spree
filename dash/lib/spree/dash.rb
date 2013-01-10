@@ -1,4 +1,4 @@
-require 'spree_frontend'
+require 'spree_backend'
 require 'httparty'
 
 module Spree
