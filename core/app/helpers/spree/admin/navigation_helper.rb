@@ -63,7 +63,7 @@ module Spree
         url = options[:url] || object_url(resource)
         name = options[:name] || t(:delete)
         options[:class] = "delete-resource"
-        options[:data] = { :confirm => t(:are_you_sure), :action => 'remove' }
+        options[:data] = { :confirm => t(:are_you_sure_delete), :action => 'remove' }
         link_to_with_icon 'icon-trash', name, url, options
       end
 
