@@ -19,5 +19,6 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_backend', version
+  s.add_dependency 'spree_frontend', version
   s.add_dependency 'httparty', '~> 0.9.0'
 end
