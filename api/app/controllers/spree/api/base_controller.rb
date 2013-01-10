@@ -1,4 +1,5 @@
-require 'spree/api/responders'
+require 'spree/api/controller_setup'
+
 module Spree
   module Api
     class BaseController < ActionController::Metal
@@ -7,7 +8,6 @@ module Spree
 
       self.responder = Spree::Api::Responders::AppResponder
 
-      self.responder = Spree::Api::Responders::AppResponder
       respond_to :json
 
       attr_accessor :current_api_user
