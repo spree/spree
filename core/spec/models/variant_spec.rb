@@ -121,6 +121,7 @@ describe Spree::Variant do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should raise an exception" do
+        variant = create(:base_variant)
         lambda { variant.on_hand = 100 }.should raise_error
       end
 
