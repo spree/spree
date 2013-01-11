@@ -601,7 +601,7 @@ server {
     # and add a far future expires header to it, making the browser
     # cache the resource and navigate faster over the website
     # this probably needs some work with Rails 3.1's asset pipeline
-    location ~ ^/(system|assets)/  {
+    location ~ ^/(system|assets|spree)/  {
       root /home/spree/[application's name]/current/public;
       expires max;
       break;
