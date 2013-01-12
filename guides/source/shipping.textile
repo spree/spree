@@ -113,9 +113,12 @@ For example:
 * FedEx Overnight
 * DHL International
 
-Each shipping method is only applicable to an specific Zone as, for example, you can't ship internationally using a local postal service.
+Each shipping method is only applicable to a specific Zone as, for example, you can't ship internationally using a local postal service.
 
-Ie. you can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground.
+I.e. you can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground.
+
+If you are using shipping categories these can be used to qualify or disqualify a given shipping method.
+
 
 h4. Zones
 
@@ -138,7 +141,7 @@ p. An example of Shipping Categories would be:
 
 Shipping Categories are created in the admin interface (Configuration -> Shipping Categories) and then assigned to products (Products->Products->edit->Product Details pane).
 
-During checkout, the shipping category of the product will determine which calculator will be used to price its shipping for each Shipping Method.
+During checkout, the shipping categories of the products in your order will determine which calculator will be used to price its shipping for each Shipping Method.
 
 h4. Calculators
 
