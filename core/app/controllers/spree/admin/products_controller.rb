@@ -8,10 +8,12 @@ module Spree
       update.before :update_before
 
       def show
+        session[:return_to] ||= request.referer
         redirect_to( :action => :edit )
       end
 
       def index
+        session[:return_to] = request.url
         respond_with(@collection)
       end
 
