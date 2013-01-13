@@ -13,6 +13,7 @@ module Spree
       end
 
       def index
+        session[:return_to] = request.url
         respond_with(@collection)
       end
 
