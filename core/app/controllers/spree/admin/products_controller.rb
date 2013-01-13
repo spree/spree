@@ -8,6 +8,7 @@ module Spree
       update.before :update_before
 
       def show
+        session[:return_to] ||= request.referer
         redirect_to( :action => :edit )
       end
 
