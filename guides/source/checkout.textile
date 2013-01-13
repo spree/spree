@@ -254,7 +254,7 @@ WARNING: Most gateways do not yet support payment profiles but the default check
 <input name="checkout[coupon_code]"/>
 </html>
 
-INFO: If you need information on how to configure coupons please the detailed section on "coupons and discounts":coupons_and_discounts.html.
+INFO: If you need information on how to configure coupons please see the detailed section on "promotions":promotions.html.
 
 h3. Google Checkout and Paypal Express
 
