@@ -202,9 +202,10 @@ The +Spree::Config+ constant returns an instance of +Spree::AppConfiguration+ wh
 You can access these preferences directly in code.  To see this in action, just fire up +script/console+ and try the following.
 
 <shell>
-  >> Spree::Config.site_name  => "Spree Demo Site"
-  >> Spree::Config.default_locale
-  => "en-US"
+  >> Spree::Config.site_name  
+  => "Spree Demo Site"
+  >> Spree::Config.admin_products_per_page
+  => 10
 </shell>
 
 The above examples show the default configuration values for these preferences.  The defaults themselves are coded within the +Spree::AppConfiguration+ class.
@@ -213,8 +214,6 @@ The above examples show the default configuration values for these preferences. 
   class Spree::AppConfiguration < Configuration
     #... snip ...
     preference :site_name, :string, :default => 'Spree Demo Site'
-    #... snip ...
-    preference :default_locale, :string, :default => 'en-US'
     #... snip ...
   end
 </shell>
@@ -227,10 +226,10 @@ The default Spree preferences in +Spree::AppConfiguration+ can be changed using 
 
 <shell>
   $ script/console
-  >> Spree::Config.default_locale = "es"
-  => nil
-  >> Spree::Config.default_locale
-  => "es"
+  >> Spree::Config.admin_products_per_page = 20
+  => 20
+  >> Spree::Config.admin_products_per_page
+  => 20
 </shell>
 
 Here we are changing a preference to something other then the default as specified in +Spree::AppConfiguration+. In this case the preference system will persist the new value in the +spree_preferences+ table.
@@ -258,7 +257,7 @@ For example if you would like to change the site name and default locale you can
 <ruby>
   Spree.config do |config|
     config.site_name = 'My Awesome Spree Site'
-    config.default_locale = 'es'
+    config.admin_products_per_page = 20
   end
 </ruby>
 
