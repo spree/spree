@@ -59,7 +59,7 @@ To create a deployment:
 
 Each *deployment* has a number of global parameters which affects all servers configured within that environment including:
 
-* *Operating System* - Currently only Ubuntu / Debian flavours are supported, with Ubuntu 10.04 LTS the preferred version.
+* *Operating System* - The Deployment Service currently supports Ubuntu 12.04 LTS.
 
 * *Rails Environment* - Sets the server wide rails environment, default 'production'.
 
