@@ -442,7 +442,7 @@ module Spree
     end
 
     def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available
+      @available_payment_methods ||= PaymentMethod.available(:front_end)
     end
 
     def payment_method
