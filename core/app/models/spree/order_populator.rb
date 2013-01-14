@@ -50,9 +50,9 @@ module Spree
       display_name = %Q{#{variant.name}}
       display_name += %Q{ (#{variant.options_text})} unless variant.options_text.blank?
 
-      if variant.in_stock?
+      if variant.available?
         on_hand = variant.on_hand
-        if on_hand >= quantity
+        if on_hand >= quantity || Spree::Config[:allow_backorders]
           return true
         else
           errors.add(:base, %Q{There are only #{on_hand} of #{display_name.inspect} remaining.} + 

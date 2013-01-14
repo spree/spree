@@ -21,7 +21,7 @@ describe Spree::OrderPopulator do
       end
 
       it "should add an error if the variant is out of stock" do
-        variant.stub :in_stock? => false
+        variant.stub :available? => false
 
         order.should_not_receive(:add_variant)
         subject.populate(:products => { 1 => 2 }, :quantity => 1) 
@@ -30,7 +30,8 @@ describe Spree::OrderPopulator do
       end
 
       it "should add an error if the variant does not have enough stock on hand" do
-        variant.stub :in_stock? => true
+        Spree::Config[:allow_backorders] = false
+        variant.stub :available? => true
 
         # Regression test for #2382
         variant.should_receive(:on_hand).and_return(2)
@@ -41,6 +42,22 @@ describe Spree::OrderPopulator do
         output = %Q{There are only 2 of \"T-Shirt (Size: M)\" remaining.} +
                  %Q{ Please select a quantity less than or equal to this value.}
         subject.errors.full_messages.join("").should == output
+      end
+
+      # Regression test for #2430
+      context "respects allow_backorders setting" do
+        before do
+          Spree::Config[:allow_backorders] = true
+          # Variant is available due to allow_backorders
+          variant.stub :available? => true
+          variant.stub :on_hand => 0
+        end
+
+        it "allows an order to be populated, even though item stock is depleted" do
+          order.should_receive(:add_variant).with(variant, 3, subject.currency)
+          subject.populate(:products => { 1 => 2 }, :quantity => 3)
+          subject.should be_valid
+        end
       end
     end
 
