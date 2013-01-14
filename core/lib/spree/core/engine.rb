@@ -6,6 +6,12 @@ module Spree
 
       config.autoload_paths += %W(#{config.root}/lib)
 
+      def self.activate
+        Decorators.register! Rails.root
+      end
+
+      config.to_prepare &method(:activate).to_proc
+
       config.after_initialize do
         ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
           event_name, start_time, end_time, id, payload = args
