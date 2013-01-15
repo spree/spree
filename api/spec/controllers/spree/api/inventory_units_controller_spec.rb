@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V1::InventoryUnitsController do
+  describe Api::InventoryUnitsController do
     render_views
 
     before do
@@ -41,6 +41,5 @@ module Spree
         json_response['exception'].should match /cannot transition to bad/
       end
     end
-
   end
 end
