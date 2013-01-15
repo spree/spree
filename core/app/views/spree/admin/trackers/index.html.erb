@@ -36,7 +36,7 @@
         <tr id="<%= spree_dom_id tracker %>" data-hook="admin_trackers_index_rows" class="<%= cycle('odd', 'even')%>">
           <td><%= tracker.analytics_id %></td>
           <td><%= tracker.environment.to_s.titleize %></td>
-          <td class="align-center"><%= tracker.active ? t(:yes) : t(:no) %></td>
+          <td class="align-center"><%= tracker.active ? t(:say_yes) : t(:say_no) %></td>
           <td class="actions">
             <%= link_to_edit tracker, :no_text => true %>
             <%= link_to_delete tracker, :no_text => true %>

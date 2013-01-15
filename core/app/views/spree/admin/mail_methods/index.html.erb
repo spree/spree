@@ -28,7 +28,7 @@
       <% @mail_methods.each do |method|%>
         <tr id="<%= spree_dom_id method %>" data-hook="admin_mail_methods_index_rows" class="<%= cycle('odd', 'even')%>">
           <td><%= method.environment.to_s.titleize %></td>
-          <td><%= method.active ? t(:yes) : t(:no) %></td>
+          <td><%= method.active ? t(:say_yes) : t(:say_no) %></td>
           <td data-hook="admin_mail_methods_index_row_actions" class="actions">
             <%= link_to_edit method, :no_text => true%>
             <%= link_to_delete method, :no_text => true %>
