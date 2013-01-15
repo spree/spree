@@ -115,7 +115,7 @@ handle_date_picker_fields = function(){
     dateFormat: Spree.translations.date_picker,
     dayNames: Spree.translations.abbr_day_names,
     dayNamesMin: Spree.translations.abbr_day_names,
-    monthNames: Spree.translations.month_names, 
+    monthNames: Spree.translations.month_names,
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
     showOn: "focus"
@@ -232,9 +232,9 @@ $(document).ready(function(){
             url: $(ui.item).closest("table.sortable").data("sortable-link"),
             data: positions,
             success: function(data){ $("#progress").hide(); }
-          });                    
+          });
         },
-        start: function (event, ui) {          
+        start: function (event, ui) {
           // Set correct height for placehoder (from dragged tr)
           ui.placeholder.height(ui.item.height())
           // Fix placeholder content to make it correct width

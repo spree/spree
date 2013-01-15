@@ -20,7 +20,7 @@ describe "viewing products" do
     visit '/t/category/clothing?keywords=shirt'
     page.should have_content("Superman T-Shirt")
     page.should_not have_selector("div[data-hook='taxon_children']")
-    
+
 
   end
 end

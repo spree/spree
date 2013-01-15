@@ -6,7 +6,7 @@
         <th><%= t(:quantity_shipped) %></th>
         <th><%= t(:quantity_returned) %></th>
         <th><%= t(:return_quantity) %></th>
-      </tr>  
+      </tr>
     </thead>
     <tbody>
       <% @return_authorization.order.inventory_units.group_by(&:variant).each do | variant, units| %>

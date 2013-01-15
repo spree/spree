@@ -47,7 +47,7 @@ module Spree
     end
 
     it "cannot create a new option type" do
-      api_post :create, :option_type => { 
+      api_post :create, :option_type => {
                         :name => "Option Type",
                         :presentation => "Option Type"
                       }
@@ -74,7 +74,7 @@ module Spree
       sign_in_as_admin!
 
       it "can create an option type" do
-        api_post :create, :option_type => { 
+        api_post :create, :option_type => {
                           :name => "Option Type",
                           :presentation => "Option Type"
                         }
@@ -109,6 +109,6 @@ module Spree
         api_delete :destroy, :id => option_type.id
         response.status.should == 204
       end
-    end 
+    end
   end
 end

@@ -17,7 +17,7 @@ module Spree
     # regression test for #2094
     it "does not clear password on update" do
       payment_method.preferred_password.should == "haxme"
-      spree_put :update, :id => payment_method.id, :payment_method => { :type => payment_method.class.to_s, :preferred_password => "" } 
+      spree_put :update, :id => payment_method.id, :payment_method => { :type => payment_method.class.to_s, :preferred_password => "" }
       response.should redirect_to(spree.edit_admin_payment_method_path(payment_method))
 
       payment_method.reload

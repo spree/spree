@@ -20,6 +20,6 @@ module Spree
         errors[:base] << "Promotion already contains this rule type"
       end
     end
- 
+
   end
 end

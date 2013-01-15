@@ -55,7 +55,7 @@ module Spree
         if on_hand >= quantity || Spree::Config[:allow_backorders]
           return true
         else
-          errors.add(:base, %Q{There are only #{on_hand} of #{display_name.inspect} remaining.} + 
+          errors.add(:base, %Q{There are only #{on_hand} of #{display_name.inspect} remaining.} +
                             %Q{ Please select a quantity less than or equal to this value.})
           return false
         end

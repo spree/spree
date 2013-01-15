@@ -10,10 +10,10 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @mail_method } %>
 
-<%= form_for [:admin, @mail_method] do |f| %>  
+<%= form_for [:admin, @mail_method] do |f| %>
   <fieldset class="no-border-top">
     <%= render :partial => 'form', :locals => { :f => f } %>
-    
+
     <div class="form-buttons filter-actions actions" data-hook="buttons">
       <%= button t(:create), 'icon-ok' %>
     </div>

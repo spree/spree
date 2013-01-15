@@ -24,7 +24,7 @@ describe Spree::OrderPopulator do
         variant.stub :available? => false
 
         order.should_not_receive(:add_variant)
-        subject.populate(:products => { 1 => 2 }, :quantity => 1) 
+        subject.populate(:products => { 1 => 2 }, :quantity => 1)
         subject.should_not be_valid
         subject.errors.full_messages.join("").should == %Q{"T-Shirt (Size: M)" is out of stock.}
       end

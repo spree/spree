@@ -3,7 +3,7 @@
     <li>
       <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
     </li>
-  <% end %>  
+  <% end %>
   <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
@@ -14,7 +14,7 @@
 <% end %>
 
 <div data-hook="admin_shipment_edit_header">
-  
+
   <% if @shipment.cost %>
     <h5 class="outstanding-balance"><%= t(:charges) %> <span class="green"><%= @shipment.display_cost %></span></h5>
   <% end %>

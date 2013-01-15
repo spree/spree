@@ -12,7 +12,7 @@
     <li>
       <span id="new_ptype_link">
         <%= link_to t(:select_from_prototype), available_admin_prototypes_url, :remote => true, 'data-update' => 'prototypes', :class => 'button icon-copy' %>
-      </span>  
+      </span>
     </li>
   </ul>
 <% end %>
@@ -20,10 +20,10 @@
 <%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
   <fieldset class="no-border-top">
     <div class="add_product_properties" data-hook="add_product_properties"></div>
-    
+
     <div id="prototypes" data-hook></div>
     <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
-    
+
     <table class="index">
       <thead>
         <tr data-hook="product_properties_header">

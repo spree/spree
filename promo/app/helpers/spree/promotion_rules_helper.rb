@@ -7,7 +7,7 @@ module Spree
       options = rule_names.map { |name| [ t("promotion_rule_types.#{name.demodulize.underscore}.name"), name] }
       options_for_select(options)
     end
- 
+
   end
 end
 

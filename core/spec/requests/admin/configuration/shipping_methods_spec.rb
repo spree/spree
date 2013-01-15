@@ -24,7 +24,7 @@ describe "Shipping Methods" do
       click_link "Shipping Methods"
 
       within_row(1) do
-        column_text(1).should == shipping_method.name 
+        column_text(1).should == shipping_method.name
         column_text(2).should == zone.name
         column_text(3).should == "Flat Rate (per order)"
         column_text(4).should == "Both"

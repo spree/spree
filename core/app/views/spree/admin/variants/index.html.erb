@@ -63,11 +63,11 @@
   <% content_for :page_actions do %>
     <ul class="inline-menu" data-hook="toolbar">
       <li id="new_var_link" data-hook>
-        <%= link_to_with_icon('icon-plus', 
-                              t(:new_variant), 
-                              new_admin_product_variant_url(@product), 
-                              :remote => :true, 
-                              :'data-update' => 'new_variant', 
+        <%= link_to_with_icon('icon-plus',
+                              t(:new_variant),
+                              new_admin_product_variant_url(@product),
+                              :remote => :true,
+                              :'data-update' => 'new_variant',
                               :class => 'button'
                              ) %>
       </li>
