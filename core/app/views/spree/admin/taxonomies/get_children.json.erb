@@ -1,7 +1,7 @@
 [<% @taxons.each_with_index do |t,i| %>
   { "attr" :
     { "id" : "<%= t.id %>" },
-    "data" : "<%= escape_javascript(raw(t.name)) %>"
+    "data" : "<%= raw(t.name.gsub('"','\"')) %>"
     <% unless t.children.empty? %>
       ,"state" : "closed"
     <% end %>
