@@ -11,7 +11,7 @@ describe Spree::Order do
 
   context "#next!" do
     context "when current state is confirm" do
-      before do 
+      before do
         order.state = "confirm"
         order.run_callbacks(:create)
         order.stub :payment_required? => true

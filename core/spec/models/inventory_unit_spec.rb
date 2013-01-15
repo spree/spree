@@ -56,7 +56,7 @@ describe Spree::InventoryUnit do
       end
 
     end
-    
+
     context "when on_demand is true" do
       before do
         variant.stub(:on_demand).and_return(true)

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Order do
-    let(:order) { stub_model(Spree::Order) } 
+    let(:order) { stub_model(Spree::Order) }
 
     context "#tax_zone" do
       let(:bill_address) { Factory :address }
@@ -115,4 +115,4 @@ module Spree
   end
 end
 
-    
+

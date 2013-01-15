@@ -1,6 +1,6 @@
 require 'spec_helper'
 module Spree
- describe PromotionRulesHelper do 
+ describe PromotionRulesHelper do
    it "does not include existing rules in options" do
      promotion = Spree::Promotion.new
      promotion.promotion_rules << Spree::Promotion::Rules::ItemTotal.new

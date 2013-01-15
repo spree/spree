@@ -12,7 +12,7 @@
       <%= label_tag :first_name %>
       <%= text_field_tag 'store[first_name]', @store[:first_name], :size => 50 %>
     </div>
-    
+
     <div class="field">
       <%= label_tag :last_name %>
       <%= text_field_tag 'store[last_name]', @store[:last_name], :size => 50 %>
@@ -22,12 +22,12 @@
       <%= label_tag :email %>
       <%= email_field_tag 'store[email]', @store[:email], :size => 50 %>
     </div>
-    
+
     <div class="field">
       <%= label_tag :store_name %>
       <%= text_field_tag 'store[name]', @store[:name], :size => 50 %>
     </div>
-    
+
     <div class="field">
       <%= label_tag :store_url %>
       <%= url_field_tag 'store[url]', @store[:url], :size => 50 %>
@@ -47,7 +47,7 @@
       <%= check_box_tag 'store[terms_of_service]', @store[:terms_of_service], @store.has_key?(:terms_of_service), :size => 50 %>
       <%= label_tag 'store[terms_of_service]', t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/about/terms" target="_new"><%= t(:review) %></a>)
     </div>
-    
+
     <div class="field">
       <%= check_box_tag 'store[privacy_policy]', @store[:privacy_policy], @store.has_key?(:privacy_policy), :size => 50 %>
       <%= label_tag 'store[privacy_policy]', t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/about/privacy" target="_new"><%= t(:review) %></a>)

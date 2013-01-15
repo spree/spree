@@ -12,11 +12,11 @@
       <% end %>
 
       <span class="or"><%= t(:or)%></span>
-    
+
       <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
         <%= button t('regenerate_key', :scope => 'spree.api'), 'icon-refresh' %>
-      <% end %>      
-    </div>    
+      <% end %>
+    </div>
 
   <% else %>
 
@@ -26,7 +26,7 @@
       <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
         <%= button t('generate_key', :scope => 'spree.api'), 'icon-key' %>
       <% end %>
-    </div>    
+    </div>
   <% end %>
 
 </fieldset>

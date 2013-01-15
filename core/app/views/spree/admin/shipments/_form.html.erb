@@ -8,7 +8,7 @@
           <th><%= t(:item_description) %></th>
           <th><%= t(:status) %></th>
           <th><%= t(:note) %></th>
-        </tr>  
+        </tr>
       </thead>
       <tbody>
         <% @shipment.order.inventory_units.each do |inventory_unit| %>
@@ -58,7 +58,7 @@
           <%= shipment_form.label :tracking, t(:tracking) + ':' %>
           <%= shipment_form.text_field :tracking, :class => 'fullwidth' %>
         </div>
-          
+
         <% if Spree::Config[:shipping_instructions] %>
           <div class="field table-cell">
             <%= shipment_form.label :special_instructions, t(:special_instructions) + ':' %>
@@ -66,6 +66,6 @@
           </div>
         <% end %>
       </div>
-    
+
   </div>
 </div>

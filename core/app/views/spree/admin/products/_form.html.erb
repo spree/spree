@@ -1,6 +1,6 @@
 <div data-hook="admin_product_form_fields">
-  
-  <div class="left eight columns alpha" data-hook="admin_product_form_left">    
+
+  <div class="left eight columns alpha" data-hook="admin_product_form_left">
     <%= f.field_container :name do %>
       <%= f.label :name, raw(t(:name) + content_tag(:span, ' *', :class => 'required')) %>
       <%= f.text_field :name, :class => 'fullwidth title' %>
@@ -56,7 +56,7 @@
         <%= f.text_field :sku, :size => 16 %>
       <% end %>
 
-      <% if Spree::Config[:track_inventory_levels] %>        
+      <% if Spree::Config[:track_inventory_levels] %>
         <div class="alpha two columns">
           <%= f.field_container :on_hand do %>
             <%= f.label :on_hand, t(:on_hand) %>

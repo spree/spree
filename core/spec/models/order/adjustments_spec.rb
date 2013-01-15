@@ -38,7 +38,7 @@ describe Spree::Order do
       end
     end
   end
-  
+
 
   context "#price_adjustment_totals" do
     before { @order = Spree::Order.create! }

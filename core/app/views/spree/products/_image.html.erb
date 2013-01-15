@@ -1,4 +1,4 @@
-<% if image %> 
+<% if image %>
   <%= image_tag image.attachment.url(:product), :itemprop => "image" %>
 <% else %>
   <%= product_image(@product, :itemprop => "image") %>

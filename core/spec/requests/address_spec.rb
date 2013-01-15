@@ -30,7 +30,7 @@ describe "Address" do
   end
 
   it "shows the state input field for a country with states required but for which states are not defined", :js => true do
-    italy = create(:country, :name => "Italy", :states_required => true) 
+    italy = create(:country, :name => "Italy", :states_required => true)
     click_button "Checkout"
 
     select italy.name, :from => @country_css
@@ -42,7 +42,7 @@ describe "Address" do
   it "shows a disabled state input field for a country where states are not required", :js => true do
      france = create(:country, :name => "France", :states_required => false)
      click_button "Checkout"
-     
+
      select france.name, :from => @country_css
      page.find(@state_select_css).should_not be_visible
      page.find(@state_name_css).should_not be_visible

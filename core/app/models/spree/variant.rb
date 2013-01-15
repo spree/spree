@@ -47,7 +47,7 @@ module Spree
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
       if Spree::Config[:track_inventory_levels] && !self.on_demand
-        count_on_hand 
+        count_on_hand
       else
         (1.0 / 0) # Infinity
       end
@@ -74,7 +74,7 @@ module Spree
     # returns true if at least one inventory unit of this variant is "on_hand"
     def in_stock?
       if Spree::Config[:track_inventory_levels] && !self.on_demand
-        on_hand > 0 
+        on_hand > 0
       else
         true
       end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe PromotionRule do
-    
+
     class BadTestRule < PromotionRule; end
 
     class TestRule < PromotionRule

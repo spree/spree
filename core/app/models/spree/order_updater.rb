@@ -123,7 +123,7 @@ module Spree
     def update_adjustments
       order.adjustments.reload.each { |adjustment| adjustment.update!(order) }
     end
-    
+
 
     private
 

@@ -8,12 +8,12 @@ describe "image settings" do
     click_link "Configuration"
     click_link "Image Settings"
   end
-  
+
   # Regression test for #2344
   it "can update attachment_url" do
     fill_in "Attachments URL", :with => "foobar"
     fill_in "Attachments Default URL", :with => "barfoo"
-    fill_in "Attachments Path", :with => "bfaoro" 
+    fill_in "Attachments Path", :with => "bfaoro"
     click_button "Update"
 
     Spree::Config[:attachment_url].should == "foobar"

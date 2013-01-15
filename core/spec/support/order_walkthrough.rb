@@ -37,7 +37,7 @@ class OrderWalkthrough
   end
 
   def self.delivery(order)
-    order.shipping_method = Spree::ShippingMethod.first 
+    order.shipping_method = Spree::ShippingMethod.first
     order.next!
   end
 

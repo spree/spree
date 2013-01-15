@@ -21,8 +21,8 @@
           <%= f.label :sku, t(:sku) %><br />
           <%= f.text_field :sku, :size => 16, :class => 'fullwidth' %>
           <%= f.error_message_on :sku %>
-        <% end %>  
-      </div>      
+        <% end %>
+      </div>
     <% end %>
 
     <div class="four columns">
@@ -31,7 +31,7 @@
         <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth'} %>
       <% end %>
     </div>
-      
+
     <div class="four columns">
       <%= f.field_container :price do %>
         <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
@@ -47,15 +47,15 @@
         <%= f.text_field :available_on, :class => 'datepicker fullwidth' %>
       <% end %>
     </div>
-    
+
   </div>
-  
+
   <div class="clearfix" data-hook="product-from-prototype" id="product-from-prototype">
     <%= render :file => 'spree/admin/prototypes/show' if @prototype %>
   </div>
 
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-  
+
 </fieldset>
 <% end %>
 
@@ -63,7 +63,7 @@
 //<![CDATA[
   (function($){
     var base_url = "<%= admin_prototypes_url %>";
-    var prototype_select = $('#product_prototype_id');    
+    var prototype_select = $('#product_prototype_id');
     prototype_select.change(function() {
       var id = prototype_select.val();
       if (id.length) {

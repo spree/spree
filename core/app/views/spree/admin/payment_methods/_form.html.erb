@@ -16,10 +16,10 @@
             <div id="gateway-settings-warning" class="info warning"><%= t(:provider_settings_warning) %></div>
           <% end %>
         <% end %>
-      </div>      
+      </div>
       <div data-hook="environment" class="field">
         <%= label_tag nil, t(:environment) %>
-        <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>        
+        <%= collection_select(:payment_method, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>
       </div>
       <div data-hook="display" class="field">
         <%= label_tag nil, t(:display) %>
@@ -31,7 +31,7 @@
           <li>
             <%= radio_button :payment_method, :active, true %>
             <%= label_tag nil, t(:yes) %>
-          </li>        
+          </li>
           <li>
             <%= radio_button :payment_method, :active, false %>
             <%= label_tag nil, t(:no) %>
@@ -39,7 +39,7 @@
         </ul>
       </div>
     </div>
-    
+
     <div class="omega eight columns">
       <div data-hook="name" class="field">
         <%= label_tag nil, t(:name) %>
@@ -48,9 +48,9 @@
       <div data-hook="description" class="field">
         <%= label_tag nil, t(:description) %>
         <%= text_area :payment_method, :description, {:cols => 60, :rows => 6, :class => 'fullwidth'} %>
-      </div>  
+      </div>
     </div>
-    
+
   </div>
 </div>
 

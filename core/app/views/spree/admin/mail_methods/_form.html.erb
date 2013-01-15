@@ -1,6 +1,6 @@
 <div data-hook="admin_mail_method_form_fields">
   <div class="row">
-      
+
     <div class="alpha six columns" data-hook="general">
       <fieldset class="no-border-bottom">
         <legend align="center"><%= t(:general) %></legend>
@@ -11,7 +11,7 @@
                                   :to_s, :titleize,
                                   {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>
         </div>
-          
+
         <div class="field">
           <%= f.check_box :preferred_enable_mail_delivery, {:style => "vertical-align:middle;"} %>
           <%= f.label :preferred_enable_mail_delivery, t(:enable_mail_delivery) %>
@@ -85,7 +85,7 @@
         </div>
       </fieldset>
     </div>
-    
+
 
   </div>
 </div>
