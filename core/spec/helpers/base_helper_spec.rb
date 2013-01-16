@@ -48,14 +48,6 @@ describe Spree::BaseHelper do
     end
   end
 
-  # Regression test for #889
-  context "seo_url" do
-    let(:taxon) { stub(:permalink => "bam") }
-    it "provides the correct URL" do
-      seo_url(taxon).should == "/t/bam"
-    end
-  end
-
   # Regression test for #1436
   context "defining custom image helpers" do
     let(:product) { mock_model(Spree::Product, :images => []) }
