@@ -57,7 +57,7 @@ module Spree
       # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
       #
       Spree::Product.add_search_scope :price_range_any do |*opts|
-        conds = opts.map {|o| Spree::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
+        conds = opts.map {|o| Spree::Core::ProductFilters.price_filter[:conds][o]}.reject {|c| c.nil?}
         scope = conds.shift
         conds.each do |new_scope|
           scope = scope.or(new_scope)
