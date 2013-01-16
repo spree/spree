@@ -160,7 +160,6 @@ module Spree
 
         updater.update_adjustments
 
-        p order.adjustments.eligible.promotion
         order.adjustments.eligible.promotion.count.should == 1
         order.adjustments.eligible.promotion.first.label.should == 'Promotion C'
       end
