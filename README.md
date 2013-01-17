@@ -20,7 +20,8 @@ All of the gems are designed to work together to provide a fully functional e-co
 however, to use only the pieces you are interested in.  So for example, you could use just the barebones spree\_core gem
 and perhaps combine it with your own custom promotion scheme instead of using spree_promo.
 
-[![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
+[![Build Status](https://secure.travis-ci.org/spree/spree.png?branch=1-2-stable)](https://travis-ci.org/spree/spree)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/spree/spree)
 
 Installation
 ------------
