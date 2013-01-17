@@ -1,4 +1,6 @@
 Spree::Core::Engine.routes.append do
+  root :to => "home#index"
+
   namespace :admin do
     get '/search/users', :to => "search#users", :as => :search_users
 
