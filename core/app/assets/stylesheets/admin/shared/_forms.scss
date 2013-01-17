@@ -117,6 +117,9 @@ span.info {
         font-weight: normal;
         text-transform: none;
       }
+      &.white-space-nowrap {
+        white-space: nowrap;
+      }
     }
   }
 

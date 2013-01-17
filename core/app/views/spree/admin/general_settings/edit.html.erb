@@ -55,7 +55,7 @@
                     <%= radio_button_tag :currency_symbol_position, "before" %>
                     <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %>
                   </li>
-                  <li>
+                  <li class="white-space-nowrap">
                     <%= radio_button_tag :currency_symbol_position, "after" %>
                     <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
                   </li>
