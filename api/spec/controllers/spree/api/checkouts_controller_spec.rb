@@ -75,10 +75,11 @@ module Spree
         response.status.should == 200
       end
 
-      it "can transition from payment to confirm" do
+      it "can update payment method and transition from payment to confirm" do
         order.update_column(:state, "payment")
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id }] }
         json_response['state'].should == 'confirm'
+        json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
         response.status.should == 200
       end
 
