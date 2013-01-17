@@ -27,3 +27,7 @@ end
 child :shipments => :shipments do
   extends "spree/api/shipments/show"
 end
+
+child :adjustments => :adjustments do
+  extends "spree/api/adjustments/show"
+end
