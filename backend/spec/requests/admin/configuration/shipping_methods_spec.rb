@@ -71,21 +71,7 @@ describe "Shipping Methods" do
           set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_none"
           click_button "Create"
-
-          visit spree.root_path
-          click_link "Mug"
-          click_button "Add To Cart"
-          click_button "Checkout"
-
-          str_addr = "bill_address"
-          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
-          ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-            fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-          end
-          select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-          check "order_use_billing"
-          click_button "Save and Continue"
-          page.should have_content("Standard")
+          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
         end
       end
 
@@ -98,21 +84,7 @@ describe "Shipping Methods" do
           set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_none"
           click_button "Create"
-
-          visit spree.root_path
-          click_link "Mug"
-          click_button "Add To Cart"
-          click_button "Checkout"
-
-          str_addr = "bill_address"
-          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
-          ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-            fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-          end
-          select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-          check "order_use_billing"
-          click_button "Save and Continue"
-          page.should_not have_content("Standard")
+          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
         end
       end
     end
@@ -127,21 +99,7 @@ describe "Shipping Methods" do
           set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_all"
           click_button "Create"
-
-          visit spree.root_path
-          click_link "Mug"
-          click_button "Add To Cart"
-          click_button "Checkout"
-
-          str_addr = "bill_address"
-          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
-          ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-            fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-          end
-          select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-          check "order_use_billing"
-          click_button "Save and Continue"
-          page.should have_content("Standard")
+          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
         end
       end
 
@@ -152,21 +110,7 @@ describe "Shipping Methods" do
           set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_all"
           click_button "Create"
-
-          visit spree.root_path
-          click_link "Mug"
-          click_button "Add To Cart"
-          click_button "Checkout"
-
-          str_addr = "bill_address"
-          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
-          ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-            fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-          end
-          select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-          check "order_use_billing"
-          click_button "Save and Continue"
-          page.should_not have_content("Standard")
+          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
         end
       end
     end
@@ -185,24 +129,7 @@ describe "Shipping Methods" do
           set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_one"
           click_button "Create"
-
-          visit spree.root_path
-          click_link "Mug"
-          click_button "Add To Cart"
-          click_link "Home"
-          click_link "Shirt"
-          click_button "Add To Cart"
-          click_button "Checkout"
-
-          str_addr = "bill_address"
-          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
-          ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-            fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-          end
-          select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-          check "order_use_billing"
-          click_button "Save and Continue"
-          page.should have_content("Standard")
+          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
         end
       end
 
@@ -213,24 +140,7 @@ describe "Shipping Methods" do
           set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
           check "shipping_method_match_one"
           click_button "Create"
-
-          visit spree.root_path
-          click_link "Mug"
-          click_button "Add To Cart"
-          click_link "Home"
-          click_link "Shirt"
-          click_button "Add To Cart"
-          click_button "Checkout"
-
-          str_addr = "bill_address"
-          select address.country.name, :from => "order_#{str_addr}_attributes_country_id"
-          ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-            fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-          end
-          select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-          check "order_use_billing"
-          click_button "Save and Continue"
-          page.should_not have_content("Standard")
+          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
         end
       end
     end
