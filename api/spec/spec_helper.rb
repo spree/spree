@@ -10,6 +10,7 @@ Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 
 require 'spree/core/testing_support/factories'
 
+require 'spree/api/testing_support/controller_hacks'
 require 'spree/api/testing_support/helpers'
 require 'spree/api/testing_support/setup'
 
@@ -17,6 +18,7 @@ RSpec.configure do |config|
   config.backtrace_clean_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
 
   config.include FactoryGirl::Syntax::Methods
+  config.include Spree::Api::TestingSupport::ControllerHacks, :type => :controller
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller
   config.extend Spree::Api::TestingSupport::Setup, :type => :controller
   config.include Spree::Core::TestingSupport::Preferences, :type => :controller
