@@ -53,19 +53,19 @@ describe Spree::Promotion do
   end
 
   describe "#delete" do
-    it "deletes actions" do
-      p = Spree::Promotion.create(:name => "delete me")
-      p.actions << Spree::Promotion::Actions::CreateAdjustment.new
-      p.destroy
+    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
 
+    before(:each) do
+      promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
+      promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.destroy
+    end
+
+    it "should delete actions" do
       Spree::PromotionAction.count.should == 0
     end
 
-    it "deletes rules" do
-      p = Spree::Promotion.create(:name => "delete me")
-      p.rules << Spree::Promotion::Rules::FirstOrder.new
-      p.destroy
-
+    it "should delete rules" do
       Spree::PromotionRule.count.should == 0
     end
   end
