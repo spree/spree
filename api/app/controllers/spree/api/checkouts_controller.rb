@@ -6,6 +6,7 @@ module Spree
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
+      include ActionView::Helpers::TranslationHelper
 
       respond_to :json
 
@@ -16,6 +17,14 @@ module Spree
 
       def update
         if @order.update_attributes(object_params)
+          if object_params[:coupon_code].present?
+            coupon_result = apply_coupon_code
+            if !coupon_result[:code_applied?]
+              @coupon_message = coupon_result[:error]
+              respond_with(@order, :default_template => 'spree/api/orders/could_not_apply_coupon')
+              return
+            end
+          end
           state_callback(:after) if @order.next
           respond_with(@order, :default_template => 'spree/api/orders/show')
         else
@@ -35,7 +44,7 @@ module Spree
               params[:order][:payments_attributes].first[:amount] = @order.total
             end
           end
-          params[:order]
+          params[:order] || {}
         end
 
         def nested_params
