@@ -6,11 +6,12 @@ module Spree
       class CreateAdjustment < PromotionAction
         calculated_adjustments
 
-        has_many :adjustments, :as => :originator, :dependent => :destroy
+        has_many :adjustments, :as => :originator
 
         delegate :eligible?, :to => :promotion
 
         before_validation :ensure_action_has_calculator
+        before_destroy :deals_with_adjustments
 
         # Creates the adjustment related to a promotion for the order passed
         # through options hash
@@ -48,10 +49,21 @@ module Spree
         end
 
         private
-        def ensure_action_has_calculator
-          return if self.calculator
-          self.calculator = Calculator::FlatPercentItemTotal.new
-        end
+          def ensure_action_has_calculator
+            return if self.calculator
+            self.calculator = Calculator::FlatPercentItemTotal.new
+          end
+
+          def deals_with_adjustments
+            self.adjustments.each do |adjustment|
+              if adjustment.adjustable.complete?
+                adjustment.originator = nil
+                adjustment.save
+              else
+                adjustment.destroy
+              end
+            end
+          end
       end
     end
   end
