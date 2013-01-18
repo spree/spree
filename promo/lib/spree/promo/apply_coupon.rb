@@ -25,9 +25,7 @@ module Spree
               previous_promo = @order.adjustments.promotion.eligible.first
               ActiveSupport::Notifications.instrument(event_name, :coupon_code => @order.coupon_code, :order => @order)
               promo = @order.adjustments.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
-
               if promo.present? and promo.eligible
-                flash[:success] = t(:coupon_code_applied)
                 return { :code_applied? => true, :success => t(:coupon_code_applied) }
                 true
               elsif previous_promo.present? and promo.present?
