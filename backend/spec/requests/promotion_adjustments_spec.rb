@@ -5,24 +5,10 @@ describe "Promotion Adjustments" do
 
   context "coupon promotions", :js => true do
     before(:each) do
-      # creates a default shipping method which is required for checkout
-      create(:bogus_payment_method, :environment => 'test')
-      # creates a check payment method so we don't need to worry about cc details
-      create(:payment_method)
-
-      sm = create(:shipping_method, :zone => create(:zone))
-      sm.calculator.set_preference(:amount, 10)
-
-      user = create(:admin_user)
-      create(:product, :name => "RoR Mug", :price => "40")
-      create(:product, :name => "RoR Bag", :price => "20")
-
       visit spree.admin_path
       click_link "Promotions"
       click_link "New Promotion"
     end
-
-    let!(:address) { create(:address, :state => create(:state)) }
 
     it "should properly populate Spree::Product#possible_promotions" do
       promotion = create_per_product_promotion 'RoR Mug', 5.0
@@ -43,39 +29,46 @@ describe "Promotion Adjustments" do
     end
 
     it "should allow an admin to create a flat rate discount coupon promo" do
-      create_per_order_coupon_promotion 30, 5, "ORDER_38"
+      fill_in "Name", :with => "Promotion"
+      select2 "Coupon code added", :from => "Event Name"
+      fill_in "Code", :with => "order"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
 
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      click_button "Checkout"
+      select2 "Item total", :from => "Add rule of type"
+      within('#rule_fields') { click_button "Add" }
 
-      fill_in "Customer E-Mail", :with => "spree@example.com"
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
+      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount", :with => 30
+      within('#rule_fields') { click_button "Update" }
 
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
+      select2 "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select2 "Flat Rate (per order)", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
 
-      fill_in "order_coupon_code", :with => "ORDER_38"
-      click_button "Save and Continue"
+      within('.calculator-fields') { fill_in "Amount", :with => 5 }
+      within('#actions_container') { click_button "Update" }
 
-      Spree::Order.last.adjustments.promotion.map(&:amount).sum.should == -5.0
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.event_name.should == "spree.checkout.coupon_code_added"
+      promotion.code.should == "order"
+
+      first_rule = promotion.rules.first
+      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
+      first_rule.preferred_amount.should == 30
+
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action_calculator = first_action.calculator
+      first_action_calculator.class.should == Spree::Calculator::FlatRate
+      first_action_calculator.preferred_amount.should == 5
     end
 
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
-      fill_in "Name", :with => "Order's total > $30"
+      fill_in "Name", :with => "Promotion"
       fill_in "Usage Limit", :with => "1"
       select2 "Coupon code added", :from => "Event Name"
-      fill_in "Code", :with => "SINGLE_USE"
+      fill_in "Code", :with => "single_use"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -86,62 +79,24 @@ describe "Promotion Adjustments" do
       within('#action_fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      click_button "Checkout"
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.usage_limit.should == 1
+      promotion.event_name.should == "spree.checkout.coupon_code_added"
+      promotion.code.should == "single_use"
 
-      fill_in "Customer E-Mail", :with => "spree@example.com"
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-      fill_in "order_coupon_code", :with => "SINGLE_USE"
+      first_rule = promotion.rules.first
+      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
+      first_rule.preferred_amount.should == 30
 
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-      click_button "Save and Continue"
-
-      Spree::Order.first.total.to_f.should == 45.00
-
-      click_button "Place Order"
-      # Really make sure that the order has been processed
-      # Rather than blindly clicking on "Place Order" and hoping for the best
-      page.should have_content("Your order has been processed successfully")
-
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      click_button "Checkout"
-
-      fill_in "Customer E-Mail", :with => "spree@example.com"
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-      fill_in "order_coupon_code", :with => "SINGLE_USE"
-      click_button "Save and Continue"
-
-      Spree::Order.last.total.to_f.should == 50.00
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action_calculator = first_action.calculator
+      first_action_calculator.class.should == Spree::Calculator::FlatRate
+      first_action_calculator.preferred_amount.should == 5
     end
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
-      fill_in "Name", :with => "Order's total > $30"
+      fill_in "Name", :with => "Promotion"
       select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -159,22 +114,25 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 36.00
-      visit spree.root_path
-      click_link "RoR Bag"
-      click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 54.00
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.event_name.should == "spree.cart.add"
+      promotion.code.should be_blank
+
+      first_rule = promotion.rules.first
+      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
+      first_rule.preferred_amount.should == 30
+
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action_calculator = first_action.calculator
+      first_action_calculator.class.should == Spree::Calculator::FlatPercentItemTotal
+      first_action_calculator.preferred_flat_percent.should == 10
     end
 
     it "should allow an admin to create an product promo with percent per item discount" do
-      visit spree.admin_path
-      click_link "Promotions"
-      click_link "New Promotion"
+      create(:product, :name => "RoR Mug")
 
-      fill_in "Name", :with => "Percent Per Item"
+      fill_in "Name", :with => "Promotion" 
       select2 "Add to cart", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -191,16 +149,23 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.event_name.should == "spree.cart.add"
+      promotion.code.should be_blank
 
-      # A $40,00 product should get a $4,00 discount
-      Spree::Order.last.total.to_f.should == 36.00
+      first_rule = promotion.rules.first
+      first_rule.class.should == Spree::Promotion::Rules::Product
+      first_rule.products.map(&:name).should include("RoR Mug")
+
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action_calculator = first_action.calculator
+      first_action_calculator.class.should == Spree::Calculator::PercentPerItem
+      first_action_calculator.preferred_flat_percent.should == 10
     end
 
     it "should allow an admin to create an automatic promotion with free shipping (no code)" do
-      fill_in "Name", :with => "Free Shipping"
+      fill_in "Name", :with => "Promotion"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -214,54 +179,21 @@ describe "Promotion Adjustments" do
       select2 "Free Shipping", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
 
-      visit spree.root_path
-      click_link "RoR Bag"
-      click_button "Add To Cart"
-      click_button "Checkout"
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.event_name.should == "spree.cart.add"
+      promotion.code.should be_blank
 
-      fill_in "Customer E-Mail", :with => "spree@example.com"
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
+      first_rule = promotion.rules.first
+      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
 
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-      click_button "Save and Continue"
-      Spree::Order.last.total.to_f.should == 30.00 # bag(20) + shipping(10)
-      page.should_not have_content("Free Shipping")
-
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      click_button "Checkout"
-
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-
-      click_button "Save and Continue"
-      Spree::Order.last.total.to_f.should == 60.00 # bag(20) + mug(40) + free shipping(0)
-      page.should have_content("Free Shipping")
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action_calculator = first_action.calculator
+      first_action_calculator.class.should == Spree::Calculator::FreeShipping
     end
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
-      fill_in "Name", :with => "Deal"
+      fill_in "Name", :with => "Promotion"
       select2 "Visit static content page", :from => "Event Name"
       fill_in "Path", :with => "content/cvv"
       click_button "Create"
@@ -274,39 +206,17 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => "4" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 40.00
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.event_name.should == "spree.content.visited"
+      promotion.path.should == "content/cvv"
+      promotion.code.should be_blank
+      promotion.rules.should be_blank
 
-      visit "/content/cvv"
-      visit spree.root_path
-      click_link "RoR Mug"
-      click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 76.00
-    end
-
-    # Regression test for #1416
-    it "should allow an admin to create an automatic promo requiring a specific product to be bought" do
-      create_per_product_promotion("RoR Mug", 5.0)
-      create_per_product_promotion("RoR Bag", 10.0)
-
-      add_to_cart "RoR Mug"
-      add_to_cart "RoR Bag"
-
-      # first promotion should be effective on current order
-      first_promotion = Spree::Promotion.first
-      first_promotion.actions.first.calculator.compute(Spree::Order.last).should == 5.0
-
-      # second promotion should be effective on current order
-      second_promotion = Spree::Promotion.last
-      second_promotion.actions.first.calculator.compute(Spree::Order.last).should == 10.0
-
-      do_checkout
-
-      # Mug discount ($5) is not taken into account due to #1526
-      # Only "best" discount is taken into account
-      Spree::Order.last.total.to_f.should == 60.0 # mug(40) + bag(20) - bag_discount(10) + shipping(10)
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action_calculator = first_action.calculator
+      first_action_calculator.class.should == Spree::Calculator::FlatRate
+      first_action_calculator.preferred_amount.should == 4
     end
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
@@ -335,36 +245,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "40.00" }
       within('#actions_container') { click_button "Update" }
-
-      visit spree.root_path
-      click_link "RoR Bag"
-      click_button "Add To Cart"
-      click_button "Checkout"
-
-      str_addr = "bill_address"
-      fill_in "order_email", :with => "buyer@spreecommerce.com"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-
-      fill_in "order_coupon_code", :with => "5ZHED2DH"
-      click_button "Save and Continue"
-
-      last_order = Spree::Order.last
-      last_order.line_items.count.should == 2
-      last_order.line_items.map(&:price).should =~ [20.00, 40.00]
-      last_order.item_total.to_f.should == 60.00
-      last_order.adjustments.promotion.map(&:amount).sum.to_f.should == -40.00
-      last_order.total.to_f.should == 30.00
     end
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
@@ -408,69 +288,6 @@ describe "Promotion Adjustments" do
       fill_in "order[line_items_attributes][0][quantity]", :with => "3"
       click_button "Update"
       Spree::Order.last.total.to_f.should == 55.00
-    end
-
-    it "only counting the most valuable promotion adjustment in an order" do
-      fill_in "Name", :with => "$5 off"
-      select2 "Order contents changed", :from => "Event Name"
-      click_button "Create"
-      page.should have_content("Editing Promotion")
-      select2 "Create adjustment", :from => "Add action of type"
-      within('#action_fields') { click_button "Add" }
-      select2 "Flat Rate (per order)", :from => "Calculator"
-      within('#actions_container') { click_button "Update" }
-      within('.calculator-fields') { fill_in "Amount", :with => "5" }
-      within('#actions_container') { click_button "Update" }
-
-      visit spree.admin_promotions_path
-      click_link "New Promotion"
-      fill_in "Name", :with => "10% off"
-      select2 "Order contents changed", :from => "Event Name"
-      click_button "Create"
-      page.should have_content("Editing Promotion")
-      select2 "Create adjustment", :from => "Add action of type"
-      within('#action_fields') { click_button "Add" }
-      select2 "Flat Percent", :from => "Calculator"
-      within('#actions_container') { click_button "Update" }
-      within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
-      within('#actions_container') { click_button "Update" }
-
-      visit spree.root_path
-      click_link "RoR Bag"
-      click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 15.00
-
-      fill_in "order[line_items_attributes][0][quantity]", :with => "2"
-      click_button "Update"
-      Spree::Order.last.total.to_f.should == 35.00
-
-      fill_in "order[line_items_attributes][0][quantity]", :with => "3"
-      click_button "Update"
-      Spree::Order.last.total.to_f.should == 54.00
-    end
-
-    def add_to_cart product_name
-      visit spree.root_path
-      click_link product_name
-      click_button "Add To Cart"
-    end
-
-    def do_checkout
-      click_button "Checkout"
-      str_addr = "bill_address"
-      fill_in "order_email", :with => "buyer@spreecommerce.com"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-      click_button "Save and Continue"
     end
   end
 end
