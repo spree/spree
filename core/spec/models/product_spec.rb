@@ -301,6 +301,15 @@ describe Spree::Product do
         product.property('the_prop_new').should == 'value'
       }.should change { product.properties.length }.by(1)
     end
+
+    it "should not overwrite properties' presentation names" do
+      product = FactoryGirl.create :product
+      Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
+      product.set_property('foo', 'value1')
+      product.set_property('bar', 'value2')
+      Spree::Property.where(:name => 'foo').first.presentation.should == "Foo's Presentation Name"
+      Spree::Property.where(:name => 'bar').first.presentation.should == "bar"
+    end
   end
 
   context '#create' do
