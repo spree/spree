@@ -343,7 +343,7 @@ describe Spree::Product do
 
       it "should create product option types based on the prototype" do
         @product.save
-        @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
+        @product.product_option_types.pluck(:option_type_id).should == prototype.option_type_ids
       end
 
       it "should create variants from an option values hash with one option type" do
@@ -424,7 +424,7 @@ describe Spree::Product do
     end
 
     it "should be sorted by position" do
-      product.images.map(&:alt).should eq(["position 1", "position 2"])
+      product.images.pluck(:alt).should eq(["position 1", "position 2"])
     end
 
   end

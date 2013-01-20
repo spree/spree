@@ -361,7 +361,7 @@ module Spree
     end
 
     def credit_cards
-      credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
+      credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
       CreditCard.scoped(:conditions => { :id => credit_card_ids })
     end
 
