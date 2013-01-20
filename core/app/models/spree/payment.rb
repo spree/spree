@@ -56,7 +56,7 @@ module Spree
     end
 
     def offsets_total
-      offsets.map(&:amount).sum
+      offsets.pluck(:amount).sum
     end
 
     def credit_allowed

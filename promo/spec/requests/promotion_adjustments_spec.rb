@@ -68,7 +68,7 @@ describe "Promotion Adjustments" do
       fill_in "order_coupon_code", :with => "ORDER_38"
       click_button "Save and Continue"
 
-      Spree::Order.last.adjustments.promotion.map(&:amount).sum.should == -5.0
+      Spree::Order.last.adjustments.promotion.pluck(:amount).sum.should == -5.0
     end
 
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
@@ -361,9 +361,9 @@ describe "Promotion Adjustments" do
 
       last_order = Spree::Order.last
       last_order.line_items.count.should == 2
-      last_order.line_items.map(&:price).should =~ [20.00, 40.00]
+      last_order.line_items.pluck(:price).should =~ [20.00, 40.00]
       last_order.item_total.to_f.should == 60.00
-      last_order.adjustments.promotion.map(&:amount).sum.to_f.should == -40.00
+      last_order.adjustments.promotion.pluck(:amount).sum.to_f.should == -40.00
       last_order.total.to_f.should == 30.00
     end
 
