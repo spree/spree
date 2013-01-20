@@ -66,7 +66,7 @@ module Spree
     add_search_scope :in_taxon do |taxon|
       select("DISTINCT(spree_products.id), spree_products.*").
       joins(:taxons).
-      where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+      where(Taxon.table_name => { :id => taxon.self_and_descendants.pluck(:id) })
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -228,7 +228,7 @@ module Spree
 
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map { |taxon| taxon.self_and_descendants.map(&:id) }.flatten.uniq
+        ids = taxons.map { |taxon| taxon.self_and_descendants.pluck(:id) }.flatten.uniq
         joins(:taxons).where("#{Taxon.table_name}.id" => ids)
       end
 

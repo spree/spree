@@ -11,7 +11,7 @@ module Spree
         scopes = []
 
         # Price based scopes
-        all_prices = products.map(&:price).sort
+        all_prices = products.pluck(:price).sort
 
         ranges = [Math.log(products.length).floor, scope_limit].max
 
