@@ -212,6 +212,7 @@ en:
   add_country: "Add Country"
   add_new_header: "Add New Header"
   add_new_style: "Add New Style"
+  add_one: "Add One"
   add_option_type: "Add Option Type"
   add_option_types: "Add Option Types"
   add_option_value: "Add Option Value"
@@ -290,6 +291,7 @@ en:
   back_to_tax_categories_list: "Back To Tax Categories List"
   back_to_taxonomies_list: "Back To Taxonomies List"
   back_to_trackers_list: "Back To Trackers List"
+  back_to_users_list: "Back To Users List"
   back_to_zones_list: "Back To Zones List"
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
@@ -321,9 +323,12 @@ en:
   charge_total: "Charge Total"
   charged: Charged
   charges: Charges
+  check_for_spree_alerts: "Check For Spree Alerts"
   checkout: Checkout
   cheque: Cheque
   choose_a_customer: "Choose a customer"
+  choose_currency: "Choose Currency"
+  choose_dashboard_locale: "Choose Dashboard Locale"
   city: City
   clone: Clone
   close: Close
@@ -346,6 +351,7 @@ en:
   cost_currency: "Cost Currency"
   cost_price: "Cost Price"
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
+  countries: Countries
   country: Country
   country_based: "Country Based"
   create: Create
@@ -451,6 +457,7 @@ en:
   extension: Extension
   extensions: Extensions
   filename: Filename
+  filter_results: "Filter Results"
   final_confirmation: "Final Confirmation"
   finalize: Finalize
   finalized_payments: "Finalized Payments"
@@ -515,6 +522,7 @@ en:
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
   inventory_settings: "Inventory Settings"
   is_not_available_to_shipment_address: "is not available to shipment address"
+  iso_name: "Iso Name"
   issue_number: "Issue Number"
   item: Item
   item_description: "Item Description"
@@ -602,9 +610,12 @@ en:
   new_variant: "New Variant"
   new_zone: "New Zone"
   next: Next
+  no_mail_methods_defined: "No Mail Methods Defined"
   no_match_found: "No Match Found"
   no_products_found: "No products found"
+  no_promotions_found: "No promotions found"
   no_results: "No results"
+  no_trackers_found: "No Trackers Found"
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
@@ -622,6 +633,7 @@ en:
     product_not_deleted: "Product could not be deleted"
     variant_deleted: "Variant has been deleted"
     variant_not_deleted: "Variant could not be deleted"
+  on_demand: "On Demand"
   on_hand: "On Hand"
   one_default_category_with_default_tax_rate: "You should configure exactly one default category with your countries default tax rate"
   open: Open
