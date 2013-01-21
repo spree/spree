@@ -1,0 +1,2 @@
+object @credit_card
+attributes *creditcard_attributes

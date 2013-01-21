@@ -76,6 +76,14 @@ module Spree
       def country_attributes
         [:id, :iso_name, :iso, :iso3, :name, :numcode]
       end
+
+      def adjustment_attributes
+	      [:id, :source_type, :source_id, :adjustable_type, :adjustable_id, :originator_type, :originator_id, :amount, :label, :mandatory, :locked, :eligible,  :created_at, :updated_at]
+      end
+
+      def creditcard_attributes
+        [:id, :month, :year, :cc_type, :last_digits, :first_name, :last_name, :gateway_customer_profile_id, :gateway_payment_profile_id]
+      end
     end
   end
 end

@@ -1,0 +1,2 @@
+object @adjustment
+attributes *adjustment_attributes
