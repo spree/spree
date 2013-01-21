@@ -26,6 +26,8 @@ module Spree
       api_get :show, :id => order.to_param
       response.status.should == 200
       json_response.should have_attributes(attributes)
+      json_response["adjustments"].should be_empty
+      json_response["credit_cards"].should be_empty
     end
 
     # Regression test for #1992
