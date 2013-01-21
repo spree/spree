@@ -32,6 +32,37 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.perform(:order => order)
       promotion.credits_count.should == 1
     end
+
+    context "#destroy" do
+      before(:each) do
+        promotion.promotion_actions = [action]
+      end
+
+      context "when order is not complete" do
+        it "should not keep the adjustment" do
+          action.perform(:order => order)
+          action.destroy
+          order.adjustments.count.should == 0
+        end
+      end
+
+      context "when order is complete" do
+        let(:order) { create(:order, :state => "complete") }
+
+        before(:each) do
+          action.perform(:order => order)
+          action.destroy
+        end
+
+        it "should keep the adjustment" do
+          order.adjustments.count.should == 1 
+        end
+
+        it "should nullify the adjustment originator" do
+          order.adjustments.first.originator.should be_nil
+        end
+      end
+    end
   end
 
   context "#compute_amount" do
@@ -46,6 +77,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.calculator.stub(:compute => 300)
       action.compute_amount(order).to_i.should == -300
     end
+
     it "should not return an amount that exceeds order's item_total + ship_total" do
       order.stub(:item_total => 1000, :ship_total => 100)
       action.calculator.stub(:compute => 1000)
@@ -56,6 +88,4 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.compute_amount(order).to_i.should == -1100
     end
   end
-
 end
-
