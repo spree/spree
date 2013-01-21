@@ -8,6 +8,8 @@ module Spree
 
     attr_accessible :property_name, :value
 
+    default_scope :order => "#{self.table_name}.position"
+
     # virtual attributes for use with AJAX completion stuff
     def property_name
       property.name if property
