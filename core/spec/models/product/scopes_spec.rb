@@ -27,6 +27,7 @@ describe "Product scopes" do
       before do
         variant = product.variants.create!({:price => 10, :count_on_hand => 300}, :without_protection => true)
         variant.update_column(:deleted_at, Time.now)
+        product.master.update_column(:deleted_at, Time.now)
       end
 
       it "does not include the deleted variant in on_hand summary" do

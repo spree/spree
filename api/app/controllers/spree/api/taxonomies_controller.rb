@@ -4,8 +4,9 @@ module Spree
       respond_to :json
 
       def index
-        @taxonomies = Taxonomy.order('name').includes(:root => :children).ransack(params[:q]).result
-          .page(params[:page]).per(params[:per_page])
+        @taxonomies = Taxonomy.order('name').includes(:root => :children).
+                      ransack(params[:q]).result.
+                      page(params[:page]).per(params[:per_page])
         respond_with(@taxonomies)
       end
 

@@ -1,50 +1,31 @@
 module Spree
   class Admin::AnalyticsController < Admin::BaseController
 
-    def sign_up
-      redirect_if_registered and return
-      @store = {
-        :first_name => '',
-        :last_name => '',
-        :email => try_spree_current_user.email,
-        :currency => 'USD',
-        :time_zone => Time.zone,
-        :name => Spree::Config.site_name,
-        :url => format_url(Spree::Config.site_url)
-      }
-    end
-
     def register
       redirect_if_registered and return
-      @store = params[:store]
-      @store[:url] = format_url(@store[:url])
-
-      unless @store.has_key? :terms_of_service
-        flash[:error] = t(:agree_to_terms_of_service)
-        return render :sign_up
-      end
-
-      unless @store.has_key? :privacy_policy
-        flash[:error] = t(:agree_to_privacy_policy)
-        return render :sign_up
-      end
 
       begin
-        @store = Spree::Dash::Jirafe.register(@store)
-        Spree::Dash::Config.app_id = @store[:app_id]
-        Spree::Dash::Config.app_token = @store[:app_token]
-        Spree::Dash::Config.site_id = @store[:site_id]
-        Spree::Dash::Config.token = @store[:site_token]
-        flash[:notice] = t(:successfully_signed_up_for_analytics)
+        store = Spree::Dash::Jirafe.register(store_hash)
+        Spree::Dash::Config.app_id = store[:app_id]
+        Spree::Dash::Config.app_token = store[:app_token]
+        Spree::Dash::Config.site_id = store[:site_id]
+        Spree::Dash::Config.token = store[:site_token]
         redirect_to admin_path
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
-        render :sign_up
+        redirect_to root_path
       end
     end
 
-    def edit
-
+    def sync
+      session[:last_jirafe_sync] = DateTime.now
+      begin
+        store = Spree::Dash::Jirafe.synchronize_resources(store_hash)
+        redirect_to admin_path
+      rescue Spree::Dash::JirafeException => e
+        flash[:error] = e.message
+        redirect_to admin_path
+      end
     end
 
     def update
@@ -65,9 +46,36 @@ module Spree
       end
     end
 
+    def store_hash
+      if Spree::Config.site_url.blank? || Spree::Config.site_url.include?("localhost")
+        url = "http://demo.spreecommerce.com"
+      else
+        url = Spree::Config.site_url
+      end
+
+      email = "junk@spreecommerce.com"
+      name = Spree::Config.site_name || "Spree Store"
+
+      store = {
+        :first_name    => 'Spree',
+        :last_name     => 'User',
+        :email         => email,
+        :name          => 'Spree Store',
+        :url           => format_url(url),
+        :currency      => 'USD',
+        :time_zone     => ActiveSupport::TimeZone::MAPPING['Eastern Time (US & Canada)'],
+      }
+
+      if Spree::Dash::Config.configured?
+        store[:app_id] = Spree::Dash::Config.app_id
+        store[:app_token] = Spree::Dash::Config.app_token
+        store[:site_id] = Spree::Dash::Config.site_id
+      end
+      store
+    end
+
     def format_url(url)
       url =~ /^http/ ? url : "http://#{url}"
     end
-
   end
 end

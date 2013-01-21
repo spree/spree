@@ -5,7 +5,7 @@ describe Spree::Shipment do
     reset_spree_preferences
   end
 
-  let(:order) { mock_model Spree::Order, :backordered? => false, :complete? => true, :currency => "USD" }
+  let(:order) { mock_model Spree::Order, :backordered? => false, :can_ship? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator'), :adjustment_label => "Shipping" }
   let(:shipment) do
     shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
@@ -13,7 +13,7 @@ describe Spree::Shipment do
     shipment
   end
 
-  let(:charge) { mock_model Spree::Adjustment, :amount => 10, :source => shipment }
+  let(:charge) { Factory(:adjustment) }
 
   context "#cost" do
     it "should return the amount of any shipping charges that it originated" do
@@ -38,14 +38,14 @@ describe Spree::Shipment do
 
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
-        shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)] )
+        shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)])
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
     end
 
-    context "when order is incomplete" do
-      before { order.stub :complete? => false }
+    context "when order cannot ship" do
+      before { order.stub :can_ship? => false }
       it "should result in a 'pending' state" do
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
@@ -146,6 +146,7 @@ describe Spree::Shipment do
     before do
       order.stub(:update!)
       shipment.stub(:require_inventory => false, :update_order => true, :state => 'ready')
+      shipment.stub(:adjustment => charge)
       shipping_method.stub(:create_adjustment)
     end
 
@@ -163,6 +164,13 @@ describe Spree::Shipment do
       Spree::ShipmentMailer.should_receive(:shipped_email).with(shipment).and_return mail_message
       mail_message.should_receive :deliver
       shipment.ship!
+    end
+
+    it "should finalize the shipment's adjustment" do
+      shipment.stub(:send_shipped_email)
+      shipment.ship!
+      shipment.adjustment.state.should == "finalized"
+      shipment.adjustment.should be_immutable
     end
   end
 

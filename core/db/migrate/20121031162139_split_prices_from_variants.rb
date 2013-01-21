@@ -18,13 +18,14 @@ class SplitPricesFromVariants < ActiveRecord::Migration
   end
 
   def down
-    add_column :spree_variants, :price, :decimal, :after => :sku, :scale => 8, :precision => 2
+    prices = ActiveRecord::Base.connection.execute("select variant_id, amount from spree_prices")
+    add_column :spree_variants, :price, :decimal, :after => :sku, :scale => 2, :precision => 8
 
-    Spree::Variant.all.each do |variant|
-      variant.price = variant.default_price.amount
-      variant.save!
+    prices.each do |price|
+      ActiveRecord::Base.connection.execute("update spree_variants set price = #{price['amount']} where id = #{price['variant_id']}")
     end
-
+    
+    change_column :spree_variants, :price, :decimal, :after => :sku, :scale => 2, :precision => 8, :null => false
     drop_table :spree_prices
   end
 end

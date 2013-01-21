@@ -15,6 +15,7 @@ Spree::Core::Engine.routes.prepend do
     end
 
     resources :images
+    resources :checkouts
     resources :variants, :only => [:index] do
     end
 
@@ -54,5 +55,6 @@ Spree::Core::Engine.routes.prepend do
     resources :taxonomies do
       resources :taxons
     end
+    resources :inventory_units, :only => [:show, :update]
   end
 end

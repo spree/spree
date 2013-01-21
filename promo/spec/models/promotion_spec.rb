@@ -39,7 +39,6 @@ describe Spree::Promotion do
       @valid_promotion.name = nil
       @valid_promotion.should_not be_valid
     end
-
   end
 
   describe ".advertised" do
@@ -69,7 +68,6 @@ describe Spree::Promotion do
 
       Spree::PromotionRule.count.should == 0
     end
-
   end
 
   describe "#activate" do
@@ -113,8 +111,8 @@ describe Spree::Promotion do
       promotion.activate(@payload)
     end
 
-    it "does not activate if newer then order" do
-      @action1.should_not_receive(:perform).with(@payload)
+    it "does activate if newer then order" do
+      @action1.should_receive(:perform).with(@payload)
       promotion.created_at = DateTime.now + 2
       promotion.activate(@payload)
     end
@@ -174,9 +172,9 @@ describe Spree::Promotion do
   end
 
   context "#products" do
-    context "when it has product rules with products associated" do
-      let(:promotion) { create(:promotion) }
+    let(:promotion) { create(:promotion) }
 
+    context "when it has product rules with products associated" do
       before do
         promotion_rule = Spree::Promotion::Rules::Product.new
         promotion_rule.promotion = promotion
@@ -186,6 +184,16 @@ describe Spree::Promotion do
 
       it "should have products" do
         promotion.products.size.should == 1
+      end
+    end
+
+    context "when there's no product rule associated" do
+      before(:each) do
+        promotion.stub_chain(:rules, :all).and_return([mock_model(Spree::Promotion::Rules::User)])
+      end
+
+      it "should not have products but still return an empty array" do
+        promotion.products.should be_blank
       end
     end
   end
@@ -203,13 +211,11 @@ describe Spree::Promotion do
 
     context "when it is expired" do
       before { promotion.stub(:expired? => true) }
-
       specify { promotion.should_not be_eligible(@order) }
     end
 
     context "when it is not expired" do
       before { promotion.expires_at = Time.now + 1.day }
-
       specify { promotion.should be_eligible(@order) }
     end
 
@@ -227,7 +233,6 @@ describe Spree::Promotion do
         promotion.should be_eligible(@order)
       end
     end
-
   end
 
   context "rules" do
@@ -268,7 +273,5 @@ describe Spree::Promotion do
         @promotion.rules_are_eligible?(@order).should be_true
       end
     end
-
   end
-
 end

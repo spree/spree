@@ -18,14 +18,14 @@ end
 group :test do
   gem 'guard'
   gem 'guard-rspec', '~> 0.5.0'
-  gem 'rspec-rails', '~> 2.9.0'
+  gem 'rspec-rails', '2.12.0'
   gem 'factory_girl_rails', '~> 1.7.0'
   gem 'email_spec', '~> 1.2.1'
 
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara', '1.1.3'
-  gem 'selenium-webdriver', '2.25.0'
+  gem 'selenium-webdriver', '2.27.1'
   gem 'database_cleaner', '0.7.1'
   gem 'launchy'
   # gem 'debugger'

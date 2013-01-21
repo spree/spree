@@ -95,26 +95,4 @@ describe Spree::Preference do
 
   end
 
-  describe "converting old values" do
-
-    it "converts true" do
-      p = Spree::Preference.new
-      p.value = 't'
-      p.value_type = TrueClass.to_s
-      Spree::Preference.convert_old_value_types(p)
-      p.value_type.should == 'boolean'
-      p.value.should == true
-    end
-
-    it "converts false" do
-      p = Spree::Preference.new
-      p.value = 'f'
-      p.value_type = FalseClass.to_s
-      Spree::Preference.convert_old_value_types(p)
-      p.value_type.should == 'boolean'
-      p.value.should == false
-    end
-
-  end
-
 end

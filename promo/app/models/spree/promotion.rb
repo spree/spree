@@ -8,29 +8,30 @@ module Spree
 
     has_many :promotion_rules, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
     alias_method :rules, :promotion_rules
-    accepts_nested_attributes_for :promotion_rules
 
     has_many :promotion_actions, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
     alias_method :actions, :promotion_actions
-    accepts_nested_attributes_for :promotion_actions
 
-    validates_associated :rules
+    accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     attr_accessible :name, :event_name, :code, :match_policy,
                     :path, :advertise, :description, :usage_limit,
                     :starts_at, :expires_at, :promotion_rules_attributes,
                     :promotion_actions_attributes
 
-    # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
-    after_save :save_rules_and_actions
-    def save_rules_and_actions
-      (rules + actions).each &:save
-    end
+    validates_associated :rules
 
     validates :name, :presence => true
     validates :code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
     validates :path, :presence => true, :if => lambda{|r| r.event_name == 'spree.content.visited' }
     validates :usage_limit, :numericality => { :greater_than => 0, :allow_nil => true }
+
+    # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
+    after_save :save_rules_and_actions
+
+    def save_rules_and_actions
+      (rules + actions).each &:save
+    end
 
     def self.advertised
       where(:advertise => true)
@@ -70,14 +71,14 @@ module Spree
     end
 
     def order_activatable?(order)
-      order &&
-      created_at.to_i < order.created_at.to_i &&
-      !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
     # Products assigned to all product rules
     def products
-      @products ||= rules.of_type('Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
+      @products ||= self.rules.all.inject([]) do |products, rule|
+        rule.respond_to?(:products) ? products << rule.products : products
+      end.flatten.uniq
     end
 
     def usage_limit_exceeded?(order = nil)
@@ -100,6 +101,5 @@ module Spree
     def code=(coupon_code)
       write_attribute(:code, (coupon_code.downcase.strip rescue nil))
     end
-
   end
 end

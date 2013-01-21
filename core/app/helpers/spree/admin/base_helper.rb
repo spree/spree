@@ -22,6 +22,14 @@ module Spree
         end
       end
 
+      def datepicker_field_value(date)
+        unless date.blank?
+          l(date, :format => t('spree.date_picker.format'))
+        else
+          nil
+        end
+      end
+
       # This method demonstrates the use of the :child_index option to render a
       # form partial for, for instance, client side addition of new nested
       # records.
@@ -130,13 +138,6 @@ module Spree
             preference_field_for(form, "preferred_#{key}", :type => object.preference_type(key))
 
         }.join("<br />").html_safe
-      end
-
-      def product_picker_field(name, value)
-        products = Product.with_ids(value.split(','))
-        product_names = products.inject({}){|memo,item| memo[item.id] = item.name; memo}
-        product_rules = products.collect{ |p| { :id => p.id, :name => p.name } }
-        %(<input type="text" name="#{name}" value="#{value}" class="tokeninput products" data-names='#{product_names.to_json}' data-pre='#{product_rules.to_json}'/>).html_safe
       end
 
       def link_to_add_fields(name, target, options = {})

@@ -32,9 +32,9 @@ Installation
 The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
-    $ gem install rails -v 3.2.9
+    $ gem install rails -v 3.2.11
     $ gem install spree
-    $ rails _3.2.9_ new my_store
+    $ rails _3.2.11_ new my_store
     $ spree install my_store
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations and
@@ -75,9 +75,6 @@ You can always perform the steps later.
 
     $ bundle exec rake db:migrate
     $ bundle exec rake db:seed
-
-To manually load sample products, orders, etc., run the following rake task
-
     $ bundle exec rake spree_sample:load
 
 Browse Store

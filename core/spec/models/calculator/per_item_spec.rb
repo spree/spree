@@ -35,4 +35,12 @@ describe Spree::Calculator::PerItem do
     calculator.compute.should == 0
   end
 
+  # Regression test for #2322
+  context "does not fail if a promotion rule does not respond to products" do
+    before { promotion.stub :rules => [double("Rule")] }
+    specify do
+      calculator.stub(:calculable => promotion_calculable)
+      lambda { calculator.matching_products }.should_not raise_error
+    end
+  end
 end

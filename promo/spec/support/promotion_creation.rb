@@ -7,25 +7,18 @@ module PromotionCreation
     click_link "New Promotion"
 
     fill_in "Name", :with => promotion_name
-    select event, :from => "Event"
+    select2 event, :from => "Event Name"
     click_button "Create"
     page.should have_content("Editing Promotion")
 
-    # add product_name to last promotion
-    promotion = Spree::Promotion.last
-    promotion.rules << Spree::Promotion::Rules::Product.new()
-    product = Spree::Product.find_by_name(product_name)
-    rule = promotion.rules.last
-    rule.products << product
-    if rule.save
-      puts "Created promotion: new price for #{product_name} is #{product.price - discount_amount} (was #{product.price})"
-    else
-      puts "Failed to create promotion: price for #{product_name} is still #{product.price}"
-    end
+    select2 "Product(s)", :from => "Add rule of type"
+    within("#rule_fields") { click_button "Add" }
+    select2_search product_name, :from => "Choose products", :dropdown_css => ".product_picker"
+    within('#rule_fields') { click_button "Update" }
 
-    select "Create adjustment", :from => "Add action of type"
+    select2 "Create adjustment", :from => "Add action of type"
     within('#action_fields') { click_button "Add" }
-    select "Flat Rate (per item)", :from => "Calculator"
+    select2 "Flat Rate (per item)", :from => "Calculator"
     within('#actions_container') { click_button "Update" }
     within('.calculator-fields') { fill_in "Amount", :with => discount_amount.to_s }
     within('#actions_container') { click_button "Update" }
@@ -41,20 +34,20 @@ module PromotionCreation
     promotion_name = "Order's total > $#{order_min}, Discount #{order_discount}"
     fill_in "Name", :with => promotion_name
     fill_in "Usage Limit", :with => "100"
-    select "Coupon code added", :from => "Event"
+    select2 "Coupon code added", :from => "Event Name"
     fill_in "Code", :with => coupon_code
     click_button "Create"
     page.should have_content("Editing Promotion")
 
-    select "Item total", :from => "Add rule of type"
+    select2 "Item total", :from => "Add rule of type"
     within('#rule_fields') { click_button "Add" }
 
     eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount", :with => order_min
     within('#rule_fields') { click_button "Update" }
 
-    select "Create adjustment", :from => "Add action of type"
+    select2 "Create adjustment", :from => "Add action of type"
     within('#action_fields') { click_button "Add" }
-    select "Flat Rate (per order)", :from => "Calculator"
+    select2 "Flat Rate (per order)", :from => "Calculator"
     within('#actions_container') { click_button "Update" }
 
     within('.calculator-fields') { fill_in "Amount", :with => order_discount }

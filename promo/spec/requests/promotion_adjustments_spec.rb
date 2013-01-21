@@ -74,14 +74,14 @@ describe "Promotion Adjustments" do
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
       fill_in "Name", :with => "Order's total > $30"
       fill_in "Usage Limit", :with => "1"
-      select "Coupon code added", :from => "Event"
+      select2 "Coupon code added", :from => "Event Name"
       fill_in "Code", :with => "SINGLE_USE"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('#action_fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -142,19 +142,19 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Order's total > $30"
-      select "Order contents changed", :from => "Event"
+      select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
+      select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
 
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Percent", :from => "Calculator"
+      select2 "Flat Percent", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }
@@ -169,19 +169,49 @@ describe "Promotion Adjustments" do
       Spree::Order.last.total.to_f.should == 54.00
     end
 
+    it "should allow an admin to create an product promo with percent per item discount" do
+      visit spree.admin_path
+      click_link "Promotions"
+      click_link "New Promotion"
+
+      fill_in "Name", :with => "Percent Per Item"
+      select2 "Add to cart", :from => "Event Name"
+      click_button "Create"
+      page.should have_content("Editing Promotion")
+
+      select2 "Product(s)", :from => "Add rule of type"
+      within("#rule_fields") { click_button "Add" }
+      select2_search "RoR Mug", :from => "Choose products"
+      within('#rule_fields') { click_button "Update" }
+
+      select2 "Create adjustment", :from => "Add action of type"
+      within('#action_fields') { click_button "Add" }
+      select2 "Percent Per Item", :from => "Calculator"
+      within('#actions_container') { click_button "Update" }
+      within('.calculator-fields') { fill_in "Percent", :with => "10" }
+      within('#actions_container') { click_button "Update" }
+
+      visit spree.root_path
+      click_link "RoR Mug"
+      click_button "Add To Cart"
+
+      # A $40,00 product should get a $4,00 discount
+      Spree::Order.last.total.to_f.should == 36.00
+    end
+
     it "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Free Shipping"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
+      select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "30"
       within('#rule_fields') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Free Shipping", :from => "Calculator"
+      select2 "Free Shipping", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
 
       visit spree.root_path
@@ -232,14 +262,14 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Deal"
-      select "Visit static content page", :from => "Event"
+      select2 "Visit static content page", :from => "Event Name"
       fill_in "Path", :with => "content/cvv"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "4" }
       within('#actions_container') { click_button "Update" }
@@ -254,13 +284,6 @@ describe "Promotion Adjustments" do
       click_link "RoR Mug"
       click_button "Add To Cart"
       Spree::Order.last.total.to_f.should == 76.00
-    end
-
-    it "should not allow an admin to create two automatic promo for the same specific product" do
-      create_per_product_promotion("RoR Mug", 5.0)
-      create_per_product_promotion("RoR Mug", 10.0)
-
-      Spree::Promotion.last.should_not be_valid
     end
 
     # Regression test for #1416
@@ -288,12 +311,13 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
       fill_in "Name", :with => "Bundle"
-      select "Coupon code added", :from => "Event"
+      select2 "Coupon code added", :from => "Event Name"
       fill_in "Code", :with => "5ZHED2DH"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Create line items", :from => "Add action of type"
+      select2 "Create line items", :from => "Add action of type"
+
       within('#action_fields') { click_button "Add" }
       # Forced narcolepsy, thanks to JavaScript
       sleep(1)
@@ -305,9 +329,9 @@ describe "Promotion Adjustments" do
 
       within('#actions_container') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#new_promotion_action_form') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "40.00" }
       within('#actions_container') { click_button "Update" }
@@ -345,18 +369,18 @@ describe "Promotion Adjustments" do
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Spend over $50 and save $5"
-      select "Order contents changed", :from => "Event"
+      select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select "Item total", :from => "Add rule of type"
+      select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "50"
       within('#rule_fields') { click_button "Update" }
 
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -388,12 +412,12 @@ describe "Promotion Adjustments" do
 
     it "only counting the most valuable promotion adjustment in an order" do
       fill_in "Name", :with => "$5 off"
-      select "Order contents changed", :from => "Event"
+      select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate (per order)", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -401,12 +425,12 @@ describe "Promotion Adjustments" do
       visit spree.admin_promotions_path
       click_link "New Promotion"
       fill_in "Name", :with => "10% off"
-      select "Order contents changed", :from => "Event"
+      select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
-      select "Create adjustment", :from => "Add action of type"
+      select2 "Create adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select "Flat Percent", :from => "Calculator"
+      select2 "Flat Percent", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Flat Percent", :with => "10" }
       within('#actions_container') { click_button "Update" }

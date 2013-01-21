@@ -13,7 +13,7 @@
     :destroy             => I18n.t(:destroy),
     :edit                => I18n.t(:edit),
     :loading             => I18n.t(:loading),
-    :month_names         => I18n.t(:month_names, :scope => :date).delete_if(&:blank?),
+    :month_names         => I18n.t(:month_names, :scope => :date).reject(&:blank?),
     :more                => I18n.t(:more),
     :name                => I18n.t(:name),
     :next                => I18n.t(:next),

@@ -22,6 +22,7 @@ $(document).ready(function() {
           return { results: data }
         }
       },
+      dropdownCssClass: 'customer_search',
       formatResult: formatCustomerResult,
       formatSelection: function (customer) {
         _.each(['bill_address', 'ship_address'], function(address) {

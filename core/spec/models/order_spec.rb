@@ -24,8 +24,8 @@ describe Spree::Order do
     before :each do
       @variant1 = mock_model(Spree::Variant, :product => "product1")
       @variant2 = mock_model(Spree::Variant, :product => "product2")
-      @line_items = [mock_model(Spree::LineItem, :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
-                     mock_model(Spree::LineItem, :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
+      @line_items = [mock_model(Spree::LineItem, :product => "product1", :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
+                     mock_model(Spree::LineItem, :product => "product2", :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
       order.stub(:line_items => @line_items)
     end
 
@@ -71,6 +71,25 @@ describe Spree::Order do
     it "should assign an order number" do
       order = Spree::Order.create
       order.number.should_not be_nil
+    end
+  end
+
+  context "#can_ship?" do
+    let(:order) { Spree::Order.create }
+
+    it "should be true for order in the 'complete' state" do
+      order.stub(:complete? => true)
+      order.can_ship?.should be_true
+    end
+
+    it "should be true for order in the 'resumed' state" do
+      order.stub(:resumed? => true)
+      order.can_ship?.should be_true
+    end
+
+    it "should be false if the order is neither in the 'complete' nor 'resumed' state" do
+      order.stub(:resumed? => false, :complete? => false)
+      order.can_ship?.should be_false
     end
   end
 
@@ -124,8 +143,8 @@ describe Spree::Order do
       adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
       adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
       order.stub :adjustments => [adjustment1, adjustment2]
-      adjustment1.should_receive(:update_column).with("locked", true)
-      adjustment2.should_receive(:update_column).with("locked", true)
+      adjustment1.should_receive(:update_column).with("state", "closed")
+      adjustment2.should_receive(:update_column).with("state", "closed")
       order.finalize!
     end
 
@@ -178,10 +197,10 @@ describe Spree::Order do
     end
   end
 
-  context "#complete?" do
-    it "should indicate if order is complete" do
+  context "#completed?" do
+    it "should indicate if order is completed" do
       order.completed_at = nil
-      order.complete?.should be_false
+      order.completed?.should be_false
 
       order.completed_at = Time.now
       order.completed?.should be_true
@@ -306,7 +325,7 @@ describe Spree::Order do
 
     before { order.stub(:line_items => [line_item]) }
 
-    it "should return line_item that has insufficent stock on hand" do
+    it "should return line_item that has insufficient stock on hand" do
       order.insufficient_stock_lines.size.should == 1
       order.insufficient_stock_lines.include?(line_item).should be_true
     end
@@ -427,7 +446,7 @@ describe Spree::Order do
         line_items.count.should == 2
 
         # No guarantee on ordering of line items, so we do this:
-        line_items.map(&:quantity).should =~ [1,1]
+        line_items.map(&:quantity).should =~ [1, 1]
         line_items.map(&:variant_id).should =~ [variant.id, variant_2.id]
       end
     end

@@ -1,14 +1,14 @@
 @import "./variables.css.scss"; // Must call explicit path or else extension integration tests cannot import file.
 
 /*--------------------------------------*/
-/* Basic styles 
+/* Basic styles
 /*--------------------------------------*/
 body {
   font-family: $ff_base;
   font-size: $base_font_size;
   font-weight: 400;
   color: $body_text_color;
-  line-height: 18px;  
+  line-height: 18px;
   background-color: $layout_background_color;
   -webkit-font-smoothing: antialiased;
 }
@@ -24,10 +24,10 @@ hr {
 
 /* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
 ::-moz-selection{background: $link_text_color; color: $layout_background_color; text-shadow: none;}
-::selection {background: $link_text_color; color: $layout_background_color; text-shadow: none;} 
+::selection {background: $link_text_color; color: $layout_background_color; text-shadow: none;}
 
 /*  j.mp/webkit-tap-highlight-color */
-a:link {-webkit-tap-highlight-color: $link_text_color;} 
+a:link {-webkit-tap-highlight-color: $link_text_color;}
 
 ins {background-color: $link_text_color; color: $layout_background_color; text-decoration: none;}
 mark {background-color: $link_text_color; color: $layout_background_color; font-style: italic; font-weight: bold;}
@@ -40,7 +40,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     color: $link_text_color;
 
     &:hover {
-      color: darken($link_text_color, 10) !important;
+      color: darken($link_text_color, 10);
     }
 
     &:active, &:focus {
@@ -64,7 +64,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       }
     }
   }
-  
+
   dl {
     dt, dd {
       display: inline-block;
@@ -77,7 +77,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
     dt {
       font-weight: bold;
-      text-transform: uppercase;      
+      text-transform: uppercase;
     }
     dd {
       margin-left: -23px;
@@ -94,7 +94,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   h5 { font-size: $sub_heading_font_size;     line-height: $sub_heading_font_size + 10;     }
   h6 { font-size: $sub_heading_font_size - 2; line-height: $sub_heading_font_size - 2 + 10; }
 
-  h1, h2, h3, h4, h5, h6 {    
+  h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     color: $title_text_color;
     -webkit-margin-before: 0;
@@ -106,14 +106,14 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   /*--------------------------------------*/
   /* Forms
   /*--------------------------------------*/
-  textarea, input[type="date"], 
+  textarea, input[type="date"],
   input[type="datetime"], input[type="datetime-local"],
   input[type="email"], input[type="month"], input[type="number"],
   input[type="password"], input[type="search"], input[type="tel"],
-  input[type="text"], input[type="time"], input[type="url"], 
+  input[type="text"], input[type="time"], input[type="url"],
   input[type="week"] {
     border: $default_border;
-    padding: 5px 10px;    
+    padding: 5px 10px;
     font-family: $ff_base;
     font-size: $input_box_font_size;
 
@@ -189,7 +189,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       background-image: none;
       background-color: $body_text_color;
       border-color: $body_text_color;
-      color: $layout_background_color !important;
+      color: $layout_background_color;
     }
   }
 
@@ -197,7 +197,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     a.button {
       line-height: 16px;
     }
-  } 
+  }
 
   input[type="checkbox"], label {
     vertical-align: middle;
@@ -271,7 +271,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
         a{
           font-weight: bold;
           font-size: $header_navigation_font_size;
-          text-transform: uppercase;          
+          text-transform: uppercase;
         }
       }
     }
@@ -285,7 +285,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     padding-bottom: 6px;
 
     li {
-      
+
       a {
         font-size: $horizontal_navigation_font_size;
         padding: 5px;
@@ -439,7 +439,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
     &.diff {
       font-weight: bold;
-    }  
+    }
   }
 
   .taxon-title {
@@ -480,12 +480,16 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
       .product-image {
         border: $default_border;
-        padding: 5px;        
+        padding: 5px;
         min-height: 110px;
         background-color: $product_background_color;
 
         &:hover {
           border-color: $link_text_color;
+        }
+
+        img {
+          max-width: 100%; /* Fluid images for product */
         }
 
       }
@@ -504,7 +508,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
     a {
       color: $link_text_color;
-    }    
+    }
   }
 
   .search-results-title {
@@ -542,6 +546,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
       img {
         min-height: 240px;
+        max-width: 100%; /* Fluid images for product */
       }
     }
     #product-thumbnails {
@@ -610,6 +615,14 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   /*--------------------------------------*/
   /* Checkout
   /*--------------------------------------*/
+  .out-of-stock {
+    background: #df0000;
+    color: white;
+    padding: 5px;
+    padding-right: 10px;
+    font-weight: bold;
+  }
+
   .progress-steps {
     list-style: decimal inside;
     overflow: auto;
@@ -643,7 +656,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
             color: $layout_background_color;
 
             &:hover {
-              color: $layout_background_color !important;              
+              color: $layout_background_color;
             }
           }
         }
@@ -692,11 +705,11 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       #summary-order-total {
         @extend span.price;
         font-size: $base_font_size + 2;
-      }      
+      }
     }
   }
 
-  #billing, #shipping, #shipping_method, 
+  #billing, #shipping, #shipping_method,
   #payment, #order_details, #order_summary {
     margin-top: 10px;
     border: $default_border;
@@ -746,11 +759,11 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
         font-size: $base_font_size + 4;
         color: $body_text_color;
 
-        tr { 
+        tr {
           border-top: 1px solid lighten($body_text_color, 60);
-          
+
           td {
-            padding: 10px; 
+            padding: 10px;
           }
         }
       }
@@ -776,7 +789,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   #shipping_method {
     p {
       label {
-        float: left; 
+        float: left;
         font-weight: bold;
         font-size: $base_font_size + 2;
         margin-right: 40px;
@@ -824,7 +837,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       margin-top: 15px;
       text-align: right;
     }
-    
+
     #subtotal {
       text-align: right;
       text-transform: uppercase;
@@ -833,12 +846,12 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       span.order-total {
         @extend span.price;
       }
-    } 
+    }
   }
 
   #empty-cart {
-    margin-top: -75px !important;
-    float: left !important;
+    margin-top: -75px;
+    float: left;
   }
 
   /*--------------------------------------*/
@@ -852,7 +865,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #registration {
     h6 {
-      text-transform: uppercase;      
+      text-transform: uppercase;
     }
 
     #existing-customer {
@@ -918,17 +931,17 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
     p[data-hook="use_billing"] {
       margin-top: -15px;
-    }    
+    }
   }
 
   /* All Mobile Sizes (devices and browser) */
-  @media only screen and (max-width: 767px) {        
+  @media only screen and (max-width: 767px) {
 
     html {
       -webkit-text-size-adjust: none;
     }
 
-    #order_details .steps-data div.columns, 
+    #order_details .steps-data div.columns,
     #order_summary .steps-data div.columns {
       padding: 0;
       margin: 0;
@@ -942,8 +955,8 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       text-align: center;
 
       ul {
-        padding-left: 0 !important;
-        list-style: none !important;
+        padding-left: 0;
+        list-style: none;
       }
     }
 
@@ -959,7 +972,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     #order_details, #order {
       table[data-hook="order_details"] {
         width: 100%;
-      } 
+      }
     }
 
     #update-cart {
@@ -978,11 +991,11 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   @media only screen and (min-width: 480px) and (max-width: 767px) {
 
     footer#footer {
-      width: auto !important;
+      width: auto;
     }
 
     input, select {
-      vertical-align: baseline !important;
+      vertical-align: baseline;
     }
 
     figure#logo {
@@ -1029,7 +1042,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
           }
           td[data-hook="cart_item_price"], td[data-hook="cart_item_total"],
           td[data-hook="order_item_price"], td[data-hook="order_item_total"]  {
-            font-size: $base_font_size !important; 
+            font-size: $base_font_size;
           }
           td[data-hook="cart_item_image"], td[data-hook="order_item_image"] {
             img {
@@ -1037,7 +1050,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
             }
           }
         }
-      }  
+      }
     }
 
   }
@@ -1045,21 +1058,21 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   @media only screen and (max-width: 767px) {
     #empty-cart {
       clear: both;
-      margin-top: 0 !important;
-      float: none !important;
+      margin-top: 0;
+      float: none;
     }
   }
-  
+
   @media only screen and (min-width: 768px) and (max-width: 959px) {
     .container .offset-by-nine.coupon-code-field {
       padding-left: 380px;
     }
   }
-  
+
 
   /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
   @media only screen and (max-width: 479px) {
-    
+
     .progress-steps li {
       padding: 0;
       margin: 0;
@@ -1100,10 +1113,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
             }
           }
           td[data-hook="cart_item_price"], td[data-hook="cart_item_total"] {
-            font-size: $base_font_size + 2 !important; 
+            font-size: $base_font_size + 2 !important;
           }
         }
-      }  
+      }
     }
 
     table.order-summary {
@@ -1116,7 +1129,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       tbody tr { display: inline-block; vertical-align: top; }
       td { display: block; min-height: 1.25em; }
     }
-    
+
 
     figure#logo {
       text-align: center;
@@ -1140,7 +1153,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       text-align: center;
 
       ul {
-        padding-left: 0 !important;
+        padding-left: 0;
 
         li {
           list-style-type: none;
@@ -1165,5 +1178,5 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     #content {
       text-align: center;
     }
-        
+
   }

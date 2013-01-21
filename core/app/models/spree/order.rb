@@ -31,7 +31,7 @@ module Spree
     token_resource
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
-                    :ship_address, :bill_address, :line_items_attributes, :number,
+                    :ship_address, :bill_address, :payments_attributes, :line_items_attributes, :number,
                     :shipping_method_id, :email, :use_billing, :special_instructions, :currency
 
     if Spree.user_class
@@ -52,7 +52,13 @@ module Spree
     has_many :line_items, :dependent => :destroy, :order => "created_at ASC"
     has_many :inventory_units
     has_many :payments, :dependent => :destroy
-    has_many :shipments, :dependent => :destroy
+
+    has_many :shipments, :dependent => :destroy do
+      def states
+        pluck(:state).uniq
+      end
+    end
+
     has_many :return_authorizations, :dependent => :destroy
     has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
 
@@ -201,15 +207,10 @@ module Spree
     # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
     # invoice.  For example, you can display tax breakout for cases where tax is included in price.
     def price_adjustment_totals
-      totals = {}
-
-      price_adjustments.each do |adjustment|
-        label = adjustment.label
-        totals[label] ||= 0
-        totals[label] = totals[label] + adjustment.amount
-      end
-
-      totals
+      Hash[price_adjustments.group_by(&:label).map do |label, adjustments|
+        total = adjustments.sum(&:amount)
+        [label, Spree::Money.new(total, { :currency => currency })]
+      end]
     end
 
     def updater
@@ -247,7 +248,7 @@ module Spree
     def awaiting_returns?
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
-    
+
     def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
@@ -355,6 +356,10 @@ module Spree
       end
     end
 
+    def can_ship?
+      self.complete? || self.resumed?
+    end
+
     def credit_cards
       credit_card_ids = payments.from_credit_card.map(&:source_id).uniq
       CreditCard.scoped(:conditions => { :id => credit_card_ids })
@@ -367,7 +372,7 @@ module Spree
       InventoryUnit.assign_opening_inventory(self)
 
       # lock all adjustments (coupon promotions, etc.)
-      adjustments.each { |adjustment| adjustment.update_column('locked', true) }
+      adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
 
       # update payment and shipment(s) states, and save
       updater = OrderUpdater.new(self)
@@ -411,7 +416,7 @@ module Spree
       # create all the threads and kick off their execution
       threads = available_shipping_methods(:front_end).each_with_index.map do |ship_method, index|
         Thread.new { computed_costs[index] = [ship_method, ship_method.calculator.compute(self)] }
-      end      
+      end
 
       # wait for all threads to finish
       threads.map(&:join)
@@ -437,7 +442,7 @@ module Spree
     end
 
     def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available
+      @available_payment_methods ||= PaymentMethod.available(:front_end)
     end
 
     def payment_method
@@ -477,7 +482,7 @@ module Spree
     end
 
     def products
-      line_items.map { |li| li.variant.product }
+      line_items.map { |li| li.product }
     end
 
     def variants

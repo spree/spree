@@ -24,6 +24,11 @@ describe Spree::Preferences::Preferable do
     @a.stub(:persisted? => true)
     @b = B.new
     @b.stub(:persisted? => true)
+
+    # ensure we're persisting as that is the default
+    #
+    store = Spree::Preferences::Store.instance
+    store.persistence = true
   end
 
   describe "preference definitions" do
@@ -118,8 +123,8 @@ describe Spree::Preferences::Preferable do
       end
 
       it "retrieves a preference from the database before falling back to default" do
-        preference = mock(:value => "chatreuse")
-        Spree::Preference.should_receive(:find_by_key).with("color").and_return(preference)
+        preference = mock(:value => "chatreuse", :key => 'a/color/123')
+        Spree::Preference.should_receive(:find_by_key).and_return(preference)
         @a.preferred_color.should == 'chatreuse'
       end
 

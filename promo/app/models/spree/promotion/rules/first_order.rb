@@ -4,7 +4,17 @@ module Spree
       class FirstOrder < PromotionRule
         def eligible?(order, options = {})
           user = order.try(:user) || options[:user]
-          !!(user && user.orders.complete.count == 0)
+          if user
+            return orders_by_email(user.email) == 0
+          elsif order.email
+            return orders_by_email(order.email) == 0
+          end
+
+          return false
+        end
+
+        def orders_by_email(email)
+          Spree::Order.where(:email => email).count
         end
       end
     end
