@@ -6,8 +6,8 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let!(:property_1) {product.product_properties.create(:property_name => "My Property 1", :value => "my value 1")}
-    let!(:property_2) {product.product_properties.create(:property_name => "My Property 2", :value => "my value 2")}
+    let!(:property_1) {product.product_properties.create(:property_name => "My Property 1", :value => "my value 1", :position => 0)}
+    let!(:property_2) {product.product_properties.create(:property_name => "My Property 2", :value => "my value 2", :position => 1)}
 
     let(:attributes) { [:id, :product_id, :property_id, :value, :property_name] }
     let(:resource_scoping) { { :product_id => product.to_param } }

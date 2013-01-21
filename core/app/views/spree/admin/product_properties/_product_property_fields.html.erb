@@ -1,4 +1,8 @@
-<tr class="product_property fields"  data-hook="product_property">
+<tr class="product_property fields" id="spree_<%= dom_id(f.object) %>" data-hook="product_property">
+  <td class="no-border">
+    <span class="handle"></span>
+    <%= f.hidden_field :id %>
+  </td>
   <td class='property_name'>
     <%= f.text_field :property_name, :class => 'autocomplete' %>
   </td>
