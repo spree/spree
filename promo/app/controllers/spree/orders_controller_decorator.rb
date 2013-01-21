@@ -10,7 +10,7 @@ Spree::OrdersController.class_eval do
         render :edit
         return
       end
-      flash[:success] = coupon_result[:success]
+      flash[:success] = coupon_result[:success] if coupon_result.has_key?(:success)
 
       @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
       fire_event('spree.order.contents_changed')
