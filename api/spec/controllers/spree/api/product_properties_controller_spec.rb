@@ -6,8 +6,8 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let!(:property_1) {product.product_properties.create(:property_name => "My Property 1", :value => "my value 1")}
-    let!(:property_2) {product.product_properties.create(:property_name => "My Property 2", :value => "my value 2")}
+    let!(:property_1) {product.product_properties.create(:property_name => "My Property 1", :value => "my value 1", :position => 0)}
+    let!(:property_2) {product.product_properties.create(:property_name => "My Property 2", :value => "my value 2", :position => 1)}
 
     let(:attributes) { [:id, :product_id, :property_id, :value, :property_name, :position] }
     let(:resource_scoping) { { :product_id => product.to_param } }
@@ -80,7 +80,7 @@ module Spree
 
       it "can create a new product property" do
         expect do
-          api_post :create, :product_property => { :property_name => "My Property 3", :value => "my value 3" }
+          api_post :create, :product_property => { :property_name => "My Property 3", :value => "my value 3", :position => 3 }
         end.to change(product.product_properties, :count).by(1)
         json_response.should have_attributes(attributes)
         response.status.should == 201
