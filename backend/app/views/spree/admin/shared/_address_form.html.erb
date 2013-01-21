@@ -45,7 +45,7 @@
   <div class="field <%= name == t(:shipping_address) ? 'shipping-row' : 'billing-row' %>">
     <%= f.label :state_id, t(:state) + ':' %>
     <span id="<%= name == t(:shipping_address) ? 's' : 'b' %>state">
-      <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth' %>
+      <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
       <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
     </span>
   </div>
