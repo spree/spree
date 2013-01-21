@@ -24,10 +24,10 @@
     <div id="prototypes" data-hook></div>
     <%= image_tag 'spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
     
-    <table class="index">
+    <table class="index sortable" data-hook data-sortable-link="<%= update_positions_admin_product_product_properties_url %>">
       <thead>
         <tr data-hook="product_properties_header">
-          <th><%= t(:property) %></th>
+          <th colspan="2"><%= t(:property) %></th>
           <th><%= t(:value) %></th>
           <th class="actions"></th>
         </tr>
