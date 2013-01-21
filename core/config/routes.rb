@@ -71,7 +71,7 @@ Spree::Core::Engine.routes.draw do
         get :search
       end
 
-      resources :product_properties
+      resources :product_properties do
         collection do
           post :update_positions
         end
