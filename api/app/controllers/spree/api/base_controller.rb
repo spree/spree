@@ -1,4 +1,4 @@
-require 'spree/api/controller_setup'
+require_dependency 'spree/api/controller_setup'
 
 module Spree
   module Api
