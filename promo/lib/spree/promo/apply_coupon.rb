@@ -6,7 +6,6 @@ module Spree
           # check if coupon code is already applied
           if @order.adjustments.promotion.eligible.detect { |p| p.originator.promotion.code == @order.coupon_code }.present?
             return { :code_applied? => true, :notice => t(:coupon_code_already_applied) }
-            true
           else
             event_name = "spree.checkout.coupon_code_added"
 
