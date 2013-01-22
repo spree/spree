@@ -3,6 +3,10 @@ require 'spec_helper'
 describe "image settings" do
   stub_authorization!
 
+  after do
+    reset_spree_preferences
+  end
+
   before do
     visit spree.admin_path
     click_link "Configuration"
@@ -13,12 +17,12 @@ describe "image settings" do
   it "can update attachment_url" do
     fill_in "Attachments URL", :with => "foobar"
     fill_in "Attachments Default URL", :with => "barfoo"
-    fill_in "Attachments Path", :with => "bfaoro" 
+    fill_in "Attachments Path", :with => "spec/dummy/tmp/bfaoro" 
     click_button "Update"
 
     Spree::Config[:attachment_url].should == "foobar"
     Spree::Config[:attachment_default_url].should == "barfoo"
-    Spree::Config[:attachment_path].should == "bfaoro"
+    Spree::Config[:attachment_path].should == "spec/dummy/tmp/bfaoro"
   end
 
 end
