@@ -278,6 +278,7 @@ en:
   back_to_images_list: "Back To Images List"
   back_to_mail_methods_list: "Back To Mail Methods List"
   back_to_option_types_list: "Back To Option Types List"
+  back_to_orders_list: "Back To Orders List"
   back_to_payment_methods_list: "Back To Payment Methods List"
   back_to_payments_list: "Back To Payments List"
   back_to_products_list: "Back To Products List"
@@ -424,6 +425,7 @@ en:
   empty: Empty
   empty_cart: "Empty Cart"
   enable_mail_delivery: "Enable Mail Delivery"
+  end: End
   ending_in: "Ending in"
   enter_at_least_five_letters: "Enter at least five letters of customer name"
   enter_exactly_as_shown_on_card: "Please enter exactly as shown on the card"
@@ -533,6 +535,7 @@ en:
   leave_blank_to_not_change: "(leave blank if you don't want to change it)"
   list: List
   listing_categories: "Listing Categories"
+  listing_countries: "Listing Countries"
   listing_option_types: "Listing Option Types"
   listing_orders: "Listing Orders"
   listing_product_groups: "Listing Product Groups"
@@ -651,6 +654,7 @@ en:
   order_date: "Order Date"
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
+  order_information: "Order Information"
   order_mailer:
     cancel_email:
       dear_customer: "Dear Customer,"
@@ -1000,6 +1004,7 @@ en:
   show_only_complete_orders: "Only show complete orders"
   show_only_unfulfilled_orders: "Show only unfulfilled orders"
   show_out_of_stock_products: "Show out-of-stock products"
+  show_rate_in_label: "Show rate in label"
   showing_first_n: "Showing first %{n}"
   sign_up: "Sign up"
   site_name: "Site Name"
@@ -1039,6 +1044,7 @@ en:
   state_based: "State Based"
   state_setting_description: "Administer the list of states/provinces associated with each country."
   states: States
+  states_required: "States Required"
   status: Status
   stop: Stop
   store: Store
