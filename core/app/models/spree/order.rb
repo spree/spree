@@ -357,7 +357,7 @@ module Spree
     end
 
     def can_ship?
-      self.complete? || self.resumed?
+      self.complete? || self.resumed? || self.awaiting_return? || self.returned?
     end
 
     def credit_cards
