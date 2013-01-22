@@ -1,9 +1,16 @@
 # Used in the sandbox rake task in Rakefile
 #!/bin/bash
-rm -rf sandbox
-rails new sandbox --skip-bundle
-cd sandbox
+
+rm -rf ./sandbox
+bundle exec rails new sandbox --skip-bundle
+if [ ! -d "sandbox" ]; then
+  echo 'sandbox rails application failed'
+  exit 1
+fi
+
+cd ./sandbox
 echo "gem 'spree', :path => '..'" >> Gemfile
 echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => 'edge'" >> Gemfile
+
 bundle install --gemfile Gemfile
-rails g spree:install --auto-accept --user_class=Spree::User
+bundle exec rails g spree:install --auto-accept --user_class=Spree::User
