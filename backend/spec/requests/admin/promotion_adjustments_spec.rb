@@ -5,27 +5,11 @@ describe "Promotion Adjustments" do
 
   context "coupon promotions", :js => true do
     before(:each) do
+      # So that variant lookup will go through alright
+      Spree::Api::Config[:requires_authentication] = false
       visit spree.admin_path
       click_link "Promotions"
       click_link "New Promotion"
-    end
-
-    it "should properly populate Spree::Product#possible_promotions" do
-      promotion = create_per_product_promotion 'RoR Mug', 5.0
-      promotion.update_column :advertise, true
-
-      mug = Spree::Product.find_by_name 'RoR Mug'
-      bag = Spree::Product.find_by_name 'RoR Bag'
-
-      mug.possible_promotions.size.should == 1
-      bag.possible_promotions.size.should == 0
-
-      # expire the promotion
-      promotion.expires_at = Date.today.beginning_of_week
-      promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
-      promotion.save!
-
-      mug.possible_promotions.size.should == 0
     end
 
     it "should allow an admin to create a flat rate discount coupon promo" do
@@ -83,10 +67,6 @@ describe "Promotion Adjustments" do
       promotion.usage_limit.should == 1
       promotion.event_name.should == "spree.checkout.coupon_code_added"
       promotion.code.should == "single_use"
-
-      first_rule = promotion.rules.first
-      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount.should == 30
 
       first_action = promotion.actions.first
       first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
@@ -161,7 +141,7 @@ describe "Promotion Adjustments" do
       first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
       first_action_calculator = first_action.calculator
       first_action_calculator.class.should == Spree::Calculator::PercentPerItem
-      first_action_calculator.preferred_flat_percent.should == 10
+      first_action_calculator.preferred_percent.should == 10
     end
 
     it "should allow an admin to create an automatic promotion with free shipping (no code)" do
@@ -220,9 +200,10 @@ describe "Promotion Adjustments" do
     end
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
-      fill_in "Name", :with => "Bundle"
+      create(:product, :name => "RoR Mug")
+      fill_in "Name", :with => "Promotion"
       select2 "Coupon code added", :from => "Event Name"
-      fill_in "Code", :with => "5ZHED2DH"
+      fill_in "Code", :with => "complex"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -245,10 +226,17 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "40.00" }
       within('#actions_container') { click_button "Update" }
+
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.code.should == "complex"
+
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateLineItems
+      line_item = first_action.promotion_action_line_items.should_not be_empty
     end
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
-      fill_in "Name", :with => "Spend over $50 and save $5"
+      fill_in "Name", :with => "Promotion"
       select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -265,29 +253,17 @@ describe "Promotion Adjustments" do
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
 
-      visit spree.root_path
-      click_link "RoR Bag"
-      click_button "Add To Cart"
-      Spree::Order.last.total.to_f.should == 20.00
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion.event_name.should == "spree.cart.add"
 
-      fill_in "order[line_items_attributes][0][quantity]", :with => "2"
-      click_button "Update"
-      Spree::Order.last.total.to_f.should == 40.00
-      Spree::Order.last.adjustments.eligible.promotion.count.should == 0
+      first_rule = promotion.rules.first
+      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
+      first_rule.preferred_amount.should == 50
 
-      fill_in "order[line_items_attributes][0][quantity]", :with => "3"
-      click_button "Update"
-      Spree::Order.last.total.to_f.should == 55.00
-      Spree::Order.last.adjustments.eligible.promotion.count.should == 1
-
-      fill_in "order[line_items_attributes][0][quantity]", :with => "2"
-      click_button "Update"
-      Spree::Order.last.total.to_f.should == 40.00
-      Spree::Order.last.adjustments.eligible.promotion.count.should == 0
-
-      fill_in "order[line_items_attributes][0][quantity]", :with => "3"
-      click_button "Update"
-      Spree::Order.last.total.to_f.should == 55.00
+      first_action = promotion.actions.first
+      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action.calculator.class.should == Spree::Calculator::FlatRate
+      first_action.calculator.preferred_amount.should == 5
     end
   end
 end

@@ -20,9 +20,10 @@ module Spree
         end
 
         def stub_authorization!
-          ability = Spree::TestingSupport::AuthorizationHelpers::Request::SuperAbility
-          before(:all) { Spree::Ability.register_ability(ability) }
-          after(:all) { Spree::Ability.register_ability(ability) }
+          before(:all) do
+            ability = Spree::TestingSupport::AuthorizationHelpers::Request::SuperAbility
+            Spree::Ability.register_ability(ability)
+          end
         end
       end
     end

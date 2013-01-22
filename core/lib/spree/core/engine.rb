@@ -69,6 +69,11 @@ module Spree
         end
       end
 
+      initializer 'spree.promo.environment', :after => 'spree.environment' do |app|
+        app.config.spree.add_class('promotions')
+        app.config.spree.promotions = Spree::Promo::Environment.new
+      end
+
       initializer 'spree.promo.register.promotion.calculators' do |app|
         app.config.spree.calculators.add_class('promotion_actions_create_adjustments')
         app.config.spree.calculators.promotion_actions_create_adjustments = [

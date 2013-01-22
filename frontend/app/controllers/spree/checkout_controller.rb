@@ -23,6 +23,10 @@ module Spree
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
+        unless apply_coupon_code
+          respond_with(@order) { |format| format.html { render :edit } }
+          return
+        end
 
         if @order.next
           state_callback(:after)

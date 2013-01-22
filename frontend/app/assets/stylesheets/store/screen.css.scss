@@ -1069,7 +1069,19 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     }
   }
 
+  #update-cart .coupon-code-field {
+    /* yes, this is ugly... */
+    margin-top: -42px !important;
+  }
 
+  @media only screen and (max-width: 767px) {
+    #empty-cart,
+    #update-cart .coupon-code-field {
+      /* yes, this is ugly... */
+      margin-top: 0 !important;
+    }
+  }
+  
   /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
   @media only screen and (max-width: 479px) {
 
