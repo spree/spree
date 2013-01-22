@@ -87,6 +87,16 @@ describe Spree::Order do
       order.can_ship?.should be_true
     end
 
+    it "should be true for an order in the 'awaiting return' state" do
+      order.stub(:awaiting_return? => true)
+      order.can_ship?.should be_true
+    end
+
+    it "should be true for an order in the 'returned' state" do
+      order.stub(:returned? => true)
+      order.can_ship?.should be_true
+    end
+
     it "should be false if the order is neither in the 'complete' nor 'resumed' state" do
       order.stub(:resumed? => false, :complete? => false)
       order.can_ship?.should be_false
