@@ -9,7 +9,7 @@ class SplitPricesFromVariants < ActiveRecord::Migration
     Spree::Variant.all.each do |variant|
       Spree::Price.create!(
         :variant_id => variant.id,
-        :amount => variant.price,
+        :amount => variant[:price],
         :currency => Spree::Config[:currency]
       )
     end
