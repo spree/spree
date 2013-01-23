@@ -28,7 +28,7 @@ $.fn.variantAutocomplete = function() {
         }
       },
       results: function (data, page) {
-        return { results: data }
+        return { results: data['variants'] }
       }
     },
     formatResult: formatVariantResult,
