@@ -5,7 +5,7 @@ $(document).ready(function() {
       multiple: true,
       initSelection: function(element, callback) {
         return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
-          return callback(self.cleanTaxons(data));
+          return callback(data);
         })
       },
       ajax: {
@@ -15,7 +15,7 @@ $(document).ready(function() {
           return { q: term }
         },
         results: function (data, page) {
-          return { results: self.cleanTaxons(data) }
+          return { results: data }
         }
       },
       formatResult: function(taxon) {
