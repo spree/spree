@@ -13,7 +13,7 @@ module Spree
     end
 
     def link_to_cart(text = nil)
-      return "" if current_spree_page?(cart_path)
+      return "" if current_spree_page?(spree.cart_path)
 
       text = text ? h(text) : t('cart')
       css_class = nil
@@ -26,7 +26,7 @@ module Spree
         css_class = 'full'
       end
 
-      link_to text, cart_path, :class => css_class
+      link_to text, spree.cart_path, :class => css_class
     end
 
     # human readable list of variant options
@@ -127,7 +127,7 @@ module Spree
       end
 
       countries.collect do |country|
-        country.name = I18n.t(country.iso, :scope => 'countries', :default => country.name)
+        country.name = I18n.t(country.iso, :scope => 'country_names', :default => country.name)
         country
       end.sort { |a, b| a.name <=> b.name }
     end

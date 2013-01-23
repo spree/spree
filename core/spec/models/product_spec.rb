@@ -301,6 +301,16 @@ describe Spree::Product do
         product.property('the_prop_new').should == 'value'
       }.should change { product.properties.length }.by(1)
     end
+
+    # Regression test for #2455
+    it "should not overwrite properties' presentation names" do
+      product = FactoryGirl.create :product
+      Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
+      product.set_property('foo', 'value1')
+      product.set_property('bar', 'value2')
+      Spree::Property.where(:name => 'foo').first.presentation.should == "Foo's Presentation Name"
+      Spree::Property.where(:name => 'bar').first.presentation.should == "bar"
+    end
   end
 
   context '#create' do
@@ -333,7 +343,7 @@ describe Spree::Product do
 
       it "should create product option types based on the prototype" do
         @product.save
-        @product.product_option_types.map(&:option_type_id).should == prototype.option_type_ids
+        @product.product_option_types.pluck(:option_type_id).should == prototype.option_type_ids
       end
 
       it "should create variants from an option values hash with one option type" do
@@ -414,7 +424,7 @@ describe Spree::Product do
     end
 
     it "should be sorted by position" do
-      product.images.map(&:alt).should eq(["position 1", "position 2"])
+      product.images.pluck(:alt).should eq(["position 1", "position 2"])
     end
 
   end

@@ -162,7 +162,7 @@ module Spree
       return if option_values_hash.nil?
       option_values_hash.keys.map(&:to_i).each do |id|
         self.option_type_ids << id unless option_type_ids.include?(id)
-        product_option_types.create({:option_type_id => id}, :without_protection => true) unless product_option_types.map(&:option_type_id).include?(id)
+        product_option_types.create({:option_type_id => id}, :without_protection => true) unless product_option_types.pluck(:option_type_id).include?(id)
       end
     end
 
@@ -232,10 +232,7 @@ module Spree
 
     def set_property(property_name, property_value)
       ActiveRecord::Base.transaction do
-        property = Property.where(:name => property_name).first_or_initialize
-        property.presentation = property_name
-        property.save!
-
+        property = Property.where(:name => property_name).first_or_create!(:presentation => property_name)
         product_property = ProductProperty.where(:product_id => id, :property_id => property.id).first_or_initialize
         product_property.value = property_value
         product_property.save!

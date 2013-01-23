@@ -121,6 +121,7 @@ describe Spree::Variant do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should raise an exception" do
+        variant = create(:base_variant)
         lambda { variant.on_hand = 100 }.should raise_error
       end
 
@@ -356,6 +357,21 @@ describe Spree::Variant do
       it "returns the value in the USD" do
         subject.should == 19.99
       end
+    end
+  end
+
+  # Regression test for #2432
+  describe 'options_text' do
+    before do
+      option_type = double("OptionType", :presentation => "Foo")
+      option_values = [double("OptionValue", :option_type => option_type, :presentation => "bar")]
+      variant.stub(:option_values).and_return(option_values)
+    end
+
+    it "orders options correctly" do
+      variant.option_values.should_receive(:joins).with(:option_type).and_return(scope = stub)
+      scope.should_receive(:order).with('spree_option_types.position asc').and_return(variant.option_values)
+      variant.options_text
     end
   end
 end

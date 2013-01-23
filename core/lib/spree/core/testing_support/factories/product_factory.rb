@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :simple_product, :class => Spree::Product do
+  factory :base_product, :class => Spree::Product do
     sequence(:name) { |n| "Product ##{n} - #{Kernel.rand(9999)}" }
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
     price 19.99
@@ -7,13 +7,15 @@ FactoryGirl.define do
     sku 'ABC'
     available_on 1.year.ago
     deleted_at nil
+  end
+
+  factory :simple_product, :parent => :base_product do
     on_hand 5
   end
 
   factory :product, :parent => :simple_product do
     tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
-    on_hand 5
   end
 
   factory :product_with_option_types, :parent => :product do
