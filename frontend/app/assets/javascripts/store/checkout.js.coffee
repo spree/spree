@@ -2,34 +2,41 @@
   ($ 'form.edit_order').submit ->
     ($ this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass 'disabled'
 
+Spree.checkout = {}
+
 $ ->
   if ($ '#checkout_form_address').is('*')
     ($ '#checkout_form_address').validate()
 
-    country_from_region = (region) ->
-      ($ 'p#' + region + 'country' + ' span#' + region + 'country-selection :only-child').val()
-
-    get_states = (region) ->
-      state_mapper[country_from_region(region)]
-
-    get_states_required = (region) ->
-      states_required_mapper[country_from_region(region)]
+    country_id = ->
+      $('p#' + region + 'country select').val()
 
     update_state = (region) ->
-      states = get_states(region)
-      states_required  = get_states_required(region)
+      if country_id != undefined
+        if Spree.checkout[country_id] == undefined
+          $.get Spree.routes.states_search + "/?country_id=#{country_id}", (data) ->
+            Spree.checkout[country_id] = {}
+            Spree.checkout[country_id]['states'] = data.states
+            Spree.checkout[country_id]['states_required'] = data.states_required
+            fill_in_states(Spree.checkout[country_id], region)
+        else
+          fill_in_states(Spree.checkout[country_id], region)
+
+    fill_in_states = (data, region) ->
+      states_required = data.states_required
+      states = data.states
 
       state_para = ($ 'p#' + region + 'state')
       state_select = state_para.find('select')
       state_input = state_para.find('input')
       state_span_required = state_para.find('state-required')
-      if states
+      if states.length > 0
         selected = parseInt state_select.val()
         state_select.html ''
-        states_with_blank = [ [ '', '' ] ].concat(states)
-        $.each states_with_blank, (pos, id_nm) ->
-          opt = ($ document.createElement('option')).attr('value', id_nm[0]).html(id_nm[1])
-          opt.prop 'selected', true if selected is id_nm[0]
+        states_with_blank = [{ name: '', id: ''}].concat(states)
+        $.each states_with_blank, (idx, state) ->
+          opt = ($ document.createElement('option')).attr('value', state.id).html(state.name)
+          opt.prop 'selected', true if selected is state.id
           state_select.append opt
 
         state_select.prop('disabled', false).show()
@@ -62,7 +69,7 @@ $ ->
       else
         ($ '#shipping .inner').show()
         ($ '#shipping .inner input, #shipping .inner select').prop 'disabled', false
-        if get_states('s')
+        if Spree.checkout[country_id].states.length == 0
           ($ 'span#sstate input').hide().prop 'disabled', true
         else
           ($ 'span#sstate select').hide().prop 'disabled', true

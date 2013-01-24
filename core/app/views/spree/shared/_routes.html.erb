@@ -1,0 +1,10 @@
+<script>
+  if (Spree === undefined) {
+    var Spree = {}
+  }
+  if (Spree.routes == undefined) {
+    Spree.routes = {}
+  }
+  Spree.routes.states_search = "<%= spree.api_states_path(:format => 'json') %>"
+</script>
+
