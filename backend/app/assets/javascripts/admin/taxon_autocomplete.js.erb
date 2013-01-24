@@ -4,12 +4,12 @@ $(document).ready(function() {
       placeholder: Spree.translations.taxon_placeholder,
       multiple: true,
       initSelection: function(element, callback) {
-        return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
+        return $.getJSON(Spree.routes.taxons_search + "?ids=" + (element.val()), null, function(data) {
           return callback(data);
         })
       },
       ajax: {
-        url: Spree.routes.taxon_search,
+        url: Spree.routes.taxons_search,
         datatype: 'json',
         data: function(term, page) {
           return { q: term }
