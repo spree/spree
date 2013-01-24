@@ -3,14 +3,8 @@ module Spree
     class StatesController < Spree::Api::BaseController
 
       def index
-        scope = if params[:country_id]
-          State.where(:country_id => params[:country_id])
-        else
-          State.scoped
-        end
-
         @states = scope.ransack(params[:q]).result.
-                     includes(:country).order('name ASC')
+                    includes(:country).order('name ASC')
 
         if params[:page] || params[:per_page]
           @states = @states.page(params[:page]).per(params[:per_page])
@@ -20,9 +14,19 @@ module Spree
       end
 
       def show
-        @state = State.find(params[:id])
+        @state = scope.find(params[:id])
         respond_with(@state)
       end
+
+      private
+        def scope
+          if params[:country_id]
+            @country = Country.find(params[:country_id])
+            return @country.states
+          else
+            return State.scoped
+          end
+        end
     end
   end
 end
