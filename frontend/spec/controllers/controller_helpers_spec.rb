@@ -7,16 +7,16 @@ describe Spree::ProductsController do
 
   before do
     I18n.stub(:available_locales => [:en, :de])
-    Rails.application.config.i18n.default_locale = :de
+    Spree::Frontend::Config[:locale] = :de
   end
 
   after do
-    Rails.application.config.i18n.default_locale = :en
+    Spree::Frontend::Config[:locale] = :en
     I18n.locale = :en
   end
 
   # Regression test for #1184
-  it "sets the default locale based off config.i18n.default_locale" do
+  it "sets the default locale based off Spree::Frontend::Config[:locale]" do
     I18n.locale.should == :en
     spree_get :index
     I18n.locale.should == :de
