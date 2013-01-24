@@ -10,8 +10,11 @@ module Spree
         end
 
         @states = scope.ransack(params[:q]).result.
-                     includes(:country).order('name ASC').
-                     page(params[:page]).per(params[:per_page])
+                     includes(:country).order('name ASC')
+
+        if params[:page] || params[:per_page]
+          @states = @states.page(params[:page]).per(params[:per_page])
+        end
 
         respond_with(@states)
       end
