@@ -32,7 +32,7 @@ module Spree
 
               previous_promo = @order.adjustments.promotion.eligible.first
               fire_event(event_name, :coupon_code => @order.coupon_code)
-              promo = @order.adjustments.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
+              promo = @order.adjustments.eligible.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
 
               if promo.present? and promo.eligible?
                 flash[:success] = t(:coupon_code_applied)
