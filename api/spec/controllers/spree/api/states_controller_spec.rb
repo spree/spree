@@ -11,13 +11,39 @@ module Spree
       stub_authentication!
     end
 
-    it "gets all countries" do
+    it "gets all states" do
       api_get :index
       json_response["states"].first.should have_attributes(attributes)
       json_response['states'].first['name'].should eq(state.name)
     end
 
-    context "with two countries" do
+    context "pagination" do
+      before do
+        State.should_receive(:scoped).and_return(@scope = stub)
+        @scope.stub_chain(:ransack, :result, :includes, :order).and_return(@scope)
+      end
+
+      it "does not paginate states results when asked not to do so" do
+        @scope.should_not_receive(:page)
+        @scope.should_not_receive(:per)
+        api_get :index
+      end
+
+      it "paginates when page parameter is passed through" do
+        @scope.should_receive(:page).with(1).and_return(@scope)
+        @scope.should_receive(:per).with(nil)
+        api_get :index, :page => 1
+      end
+
+      it "paginates when per_page parameter is passed through" do
+        @scope.should_receive(:page).with(nil).and_return(@scope)
+        @scope.should_receive(:per).with(25)
+        api_get :index, :per_page => 25
+      end
+    end
+
+
+    context "with two states" do
       before { create(:state, :name => "New South Wales") }
 
       it "gets all states for a country" do
@@ -30,25 +56,14 @@ module Spree
         json_response["states"].count.should == 1
       end
 
-      it "can view all countries" do
+      it "can view all states" do
         api_get :index
         json_response["states"].first.should have_attributes(attributes)
-        json_response['count'].should == 2
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 1
       end
 
       it 'can query the results through a paramter' do
         api_get :index, :q => { :name_cont => 'Vic' }
-        json_response['count'].should == 1
         json_response['states'].first['name'].should eq("Victoria")
-      end
-
-      it 'can control the page size through a parameter' do
-        api_get :index, :per_page => 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
       end
     end
 
