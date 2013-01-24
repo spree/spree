@@ -40,6 +40,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def create
     invoke_callbacks(:create, :before)
+    @object.attributes = params[object_name]
     if @object.save
       invoke_callbacks(:create, :after)
       flash[:success] = flash_message_for(@object, :successfully_created)
@@ -182,9 +183,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     def build_resource
       if parent_data.present?
-        parent.send(controller_name).build(params[object_name])
+        parent.send(controller_name).build
       else
-        model_class.new(params[object_name])
+        model_class.new
       end
     end
 
