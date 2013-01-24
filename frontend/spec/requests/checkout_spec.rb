@@ -1,10 +1,18 @@
 require 'spec_helper'
 
 describe "Checkout" do
-  let(:country) { create(:country, :name => "Kangaland",:states_required => true) }
-  before do
-    create(:state, :name => "Victoria", :country => country)
+  let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
+  let!(:state) { create(:state, :name => "Victoria", :country => country) }
+  let!(:shipping_method) do
+    shipping_method = create(:shipping_method)
+    calculator = Spree::Calculator::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
+    shipping_method.calculator = calculator
+    shipping_method.save
+
+    shipping_method
   end
+
+  let!(:payment_method) { create(:payment_method) }
 
   context "visitor makes checkout as guest without registration" do
     before(:each) do
@@ -38,9 +46,6 @@ describe "Checkout" do
 
     context "defaults to use billing address" do
       before do
-        shipping_method = create(:shipping_method)
-        shipping_method.zone.zone_members << Spree::ZoneMember.create(:zoneable => country)
-
         @order = OrderWalkthrough.up_to(:address)
         @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
 
@@ -109,13 +114,6 @@ describe "Checkout" do
       # Regression test for #1596
       context "full checkout" do
         before do
-          create(:payment_method)
-          Spree::ShippingMethod.delete_all
-          shipping_method = create(:shipping_method)
-          calculator = Spree::Calculator::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
-          shipping_method.calculator = calculator
-          shipping_method.save
-
           @product.shipping_category = shipping_method.shipping_category
           @product.save!
         end
@@ -144,16 +142,35 @@ describe "Checkout" do
     end
 
     context "promotions", :js => true do
+      def create_basic_coupon_promotion(code)
+        promotion = Spree::Promotion.create!({:name       => code.titleize,
+                                              :code       => code,
+                                              :event_name => "spree.checkout.coupon_code_added",
+                                              :starts_at  => 1.day.ago,
+                                              :expires_at => 1.day.from_now}, :without_protection => true)
+
+       calculator = Spree::Calculator::FlatRate.new
+       calculator.preferred_amount = 10
+
+       action = Spree::Promotion::Actions::CreateAdjustment.new
+       action.calculator = calculator
+       action.promotion = promotion 
+       action.save
+
+       promotion.reload # so that promotion.actions is available
+     end
+
+      let!(:promotion) { create_basic_coupon_promotion("onetwo") }
+
       # OrdersController
       context "on the payment page" do
         before do
+
           visit spree.root_path
           click_link "RoR Mug"
           click_button "add-to-cart-button"
           click_button "Checkout"
           fill_in "order_email", :with => "spree@example.com"
-          click_button "Continue"
-
           fill_in "First Name", :with => "John"
           fill_in "Last Name", :with => "Smith"
           fill_in "Street Address", :with => "1 John Street"
@@ -162,7 +179,6 @@ describe "Checkout" do
           select country.name, :from => "Country"
           select state.name, :from => "order[bill_address_attributes][state_id]"
           fill_in "Phone", :with => "555-555-5555"
-          check "Use Billing Address"
 
           # To shipping method screen
           click_button "Save and Continue"
@@ -177,10 +193,6 @@ describe "Checkout" do
         end
 
         context "with a promotion" do
-          before do
-            create_basic_coupon_promotion("onetwo")
-          end
-
           it "applies a promotion to an order" do
             fill_in "Coupon code", :with => "onetwo"
             click_button "Save and Continue"
@@ -191,7 +203,6 @@ describe "Checkout" do
 
       # CheckoutController
       context "on the cart page" do
-        let!(:promotion) { create_basic_coupon_promotion("onetwo") }
 
         before do
           visit spree.root_path
@@ -209,13 +220,6 @@ describe "Checkout" do
           fill_in "Coupon code", :with => "ONETwO"
           click_button "Apply"
           page.should have_content(I18n.t(:coupon_code_applied))
-        end
-
-        it "cannot enter a promotion code that was created after the order" do
-          promotion.update_column(:created_at, 1.day.from_now)
-          fill_in "Coupon code", :with => "onetwo"
-          click_button "Apply"
-          page.should have_content(I18n.t(:coupon_code_not_found))
         end
 
         it "informs the user about a coupon code which has exceeded its usage" do
