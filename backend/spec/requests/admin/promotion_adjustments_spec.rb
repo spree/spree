@@ -5,8 +5,6 @@ describe "Promotion Adjustments" do
 
   context "coupon promotions", :js => true do
     before(:each) do
-      # So that variant lookup will go through alright
-      Spree::Api::Config[:requires_authentication] = false
       visit spree.admin_path
       click_link "Promotions"
       click_link "New Promotion"
