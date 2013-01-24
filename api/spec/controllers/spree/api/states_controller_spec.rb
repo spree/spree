@@ -47,13 +47,14 @@ module Spree
       before { create(:state, :name => "New South Wales") }
 
       it "gets all states for a country" do
-        country = create(:country)
+        country = create(:country, :states_required => true)
         state.country = country 
         state.save
 
         api_get :index, :country_id => country.id
         json_response["states"].first.should have_attributes(attributes)
         json_response["states"].count.should == 1
+        json_response["states_required"] = true
       end
 
       it "can view all states" do
