@@ -9,7 +9,7 @@ describe "Shipments" do
     # Clear all the shipments and then re-create them in this test
 
     order.shipments.delete_all
-    reset_spree_preferences do |config|
+    configure_spree_preferences do |config|
       config.allow_backorders = true
     end
 

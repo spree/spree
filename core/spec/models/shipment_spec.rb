@@ -1,10 +1,7 @@
 require 'spec_helper'
+require 'benchmark'
 
 describe Spree::Shipment do
-  before(:each) do
-    reset_spree_preferences
-  end
-
   let(:order) { mock_model Spree::Order, :backordered? => false, :can_ship? => true, :currency => "USD" }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator'), :adjustment_label => "Shipping" }
   let(:shipment) do

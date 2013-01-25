@@ -14,7 +14,7 @@ describe "Customer Details" do
   end
 
   before do
-    reset_spree_preferences do |config|
+    configure_spree_preferences do |config|
       config.default_country_id = country.id
       config.company = true
     end

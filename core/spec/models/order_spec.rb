@@ -9,10 +9,6 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order do
-  before(:each) do
-    reset_spree_preferences
-  end
-
   let(:user) { stub_model(Spree::LegacyUser, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
 

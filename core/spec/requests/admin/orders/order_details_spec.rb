@@ -7,7 +7,7 @@ describe "Order Details" do
   context "edit order page" do
 
     before do
-      reset_spree_preferences do |config|
+      configure_spree_preferences do |config|
         config.allow_backorders = true
       end
       create(:country)
