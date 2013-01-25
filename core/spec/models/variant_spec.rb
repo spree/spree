@@ -5,10 +5,6 @@ require 'spec_helper'
 describe Spree::Variant do
   let!(:variant) { create(:variant, :count_on_hand => 95) }
 
-  before(:each) do
-    reset_spree_preferences
-  end
-
   context "validations" do
     it "should validate price is greater than 0" do
       variant.price = -1

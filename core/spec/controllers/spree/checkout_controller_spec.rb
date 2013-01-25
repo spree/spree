@@ -173,7 +173,7 @@ describe Spree::CheckoutController do
     before do
       order.stub(:line_items => [line_item])
 
-      reset_spree_preferences do |config|
+      configure_spree_preferences do |config|
         config.track_inventory_levels = true
         config.allow_backorders = false
       end
