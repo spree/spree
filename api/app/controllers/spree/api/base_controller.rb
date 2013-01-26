@@ -53,7 +53,7 @@ module Spree
 
       def authenticate_user
         if requires_authentication? || api_key.present?
-          unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key)
+          unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key.to_s)
             render "spree/api/errors/invalid_api_key", :status => 401 and return
           end
         else
