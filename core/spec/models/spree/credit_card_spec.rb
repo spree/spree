@@ -154,21 +154,6 @@ describe Spree::CreditCard do
     end
   end
 
-  context "#number=" do
-    it "should strip non-numeric characters from card input" do
-      credit_card.number = '6011000990139424'
-      credit_card.number.should == '6011000990139424'
-
-      credit_card.number = '  6011-0009-9013-9424  '
-      credit_card.number.should == '6011000990139424'
-    end
-
-    it "should not raise an exception on non-string input" do
-      credit_card.number = Hash.new
-      credit_card.number.should be_nil
-    end
-  end
-
   context "#associations" do
     it "should be able to access its payments" do
       expect { credit_card.payments.all }.not_to raise_error(ActiveRecord::StatementInvalid)
