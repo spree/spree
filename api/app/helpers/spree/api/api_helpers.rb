@@ -76,6 +76,10 @@ module Spree
       def country_attributes
         [:id, :iso_name, :iso, :iso3, :name, :numcode]
       end
+
+      def user_attributes
+        [:id, :email, :created_at, :updated_at]
+      end
     end
   end
 end

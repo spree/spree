@@ -30,18 +30,14 @@ module Spree
       alias_action :new, :to => :create
       alias_action :new_action, :to => :create
       alias_action :show, :to => :read
+      alias_action :delete, :to => :destroy
 
       user ||= Spree.user_class.new
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
         #############################
-        can :read, Spree.user_class do |resource|
-          resource == user
-        end
-        can :update, Spree.user_class do |resource|
-          resource == user
-        end
+        can [:read,:update,:destroy], Spree.user_class, :id => user.id
         can :create, Spree.user_class
         #############################
         can :read, Order do |order, token|
