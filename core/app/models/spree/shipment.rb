@@ -108,14 +108,19 @@ module Spree
 
     # Determines the appropriate +state+ according to the following logic:
     #
-    # pending    unless order is complete and +order.payment_state+ is +paid+
+    # pending    unless order is complete, +order.payment_state+ is +paid+ 
+    #            and allow_backorder_shipping is false
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
       return 'pending' unless order.can_ship?
-      return 'pending' if inventory_units.any? &:backordered?
-      return 'shipped' if state == 'shipped'
+      return 'pending' if self.hold_backordered?
+      return 'shipped' if self.state == 'shipped'
       order.paid? ? 'ready' : 'pending'
+    end
+
+    def hold_backordered?
+      self.inventory_units.any?(&:backordered?) && !Spree::Config[:allow_backorder_shipping]
     end
 
     private

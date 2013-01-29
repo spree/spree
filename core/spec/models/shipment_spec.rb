@@ -24,7 +24,6 @@ describe Spree::Shipment do
   end
 
   context "#update!" do
-
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
         shipment.state = "shipped"
@@ -33,8 +32,26 @@ describe Spree::Shipment do
       end
     end
 
+    shared_context "allow_backorder_shipping true" do
+      before(:each) do
+        reset_spree_preferences do |config|
+          config.allow_backorder_shipping = true
+        end
+      end
+    end
+
+    shared_examples_for "ready if allow_backorder_shipping is true" do
+      include_context "allow_backorder_shipping true"
+
+      it "should have a state of ready even if backordered" do
+        shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)])
+        shipment.should_receive(:update_column).with("state", "ready")
+        shipment.update!(order)
+      end
+    end
+
     shared_examples_for "pending if backordered" do
-      it "should have a state of pending if backordered" do
+      specify do
         shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => true)])
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
@@ -55,8 +72,10 @@ describe Spree::Shipment do
         shipment.should_receive(:update_column).with("state", "ready")
         shipment.update!(order)
       end
+
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
+      it_should_behave_like "ready if allow_backorder_shipping is true"
     end
 
     context "when order has balance due" do
@@ -66,8 +85,14 @@ describe Spree::Shipment do
         shipment.should_receive(:update_column).with("state", "pending")
         shipment.update!(order)
       end
+
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
+
+      context do
+        include_context "allow_backorder_shipping true"
+        it_should_behave_like "pending if backordered"
+      end
     end
 
     context "when order has a credit owed" do
@@ -77,8 +102,10 @@ describe Spree::Shipment do
         shipment.should_receive(:update_column).with("state", "ready")
         shipment.update!(order)
       end
+
       it_should_behave_like "immutable once shipped"
       it_should_behave_like "pending if backordered"
+      it_should_behave_like "ready if allow_backorder_shipping is true"
     end
 
     context "when shipment state changes to shipped" do
