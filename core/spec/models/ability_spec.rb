@@ -1,6 +1,6 @@
 require 'spec_helper'
-require 'bar_ability'
 require 'cancan/matchers'
+require 'spree/core/testing_support/bar_ability'
 
 # Fake ability for testing registration of additional abilities
 class FooAbility

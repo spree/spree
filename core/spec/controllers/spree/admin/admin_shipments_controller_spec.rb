@@ -1,6 +1,6 @@
 require 'spec_helper'
-require 'bar_ability'
 require 'cancan'
+require 'spree/core/testing_support/bar_ability'
 
 describe Spree::Admin::ShipmentsController do
   context '#authorize_admin' do

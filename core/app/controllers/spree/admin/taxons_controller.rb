@@ -109,12 +109,6 @@ module Spree
         respond_with(@taxon) { |format| format.json { render :json => '' } }
       end
 
-      private
-
-      def load_product
-        Product.find_by_permalink! params[:product_id]
-      end
-
     end
   end
 end

@@ -108,10 +108,19 @@ module Spree
         response.status.should == 201
       end
 
-      it "can destroy" do
+      it "can destroy user without orders" do
+        user.orders.destroy_all
         api_delete :destroy, :id => user.id
         response.status.should == 204
       end
+
+      it "cannot destroy user with orders" do
+        create(:completed_order_with_totals, :user => user)
+        api_delete :destroy, :id => user.id
+        json_response["exception"].should eq "Spree::LegacyUser::DestroyWithOrdersError"
+        response.status.should == 422
+      end
+
     end
   end
 end
