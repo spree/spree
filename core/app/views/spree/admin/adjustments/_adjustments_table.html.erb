@@ -24,15 +24,13 @@
           <%= link_to_toggle_adjustment_state @order, adjustment, :no_text => true %>
         </td>
       </tr>
-
-      <tr>
-        <td class="align-center">
-          <%= link_to t(:open_all_adjustments), open_adjustments_admin_order_path(@order) %>
-        </td>
-        <td class="align-center">
-          <%= link_to t(:close_all_adjustments), close_adjustments_admin_order_path(@order) %>
-        </td>
-      </tr>
     <% end %>
+    <tr>
+      <td class="align-center" colspan='4'>
+        <%= button_to t(:open_all_adjustments), open_adjustments_admin_order_path(@order) %>&nbsp;
+        <%= button_to t(:close_all_adjustments), close_adjustments_admin_order_path(@order) %>
+      </td>
+      <td class='actions'>&nbsp;</td>
+    </tr>
   </tbody>
 </table>
