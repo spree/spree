@@ -17,7 +17,6 @@ module Spree
           rescue
             record = Object.new
           end
-          authorize! :admin, record
           authorize! params[:action].to_sym, record
         end
 
