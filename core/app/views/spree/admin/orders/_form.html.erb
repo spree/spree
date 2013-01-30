@@ -38,7 +38,7 @@
         <tbody id="order-charges" data-hook="admin_order_form_adjustments" class="no-border-top">
           <% @order.adjustments.eligible.each do |adjustment| %>
             <tr>
-              <td colspan="3"><strong><%= adjustment.label %></strong></td>
+              <td colspan="3"><strong><%= adjustment.label %>:</strong></td>
               <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
               <td class="actions"></td>
             </tr>
