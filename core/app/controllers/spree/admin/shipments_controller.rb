@@ -79,10 +79,11 @@ module Spree
 
       def order
         @order ||= Order.find_by_number(params[:order_id])
+        authorize! params[:action], @order
       end
 
       def shipment
-        @shipment ||= Shipment.find_by_number(params[:id])
+        @shipment ||= order.shipments.find_by_number(params[:id])
       end
 
       def build_shipment

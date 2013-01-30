@@ -111,6 +111,7 @@ module Spree
 
         def load_order
           @order = Order.find_by_number!(params[:id], :include => :adjustments) if params[:id]
+          authorize! params[:action], @order
         end
 
         # Used for extensions which need to provide their own custom event links on the order details view.
