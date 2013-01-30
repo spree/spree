@@ -53,14 +53,17 @@ module Spree
       return unless File.exists? 'public/robots.txt'
       append_file "public/robots.txt", <<-ROBOTS
 User-agent: *
-Disallow: /checkouts
+Disallow: /checkout
+Disallow: /cart
 Disallow: /orders
 Disallow: /countries
 Disallow: /line_items
 Disallow: /password_resets
 Disallow: /states
 Disallow: /user_sessions
+Disallow: /user_registrations
 Disallow: /users
+Disallow: /account
       ROBOTS
     end
 
