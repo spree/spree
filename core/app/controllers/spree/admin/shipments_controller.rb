@@ -92,6 +92,10 @@ module Spree
         @shipment.shipping_method ||= order.shipping_method
         @shipment.attributes = params[:shipment]
       end
+
+      def model_class
+        Spree::Shipment
+      end
     end
   end
 end

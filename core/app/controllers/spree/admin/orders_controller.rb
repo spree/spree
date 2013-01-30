@@ -34,7 +34,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = Order.ransack(params[:q])
+        @search = Order.accessible_by(current_ability, :index).ransack(params[:q])
         @orders = @search.result.includes([:user, :shipments, :payments]).
           page(params[:page]).
           per(params[:per_page] || Spree::Config[:orders_per_page])
@@ -118,6 +118,9 @@ module Spree
           @order_events = %w{cancel resume}
         end
 
+        def model_class
+          Spree::Order
+        end
     end
   end
 end

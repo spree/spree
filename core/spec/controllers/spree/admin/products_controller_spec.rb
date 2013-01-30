@@ -4,6 +4,8 @@ describe Spree::Admin::ProductsController do
   stub_authorization!
 
   context "#index" do
+    let(:ability_user) { stub_model(Spree::LegacyUser, :has_spree_role? => true) }
+
     # Regression test for #1259
     it "can find a product by SKU" do
       product = create(:product, :sku => "ABC123")
