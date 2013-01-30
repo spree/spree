@@ -1,3 +1,4 @@
+//= require jquery-migrate-1.0.0
 //= require jquery-ui
 //= require modernizr
 //= require jquery.cookie
