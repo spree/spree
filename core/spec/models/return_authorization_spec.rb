@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
-  let(:inventory_unit) { Spree::InventoryUnit.create({:variant => mock_model(Spree::Variant)}, :without_protection => true) }
+  let(:inventory_unit) { Spree::InventoryUnit.create({:variant => mock_model(Spree::Variant), :state => "shipped"}, :without_protection => true) }
   let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
   let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order}, :without_protection => true) }
 
@@ -24,29 +24,34 @@ describe Spree::ReturnAuthorization do
     context "on empty rma" do
       it "should associate inventory unit" do
         order.stub(:authorize_return!)
+        inventory_unit.should_receive(:restock_variant)
         return_authorization.add_variant(inventory_unit.variant.id, 1)
         return_authorization.inventory_units.size.should == 1
         inventory_unit.return_authorization.should == return_authorization
       end
 
       it "should update order state" do
+        inventory_unit.should_receive(:restock_variant)
         order.should_receive(:authorize_return!)
         return_authorization.add_variant(inventory_unit.variant.id, 1)
       end
     end
 
     context "on rma that already has inventory_units" do
-      let(:inventory_unit_2)  { Spree::InventoryUnit.create({:variant => inventory_unit.variant}, :without_protection => true) }
+      let(:inventory_unit_2)  { Spree::InventoryUnit.create({:variant => inventory_unit.variant, :state => "shipped"}, :without_protection => true) }
       before { order.stub(:inventory_units => [inventory_unit, inventory_unit_2], :awaiting_return? => true) }
 
       it "should associate inventory unit" do
         order.stub(:authorize_return!)
+        inventory_unit.should_receive(:restock_variant)
+        inventory_unit_2.should_receive(:restock_variant)
         return_authorization.add_variant(inventory_unit.variant.id, 2)
         return_authorization.inventory_units.size.should == 2
         inventory_unit_2.return_authorization.should == return_authorization
       end
 
       it "should not update order state" do
+        inventory_unit.should_receive(:restock_variant)
         order.should_not_receive(:authorize_return!)
         return_authorization.add_variant(inventory_unit.variant.id, 1)
       end
