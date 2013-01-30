@@ -13,7 +13,6 @@ class OrderSpecificAbility
 end
 
 describe Spree::Admin::OrdersController do
-
   before { Spree::Order.stub :find_by_number! => order }
 
   context "without auth" do

@@ -181,7 +181,6 @@ describe Spree::Ability do
         # It can create new users if is has access to the :admin, User!!
 
         # TODO change the Ability class so only users and customers get the extra premissions?
-
         Spree::Ability.remove_ability(BarAbility)
       end
     end
