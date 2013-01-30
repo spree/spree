@@ -25,6 +25,8 @@ describe Spree::Admin::MailMethodsController do
   end
 
   it "can trigger testmail without current_user" do
+    controller.stub :try_spree_current_user => nil
+
     spree_post :testmail, :id => create(:mail_method).id
     flash[:error].should_not include("undefined local variable or method `current_user'")
   end

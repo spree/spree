@@ -134,9 +134,19 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     def load_resource
       if member_action?
         @object ||= load_resource_instance
+
+        # call authorize! a third time (called twice already in Admin::BaseController)
+        # this time we pass the actual instance so fine-grained abilities can control
+        # access to individual records, not just entire models.
+        authorize! :manage, @object
+
         instance_variable_set("@#{object_name}", @object)
       else
         @collection ||= collection
+
+        # note: we don't call authorize here as the collection method should use
+        # CanCan's accessible_by method to restrict the actual records returned
+
         instance_variable_set("@#{controller_name}", @collection)
       end
     end
@@ -181,7 +191,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     def collection
       return parent.send(controller_name) if parent_data.present?
       if model_class.respond_to?(:accessible_by) && !current_ability.has_block?(params[:action], model_class)
-        model_class.accessible_by(current_ability)
+        model_class.accessible_by(current_ability, params[:action])
       else
         model_class.scoped
       end

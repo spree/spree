@@ -1,8 +1,11 @@
 module AuthorizationHelpers
   module Controller
     def stub_authorization!
+      let(:ability_user) { stub_model(Spree::LegacyUser) }
+
       before do
-        controller.should_receive(:authorize!).twice.and_return(true)
+        controller.should_receive(:authorize!).at_least(:twice).and_return(true)
+        controller.stub(:try_spree_current_user => ability_user)
       end
     end
   end

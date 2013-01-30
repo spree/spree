@@ -4,10 +4,15 @@ module Spree
     self.table_name = 'spree_users'
     attr_accessible :email, :password, :password_confirmation
 
+    has_many :orders
     belongs_to :ship_address, :class_name => 'Spree::Address'
     belongs_to :bill_address, :class_name => 'Spree::Address'
 
     scope :registered
+
+    before_destroy :check_completed_orders
+
+    class DestroyWithOrdersError < StandardError; end
 
     def anonymous?
       false
@@ -24,5 +29,11 @@ module Spree
 
     attr_accessor :password
     attr_accessor :password_confirmation
+
+    private
+
+      def check_completed_orders
+        raise DestroyWithOrdersError if orders.complete.present?
+      end
   end
 end
