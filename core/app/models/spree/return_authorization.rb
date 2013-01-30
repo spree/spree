@@ -44,7 +44,7 @@ module Spree
           next unless inventory_unit.return_authorization.nil? && count < quantity
 
           inventory_unit.return_authorization = self
-          inventory_unit.save!
+          inventory_unit.return!
 
           count += 1
         end

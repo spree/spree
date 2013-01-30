@@ -17,7 +17,7 @@
               <%= check_box_tag "inventory_units[#{inventory_unit.id}]",
                                 :true,
                                 (inventory_unit.shipment == @shipment),
-                                { :disabled => %w(shipped backordered returned).include?(inventory_unit.state),
+                                { :disabled => %w(shipped backordered).include?(inventory_unit.state),
                                   :class => 'inventory_unit'} %>
             </td>
             <td style="vertical-align:top; width:120px;"><%= inventory_unit.variant.sku %></td>
