@@ -40,7 +40,7 @@ module Spree
             end
           end
         else
-          { :coupon_applied? => true }
+          { :coupon_applied? => true, :success => t(:coupon_code_applied) }
         end
       end
     end
