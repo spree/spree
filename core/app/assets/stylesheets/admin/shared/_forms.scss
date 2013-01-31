@@ -9,9 +9,9 @@ input[type="number"],
 input[type="tel"],
 textarea, fieldset {
   @include border-radius($border-radius);
-  padding: 7px 10px;  
+  padding: 7px 10px;
   border: 1px solid $color-txt-brd;
-  color: $color-body-text;
+  color: $color-txt-text;
   font-size: 90%;
 
   &:focus {
@@ -47,13 +47,13 @@ label {
 
 .label-block label { display: block }
 
-input[type="submit"], 
-input[type="button"], 
+input[type="submit"],
+input[type="button"],
 button, .button {
   @include border-radius($border-radius);
   display: inline-block;
   padding: 8px 15px;
-  border: none;  
+  border: none;
   background-color: $color-btn-bg;
   color: $color-btn-text;
   text-transform: uppercase;
@@ -67,7 +67,7 @@ button, .button {
     color: $color-btn-hover-text;
   }
 
-  &:active:focus {    
+  &:active:focus {
     box-shadow: 0 0 8px 0 darken($color-btn-hover-bg, 5) inset;
   }
 
@@ -91,7 +91,7 @@ span.info {
 
   &.checkbox {
     min-height: 73px;
-    
+
     input[type="checkbox"] {
       display: inline-block;
       width: auto;
@@ -125,8 +125,8 @@ span.info {
 
   &.withError {
     .field_with_errors {
-      label { 
-        color: very-light($color-error, 30); 
+      label {
+        color: very-light($color-error, 30);
       }
 
       input {
@@ -148,14 +148,14 @@ fieldset {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   margin-left: 0;
-  margin-right: 0;  
-  position: relative;  
+  margin-right: 0;
+  position: relative;
   margin-bottom: 35px;
   padding: 10px 0 15px 0;
   background-color: transparent;
   border-left: none;
   border-right: none;
-  border-radius: 0;    
+  border-radius: 0;
 
   &.no-border-bottom {
     border-bottom: none;
@@ -168,8 +168,8 @@ fieldset {
   }
 
   legend {
-    background-color: $color-1;    
-    color: $color-2;    
+    background-color: $color-1;
+    color: $color-2;
     font-size: 14px;
     font-weight: 600;
     text-transform: uppercase;
@@ -178,7 +178,7 @@ fieldset {
   }
 
   label {
-    color: lighten($color-body-text, 15);
+    color: lighten($color-body-text, 8);
   }
 
   .filter-actions {
@@ -192,7 +192,7 @@ fieldset {
 
     button, .button, input[type="submit"], input[type="button"], span.or {
       @include border-radius($border-radius);
-      
+
       -webkit-box-shadow: 0 0 0 15px $color-1;
          -moz-box-shadow: 0 0 0 15px $color-1;
           -ms-box-shadow: 0 0 0 15px $color-1;

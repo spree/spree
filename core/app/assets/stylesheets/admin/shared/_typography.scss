@@ -22,7 +22,7 @@ strong, b {
 
 // links
 //--------------------------------------------------------------
-a { 
+a {
   color: $color-link;
   text-decoration: none;
   line-height: inherit;
@@ -31,17 +31,17 @@ a {
     outline: none;
   }
 
-  &:hover {
-    color: $color-link-hover;
-  }
-  &:active {
-    color: $color-link-active;
-  }
   &:visited {
     color: $color-link-visited;
   }
   &:focus {
     color: $color-link-focus;
+  }
+  &:active {
+    color: $color-link-active;
+  }
+  &:hover {
+    color: $color-link-hover;
   }
 }
 
@@ -50,8 +50,8 @@ a {
 
 h1,h2,h3,h4,h5,h6 {
   font-weight: 600;
-  color: $color-headers; 
-  line-height: 1.1; 
+  color: $color-headers;
+  line-height: 1.1;
 }
 
 h1 { font-size: $h1-size; line-height: $h1-size + 6 }
