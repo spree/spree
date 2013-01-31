@@ -1,18 +1,14 @@
 <div class="row steps-data">
 
   <% if order.has_step?("address") %>
-    <div class="columns alpha four">
+    <div class="columns alpha four" data-hook="order-ship-address">
       <h6><%= t(:shipping_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-      <div class="address">
-        <%= order.ship_address %>
-      </div>
+      <%= render :partial => 'spree/shared/address', :locals => { :address => order.ship_address } %>
     </div>
 
-    <div class="columns alpha four">
+    <div class="columns alpha four" data-hook="order-bill-address">
       <h6><%= t(:billing_address) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
-      <div class="address">
-        <%= order.bill_address %>
-      </div>
+      <%= render :partial => 'spree/shared/address', :locals => { :address => order.bill_address } %>
     </div>
 
     <% if @order.has_step?("delivery") %>
