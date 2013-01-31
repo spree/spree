@@ -16,15 +16,7 @@ module Spree
       end
 
       def update
-        if @order.update_attributes(object_params)
-          if object_params[:coupon_code].present?
-            coupon_result = apply_coupon_code
-            if !coupon_result[:code_applied?]
-              @coupon_message = coupon_result[:error]
-              respond_with(@order, :default_template => 'spree/api/orders/could_not_apply_coupon')
-              return
-            end
-          end
+         if @order.update_attributes(object_params)
           state_callback(:after) if @order.next
           respond_with(@order, :default_template => 'spree/api/orders/show')
         else
