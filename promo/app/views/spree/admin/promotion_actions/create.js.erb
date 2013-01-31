@@ -5,7 +5,8 @@ $(document).ready(function(){
 });
 initProductActions();
 
-$('.type-select.select2').select2();
+//enable select2 functions for recently added box
+$('.type-select.select2').last().select2();
 
 $('#<%= dom_id @promotion_action %>').hide();
 $('#<%= dom_id @promotion_action %>').fadeIn();
