@@ -2,11 +2,11 @@ $('#actions').append('<%= escape_javascript( render(:partial => 'spree/admin/pro
 $('#actions .no-objects-found').hide();
 $(document).ready(function(){
   $(".variant_autocomplete").variantAutocomplete();
+  //enable select2 functions for recently added box
+  $('.type-select.select2').last().select2();
 });
 initProductActions();
 
-//enable select2 functions for recently added box
-$('.type-select.select2').last().select2();
 
 $('#<%= dom_id @promotion_action %>').hide();
 $('#<%= dom_id @promotion_action %>').fadeIn();
