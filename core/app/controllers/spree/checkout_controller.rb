@@ -107,10 +107,6 @@ module Spree
         @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
       end
 
-      def before_payment
-        current_order.payments.destroy_all if request.put?
-      end
-
       def after_complete
         session[:order_id] = nil
       end
