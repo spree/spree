@@ -21,9 +21,11 @@ module Spree
       session[:last_jirafe_sync] = DateTime.now
       begin
         store = Spree::Dash::Jirafe.synchronize_resources(store_hash)
-        redirect_to admin_path
+      rescue SocketError
+        flash[:error] = t(:could_not_connect_to_jirafe)
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
+      ensure
         redirect_to admin_path
       end
     end
