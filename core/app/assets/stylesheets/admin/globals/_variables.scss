@@ -12,7 +12,7 @@ $base-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial,
 // Basic color palette for admin
 $color-1:                     #FFFFFF !default;    // White
 $color-2:                     #9FC820 !default;    // Green
-$color-3:                     #5FA5E8 !default;    // Light Blue
+$color-3:                     #5498DA !default;    // Light Blue
 $color-4:                     #6788A2 !default;    // Dark Blue
 $color-5:                     #C60F13 !default;    // Red
 $color-6:                     #FF9300 !default;    // Yellow
@@ -26,7 +26,7 @@ $color-link-hover:            $color-2 !default;
 $color-link-active:           $color-2 !default;
 $color-link-focus:            $color-2 !default;
 $color-link-visited:          $color-3 !default;
-$color-border:                very-light($color-3, 8) !default;
+$color-border:                very-light($color-3, 12) !default;
 
 // Basic flash colors
 $color-success:               $color-2 !default;
@@ -35,8 +35,8 @@ $color-error:                 $color-5 !default;
 
 // Table colors
 $color-tbl-odd:               $color-1 !default;
-$color-tbl-even:              very-light($color-3) !default;
-$color-tbl-thead:             very-light($color-3) !default;
+$color-tbl-even:              very-light($color-3, 4) !default;
+$color-tbl-thead:             very-light($color-3, 4) !default;
 
 // Button colors
 $color-btn-bg:                $color-3 !default;
@@ -66,8 +66,8 @@ $color-sel-hover-text:        $color-1 !default;
 
 // Text inputs colors
 $color-txt-brd:               $color-border !default;
-$color-txt-text:              $color-4 !default;
-$color-txt-hover-brd:         very-light($color-2, 20) !default;
+$color-txt-text:              $color-3 !default;
+$color-txt-hover-brd:         $color-2 !default;
 
 // States label colors
 $color-ste-complete-bg:       $color-success !default;
