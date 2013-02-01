@@ -4,15 +4,14 @@ Spree::CheckoutController.class_eval do
   private
 
   def after_update_attributes
-    if object_params[:coupon_code].present?
-      coupon_result = apply_coupon_code
-      unless coupon_result[:coupon_applied?]
-        flash[:error] = coupon_result[:error]
-        respond_with(@order) { |format| format.html { render :edit } }
-        return true
-      end
+    coupon_result = apply_coupon_code
+    if coupon_result[:coupon_applied?]
       flash[:success] = coupon_result[:success]
+      return false
+    else
+      flash[:error] = coupon_result[:error]
+      respond_with(@order) { |format| format.html { render :edit } }
+      return true
     end
-    false
   end
 end

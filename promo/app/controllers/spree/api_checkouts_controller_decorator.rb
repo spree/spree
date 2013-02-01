@@ -10,7 +10,6 @@ Spree::Api::CheckoutsController.class_eval do
         @coupon_message = coupon_result[:error]
         respond_with(@order, :default_template => 'spree/api/orders/could_not_apply_coupon')
       end
-      return true
     end
     false
   end
