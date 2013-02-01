@@ -10,6 +10,8 @@ en:
   analytics_desc_list_3: Absolutely no code to install
   analytics_desc_list_4: It's completely free!
 
+  could_not_connect_to_jirafe: Could not connect to Jirafe to sync data. This will be automatically retried later.
+
   spree:
     dash:
       jirafe:
