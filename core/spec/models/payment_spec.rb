@@ -563,4 +563,12 @@ describe Spree::Payment do
       payment.gateway_options[:ip].should == order.last_ip_address
     end
   end
+
+  # Regression test for #1998
+  context "#set_unique_identifier" do
+    it "sets a unique identifier on create" do
+      payment.run_callbacks(:save)
+      payment.identifier.should_not be_blank
+    end
+  end
 end

@@ -8,6 +8,8 @@ module Spree
     has_many :offsets, :class_name => "Spree::Payment", :foreign_key => :source_id, :conditions => "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
     has_many :log_entries, :as => :source
 
+    before_save :set_unique_identifier
+
     after_save :create_payment_profile, :if => :profiles_supported?
 
     # update the order totals, etc.
@@ -107,6 +109,23 @@ module Spree
       def update_order
         order.payments.reload
         order.update!
+      end
+
+      # Necessary because some payment gateways will refuse payments with
+      # duplicate IDs. We *were* using the Order number, but that's set once and
+      # is unchanging. What we need is a unique identifier on a per-payment basis,
+      # and this is it. Related to #1998.
+      # See https://github.com/spree/spree/issues/1998#issuecomment-12869105
+      def set_unique_identifier
+        chars = [('A'..'Z').to_a, ('0'..'9').to_a].flatten - %w(0 1 I O)
+        identifier = ''
+        8.times { identifier << chars[rand(chars.length)] }
+        if Spree::Payment.exists?(:identifier => identifier)
+          # Call it again, we've got a duplicate ID.
+          set_unique_identifier
+        else
+          self.identifier = identifier
+        end
       end
   end
 end
