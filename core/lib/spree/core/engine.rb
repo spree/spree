@@ -1,3 +1,5 @@
+require 'rabl'
+
 module Spree
   module Core
     class Engine < ::Rails::Engine
