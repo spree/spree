@@ -111,7 +111,7 @@ module Spree
       options = { :email    => order.email,
                   :customer => order.email,
                   :ip       => '192.168.1.100', # TODO: Use an actual IP
-                  :order_id => order.number }
+                  :order_id => "#{order.number}-#{self.identifier}" }
 
       options.merge!({ :shipping => order.ship_total * 100,
                        :tax      => order.tax_total * 100,
