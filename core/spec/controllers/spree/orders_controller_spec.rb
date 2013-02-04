@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrdersController do
   let(:user) { create(:user) }
-  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code => nil, :user => user, :completed? => false, :currency => "USD")}
+  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code => nil, :user => user, :completed? => false, :currency => "USD", :token => 'a1b2c3d4')}
   before do
     # Don't care about IP address being set here
     order.stub(:last_ip_address=)
@@ -11,6 +11,8 @@ describe Spree::OrdersController do
     if Spree::BaseController.spree_responders[:OrdersController].present?
       Spree::BaseController.spree_responders[:OrdersController].clear
     end
+
+    controller.stub(:try_spree_current_user => user)
   end
 
   context "#populate" do

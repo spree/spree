@@ -9,16 +9,6 @@ module Spree
           end
         end
 
-        # This should be overridden by an auth-related extension which would then have the
-        # opportunity to associate the new order with the # current user before saving.
-        def before_save_new_order
-        end
-
-        # This should be overridden by an auth-related extension which would then have the
-        # opporutnity to store tokens, etc. in the session # after saving.
-        def after_save_new_order
-        end
-
         # The current incomplete order from the session for use in cart and during checkout
         def current_order(create_order_if_necessary = false)
           return @current_order if @current_order
@@ -28,9 +18,13 @@ module Spree
           end
           if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
             @current_order = Spree::Order.new(:currency => current_currency)
-            before_save_new_order
+            @current_order.user ||= try_spree_current_user
             @current_order.save!
-            after_save_new_order
+
+            # make sure the user has permission to access the order (if they are a guest)
+            if try_spree_current_user.nil?
+              session[:access_token] = @current_order.token
+            end
           end
           if @current_order
             @current_order.last_ip_address = ip_address

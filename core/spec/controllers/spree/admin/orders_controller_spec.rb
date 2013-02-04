@@ -14,11 +14,12 @@ end
 
 describe Spree::Admin::OrdersController do
 
+  before { Spree::Order.stub :find_by_number! => order }
+
   context "without auth" do
     stub_authorization!
 
     before do
-      Spree::Order.stub :find_by_number! => order
       request.env["HTTP_REFERER"] = "http://localhost:3000"
 
       # ensure no respond_overrides are in effect
@@ -70,6 +71,7 @@ describe Spree::Admin::OrdersController do
       Spree::Ability.register_ability(BarAbility)
       spree_post :index
       response.should render_template :index
+      Spree::Ability.remove_ability(BarAbility)
     end
 
     it 'should deny access to users with an bar role' do
@@ -81,6 +83,7 @@ describe Spree::Admin::OrdersController do
       Spree::Ability.register_ability(BarAbility)
       spree_put :update, { :id => 'R123' }
       response.should redirect_to('/unauthorized')
+      Spree::Ability.remove_ability(BarAbility)
     end
 
     it 'should deny access to users without an admin role' do

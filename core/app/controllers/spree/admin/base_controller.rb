@@ -12,11 +12,7 @@ module Spree
 
       protected
         def authorize_admin
-          begin
-            record = model_class.new
-          rescue
-            record = Object.new
-          end
+          record = model_class rescue Object
           authorize! params[:action].to_sym, record
         end
 

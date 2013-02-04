@@ -31,6 +31,7 @@ describe Spree::Admin::ShipmentsController do
       Spree::Ability.register_ability(BarAbility)
       spree_get :index
       response.should render_template :index
+      Spree::Ability.remove_ability(BarAbility)
     end
 
     it 'should grant access to users with an bar role' do
@@ -39,6 +40,7 @@ describe Spree::Admin::ShipmentsController do
       spree_get :edit, { :order_id => 'R123', :id => 9 }
       response.should_not redirect_to('/unauthorized')
       response.status.should_not == 302
+      Spree::Ability.remove_ability(BarAbility)
     end
 
     it 'should grant access to users with an bar role' do
@@ -47,6 +49,7 @@ describe Spree::Admin::ShipmentsController do
       spree_put :update, { :order_id => 'R123', :id => 9 }
       response.should_not redirect_to('/unauthorized')
       response.status.should_not == 302
+      Spree::Ability.remove_ability(BarAbility)
     end
 
     it 'should deny access to users without an admin role' do

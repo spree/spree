@@ -13,6 +13,7 @@ module Spree
     before_filter :load_order
     before_filter :ensure_valid_state
     before_filter :associate_user
+    before_filter :check_authorization
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     respond_to :html
@@ -114,6 +115,10 @@ module Spree
       def rescue_from_spree_gateway_error
         flash[:error] = t(:spree_gateway_error_flash_for_checkout)
         render :edit
+      end
+
+      def check_authorization
+        authorize!(:edit, current_order, session[:access_token])
       end
   end
 end

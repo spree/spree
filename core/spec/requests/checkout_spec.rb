@@ -74,13 +74,17 @@ describe "Checkout" do
 
     context "and likes to double click buttons" do
       before(:each) do
+        user = create(:user)
+
         order = OrderWalkthrough.up_to(:delivery)
         order.stub :confirmation_required? => true
 
         order.reload
+        order.user = user
         order.update!
 
         Spree::CheckoutController.any_instance.stub(:current_order => order)
+        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
         Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
       end
 

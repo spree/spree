@@ -20,6 +20,7 @@ Spree::Core::Engine.routes.draw do
   end
 
   get '/orders/populate', :via => :get, :to => populate_redirect
+  match '/orders/:id/token/:token' => 'orders#show', :via => :get, :as => :token_order
 
   resources :orders do
     post :populate, :on => :collection
