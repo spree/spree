@@ -15,6 +15,8 @@ end
 describe Spree::Admin::OrdersController do
   before { Spree::Order.stub :find_by_number! => order }
 
+  before { Spree::Order.stub :find_by_number! => order }
+
   context "without auth" do
     stub_authorization!
 
