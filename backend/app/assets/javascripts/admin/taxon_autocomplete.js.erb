@@ -12,7 +12,9 @@ $(document).ready(function() {
         url: Spree.routes.taxons_search,
         datatype: 'json',
         data: function(term, page) {
-          return { q: term }
+          return { q:
+            { name_cont: term }
+          }
         },
         results: function (data, page) {
           return { results: data }
