@@ -56,6 +56,19 @@ $ ->
 
     ($ 'p#bcountry select').change ->
       update_state 'b'
+      if $('input#order_use_billing').is(':checked')
+        c_id = $('#bcountry select').val()
+        $('#scountry select').val(c_id).change()
+
+    ($ 'p#bstate input').change ->
+      if $('input#order_use_billing').is(':checked')
+        $('#sstate input').val($('#sstate input').val())
+
+    ($ 'p#bstate select').change ->
+      console.log("triggering right field")
+      if $('input#order_use_billing').is(':checked')
+        $('p#sstate select').val($('#bstate select').val())
+
 
     ($ 'p#scountry select').change ->
       update_state 's'
