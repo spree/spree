@@ -30,18 +30,22 @@ module Spree
                 return false
               end
 
-              previous_promo = @order.adjustments.promotion.eligible.first
+              eligible_promos = @order.adjustments.promotion.eligible
+
+              previous_promo = eligible_promos.first
               fire_event(event_name, :coupon_code => @order.coupon_code)
-              promo = @order.adjustments.eligible.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
+              promo = eligible_promos.detect { |p| p.originator.promotion.code == @order.coupon_code }
+              ineligible_promos = @order.adjustments.promotion.where(:eligible => false)
+              ineligible_promo = ineligible_promos.detect { |p| p.originator.promotion.code == @order.coupon_code }
 
               if promo.present? and promo.eligible?
                 flash[:success] = t(:coupon_code_applied)
                 true
-              elsif promo.present?
-                flash[:error] = t(:coupon_code_not_eligible)
-                false
               elsif previous_promo.present?
                 flash[:error] = t(:coupon_code_better_exists)
+                false
+              elsif ineligible_promo.present?
+                flash[:error] = t(:coupon_code_not_eligible)
                 false
               else
                 # if the promotion was created after the order
