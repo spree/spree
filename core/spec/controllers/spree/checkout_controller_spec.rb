@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController do
-
+  let(:token) { 'some_token' }
   let(:user) { stub_model(Spree::LegacyUser) }
   let(:order) do
     mock_model(Spree::Order, :checkout_allowed? => true,
@@ -20,6 +20,11 @@ describe Spree::CheckoutController do
   end
 
   context "#edit" do
+
+    it 'should check if the user is authorized for :edit' do
+      controller.should_receive(:authorize!).with(:edit, order, token)
+      spree_get :edit, { :state => 'address' }, { :access_token => token }
+    end
 
     it "should redirect to the cart path unless checkout_allowed?" do
       order.stub :checkout_allowed? => false
@@ -58,6 +63,11 @@ describe Spree::CheckoutController do
   end
 
   context "#update" do
+
+    it 'should check if the user is authorized for :edit' do
+      controller.should_receive(:authorize!).with(:edit, order, token)
+      spree_post :update, { :state => 'address' }, { :access_token => token }
+    end
 
     context "save successful" do
       before do
