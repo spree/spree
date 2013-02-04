@@ -8,19 +8,20 @@ $ ->
   if ($ '#checkout_form_address').is('*')
     ($ '#checkout_form_address').validate()
 
-    country_id = ->
+    country_id = (region) ->
       $('p#' + region + 'country select').val()
 
     update_state = (region) ->
-      if country_id != undefined
-        if Spree.checkout[country_id] == undefined
-          $.get Spree.routes.states_search + "/?country_id=#{country_id}", (data) ->
-            Spree.checkout[country_id] = {}
-            Spree.checkout[country_id]['states'] = data.states
-            Spree.checkout[country_id]['states_required'] = data.states_required
-            fill_in_states(Spree.checkout[country_id], region)
+      c_id = country_id(region)
+      if c_id != undefined
+        if Spree.checkout[c_id] == undefined
+          $.get Spree.routes.states_search + "/?country_id=#{c_id}", (data) ->
+            Spree.checkout[c_id] = {}
+            Spree.checkout[c_id]['states'] = data.states
+            Spree.checkout[c_id]['states_required'] = data.states_required
+            fill_in_states(Spree.checkout[c_id], region)
         else
-          fill_in_states(Spree.checkout[country_id], region)
+          fill_in_states(Spree.checkout[c_id], region)
 
     fill_in_states = (data, region) ->
       states_required = data.states_required
@@ -69,10 +70,7 @@ $ ->
       else
         ($ '#shipping .inner').show()
         ($ '#shipping .inner input, #shipping .inner select').prop 'disabled', false
-        if Spree.checkout[country_id].states.length == 0
-          ($ 'span#sstate input').hide().prop 'disabled', true
-        else
-          ($ 'span#sstate select').hide().prop 'disabled', true
+        update_state('s')
     ).triggerHandler 'click'
 
   if ($ '#checkout_form_payment').is('*')
