@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController do
+
+  let(:user) { stub_model(Spree::LegacyUser) }
   let(:order) do
     mock_model(Spree::Order, :checkout_allowed? => true,
-                             :user => nil,
+                             :user => user,
                              :email => nil,
                              :completed? => false,
                              :update_attributes => true,
@@ -12,7 +14,10 @@ describe Spree::CheckoutController do
                              :coupon_code => nil).as_null_object
   end
 
-  before { controller.stub :current_order => order }
+  before do
+    controller.stub :try_spree_current_user => user
+    controller.stub :current_order => order
+  end
 
   context "#edit" do
 
@@ -40,15 +45,12 @@ describe Spree::CheckoutController do
     end
 
     it "should associate the order with a user" do
-      user = double("User", :last_incomplete_spree_order => nil)
-      controller.stub(:spree_current_user => user)
+      order.user = nil
       order.should_receive(:associate_user!).with(user)
       spree_get :edit, {}, :order_id => 1
     end
 
     it "should fire the spree.user.signup event if user has just signed up" do
-      user = double("User", :last_incomplete_spree_order => nil)
-      controller.stub(:spree_current_user => user)
       controller.should_receive(:fire_event).with("spree.user.signup", :user => user, :order => order)
       spree_get :edit, {}, :spree_user_signup => true
     end

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::OrdersController do
+  stub_authorization!
+
   after do
     Spree::OrdersController.clear_overrides!
   end

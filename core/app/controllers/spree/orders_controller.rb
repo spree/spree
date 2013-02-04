@@ -2,6 +2,7 @@ module Spree
   class OrdersController < Spree::StoreController
     ssl_required :show
 
+    before_filter :check_authorization
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/products'
 
@@ -64,5 +65,17 @@ module Spree
     def accurate_title
       @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : t(:shopping_cart)
     end
+
+    def check_authorization
+      session[:access_token] ||= params[:token]
+      order = Spree::Order.find_by_number(params[:id]) || current_order
+
+      if order
+        authorize! :edit, order, session[:access_token]
+      else
+        authorize! :create, Spree::Order
+      end
+    end
+
   end
 end

@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'orders' do
   let(:order) { OrderWalkthrough.up_to(:complete) }
+  let(:user) { create(:user) }
+
+  before do
+    order.update_attribute(:user_id, user.id)
+    Spree::OrdersController.any_instance.stub(:try_spree_current_user => user)
+  end
 
   it "can visit an order" do
     # Regression test for current_user call on orders/show

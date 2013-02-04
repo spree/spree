@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrdersController do
+  stub_authorization!
 
   let(:user) { create(:user) }
   let(:order) { user.spree_orders.create }
