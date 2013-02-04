@@ -5,7 +5,7 @@ module AuthorizationHelpers
 
       before do
         controller.stub(:try_spree_current_user => ability_user)
-        controller.should_receive(:authorize!).and_return(true)
+        controller.should_receive(:authorize!).any_number_of_times.and_return(true)
       end
     end
   end
