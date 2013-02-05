@@ -18,6 +18,8 @@ module Spree
 
     helper 'spree/orders'
 
+    helper 'spree/orders'
+
     # Updates the order and advances to the next state (when possible.)
     # Overriden by the promo gem if it exists. 
     def update
