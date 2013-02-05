@@ -40,6 +40,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.3.2'
   s.add_dependency 'cancan', '1.6.8'
+  s.add_dependency 'truncate_html', '0.9.2'
+
+  # Frozen to 5.0.0 because 5.1.0 is not compatible with Ruby 1.8.
   s.add_dependency 'money', '5.0.0'
-  s.add_dependency 'rabl', '0.7.2'
 end

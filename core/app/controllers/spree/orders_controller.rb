@@ -3,7 +3,7 @@ module Spree
     ssl_required :show
 
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
-    helper 'spree/products'
+    helper 'spree/products', 'spree/orders'
 
     respond_to :html
 
