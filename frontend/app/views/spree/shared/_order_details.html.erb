@@ -75,7 +75,6 @@
         <td data-hook="order_item_description">
           <h4><%= item.variant.product.name %></h4>
           <%= truncated_product_description(item.variant.product) %>
-          <%= truncate_html(raw(item.variant.product.description), :length => 100, :omission => "...") %>
           <%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %>
         </td>
         <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount %></span></td>
