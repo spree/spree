@@ -17,15 +17,6 @@ module Spree
         respond_with(@collection)
       end
 
-      def search
-        if params[:ids]
-          @products = Spree::Product.where(:id => params[:ids].split(","))
-        else
-          search_params = { :name_cont => params[:q], :sku_cont => params[:q] }
-          @products = Spree::Product.ransack(search_params.merge(:m => 'or')).result
-        end
-      end
-
       def update
         if params[:product][:taxon_ids].present?
           params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
