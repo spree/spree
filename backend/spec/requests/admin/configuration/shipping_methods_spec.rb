@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe "Shipping Methods" do
   stub_authorization!
-  let!(:country) { create(:country) }
-  let!(:state) { create(:state, :country => country) }
   let!(:zone) { create(:global_zone) }
-  let!(:product) { create(:product, :name => "Mug") }
   let!(:shipping_method) { create(:shipping_method, :zone => zone) }
 
   before(:each) do
@@ -57,91 +54,13 @@ describe "Shipping Methods" do
   end
 
   context "availability", :js => true do
-    before(:each) do
-      @shipping_category = create(:shipping_category, :name => "Default")
+    it "can check shipping method match fields" do
       click_link "Shipping Methods"
-      click_link "admin_new_shipping_method_link"
-    end
-
-    context "when rule is no products match" do
-      context "when match rules are satisfied" do
-        it "shows the right shipping method on checkout" do
-          fill_in "shipping_method_name", :with => "Standard"
-          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
-          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
-          check "shipping_method_match_none"
-          click_button "Create"
-          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
-        end
-      end
-
-      context "when match rules aren't satisfied" do
-        before { product.shipping_category = @shipping_category; product.save }
-
-        it "shows the right shipping method on checkout" do
-          fill_in "shipping_method_name", :with => "Standard"
-          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
-          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
-          check "shipping_method_match_none"
-          click_button "Create"
-          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
-        end
-      end
-    end
-
-    context "when rule is all products match" do
-      context "when match rules are satisfied" do
-        before { product.shipping_category = @shipping_category; product.save }
-
-        it "shows the right shipping method on checkout" do
-          fill_in "shipping_method_name", :with => "Standard"
-          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
-          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
-          check "shipping_method_match_all"
-          click_button "Create"
-          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
-        end
-      end
-
-      context "when match rules aren't satisfied" do
-        it "shows the right shipping method on checkout" do
-          fill_in "shipping_method_name", :with => "Standard"
-          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
-          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
-          check "shipping_method_match_all"
-          click_button "Create"
-          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
-        end
-      end
-    end
-
-    context "when rule is at least one products match" do
-      before(:each) do
-        create(:product, :name => "Shirt")
-      end
-
-      context "when match rules are satisfied" do
-        before { product.shipping_category = @shipping_category; product.save }
-
-        it "shows the right shipping method on checkout" do
-          fill_in "shipping_method_name", :with => "Standard"
-          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
-          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
-          check "shipping_method_match_one"
-          click_button "Create"
-          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
-        end
-      end
-
-      context "when match rules aren't satisfied" do
-        it "shows the right shipping method on checkout" do
-          fill_in "shipping_method_name", :with => "Standard"
-          set_select2_field("#shipping_method_zone_id", shipping_method.zone.id)
-          set_select2_field("#shipping_method_shipping_category_id", @shipping_category.id)
-          check "shipping_method_match_one"
-          click_button "Create"
-          page.should have_content(%Q{Shipping method "Standard" has been successfully created!})
-        end
+      click_link "New Shipping Method"
+      ["none", "one", "all"].each do |type|
+        field = "shipping_method_match_#{type}"
+        check field
+        uncheck field
       end
     end
   end
