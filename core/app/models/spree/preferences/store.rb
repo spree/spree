@@ -64,6 +64,10 @@ module Spree::Preferences
       destroy(key)
     end
 
+    def clear_cache
+      @cache.clear
+    end
+
     private
 
     def persist(cache_key, value, type)

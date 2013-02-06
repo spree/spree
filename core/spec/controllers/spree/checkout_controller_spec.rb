@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController do
-  let(:order) do 
+  let(:order) do
     mock_model(Spree::Order, :checkout_allowed? => true,
                              :user => nil,
                              :email => nil,
@@ -173,7 +173,7 @@ describe Spree::CheckoutController do
     before do
       order.stub(:line_items => [line_item])
 
-      reset_spree_preferences do |config|
+      configure_spree_preferences do |config|
         config.track_inventory_levels = true
         config.allow_backorders = false
       end

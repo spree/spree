@@ -41,7 +41,7 @@ describe Spree::Address do
 
   context "validation" do
     before do
-      reset_spree_preferences do |config|
+      configure_spree_preferences do |config|
         config.address_requires_state = true
       end
     end

@@ -3,10 +3,6 @@
 require 'spec_helper'
 
 describe Spree::Product do
-  before(:each) do
-    reset_spree_preferences
-  end
-
   context "#on_hand=" do
     it "should not complain of a missing master" do
       product = Spree::Product.new

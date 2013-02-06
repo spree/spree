@@ -5,7 +5,7 @@ describe "Inventory Settings" do
 
   context "changing settings" do
     before(:each) do
-      reset_spree_preferences do |config|
+      configure_spree_preferences do |config|
         config.allow_backorders = true
       end
 

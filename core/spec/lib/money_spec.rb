@@ -4,7 +4,7 @@ require 'spec_helper'
 module Spree
   describe Money do
     before do
-      reset_spree_preferences do |config|
+      configure_spree_preferences do |config|
         config.currency = "USD"
         config.currency_symbol_position = :before
         config.display_currency = false
@@ -49,7 +49,7 @@ module Spree
 
     context "JPY" do
       before do
-        reset_spree_preferences do |config|
+        configure_spree_preferences do |config|
           config.currency = "JPY"
           config.currency_symbol_position = :before
           config.display_currency = false

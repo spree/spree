@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Spree::LineItem do
-  before(:each) do
-    reset_spree_preferences
-  end
-
   let(:variant) { mock_model(Spree::Variant, :count_on_hand => 95, :price => 9.99) }
   let(:line_item) { Spree::LineItem.new(:quantity => 5) }
   let(:order) do

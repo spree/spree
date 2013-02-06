@@ -17,7 +17,7 @@ describe "Checkout" do
 
     context "when backordering is disabled" do
       before(:each) do
-        reset_spree_preferences do |config|
+        configure_spree_preferences do |config|
           config.allow_backorders = false
         end
       end

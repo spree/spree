@@ -2,17 +2,23 @@ module Spree
   module Core
     module TestingSupport
       module Preferences
-        # Resets all preferences to default values, you can
-        # pass a block to override the defaults with a block
+        def reset_spree_preferences(&config_block)
+          Spree::Preferences::Store.instance.persistence = false
+          Spree::Preferences::Store.instance.clear_cache
+
+          configure_spree_preferences &config_block if block_given?
+        end
+
+        # The preference cache is cleared before each test, so the
+        # default values will be used. You can define preferences
+        # for your spec with:
         #
-        # reset_spree_preferences do |config|
+        # configure_spree_preferences do |config|
         #   config.site_name = "my fancy pants store"
         # end
         #
-        def reset_spree_preferences
-          Spree::Preferences::Store.instance.persistence = false
+        def configure_spree_preferences
           config = Rails.application.config.spree.preferences
-          config.reset
           yield(config) if block_given?
         end
 

@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Shipment do
-  before(:each) do
-    reset_spree_preferences
-  end
-
   let(:order) { mock_model Spree::Order, :backordered? => false, :can_ship? => true }
   let(:shipping_method) { mock_model Spree::ShippingMethod, :calculator => mock('calculator') }
   let(:shipment) do
