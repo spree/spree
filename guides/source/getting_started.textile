@@ -220,16 +220,3 @@ Upon successful authentication you should see the admin screen:
 
 Feel free to explore some of the backend features that Spree has to offer and to verify that your installation is working properly.
 
-h4. Configuring Spree Analytics
-
-Spree Analytics shows your store's ecommerce performance on the admin overview page. It provides deep insight into your visitors' behavior and sales conversions. You will have to register your store for this free service.
-
-You will have to activate this free service using the simple form available on your store. 
-
-!images/analytics/signup.png(Admin welcome screenshot)!
-
-On your store, go to the Admin Overview and click Activate. Fill out the form, and you're all set.
-
-!images/analytics/dashboard.png(Admin welcome screenshot)!
-
-Data will begin to populate as soon as people visit your site, but no historical data is loaded.
