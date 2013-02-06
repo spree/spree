@@ -192,7 +192,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     def collection
       return parent.send(controller_name) if parent_data.present?
       if model_class.respond_to?(:accessible_by) && !current_ability.has_block?(params[:action], model_class)
-        model_class.accessible_by(current_ability, params[:action])
+        # If you remove .to_sym from the following line, you'll break the code.
+        # This is because "index" != :index, according to CanCan.
+        model_class.accessible_by(current_ability, params[:action].to_sym)
       else
         model_class.scoped
       end
