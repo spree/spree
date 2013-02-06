@@ -15,6 +15,8 @@ module Spree
     before_filter :associate_user
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
+    helper 'spree/orders'
+
     # Updates the order and advances to the next state (when possible.)
     # Overriden by the promo gem if it exists. 
     def update
