@@ -26,6 +26,7 @@ group :test do
   gem 'database_cleaner', '0.7.1'
   gem 'launchy'
   gem 'pry'
+  gem 'webmock', '1.8.11'
 end
 
 gemspec
