@@ -17,7 +17,9 @@
     <colgroup>
       <col style="width: 5%">
       <col style="width: 10%">
-      <col style="width: 25%">
+      <% if @product.has_variants? %>
+        <col style="width: 25%">
+      <% end %>
       <col style="width: 45%">
       <col style="width: 15%">
     </colgroup>
@@ -33,7 +35,7 @@
     </thead>
 
     <tbody>
-      <% (@product.images + @product.variant_images).each do |image| %>
+      <% (@product.variant_images).each do |image| %>
         <tr id="<%= spree_dom_id image %>" data-hook="images_row" class="<%= cycle('odd', 'even')%>">
           <td class="no-border">
             <span class="handle"></span>
@@ -41,7 +43,9 @@
           <td>
             <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
           </td>
-          <td><%= options_text_for(image) %></td>
+          <% if @product.has_variants? %>
+            <td><%= options_text_for(image) %></td>
+          <% end %>
           <td><%= image.alt %></td>
           <td class="actions">
             <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_product_image_url(@product, image), :no_text => true, :data => {:action => 'edit'} %>

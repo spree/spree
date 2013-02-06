@@ -3,9 +3,13 @@ module Spree
     module ImagesHelper
       def options_text_for(image)
         if image.viewable.is_a?(Spree::Variant)
-          image.viewable.options_text
+          if image.viewable.is_master?
+            I18n.t(:all)
+          else
+            image.viewable.options_text
+          end
         else
-          "All"
+          I18n.t(:all)
         end
       end
     end
