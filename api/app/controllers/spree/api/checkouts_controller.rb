@@ -6,6 +6,7 @@ module Spree
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
+      include ActionView::Helpers::TranslationHelper
 
       respond_to :json
 
@@ -16,6 +17,7 @@ module Spree
 
       def update
         if @order.update_attributes(object_params)
+          return if after_update_attributes
           state_callback(:after) if @order.next
           respond_with(@order, :default_template => 'spree/api/orders/show')
         else
@@ -35,7 +37,7 @@ module Spree
               params[:order][:payments_attributes].first[:amount] = @order.total
             end
           end
-          params[:order]
+          params[:order] || {}
         end
 
         def nested_params
@@ -84,6 +86,11 @@ module Spree
           else
             render 'spree/api/orders/could_not_transition', :status => 422
           end
+        end
+
+        def after_update_attributes
+          # Implemented in checkout controller decorators to add extra functionality to update action
+          false
         end
     end
   end
