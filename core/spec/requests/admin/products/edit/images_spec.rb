@@ -36,6 +36,40 @@ describe "Product Images" do
     page.should_not have_content("No Images Found.")
     within("table.index") do
       page.should have_content(variant.options_text)
+
+      #ensure no duplicate images are displayed
+      page.should have_css("tbody tr", :count => 1)
+
+      #ensure variant header is displayed
+      within("thead") do
+        page.should have_content("Variant")
+      end
+
+      #ensure variant header is displayed
+      within("tbody") do
+        page.should have_content("Size: S")
+      end
+
+    end
+  end
+
+  it "should not see variant column when product has no variants" do
+    product = create(:product)
+    product.images.create!(:attachment => File.open(file_path))
+    visit spree.admin_product_images_path(product)
+
+    page.should_not have_content("No Images Found.")
+    within("table.index") do
+      #ensure no duplicate images are displayed
+      page.should have_css("tbody tr", :count => 1)
+
+      #ensure variant header is not displayed
+      within("thead") do
+        page.should_not have_content("Variant")
+      end
+
+      #ensure correct cell count
+      page.should have_css("thead th", :count => 3)
     end
   end
 end
