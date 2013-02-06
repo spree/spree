@@ -232,11 +232,11 @@ en:
   adjustments: Adjustments
   admin:
     mail_methods:
-      send_testmail: "Send Testmail"
+      send_testmail: "Send Test Mail"
       testmail:
-        delivery_error: "Testmail delivery error"
-        delivery_success: "Testmail sent successfully"
-        error: "Testmail error: %{e}"
+        delivery_error: "Test Mail delivery error"
+        delivery_success: "Test Mail sent successfully"
+        error: "Test Mail error: %{e}"
   administration: Administration
   all: All
   all_adjustments_closed: "All adjustments successfully closed!"
@@ -1081,7 +1081,7 @@ en:
     test_email:
       greeting: Congratulations!
       message: "If you have received this email, then your email settings are correct."
-      subject: Testmail
+      subject: Test Mail
   test_mode: "Test Mode"
   thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
   there_were_problems_with_the_following_fields: "There were problems with the following fields"
