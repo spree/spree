@@ -171,6 +171,14 @@ module Spree
         response.status.should == 422
         json_response['error'].should =~ /could not be transitioned/
       end
+
+      it "can apply a coupon code to an order" do
+        order.update_column(:state, "payment")
+        Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
+        coupon_result = { :coupon_applied? => true }
+        Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return(coupon_result)
+        api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }
+      end
     end
   end
 end
