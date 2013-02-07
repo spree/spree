@@ -7,4 +7,5 @@ node(:pages) { @variants.num_pages }
 child(@variants => :variants) do
   attributes *variant_attributes
   child(:option_values => :option_values) { attributes *option_value_attributes }
+  child(:images => :images) { extends "spree/api/images/show" }
 end
