@@ -41,6 +41,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    WebMock.disable!
     DatabaseCleaner.start
     reset_spree_preferences
   end

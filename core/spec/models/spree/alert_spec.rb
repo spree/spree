@@ -5,6 +5,8 @@ module Spree
   describe Alert do
     include WebMock::API
 
+    before { WebMock.enable! }
+
     it "gets current alerts" do
       alerts_json = File.read(File.join(fixture_path, "alerts.json"))
 
