@@ -100,6 +100,10 @@ Disallow: /account
     end
       APP
 
+      gsub_file 'config/application.rb',
+        /config.active_record.whitelist_attributes = true/,
+        'config.active_record.whitelist_attributes = false'
+
       append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
     end
 
