@@ -4,10 +4,8 @@ module Spree
   class Promotion
     module Rules
       class ItemTotal < PromotionRule
-        preference :amount, :decimal, :default => 100.00
-        preference :operator, :string, :default => '>'
-
-        attr_accessible :preferred_amount, :preferred_operator
+        preference :amount, :decimal, default: 100.00
+        preference :operator, :string, default: '>'
 
         OPERATORS = ['gt', 'gte']
 

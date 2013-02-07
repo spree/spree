@@ -2,10 +2,8 @@ module Spree
   class Promotion
     module Rules
       class User < PromotionRule
-        attr_accessible :user_ids_string
-
-        belongs_to :user, :class_name => Spree.user_class.to_s
-        has_and_belongs_to_many :users, :class_name => Spree.user_class.to_s, :join_table => 'spree_promotion_rules_users', :foreign_key => 'promotion_rule_id'
+        belongs_to :user, class_name: Spree.user_class.to_s
+        has_and_belongs_to_many :users, class_name: Spree.user_class.to_s, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id'
 
         def eligible?(order, options = {})
           users.include?(order.user)

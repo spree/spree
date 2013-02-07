@@ -50,7 +50,7 @@ class OrderWalkthrough
   end
 
   def self.payment(order)
-    order.payments.create!({:payment_method => Spree::PaymentMethod.first, :amount => order.total}, :without_protection => true)
+    order.payments.create!(:payment_method => Spree::PaymentMethod.first, :amount => order.total)
     # TODO: maybe look at some way of making this payment_state change automatic
     order.payment_state = 'paid'
     order.next!

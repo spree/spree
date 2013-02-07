@@ -7,7 +7,7 @@ describe Spree::Payment do
   end
 
   let(:gateway) do
-    gateway = Spree::Gateway::Bogus.new({:environment => 'test', :active => true}, :without_protection => true)
+    gateway = Spree::Gateway::Bogus.new(:environment => 'test', :active => true)
     gateway.stub :source_required => true
     gateway
   end
@@ -127,7 +127,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
+        payment.log_entries.should_receive(:create).with(:details => anything)
         payment.authorize!
       end
 
@@ -178,7 +178,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
+        payment.log_entries.should_receive(:create).with(:details => anything)
         payment.purchase!
       end
 
@@ -293,7 +293,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
+        payment.log_entries.should_receive(:create).with(:details => anything)
         payment.void_transaction!
       end
 
@@ -375,7 +375,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with({:details => anything}, {:without_protection => true})
+        payment.log_entries.should_receive(:create).with(:details => anything)
         payment.credit!
       end
 
@@ -497,7 +497,7 @@ describe Spree::Payment do
 
   context "#save" do
     it "should call order#update!" do
-      payment = Spree::Payment.create({:amount => 100, :order => order}, :without_protection => true)
+      payment = Spree::Payment.create(:amount => 100, :order => order)
       order.should_receive(:update!)
       payment.save
     end
@@ -512,14 +512,26 @@ describe Spree::Payment do
       context "when there is an error connecting to the gateway" do
         it "should call gateway_error " do
           gateway.should_receive(:create_profile).and_raise(ActiveMerchant::ConnectionError)
-          lambda { Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true) }.should raise_error(Spree::Core::GatewayError)
+          lambda do
+            Spree::Payment.create(
+              :amount => 100,
+              :order => order,
+              :source => card,
+              :payment_method => gateway
+            )
+          end.should raise_error(Spree::Core::GatewayError)
         end
       end
 
       context "when successfully connecting to the gateway" do
         it "should create a payment profile" do
           payment.payment_method.should_receive :create_profile
-          payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
+          payment = Spree::Payment.create(
+            :amount => 100,
+            :order => order,
+            :source => card,
+            :payment_method => gateway
+          )
         end
       end
 
@@ -531,7 +543,12 @@ describe Spree::Payment do
 
       it "should not create a payment profile" do
         gateway.should_not_receive :create_profile
-        payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
+        payment = Spree::Payment.create(
+          :amount => 100,
+          :order => order,
+          :source => card,
+          :payment_method => gateway
+        )
       end
     end
   end
@@ -547,16 +564,21 @@ describe Spree::Payment do
         }
       }
 
-      payment = Spree::Payment.new(params, :without_protection => true)
+      payment = Spree::Payment.new(params)
       payment.should be_valid
       payment.source.should_not be_nil
     end
 
     it "errors when payment source not valid" do
-      params = { :amount => 100, :payment_method => gateway,
-        :source_attributes => {:year=>"2012", :month =>"1" }}
+      params = { 
+        :amount => 100,
+        :payment_method => gateway,
+        :source_attributes => {
+          :year => "2012", :month =>"1"
+        }
+      }
 
-      payment = Spree::Payment.new(params, :without_protection => true)
+      payment = Spree::Payment.new(params)
       payment.should_not be_valid
       payment.source.should_not be_nil
       payment.source.should have(1).error_on(:number)

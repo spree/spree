@@ -2,9 +2,7 @@ require_dependency 'spree/calculator'
 
 module Spree
   class Calculator::FlatPercentItemTotal < Calculator
-    preference :flat_percent, :decimal, :default => 0
-
-    attr_accessible :preferred_flat_percent
+    preference :flat_percent, :decimal, default: 0
 
     def self.description
       Spree.t(:flat_percent)

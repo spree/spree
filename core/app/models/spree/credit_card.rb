@@ -12,9 +12,6 @@ module Spree
     validates :verification_value, presence: true, unless: :has_payment_profile?, on: :create
     validate :expiry_not_in_the_past
 
-    attr_accessible :first_name, :last_name, :number, :verification_value, :year,
-                    :month, :gateway_customer_profile_id, :gateway_payment_profile_id
-
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
 
     def set_last_digits

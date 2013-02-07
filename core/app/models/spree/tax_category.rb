@@ -5,8 +5,6 @@ module Spree
 
     has_many :tax_rates, dependent: :destroy
 
-    attr_accessible :name, :description, :is_default
-
     before_save :set_default_category
 
     def set_default_category

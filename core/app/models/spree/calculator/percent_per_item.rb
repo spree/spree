@@ -6,9 +6,7 @@ module Spree
   # off the entire order.
 
   class Calculator::PercentPerItem < Calculator
-    preference :percent, :decimal, :default => 0
-
-    attr_accessible :preferred_percent
+    preference :percent, :decimal, default: 0
 
     def self.description
       Spree.t(:percent_per_item)

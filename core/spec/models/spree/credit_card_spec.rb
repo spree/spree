@@ -17,7 +17,7 @@ describe Spree::CreditCard do
   before(:each) do
 
     @order = create(:order)
-    @payment = Spree::Payment.create({ amount: 100, order: @order }, without_protection: true)
+    @payment = Spree::Payment.create(:amount => 100, :order => @order)
 
     @success_response = double('gateway_response', success?: true, authorization: '123', avs_result: { 'code' => 'avs-code' })
     @fail_response = double('gateway_response', success?: false)

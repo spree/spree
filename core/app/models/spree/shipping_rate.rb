@@ -3,9 +3,6 @@ module Spree
     belongs_to :shipment, class_name: 'Spree::Shipment'
     belongs_to :shipping_method, class_name: 'Spree::ShippingMethod'
 
-    attr_accessible :id, :shipping_method, :shipment,
-                    :name, :cost, :selected, :shipping_method_id
-
     scope :frontend, -> { includes(:shipping_method).where(ShippingMethod.on_frontend_query) }
     scope :backend, -> { includes(:shipping_method).where(ShippingMethod.on_backend_query) }
 

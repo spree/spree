@@ -5,7 +5,6 @@ module Spree
         klass.class_eval do
           has_one   :calculator, :class_name => "Spree::Calculator", :as => :calculable, :dependent => :destroy
           accepts_nested_attributes_for :calculator
-          attr_accessible :calculator_type, :calculator_attributes
           validates :calculator, :presence => true
 
           def self.calculators
@@ -33,12 +32,15 @@ module Spree
             calculable = calculable.to_package if calculable.is_a?(Spree::Shipment)
             amount = compute_amount(calculable)
             return if amount == 0 && !mandatory
-            target.adjustments.create({ :amount => amount,
-                                        :source => old_calculable,
-                                        :originator => self,
-                                        :label => label,
-                                        :mandatory => mandatory,
-                                        :state => state }, :without_protection => true)
+
+            target.adjustments.create(
+              :amount => amount,
+              :source => calculable,
+              :originator => self,
+              :label => label,
+              :mandatory => mandatory,
+              :state => state
+            )
           end
 
           # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+

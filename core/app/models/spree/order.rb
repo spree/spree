@@ -4,6 +4,7 @@ require 'spree/order/checkout'
 module Spree
   class Order < ActiveRecord::Base
     include Checkout
+    include ActiveModel::ForbiddenAttributesProtection
 
     checkout_flow do
       go_to_state :address
@@ -353,12 +354,12 @@ module Spree
 
       deliver_order_confirmation_email
 
-      self.state_changes.create({
+      self.state_changes.create(
         previous_state: 'cart',
         next_state:     'complete',
         name:           'order' ,
         user_id:        self.user_id
-      }, without_protection: true)
+      )
     end
 
     def deliver_order_confirmation_email
@@ -472,12 +473,12 @@ module Spree
       state = "#{name}_state"
       if persisted?
         old_state = self.send("#{state}_was")
-        self.state_changes.create({
+        self.state_changes.create(
           previous_state: old_state,
           next_state:     self.send(state),
           name:           name,
           user_id:        self.user_id
-        }, without_protection: true)
+        )
       end
     end
 

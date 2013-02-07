@@ -2,11 +2,8 @@ module Spree
   class Promotion
     module Actions
       class CreateLineItems < PromotionAction
-        has_many :promotion_action_line_items, :foreign_key => :promotion_action_id
+        has_many :promotion_action_line_items, foreign_key: :promotion_action_id
         accepts_nested_attributes_for :promotion_action_line_items
-        attr_accessible :promotion_action_line_items_attributes
-
-        delegate :eligible?, :to => :promotion
 
         # Adds a line item to the Order if the promotion is eligible
         #
