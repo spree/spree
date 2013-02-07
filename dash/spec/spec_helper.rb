@@ -27,6 +27,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    WebMock.disable!
     DatabaseCleaner.start
   end
 
