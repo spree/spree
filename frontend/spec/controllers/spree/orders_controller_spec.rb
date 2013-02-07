@@ -7,6 +7,7 @@ describe Spree::OrdersController do
     # Don't care about IP address being set here
     order.stub(:last_ip_address=)
     Spree::Order.stub(:find).with(1).and_return(order)
+    controller.stub(:try_spree_current_user => user)
   end
 
   context "#populate" do
