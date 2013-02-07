@@ -16,7 +16,7 @@ describe Spree::Calculator::PercentPerItem do
 
   it "has a translation for description" do
     calculator.description.should_not include("translation missing")
-    calculator.description.should == I18n.t(:percent_per_item)
+    calculator.description.should == Spree.t(:percent_per_item)
   end
 
   it "correctly calculates per item promotion" do

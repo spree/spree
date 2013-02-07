@@ -10,7 +10,7 @@ module Spree
     attr_accessible :preferred_first_item, :preferred_additional_item, :preferred_max_items, :preferred_currency
 
     def self.description
-      I18n.t(:flexible_rate)
+      Spree.t(:flexible_rate)
     end
 
     def self.available?(object)

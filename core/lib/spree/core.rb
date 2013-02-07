@@ -38,6 +38,7 @@ end
 require 'spree/core/version'
 require 'spree/core/engine'
 
+require 'spree/i18n'
 require 'spree/money'
 
 require 'spree/core/delegate_belongs_to'
