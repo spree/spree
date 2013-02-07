@@ -14,8 +14,6 @@ module Spree
         .backordered.order("#{self.table_name}.created_at ASC")
     end
 
-    attr_accessible :shipment, :variant_id
-
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do
       event :fill_backorder do

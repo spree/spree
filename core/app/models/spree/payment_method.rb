@@ -6,7 +6,6 @@ module Spree
 
     scope :production, -> { where(environment: 'production') }
 
-    attr_accessible :name, :description, :environment, :display_on, :active
     validates :name, presence: true
 
     def self.providers

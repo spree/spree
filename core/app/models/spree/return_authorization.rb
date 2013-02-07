@@ -11,16 +11,14 @@ module Spree
     validates :amount, numericality: true
     validate :must_have_shipped_units
 
-    attr_accessible :amount, :reason, :stock_location_id
-
-    state_machine initial: 'authorized' do
-      after_transition to: 'received', do: :process_return
+    state_machine initial: :authorized do
+      after_transition to: :received, do: :process_return
 
       event :receive do
-        transition to: 'received', from: 'authorized', if: :allow_receive?
+        transition to: :received, from: :authorized, if: :allow_receive?
       end
       event :cancel do
-        transition to: 'canceled', from: 'authorized'
+        transition to: :canceled, from: :authorized
       end
     end
 

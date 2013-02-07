@@ -1,57 +1,58 @@
-# encoding: utf-8
 country = Spree::Country.find_by_name('United States')
 
-Spree::State.create!({"name"=>"Michigan", "abbr"=>"MI", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"South Dakota", "abbr"=>"SD", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Washington", "abbr"=>"WA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Wisconsin", "abbr"=>"WI", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Arizona", "abbr"=>"AZ", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Illinois", "abbr"=>"IL", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"New Hampshire", "abbr"=>"NH", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"North Carolina", "abbr"=>"NC", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Kansas", "abbr"=>"KS", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Missouri", "abbr"=>"MO", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Arkansas", "abbr"=>"AR", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Nevada", "abbr"=>"NV", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"District of Columbia", "abbr"=>"DC", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Idaho", "abbr"=>"ID", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Nebraska", "abbr"=>"NE", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Pennsylvania", "abbr"=>"PA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Hawaii", "abbr"=>"HI", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Utah", "abbr"=>"UT", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Vermont", "abbr"=>"VT", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Delaware", "abbr"=>"DE", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Rhode Island", "abbr"=>"RI", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Oklahoma", "abbr"=>"OK", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Louisiana", "abbr"=>"LA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Montana", "abbr"=>"MT", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Tennessee", "abbr"=>"TN", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Maryland", "abbr"=>"MD", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Florida", "abbr"=>"FL", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Virginia", "abbr"=>"VA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Minnesota", "abbr"=>"MN", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"New Jersey", "abbr"=>"NJ", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Ohio", "abbr"=>"OH", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"California", "abbr"=>"CA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"North Dakota", "abbr"=>"ND", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Maine", "abbr"=>"ME", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Indiana", "abbr"=>"IN", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Texas", "abbr"=>"TX", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Oregon", "abbr"=>"OR", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Wyoming", "abbr"=>"WY", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Alabama", "abbr"=>"AL", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Iowa", "abbr"=>"IA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Mississippi", "abbr"=>"MS", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Kentucky", "abbr"=>"KY", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"New Mexico", "abbr"=>"NM", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Georgia", "abbr"=>"GA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Colorado", "abbr"=>"CO", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Massachusetts", "abbr"=>"MA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Connecticut", "abbr"=>"CT", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"New York", "abbr"=>"NY", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"South Carolina", "abbr"=>"SC", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"Alaska", "abbr"=>"AK", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"West Virginia", "abbr"=>"WV", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"U.S. Armed Forces – Americas", "abbr"=>"AA", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"U.S. Armed Forces – Europe", "abbr"=>"AE", :country=>country}, :without_protection => true)
-Spree::State.create!({"name"=>"U.S. Armed Forces – Pacific", "abbr"=>"AP", :country=>country}, :without_protection => true)
+Spree::State.create!([
+  { name: 'Michigan', abbr: 'MI', country: country },
+  { name: 'South Dakota', abbr: 'SD', country: country },
+  { name: 'Washington', abbr: 'WA', country: country },
+  { name: 'Wisconsin', abbr: 'WI', country: country },
+  { name: 'Arizona', abbr: 'AZ', country: country },
+  { name: 'Illinois', abbr: 'IL', country: country },
+  { name: 'New Hampshire', abbr: 'NH', country: country },
+  { name: 'North Carolina', abbr: 'NC', country: country },
+  { name: 'Kansas', abbr: 'KS', country: country },
+  { name: 'Missouri', abbr: 'MO', country: country },
+  { name: 'Arkansas', abbr: 'AR', country: country },
+  { name: 'Nevada', abbr: 'NV', country: country },
+  { name: 'District of Columbia', abbr: 'DC', country: country },
+  { name: 'Idaho', abbr: 'ID', country: country },
+  { name: 'Nebraska', abbr: 'NE', country: country },
+  { name: 'Pennsylvania', abbr: 'PA', country: country },
+  { name: 'Hawaii', abbr: 'HI', country: country },
+  { name: 'Utah', abbr: 'UT', country: country },
+  { name: 'Vermont', abbr: 'VT', country: country },
+  { name: 'Delaware', abbr: 'DE', country: country },
+  { name: 'Rhode Island', abbr: 'RI', country: country },
+  { name: 'Oklahoma', abbr: 'OK', country: country },
+  { name: 'Louisiana', abbr: 'LA', country: country },
+  { name: 'Montana', abbr: 'MT', country: country },
+  { name: 'Tennessee', abbr: 'TN', country: country },
+  { name: 'Maryland', abbr: 'MD', country: country },
+  { name: 'Florida', abbr: 'FL', country: country },
+  { name: 'Virginia', abbr: 'VA', country: country },
+  { name: 'Minnesota', abbr: 'MN', country: country },
+  { name: 'New Jersey', abbr: 'NJ', country: country },
+  { name: 'Ohio', abbr: 'OH', country: country },
+  { name: 'California', abbr: 'CA', country: country },
+  { name: 'North Dakota', abbr: 'ND', country: country },
+  { name: 'Maine', abbr: 'ME', country: country },
+  { name: 'Indiana', abbr: 'IN', country: country },
+  { name: 'Texas', abbr: 'TX', country: country },
+  { name: 'Oregon', abbr: 'OR', country: country },
+  { name: 'Wyoming', abbr: 'WY', country: country },
+  { name: 'Alabama', abbr: 'AL', country: country },
+  { name: 'Iowa', abbr: 'IA', country: country },
+  { name: 'Mississippi', abbr: 'MS', country: country },
+  { name: 'Kentucky', abbr: 'KY', country: country },
+  { name: 'New Mexico', abbr: 'NM', country: country },
+  { name: 'Georgia', abbr: 'GA', country: country },
+  { name: 'Colorado', abbr: 'CO', country: country },
+  { name: 'Massachusetts', abbr: 'MA', country: country },
+  { name: 'Connecticut', abbr: 'CT', country: country },
+  { name: 'New York', abbr: 'NY', country: country },
+  { name: 'South Carolina', abbr: 'SC', country: country },
+  { name: 'Alaska', abbr: 'AK', country: country },
+  { name: 'West Virginia', abbr: 'WV', country: country },
+  { name: 'U.S. Armed Forces - Americas', abbr: 'AA', country: country },
+  { name: 'U.S. Armed Forces - Europe', abbr: 'AE', country: country },
+  { name: 'U.S. Armed Forces - Pacific', abbr: 'AP', country: country }
+])

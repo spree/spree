@@ -12,7 +12,7 @@ describe "Products" do
     def build_option_type_with_values(name, values)
       ot = FactoryGirl.create(:option_type, :name => name)
       values.each do |val|
-        ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
+        ot.option_values.create(:name => val.downcase, :presentation => val)
       end
       ot
     end
@@ -113,7 +113,7 @@ describe "Products" do
       def build_option_type_with_values(name, values)
         ot = FactoryGirl.create(:option_type, :name => name)
         values.each do |val|
-          ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
+          ot.option_values.create(:name => val.downcase, :presentation => val)
         end
         ot
       end

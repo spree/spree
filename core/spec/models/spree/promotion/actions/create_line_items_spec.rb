@@ -5,15 +5,17 @@ describe Spree::Promotion::Actions::CreateLineItems do
   let(:action) { Spree::Promotion::Actions::CreateLineItems.create }
 
   context "#perform" do
-    context "order is not eligible" do
-      before { action.stub(eligible?: false) }
-
-      it "doesn't create line items" do
-        expect(order.line_items.count).to eql 0
-
-        action.perform(:order => order)
-        expect(order.line_items.count).to eql 0
-      end
+    before do
+      @v1 = create(:variant)
+      @v2 = create(:variant)
+      action.promotion_action_line_items.create!(
+        :variant => @v1,
+        :quantity => 1
+      )
+      action.promotion_action_line_items.create!(
+        :variant => @v2,
+        :quantity => 2
+      )
     end
 
     context "order is eligible" do

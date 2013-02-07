@@ -37,7 +37,7 @@ shipping_methods = [
 ]
 
 shipping_methods.each do |shipping_method_attrs|
-  Spree::ShippingMethod.create!(shipping_method_attrs, :without_protection => true)
+  Spree::ShippingMethod.create!(shipping_method_attrs)
 end
 
 {

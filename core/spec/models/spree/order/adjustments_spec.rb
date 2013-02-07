@@ -106,8 +106,17 @@ describe Spree::Order do
 
     context "when only one line item has adjustments" do
       before do
-        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :without_protection => true)
-        @adj2 = line_item1.adjustments.create({:amount => 5, :source => line_item1, :label => "VAT 10%"}, :without_protection => true)
+        @adj1 = line_item1.adjustments.create(
+          :amount => 2,
+          :source => line_item1,
+          :label => "VAT 5%"
+        )
+
+        @adj2 = line_item1.adjustments.create(
+          :amount => 5,
+          :source => line_item1,
+          :label => "VAT 10%"
+        )
       end
 
       it "should return the adjustments for that line item" do
@@ -117,8 +126,17 @@ describe Spree::Order do
 
     context "when more than one line item has adjustments" do
       before do
-        @adj1 = line_item1.adjustments.create({:amount => 2, :source => line_item1, :label => "VAT 5%"}, :without_protection => true)
-        @adj2 = line_item2.adjustments.create({:amount => 5, :source => line_item2, :label => "VAT 10%"}, :without_protection => true)
+        @adj1 = line_item1.adjustments.create(
+          :amount => 2,
+          :source => line_item1,
+          :label => "VAT 5%"
+        )
+
+        @adj2 = line_item2.adjustments.create(
+          :amount => 5,
+          :source => line_item2,
+          :label => "VAT 10%"
+        )
       end
 
       it "should return the adjustments for each line item" do

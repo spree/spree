@@ -9,6 +9,14 @@ require 'paperclip'
 require 'paranoia'
 require 'ransack'
 require 'state_machine'
+begin
+  require 'strong_parameters'
+rescue LoadError
+  puts "Couldn't find strong_parameters. Please add this line to your Gemfile:
+
+  gem 'strong_parameters', :github => 'rails/strong_parameters'"
+  exit
+end
 
 module Spree
 
