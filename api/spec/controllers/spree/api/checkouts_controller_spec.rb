@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/promo/coupon_applicator'
 
 module Spree
   describe Api::CheckoutsController do
@@ -141,6 +142,13 @@ module Spree
         api_put :update, :id => order.to_param, :order => { :email => "guest@spreecommerce.com" }
         json_response['email'].should == "guest@spreecommerce.com"
         response.status.should == 200
+      end
+
+      it "can apply a coupon code to an order" do
+        order.update_column(:state, "payment")
+        Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
+        Spree::Promo::CouponApplicator.any_instance.should_receive(:apply)
+        api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }
       end
     end
   end

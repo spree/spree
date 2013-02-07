@@ -15,15 +15,9 @@ module Spree
       end
 
       def update
-        respond_with(@order, :default_template => 'spree/api/orders/show') and return if @order.state == "complete"
-
-        if object_params && object_params[:user_id].present?
-          @order.update_attribute(:user_id, object_params[:user_id])
-          object_params.delete(:user_id)
-        end
-
-        if @order.update_attributes(object_params) && @order.next
-          state_callback(:after)
+        if @order.update_attributes(object_params)
+          return if after_update_attributes
+          state_callback(:after) if @order.next
           respond_with(@order, :default_template => 'spree/api/orders/show')
         else
           respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
@@ -91,6 +85,18 @@ module Spree
           else
             render 'spree/api/orders/could_not_transition', :status => 422
           end
+        end
+
+        def after_update_attributes
+          if object_params && object_params[:coupon_code].present?
+            coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
+            if !coupon_result[:coupon_applied?]
+              @coupon_message = coupon_result[:error]
+              respond_with(@order, :default_template => 'spree/api/orders/could_not_apply_coupon')
+              return true
+            end
+          end
+          false
         end
     end
   end

@@ -18,17 +18,11 @@ module Spree
 
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
-    helper 'spree/orders'
-
     # Updates the order and advances to the next state (when possible.)
-    # Overriden by the promo gem if it exists. 
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
-        unless apply_coupon_code
-          respond_with(@order) { |format| format.html { render :edit } }
-          return
-        end
+        return if after_update_attributes
 
         unless @order.next
           flash[:error] = t(:payment_processing_failed)
@@ -137,6 +131,18 @@ module Spree
 
       def check_authorization
         authorize!(:edit, current_order, session[:access_token])
+      end
+
+      def after_update_attributes
+        coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
+        if coupon_result[:coupon_applied?]
+          flash[:success] = coupon_result[:success] if coupon_result[:success].present?
+          return false
+        else
+          flash[:error] = coupon_result[:error]
+          respond_with(@order) { |format| format.html { render :edit } }
+          return true
+        end
       end
   end
 end
