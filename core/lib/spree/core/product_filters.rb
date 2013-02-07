@@ -24,7 +24,7 @@ module Spree
     #  * a mapping of presentation labels to the relevant condition (in the context of the named scope)
     #  * an optional list of labels and values (for use with object selection - see taxons examples below)
     #
-    # The named scopes here have a suffix '_any', following SearchLogic's convention for a
+    # The named scopes here have a suffix '_any', following Ransack's convention for a
     # scope which returns results which match any of the inputs. This is purely a convention,
     # but might be a useful reminder.
     #
@@ -34,7 +34,7 @@ module Spree
     # Rails will send the action a hash containing (among other things) an array named
     # after the scope whose values are the active labels.
     #
-    # SearchLogic will then convert this array to a call to the named scope with the array
+    # Ransack will then convert this array to a call to the named scope with the array
     # contents, and the named scope will build a query with the disjunction of the conditions
     # relating to the labels, all relative to the scope's context.
     #
@@ -130,7 +130,7 @@ module Spree
       #   if they use the same scope). To be safe, the code uses a copy of the scope.
       #
       #   HOWEVER: what happens if we want a more precise scope?  we can't pass
-      #   parametrized scope names to SearchLogic, only atomic names, so couldn't ask
+      #   parametrized scope names to Ransack, only atomic names, so couldn't ask
       #   for taxon T's customized filter to be used. BUT: we can arrange for the form
       #   to pass back a hash instead of an array, where the key acts as the (taxon)
       #   parameter and value is its label array, and then get a modified named scope
@@ -183,7 +183,7 @@ module Spree
       # Filtering by the list of all taxons
       #
       # Similar idea as above, but we don't want the descendants' products, hence
-      # it uses one of the auto-generated scopes from SearchLogic.
+      # it uses one of the auto-generated scopes from Ransack.
       #
       # idea: expand the format to allow nesting of labels?
       def ProductFilters.all_taxons
