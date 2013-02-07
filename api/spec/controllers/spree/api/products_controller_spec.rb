@@ -79,18 +79,22 @@ module Spree
 
       it "gets a single product" do
         product.master.images.create!(:attachment => image("thinking-cat.jpg"))
+        product.variants.create!
+        product.variants.first.images.create!(:attachment => image("thinking-cat.jpg"))
         product.set_property("spree", "rocks")
         api_get :show, :id => product.to_param
         json_response.should have_attributes(attributes)
         json_response['variants'].first.should have_attributes([:name,
                                                               :is_master,
                                                               :count_on_hand,
-                                                              :price])
+                                                              :price,
+                                                              :images])
 
-        json_response["images"].first.should have_attributes([:attachment_file_name,
-                                                            :attachment_width,
-                                                            :attachment_height,
-                                                            :attachment_content_type])
+        json_response['variants'].first['images'].first.should have_attributes([:attachment_file_name,
+                                                                                :attachment_width,
+                                                                                :attachment_height,
+                                                                                :attachment_content_type,
+                                                                                :attachment_url])
 
         json_response["product_properties"].first.should have_attributes([:value,
                                                                          :product_id,

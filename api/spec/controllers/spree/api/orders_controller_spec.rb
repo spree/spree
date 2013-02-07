@@ -111,6 +111,14 @@ module Spree
           response.status.should == 200
           order.reload.line_items.should be_empty
         end
+        
+        it "can list its line items with images" do
+          order.line_items.first.variant.images.create!(:attachment => image("thinking-cat.jpg"))
+          
+          api_get :show, :id => order.to_param
+          
+          json_response['line_items'].first['variant'].should have_attributes([:images])
+        end
       end
     end
 
