@@ -15,7 +15,7 @@ module Spree
                     :preferred_currency
 
     def self.description
-      I18n.t(:price_sack)
+      Spree.t(:price_sack)
     end
 
     # as object we always get line items, as calculable we have Coupon, ShippingMethod
