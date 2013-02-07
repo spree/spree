@@ -27,6 +27,7 @@ group :test do
   gem 'launchy'
   gem 'pry'
   gem 'webmock', '1.8.11'
+  gem 'email_spec', '1.4.0'
 end
 
 gemspec
