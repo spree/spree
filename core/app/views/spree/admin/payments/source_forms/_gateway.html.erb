@@ -9,7 +9,7 @@
     <div class="nine columns">
       <%= image_tag 'credit_cards/credit_card.gif', :id => 'credit-card-image' %>
     </div>
-    
+
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
     <div class="clear"></div>
@@ -17,8 +17,8 @@
     <div class="alpha four columns">
       <div data-hook="card_number">
         <div class="field">
-          <%= label_tag nil, raw(t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required fullwidth', :maxlength => 19 %>
+          <%= label_tag 'card_number', raw(t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
+          <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required fullwidth', :id => 'card_number', :maxlength => 19 %>
           <span id="card_type" style="display:none;">
             ( <span id="looks_like" ><%= t(:card_type_is) %> <span id="type"></span></span>
               <span id="unrecognized"><%= t(:unrecognized_card_type) %></span>
@@ -29,16 +29,16 @@
     </div>
     <div class="three columns">
       <div data-hook="card_expiration" class="field">
-        <%= label_tag nil, raw(t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
-        <%= select_month(Date.today, :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true, :class => 'required select2') %>
-        <%= select_year(Date.today, :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15, :class => 'required select2') %>
+        <%= label_tag 'card_month', raw(t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
+        <%= select_month(Date.today, { :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true }, :class => 'required select2', :id => 'card_month') %>
+        <%= select_year(Date.today, { :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15 }, :class => 'required select2', :id => 'card_year') %>
       </div>
     </div>
     <div class="omega two columns">
       <div data-hook="card_code" class="field">
-        <%= label_tag nil, raw(t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
-        <%= text_field_tag "#{param_prefix}[verification_value]", '', :class => 'required fullwidth', :size => 5 %>
-        <a href="/content/cvv" class="info" target="_blank" onclick="window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false">
+        <%= label_tag 'card_code', raw(t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
+        <%= text_field_tag "#{param_prefix}[verification_value]", '', :class => 'required fullwidth', :size => 5, :id => 'card_code' %>
+        <a href="/content/cvv" class="info" target="_blank" id="cvv_link">
           (<%= t(:whats_this) %>)
         </a>
       </div>
