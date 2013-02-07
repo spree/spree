@@ -20,8 +20,6 @@ module Spree
 
     helper 'spree/orders'
 
-    rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
-
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
