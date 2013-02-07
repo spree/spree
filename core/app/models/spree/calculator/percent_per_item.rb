@@ -11,7 +11,7 @@ module Spree
     attr_accessible :preferred_percent
 
     def self.description
-      I18n.t(:percent_per_item)
+      Spree.t(:percent_per_item)
     end
 
     def compute(object=nil)

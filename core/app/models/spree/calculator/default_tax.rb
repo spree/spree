@@ -3,7 +3,7 @@ require_dependency 'spree/calculator'
 module Spree
   class Calculator::DefaultTax < Calculator
     def self.description
-      I18n.t(:default_tax)
+      Spree.t(:default_tax)
     end
 
     def compute(computable)

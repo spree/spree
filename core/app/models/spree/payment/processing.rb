@@ -17,7 +17,7 @@ module Spree
               end
             end
           else
-            raise Core::GatewayError.new(I18n.t(:payment_processing_failed))
+            raise Core::GatewayError.new(Spree.t(:payment_processing_failed))
           end
         end
       end
@@ -178,11 +178,11 @@ module Spree
       if error.is_a? ActiveMerchant::Billing::Response
         text = error.params['message'] || error.params['response_reason_text'] || error.message
       elsif error.is_a? ActiveMerchant::ConnectionError
-        text = I18n.t(:unable_to_connect_to_gateway)
+        text = Spree.t(:unable_to_connect_to_gateway)
       else
         text = error.to_s
       end
-      logger.error(I18n.t(:gateway_error))
+      logger.error(Spree.t(:gateway_error))
       logger.error("  #{error.to_yaml}")
       raise Core::GatewayError.new(text)
     end
@@ -191,7 +191,7 @@ module Spree
     # Ex. When testing in staging environment with a copy of production data.
     def check_environment
       return if payment_method.environment == Rails.env
-      message = I18n.t(:gateway_config_unavailable) + " - #{Rails.env}"
+      message = Spree.t(:gateway_config_unavailable) + " - #{Rails.env}"
       raise Core::GatewayError.new(message)
     end
 

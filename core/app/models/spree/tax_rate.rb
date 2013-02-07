@@ -2,7 +2,7 @@ module Spree
   class DefaultTaxZoneValidator < ActiveModel::Validator
     def validate(record)
       if record.included_in_price
-        record.errors.add(:included_in_price, I18n.t(:included_price_validation)) unless Zone.default_tax
+        record.errors.add(:included_in_price, Spree.t(:included_price_validation)) unless Zone.default_tax
       end
     end
   end
@@ -59,7 +59,7 @@ module Spree
           order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
         else
           amount = -1 * calculator.compute(order)
-          label = I18n.t(:refund) + label
+          label = Spree.t(:refund) + label
           order.adjustments.create({ amount: amount,
                                      source: order,
                                      originator: self,

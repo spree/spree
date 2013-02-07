@@ -1,7 +1,7 @@
 module Spree
   class Calculator::FreeShipping < Calculator
     def self.description
-      I18n.t(:free_shipping)
+      Spree.t(:free_shipping)
     end
 
     def compute(object)

@@ -82,7 +82,7 @@ describe Spree::ReturnAuthorization do
       mock_adjustment.should_receive(:source=).with(return_authorization)
       mock_adjustment.should_receive(:adjustable=).with(order)
       mock_adjustment.should_receive(:save)
-      Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => I18n.t(:rma_credit)).and_return(mock_adjustment)
+      Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => Spree.t(:rma_credit)).and_return(mock_adjustment)
       return_authorization.receive!
     end
 

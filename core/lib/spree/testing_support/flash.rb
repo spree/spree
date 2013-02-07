@@ -10,7 +10,7 @@ module Spree
       end
 
       def assert_successful_update_message(resource)
-        flash = I18n.t(:successfully_updated, :resource => I18n.t(resource))
+        flash = Spree.t(:successfully_updated, :resource => Spree.t(resource))
         assert_flash_success(flash)
       end
 
@@ -18,7 +18,7 @@ module Spree
 
       def convert_flash(flash)
         if flash.is_a?(Symbol)
-          flash = I18n.t(flash)
+          flash = Spree.t(flash)
         end
         flash
       end
