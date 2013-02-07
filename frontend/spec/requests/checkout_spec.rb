@@ -5,10 +5,9 @@ describe "Checkout" do
   let!(:state) { create(:state, :name => "Victoria", :country => country) }
   let!(:shipping_method) do
     shipping_method = create(:shipping_method)
-    calculator = Spree::Calculator::Shipping::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
+    calculator = Spree::Calculator::Shipping::PerItem.create!(:calculable => shipping_method)
     shipping_method.calculator = calculator
     shipping_method.save
-
     shipping_method
   end
   let!(:stock_location) { create(:stock_location) }
@@ -81,10 +80,8 @@ describe "Checkout" do
         fill_in "#{address}_phone", :with => "(555) 5555-555"
 
         click_button "Save and Continue"
-        page.should_not have_content("undefined method `promotion'")
-
-        click_button "Save and Continue"
         page.should have_content(shipping_method.name)
+        page.should_not have_content("undefined method `promotion'")
       end
     end
   end

@@ -16,9 +16,6 @@ module Spree
     after_save :ensure_selected_shipping_rate, :ensure_correct_adjustment, :update_order
 
     attr_accessor :special_instructions
-    attr_accessible :order, :special_instructions, :stock_location_id,
-                    :tracking, :address, :inventory_units, :selected_shipping_rate_id
-
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 

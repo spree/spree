@@ -94,12 +94,14 @@ module Spree
         record_response(response)
 
         if response.success?
-          self.class.create({ :order => order,
-                              :source => self,
-                              :payment_method => payment_method,
-                              :amount => credit_amount.abs * -1,
-                              :response_code => response.authorization,
-                              :state => 'completed' }, :without_protection => true)
+          self.class.create(
+            :order => order,
+            :source => self,
+            :payment_method => payment_method,
+            :amount => credit_amount.abs * -1,
+            :response_code => response.authorization,
+            :state => 'completed'
+          )
         else
           gateway_error(response)
         end
@@ -163,7 +165,7 @@ module Spree
     end
 
     def record_response(response)
-      log_entries.create({:details => response.to_yaml}, :without_protection => true)
+      log_entries.create(:details => response.to_yaml)
     end
 
     def protect_from_connection_error

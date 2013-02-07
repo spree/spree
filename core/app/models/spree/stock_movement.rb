@@ -3,8 +3,6 @@ module Spree
     belongs_to :stock_item, class_name: 'Spree::StockItem'
     belongs_to :originator, polymorphic: true
 
-    attr_accessible :quantity, :stock_item, :stock_item_id, :originator
-
     after_create :update_stock_item_quantity
 
     validates :stock_item, presence: true

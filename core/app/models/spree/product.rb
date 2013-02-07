@@ -71,14 +71,6 @@ module Spree
 
     attr_accessor :option_values_hash
 
-    attr_accessible :name, :description, :available_on, :permalink, :meta_description,
-                    :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
-                    :option_values_hash, :weight, :height, :width, :depth,
-                    :shipping_category_id, :tax_category_id, :product_properties_attributes,
-                    :variants_attributes, :taxon_ids, :option_type_ids, :cost_currency
-
-    attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
-
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
 
     make_permalink order: :name
@@ -127,7 +119,7 @@ module Spree
       return if option_values_hash.nil?
       option_values_hash.keys.map(&:to_i).each do |id|
         self.option_type_ids << id unless option_type_ids.include?(id)
-        product_option_types.create({option_type_id: id}, without_protection: true) unless product_option_types.pluck(:option_type_id).include?(id)
+        product_option_types.create(option_type_id: id) unless product_option_types.pluck(:option_type_id).include?(id)
       end
     end
 
@@ -195,7 +187,10 @@ module Spree
         values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
         values.each do |ids|
-          variant = variants.create({ option_value_ids: ids, price: master.price }, without_protection: true)
+          variant = variants.create(
+            option_value_ids: ids,
+            price: master.price
+          )
         end
         save
       end
@@ -203,7 +198,7 @@ module Spree
       def add_properties_and_option_types_from_prototype
         if prototype_id && prototype = Spree::Prototype.find_by_id(prototype_id)
           prototype.properties.each do |property|
-            product_properties.create({property: property}, without_protection: true)
+            product_properties.create(property: property)
           end
           self.option_types = prototype.option_types
         end

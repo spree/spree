@@ -6,7 +6,7 @@ describe "Promotion adjustments", :js => true do
   let!(:zone) { create(:zone) }
   let!(:shipping_method) do
     shipping_method = create(:shipping_method)
-    calculator = Spree::Calculator::Shipping::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
+    calculator = Spree::Calculator::Shipping::PerItem.create!(:calculable => shipping_method)
     shipping_method.calculator = calculator
     shipping_method.save
 
@@ -17,11 +17,11 @@ describe "Promotion adjustments", :js => true do
 
   context "visitor makes checkout as guest without registration" do
     def create_basic_coupon_promotion(code)
-      promotion = Spree::Promotion.create!({:name       => code.titleize,
-                                            :code       => code,
-                                            :event_name => "spree.checkout.coupon_code_added",
-                                            :starts_at  => 1.day.ago,
-                                            :expires_at => 1.day.from_now}, :without_protection => true)
+      promotion = Spree::Promotion.create!(:name       => code.titleize,
+                                           :code       => code,
+                                           :event_name => "spree.checkout.coupon_code_added",
+                                           :starts_at  => 1.day.ago,
+                                           :expires_at => 1.day.from_now)
 
      calculator = Spree::Calculator::FlatRate.new
      calculator.preferred_amount = 10

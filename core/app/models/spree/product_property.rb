@@ -6,8 +6,6 @@ module Spree
     validates :property, presence: true
     validates :value, length: { maximum: 255 }
 
-    attr_accessible :property_name, :value, :position
-
     default_scope order: "#{self.table_name}.position"
 
     # virtual attributes for use with AJAX completion stuff

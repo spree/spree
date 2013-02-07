@@ -20,9 +20,6 @@ module Spree
 
     scope :by_zone, ->(zone) { where(zone_id: zone) }
 
-    attr_accessible :amount, :tax_category_id, :calculator, :zone_id, :name,
-                    :included_in_price, :show_rate_in_label
-
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order)
       return [] unless order.tax_zone
@@ -60,11 +57,13 @@ module Spree
         else
           amount = -1 * calculator.compute(order)
           label = I18n.t(:refund) + label
-          order.adjustments.create({ amount: amount,
-                                     source: order,
-                                     originator: self,
-                                     state: "closed",
-                                     label: label }, without_protection: true)
+          order.adjustments.create(
+            amount: amount,
+            source: order,
+            originator: self,
+            state: "closed",
+            label: label
+          )
         end
       else
         create_adjustment(label, order, order)

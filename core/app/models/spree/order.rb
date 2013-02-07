@@ -3,6 +3,7 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < ActiveRecord::Base
+    include ActiveModel::ForbiddenAttributesProtection
     # TODO:
     # Need to use fully qualified name here because during sandbox migration
     # there is a class called Checkout which conflicts if you use this:
@@ -30,12 +31,6 @@ module Spree
     end
 
     token_resource
-
-    attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes,
-                    :payments_attributes, :ship_address, :bill_address, :currency,
-                    :payments_attributes, :line_items_attributes, :number, :email,
-                    :use_billing, :special_instructions, :shipments_attributes,
-                    :coupon_code
 
     attr_reader :coupon_code
 
@@ -395,12 +390,12 @@ module Spree
 
       deliver_order_confirmation_email
 
-      self.state_changes.create({
+      self.state_changes.create(
         previous_state: 'cart',
         next_state:     'complete',
         name:           'order' ,
         user_id:        self.user_id
-      }, without_protection: true)
+      )
     end
 
     def deliver_order_confirmation_email
@@ -498,12 +493,12 @@ module Spree
       state = "#{name}_state"
       if persisted?
         old_state = self.send("#{state}_was")
-        self.state_changes.create({
+        self.state_changes.create(
           previous_state: old_state,
           next_state:     self.send(state),
           name:           name,
           user_id:        self.user_id
-        }, without_protection: true)
+        )
       end
     end
 

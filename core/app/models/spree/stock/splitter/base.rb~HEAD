@@ -8,7 +8,7 @@ module Spree
           @packer = packer
           @next_splitter = next_splitter
         end
-        delegate :stock_location, :order, :to => :packer
+        delegate :stock_location, :order, to: :packer
 
         def split(packages)
           return_next(packages)

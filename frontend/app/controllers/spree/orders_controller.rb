@@ -19,7 +19,7 @@ module Spree
         redirect_to root_path and return
       end
 
-      if @order.update_attributes(params[:order])
+      if @order.update_attributes(order_params)
         return if after_update_attributes
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         fire_event('spree.order.contents_changed')
@@ -85,16 +85,20 @@ module Spree
 
     private
 
-    def after_update_attributes
-      coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
-      if coupon_result[:coupon_applied?]
-        flash[:success] = coupon_result[:success] if coupon_result[:success].present?
-        return false
-      else
-        flash[:error] = coupon_result[:error]
-        respond_with(@order) { |format| format.html { render :edit } }
-        return true
+      def order_params
+        params[:order].permit(*permitted_order_attributes)
       end
-    end
+
+      def after_update_attributes
+        coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
+        if coupon_result[:coupon_applied?]
+          flash[:success] = coupon_result[:success] if coupon_result[:success].present?
+          return false
+        else
+          flash[:error] = coupon_result[:error]
+          respond_with(@order) { |format| format.html { render :edit } }
+          return true
+        end
+      end
   end
 end
