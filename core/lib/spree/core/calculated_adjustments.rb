@@ -5,7 +5,6 @@ module Spree
         klass.class_eval do
           has_one   :calculator, :as => :calculable, :dependent => :destroy
           accepts_nested_attributes_for :calculator
-          attr_accessible :calculator_type, :calculator_attributes
           validates :calculator, :presence => true
 
           def self.calculators
@@ -27,12 +26,15 @@ module Spree
           def create_adjustment(label, target, calculable, mandatory=false, state="closed")
             amount = compute_amount(calculable)
             return if amount == 0 && !mandatory
-            target.adjustments.create({ :amount => amount,
-                                        :source => calculable,
-                                        :originator => self,
-                                        :label => label,
-                                        :mandatory => mandatory,
-                                        :state => state }, :without_protection => true)
+
+            target.adjustments.create(
+              :amount => amount,
+              :source => calculable,
+              :originator => self,
+              :label => label,
+              :mandatory => mandatory,
+              :state => state
+            )
           end
 
           # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+

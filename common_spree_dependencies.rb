@@ -30,4 +30,6 @@ group :test do
   gem 'webmock', '1.8.11'
 end
 
+gem 'strong_parameters'
+
 gemspec

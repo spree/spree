@@ -10,11 +10,11 @@ describe "Promotion adjustments", :js => true do
 
   context "visitor makes checkout as guest without registration" do
     def create_basic_coupon_promotion(code)
-      promotion = Spree::Promotion.create!({:name       => code.titleize,
-                                            :code       => code,
-                                            :event_name => "spree.checkout.coupon_code_added",
-                                            :starts_at  => 1.day.ago,
-                                            :expires_at => 1.day.from_now}, :without_protection => true)
+      promotion = Spree::Promotion.create!(:name       => code.titleize,
+                                           :code       => code,
+                                           :event_name => "spree.checkout.coupon_code_added",
+                                           :starts_at  => 1.day.ago,
+                                           :expires_at => 1.day.from_now)
 
      calculator = Spree::Calculator::FlatRate.new
      calculator.preferred_amount = 10

@@ -157,9 +157,7 @@ masters = {
   }
 }
 
-variants.each do |variant_attrs|
-  Spree::Variant.create!(variant_attrs, :without_protection => true)
-end
+Spree::Variant.create!(variants)
 
 masters.each do |product, variant_attrs|
   product.master.update_attributes!(variant_attrs)

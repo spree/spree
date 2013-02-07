@@ -11,11 +11,6 @@ module Spree
 
     validate :state_validate
 
-    attr_accessible :firstname, :lastname, :address1, :address2,
-                    :city, :zipcode, :country_id, :state_id,
-                    :country, :state, :phone, :state_name,
-                    :company, :alternative_phone
-
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
@@ -29,7 +24,7 @@ module Spree
 
     def self.default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
-      new({ country: country }, without_protection: true)
+      new(country: country)
     end
 
     # Can modify an address if it's not been used in an order (but checkouts controller has finer control)

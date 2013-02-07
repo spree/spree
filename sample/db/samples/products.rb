@@ -108,7 +108,7 @@ products.each do |product_attrs|
   Spree::Config[:currency] = "USD"
 
   default_shipping_category = Spree::ShippingCategory.find_by_name!("Default Shipping")
-  product = Spree::Product.create!(default_attrs.merge(product_attrs), :without_protection => true)
+  product = Spree::Product.create!(default_attrs.merge(product_attrs))
   Spree::Config[:currency] = "EUR"
   product.reload
   product.price = eur_price

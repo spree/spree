@@ -5,15 +5,10 @@ require 'bigdecimal/util'
 module Spree
   module Calculator::Shipping
     class PriceSack < ShippingCalculator
-      preference :minimal_amount, :decimal, :default => 0
-      preference :normal_amount, :decimal, :default => 0
-      preference :discount_amount, :decimal, :default => 0
-      preference :currency, :string, :default => Spree::Config[:currency]
-
-      attr_accessible :preferred_minimal_amount,
-                      :preferred_normal_amount,
-                      :preferred_discount_amount,
-                      :preferred_currency
+      preference :minimal_amount, :decimal, default: 0
+      preference :normal_amount, :decimal, default: 0
+      preference :discount_amount, :decimal, default: 0
+      preference :currency, :string, default: Spree::Config[:currency]
 
       def self.description
         Spree.t(:shipping_price_sack)

@@ -4,7 +4,7 @@ describe Spree::Calculator::DefaultTax do
   let!(:tax_category) { create(:tax_category, :tax_rates => []) }
   let!(:rate) { mock_model(Spree::TaxRate, :tax_category => tax_category, :amount => 0.05, :included_in_price => vat) }
   let(:vat) { false }
-  let!(:calculator) { Spree::Calculator::DefaultTax.new({:calculable => rate}, :without_protection => true) }
+  let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
   let!(:order) { create(:order) }
   let!(:product_1) { create(:product, :tax_category => tax_category) }
   let!(:product_2) { create(:product, :tax_category => tax_category) }

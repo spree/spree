@@ -49,20 +49,20 @@ describe Spree::OrdersController do
     end
 
     it "should not result in a flash success" do
-      spree_put :update, {}, {:order_id => 1}
+      spree_put :update, { :order => { :email => "foo@bar.com" }}, {:order_id => 1}
       flash[:success].should be_nil
     end
 
     it "should render the edit view (on failure)" do
       order.stub(:update_attributes).and_return false
-      order.stub(:errors).and_return({:number => "has some error"})
-      spree_put :update, {}, {:order_id => 1}
+      order.stub(:errors).and_return({:email => "is invalid"})
+      spree_put :update, { :order => { :email => "" } }, {:order_id => 1}
       response.should render_template :edit
     end
 
     it "should redirect to cart path (on success)" do
       order.stub(:update_attributes).and_return true
-      spree_put :update, {}, {:order_id => 1}
+      spree_put :update, { :order => { :email => "foo@bar.com" } }, {:order_id => 1}
       response.should redirect_to(spree.cart_path)
     end
   end

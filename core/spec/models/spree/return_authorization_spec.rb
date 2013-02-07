@@ -4,8 +4,7 @@ describe Spree::ReturnAuthorization do
   let(:stock_location) {Spree::StockLocation.create(:name => "test")}
   let(:order) { FactoryGirl.create(:shipped_order)}
   let(:variant) { order.shipments.first.inventory_units.first.variant }
-  let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order,
-                                                               :stock_location_id => stock_location.id}, :without_protection => true) }
+  let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
 
     context "save" do
     it "should be invalid when order has no inventory units" do
