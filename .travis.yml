@@ -8,7 +8,7 @@ env:
   - GEM=api DB=postgres
   - GEM=backend DB=sqlite
   - GEM=backend DB=mysql
-  - GEM=backend DB=postgrs
+  - GEM=backend DB=postgres
   - GEM=core DB=sqlite
   - GEM=core DB=mysql
   - GEM=core DB=postgres
@@ -17,7 +17,7 @@ env:
   - GEM=dash DB=postgres
   - GEM=frontend DB=sqlite
   - GEM=frontend DB=mysql
-  - GEM=frontend DB=postgrs
+  - GEM=frontend DB=postgres
 before_install:
   - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
