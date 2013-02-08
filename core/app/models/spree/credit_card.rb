@@ -3,7 +3,6 @@ module Spree
     has_many :payments, :as => :source
 
     before_save :set_last_digits
-    after_validation :set_card_type
 
     attr_accessor :number, :verification_value
 
@@ -11,8 +10,13 @@ module Spree
     validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
     validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
 
-    attr_accessible :first_name, :last_name, :number, :verification_value, :year,
-                    :month, :gateway_customer_profile_id, :gateway_payment_profile_id
+    attr_accessible :first_name, :last_name, :number, :verification_value, :expiry,
+                    :gateway_customer_profile_id, :gateway_payment_profile_id,
+                    :cc_type
+
+    def expiry=(expiry)
+      self[:month], self[:year] = expiry.split(" / ")
+    end
 
     def number=(num)
       @number = num.gsub(/[^0-9]/, '') rescue nil
@@ -22,19 +26,6 @@ module Spree
       number.to_s.gsub!(/\s/,'')
       verification_value.to_s.gsub!(/\s/,'')
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
-    end
-
-    # cheap hack to get to the type? method from deep within ActiveMerchant without stomping on
-    # potentially existing methods in CreditCard
-    class CardDetector
-      class << self
-        include ActiveMerchant::Billing::CreditCardMethods::ClassMethods
-      end
-    end
-
-    # sets self.cc_type while we still have the card number
-    def set_card_type
-      self.cc_type ||= CardDetector.brand?(number)
     end
 
     def name?
@@ -93,11 +84,6 @@ module Spree
 
     def has_payment_profile?
       gateway_customer_profile_id.present?
-    end
-
-    def spree_cc_type
-      return 'visa' if Rails.env.development?
-      cc_type
     end
   end
 end

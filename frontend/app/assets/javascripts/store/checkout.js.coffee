@@ -1,3 +1,6 @@
+//= require_self
+//= require jquery.payment
+
 @disableSaveOnClick = ->
   ($ 'form.edit_order').submit ->
     ($ this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass 'disabled'
@@ -5,6 +8,13 @@
 Spree.checkout = {}
 
 $ ->
+  $("#card_number").formatCardNumber()
+  $("#card_expiration").formatCardExpiry()
+  $("#card_code").formatCardCVC()
+
+  $("#card_number").change ->
+    $("#cc_type").val($.cardType(@value))
+
   if ($ '#checkout_form_address').is('*')
     ($ '#checkout_form_address').validate()
 
