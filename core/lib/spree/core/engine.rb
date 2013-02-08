@@ -95,7 +95,11 @@ module Spree
 
       # filter sensitive information during logging
       initializer "spree.params.filter" do |app|
-        app.config.filter_parameters += [:password, :password_confirmation, :number]
+        app.config.filter_parameters += [
+          :password,
+          :password_confirmation,
+          :number,
+          :verification_value]
       end
     end
   end
