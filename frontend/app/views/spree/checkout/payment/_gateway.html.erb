@@ -13,14 +13,16 @@
   </span>
 </p>
 <p class="field" data-hook="card_expiration">
-  <%= label_tag "card_month", Spree.t(:expiration) %><span class="required">*</span><br />
-  <%= select_month(Date.today, { :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true }, :class => 'required', :id => "card_month") %>
-  <%= select_year(Date.today, { :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15 }, :class => 'required', :id => "card_year") %>
+  <%= label_tag "card_month", t(:expiration) %><span class="required">*</span><br />
+  <%= text_field_tag "#{param_prefix}[expiry]", '', :id => 'card_expiry', :class => "required", :placeholder => "MM / YY" %>
 </p>
 <p class="field" data-hook="card_code">
   <%= label_tag "card_code", Spree.t(:card_code) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:id => 'card_code', :class => 'required', :size => 5) %>
   <%= link_to "(#{Spree.t(:what_is_this)})", spree.content_path('cvv'), :target => '_blank', "data-hook" => "cvv_link", :id => "cvv_link" %>
 </p>
+
+<%= hidden_field_tag "#{param_prefix}[cc_type]", '', :id => "cc_type" %>
+
 <%= hidden_field param_prefix, 'first_name', :value => @order.billing_firstname %>
 <%= hidden_field param_prefix, 'last_name', :value => @order.billing_lastname %>

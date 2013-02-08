@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Spree::CreditCard do
-
-  let(:valid_credit_card_attributes) { { number: '4111111111111111', verification_value: '123', month: 12, year: 2014 } }
+  let(:valid_credit_card_attributes) { {:number => '4111111111111111', :verification_value => '123', :expiry => "12 / 14"} }
 
   def self.payment_states
     Spree::Payment.state_machine.states.keys
@@ -136,49 +135,18 @@ describe Spree::CreditCard do
     end
   end
 
-  context "#spree_cc_type" do
-    before { credit_card.attributes = valid_credit_card_attributes }
+  context "#number=" do
+    it "should strip non-numeric characters from card input" do
+      credit_card.number = "6011000990139424"
+      credit_card.number.should == "6011000990139424"
 
-    context "in development mode" do
-      before do
-        stub_rails_env("production")
-      end
-
-      it "should return visa" do
-        credit_card.save
-        credit_card.spree_cc_type.should == 'visa'
-      end
+      credit_card.number = "  6011-0009-9013-9424  "
+      credit_card.number.should == "6011000990139424"
     end
 
-    context "in production mode" do
-      before { stub_rails_env("production") }
-
-      it "should return the actual cc_type for a valid number" do
-        credit_card.number = '378282246310005'
-        credit_card.save
-        credit_card.spree_cc_type.should == 'american_express'
-      end
-    end
-  end
-
-  context "#set_card_type" do
-    before :each do
-      stub_rails_env("production")
-      credit_card.attributes = valid_credit_card_attributes
-    end
-
-    it "stores the credit card type after validation" do
-      credit_card.number = '6011000990139424'
-      credit_card.save
-      credit_card.spree_cc_type.should == 'discover'
-    end
-
-    it "does not overwrite the credit card type when loaded and saved" do
-      credit_card.number = '5105105105105100'
-      credit_card.save
-      credit_card.number = 'XXXXXXXXXXXX5100'
-      credit_card.save
-      credit_card.spree_cc_type.should == 'master'
+    it "should not raise an exception on non-string input" do
+      credit_card.number = Hash.new
+      credit_card.number.should be_nil
     end
   end
 

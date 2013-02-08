@@ -29,4 +29,8 @@
 
 *   Fixed issue where selecting an existing user in the customer details step would not associate them with an order.
     
-    *Ryan Bigg and dan-ding"
+    *Ryan Bigg and dan-ding*
+
+*   We now use [jQuery.payment](https://stripe.com/blog/jquery-payment) (from Stripe) to provide slightly better formatting on credit card number, expiry and CVV fields.
+
+   *Ryan Bigg*

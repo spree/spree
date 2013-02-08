@@ -1,6 +1,18 @@
+//= require_self
+//= require jquery.payment
 $(document).ready(function() {
   if ($('#customer_autocomplete_template').length > 0) {
     window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text());
+  }
+
+  if ($("#card_number").is("*")) {
+    $("#card_number").payment('formatCardNumber')
+      $("#card_expiry").payment('formatCardExpiry')
+      $("#card_code").payment('formatCardCVC')
+
+      $("#card_number").change(function() {
+        $("#cc_type").val($.payment.cardType(this.value))
+      })
   }
 
   formatCustomerResult = function(customer) {
