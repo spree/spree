@@ -510,7 +510,7 @@ describe Spree::Payment do
   context "#build_source" do
     it "should build the payment's source" do
       params = { :amount => 100, :payment_method => gateway,
-        :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'}}
+        :source_attributes => {:expiry =>"1 / 12", :number => '1234567890123',:verification_value => '123'}}
 
       payment = Spree::Payment.new(params, :without_protection => true)
       payment.should be_valid
@@ -520,7 +520,7 @@ describe Spree::Payment do
     context "with the params hash ordered differently" do
       it "should build the payment's source" do
         params = {
-          :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'},
+          :source_attributes => {:expiry =>"1 / 12", :number => '1234567890123',:verification_value => '123'},
           :amount => 100, :payment_method => gateway
         }
 
@@ -532,7 +532,7 @@ describe Spree::Payment do
 
     it "errors when payment source not valid" do
       params = { :amount => 100, :payment_method => gateway,
-        :source_attributes => {:year=>"2012", :month =>"1" }}
+        :source_attributes => {:expiry => "1 / 12" }}
 
       payment = Spree::Payment.new(params, :without_protection => true)
       payment.should_not be_valid

@@ -30,8 +30,7 @@
     <div class="three columns">
       <div data-hook="card_expiration" class="field">
         <%= label_tag 'card_month', raw(t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
-        <%= select_month(Date.today, { :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true }, :class => 'required select2', :id => 'card_month') %>
-        <%= select_year(Date.today, { :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15 }, :class => 'required select2', :id => 'card_year') %>
+        <%= text_field_tag "#{param_prefix}[expiry]", '', :id => 'card_expiry', :class => "required", :placeholder => "MM / YY" %>
       </div>
     </div>
     <div class="omega two columns">
