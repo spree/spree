@@ -14,7 +14,7 @@ module Spree
 
     def update
       @order = current_order
-      if @order.update_attributes(params[:order])
+      if @order.update_attributes(order_params)
         return if after_update_attributes
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         fire_event('spree.order.contents_changed')
@@ -63,6 +63,8 @@ module Spree
       redirect_to spree.cart_path
     end
 
+    private
+
     def accurate_title
       @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : t(:shopping_cart)
     end
@@ -90,6 +92,10 @@ module Spree
         respond_with(@order) { |format| format.html { render :edit } }
         return true
       end
+    end
+
+    def order_params
+      params.require(:order).permit(permitted_order_attributes)
     end
   end
 end
