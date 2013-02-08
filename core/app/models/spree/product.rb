@@ -24,7 +24,8 @@ module Spree
     has_many :product_properties, :dependent => :destroy
     has_many :properties, :through => :product_properties
 
-    has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
+    has_many :classifications, :dependent => :delete_all
+    has_many :taxons, :through => :classifications
 
     belongs_to :tax_category
     belongs_to :shipping_category
@@ -47,6 +48,8 @@ module Spree
     has_many :variants_including_master_and_deleted, :class_name => 'Spree::Variant'
 
     has_many :prices, :through => :variants, :order => 'spree_variants.position, spree_variants.id, currency'
+
+    has_and_belongs_to_many :promotion_rules, :join_table => :spree_products_promotion_rules
 
     delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
