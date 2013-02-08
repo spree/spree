@@ -4,6 +4,13 @@ Spree.disableSaveOnClick = ->
 
 Spree.ready ($) ->
   Spree.Checkout = {}
+  $("#card_number").formatCardNumber()
+  $("#card_expiration").formatCardExpiry()
+  $("#card_code").formatCardCVC()
+
+  $("#card_number").change ->
+    $("#cc_type").val($.cardType(@value))
+
   if ($ '#checkout_form_address').is('*')
     ($ '#checkout_form_address').validate()
 

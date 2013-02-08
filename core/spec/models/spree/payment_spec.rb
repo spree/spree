@@ -557,8 +557,7 @@ describe Spree::Payment do
     it "should build the payment's source" do
       params = { :amount => 100, :payment_method => gateway,
         :source_attributes => {
-          :year => 1.month.from_now.year,
-          :month =>1.month.from_now.month,
+          :expiry =>"1 / 12",
           :number => '1234567890123',
           :verification_value => '123'
         }
@@ -570,13 +569,8 @@ describe Spree::Payment do
     end
 
     it "errors when payment source not valid" do
-      params = { 
-        :amount => 100,
-        :payment_method => gateway,
-        :source_attributes => {
-          :year => "2012", :month =>"1"
-        }
-      }
+      params = { :amount => 100, :payment_method => gateway,
+        :source_attributes => {:expiry => "1 / 12" }}
 
       payment = Spree::Payment.new(params)
       payment.should_not be_valid
