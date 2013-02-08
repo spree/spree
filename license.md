@@ -1,5 +1,6 @@
 Spree License
-=======
+=============
+
 Copyright © 2007-2013, Spree Commerce Inc. and other contributors.
 All rights reserved.
 

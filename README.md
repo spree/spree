@@ -14,10 +14,11 @@ in a single set of [online documentation](http://spreecommerce.com/documentation
 automatically require all of the necessary gem dependencies which are:
 
 * spree_api
+* spree_frontend
+* spree_backend
 * spree_cmd
 * spree_core
 * spree_dash
-* spree_promo
 * spree_sample
 
 All of the gems are designed to work together to provide a fully functional e-commerce platform.  It is also possible,
