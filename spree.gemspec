@@ -1,5 +1,5 @@
 # encoding: UTF-8
-version = File.read(File.expand_path("../SPREE_VERSION",__FILE__)).strip
+version = File.read(File.expand_path('../SPREE_VERSION',__FILE__)).strip
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
   s.required_ruby_version     = '>= 1.9.3'
-  s.required_rubygems_version = ">= 1.3.6"
+  s.required_rubygems_version = '>= 1.8.25'
 
   s.author       = 'Sean Schofield'
   s.email        = 'sean@spreecommerce.com'
