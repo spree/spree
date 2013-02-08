@@ -73,8 +73,11 @@ module Spree
 
       # filter sensitive information during logging
       initializer "spree.params.filter" do |app|
-        app.config.filter_parameters += [:password, :password_confirmation, :number]
-      end
+        app.config.filter_parameters += [
+          :password,
+          :password_confirmation,
+          :number,
+          :verification_value]
 
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
       initializer "spree.assets.precompile", :group => :all do |app|
