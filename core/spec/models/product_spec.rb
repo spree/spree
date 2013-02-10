@@ -422,7 +422,19 @@ describe Spree::Product do
     it "should be sorted by position" do
       product.images.pluck(:alt).should eq(["position 1", "position 2"])
     end
+  end
 
+  # Regression tests for #2352
+  context "classifications and taxons" do
+    it "is joined through classifications" do
+      reflection = Spree::Product.reflect_on_association(:taxons)
+      reflection.options[:through] = :classifications
+    end
+
+    it "will delete all classifications" do
+      reflection = Spree::Product.reflect_on_association(:classifications)
+      reflection.options[:dependent] = :delete_all
+    end
   end
 
 end

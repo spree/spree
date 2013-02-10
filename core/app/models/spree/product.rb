@@ -24,7 +24,8 @@ module Spree
     has_many :product_properties, :dependent => :destroy
     has_many :properties, :through => :product_properties
 
-    has_and_belongs_to_many :taxons, :join_table => 'spree_products_taxons'
+    has_many :classifications, :dependent => :delete_all
+    has_many :taxons, :through => :classifications
 
     belongs_to :tax_category
     belongs_to :shipping_category

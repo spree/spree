@@ -2,7 +2,7 @@
 <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
 <p class="field" data-hook="card_number">
-  <%= label_tag nil, t(:card_number) %><span class="required">*</span><br />
+  <%= label_tag "card_number", t(:card_number) %><span class="required">*</span><br />
   <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
   <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:id => 'card_number', :class => 'required', :size => 19, :maxlength => 19, :autocomplete => "off") %>
   &nbsp;
@@ -13,14 +13,14 @@
   </span>
 </p>
 <p class="field" data-hook="card_expiration">
-  <%= label_tag nil, t(:expiration) %><span class="required">*</span><br />
-  <%= select_month(Date.today, { :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true }, :class => 'required') %>
-  <%= select_year(Date.today, { :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15 }, :class => 'required') %>
+  <%= label_tag "card_month", t(:expiration) %><span class="required">*</span><br />
+  <%= select_month(Date.today, { :prefix => param_prefix, :field_name => 'month', :use_month_numbers => true }, :class => 'required', :id => "card_month") %>
+  <%= select_year(Date.today, { :prefix => param_prefix, :field_name => 'year', :start_year => Date.today.year, :end_year => Date.today.year + 15 }, :class => 'required', :id => "card_year") %>
 </p>
 <p class="field" data-hook="card_code">
-  <%= label_tag nil, t(:card_code) %><span class="required">*</span><br />
+  <%= label_tag "card_code", t(:card_code) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:id => 'card_code', :class => 'required', :size => 5) %>
-  <%= link_to "(#{t(:whats_this)})", spree.content_path('cvv'), :target => '_blank', :onclick => "window.open(this.href,'cvv_info','left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1');return false", "data-hook" => "cvv_link" %>
+  <%= link_to "(#{t(:what_is_this)})", spree.content_path('cvv'), :target => '_blank', "data-hook" => "cvv_link", :id => "cvv_link" %>
 </p>
 <%= hidden_field param_prefix, 'first_name', :value => @order.billing_firstname %>
 <%= hidden_field param_prefix, 'last_name', :value => @order.billing_lastname %>
