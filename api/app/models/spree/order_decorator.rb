@@ -8,8 +8,6 @@ Spree::Order.class_eval do
       end
     end
 
-    order.user = user
-    order.email = user.email
     order
   end
 end
