@@ -63,14 +63,14 @@ module Spree
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
-      json_response["state"].should == "address"
+      json_response["state"].should == "cart"
     end
 
     it "can create an order without any parameters" do
       lambda { api_post :create }.should_not raise_error(NoMethodError)
       response.status.should == 201
       order = Order.last
-      json_response["state"].should == "address"
+      json_response["state"].should == "cart"
     end
 
     context "working with an order" do
