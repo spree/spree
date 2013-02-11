@@ -1,9 +1,0 @@
-proto_shirts:
-  name: Shirt
-  properties: prop_manufacturer, prop_brand, prop_model, prop_shirt_type, prop_shirt_sleeve_type, prop_shirt_fabric, prop_shirt_fit, prop_gender
-proto_bags:
-  name: Bag
-  properties: prop_bag_type, prob_bag_size, prop_bag_material
-proto_mugs:
-  name: Mug
-  properties: prop_mug_size, prop_mug_type
