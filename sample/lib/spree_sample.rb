@@ -1,4 +1,5 @@
 require 'spree_core'
+require 'spree/sample'
 
 module SpreeSample
   class Engine < Rails::Engine

@@ -17,13 +17,10 @@ creditcard = Spree::CreditCard.create({ :cc_type => 'visa', :month => 12, :year 
                                         :gateway_customer_profile_id => 'BGS-1234' }, :without_protection => true)
 
 Spree::Order.all.each_with_index do |order, index|
-  printf "\rProcessing order #{index}"
-  STDOUT.flush
   order.update!
-  payment = order.payments.create({ :amount => order.total, :source => creditcard.clone, :payment_method => method }, :without_protection => true)
+  payment = order.payments.create!({ :amount => order.total, :source => creditcard.clone, :payment_method => method }, :without_protection => true)
   payment.update_attributes_without_callbacks({
     :state => 'pending',
     :response_code => '12345'
   })
 end
-puts
