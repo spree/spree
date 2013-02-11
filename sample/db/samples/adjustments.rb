@@ -8,7 +8,7 @@ first_order.adjustments.create!({
   :source => first_order,
   :originator => Spree::TaxRate.find_by_name!("North America"),
   :label => "Tax",
-  :locked => false,
+  :state => "open",
   :mandatory => true
 }, :without_protection => true)
 
@@ -17,7 +17,7 @@ last_order.adjustments.create!({
   :source => last_order,
   :originator => Spree::TaxRate.find_by_name!("North America"),
   :label => "Tax",
-  :locked => false,
+  :state => "open",
   :mandatory => true
 }, :without_protection => true)
 
@@ -26,7 +26,7 @@ first_order.adjustments.create!({
   :source => first_order,
   :originator => Spree::ShippingMethod.find_by_name!("UPS Ground (USD)"),
   :label => "Shipping",
-  :locked => true,
+  :state => "finalized",
   :mandatory => true
 }, :without_protection => true)
 
@@ -35,6 +35,6 @@ last_order.adjustments.create!({
   :source => last_order,
   :originator => Spree::ShippingMethod.find_by_name!("UPS Ground (USD)"),
   :label => "Shipping",
-  :locked => true,
+  :state => "finalized",
   :mandatory => true
 }, :without_protection => true)
