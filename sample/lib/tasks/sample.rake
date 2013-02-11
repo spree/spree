@@ -1,11 +1,30 @@
 require 'ffaker'
+require 'pathname'
+require 'spree/sample'
 
 namespace :spree_sample do
   desc 'Loads sample data'
-  task :load do
-    sample_path = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample')
+  task :load => :environment do
+    Spree::Sample.load_sample("payment_methods")
+    Spree::Sample.load_sample("shipping_categories")
+    Spree::Sample.load_sample("shipping_methods")
+    Spree::Sample.load_sample("tax_categories")
+    Spree::Sample.load_sample("tax_rates")
 
-    Rake::Task['db:load_dir'].reenable
-    Rake::Task['db:load_dir'].invoke(sample_path)
+    Spree::Sample.load_sample("products")
+    Spree::Sample.load_sample("taxons")
+    Spree::Sample.load_sample("option_values")
+    Spree::Sample.load_sample("product_option_types")
+    Spree::Sample.load_sample("product_properties")
+    Spree::Sample.load_sample("prototypes")
+    Spree::Sample.load_sample("variants")
+    Spree::Sample.load_sample("assets")
+
+    Spree::Sample.load_sample("orders")
+    Spree::Sample.load_sample("line_items")
+    Spree::Sample.load_sample("adjustments")
+    Spree::Sample.load_sample("payments")
   end
 end
+
+
