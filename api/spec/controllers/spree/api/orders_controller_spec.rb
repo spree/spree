@@ -89,8 +89,12 @@ module Spree
       end
 
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
-      let(:shipping_address) { clean_address(attributes_for(:address).merge!(address_params)) }
-      let(:billing_address) { clean_address(attributes_for(:address).merge!(address_params)) }
+      let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista", 
+                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                :country_id => Country.first.id, :state_id => State.first.id} }
+      let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista", 
+                                 :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                 :country_id => Country.first.id, :state_id => State.first.id} }
       let!(:shipping_method) { create(:shipping_method) }
       let!(:payment_method) { create(:payment_method) }
 
@@ -99,6 +103,44 @@ module Spree
 
         response.status.should == 200
         json_response['item_total'].to_f.should_not == order.item_total.to_f
+      end
+      
+      it "can add billing address" do
+        order.bill_address.should be_nil
+        
+        api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
+        
+        order.reload.bill_address.should_not be_nil
+      end
+      
+      it "receives error message if trying to add billing address with errors" do
+        order.bill_address.should be_nil
+        billing_address[:firstname] = ""
+        
+        api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
+        
+        json_response['error'].should_not be_nil
+        json_response['errors'].should_not be_nil
+        json_response['errors']['bill_address.firstname'].first.should eq "can't be blank"
+      end
+      
+      it "can add shipping address" do
+        order.ship_address.should be_nil
+        
+        api_put :update, :id => order.to_param, :order => { :ship_address_attributes => shipping_address }
+        
+        order.reload.ship_address.should_not be_nil
+      end
+      
+      it "receives error message if trying to add shipping address with errors" do
+        order.ship_address.should be_nil
+        shipping_address[:firstname] = ""
+        
+        api_put :update, :id => order.to_param, :order => { :ship_address_attributes => shipping_address }
+        
+        json_response['error'].should_not be_nil
+        json_response['errors'].should_not be_nil
+        json_response['errors']['ship_address.firstname'].first.should eq "can't be blank"
       end
 
       context "with a line item" do
