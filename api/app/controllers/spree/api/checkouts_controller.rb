@@ -6,6 +6,7 @@ module Spree
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
+      include ActionView::Helpers::TranslationHelper
 
       respond_to :json
 
@@ -16,6 +17,7 @@ module Spree
 
       def update
         if @order.update_attributes(object_params)
+          return if after_update_attributes
           state_callback(:after) if @order.next
           respond_with(@order, :default_template => 'spree/api/orders/show')
         else
@@ -84,6 +86,18 @@ module Spree
           else
             render 'spree/api/orders/could_not_transition', :status => 422
           end
+        end
+
+        def after_update_attributes
+          if object_params && object_params[:coupon_code].present?
+            coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
+            if !coupon_result[:coupon_applied?]
+              @coupon_message = coupon_result[:error]
+              respond_with(@order, :default_template => 'spree/api/orders/could_not_apply_coupon')
+              return true
+            end
+          end
+          false
         end
     end
   end

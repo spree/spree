@@ -7,7 +7,7 @@ module Spree
     end
 
     protected
-      # This method is placed here so that the CheckoutController 
+      # This method is placed here so that the CheckoutController
       # and OrdersController can both reference it.
       def apply_coupon_code
         if @order.coupon_code.present?

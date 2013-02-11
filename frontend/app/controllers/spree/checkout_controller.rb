@@ -4,8 +4,8 @@ module Spree
   # order that this approach is waranted.
 
   # Much of this file, especially the update action is overriden in the promo gem.
-  # This is to allow for the promo behavior but also allow the promo gem to be 
-  # removed if the functionality is not needed. 
+  # This is to allow for the promo behavior but also allow the promo gem to be
+  # removed if the functionality is not needed.
 
   class CheckoutController < Spree::StoreController
     ssl_required
@@ -18,17 +18,11 @@ module Spree
 
     helper 'spree/orders'
 
-    helper 'spree/orders'
-
     # Updates the order and advances to the next state (when possible.)
-    # Overriden by the promo gem if it exists. 
     def update
       if @order.update_attributes(object_params)
         fire_event('spree.checkout.update')
-        unless apply_coupon_code
-          respond_with(@order) { |format| format.html { render :edit } }
-          return
-        end
+        return if after_update_attributes
 
         if @order.next
           state_callback(:after)
@@ -125,6 +119,18 @@ module Spree
 
       def check_authorization
         authorize!(:edit, current_order, session[:access_token])
+      end
+
+      def after_update_attributes
+        coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
+        if coupon_result[:coupon_applied?]
+          flash[:success] = coupon_result[:success] if coupon_result[:success].present?
+          return false
+        else
+          flash[:error] = coupon_result[:error]
+          respond_with(@order) { |format| format.html { render :edit } }
+          return true
+        end
       end
   end
 end
