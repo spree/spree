@@ -24,6 +24,15 @@ module Spree
                          :address => { :address1 => "123 Test Lane" }
         json_response['address1'].should eq '123 Test Lane'
       end
+      
+      it "receives the errors object if address is invalid" do
+        api_put :update, :id => @address.id,
+                         :address => { :address1 => "" }
+                         
+        json_response['error'].should_not be_nil
+        json_response['errors'].should_not be_nil
+        json_response['errors']['address1'].first.should eq "can't be blank"
+      end
     end
 
     context "on somebody else's address" do
