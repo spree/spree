@@ -11,7 +11,7 @@ module Spree
         message.from ||= mail_method.preferred_mails_from
 
         if mail_method.preferred_intercept_email.present?
-          message.subject = "[#{message.to}] #{message.subject}"
+          message.subject = "#{message.to} #{message.subject}"
           message.to = mail_method.preferred_intercept_email
         end
 
