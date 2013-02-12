@@ -1,41 +1,25 @@
 require 'active_record'
-require 'spree/core/custom_fixtures'
 
 namespace :db do
   desc %q{Loads a specified fixture file:
-For .yml      use rake db:load_file[spree/filename.yml,/absolute/path/to/parent/]
-For .rb       use rake db:load_file[/absolute/path/to/sample/filename.rb]}
+use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
   task :load_file , [:file, :dir] => :environment do |t, args|
     file = Pathname.new(args.file)
 
-    if %w{.yml}.include? file.extname
-      puts "loading fixture #{Pathname.new(args.dir).join(file)}"
-      Spree::Core::Fixtures.create_fixtures(args.dir, file.to_s.sub(file.extname, ""))
-    elsif file.exist?
-      puts "loading ruby #{file}"
-      require file
-    end
+    puts "loading ruby #{file}"
+    require file
   end
 
   desc "Loads fixtures from the the dir you specify using rake db:load_dir[loadfrom]"
-  task :load_dir , [:dir] => :environment do |t , args|
+  task :load_dir , [:dir] => :environment do |t, args|
     dir = args.dir
     dir = File.join(Rails.root, "db", dir) if Pathname.new(dir).relative?
 
-    fixtures = ActiveSupport::OrderedHash.new
     ruby_files = ActiveSupport::OrderedHash.new
-    Dir.glob(File.join(dir , '**/*.{yml,rb}')).each do |fixture_file|
+    Dir.glob(File.join(dir , '**/*.{rb}')).each do |fixture_file|
       ext = File.extname fixture_file
-      if ext == ".rb"
-        ruby_files[File.basename(fixture_file, '.*')] = fixture_file
-      else
-        fixtures[fixture_file.sub(dir, "")[1..-1]] = fixture_file
-      end
-    end
-    fixtures.sort.each do |relative_path , fixture_file|
-      # an invoke will only execute the task once
-      Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file, :dir], [relative_path, dir]) )
+      ruby_files[File.basename(fixture_file, '.*')] = fixture_file
     end
     ruby_files.sort.each do |fixture , ruby_file|
       # an invoke will only execute the task once
