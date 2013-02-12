@@ -3,6 +3,7 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < ActiveRecord::Base
+    include ActiveModel::ForbiddenAttributesProtection
     # TODO:
     # Need to use fully qualified name here because during sandbox migration
     # there is a class called Checkout which conflicts if you use this:
@@ -29,10 +30,6 @@ module Spree
     end
 
     token_resource
-
-    attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
-                    :ship_address, :bill_address, :payments_attributes, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions, :currency, :coupon_code
 
     attr_reader :coupon_code
 
