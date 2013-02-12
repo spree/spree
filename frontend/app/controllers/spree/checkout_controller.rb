@@ -7,13 +7,15 @@ module Spree
     ssl_required
 
     before_filter :load_order
+
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
     before_filter :ensure_sufficient_stock_lines
-
     before_filter :ensure_valid_state
+
     before_filter :associate_user
     before_filter :check_authorization
+
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     helper 'spree/orders'
@@ -28,14 +30,13 @@ module Spree
           return
         end
 
-        if @order.next
-          state_callback(:after)
-        else
+        unless @order.next
           flash[:error] = t(:payment_processing_failed)
           redirect_to checkout_state_path(@order.state) and return
         end
 
         if @order.state == "complete" || @order.completed?
+          session[:order_id] = nil
           flash.notice = t(:order_processed_successfully)
           flash[:commerce_tracking] = "nothing special"
           redirect_to completion_route
@@ -69,7 +70,7 @@ module Spree
         redirect_to spree.cart_path and return unless @order
 
         @order.state = params[:state] if params[:state]
-        state_callback(:before)
+        setup_for_current_state
       end
 
       def ensure_checkout_allowed
@@ -114,8 +115,8 @@ module Spree
         params[:order]
       end
 
-      def state_callback(before_or_after = :before)
-        method_name = :"#{before_or_after}_#{@order.state}"
+      def setup_for_current_state
+        method_name = :"before_#{@order.state}"
         send(method_name) if respond_to?(method_name, true)
       end
 
@@ -127,10 +128,6 @@ module Spree
       def before_delivery
         return if params[:order].present?
         @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
-      end
-
-      def after_complete
-        session[:order_id] = nil
       end
 
       def rescue_from_spree_gateway_error
