@@ -36,6 +36,24 @@ module Spree
         Order.any_instance.stub(:confirmation_required? => true)
         Order.any_instance.stub(:payment_required? => true)
       end
+      
+      it "will return an error if the recently created order cannot transition from cart to address" do
+        order.state.should eq "cart"
+        order.email = nil # email is necessary to transition from cart to address
+        order.save!
+        
+        api_put :update, :id => order.to_param
+        
+        json_response['error'].should =~ /could not be transitioned/
+        response.status.should == 422
+      end
+      
+      it "should transition a recently created order from cart do address" do
+        order.state.should eq "cart"
+        order.email.should_not be_nil
+        api_put :update, :id => order.to_param
+        order.reload.state.should eq "address"
+      end
 
       it "will return an error if the order cannot transition" do
         order.update_column(:state, "address")
