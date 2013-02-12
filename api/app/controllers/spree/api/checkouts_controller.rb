@@ -16,7 +16,12 @@ module Spree
 
       def update
         respond_with(@order, :default_template => 'spree/api/orders/show') and return if @order.state == "complete"
-        
+
+        if object_params && object_params[:user_id].present?
+          @order.update_attribute(:user_id, object_params[:user_id])
+          object_params.delete(:user_id)
+        end
+
         if @order.update_attributes(object_params) && @order.next
           state_callback(:after)
           respond_with(@order, :default_template => 'spree/api/orders/show')
