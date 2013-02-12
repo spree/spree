@@ -98,11 +98,11 @@ module Spree
     end
 
     def immutable?
-      state == "open" ? false : true
+      state != "open"
     end
 
     def finalized?
-      state == "finalized" ? true : false
+      state == "finalized"
     end
 
     private
