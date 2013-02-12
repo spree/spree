@@ -1,5 +1,6 @@
 module Spree
   class StockLocation < ActiveRecord::Base
+<<<<<<< HEAD
     has_many :stock_items, dependent: :destroy
     has_many :stock_movements, through: :stock_items
 
@@ -61,5 +62,15 @@ module Spree
           self.stock_items.create!(variant: v)
         end
       end
+=======
+    belongs_to :address
+    attr_accessible :name
+    has_many :stock_items, :dependent => :destroy
+
+    def count_on_hand(variant_id)
+      stock_item = stock_items.where(variant_id: variant_id).first
+      stock_item.try(:count_on_hand)
+    end
+>>>>>>> stock locations and items
   end
 end
