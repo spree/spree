@@ -1,22 +1,22 @@
 module Spree
-  # Handles checkout logic.  This is somewhat contrary to standard REST convention since there is not actually a
-  # Checkout object.  There's enough distinct logic specific to checkout which has nothing to do with updating an
-  # order that this approach is waranted.
-
-  # Much of this file, especially the update action is overriden in the promo gem.
-  # This is to allow for the promo behavior but also allow the promo gem to be 
-  # removed if the functionality is not needed. 
-
+  # This is somewhat contrary to standard REST convention since there is not
+  # actually a Checkout object. There's enough distinct logic specific to
+  # checkout which has nothing to do with updating an order that this approach
+  # is waranted.
   class CheckoutController < Spree::StoreController
     ssl_required
 
     before_filter :load_order
+
+    before_filter :ensure_order_not_completed
+    before_filter :ensure_checkout_allowed
+    before_filter :ensure_sufficient_stock_lines
     before_filter :ensure_valid_state
+
     before_filter :associate_user
     before_filter :check_authorization
-    rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
-    helper 'spree/orders'
+    rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     helper 'spree/orders'
 
@@ -30,15 +30,13 @@ module Spree
           return
         end
 
-        if @order.next
-          state_callback(:after)
-        else
+        unless @order.next
           flash[:error] = t(:payment_processing_failed)
-          redirect_to checkout_state_path(@order.state)
-          return
+          redirect_to checkout_state_path(@order.state) and return
         end
 
         if @order.state == "complete" || @order.completed?
+          session[:order_id] = nil
           flash.notice = t(:order_processed_successfully)
           flash[:commerce_tracking] = "nothing special"
           redirect_to completion_route
@@ -69,11 +67,27 @@ module Spree
 
       def load_order
         @order = current_order
-        redirect_to spree.cart_path and return unless @order and @order.checkout_allowed?
-        raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
-        redirect_to spree.cart_path and return if @order.completed?
+        redirect_to spree.cart_path and return unless @order
+
         @order.state = params[:state] if params[:state]
-        state_callback(:before)
+        setup_for_current_state
+      end
+
+      def ensure_checkout_allowed
+        unless @order.checkout_allowed?
+          redirect_to spree.cart_path
+        end
+      end
+
+      def ensure_order_not_completed
+        redirect_to spree.cart_path if @order.completed?
+      end
+
+      def ensure_sufficient_stock_lines
+        if @order.insufficient_stock_lines.present?
+          flash[:error] = t(:spree_inventory_error_flash_for_insufficient_quantity)
+          redirect_to spree.cart_path
+        end
       end
 
       # Provides a route to redirect after order completion
@@ -81,12 +95,19 @@ module Spree
         spree.order_path(@order)
       end
 
+      # For payment step, filter order parameters to produce the expected nested
+      # attributes for a single payment and its source, discarding attributes
+      # for payment methods other than the one selected
       def object_params
-        # For payment step, filter order parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
         if @order.payment?
-          if params[:payment_source].present? && source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
-            params[:order][:payments_attributes].first[:source_attributes] = source_params
+          if params[:payment_source].present?
+            source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
+
+            if source_params
+              params[:order][:payments_attributes].first[:source_attributes] = source_params
+            end
           end
+
           if (params[:order][:payments_attributes])
             params[:order][:payments_attributes].first[:amount] = @order.total
           end
@@ -94,13 +115,8 @@ module Spree
         params[:order]
       end
 
-      def raise_insufficient_quantity
-        flash[:error] = t(:spree_inventory_error_flash_for_insufficient_quantity)
-        redirect_to spree.cart_path
-      end
-
-      def state_callback(before_or_after = :before)
-        method_name = :"#{before_or_after}_#{@order.state}"
+      def setup_for_current_state
+        method_name = :"before_#{@order.state}"
         send(method_name) if respond_to?(method_name, true)
       end
 
@@ -112,10 +128,6 @@ module Spree
       def before_delivery
         return if params[:order].present?
         @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
-      end
-
-      def after_complete
-        session[:order_id] = nil
       end
 
       def rescue_from_spree_gateway_error
