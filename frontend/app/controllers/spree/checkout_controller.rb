@@ -7,14 +7,16 @@ module Spree
     ssl_required
 
     before_filter :load_order
+
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
     before_filter :ensure_sufficient_stock_lines
-
     before_filter :ensure_valid_state
 
     before_filter :associate_user
     before_filter :check_authorization
+
+    rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     helper 'spree/orders'
 
@@ -139,8 +141,8 @@ module Spree
         )
       end
 
-      def state_callback(before_or_after = :before)
-        method_name = :"#{before_or_after}_#{@order.state}"
+      def setup_for_current_state
+        method_name = :"before_#{@order.state}"
         send(method_name) if respond_to?(method_name, true)
       end
 
