@@ -23,3 +23,4 @@ class CreateDefaultStock < ActiveRecord::Migration
     Spree::StockItem.delete_all
   end
 end
+
