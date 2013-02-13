@@ -6,7 +6,6 @@ module Spree
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
-      include ActionView::Helpers::TranslationHelper
 
       respond_to :json
 
