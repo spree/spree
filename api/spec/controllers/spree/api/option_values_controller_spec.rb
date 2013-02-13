@@ -5,7 +5,7 @@ module Spree
     render_views
 
     let(:attributes) { [:id, :name, :presentation, :option_type_name, :option_type_name] }
-    let!(:option_value) { Factory(:option_value) }
+    let!(:option_value) { create(:option_value) }
     let!(:option_type) { option_value.option_type }
 
     before do
@@ -21,7 +21,7 @@ module Spree
     context "without any option type scoping" do
       before do
         # Create another option value with a brand new option type
-        Factory(:option_value, :option_type => Factory(:option_type))
+        create(:option_value, :option_type => create(:option_type))
       end
 
       it "can retreive a list of all option values" do
@@ -41,15 +41,15 @@ module Spree
       end
 
       it "can search for an option type" do
-        Factory(:option_value, :name => "buzz")
+        create(:option_value, :name => "buzz")
         api_get :index, :q => { :name_cont => option_value.name }
         json_response.count.should == 1
         json_response.first.should have_attributes(attributes)
       end
 
       it "can retreive a list of option types" do
-        option_value_1 = Factory(:option_value, :option_type => option_type)
-        option_value_2 = Factory(:option_value, :option_type => option_type)
+        option_value_1 = create(:option_value, :option_type => option_type)
+        option_value_2 = create(:option_value, :option_type => option_type)
         api_get :index, :ids => [option_value.id, option_value_1.id]
         json_response.count.should == 2
       end
@@ -60,7 +60,7 @@ module Spree
       end
 
       it "cannot create a new option value" do
-        api_post :create, :option_value => { 
+        api_post :create, :option_value => {
                           :name => "Option Value",
                           :presentation => "Option Value"
                         }
@@ -87,7 +87,7 @@ module Spree
         sign_in_as_admin!
 
         it "can create an option value" do
-          api_post :create, :option_value => { 
+          api_post :create, :option_value => {
                             :name => "Option Value",
                             :presentation => "Option Value"
                           }
@@ -122,7 +122,7 @@ module Spree
           api_delete :destroy, :id => option_value.id
           response.status.should == 204
         end
-      end 
+      end
     end
   end
 end

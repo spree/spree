@@ -10,7 +10,7 @@ describe Spree::Shipment do
     shipment
   end
 
-  let(:charge) { Factory(:adjustment) }
+  let(:charge) { create(:adjustment) }
 
   context "#cost" do
     it "should return the amount of any shipping charges that it originated" do

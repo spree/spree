@@ -19,7 +19,7 @@ FactoryGirl.define do
   end
 
   factory :product_with_option_types, :parent => :product do
-    after_create { |product| FactoryGirl.create(:product_option_type, :product => product) }
+    after(:create) { |product| FactoryGirl.create(:product_option_type, :product => product) }
   end
 
   factory :custom_product, :class => Spree::Product do

@@ -5,7 +5,7 @@ FactoryGirl.define do
   end
 
   factory :tax_category_with_rates, :parent => :tax_category do
-    after_create do |tax_category|
+    after(:create) do |tax_category|
       tax_category.tax_rates.create!({
         :amount => 0.05,
         :calculator => Spree::Calculator::DefaultTax.new,
