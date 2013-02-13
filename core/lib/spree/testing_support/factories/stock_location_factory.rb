@@ -4,7 +4,7 @@ FactoryGirl.define do
 
     # associations:
     address
-    after_create do |stock_location, evaluator|
+    after(:create) do |stock_location, evaluator|
       FactoryGirl.create_list(:stock_item, 2,
                               stock_location: stock_location)
     end
