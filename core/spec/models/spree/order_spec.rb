@@ -413,7 +413,7 @@ describe Spree::Order do
 
   # Regression tests for #2179
   context "#merge!" do
-    let(:variant) { Factory(:variant) }
+    let(:variant) { create(:variant) }
     let(:order_1) { Spree::Order.create }
     let(:order_2) { Spree::Order.create }
 
@@ -439,7 +439,7 @@ describe Spree::Order do
     end
 
     context "merging together two orders with different line items" do
-      let(:variant_2) { Factory(:variant) }
+      let(:variant_2) { create(:variant) }
 
       before do
         order_1.add_variant(variant)

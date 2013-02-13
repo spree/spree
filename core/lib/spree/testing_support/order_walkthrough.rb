@@ -2,12 +2,12 @@ class OrderWalkthrough
   def self.up_to(state)
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
-      Factory(:payment_method)
+      FactoryGirl.create(:payment_method)
     end
 
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::ShippingMethod.exists?
-      Factory(:shipping_method)
+      FactoryGirl.create(:shipping_method)
     end
 
     order = Spree::Order.create!(:email => "spree@example.com")
@@ -37,7 +37,7 @@ class OrderWalkthrough
   end
 
   def self.delivery(order)
-    order.shipping_method = Spree::ShippingMethod.first 
+    order.shipping_method = Spree::ShippingMethod.first
     order.next!
   end
 

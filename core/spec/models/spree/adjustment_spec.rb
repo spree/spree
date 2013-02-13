@@ -86,7 +86,7 @@ describe Spree::Adjustment do
   end
 
   context "adjustment state" do
-    let(:adjustment) { Factory(:adjustment, :state => 'open') }
+    let(:adjustment) { create(:adjustment, :state => 'open') }
 
     context "#immutable?" do
       it "is true when adjustment state isn't open" do

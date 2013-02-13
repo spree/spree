@@ -2,13 +2,13 @@ require 'spec_helper'
 
 module Spree
   describe Order do
-    let(:order) { stub_model(Spree::Order) } 
+    let(:order) { stub_model(Spree::Order) }
 
     context "#tax_zone" do
-      let(:bill_address) { Factory :address }
-      let(:ship_address) { Factory :address }
+      let(:bill_address) { create :address }
+      let(:ship_address) { create :address }
       let(:order) { Spree::Order.create(:ship_address => ship_address, :bill_address => bill_address) }
-      let(:zone) { Factory :zone }
+      let(:zone) { create :zone }
 
       context "when no zones exist" do
         before { Spree::Zone.destroy_all }
@@ -115,4 +115,4 @@ module Spree
   end
 end
 
-    
+

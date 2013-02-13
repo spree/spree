@@ -5,7 +5,7 @@ module Spree
     render_views
 
     let(:attributes) { [:id, :name, :position, :presentation] }
-    let!(:option_value) { Factory(:option_value) }
+    let!(:option_value) { create(:option_value) }
     let!(:option_type) { option_value.option_type }
 
     before do
@@ -27,15 +27,15 @@ module Spree
     end
 
     it "can search for an option type" do
-      Factory(:option_type, :name => "buzz")
+      create(:option_type, :name => "buzz")
       api_get :index, :q => { :name_cont => option_type.name }
       json_response.count.should == 1
       json_response.first.should have_attributes(attributes)
     end
 
     it "can retreive a list of option types" do
-      option_type_1 = Factory(:option_type)
-      option_type_2 = Factory(:option_type)
+      option_type_1 = create(:option_type)
+      option_type_2 = create(:option_type)
       api_get :index, :ids => [option_type, option_type_1]
       json_response.count.should == 2
 
@@ -43,15 +43,15 @@ module Spree
     end
 
     it "can search for an option type" do
-      Factory(:option_type, :name => "buzz")
+      create(:option_type, :name => "buzz")
       api_get :index, :q => { :name_cont => option_type.name }
       json_response.count.should == 1
       json_response.first.should have_attributes(attributes)
     end
 
     it "can retreive a list of option types" do
-      option_type_1 = Factory(:option_type)
-      option_type_2 = Factory(:option_type)
+      option_type_1 = create(:option_type)
+      option_type_2 = create(:option_type)
       api_get :index, :ids => [option_type, option_type_1]
       json_response.count.should == 2
     end
@@ -63,7 +63,7 @@ module Spree
     end
 
     it "cannot create a new option type" do
-      api_post :create, :option_type => { 
+      api_post :create, :option_type => {
                         :name => "Option Type",
                         :presentation => "Option Type"
                       }
@@ -90,7 +90,7 @@ module Spree
       sign_in_as_admin!
 
       it "can create an option type" do
-        api_post :create, :option_type => { 
+        api_post :create, :option_type => {
                           :name => "Option Type",
                           :presentation => "Option Type"
                         }
@@ -125,6 +125,6 @@ module Spree
         api_delete :destroy, :id => option_type.id
         response.status.should == 204
       end
-    end 
+    end
   end
 end
