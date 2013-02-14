@@ -18,6 +18,14 @@ module Spree
         end
       end
 
+      context 'packages' do
+        it 'builds an array of packages' do
+          packages = subject.packages
+          packages.size.should eq 1
+          packages.first.contents.size.should eq 5
+        end
+      end
+
       context 'default_package' do
         it 'contains all the items' do
           package = subject.default_package
@@ -31,13 +39,6 @@ module Spree
           package.on_hand.size.should eq 5
           package.backordered.size.should eq 5
         end
-      end
-
-      xit 'builds an array of packages' do
-        order.reload #temp fix for bug where line_items weren't loaded
-        packages = subject.packages(order)
-        packages.size.should eq 1
-        packages.first.contents.size.should eq 5
       end
 
       context 'stock_status' do
