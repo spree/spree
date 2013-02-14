@@ -114,6 +114,20 @@ describe "Checkout" do
         end
       end
 
+      context 'payment already exists on order' do
+        before(:each) do
+          payment = order.payments.new
+          payment.payment_method = Spree::PaymentMethod.first
+          payment.save!
+        end
+
+        it 'updates the existing payment' do
+          visit spree.checkout_state_path(:payment)
+          expect { click_button "Save and Continue" }.to_not change{ order.payments.count }
+        end
+      end
+
+
       # Regression test for #1596
       context "full checkout" do
         before do
