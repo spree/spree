@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::StockItem do
-  subject { create(:stock_item) }
+  let(:stock_location) { create(:stock_location) }
+  subject { create(:stock_item, stock_location: stock_location) }
 
   it 'maintains the count on hand for a varaint' do
     subject.count_on_hand.should eq 10
