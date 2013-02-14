@@ -18,20 +18,16 @@ module Spree
       I18n.t(:shipping)
     end
 
-    def available?(order, display_on = nil)
-      displayable?(display_on) && calculator.available?(order)
-    end
-
-    def displayable?(display_on)
-      (self.display_on == display_on.to_s || self.display_on.blank?)
+    def available?(order)
+      calculator.available?(order)
     end
 
     def within_zone?(order)
       zone && zone.include?(order.ship_address)
     end
 
-    def available_to_order?(order, display_on= nil)
-      available?(order, display_on) &&
+    def available_to_order?(order)
+      available?(order) &&
       within_zone?(order) &&
       category_match?(order) &&
       currency_match?(order)
