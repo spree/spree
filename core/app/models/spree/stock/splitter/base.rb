@@ -2,25 +2,22 @@ module Spree
   module Stock
     module Splitter
       class Base
-        attr_reader :packer, :next_splitter
+        attr_accessor :stock_location, :order
 
-        def initialize(packer, next_splitter=nil)
-          @packer = packer
-          @next_splitter = next_splitter
+        def initialize(stock_location, order)
+          @stock_location = stock_location
+          @order = order
         end
-        delegate :stock_location, :order, :to => :packer
 
         def split(packages)
-          return_next(packages)
+          packages
         end
+      end
 
-        private
-        def return_next(packages)
-          next_splitter ? next_splitter.split(packages) : packages
-        end
-
-        def build_package(contents=[])
-          Stock::Package.new(stock_location, order, contents)
+      class ShippingCategory < Base
+        def split(packages)
+          #TODO regroup items by shipping category
+          packages
         end
       end
     end
