@@ -13,6 +13,7 @@ module Spree
       protected
         def authorize_admin
           record = model_class rescue Object
+          authorize! :admin, record
           authorize! params[:action].to_sym, record
         end
 
