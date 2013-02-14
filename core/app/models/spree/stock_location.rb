@@ -14,9 +14,9 @@ module Spree
     def default_package(order)
       package = StockPackage.new(self)
       order.line_items.each do |line_item|
-        line_item.quantity.times do
-          package.add stock_item_for_variant(line_item.variant)
-        end
+        on_hand, backordered = stock_status(line_item.variant, line_item.quantity)
+        package.add line_item.variant, on_hand, :on_hand if on_hand > 0
+        package.add line_item.variant, backordered, :backordered if backordered > 0
       end
       package
     end
@@ -28,11 +28,17 @@ module Spree
 
     private
     def stock_item_for_variant(variant)
-      stock_items.first
+      stock_items.where(variant: variant).first
     end
 
-    def count_on_hand(variant_id)
-      stock_item = stock_items.where(variant_id: variant_id).first
+    def stock_status(variant, quantity)
+      on_hand = count_on_hand(variant)
+      #TODO fancy math for backorder counts
+      [on_hand, 0]
+    end
+
+    def count_on_hand(variant)
+      stock_item = stock_items.where(variant_id: variant).first
       stock_item.try(:count_on_hand)
     end
   end
