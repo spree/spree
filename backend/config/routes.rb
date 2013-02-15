@@ -62,7 +62,11 @@ Spree::Core::Engine.routes.append do
     resources :tax_categories
 
     resources :products do
-      resources :product_properties
+      resources :product_properties do
+        collection do
+          post :update_positions
+        end
+      end
       resources :images do
         collection do
           post :update_positions
@@ -94,6 +98,8 @@ Spree::Core::Engine.routes.append do
         get :filtered
       end
     end
+
+    delete '/product_properties/:id', :to => "product_properties#destroy", :as => :product_property
 
     resources :prototypes do
       member do
