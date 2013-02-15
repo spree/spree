@@ -30,7 +30,7 @@ module Spree
     validate :check_price
     validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true, :if => proc { Spree::Config[:require_master_price] }
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
-    validates :count_on_hand, :numericality => true
+    #validates :count_on_hand, :numericality => true
 
     before_validation :set_cost_currency
     after_save :process_backorders
@@ -46,11 +46,11 @@ module Spree
 
     # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
     def on_hand
-      if Spree::Config[:track_inventory_levels] && !self.on_demand
-        count_on_hand 
-      else
-        (1.0 / 0) # Infinity
-      end
+      # if Spree::Config[:track_inventory_levels] && !self.on_demand
+      #   count_on_hand
+      # else
+      #   (1.0 / 0) # Infinity
+      # end
     end
 
     # set actual attribute
@@ -58,7 +58,7 @@ module Spree
       if !Spree::Config[:track_inventory_levels]
         raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
       else
-        self.count_on_hand = new_level unless self.on_demand
+        # self.count_on_hand = new_level unless self.on_demand
       end
     end
 
@@ -74,7 +74,7 @@ module Spree
     # returns true if at least one inventory unit of this variant is "on_hand"
     def in_stock?
       if Spree::Config[:track_inventory_levels] && !self.on_demand
-        on_hand > 0 
+        on_hand > 0
       else
         true
       end
