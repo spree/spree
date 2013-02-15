@@ -120,7 +120,7 @@ module Spree
     # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
     def on_hand=(new_level)
       unless self.on_demand
-        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels] 
+        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
         master.on_hand = new_level
       end
     end
@@ -269,9 +269,9 @@ module Spree
       end
 
       def recalculate_count_on_hand
-        product_count_on_hand = has_variants? ?
-          variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
-        self.count_on_hand = product_count_on_hand
+        # product_count_on_hand = has_variants? ?
+        #   variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
+        # self.count_on_hand = product_count_on_hand
       end
 
       # the master on_hand is meaningless once a product has variants as the inventory

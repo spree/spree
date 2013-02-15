@@ -3,11 +3,11 @@ module Spree
     class Package
       ContentItem = Struct.new(:variant, :quantity, :status)
 
-      attr_accessor :stock_location, :contents
+      attr_accessor :packer, :contents
 
-      def initialize(stock_location)
-        @stock_location = stock_location
-        @contents = Array.new
+      def initialize(packer, contents=[])
+        @packer = packer
+        @contents = contents
       end
 
       def add(variant, quantity, status=:on_hand)
@@ -24,6 +24,10 @@ module Spree
 
       def backordered
         contents.select { |item| item.status == :backordered }
+      end
+
+      def quantity
+        contents.sum { |item| item.quantity }
       end
 
       def inspect
