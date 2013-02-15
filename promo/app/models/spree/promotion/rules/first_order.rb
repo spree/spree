@@ -2,20 +2,27 @@ module Spree
   class Promotion
     module Rules
       class FirstOrder < PromotionRule
+        attr_reader :user, :email
+
         def eligible?(order, options = {})
-          user = order.try(:user) || options[:user]
-          if user
-            return orders_by_email(user.email) == 0
-          elsif order.email
-            return orders_by_email(order.email) == 0
+          @user = order.try(:user) || options[:user]
+          @email = order.email
+
+          if user || email
+            completed_orders.blank? || (completed_orders.first == order)
+          else
+            false
+          end
+        end
+
+        private
+          def completed_orders
+            user ? user.orders.complete : orders_by_email
           end
 
-          return false
-        end
-
-        def orders_by_email(email)
-          Spree::Order.where(:email => email).count
-        end
+          def orders_by_email
+            Spree::Order.where(:email => email).complete
+          end
       end
     end
   end
