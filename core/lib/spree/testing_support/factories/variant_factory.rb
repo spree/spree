@@ -14,8 +14,8 @@ FactoryGirl.define do
   end
 
   factory :variant, :parent => :base_variant do
-    on_hand 5
-    
+    #on_hand 5
+
     # associations:
     product { |p| p.association(:product) }
   end
