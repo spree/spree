@@ -4,8 +4,17 @@ module Spree
   module Stock
     module Splitter
       describe Base do
+        let(:packer) { build(:stock_packer) }
+        subject { Base.new(packer) }
 
-        pending 'chains together'
+        it 'continues to splitter chain' do
+          splitter1 = Base.new(packer)
+          splitter2 = Base.new(packer, splitter1)
+          packages = []
+
+          splitter1.should_receive(:split).with(packages)
+          splitter2.split(packages)
+        end
 
       end
     end
