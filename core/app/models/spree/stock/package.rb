@@ -5,6 +5,8 @@ module Spree
 
       attr_accessor :packer, :contents
 
+      delegate :shipping_location, :order, :to => :packer
+
       def initialize(packer, contents=[])
         @packer = packer
         @contents = contents
@@ -15,7 +17,7 @@ module Spree
       end
 
       def weight
-        contents.sum { |item| item.variant.weight }
+        contents.sum { |item| item.variant.weight * item.quantity }
       end
 
       def on_hand
