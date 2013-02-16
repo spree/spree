@@ -70,6 +70,7 @@ module Spree
           :password_confirmation,
           :number,
           :verification_value]
+      end
 
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
       initializer "spree.assets.precompile", :group => :all do |app|
