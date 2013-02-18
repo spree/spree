@@ -75,7 +75,7 @@ module Spree
     end
 
     def logo(image_path=Spree::Config[:logo])
-      link_to image_tag(image_path), root_path
+      link_to image_tag(image_path), spree.root_path
     end
 
     def flash_messages(opts = {})
@@ -92,7 +92,7 @@ module Spree
     def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
       return "" if current_page?("/") || taxon.nil?
       separator = raw(separator)
-      crumbs = [content_tag(:li, link_to(t(:home) , root_path) + separator)]
+      crumbs = [content_tag(:li, link_to(t(:home) , spree.root_path) + separator)]
       if taxon
         crumbs << content_tag(:li, link_to(t(:products) , products_path) + separator)
         crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
