@@ -29,7 +29,7 @@ module Spree
           redirect_to checkout_state_path(@order.state) and return
         end
 
-        if @order.state == "complete" || @order.completed?
+        if @order.completed?
           session[:order_id] = nil
           flash.notice = t(:order_processed_successfully)
           flash[:commerce_tracking] = "nothing special"
