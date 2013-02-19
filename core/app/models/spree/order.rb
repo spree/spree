@@ -194,7 +194,7 @@ module Spree
         arr_price_adjustments.concat line_item.adjustments
       end
 
-      adjustments.taxables.each do |adjustement|
+      adjustments.taxable.each do |adjustement|
         arr_price_adjustments.concat adjustement.adjustments
       end
 

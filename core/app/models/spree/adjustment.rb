@@ -35,7 +35,7 @@ module Spree
     scope :tax, lambda { where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order') }
     scope :price, lambda { where(:adjustable_type => 'Spree::LineItem') }
     scope :shipping, lambda { where(:originator_type => 'Spree::ShippingMethod') }
-    scope :taxables, lambda { where(:originator_type => 'Spree::ShippingMethod') }
+    scope :taxable, lambda { where('originator_type <> ?', 'Spree::TaxRate') }
     scope :optional, where(:mandatory => false)
     scope :eligible, where(:eligible => true)
     scope :charge, where("amount >= 0")

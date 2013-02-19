@@ -31,7 +31,7 @@ module Spree
 
         line_items_total = matched_line_items.sum(&:total)
 
-        line_items_total += order.adjustments.taxables.sum(&:amount) if rate.included_in_price? && rate.tax_category.is_default?
+        line_items_total += order.adjustments.taxable.sum(&:amount) if rate.included_in_price? && rate.tax_category.is_default?
 
         round_to_two_places(line_items_total * rate.amount)
       end
