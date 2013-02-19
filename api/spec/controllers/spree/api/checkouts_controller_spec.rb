@@ -149,7 +149,7 @@ module Spree
       it "can apply a coupon code to an order" do
         order.update_column(:state, "payment")
         Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
-        Spree::Promo::CouponApplicator.any_instance.should_receive(:apply)
+        Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return({:coupon_applied? => true})
         api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }
       end
     end
