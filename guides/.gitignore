@@ -1,8 +1,7 @@
-.bundle
 output
-staging
+tmp
 .DS_Store
-roadmap.txt
-*.swp
-.rvmrc
+.bundle
 bin
+crash.log
+.rbenv-version

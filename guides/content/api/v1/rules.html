@@ -1,0 +1,18 @@
+---
+title: Rules
+---
+
+# Rules
+
+The following are some simple rules that all Spree API endpoints comply with.
+
+1. All successful requests for the API will return a status of 200. 
+2. Successful create and update requests will result in a status of 201 and 200 respectively. 
+3. Both create and update requests will return Spree\'s representation of the data upon success. 
+4. If a create or update request fails, a status code of 422 will be returned, with a hash containing an \"error\" key, and an \"errors\" key. The errors value will contain all ActiveRecord validation errors encountered when saving this record. 
+5. Delete requests will return status of 200, and no content. 
+6. Requests that list collections, such as /api/products will return a limited result set back. 
+7. Requests that list collections can be paginated through by passing a page parameter that is a number greater than 0. 
+8. If a resource can not be found, the API will return a status of 404. 
+9. Unauthorized requests will be met with a 401 response.
+

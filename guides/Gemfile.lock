@@ -1,0 +1,68 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    adsf (1.1.1)
+      rack (>= 1.0.0)
+    builder (3.1.4)
+    capistrano (2.13.5)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
+    coderay (1.0.8)
+    colored (1.2)
+    cri (2.3.0)
+      colored (>= 1.2)
+    daemons (1.1.9)
+    eventmachine (1.0.0)
+    fssm (0.2.9)
+    highline (1.6.15)
+    kramdown (0.14.0)
+    method_source (0.8.1)
+    mime-types (1.19)
+    nanoc (3.4.2)
+      cri (~> 2.2)
+    net-scp (1.0.4)
+      net-ssh (>= 1.99.1)
+    net-sftp (2.0.5)
+      net-ssh (>= 2.0.9)
+    net-ssh (2.6.1)
+    net-ssh-gateway (1.1.0)
+      net-ssh (>= 1.99.1)
+    nokogiri (1.5.5)
+    posix-spawn (0.3.6)
+    pry (0.9.12)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
+    pygments.rb (0.3.2)
+      posix-spawn (~> 0.3.6)
+      yajl-ruby (~> 1.1.0)
+    rack (1.4.1)
+    rake (10.0.1)
+    slop (3.4.3)
+    thin (1.5.0)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
+    yajl-ruby (1.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  adsf
+  builder
+  capistrano
+  coderay
+  fssm
+  kramdown
+  mime-types
+  nanoc
+  nokogiri
+  pry
+  pygments.rb
+  rake
+  thin
+  yajl-ruby

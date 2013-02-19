@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+# A few helpful tips about the Rules file:
+#
+# * The order of rules is important: for each item, only the first matching
+#   rule is applied.
+#
+# * Item identifiers start and end with a slash (e.g. “/about/” for the file
+#   “content/about.html”). To select all children, grandchildren, … of an
+#   item, use the pattern “/about/*/”; “/about/*” will also select the parent,
+#   because “*” matches zero or more characters.
+
+compile '/static/*' do
+end
+
+compile '/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  filter :colorize_syntax,
+    :colorizers => {:javascript => :pygmentsrb}
+  layout 'default'
+end
+
+compile '/CNAME/' do
+end
+
+compile '/feed/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+end
+
+compile '/developer/*' do
+  # Parses !!! for warnings, *** for notes.
+  filter :parse_info_boxes
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil
+  filter :colorize_syntax,
+    :colorizers => {:javascript => :pygmentsrb,
+                    :ruby       => :pygmentsrb}
+  layout 'developer'
+  filter :add_toc
+end
+
+compile '/api/v1/*' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  filter :colorize_syntax,
+    :colorizers => {:javascript => :pygmentsrb}
+  layout 'api/v1/default'
+end
+
+compile '/api/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  layout 'api'
+end
+
+route '/static/*' do
+  item.identifier[7..-2]
+end
+
+route '*' do
+  item.identifier + 'index.html'
+end
+
+layout '*', :erb
