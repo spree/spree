@@ -15,7 +15,13 @@ module Spree
       end
 
       def update
+        user_id = object_params.delete(:user_id)
         if @order.update_attributes(object_params)
+          # TODO: Replace with better code when we switch to strong_parameters
+          # Also remove above user_id stripping
+          if current_api_user.has_spree_role?("admin")
+            @order.associate_user!(Spree.user_class.find(user_id))
+          end
           return if after_update_attributes
           state_callback(:after) if @order.next
           respond_with(@order, :default_template => 'spree/api/orders/show')
@@ -43,7 +49,7 @@ module Spree
               params[:order][:payments_attributes].first[:amount] = @order.total
             end
           end
-          params[:order]
+          params[:order] || {}
         end
 
         def nested_params
