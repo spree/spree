@@ -64,7 +64,7 @@ module Spree
     end
 
     def accurate_title
-      @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : t(:shopping_cart)
+      @order && @order.completed? ? t(:order_number, :number => @order.number) : t(:shopping_cart)
     end
 
     def check_authorization
