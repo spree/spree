@@ -4,8 +4,10 @@ module Spree
   module Stock
     describe Package do
       let(:variant) { build(:variant, weight: 25.0) }
-      let(:packer) { build(:stock_packer) }
-      subject { Package.new(packer) }
+      let(:stock_location) { build(:stock_location) }
+      let(:order) { build(:order) }
+
+      subject { Package.new(stock_location, order) }
 
       it 'calculates the weight of all the contents' do
         subject.add variant, 4

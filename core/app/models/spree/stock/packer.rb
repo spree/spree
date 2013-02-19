@@ -20,7 +20,7 @@ module Spree
       end
 
       def default_package
-        package = Package.new(self)
+        package = Package.new(stock_location, order)
         order.line_items.each do |line_item|
           on_hand, backordered = stock_status(line_item.variant, line_item.quantity)
           package.add line_item.variant, on_hand, :on_hand if on_hand > 0
@@ -29,6 +29,7 @@ module Spree
         package
       end
 
+      private
       def build_splitter
         splitter = nil
         splitters.reverse.each do |klass|
@@ -37,7 +38,6 @@ module Spree
         splitter
       end
 
-      private
       def stock_status(variant, quantity)
         item = stock_location.stock_item(variant)
 
