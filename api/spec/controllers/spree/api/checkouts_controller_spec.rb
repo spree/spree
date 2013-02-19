@@ -130,11 +130,15 @@ module Spree
         response.status.should == 200
       end
 
-      it "can assign a user to the order" do
-        user = create(:user)
-        api_put :update, :id => order.to_param, :order => { :user_id => user.id }
-        json_response['user_id'].should == user.id
-        response.status.should == 200
+      context "as an admin" do
+        sign_in_as_admin!
+        it "can assign a user to the order" do
+          user = create(:user)
+          # Need to pass email as well so that validations succeed
+          api_put :update, :id => order.to_param, :order => { :user_id => user.id, :email => "guest@spreecommerce.com" }
+          response.status.should == 200
+          json_response['user_id'].should == user.id
+        end
       end
 
       it "can assign an email to the order" do
