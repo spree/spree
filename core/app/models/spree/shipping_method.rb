@@ -55,8 +55,8 @@ module Spree
       calculator.preferences[:currency]
     end
 
-    def self.all_available(order, display_on = nil)
-      all.select { |method| method.available_to_order?(order,display_on) }
+    def self.all_available(order)
+      all.select { |method| method.available_to_order?(order) }
     end
   end
 end

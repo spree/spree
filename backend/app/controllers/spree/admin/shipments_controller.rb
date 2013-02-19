@@ -62,7 +62,7 @@ module Spree
       private
 
       def load_shipping_methods
-        @shipping_methods = ShippingMethod.all_available(order, :back_end)
+        @shipping_methods = ShippingMethod.all_available(order)
       end
 
       def assign_inventory_units

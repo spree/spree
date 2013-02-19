@@ -404,19 +404,19 @@ module Spree
 
     # Helper methods for checkout steps
 
-    def available_shipping_methods(display_on = nil)
+    def available_shipping_methods
       return [] unless ship_address
-      ShippingMethod.all_available(self, display_on)
+      ShippingMethod.all_available(self)
     end
 
     def rate_hash
       return @rate_hash if @rate_hash.present?
 
       # reserve one slot for each shipping method computation
-      computed_costs = Array.new(available_shipping_methods(:front_end).size)
+      computed_costs = Array.new(available_shipping_methods.size)
 
       # create all the threads and kick off their execution
-      threads = available_shipping_methods(:front_end).each_with_index.map do |ship_method, index|
+      threads = available_shipping_methods.each_with_index.map do |ship_method, index|
         Thread.new { computed_costs[index] = [ship_method, ship_method.calculator.compute(self)] }
       end
 
