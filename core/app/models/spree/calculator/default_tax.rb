@@ -12,6 +12,8 @@ module Spree
           compute_order(computable)
         when Spree::LineItem
           compute_line_item(computable)
+        when Spree::Adjustment
+          compute_adjustment(computable)
       end
     end
 
@@ -28,6 +30,9 @@ module Spree
         end
 
         line_items_total = matched_line_items.sum(&:total)
+
+        line_items_total += order.adjustments.taxables.sum(&:amount) if rate.included_in_price? && rate.tax_category.is_default?
+
         round_to_two_places(line_items_total * rate.amount)
       end
 
@@ -39,10 +44,18 @@ module Spree
         end
       end
 
+      def compute_adjustment(adjustment)
+        if rate.included_in_price? && rate.tax_category.is_default?
+          deduced_total_by_rate(adjustment.amount, rate)
+        else
+          0
+        end
+      end
+
       def round_to_two_places(amount)
         BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
       end
-      
+
       def deduced_total_by_rate(total, rate)
         round_to_two_places(total - ( total / (1 + rate.amount) ) )
       end

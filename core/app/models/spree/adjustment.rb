@@ -27,6 +27,7 @@ module Spree
     belongs_to :adjustable, :polymorphic => true
     belongs_to :source, :polymorphic => true
     belongs_to :originator, :polymorphic => true
+    has_many :adjustments, :as => :adjustable, :class_name => "Spree::Adjustment" # for taxes included_in_price
 
     validates :label, :presence => true
     validates :amount, :numericality => true
@@ -34,6 +35,7 @@ module Spree
     scope :tax, lambda { where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order') }
     scope :price, lambda { where(:adjustable_type => 'Spree::LineItem') }
     scope :shipping, lambda { where(:originator_type => 'Spree::ShippingMethod') }
+    scope :taxables, lambda { where(:originator_type => 'Spree::ShippingMethod') }
     scope :optional, where(:mandatory => false)
     scope :eligible, where(:eligible => true)
     scope :charge, where("amount >= 0")

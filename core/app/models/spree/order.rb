@@ -188,13 +188,17 @@ module Spree
     # Array of adjustments that are inclusive in the variant price.  Useful for when prices
     # include tax (ex. VAT) and you need to record the tax amount separately.
     def price_adjustments
-      adjustments = []
+      arr_price_adjustments = []
 
       line_items.each do |line_item|
-        adjustments.concat line_item.adjustments
+        arr_price_adjustments.concat line_item.adjustments
       end
 
-      adjustments
+      adjustments.taxables.each do |adjustement|
+        arr_price_adjustments.concat adjustement.adjustments
+      end
+
+      arr_price_adjustments
     end
 
     # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
@@ -355,7 +359,7 @@ module Spree
       TaxRate.match(self).each { |rate| rate.adjust(self) }
     end
 
-    # Creates a new shipment (adjustment is created by shipment model)
+    # Creates a new shipment (adjustment is created by shipment model) and recalculate tax
     def create_shipment!
       shipping_method(true)
       if shipment.present?
@@ -366,7 +370,7 @@ module Spree
                                           :address => self.ship_address,
                                           :inventory_units => self.inventory_units}, :without_protection => true)
       end
-
+      create_tax_charge!
     end
 
     def outstanding_balance
@@ -534,7 +538,7 @@ module Spree
       #
       # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
       def update_payment_state
-        
+
         #line_item are empty when user empties cart
         if self.line_items.empty? || round_money(payment_total) < round_money(total)
           self.payment_state = 'balance_due'
