@@ -54,13 +54,12 @@ module Spree
 
       it "will return an error if the recently created order cannot transition from cart to address" do
         order.state.should eq "cart"
-        order.email = nil # email is necessary to transition from cart to address
-        order.save!
+        order.update_column(:email, nil) # email is necessary to transition from cart to address
 
         api_put :update, :id => order.to_param
 
-        json_response['error'].should =~ /could not be transitioned/
-        response.status.should == 422
+        # Order has not transitioned
+        json_response['state'].should == 'cart'
       end
 
       it "should transition a recently created order from cart do address" do
@@ -149,6 +148,25 @@ module Spree
         Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
         Spree::Promo::CouponApplicator.any_instance.should_receive(:apply)
         api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }
+      end
+    end
+
+    context "PUT 'next'" do
+      let!(:order) { create(:order) }
+      it "can transition an order to the next state" do
+        order.update_column(:email, "spree@example.com")
+
+        api_put :next, :id => order.to_param
+        response.status.should == 200
+        json_response['state'].should == 'address'
+      end
+
+      it "cannot transition if order email is blank" do
+        order.update_column(:email, nil)
+
+        api_put :next, :id => order.to_param
+        response.status.should == 422
+        json_response['error'].should =~ /could not be transitioned/
       end
     end
   end
