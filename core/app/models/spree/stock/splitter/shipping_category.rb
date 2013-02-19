@@ -22,7 +22,7 @@ module Spree
         def hash_to_packages(categories)
           packages = []
           categories.each do |id, contents|
-            packages << Package.new(packer, contents)
+            packages << Package.new(stock_location, order, contents)
           end
           packages
         end

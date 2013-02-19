@@ -2,7 +2,7 @@ module Spree
   module Stock
     module Splitter
       class Base
-        attr_accessor :packer, :next_splitter
+        attr_reader :packer, :next_splitter
 
         def initialize(packer, next_splitter=nil)
           @packer = packer
