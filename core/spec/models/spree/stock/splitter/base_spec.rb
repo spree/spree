@@ -5,7 +5,6 @@ module Spree
     module Splitter
       describe Base do
         let(:packer) { build(:stock_packer) }
-        subject { Base.new(packer) }
 
         it 'continues to splitter chain' do
           splitter1 = Base.new(packer)

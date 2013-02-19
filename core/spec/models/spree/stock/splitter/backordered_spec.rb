@@ -10,7 +10,7 @@ module Spree
         subject { Backordered.new(packer) }
 
         it 'splits packages by status' do
-          package = Package.new(packer)
+          package = Package.new(packer.stock_location, packer.order)
           package.add variant, 4, :on_hand
           package.add variant, 5, :backordered
 

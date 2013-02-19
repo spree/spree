@@ -19,11 +19,11 @@ module Spree
         subject { ShippingCategory.new(packer) }
 
         it 'splits each package by shipping category' do
-          package1 = Package.new(packer)
+          package1 = Package.new(packer.stock_location, packer.order)
           package1.add variant1, 4, :on_hand
           package1.add variant2, 8, :on_hand
 
-          package2 = Package.new(packer)
+          package2 = Package.new(packer.stock_location, packer.order)
           package2.add variant1, 6, :on_hand
           package2.add variant2, 9, :backordered
 

@@ -6,7 +6,7 @@ module Spree
       def packages(order)
         packages = Array.new
         StockLocation.all.each do |stock_location|
-          packer = Packer.new(stock_location, order, splitters(stock_location))
+          packer = packer(stock_location, order)
           packages += packer.packages
         end
 
@@ -20,6 +20,10 @@ module Spree
       def missing_items(order, packages)
         #TODO loop through and pull out packages
         []
+      end
+
+      def packer(stock_location, order)
+        Packer.new(stock_location, order, splitters(stock_location))
       end
 
       def splitters(stock_location)

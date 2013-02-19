@@ -3,12 +3,11 @@ module Spree
     class Package
       ContentItem = Struct.new(:variant, :quantity, :status)
 
-      attr_accessor :packer, :contents
+      attr_reader :stock_location, :order, :contents
 
-      delegate :shipping_location, :order, :to => :packer
-
-      def initialize(packer, contents=[])
-        @packer = packer
+      def initialize(stock_location, order, contents=[])
+        @stock_location = stock_location
+        @order = order
         @contents = contents
       end
 
