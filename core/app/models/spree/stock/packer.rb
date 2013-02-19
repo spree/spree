@@ -1,12 +1,12 @@
 module Spree
   module Stock
     class Packer
-      attr_accessor :stock_location, :order, :splitter_class
+      attr_reader :stock_location, :order, :splitters
 
-      def initialize(stock_location, order, splitter_class=Splitter::Base)
+      def initialize(stock_location, order, splitters=[Splitter::Base])
         @stock_location = stock_location
         @order = order
-        @splitter_class = splitter_class
+        @splitters = splitters
       end
 
       def packages
@@ -30,8 +30,11 @@ module Spree
       end
 
       def build_splitter
-        # TODO build a chain of splitters
-        splitter_class.new(self)
+        splitter = nil
+        splitters.reverse.each do |klass|
+          splitter = klass.new(self, splitter)
+        end
+        splitter
       end
 
       private
