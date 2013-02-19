@@ -772,7 +772,7 @@ en:
         thanks: Thank you for your business.
         total: ! 'Order Total: %{total}'
     order_not_found: We couldn't find your order. Please try that action again.
-    order_number: Order
+    order_number: Order %{number}
     order_populator:
       out_of_stock: ! '%{item} is out of stock.'
       selected_quantity_not_available: ! 'Selected quantity of %{item} is not available.'
