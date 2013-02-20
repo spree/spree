@@ -86,13 +86,13 @@ smart enough not to try to compile unchanged files:
       create  [0.00s]  output/CNAME
       create  [0.02s]  output/changes.atom
       create  [0.01s]  output/index.html
-      create  [0.09s]  output/v1/addresses/index.html
-      create  [0.01s]  output/v1/changelog/index.html
-      create  [0.02s]  output/v1/countries/index.html
-      create  [0.03s]  output/v1/index.html
-      create  [0.08s]  output/v1/order/line_items/index.html
-      create  [0.15s]  output/v1/order/payments/index.html
-      create  [0.02s]  output/v1/order/shipments/index.html
+      create  [0.09s]  output/addresses/index.html
+      create  [0.01s]  output/changelog/index.html
+      create  [0.02s]  output/countries/index.html
+      create  [0.03s]  output/index.html
+      create  [0.08s]  output/order/line_items/index.html
+      create  [0.15s]  output/order/payments/index.html
+      create  [0.02s]  output/order/shipments/index.html
 
     Site compiled in 5.81s.
 

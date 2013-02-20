@@ -6,25 +6,25 @@
 <!--[if gt IE 9]><!--> <html lang="en" > <!--<![endif]-->
 <head>
   <title><%= @item[:title] %></title>
-  
+
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  
+
   <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
   <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:400italic,600italic,400,600' rel='stylesheet' type='text/css'>
-  
+
   <link href="/shared/css/icons.css" media="screen" rel="stylesheet" type="text/css">
   <link href="/shared/css/icons-codes.css" media="screen" rel="stylesheet" type="text/css">
-    
-  <!--[if IE 7]> 
+
+  <!--[if IE 7]>
     <link href="/shared/css/icons-ie7.css" media="screen" rel="stylesheet" type="text/css">
     <link href="/shared/css/icons-ie7-codes.css" media="screen" rel="stylesheet" type="text/css">
   <![endif]-->
-    
+
   <link href="/shared/css/skeleton.css" media="screen" rel="stylesheet" type="text/css">
   <link href="/shared/css/pygments.css" media="screen" rel="stylesheet" type="text/css">
 
@@ -39,13 +39,13 @@
   <header id="header">
     <div id="top-header">
       <div class="container">
-        
+
         <div class="row">
-          
+
           <div class="five columns">
-            <a class="logo" href="/"><img src='/images/logo.png' /></a>      
+            <a class="logo" href="/"><img src='/images/logo.png' /></a>
           </div>
-          
+
           <%= render '_main_menu' %>
 
         </div>
@@ -60,21 +60,21 @@
         </div>
       </div>
     </div>
-      
+
   </header>
 
   <div class="container">
     <section id="main-content">
-      
+
       <div class="twelve columns">
         <div id="content">
           <%= yield %>
         </div>
       </div>
-      
+
     </section>
 
-    <%= render 'api/v1/_sidebar' %>
+    <%= render 'api/_sidebar' %>
   </div>
 
   <%= render '_footer' %>

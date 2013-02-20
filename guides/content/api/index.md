@@ -1,14 +1,48 @@
 ---
-title: Spree API
+title: Summary
 ---
 
-# The Spree API
+# Summary
 
-This site covers the inner working of Spree\'s RESTful API. It assumes a basic understanding of the principles of REST.
+Spree currently supports RESTful access to the resources listed in the sidebar
+on the right &raquo;
 
-The REST API is designed to give developers a convenient way to access data contained within Spree. With a standard read/write interface to store data, it is now very simple to write third party applications (eg. iPhone) that can talk to your Spree store. It is also possible to build sophisticated middleware applications that can serve as a bridge between Spree and a warehouse or inventory system.
+This API was built using the great [Rabl](https://github.com/nesquena/rabl) gem.
+Please consult its documentation if you wish to understand how the templates use
+it to return data.
 
-For a comprehensive list of API functions, start browsing the resources in the above diagram.
+This API conforms to a set of [rules](/rules).
 
-View the [API Changelog](#changes) for information on existing and
-planned changes to the API.
+## JSON Data
+
+Developers communicate with the Spree API using the [JSON](http://www.json.org) data format. Requests for data are communicated in the standard manner using the HTTP protocol.
+
+## Making an API Call
+
+You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a `X-Spree-Token` header along with the request:
+
+    curl --header "X-Spree-Token: YOUR_KEY_HERE" http://example.com/api/products.json
+
+
+Alternatively, you may also pass through the token as a parameter in the request if a header just won’t suit your purposes (i.e. JavaScript console debugging).
+
+    curl http://example.com/api/products.json?token=YOUR_KEY_HERE
+
+The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
+
+## Error Messages
+
+You may encounter the follow error messages when using the API.
+
+### Not Found
+
+<%= not_found %>
+
+### Authorization Failure
+
+<%= authorization_failure %>
+
+### Invalid API Key
+
+<%= headers 401 %>
+<%= json(:error => "Invalid API key ([key]) specified.") %>

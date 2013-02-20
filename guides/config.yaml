@@ -66,6 +66,6 @@ watcher:
 base_url: http://edgeguides.spreecommerce.com
 
 # Array of [version, released_at] Array tuples.
-api_versions:  
-  -
-    - v1
+#api_versions:
+#  -
+#    - v1

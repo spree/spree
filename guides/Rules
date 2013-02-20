@@ -43,12 +43,12 @@ compile '/developer/*' do
   filter :add_toc
 end
 
-compile '/api/v1/*' do
+compile '/api/*' do
   filter :erb
   filter :kramdown, :toc_levels => [2]
   filter :colorize_syntax,
     :colorizers => {:javascript => :pygmentsrb}
-  layout 'api/v1/default'
+  layout 'api/default'
 end
 
 compile '/api/' do
