@@ -63,13 +63,11 @@ We can do this with the following command:
 
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
 
-```
-class AddSalePriceToSpreeVariants < ActiveRecord::Migration
-  def change
-    add_column :spree_variants, :sale_price, :decimal, :precision => 8, :scale => 2
-  end
-end
-```
+    class AddSalePriceToSpreeVariants < ActiveRecord::Migration
+      def change
+        add_column :spree_variants, :sale_price, :decimal, :precision => 8, :scale => 2
+      end
+    end
 
 ### Adding Our Extension to the Spree Application
 
@@ -99,25 +97,21 @@ Make sure you are in the `spree_simple_sales` root directory and run the followi
 
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
-```
-module Spree
-  HomeController.class_eval do
-    def sale
-      @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').uniq
+    module Spree
+      HomeController.class_eval do
+        def sale
+          @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').uniq
+        end
+      end
     end
-  end
-end
-```
 
 This will select just the products that have a variant with a `sale_price` set.
 
 We also need to add a route to this action in our `config/routes.rb` file. Let's do this now. Update the routes file to contain the following:
 
-```
-Spree::Core::Engine.routes.draw do
-  get "/sale" => "home#sale"
-end
-```
+    Spree::Core::Engine.routes.draw do
+      get "/sale" => "home#sale"
+    end
 
 ### Viewing On Sale Products
 
@@ -131,16 +125,17 @@ So, in order to do this, first open up the rails console:
 
 Now, follow the steps I take in selecting a product and updating it's master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
 
-```
-> product = Spree::Product.first
-=> #<Spree::Product id: 107377505, name: "Spree Bag", description: "Lorem ipsum dolor sit amet, consectetuer adipiscing...", available_on: "2013-02-13 18:30:16", deleted_at: nil, permalink: "spree-bag", meta_description: nil, meta_keywords: nil, tax_category_id: 25484906, shipping_category_id: nil, count_on_hand: 10, created_at: "2013-02-13 18:30:16", updated_at: "2013-02-13 18:30:16", on_demand: false>
-> variant = product.master
-=> #<Spree::Variant id: 833839126, sku: "SPR-00012", weight: nil, height: nil, width: nil, depth: nil, deleted_at: nil, is_master: true, product_id: 107377505, count_on_hand: 10, cost_price: #<BigDecimal:7f8dda5eebf0,'0.21E2',9(36)>, position: nil, lock_version: 0, on_demand: false, cost_currency: nil, sale_price: nil>
-> variant.sale_price = 8.00
-=> 8.0
-> variant.save
-=> true
-```
+    > product = Spree::Product.first
+    => #<Spree::Product id: 107377505, name: "Spree Bag", description: "Lorem ipsum dolor sit amet, consectetuer adipiscing...", available_on: "2013-02-13 18:30:16", deleted_at: nil, permalink: "spree-bag", meta_description: nil, meta_keywords: nil, tax_category_id: 25484906, shipping_category_id: nil, count_on_hand: 10, created_at: "2013-02-13 18:30:16", updated_at: "2013-02-13 18:30:16", on_demand: false>
+    
+    > variant = product.master
+    => #<Spree::Variant id: 833839126, sku: "SPR-00012", weight: nil, height: nil, width: nil, depth: nil, deleted_at: nil, is_master: true, product_id: 107377505, count_on_hand: 10, cost_price: #<BigDecimal:7f8dda5eebf0,'0.21E2',9(36)>, position: nil, lock_version: 0, on_demand: false, cost_currency: nil, sale_price: nil>
+    
+    > variant.sale_price = 8.00
+    => 8.0
+    
+    > variant.save
+    => true
 
 ### Creating a View
 
@@ -168,17 +163,15 @@ First, create the required directory structure for our new decorator:
 
 Next, create the file `app/models/spree/variant_decorator` and add the following content to it:
 
-```
-module Spree
-  Variant.class_eval do
-    alias_method :orig_price_in, :price_in    
-    def price_in(currency)
-      return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(:variant_id => self.id, :amount => self.sale_price, :currency => currency)
+    module Spree
+      Variant.class_eval do
+        alias_method :orig_price_in, :price_in    
+        def price_in(currency)
+          return orig_price_in(currency) unless sale_price.present?
+          Spree::Price.new(:variant_id => self.id, :amount => self.sale_price, :currency => currency)
+        end
+      end
     end
-  end
-end
-```
 
 Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implemenation of `price_in`.
 
@@ -196,12 +189,10 @@ We can do this with the following command from the root directory of our extensi
 
 After this command completes, you should be able to run `rspec` and see the following output:
 
-```
-No examples found.
-
-Finished in 0.00005 seconds
-0 examples, 0 failures
-```
+    No examples found.
+    
+    Finished in 0.00005 seconds
+    0 examples, 0 failures
 
 Great! We're ready to start adding some tests. Let's replicate the extension's directory structure in our spec directory by running the following command
 
@@ -209,35 +200,33 @@ Great! We're ready to start adding some tests. Let's replicate the extension's d
 
 Now, let's create a new file in this directory called `variant_decorator_spec.rb` and add the following tests to it:
 
-```
-require 'spec_helper'
-
-describe Spree::Variant do
-  describe "#price_in" do
-    it "returns the sale price if it is present" do
-      variant = create(:variant, :sale_price => 8.00)
-      expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.sale_price)
-
-      result = variant.price_in("USD")
-
-      result.variant_id.should == expected.variant_id
-      result.amount.to_f.should == expected.amount.to_f
-      result.currency.should == expected.currency
+    require 'spec_helper'
+    
+    describe Spree::Variant do
+      describe "#price_in" do
+        it "returns the sale price if it is present" do
+          variant = create(:variant, :sale_price => 8.00)
+          expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.sale_price)
+    
+          result = variant.price_in("USD")
+    
+          result.variant_id.should == expected.variant_id
+          result.amount.to_f.should == expected.amount.to_f
+          result.currency.should == expected.currency
+        end
+    
+        it "returns the normal price if it is not on sale" do
+          variant = create(:variant, :price => 15.00)
+          expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.price)
+    
+          result = variant.price_in("USD")
+    
+          result.variant_id.should == expected.variant_id
+          result.amount.to_f.should == expected.amount.to_f
+          result.currency.should == expected.currency
+        end
+      end
     end
-
-    it "returns the normal price if it is not on sale" do
-      variant = create(:variant, :price => 15.00)
-      expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.price)
-
-      result = variant.price_in("USD")
-
-      result.variant_id.should == expected.variant_id
-      result.amount.to_f.should == expected.amount.to_f
-      result.currency.should == expected.currency
-    end
-  end
-end
-```
 
 These specs test that the `price_in` method we overrode in our `VariantDecorator` returns the correct price both when the sale price is present and when it is not.
 
@@ -245,4 +234,4 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 
 In this tutorial you learned how to both install extensions and create your own. A lot of core spree development concepts were covered and you gained exposure to some of the Spree internals. 
 
-In the [next part]() of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension .
+In the [next part](/developer/tutorial/deface_overrides) of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension .
