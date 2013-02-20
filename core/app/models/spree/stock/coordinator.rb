@@ -6,23 +6,29 @@ module Spree
       def packages(order)
         packages = Array.new
         StockLocation.all.each do |stock_location|
-          packer = packer(stock_location, order)
+          packer = build_packer(stock_location, order)
           packages += packer.packages
+          break if order_fulfilled?(order, packages)
         end
 
-        #TODO prioritize packages!
-
-        #TODO determine missing items
         packages
       end
 
       private
-      def missing_items(order, packages)
-        #TODO loop through and pull out packages
-        []
+      def order_fulfilled?(order, packages)
+        variants = {}
+        order.line_items.each { |li| variants[li.variant_id] = li.quantity }
+
+        packages.each do |package|
+          package.contents.each do |item|
+            variants[item.variant.id] -= 1
+          end
+        end
+
+        variants.values.all? {|value| value == 0}
       end
 
-      def packer(stock_location, order)
+      def build_packer(stock_location, order)
         Packer.new(stock_location, order, splitters(stock_location))
       end
 
