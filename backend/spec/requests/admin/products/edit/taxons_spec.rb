@@ -5,7 +5,7 @@ describe "Product Taxons" do
 
   context "managing taxons" do
     def selected_taxons
-      find("#product_taxon_ids").value.split(',').map(&:to_i)
+      find("#product_taxon_ids").value.split(',').map(&:to_i).uniq
     end
 
     it "should allow an admin to manage taxons", :js => true do
