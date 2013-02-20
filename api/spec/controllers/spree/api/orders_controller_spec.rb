@@ -159,6 +159,12 @@ module Spree
           
           json_response['line_items'].first['variant'].should have_attributes([:images])
         end
+        
+        it "lists variants product id" do
+          api_get :show, :id => order.to_param
+          
+          json_response['line_items'].first['variant'].should have_attributes([:product_id])
+        end
       end
     end
 
