@@ -43,18 +43,18 @@ compile '/developer/*' do
   filter :add_toc
 end
 
+compile '/api/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  layout 'api'
+end
+
 compile '/api/*' do
   filter :erb
   filter :kramdown, :toc_levels => [2]
   filter :colorize_syntax,
     :colorizers => {:javascript => :pygmentsrb}
   layout 'api/default'
-end
-
-compile '/api/' do
-  filter :erb
-  filter :kramdown, :toc_levels => [2]
-  layout 'api'
 end
 
 route '/static/*' do
