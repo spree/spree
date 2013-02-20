@@ -3,9 +3,9 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Coordinator do
-      let(:order) { create(:order_with_line_items, line_items_count: 5) }
-      let(:variant) { build(:variant) }
-      let(:stock_location) { create(:stock_location) }
+      let(:package) { build(:stock_package) }
+      let(:order) { package.order }
+      let(:stock_location) { package.stock_location }
 
       before :all do
         Spree::Stock.default_splitters = [
@@ -14,14 +14,12 @@ module Spree
         ]
       end
 
-      it 'builds a list of packages from stock_locations' do
-          package = Package.new(stock_location, order)
-          package.add variant, 4, :on_hand
-      end
-
       it 'builds a list of packages for an order' do
+        StockLocation.should_receive(:all).and_return([stock_location])
+        subject.should_receive(:build_packer).and_return(double(:packages => [package]))
+
         packages = subject.packages order
-        puts packages.inspect
+        packages.count.should == 1
       end
     end
   end

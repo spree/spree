@@ -9,14 +9,4 @@ FactoryGirl.define do
                               stock_location: stock_location)
     end
   end
-
-  # must use build()
-  factory :stock_packer, :class => Spree::Stock::Packer do
-    ignore do
-      stock_location { build(:stock_location) }
-      contents []
-    end
-
-    initialize_with { new(stock_location, contents) }
-  end
 end
