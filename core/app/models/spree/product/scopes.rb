@@ -211,14 +211,18 @@ module Spree
       group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
-    if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-      if table_exists?
-        scope :group_by_products_id, { :group => column_names.map { |col_name| "#{table_name}.#{col_name}"} }
+    # This method needs to be defined *as a method*, otherwise it will cause the
+    # problem shown in #1247.
+    def self.group_by_products_id
+      if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
+        # Need to check, otherwise `column_names` will fail
+        if table_exists?
+          group(column_names.map { |col_name| "#{table_name}.#{col_name}"})
+        end
+      else
+        group("#{self.quoted_table_name}.id")
       end
-    else
-      scope :group_by_products_id, { :group => "#{self.quoted_table_name}.id" }
     end
-    search_scopes << :group_by_products_id
 
     private
 
