@@ -18,6 +18,10 @@ module Spree
         def return_next(packages)
           next_splitter ? next_splitter.split(packages) : packages
         end
+
+        def build_package(contents=[])
+          Package.new(stock_location, order, contents)
+        end
       end
     end
   end
