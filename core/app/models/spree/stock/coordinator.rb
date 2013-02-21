@@ -3,19 +3,33 @@ module Spree
     mattr_accessor :default_splitters
 
     class Coordinator
-      def packages(order)
+      attr_reader :order
+
+      def initialize(order)
+        @order = order
+      end
+
+      def packages
         packages = Array.new
+        packages = build_packages(packages)
+        packages = prioritize_packages(packages)
+      end
+
+      private
+      def build_packages(packages)
         StockLocation.all.each do |stock_location|
           packer = build_packer(stock_location, order)
           packages += packer.packages
           break if order_fulfilled?(order, packages)
         end
-
-
-        finalize packages
+        packages
       end
 
-      private
+      def prioritize_packages(packages)
+        prioritizer = Prioritizer.new(order, packages)
+        prioritizer.prioritized_packages
+      end
+
       def order_fulfilled?(order, packages)
         variants = {}
         order.line_items.each { |li| variants[li.variant_id] = li.quantity }
@@ -27,11 +41,6 @@ module Spree
         end
 
         variants.values.all? {|value| value <= 0}
-      end
-
-      def finalize(packages)
-
-        packages
       end
 
       def build_packer(stock_location, order)
