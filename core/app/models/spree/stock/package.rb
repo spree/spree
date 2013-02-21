@@ -27,14 +27,32 @@ module Spree
         contents.select { |item| item.status == :backordered }
       end
 
-      def quantity
-        contents.sum { |item| item.quantity }
+      def find_item(variant, status=:on_hand)
+        contents.select do |item|
+          item.variant == variant &&
+          item.status == status
+        end.first
+      end
+
+      def quantity(status=nil)
+        case status
+        when :on_hand
+          on_hand.sum { |item| item.quantity }
+        when :backordered
+          backordered.sum { |item| item.quantity }
+        else
+          contents.sum { |item| item.quantity }
+        end
+      end
+
+      def empty?
+        quantity == 0
       end
 
       def inspect
         contents.map do |content_item|
           "#{content_item.variant.name} #{content_item.quantity} #{content_item.status}"
-        end.join(',')
+        end.join('/')
       end
     end
   end
