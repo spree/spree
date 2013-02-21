@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'aws-sdk', '~> 1.3.4'
   s.add_dependency 'ransack', '0.7.2'
   s.add_dependency 'activemerchant', '~> 1.29.3'
+  s.add_dependency 'json', '>= 1.5.5'
   s.add_dependency 'rails', '~> 3.2.12'
   s.add_dependency 'kaminari', '0.13.0'
   s.add_dependency 'deface', '>= 0.9.0'
