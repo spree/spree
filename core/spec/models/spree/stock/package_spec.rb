@@ -21,10 +21,24 @@ module Spree
         subject.backordered.count.should eq 1
       end
 
-      it 'calcualtes the total number of items' do
-        subject.add variant, 4
-        subject.add variant, 3
-        subject.quantity.should == 7
+      it 'calculates the quantity by status' do
+        subject.add variant, 4, :on_hand
+        subject.add variant, 3, :backordered
+
+        subject.quantity.should eq 7
+        subject.quantity(:on_hand).should eq 4
+        subject.quantity(:backordered).should eq 3
+      end
+
+      it 'returns nil for content item not found' do
+        item = subject.find_item(variant, :on_hand)
+        item.should be_nil
+      end
+
+      it 'finds content item for a variant' do
+        subject.add variant, 4, :on_hand
+        item = subject.find_item(variant, :on_hand)
+        item.quantity.should eq 4
       end
     end
   end

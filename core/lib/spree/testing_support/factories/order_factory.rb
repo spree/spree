@@ -14,6 +14,7 @@ FactoryGirl.define do
       end
       after(:create) do |order, evaluator|
         FactoryGirl.create_list(:line_item, evaluator.line_items_count, :order => order)
+        order.line_items.reload
       end
     end
 
