@@ -18,10 +18,12 @@ FactoryGirl.define do
 
     initialize_with { new(stock_location, order, contents) }
 
-    after(:build) do |package, evaluator|
-      evaluator.order.line_items.reload
-      evaluator.order.line_items.each do |line_item|
-        package.add line_item.variant, line_item.quantity, :on_hand
+    factory :stock_package_fulfilled do
+      after(:build) do |package, evaluator|
+        evaluator.order.line_items.reload
+        evaluator.order.line_items.each do |line_item|
+          package.add line_item.variant, line_item.quantity, :on_hand
+        end
       end
     end
   end

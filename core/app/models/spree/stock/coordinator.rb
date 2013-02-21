@@ -11,7 +11,8 @@ module Spree
           break if order_fulfilled?(order, packages)
         end
 
-        packages
+
+        finalize packages
       end
 
       private
@@ -25,7 +26,12 @@ module Spree
           end
         end
 
-        variants.values.all? {|value| value == 0}
+        variants.values.all? {|value| value <= 0}
+      end
+
+      def finalize(packages)
+
+        packages
       end
 
       def build_packer(stock_location, order)
