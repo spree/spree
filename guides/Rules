@@ -57,6 +57,12 @@ compile '/api/*' do
   layout 'api/default'
 end
 
+compile '/user/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  layout 'user'
+end
+
 route '/static/*' do
   item.identifier[7..-2]
 end
