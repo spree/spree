@@ -64,7 +64,6 @@ describe "Checkout" do
           fill_in "#{address}_zipcode", :with => "12345"
           fill_in "#{address}_phone", :with => "(555) 5555-555"
 
-          check "Use Billing Address"
           click_button "Save and Continue"
           page.should_not have_content("undefined method `promotion'")
           page!
