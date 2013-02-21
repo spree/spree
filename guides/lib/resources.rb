@@ -119,6 +119,19 @@ module Spree
       end
     end
 
+    USER =
+      {
+        "id"=>1,
+        "email"=>"spree@example.com",
+        "login"=>"spree@example.com",
+        "spree_api_key"=>nil,
+        "created_at"=>"Fri, 01 Feb 2013 20:38:57 UTC +00:00",
+        "updated_at"=>"Fri, 01 Feb 2013 20:38:57 UTC +00:00"
+      }
+
+    UPDATED_USER = USER.merge({"spree_api_key" => "A13adsfq234",
+      "updated_at" => "Fri, 01 Feb 2013 20:40:57 UTC +00:00"})
+
     IMAGE =
        {"id"=>1,
         "position"=>1,
@@ -168,6 +181,75 @@ module Spree
         "property_name"=>"bag_type"
        }
 
+    NEW_PRODUCT_EVENT =
+      {
+        "event" => 'product:new',
+        "event_id" => '510bfe8e7575e41e41000017',
+        "payload" => {
+          "id"=>1,
+          "name"=>"Example product",
+          "description"=> "Description",
+          "price"=>"15.99",
+          "available_on"=>"2012-10-17T03:43:57Z",
+          "permalink"=>"ruby-on-rails-tote",
+          "count_on_hand"=>10,
+          "meta_description"=>nil,
+          "meta_keywords"=>nil }
+      }
+
+    NEW_PRODUCT_EVENT_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000004',
+      "result" => 'OK',
+      "details" => {
+        "message" => "Product Added"
+      }
+    }
+
+    NEW_PRODUCT_PUSH =
+      {
+        "event"=> 'product:new',
+        "id"=>1123,
+        "name"=>"Example product",
+        "description"=> "Description",
+        "price"=>"15.99",
+        "available_on"=>"2012-10-17T03:43:57Z",
+        "permalink"=>"ruby-on-rails-tote",
+        "count_on_hand"=>10,
+        "meta_description"=>nil,
+        "meta_keywords"=>nil
+      }
+
+    NEW_PRODUCT_PUSH_RESPONSE =
+      {
+        "event_id"=> 'guid',
+        "result" => 'accepted',
+        'payload' => NEW_PRODUCT_PUSH
+      }
+
+    UPDATE_PRODUCT_EVENT =
+      {
+        "event" => 'product:update',
+        "event_id" => '510bfe8e7575e41e41000017',
+        "payload" => {
+          "id"=>1,
+          "name"=>"Example product",
+          "description"=> "Description",
+          "price"=>"15.99",
+          "available_on"=>"2012-10-17T03:43:57Z",
+          "permalink"=>"ruby-on-rails-tote",
+          "count_on_hand"=>10,
+          "meta_description"=>nil,
+          "meta_keywords"=>nil }
+    }
+
+    UPDATE_PRODUCT_EVENT_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000004',
+      "result" => 'OK',
+      "details" => {
+        "message" => "Product Updated"
+      }
+    }
+
     PRODUCT =
       {
         "id"=>1,
@@ -200,6 +282,25 @@ module Spree
         "payment_method" => PAYMENT_METHOD
       }
 
+    NEW_PAYMENT_EVENT =
+      {
+        "event" => 'payment:new',
+        "event_id" => '510bfe8e7575e41e41000017',
+        "payload" => {
+          "id"=>1,
+          "amount"=>"10.00",
+          "state"=>"checkout",
+          "payment_method_id"=>1 }
+      }
+
+    NEW_PAYMENT_EVENT_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000004',
+      "result" => 'OK',
+      "details" => {
+        "message" => "Payment Received"
+      }
+    }
+
     ORDER =
       {
         "id"=>1,
@@ -220,7 +321,7 @@ module Spree
       }
 
 
-    ADJUSTMENT = 
+    ADJUSTMENT =
     {
       "id" => 1073043775,
       "source_type" => "Spree::Order",
@@ -244,6 +345,15 @@ module Spree
       {
         "id"=>1,
         "quantity"=>1,
+        "price"=>"19.99",
+        "variant_id"=>1,
+        "variant" => line_item_variant
+      }
+
+    LINE_ITEM2 =
+      {
+        "id"=>2,
+        "quantity"=>2,
         "price"=>"19.99",
         "variant_id"=>1,
         "variant" => line_item_variant
@@ -282,6 +392,25 @@ module Spree
         "shipping_method"=> SHIPPING_METHOD
       }
 
+    temp = SHIPMENT.merge({
+      "tracking" => "UPS1234566",
+      "shipped_at" => Time.now.to_s,
+      "state" => "shipped"
+    })
+    temp.delete('shipping_method')
+    temp.delete('id')
+    PUSH_SHIPMENT_CONFIRMATION = temp
+
+    PUSH_SHIPMENT_RESPONSE = {
+      'event_id' => 'guid',
+      'result' => 'accepted',
+      'payload' => PUSH_SHIPMENT_CONFIRMATION
+    }
+
+    READY_SHIPMENT = SHIPMENT.merge({"state" => "ready_to_ship"})
+
+    SHIPPED_SHIPMENT = SHIPMENT.merge({"state" => "shipped"})
+
     ORDER_SHOW = ORDER.merge({
       "line_items" => [LINE_ITEM],
       "payments" => [PAYMENT],
@@ -289,6 +418,141 @@ module Spree
       "adjustments" => [ADJUSTMENT]
 
     })
+
+    ORDER_SHOW2 = ORDER.merge({
+      "line_items" => [LINE_ITEM2],
+      "payments" => [PAYMENT],
+      "shipments" => [SHIPMENT],
+      "adjustments" => [ADJUSTMENT]
+
+    })
+
+    EVENT = {
+      "event" => 'event:name',
+      "event_id" => 'guid',
+      "payload" => {
+        "order" => "..."
+      }
+    }
+
+    EVENT_RESPONSE = {
+      "event_id" => 'guid',
+      "result" => 'ok',
+      "details" => {
+        "message" => "..."
+      }
+    }
+
+    NEW_ORDER_EVENT = {
+      "event" => 'order:new',
+      "event_id" => '510bfe8e7575e41e41000001',
+      "payload" => {
+        "order" => ORDER_SHOW
+      }
+    }
+
+    NEW_ORDER_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000001',
+      "result" => 'ok',
+      "details" => {
+        "message" => "Order sent to warehouse"
+      }
+    }
+
+    UPDATED_ORDER_EVENT = {
+      "event" => 'order:updated',
+      "event_id" => '510bfe8e7575e41e41000002',
+      "payload" => {
+        "order" => ORDER_SHOW2
+      }
+    }
+
+    UPDATED_ORDER_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000002',
+      "result" => 'ok',
+      "details" => {
+        "message" => "Update sent to warehouse"
+      }
+    }
+
+    CANCELLED_ORDER_EVENT = {
+      "event" => 'order:cancelled',
+      "event_id" => '510bfe8e7575e41e41000003',
+      "payload" => {
+        "order" => ORDER
+      }
+    }
+
+    CANCELLED_ORDER_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000003',
+      "result" => 'ok',
+      "details" => {
+        "message" => "Order cancellation sent to warehouse"
+      }
+    }
+
+    NEW_USER_EVENT = {
+      "event" => 'create:user',
+      "event_id" => '510bfe8e7575e41e41000017',
+      "payload" => {
+        "user" => USER
+      }
+    }
+
+    NEW_USER_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000017',
+      "result" => 'ok',
+      "details" => {
+        "message" => "User Account Created"
+      }
+    }
+
+    UPDATED_USER_EVENT = {
+      "event" => 'update:event',
+      "event_id" => '510bfe8e7575e41e41000018',
+      "payload" => {
+        "user" => UPDATED_USER
+      }
+    }
+
+    UPDATED_USER_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000018',
+      "result" => 'ok',
+      "details" => {
+        "message" => "User Account Updated"
+      }
+    }
+    SHIPMENT_READY_EVENT = {
+      "event" => 'shipment:ready',
+      "event_id" => '510bfe8e7575e41e41000004',
+      "payload" => {
+        "shipment" => READY_SHIPMENT
+      }
+    }
+
+    SHIPMENT_READY_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000004',
+      "result" => 'ok',
+      "details" => {
+        "message" => "Shipment sent to warehouse for fulfillment"
+      }
+    }
+
+    SHIPMENT_CONFIRMATION_EVENT = {
+      "event" => 'shipment:confirmed',
+      "event_id" => '510bfe8e7575e41e41000005',
+      "payload" => {
+        "shipment" => SHIPPED_SHIPMENT
+      }
+    }
+
+    SHIPMENT_CONFIRMATION_RESPONSE = {
+      "event_id" => '510bfe8e7575e41e41000005',
+      "result" => 'ok',
+      "details" => {
+        "message" => "Shipping Confirmation email Sent"
+      }
+    }
 
     ORDER_SHOW_ADDRESS_STATE = ORDER.merge({
       "state" => "address",

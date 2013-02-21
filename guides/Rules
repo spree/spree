@@ -63,6 +63,20 @@ compile '/user/' do
   layout 'user'
 end
 
+compile '/integration/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  layout 'integration'
+end
+
+compile '/integration/*' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  filter :colorize_syntax,
+    :colorizers => {:javascript => :pygmentsrb}
+  layout 'integration/default'
+end
+
 route '/static/*' do
   item.identifier[7..-2]
 end
