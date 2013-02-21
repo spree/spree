@@ -16,7 +16,6 @@ module Spree
         ]
       end
 
-
       it 'builds a list of packages for an order' do
         StockLocation.should_receive(:active).and_return([stock_location])
         subject.should_receive(:build_packer).and_return(double(:packages => [package]))
@@ -25,7 +24,6 @@ module Spree
         packages = subject.packages
         packages.count.should == 1
       end
-
     end
   end
 end
