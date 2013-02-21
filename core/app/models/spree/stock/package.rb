@@ -4,11 +4,13 @@ module Spree
       ContentItem = Struct.new(:variant, :quantity, :status)
 
       attr_reader :stock_location, :order, :contents
+      attr_accessor :shipping_rates
 
       def initialize(stock_location, order, contents=[])
         @stock_location = stock_location
         @order = order
         @contents = contents
+        @shipping_rates = Array.new
       end
 
       def add(variant, quantity, status=:on_hand)
@@ -47,6 +49,14 @@ module Spree
 
       def empty?
         quantity == 0
+      end
+
+      def currency
+        #TODO calculate from first variant?
+      end
+
+      def shipping_category
+        #TODO return proper category?
       end
 
       def inspect

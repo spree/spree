@@ -13,6 +13,7 @@ module Spree
         packages = Array.new
         packages = build_packages(packages)
         packages = prioritize_packages(packages)
+        packages = estimate_packages(packages)
       end
 
       private
@@ -28,6 +29,14 @@ module Spree
       def prioritize_packages(packages)
         prioritizer = Prioritizer.new(order, packages)
         prioritizer.prioritized_packages
+      end
+
+      def estimate_packages(packages)
+        estimator = Estimator.new(order)
+        packages.each do |package|
+          package.shipping_rates = estimator.shipping_rates(package)
+        end
+        packages
       end
 
       def order_fulfilled?(order, packages)
