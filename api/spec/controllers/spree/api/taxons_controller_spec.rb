@@ -88,11 +88,14 @@ module Spree
       sign_in_as_admin!
 
       it "can create" do
-        api_post :create, :taxonomy_id => taxonomy.id, :taxon => { :name => "Colors", :parent_id => taxon.id}
+        api_post :create, :taxonomy_id => taxonomy.id, :taxon => { :name => "Colors" }
         json_response.should have_attributes(attributes)
         response.status.should == 201
 
-        taxon.reload.children.count.should eq 2
+        taxonomy.reload.root.children.count.should eq 2
+        
+        Spree::Taxon.last.parent_id.should eq taxonomy.root.id
+        Spree::Taxon.last.taxonomy_id.should eq taxonomy.id
       end
 
       it "cannot create a new taxon with invalid attributes" do
@@ -101,7 +104,19 @@ module Spree
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
         errors = json_response["errors"]
 
-        taxon.reload.children.count.should eq 1
+        taxonomy.reload.root.children.count.should eq 1
+      end
+      
+      it "cannot create a new taxon with invalid taxonomy_id" do
+        api_post :create, :taxonomy_id => 1000, :taxon => { :name => "Colors" }
+        response.status.should == 422
+        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        
+        errors = json_response["errors"]
+        errors["taxonomy_id"].should_not be_nil
+        errors["taxonomy_id"].first.should eq "Invalid taxonomy_id."
+
+        taxonomy.reload.root.children.count.should eq 1
       end
 
       it "can destroy" do
