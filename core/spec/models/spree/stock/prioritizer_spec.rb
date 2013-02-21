@@ -89,6 +89,23 @@ module Spree
         packages[0].quantity(:backordered).should eq 3
         packages[1].quantity(:on_hand).should eq 2
       end
+
+      it '1st has backorder, 2nd has all' do
+        order.line_items[0].stub(:quantity => 5)
+        package1 = pack do |package|
+          package.add variant1, 3, :backordered
+          package.add variant2, 1, :on_hand
+        end
+        package2 = pack do |package|
+          package.add variant1, 5, :on_hand
+        end
+
+        packages = [package1, package2]
+        prioritizer = Prioritizer.new(order, packages)
+        packages = prioritizer.prioritized_packages
+        packages[0].quantity(:backordered).should eq 0
+        packages[1].quantity(:on_hand).should eq 5
+      end
     end
   end
 end

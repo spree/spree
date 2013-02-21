@@ -22,18 +22,16 @@ module Spree
           adjuster = @adjuster_class.new(line_item.variant, line_item.quantity, :on_hand)
 
           visit_packages(adjuster)
-          unless adjuster.fulfilled?
-            adjuster.status = :backordered
-            visit_packages(adjuster)
-          end
+
+          adjuster.status = :backordered
+          visit_packages(adjuster)
         end
       end
 
       def visit_packages(adjuster)
         packages.each do |package|
           item = package.find_item adjuster.variant, adjuster.status
-          next unless item
-          adjuster.adjust(item)
+          adjuster.adjust(item) if item
         end
       end
 
@@ -42,7 +40,7 @@ module Spree
       end
 
       def prune_packages
-        packages.select! { |pkg| !pkg.empty? }
+        packages.reject! { |pkg| pkg.empty? }
       end
     end
   end
