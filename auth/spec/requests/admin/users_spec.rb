@@ -15,7 +15,7 @@ describe 'Users' do
       fill_in "user_password_confirmation", :with => "welcome"
       click_button "Update"
 
-      page.should have_content("successfully updated!")
+      page.should have_content("Account updated!")
     end
   end
 end

@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::UsersController do
   let(:admin_user) { create(:user) }
   let(:user) { create(:user) }
+  let(:role) { create(:role) }
 
   before do
     sign_in user
@@ -39,6 +40,10 @@ describe Spree::UsersController do
         spree_put :update, { :user => create(:user) }, { :user => { :email => 'mynew@email-address.com' } }
         response.should redirect_to(spree.login_url(:only_path => true))
       end
+    end
+
+    it 'should not update roles' do
+      expect { spree_put :update, { :user => { :role_ids => [role.id] } }}.to raise_exception(ActiveModel::MassAssignmentSecurity::Error)
     end
   end
 end
