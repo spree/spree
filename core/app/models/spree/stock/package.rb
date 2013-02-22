@@ -60,9 +60,11 @@ module Spree
       end
 
       def inspect
-        contents.map do |content_item|
+        out = "#{order} - "
+        out << contents.map do |content_item|
           "#{content_item.variant.name} #{content_item.quantity} #{content_item.status}"
         end.join('/')
+        out
       end
     end
   end
