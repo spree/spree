@@ -110,7 +110,7 @@ describe "Promotion Adjustments" do
     it "should allow an admin to create an product promo with percent per item discount" do
       create(:product, :name => "RoR Mug")
 
-      fill_in "Name", :with => "Promotion" 
+      fill_in "Name", :with => "Promotion"
       select2 "Add to cart", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")

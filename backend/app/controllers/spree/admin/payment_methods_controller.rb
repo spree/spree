@@ -3,6 +3,7 @@ module Spree
     class PaymentMethodsController < ResourceController
       skip_before_filter :load_resource, :only => [:create]
       before_filter :load_data
+      before_filter :validate_payment_method_provider, :only => :create
 
       respond_to :html
 
@@ -49,6 +50,14 @@ module Spree
 
       def load_data
         @providers = Gateway.providers.sort{|p1, p2| p1.name <=> p2.name }
+      end
+
+      def validate_payment_method_provider
+        valid_payment_methods = Rails.application.config.spree.payment_methods.map(&:to_s)
+        if !valid_payment_methods.include?(params[:payment_method][:type])
+          flash[:error] = t(:invalid_payment_provider)
+          redirect_to new_admin_payment_method_path
+        end
       end
     end
   end
