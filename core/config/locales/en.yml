@@ -452,16 +452,6 @@ en:
   errors_prohibited_this_record_from_being_saved:
     one: "1 error prohibited this record from being saved"
     other: "%{count} errors prohibited this record from being saved"
-  event: Event
-  events:
-    spree:
-      cart:
-        add: "Add to cart"
-      order:
-        contents_changed: "Order contents changed"
-      page_view: "Static page viewed"
-      user:
-        signup: "User signup"
   existing_customer: "Existing Customer"
   expiration: Expiration
   expiration_month: "Expiration Month"
@@ -1175,12 +1165,20 @@ en:
   coupon_code_not_eligible: This coupon code is not eligible for this order
   editing_promotion: Editing Promotion
   current_promotion_usage: 'Current Usage: %{count}'
+  event: Event
   events:
     spree:
       checkout:
         coupon_code_added: Coupon code added
       content:
         visited: Visit static content page
+      cart:
+        add: Add to cart
+      order:
+        contents_changed: Order contents changed
+      page_view: Static page viewed
+      user:
+        signup: User signup
   expiry: Expiry
   free_shipping: Free Shipping
   item_total_rule:

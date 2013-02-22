@@ -9,7 +9,7 @@
 
       <%= f.field_container :event_name do %>
         <%= f.label :event_name %>
-        <%= f.select :event_name, Spree::Activator.event_names.map{|name| [t("events.#{name}"), name] }, {}, {:class => 'select2 fullwidth'} %>
+        <%= f.select :event_name, @event_names, {}, {:class => 'select2 fullwidth'} %>
       <% end %>
 
       <%= f.field_container :code do %>
