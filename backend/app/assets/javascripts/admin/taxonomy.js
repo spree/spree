@@ -84,7 +84,7 @@ var setup_taxonomy_tree = function(taxonomy_id) {
       success: function(taxonomy) { 
 
         // this is defined within admin/taxonomies/edit
-        base_url = Spree.routes.taxonomy_taxons_path;
+        base_url = Spree.routes.taxonomy_taxons_path + "/";
 
         is_cut = false;
         last_rollback = null;
