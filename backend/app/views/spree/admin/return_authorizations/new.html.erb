@@ -1,15 +1,22 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
 
 <% content_for :page_title do %>
-  <%= t(:new_return_authorization) %>
+  <i class="icon-arrow-right"></i> <%= t(:new_return_authorization) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= button_link_to t(:back_to_return_authorizations_list), spree.admin_order_return_authorizations_url, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @return_authorization } %>
 <%= form_for [:admin, @order, @return_authorization] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
 
-  <div class="form-buttons" data-hook="buttons">
-    <%= button t(:continue) %>
-    <%= t(:or) %> <%= link_to t('actions.cancel'), admin_order_return_authorizations_url(@order) %>
-  </div>
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button t(:continue), 'icon-arrow-right' %>
+      <span class="or"><%= t(:or) %></span>
+      <%= button_link_to t(:cancel), admin_order_return_authorizations_url(@order), :icon => 'icon-remove' %>
+    </div>
+  </fieldset>
 <% end %>
