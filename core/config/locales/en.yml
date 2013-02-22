@@ -529,6 +529,9 @@ en:
   intercept_email_address: "Intercept Email Address"
   intercept_email_instructions: "Override email recipient and replace with this address."
   invalid_search: "Invalid search criteria."
+  invalid_payment_provider: "Invalid payment provider."
+  invalid_promotion_action: "Invalid promotion action."
+  invalid_promotion_rule: "Invalid promotion rule."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
   inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
