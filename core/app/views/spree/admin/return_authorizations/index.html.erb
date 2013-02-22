@@ -21,8 +21,8 @@
         <th><%= t(:status) %></th>
         <th><%= t(:amount) %></th>
         <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-        <th class="action"></th>
-      </tr>  
+        <th class="actions"></th>
+      </tr>
     </thead>
     <tbody>
       <% @return_authorizations.each do |return_authorization| %>
@@ -32,10 +32,9 @@
           <td><%= return_authorization.display_amount %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>
           <td class="actions">
-            <%= link_to_edit return_authorization %>
+            <%= link_to_edit return_authorization, :no_text => true %>
             <% unless return_authorization.received? %>
-              &nbsp;
-              <%= link_to_delete return_authorization %>
+              <%= link_to_delete return_authorization, :no_text => true %>
             <% end %>
           </td>
 
