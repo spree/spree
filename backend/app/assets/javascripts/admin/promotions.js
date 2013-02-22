@@ -9,7 +9,7 @@ var initProductActions = function(){
     }
   });
 
-  $(".variant_autocomplete").variantAutocomplete();
+  $('#promotion-filters').find(".variant_autocomplete").variantAutocomplete();
 
   $('.calculator-fields').each(function(){
     var $fields_container = $(this);
