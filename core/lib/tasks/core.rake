@@ -16,7 +16,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     dir = args.dir
     dir = File.join(Rails.root, "db", dir) if Pathname.new(dir).relative?
 
-    ruby_files = ActiveSupport::OrderedHash.new
+    ruby_files = {}
     Dir.glob(File.join(dir , '**/*.{rb}')).each do |fixture_file|
       ext = File.extname fixture_file
       ruby_files[File.basename(fixture_file, '.*')] = fixture_file
