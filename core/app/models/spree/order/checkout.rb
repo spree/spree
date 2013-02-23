@@ -18,8 +18,7 @@ module Spree
           end
 
           def self.define_state_machine!
-            # Needs to be an ordered hash to preserve flow order
-            self.checkout_steps = ActiveSupport::OrderedHash.new
+            self.checkout_steps = {}
             self.next_event_transitions = []
             self.previous_states = [:cart]
 
@@ -110,7 +109,7 @@ module Spree
           end
 
           def self.checkout_steps
-            @checkout_steps ||= ActiveSupport::OrderedHash.new
+            @checkout_steps ||= {}
           end
 
           def self.add_transition(options)
