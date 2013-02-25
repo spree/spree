@@ -40,6 +40,27 @@ module Spree
         item = subject.find_item(variant, :on_hand)
         item.quantity.should eq 4
       end
+
+      it 'get flattened contents' do
+        subject.add variant, 4, :on_hand
+        subject.add variant, 2, :backordered
+        flattened = subject.flattened
+        flattened.select { |i| i.status == :on_hand }.size.should eq 4
+        flattened.select { |i| i.status == :backordered }.size.should eq 2
+      end
+
+      it 'set contents from flattened' do
+        flattened = [Package::ContentItem.new(variant, 1, :on_hand),
+                    Package::ContentItem.new(variant, 1, :on_hand),
+                    Package::ContentItem.new(variant, 1, :backordered),
+                    Package::ContentItem.new(variant, 1, :backordered)]
+
+        subject.flattened = flattened
+        subject.on_hand.size.should eq 1
+        subject.on_hand.first.quantity.should eq 2
+
+        subject.backordered.size.should eq 1
+      end
     end
   end
 end
