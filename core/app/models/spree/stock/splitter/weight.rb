@@ -20,6 +20,7 @@ module Spree
         def reduce(package)
           removed = []
           while package.weight > self.threshold
+            break if package.contents.size == 1
             removed << package.contents.shift
           end
           removed
