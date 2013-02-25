@@ -139,7 +139,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
         # call authorize! a third time (called twice already in Admin::BaseController)
         # this time we pass the actual instance so fine-grained abilities can control
         # access to individual records, not just entire models.
-        authorize! params[:action], @object
+        authorize! action, @object
 
         instance_variable_set("@#{object_name}", @object)
       else
@@ -153,7 +153,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     def load_resource_instance
-      if new_actions.include?(params[:action].to_sym)
+      if new_actions.include?(action)
         build_resource
       elsif params[:id]
         find_resource
@@ -192,7 +192,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     def collection
       return parent.send(controller_name) if parent_data.present?
       if model_class.respond_to?(:accessible_by) && !current_ability.has_block?(params[:action], model_class)
-        model_class.accessible_by(current_ability, params[:action])
+        model_class.accessible_by(current_ability, action)
       else
         model_class.scoped
       end
@@ -252,7 +252,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     def member_action?
-      !collection_actions.include? params[:action].to_sym
+      !collection_actions.include? action
     end
 
     def new_actions
