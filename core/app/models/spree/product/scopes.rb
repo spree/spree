@@ -18,13 +18,17 @@ module Spree
       ]
     end
 
-    simple_scopes.each do |name|
-      # We should not define price scopes here, as they require something slightly different
-      next if name.to_s.include?("master_price")
-      parts = name.to_s.match(/(.*)_by_(.*)/)
-      order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
-      self.scope(name.to_s, relation.order(order_text))
+    def self.add_simple_scopes(scopes)
+      scopes.each do |name|
+        # We should not define price scopes here, as they require something slightly different
+        next if name.to_s.include?("master_price")
+        parts = name.to_s.match(/(.*)_by_(.*)/)
+        order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+        self.scope(name.to_s, relation.order(order_text))
+      end
     end
+
+    add_simple_scopes simple_scopes
 
     add_search_scope :ascend_by_master_price do
       joins(:master => :default_price).order("#{price_table_name}.amount ASC")
