@@ -51,6 +51,28 @@ module Spree
         quantity == 0
       end
 
+      def flattened
+        flat = []
+        contents.each do |item|
+          item.quantity.times do
+            flat << ContentItem.new(item.variant, 1, item.status)
+          end
+        end
+        flat
+      end
+
+      def flattened=(flattened)
+        contents.clear
+        flattened.each do |item|
+          current_item = find_item(item.variant, item.status)
+          if current_item
+            current_item.quantity += 1
+          else
+            add(item.variant, item.quantity, item.status)
+          end
+        end
+      end
+
       def currency
         #TODO calculate from first variant?
       end
