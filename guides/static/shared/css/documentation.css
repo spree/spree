@@ -21,7 +21,7 @@ a {
 h1, h2, h3, h4, h5, h6, a {
   color: #82B245;
   font-weight: 600;
-  text-decoration: none;  
+  text-decoration: none;
 }
 
 h1 {
@@ -44,7 +44,7 @@ button, .button {
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
       -ms-border-radius: 3px;
-       -o-border-radius: 3px;  
+       -o-border-radius: 3px;
           border-radius: 3px;
 
   transition: background-color 1s;
@@ -53,7 +53,7 @@ button, .button {
   -o-transition: background-color 1s; /* Opera */
 }
 
-input[type="button"]:hover, 
+input[type="button"]:hover,
 input[type="submit"]:hover,
 button:hover, .button:hover {
   background-color: #228DF2;
@@ -84,11 +84,11 @@ code {
   padding: 3px 5px;
   background-color: #EAF3FF;
   color: #73A7E9;
-  
+
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
       -ms-border-radius: 3px;
-       -o-border-radius: 3px;  
+       -o-border-radius: 3px;
           border-radius: 3px;
 }
 
@@ -96,11 +96,11 @@ pre code {
   padding: 0;
   background-color: inherit;
   color: #68A8EC;
-  
+
   -webkit-border-radius: inherit;
      -moz-border-radius: inherit;
       -ms-border-radius: inherit;
-       -o-border-radius: inherit;  
+       -o-border-radius: inherit;
           border-radius: inherit;
 }
 
@@ -112,13 +112,13 @@ pre.highlight {
   -webkit-border-bottom-right-radius: 3px;
      -moz-border-bottom-right-radius: 3px;
       -ms-border-bottom-right-radius: 3px;
-       -o-border-bottom-right-radius: 3px;  
+       -o-border-bottom-right-radius: 3px;
           border-bottom-right-radius: 3px;
 
   -webkit-border-bottom-left-radius: 3px;
      -moz-border-bottom-left-radius: 3px;
       -ms-border-bottom-left-radius: 3px;
-       -o-border-bottom-left-radius: 3px;  
+       -o-border-bottom-left-radius: 3px;
           border-bottom-left-radius: 3px;
 }
 
@@ -132,17 +132,17 @@ pre.headers {
   background-color: #9DC5F3;
   color: white;
   text-transform: uppercase;
-  
+
   -webkit-border-top-right-radius: 3px;
      -moz-border-top-right-radius: 3px;
       -ms-border-top-right-radius: 3px;
-       -o-border-top-right-radius: 3px;  
+       -o-border-top-right-radius: 3px;
           border-top-right-radius: 3px;
 
   -webkit-border-top-left-radius: 3px;
      -moz-border-top-left-radius: 3px;
       -ms-border-top-left-radius: 3px;
-       -o-border-top-left-radius: 3px;  
+       -o-border-top-left-radius: 3px;
           border-top-left-radius: 3px;
 }
 pre.headers code {
@@ -237,10 +237,10 @@ pre.headers code {
 #main-menu ul li a {
   text-transform: uppercase;
   display: inline-block;
-  padding: 0 20px;  
+  padding: 0 20px;
   color: #358EC7;
 }
-#main-menu ul li a:hover, 
+#main-menu ul li a:hover,
 #main-menu ul li.active a {
   color: #89B64A;
 }
@@ -297,7 +297,7 @@ pre.headers code {
   margin-top: 56px;
 }
 #sidebar-menu ul {
-  list-style: none;  
+  list-style: none;
 }
 #sidebar-menu ul ul {
   margin-left: 20px;
@@ -305,7 +305,7 @@ pre.headers code {
   -webkit-padding-start: 0px;
 }
 
-#sidebar-menu ul li a {  
+#sidebar-menu ul li a {
   color: #416793;
 }
 #sidebar-menu ul li a:hover,
@@ -357,7 +357,7 @@ pre.headers code {
 #main-footer a:hover {
   color: #89B64A;
 }
-.footer-top {  
+.footer-top {
   background-color: #EFF6FD;
   border-top: 1px solid #D7E1EE;
 }
@@ -382,11 +382,11 @@ pre.headers code {
   height: 30px;
   border: 3px solid white;
   display: block;
-  
+
   -webkit-border-radius: 30px;
      -moz-border-radius: 30px;
       -ms-border-radius: 30px;
-       -o-border-radius: 30px;  
+       -o-border-radius: 30px;
           border-radius: 30px;
 }
 #main-footer .social-icons i.icon-github-circled {
@@ -400,6 +400,18 @@ pre.headers code {
 }
 #main-footer .social-icons i.icon-gplus-circled {
   color: #E4532E;
+}
+
+/* DEVELOPER GUIDES */
+.developer.home #subheader {
+  padding-top: 20px;
+}
+.developer.home #subheader .container {
+  background: url('/images/developer-banner.png') no-repeat center;
+  min-height: 440px;
+}
+.developer #subheader {
+  background-image: url('/images/developer-pattern.jpg');
 }
 
 /* Browser fixes */

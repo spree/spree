@@ -29,6 +29,12 @@ compile '/feed/' do
   filter :kramdown, :toc_levels => [2]
 end
 
+compile '/developer/' do
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  layout 'developer'
+end
+
 compile '/developer/*' do
   # Parses !!! for warnings, *** for notes.
   filter :parse_info_boxes
@@ -39,7 +45,7 @@ compile '/developer/*' do
   filter :colorize_syntax,
     :colorizers => {:javascript => :pygmentsrb,
                     :ruby       => :pygmentsrb}
-  layout 'developer'
+  layout 'developer/default'
   filter :add_toc
 end
 
