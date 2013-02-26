@@ -5,10 +5,15 @@ module Spree
         if payment_method && payment_method.source_required?
           if source
             if !processing?
-              if payment_method.auto_capture?
-                purchase!
+              if payment_method.supports?(source)
+                if payment_method.auto_capture?
+                  purchase!
+                else
+                  authorize!
+                end
               else
-                authorize!
+                invalidate!
+                raise Core::GatewayError.new(I18n.t(:payment_method_not_supported))
               end
             end
           else
