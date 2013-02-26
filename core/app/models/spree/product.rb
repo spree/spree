@@ -131,6 +131,10 @@ module Spree
       self[:on_demand] = new_on_demand
     end
 
+    def count_on_hand=(value)
+      raise I18n.t('exceptions.count_on_hand_setter')
+    end
+
     # Returns true if there are inventory units (any variant) with "on_hand" state for this product
     # Variants take precedence over master
     def has_stock?
@@ -264,9 +268,12 @@ module Spree
       end
 
       def recalculate_count_on_hand
-        product_count_on_hand = has_variants? ?
-          variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
-        self.count_on_hand = product_count_on_hand
+        value = if has_variants?
+          variants.sum(:count_on_hand)
+        else
+          (master ? master.count_on_hand : 0)
+        end
+        self[:count_on_hand] = value
       end
 
       # the master on_hand is meaningless once a product has variants as the inventory
