@@ -403,18 +403,6 @@ module Spree
     end
 
     # Helper methods for checkout steps
-
-    def rate_hash
-      @rate_hash ||= available_shipping_methods.collect do |ship_method|
-        next unless cost = ship_method.calculator.compute(self)
-        ShippingRate.new( :id => ship_method.id,
-                          :shipping_method => ship_method,
-                          :name => ship_method.name,
-                          :cost => cost,
-                          :currency => currency)
-      end.compact.sort_by { |r| r.cost }
-    end
-
     def paid?
       payment_state == 'paid'
     end
