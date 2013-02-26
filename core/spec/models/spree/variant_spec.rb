@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Spree::Variant do
-  let!(:variant) { create(:variant, :count_on_hand => 95) }
+  let!(:variant) { create(:variant) }
 
   context "validations" do
     it "should validate price is greater than 0" do
