@@ -26,6 +26,13 @@ module Spree
     scope :pending, with_state('pending')
     scope :failed, with_state('failed')
 
+    after_rollback :persist_invalid
+
+    def persist_invalid
+      state_will_change!
+      save 
+    end
+
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'checkout' do
       # With card payments, happens before purchase or authorization happens
@@ -46,6 +53,10 @@ module Spree
       end
       event :void do
         transition :from => ['pending', 'completed', 'checkout'], :to => 'void'
+      end
+      # when the card brand isnt supported
+      event :invalidate! do
+        transition :from => ['checkout'], :to => 'invalid'
       end
     end
 
