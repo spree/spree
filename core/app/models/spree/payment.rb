@@ -29,10 +29,8 @@ module Spree
     after_rollback :persist_invalid
 
     def persist_invalid
-      if state == 'invalid'
-        state_will_change!
-        save 
-      end
+      state_will_change!
+      save 
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
