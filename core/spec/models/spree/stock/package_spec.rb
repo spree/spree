@@ -61,6 +61,26 @@ module Spree
 
         subject.backordered.size.should eq 1
       end
+
+      it "can convert to a shipment" do
+        flattened = [Package::ContentItem.new(variant, 1, :on_hand),
+                    Package::ContentItem.new(variant, 1, :backordered)]
+
+        subject.flattened = flattened
+        shipment = subject.to_shipment
+        shipment.order.should == subject.order
+        shipment.inventory_units.size.should == 2
+
+        first_unit = shipment.inventory_units.first
+        first_unit.variant.should == variant
+        first_unit.state.should == 'on_hand'
+        first_unit.order.should == subject.order
+
+        last_unit = shipment.inventory_units.last
+        last_unit.variant.should == variant
+        last_unit.state.should == 'backordered'
+        last_unit.order.should == subject.order
+      end
     end
   end
 end
