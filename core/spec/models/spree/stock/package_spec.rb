@@ -69,6 +69,7 @@ module Spree
         subject.flattened = flattened
         shipment = subject.to_shipment
         shipment.order.should == subject.order
+        shipment.stock_location.should == subject.stock_location
         shipment.inventory_units.size.should == 2
 
         first_unit = shipment.inventory_units.first
