@@ -26,6 +26,12 @@ module Spree
       after_transition :to => 'returned', :do => :restock_variant
     end
 
+    def self.backordered_for_stock_item(stock_item)
+      stock_locations_table = Spree::StockLocation.table_name
+      joins(:shipment => :stock_location).where("#{stock_locations_table}.id = ?", stock_item.stock_location.id).
+      order("created_at ASC")
+    end
+
     # Assigns inventory to a newly completed order.
     # Should only be called once during the life-cycle of an order, on transition to completed.
     #
