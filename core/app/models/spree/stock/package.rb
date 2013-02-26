@@ -1,7 +1,7 @@
 module Spree
   module Stock
     class Package
-      ContentItem = Struct.new(:variant, :quantity, :status)
+      ContentItem = Struct.new(:variant, :quantity, :state)
 
       attr_reader :stock_location, :order, :contents
       attr_accessor :shipping_rates
@@ -13,8 +13,8 @@ module Spree
         @shipping_rates = Array.new
       end
 
-      def add(variant, quantity, status=:on_hand)
-        contents << ContentItem.new(variant, quantity, status)
+      def add(variant, quantity, state=:on_hand)
+        contents << ContentItem.new(variant, quantity, state)
       end
 
       def weight
@@ -22,22 +22,22 @@ module Spree
       end
 
       def on_hand
-        contents.select { |item| item.status == :on_hand }
+        contents.select { |item| item.state == :on_hand }
       end
 
       def backordered
-        contents.select { |item| item.status == :backordered }
+        contents.select { |item| item.state == :backordered }
       end
 
-      def find_item(variant, status=:on_hand)
+      def find_item(variant, state=:on_hand)
         contents.select do |item|
           item.variant == variant &&
-          item.status == status
+          item.state == state
         end.first
       end
 
-      def quantity(status=nil)
-        case status
+      def quantity(state=nil)
+        case state
         when :on_hand
           on_hand.sum { |item| item.quantity }
         when :backordered
@@ -55,7 +55,7 @@ module Spree
         flat = []
         contents.each do |item|
           item.quantity.times do
-            flat << ContentItem.new(item.variant, 1, item.status)
+            flat << ContentItem.new(item.variant, 1, item.state)
           end
         end
         flat
@@ -64,11 +64,11 @@ module Spree
       def flattened=(flattened)
         contents.clear
         flattened.each do |item|
-          current_item = find_item(item.variant, item.status)
+          current_item = find_item(item.variant, item.state)
           if current_item
             current_item.quantity += 1
           else
-            add(item.variant, item.quantity, item.status)
+            add(item.variant, item.quantity, item.state)
           end
         end
       end
@@ -84,7 +84,7 @@ module Spree
       def inspect
         out = "#{order} - "
         out << contents.map do |content_item|
-          "#{content_item.variant.name} #{content_item.quantity} #{content_item.status}"
+          "#{content_item.variant.name} #{content_item.quantity} #{content_item.state}"
         end.join('/')
         out
       end
