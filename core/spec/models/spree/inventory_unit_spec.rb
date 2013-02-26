@@ -66,3 +66,4 @@ describe Spree::InventoryUnit do
   end
 end
 
+
