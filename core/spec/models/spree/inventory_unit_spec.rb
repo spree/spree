@@ -68,7 +68,6 @@ describe Spree::InventoryUnit do
     end
   end
 
-
   context "#increase" do
     context "when :track_inventory_levels is true" do
       before do
