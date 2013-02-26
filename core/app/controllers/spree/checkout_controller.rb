@@ -127,7 +127,7 @@ module Spree
 
       # "PUT Update" will create a new payment/source through update_attributes, so we delete existing payments first
       def clear_existing_payments
-        @order.payments.destroy_all if @order.payment
+        @order.payments.destroy_all if params[:order] && params[:order][:payments_attributes]
       end
 
   end
