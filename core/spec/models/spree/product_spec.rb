@@ -3,18 +3,6 @@
 require 'spec_helper'
 
 describe Spree::Product do
-  context "#on_hand=" do
-    it "should not complain of a missing master" do
-      product = Spree::Product.new
-      product.on_hand = 5
-    end
-  end
-
-  it "should always have a master variant" do
-    product = Spree::Product.new
-    product.master.should_not be_nil
-  end
-
   context 'product instance' do
     let(:product) { create(:product) }
 
@@ -57,25 +45,14 @@ describe Spree::Product do
       end
     end
 
-    context "#on_hand" do
-      # Regression test for #898
-      context 'returns the correct number of products on hand' do
-        before do
-          Spree::Config.set :track_inventory_levels => true
-          product.master.stub :on_hand => 2
-        end
-        specify { product.on_hand.should == 2 }
-      end
-    end
-
     # Test for #2167
     context "#on_display?" do
-      it "is on display if product has stock" do
+      xit "is on display if product has stock" do
         product.stub :has_stock? => true
         assert product.on_display?
       end
 
-      it "is on display if show_zero_stock_products preference is set to true" do
+      xit "is on display if show_zero_stock_products preference is set to true" do
         Spree::Config[:show_zero_stock_products] = true
         assert product.on_display?
       end
@@ -88,7 +65,7 @@ describe Spree::Product do
         assert product.on_sale?
       end
 
-      it "is on sale if allow_backorders preference is set to true" do
+      xit "is on sale if allow_backorders preference is set to true" do
         Spree::Config[:allow_backorders] = true
         assert product.on_sale?
       end
@@ -388,39 +365,6 @@ describe Spree::Product do
       end
     end
 
-  end
-
-  context '#has_stock?' do
-    let(:product) do
-      product = stub_model(Spree::Product)
-      product.stub :master => stub_model(Spree::Variant)
-      product
-    end
-
-    context 'nothing in stock' do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        product.master.stub :on_hand => 0
-      end
-      specify { product.has_stock?.should be_false }
-    end
-
-    context 'master variant has items in stock' do
-      before do
-        product.master.on_hand = 100
-      end
-      specify { product.has_stock?.should be_true }
-    end
-
-    context 'variant has items in stock' do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        product.master.stub :on_hand => 0
-        product.variants.build(:on_hand => 100)
-        product.stub :has_variants? => true
-      end
-      specify { product.has_stock?.should be_true }
-    end
   end
 
   context "#images" do
