@@ -26,6 +26,49 @@ describe Spree::InventoryUnit do
     end
   end
 
+  context "#backordered_inventory_units" do
+    let!(:stock_location) { create(:stock_location) }
+    let!(:stock_item) do
+      stock_item = build(:stock_item)
+      stock_item.stock_location = stock_location
+      stock_item.tap(&:save!)
+    end
+
+    let(:order) { create(:order) }
+    let(:shipment) do
+      shipping_method = stub_model(Spree::ShippingMethod)
+      shipment = Spree::Shipment.new
+      shipment.stock_location = stock_location
+      shipment.shipping_method = shipping_method
+      shipment.order = order
+      # We don't care about this in this test
+      shipment.stub(:ensure_correct_adjustment)
+      shipment.tap(&:save!)
+    end
+
+    let!(:unit) do
+      unit = shipment.inventory_units.build
+      unit.state = 'backordered'
+      unit.tap(&:save!)
+    end
+
+    it "finds inventory units from its stock location" do
+      Spree::InventoryUnit.backordered_for_stock_item(stock_item).should =~ [unit]
+    end
+
+    context "does not find inventory units from other stock locations" do
+      before do
+        stock_item.stock_location = create(:stock_location)
+        stock_item.save!
+      end
+
+      specify do
+        Spree::InventoryUnit.backordered_for_stock_item(stock_item).should be_empty
+      end
+    end
+  end
+
+
   context "#increase" do
     context "when :track_inventory_levels is true" do
       before do
