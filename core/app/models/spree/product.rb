@@ -111,19 +111,6 @@ module Spree
       has_stock? || Spree::Config[:allow_backorders]
     end
 
-    # returns the number of inventory units "on_hand" for this product
-    def on_hand
-      has_variants? ? variants.sum(&:on_hand) : master.on_hand
-    end
-
-    # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
-    def on_hand=(new_level)
-      unless self.on_demand
-        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
-        master.on_hand = new_level
-      end
-    end
-
     def on_demand=(new_on_demand)
       raise 'cannot set on_demand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
       master.on_demand = on_demand
