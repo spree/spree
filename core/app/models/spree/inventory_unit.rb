@@ -8,11 +8,6 @@ module Spree
     scope :backordered, lambda { where(:state => 'backordered') }
     scope :shipped, lambda { where(:state => 'shipped') }
 
-    def self.backorder
-      warn "[SPREE] Spree::InventoryUnit.backorder will be deprecated in Spree 1.3. Please use Spree::Product.backordered instead."
-      backordered
-    end
-
     attr_accessible :shipment
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
