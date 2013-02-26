@@ -88,6 +88,20 @@ module Spree
         end.join('/')
         out
       end
+
+      def to_shipment
+        shipment = Spree::Shipment.new
+        shipment.order = order
+
+        contents.each do |item|
+          unit = shipment.inventory_units.build
+          unit.order = order
+          unit.variant = item.variant
+          unit.state = item.state.to_s
+        end
+
+        shipment
+      end
     end
   end
 end
