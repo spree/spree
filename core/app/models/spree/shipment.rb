@@ -5,6 +5,7 @@ module Spree
     belongs_to :order
     belongs_to :shipping_method
     belongs_to :address
+    belongs_to :stock_location
 
     has_many :state_changes, :as => :stateful
     has_many :inventory_units, :dependent => :nullify
