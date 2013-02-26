@@ -57,9 +57,7 @@ module Spree
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
     after_create :build_variants_from_option_values_hash, :if => :option_values_hash
-    before_save :recalculate_count_on_hand
     after_save :save_master
-    after_save :set_master_on_hand_to_zero_when_product_has_variants
 
     delegate :images, :to => :master, :prefix => true
     alias_method :images, :master_images
@@ -248,18 +246,6 @@ module Spree
           end
           self.option_types = prototype.option_types
         end
-      end
-
-      def recalculate_count_on_hand
-        # product_count_on_hand = has_variants? ?
-        #   variants.sum(:count_on_hand) : (master ? master.count_on_hand : 0)
-        # self.count_on_hand = product_count_on_hand
-      end
-
-      # the master on_hand is meaningless once a product has variants as the inventory
-      # units are now "contained" within the product variants
-      def set_master_on_hand_to_zero_when_product_has_variants
-        master.on_hand = 0 if has_variants? && Spree::Config[:track_inventory_levels] && !self.on_demand
       end
 
       # ensures the master variant is flagged as such
