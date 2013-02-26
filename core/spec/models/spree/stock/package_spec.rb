@@ -21,7 +21,7 @@ module Spree
         subject.backordered.count.should eq 1
       end
 
-      it 'calculates the quantity by status' do
+      it 'calculates the quantity by state' do
         subject.add variant, 4, :on_hand
         subject.add variant, 3, :backordered
 
@@ -45,8 +45,8 @@ module Spree
         subject.add variant, 4, :on_hand
         subject.add variant, 2, :backordered
         flattened = subject.flattened
-        flattened.select { |i| i.status == :on_hand }.size.should eq 4
-        flattened.select { |i| i.status == :backordered }.size.should eq 2
+        flattened.select { |i| i.state == :on_hand }.size.should eq 4
+        flattened.select { |i| i.state == :backordered }.size.should eq 2
       end
 
       it 'set contents from flattened' do
