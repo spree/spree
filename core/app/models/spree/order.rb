@@ -404,11 +404,6 @@ module Spree
 
     # Helper methods for checkout steps
 
-    def available_shipping_methods
-      return [] unless ship_address
-      ShippingMethod.all_available(self)
-    end
-
     def rate_hash
       @rate_hash ||= available_shipping_methods.collect do |ship_method|
         next unless cost = ship_method.calculator.compute(self)
