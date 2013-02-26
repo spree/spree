@@ -289,43 +289,6 @@ describe Spree::Order do
     end
   end
 
-  context "rate_hash" do
-    let(:shipping_method_1) { mock_model Spree::ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
-    let(:shipping_method_2) { mock_model Spree::ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }
-
-    before do
-      shipping_method_1.calculator.stub(:compute).and_return(10.0)
-      shipping_method_2.calculator.stub(:compute).and_return(0.0)
-      order.stub(:available_shipping_methods => [ shipping_method_1, shipping_method_2 ])
-    end
-
-    it "should return shipping methods sorted by cost" do
-      rate_1, rate_2 = order.rate_hash
-
-      rate_1.shipping_method.should == shipping_method_2
-      rate_1.cost.should == 0.0
-      rate_1.name.should == "Ground Shipping"
-      rate_1.id.should == 2
-
-      rate_2.shipping_method.should == shipping_method_1
-      rate_2.cost.should == 10.0
-      rate_2.name.should == "Air Shipping"
-      rate_2.id.should == 1
-    end
-
-    it "should not return shipping methods with nil cost" do
-      shipping_method_1.calculator.stub(:compute).and_return(nil)
-      order.rate_hash.count.should == 1
-      rate_1 = order.rate_hash.first
-
-      rate_1.shipping_method.should == shipping_method_2
-      rate_1.cost.should == 0
-      rate_1.name.should == "Ground Shipping"
-      rate_1.id.should == 2
-    end
-
-  end
-
   context "insufficient_stock_lines" do
     let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
 
