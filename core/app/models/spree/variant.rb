@@ -34,7 +34,6 @@ module Spree
     before_validation :set_cost_currency
     after_save :process_backorders
     after_save :save_default_price
-    after_save :recalculate_product_on_hand, :if => :is_master?
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
@@ -188,10 +187,11 @@ module Spree
         price.to_d
       end
 
-      def recalculate_product_on_hand
-        on_hand = product.on_hand
-        if Spree::Config[:track_inventory_levels] && on_hand != (1.0 / 0) # Infinity
-          product.update_column(:count_on_hand, on_hand)
+      # Ensures a new variant takes the product master price when price is not supplied
+      def check_price
+        if price.nil?
+          raise 'Must supply price for variant or master.price for product.' if self == product.master
+          self.price = product.master.price
         end
       end
 
