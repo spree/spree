@@ -76,9 +76,8 @@ var handle_delete = function(e, data){
 
 };
 
-var taxonomy_id; 
 
-$(document).ready(function(){
+var setup_taxonomy_tree = function(taxonomy_id) {
   if(taxonomy_id!=undefined){
     $.ajax({
       url: '/api/taxonomies/' + taxonomy_id + '/jstree', 
@@ -210,4 +209,4 @@ $(document).ready(function(){
       }
     });
   }
-});
+};

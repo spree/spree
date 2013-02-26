@@ -3,6 +3,11 @@
     var loading = '#{escape_javascript t(:loading)}';
     var new_taxon = '#{escape_javascript t(:new_taxon)}';
     var server_error = '#{escape_javascript t(:server_error)}';
-    var taxonomy_tree_error = '#{escape_javascript t(:taxonomy_tree_error)}';"
+    var taxonomy_tree_error = '#{escape_javascript t(:taxonomy_tree_error)}';
+
+    $(document).ready(function(){
+      setup_taxonomy_tree(taxonomy_id);
+    });
+    "
   %>
 <% end %>
