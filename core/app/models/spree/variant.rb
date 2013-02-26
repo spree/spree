@@ -7,7 +7,7 @@ module Spree
                         :meta_keywords, :tax_category
 
     attr_accessible :name, :presentation, :cost_price, :lock_version,
-                    :position, :on_demand, :on_hand, :option_value_ids,
+                    :position, :on_demand, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
                     :weight, :height, :width, :depth, :sku, :cost_currency
 
@@ -30,7 +30,6 @@ module Spree
     validate :check_price
     validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true, :if => proc { Spree::Config[:require_master_price] }
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
-    #validates :count_on_hand, :numericality => true
 
     before_validation :set_cost_currency
     after_save :process_backorders
@@ -42,24 +41,6 @@ module Spree
 
     def self.active(currency = nil)
       joins(:prices).where(:deleted_at => nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
-    end
-
-    # Returns number of inventory units for this variant (new records haven't been saved to database, yet)
-    def on_hand
-      # if Spree::Config[:track_inventory_levels] && !self.on_demand
-      #   count_on_hand
-      # else
-      #   (1.0 / 0) # Infinity
-      # end
-    end
-
-    # set actual attribute
-    def on_hand=(new_level)
-      if !Spree::Config[:track_inventory_levels]
-        raise 'Cannot set on_hand value when Spree::Config[:track_inventory_levels] is false'
-      else
-        # self.count_on_hand = new_level unless self.on_demand
-      end
     end
 
     def cost_price=(price)
