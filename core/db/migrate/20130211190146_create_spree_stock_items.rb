@@ -4,6 +4,7 @@ class CreateSpreeStockItems < ActiveRecord::Migration
       t.belongs_to :stock_location
       t.belongs_to :variant
       t.integer :count_on_hand
+      t.integer :lock_version
 
       t.timestamps
     end
