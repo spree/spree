@@ -32,7 +32,6 @@ module Spree
     validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
 
     before_validation :set_cost_currency
-    after_save :process_backorders
     after_save :save_default_price
 
     # default variant scope only lists non-deleted variants
@@ -142,26 +141,6 @@ module Spree
     end
 
     private
-
-      def process_backorders
-        if count_changes = changes['count_on_hand']
-          new_level = count_changes.last
-
-          if Spree::Config[:track_inventory_levels] && !self.on_demand
-            new_level = new_level.to_i
-
-            # update backorders if level is positive
-            if new_level > 0
-              # fill backordered orders before creating new units
-              backordered_units = inventory_units.with_state('backordered')
-              backordered_units.slice(0, new_level).each(&:fill_backorder)
-              new_level -= backordered_units.length
-            end
-
-            self.update_attribute_without_callbacks(:count_on_hand, new_level)
-          end
-        end
-      end
 
       # Ensures a new variant takes the product master price when price is not supplied
       def check_price
