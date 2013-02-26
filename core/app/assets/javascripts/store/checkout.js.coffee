@@ -34,6 +34,7 @@ $ ->
 
         state_select.prop('disabled', false).show()
         state_input.hide().prop 'disabled', true
+        state_para.show()
         state_span_required.show()
       else
         state_select.hide().prop 'disabled', true
