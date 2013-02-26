@@ -12,6 +12,8 @@ FactoryGirl.define do
       ignore do
         line_items_count 5
       end
+      bill_address { FactoryGirl.create(:address) }
+      ship_address { FactoryGirl.create(:address) }
       after(:create) do |order, evaluator|
         FactoryGirl.create_list(:line_item, evaluator.line_items_count, :order => order)
         order.line_items.reload

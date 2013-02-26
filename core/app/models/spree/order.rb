@@ -404,11 +404,6 @@ module Spree
 
     # Helper methods for checkout steps
 
-    def available_shipping_methods
-      return [] unless ship_address
-      ShippingMethod.all_available(self)
-    end
-
     def rate_hash
       return @rate_hash if @rate_hash.present?
 
