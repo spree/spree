@@ -29,6 +29,7 @@ module Spree
     after_rollback :persist_invalid
 
     def persist_invalid
+      return unless ['failed', 'invalid'].include?(state)
       state_will_change!
       save 
     end
@@ -55,7 +56,7 @@ module Spree
         transition :from => ['pending', 'completed', 'checkout'], :to => 'void'
       end
       # when the card brand isnt supported
-      event :invalidate! do
+      event :invalidate do
         transition :from => ['checkout'], :to => 'invalid'
       end
     end
