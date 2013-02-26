@@ -10,6 +10,14 @@ describe Spree::Product do
     end
   end
 
+  context "#count_on_hand=" do
+    it "cannot be set manually" do
+      product = Spree::Product.new
+      setter = lambda { product.count_on_hand = 5 }
+      setter.should raise_error(I18n.t('exceptions.count_on_hand_setter'))
+    end
+  end
+
   it "should always have a master variant" do
     product = Spree::Product.new
     product.master.should_not be_nil

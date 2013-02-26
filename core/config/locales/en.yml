@@ -462,6 +462,8 @@ en:
       page_view: "Static page viewed"
       user:
         signup: "User signup"
+  exceptions:
+    count_on_hand_setter: "Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead."
   existing_customer: "Existing Customer"
   expiration: Expiration
   expiration_month: "Expiration Month"
