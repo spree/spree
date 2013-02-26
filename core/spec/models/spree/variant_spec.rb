@@ -26,22 +26,6 @@ describe Spree::Variant do
     variant.run_callbacks(:save)
   end
 
-  it "lock_version should prevent stale updates" do
-    copy = Spree::Variant.find(variant.id)
-
-    copy.count_on_hand = 200
-    copy.save!
-
-    variant.count_on_hand = 100
-    expect { variant.save }.to raise_error ActiveRecord::StaleObjectError
-
-    variant.reload.count_on_hand.should == 200
-    variant.count_on_hand = 100
-    variant.save
-
-    variant.reload.count_on_hand.should == 100
-  end
-
   context "on_hand=" do
     before { variant.stub(:inventory_units => mock('inventory-units')) }
 
