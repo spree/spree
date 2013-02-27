@@ -8,6 +8,10 @@ module Spree
       #   * :match_path as an alternative way to control when the tab is active, /products would match /admin/products, /admin/products/5/variants etc.
       def tab(*args)
         options = {:label => args.first.to_s}
+
+        # Return if resource is found and user is not allowed to :admin
+        return '' if klass = klass_for(options[:label]) and cannot?(:admin, klass)
+
         if args.last.is_a?(Hash)
           options = options.merge(args.pop)
         end
@@ -36,7 +40,7 @@ module Spree
         if options[:css_class]
           css_classes << options[:css_class]
         end
-        content_tag('li', link, :class => css_classes.join(' ')) if klass = klass_for(options[:label]) and can?(:admin, klass)
+        content_tag('li', link, :class => css_classes.join(' '))
       end
 
       # finds class for a given symbol / string
