@@ -4,14 +4,26 @@ describe "Promotion Adjustments" do
   stub_authorization!
 
   context "coupon promotions", :js => true do
+    let!(:zone) { create(:zone) }
+    let!(:shipping_method) do
+      sm = create(:shipping_method, :zone => zone)
+      sm.calculator.set_preference(:amount, 10)
+      sm
+    end
+    let!(:country) do
+      country = create(:country)
+      shipping_method.zone.zone_members.create!(:zoneable => country)
+      country
+    end
+    let!(:state) { create(:state, :country => country) }
+    let!(:address) { create(:address, :state => state, :country => country) }
+
     before(:each) do
       # creates a default shipping method which is required for checkout
       create(:bogus_payment_method, :environment => 'test')
       # creates a check payment method so we don't need to worry about cc details
       create(:payment_method)
 
-      sm = create(:shipping_method, :zone => Spree::Zone.find_by_name('North America'))
-      sm.calculator.set_preference(:amount, 10)
 
       user = create(:admin_user)
       create(:product, :name => "RoR Mug", :price => "40")
@@ -21,8 +33,6 @@ describe "Promotion Adjustments" do
       click_link "Promotions"
       click_link "New Promotion"
     end
-
-    let!(:address) { create(:address, :state => Spree::State.first) }
 
     it "should properly populate Spree::Product#possible_promotions" do
       promotion = create_per_product_promotion 'RoR Mug', 5.0

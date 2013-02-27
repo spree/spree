@@ -4,7 +4,9 @@ describe "Checkout" do
   stub_authorization!
 
   context "visitor makes checkout as guest without registration", :js => true do
+    let(:country) { create(:country, :name => "Kangaland",:states_required => true) }
     before do
+      create(:state, :name => "Victoria", :country => country)
       @product = create(:product, :name => "RoR Mug")
       create(:zone)
       create(:shipping_method)
@@ -32,8 +34,8 @@ describe "Checkout" do
         fill_in "Street Address", :with => "1 John Street"
         fill_in "City", :with => "City of John"
         fill_in "Zip", :with => "01337"
-        select "United States", :from => "Country"
-        select "Alaska", :from => "order[bill_address_attributes][state_id]"
+        select country.name, :from => "Country"
+        select country.states.first.name, :from => "order[bill_address_attributes][state_id]"
         fill_in "Phone", :with => "555-555-5555"
         check "Use Billing Address"
 
