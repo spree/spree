@@ -50,19 +50,9 @@ module Spree
       inventory_units.with_state('backordered').size
     end
 
-    # returns true if at least one inventory unit of this variant is "on_hand"
-    def in_stock?
-      if Spree::Config[:track_inventory_levels] && !self.on_demand
-        on_hand > 0
-      else
-        true
-      end
-    end
-    alias in_stock in_stock?
-
     # returns true if this variant is allowed to be placed on a new order
     def available?
-      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || in_stock? || self.on_demand) : true
+      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || self.on_demand) : true
     end
 
     def options_text
