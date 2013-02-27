@@ -56,7 +56,5 @@ module Spree
           end
         end
       end
-
->>>>>>> Move responsibility of processing backorders from Spree::Variant to Spree::StockItem
   end
 end
