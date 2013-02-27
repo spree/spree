@@ -96,6 +96,7 @@ module Spree
 
         contents.each do |item|
           unit = shipment.inventory_units.build
+          unit.pending = true
           unit.order = order
           unit.variant = item.variant
           unit.state = item.state.to_s
