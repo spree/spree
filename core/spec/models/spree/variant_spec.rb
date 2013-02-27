@@ -223,4 +223,3 @@ describe Spree::Variant do
     end
   end
 end
-
