@@ -207,14 +207,6 @@ module Spree
         price.to_d
       end
 
-      # Ensures a new variant takes the product master price when price is not supplied
-      def check_price
-        if price.nil?
-          raise 'Must supply price for variant or master.price for product.' if self == product.master
-          self.price = product.master.price
-        end
-      end
-
       def recalculate_product_on_hand
         on_hand = product.on_hand
         if Spree::Config[:track_inventory_levels] && on_hand != (1.0 / 0) # Infinity
