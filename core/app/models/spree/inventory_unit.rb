@@ -32,18 +32,6 @@ module Spree
       order("created_at ASC")
     end
 
-    # Assigns inventory to a newly completed order.
-    # Should only be called once during the life-cycle of an order, on transition to completed.
-    #
-    def self.assign_opening_inventory(order)
-      return [] unless order.completed?
-
-      #increase inventory to meet initial requirements
-      order.line_items.each do |line_item|
-        increase(order, line_item.variant, line_item.quantity)
-      end
-    end
-
     # manages both variant.count_on_hand and inventory unit creation
     #
     def self.increase(order, variant, quantity)

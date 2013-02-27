@@ -5,27 +5,6 @@ describe Spree::InventoryUnit do
   let(:line_item) { mock_model(Spree::LineItem, :variant => variant, :quantity => 5) }
   let(:order) { mock_model(Spree::Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }
 
-  context "#assign_opening_inventory" do
-    context "when order is complete" do
-
-      it "should increase inventory" do
-        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 5).and_return([])
-        Spree::InventoryUnit.assign_opening_inventory(order)
-      end
-
-    end
-
-    context "when order is not complete" do
-      before { order.stub(:completed?).and_return(false) }
-
-      it "should not do anything" do
-        Spree::InventoryUnit.should_not_receive(:increase)
-        Spree::InventoryUnit.assign_opening_inventory(order).should == []
-      end
-
-    end
-  end
-
   context "#backordered_inventory_units" do
     let!(:stock_location) { create(:stock_location) }
     let!(:stock_item) do

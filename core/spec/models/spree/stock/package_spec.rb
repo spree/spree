@@ -76,6 +76,7 @@ module Spree
         first_unit.variant.should == variant
         first_unit.state.should == 'on_hand'
         first_unit.order.should == subject.order
+        first_unit.should be_pending
 
         last_unit = shipment.inventory_units.last
         last_unit.variant.should == variant
