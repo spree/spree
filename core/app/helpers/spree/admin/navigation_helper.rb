@@ -36,7 +36,23 @@ module Spree
         if options[:css_class]
           css_classes << options[:css_class]
         end
-        content_tag('li', link, :class => css_classes.join(' '))
+        content_tag('li', link, :class => css_classes.join(' ')) if klass = klass_for(options[:label]) and can?(:admin, klass)
+      end
+
+      # finds class for a given symbol / string
+      #
+      # Example :
+      # :products returns Spree::Product
+      # :my_products returns MyProduct if MyProduct is defined
+      # :my_products returns My::Product if My::Product is defined
+      # if cannot constantize it returns nil
+      # This will allow us to use cancan abilities on tab
+      def klass_for(name)
+        model_name = name.to_s
+
+        ["Spree::#{model_name.classify}", model_name.classify, model_name.gsub('_', '/').classify].find do |t|
+          t.safe_constantize
+        end.try(:safe_constantize)
       end
 
       def link_to_clone(resource, options={})
@@ -96,9 +112,9 @@ module Spree
             object_name, action = url.split('/')[-2..-1]
             html_options['data-update'] = [action, object_name.singularize].join('_')
           end
-          
+
           html_options.delete('data-update') unless html_options['data-update']
-          
+
           html_options[:class] = 'button'
 
           if html_options[:icon]
