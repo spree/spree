@@ -1,7 +1,7 @@
 Spree::Sample.load_sample("option_values")
 Spree::Sample.load_sample("products")
 
-ror_baseball_jersey = Spree::Product.find_by_name!("Ruby on Rails Baseball Jersey") 
+ror_baseball_jersey = Spree::Product.find_by_name!("Ruby on Rails Baseball Jersey")
 ror_tote = Spree::Product.find_by_name!("Ruby on Rails Tote")
 ror_bag = Spree::Product.find_by_name!("Ruby on Rails Bag")
 ror_jr_spaghetti = Spree::Product.find_by_name!("Ruby on Rails Jr. Spaghetti")
@@ -26,10 +26,6 @@ extra_large = Spree::OptionValue.find_by_name!("Extra Large")
 red = Spree::OptionValue.find_by_name!("Red")
 blue = Spree::OptionValue.find_by_name!("Blue")
 green = Spree::OptionValue.find_by_name!("Green")
-
-default_attrs = {
-  :count_on_hand => 10
-}
 
 variants = [
   {
