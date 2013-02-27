@@ -31,19 +31,7 @@ module Spree
 
     # human readable list of variant options
     def variant_options(v, options={})
-      list = v.options_text
-
-      # We shouldn't show out of stock if the product is infact in stock
-      # or when we're not allowing backorders.
-      unless v.in_stock?
-        list = if options[:include_style]
-          content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => 'out-of-stock')
-        else
-          "#{t(:out_of_stock)} #{list}"
-        end
-      end
-
-      list
+      v.options_text
     end
 
     def meta_data_tags

@@ -9,7 +9,6 @@ describe Spree::ShipmentMailer do
     order = stub_model(Spree::Order)
     product = stub_model(Spree::Product, :name => %Q{The "BEST" product})
     variant = stub_model(Spree::Variant, :product => product)
-    variant.stub(:in_stock? => false)
     line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
     shipment = stub_model(Spree::Shipment)
     shipment.stub(:line_items => [line_item], :order => order)
