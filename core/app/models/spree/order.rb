@@ -404,32 +404,6 @@ module Spree
 
     # Helper methods for checkout steps
 
-    # def rate_hash
-    #   return @rate_hash if @rate_hash.present?
-
-    #   # reserve one slot for each shipping method computation
-    #   computed_costs = Array.new(available_shipping_methods.size)
-
-    #   # create all the threads and kick off their execution
-    #   threads = available_shipping_methods.each_with_index.map do |ship_method, index|
-    #     Thread.new { computed_costs[index] = [ship_method, ship_method.calculator.compute(self)] }
-    #   end
-
-    #   # wait for all threads to finish
-    #   threads.map(&:join)
-
-    #   # now consolidate and memoize the threaded results
-    #   @rate_hash ||= computed_costs.map do |pair|
-    #     ship_method,cost = *pair
-    #     next unless cost
-    #     ShippingRate.new( :id => ship_method.id,
-    #                       :shipping_method => ship_method,
-    #                       :name => ship_method.name,
-    #                       :cost => cost,
-    #                       :currency => currency)
-    #   end.compact.sort_by { |r| r.cost }
-    # end
-
     def paid?
       payment_state == 'paid'
     end
