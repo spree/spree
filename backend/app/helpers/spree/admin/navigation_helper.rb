@@ -8,6 +8,10 @@ module Spree
       #   * :match_path as an alternative way to control when the tab is active, /products would match /admin/products, /admin/products/5/variants etc.
       def tab(*args)
         options = {:label => args.first.to_s}
+
+        # Return if resource is found and user is not allowed to :admin
+        return '' if klass = klass_for(options[:label]) and cannot?(:admin, klass)
+
         if args.last.is_a?(Hash)
           options = options.merge(args.pop)
         end
@@ -37,6 +41,22 @@ module Spree
           css_classes << options[:css_class]
         end
         content_tag('li', link, :class => css_classes.join(' '))
+      end
+
+      # finds class for a given symbol / string
+      #
+      # Example :
+      # :products returns Spree::Product
+      # :my_products returns MyProduct if MyProduct is defined
+      # :my_products returns My::Product if My::Product is defined
+      # if cannot constantize it returns nil
+      # This will allow us to use cancan abilities on tab
+      def klass_for(name)
+        model_name = name.to_s
+
+        ["Spree::#{model_name.classify}", model_name.classify, model_name.gsub('_', '/').classify].find do |t|
+          t.safe_constantize
+        end.try(:safe_constantize)
       end
 
       def link_to_clone(resource, options={})
