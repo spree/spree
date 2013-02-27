@@ -101,30 +101,10 @@ module Spree
       variants.any?
     end
 
-    # should product be displayed on products pages and search
-    def on_display?
-      has_stock? || Spree::Config[:show_zero_stock_products]
-    end
-
-    # is this product actually available for purchase
-    def on_sale?
-      has_stock? || Spree::Config[:allow_backorders]
-    end
-
     def on_demand=(new_on_demand)
       raise 'cannot set on_demand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
       master.on_demand = on_demand
       self[:on_demand] = new_on_demand
-    end
-
-    def count_on_hand=(value)
-      raise I18n.t('exceptions.count_on_hand_setter')
-    end
-
-    # Returns true if there are inventory units (any variant) with "on_hand" state for this product
-    # Variants take precedence over master
-    def has_stock?
-      has_variants? ? variants.any?(&:in_stock?) : master.in_stock?
     end
 
     def tax_category

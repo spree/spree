@@ -6,12 +6,6 @@
 
 <%= form_tag admin_inventory_settings_path, :method => :put do %>
 
-  <div data-hook="show_zero_stock" class="field">
-    <%= hidden_field_tag 'preferences[show_zero_stock_products]', '0' %>
-    <%= check_box_tag('preferences[show_zero_stock_products]', "1", Spree::Config[:show_zero_stock_products]) %>
-    <%= t(:show_out_of_stock_products) %>
-  </div>
-  
   <div data-hook="allow_backorders"  class="field">
     <%= hidden_field_tag 'preferences[allow_backorders]', '0' %>
     <%= check_box_tag('preferences[allow_backorders]', "1", Spree::Config[:allow_backorders]) %>
