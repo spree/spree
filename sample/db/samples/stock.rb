@@ -10,4 +10,3 @@ Spree::Variant.all.each do |variant|
     Spree::StockMovement.create(:quantity => 10, :stock_item => stock_item)
   end
 end
-
