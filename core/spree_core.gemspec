@@ -45,4 +45,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'rabl', '0.7.2'
   # Latest truncate_html supports only Ruby 1.9
   s.add_dependency 'truncate_html', '~> 0.5.5'
+
+  # i18n 0.6.2 has a change which breaks Ruby 1.8
+  # https://github.com/svenfuchs/i18n/commit/d20b304e33c5c03f910219333ca931f12c9e0fe0
+  s.add_dependency 'i18n', '0.6.1'
 end
