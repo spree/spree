@@ -57,19 +57,6 @@ describe Spree::Product do
     end
 
     # Test for #2167
-    context "#on_display?" do
-      xit "is on display if product has stock" do
-        product.stub :has_stock? => true
-        assert product.on_display?
-      end
-
-      xit "is on display if show_zero_stock_products preference is set to true" do
-        Spree::Config[:show_zero_stock_products] = true
-        assert product.on_display?
-      end
-    end
-
-    # Test for #2167
     context "#on_sale?" do
       it "is on sale if the product has stock" do
         product.stub :has_stock? => true
