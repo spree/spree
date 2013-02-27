@@ -35,4 +35,11 @@ describe "Product scopes" do
       end
     end
   end
+
+  context "not_deleted" do
+    it "contains products 'deleted' in the future" do
+      product.update_column(:deleted_at, 1.day.from_now)
+      Spree::Product.not_deleted.should include(product)
+    end
+  end
 end

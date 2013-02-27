@@ -184,7 +184,7 @@ module Spree
     end
 
     add_search_scope :not_deleted do
-      where(:deleted_at => nil)
+      where("#{Product.quoted_table_name}.deleted_at IS NULL or #{Product.quoted_table_name}.deleted_at >= ?", Time.zone.now)
     end
 
     # Can't use add_search_scope for this as it needs a default argument
