@@ -107,7 +107,7 @@ describe Spree::Order do
     end
 
     it "should sell inventory units" do
-      Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
+      order.inventory_units.should_receive(:update_all).with(:pending => false)
       order.finalize!
     end
 

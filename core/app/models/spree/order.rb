@@ -371,7 +371,8 @@ module Spree
     # Called after transition to complete state when payments will have been processed
     def finalize!
       touch :completed_at
-      InventoryUnit.assign_opening_inventory(self)
+
+      inventory_units.update_all(:pending => false)
 
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
