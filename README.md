@@ -25,8 +25,8 @@ All of the gems are designed to work together to provide a fully functional e-co
 however, to use only the pieces you are interested in.  So for example, you could use just the barebones spree\_core gem
 and perhaps combine it with your own custom promotion scheme instead of using spree_promo.
 
-[![Build Status](https://secure.travis-ci.org/spree/spree.png)](http://travis-ci.org/spree/spree)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/spree/spree)
+
 Installation
 ------------
 
@@ -189,6 +189,14 @@ bundle exec rake spree_auth:admin:create
 Running Tests
 -------------
 
+[![Team City](http://www.jetbrains.com/img/logos/logo_teamcity_small.gif)](http://www.jetbrains.com/teamcity)
+
+We use [TeamCity](http://www.jetbrains.com/teamcity/) to run the tests for Spree.
+
+You can see the build statuses at http://ci.spreecommerce.com.
+
+---
+
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time
 creation of a test application and then you can use it to run the tests.  For example, to run the
 tests for the core project.
@@ -225,8 +233,6 @@ If you want to run a particular line of spec
 ```shell
 bundle exec rspec spec/models/state_spec.rb:7
 ```
-
-Travis, the continuous integration service, runs the test suite for each gem one at a time, using the same commands as contained within [`build.sh`](build.sh).
 
 Contributing
 ------------
