@@ -19,7 +19,7 @@ module Spree
 
         def create
           authorize! :create, Variant
-          @variant = scope.new(params[:product])
+          @variant = scope.new(params[:variant])
           if @variant.save
             render :show, :status => 201
           else

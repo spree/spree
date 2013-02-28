@@ -134,6 +134,7 @@ module Spree
         api_post :create, :variant => { :sku => "12345" }
         json_response.should have_attributes(attributes)
         response.status.should == 201
+        json_response["variant"]["sku"].should == "12345"
 
         variant.product.variants.count.should == 1
       end
