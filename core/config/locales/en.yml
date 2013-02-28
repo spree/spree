@@ -86,7 +86,6 @@ en:
         description: Description
         master_price: "Master Price"
         name: Name
-        on_demand: "On Demand"
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
@@ -654,7 +653,6 @@ en:
     product_not_deleted: "Product could not be deleted"
     variant_deleted: "Variant has been deleted"
     variant_not_deleted: "Variant could not be deleted"
-  on_demand: "On Demand"
   on_hand: "On Hand"
   one_default_category_with_default_tax_rate: "You should configure exactly one default category with your countries default tax rate"
   open: Open

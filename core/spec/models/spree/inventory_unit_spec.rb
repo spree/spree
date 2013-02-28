@@ -67,22 +67,9 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:create_units)
       end
 
-      it "should decrement count_on_hand" do
-        variant.should_not_receive(:decrement!)
-        Spree::InventoryUnit.increase(order, variant, 5)
-      end
-
-    end
-
-    context "when on_demand is true" do
-      before do
-        variant.stub(:on_demand).and_return(true)
-        Spree::InventoryUnit.stub(:create_units)
-      end
-
-      it "should decrement count_on_hand" do
-        variant.should_not_receive(:decrement!)
-        Spree::InventoryUnit.increase(order, variant, 5)
+      it "should not decrement count_on_hand" do
+        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
+        stock_item.reload.count_on_hand.should == 100
       end
 
     end
@@ -132,19 +119,6 @@ describe Spree::InventoryUnit do
     context "when :track_inventory_levels is false" do
       before do
         Spree::Config.set :track_inventory_levels => false
-        Spree::InventoryUnit.stub(:destroy_units)
-      end
-
-      it "should decrement count_on_hand" do
-        variant.should_not_receive(:increment!)
-        Spree::InventoryUnit.decrease(order, variant, 5)
-      end
-
-    end
-
-    context "when on_demand is true" do
-      before do
-        variant.stub(:on_demand).and_return(true)
         Spree::InventoryUnit.stub(:destroy_units)
       end
 
@@ -227,15 +201,6 @@ describe Spree::InventoryUnit do
       end
     end
 
-    context "when :on_demand is true" do
-      before { variant.stub(:on_demand).and_return(true) }
-
-      it "should return zero back orders" do
-        variant.stub(:on_hand).and_return(nil)
-        Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 0
-      end
-    end
-
   end
 
   context "#create_units" do
@@ -299,7 +264,7 @@ describe Spree::InventoryUnit do
   end
 
   context "return!" do
-    let(:inventory_unit) { Spree::InventoryUnit.create({:state => "shipped", :variant => mock_model(Spree::Variant, :on_hand => 95, :on_demand => false)}, :without_protection => true) }
+    let(:inventory_unit) { Spree::InventoryUnit.create({:state => "shipped", :variant => mock_model(Spree::Variant, :on_hand => 95)}, :without_protection => true) }
 
     it "should update on_hand for variant" do
       inventory_unit.variant.should_receive(:on_hand=).with(96)
@@ -317,16 +282,6 @@ describe Spree::InventoryUnit do
         inventory_unit.return!
       end
     end
-    context "when on_demand is true" do
-      before { inventory_unit.variant.stub(:on_demand).and_return(true) }
-
-      it "does not update on_hand for variant" do
-        inventory_unit.variant.should_not_receive(:on_hand=).with(96)
-        inventory_unit.variant.should_not_receive(:save)
-        inventory_unit.return!
-      end
-    end
-
   end
 end
 
