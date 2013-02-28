@@ -11,8 +11,7 @@ module Spree
       variant.option_values << create(:option_value)
       variant
     end
-    let!(:attributes) { [:id, :name, :count_on_hand,
-                         :sku, :price, :weight, :height,
+    let!(:attributes) { [:id, :name, :sku, :price, :weight, :height,
                          :width, :depth, :is_master, :cost_price,
                          :permalink] }
 
@@ -51,7 +50,7 @@ module Spree
                                                  :option_type_name,
                                                  :option_type_id])
     end
-    
+
     it "variants returned contain images data" do
       variant.images.create!(:attachment => image("thinking-cat.jpg"))
 
@@ -99,13 +98,13 @@ module Spree
                                                  :option_type_name,
                                                  :option_type_id])
     end
-    
+
     it "can see a single variant with images" do
       variant.images.create!(:attachment => image("thinking-cat.jpg"))
-      
+
       api_get :show, :id => variant.to_param
-      
-      json_response.should have_attributes(attributes + [:images])      
+
+      json_response.should have_attributes(attributes + [:images])
       option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
