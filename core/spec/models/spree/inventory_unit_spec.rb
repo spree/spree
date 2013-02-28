@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Spree::InventoryUnit do
-  let(:variant) { mock_model(Spree::Variant, :on_hand => 95, :on_demand => false) }
+  let(:variant) { mock_model(Spree::Variant) }
   let(:line_item) { mock_model(Spree::LineItem, :variant => variant, :quantity => 5) }
   let(:order) { mock_model(Spree::Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }
+  let(:stock_location) { create(:stock_location, :stock_items => []) }
+  let(:stock_item) { create(:stock_item, :variant => variant, :stock_location => stock_location, :count_on_hand => 100) }
 
   context "#backordered_inventory_units" do
     let!(:stock_location) { create(:stock_location) }
@@ -54,9 +56,9 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:create_units)
       end
 
-      it "should decrement count_on_hand" do
-        variant.should_receive(:decrement!).with(:count_on_hand, 5)
-        Spree::InventoryUnit.increase(order, variant, 5)
+      it "should decrement stock item count_on_hand" do
+        stock_location.should_receive(:decrease_stock_for_variant).with(stock_item.variant, 5)
+        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -67,9 +69,9 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:create_units)
       end
 
-      it "should not decrement count_on_hand" do
+      it "should not decrement stock item count_on_hand" do
+        stock_location.should_not_receive(:decrease_stock_for_variant)
         Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
-        stock_item.reload.count_on_hand.should == 100
       end
 
     end
@@ -82,7 +84,7 @@ describe Spree::InventoryUnit do
 
       it "should create units" do
         Spree::InventoryUnit.should_receive(:create_units)
-        Spree::InventoryUnit.increase(order, variant, 5)
+        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -95,7 +97,7 @@ describe Spree::InventoryUnit do
 
       it "should not create units" do
         Spree::InventoryUnit.should_not_receive(:create_units)
-        Spree::InventoryUnit.increase(order, variant, 5)
+        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -109,9 +111,9 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:destroy_units)
       end
 
-      it "should decrement count_on_hand" do
-        variant.should_receive(:increment!).with(:count_on_hand, 5)
-        Spree::InventoryUnit.decrease(order, variant, 5)
+      it "should increment stock item count_on_hand" do
+        stock_location.should_receive(:increase_stock_for_variant).with(stock_item.variant, 5)
+        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -123,8 +125,8 @@ describe Spree::InventoryUnit do
       end
 
       it "should decrement count_on_hand" do
-        variant.should_not_receive(:increment!)
-        Spree::InventoryUnit.decrease(order, variant, 5)
+        stock_location.should_not_receive(:increase_stock_for_variant)
+        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -137,7 +139,7 @@ describe Spree::InventoryUnit do
 
       it "should destroy units" do
         Spree::InventoryUnit.should_receive(:destroy_units).with(order, variant, 5)
-        Spree::InventoryUnit.decrease(order, variant, 5)
+        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -150,7 +152,7 @@ describe Spree::InventoryUnit do
 
       it "should destroy units" do
         Spree::InventoryUnit.should_not_receive(:destroy_units)
-        Spree::InventoryUnit.decrease(order, variant, 5)
+        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
       end
 
     end
@@ -163,31 +165,31 @@ describe Spree::InventoryUnit do
 
       context "and all units are in stock" do
         it "should return zero back orders" do
-          Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 0
+          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 0
         end
       end
 
       context "and partial units are in stock" do
-        before { variant.stub(:on_hand).and_return(2) }
+        before { stock_item.stub(:count_on_hand).and_return(2) }
 
         it "should return correct back order amount" do
-          Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 3
+          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 3
         end
       end
 
       context "and zero units are in stock" do
-        before { variant.stub(:on_hand).and_return(0) }
+        before { stock_item.stub(:count_on_hand).and_return(0) }
 
         it "should return correct back order amount" do
-          Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 5
+          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 5
         end
       end
 
       context "and less than zero units are in stock" do
-        before { variant.stub(:on_hand).and_return(-9) }
+        before { stock_item.stub(:count_on_hand).and_return(-9) }
 
         it "should return entire amount as back order" do
-          Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 5
+          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 5
         end
       end
     end
@@ -196,8 +198,8 @@ describe Spree::InventoryUnit do
       before { Spree::Config.set :track_inventory_levels => false }
 
       it "should return zero back orders" do
-        variant.stub(:on_hand).and_return(nil)
-        Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 0
+        stock_item.stub(:count_on_hand).and_return(nil)
+        Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 0
       end
     end
 
