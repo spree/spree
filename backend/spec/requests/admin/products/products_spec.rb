@@ -166,7 +166,6 @@ describe "Products" do
         fill_in "product_available_on", :with => "2012/01/24"
         click_button "Create"
         page.should have_content("successfully created!")
-        fill_in "product_on_hand", :with => "100"
         click_button "Update"
         page.should have_content("successfully updated!")
       end
@@ -182,9 +181,7 @@ describe "Products" do
         fill_in "product_price", :with => "100"
         click_button "Create"
         page.should have_content("successfully created!")
-        fill_in "product_on_hand", :with => ""
         click_button "Update"
-        page.should_not have_content("spree_products.count_on_hand may not be NULL")
         page.should have_content("successfully updated!")
       end
     end

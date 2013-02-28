@@ -20,26 +20,4 @@ describe "Product scopes" do
       Spree::Product.in_taxon(@parent_taxon).to_a.count.should == 1
     end
   end
-
-  context "on_hand" do
-    # Regression test for #2111
-    context "A product with a deleted variant" do
-      before do
-        variant = product.variants.create!({:price => 10}, :without_protection => true)
-        variant.update_column(:deleted_at, Time.now)
-        product.master.update_column(:deleted_at, Time.now)
-      end
-
-      it "does not include the deleted variant in on_hand summary" do
-        Spree::Product.on_hand.should be_empty
-      end
-    end
-  end
-
-  context "not_deleted" do
-    it "contains products 'deleted' in the future" do
-      product.update_column(:deleted_at, 1.day.from_now)
-      Spree::Product.not_deleted.should include(product)
-    end
-  end
 end
