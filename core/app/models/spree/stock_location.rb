@@ -13,5 +13,9 @@ module Spree
     def count_on_hand(variant)
       stock_item(variant).try(:count_on_hand)
     end
+
+    def decrease_stock_for_variant(variant, by = 1)
+      stock_item(variant).decrement!(:count_on_hand, by)
+    end
   end
 end
