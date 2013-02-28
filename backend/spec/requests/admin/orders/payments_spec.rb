@@ -10,8 +10,7 @@ describe "Payments" do
     end
 
     @order = create(:completed_order_with_totals, :number => "R100", :state => "complete")
-    product = create(:product, :name => 'spree t-shirt', :on_hand => 5)
-    product.master.count_on_hand = 5
+    product = create(:product, :name => 'spree t-shirt')
     product.master.save
     @order.add_variant(product.master, 2)
     @order.update!

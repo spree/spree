@@ -18,7 +18,6 @@ describe "Checkout" do
     before(:each) do
       Spree::Product.delete_all
       @product = create(:product, :name => "RoR Mug")
-      @product.on_hand = 1
       @product.save
       create(:zone)
     end
@@ -35,7 +34,6 @@ describe "Checkout" do
         click_link "RoR Mug"
         click_button "add-to-cart-button"
 
-        @product.on_hand = 0
         @product.save
 
         click_button "Checkout"

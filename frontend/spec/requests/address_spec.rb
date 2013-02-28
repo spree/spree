@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Address" do
   before do
-    @product = create(:product, :name => "RoR Mug", :on_hand => 1)
+    @product = create(:product, :name => "RoR Mug")
     @product.save
 
     @order = create(:order_with_totals, :state => 'cart')

@@ -32,6 +32,16 @@ module Spree
       order("created_at ASC")
     end
 
+    def self.assign_opening_inventory(order)
+      return [] unless order.completed?
+      stock_location = order.stock_location
+
+      #increase inventory to meet initial requirements
+      order.line_items.each do |line_item|
+        increase(order, stock_location.stock_item(variant), line_item.quantity)
+      end
+    end
+
     # manages both variant.count_on_hand and inventory unit creation
     #
     def self.increase(order, stock_location, variant, quantity)
@@ -45,7 +55,7 @@ module Spree
 
       #create units if configured
       if Spree::Config[:create_inventory_units]
-        create_units(order, variant, sold, back_order)
+        create_units(order, stock_item.variant, sold, back_order)
       end
     end
 
@@ -67,6 +77,11 @@ module Spree
       update_column(:pending, false)
       shipment.stock_location.decrease_stock_for_variant(variant)
     end
+
+    # def finalize!
+    #   self.update_column(:pending, false)
+    #   self.shipment.stock_location.decrement_count_on_hand_for_variant(variant)
+    # end
 
     private
       def allow_ship?

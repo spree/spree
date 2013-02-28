@@ -59,12 +59,7 @@ module Spree
     end
 
     def sufficient_stock?
-      return true if Spree::Config[:allow_backorders]
-      if new_record? || !order.completed?
-        variant.on_hand >= quantity
-      else
-        variant.on_hand >= (quantity - self.changed_attributes['quantity'].to_i)
-      end
+      true
     end
 
     def insufficient_stock?

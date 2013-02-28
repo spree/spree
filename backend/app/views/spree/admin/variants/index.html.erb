@@ -20,7 +20,6 @@
         <th colspan="2"><%= t(:options) %></th>
         <th><%= t(:price) %></th>
         <th><%= t(:sku) %></th>
-        <th><%= t(:on_hand) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -35,7 +34,6 @@
           <td><%= variant.options_text %></td>
           <td class="align-center"><%= variant.display_price %></td>
           <td class="align-center"><%= variant.sku %></td>
-          <td class="align-center"><%= variant.on_hand %></td>
           <td class="actions">
             <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
             &nbsp;
