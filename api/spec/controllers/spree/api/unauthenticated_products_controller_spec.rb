@@ -6,7 +6,7 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords, :taxon_ids] }
+    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :meta_description, :meta_keywords, :taxon_ids] }
 
     context "without authentication" do
       before { Spree::Api::Config[:requires_authentication] = false }
