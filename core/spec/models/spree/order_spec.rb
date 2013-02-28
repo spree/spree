@@ -107,7 +107,14 @@ describe Spree::Order do
     end
 
     it "should sell inventory units" do
-      order.inventory_units.should_receive(:update_all).with(:pending => false)
+      order.finalize!
+      order.inventory_units.all? { |iu| !iu.pending }.should be_true
+    end
+
+    it "should decrease the stock for each variant in the shipment" do
+      order.shipments.each do |shipment|
+        shipment.stock_location.should_receive(:decrease_stock_for_variant)
+      end
       order.finalize!
     end
 
