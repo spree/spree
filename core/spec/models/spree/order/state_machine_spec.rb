@@ -11,7 +11,7 @@ describe Spree::Order do
 
   context "#next!" do
     context "when current state is confirm" do
-      before do 
+      before do
         order.state = "confirm"
         order.run_callbacks(:create)
         order.stub :payment_required? => true
@@ -123,7 +123,7 @@ describe Spree::Order do
   end
 
   context "#cancel" do
-    let!(:variant) { stub_model(Spree::Variant, :on_hand => 0) }
+    let!(:variant) { stub_model(Spree::Variant) }
     let!(:inventory_units) { [stub_model(Spree::InventoryUnit, :variant => variant),
                               stub_model(Spree::InventoryUnit, :variant => variant) ]}
     let!(:shipment) do

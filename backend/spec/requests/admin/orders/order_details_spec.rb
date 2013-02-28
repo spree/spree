@@ -15,7 +15,7 @@ describe "Order Details" do
 
     after(:each) { I18n.reload! }
 
-    let(:product) { create(:product, :name => 'spree t-shirt', :on_hand => 5, :price => 19.99) }
+    let(:product) { create(:product, :name => 'spree t-shirt', :price => 19.99) }
     let(:order) { create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100") }
 
     it "should allow me to edit order details", :js => true do
