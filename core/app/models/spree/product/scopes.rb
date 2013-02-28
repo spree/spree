@@ -50,7 +50,7 @@ module Spree
     # If you need products only within one taxon use
     #
     #   Spree::Product.taxons_id_eq(x)
-    # 
+    #
     # If you're using count on the result of this scope, you must use the
     # `:distinct` option as well:
     #
@@ -201,11 +201,6 @@ module Spree
       not_deleted.available(nil, currency)
     end
     search_scopes << :active
-
-    add_search_scope :on_hand do
-      variants_table = Variant.table_name
-      where("#{table_name}.id in (select product_id from #{variants_table} where product_id = #{table_name}.id and #{variants_table}.deleted_at IS NULL group by product_id having sum(count_on_hand) > 0)")
-    end
 
     add_search_scope :taxons_name_eq do |name|
       group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
