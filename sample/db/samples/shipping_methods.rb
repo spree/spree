@@ -1,4 +1,11 @@
+begin
 north_america = Spree::Zone.find_by_name!("North America")
+rescue ActiveRecord::RecordNotFound
+  puts "Couldn't find 'North America' zone. Did you run `rake db:seed` first?"
+  puts "That task will set up the countries, states and zones required for Spree."
+  exit
+end
+
 europe_vat = Spree::Zone.find_by_name!("EU_VAT")
 
 shipping_methods = [
