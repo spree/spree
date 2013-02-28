@@ -34,13 +34,13 @@ module Spree
 
     # manages both variant.count_on_hand and inventory unit creation
     #
-    def self.increase(order, variant, quantity)
-      back_order = determine_backorder(order, variant, quantity)
+    def self.increase(order, stock_location, variant, quantity)
+      back_order = determine_backorder(order, stock_location.stock_item(variant), quantity)
       sold = quantity - back_order
 
       #set on_hand if configured
       if self.track_levels?(variant)
-        variant.decrement!(:count_on_hand, quantity)
+        stock_location.decrease_stock_for_variant(variant, quantity)
       end
 
       #create units if configured
@@ -49,9 +49,9 @@ module Spree
       end
     end
 
-    def self.decrease(order, variant, quantity)
+    def self.decrease(order, stock_location, variant, quantity)
       if self.track_levels?(variant)
-        variant.increment!(:count_on_hand, quantity)
+        stock_location.increase_stock_for_variant(variant, quantity)
       end
 
       if Spree::Config[:create_inventory_units]
@@ -73,11 +73,11 @@ module Spree
         Spree::Config[:allow_backorder_shipping] || self.sold?
       end
 
-      def self.determine_backorder(order, variant, quantity)
-        if variant.on_hand == 0
+      def self.determine_backorder(order, stock_item, quantity)
+        if stock_item.count_on_hand == 0
           quantity
-        elsif variant.on_hand.present? and variant.on_hand < quantity
-          quantity - (variant.on_hand < 0 ? 0 : variant.on_hand)
+        elsif stock_item.count_on_hand.present? and stock_item.count_on_hand < quantity
+          quantity - (stock_item.count_on_hand < 0 ? 0 : stock_item.count_on_hand)
         else
           0
         end
