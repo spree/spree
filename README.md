@@ -193,7 +193,7 @@ Running Tests
 
 We use [TeamCity](http://www.jetbrains.com/teamcity/) to run the tests for Spree.
 
-You can see the build statuses at http://ci.spreecommerce.com.
+You can see the build statuses at [http://ci.spreecommerce.com](http://ci.spreecommerce.com/guestLogin.html?guest=1).
 
 ---
 
