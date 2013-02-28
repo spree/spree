@@ -29,7 +29,7 @@ module Spree
         if count_changes = changes['count_on_hand']
           new_level = count_changes.last
 
-          if Spree::Config[:track_inventory_levels] # && !self.on_demand
+          if Spree::Config[:track_inventory_levels]
             new_level = new_level.to_i
 
             # update backorders if level is positive

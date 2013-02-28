@@ -73,7 +73,7 @@ module Spree
 
     attr_accessible :name, :description, :available_on, :permalink, :meta_description,
                     :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
-                    :option_values_hash, :on_demand, :on_hand, :weight, :height, :width, :depth,
+                    :option_values_hash, :on_hand, :weight, :height, :width, :depth,
                     :shipping_category_id, :tax_category_id, :product_properties_attributes,
                     :variants_attributes, :taxon_ids, :option_type_ids, :cost_currency
 
@@ -99,12 +99,6 @@ module Spree
     # returns true if the product has any variants (the master variant is not a member of the variants array)
     def has_variants?
       variants.any?
-    end
-
-    def on_demand=(new_on_demand)
-      raise 'cannot set on_demand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
-      master.on_demand = on_demand
-      self[:on_demand] = new_on_demand
     end
 
     def tax_category
