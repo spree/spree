@@ -60,7 +60,12 @@ module Spree
     end
 
     def self.track_levels?(variant)
-      Spree::Config[:track_inventory_levels] && !variant.on_demand
+      Spree::Config[:track_inventory_levels]
+    end
+
+    def finalize!
+      update_column(:pending, false)
+      shipment.stock_location.decrease_stock_for_variant(variant)
     end
 
     private
