@@ -7,7 +7,7 @@ module Spree
                         :meta_keywords, :tax_category
 
     attr_accessible :name, :presentation, :cost_price, :lock_version,
-                    :position, :on_demand, :option_value_ids,
+                    :position, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
                     :weight, :height, :width, :depth, :sku, :cost_currency
 
@@ -52,7 +52,7 @@ module Spree
 
     # returns true if this variant is allowed to be placed on a new order
     def available?
-      Spree::Config[:track_inventory_levels] ? (Spree::Config[:allow_backorders] || self.on_demand) : true
+      Spree::Config[:track_inventory_levels] ? Spree::Config[:allow_backorders] : true
     end
 
     def options_text
@@ -109,13 +109,6 @@ module Spree
 
     def option_value(opt_name)
       self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
-    end
-
-    def on_demand=(on_demand)
-      self[:on_demand] = on_demand
-      if on_demand
-        inventory_units.with_state('backordered').each(&:fill_backorder)
-      end
     end
 
     def has_default_price?
