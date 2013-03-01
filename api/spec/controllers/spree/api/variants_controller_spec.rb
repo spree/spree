@@ -155,8 +155,10 @@ module Spree
         api_post :create, :variant => { :sku => "12345" }
         json_response.should have_attributes(attributes)
         response.status.should == 201
+				json_response["sku"].should == "12345"
+				assigns[:variant].sku.should == "12345"
 
-        variant.product.variants.count.should == 1
+        assigns[:variant].product.variants.count.should == 1
       end
 
       it "can update a variant" do
