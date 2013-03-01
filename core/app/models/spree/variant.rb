@@ -4,7 +4,7 @@ module Spree
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
                         :tax_category_id, :shipping_category_id, :meta_description,
-                        :meta_keywords, :tax_category
+                        :meta_keywords, :tax_category, :shipping_category
 
     attr_accessible :name, :presentation, :cost_price, :lock_version,
                     :position, :option_value_ids,

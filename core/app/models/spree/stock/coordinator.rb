@@ -1,7 +1,5 @@
 module Spree
   module Stock
-    mattr_accessor :default_splitters
-
     class Coordinator
       attr_reader :order
 
@@ -58,7 +56,7 @@ module Spree
 
       def splitters(stock_location)
         # extension point to return custom splitters for a location
-        Spree::Stock.default_splitters
+        Rails.application.config.spree.stock_splitters
       end
     end
   end

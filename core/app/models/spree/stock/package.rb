@@ -78,7 +78,7 @@ module Spree
       end
 
       def shipping_category
-        #TODO return proper category?
+        contents.first.variant.shipping_category
       end
 
       def inspect

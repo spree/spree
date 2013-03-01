@@ -48,6 +48,13 @@ module Spree
             Spree::Calculator::DefaultTax]
       end
 
+      initializer "spree.register.stock_splitters" do |app|
+        app.config.spree.stock_splitters = [
+          Spree::Stock::Splitter::ShippingCategory,
+          Spree::Stock::Splitter::Backordered
+        ]
+      end
+
       initializer "spree.register.payment_methods" do |app|
         app.config.spree.payment_methods = [
             Spree::Gateway::Bogus,
