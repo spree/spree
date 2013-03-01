@@ -55,7 +55,7 @@ module Spree
 
       #create units if configured
       if Spree::Config[:create_inventory_units]
-        create_units(order, stock_item.variant, sold, back_order)
+        create_units(order, variant, sold, back_order)
       end
     end
 
