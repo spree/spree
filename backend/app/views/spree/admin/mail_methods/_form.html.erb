@@ -4,22 +4,15 @@
     <div class="alpha six columns" data-hook="general">
       <fieldset class="no-border-bottom">
         <legend align="center"><%= t(:general) %></legend>
+
         <div class="field">
-          <%= f.label :environment, t(:environment) %><br />
-          <%= f.collection_select(:environment,
-                                  Rails.configuration.database_configuration.keys.sort,
-                                  :to_s, :titleize,
-                                  {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>
-        </div>
-          
-        <div class="field">
-          <%= f.check_box :preferred_enable_mail_delivery, {:style => "vertical-align:middle;"} %>
-          <%= f.label :preferred_enable_mail_delivery, t(:enable_mail_delivery) %>
+          <%= preference_field_tag("enable_mail_delivery", Spree::Config[:enable_mail_delivery], :type => :boolean) %>
+          <%= label_tag :enable_mail_delivery, t(:enable_mail_delivery) %>
         </div>
 
         <div class="field">
-          <%= f.label :preferred_mails_from, t(:send_mails_as) %><br />
-          <%= f.text_field :preferred_mails_from, :maxlength => 256, :class => 'fullwidth' %>
+          <%= label_tag :mails_from, t(:send_mails_as) %><br />
+          <%= text_field_tag :mails_from, Spree::Config[:mails_from], :maxlength => 256, :class => 'fullwidth' %>
           <br />
           <span class="info">
             <%= t(:smtp_send_all_emails_as_from_following_address) %>
@@ -27,8 +20,8 @@
         </div>
 
         <div class="field">
-          <%= f.label :preferred_mail_bcc, t(:send_copy_of_all_mails_to) %><br />
-          <%= f.text_field :preferred_mail_bcc, :maxlength => 256, :class => 'fullwidth' %>
+          <%= label_tag :mail_bcc, t(:send_copy_of_all_mails_to) %><br />
+          <%= text_field_tag :mail_bcc, Spree::Config[:mail_bcc], :maxlength => 256, :class => 'fullwidth' %>
           <br />
           <span class="info">
             <%= t(:smtp_send_copy_to_this_addresses) %>
@@ -36,8 +29,8 @@
         </div>
 
         <div class="field">
-          <%= f.label :preferred_intercept_email, t(:intercept_email_address) %><br />
-          <%= f.text_field :preferred_intercept_email, :maxlength => 256, :class => 'fullwidth' %>
+          <%= label_tag :intercept_email, t(:intercept_email_address) %><br />
+          <%= text_field_tag :intercept_email, Spree::Config[:intercept_email], :maxlength => 256, :class => 'fullwidth' %>
           <br />
           <span class="info">
             <%= t(:intercept_email_instructions) %>
@@ -50,42 +43,38 @@
       <fieldset class="no-border-bottom">
         <legend align="center"><%= t(:smtp) %></legend>
         <div class="field">
-          <%= f.label :preferred_mail_domain, t(:smtp_domain) %><br />
-          <%= f.text_field :preferred_mail_domain, :class => 'fullwidth' %>
+          <%= label_tag :mail_domain, t(:smtp_domain) %><br />
+          <%= text_field_tag :mail_domain, Spree::Config[:mail_domain], :class => 'fullwidth' %>
         </div>
         <div class="field">
-          <%= f.label :preferred_mail_host, t(:smtp_mail_host) %><br />
-          <%= f.text_field :preferred_mail_host, :class => 'fullwidth' %>
+          <%= label_tag :mail_host, t(:smtp_mail_host) %><br />
+          <%= text_field_tag :mail_host, Spree::Config[:mail_host], :class => 'fullwidth' %>
         </div>
         <div class="field">
-          <%= f.label :preferred_mail_port, t(:smtp_port) %><br />
-          <%= f.text_field :preferred_mail_port, :class => 'fullwidth' %>
+          <%= label_tag :mail_port, t(:smtp_port) %><br />
+          <%= text_field_tag :mail_port, Spree::Config[:mail_port], :class => 'fullwidth' %>
         </div>
         <div class="field">
-          <%= f.label :preferred_secure_connection_type, t(:secure_connection_type) %><br />
-          <%= f.collection_select(:preferred_secure_connection_type,
-                                  Spree::MailMethod::SECURE_CONNECTION_TYPES,
-                                  :to_s, :to_s,
-                                  {}, {'class' => 'select2 fullwidth'}) %>
+          <%= label_tag :secure_connection_type, t(:secure_connection_type) %><br />
+          <%= select_tag(:secure_connection_type, 
+                         options_from_collection_for_select(Spree::Core::MailSettings::SECURE_CONNECTION_TYPES, :to_s, :to_s, Spree::Config[:secure_connection_type]),
+                         :class => 'select2 fullwidth') %>
         </div>
         <div class="field">
-          <%= f.label :preferred_mail_auth_type, t(:smtp_authentication_type) %><br />
-          <%= f.collection_select(:preferred_mail_auth_type,
-                                  Spree::MailMethod::MAIL_AUTH,
-                                  :to_s, :to_s,
-                                  {}, {'class' => 'select2 fullwidth'}) %>
+          <%= label_tag :mail_auth_type, t(:smtp_authentication_type) %><br />
+          <%= select_tag(:mail_auth_type,
+                         options_from_collection_for_select(Spree::Core::MailSettings::MAIL_AUTH, :to_s, :to_s, Spree::Config[:mail_auth_type]),
+                         :class => 'select2 fullwidth') %>
         </div>
         <div class="field">
-          <%= f.label :preferred_smtp_username, t(:smtp_username) %><br />
-          <%= f.text_field :preferred_smtp_username, :class => 'fullwidth' %>
+          <%= label_tag :smtp_username, t(:smtp_username) %><br />
+          <%= text_field_tag :smtp_username, Spree::Config[:smtp_username], :class => 'fullwidth' %>
         </div>
         <div class="field">
-          <%= f.label :preferred_smtp_password, t(:smtp_password) %><br />
-          <%= f.password_field :preferred_smtp_password, :class => 'fullwidth' %>
+          <%= label_tag :preferred_smtp_password, t(:smtp_password) %><br />
+          <%= password_field_tag :smtp_password, Spree::Config[:smtp_password], :class => 'fullwidth' %>
         </div>
       </fieldset>
     </div>
-    
-
   </div>
 </div>
