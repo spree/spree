@@ -10,7 +10,7 @@ module Spree
       subject { Coordinator.new(order) }
 
       before :all do
-        Spree::Stock.default_splitters = [
+        Rails.application.config.spree.stock_splitters = [
          Spree::Stock::Splitter::Backordered,
          Spree::Stock::Splitter::ShippingCategory
         ]
