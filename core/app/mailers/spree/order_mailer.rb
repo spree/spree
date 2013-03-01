@@ -7,7 +7,7 @@ module Spree
     helper_method :money
 
     def from_address
-      MailMethod.current.preferred_mails_from
+      Spree::Config[:mails_from]
     end
 
     def confirm_email(order, resend = false)

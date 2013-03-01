@@ -17,10 +17,7 @@ describe Spree::ShipmentMailer do
   end
 
   before do
-    Spree::MailMethod.create!(
-      :environment => Rails.env,
-      :preferred_mails_from => "spree@example.com"
-    )
+    Spree::Config[:mails_from] = "spree@example.com"
   end
 
   # Regression test for #2196

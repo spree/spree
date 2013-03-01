@@ -185,10 +185,8 @@ Spree::Core::Engine.routes.append do
 
     resources :trackers
     resources :payment_methods
-    resources :mail_methods do
-      member do
-        post :testmail
-      end
+    resource :mail_method, :only => [:edit, :update] do
+      post :testmail, :on => :collection
     end
   end
 
