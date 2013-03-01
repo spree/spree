@@ -19,7 +19,6 @@ module Spree
           message.bcc ||= mail_method.preferred_mail_bcc
         end
       end
-
     end
   end
 end

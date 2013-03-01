@@ -1,7 +1,6 @@
 module Spree
   module Core
     module MailSettings
-
       # Override the Rails application mail settings based on preference.
       # This makes it possible to configure the mail settings
       # through an admin interface instead of requiring changes to the Rails envrionment file.
@@ -33,7 +32,6 @@ module Spree
           ActionMailer::Base.perform_deliveries = false
         end
       end
-
     end
   end
 end

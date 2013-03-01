@@ -3,6 +3,10 @@ module Spree
     class MailMethodsController < ResourceController
       after_filter :initialize_mail_settings
 
+      def edit
+        @mail_method = Spree::MailMethod.current || Spree::MailMethod.new
+      end
+
       def update
         if params[:mail_method][:preferred_smtp_password].blank?
           params[:mail_method].delete(:preferred_smtp_password)
