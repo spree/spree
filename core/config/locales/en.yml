@@ -1105,6 +1105,8 @@ en:
   to_state: "To State"
   total: Total
   tracking: Tracking
+  tracking_url: Tracking URL
+  tracking_url_placeholder: "e.g. http://quickship.com/package?num=:tracking"
   transaction: Transaction
   transactions: Transactions
   tree: Tree
