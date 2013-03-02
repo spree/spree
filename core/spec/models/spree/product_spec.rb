@@ -38,6 +38,17 @@ describe Spree::Product do
         clone.taxons.should == product.taxons
         clone.images.size.should == product.images.size
       end
+
+      it 'calls #duplicate_extra' do
+        Spree::Product.class_eval do
+          def duplicate_extra(old_product)
+            self.name = old_product.name.reverse
+          end
+        end
+
+        clone = product.duplicate
+        clone.name.should == product.name.reverse
+      end
     end
 
     context "product has no variants" do
