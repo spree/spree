@@ -96,4 +96,28 @@ describe Spree::BaseHelper do
       helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
     end
   end
+
+  context "link_to_tracking" do
+    it "returns tracking link if available" do
+      a = link_to_tracking_html(tracking: '123', tracking_url: 'http://g.c/?t=123').css('a')
+
+      a.text.should == '123'
+      a.attr('href').value.should == 'http://g.c/?t=123'
+    end
+
+    it "returns tracking without link if link unavailable" do
+      html = link_to_tracking_html(tracking: '123', tracking_url: nil)
+      html.css('span').text.should == '123'
+    end
+
+    it "returns nothing when no tracking" do
+      html = link_to_tracking_html(tracking: nil)
+      html.css('span').text.should == ''
+    end
+
+    def link_to_tracking_html(options = {})
+      node = link_to_tracking(stub(:shipment, options))
+      Nokogiri::HTML(node.to_s)
+    end
+  end
 end
