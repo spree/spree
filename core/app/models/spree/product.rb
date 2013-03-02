@@ -17,6 +17,7 @@
 # All other variants have option values and may have inventory units.
 # Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
 #
+
 module Spree
   class Product < ActiveRecord::Base
     has_many :product_option_types, :dependent => :destroy
@@ -120,7 +121,7 @@ module Spree
     # adjusts the "on_hand" inventory level for the product up or down to match the given new_level
     def on_hand=(new_level)
       unless self.on_demand
-        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels] 
+        raise 'cannot set on_hand of product with variants' if has_variants? && Spree::Config[:track_inventory_levels]
         master.on_hand = new_level
       end
     end
@@ -174,31 +175,8 @@ module Spree
     # for adding products which are closely related to existing ones
     # define "duplicate_extra" for site-specific actions, eg for additional fields
     def duplicate
-      p = self.dup
-      p.name = 'COPY OF ' + name
-      p.deleted_at = nil
-      p.created_at = p.updated_at = nil
-      p.taxons = taxons
-
-      p.product_properties = product_properties.map { |q| r = q.dup; r.created_at = r.updated_at = nil; r }
-
-      image_dup = lambda { |i| j = i.dup; j.attachment = i.attachment.clone; j }
-
-      variant = master.dup
-      variant.sku = 'COPY OF ' + master.sku
-      variant.deleted_at = nil
-      variant.images = master.images.map { |i| image_dup.call i }
-      variant.price = master.price
-      variant.currency = master.currency
-      p.master = variant
-
-      # don't dup the actual variants, just the characterising types
-      p.option_types = option_types if has_variants?
-
-      # allow site to do some customization
-      p.send(:duplicate_extra, self) if p.respond_to?(:duplicate_extra)
-      p.save!
-      p
+      duplicator = ProductDuplicator.new(self)
+      duplicator.duplicate
     end
 
     # use deleted? rather than checking the attribute directly. this
