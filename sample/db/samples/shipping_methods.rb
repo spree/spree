@@ -12,22 +12,26 @@ shipping_methods = [
   {
     :name => "UPS Ground (USD)",
     :zone => north_america,
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :tracking_url => "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=:tracking"
   },
   {
     :name => "UPS Two Day (USD)",
     :zone => north_america,
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :tracking_url => "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=:tracking"
   },
   {
     :name => "UPS One Day (USD)",
     :zone => north_america,
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :tracking_url => "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=:tracking"
   },
   {
     :name => "UPS Ground (EUR)",
     :zone => europe_vat,
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :tracking_url => "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=:tracking"
   }
 ]
 
