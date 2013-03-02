@@ -120,7 +120,7 @@ module Spree
     end
 
     def tracking_url
-      shipping_method.build_tracking_url(tracking)
+      @tracking_url ||= shipping_method.build_tracking_url(tracking)
     end
 
     private
