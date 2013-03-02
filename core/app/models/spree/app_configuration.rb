@@ -97,8 +97,8 @@ module Spree
     preference :mail_host, :string, :default => 'localhost'
     preference :mail_domain, :string, :default => 'localhost'
     preference :mail_port, :integer, :default => 25
-    preference :secure_connection_type, :string, :default => SECURE_CONNECTION_TYPES[0]
-    preference :mail_auth_type, :string, :default => MAIL_AUTH[0]
+    preference :secure_connection_type, :string, :default => MailMethod::SECURE_CONNECTION_TYPES[0]
+    preference :mail_auth_type, :string, :default => MailMethod::MAIL_AUTH[0]
     preference :smtp_username, :string
     preference :smtp_password, :string
 
