@@ -988,6 +988,7 @@ en:
       subject: "Shipment Notification"
       thanks: "Thank you for your business."
       track_information: "Tracking Information: %{tracking}"
+      track_link: "Tracking Link: %{url}"
   shipment_number: "Shipment #"
   shipment_state: "Shipment State"
   shipment_states:
@@ -1108,6 +1109,8 @@ en:
   to_state: "To State"
   total: Total
   tracking: Tracking
+  tracking_url: Tracking URL
+  tracking_url_placeholder: "e.g. http://quickship.com/package?num=:tracking"
   transaction: Transaction
   transactions: Transactions
   tree: Tree

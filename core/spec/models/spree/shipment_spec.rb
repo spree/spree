@@ -223,4 +223,13 @@ describe Spree::Shipment do
       shipment.display_cost.should == Spree::Money.new(21.22)
     end
   end
+
+  context "#tracking_url" do
+    it "uses shipping method to determine url" do
+      shipping_method.should_receive(:build_tracking_url).with("1Z12345").and_return(:some_url)
+      shipment.tracking = "1Z12345"
+
+      shipment.tracking_url.should == :some_url
+    end
+  end
 end

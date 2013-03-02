@@ -22,6 +22,14 @@
       <%= error_message_on :shipping_method, :display_on %>
     <% end %>
   </div>
+
+  <div class="alpha twelve columns">
+    <%= f.field_container :tracking_url do %>
+      <%= f.label :tracking_url, t(:tracking_url) %><br />
+      <%= f.text_field :tracking_url, :class => 'fullwidth', :placeholder => t(:tracking_url_placeholder) %>
+      <%= error_message_on :shipping_method, :tracking_url %>
+    <% end %>
+  </div>
 </div>
 
 <div data-hook="admin_shipping_method_form_availability_fields" class="alpha six columns">
