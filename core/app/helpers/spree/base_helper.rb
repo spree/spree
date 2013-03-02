@@ -163,6 +163,16 @@ module Spree
       end
     end
 
+    def link_to_tracking(shipment, options = {})
+      return unless shipment.tracking
+
+      if shipment.tracking_url
+        link_to(shipment.tracking, shipment.tracking_url, options)
+      else
+        content_tag(:span, shipment.tracking)
+      end
+    end
+
     private
 
     # Returns style of image or nil
