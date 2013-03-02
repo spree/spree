@@ -1,12 +1,12 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:editing_mail_method) %>
+  <%= t(:mail_method_settings) %>
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @mail_method } %>
 
-<%= form_for [:admin, @mail_method], :url => admin_mail_method_path do |f| %>
+<%= form_tag admin_mail_method_path, :method => :put do |f| %>
   <fieldset class="no-border-top">
     <%= render :partial => 'form', :locals => { :f => f } %>
     <div class="form-buttons filter-actions actions" data-hook="buttons"><%= button t(:update), 'icon-refresh' %></div>

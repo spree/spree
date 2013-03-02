@@ -1,17 +1,20 @@
 module Spree
   module Admin
-    class MailMethodsController < ResourceController
+    class MailMethodsController < Spree::Admin::BaseController
       after_filter :initialize_mail_settings
 
-      def edit
-        @mail_method = Spree::MailMethod.current || Spree::MailMethod.new
-      end
-
       def update
-        if params[:mail_method][:preferred_smtp_password].blank?
-          params[:mail_method].delete(:preferred_smtp_password)
+        if params[:smtp_password].blank?
+          params.delete(:smtp_password)
         end
-        super
+
+        params.each do |name, value|
+          next unless Spree::Config.has_preference? name
+          Spree::Config[name] = value
+        end
+
+        flash[:success] = t(:successfully_updated, :resource => t(:mail_methods))
+        render :edit
       end
 
       def testmail
@@ -28,9 +31,9 @@ module Spree
       end
 
       private
-      def initialize_mail_settings
-        Spree::Core::MailSettings.init
-      end
+        def initialize_mail_settings
+          Spree::Core::MailSettings.init
+        end
     end
   end
 end
