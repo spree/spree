@@ -99,19 +99,19 @@ describe Spree::BaseHelper do
 
   context "link_to_tracking" do
     it "returns tracking link if available" do
-      a = link_to_tracking_html(tracking: '123', tracking_url: 'http://g.c/?t=123').css('a')
+      a = link_to_tracking_html(:tracking => '123', :tracking_url => 'http://g.c/?t=123').css('a')
 
       a.text.should == '123'
       a.attr('href').value.should == 'http://g.c/?t=123'
     end
 
     it "returns tracking without link if link unavailable" do
-      html = link_to_tracking_html(tracking: '123', tracking_url: nil)
+      html = link_to_tracking_html(:tracking => '123', :tracking_url => nil)
       html.css('span').text.should == '123'
     end
 
     it "returns nothing when no tracking" do
-      html = link_to_tracking_html(tracking: nil)
+      html = link_to_tracking_html(:tracking => nil)
       html.css('span').text.should == ''
     end
 

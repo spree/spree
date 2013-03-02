@@ -199,7 +199,7 @@ describe Spree::ShippingMethod do
 
   context "#build_tracking_url" do
     context "when a tracking_url is specified" do
-      let(:shipping_method) { create(:shipping_method, tracking_url: "http://www.ups.com?tracking?n=:tracking") }
+      let(:shipping_method) { create(:shipping_method, :tracking_url => "http://www.ups.com?tracking?n=:tracking") }
 
       specify { shipping_method.build_tracking_url("1Z12345").should == "http://www.ups.com?tracking?n=1Z12345" }
       specify { shipping_method.build_tracking_url("").should  be_nil }
@@ -207,7 +207,7 @@ describe Spree::ShippingMethod do
     end
 
     context "when a tracking_url is not specified" do
-      let(:shipping_method) { create(:shipping_method, tracking_url: nil) }
+      let(:shipping_method) { create(:shipping_method, :tracking_url => nil) }
 
       specify { shipping_method.build_tracking_url("1Z12345").should be_nil }
     end
