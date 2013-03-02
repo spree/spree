@@ -10,11 +10,12 @@ describe Spree::Admin::MailMethodsController do
     end
   end
 
-  it "can trigger testmail without current_user" do
+  it "can trigger testmail" do
     request.env["HTTP_REFERER"] = "/"
-    controller.stub :try_spree_current_user => nil
+    controller.stub(:try_spree_current_user => double('User', email: 'user@spree.com'))
 
-    spree_post :testmail
-    flash[:error].should_not include("undefined local variable or method `current_user'")
+    expect {
+      spree_post :testmail
+    }.to change { ActionMailer::Base.deliveries.size }.by(1)
   end
 end
