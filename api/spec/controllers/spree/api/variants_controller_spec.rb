@@ -161,6 +161,17 @@ module Spree
         assigns[:variant].product.variants.count.should == 1
       end
 
+			it "can create a new variant with option_values" do
+				value = create(:option_value)
+				api_post :create, :variant => { :sku => "12345" }, :option_values => { value.option_type.name => value.id }
+        json_response.should have_attributes(attributes)
+        response.status.should == 201
+				assigns[:variant].sku.should == "12345"
+        assigns[:variant].product.variants.count.should == 1
+				assigns[:variant].option_values.count.should == 1
+				assigns[:variant].option_values.first.name == value.name
+			end
+
       it "can update a variant" do
         api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }
         response.status.should == 200

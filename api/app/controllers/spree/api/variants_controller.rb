@@ -22,7 +22,7 @@ module Spree
       def create
         authorize! :create, Variant
         @variant = scope.new(params[:variant])
-        if @variant.save
+        if @variant.save && save_option_values
           respond_with(@variant, :status => 201, :default_template => :show)
         else
           invalid_resource!(@variant)
@@ -47,6 +47,16 @@ module Spree
       end
 
       private
+				def save_option_values
+					if params[:option_values]
+						option_values = params[:option_values]
+						option_values.each_value {|id| @variant.option_values << OptionValue.find(id)}
+						@variant.save
+					else
+						true
+					end
+				end
+
         def product
           @product ||= Spree::Product.find_by_permalink(params[:product_id]) if params[:product_id]
         end
