@@ -58,5 +58,9 @@ module Spree
     def self.all_available(order)
       all.select { |method| method.available_to_order?(order) }
     end
+
+    def build_tracking_url(tracking)
+      tracking_url.gsub(/:tracking/, tracking) unless tracking.blank? || tracking_url.blank?
+    end
   end
 end

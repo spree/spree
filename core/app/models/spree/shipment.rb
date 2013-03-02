@@ -119,6 +119,10 @@ module Spree
       order.paid? ? 'ready' : 'pending'
     end
 
+    def tracking_url
+      shipping_method.build_tracking_url(tracking)
+    end
+
     private
       def generate_shipment_number
         return number unless number.blank?
