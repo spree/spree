@@ -3,7 +3,7 @@ module Spree
     class OptionTypesController < Spree::Api::BaseController
       def index
         if params[:ids]
-          @option_types = Spree::OptionType.where(:id => params[:ids])
+          @option_types = Spree::OptionType.where(:id => params[:ids].split(','))
         else
           @option_types = Spree::OptionType.scoped.ransack(params[:q]).result
         end
