@@ -128,7 +128,7 @@ describe Spree::Product do
         before { Spree::Config[:display_currency] = true }
 
         it "shows the currency" do
-          product.display_price.should == "$10.55 USD"
+          product.display_price.to_s.should == "$10.55 USD"
         end
       end
 
@@ -136,7 +136,7 @@ describe Spree::Product do
         before { Spree::Config[:display_currency] = false }
 
         it "does not include the currency" do
-          product.display_price.should == "$10.55"
+          product.display_price.to_s.should == "$10.55"
         end
       end
 

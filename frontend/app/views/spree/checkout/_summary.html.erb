@@ -11,13 +11,13 @@
       <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
         <tr>
           <td><%= adjustment.label %>: </td>
-          <td><%= adjustment.display_amount %></td>
+          <td><%= adjustment.display_amount.to_html %></td>
         </tr>
       <% end %>
     </tbody>
     <tr data-hook="order_total">
       <td><strong><%= t(:order_total) %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= @order.display_total %></span></strong></td>
+      <td><strong><span id='summary-order-total'><%= @order.display_total.to_html %></span></strong></td>
     </tr>
     <% if order.price_adjustment_totals.present? %>
       <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
