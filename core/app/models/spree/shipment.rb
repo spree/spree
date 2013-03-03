@@ -30,6 +30,8 @@ module Spree
     scope :shipped, with_state('shipped')
     scope :ready, with_state('ready')
     scope :pending, with_state('pending')
+    scope :trackable, where("spree_shipments.tracking is not null
+                             and spree_shipments.tracking != ''")
 
     def to_param
       number if number
