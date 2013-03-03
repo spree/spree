@@ -93,7 +93,7 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.cart.add"
+      promotion.event_name.should == "spree.order.contents_changed"
       promotion.code.should be_blank
 
       first_rule = promotion.rules.first
@@ -252,7 +252,7 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.cart.add"
+      promotion.event_name.should == "spree.order.contents_changed"
 
       first_rule = promotion.rules.first
       first_rule.class.should == Spree::Promotion::Rules::ItemTotal
