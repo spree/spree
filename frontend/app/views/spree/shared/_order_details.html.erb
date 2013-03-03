@@ -17,7 +17,7 @@
         <div class="delivery">
           <%= order.shipping_method.name %>
         </div>
-        <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => @order}) if @order.shipped_units? %>
+        <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => @order}) if @order.shipped? %>
       </div>
     <% end %>
   <% end %>
