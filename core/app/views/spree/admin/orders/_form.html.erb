@@ -31,7 +31,7 @@
         <tbody id="subtotal" data-hook="admin_order_form_subtotal" class="no-border-top">
           <tr id="subtotal-row">
             <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-            <td class="total align-center"><span><%= @order.display_item_total %></span></td>
+            <td class="total align-center"><span><%= @order.display_item_total.to_html %></span></td>
             <td class="actions"></td>
           </tr>
         </tbody>
@@ -39,7 +39,7 @@
           <% @order.adjustments.eligible.each do |adjustment| %>
             <tr>
               <td colspan="3"><strong><%= adjustment.label %>:</strong></td>
-              <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
+              <td class="total align-center"><span><%= adjustment.display_amount.to_html %></span></td>
               <td class="actions"></td>
             </tr>
           <% end %>
@@ -47,7 +47,7 @@
         <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total no-border-top">
           <tr>
             <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-            <td class="total align-center"><span id="order_total"><%= @order.display_total %></span></td>
+            <td class="total align-center"><span id="order_total"><%= @order.display_total.to_html %></span></td>
             <td class="actions"></td>
           </tr>
         </tbody>

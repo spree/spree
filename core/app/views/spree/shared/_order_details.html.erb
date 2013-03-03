@@ -81,16 +81,16 @@
           <%= truncated_product_description(item.variant.product) %>
           <%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %>
         </td>
-        <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount %></span></td>
+        <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount.to_html %></span></td>
         <td data-hook="order_item_qty"><%= item.quantity %></td>
-        <td data-hook="order_item_total" class="total"><span><%= item.display_amount %></span></td>
+        <td data-hook="order_item_total" class="total"><span><%= item.display_amount.to_html %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tfoot id="order-total" data-hook="order_details_total">
     <tr class="total">
       <td colspan="4"><b><%= t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= @order.display_total %></span></td>
+      <td class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
     </tr>
   </tfoot>
   <% if order.price_adjustment_totals.present? %>
@@ -106,7 +106,7 @@
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= @order.display_item_total %></span></td>
+      <td class="total"><span><%= @order.display_item_total.to_html %></span></td>
     </tr>
   </tfoot>
   <tfoot id="order-charges" data-hook="order_details_adjustments">
@@ -114,7 +114,7 @@
     <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="4"><strong><%= adjustment.label %></strong></td>
-        <td class="total"><span><%= adjustment.display_amount %></span></td>
+        <td class="total"><span><%= adjustment.display_amount.to_html %></span></td>
       </tr>
     <% end %>
   </tfoot>

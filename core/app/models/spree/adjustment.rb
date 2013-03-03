@@ -70,7 +70,7 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new(amount, { :currency => currency }).to_s
+      Spree::Money.new(amount, { :currency => currency })
     end
 
     private
