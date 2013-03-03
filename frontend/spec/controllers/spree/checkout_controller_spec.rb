@@ -104,6 +104,12 @@ describe Spree::CheckoutController do
 
         context "when in the confirm state" do
           before { order.stub :state => "complete" }
+          before do
+            # First time it checks for completed? it will be when it loads the order
+            # Second time it checks is after the update succeeds
+            # Need to return false the first time, true the second
+            order.should_receive(:completed?).and_return(false, true)
+          end
 
           it "should redirect to the order view" do
             spree_post :update, {:state => "confirm"}
