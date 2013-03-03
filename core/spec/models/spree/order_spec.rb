@@ -289,6 +289,16 @@ describe Spree::Order do
     end
   end
 
+  context "#shipped?" do
+    specify { order_with_shipment_state("partial").should   be_shipped }
+    specify { order_with_shipment_state("shipped").should   be_shipped }
+    specify { order_with_shipment_state("ready").should_not be_shipped }
+
+    def order_with_shipment_state(state)
+      order.tap {|o| o.shipment_state = state }
+    end
+  end
+
   context "rate_hash" do
     let(:shipping_method_1) { mock_model Spree::ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
     let(:shipping_method_2) { mock_model Spree::ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }

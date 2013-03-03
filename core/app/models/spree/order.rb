@@ -556,6 +556,10 @@ module Spree
       adjustments.eligible.promotion.map(&:amount).sum
     end
 
+    def shipped?
+      %w(partial shipped).include?(shipment_state)
+    end
+
     private
       def link_by_email
         self.email = user.email if self.user
@@ -583,9 +587,7 @@ module Spree
 
         #TODO: make_shipments_pending
         OrderMailer.cancel_email(self).deliver
-        unless %w(partial shipped).include?(shipment_state)
-          self.payment_state = 'credit_owed'
-        end
+        self.payment_state = 'credit_owed' unless shipped?
       end
 
       def restock_items!
