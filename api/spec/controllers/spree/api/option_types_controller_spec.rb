@@ -36,7 +36,7 @@ module Spree
     it "can retreive a list of option types" do
       option_type_1 = create(:option_type)
       option_type_2 = create(:option_type)
-      api_get :index, :ids => [option_type, option_type_1]
+      api_get :index, :ids => "#{option_type.id},#{option_type_1.id}"
       json_response.count.should == 2
 
       check_option_values(json_response.first["option_values"])
