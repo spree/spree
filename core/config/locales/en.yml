@@ -597,6 +597,12 @@ en:
   no_match_found: "No Match Found"
   no_products_found: "No products found"
   no_results: "No results"
+  no_promotions_found: "No promotions found"
+  no_payment_methods_found: "No payment methods found"
+  no_results: "No results"
+  no_shipments_for_this_order: "There are no shipments for this order"
+  no_shipping_methods_found: "No shipping methods found"
+  no_trackers_found: "No Trackers Found"
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
