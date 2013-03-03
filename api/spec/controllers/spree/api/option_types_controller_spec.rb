@@ -33,27 +33,13 @@ module Spree
       json_response.first.should have_attributes(attributes)
     end
 
-    it "can retreive a list of option types" do
+    it "can retreive a list of specific option types" do
       option_type_1 = create(:option_type)
       option_type_2 = create(:option_type)
       api_get :index, :ids => "#{option_type.id},#{option_type_1.id}"
       json_response.count.should == 2
 
       check_option_values(json_response.first["option_values"])
-    end
-
-    it "can search for an option type" do
-      create(:option_type, :name => "buzz")
-      api_get :index, :q => { :name_cont => option_type.name }
-      json_response.count.should == 1
-      json_response.first.should have_attributes(attributes)
-    end
-
-    it "can retreive a list of option types" do
-      option_type_1 = create(:option_type)
-      option_type_2 = create(:option_type)
-      api_get :index, :ids => [option_type, option_type_1]
-      json_response.count.should == 2
     end
 
     it "can list a single option type" do
