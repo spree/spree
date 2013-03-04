@@ -48,6 +48,7 @@ end
   shipping_method = Spree::ShippingMethod.find_by_name!(shipping_method_name)
   shipping_method.calculator.preferred_amount = price
   shipping_method.calculator.preferred_currency = currency
+  shipping_method.shipping_categories << Spree::ShippingCategory.first
   shipping_method.save!
 end
 
