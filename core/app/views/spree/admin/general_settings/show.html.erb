@@ -11,7 +11,7 @@
   <% end %>
   <tr>
     <td colspan="2">
-      <%= t(:dollar_amounts_displayed_as, :example => Spree::Money.new(20.99)) %>
+      <%= t(:dollar_amounts_displayed_as, :example => Spree::Money.new(20.99).to_html) %>
     </td>
   </tr>
 

@@ -108,7 +108,7 @@ describe Spree::Adjustment do
       before { Spree::Config[:display_currency] = true }
 
       it "shows the currency" do
-        adjustment.display_amount.should == "$10.55 USD"
+        adjustment.display_amount.to_s.should == "$10.55 USD"
       end
     end
 
@@ -116,7 +116,7 @@ describe Spree::Adjustment do
       before { Spree::Config[:display_currency] = false }
 
       it "does not include the currency" do
-        adjustment.display_amount.should == "$10.55"
+        adjustment.display_amount.to_s.should == "$10.55"
       end
     end
   end

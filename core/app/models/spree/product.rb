@@ -231,7 +231,7 @@ module Spree
     end
 
     def display_price
-      Spree::Money.new(price).to_s
+      Spree::Money.new(price)
     end
 
     private

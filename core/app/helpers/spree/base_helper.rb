@@ -165,7 +165,7 @@ module Spree
     end
 
     def money(amount)
-      Spree::Money.new(amount)
+      Spree::Money.new(amount).to_html
     end
 
     def method_missing(method_name, *args, &block)

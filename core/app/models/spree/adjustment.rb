@@ -66,7 +66,7 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new(amount).to_s
+      Spree::Money.new(amount)
     end
 
     private

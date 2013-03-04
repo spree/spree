@@ -19,9 +19,9 @@
      <p>
        <strong><%= t(:currency_symbol_position) %></strong><br>
        <%= radio_button_tag :currency_symbol_position, "before" %>
-       <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before") %><br>
+       <%= label_tag :currency_symbol_position_before, Spree::Money.new(10, :symbol_position => "before").to_html %><br>
        <%= radio_button_tag :currency_symbol_position, "after" %>
-       <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after") %>
+       <%= label_tag :currency_symbol_position_after, Spree::Money.new(10, :symbol_position => "after").to_html %>
      </p>
   </fieldset>
 

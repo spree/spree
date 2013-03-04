@@ -6,9 +6,9 @@ module Spree
       diff = variant.price - variant.product.price
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{Spree::Money.new(diff.abs)})"
+        "(#{t(:add)}: #{Spree::Money.new(diff.abs).to_html})"
       else
-        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs)})"
+        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs).to_html})"
       end
     end
 

@@ -65,7 +65,7 @@ module Spree
     end
 
     def ProductFilters.format_price(amount)
-      Spree::Money.new(amount)
+      Spree::Money.new(amount).to_html
     end
 
     def ProductFilters.price_filter
