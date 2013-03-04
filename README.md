@@ -13,13 +13,13 @@ Spree actually consists of several different gems, each of which are maintained 
 in a single set of [online documentation](http://spreecommerce.com/documentation).  By requiring the Spree gem you
 automatically require all of the necessary gem dependencies which are:
 
-* spree_api
-* spree_frontend
-* spree_backend
-* spree_cmd
-* spree_core
-* spree_dash
-* spree_sample
+* spree_api (RESTful API)
+* spree_frontend (User-facing components)
+* spree_backend (Admin area)
+* spree_cmd (Command-line tools)
+* spree_core (Models & Mailers, the basic components of Spree that it can't run without)
+* spree_dash (Analytics dashboard, depends on backend)
+* spree_sample (Sample data)
 
 All of the gems are designed to work together to provide a fully functional e-commerce platform.  It is also possible,
 however, to use only the pieces you are interested in.  So for example, you could use just the barebones spree\_core gem
