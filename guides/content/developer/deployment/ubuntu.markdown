@@ -255,7 +255,7 @@ user's home directory would make better sense. Add this line to
 `config/deploy.rb` to do that:
 
 ```ruby
-set :deploy_to, "/home/spree/#{application_name}"
+set :deploy_to, "/home/spree/#{application}"
 ```
 
 You will also need to tell Capistrano to never use sudo, since you're going to
