@@ -167,15 +167,25 @@ module Spree
         json_response.should have_attributes(attributes)
         response.status.should == 201
 				assigns[:variant].sku.should == "12345"
-        assigns[:variant].product.variants.count.should == 1
-				assigns[:variant].option_values.count.should == 1
-				assigns[:variant].option_values.first.name == value.name
+				assigns[:variant].option_values.should include(value)
 			end
 
       it "can update a variant" do
+				variant.sku.should_not == "12345"
         api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }
         response.status.should == 200
+				assigns[:variant].sku.should == "12345"
       end
+
+			it "can update a variant with option_values" do
+				value = create(:option_value)
+				variant.option_values.should_not include(value)
+        api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }, :option_values =>
+					{ value.option_type.name => value.id }
+        response.status.should == 200
+				assigns[:variant].sku.should == "12345"
+				assigns[:variant].option_values.should include(value)
+			end
 
       it "can delete a variant" do
         api_delete :destroy, :id => variant.to_param

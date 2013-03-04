@@ -32,7 +32,7 @@ module Spree
       def update
         authorize! :update, Variant
         @variant = scope.find(params[:id])
-        if @variant.update_attributes(params[:variant])
+        if @variant.update_attributes(params[:variant]) && save_option_values
           respond_with(@variant, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
@@ -50,6 +50,7 @@ module Spree
 				def save_option_values
 					if params[:option_values]
 						option_values = params[:option_values]
+						@variant.option_values.clear if !@variant.option_values.empty?
 						option_values.each_value {|id| @variant.option_values << OptionValue.find(id)}
 						@variant.save
 					else
