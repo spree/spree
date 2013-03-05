@@ -2,7 +2,8 @@ module Spree
   class StockLocation < ActiveRecord::Base
     belongs_to :address
     attr_accessible :name
-    has_many :stock_items, :dependent => :destroy
+    has_many :stock_items, dependent: :destroy
+    has_many :stock_movements, through: :stock_items
 
     validates_presence_of :name
 
