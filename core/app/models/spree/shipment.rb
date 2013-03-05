@@ -3,7 +3,10 @@ require 'ostruct'
 module Spree
   class Shipment < ActiveRecord::Base
     belongs_to :order
-    belongs_to :shipping_method
+
+    has_many :shipment_shipping_methods
+    has_many :shipping_methods, :through => :shipment_shipping_methods
+
     belongs_to :address
     belongs_to :stock_location
 
@@ -16,14 +19,14 @@ module Spree
 
     attr_accessor :special_instructions
 
-    attr_accessible :order, :shipping_method, :special_instructions,
-                    :shipping_method_id, :tracking, :address, :inventory_units
+    attr_accessible :order, :special_instructions,
+                    :tracking, :address, :inventory_units
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
     validates :inventory_units, :presence => true, :if => :require_inventory
-    validates :shipping_method, :presence => true
+    #validates :shipping_method, :presence => true
 
     make_permalink :field => :number
 
@@ -41,6 +44,15 @@ module Spree
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.now
+    end
+
+    def shipping_method
+      shipment_shipping_methods.where(selected: true).first.try(:shipping_method)
+    end
+
+    def add_shipping_method(shipping_method, selected=false)
+      shipment_shipping_methods << Spree::ShipmentShippingMethod.create(:shipping_method => shipping_method,
+                                                                        :selected => selected)
     end
 
     def currency
@@ -165,7 +177,7 @@ module Spree
           adjustment.originator = shipping_method
           adjustment.label = shipping_method.adjustment_label
           adjustment.save
-        else
+        elsif shipping_method
           shipping_method.create_adjustment(shipping_method.adjustment_label, order, self, true)
           reload #ensure adjustment is present on later saves
         end
