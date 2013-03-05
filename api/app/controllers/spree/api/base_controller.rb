@@ -66,8 +66,8 @@ module Spree
             render "spree/api/errors/invalid_api_key", :status => 401 and return
           end
         else
-          # Effectively, an anonymous user
-          @current_api_user = Spree.user_class.new
+          # An authenticated user or an anonymous user
+          @current_api_user = try_spree_current_user || Spree.user_class.new
         end
       end
 
