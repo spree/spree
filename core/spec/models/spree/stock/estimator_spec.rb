@@ -4,7 +4,7 @@ module Spree
   module Stock
     describe Estimator do
       let!(:shipping_method) { create(:shipping_method_with_category) }
-      let(:shipping_category) { shipping_method.shipping_category }
+      let(:shipping_category) { shipping_method.shipping_categories.first }
       let(:package) { build(:stock_package_fulfilled) }
       let(:order) { package.order }
       subject { Estimator.new(order) }

@@ -1,10 +1,12 @@
 module Spree
-  class ShippingRate < Struct.new(:id, :shipping_method, :name, :cost, :currency)
-    def initialize(attributes = {})
-      attributes.each do |k, v|
-        self.send("#{k}=", v)
-      end
-    end
+  class ShippingRate < ActiveRecord::Base
+    belongs_to :shipment
+    belongs_to :shipping_method
+
+    attr_accessible :id, :shipping_method, :shipment,
+                    :name, :cost, :selected
+
+    delegate :order, :currency, to: :shipment
 
     def display_price
       if Spree::Config[:shipment_inc_vat]
