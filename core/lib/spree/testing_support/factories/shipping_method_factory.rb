@@ -14,10 +14,9 @@ FactoryGirl.define do
   factory :shipping_method_with_category, :class => Spree::ShippingMethod do
     zone { |a| Spree::Zone.find_by_name('GlobalZone') || a.association(:global_zone) }
     name 'UPS Ground'
-    match_none nil
-    match_one nil
-    match_all nil
-    association(:shipping_category, :factory => :shipping_category)
     calculator { FactoryGirl.build(:calculator) }
+    after(:create) do |shipping_method, evaluator|
+      shipping_method.shipping_categories << create(:shipping_category)
+    end
   end
 end
