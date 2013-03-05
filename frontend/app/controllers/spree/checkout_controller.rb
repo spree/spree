@@ -126,7 +126,7 @@ module Spree
 
       def before_delivery
         return if params[:order].present?
-        @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
+        # @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
       end
 
       def rescue_from_spree_gateway_error

@@ -524,6 +524,17 @@ module Spree
       %w(partial shipped).include?(shipment_state)
     end
 
+    def create_proposed_shipments
+      shipments.destroy_all
+
+      packages = Spree::Stock::Coordinator.new(self).packages
+      packages.each do |package|
+        shipments << package.to_shipment
+      end
+
+      shipments
+    end
+
     private
       def link_by_email
         self.email = user.email if self.user
@@ -538,12 +549,12 @@ module Spree
         return unless has_step?("delivery")
         return unless address?
         return unless ship_address && ship_address.valid?
-        errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
+        # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
 
       def has_available_payment
         return unless delivery?
-        errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
+        # errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
 
       def after_cancel
