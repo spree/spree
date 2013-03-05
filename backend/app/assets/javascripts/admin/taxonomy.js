@@ -35,7 +35,7 @@ var handle_create = function(e, data) {
     data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error,
     success: function(data,result) {
-      node.attr('id', data.taxon.id);
+      node.attr('id', data.id);
     }
   });
 
@@ -64,7 +64,7 @@ var handle_delete = function(e, data){
       $.ajax({
         type: "POST",
         dataType: "json",
-        url: base_url + node.attr("id"),
+        url: base_url + '/' + node.attr("id"),
         data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
         error: handle_ajax_error
       });
@@ -85,7 +85,8 @@ $(document).ready(function(){
       success: function(taxonomy) { 
 
         // this is defined within admin/taxonomies/edit
-        base_url = Spree.routes.taxonomy_taxons_path + "/";
+        base_url = Spree.routes.taxonomy_taxons_path;
+        admin_base_url = Spree.routes.admin_taxonomy_taxons_path;
 
         is_cut = false;
         last_rollback = null;
@@ -145,7 +146,7 @@ $(document).ready(function(){
                     edit : {
                       separator_before: true,
                       label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action           : function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
+                      action           : function (obj) { window.location = admin_base_url + '/' + obj.attr("id") + "/edit/"; }
                     }
                   }
                 } else {
@@ -175,7 +176,7 @@ $(document).ready(function(){
                     edit: {
                       separator_before: true,
                       label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action: function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
+                      action: function (obj) { window.location = admin_base_url + '/' + obj.attr("id") + "/edit/"; }
                     }
                   }
                 }
