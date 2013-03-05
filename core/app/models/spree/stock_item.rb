@@ -2,6 +2,7 @@ module Spree
   class StockItem < ActiveRecord::Base
     belongs_to :stock_location
     belongs_to :variant
+    has_many :stock_movements
 
     validates_presence_of :stock_location
     validates_uniqueness_of :variant_id, :scope => :stock_location_id
