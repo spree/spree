@@ -7,6 +7,7 @@ module Spree
                     :name, :cost, :selected
 
     delegate :order, :currency, to: :shipment
+    delegate :name, to: :shipping_method
 
     def display_price
       if Spree::Config[:shipment_inc_vat]
