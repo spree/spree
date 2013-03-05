@@ -35,7 +35,7 @@ var handle_create = function(e, data) {
     data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error,
     success: function(data,result) {
-      node.attr('id', data.taxon.id);
+      node.attr('id', data.id);
     }
   });
 
@@ -84,7 +84,8 @@ var setup_taxonomy_tree = function(taxonomy_id) {
       success: function(taxonomy) { 
 
         // this is defined within admin/taxonomies/edit
-        base_url = Spree.routes.taxonomy_taxons_path + "/";
+        base_url = Spree.routes.taxonomy_taxons_path;
+        admin_base_url = Spree.routes.admin_taxonomy_taxons_path;
 
         is_cut = false;
         last_rollback = null;
@@ -144,7 +145,7 @@ var setup_taxonomy_tree = function(taxonomy_id) {
                     edit : {
                       separator_before: true,
                       label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action           : function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
+                      action           : function (obj) { window.location = admin_base_url + '/' + obj.attr("id") + "/edit/"; }
                     }
                   }
                 } else {
@@ -174,7 +175,7 @@ var setup_taxonomy_tree = function(taxonomy_id) {
                     edit: {
                       separator_before: true,
                       label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action: function (obj) { window.location = base_url + obj.attr("id") + "/edit/"; }
+                      action: function (obj) { window.location = admin_base_url + '/' + obj.attr("id") + "/edit/"; }
                     }
                   }
                 }
