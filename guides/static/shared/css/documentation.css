@@ -251,10 +251,6 @@ pre.headers code {
   padding-left: 0;
 }
 
-.home #sidebar {
-  margin-top: 30px;
-}
-
 #github ul {
   list-style: none;
   margin-left: 0;
@@ -303,6 +299,26 @@ pre.headers code {
   margin-left: 20px;
   padding-left: 0px;
   -webkit-padding-start: 0px;
+}
+#sidebar-menu ul ul li a {
+  padding-left: 17px;
+}
+#sidebar-menu ul ul li.with-submenu a {
+  padding-left: 0;
+}
+
+#sidebar-menu ul ul ul {
+  display: none;
+}
+#sidebar-menu ul ul ul li a {
+  color: #6D8FB6;
+}
+
+.js-guides li i {
+  cursor: pointer;
+}
+.js-guides li i:hover {
+  color: #89B64A;
 }
 
 #sidebar-menu ul li a {
