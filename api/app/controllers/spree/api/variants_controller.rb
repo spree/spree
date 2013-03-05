@@ -4,7 +4,7 @@ module Spree
       respond_to :json
 
       before_filter :product
-			before_filter :params_filtering, :only => [:create,:update]
+			before_filter :params_option_values_to_option_value_ids, :only => [:create,:update]
 
       def index
         @variants = scope.includes(:option_values).ransack(params[:q]).result.
@@ -23,7 +23,6 @@ module Spree
       def create
         authorize! :create, Variant
 				variant_params = params[:variant].except(:count_on_hand,:permalink,:images,:cost_price,:is_master,:option_values)
-        #@variant = scope.new(params[:variant])
 				@variant = Variant.new(variant_params)
 
         if @variant.save
@@ -54,7 +53,8 @@ module Spree
       end
 
       private
-				def params_filtering
+				# Modifies params, params[:variant][:option_values] (OptionValue array) to params[:varant][:option_value_ids]
+				def params_option_values_to_option_value_ids
 					option_values = params[:variant][:option_values] if params[:variant] && params[:variant][:option_values]
 					if option_values
 						params[:variant][:option_value_ids] = []
@@ -62,20 +62,6 @@ module Spree
 							params[:variant][:option_value_ids].push option_value_variant[:option_value][:id]
 						end
 					end
-				end
-
-				def save_option_values
-					if params[:option_values]
-						puts "\nsave_option_values\n"
-						option_values = params[:option_values]
-						@variant.option_values.clear if !@variant.option_values.empty?
-						option_values.each do |option_value_variant|
-							@variant.option_values << OptionValue.find(option_value_variant[:option_value][:id])
-						end
-						@variant.save
-					else
-						true
-					end		
 				end
 
         def product

@@ -165,7 +165,7 @@ module Spree
 			it "can create a new variant with option_values" do
 				value = create(:option_value)
 				product = create(:product)
-				api_post :create, :variant => { :product_id => product.id, :sku => "12345", :option_values => [{:option_value => {:id => value.id}}] }
+				api_post :create, :variant => { :product_id => product.id, :sku => "12345", :option_values => [{:option_value => value.attributes.except(:created_at,:updated_at)}] }
         json_response.should have_attributes(attributes)
         response.status.should == 201
 				assigns[:variant].sku.should == "12345"
