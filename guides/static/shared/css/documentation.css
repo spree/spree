@@ -303,9 +303,6 @@ pre.headers code {
 #sidebar-menu ul ul li a {
   padding-left: 17px;
 }
-#sidebar-menu ul ul li.with-submenu a {
-  padding-left: 0;
-}
 
 #sidebar-menu ul ul ul {
   display: none;
