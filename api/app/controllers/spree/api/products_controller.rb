@@ -31,9 +31,9 @@ module Spree
         authorize! :update, Product
         @product = find_product(params[:id])
 
-				my_params = params[:product].except(:option_types,:variants,:product_properties,:taxon_ids,:count_on_hand,:permalink)
+				product_params = params[:product].except(:option_types,:variants,:product_properties,:count_on_hand)
 
-        if @product.update_attributes(my_params)
+        if @product.update_attributes(product_params)
           respond_with(@product, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)

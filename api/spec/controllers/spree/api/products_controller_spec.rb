@@ -197,6 +197,11 @@ module Spree
         response.status.should == 200
       end
 
+			it "can update a product when count_on_hand is given" do
+        api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!",:count_on_hand => 15 }
+        response.status.should == 200
+			end
+
       it "cannot update a product with an invalid attribute" do
         api_put :update, :id => product.to_param, :product => { :name => "" }
         response.status.should == 422
