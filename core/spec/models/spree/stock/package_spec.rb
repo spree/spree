@@ -65,8 +65,11 @@ module Spree
       it "can convert to a shipment" do
         flattened = [Package::ContentItem.new(variant, 1, :on_hand),
                     Package::ContentItem.new(variant, 1, :backordered)]
-
         subject.flattened = flattened
+
+        shipping_method = build(:shipping_method)
+        subject.shipping_rates = [ Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true) ]
+
         shipment = subject.to_shipment
         shipment.order.should == subject.order
         shipment.stock_location.should == subject.stock_location
@@ -82,6 +85,8 @@ module Spree
         last_unit.variant.should == variant
         last_unit.state.should == 'backordered'
         last_unit.order.should == subject.order
+
+        shipment.shipping_method.should eq shipping_method
       end
     end
   end
