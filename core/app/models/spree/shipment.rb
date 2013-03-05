@@ -49,7 +49,7 @@ module Spree
     end
 
     def shipping_method
-      shipping_rates.where(selected: true).first.try(:shipping_method)
+      shipping_rates.where(selected: true).first.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
     end
 
     def add_shipping_method(shipping_method, selected=false)
