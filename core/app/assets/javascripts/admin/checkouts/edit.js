@@ -49,7 +49,7 @@ $(document).ready(function(){
       source: function(request, response) {
         var params = { q: $('#customer_search').val(),
                        authenticity_token: AUTH_TOKEN }
-        $.get(Spree.routes.user_search + '&' + jQuery.param(params), function(data) {
+        $.get(Spree.routes.user_search + '?' + jQuery.param(params), function(data) {
           result = prep_user_autocomplete_data(data)
           response(result);
         });
