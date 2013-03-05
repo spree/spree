@@ -13,8 +13,7 @@ module Spree
 
     has_many :inventory_units
     has_many :line_items
-    #has_and_belongs_to_many :option_values, :join_table => :spree_option_values_variants
-    has_and_belongs_to_many :option_values, :join_table => :spree_option_values_variants, :readonly => false
+    has_and_belongs_to_many :option_values, :join_table => :spree_option_values_variants
     has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
     has_one :default_price,

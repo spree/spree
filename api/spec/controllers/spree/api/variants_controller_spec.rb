@@ -169,7 +169,7 @@ module Spree
         json_response.should have_attributes(attributes)
         response.status.should == 201
 				assigns[:variant].sku.should == "12345"
-				assigns[:variant].option_values.should include(value)
+				assigns[:variant].option_value_ids.should include(value.id)
 			end
 
       it "can update a variant" do
@@ -181,8 +181,8 @@ module Spree
 
 			it "can update a variant with option_values" do
 				value = create(:option_value)
-				variant.option_values.should_not include(value)
-        api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }, :option_values => [{:option_value => {:id => value.id}}]
+				variant.option_value_ids.should_not include(value.id)
+        api_put :update, :id => variant.to_param, :variant => { :sku => "12345", :option_values => [{:option_value => value.attributes.except(:created_at,:updated_at)}]}
         response.status.should == 200
 				assigns[:variant].sku.should == "12345"
 				assigns[:variant].option_values.should include(value)

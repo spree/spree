@@ -4,6 +4,7 @@ module Spree
       respond_to :json
 
       before_filter :product
+			before_filter :params_filtering, :only => [:create,:update]
 
       def index
         @variants = scope.includes(:option_values).ransack(params[:q]).result.
@@ -21,12 +22,11 @@ module Spree
 
       def create
         authorize! :create, Variant
-				params[:option_values] = params[:variant][:option_values] if params[:variant] && params[:variant][:option_values]
 				variant_params = params[:variant].except(:count_on_hand,:permalink,:images,:cost_price,:is_master,:option_values)
         #@variant = scope.new(params[:variant])
 				@variant = Variant.new(variant_params)
 
-        if @variant.save && save_option_values
+        if @variant.save
           respond_with(@variant, :status => 201, :default_template => :show)
         else
           invalid_resource!(@variant)
@@ -37,10 +37,9 @@ module Spree
         authorize! :update, Variant
         @variant = Variant.find(params[:id])
 
-				params[:option_values] = params[:variant][:option_values] if params[:variant] && params[:variant][:option_values]
 				variant_params = params[:variant].except(:count_on_hand,:permalink,:images,:cost_price,:is_master,:option_values)
         
-				if @variant.update_attributes(variant_params) && save_option_values
+				if @variant.update_attributes(variant_params)
           respond_with(@variant, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
@@ -55,20 +54,19 @@ module Spree
       end
 
       private
-				def save_option_values2
-					if params[:option_values]
-						puts "\n\n#{params[:option_values]}\n\n"
-						option_values = params[:option_values]
-						@variant.option_values.clear if !@variant.option_values.empty?
-						option_values.each_value {|id| @variant.option_values << OptionValue.find(id)}
-						@variant.save
-					else
-						true
+				def params_filtering
+					option_values = params[:variant][:option_values] if params[:variant] && params[:variant][:option_values]
+					if option_values
+						params[:variant][:option_value_ids] = []
+						option_values.each do |option_value_variant|
+							params[:variant][:option_value_ids].push option_value_variant[:option_value][:id]
+						end
 					end
 				end
 
 				def save_option_values
 					if params[:option_values]
+						puts "\nsave_option_values\n"
 						option_values = params[:option_values]
 						@variant.option_values.clear if !@variant.option_values.empty?
 						option_values.each do |option_value_variant|
