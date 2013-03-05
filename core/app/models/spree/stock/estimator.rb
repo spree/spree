@@ -23,6 +23,8 @@ module Spree
 
       private
       def shipping_methods(package)
+        return [] unless package.shipping_category
+
         shipping_methods = package.shipping_category.shipping_methods
         shipping_methods.delete_if { |ship_method| !ship_method.calculator.available?(package.contents) }
         shipping_methods.delete_if { |ship_method| !ship_method.zone.include?(order.ship_address) }
