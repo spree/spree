@@ -4,8 +4,8 @@ module Spree
   class Shipment < ActiveRecord::Base
     belongs_to :order
 
-    has_many :shipment_shipping_methods
-    has_many :shipping_methods, :through => :shipment_shipping_methods
+    has_many :shipping_rates
+    has_many :shipping_methods, :through => :shipping_rates
 
     belongs_to :address
     belongs_to :stock_location
@@ -49,11 +49,11 @@ module Spree
     end
 
     def shipping_method
-      shipment_shipping_methods.where(selected: true).first.try(:shipping_method)
+      shipping_rates.where(selected: true).first.try(:shipping_method)
     end
 
     def add_shipping_method(shipping_method, selected=false)
-      shipment_shipping_methods << Spree::ShipmentShippingMethod.create(:shipping_method => shipping_method,
+      shipping_rates << Spree::ShippingRate.create(:shipping_method => shipping_method,
                                                                         :selected => selected)
     end
 

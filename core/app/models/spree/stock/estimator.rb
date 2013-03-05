@@ -18,9 +18,7 @@ module Spree
           shipping_rates << ShippingRate.new(
                                       :id => shipping_method.id,
                                       :shipping_method => shipping_method,
-                                      :name => shipping_method.name,
-                                      :cost => cost,
-                                      :currency => package.currency)
+                                      :cost => cost)
         end
         shipping_rates
       end
