@@ -3,7 +3,11 @@
 require 'spec_helper'
 
 describe Spree::ShippingRate do
-  let(:shipping_rate) { Spree::ShippingRate.new(:cost => 10.55) }
+  let(:shipment) { create(:shipment) }
+  let(:shipping_method) { create(:shipping_method) }
+  let(:shipping_rate) { Spree::ShippingRate.new(:shipment => shipment,
+                                                :shipping_method => shipping_method,
+                                                :cost => 10.55) }
   before { Spree::TaxRate.stub(:default => 0.05) }
 
   context "#display_price" do
@@ -22,7 +26,9 @@ describe Spree::ShippingRate do
     end
 
     context "when the currency is JPY" do
-      let(:shipping_rate) { Spree::ShippingRate.new(:cost => 205, :currency => "JPY") }
+      let(:shipping_rate) { shipping_rate = Spree::ShippingRate.new(:cost => 205)
+                            shipping_rate.stub(:currency => "JPY")
+                            shipping_rate }
 
       it "displays the price in yen" do
         shipping_rate.display_price.to_s.should == "¥205"
