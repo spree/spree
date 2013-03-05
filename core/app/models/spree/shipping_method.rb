@@ -31,5 +31,12 @@ module Spree
       Rails.logger.error "DEPRECATION WARNING: ShippingMethod#zone= is no longer correct. Multiple zones need to be supported"
       zones = zone
     end
+
+    def include?(address)
+      return false unless address
+      zones.any? do |zone|
+        zone.include?(address)
+      end
+    end
   end
 end
