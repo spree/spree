@@ -93,6 +93,7 @@ module Spree
         shipment = Spree::Shipment.new
         shipment.order = order
         shipment.stock_location = stock_location
+        shipment.shipping_rates = shipping_rates
 
         contents.each do |item|
           unit = shipment.inventory_units.build
