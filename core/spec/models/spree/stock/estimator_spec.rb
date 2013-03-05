@@ -11,7 +11,7 @@ module Spree
 
       context "#shipping rates" do
         before(:each) do
-          shipping_method.zone.members.create(:zoneable => order.ship_address.country)
+          shipping_method.zones.first.members.create(:zoneable => order.ship_address.country)
           ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(true)
           ShippingMethod.any_instance.stub_chain(:calculator, :compute).and_return(4.00)
           ShippingMethod.any_instance.stub_chain(:calculator, :preferences).and_return({:currency => "USD"})

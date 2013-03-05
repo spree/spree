@@ -27,7 +27,7 @@ module Spree
 
         shipping_methods = package.shipping_category.shipping_methods
         shipping_methods.delete_if { |ship_method| !ship_method.calculator.available?(package.contents) }
-        shipping_methods.delete_if { |ship_method| !ship_method.zone.include?(order.ship_address) }
+        shipping_methods.delete_if { |ship_method| !ship_method.include?(order.ship_address) }
         shipping_methods.delete_if { |ship_method| !(ship_method.calculator.preferences[:currency].nil? || ship_method.calculator.preferences[:currency] == currency) }
         shipping_methods
       end
