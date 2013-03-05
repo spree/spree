@@ -152,7 +152,8 @@ module Spree
       end
 
       it "can create a new variant" do
-        api_post :create, :variant => { :sku => "12345" }
+				product = create(:product)
+        api_post :create, :variant => { :sku => "12345", :product_id => product.id }
         json_response.should have_attributes(attributes)
         response.status.should == 201
 				json_response["sku"].should == "12345"
@@ -163,7 +164,8 @@ module Spree
 
 			it "can create a new variant with option_values" do
 				value = create(:option_value)
-				api_post :create, :variant => { :sku => "12345" }, :option_values => { value.option_type.name => value.id }
+				product = create(:product)
+				api_post :create, :variant => { :product_id => product.id, :sku => "12345", :option_values => [{:option_value => {:id => value.id}}] }
         json_response.should have_attributes(attributes)
         response.status.should == 201
 				assigns[:variant].sku.should == "12345"
@@ -180,8 +182,7 @@ module Spree
 			it "can update a variant with option_values" do
 				value = create(:option_value)
 				variant.option_values.should_not include(value)
-        api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }, :option_values =>
-					{ value.option_type.name => value.id }
+        api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }, :option_values => [{:option_value => {:id => value.id}}]
         response.status.should == 200
 				assigns[:variant].sku.should == "12345"
 				assigns[:variant].option_values.should include(value)

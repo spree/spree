@@ -21,7 +21,11 @@ module Spree
 
       def create
         authorize! :create, Variant
-        @variant = scope.new(params[:variant])
+				params[:option_values] = params[:variant][:option_values] if params[:variant] && params[:variant][:option_values]
+				variant_params = params[:variant].except(:count_on_hand,:permalink,:images,:cost_price,:is_master,:option_values)
+        #@variant = scope.new(params[:variant])
+				@variant = Variant.new(variant_params)
+
         if @variant.save && save_option_values
           respond_with(@variant, :status => 201, :default_template => :show)
         else
@@ -31,8 +35,12 @@ module Spree
 
       def update
         authorize! :update, Variant
-        @variant = scope.find(params[:id])
-        if @variant.update_attributes(params[:variant]) && save_option_values
+        @variant = Variant.find(params[:id])
+
+				params[:option_values] = params[:variant][:option_values] if params[:variant] && params[:variant][:option_values]
+				variant_params = params[:variant].except(:count_on_hand,:permalink,:images,:cost_price,:is_master,:option_values)
+        
+				if @variant.update_attributes(variant_params) && save_option_values
           respond_with(@variant, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
@@ -47,8 +55,9 @@ module Spree
       end
 
       private
-				def save_option_values
+				def save_option_values2
 					if params[:option_values]
+						puts "\n\n#{params[:option_values]}\n\n"
 						option_values = params[:option_values]
 						@variant.option_values.clear if !@variant.option_values.empty?
 						option_values.each_value {|id| @variant.option_values << OptionValue.find(id)}
@@ -56,6 +65,19 @@ module Spree
 					else
 						true
 					end
+				end
+
+				def save_option_values
+					if params[:option_values]
+						option_values = params[:option_values]
+						@variant.option_values.clear if !@variant.option_values.empty?
+						option_values.each do |option_value_variant|
+							@variant.option_values << OptionValue.find(option_value_variant[:option_value][:id])
+						end
+						@variant.save
+					else
+						true
+					end		
 				end
 
         def product
