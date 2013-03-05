@@ -24,6 +24,18 @@ describe Spree::Shipment do
     end
   end
 
+  context 'shipping_rates' do
+    xit 'can be assigned by array' do
+      shipping_method1 = mock_model Spree::ShippingMethod
+      shipping_method2 = mock_model Spree::ShippingMethod
+      shipping_rates = [Spree::ShippingRate.new(:shipping_method => shipping_method1, :cost => 10.00, :selected => true),
+                        Spree::ShippingRate.new(:shipping_method => shipping_method2, :cost => 20.00)]
+
+      shipment.shipping_rates.create :shipping_method => shipping_method1, :cost => 10.00, :selected => true
+      shipment.shipping_method.should eq shipping_method1
+    end
+  end
+
   context "#update!" do
 
     shared_examples_for "immutable once shipped" do

@@ -15,10 +15,8 @@ module Spree
         shipping_methods.each do |shipping_method|
           cost = calculate_cost(shipping_method, package)
 
-          shipping_rates << ShippingRate.new(
-                                      :id => shipping_method.id,
-                                      :shipping_method => shipping_method,
-                                      :cost => cost)
+          shipping_rates << ShippingRate.new( :shipping_method => shipping_method,
+                                              :cost => cost)
         end
         shipping_rates
       end
