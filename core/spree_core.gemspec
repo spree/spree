@@ -5,8 +5,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_core'
   s.version     = version
-  s.summary     = 'The barebones necessary for Spree.'
-  s.description = 'The barebones necessary for Spree.'
+  s.summary     = 'The bare bones necessary for Spree.'
+  s.description = 'The bare bones necessary for Spree.'
 
   s.required_ruby_version = '>= 1.9.3'
   s.author      = 'Sean Schofield'
