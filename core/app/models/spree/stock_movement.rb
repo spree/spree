@@ -11,12 +11,10 @@ module Spree
     private
 
     def update_stock_item_quantity
-      variant = stock_item.variant
-
       if action == "sold"
-        stock_item.stock_location.decrease_stock_for_variant(variant, -quantity)
+        stock_item.count_on_hand -= quantity
       else
-        stock_item.stock_location.increase_stock_for_variant(variant, quantity)
+        stock_item.count_on_hand += quantity
       end
     end
   end

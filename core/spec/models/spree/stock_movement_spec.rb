@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::StockItem do
-  let(:stock_item) { create(:stock_item, stock_location: create(:stock_location)) }
+  let(:stock_item) { create(:stock_item, count_on_hand: 10, stock_location: create(:stock_location)) }
   subject { build(:stock_movement, :sold, stock_item: stock_item) }
 
   it 'should belong to a stock item' do
@@ -26,11 +26,8 @@ describe Spree::StockItem do
   context "when action is sold" do
     context "after save" do
       it "should decrement the stock item count on hand" do
-        stock_item.stock_location.should_receive(:decrease_stock_for_variant).with(
-          stock_item.variant,
-          -subject.quantity
-        )
         subject.save
+        stock_item.count_on_hand.should == 9
       end
     end
   end
@@ -39,11 +36,8 @@ describe Spree::StockItem do
     context "after save" do
       it "should increment the stock item count on hand" do
         subject.action = 'received'
-        stock_item.stock_location.should_receive(:increase_stock_for_variant).with(
-          stock_item.variant,
-          subject.quantity
-        )
         subject.save
+        stock_item.count_on_hand.should == 11
       end
     end
   end
