@@ -1,0 +1,40 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:stock_movements_for_stock_location, stock_location_name: @stock_location.name) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'icon-plus', id: 'admin_new_stock_movement_link' %>
+  </li>
+<% end %>
+
+<table class="index" id='listing_stock_movements'>
+  <colgroup>
+    <col style="width: 35%">
+    <col style="width: 20%">
+    <col style="width: 45%">
+  </colgroup>
+  <thead>
+    <tr data-hook="admin_stock_movements_index_headers">
+      <th><%= t(:stock_item) %>
+      <th><%= t(:quantity) %></th>
+      <th><%= t(:action) %></th>
+      <th data-hook="admin_stock_movements_index_header_actions" class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @stock_movements.each do |stock_movement|%>
+      <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows" class="<%= cycle('odd', 'even')%>">
+        <td class="align-center"><%= stock_movement.stock_item.variant.sku %></td>
+        <td class="align-center"><%= stock_movement.quantity %></td>
+        <td class="align-center"><%= stock_movement.action %></td>
+        <td data-hook="admin_stock_movements_index_row_actions" class="actions">
+          <%= link_to_edit stock_movement, no_text: true %>
+          <%= link_to_delete stock_movement, no_text: true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
