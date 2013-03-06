@@ -3,6 +3,38 @@
     <%= f.field_container :name do %>
       <%= f.label :name, t(:name) %>
       <%= f.text_field :name, :class => 'fullwidth' %>
+
+      <div class="field ">
+        <%= f.label :address1, t(:street_address) + ':' %>
+        <%= f.text_field :address1, :class => 'fullwidth' %>
+      </div>
+      <div class="field ">
+        <%= f.label :address2, t(:street_address_2) + ':' %>
+        <%= f.text_field :address2, :class => 'fullwidth' %>
+      </div>
+      <div class="field ">
+        <%= f.label :city, t(:city) + ':' %>
+        <%= f.text_field :city, :class => 'fullwidth' %>
+      </div>
+      <div class="field ">
+        <%= f.label :zipcode, t(:zip) + ':' %>
+        <%= f.text_field :zipcode, :class => 'fullwidth' %>
+      </div>
+      <div class="field ">
+        <%= f.label :country_id, t(:country) + ':' %>
+        <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %></span>
+      </div>
+      <div class="field ">
+        <%= f.label :state_id, t(:state) + ':' %>
+        <span id="state">
+          <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
+          <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+        </span>
+      </div>
+      <div class="field ">
+        <%= f.label :phone, t(:phone) + ':' %>
+        <%= f.phone_field :phone, :class => 'fullwidth' %>
+      </div>
     <% end %>
   </div>
 </div>
