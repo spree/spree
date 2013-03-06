@@ -2,7 +2,7 @@ module Spree
   class StockMovement < ActiveRecord::Base
     belongs_to :stock_item
 
-    attr_accessible :action, :quantity
+    attr_accessible :action, :quantity, :stock_item
 
     after_save :update_stock_item_quantity
 

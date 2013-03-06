@@ -17,10 +17,10 @@ describe Spree::InventoryUnit do
 
     let(:order) { create(:order) }
     let(:shipment) do
-      shipping_method = stub_model(Spree::ShippingMethod)
+      shipping_method = create(:shipping_method)
       shipment = Spree::Shipment.new
       shipment.stock_location = stock_location
-      shipment.shipping_method = shipping_method
+      shipment.shipping_methods << shipping_method
       shipment.order = order
       # We don't care about this in this test
       shipment.stub(:ensure_correct_adjustment)
@@ -56,9 +56,10 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:create_units)
       end
 
-      it "should decrement stock item count_on_hand" do
-        stock_location.should_receive(:decrease_stock_for_variant).with(stock_item.variant, 5)
-        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
+      it "should create a new stock movement" do
+        lambda {
+          Spree::InventoryUnit.increase(order, stock_location, stock_item, 5)
+        }.should change(Spree::StockMovement, :count).by(1)
       end
 
     end
@@ -69,9 +70,10 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:create_units)
       end
 
-      it "should not decrement stock item count_on_hand" do
-        stock_location.should_not_receive(:decrease_stock_for_variant)
-        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
+      it "should not create a new stock movement" do
+        lambda {
+          Spree::InventoryUnit.increase(order, stock_location, stock_item, 5)
+        }.should_not change(Spree::StockMovement, :count)
       end
 
     end
@@ -84,7 +86,7 @@ describe Spree::InventoryUnit do
 
       it "should create units" do
         Spree::InventoryUnit.should_receive(:create_units)
-        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
+        Spree::InventoryUnit.increase(order, stock_location, stock_item, 5)
       end
 
     end
@@ -97,7 +99,7 @@ describe Spree::InventoryUnit do
 
       it "should not create units" do
         Spree::InventoryUnit.should_not_receive(:create_units)
-        Spree::InventoryUnit.increase(order, stock_location, stock_item.variant, 5)
+        Spree::InventoryUnit.increase(order, stock_location, stock_item, 5)
       end
 
     end
@@ -111,9 +113,10 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:destroy_units)
       end
 
-      it "should increment stock item count_on_hand" do
-        stock_location.should_receive(:increase_stock_for_variant).with(stock_item.variant, 5)
-        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
+      it "should create a new stock movement" do
+        lambda {
+          Spree::InventoryUnit.decrease(order, stock_location, stock_item, 5)
+        }.should change(Spree::StockMovement, :count).by(1)
       end
 
     end
@@ -124,9 +127,10 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.stub(:destroy_units)
       end
 
-      it "should decrement count_on_hand" do
-        stock_location.should_not_receive(:increase_stock_for_variant)
-        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
+      it "should not create a new stock movement" do
+        lambda {
+          Spree::InventoryUnit.decrease(order, stock_location, stock_item, 5)
+        }.should_not change(Spree::StockMovement, :count)
       end
 
     end
@@ -139,7 +143,7 @@ describe Spree::InventoryUnit do
 
       it "should destroy units" do
         Spree::InventoryUnit.should_receive(:destroy_units).with(order, variant, 5)
-        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
+        Spree::InventoryUnit.decrease(order, stock_location, stock_item, 5)
       end
 
     end
@@ -152,7 +156,7 @@ describe Spree::InventoryUnit do
 
       it "should destroy units" do
         Spree::InventoryUnit.should_not_receive(:destroy_units)
-        Spree::InventoryUnit.decrease(order, stock_location, stock_item.variant, 5)
+        Spree::InventoryUnit.decrease(order, stock_location, stock_item, 5)
       end
 
     end
