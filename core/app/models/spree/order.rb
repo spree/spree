@@ -18,7 +18,6 @@ module Spree
       go_to_state :payment, :if => lambda { |order|
         # Fix for #2191
         if order.shipping_method
-          order.create_shipment!
           order.update_totals
         end
         order.payment_required?
@@ -32,7 +31,8 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :payments_attributes, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions, :currency, :coupon_code
+                    :shipping_method_id, :email, :use_billing, :special_instructions, :currency, :coupon_code,
+                    :shipments_attributes
 
     attr_reader :coupon_code
 
@@ -336,19 +336,6 @@ module Spree
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
       Spree::TaxRate.adjust(self)
-    end
-
-    # Creates a new shipment (adjustment is created by shipment model)
-    def create_shipment!
-      shipping_method(true)
-      if shipment.present?
-        shipment.update_attributes!(:shipping_method => shipping_method)
-      else
-        self.shipments << Shipment.create!({ :order => self,
-                                          :shipping_method => shipping_method,
-                                          :address => self.ship_address,
-                                          :inventory_units => self.inventory_units}, :without_protection => true)
-      end
     end
 
     def outstanding_balance
