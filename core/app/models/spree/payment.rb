@@ -25,6 +25,7 @@ module Spree
     scope :completed, with_state('completed')
     scope :pending, with_state('pending')
     scope :failed, with_state('failed')
+    scope :valid, where("state NOT IN (?)", %w(failed invalid))
 
     after_rollback :persist_invalid
 

@@ -1,0 +1,16 @@
+<% source = payment.source %>
+<% if source.is_a?(Spree::CreditCard) %>
+  <span class="cc-type">
+    <% unless (cc_type = source.cc_type).blank? %>
+      <%= image_tag "credit_cards/icons/#{cc_type}.png" %>
+    <% end %>
+    <%= t(:ending_in) %> <%= source.last_digits %>
+  </span>
+  <br />
+  <span class="full-name">
+    <%= source.first_name %>
+    <%= source.last_name %>
+  </span>
+<% else %>
+  <%= content_tag(:span, payment.payment_method.name) %>
+<% end %>
