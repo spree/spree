@@ -179,6 +179,9 @@ Spree::Core::Engine.routes.append do
 
     resources :shipping_methods
     resources :shipping_categories
+    resources :stock_locations do
+      resources :stock_movements
+    end
     resources :tax_rates
     resource  :tax_settings
 
