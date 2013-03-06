@@ -3,6 +3,7 @@ module Spree
     class ShippingMethodsController < ResourceController
       before_filter :load_data, :except => [:index]
       before_filter :set_shipping_category, :only => [:create, :update]
+      before_filter :set_zones, :only => [:create, :update]
 
       def destroy
         @object.touch :deleted_at
@@ -18,10 +19,17 @@ module Spree
       private
 
       def set_shipping_category
-        return true if params[:shipping_method][:shipping_category_id] == ""
-        @shipping_method.shipping_category = Spree::ShippingCategory.find(params[:shipping_method][:shipping_category_id])
+        return true if params["shipping_method"][:shipping_categories] == ""
+        @shipping_method.shipping_categories = Spree::ShippingCategory.where(:id => params["shipping_method"][:shipping_categories])
         @shipping_method.save
-        params[:shipping_method].delete(:shipping_category_id)
+        params[:shipping_method].delete(:shipping_categories)
+      end
+
+      def set_zones
+        return true if params["shipping_method"][:zones] == ""
+        @shipping_method.zones = Spree::Zone.where(:id => params["shipping_method"][:zones])
+        @shipping_method.save
+        params[:shipping_method].delete(:zones)
       end
 
       def location_after_save
