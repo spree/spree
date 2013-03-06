@@ -6,12 +6,13 @@
     <% end %>
     <%= f.field_container :action do %>
       <%= f.label :action, t(:action) %>
-      <%= f.select :action, options_for_select(allowed_actions) %>
+      <%= collection_select 'stock_movement', 'action', allowed_actions, :to_s, :to_s,
+        { selected: @stock_movement.action }, class: 'select2 fullwidth' %>
     <% end %>
     <%= f.field_container :stock_item_id do %>
       <%= f.label :stock_item_id, t(:stock_item_id) %>
       <%= collection_select 'stock_movement', 'stock_item_id', @stock_location.stock_items, :id, :variant_name,
-        { selected: @stock_movement.stock_item_id }, :class => 'select2 fullwidth' %>
+        { selected: @stock_movement.stock_item_id }, class: 'select2 fullwidth' %>
     <% end %>
   </div>
 </div>
