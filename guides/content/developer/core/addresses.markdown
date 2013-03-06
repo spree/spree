@@ -39,8 +39,7 @@ A zone is comprised of many different "zone members", which can either be a
 set of countries or a set of states. 
 
 Every order has a "tax zone", which indicates if a user should or shouldn't be
-taxed when placing an order. For more information, please see the <%= link_to
-"Taxation", :taxation %> guide.
+taxed when placing an order. For more information, please see the <%= link_to "Taxation", :taxation %> guide.
 
 In addition to tax zones, orders also have shipping methods. These are provided
 to the user based on their address information, and once selected lock in how an

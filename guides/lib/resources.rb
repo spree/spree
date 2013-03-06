@@ -95,6 +95,10 @@ module Spree
       LINKS[:adjustments] = LINKS[:core] + "adjustments"
       LINKS[:payments] = LINKS[:core] + "payments"
       LINKS[:calculators] = LINKS[:core] + "calculators"
+      LINKS[:taxation] = LINKS[:core] + "taxation"
+      LINKS[:shipping] = LINKS[:core] + "shipping"
+      LINKS[:addresses] = LINKS[:core] + "addresses"
+      LINKS[:promotions] = LINKS[:core] + "promotions"
 
       def warning(message)
         %(<div class='warning'>) + message + %(</div>)

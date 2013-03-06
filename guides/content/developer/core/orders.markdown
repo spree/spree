@@ -5,8 +5,8 @@ title: "Orders"
 ## Overview
 
 The Order model is one of the central models in Spree, providing a central place to
-collect information about the order, including line items, <%= link_to "adjustments", :adjustments %>,
- <%= link_to "payments", :payments %>, addresses, return authorizations,
+collect information about the order, including line items, adjustments,
+payments, addresses, return authorizations, 
 <%= link_to "inventory units", "#" %>, and shipments.
 
 Every order that is created within Spree is given its own unique identifier,
@@ -84,5 +84,35 @@ with the line item to preserve that data. If the variant's price were to change,
 then the line item would still have a record of the price at the time of ordering.
 
 * Inventory tracking notes to go here after Chris+Brian have done their thing.
+
+## Addresses
+
+An order can link to two address objects. The shipping address indicates where
+the order's product should be shipped to. This address is used to determine
+which shipping methods are available for an order.
+
+The billing address indicates where the user who's paying for the order is
+located. This can alter the tax rate for the order, which in turn can change how
+much the final order total can be.
+
+For more information about addresses, please read the <%= link_to "Addresses",
+:addresses %> guide.
+
+## Adjustments
+
+Adjustments are used to affect an order's final cost, either by decreasing it
+(<%= link_to "Promotions", :promotions %>) or increasing it 
+(<%= link_to "Shipping", :shipping %>, <%= link_to "Taxes", :taxation %>).
+
+For more information about adjustments, please see the 
+<%= link_to "Adjustments", :adjustments %> guide.
+
+## Payments
+
+Payment records are used to track payment information about an order. For more
+information, please read the <%= link_to "Payments", :payments %> guide.
+
+
+
 
 
