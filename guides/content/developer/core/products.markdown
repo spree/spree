@@ -1,9 +1,8 @@
 ---
-title: "Core | Products"
-has_toc: true
+title: "Products"
 ---
 
-## Products
+## Overview
 
 Product records track unique products within your store. These differ from <%=
 link_to "Variants", "#variants" %>, which track the unique variations of a
@@ -43,7 +42,7 @@ variant, and so are different from [Product
 Properties](/developer/core/models/product_properties), which apply to all
 variants of that product.
 
-### Master Variants 
+### Master Variants
 
 Every single product has a master variant, which tracks basic information such
 as a count on hand, a price and a SKU.
@@ -63,7 +62,7 @@ unique variants:
 * Small, Red
 * Small, Green
 * Small, Blue
-* Medium, Red 
+* Medium, Red
 * Medium, Green
 * Medium, Blue
 * Large, Red
@@ -133,7 +132,7 @@ will not be visible in the frontend.
 You may see what price a product would be in the current currency
 (`Spree::Config[:currency]`) by calling the `price` method on that instance:
 
-    product.price 
+    product.price
     => "15.99"
 
 To find a list of currencies that this product is available in, call `prices` to

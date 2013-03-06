@@ -1,8 +1,8 @@
 ---
-  title: "Core | Models | Payment"
+title: "Payments"
 ---
 
-## Payment
+## Overview
 
 Spree has a highly flexible payments model which allows multiple payment methods
 to be available during checkout. The logic for processing payments is decoupled
@@ -170,7 +170,7 @@ The returned object from both the `purchase` and `authorize` methods on the
 payment method objects must be an `ActiveMerchant::Billing::Response` object.
 This response object is then stored (in YAML) in the `spree_log_entries` table.
 Log entries can be retrieved with a call to the `log_entries` association on any
-`Payment` object. 
+`Payment` object.
 
 If the `purchase!` route is taken and is successful, the payment is marked as
 `completed`. If it fails, it is marked as `failed`. If the `authorize` method is

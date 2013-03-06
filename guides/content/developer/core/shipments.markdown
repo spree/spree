@@ -1,9 +1,8 @@
 ---
-title: "Core | Shipments"
-has_toc: true
+title: "Shipments"
 ---
 
-## Shipments
+## Overview
 
 Shipments within Spree tie to <%= link_to "Orders", :orders %>, and are used to
 track shipping information regarding the items for that order. Shipments also
@@ -31,7 +30,7 @@ will be displayed to the user for selection.
 
 ### Is this shipment available?
 
-This first check is rather simple. 
+This first check is rather simple.
 
 The shipment asks its calculator if the
 calculator is available for this object. By default,
@@ -65,7 +64,7 @@ category of the shipping method.
 
 This check is simple as well. If a shipping method's calculator's currency
 matches the currency of the order, then the shipping method will be valid for
-this order. 
+this order.
 
 ***
   An order's currency is determined by the `Spree::Config[:currency]`

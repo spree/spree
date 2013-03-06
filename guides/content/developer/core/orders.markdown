@@ -1,12 +1,12 @@
 ---
-  title: "Core | Models | Order"
+title: "Orders"
 ---
 
-## Order
+## Overview
 
 The Order model is one of the central models in Spree, providing a central place to
 collect information about the order, including line items, <%= link_to "adjustments", :adjustments %>,
- <%= link_to "payments", :payments %>, addresses, return authorizations, 
+ <%= link_to "payments", :payments %>, addresses, return authorizations,
 <%= link_to "inventory units", "#" %>, and shipments.
 
 Every order that is created within Spree is given its own unique identifier,
@@ -79,7 +79,7 @@ Line items are used to keep track of items within the context of an order.
  These records provide a link between orders,
 and <%= link_to "Variants", :variants %>.
 
-When a variant is added to an order, the price of that item is tracked along 
+When a variant is added to an order, the price of that item is tracked along
 with the line item to preserve that data. If the variant's price were to change,
 then the line item would still have a record of the price at the time of ordering.
 

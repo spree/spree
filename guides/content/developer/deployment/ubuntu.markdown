@@ -1,17 +1,16 @@
---- 
+---
 title: "Deploying to Heroku"
-has_toc: true
 ---
 
-## Deploying to Ubuntu
+## Overview
 
 This guide will walk you through configuring and deploying your Spree
-application to an environment on Ubuntu 12.04. 
+application to an environment on Ubuntu 12.04.
 
 This guide assumes an absolutely clean-slate Ubuntu 12.04 Server install, and
 covers setting up the following things:
 
-* A user for the application 
+* A user for the application
 * Operating system dependencies required for Ruby, Rails and Spree
 * Ruby 1.9.3
 * Rails 3.2.12
@@ -170,16 +169,16 @@ This command will take a couple of minutes to finish running.
 Once it's finished running, run this command to make that version of Ruby the
 default for this user:
 
-rvm use 1.9.3 --default 
+rvm use 1.9.3 --default
 
 Ensure that this version of Ruby is really the new default by running this
 command:
 
-    ruby -v 
+    ruby -v
 
 It should output something similar to this:
 
-    ruby 1.9.3p194 (2012-04-20 revision 35410) [i686-linux] 
+    ruby 1.9.3p194 (2012-04-20 revision 35410) [i686-linux]
 
 You now have a version of Ruby correctly configured on your server.
 
@@ -191,7 +190,7 @@ will use the deployment tool called
 
 Install Capistrano on your local system by running this command:
 
-    gem install capistrano 
+    gem install capistrano
 
 Then, inside the directory for your Spree app, run this command to set up a
 Capistrano deploy configuration:
@@ -207,12 +206,12 @@ lines (comments removed):
 set :application, "set your application name here"
 set :repository,  "set your repository location here"
 
-set :scm, :subversion 
+set :scm, :subversion
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
 role :web, "your web-server here" # Your HTTP server, Apache/etc
 role :app, "your app-server here" # This may be the same as your `Web` server
-role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run 
+role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
 role :db,  "your slave db-server here"
 ```
 
@@ -232,7 +231,7 @@ architecture. Within this guide, you've been working with a single server and
 will continue to do so. Therefore, these roles should look like this:
 
 ```ruby
-server = "[your server's address]" 
+server = "[your server's address]"
 role :web, server
 role :app, server
 role :db,  server, :primary => true
@@ -294,7 +293,7 @@ role :db,  server, :primary => true # This is where Rails migrations will run
 
 set :user, "spree"
 
-set :deploy_to, "/home/spree/#{application}" 
+set :deploy_to, "/home/spree/#{application}"
 set :use_sudo, false
 
 default_run_options[:shell] = '/bin/bash --login'
@@ -318,7 +317,7 @@ To attempt to deploy the actual application to the server, run `cap deploy`. If
 the `repository` option points to GitHub, this will fail because the server has
 never verified GitHub's host key.
 
-    [[your server's address]] executing command 
+    [[your server's address]] executing command
     ** [[your server's address] :: err] Host key verification failed.
     ** [[your server's address] :: err] fatal: The remote end hung up unexpectedly
 
@@ -332,15 +331,15 @@ to the prompt and GitHub's host key will now be verified.
 
 When you run `cap deploy` again, you'll see this error:
 
-    [[your server's address]] executing command 
-    ** [[your server's address] :: err] Permission denied (publickey). 
+    [[your server's address]] executing command
+    ** [[your server's address] :: err] Permission denied (publickey).
     ** [[your server's address] :: err] fatal: The remote end hung up unexpectedly
 
 This means that your application does not have a deploy key setup for it on
 GitHub. To set up a deploy key for the application, run this command as the
 "spree" user on the server:
 
-    ssh-keygen -t rsa 
+    ssh-keygen -t rsa
 
 !!!
 Do not enter a password for this key. Otherwise you will need to use it
@@ -379,12 +378,12 @@ the necessary tables for your Spree store.
 
 To install PostgreSQL, run this command:
 
-    apt-get install -y postgresql 
+    apt-get install -y postgresql
 
 You will also need to install its development headers, which the `pg` gem will
 use to connect to the database:
 
-    apt-get install -y libpq-dev 
+    apt-get install -y libpq-dev
 
 Once those two packages are installed, you will need to create a new database
 for your application to use. This database should have the same name as the
@@ -461,10 +460,10 @@ To set up unicorn for your application, add the `unicorn` gem to your `Gemfile`,
 inside the `production` group:
 
 ```ruby
-group :production do 
+group :production do
   gem 'pg'
-  gem 'unicorn' 
-end 
+  gem 'unicorn'
+end
 ```
 
 Unicorn requires some configuration in order to work, which belongs in
@@ -472,25 +471,25 @@ Unicorn requires some configuration in order to work, which belongs in
 
 ```ruby
 # config/unicorn.rb
-# Set environment to development unless something else is specified 
+# Set environment to development unless something else is specified
 env = ENV["RAILS_ENV"] || "development"
 
-# See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete documentation. 
+# See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete documentation.
 worker_processes 4
 
 # listen on both a Unix domain socket and a TCP port, # we use a shorter backlog
 # for quicker failover when busy listen "/tmp/[application's name].socket",
 backlog: 64
 
-# Preload our app for more speed 
+# Preload our app for more speed
 preload_app true
 
-# nuke workers after 30 seconds instead of 60 seconds (the default) 
+# nuke workers after 30 seconds instead of 60 seconds (the default)
 timeout 30
 
 pid "/tmp/unicorn.[application's name].pid"
 
-# Production specific settings 
+# Production specific settings
 if env == "production"
   # Help ensure your application will always spawn in the symlinked
   # "current" directory that Capistrano sets up.
@@ -499,13 +498,13 @@ if env == "production"
   # feel free to point this anywhere accessible on the filesystem user 'spree'
   shared_path = "/home/spree/[application's name]/shared"
 
-  stderr_path "#{shared_path}/log/unicorn.stderr.log" 
+  stderr_path "#{shared_path}/log/unicorn.stderr.log"
   stdout_path "#{shared_path}/log/unicorn.stdout.log"
 end
 
-before_fork do |server, worker| 
+before_fork do |server, worker|
   # the following is highly recomended for Rails + "preload_app true"
-  # as there's no need for the master process to hold a connection 
+  # as there's no need for the master process to hold a connection
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.connection.disconnect!
   end
@@ -515,23 +514,23 @@ before_fork do |server, worker|
   old_pid = "/tmp/unicorn.[application's name].pid.oldbin"
   if File.exists?(old_pid) && server.pid != old_pid
     begin
-      Process.kill("QUIT", File.read(old_pid).to_i) 
+      Process.kill("QUIT", File.read(old_pid).to_i)
     rescue Errno::ENOENT, Errno::ESRCH
       # someone else did our job for us
     end
   end
 end
 
-after_fork do |server, worker| 
+after_fork do |server, worker|
   # the following is *required* for Rails + "preload_app true"
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.establish_connection
   end
 
-  # if preload_app is true, then you may also want to check and 
+  # if preload_app is true, then you may also want to check and
   # restart any other shared sockets/descriptors such as Memcached,
-  # and Redis.  TokyoCabinet file handles are safe to reuse 
-  # between any number of forked children (assuming your kernel 
+  # and Redis.  TokyoCabinet file handles are safe to reuse
+  # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
 end
 ```
@@ -546,7 +545,7 @@ your `config/deploy.rb`:
 
 ```ruby
 namespace :unicorn do
-  desc "Zero-downtime restart of Unicorn" 
+  desc "Zero-downtime restart of Unicorn"
   task :restart, except: { no_release: true } do
     run "kill -s USR2 `cat /tmp/unicorn.[application's name].pid`"
   end
@@ -557,9 +556,9 @@ namespace :unicorn do
   end
 
   desc "Stop unicorn"
-  task :stop, except: { no_release: true } do 
-    run "kill -s QUIT `cat /tmp/unicorn.[application's name].pid`" 
-  end 
+  task :stop, except: { no_release: true } do
+    run "kill -s QUIT `cat /tmp/unicorn.[application's name].pid`"
+  end
 end
 
 after "deploy:restart", "unicorn:restart"
@@ -574,7 +573,7 @@ nginx and getting it to serve requests from your application.
 
 To install nginx, run this command as `root`:
 
-    apt-get install nginx 
+    apt-get install nginx
 
 Once this command is installed, you will then need to configure nginx to serve
 requests from your unicorn workers. To do this, put this content inside
@@ -582,7 +581,7 @@ requests from your unicorn workers. To do this, put this content inside
 
     user spree;
 
-    # Change this depending on your hardware 
+    # Change this depending on your hardware
     worker_processes 4;
     pid /var/run/nginx.pid;
 
@@ -592,12 +591,12 @@ requests from your unicorn workers. To do this, put this content inside
      }
 
     http {
-      types_hash_bucket_size 512; 
+      types_hash_bucket_size 512;
       types_hash_max_size 2048;
 
       sendfile on;
-      tcp_nopush on; 
-      tcp_nodelay off; 
+      tcp_nopush on;
+      tcp_nodelay off;
 
       include /etc/nginx/mime.types;
       default_type application/octet-stream;
@@ -624,13 +623,13 @@ nginx where your application is. Create another file at
 content:
 
     upstream [your server's address] {
-      # fail_timeout=0 means we always retry an upstream even if it failed 
+      # fail_timeout=0 means we always retry an upstream even if it failed
       # to return a good HTTP response (in case the Unicorn master nukes a
       # single worker for timing out).
-      server unix:/tmp/[your application's name].socket fail_timeout=0; 
+      server unix:/tmp/[your application's name].socket fail_timeout=0;
     }
 
-    server { 
+    server {
       # if you're running multiple servers, instead of "default" you should
       # put your main domain name here
       listen 80 default;
@@ -666,10 +665,10 @@ content:
       }
 
       # if the request is for a static resource, nginx should serve it directly
-      # and add a far future expires header to it, making the browser 
-      # cache the resource and navigate faster over the website 
+      # and add a far future expires header to it, making the browser
+      # cache the resource and navigate faster over the website
       location ~ ^/(system|assets|spree)/  {
-        root /home/spree/[application's name]/current/public; 
+        root /home/spree/[application's name]/current/public;
         expires max;
         break;
       }

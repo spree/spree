@@ -1,5 +1,5 @@
 ---
-  title: "Core | Models | Payment"
+title: "Core | Models | Payment"
 ---
 
 # Payment

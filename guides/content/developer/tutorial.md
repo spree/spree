@@ -1,6 +1,5 @@
 ---
-title: "Developer | Tutorials"
-has_toc: true
+title: "Tutorials"
 ---
 
 ## Tutorial

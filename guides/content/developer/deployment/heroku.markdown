@@ -1,9 +1,8 @@
 ---
-  title: "Deploying to Heroku"
-  has_toc: true
+title: "Deploying to Heroku"
 ---
 
-## Deploying to Heroku
+## Overview
 
 This article will walk you through configuring and deploying your Spree
 application to Heroku.
@@ -51,7 +50,7 @@ To configure Spree to upload images to S3, put these lines into
 
 ```ruby
 Spree.config do |config|
-  config.use_s3 = true 
+  config.use_s3 = true
   config.s3_bucket = '<bucket>'
   config.s3_access_key = "<key>"
   config.s3_secret = "<secret>"

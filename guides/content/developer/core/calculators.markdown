@@ -1,9 +1,8 @@
 ---
-  title: "Core | Models | Calculators"
-  has_toc: true
+title: "Calculators"
 ---
 
-## Calculators
+## Overview
 
 Spree makes extensive use of the Spree::Calculator model and there are several
 subclasses provided to deal with various types of calculations (flat rate,
@@ -27,7 +26,7 @@ module to provide an easy way to calculate adjustments for their objects.
 ## Available Calculators
 
 The following are descriptions of the currently available calculators in Spree.
-If you would like to add your own, please see the 
+If you would like to add your own, please see the
 <%= link_to "Registering a calculator", "#registering-a-calculator" %> section.
 
 ### Default Tax
@@ -48,7 +47,7 @@ For example, if an order had an item total of $31 and the calculator was
 configured to have a flat percent amount of 10, the discount would be $3.10,
 because:
 
-    $31 x 10% = $3.10 
+    $31 x 10% = $3.10
 
 ### Flat Rate
 
@@ -63,7 +62,7 @@ like this:
 The currency for this calculator is used to check to see if a shipping method is
 available for an order. If an order's currency does not match the shipping
 method's currency, then that shipping method will not be displayed on the
-frontend. 
+frontend.
 
 This calculator can take any object and will return simply the preferred amount.
 
@@ -97,7 +96,7 @@ others.
 This calculator takes two preferences:
 
 * `amount`: The amount per item to calculate.
-* `currency`: The currency for this calculator. 
+* `currency`: The currency for this calculator.
 
 This calculator depends on its `calcuable` responding to a `promotion` method,
 which should return a `Spree::Promotion` (or similar) object. This object should
@@ -111,7 +110,7 @@ they are eligible for this calculator. The calculation is this:
     [matching product quantity] x [amount]
 
 Every matching product within an order will add to the calculator's total. For
-example, assuming the calculator has an amount of "5" and there's an order 
+example, assuming the calculator has an amount of "5" and there's an order
 with the following line items:
 
 * Product A: $15.00 x 2 (within matching products)
@@ -126,7 +125,7 @@ Meaning the calculator will compute an amount of "15".
 
 ### Percent Per Item
 
-The Per Item calculator works in a near-identical fashion to the 
+The Per Item calculator works in a near-identical fashion to the
 <%= link_to "Per Item calculator", "#per-item" %>, with the exception of rather
 than providing a flat-rate per item, it is a percentage.
 

@@ -1,11 +1,11 @@
 ---
-  title: "Core | Models | Adjustments"
+title: "Adjustments"
 ---
 
-## Adjustments
+## Overview
 
-An adjustment in Spree tracks an adjustment to the price of an 
-<%= link_to "Order", :orders %>, or an order's 
+An adjustment in Spree tracks an adjustment to the price of an
+<%= link_to "Order", :orders %>, or an order's
 <%= link_to "Line Item", :line_items %> within Spree.
 
 Adjustments can be either positive or negative. Adjustments with a positive

@@ -1,6 +1,5 @@
---- 
-title: "Internationalization (I18n)"
-has_toc: true
+---
+title: "Internationalization"
 ---
 
 This guide covers how Spree uses Rails' internationalization features, and how
@@ -74,7 +73,7 @@ You don't need to copy any files from `spree_i18n` or `rails-i18n` for their
 translations to be available within your application. They are made available
 automatically, because both `spree_i18n` and `rails-i18n` are railties.
 
-### Translating views 
+### Translating views
 
 When reviewing the source of any view in Spree you'll notice that all text is
 rendered by passing a string to a helper method similar to:
@@ -123,7 +122,7 @@ into English
 ## Deploying the Translations
 
 The `spree_i18n` gem is configured in the same manner as any Rubygem in a Rails
-application.  Simply add it to the `Gemfile.` using the git url. 
+application.  Simply add it to the `Gemfile.` using the git url.
 
 ```ruby
 gem 'spree_i18n', :github => "spree/spree_i18n"
@@ -139,7 +138,7 @@ or the `spree_i18n` gem.
 ### Setting the Default Currency
 
 INFO: This functionality is new in Spree 1.2. Please refer to the appropriate
-guide if you are using an older version. 
+guide if you are using an older version.
 
 In earlier versions of Spree, we used `number_to_currency` to display prices for
 products. This caused a problem when somebody selected a different I18n locale,

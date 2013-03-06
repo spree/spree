@@ -1,6 +1,5 @@
 ---
-title: "Developer | Source Code"
-has_toc: true
+title: "Source Code"
 ---
 
 ## Source Code

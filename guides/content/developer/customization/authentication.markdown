@@ -1,9 +1,8 @@
---- 
+---
 title: "Custom Authentication"
-has_toc: true
 ---
 
-## Custom Authentication
+## Overview
 
 This guide covers using a custom authentication setup with Spree, such as one
 provided by your own application. This is ideal in situations where you want to
@@ -136,7 +135,7 @@ if you're using Devise:
 
 ```ruby
 devise_scope :person do
-  get '/login', :to => "devise/sessions#new" 
+  get '/login', :to => "devise/sessions#new"
   get '/signup', :to => "devise/registrations#new"
   delete '/logout', :to => "devise/sessions#destroy"
 end
@@ -179,7 +178,7 @@ section. Admin users of your system should be assigned the Spree admin role,
 like this:
 
 ```ruby
-user = User.find_by_email("master@example.com") 
+user = User.find_by_email("master@example.com")
 user.spree_roles << Spree::Role.find_or_create_by_name("admin")
 ```
 
@@ -205,11 +204,11 @@ content inside it:
 
 ```ruby
 Deface::Override.new({
-  :virtual_path => "spree/shared/_nav_bar", 
+  :virtual_path => "spree/shared/_nav_bar",
   :name => "auth_shared_login_bar",
   :insert_before => "li#search-bar",
   :partial => "spree/shared/login_bar",
-  :disabled => false, 
+  :disabled => false,
   :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad'
 })
 ```
