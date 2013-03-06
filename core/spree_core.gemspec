@@ -31,8 +31,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'ffaker', '~> 1.12.0'
   s.add_dependency 'paperclip', '~> 2.8'
   s.add_dependency 'aws-sdk', '~> 1.3.4'
-  s.add_dependency 'ransack', '~> 0.6.0'
-  s.add_dependency 'activemerchant', '= 1.28.0'
+  s.add_dependency 'ransack', '0.7.2'
+  s.add_dependency 'activemerchant', '~> 1.31'
   s.add_dependency 'json', '>= 1.5.5'
   # Because Money 5.1.0 removes compatibility with Ruby 1.8
   s.add_dependency 'money', '5.0.0'
