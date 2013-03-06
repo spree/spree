@@ -2,6 +2,7 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/packagetask'
 require 'rubygems/package_task'
+require 'spree/testing_support/common_rake'
 
 spec = eval(File.read('spree_sample.gemspec'))
 
@@ -14,3 +15,10 @@ task :release do
   version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
   cmd = "cd pkg && gem push spree_sample-#{version}.gem"; puts cmd; system cmd
 end
+
+desc "Generates a dummy app for testing"
+task :test_app do
+  ENV['LIB_NAME'] = 'spree/core'
+  Rake::Task['common:test_app'].invoke
+end
+
