@@ -7,7 +7,7 @@ class CreateShippingMethodZone < ActiveRecord::Migration
 
     Spree::ShippingMethod.all.each{|sm| sm.zones << Spree::Zone.find(sm.zone_id)}
 
-    remove_column :zone_id, :spree_shipping_methods
+    remove_column :spree_shipping_methods, :zone_id
   end
 
   def down

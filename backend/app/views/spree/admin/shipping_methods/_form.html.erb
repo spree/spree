@@ -7,13 +7,6 @@
     <% end %>
   </div>
 
-  <div class="four columns">
-    <%= f.field_container :zone_id do %>
-      <%= f.label :zone_id, t(:zone) %><br />
-      <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2 fullwidth'}) %>
-      <%= error_message_on :shipping_method, :zone_id %>
-    <% end %>
-  </div>
 
   <div class="omega four columns">
     <%= f.field_container :display_on do %>
@@ -26,21 +19,18 @@
 
 <div data-hook="admin_shipping_method_form_availability_fields" class="alpha six columns">
   <fieldset class="categories no-border-bottom">
-    <legend align="center"><%= t(:availability) %></legend>
-
-    <%= f.field_container :shipping_category do %>
-      <%= f.label :shipping_category, t(:shipping_category_choose) %>
-      <%= select(:shipping_method, :shipping_category_id, Spree::ShippingCategory.all.collect { |s| [s.name, s.id] }, { :include_blank => "None" }, {:class => 'select2 fullwidth'}) %>
+    <legend align="center"><%= t(:zones) %></legend>
+  <div class="four columns">
+    
+    <%= f.field_container :zones do %>
+      <% Spree::Zone.all.each do |zone| %>
+        <%= f.label :zone_id, zone.name %>
+        <%= check_box_tag('shipping_method[zones][]', zone.id, @shipping_method.zones.include?(zone)) %><br>
+      <% end %>
+      <%= error_message_on :shipping_method, :zone_id %>
     <% end %>
+  </div>
 
-    <div class="field">
-      <%= label_tag t(:match_rule) %>
-      <ul>
-        <li><%= f.check_box :match_none %> <%= f.label :match_none, t('match_choices.none') %></li>
-        <li><%= f.check_box :match_one %>  <%= f.label :match_one, t('match_choices.one') %></li>
-        <li><%= f.check_box :match_all %>  <%= f.label :match_all, t('match_choices.all') %></li>
-      </ul>
-    </div>
 
   </fieldset>
 </div>
