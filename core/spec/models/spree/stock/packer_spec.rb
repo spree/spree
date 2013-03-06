@@ -82,14 +82,14 @@ module Spree
         it 'some on_hand with some backordered' do
           on_hand, backordered = subject.send(:stock_status, double, 20)
           on_hand.should eq 10
-          backordered.should eq nil
+          backordered.should eq 0
         end
 
         it 'zero on_hand with all backordered' do
           @stock_item.stub(count_on_hand: 0)
           on_hand, backordered = subject.send(:stock_status, double, 20)
           on_hand.should eq 0
-          backordered.should eq nil
+          backordered.should eq 0
         end
       end
     end
