@@ -21,6 +21,7 @@
   <thead>
     <tr data-hook="stock_locations_header">
       <th><%= t(:name) %></th>
+      <th><%= t(:active) %></th>
       <th><%= t(:stock_movements) %></th>
       <th class="actions"></th>
     </tr>
@@ -32,6 +33,7 @@
     %>
       <tr id="<%= spree_dom_id stock_location %>" data-hook="stock_location_row" class="<%= cycle('odd', 'even')%>">
         <td><%= stock_location.name %></td>
+        <td><%= stock_location.active? ? 'active' : 'inactive' %></td>
         <td><%= link_to t(:stock_movements), admin_stock_location_stock_movements_path(stock_location.id) %> </td>
         <td class="actions">
           <%= link_to_edit stock_location, :no_text => true %>

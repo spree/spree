@@ -17,7 +17,7 @@ module Spree
       end
 
       it 'builds a list of packages for an order' do
-        StockLocation.should_receive(:all).and_return([stock_location])
+        StockLocation.should_receive(:active).and_return([stock_location])
         subject.should_receive(:build_packer).and_return(double(:packages => [package]))
         Estimator.any_instance.should_receive(:shipping_rates).and_return([])
 
