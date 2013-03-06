@@ -19,7 +19,6 @@ module Spree
         StockLocation.all.each do |stock_location|
           packer = build_packer(stock_location, order)
           packages += packer.packages
-          break if order_fulfilled?(order, packages)
         end
         packages
       end
@@ -35,19 +34,6 @@ module Spree
           package.shipping_rates = estimator.shipping_rates(package)
         end
         packages
-      end
-
-      def order_fulfilled?(order, packages)
-        variants = {}
-        order.line_items.each { |li| variants[li.variant_id] = li.quantity }
-
-        packages.each do |package|
-          package.contents.each do |item|
-            variants[item.variant.id] -= 1
-          end
-        end
-
-        variants.values.all? {|value| value <= 0}
       end
 
       def build_packer(stock_location, order)
