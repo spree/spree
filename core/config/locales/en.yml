@@ -297,6 +297,7 @@ en:
   back_to_shipping_categories: "Back To Shipping Categories"
   back_to_shipping_methods_list: "Back To Shipping Methods List"
   back_to_states_list: "Back To States List"
+  back_to_stock_movements_list: "Back to Stock Movements List"
   back_to_store: "Go Back To Store"
   back_to_tax_categories_list: "Back To Tax Categories List"
   back_to_taxonomies_list: "Back To Taxonomies List"
@@ -423,6 +424,7 @@ en:
   editing_shipping_category: "Editing Shipping Category"
   editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editing State"
+  editing_stock_movement: "Editing Stock Movement"
   editing_tax_category: "Editing Tax Category"
   editing_tax_rate: "Editing Tax Rate"
   editing_tracker: "Editing Tracker"
@@ -618,6 +620,7 @@ en:
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
   new_state: "New State"
+  new_stock_movement: "New Stock Movement"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
   new_taxon: "New Taxon"
@@ -1066,6 +1069,7 @@ en:
   states: States
   states_required: "States Required"
   status: Status
+  stock_movements_for_stock_location: "Stock Movements for %{stock_location_name}"
   stop: Stop
   store: Store
   street_address: "Street Address"
