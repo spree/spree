@@ -14,7 +14,7 @@ module Spree
     delegate :weight, :to => :variant
 
     def can_backorder?
-      true
+      self.backorderable
     end
 
     def self.locations_for_variant(variant)
