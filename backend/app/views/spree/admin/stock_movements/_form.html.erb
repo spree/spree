@@ -6,7 +6,7 @@
     <% end %>
     <%= f.field_container :action do %>
       <%= f.label :action, t(:action) %>
-      <%= f.text_field :action, :class => 'fullwidth' %>
+      <%= f.select :action, options_for_select(allowed_actions) %>
     <% end %>
     <%= f.field_container :stock_item_id do %>
       <%= f.label :stock_item_id, t(:stock_item_id) %>

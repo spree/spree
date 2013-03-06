@@ -4,6 +4,11 @@ module Spree
       belongs_to 'spree/stock_location', find_by: :id
 
       respond_to :html
+      helper_method :allowed_actions
+
+      def allowed_actions
+        %w{sold received}
+      end
     end
   end
 end
