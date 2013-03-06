@@ -4,22 +4,22 @@ europe_vat = Spree::Zone.find_by_name!("EU_VAT")
 shipping_methods = [
   {
     :name => "UPS Ground (USD)",
-    :zone => north_america,
+    :zones => [north_america],
     :calculator => Spree::Calculator::FlatRate.create!
   },
   {
     :name => "UPS Two Day (USD)",
-    :zone => north_america,
+    :zones => [north_america],
     :calculator => Spree::Calculator::FlatRate.create!
   },
   {
     :name => "UPS One Day (USD)",
-    :zone => north_america,
+    :zones => [north_america],
     :calculator => Spree::Calculator::FlatRate.create!
   },
   {
     :name => "UPS Ground (EUR)",
-    :zone => europe_vat,
+    :zones => [europe_vat],
     :calculator => Spree::Calculator::FlatRate.create!
   }
 ]
