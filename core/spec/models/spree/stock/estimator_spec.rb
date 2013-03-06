@@ -25,7 +25,7 @@ module Spree
         end
 
         it "does not return shipping rates from a shipping method if the order's ship address is in a different zone" do
-          shipping_method.zone.members.delete_all
+          shipping_method.zones.each{|z| z.members.delete_all}
           package.should_receive(:shipping_category).and_return(shipping_category)
 
           shipping_rates = subject.shipping_rates(package)
