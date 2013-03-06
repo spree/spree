@@ -13,9 +13,12 @@
 
     <% if @order.has_step?("delivery") %>
       <div class="columns alpha four">
-        <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
+        <h6><%= t(:shipments) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
         <div class="delivery">
-          <%= order.shipping_method.name %>
+          <% order.shipments.each do |shipment| %>
+            <%= shipment.stock_location.name %>
+            <%= shipment.shipping_method.name %>
+          <% end %>
         </div>
       </div>
     <% end %>

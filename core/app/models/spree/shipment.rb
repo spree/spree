@@ -15,18 +15,18 @@ module Spree
     has_one :adjustment, :as => :source, :dependent => :destroy
 
     before_create :generate_shipment_number
-    after_save :ensure_correct_adjustment, :update_order
+    after_save :ensure_correct_adjustment, :ensure_selected_shipping_rate, :update_order
 
     attr_accessor :special_instructions
 
     attr_accessible :order, :special_instructions,
-                    :tracking, :address, :inventory_units
+                    :tracking, :address, :inventory_units, :selected_shipping_rate_id
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
+
     validates :inventory_units, :presence => true, :if => :require_inventory
-    #validates :shipping_method, :presence => true
 
     make_permalink :field => :number
 
@@ -53,6 +53,20 @@ module Spree
     def add_shipping_method(shipping_method, selected=false)
       shipping_rates << Spree::ShippingRate.create(:shipping_method => shipping_method,
                                                                         :selected => selected)
+    end
+
+    def selected_shipping_rate_id
+      shipping_rates.where(selected: true).first.try(:id)
+    end
+
+    def selected_shipping_rate_id=(id)
+      shipping_rates.update_all(selected: false)
+      shipping_rates.update(id, selected: true)
+    end
+
+    def ensure_selected_shipping_rate
+      shipping_rates.exists?(selected: true) ||
+        shipping_rates.limit(1).update_all(selected: true)
     end
 
     def currency
