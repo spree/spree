@@ -166,7 +166,7 @@ module Spree
 
     # If true, causes the confirmation step to happen during the checkout process
     def confirmation_required?
-      payment_method && payment_method.payment_profiles_supported?
+      payments.map(&:payment_method).any?(&:payment_profiles_supported?)
     end
 
     # Indicates the number of items in the order
@@ -424,20 +424,8 @@ module Spree
       payment_state == 'paid'
     end
 
-    def payment
-      payments.first
-    end
-
     def available_payment_methods
       @available_payment_methods ||= PaymentMethod.available(:front_end)
-    end
-
-    def payment_method
-      if payment and payment.payment_method
-        payment.payment_method
-      else
-        available_payment_methods.first
-      end
     end
 
     def pending_payments
