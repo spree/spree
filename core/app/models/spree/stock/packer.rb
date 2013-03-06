@@ -46,7 +46,7 @@ module Spree
           backordered = 0
         else
           on_hand = item.count_on_hand
-          backordered = quantity - on_hand if item.backorderable?
+          backordered = item.backorderable? ? (quantity - on_hand) : 0
         end
 
         [on_hand, backordered]
