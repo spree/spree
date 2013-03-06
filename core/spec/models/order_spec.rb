@@ -228,20 +228,6 @@ describe Spree::Order do
     end
   end
 
-  context "#payment_method" do
-    it "should return payment.payment_method if payment is present" do
-      payments = [create(:payment)]
-      payments.stub(:completed => payments)
-      order.stub(:payments => payments)
-      order.payment_method.should == order.payments.first.payment_method
-    end
-
-    it "should return the first payment method from available_payment_methods if payment is not present" do
-      create(:payment_method, :environment => 'test')
-      order.payment_method.should == order.available_payment_methods.first
-    end
-  end
-
   context "#allow_checkout?" do
     it "should be true if there are line_items in the order" do
       order.stub_chain(:line_items, :count => 1)

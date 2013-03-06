@@ -699,6 +699,9 @@ en:
   pay: pay
   payment: Payment
   payment_actions: "Actions"
+  payment_counter:
+    one: "Payment #1"
+    other: "Payment #%{count}"
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
   payment_method: Payment Method

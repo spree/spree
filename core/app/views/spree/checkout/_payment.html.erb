@@ -4,7 +4,7 @@
     <% @order.available_payment_methods.each do |method| %>
     <p>
       <label>
-        <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.payment_method %>
+        <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id %>
         <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
       </label>
     </p>
