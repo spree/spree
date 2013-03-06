@@ -1,11 +1,15 @@
 module Spree
   class StockLocation < ActiveRecord::Base
-    belongs_to :address
-    attr_accessible :name
     has_many :stock_items, dependent: :destroy
     has_many :stock_movements, through: :stock_items
 
+    belongs_to :state
+    belongs_to :country
+
     validates_presence_of :name
+
+    attr_accessible :name, :address1, :address2, :city, :zipcode,
+                    :state_name, :state_id, :country_id, :phone
 
     def stock_item(variant)
       stock_items.where(variant_id: variant).first
