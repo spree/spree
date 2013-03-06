@@ -2,19 +2,25 @@
   <legend align="center"><%= t(:shipping_method) %></legend>
   <div class="inner" data-hook="shipping_method_inner">
     <div id="methods">
-      <p class="field radios">
 
-        <% @order.create_proposed_shipments.each_with_index do |shipment, idx| %>
-        <h2>Package <%= idx + 1 %> from <%= shipment.stock_location.name %> location</h2>
+      <% @order.create_proposed_shipments %>
+
+        <%= form.fields_for :shipments do |ship_form| %>
+          <p>Package from <%= ship_form.object.stock_location.name %></p>
+
           <p>contents:</p>
-          <% shipment.manifest.each do |item| %>
+          <% ship_form.object.manifest.each do |item| %>
             <%= item.variant.name %> <%= item.quantity %>
           <% end %>
-          <% shipment.shipping_rates.each do |shipping_rate| %>
-          <p><%= radio_button_tag "shipment_{shipment.id}", shipping_rate.id, shipping_rate.selected %><%= shipping_rate.name %> <%= shipping_rate.cost %></p>
+
+          <p>shipping method</p>
+          <% ship_form.object.shipping_rates.each do |rate| %>
+            <p class="field radios">
+              <%= ship_form.radio_button :selected_shipping_rate_id, rate.id %> <%= rate.name %> <%= rate.cost %></p>
+            </p>
           <% end %>
         <% end %>
-      </p>
+
     </div>
     <% if Spree::Config[:shipping_instructions] && @order.rate_hash.present? %>
       <p id="minstrs" data-hook>
