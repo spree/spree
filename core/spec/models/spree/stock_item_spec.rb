@@ -73,6 +73,10 @@ describe Spree::StockItem do
     subject.reload.count_on_hand.should == 100
   end
 
+  it "can return the stock item's variant's name" do
+    subject.variant_name.should == "Spree Bag"
+  end
+
   context "count_on_hand=" do
     context "when :track_inventory_levels is true" do
       before { Spree::Config.set :track_inventory_levels => true }
@@ -80,7 +84,7 @@ describe Spree::StockItem do
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
       context "and count is increased" do
-        it "should fill backorders" do 
+        it "should fill backorders" do
           subject.update_column(:count_on_hand, 0)
           subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
           inventory_unit.should_receive(:fill_backorder)

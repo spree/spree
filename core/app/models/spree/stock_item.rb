@@ -32,6 +32,10 @@ module Spree
       Spree::InventoryUnit.backordered_for_stock_item(self)
     end
 
+    def variant_name
+      variant.name
+    end
+
     private
       def process_backorders
         if count_changes = changes['count_on_hand']
