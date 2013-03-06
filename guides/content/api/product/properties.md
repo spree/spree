@@ -4,14 +4,11 @@ title: Product Properties
 
 # Product Properties API
 
-* TOC
-{:toc}
-
 <%= warning "Requests to this API will only succeed if the user making them has access to the underlying products. If the user is not an admin and the product is not available yet, users will receive a 404 response from this API." %>
 
 ## List product properties
 
-List 
+List
 
 Retrieve a list of all product properties for a product by making this request:
 
@@ -32,7 +29,7 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:product_property) do |h| 
+<%= json(:product_property) do |h|
 { :product_properties => [h],
   :count => 10,
   :pages => 2,
@@ -57,7 +54,7 @@ The search results are paginated.
    :count => 10,
    :pages => 2,
    :current_page => 1 }
-end %> 
+end %>
 
 ### Sorting results
 

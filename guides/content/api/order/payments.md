@@ -4,10 +4,7 @@ title: Payments
 
 # Payments API
 
-* TOC
-{:toc}
-
-## Listing payments 
+## Listing payments
 
 To see details about an order's payments, make this request:
 
@@ -28,7 +25,7 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:payment) do |h| 
+<%= json(:payment) do |h|
 { :payments => [h],
   :count => 2,
   :pages => 2,
@@ -48,7 +45,7 @@ The search results are paginated.
 ### Response
 
 <%= headers 200 %>
-<%= json(:payment) do |h| 
+<%= json(:payment) do |h|
 { :payments => [h],
   :count => 2,
   :pages => 2,
@@ -171,7 +168,7 @@ To void a payment, make a request like this:
 <%= headers 422 %>
 <%= json :error => "There was a problem with the payment gateway: [text]" %>
 
-## Crediting a payment 
+## Crediting a payment
 
 To credit a payment, make a request like this:
 

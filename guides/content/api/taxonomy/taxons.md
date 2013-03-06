@@ -4,10 +4,7 @@ title: Taxons
 
 # Taxons API
 
-* TOC
-{:toc}
-
-## List taxons 
+## List taxons
 
 To get a list for all taxons underneath the root taxon for a taxonomy (and their immediate children) for a taxonomy, make this request:
 

@@ -4,10 +4,7 @@ title: Shipments
 
 # Shipments API
 
-* TOC
-{:toc}
-
-## Marking a shipment as ready 
+## Marking a shipment as ready
 
 <%= admin_only %>
 
@@ -24,7 +21,7 @@ You may choose to update shipment attributes with this request as well:
 <%= headers 200 %>
 <%= json(:shipment) %>
 
-## Marking a shipment as shipped 
+## Marking a shipment as shipped
 
 <%= admin_only %>
 

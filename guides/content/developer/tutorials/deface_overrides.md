@@ -2,12 +2,9 @@
 title: Deface Overrides
 ---
 
-* TOC
-{:toc}
-
 ## Introduction
 
-This tutorial is a continuation of the previous one, [Extensions](/developer/tutorial/extensions), and begins where we left off in the last one. We have created a simple extension for promoting on-sale products on a "sales homepage". 
+This tutorial is a continuation of the previous one, [Extensions](/developer/tutorial/extensions), and begins where we left off in the last one. We have created a simple extension for promoting on-sale products on a "sales homepage".
 
 In this tutorial we are going to learn about [Deface](http://github.com/spree/deface) and how we can use it to improve our extension. As part of improving our extension, we will be updating the existing Spree admin interface so that we are able to set the `sale_price` for products.
 
@@ -41,7 +38,7 @@ Here is what the erb template looks like in Spree:
         </div>
       <%% end %>
     </div>
-    
+
 If you wanted to insert some code just before the `#registration` div on the page, you would define an override in `app/overrides` (creating a new file with an `rb` extension) as follows:
 
         Deface::Override.new(:virtual_path  => "spree/checkout/registration",
@@ -58,9 +55,9 @@ Now let's go over some of the features Deface has to offer.
 Deface applies an action to element(s) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element(s) is the value, for example:
 
     :remove => "p.junk"
-        
+
     :insert_after => "div#wow p.header"
-        
+
     :insert_bottom => "ul#giant-list"
 
 Deface currently supports the following actions:
@@ -111,7 +108,7 @@ So we want to override `spree/admin/product/_form`. Here is the part of the file
         <%%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
         <%%= f.error_message_on :price %>
     <%% end %>
-        
+
 We want our override to insert another field container after the price field container. We can do this by creating a new file `app/overrides/add_sale_price_to_product_edit.rb` and adding the following content:
 
     Deface::Override.new(:virtual_path => "spree/admin/products/_form",
@@ -124,7 +121,7 @@ We want our override to insert another field container after the price field con
                              <%%= f.error_message_on :sale_price %>
                            <%% end %>
                          ")
-                         
+
 There is one more change we will need to make in order to get the updated product edit form working. We need to make `cost_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `cost_price`.
 
 We can do this by creating a new file `app/models/spree/product_decorator.rb` and adding the following content to it:
@@ -132,7 +129,7 @@ We can do this by creating a new file `app/models/spree/product_decorator.rb` an
     module Spree
         Product.class_eval do
         delegate_belongs_to :master, :sale_price
-    
+
         attr_accessible :sale_price
         end
     end

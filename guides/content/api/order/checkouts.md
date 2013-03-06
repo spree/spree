@@ -4,9 +4,6 @@ title: Checkouts
 
 # Checkouts API
 
-* TOC
-{:toc}
-
 ## Introduction
 
 The checkout API functionality can be used to advance an existing order's state. Sending a `PUT` request to `/api/checkouts/ORDER_NUMBER` will advance an order's state or, failing that, report any errors.

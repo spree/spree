@@ -6,10 +6,7 @@ title: Return Authorizations
 
 <%= admin_only %>
 
-* TOC
-{:toc}
-
-## List return authorizations 
+## List return authorizations
 
 To list all return authorizations for an order, make a request like this:
 
@@ -30,7 +27,7 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:return_authorization) do |h| 
+<%= json(:return_authorization) do |h|
 { :return_authorizations => [h],
   :count => 2,
   :pages => 1,
@@ -61,7 +58,7 @@ Results can be returned in a specific order by specifying which field to sort by
    :count => 1,
    :pages => 1,
    :current_page => 1 }
-end %> 
+end %>
 
 ## A single return authorization
 
@@ -109,7 +106,7 @@ For instance, to update a return authorization's number, make this request:
 <%= headers 200 %>
 <%= json(:return_authorization) %>
 
-## Deleting a return authorization 
+## Deleting a return authorization
 
 <%= admin_only %>
 

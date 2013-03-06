@@ -4,12 +4,9 @@ title: Line Items
 
 # Line Items API
 
-* TOC
-{:toc}
+## Creating a line item
 
-## Creating a line item 
-
-To create a new line item, make a request like this: 
+To create a new line item, make a request like this:
 
     POST /api/orders/R1234567/line_items?line_item[variant_id]=1&line_item[quantity]=1
 

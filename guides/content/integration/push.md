@@ -6,9 +6,6 @@ title: Spree Pro Integration Guide - Pushing Events
 
 Applications can push new events to Spree Professional. These can be triggered when an order has changed, a shipment has shipped, a payment has been captured or a new user has signed up.
 
-* TOC
-{:toc}
-
 ## Overview
 
 Applications can be notified when events occur in Spree Professional and can push events back to Spree Professional. This creates a bidirectional conversation between Spree Professional and integrated services.

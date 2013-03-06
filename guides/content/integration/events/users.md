@@ -6,9 +6,6 @@ title: Spree Professional > User Events
 
 This guide explains the two events that maybe consumed relating to users:
 
-* TOC
-{:toc}
-
 ## New User Event
 
 In this example, a user has just signed up on a store which results in a "New User" event has being created.
@@ -30,7 +27,7 @@ Optionally, the endpoint can include "event" details what will be displayed alon
 
 ## Updated User Event
 
-After the initial "New User" event, any changes should result in an "Updated User" event. 
+After the initial "New User" event, any changes should result in an "Updated User" event.
 
 The integrator has already configured an endpoint for "Updated User" events, so the following JSON is PUT'ed to that URL.
 

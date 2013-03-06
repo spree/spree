@@ -46,7 +46,6 @@ compile '/developer/*' do
     :colorizers => {:javascript => :pygmentsrb,
                     :ruby       => :pygmentsrb}
   layout 'developer/default'
-  filter :add_toc
 end
 
 compile '/api/' do

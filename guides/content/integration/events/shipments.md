@@ -6,9 +6,6 @@ title: Spree Integration > Shipment Events
 
 This guide explains the two events that maybe consumed relating to shipments:
 
-* TOC
-{:toc}
-
 ## Shipment Ready Event
 
 In this example, a payment has just been captured on a store which results in a "Shipment Ready" event being created.

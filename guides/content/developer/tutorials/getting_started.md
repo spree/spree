@@ -1,11 +1,8 @@
 ---
-title: Getting Started with Spree
+title: Getting Started
 ---
 
-* TOC
-{:toc}
-
-## Prerequisites 
+## Prerequisites
 
 Before starting this tutorial, make sure you have Ruby and RubyGems installed on your system. This is fairly straightforward, but differs depending on which operating system you use.
 
@@ -84,6 +81,6 @@ Feel free to explore some of the backend features that Spree has to offer and to
 
 ## Wrapping Up
 
-If you've followed the steps described in this tutorial, you should now have a fully functional Spree application up and running. 
+If you've followed the steps described in this tutorial, you should now have a fully functional Spree application up and running.
 
 This tutorial is part of a series. The next tutorial in this series is the [Extensions Tutorial](/developer/tutorials/extensions).

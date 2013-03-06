@@ -2,9 +2,6 @@
 title: Extensions
 ---
 
-* TOC
-{:toc}
-
 ## Introduction
 
 This tutorial continues where we left off in the [getting started]() tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
@@ -53,7 +50,7 @@ This creates a `spree_simple_sales` directory with several additional files and 
 
 ### Adding a Sale Price to Variants
 
-The first thing we need to do is create a migration that adds a sale_price column to [variants](http://guides.spreecommerce.com/products_and_variants.html#what-is-a-variant). 
+The first thing we need to do is create a migration that adds a sale_price column to [variants](http://guides.spreecommerce.com/products_and_variants.html#what-is-a-variant).
 
 We can do this with the following command:
 
@@ -127,13 +124,13 @@ Now, follow the steps I take in selecting a product and updating it's master var
 
     > product = Spree::Product.first
     => #<Spree::Product id: 107377505, name: "Spree Bag", description: "Lorem ipsum dolor sit amet, consectetuer adipiscing...", available_on: "2013-02-13 18:30:16", deleted_at: nil, permalink: "spree-bag", meta_description: nil, meta_keywords: nil, tax_category_id: 25484906, shipping_category_id: nil, count_on_hand: 10, created_at: "2013-02-13 18:30:16", updated_at: "2013-02-13 18:30:16", on_demand: false>
-    
+
     > variant = product.master
     => #<Spree::Variant id: 833839126, sku: "SPR-00012", weight: nil, height: nil, width: nil, depth: nil, deleted_at: nil, is_master: true, product_id: 107377505, count_on_hand: 10, cost_price: #<BigDecimal:7f8dda5eebf0,'0.21E2',9(36)>, position: nil, lock_version: 0, on_demand: false, cost_currency: nil, sale_price: nil>
-    
+
     > variant.sale_price = 8.00
     => 8.0
-    
+
     > variant.save
     => true
 
@@ -165,7 +162,7 @@ Next, create the file `app/models/spree/variant_decorator` and add the following
 
     module Spree
       Variant.class_eval do
-        alias_method :orig_price_in, :price_in    
+        alias_method :orig_price_in, :price_in
         def price_in(currency)
           return orig_price_in(currency) unless sale_price.present?
           Spree::Price.new(:variant_id => self.id, :amount => self.sale_price, :currency => currency)
@@ -190,7 +187,7 @@ We can do this with the following command from the root directory of our extensi
 After this command completes, you should be able to run `rspec` and see the following output:
 
     No examples found.
-    
+
     Finished in 0.00005 seconds
     0 examples, 0 failures
 
@@ -201,26 +198,26 @@ Great! We're ready to start adding some tests. Let's replicate the extension's d
 Now, let's create a new file in this directory called `variant_decorator_spec.rb` and add the following tests to it:
 
     require 'spec_helper'
-    
+
     describe Spree::Variant do
       describe "#price_in" do
         it "returns the sale price if it is present" do
           variant = create(:variant, :sale_price => 8.00)
           expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.sale_price)
-    
+
           result = variant.price_in("USD")
-    
+
           result.variant_id.should == expected.variant_id
           result.amount.to_f.should == expected.amount.to_f
           result.currency.should == expected.currency
         end
-    
+
         it "returns the normal price if it is not on sale" do
           variant = create(:variant, :price => 15.00)
           expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.price)
-    
+
           result = variant.price_in("USD")
-    
+
           result.variant_id.should == expected.variant_id
           result.amount.to_f.should == expected.amount.to_f
           result.currency.should == expected.currency
@@ -232,6 +229,6 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 
 ## Summary
 
-In this tutorial you learned how to both install extensions and create your own. A lot of core spree development concepts were covered and you gained exposure to some of the Spree internals. 
+In this tutorial you learned how to both install extensions and create your own. A lot of core spree development concepts were covered and you gained exposure to some of the Spree internals.
 
 In the [next part](/developer/tutorial/deface_overrides) of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension .

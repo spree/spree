@@ -116,6 +116,5 @@ One thing: remember to add trailing slashes to all nanoc links!
 ## TODO
 
 * Integrate through a simple hurl.it app for live API calls.
-* Maybe add a nice TOC at the top of each page.
 * Write a task for verifying JSON Resource examples against the actual
   API.
