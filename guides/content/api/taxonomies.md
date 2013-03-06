@@ -2,12 +2,7 @@
 title: Taxonomies
 ---
 
-# Taxonomies API
-
-* TOC
-{:toc}
-
-## List taxonomies 
+## List taxonomies
 
 To get a list of all the taxonomies, including their root nodes and the
 immediate children for the root node, make a request like this:
@@ -25,7 +20,7 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:taxonomy) do |h| 
+<%= json(:taxonomy) do |h|
 { :taxonomies => [h],
   :count => 25,
   :pages => 5,
@@ -50,7 +45,7 @@ The search results are paginated.
    :count => 5,
    :pages => 2,
    :current_page => 1 }
-end %> 
+end %>
 
 ### Sorting results
 

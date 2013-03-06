@@ -2,11 +2,6 @@
 title: Orders
 ---
 
-# Orders API
-
-* TOC
-{:toc}
-
 ## List all orders
 
 <%= admin_only %>
@@ -35,7 +30,7 @@ per_page
   :count => 25,
   :pages => 5,
   :current_page => 1 }
-end %> 
+end %>
 
 ## Order searching
 
@@ -55,7 +50,7 @@ The search results are paginated.
    :count => 25,
    :pages => 5,
    :current_page => 1 }
-end %> 
+end %>
 
 ### Sorting results
 

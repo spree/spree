@@ -2,11 +2,6 @@
 title: Products
 ---
 
-* TOC
-{:toc}
-
-## List products 
-
 List products visible to the authenticated user. If the user is not an admin, they will only be able to see products which have an `available_on` date in the past. If the user is an admin, they are able to see all products.
 
     GET /api/products
@@ -34,7 +29,7 @@ per_page
   :count => 25,
   :pages => 5,
   :current_page => 1 }
-end %> 
+end %>
 
 ## Searching products
 
@@ -49,7 +44,7 @@ The search results are paginated.
 ### Response
 
 <%= headers 200 %>
-<%= json(:product) do |h| 
+<%= json(:product) do |h|
 { :products => [h],
   :count => 25,
   :pages => 5,

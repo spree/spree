@@ -2,11 +2,6 @@
 title: Variants
 ---
 
-# Variants API
-
-* TOC
-{:toc}
-
 ## List variants
 
 To return a paginated list of all variants within the store, make this request:
@@ -38,7 +33,7 @@ per_page
   :count => 25,
   :pages => 5,
   :current_page => 1 }
-end %> 
+end %>
 
 ## Searching variants
 
@@ -64,7 +59,7 @@ The search results are paginated.
    :count => 25,
    :pages => 5,
    :current_page => 1 }
-end %> 
+end %>
 
 ### Sorting results
 

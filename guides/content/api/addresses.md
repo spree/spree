@@ -2,14 +2,9 @@
 title: Address
 ---
 
-# Address API
+## A single address
 
-* TOC
-{:toc}
-
-## A single address 
-
-Retrieve details about a particular address: 
+Retrieve details about a particular address:
 
     GET /api/address/1
 

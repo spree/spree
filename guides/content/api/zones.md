@@ -2,11 +2,6 @@
 title: Zones
 ---
 
-# Zones API
-
-* TOC
-{:toc}
-
 ## List zones
 
 To get a list of zones, make this request:
@@ -28,7 +23,7 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:zone) do |h| 
+<%= json(:zone) do |h|
 { :zones => [h],
   :count => 25,
   :pages => 5,
@@ -53,7 +48,7 @@ The search results are paginated.
    :count => 25,
    :pages => 5,
    :current_page => 1 }
-end %> 
+end %>
 
 ### Sorting results
 
@@ -87,7 +82,7 @@ a zone member which is a `Spree::Country` record with the `id` attribute of 1, s
   :zone => {
     :name => "North Pole",
     :zone_members => [
-      { 
+      {
         :zoneable_type => "Spree::Country",
         :zoneable_id => 1
       }
@@ -114,7 +109,7 @@ To update zone and zone member information, use parameters like this:
   :zone => {
     :name => "North Pole",
     :zone_members => [
-      { 
+      {
         :zoneable_type => "Spree::Country",
         :zoneable_id => 1
       }

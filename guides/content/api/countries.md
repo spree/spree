@@ -2,11 +2,6 @@
 title: Countries
 ---
 
-# Country API
-
-* TOC
-{:toc}
-
 ## Listing countries
 
 Retrieve a list of all countries by making this request:
@@ -28,7 +23,7 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:country) do |h| 
+<%= json(:country) do |h|
 { :countries => [h],
   :count => 25,
   :pages => 5,
@@ -53,7 +48,7 @@ The search results are paginated.
    :count => 25,
    :pages => 5,
    :current_page => 1 }
-end %> 
+end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
@@ -61,7 +56,7 @@ Results can be returned in a specific order by specifying which field to sort by
 
 ## A single country
 
-Retrieve details about a particular country: 
+Retrieve details about a particular country:
 
     GET /api/countries/1
 
