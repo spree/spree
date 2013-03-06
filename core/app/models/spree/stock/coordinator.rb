@@ -16,7 +16,7 @@ module Spree
 
       private
       def build_packages(packages)
-        StockLocation.all.each do |stock_location|
+        StockLocation.active.each do |stock_location|
           packer = build_packer(stock_location, order)
           packages += packer.packages
         end

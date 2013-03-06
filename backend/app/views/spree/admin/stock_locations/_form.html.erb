@@ -5,6 +5,10 @@
       <%= f.text_field :name, :class => 'fullwidth' %>
 
       <div class="field ">
+        <%= f.label :active, t(:active) + ':' %>
+        <%= f.check_box :active %>
+      </div>
+      <div class="field ">
         <%= f.label :address1, t(:street_address) + ':' %>
         <%= f.text_field :address1, :class => 'fullwidth' %>
       </div>
