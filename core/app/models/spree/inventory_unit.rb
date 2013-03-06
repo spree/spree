@@ -38,34 +38,34 @@ module Spree
 
       #increase inventory to meet initial requirements
       order.line_items.each do |line_item|
-        increase(order, stock_location.stock_item(variant), line_item.quantity)
+        increase(order, stock_location, line_item.quantity)
       end
     end
 
     # manages both variant.count_on_hand and inventory unit creation
     #
-    def self.increase(order, stock_location, variant, quantity)
-      back_order = determine_backorder(order, stock_location.stock_item(variant), quantity)
+    def self.increase(order, stock_location, stock_item, quantity)
+      back_order = determine_backorder(order, stock_item, quantity)
       sold = quantity - back_order
 
       #set on_hand if configured
-      if self.track_levels?(variant)
-        stock_location.decrease_stock_for_variant(variant, quantity)
+      if self.track_levels?(stock_item.variant)
+        Spree::StockMovement.create!(stock_item: stock_item, action: 'sold', quantity: quantity)
       end
 
       #create units if configured
       if Spree::Config[:create_inventory_units]
-        create_units(order, variant, sold, back_order)
+        create_units(order, stock_item.variant, sold, back_order)
       end
     end
 
-    def self.decrease(order, stock_location, variant, quantity)
-      if self.track_levels?(variant)
-        stock_location.increase_stock_for_variant(variant, quantity)
+    def self.decrease(order, stock_location, stock_item, quantity)
+      if self.track_levels?(stock_item.variant)
+        Spree::StockMovement.create!(stock_item: stock_item, action: 'received', quantity: quantity)
       end
 
       if Spree::Config[:create_inventory_units]
-        destroy_units(order, variant, quantity)
+        destroy_units(order, stock_item.variant, quantity)
       end
     end
 
