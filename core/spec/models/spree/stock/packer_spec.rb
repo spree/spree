@@ -41,7 +41,7 @@ module Spree
         end
       end
 
-      context 'stock_status' do
+      context 'backorderable stock_status' do
         before do
           @stock_item = build(:stock_item, count_on_hand: 10)
           subject.stock_location.should_receive(:stock_item).and_return(@stock_item)
@@ -64,6 +64,32 @@ module Spree
           on_hand, backordered = subject.send(:stock_status, double, 20)
           on_hand.should eq 0
           backordered.should eq 20
+        end
+      end
+
+      context 'not backorderable stock_status' do
+        before do
+          @stock_item = build(:stock_item, count_on_hand: 10, :backorderable => false)
+          subject.stock_location.should_receive(:stock_item).and_return(@stock_item)
+        end
+
+        it 'all on_hand with no backordered' do
+          on_hand, backordered = subject.send(:stock_status, double, 5)
+          on_hand.should eq 5
+          backordered.should eq 0
+        end
+
+        it 'some on_hand with some backordered' do
+          on_hand, backordered = subject.send(:stock_status, double, 20)
+          on_hand.should eq 10
+          backordered.should eq nil
+        end
+
+        it 'zero on_hand with all backordered' do
+          @stock_item.stub(count_on_hand: 0)
+          on_hand, backordered = subject.send(:stock_status, double, 20)
+          on_hand.should eq 0
+          backordered.should eq nil
         end
       end
     end

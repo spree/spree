@@ -13,10 +13,6 @@ module Spree
 
     delegate :weight, :to => :variant
 
-    def can_backorder?
-      self.backorderable
-    end
-
     def self.locations_for_variant(variant)
       where(variant_id: variant).map(&:stock_location)
     end
