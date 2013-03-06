@@ -13,7 +13,7 @@ module Spree
 
     has_and_belongs_to_many :zones
 
-    attr_accessible :name, :zone_id, :display_on, :shipping_category_id,
+    attr_accessible :name, :zones, :display_on, :shipping_category_id,
                     :match_none, :match_one, :match_all
 
     def adjustment_label
