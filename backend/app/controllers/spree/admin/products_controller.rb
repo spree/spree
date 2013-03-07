@@ -51,6 +51,12 @@ module Spree
         redirect_to edit_admin_product_url(@new)
       end
 
+      def stock
+        @variants = @product.variants
+        @variants << @product.master
+        @stock_locations = StockLocation.all
+      end
+
       protected
 
         def find_resource

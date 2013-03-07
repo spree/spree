@@ -21,6 +21,9 @@
       <li<%== ' class="active"' if current == 'Product Properties' %>>
         <%= link_to_with_icon 'icon-tasks', t(:product_properties), admin_product_product_properties_url(@product) %>
       </li>
+      <li<%== ' class="active"' if current == 'Stock Management' %>>
+        <%= link_to_with_icon 'icon-tasks', t(:stock_management), stock_admin_product_url(@product) %>
+      </li>
     </ul>
   </nav>
 

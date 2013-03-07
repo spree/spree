@@ -1070,6 +1070,7 @@ en:
   states_required: "States Required"
   status: Status
   stock_movements_for_stock_location: "Stock Movements for %{stock_location_name}"
+  stock_movements_for_product: "Stock Movements for %{product_name}"
   stop: Stop
   store: Store
   street_address: "Street Address"
