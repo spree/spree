@@ -106,11 +106,15 @@ $color-ste-delivery-bg:       $color-success !default;
 $color-ste-delivery-text:     $color-1 !default;
 $color-ste-confirm-bg:        $color-error !default;
 $color-ste-confirm-text:      $color-1 !default;
+$color-ste-active-bg:         $color-success !default;
+$color-ste-active-text:       $color-1 !default;
+$color-ste-inactive-bg:       $color-notice !default;
+$color-ste-inactive-text:     $color-1 !default;
 
 // Avaliable states
-$states:                      completed,                 complete,                 sold,                 pending,                 paid,                 shipped,                 balance_due,                 backorder,                 checkout,                 cart,                 address,                 delivery,                 payment,                 confirm,                 canceled,                 ready,                 void  !default;
-$states-bg-colors:            $color-ste-completed-bg,   $color-ste-complete-bg,   $color-ste-sold-bg,   $color-ste-pending-bg,   $color-ste-paid-bg,   $color-ste-shipped-bg,   $color-ste-balance_due-bg,   $color-ste-backorder-bg,   $color-ste-checkout-bg,   $color-ste-cart-bg,   $color-ste-address-bg,   $color-ste-delivery-bg,   $color-ste-payment-bg,   $color-ste-confirm-bg,   $color-ste-canceled-bg,   $color-ste-ready-bg,   $color-ste-void-bg  !default;
-$states-text-colors:          $color-ste-completed-text, $color-ste-complete-text, $color-ste-sold-text, $color-ste-pending-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text, $color-ste-checkout-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text, $color-ste-canceled-text, $color-ste-ready-text, $color-ste-void-text  !default;
+$states:                      completed,                 complete,                 sold,                 pending,                 paid,                 shipped,                 balance_due,                 backorder,                 checkout,                 cart,                 address,                 delivery,                 payment,                 confirm,                 canceled,                 ready,                 void,                 active,                 inactive  !default;
+$states-bg-colors:            $color-ste-completed-bg,   $color-ste-complete-bg,   $color-ste-sold-bg,   $color-ste-pending-bg,   $color-ste-paid-bg,   $color-ste-shipped-bg,   $color-ste-balance_due-bg,   $color-ste-backorder-bg,   $color-ste-checkout-bg,   $color-ste-cart-bg,   $color-ste-address-bg,   $color-ste-delivery-bg,   $color-ste-payment-bg,   $color-ste-confirm-bg,   $color-ste-canceled-bg,   $color-ste-ready-bg,   $color-ste-void-bg,   $color-ste-active-bg,   $color-ste-inactive-bg  !default;
+$states-text-colors:          $color-ste-completed-text, $color-ste-complete-text, $color-ste-sold-text, $color-ste-pending-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text, $color-ste-checkout-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text, $color-ste-canceled-text, $color-ste-ready-text, $color-ste-void-text, $color-ste-active-text, $color-ste-inactive-text !default;
 
 // Avaliable actions
 $actions:                     edit,                   clone,                   remove,                   void,                   capture,                   mail  !default;

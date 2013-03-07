@@ -1,33 +1,62 @@
 <div data-hook="admin_stock_locations_form_fields" class="row">
-  <div class="alpha four columns">
-    <%= f.field_container :name do %>
-      <%= f.label :name, t(:name) %>
-      <%= f.text_field :name, :class => 'fullwidth' %>
+  <div class="row">
+    <div class="alpha twelve columns">
+      <%= f.field_container :name do %>
+        <%= f.label :name, t(:name) %>
+        <%= f.text_field :name, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+    <div class="omega four columns">
+      <%= f.field_container :active do %>
+        <label for="active"><%= t(:state) %></label>
+        <ul>
+          <li>
+            <%= f.label :active, t(:active) + ':' %>
+            <%= f.check_box :active %>
+          </li>
+        </ul>
+      <% end %>
+    </div>
+  </div>
 
-      <div class="field ">
-        <%= f.label :active, t(:active) + ':' %>
-        <%= f.check_box :active %>
-      </div>
+  <div class="row">
+    <div class="alpha four columns">
       <div class="field ">
         <%= f.label :address1, t(:street_address) + ':' %>
         <%= f.text_field :address1, :class => 'fullwidth' %>
       </div>
+    </div>
+
+    <div class="four columns">
       <div class="field ">
         <%= f.label :address2, t(:street_address_2) + ':' %>
         <%= f.text_field :address2, :class => 'fullwidth' %>
       </div>
+    </div>
+    <div class="four columns">
       <div class="field ">
         <%= f.label :city, t(:city) + ':' %>
         <%= f.text_field :city, :class => 'fullwidth' %>
       </div>
+    </div>
+
+    <div class="omega four columns">
       <div class="field ">
         <%= f.label :zipcode, t(:zip) + ':' %>
         <%= f.text_field :zipcode, :class => 'fullwidth' %>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="alpha eight columns">
       <div class="field ">
         <%= f.label :country_id, t(:country) + ':' %>
         <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %></span>
       </div>
+    </div>
+
+    <div class="four columns">
       <div class="field ">
         <%= f.label :state_id, t(:state) + ':' %>
         <span id="state">
@@ -35,10 +64,13 @@
           <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
         </span>
       </div>
+    </div>
+
+    <div class="omega four columns">
       <div class="field ">
         <%= f.label :phone, t(:phone) + ':' %>
         <%= f.phone_field :phone, :class => 'fullwidth' %>
       </div>
-    <% end %>
+    </div>
   </div>
 </div>
