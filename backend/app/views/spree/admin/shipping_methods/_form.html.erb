@@ -1,5 +1,5 @@
 <div data-hook="admin_shipping_method_form_fields" class="alpha twelve columns">
-  <div class="alpha four columns">
+  <div class="alpha six columns">
     <%= f.field_container :name do %>
       <%= f.label :name, t(:name) %><br />
       <%= f.text_field :name, :class => 'fullwidth' %>
@@ -7,8 +7,7 @@
     <% end %>
   </div>
 
-
-  <div class="omega four columns">
+  <div class="omega six columns">
     <%= f.field_container :display_on do %>
       <%= f.label :display_on, t(:display) %><br />
       <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
@@ -17,32 +16,33 @@
   </div>
 </div>
 
-<div data-hook="admin_shipping_method_form_availability_fields" class="alpha six columns">
-  <fieldset class="categories no-border-bottom">
-    <legend align="center"><%= t(:categories) %></legend>
-        <%= f.field_container :categories do %>
-      <% Spree::ShippingCategory.all.each do |category| %>
-        <%= f.label :shipping_category_id, category.name %>
-        <%= check_box_tag('shipping_method[shipping_categories][]', category.id, @shipping_method.shipping_categories.include?(category)) %><br>
+<div class="alpha six columns">
+  <div data-hook="admin_shipping_method_form_availability_fields" class="alpha six columns">
+    <fieldset class="categories no-border-bottom">
+      <legend align="center"><%= t(:categories) %></legend>
+          <%= f.field_container :categories do %>
+        <% Spree::ShippingCategory.all.each do |category| %>
+          <%= f.label :shipping_category_id, category.name %>
+          <%= check_box_tag('shipping_method[shipping_categories][]', category.id, @shipping_method.shipping_categories.include?(category)) %><br>
+        <% end %>
+        <%= error_message_on :shipping_method, :shipping_category_id %>
       <% end %>
-      <%= error_message_on :shipping_method, :shipping_category_id %>
-    <% end %>
+    </fieldset>
   </div>
 
-  </fieldset>
+  <div class="alpha six columns">
+    <fieldset class="no-border-bottom">
+      <legend align="center"><%= t(:zones) %></legend>
+      <%= f.field_container :zones do %>
+        <% Spree::Zone.all.each do |zone| %>
+          <%= f.label :zone_id, zone.name %>
+          <%= check_box_tag('shipping_method[zones][]', zone.id, @shipping_method.zones.include?(zone)) %><br>
+        <% end %>
+        <%= error_message_on :shipping_method, :zone_id %>
+      <% end %>
+    </fieldset>
+  </div>
 </div>
-
- <div class="four columns">
-  <legend align="center"><%= t(:zones) %></legend>
-
-    <%= f.field_container :zones do %>
-      <% Spree::Zone.all.each do |zone| %>
-        <%= f.label :zone_id, zone.name %>
-        <%= check_box_tag('shipping_method[zones][]', zone.id, @shipping_method.zones.include?(zone)) %><br>
-      <% end %>
-      <%= error_message_on :shipping_method, :zone_id %>
-    <% end %>
-  </div>
 
 <div data-hook="admin_shipping_method_form_calculator_fields" class="omega six columns">
   <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>

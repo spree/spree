@@ -5,21 +5,54 @@
 
       <% @order.create_proposed_shipments %>
 
-        <%= form.fields_for :shipments do |ship_form| %>
-          <p>Package from <%= ship_form.object.stock_location.name %></p>
+      <%= form.fields_for :shipments do |ship_form| %>
 
-          <p>contents:</p>
-          <% ship_form.object.manifest.each do |item| %>
-            <%= item.variant.name %> <%= item.quantity %>
-          <% end %>
+        <div class="shipment">
+          <h3 class="stock-location" data-hook="stock-location">
+            <%= t(:package_from) %>
+            <strong class="stock-location-name" data-hook="stock-location-name"><%= ship_form.object.stock_location.name %></strong>
+          </h3>
 
-          <p>shipping method</p>
-          <% ship_form.object.shipping_rates.each do |rate| %>
-            <p class="field radios">
-              <%= ship_form.radio_button :selected_shipping_rate_id, rate.id %> <%= rate.name %> <%= rate.cost %></p>
-            </p>
-          <% end %>
-        <% end %>
+          <table class="stock-contents" data-hook="stock-contents">
+            <colgroup>
+              <col style="width: 10%;" />
+              <col style="width: 60%;" />
+              <col style="width: 10%;" />
+              <col style="width: 20%;" />
+            </colgroup>
+            <thead>
+              <th>image</th>
+              <th>name</th>
+              <th>quantity</th>
+              <th>price</th>
+            </thead>
+            <tbody>
+              <% ship_form.object.manifest.each do |item| %>
+                <tr class="stock-item">
+                  <td class="item-image"><%= mini_image(item.variant) %></td>
+                  <td class="item-name"><%= item.variant.name %></td>
+                  <td class="item-qty"><%= item.quantity %></td>
+                  <td class="item-price"><%= item.variant.price_in(current_currency).display_price %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+
+          <h5 class="stock-shipping-method-title"><%= t(:shipping_method) %></h5>
+          <ul class="field radios shipping-methods">
+            <% ship_form.object.shipping_rates.each do |rate| %>
+              <li class="shipping-method">
+                <label>
+                  <%= ship_form.radio_button :selected_shipping_rate_id, rate.id %>
+                  <span class="rate-name"><%= rate.name %></span>
+                  <span class="rate-cost"><%= number_to_currency rate.cost %></span>
+                </label>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+      <% end %>
 
     </div>
     <% if Spree::Config[:shipping_instructions] && @order.rate_hash.present? %>
