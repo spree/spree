@@ -11,14 +11,7 @@ module Spree
       def create
         variant = Variant.find(params[:line_item][:variant_id])
         @line_item = @order.contents.add(variant, params[:line_item][:quantity].to_i)
-
-        if @order.save
-          render_order_form
-        else
-          respond_with(@line_item) do |format|
-            format.js { render :action => 'create', :locals => { :order => @order.reload } }
-          end
-        end
+        @order.save
       end
 
       def destroy
@@ -33,7 +26,8 @@ module Spree
 
       private
         def render_order_form
-          render :partial => 'spree/admin/orders/form', :locals => { :order => @order.reload }
+          @order.reload
+          respond_with(@line_item) { |format| format.js { render :create } }
         end
 
         def load_order
