@@ -17,6 +17,16 @@ describe Spree::Variant do
     end
   end
 
+  context "after create" do
+    it "should create a stock item for the variant for each stock location" do
+      Spree::StockLocation.create(:name => "Default")
+      product = create(:product)
+      lambda {
+        product.variants.create(:name => "Foobar")
+      }.should change(Spree::StockItem, :count).by(1)
+    end
+  end
+
   context "product has other variants" do
     describe "option value accessors" do
       before {
