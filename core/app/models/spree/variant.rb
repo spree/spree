@@ -35,6 +35,7 @@ module Spree
 
     before_validation :set_cost_currency
     after_save :save_default_price
+    after_create :create_stock_items
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
@@ -165,6 +166,12 @@ module Spree
 
       def set_cost_currency
         self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+      end
+
+      def create_stock_items
+        Spree::StockLocation.all.each do |stock_location|
+          stock_location.stock_items.create!(:variant => self)
+        end
       end
   end
 end

@@ -7,7 +7,7 @@ module Spree
     validates_presence_of :stock_location
     validates_uniqueness_of :variant_id, :scope => :stock_location_id
 
-    attr_accessible :count_on_hand, :variant
+    attr_accessible :count_on_hand, :variant, :stock_location
 
     after_save :process_backorders
 
