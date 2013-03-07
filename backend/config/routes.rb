@@ -74,6 +74,7 @@ Spree::Core::Engine.routes.append do
       end
       member do
         get :clone
+        get :stock
       end
       resources :variants do
         collection do
