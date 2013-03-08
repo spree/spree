@@ -17,7 +17,7 @@ describe "Add items to cart" do
       click_link "Orders"
       click_link "New Order"
       
-      select2_search "t-shirt", :from => "Name or SKU (enter at least first 4 characters of product name)"
+      select2_search product.name, :from => "Name or SKU (enter at least first 4 characters of product name)"
       within('#add-line-item') { click_on "Add" }
       page.should have_content(product.price)
     end
