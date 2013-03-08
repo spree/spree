@@ -1,13 +1,16 @@
 module Spree
   module Admin
-    class StockMovementsController < ResourceController
-      belongs_to 'spree/stock_location', find_by: :id
-
+    class StockMovementsController < Spree::Admin::BaseController
       respond_to :html
-      helper_method :allowed_actions
 
-      def allowed_actions
-        %w{received sold}
+      def index
+        @stock_movements = @stock_location.stock_movements
+      end
+
+      private
+
+      def stock_location
+        @stock_location ||= StockLocation.find(params[:stock_location_id])
       end
     end
   end
