@@ -7,7 +7,7 @@ module Spree
       helper_method :allowed_actions
 
       def allowed_actions
-        %w{sold received}
+        %w{received sold}
       end
     end
   end
