@@ -289,5 +289,22 @@ describe Spree::InventoryUnit do
       end
     end
   end
+
+  context "#finalize!" do
+    let(:inventory_unit) { FactoryGirl.create(:inventory_unit)  }
+    
+    it "should mark the shipment not pending" do
+      inventory_unit.stub(:stock_item, FactoryGirl.create(:stock_item))
+      inventory_unit.pending.should == true
+      inventory_unit.finalize!
+      inventory_unit.pending.should == false
+    end
+
+    it "should create a stock movement" do
+      inventory_unit.stub(:stock_item, FactoryGirl.create(:stock_item))
+      expect {inventory_unit.finalize!}.to change{Spree::StockMovement.count}.by(1)
+
+    end
+  end
 end
 
