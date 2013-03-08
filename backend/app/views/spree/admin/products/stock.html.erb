@@ -25,7 +25,7 @@
     <% @variants.each do |variant| %>
       <% if variant.stock_items.present? %>
         <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows" class="<%= cycle('odd', 'even') %>">
-          <td class="align-center"><%= variant.name %></td>
+          <td class="align-center"><%= variant.name %> (<%= variant.sku %>)</td>
           <% @stock_locations.each do |stock_location| %>
             <td class="align-center">
               <table class="index stock_location_details">
@@ -36,7 +36,7 @@
                 <thead>
                   <tr>
                     <th><%= t(:count_on_hand) %></th>
-                    <th><%= t(:backordered) %></th>
+                    <th><%= t(:backorderable) %></th>
                   </tr>
                 </thead>
                 <tbody>
