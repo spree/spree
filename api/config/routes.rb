@@ -21,8 +21,7 @@ Spree::Core::Engine.routes.prepend do
       end
     end
 
-    resources :variants, :only => [:index] do
-    end
+    resources :variants, :only => [:index]
 
     resources :option_types do
       resources :option_values
