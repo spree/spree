@@ -16,5 +16,8 @@ FactoryGirl.define do
         line_item.quantity.times { shipment.inventory_units.create(:variant_id => line_item.variant) }
       end
     end
+    stock_location {FactoryGirl.create(:stock_location)}
+    stock_location_id {stock_location.id}
+    
   end
 end
