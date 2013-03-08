@@ -50,7 +50,7 @@ module Spree
 
       def stock
         @variants = @product.variants
-        @variants << @product.master
+        @variants = [@product.master] if @variants.empty?
         @stock_locations = StockLocation.all
       end
 
