@@ -1,0 +1,23 @@
+<div data-hook="admin_stock_movements_form_fields" class="row">
+  <div class="alpha four columns">
+    <%= f.field_container :quantity do %>
+      <%= f.label :quantity, t(:quantity) %>
+      <%= f.text_field :quantity, :class => 'fullwidth' %>
+    <% end %>
+    <%= f.field_container :stock_location do %>
+      <%= f.label :stock_location_id, t(:stock_location) %>
+      <%= collection_select 'stock_movement', 'stock_location_id', Spree::StockLocation.all, :to_s, :name,
+        { include_blank: true }, class: 'select2 fullwidth' %>
+    <% end %>
+    <%= f.field_container :action do %>
+      <%= f.label :action, t(:action) %>
+      <%= collection_select 'stock_movement', 'action', allowed_stock_movement_actions, :to_s, :to_s,
+        { include_blank: true }, class: 'select2 fullwidth' %>
+    <% end %>
+    <%= f.field_container :stock_item_id do %>
+      <%= f.label :stock_item_id, t(:stock_item) %>
+      <%= collection_select 'stock_movement', 'stock_item_id', Spree::StockItem.all, :id, :variant_name,
+        {}, class: 'select2 fullwidth' %>
+    <% end %>
+  </div>
+</div>

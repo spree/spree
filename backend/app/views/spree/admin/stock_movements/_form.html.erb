@@ -6,7 +6,7 @@
     <% end %>
     <%= f.field_container :action do %>
       <%= f.label :action, t(:action) %>
-      <%= collection_select 'stock_movement', 'action', allowed_actions, :to_s, :to_s,
+      <%= collection_select 'stock_movement', 'action', allowed_stock_movement_actions, :to_s, :to_s,
         { selected: @stock_movement.action }, class: 'select2 fullwidth' %>
     <% end %>
     <%= f.field_container :stock_item_id do %>
