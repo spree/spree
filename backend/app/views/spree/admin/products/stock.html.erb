@@ -55,3 +55,10 @@
     <% end %>
   </tbody>
 </table>
+
+<%= form_for [:admin, Spree::StockMovement.new] do |f| %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'spree/admin/shared/stock_movement_form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
+<% end %>
