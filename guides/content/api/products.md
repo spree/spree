@@ -4,11 +4,13 @@ title: Products
 
 List products visible to the authenticated user. If the user is not an admin, they will only be able to see products which have an `available_on` date in the past. If the user is an admin, they are able to see all products.
 
-    GET /api/products
+```text
+GET /api/products```
 
 Products are paginated and can be iterated through by passing along a `page` parameter:
 
-    GET /api/products?page=2
+```text
+GET /api/products?page=2```
 
 ### Parameters
 
@@ -35,7 +37,8 @@ end %>
 
 To search for a particular product, make a request like this:
 
-    GET /api/products?q[name_cont]=Spree
+```text
+GET /api/products?q[name_cont]=Spree```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -55,21 +58,25 @@ end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-    GET /api/products?q[s]=sku%20asc
+```text
+GET /api/products?q[s]=sku%20asc```
 
 It is also possible to sort results using an associated object's field.
 
-    GET /api/products?q[s]=shipping_category_name%20asc
+```text
+GET /api/products?q[s]=shipping_category_name%20asc```
 
 ## A single product
 
 To view the details for a single product, make a request using that product\'s permalink:
 
-    GET /api/products/a-product
+```text
+GET /api/products/a-product```
 
 You may also query by the product\'s id attribute:
 
-    GET /api/products/1
+```text
+GET /api/products/1```
 
 Note that the API will attempt a permalink lookup before an ID lookup.
 
@@ -86,7 +93,8 @@ Note that the API will attempt a permalink lookup before an ID lookup.
 
 You can learn about the potential attributes (required and non-required) for a product by making this request:
 
-     GET /api/products/new
+```text
+GET /api/products/new```
 
 ### Response
 
@@ -105,11 +113,13 @@ You can learn about the potential attributes (required and non-required) for a p
 
 To create a new product through the API, make this request with the necessary parameters:
 
-    POST /api/products
+```text
+POST /api/products```
 
 For instance, a request to create a new product called \"Headphones\" with a price of $100 would look like this:
 
-    POST /api/products?product[name]=Headphones&product[price]=100
+```text
+POST /api/products?product[name]=Headphones&product[price]=100```
 
 ### Successful response
 
@@ -132,11 +142,13 @@ For instance, a request to create a new product called \"Headphones\" with a pri
 
 To update a product\'s details, make this request with the necessary parameters:
 
-    PUT /api/products/a-product
+```text
+PUT /api/products/a-product```
 
 For instance, to update a product\'s name, send it through like this:
 
-    PUT /api/products/a-product?product[name]=Headphones
+```text
+PUT /api/products/a-product?product[name]=Headphones```
 
 ### Successful response
 
@@ -159,7 +171,8 @@ For instance, to update a product\'s name, send it through like this:
 
 To delete a product, make this request:
 
-    DELETE /api/products/a-product
+```text
+DELETE /api/products/a-product```
 
 This request, much like a typical product \"deletion\" through the admin interface, will not actually remove the record from the database. It simply sets the `deleted_at` field to the current time on the product, as well as all of that product\'s variants.
 

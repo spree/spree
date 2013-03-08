@@ -102,9 +102,8 @@ We want to override the product edit admin page, so the view we want to modify i
 
 First, let's create the overrides directory with the following command:
 
-```shell
-$ mkdir app/overrides
-```
+```bash
+$ mkdir app/overrides```
 
 So we want to override `spree/admin/product/_form`. Here is the part of the file we are going to add content to (you can also view the [full file](https://github.com/spree/spree/blob/1-3-stable/core/app/views/spree/admin/products/_form.html.erb)):
 
@@ -114,8 +113,7 @@ So we want to override `spree/admin/product/_form`. Here is the part of the file
     <%%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
     <%%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
     <%%= f.error_message_on :price %>
-<%% end %>
-```
+<%% end %>```
 
 We want our override to insert another field container after the price field container. We can do this by creating a new file `app/overrides/add_sale_price_to_product_edit.rb` and adding the following content:
 
@@ -129,8 +127,7 @@ Deface::Override.new(:virtual_path => "spree/admin/products/_form",
                          <%%= f.text_field :sale_price, :value => number_to_currency(@product.sale_price, :unit => '') %>
                          <%%= f.error_message_on :sale_price %>
                        <%% end %>
-                     ")
-```
+                     ")```
 
 There is one more change we will need to make in order to get the updated product edit form working. We need to make `cost_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `cost_price`.
 
@@ -143,7 +140,6 @@ module Spree
 
   attr_accessible :sale_price
   end
-end
-```
+end```
 
 Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application (created in the [Getting Started](/developer/tutorial/getting_started/) tutorial).

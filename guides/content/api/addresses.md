@@ -6,7 +6,8 @@ title: Address
 
 Retrieve details about a particular address:
 
-    GET /api/address/1
+```text
+GET /api/address/1```
 
 ### Response
 
@@ -17,7 +18,8 @@ Retrieve details about a particular address:
 
 To update an address, make a request like this:
 
-    PUT /api/address/1?address[firstname]=Ryan
+```text
+PUT /api/address/1?address[firstname]=Ryan```
 
 This request will update the `firstname` field for an address to the value of \"Ryan\"
 

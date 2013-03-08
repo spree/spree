@@ -12,16 +12,18 @@ img {
 }
 
 a {
+  text-decoration: none;
+  color: #82B245;
   transition: color 0.2s;
   -moz-transition: color 0.2s; /* Firefox 4 */
   -webkit-transition: color 0.2s; /* Safari and Chrome */
   -o-transition: color 0.2s; /* Opera */
 }
 
-h1, h2, h3, h4, h5, h6, a {
+h1, h2, h3, h4, h5, h6 {
   color: #82B245;
-  font-weight: 600;
-  text-decoration: none;
+  font-weight: normal;
+  font-family: 'Bariol', 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
 }
 
 h1 {

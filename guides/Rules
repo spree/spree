@@ -9,6 +9,7 @@
 #   “content/about.html”). To select all children, grandchildren, … of an
 #   item, use the pattern “/about/*/”; “/about/*” will also select the parent,
 #   because “*” matches zero or more characters.
+require 'coderay_bash'
 
 compile '/static/*' do
 end
@@ -16,22 +17,45 @@ end
 compile '/' do
   filter :erb
   filter :kramdown, :toc_levels => [2]
-  filter :colorize_syntax,
-    :colorizers => {:javascript => :pygmentsrb}
   layout 'default'
 end
 
 compile '/CNAME/' do
 end
 
+compile '/assets/stylesheets/*/_*/' do
+  # don’t compile partials
+end
+
+route '/assets/stylesheets/*/_*/' do
+  # don't output partials, so return nil
+  nil
+end
+
+compile '/assets/stylesheets/*/' do
+  filter :sass, syntax: :scss
+end
+
+
+route '/assets/stylesheets/*/' do
+  item.identifier.chop + '.css' # so that the /assets/style/screen/ item is compiled to /assets/style/screen.css
+end
+
+compile '/assets/*' do
+end
+
+route '/assets/*' do
+  item.identifier.chop + '.' + item[:extension]
+end
+
 compile '/feed/' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
 end
 
 compile '/developer/' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'developer'
 end
 
@@ -41,44 +65,47 @@ compile '/developer/*' do
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil
-  filter :colorize_syntax,
-    :colorizers => {:javascript => :pygmentsrb,
-                    :ruby       => :pygmentsrb}
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'developer/default'
 end
 
 compile '/api/' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'api'
 end
 
 compile '/api/*' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
-  filter :colorize_syntax,
-    :colorizers => {:javascript => :pygmentsrb}
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'api/default'
 end
 
 compile '/user/' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'user'
 end
 
 compile '/integration/' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration'
 end
 
 compile '/integration/*' do
   filter :erb
-  filter :kramdown, :toc_levels => [2]
-  filter :colorize_syntax,
-    :colorizers => {:javascript => :pygmentsrb}
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration/default'
 end
 

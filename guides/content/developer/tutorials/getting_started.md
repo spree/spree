@@ -12,17 +12,15 @@ By following this tutorial, you will create a simple Spree project called `mysto
 
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
-```shell
-$ gem install rails
-```
+```bash
+$ gem install rails```
 
 ### Installing Bundler
 
 Bundler is the current standard for maintaining Ruby gem dependencies. It is recommended that you have a decent working knowledge of Bundler and how it used within Rails before attempting to install Spree. You can install Bundler using the following command:
 
-```shell
-$ gem install bundler
-```
+```bash
+$ gem install bundler```
 
 ### Installing Image Magick
 
@@ -30,17 +28,15 @@ Spree also uses the Image Magick library for manipulating images. Using this lib
 
 If you are using OSX, a recommended approach is to install Image Magick using [Homebrew](http://mxcl.github.com/homebrew/). This can be done with the following command:
 
-```shell
-$ brew install imagemagick
-```
+```bash
+$ brew install imagemagick```
 
 ### Installing Spree
 
 The easiest way to get Spree setup is by installing the `spree_cmd` gem. This can be done with the following command:
 
-```shell
-$ gem install spree_cmd
-```
+```bash
+$ gem install spree_cmd```
 
 ## Creating a New Spree Project
 
@@ -50,9 +46,8 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 
 Let’s start by creating a standard Rails application using the following command:
 
-```shell
-$ rails new mystore
-```
+```bash
+$ rails new mystore```
 
 ### Adding Spree to Your Rails Application
 
@@ -60,23 +55,20 @@ Now that we have a basic Rails application we can add Spree to it. This approach
 
 After you create the store application, switch to its folder to continue work directly in that application:
 
-```shell
-$ cd mystore
-```
+```bash
+$ cd mystore```
 
 Now lets add Spree to our Rails application:
 
-```shell
-$ spree install --auto-accept
-```
+```bash
+$ spree install --auto-accept```
 
 ## Hello, Spree!
 
 You now have a functional Spree application after running only a few commands! To see it, you need to start a web server on your development machine. You can do this by running another command:
 
-```shell
-$ rails server
-```
+```bash
+$ rails server```
 
 This will fire up an instance of the Webrick web server by default (Spree can also use several other web servers). To see your application in action, open a browser window and navigate to http://localhost:3000. You should see the Spree default home page:
 

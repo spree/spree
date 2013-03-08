@@ -8,11 +8,13 @@ title: Orders
 
 Retrieve a list of orders by making this request:
 
-    GET /api/orders
+```text
+GET /api/orders```
 
 Orders are paginated and can be iterated through by passing along a `page` parameter:
 
-    GET /api/orders?page=2
+```text
+GET /api/orders?page=2```
 
 ### Parameters
 
@@ -36,7 +38,8 @@ end %>
 
 To search for a particular order, make a request like this:
 
-    GET /api/orders?q[email_cont]=bob
+```text
+GET /api/orders?q[email_cont]=bob```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `email_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -56,17 +59,20 @@ end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-    GET /api/orders?q[s]=number%20desc
+```text
+GET /api/orders?q[s]=number%20desc```
 
 It is also possible to sort results using an associated object's field.
 
-    GET /api/orders?q[s]=user_name%20asc
+```text
+GET /api/orders?q[s]=user_name%20asc```
 
 ## A single order
 
 To view the details for a single product, make a request using that order\'s number:
 
-    GET /api/orders/R123456789
+```text
+GET /api/orders/R123456789```
 
 Orders through the API will only be visible to admins and the users who own them. If a user attempts to access an order that does not belong to them, they will be met with an authorization error.
 
@@ -87,11 +93,13 @@ Orders through the API will only be visible to admins and the users who own them
 
 To create a new order through the API, make this request:
 
-    POST /api/orders
+```text
+POST /api/orders```
 
 If you wish to create an order with a line item matching to a variant whose ID is \"1\" and quantity is 5, make this request:
 
-    POST /api/orders?order[line_items][0][variant_id]=1&order[line_items][0][quantity]=5
+```text
+POST /api/orders?order[line_items][0][variant_id]=1&order[line_items][0][quantity]=5```
 
 ### Successful response
 
@@ -112,13 +120,15 @@ If you wish to create an order with a line item matching to a variant whose ID i
 
 To add address information to an order, make this request with the correct parameters:
 
-    PUT /api/orders/:number/address
+```text
+PUT /api/orders/:number/address```
 
 You may choose to pass through both the shipping address or billing address.
 
 With an order number of R1234567, updating an address would be done like this:
 
-    PUT /api/orders/:number/address?shipping_address[firstname]...
+```text
+PUT /api/orders/:number/address?shipping_address[firstname]...```
 
 The valid address parameters are:
 
@@ -146,7 +156,8 @@ To choose a delivery method for the order, pass along one ID from the `shipping_
 
 Make a request like this to select the delivery method:
 
-    PUT /api/orders/R1234567?shipping_method_id=1
+```text
+PUT /api/orders/R1234567?shipping_method_id=1```
 
 Upon a successful request, the order will transition to the `payment` state.
 
@@ -154,7 +165,8 @@ Upon a successful request, the order will transition to the `payment` state.
 
 To empty an order\'s cart, make this request:
 
-    PUT /api/orders/R1234567/empty
+```text
+PUT /api/orders/R1234567/empty```
 
 All line items will be removed from the cart and the order\'s information will
 be cleared. Inventory that was previously depleted by this order will be

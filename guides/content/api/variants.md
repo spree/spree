@@ -6,13 +6,18 @@ title: Variants
 
 To return a paginated list of all variants within the store, make this request:
 
-    GET /api/variants
+```text
+GET /api/variants```
 
 You can limit this to showing the variants for a particular product by passing through a product id:
 
-    GET /api/products/1/variants
-    # or
-    GET /api/variants?product_id=1
+```text
+GET /api/products/1/variants```
+
+or
+
+```text
+GET /api/variants?product_id=1```
 
 ### Parameters
 
@@ -39,13 +44,19 @@ end %>
 
 To search for a particular variant, make a request like this:
 
-    GET /api/variants?q[sku_cont]=foo
+```text
+GET /api/variants?q[sku_cont]=foo```
 
 You can limit this to showing the variants for a particular product by passing through a product id:
 
-    GET /api/products/1/variants?q[sku_cont]=foo
-    # or
-    GET /api/variants?product_id=1&q[sku_cont]=foo
+```text
+GET /api/products/1/variants?q[sku_cont]=foo```
+
+or
+
+```text
+GET /api/variants?product_id=1&q[sku_cont]=foo```
+
 
 The searching API is provided through the Ransack gem which Spree depends on. The `sku_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -65,17 +76,20 @@ end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-    GET /api/variants?q[s]=price%20asc
+```text
+GET /api/variants?q[s]=price%20asc```
 
 It is also possible to sort results using an associated object's field.
 
-    GET /api/variants?q[s]=product_name%20asc
+```text
+GET /api/variants?q[s]=product_name%20asc```
 
 ## A single variant
 
 To view the details for a single variant, make a request using that variant\'s id, along with its `product_id`:
 
-    GET /api/products/1/variants/1
+```text
+GET /api/products/1/variants/1```
 
 ### Successful Response
 
@@ -90,7 +104,8 @@ To view the details for a single variant, make a request using that variant\'s i
 
 You can learn about the potential attributes (required and non-required) for a variant by making this request:
 
-     GET /api/products/1/variants/new
+```text
+GET /api/products/1/variants/new```
 
 ### Response
 
@@ -109,11 +124,13 @@ You can learn about the potential attributes (required and non-required) for a v
 
 To create a new variant for a product, make this request with the necessary parameters:
 
-    POST /api/products/1/variants
+```text
+POST /api/products/1/variants```
 
 For instance, a request to create a new variant with a SKU of 12345 and a price of 19.99 would look like this::
 
-    POST /api/products/1/variants/?variant[sku]=12345&variant[price]=19.99
+```text
+POST /api/products/1/variants/?variant[sku]=12345&variant[price]=19.99```
 
 ### Successful response
 
@@ -134,11 +151,13 @@ For instance, a request to create a new variant with a SKU of 12345 and a price 
 
 To update a variant\'s details, make this request with the necessary parameters:
 
-    PUT /api/products/1/variants/2
+```text
+PUT /api/products/1/variants/2```
 
 For instance, to update a variant\'s SKU, send it through like this:
 
-    PUT /api/products/1/variants/2?variant[sku]=12345
+```text
+PUT /api/products/1/variants/2?variant[sku]=12345```
 
 ### Successful response
 
@@ -159,7 +178,8 @@ For instance, to update a variant\'s SKU, send it through like this:
 
 To delete a variant, make this request:
 
-    DELETE /api/products/1/variants/2
+```text
+DELETE /api/products/1/variants/2```
 
 This request, much like a typical variant \"deletion\" through the admin interface, will not actually remove the record from the database. It simply sets the `deleted_at` field to the current time on the variant.
 

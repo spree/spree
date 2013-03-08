@@ -7,7 +7,8 @@ title: Taxonomies
 To get a list of all the taxonomies, including their root nodes and the
 immediate children for the root node, make a request like this:
 
-    GET /api/taxonomies
+```text
+GET /api/taxonomies```
 
 ### Parameters
 
@@ -31,7 +32,8 @@ end %>
 
 To search for a particular taxonomy, make a request like this:
 
-    GET /api/taxonomies?q[name_cont]=brand
+```text
+GET /api/taxonomies?q[name_cont]=brand```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -51,17 +53,20 @@ end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-    GET /api/taxonomies?q[s]=name%20asc
+```text
+GET /api/taxonomies?q[s]=name%20asc```
 
 It is also possible to sort results using an associated object's field.
 
-    GET /api/taxonomies?q[s]=root_name%20desc
+```text
+GET /api/taxonomies?q[s]=root_name%20desc```
 
 ## A single taxonomy
 
 To get information for a single taxonomy, including its root node and the immediate children of the root node, make a request like this:
 
-     GET /api/taxonomies/1
+```text
+GET /api/taxonomies/1```
 
 ### Response
 
@@ -74,12 +79,14 @@ To get information for a single taxonomy, including its root node and the immedi
 
 To create a taxonomy, make a request like this:
 
-     POST /api/taxonomies
+```text
+POST /api/taxonomies```
 
 For instance, if you want to create a taxonomy with the name \"Brands\", make
 this request:
 
-     POST /api/taxonomies?taxonomy[name]=Brand
+```text
+POST /api/taxonomies?taxonomy[name]=Brand```
 
 If you\'re creating a taxonomy without a root taxon, a root taxon will automatically be
 created for you with the same name as the taxon.
@@ -95,11 +102,13 @@ created for you with the same name as the taxon.
 
 To update a taxonomy, make a request like this:
 
-     PUT /api/taxonomies/1
+```text
+PUT /api/taxonomies/1```
 
 For instance, to update a taxonomy\'s name, make this request:
 
-     PUT /api/taxonomies/1?taxonomy[name]=Brand
+```text
+PUT /api/taxonomies/1?taxonomy[name]=Brand```
 
 ### Response
 
@@ -112,7 +121,8 @@ For instance, to update a taxonomy\'s name, make this request:
 
 To delete a taxonomy, make a request like this:
 
-    DELETE /api/taxonomies/1
+```text
+DELETE /api/taxonomies/1```
 
 ### Response
 

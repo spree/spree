@@ -2,7 +2,7 @@
 title: API
 ---
 
-# Spree API Guide
+## Spree API Guide
 
 This site covers the inner working of Spree\'s RESTful API. It assumes a basic understanding of the principles of REST.
 
