@@ -183,6 +183,7 @@ Spree::Core::Engine.routes.append do
     resources :stock_locations do
       resources :stock_movements
     end
+    resources :stock_movements
     resources :stock_items
     resources :tax_rates
     resource  :tax_settings
