@@ -1,7 +1,10 @@
 module Spree
   module Admin
     class StockItemsController < Spree::Admin::BaseController
+      before_filter :determine_backorderable
+
       def update
+        stock_item.save
         respond_to do |format|
           format.js { head :ok }
         end
@@ -14,7 +17,7 @@ module Spree
       end
 
       def determine_backorderable
-        @stock_item.backorderable = params[:stock_item_backorderable].present? ? true : false
+        stock_item.backorderable = params[:stock_item].present? && params[:stock_item][:backorderable].present? ? true : false
       end
     end
   end
