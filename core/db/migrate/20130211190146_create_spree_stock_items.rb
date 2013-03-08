@@ -3,7 +3,7 @@ class CreateSpreeStockItems < ActiveRecord::Migration
     create_table :spree_stock_items do |t|
       t.belongs_to :stock_location
       t.belongs_to :variant
-      t.integer :count_on_hand
+      t.integer :count_on_hand, null: false, default: 0
       t.integer :lock_version
 
       t.timestamps
