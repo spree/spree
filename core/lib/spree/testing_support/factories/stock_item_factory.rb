@@ -4,5 +4,6 @@ FactoryGirl.define do
 
     # associations:
     variant
+    stock_location
   end
 end
