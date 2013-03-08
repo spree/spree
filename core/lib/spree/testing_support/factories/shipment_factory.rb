@@ -9,5 +9,8 @@ FactoryGirl.define do
     after(:create) do |shipment, evalulator|
       shipment.add_shipping_method(create(:shipping_method), true)
     end
+    stock_location {FactoryGirl.create(:stock_location)}
+    stock_location_id {stock_location.id}
+    
   end
 end
