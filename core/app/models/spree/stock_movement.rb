@@ -17,6 +17,8 @@ module Spree
         original = changes[0]
         final = changes[1]
 
+        original = 0 if original.nil?
+
         if action == "sold"
           stock_item.count_on_hand = stock_item.count_on_hand + original - final
         else

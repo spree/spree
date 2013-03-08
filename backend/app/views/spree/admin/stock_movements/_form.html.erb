@@ -11,7 +11,7 @@
     <% end %>
     <%= f.field_container :stock_item_id do %>
       <%= f.label :stock_item_id, t(:stock_item_id) %>
-      <%= collection_select 'stock_movement', 'stock_item_id', @stock_location.stock_items, :id, :variant_name,
+      <%= collection_select 'stock_movement', 'stock_item_id', stock_location.stock_items, :id, :variant_name,
         { selected: @stock_movement.stock_item_id }, class: 'select2 fullwidth' %>
     <% end %>
   </div>
