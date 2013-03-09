@@ -9,31 +9,31 @@ $(document).ready(function() {
     $('#s3_settings, #s3_headers').toggle();
   });
 
-  $('.destroy_style').live("click", function(e) {
+  $(document).on('click', '.destroy_style', function(e) {
     e.preventDefault();
     $(this).parent().remove();
   });
 
-  $('.destroy_new_attachment_styles').live("click", function(e) {
+  $(document).on('click', '.destroy_new_attachment_styles', function(e) {
     e.preventDefault();
     $(this).closest('.new_attachment_styles').remove();
   });
 
-  $('.destroy_new_s3_headers').live("click", function(e) {
+  $(document).on('click', '.destroy_new_s3_headers', function(e) {
     e.preventDefault();
     $(this).closest('.new_s3_headers').remove();
   });
 
   // Handle adding new styles
   var styles_hash_index = 1;
-  $('.add_new_style').live("click", function(e) {
+  $(document).on('click', '.add_new_style', function(e) {
     e.preventDefault();
     $('#new-styles').append(generate_html_for_hash("new_attachment_styles", styles_hash_index));
   });
 
   // Handle adding new headers
   var headers_hash_index = 1;
-  $('.add_header').live("click", function(e) {
+  $(document).on('click', '.add_header', function(e) {
     e.preventDefault();
     $('#headers_list').append(generate_html_for_hash("new_s3_headers", headers_hash_index));
   });
