@@ -14,6 +14,8 @@ module Spree
     before_filter :ensure_valid_state
     before_filter :associate_user
     before_filter :check_authorization
+    before_filter :clear_existing_payments, :only => :update
+
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
     respond_to :html
@@ -122,5 +124,11 @@ module Spree
       def check_authorization
         authorize!(:edit, current_order, session[:access_token])
       end
+
+      # "PUT Update" will create a new payment/source through update_attributes, so we delete existing payments first
+      def clear_existing_payments
+        @order.payments.destroy_all if params[:order] && params[:order][:payments_attributes]
+      end
+
   end
 end
