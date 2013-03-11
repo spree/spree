@@ -23,7 +23,7 @@ GEM
     eventmachine (1.0.1)
     fssm (0.2.10)
     highline (1.6.15)
-    kramdown (0.14.2)
+    kramdown (1.0.1)
     listen (0.7.3)
     method_source (0.8.1)
     mime-types (1.21)
@@ -66,10 +66,10 @@ DEPENDENCIES
   capistrano
   coderay_bash
   fssm
-  kramdown
+  kramdown (= 1.0.1)
   listen
   mime-types
-  nanoc
+  nanoc (= 3.6.1)
   neat
   nokogiri
   pry

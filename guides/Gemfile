@@ -2,10 +2,10 @@ source "http://rubygems.org"
 
 gem 'builder'
 gem 'coderay_bash'
-gem 'kramdown'
+gem 'kramdown', '1.0.1'
 gem 'mime-types'
 gem 'nokogiri'
-gem 'nanoc'
+gem 'nanoc', '3.6.1'
 gem 'rake'
 gem 'thin'
 gem 'yajl-ruby'
