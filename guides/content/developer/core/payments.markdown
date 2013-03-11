@@ -197,6 +197,18 @@ problem affecting customer satisfaction. You should check the latest
 `log_entries` for the most recent payments in the store if this is happening.
 !!!
 
+### Log Entries
+
+Responses from payment gateways within Spree are typically
+`ActiveMerchant::Billing::Response` objects. When Spree handles a response from a payment
+gateway, it will serialize these objects as YAML and store them into the
+database as log entries for a payment. These responses can be useful for
+debugging why a payment has failed.
+
+You can get a list of these log entries by calling the `log_entries` on any
+`Spree::Payment` object. To get the `Active::Merchant::Billing::Response` out of
+these `Spree::LogEntry` objects, call the `details` method.
+
 ## Supported Gateways
 
 With the usage of the [spree_gateway](https://github.com/spree/spree_gateway)
