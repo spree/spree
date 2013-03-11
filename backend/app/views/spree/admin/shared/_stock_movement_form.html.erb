@@ -15,9 +15,9 @@
       <%= collection_select 'stock_movement', 'action', allowed_stock_movement_actions, :to_s, :to_s,
         { include_blank: true }, class: 'select2 fullwidth' %>
     <% end %>
-    <%= f.field_container :stock_item_id do %>
-      <%= f.label :stock_item_id, t(:stock_item) %>
-      <%= collection_select 'stock_movement', 'stock_item_id', Spree::StockItem.all, :id, :variant_name,
+    <%= f.field_container :variant_id do %>
+      <%= f.label :variant_id, t(:variant) %>
+      <%= collection_select 'stock_item', 'variant_id', @variants, :id, :sku,
         {}, class: 'select2 fullwidth' %>
     <% end %>
   </div>
