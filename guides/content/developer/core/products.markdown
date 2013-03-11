@@ -78,14 +78,12 @@ frontend.
 Spree automatically handles creation and storage of several size versions of each
  image (via the Paperclip plugin). The default styles are as follows:
 
-<% ruby do %>
-:styles => {
-  :mini => '48x48>',
-  :small => '100x100>',
-  :product => '240x240>',
-  :large => '600x600>'
-  }
-<% end %>
+    :styles => {
+      :mini => '48x48>',
+      :small => '100x100>',
+      :product => '240x240>',
+      :large => '600x600>'
+    }
 
 These sizes can be changed by altering the value of
 `Spree::Config[:attachment_styles]`. (TODO: information about regenerating
