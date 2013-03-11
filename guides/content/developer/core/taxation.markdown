@@ -252,7 +252,7 @@ is also the Quebec Sales Tax of 9.5% on the sale price including GST.
 
 Since Spree does not currently support the notion of compound tax rates you can
 calculate a combined sales tax amount instead. In this case you can create a
-single sales tax rate of 14.975%. This approach is allowed <%= link_to "according to the
-Quebec government, "http://www.revenuquebec.ca/en/entreprise/taxes/tvq_tps/calcul-taxes.aspx" %>
+single sales tax rate of 14.975%. This approach is allowed 
+<%= link_to "according to the Quebec government, "http://www.revenuquebec.ca/en/entreprise/taxes/tvq_tps/calcul-taxes.aspx" %>
 as long as you label the tax simply as "QST" and do not display the percentage
 used in the calculation as part of the label.
