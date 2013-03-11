@@ -175,3 +175,8 @@ within the heirarchy of the item. This logic is handled by the
 [awesome_nested_set](https://github.com/collectiveidea/awesome_nested_set) gem.
 ***
 
+Taxons link to products through an intermediary model called `Classification`.
+This model exists so that when a product is deleted, all the links for that
+product to its taxon are deleted automatically. A similar action takes place when a taxon is
+deleted: all the links to a product are deleted automatically.
+
