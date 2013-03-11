@@ -1,6 +1,5 @@
-
 ---
-  title: "Core | Models | Address
+  title: "Core | Models | Address"
 ---
 
 ## Address
