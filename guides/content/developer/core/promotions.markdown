@@ -30,6 +30,15 @@ payload's. The `code` attribute is used for promotion codes, where a user must
 enter a code to receive the promotion, and the `path` attribute is used to apply
 a promotion once a user has visited a specific path.
 
+!!!
+Path-based promotions will only work if the `spree.content.visited` event is
+triggered, with a call such as `fire_event('spree.content.visited')`. This is done
+within `Spree::ContentController`, as an example.
+!!!
+
+A promotion may also have a `usage_limit` attribute set, which restricts how
+many times the promotion can be used.
+
 ## Actions
 
 There are two actions which come with Spree: one action to apply adjustments
@@ -70,6 +79,11 @@ You can create a new action for Spree's promotion engine by inherting from
       def perform(options={})
       end
     end
+
+***
+You can access promotion information using the `promotion` method within any
+`Spree::PromotionAction`.
+***
 
 This action must then be registered with Spree, which can be done by adding this
 code to `config/initializers/spree.rb`:
@@ -113,20 +127,14 @@ To register a new rule with Spree, first define a class that inherits from
       end
     end
 
+The `eligible?` method should then return `true` or `false` to indicate if the
+promotion should be eligible for an order. You can retreive promotion
+information by calling `promotion`.
+
 Then register it using this code inside `config/initializers/spree.rb`:
 
      Rails.application.config.spree.promotion.rules << MyPromotionRule
 
 Once this rule has been registered, it will be available within Spree's
 interface.
-
-
-
-
-
-
-
-
-
-
 
