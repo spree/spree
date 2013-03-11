@@ -116,7 +116,7 @@ describe "Checkout" do
       # Regression test for #1596
       context "full checkout" do
         before do
-          @product.shipping_category = shipping_method.shipping_category
+          @product.shipping_category = shipping_method.shipping_categories.first
           @product.save!
         end
 
@@ -139,6 +139,10 @@ describe "Checkout" do
 
           click_button "Save and Continue"
           page.should_not have_content("undefined method `promotion'")
+
+	  choose(shipping_method.name)
+	  click_button "Save and Continue"
+	  page.should have_content(shipping_method.name)
         end
       end
     end
