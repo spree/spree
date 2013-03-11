@@ -14,8 +14,14 @@ module Spree
 
       def create
         if params[:stock_movement][:stock_location_id].present?
+          variant = Variant.find(params[:stock_item].delete(:variant_id))
           location = StockLocation.find(params[:stock_movement].delete(:stock_location_id))
           @stock_movement = location.stock_movements.build(params[:stock_movement])
+          if stock_item = location.stock_item(variant)
+            @stock_movement.stock_item = stock_item
+          else
+            @stock_movement.stock_item = variant.stock_items.create!(stock_location: location)
+          end
           @stock_movement.save
           flash[:success] = flash_message_for(@stock_movement, :successfully_created)
           redirect_to :back
