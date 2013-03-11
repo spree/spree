@@ -7,7 +7,7 @@
     <% end %>
     <%= f.field_container :stock_location do %>
       <%= f.label :stock_location_id, t(:stock_location) %>
-      <%= collection_select 'stock_movement', 'stock_location_id', Spree::StockLocation.all, :to_s, :name,
+      <%= collection_select 'stock_movement', 'stock_location_id', Spree::StockLocation.all, :id, :name,
         { include_blank: true }, class: 'select2 fullwidth' %>
     <% end %>
     <%= f.field_container :action do %>
