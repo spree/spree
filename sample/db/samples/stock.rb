@@ -7,6 +7,6 @@ location.save!
 
 Spree::Variant.all.each do |variant|
   si = location.stock_items.create(variant: variant, count_on_hand: 10)
-  Spree::StockMovement.create!(:action => 'received', :quantity => 10, :stock_item => si)
+  Spree::StockMovement.create(:action => 'received', :quantity => 10, :stock_item => si)
 end
 
