@@ -25,12 +25,12 @@ gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git'```
 
 Now, let's install the gem via Bundler with the following command:
 
-```shell
+```bash
 $ bundle install```
 
 Finally, let's copy over the required migrations and assets from the extension with the following command:
 
-```shell
+```bash
 $ bundle exec rails g spree_fancy:install```
 
 Answer **yes** when prompted to run migrations.
@@ -45,12 +45,12 @@ Let's build a simple extension. Suppose we want the ability to mark certain prod
 
 So let's start by generating the extension. Run the following command from a directory of your choice outside of our Spree application:
 
-```shell
+```bash
 $ spree extension simple_sales```
 
 This creates a `spree_simple_sales` directory with several additional files and directories. After generating the extension make sure you change to its directory:
 
-```shell
+```bash
 $ cd spree_simple_sales```
 
 ### Adding a Sale Price to Variants
@@ -59,7 +59,7 @@ The first thing we need to do is create a migration that adds a sale_price colum
 
 We can do this with the following command:
 
-```shell
+```bash
 rails g migration add_sale_price_to_spree_variants sale_price:decimal```
 
 **TODO**: Make above generator actually work in extension directories
@@ -86,12 +86,12 @@ You may have to adjust the path somewhat depending on where you created the exte
 
 Once you have added the gem, it's time to bundle:
 
-```shell
+```bash
 $ bundle install```
 
 Finally, let's run the `spree_simple_sales` install generator to copy over the migration we just created (answer **yes** if prompted to run migrations):
 
-```shell
+```bash
 $ rails g spree_simple_sales:install```
 
 ### Adding a Controller Action to HomeController
@@ -100,7 +100,7 @@ Now we need to extend `Spree::HomeController` and add an action that selects on 
 
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
-```shell
+```bash
 $ mkdir -p app/controllers/spree```
 
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
@@ -131,7 +131,7 @@ Now that our variants have the attribute `sale_price` available to them, let's u
 
 So, in order to do this, first open up the rails console:
 
-```shell
+```bash
 $ rails console```
 
 Now, follow the steps I take in selecting a product and updating it's master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
@@ -155,7 +155,7 @@ Now we have at least one product in our database that is on sale. Let's create a
 
 First, create the required views directory with the following command:
 
-```shell
+```bash
 $ mkdir -p app/views/spree/home```
 
 Next, create the file `app/views/spree/home/sale.html.erb` and add the following content to it:
@@ -173,7 +173,7 @@ Let's fix our extension so that it uses the `sale_price` when it is present.
 
 First, create the required directory structure for our new decorator:
 
-```shell
+```bash
 $ mkdir -p app/models/spree```
 
 Next, create the file `app/models/spree/variant_decorator` and add the following content to it:
@@ -201,12 +201,12 @@ An extension is not a full Rails application, so we need something to test our e
 
 We can do this with the following command from the root directory of our extension:
 
-```shell
+```bash
 $ bundle exec rake test_app```
 
 After this command completes, you should be able to run `rspec` and see the following output:
 
-```shell
+```bash
 No examples found.
 
 Finished in 0.00005 seconds
@@ -214,7 +214,7 @@ Finished in 0.00005 seconds
 
 Great! We're ready to start adding some tests. Let's replicate the extension's directory structure in our spec directory by running the following command
 
-```shell
+```bash
 $ mkdir -p spec/models/spree```
 
 Now, let's create a new file in this directory called `variant_decorator_spec.rb` and add the following tests to it:
