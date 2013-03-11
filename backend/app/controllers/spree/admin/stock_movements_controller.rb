@@ -13,13 +13,17 @@ module Spree
       end
 
       def create
-        @stock_movement = stock_location.stock_movements.build(params[:stock_movement])
-
-        if @stock_movement.save
+        if params[:stock_movement][:stock_location_id].present?
+          location = StockLocation.find(params[:stock_movement].delete(:stock_location_id))
+          @stock_movement = location.stock_movements.build(params[:stock_movement])
+          @stock_movement.save
+          flash[:success] = flash_message_for(@stock_movement, :successfully_created)
+          redirect_to :back
+        else
+          @stock_movement = stock_location.stock_movements.build(params[:stock_movement])
+          @stock_movement.save
           flash[:success] = flash_message_for(@stock_movement, :successfully_created)
           redirect_to admin_stock_location_stock_movements_path(stock_location)
-        else
-          render :new
         end
       end
 
@@ -38,6 +42,7 @@ module Spree
       end
 
       def destroy
+        stock_movement = StockMovement.find(params[:id])
         flash[:success] = flash_message_for(stock_movement, :successfully_removed)
         stock_movement.destroy
         redirect_to admin_stock_location_stock_movements_path(stock_location)
