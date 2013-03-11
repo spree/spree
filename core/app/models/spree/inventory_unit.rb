@@ -73,13 +73,13 @@ module Spree
       Spree::Config[:track_inventory_levels]
     end
 
-    def stock_item
+    def find_stock_item
       Spree::StockItem.where({:stock_location_id => self.shipment.stock_location_id, :variant_id => variant_id}).first
     end
 
     def finalize!
       update_column(:pending, false)
-      Spree::StockMovement.create!(:stock_item => stock_item, :quantity => 1, :action => 'sold')
+      Spree::StockMovement.create!(:stock_item => find_stock_item, :quantity => 1, :action => 'sold')
     end
 
     # def finalize!
