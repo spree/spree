@@ -60,5 +60,5 @@ When each Activator object is activated, the `activate` method receives the
 payload from the `fire_event` method. Whatever the activator does with this is
 up to that specific activator.
 
-For an example of how Activators are used, please see the <%= link_to
-"Promotions", :promotions %> guide.
+For an example of how Activators are used, please see the 
+<%= link_to "Promotions", :promotions %> guide.
