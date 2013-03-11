@@ -63,7 +63,7 @@ module Spree
       end
 
       it "can convert to a shipment" do
-        flattened = [Package::ContentItem.new(variant, 1, :on_hand),
+        flattened = [Package::ContentItem.new(variant, 2, :on_hand),
                     Package::ContentItem.new(variant, 1, :backordered)]
         subject.flattened = flattened
 
@@ -73,7 +73,7 @@ module Spree
         shipment = subject.to_shipment
         shipment.order.should == subject.order
         shipment.stock_location.should == subject.stock_location
-        shipment.inventory_units.size.should == 2
+        shipment.inventory_units.size.should == 3
 
         first_unit = shipment.inventory_units.first
         first_unit.variant.should == variant
