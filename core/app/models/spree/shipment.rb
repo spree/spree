@@ -64,6 +64,7 @@ module Spree
     def selected_shipping_rate_id=(id)
       shipping_rates.update_all(selected: false)
       shipping_rates.update(id, selected: true)
+      self.save!
     end
 
     def ensure_selected_shipping_rate
@@ -195,8 +196,11 @@ module Spree
       def ensure_correct_adjustment
         if adjustment
           adjustment.originator = shipping_method
-          adjustment.label = shipping_method.adjustment_label
-          adjustment.save
+          adjustment.label = shipping_method.name
+          adjustment.amount = shipping_rates.where(selected: true).first.cost
+          adjustment.save!
+      	  adjustment.reload
+
         elsif shipping_method
           shipping_method.create_adjustment(shipping_method.adjustment_label, order, self, true)
           reload #ensure adjustment is present on later saves
