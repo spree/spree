@@ -112,7 +112,6 @@ For more information about adjustments, please see the
 Payment records are used to track payment information about an order. For more
 information, please read the <%= link_to "Payments", :payments %> guide.
 
+## Return Authorizations
 
-
-
-
+TODO: document return authorizations.
