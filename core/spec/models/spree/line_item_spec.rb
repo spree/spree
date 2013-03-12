@@ -201,7 +201,9 @@ describe Spree::LineItem do
   context 'after shipment made' do
     before do
       shipping_method = mock_model(Spree::ShippingMethod, :calculator => mock(:calculator))
-      shipment = Spree::Shipment.new :order => order, :shipping_method => shipping_method
+      shipment = Spree::Shipment.new :order => order
+      shipment.shipping_rates = [mock_model(Spree::ShippingRate)]
+
       shipment.stub(:state => 'shipped')
       shipped_inventory_units = 5.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'shipped' }, :without_protection => true) }
       unshipped_inventory_units = 2.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'sold' }, :without_protection => true) }
