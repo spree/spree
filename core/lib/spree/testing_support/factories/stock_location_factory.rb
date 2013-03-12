@@ -13,8 +13,8 @@ FactoryGirl.define do
 
     # associations:
     after(:create) do |stock_location, evaluator|
-      FactoryGirl.create_list(:stock_item, 2,
-                              stock_location: stock_location)
+      stock_location.stock_items.create(variant: create(:variant))
+      stock_location.stock_items.create(variant: create(:variant))
     end
   end
 end
