@@ -90,7 +90,7 @@ This action must then be registered with Spree, which can be done by adding this
 code to `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotion.actions << MyAction```
+Rails.application.config.spree.promotions.actions << MyAction```
 
 Once this has been registered, it will be available within Spree's interface. To
 provide translations for the interface, you will need to define them within your
@@ -138,7 +138,7 @@ information by calling `promotion`.
 Then register it using this code inside `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotion.rules << MyPromotionRule```
+Rails.application.config.spree.promotions.rules << MyPromotionRule```
 
 Once this rule has been registered, it will be available within Spree's
 interface.
