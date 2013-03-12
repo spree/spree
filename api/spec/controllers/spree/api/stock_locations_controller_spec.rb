@@ -77,7 +77,7 @@ module Spree
       end
 
       it "can delete a stock location" do
-        api_delete :destroy, :id => stock_location.to_param
+        api_delete :destroy, id: stock_location.to_param
         response.status.should == 204
         lambda { stock_location.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end

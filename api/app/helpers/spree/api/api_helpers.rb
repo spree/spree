@@ -99,6 +99,10 @@ module Spree
       def stock_location_attributes
         [:id, :name, :address1, :address2, :city, :state_id, :state_name, :country_id, :zipcode, :phone, :active]
       end
+
+      def stock_movement_attributes
+        [:id, :quantity, :action, :stock_item_id]
+      end
     end
   end
 end
