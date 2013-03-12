@@ -95,6 +95,10 @@ module Spree
       def property_attributes
         [:id, :name, :presentation]
       end
+
+      def stock_location_attributes
+        [:id, :name, :address1, :address2, :city, :state_id, :state_name, :country_id, :zipcode, :phone, :active]
+      end
     end
   end
 end
