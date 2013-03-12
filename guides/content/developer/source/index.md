@@ -19,4 +19,3 @@ Spree's functionality is split across seven different components:
   Spree; things like product viewing and checkout.
 * [**Sample**](/developer/sample): Provides the sample data for Spree, used for
   setting up a new Spree store.
-
