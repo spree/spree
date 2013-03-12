@@ -10,7 +10,7 @@ complex area within Spree, as there are a large number of moving parts to
 consider.
 
 The first of these moving parts is that promotions are based off
-[Activators](/developer/core/models/activators/), using the functionality provided by
+<%= link_to "Activators", :activators %>, using the functionality provided by
 that area of Spree to know when to trigger the application of a promotion to an
 order. **Please read that guide first**.
 
