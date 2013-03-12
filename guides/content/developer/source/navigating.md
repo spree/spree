@@ -97,18 +97,17 @@ functionality provided by each of these gems.
 Within the Spree source, each of the gems is organized into
 subdirectories as follows:
 
-[TODO - fix table]
-  --------------- -------------- ---------------------------------------------------------------------------
-  _\<.Gem        _.Directory   _.Description
-  spree_api      api            Provides REST API access
-  spree_auth     auth           Provides authentication and authorization (via authlogic and cancan gems)
-  spree_cmd      cmd            Command line utility for installing Spree and creating extensions
-  spree_core     core           Core functionality - all other gems depend on this gem
-  spree_dash     dash           Simple overview dashboard
-  spree_promo    promo          Coupons and promotions
-  spree_sample   sample         Sample data and images
-  --------------- -------------- ---------------------------------------------------------------------------
-
+| Gem          | Directory | Description               |
+| :------------| :---------| :-------------------------|
+| spree_api    | api       | Provides REST API access  |
+| spree_auth   | auth      | Provides authentication and authorization (via authlogic and cancan gems) |
+| spree_cmd    | cmd       | Command line utility for installing Spree and creating extensions |
+| spree_core   | core      | Core functionality - all other gems depend on this gem |
+| spree_dash   | dash      | Simple overview dashboard |
+| spree_promo  | promo     | Coupons and promotions    |
+| spree_sample | sample    | Sample data and images    |
+  
+ 
 ### Use of Rails Engines
 
 Each of the gems in Spree makes use of Rails Engines. This functionality
