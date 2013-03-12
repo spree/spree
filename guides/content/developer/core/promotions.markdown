@@ -90,19 +90,23 @@ You can access promotion information using the `promotion` method within any
 This action must then be registered with Spree, which can be done by adding this
 code to `config/initializers/spree.rb`:
 
-    Rails.application.config.spree.promotion.actions << MyAction
+```ruby
+Rails.application.config.spree.promotion.actions << MyAction
+```
 
 Once this has been registered, it will be available within Spree's interface. To
 provide translations for the interface, you will need to define them within your
 locale file. For instance, to define English translations for your new promotion
 action, use this code within `config/locales/en.yml`:
 
+```yaml
 en:
   spree:
     promotion_action_types:
       my_promotion_action:
         name: My Promotion Action
         description: Performs my promotion action.
+```
 
 ## Rules
 
@@ -124,10 +128,12 @@ must match. This is determined by the `match_policy` attribute on the
 To register a new rule with Spree, first define a class that inherits from
 `Spree::PromotionRule`, like this:
 
-    class MyPromotionRule < Spree::PromotionRule
-      def eligible?(order)
-      end
-    end
+```ruby
+class MyPromotionRule < Spree::PromotionRule
+  def eligible?(order)
+  end
+end
+```
 
 The `eligible?` method should then return `true` or `false` to indicate if the
 promotion should be eligible for an order. You can retreive promotion
@@ -135,7 +141,9 @@ information by calling `promotion`.
 
 Then register it using this code inside `config/initializers/spree.rb`:
 
-     Rails.application.config.spree.promotion.rules << MyPromotionRule
+```ruby
+Rails.application.config.spree.promotion.rules << MyPromotionRule
+```
 
 Once this rule has been registered, it will be available within Spree's
 interface.
