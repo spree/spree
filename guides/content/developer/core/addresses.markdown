@@ -1,5 +1,5 @@
 ---
-  title: "Core | Models | Address"
+title: "Addresses"
 ---
 
 ## Address
@@ -35,7 +35,7 @@ affect different features of the order, including shipping availability and
 taxation. The way these effects work is through zones.
 
 A zone is comprised of many different "zone members", which can either be a
-set of countries or a set of states. 
+set of countries or a set of states.
 
 Every order has a "tax zone", which indicates if a user should or shouldn't be
 taxed when placing an order. For more information, please see the <%= link_to "Taxation", :taxation %> guide.

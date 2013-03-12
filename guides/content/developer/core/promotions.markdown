@@ -1,5 +1,5 @@
 ---
-  title: "Core | Models | Promotions"
+title: "Promotions"
 ---
 
 ## Overview

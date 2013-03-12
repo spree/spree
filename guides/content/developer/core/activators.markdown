@@ -1,5 +1,5 @@
 ---
-  title: "Core | Models | Activators"
+title: "Activators"
 ---
 
 ## Overview

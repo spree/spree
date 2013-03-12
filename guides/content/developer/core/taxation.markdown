@@ -1,5 +1,5 @@
 ---
-  title: "Core | Models | Order"
+title: Taxation
 ---
 
 # Overview
@@ -215,19 +215,19 @@ should only apply to orders within the United Kingdom (UK).
 In the case where the order address is within the UK and we purchase a single
 clothing item for £17.99 we see an order total of £17.99. The tax rate
 adjustment applied is £17.99 x 5%, which is £0.8995, and that is rounded up to
-two decimal places, becoming £0.90. 
+two decimal places, becoming £0.90.
 
 Now let's increase the quantity on the item from 1 to 2. The order total changes
 to £35.98 with a tax total of £1.799, which is again rounded up to now being £1.80.
 
-Next we'll add a different clothing item costing £19.99 to our order. Since both 
+Next we'll add a different clothing item costing £19.99 to our order. Since both
 items are clothing and taxed at the same rate so they can be reduced to a single total,
 which means there's a single adjustment still applied to the order, calculated
 like this: (£17.99 + £19.99) x 0.05 = £1.899, rounded up to two decimal places:
 £1.90.
 
 Now let's assume an additional tax rate of 10% on a "Consumer Electronics" tax
-category. When we add a product with this tax category to our order with a price 
+category. When we add a product with this tax category to our order with a price
 of £16.99, there will be a second adjustment added to the order, with a
 calculated total of £16.99 x 10%, which is £1.699. Rounded up, it's £1.70.
 
@@ -252,7 +252,7 @@ is also the Quebec Sales Tax of 9.5% on the sale price including GST.
 
 Since Spree does not currently support the notion of compound tax rates you can
 calculate a combined sales tax amount instead. In this case you can create a
-single sales tax rate of 14.975%. This approach is allowed 
+single sales tax rate of 14.975%. This approach is allowed
 <%= link_to "according to the Quebec government", "http://www.revenuquebec.ca/en/entreprise/taxes/tvq_tps/calcul-taxes.aspx" %>
 as long as you label the tax simply as "QST" and do not display the percentage
 used in the calculation as part of the label.
