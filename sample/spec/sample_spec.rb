@@ -10,4 +10,14 @@ describe 'running sample' do
       $?.to_i.should == 0
     end
   end
+
+  context "running just db:seed" do
+    it "sets default_country_id to United States" do
+      Dir.chdir "spec/dummy" do
+        `rake db:seed`
+        country = Spree::Country.find_by_id(Spree::Config[:default_country_id])
+        country.name.should == "United States"
+      end
+    end
+  end
 end

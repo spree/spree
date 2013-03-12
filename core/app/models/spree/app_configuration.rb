@@ -41,7 +41,7 @@ module Spree
     preference :currency, :string, :default => "USD"
     preference :currency_symbol_position, :string, :default => "before"
     preference :display_currency, :boolean, :default => false
-    preference :default_country_id, :integer, :default => 214
+    preference :default_country_id, :integer
     preference :default_meta_description, :string, :default => 'Spree demo site'
     preference :default_meta_keywords, :string, :default => 'spree, demo'
     preference :default_seo_title, :string, :default => ''
