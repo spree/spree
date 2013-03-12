@@ -19,13 +19,15 @@ have the following attributes:
 The subscription to these events is done with this code from inside the Spree
 Core gem, which uses Active Support's Notifications API:
 
-    ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
-      event_name, start_time, end_time, id, payload = args
-      Activator.active.event_name_starts_with(event_name).each do |activator|
-        payload[:event_name] = event_name
-        activator.activate(payload)
-      end
-    end
+```ruby
+ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
+  event_name, start_time, end_time, id, payload = args
+  Activator.active.event_name_starts_with(event_name).each do |activator|
+    payload[:event_name] = event_name
+    activator.activate(payload)
+  end
+end
+```
 
 ***
 For documentation about `ActiveSupport::Notifications`, please see [the Rails
@@ -36,7 +38,9 @@ This code from the engine class subscribes to all Active Support notifications
 within the Rails application which begin with `spree.`. These events are
 typically caused by the use of `fire_event` within Spree's controllers, like so:
 
-    fire_event('spree.checkout.update')
+```ruby
+fire_event('spree.checkout.update')
+```
 
 This method itself calls `ActiveSupport::Notifications.instrument` and passes
 through the arguments from this method. While it would seem that `fire_event` is
@@ -48,7 +52,9 @@ current order (`current_order`) respectively.
 The `fire_event` method can be used to pass additional payload information
 through too:
 
-    fire_event('spree.checkout.update', :extra => "information")
+```ruby
+fire_event('spree.checkout.update', :extra => "information")
+```
 
 By calling `fire_event`, the notifications hook that is defined inside the
 engine is triggered. The next bit of the code finds all the currently active
@@ -60,5 +66,5 @@ When each Activator object is activated, the `activate` method receives the
 payload from the `fire_event` method. Whatever the activator does with this is
 up to that specific activator.
 
-For an example of how Activators are used, please see the 
+For an example of how Activators are used, please see the
 <%= link_to "Promotions", :promotions %> guide.

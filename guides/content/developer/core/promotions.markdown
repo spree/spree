@@ -75,10 +75,12 @@ the order to nullify the cost of adding the product to the order.
 You can create a new action for Spree's promotion engine by inherting from
 `Spree::PromotionAction`, like this:
 
-    class MyPromotionAction < Spree::PromotionAction
-      def perform(options={})
-      end
-    end
+```ruby
+class MyPromotionAction < Spree::PromotionAction
+  def perform(options={})
+  end
+end
+```
 
 ***
 You can access promotion information using the `promotion` method within any
@@ -104,7 +106,7 @@ en:
 
 ## Rules
 
-There are five rules which come with Spree: 
+There are five rules which come with Spree:
 
 * `FirstOrder`: The user's order is their first.
 * `ItemTotal`: The order's total is greater than (or equal to) a given value.
