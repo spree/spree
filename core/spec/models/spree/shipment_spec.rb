@@ -158,6 +158,7 @@ describe Spree::Shipment do
       shipment.stub(:require_inventory => false, :update_order => true, :state => 'ready')
       shipment.stub(:adjustment => charge)
       shipping_method.stub(:create_adjustment)
+      shipment.stub(:ensure_correct_adjustment)
     end
 
     it "should update shipped_at timestamp" do
@@ -201,10 +202,13 @@ describe Spree::Shipment do
     end
 
     it "should update originator when adjustment is present" do
+      shipment.stub(:selected_shipping_rate => mock_model(Spree::ShippingRate, :cost => 10.00))
       shipment.stub_chain(:adjustment, :originator)
       shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:save)
-      shipment.adjustment.should_receive(:label=).with("Shipping")
+      shipment.adjustment.should_receive(:label=).with(shipping_method.name)
+      shipment.adjustment.should_receive(:amount=).with(10.00)
+      shipment.adjustment.should_receive(:save!)
+      shipment.adjustment.should_receive(:reload)
       shipment.send(:ensure_correct_adjustment)
     end
   end
