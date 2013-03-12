@@ -4,7 +4,7 @@ module Spree
   describe Api::StockMovementsController do
     render_views
 
-    let!(:stock_location) { create(:stock_location) }
+    let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_movement) { create(:stock_movement, stock_item: stock_location.stock_items.first) }
     let!(:attributes) { [:id, :quantity, :action, :stock_item_id] }
 
