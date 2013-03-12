@@ -75,5 +75,8 @@ Spree::Core::Engine.routes.prepend do
     resources :inventory_units, :only => [:show, :update]
     resources :users
     resources :properties
+    resources :stock_locations do
+      resources :stock_movements
+    end
   end
 end
