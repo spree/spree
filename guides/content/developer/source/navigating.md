@@ -139,8 +139,8 @@ appropriate here. Please consult the Rails Guides for more information.
 
 Using a Spree gem is as simple as adding it to your *Gemfile*:
 
-```shell
-$ gem 'spree_core', '0.70.3'
+```ruby
+gem 'spree_core', '0.70.3'
 ```
 
 Distribution of Spree (and its extensions) is also consistent with Rails
