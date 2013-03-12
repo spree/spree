@@ -77,6 +77,7 @@ Spree::Core::Engine.routes.prepend do
     resources :properties
     resources :stock_locations do
       resources :stock_movements
+      resources :stock_items
     end
   end
 end

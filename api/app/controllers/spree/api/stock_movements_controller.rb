@@ -43,7 +43,7 @@ module Spree
       private
 
       def stock_location
-        render :stock_location_required, status: 422 and return unless params[:stock_location_id]
+        render 'spree/api/shared/stock_location_required', status: 422 and return unless params[:stock_location_id]
         @stock_location ||= StockLocation.find(params[:stock_location_id])
       end
 

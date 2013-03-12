@@ -103,6 +103,10 @@ module Spree
       def stock_movement_attributes
         [:id, :quantity, :action, :stock_item_id]
       end
+
+      def stock_item_attributes
+        [:id, :count_on_hand, :backorderable, :lock_version, :stock_location_id, :variant_id]
+      end
     end
   end
 end
