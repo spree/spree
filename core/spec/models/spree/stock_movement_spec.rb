@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::StockMovement do
-  let(:stock_item) { create(:stock_item, count_on_hand: 10, stock_location: create(:stock_location)) }
+  let(:stock_location) { create(:stock_location_with_items) }
+  let(:stock_item) { stock_location.stock_items.first }
   subject { build(:stock_movement, stock_item: stock_item) }
 
   it 'should belong to a stock item' do
