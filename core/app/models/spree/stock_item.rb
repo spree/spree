@@ -2,7 +2,7 @@ module Spree
   class StockItem < ActiveRecord::Base
     belongs_to :stock_location
     belongs_to :variant
-    has_many :stock_movements
+    has_many :stock_movements, dependent: :destroy
 
     validates_presence_of :stock_location
     validates_uniqueness_of :variant_id, :scope => :stock_location_id
@@ -12,10 +12,6 @@ module Spree
     after_save :process_backorders
 
     delegate :weight, :to => :variant
-
-    def self.locations_for_variant(variant)
-      where(variant_id: variant).map(&:stock_location)
-    end
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)

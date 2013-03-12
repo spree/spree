@@ -1,18 +1,11 @@
 require 'spec_helper'
 
 describe Spree::StockItem do
-  let(:stock_location) { create(:stock_location) }
-  subject { create(:stock_item, stock_location: stock_location, variant: create(:variant, :name => "Spree Bag")) }
+  let(:stock_location) { create(:stock_location_with_items) }
+  subject { stock_location.stock_items.first }
 
   it 'maintains the count on hand for a varaint' do
     subject.count_on_hand.should eq 10
-  end
-
-  it 'determines all the locations for a varaint' do
-    stock_location = create(:stock_location)
-    variant = stock_location.stock_items.first.variant
-    locations = Spree::StockItem.locations_for_variant(variant)
-    locations.should include stock_location
   end
 
   it "lock_version should prevent stale updates" do
@@ -32,7 +25,7 @@ describe Spree::StockItem do
   end
 
   it "can return the stock item's variant's name" do
-    subject.variant_name.should == "Spree Bag"
+    subject.variant_name.should == subject.variant.name
   end
 
   context "count_on_hand=" do

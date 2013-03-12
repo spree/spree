@@ -2,8 +2,12 @@ require 'spec_helper'
 
 module Spree
   describe StockLocation do
-    subject { create(:stock_location) }
+    subject { create(:stock_location_with_items) }
     let(:variant) { subject.stock_items.first.variant }
+
+    before(:each) do
+      Spree::StockLocation.delete_all
+    end
 
     it 'finds a stock_item for a variant' do
       stock_item = subject.stock_item(variant)

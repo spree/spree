@@ -11,10 +11,13 @@ FactoryGirl.define do
     state  { |stock_location| stock_location.association(:state) }
     country  { |stock_location| stock_location.association(:country) }
 
-    # associations:
-    after(:create) do |stock_location, evaluator|
-      stock_location.stock_items.create(variant: create(:variant))
-      stock_location.stock_items.create(variant: create(:variant))
+    factory :stock_location_with_items do
+      after(:create) do |stock_location, evaluator|
+        Spree::Variant.skip_callback(:create, :after, :create_stock_items)
+        stock_location.stock_items.create(variant: create(:variant), count_on_hand: 10)
+        stock_location.stock_items.create(variant: create(:variant), count_on_hand: 20)
+        Spree::Variant.set_callback(:create, :after, :create_stock_items)
+      end
     end
   end
 end
