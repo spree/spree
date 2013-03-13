@@ -29,7 +29,7 @@ To work around this issue, put this line underneath the other `config.assets`
 lines inside `config/application.rb`:
 
 ```ruby
-  config.assets.initialize_on_precompile = false
+config.assets.initialize_on_precompile = false
 ```
 
 The assets for your application will still be precompiled, it's just that Rails
@@ -83,7 +83,9 @@ end
 Once you have configured the above settings, you can push your Spree application
 to Heroku:
 
-    git push heroku master
+```bash
+$ git push heroku master
+```
 
 ## SSL Support
 
