@@ -42,14 +42,16 @@ to use a local clone of Spree, pass the --path option
 spree install my_store --path=../spree
 
 
-options
+Options
 -------
 
-* --auto_accept - answer yes to all questions
-* --edge - to use the edge version of Spree
-* --path=../spree - to use a local version of spree
-* --git=git@github.com:cmar/spree.git
-* --branch=my_changes or --ref=23423423423423 or --tag=my_tag
+* `--auto_accept` to answer yes to all questions
+* `--edge` to use the edge version of Spree
+* `--path=../spree` to use a local version of spree
+* `--git=git@github.com:cmar/spree.git` to use git version of spree
+  * `--branch=my_changes` to use git branch
+  * `--ref=23423423423423` to use git reference
+  * `--tag=my_tag` to use git tag
 
 Older Versions of Spree
 -----------------------
