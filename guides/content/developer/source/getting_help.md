@@ -33,5 +33,11 @@ issue with Spree, please first read the [Filing an Issue](https://github.com/spr
 guidelines. If you provide the information we ask for there, we will be able to
 help you with your issue much more effectively.
 
+!!!
+If you think you have discovered a security issue with Spree, please do not
+report them publically. Instead, email [our security
+address](mailto:security@spreecommerce.com)
+!!!
+
 ## Consulting Services
 
