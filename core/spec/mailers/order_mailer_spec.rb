@@ -96,5 +96,18 @@ describe Spree::OrderMailer do
         end
       end
     end
+
+    context "using EUR as the currency" do
+      before do
+        Spree::Config[:currency] = "EUR"
+      end
+
+      # Regression test for #2690
+      it "doesn't aggressively escape money amounts" do
+        confirm_email = Spree::OrderMailer.confirm_email(order)
+        confirm_email.body.should_not include("&#x20AC;") # escaped € symbol
+      end
+
+    end
   end
 end
