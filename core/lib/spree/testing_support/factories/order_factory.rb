@@ -10,7 +10,10 @@ FactoryGirl.define do
   end
 
   factory :order_with_totals, :parent => :order do
-    after(:create) { |order| FactoryGirl.create(:line_item, :order => order) }
+    after(:create) do |order|
+      FactoryGirl.create(:line_item, :order => order)
+      order.line_items.reload # to ensure order.line_items is accessible after
+    end
   end
 
   factory :order_with_inventory_unit_shipped, :parent => :order do
