@@ -60,8 +60,7 @@ def check_registration
 end
 ```
 
-The configuration of the guest checkout option is done via <%= link_to
-"Preferences", :preferences %>.  Spree will allow guest checkout by default. Use
+The configuration of the guest checkout option is done via <%= link_to "Preferences", :preferences %>.  Spree will allow guest checkout by default. Use
 the `allow_guest_checkout` preference to change the default setting.
 
 ### Address Information
