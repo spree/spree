@@ -90,14 +90,6 @@ describe Spree::Order do
         order.state = "delivery"
         order.stub :total => 10.0
       end
-
-      context "when transitioning to payment state" do
-        it "should create a shipment" do
-          order.should_receive(:create_shipment!)
-          order.next!
-          order.state.should == 'payment'
-        end
-      end
     end
 
   end
