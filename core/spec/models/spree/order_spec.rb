@@ -119,8 +119,9 @@ describe Spree::Order do
     end
 
     it "should change the shipment state to ready if order is paid" do
-      order.stub :shipping_method => mock_model(Spree::ShippingMethod, :create_adjustment => true, :adjustment_label => "Shipping")
-      order.create_shipment!
+      shipment = Spree::Shipment.new
+      order.shipments << shipment
+
       order.stub(:paid? => true, :complete? => true)
       order.finalize!
       order.reload # reload so we're sure the changes are persisted
@@ -436,6 +437,7 @@ describe Spree::Order do
 
     it "transitions from delivery to payment" do
       persisted_order.shipping_method = shipping_method
+      persisted_order.stub(payment_required?: true)
       persisted_order.next!
       persisted_order.state.should == "payment"
     end
