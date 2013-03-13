@@ -19,6 +19,7 @@ describe Spree::Variant do
 
   context "after create" do
     it "should create a stock item for the variant for each stock location" do
+      Spree::StockLocation.delete_all # FIXME leaky database
       Spree::StockLocation.create(:name => "Default")
       product = create(:product)
       lambda {
