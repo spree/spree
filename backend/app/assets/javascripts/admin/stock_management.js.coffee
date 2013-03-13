@@ -7,5 +7,5 @@ jQuery ->
       url: @action
       data: $(@).serialize()
       success: ->
-        console.log("WOOP WOOP!")
+        return
     false
