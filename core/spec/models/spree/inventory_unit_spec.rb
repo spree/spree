@@ -4,17 +4,10 @@ describe Spree::InventoryUnit do
   let(:variant) { mock_model(Spree::Variant) }
   let(:line_item) { mock_model(Spree::LineItem, :variant => variant, :quantity => 5) }
   let(:order) { mock_model(Spree::Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }
-  let(:stock_location) { create(:stock_location, :stock_items => []) }
-  let(:stock_item) { create(:stock_item, :variant => variant, :stock_location => stock_location, :count_on_hand => 100) }
+  let(:stock_location) { create(:stock_location_with_items) }
+  let(:stock_item) { stock_location.stock_items.first }
 
   context "#backordered_inventory_units" do
-    let!(:stock_location) { create(:stock_location) }
-    let!(:stock_item) do
-      stock_item = build(:stock_item)
-      stock_item.stock_location = stock_location
-      stock_item.tap(&:save!)
-    end
-
     let(:order) { create(:order) }
     let(:shipment) do
       shipping_method = create(:shipping_method)
@@ -142,6 +135,7 @@ describe Spree::InventoryUnit do
       end
 
       it "should destroy units" do
+        stock_item.stub(:variant => variant)
         Spree::InventoryUnit.should_receive(:destroy_units).with(order, variant, 5)
         Spree::InventoryUnit.decrease(order, stock_location, stock_item, 5)
       end
@@ -292,18 +286,18 @@ describe Spree::InventoryUnit do
 
   context "#finalize!" do
     let(:inventory_unit) { FactoryGirl.create(:inventory_unit)  }
-    
+
     it "should mark the shipment not pending" do
-      inventory_unit.stub(:stock_item, FactoryGirl.create(:stock_item))
+      Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => 1, :action => 'sold'))
+
       inventory_unit.pending.should == true
       inventory_unit.finalize!
       inventory_unit.pending.should == false
     end
 
     it "should create a stock movement" do
-      inventory_unit.stub(:stock_item, FactoryGirl.create(:stock_item))
-      expect {inventory_unit.finalize!}.to change{Spree::StockMovement.count}.by(1)
-
+      Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => 1, :action => 'sold'))
+      inventory_unit.finalize!
     end
   end
 end
