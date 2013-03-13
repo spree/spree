@@ -79,8 +79,7 @@ You can create a new action for Spree's promotion engine by inherting from
 class MyPromotionAction < Spree::PromotionAction
   def perform(options={})
   end
-end
-```
+end```
 
 ***
 You can access promotion information using the `promotion` method within any
@@ -91,8 +90,7 @@ This action must then be registered with Spree, which can be done by adding this
 code to `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotion.actions << MyAction
-```
+Rails.application.config.spree.promotion.actions << MyAction```
 
 Once this has been registered, it will be available within Spree's interface. To
 provide translations for the interface, you will need to define them within your
@@ -105,8 +103,7 @@ en:
     promotion_action_types:
       my_promotion_action:
         name: My Promotion Action
-        description: Performs my promotion action.
-```
+        description: Performs my promotion action.```
 
 ## Rules
 
@@ -132,8 +129,7 @@ To register a new rule with Spree, first define a class that inherits from
 class MyPromotionRule < Spree::PromotionRule
   def eligible?(order)
   end
-end
-```
+end```
 
 The `eligible?` method should then return `true` or `false` to indicate if the
 promotion should be eligible for an order. You can retreive promotion
@@ -142,8 +138,7 @@ information by calling `promotion`.
 Then register it using this code inside `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotion.rules << MyPromotionRule
-```
+Rails.application.config.spree.promotion.rules << MyPromotionRule```
 
 Once this rule has been registered, it will be available within Spree's
 interface.

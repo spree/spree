@@ -26,8 +26,7 @@ ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
     payload[:event_name] = event_name
     activator.activate(payload)
   end
-end
-```
+end```
 
 ***
 For documentation about `ActiveSupport::Notifications`, please see [the Rails
@@ -39,8 +38,7 @@ within the Rails application which begin with `spree.`. These events are
 typically caused by the use of `fire_event` within Spree's controllers, like so:
 
 ```ruby
-fire_event('spree.checkout.update')
-```
+fire_event('spree.checkout.update')```
 
 This method itself calls `ActiveSupport::Notifications.instrument` and passes
 through the arguments from this method. While it would seem that `fire_event` is
@@ -53,8 +51,7 @@ The `fire_event` method can be used to pass additional payload information
 through too:
 
 ```ruby
-fire_event('spree.checkout.update', :extra => "information")
-```
+fire_event('spree.checkout.update', :extra => "information")```
 
 By calling `fire_event`, the notifications hook that is defined inside the
 engine is triggered. The next bit of the code finds all the currently active
