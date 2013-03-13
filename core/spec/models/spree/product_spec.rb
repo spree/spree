@@ -58,11 +58,6 @@ describe Spree::Product do
 
     # Test for #2167
     context "#on_sale?" do
-      it "is on sale if the product has stock" do
-        product.stub :has_stock? => true
-        assert product.on_sale?
-      end
-
       xit "is on sale if allow_backorders preference is set to true" do
         Spree::Config[:allow_backorders] = true
         assert product.on_sale?
