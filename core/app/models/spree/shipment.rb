@@ -11,7 +11,7 @@ module Spree
     belongs_to :stock_location
 
     has_many :state_changes, :as => :stateful
-    has_many :inventory_units, :dependent => :nullify
+    has_many :inventory_units, :dependent => :destroy
     has_one :adjustment, :as => :source, :dependent => :destroy
 
     before_create :generate_shipment_number
