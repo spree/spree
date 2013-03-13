@@ -1,4 +1,4 @@
-Spree.add_image_handlers = ->
+Spree.addImageHandlers = ->
   thumbnails = ($ '#product-images ul.thumbnails')
   ($ '#main-image').data 'selectedThumb', ($ '#main-image img').attr('src')
   thumbnails.find('li').eq(0).addClass 'selected'
@@ -16,11 +16,11 @@ Spree.add_image_handlers = ->
   thumbnails.find('li').on 'mouseleave', (event) ->
     ($ '#main-image img').attr 'src', ($ '#main-image').data('selectedThumb')
 
-Spree.show_variant_images = (variant_id) ->
+Spree.showVariantImages = (variantId) ->
   ($ 'li.vtmb').hide()
-  ($ 'li.vtmb-' + variant_id).show()
+  ($ 'li.vtmb-' + variantId).show()
   currentThumb = ($ '#' + ($ '#main-image').data('selectedThumbId'))
-  if not currentThumb.hasClass('vtmb-' + variant_id)
+  if not currentThumb.hasClass('vtmb-' + variantId)
     thumb = ($ ($ 'ul.thumbnails li:visible.vtmb').eq(0))
     thumb = ($ ($ 'ul.thumbnails li:visible').eq(0)) unless thumb.length > 0
     newImg = thumb.find('a').attr('href')
@@ -30,13 +30,13 @@ Spree.show_variant_images = (variant_id) ->
     ($ '#main-image').data 'selectedThumb', newImg
     ($ '#main-image').data 'selectedThumbId', thumb.attr('id')
 
-Spree.update_variant_price = (variant) ->
-  variant_price = variant.data('price')
-  ($ '.price.selling').text(variant_price) if variant_price
+Spree.updateVariantPrice = (variant) ->
+  variantPrice = variant.data('price')
+  ($ '.price.selling').text(variantPrice) if variantPrice
 
 $ ->
-  Spree.add_image_handlers()
-  Spree.show_variant_images ($ '#product-variants input[type="radio"]').eq(0).attr('value') if ($ '#product-variants input[type="radio"]').length > 0
+  Spree.addImageHandlers()
+  Spree.showVariantImages ($ '#product-variants input[type="radio"]').eq(0).attr('value') if ($ '#product-variants input[type="radio"]').length > 0
   ($ '#product-variants input[type="radio"]').click (event) ->
-    Spree.show_variant_images @value
-    Spree.update_variant_price ($ this)
+    Spree.showVariantImages @value
+    Spree.updateVariantPrice ($ this)
