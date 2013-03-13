@@ -4,6 +4,8 @@ describe Spree::Core::Search::Base do
 
   before do
     include Spree::Core::ProductFilters
+    Spree::Product.delete_all # FIXME product leaks
+
     @product1 = create(:product, :name => "RoR Mug", :price => 9.00)
     @product2 = create(:product, :name => "RoR Shirt", :price => 11.00)
   end
