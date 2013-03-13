@@ -26,7 +26,7 @@ The authoritative git repository is hosted by
 [spree](https://github.com/spree/spree/tree/master) repository. You can
 clone the git repository using the following command:
 
-```shell
+```bash
 $ git clone git://github.com/spree/spree.git
 ```
 
@@ -77,7 +77,7 @@ site](http://gembundler.com/).
 You can install the gem dependencies for Spree after cloning the
 repository using this Bundler-provided command:
 
-```shell
+```bash
 $ bundle install
 ```
 
@@ -190,7 +190,7 @@ helpful Rake task for setting up such a test application.
 To run this Rake task, go into the root of the Spree project and run
 this command:
 
-```shell
+```bash
 $ bundle exec rake sandbox
 ```
 
@@ -204,7 +204,7 @@ deleted and rebuilt from scratch each time the Rake task runs.
 The Spree gem can easily be built from the source. Run these two
 commands in the root of the Spree project to do this:
 
-```shell
+```bash
 $ bundle exec rake clean
 $ bundle exec rake gem
 ```
@@ -212,13 +212,13 @@ $ bundle exec rake gem
 Most likely you will want to build and install of the related gems.
 Fortunately there is a simple Rake task for that.
 
-```shell
+```bash
 $ bundle exec rake gem:install
 ```
 
 You can also build just one specific gem.
 
-```shell
+```bash
 $ cd core
 $ bundle exec rake gem
 ```
@@ -242,8 +242,8 @@ project code is using the exact same version of the Spree code as you
 are. You will need to update the bundle if you want to update to code
 that is newer since the last time you updated.
 
-```shell
-$ bundle update\
+```bash
+$ bundle update
 ```
 
 ### Developing on the “Edge”
@@ -266,7 +266,7 @@ for more details.
 Spree provides a convenient generator for helping you to get started
 with extensions.
 
-```shell
+```bash
 $ spree extension foo
 ```
 

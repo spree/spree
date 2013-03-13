@@ -122,7 +122,7 @@ Ruby, including:
 
 Rails 3.1 introduced the concept of the asset pipeline. Unfortunately this causes some significant performance issues when running Spree in development mode. The good news is you can improve performance significantly by using a special precompile task.
 
-```shell
+```bash
 $ bundle exec rake assets:precompile:nondigest
 ```
 
@@ -130,7 +130,7 @@ Using the precompile rake task in development will prevent any changes to asset 
 
 Rails also provides the following rake task that will delete the entire `public/assets` directory, this can be helpful to clear out development assets before committing.
 
-```shell
+```bash
 $ bundle exec rake assets:clean
 ```
 
