@@ -28,23 +28,13 @@ module Spree
 
     def self.backordered_for_stock_item(stock_item)
       stock_locations_table = Spree::StockLocation.table_name
-      joins(:shipment => :stock_location).where("#{stock_locations_table}.id = ?", stock_item.stock_location.id).
+      joins(:shipment => :stock_location).where("#{stock_locations_table}.id = ?", stock_item.stock_location_id).
       order("created_at ASC")
-    end
-
-    def self.assign_opening_inventory(order)
-      return [] unless order.completed?
-      stock_location = order.stock_location
-
-      #increase inventory to meet initial requirements
-      order.line_items.each do |line_item|
-        increase(order, stock_location, line_item.quantity)
-      end
     end
 
     # manages both variant.count_on_hand and inventory unit creation
     #
-    def self.increase(order, stock_location, stock_item, quantity)
+    def self.increase(order, stock_item, quantity)
       back_order = determine_backorder(order, stock_item, quantity)
       sold = quantity - back_order
 
@@ -59,7 +49,7 @@ module Spree
       end
     end
 
-    def self.decrease(order, stock_location, stock_item, quantity)
+    def self.decrease(order, stock_item, quantity)
       if self.track_levels?(stock_item.variant)
         Spree::StockMovement.create!(stock_item: stock_item, action: 'received', quantity: quantity)
       end
