@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 require 'email_spec'
 
@@ -93,6 +94,22 @@ describe Spree::OrderMailer do
           cancel_email.body.should include("Resumo da Pedido [CANCELADA]")
         end
       end
+    end
+
+    context "using EUR as the currency" do
+      before do
+        Spree::Config[:currency] = "EUR"
+      end
+
+      # Regression test for #2690
+      it "doesn't aggressively escape money amounts" do
+        confirm_email = Spree::OrderMailer.confirm_email(order)
+        confirm_email.body.should_not include("&#x20AC;") # escaped € symbol
+        confirm_email.body.should include("The \"BEST\" product  (1) @ €5.00 = €5.00")
+        confirm_email.body.should include("Subtotal: €0.00")
+        confirm_email.body.should include("Order Total: €0.00")
+      end
+
     end
   end
 end
