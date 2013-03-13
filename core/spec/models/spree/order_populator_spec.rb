@@ -29,18 +29,6 @@ describe Spree::OrderPopulator do
         subject.errors.full_messages.join("").should == %Q{"T-Shirt (Size: M)" is out of stock.}
       end
 
-      it "should add an error if the variant does not have enough stock on hand" do
-        Spree::Config[:allow_backorders] = false
-        variant.stub :available? => true
-
-        order.should_not_receive(:add_variant)
-        subject.populate(:products => { 1 => 2 }, :quantity => 3)
-        subject.should_not be_valid
-        output = %Q{There are only 2 of \"T-Shirt (Size: M)\" remaining.} +
-                 %Q{ Please select a quantity less than or equal to this value.}
-        subject.errors.full_messages.join("").should == output
-      end
-
       # Regression test for #2430
       context "respects allow_backorders setting" do
         before do
