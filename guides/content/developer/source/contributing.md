@@ -65,6 +65,20 @@ If the ticket already exists, however, and you want to supply a patch after the 
 
 GitHub will automatically detect this commit message when you push it and link the issue.  Please see the detailed [GitHub Issues](https://github.com/blog/831-issues-2-0-the-next-generation) blog post for more details.
 
+We add code from Pull Requests to spree using the [hub gem](https://github.com/defunkt/hub), in particular the `hub am` command, which is used like this:
+
+```bash
+hub am -3 https://github.com/spree/spree/pull/<number>
+```
+
+This command will apply the commits from the pull request to the current branch, using a 3-way merge as a fallback. This means that we can run this command in order to apply the patch to different branches. A pull request applied in this way leads to tidier commit history, with no merge commits visible.
+
+***
+For this reason, there is no need to create multiple pull requests for Spree's different branches. Please only create one pull request per change and simply mention inside the pull request that it can apply to multiple branches. If a patch does not apply cleanly to a branch, the Spree team may ask you for another one which applies to the other branch.
+***
+
+
+
 ### Feature Requests
 
 We're interested in hearing your ideas for new features but creating feature requests in the Issue Tracker is not the proper way to ask for a feature.  A feature request is any idea you have to improve the software experience that is not strictly related to a bug or error of omission.
