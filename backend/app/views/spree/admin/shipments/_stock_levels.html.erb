@@ -1,0 +1,26 @@
+<h2>Stock Levels</h2>
+<table class="index">
+  <thead>
+    <tr>
+     <th><%= t(:variant) %></th>
+     <th><%= t(:needed) %></th>
+      <% @locations.each do |location| %>
+      <th><%= "#{location.name} location" %> </th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @order.line_items.each do |line_item| %>
+      <tr>
+        <td><%= line_item.variant.name %></td>
+        <td><%= line_item.quantity %></td>
+        <% @locations.each do |location| %>
+        <td>
+          <%= location.count_on_hand(line_item.variant) %>
+        </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
