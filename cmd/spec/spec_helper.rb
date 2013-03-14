@@ -9,4 +9,5 @@ RSpec.configure do |config|
 
   config.use_transactional_fixtures = false
 
+  config.fail_fast = ENV['FAIL_FAST'] || false
 end
