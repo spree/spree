@@ -38,6 +38,13 @@ module Spree
 
     def attempt_cart_add(variant_id, quantity)
       quantity = quantity.to_i
+      # 2,147,483,647 is crazy.
+      # See issue #2695.
+      if quantity > 2_147_483_647
+        errors.add(:base, %Q{Please enter a reasonable quantity.})
+        return false
+      end
+
       variant = Spree::Variant.find(variant_id)
       if quantity > 0
         if check_stock_levels(variant, quantity)
