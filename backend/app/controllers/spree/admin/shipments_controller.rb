@@ -2,6 +2,7 @@ module Spree
   module Admin
     class ShipmentsController < Spree::Admin::BaseController
       respond_to :html
+      before_filter :locations, only: :index
 
       def index
         @shipments = order.shipments
@@ -70,6 +71,10 @@ module Spree
 
       def shipment
         @shipment ||= order.shipments.find_by_number(params[:id])
+      end
+
+      def locations
+        @locations ||= Spree::StockLocation.active
       end
 
       def build_shipment
