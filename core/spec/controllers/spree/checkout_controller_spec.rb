@@ -4,14 +4,7 @@ describe Spree::CheckoutController do
   let(:token) { 'some_token' }
   let(:user) { stub_model(Spree::LegacyUser) }
   let(:order) do
-    mock_model(Spree::Order, :checkout_allowed? => true,
-                             :user => user,
-                             :email => nil,
-                             :completed? => false,
-                             :update_attributes => true,
-                             :payment? => false,
-                             :insufficient_stock_lines => [],
-                             :coupon_code => nil).as_null_object
+    order = FactoryGirl.create(:order_with_totals)
   end
 
   before do
@@ -49,17 +42,24 @@ describe Spree::CheckoutController do
       response.should redirect_to(spree.cart_path)
     end
 
-    it "should associate the order with a user" do
-      order.user = nil
-      order.should_receive(:associate_user!).with(user)
-      spree_get :edit, {}, :order_id => 1
-    end
+    context "when entering the checkout" do
+      before do
+        # The first step for checkout controller is address
+        # Transitioning into this state first is required
+        order.update_column(:state, "address")
+      end
 
-    it "should fire the spree.user.signup event if user has just signed up" do
-      controller.should_receive(:fire_event).with("spree.user.signup", :user => user, :order => order)
-      spree_get :edit, {}, :spree_user_signup => true
-    end
+      it "should associate the order with a user" do
+        order.user = nil
+        order.should_receive(:associate_user!).with(user)
+        spree_get :edit, {}, :order_id => 1
+      end
 
+      it "should fire the spree.user.signup event if user has just signed up" do
+        controller.should_receive(:fire_event).with("spree.user.signup", :user => user, :order => order)
+        spree_get :edit, {}, :spree_user_signup => true
+      end
+    end
   end
 
   context "#update" do
@@ -70,76 +70,94 @@ describe Spree::CheckoutController do
     end
 
     context "save successful" do
-      before do
-        order.stub(:update_attribute).and_return true
-        order.should_receive(:update_attributes).and_return true
-      end
+      context "with the order in the cart state" do
+        before do
+          order.update_column(:state, "cart")
+          order.stub :user => user
 
-      it "should assign order" do
-        order.stub :state => "address"
-        spree_post :update, {:state => "confirm"}
-        assigns[:order].should_not be_nil
-      end
+          # Must have *a* shipping method and a payment method so updating from address works
+          order.stub :available_shipping_methods => [stub_model(Spree::ShippingMethod)]
+          order.stub :available_payment_methods => [stub_model(Spree::PaymentMethod)]
+        end
 
-      it "should change to requested state" do
-        order.stub :state => "address"
-        order.should_receive(:state=).with('confirm')
-        spree_post :update, {:state => "confirm"}
-      end
+        let(:address_params) do
+          address = FactoryGirl.build(:address)
+          address.attributes.except("created_at", "updated_at")
+        end
 
-      context "with next state" do
-        before { order.stub :next => true }
+        it "should assign order" do
+          spree_post :update, {:state => "address"}
+          assigns[:order].should_not be_nil
+        end
 
         it "should advance the state" do
-          order.stub :state => "address"
-          order.should_receive(:next).and_return true
-          spree_post :update, {:state => "delivery"}
+          spree_post :update, {
+            :state => "address",
+            :order => {
+              :bill_address_attributes => address_params,
+              :use_billing => true
+            }
+          }
+          order.reload.state.should == "delivery"
         end
 
         it "should redirect the next state" do
-          order.stub :state => "payment"
-          spree_post :update, {:state => "delivery"}
-          response.should redirect_to spree.checkout_state_path("payment")
+          spree_post :update, {
+            :state => "address",
+            :order => {
+              :bill_address_attributes => address_params,
+              :use_billing => true
+            }
+          }
+          response.should redirect_to spree.checkout_state_path("delivery")
+        end
+      end
+
+      context "when in the confirm state" do
+        before do
+          order.stub :confirmation_required? => true
+          order.update_column(:state, "confirm")
+          order.stub :user => user
+          # An order requires a payment to reach the complete state
+          # This is because payment_required? is true on the order
+          create(:payment, :amount => order.total, :order => order)
+          order.payments.reload
         end
 
-        context "when in the confirm state" do
-          before { order.stub :state => "complete" }
-
-          it "should redirect to the order view" do
-            spree_post :update, {:state => "confirm"}
-            response.should redirect_to spree.order_path(order)
-          end
-
-          it "should populate the flash message" do
-            spree_post :update, {:state => "confirm"}
-            flash.notice.should == I18n.t(:order_processed_successfully)
-          end
-
-          it "should remove completed order from the session" do
-            spree_post :update, {:state => "confirm"}, {:order_id => "foofah"}
-            session[:order_id].should be_nil
-          end
-
+        it "should redirect to the order view" do
+          spree_post :update, {:state => "confirm"}
+          response.should redirect_to spree.order_path(order)
         end
 
+        it "should populate the flash message" do
+          spree_post :update, {:state => "confirm"}
+          flash.notice.should == I18n.t(:order_processed_successfully)
+        end
+
+        it "should remove completed order from the session" do
+          spree_post :update, {:state => "confirm"}, {:order_id => "foofah"}
+          session[:order_id].should be_nil
+        end
       end
     end
 
     context "save unsuccessful" do
-      before { order.should_receive(:update_attributes).and_return false }
+      before do
+        order.stub :user => user
+        order.stub :update_attributes => false
+      end
 
-      it "should assign order" do
-        spree_post :update, {:state => "confirm"}
+      it "should not assign order" do
+        spree_post :update, {:state => "address"}
         assigns[:order].should_not be_nil
       end
 
       it "should not change the order state" do
-        order.should_not_receive(:update_attribute)
-        spree_post :update, { :state => 'confirm' }
+        spree_post :update, { :state => 'address' }
       end
 
       it "should render the edit template" do
-        spree_post :update, { :state => 'confirm' }
+        spree_post :update, { :state => 'address' }
         response.should render_template :edit
       end
     end
@@ -160,18 +178,15 @@ describe Spree::CheckoutController do
     context "Spree::Core::GatewayError" do
 
       before do
+        order.stub :user => user
         order.stub(:update_attributes).and_raise(Spree::Core::GatewayError)
-        spree_post :update, {:state => "whatever"}
+        spree_post :update, {:state => "address"}
       end
 
       it "should render the edit template" do
         response.should render_template :edit
-      end
-
-      it "should set appropriate flash message" do
         flash[:error].should == I18n.t(:spree_gateway_error_flash_for_checkout)
       end
-
     end
 
   end
