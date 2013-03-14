@@ -30,7 +30,7 @@ group :test do
   gem 'email_spec', '1.4.0'
 end
 
-gem 'strong_parameters', :git => "git://github.com/rails/strong_parameters"
+gem 'strong_parameters', :git => "git://github.com/rails/strong_parameters", :branch => "master"
 
 gemspec
 
