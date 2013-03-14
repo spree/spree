@@ -22,8 +22,7 @@ module Spree
           else
             @stock_movement.stock_item = variant.stock_items.create!(stock_location: location)
           end
-          @stock_movement.save
-          flash[:success] = flash_message_for(@stock_movement, :successfully_created)
+          @stock_movement.save ? flash[:success] = flash_message_for(@stock_movement, :successfully_created) : flash[:error] = t(:could_not_create_stock_movement)
           redirect_to :back
         else
           @stock_movement = stock_location.stock_movements.build(params[:stock_movement])

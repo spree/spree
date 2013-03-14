@@ -361,6 +361,7 @@ en:
   copy_all_mails_to: "Copy All Mails To"
   cost_currency: "Cost Currency"
   cost_price: "Cost Price"
+  could_not_create_stock_movement: "There was a problem saving this stock movement. Please try again."
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   countries: Countries
   country: Country
@@ -1069,6 +1070,7 @@ en:
   states: States
   states_required: "States Required"
   status: Status
+  stock_location: "Stock Location"
   stock_movements_for_stock_location: "Stock Movements for %{stock_location_name}"
   stock_movements_for_product: "Stock Movements for %{product_name}"
   stop: Stop
