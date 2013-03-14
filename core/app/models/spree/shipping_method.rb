@@ -38,5 +38,9 @@ module Spree
         zone.include?(address)
       end
     end
+
+    def build_tracking_url(tracking)
+      tracking_url.gsub(/:tracking/, tracking) unless tracking.blank? || tracking_url.blank?
+    end
   end
 end
