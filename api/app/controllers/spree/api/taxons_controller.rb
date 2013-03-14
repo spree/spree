@@ -2,7 +2,6 @@ module Spree
   module Api
     class TaxonsController < Spree::Api::BaseController
       respond_to :json
-      ssl_allowed :index, :show, :jstree, :create, :update, :destroy
 
       def index
         if taxonomy
