@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class ShipmentsController < Spree::Admin::BaseController
-      before_filter :load_shipping_methods, :except => [:country_changed, :index]
-
       respond_to :html
 
       def index
@@ -60,11 +58,6 @@ module Spree
       end
 
       private
-
-      def load_shipping_methods
-        @shipping_methods = ShippingMethod.all_available(order)
-      end
-
       def assign_inventory_units
         return unless params.has_key? :inventory_units
         shipment.inventory_unit_ids = params[:inventory_units].keys
