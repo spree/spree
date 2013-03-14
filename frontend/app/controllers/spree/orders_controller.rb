@@ -95,7 +95,7 @@ module Spree
     end
 
     def order_params
-      params.require(:order).permit(permitted_order_attributes)
+      params[:order].permit(permitted_order_attributes)
     end
   end
 end
