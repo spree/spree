@@ -20,8 +20,6 @@ module Spree
 
     scope :by_zone, lambda { |zone| where(:zone_id => zone) }
 
-    attr_accessible :amount, :tax_category_id, :calculator, :zone_id, :included_in_price, :name, :show_rate_in_label
-
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order)
       return [] unless order.tax_zone
