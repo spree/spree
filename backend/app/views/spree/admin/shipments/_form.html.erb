@@ -50,8 +50,8 @@
 
     <div class="block-table">
       <div class="field table-cell">
-        <%= shipment_form.label :shipping_method_id, t(:shipping_method) + ':' %>
-        <%= shipment_form.select :shipping_method_id, @shipping_methods.map {|sm| ["#{sm.name} - #{sm.zone.name}", sm.id] }, {}, {:class => 'select2 fullwidth'} %>
+        <%= shipment_form.label :selected_shipping_rate_id, t(:shipping_rate) + ':' %>
+        <%= shipment_form.select :selected_shipping_rate_id, @shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, {}, {:class => 'select2 fullwidth'} %>
       </div>
 
       <div class="field table-cell">
