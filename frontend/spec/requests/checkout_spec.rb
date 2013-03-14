@@ -46,9 +46,6 @@ describe "Checkout" do
 
     context "defaults to use billing address" do
       before do
-        @order = OrderWalkthrough.up_to(:address)
-        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
-
         visit spree.root_path
         click_link "RoR Mug"
         click_button "add-to-cart-button"
