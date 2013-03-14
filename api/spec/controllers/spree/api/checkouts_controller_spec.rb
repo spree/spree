@@ -13,7 +13,7 @@ module Spree
       @country = @state.country
       country_zone.members.create(:zoneable => @country)
 
-      @shipping_method = create(:shipping_method, :zone => country_zone)
+      @shipping_method = create(:shipping_method, :zones => [country_zone])
       @payment_method = create(:payment_method)
     end
 
