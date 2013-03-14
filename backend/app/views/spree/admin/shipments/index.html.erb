@@ -1,10 +1,10 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
-<% content_for :page_actions do %>  
+<% content_for :page_actions do %>
     <li id='new_shipment_section'>
       <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order), :icon => 'icon-plus' %>
     </li>
-    <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>  
+    <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <% content_for :page_title do %>
@@ -16,6 +16,9 @@
     <thead>
       <tr data-hook="admin_shipments_index_headers">
         <th><%= t(:shipment_number) %></th>
+        <% if Spree::StockLocation.count > 1 %>
+          <th><%= t(:from) %></th>
+        <% end %>
         <th><%= t(:shipping_method) %></th>
         <th><%= t(:shipping_cost) %></th>
         <th><%= t(:tracking) %></th>
@@ -28,6 +31,9 @@
       <% @shipments.each do |shipment| %>
         <tr id="<%= spree_dom_id shipment %>" data-hook="admin_shipments_index_rows" class="<%= cycle('odd', 'even') %>">
           <td><%= shipment.number %></td>
+          <% if Spree::StockLocation.count > 1 %>
+            <td><%= shipment.stock_location.name %></td>
+          <% end %>
           <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
           <td><%= shipment.display_cost %></td>
           <td><%= link_to_tracking shipment, :target => '_blank' %></td>
