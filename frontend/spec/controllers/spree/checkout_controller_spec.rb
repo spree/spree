@@ -111,6 +111,35 @@ describe Spree::CheckoutController do
         end
       end
 
+      context "when in the payment state" do
+        before do
+          order.update_column(:state, "payment")
+          order.stub :user => user
+        end
+
+        # Regression test for an issue where coupon code parameter was being ignored
+        # Thanks to strong_parameters
+        it "can attempt apply a coupon code" do
+          coupon_applicator = double('coupon_applicator')
+          Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_return(coupon_applicator)
+          coupon_result = {
+            :coupon_applied? => false,
+            :error => "That coupon is bad and you should feel bad."
+          }
+          coupon_applicator.should_receive(:apply).and_return(coupon_result)
+
+          spree_post :update, {
+            :state => "payment",
+            :order => {
+              :coupon_code => "bad_coupon_code"
+            }
+          }
+
+          flash[:error].should == coupon_result[:error]
+        end
+
+      end
+
       context "when in the confirm state" do
         before do
           order.stub :confirmation_required? => true
