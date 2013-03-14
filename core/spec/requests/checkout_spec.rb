@@ -41,9 +41,6 @@ describe "Checkout" do
         shipping_method = create(:shipping_method)
         shipping_method.zone.zone_members << Spree::ZoneMember.create(:zoneable => country)
 
-        @order = OrderWalkthrough.up_to(:address)
-        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
-
         visit spree.root_path
         click_link "RoR Mug"
         click_button "add-to-cart-button"
