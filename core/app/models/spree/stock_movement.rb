@@ -8,6 +8,7 @@ module Spree
 
     validates :action, inclusion: { in: %w(sold received), message: "%{value} is not a valid action" }
     validates :stock_item, presence: true
+    validates :quantity, presence: true, numericality: { greater_than: 0 }
 
     private
 
