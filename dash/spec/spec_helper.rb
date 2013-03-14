@@ -40,4 +40,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests, :type => :controller
 
   config.include Rack::Test::Methods, :type => :requests
+
+  config.fail_fast = ENV['FAIL_FAST'] || false
 end

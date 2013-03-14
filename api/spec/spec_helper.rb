@@ -25,4 +25,6 @@ RSpec.configure do |config|
   config.before do
     Spree::Api::Config[:requires_authentication] = true
   end
+
+  config.fail_fast = ENV['FAIL_FAST'] || false
 end
