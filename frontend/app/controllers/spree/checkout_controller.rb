@@ -129,7 +129,7 @@ module Spree
           end
         end
 
-        params.permit(
+        params[:order].permit(
           :email,
           :use_billing,
           :shipping_method_id,
