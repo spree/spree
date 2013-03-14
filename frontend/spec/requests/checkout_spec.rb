@@ -114,34 +114,34 @@ describe "Checkout" do
         click_button "Place Order"
         page.should have_selector('input.button[disabled]')
       end
+    end
 
-      # Regression test for #1596
-      context "full checkout" do
-        before do
-          @product.shipping_category = shipping_method.shipping_category
-          @product.save!
-        end
+    # Regression test for #1596
+    context "full checkout" do
+      before do
+        @product.shipping_category = shipping_method.shipping_category
+        @product.save!
+      end
 
-        it "does not break the per-item shipping method calculator", :js => true do
-          visit spree.root_path
-          click_link "RoR Mug"
-          click_button "add-to-cart-button"
-          click_button "Checkout"
-          Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
+      it "does not break the per-item shipping method calculator", :js => true do
+        visit spree.root_path
+        click_link "RoR Mug"
+        click_button "add-to-cart-button"
+        click_button "Checkout"
+        Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
 
-          address = "order_bill_address_attributes"
-          fill_in "#{address}_firstname", :with => "Ryan"
-          fill_in "#{address}_lastname", :with => "Bigg"
-          fill_in "#{address}_address1", :with => "143 Swan Street"
-          fill_in "#{address}_city", :with => "Richmond"
-          select "Kangaland", :from => "#{address}_country_id"
-          select "Victoria", :from => "#{address}_state_id"
-          fill_in "#{address}_zipcode", :with => "12345"
-          fill_in "#{address}_phone", :with => "(555) 5555-555"
+        address = "order_bill_address_attributes"
+        fill_in "#{address}_firstname", :with => "Ryan"
+        fill_in "#{address}_lastname", :with => "Bigg"
+        fill_in "#{address}_address1", :with => "143 Swan Street"
+        fill_in "#{address}_city", :with => "Richmond"
+        select "Kangaland", :from => "#{address}_country_id"
+        select "Victoria", :from => "#{address}_state_id"
+        fill_in "#{address}_zipcode", :with => "12345"
+        fill_in "#{address}_phone", :with => "(555) 5555-555"
 
-          click_button "Save and Continue"
-          page.should_not have_content("undefined method `promotion'")
-        end
+        click_button "Save and Continue"
+        page.should_not have_content("undefined method `promotion'")
       end
     end
   end
