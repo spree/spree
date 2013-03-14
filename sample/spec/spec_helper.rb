@@ -27,4 +27,6 @@ RSpec.configure do |config|
   config.after(:each) do
     DatabaseCleaner.clean
   end
+
+  config.fail_fast = ENV['FAIL_FAST'] || false
 end
