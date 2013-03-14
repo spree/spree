@@ -55,7 +55,7 @@ describe Spree::OrdersController do
 
     it "should render the edit view (on failure)" do
       order.stub(:update_attributes).and_return false
-      order.stub(:errors).and_return({:number => "has some error"})
+      order.stub(:errors).and_return({:email => "is invalid"})
       spree_put :update, {}, {:order_id => 1}
       response.should render_template :edit
     end
