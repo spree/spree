@@ -70,12 +70,12 @@ module Spree
         it 'should check if user is authorized for :edit' do
           order.stub :update_attributes
           controller.should_receive(:authorize!).with(:edit, order, token)
-          spree_post :update, :token => token
+          spree_post :update, :order => { :email => "foo@bar.com" }, :token => token
         end
         it "should check against the specified order" do
           order.stub :update_attributes
           controller.should_receive(:authorize!).with(:edit, specified_order, token)
-          spree_post :update, :id => specified_order.number, :token => token
+          spree_post :update, :order => { :email => "foo@bar.com" }, :id => specified_order.number, :token => token
         end
       end
 

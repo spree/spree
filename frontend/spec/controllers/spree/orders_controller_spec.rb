@@ -49,7 +49,7 @@ describe Spree::OrdersController do
     end
 
     it "should not result in a flash success" do
-      spree_put :update, {}, {:order_id => 1}
+      spree_put :update, { :order => { :email => "foo@bar.com" }}, {:order_id => 1}
       flash[:success].should be_nil
     end
 
