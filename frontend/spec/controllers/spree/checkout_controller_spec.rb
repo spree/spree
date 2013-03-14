@@ -124,6 +124,7 @@ describe Spree::CheckoutController do
           order.payments.reload
         end
 
+        # This inadvertently is a regression test for #2694
         it "should redirect to the order view" do
           spree_post :update, {:state => "confirm"}
           response.should redirect_to spree.order_path(order)
