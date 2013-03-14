@@ -75,6 +75,4 @@ describe Spree::OrdersController do
       response.should redirect_to(spree.cart_path)
     end
   end
-
-  #TODO - move some of the assigns tests based on session, etc. into a shared example group once new block syntax released
 end
