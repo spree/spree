@@ -18,8 +18,6 @@ module Spree
     attr_accessor :source_attributes
     after_initialize :build_source
 
-    attr_accessible :amount, :payment_method_id, :source_attributes
-
     scope :from_credit_card, lambda { where(:source_type => 'Spree::CreditCard') }
     scope :with_state, lambda { |s| where(:state => s) }
     scope :completed, with_state('completed')

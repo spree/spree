@@ -10,11 +10,6 @@ module Spree
 
     validate :state_validate
 
-    attr_accessible :firstname, :lastname, :address1, :address2,
-                    :city, :zipcode, :country_id, :state_id,
-                    :country, :state, :phone, :state_name,
-                    :company, :alternative_phone
-
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 

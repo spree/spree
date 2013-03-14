@@ -8,8 +8,6 @@ module Spree
   class Calculator::PercentPerItem < Calculator
     preference :percent, :decimal, :default => 0
 
-    attr_accessible :preferred_percent
-
     def self.description
       I18n.t(:percent_per_item)
     end

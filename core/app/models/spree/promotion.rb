@@ -14,11 +14,6 @@ module Spree
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
-    attr_accessible :name, :event_name, :code, :match_policy,
-                    :path, :advertise, :description, :usage_limit,
-                    :starts_at, :expires_at, :promotion_rules_attributes,
-                    :promotion_actions_attributes
-
     validates_associated :rules
 
     validates :name, :presence => true

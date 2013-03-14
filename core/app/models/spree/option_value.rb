@@ -5,7 +5,5 @@ module Spree
     has_and_belongs_to_many :variants, :join_table => 'spree_option_values_variants', :class_name => "Spree::Variant"
 
     validates :name, :presentation, :presence => true
-
-    attr_accessible :name, :presentation
   end
 end

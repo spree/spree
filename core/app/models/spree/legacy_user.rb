@@ -2,7 +2,6 @@
 module Spree
   class LegacyUser < ActiveRecord::Base
     self.table_name = 'spree_users'
-    attr_accessible :email, :password, :password_confirmation
 
     has_many :orders, :foreign_key => :user_id
     belongs_to :ship_address, :class_name => 'Spree::Address'

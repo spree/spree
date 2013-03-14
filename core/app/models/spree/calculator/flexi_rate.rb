@@ -7,8 +7,6 @@ module Spree
     preference :max_items,       :integer, :default => 0
     preference :currency,        :string,  :default => Spree::Config[:currency]
 
-    attr_accessible :preferred_first_item, :preferred_additional_item, :preferred_max_items, :preferred_currency
-
     def self.description
       I18n.t(:flexible_rate)
     end
