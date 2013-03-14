@@ -1,5 +1,7 @@
 $(document).ready(function() {
-  window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text());
+  if ($('#customer_autocomplete_template').length > 0) {
+    window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text());
+  }
 
   formatCustomerResult = function(customer) {
     return customerTemplate({
