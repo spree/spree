@@ -24,7 +24,7 @@ module Spree
         order.payment_required?
       }
       go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
-      go_to_state :complete, :if => lambda { |order| (order.payment_required? && order.payments.exists?) || !order.payment_required? }
+      go_to_state :complete, :if => lambda { |order| (order.payment_required? && order.has_unprocessed_payments?) || !order.payment_required? }
       remove_transition :from => :delivery, :to => :confirm
     end
 
@@ -167,6 +167,13 @@ module Spree
     # If true, causes the confirmation step to happen during the checkout process
     def confirmation_required?
       payments.map(&:payment_method).any?(&:payment_profiles_supported?)
+    end
+
+    # Used by the checkout state machine to check for unprocessed payments
+    # The Order should be unable to proceed to complete if there are unprocessed
+    # payments and there is payment required.
+    def has_unprocessed_payments?
+      payments.with_state('checkout').reload.exists?
     end
 
     # Indicates the number of items in the order

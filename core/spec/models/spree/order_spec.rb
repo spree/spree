@@ -480,4 +480,25 @@ describe Spree::Order do
       persisted_order.state.should == "payment"
     end
   end
+
+  # Related to the fix for #2694
+  context "#has_unprocessed_payments?" do
+    let!(:persisted_order) { create(:order) }
+
+    context "with payments in the 'checkout' state" do
+      before do
+        create(:payment, :order => persisted_order, :state => 'checkout')
+      end
+
+      it "returns true" do
+        assert persisted_order.has_unprocessed_payments?
+      end
+    end
+
+    context "with no payments in the 'checkout' state" do
+      it "returns false" do
+        assert !persisted_order.has_unprocessed_payments?
+      end
+    end
+  end
 end
