@@ -162,7 +162,7 @@ module Spree
           json_response["error"].should == "There was a problem with the payment gateway: NO REFUNDS"
 
           payment.reload
-          payment.state.should == "pending"
+          payment.state.should == "checkout"
         end
 
         context "crediting" do
