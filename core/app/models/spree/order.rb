@@ -341,10 +341,12 @@ module Spree
       if shipment.present?
         shipment.update_attributes!(:shipping_method => shipping_method)
       else
-        self.shipments << Shipment.create!({ :order => self,
-                                          :shipping_method => shipping_method,
-                                          :address => self.ship_address,
-                                          :inventory_units => self.inventory_units}, :without_protection => true)
+        self.shipments << Shipment.create!(
+          :order => self,
+          :shipping_method => shipping_method,
+          :address => self.ship_address,
+          :inventory_units => self.inventory_units
+        )
       end
     end
 
@@ -389,12 +391,12 @@ module Spree
 
       deliver_order_confirmation_email
 
-      self.state_changes.create({
+      self.state_changes.create(
         :previous_state => 'cart',
         :next_state     => 'complete',
         :name           => 'order' ,
         :user_id        => self.user_id
-      }, :without_protection => true)
+      )
     end
 
     def deliver_order_confirmation_email
@@ -509,12 +511,12 @@ module Spree
       state = "#{name}_state"
       if persisted?
         old_state = self.send("#{state}_was")
-        self.state_changes.create({
+        self.state_changes.create(
           :previous_state => old_state,
           :next_state     => self.send(state),
           :name           => name,
           :user_id        => self.user_id
-        }, :without_protection => true)
+        )
       end
     end
 

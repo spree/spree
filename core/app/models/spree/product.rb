@@ -168,7 +168,7 @@ module Spree
       return if option_values_hash.nil?
       option_values_hash.keys.map(&:to_i).each do |id|
         self.option_type_ids << id unless option_type_ids.include?(id)
-        product_option_types.create({:option_type_id => id}, :without_protection => true) unless product_option_types.pluck(:option_type_id).include?(id)
+        product_option_types.create(:option_type_id => id) unless product_option_types.pluck(:option_type_id).include?(id)
       end
     end
 
@@ -236,7 +236,10 @@ module Spree
         values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
         values.each do |ids|
-          variant = variants.create({ :option_value_ids => ids, :price => master.price }, :without_protection => true)
+          variant = variants.create(
+            :option_value_ids => ids,
+            :price => master.price
+          )
         end
         save
       end
@@ -244,7 +247,7 @@ module Spree
       def add_properties_and_option_types_from_prototype
         if prototype_id && prototype = Spree::Prototype.find_by_id(prototype_id)
           prototype.properties.each do |property|
-            product_properties.create({:property => property}, :without_protection => true)
+            product_properties.create(:property => property)
           end
           self.option_types = prototype.option_types
         end

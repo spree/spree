@@ -34,12 +34,13 @@ module Spree
         # is saved
         def create_adjustment(label, target, calculable, mandatory=false)
           amount = compute_amount(calculable)
-          params = { :amount => amount,
-                    :source => calculable,
-                    :originator => self,
-                    :label => label,
-                    :mandatory => mandatory }
-          target.adjustments.create(params, :without_protection => true)
+          target.adjustments.create(
+            :amount => amount,
+            :source => calculable,
+            :originator => self,
+            :label => label,
+            :mandatory => mandatory
+          )
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
