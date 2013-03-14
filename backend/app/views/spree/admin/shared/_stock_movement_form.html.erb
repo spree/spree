@@ -3,20 +3,20 @@
     <%= hidden_field_tag :stock_management, true %>
     <%= f.field_container :quantity do %>
       <%= f.label :quantity, t(:quantity) %>
-      <%= f.text_field :quantity, :class => 'fullwidth' %>
+      <%= f.number_field :quantity, class: 'fullwidth', min: 1, value: 1 %>
     <% end %>
     <%= f.field_container :stock_location do %>
       <%= f.label :stock_location_id, t(:stock_location) %>
       <%= collection_select 'stock_movement', 'stock_location_id', Spree::StockLocation.all, :id, :name,
-        { include_blank: true }, class: 'select2 fullwidth' %>
+        {}, class: 'select2 fullwidth' %>
     <% end %>
     <%= f.field_container :action do %>
       <%= f.label :action, t(:action) %>
       <%= collection_select 'stock_movement', 'action', allowed_stock_movement_actions, :to_s, :to_s,
-        { include_blank: true }, class: 'select2 fullwidth' %>
+        {}, class: 'select2 fullwidth' %>
     <% end %>
     <%= f.field_container :variant_id do %>
-      <%= f.label :variant_id, t(:variant) %>
+      <%= label_tag 'stock_item[variant_id]', t(:variant) %>
       <%= collection_select 'stock_item', 'variant_id', @variants, :id, :sku,
         {}, class: 'select2 fullwidth' %>
     <% end %>
