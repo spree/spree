@@ -99,12 +99,12 @@ module Spree
       order.shipment_state = 'shipped'
       state_changes = stub
       order.stub :state_changes => state_changes
-      state_changes.should_receive(:create).with({
+      state_changes.should_receive(:create).with(
         :previous_state => nil,
         :next_state => 'shipped',
         :name => 'shipment',
         :user_id => nil
-      }, :without_protection => true)
+      )
 
       order.state_changed('shipment')
     end
@@ -132,7 +132,7 @@ module Spree
     context "#update_adjustments" do
       let(:originator) do
         originator = Spree::Promotion::Actions::CreateAdjustment.create
-        calculator = Spree::Calculator::PerItem.create({:calculable => originator}, :without_protection => true)
+        calculator = Spree::Calculator::PerItem.create(:calculable => originator)
         originator.calculator = calculator
         originator.save
         originator

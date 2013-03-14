@@ -31,13 +31,17 @@ describe Spree::OrderMailer do
 
   context "only shows eligible adjustments in emails" do
     before do
-      order.adjustments.create({:label    => "Eligible Adjustment",
-                                :amount   => 10,
-                                :eligible => true}, :without_protection => true)
+      order.adjustments.create(
+        :label    => "Eligible Adjustment",
+        :amount   => 10,
+        :eligible => true
+      )
 
-      order.adjustments.create!({:label    => "Ineligible Adjustment",
-                                 :amount   => -10,
-                                 :eligible => false}, :without_protection => true)
+      order.adjustments.create!(
+        :label    => "Ineligible Adjustment",
+        :amount   => -10,
+        :eligible => false
+      )
     end
 
     let!(:confirmation_email) { Spree::OrderMailer.confirm_email(order) }

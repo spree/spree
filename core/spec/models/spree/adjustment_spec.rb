@@ -79,7 +79,11 @@ describe Spree::Adjustment do
 
   context "#save" do
     it "should call order#update!" do
-      adjustment = Spree::Adjustment.new({:adjustable => order, :amount => 10, :label => "Foo"}, :without_protection => true)
+      adjustment = Spree::Adjustment.new(
+        :adjustable => order,
+        :amount => 10,
+        :label => "Foo"
+      )
       order.should_receive(:update!)
       adjustment.save
     end

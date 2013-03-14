@@ -1,9 +1,23 @@
 require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
-  let(:inventory_unit) { Spree::InventoryUnit.create({:variant => mock_model(Spree::Variant), :state => "shipped"}, :without_protection => true) }
-  let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
-  let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order}, :without_protection => true) }
+  let(:inventory_unit) do
+    Spree::InventoryUnit.create(
+      :variant => mock_model(Spree::Variant),
+      :state => "shipped"
+    )
+  end
+
+  let(:order) do
+    mock_model(Spree::Order,
+      :inventory_units => [inventory_unit],
+      :awaiting_return? => false
+    )
+  end
+
+  let(:return_authorization) do
+    Spree::ReturnAuthorization.new(:order => order)
+  end
 
   before { inventory_unit.stub(:shipped?).and_return(true) }
 
@@ -38,7 +52,13 @@ describe Spree::ReturnAuthorization do
     end
 
     context "on rma that already has inventory_units" do
-      let(:inventory_unit_2)  { Spree::InventoryUnit.create({:variant => inventory_unit.variant, :state => "shipped"}, :without_protection => true) }
+      let(:inventory_unit_2) do
+        Spree::InventoryUnit.create(
+          :variant => inventory_unit.variant,
+          :state => "shipped"
+        )
+      end
+
       before { order.stub(:inventory_units => [inventory_unit, inventory_unit_2], :awaiting_return? => true) }
 
       it "should associate inventory unit" do
