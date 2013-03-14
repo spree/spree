@@ -26,13 +26,12 @@ $(function() {
     }
   });
 
-  sidebar_menu.find('.js-guides li i').toggle(function(){
-    if($(this).parent().find('ul').length > 0){
+  sidebar_menu.find('.js-guides li i').on('click', function(){
+    if($(this).parent().find('ul:hidden').length > 0){
       $(this).removeClass('icon-right-dir').addClass('icon-down-dir');
       $(this).parent().find('ul').stop().slideDown();
     }
-  }, function(){
-    if($(this).parent().find('ul').length > 0){
+    else if($(this).parent().find('ul:visible')) {
       $(this).removeClass('icon-down-dir').addClass('icon-right-dir');
       $(this).parent().find('ul').stop().slideUp();
     }

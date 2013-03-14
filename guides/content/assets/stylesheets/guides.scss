@@ -1,8 +1,9 @@
 @import 'global/variables';
 @import 'vendor/bourbon/bourbon';
-@import 'plugins/antiscroll';
+@import 'vendor/icons';
 
 @import 'components/code';
+@import 'components/info_boxes';
 
 @import 'shared/typography';
 @import 'shared/base';

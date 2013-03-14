@@ -298,7 +298,6 @@ pre.headers code {
   list-style: none;
 }
 #sidebar-menu ul ul {
-  margin-left: 20px;
   padding-left: 0px;
   -webkit-padding-start: 0px;
 }
@@ -367,7 +366,6 @@ pre.headers code {
 }
 #main-footer a {
   color: #6286B1;
-  font-weight: 400;
 }
 #main-footer a:hover {
   color: #89B64A;

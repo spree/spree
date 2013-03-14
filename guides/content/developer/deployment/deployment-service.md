@@ -157,6 +157,7 @@ Configurations** commands appear similar they are server specific so be
 sure to run the correct command on each server.
 ***
 
+
 !!!
 The **Initialize Configuration** command should only be run on
 servers that are intended to be dedicated Spree servers, it reconfigures
@@ -182,8 +183,7 @@ command to set your site specific database passwords.
 The command is generally something like:
 
 ```bash
-FACTER_db_pass=YOUR_DB_PASSWORD puppet agent —test
-```
+FACTER_db_pass=YOUR_DB_PASSWORD puppet agent —test```
 
 It’s important to substitute YOUR_DB_PASSWORD with the actual password
 you require.
@@ -216,8 +216,7 @@ workers are configured via the Deployment Server UI.
 Default Procfile contents:
 
 ```bash
-web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E ENV
-```
+web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E ENV```
 
 The provided Capistrano deployment script symlinks the Procfile into
 location after each deploy.
@@ -233,8 +232,8 @@ namespace :deploy do
   end
 end
 
-after 'deploy:update_code', 'deploy:symlink_shared'
-```
+after 'deploy:update_code', 'deploy:symlink_shared'```
+
 
 ***
 It’s important to remember to not edit the Procfile above
@@ -265,8 +264,7 @@ processes in your application at once:
 ```bash
 $ sudo stop spree
 $ sudo start spree
-$ sudo restart spree
-```
+$ sudo restart spree```
 
 #### Processes by type
 
@@ -275,8 +273,7 @@ To control all processes of a specific type you can use:
 ```bash
 $ sudo start spree-web
 $ sudo stop spree-worker
-$ sudo restart spree-solr
-```
+$ sudo restart spree-solr```
 
 #### Individual Processes
 
@@ -286,8 +283,7 @@ the end:
 ```bash
 $ sudo start spree-web-1
 $ sudo stop spree-worker-3
-$ sudo restart spree-solr-2
-```
+$ sudo restart spree-solr-2```
 
 ***
 The process number is the concurrency number specified in the
@@ -309,8 +305,7 @@ Sample Procfile containing Delayed Job workers:
 
 ```bash
 web: bundle exec unicorn_rails -c /data/app\_name/shared/config/unicorn.rb -p $PORT -E production
-worker: bundle exec rake jobs:work
-```
+worker: bundle exec rake jobs:work```
 
 ### Changing process concurrency
 
@@ -329,8 +324,7 @@ namespace :foreman do
     run "cd #{current_path} && bundle exec foreman export upstart /etc/init -a #{application} -c worker=3 -u spree"
   end
   …
-end
-```
+end```
 
 The `-c` (or `--concurrency`) switch accepts the process type and an integer
 for the number of processes to start up. You specify mulitple types by

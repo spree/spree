@@ -189,7 +189,7 @@
 .icon-floppy:before { content: '💾'; } /* '\1f4be' */
 .icon-cd:before { content: '💿'; } /* '\1f4bf' */
 .icon-folder:before { content: '📁'; } /* '\1f4c1' */
-.icon-doc-text:before { content: '📄'; } /* '\1f4c4' */
+.icon-doc-text:before { content: '\1f4c4'; } /* '\1f4c4' */
 .icon-calendar:before { content: '📅'; } /* '\1f4c5' */
 .icon-chart-line:before { content: '📈'; } /* '\1f4c8' */
 .icon-chart-bar:before { content: '📊'; } /* '\1f4ca' */

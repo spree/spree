@@ -1,6 +1,27 @@
+// Base
+img {
+  max-width: 100%;
+}
+
 // Sidebar
 #sidebar {
   #sidebar-menu {
+    > ul {
+      margin-left: 0;
+      padding-left: 0;
+      -webkit-padding-start: 0px;
+    }
+    ul {
+      ul {
+        margin-left: 10px;
+
+        ul {
+          li {
+            margin-left: 10px !important;
+          }
+        }
+      }
+    }
     li.js-topic {
       margin-bottom: 15px;
     }
@@ -18,6 +39,10 @@
 
 // Footer
 #main-footer {
+  * {
+    line-height: 24px;
+  }
+
   .block-title {
     font-size: 14px;
   }
@@ -28,5 +53,9 @@
     i {
       line-height: 27px;
     }
+  }
+
+  a {
+    font-weight: 600;
   }
 }
