@@ -31,8 +31,8 @@ Spree::Core::Engine.routes.append do
         get :shipping_method
       end
     end
-
   end
+
   get '/cart', :to => 'orders#edit', :as => :cart
   put '/cart', :to => 'orders#update', :as => :update_cart
   put '/cart/empty', :to => 'orders#empty', :as => :empty_cart
@@ -133,6 +133,10 @@ Spree::Core::Engine.routes.append do
       end
       resources :line_items
       resources :shipments do
+        collection do
+          get :review
+        end
+
         member do
           put :fire
         end
