@@ -81,7 +81,6 @@ module Spree
         @shipment = order.shipments.build
         @shipment.address ||= order.ship_address
         @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
-        @shipment.shipping_method ||= order.shipping_method
         @shipment.attributes = params[:shipment]
       end
 
