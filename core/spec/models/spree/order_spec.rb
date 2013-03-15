@@ -111,6 +111,11 @@ describe Spree::Order do
       order.inventory_units.all? { |iu| !iu.pending }.should be_true
     end
 
+    it "should finalize all inventory units" do
+      Spree::InventoryUnit.should_receive(:finalize_units!).with(order.inventory_units)
+      order.finalize!
+    end
+
     it "should decrease the stock for each variant in the shipment" do
       order.shipments.each do |shipment|
         shipment.stock_location.should_receive(:decrease_stock_for_variant)
