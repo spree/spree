@@ -26,11 +26,21 @@ module Spree
       zone && zone.include?(order.ship_address)
     end
 
+    # available_to_order_if can be used to declare which conditions must be met in order
+    # to be available to an order
+    #
+    # available_to_order_if :method_name?
+    #
+    # Your method must take in a single parameter which is a Spree::Order
+    def self.available_to_order_if(*args)
+      @@available_to_order_methods ||= []
+      @@available_to_order_methods.concat args
+    end
+
+    available_to_order_if :available?, :within_zone?, :category_match?, :currency_match?
+
     def available_to_order?(order)
-      available?(order) &&
-      within_zone?(order) &&
-      category_match?(order) &&
-      currency_match?(order)
+      @@available_to_order_methods.all? { |m| self.send(m, order)}
     end
 
     # Indicates whether or not the category rules for this shipping method
