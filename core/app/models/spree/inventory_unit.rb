@@ -28,8 +28,10 @@ module Spree
 
     def self.backordered_for_stock_item(stock_item)
       stock_locations_table = Spree::StockLocation.table_name
-      joins(:shipment => :stock_location).where("#{stock_locations_table}.id = ?", stock_item.stock_location_id).
-      order("created_at ASC")
+      joins(:shipment => :stock_location).
+      where("#{stock_locations_table}.id = ?", stock_item.stock_location_id).
+      where("#{table_name}.variant_id = ?", stock_item.variant_id).
+      where(:state => "backordered").order("created_at ASC")
     end
 
     # manages both variant.count_on_hand and inventory unit creation
