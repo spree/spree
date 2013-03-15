@@ -65,19 +65,17 @@ module Spree
       Spree::Config[:track_inventory_levels]
     end
 
+    def self.finalize_units!(inventory_units)
+      inventory_units.map { |iu| iu.update_column(:pending, false) }
+      inventory_units.group_by(&:variant_id).each do |variant_id, iu|
+        stock_item = iu.first.find_stock_item
+        Spree::StockMovement.create!(:stock_item => stock_item, :quantity => iu.size, :action => 'sold')
+      end
+    end
+
     def find_stock_item
       Spree::StockItem.where({:stock_location_id => self.shipment.stock_location_id, :variant_id => variant_id}).first
     end
-
-    def finalize!
-      update_column(:pending, false)
-      Spree::StockMovement.create!(:stock_item => find_stock_item, :quantity => 1, :action => 'sold')
-    end
-
-    # def finalize!
-    #   self.update_column(:pending, false)
-    #   self.shipment.stock_location.decrement_count_on_hand_for_variant(variant)
-    # end
 
     private
       def allow_ship?
