@@ -1,14 +1,20 @@
 module Spree
   module Stock
     class OrderCounter
-      Row = Struct.new(:variant, :assigned, :remaining)
-
       attr_reader :order
 
       def initialize(order)
         @order = order
         @ordered_counts = count_line_items
         @assigned_counts = count_inventory_units
+      end
+
+      def variants
+        @ordered_counts.keys
+      end
+
+      def ordered(variant)
+        @ordered_counts[variant]
       end
 
       def assigned(variant)
@@ -35,7 +41,6 @@ module Spree
         end
         counts
       end
-
     end
   end
 end

@@ -1,22 +1,28 @@
+<% order_counter = Spree::Stock::OrderCounter.new(@order) %>
+
 <h2>Stock Levels</h2>
 <table class="index">
   <thead>
     <tr>
      <th><%= t(:variant) %></th>
-     <th><%= t(:needed) %></th>
+     <th><%= t(:ordered) %></th>
+     <th><%= t(:assigned) %></th>
+     <th><%= t(:remaining) %></th>
       <% @locations.each do |location| %>
       <th><%= "#{location.name} location" %> </th>
       <% end %>
     </tr>
   </thead>
   <tbody>
-    <% @order.line_items.each do |line_item| %>
+    <% order_counter.variants.each do |variant| %>
       <tr>
-        <td><%= line_item.variant.name %></td>
-        <td><%= line_item.quantity %></td>
+        <td><%= variant.name %></td>
+        <td><%= order_counter.ordered(variant) %></td>
+        <td><%= order_counter.assigned(variant) %></td>
+        <td><%= order_counter.remaining(variant) %></td>
         <% @locations.each do |location| %>
         <td>
-          <%= location.count_on_hand(line_item.variant) %>
+          <%= location.count_on_hand(variant) %>
         </td>
         <% end %>
       </tr>

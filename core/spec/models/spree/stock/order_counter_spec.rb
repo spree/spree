@@ -15,6 +15,13 @@ module Spree
 
       subject { OrderCounter.new(order) }
 
+      its(:variants) { should eq [variant1, variant2] }
+
+      it 'counts ordered' do
+        subject.ordered(variant1).should eq 2
+        subject.ordered(variant2).should eq 2
+      end
+
       it 'counts assigned' do
         subject.assigned(variant1).should eq 1
         subject.assigned(variant2).should eq 2
