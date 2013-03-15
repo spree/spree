@@ -17,7 +17,7 @@ module Spree
 
     attr_accessible :quantity, :variant_id
 
-    before_save :update_inventory
+    # before_save :update_inventory
     before_destroy :ensure_not_shipped, :remove_inventory
 
     after_save :update_order
@@ -67,50 +67,50 @@ module Spree
     end
 
     private
-      def update_inventory
-        return true unless order.completed?
+    # def update_inventory
+    #   return true unless order.completed?
 
-        if new_record?
-          InventoryUnit.increase(order, variant, quantity)
-        elsif old_quantity = self.changed_attributes['quantity']
-          if old_quantity < quantity
-            InventoryUnit.increase(order, variant, (quantity - old_quantity))
-          elsif old_quantity > quantity
-            InventoryUnit.decrease(order, variant, (old_quantity - quantity))
-          end
-        end
+    #   if new_record?
+    #     InventoryUnit.increase(order, variant.stock_item, quantity)
+    #   elsif old_quantity = self.changed_attributes['quantity']
+    #     if old_quantity < quantity
+    #       InventoryUnit.increase(order, variant.stock_item, (quantity - old_quantity))
+    #     elsif old_quantity > quantity
+    #       InventoryUnit.decrease(order, variant.stock_item, (old_quantity - quantity))
+    #     end
+    #   end
+    # end
+
+    def remove_inventory
+      return true unless order.completed?
+
+      InventoryUnit.decrease(order, variant, quantity)
+    end
+
+    def update_order
+      # update the order totals, etc.
+      order.create_tax_charge!
+      order.update!
+    end
+
+    def ensure_not_shipped
+      if order.try(:inventory_units).to_a.any?{ |unit| unit.variant_id == variant_id && unit.shipped? }
+        errors.add :base, I18n.t('validation.cannot_destory_line_item_as_inventory_units_have_shipped')
+        return false
       end
+    end
 
-      def remove_inventory
-        return true unless order.completed?
+    # Validation
+    def stock_availability
+      return if sufficient_stock?
+      errors.add(:quantity, I18n.t('validation.exceeds_available_stock'))
+    end
 
-        InventoryUnit.decrease(order, variant, quantity)
+    def quantity_no_less_than_shipped
+      already_shipped = order.shipments.reduce(0) { |acc, s| acc + s.inventory_units.shipped.where(:variant_id => variant_id).count }
+      unless quantity >= already_shipped
+        errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units'))
       end
-
-      def update_order
-        # update the order totals, etc.
-        order.create_tax_charge!
-        order.update!
-      end
-
-      def ensure_not_shipped
-        if order.try(:inventory_units).to_a.any?{ |unit| unit.variant_id == variant_id && unit.shipped? }
-          errors.add :base, I18n.t('validation.cannot_destory_line_item_as_inventory_units_have_shipped')
-          return false
-        end
-      end
-
-      # Validation
-      def stock_availability
-        return if sufficient_stock?
-        errors.add(:quantity, I18n.t('validation.exceeds_available_stock'))
-      end
-
-      def quantity_no_less_than_shipped
-        already_shipped = order.shipments.reduce(0) { |acc, s| acc + s.inventory_units.shipped.where(:variant_id => variant_id).count }
-        unless quantity >= already_shipped
-          errors.add(:quantity, I18n.t('validation.cannot_be_less_than_shipped_units'))
-        end
-      end
+    end
   end
 end
