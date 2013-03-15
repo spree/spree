@@ -2,13 +2,21 @@ module Spree
   module Admin
     class ShipmentsController < Spree::Admin::BaseController
       respond_to :html
-      before_filter :locations, only: :index
 
       def index
         @shipments = order.shipments
       end
 
+      def review
+        @order = order
+        @locations = Spree::StockLocation.active
+      end
+
       def new
+        stock_location = Spree::StockLocation.find_by_id(params[:stock_location])
+        redirect_to review_admin_order_shipments_path(order) unless stock_location
+
+        #TODO build shipment from location and populate with needed stock
         build_shipment
       end
 
@@ -71,10 +79,6 @@ module Spree
 
       def shipment
         @shipment ||= order.shipments.find_by_number(params[:id])
-      end
-
-      def locations
-        @locations ||= Spree::StockLocation.active
       end
 
       def build_shipment

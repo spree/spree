@@ -1,6 +1,15 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
+
+<% content_for :page_actions do %>
+    <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+<% end %>
+
+<% content_for :page_title do %>
+  <i class="icon-arrow-right"></i> <%= t(:shipments) %>
+<% end %>
+
 <% order_counter = Spree::Stock::OrderCounter.new(@order) %>
 
-<h2>Stock Levels</h2>
 <table class="index">
   <thead>
     <tr>
@@ -27,6 +36,16 @@
         <% end %>
       </tr>
     <% end %>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <% @locations.each do |location| %>
+        <td>
+          <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order, :stock_location => location), :icon => 'icon-plus' %>
+        </td>
+        <% end %>
+      </tr>
   </tbody>
 </table>
-
