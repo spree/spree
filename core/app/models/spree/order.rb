@@ -366,7 +366,7 @@ module Spree
     def finalize!
       touch :completed_at
 
-      inventory_units.each { |iu| iu.finalize! }
+      Spree::InventoryUnit.finalize_units!(inventory_units)
 
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
