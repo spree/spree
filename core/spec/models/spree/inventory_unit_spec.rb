@@ -27,7 +27,7 @@ describe Spree::InventoryUnit do
       unit.tap(&:save!)
     end
 
-    it "finds inventory units from its stock location" do
+    it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
       stock_item.variant_id = 1
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should =~ [unit]
     end
