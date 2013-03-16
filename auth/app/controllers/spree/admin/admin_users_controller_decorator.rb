@@ -12,7 +12,11 @@ Spree::Admin::UsersController.class_eval do
     end
 
     @user = Spree::User.new(params[:user])
+
+    invoke_callbacks(:create, :before)
+
     if @user.save
+      invoke_callbacks(:create, :after)
 
       if roles
         @user.roles = roles.reject(&:blank?).collect{|r| Spree::Role.find(r)}
@@ -21,6 +25,7 @@ Spree::Admin::UsersController.class_eval do
       flash.now[:notice] = t(:created_successfully)
       render :edit
     else
+      invoke_callbacks(:create, :fails)
       render :new
     end
   end
@@ -30,7 +35,11 @@ Spree::Admin::UsersController.class_eval do
       roles = params[:user].delete("role_ids")
     end
 
+    invoke_callbacks(:update, :before)
+
     if @user.update_attributes(params[:user])
+      invoke_callbacks(:update, :after)
+
       if roles
         @user.roles = roles.reject(&:blank?).collect{|r| Spree::Role.find(r)}
       end
@@ -43,6 +52,7 @@ Spree::Admin::UsersController.class_eval do
       flash.now[:notice] = t(:account_updated)
       render :edit
     else
+      invoke_callbacks(:update, :fails)
       render :edit
     end
   end

@@ -42,4 +42,53 @@ describe Spree::Admin::UsersController do
       response.should render_template 'spree/shared/unauthorized'
     end
   end
+
+  describe 'resource callbacks' do
+    [:create, :update].each do |action|
+      describe "##{action}" do
+        let(:user) { stub('User', has_role?: true).as_null_object }
+
+        before do
+          Spree::User.stub(new: user, find: user)
+          subject.stub(:invoke_callbacks)
+        end
+
+        after { spree_post action, user: {}, id: 1 }
+
+        it "invokes the 'before' callback" do
+          subject.should_receive(:invoke_callbacks).with(action, :before)
+        end
+
+        context 'when the user is saved successfully' do
+          before do
+            user.stub(save: true)
+            user.stub(update_attributes: true)
+          end
+
+          it "invokes the 'after' callback" do
+            subject.should_receive(:invoke_callbacks).with(action, :after)
+          end
+
+          it "does not invoke the 'fails' callback" do
+            subject.should_not_receive(:invoke_callbacks).with(action, :fails)
+          end
+        end
+
+        context 'when the user is not saved successfully' do
+          before do
+            user.stub(save: false)
+            user.stub(update_attributes: false)
+          end
+
+          it "invokes the 'fails' callback" do
+            subject.should_receive(:invoke_callbacks).with(action, :fails)
+          end
+
+          it "does not invoke the 'after' callback" do
+            subject.should_not_receive(:invoke_callbacks).with(action, :after)
+          end
+        end
+      end
+    end
+  end
 end
