@@ -35,6 +35,37 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
   end
 
+  context "#destroy" do
+    before(:each) do
+      promotion.promotion_actions = [action]
+    end
+
+    context "when order is not complete" do
+      it "should not keep the adjustment" do
+        action.perform(:order => order)
+        action.destroy
+        order.adjustments.count.should == 0
+      end
+    end
+
+    context "when order is complete" do
+      let(:order) { create(:order, :state => "complete") }
+
+      before(:each) do
+        action.perform(:order => order)
+        action.destroy
+      end
+
+      it "should keep the adjustment" do
+        order.adjustments.count.should == 1
+      end
+
+      it "should nullify the adjustment originator" do
+        order.adjustments.first.originator.should be_nil
+      end
+    end
+  end
+
   context "#compute_amount" do
     before do
       action.calculator = Spree::Calculator::FreeShipping.new
