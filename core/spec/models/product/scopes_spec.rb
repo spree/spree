@@ -34,4 +34,15 @@ describe "Product scopes" do
       end
     end
   end
+
+  # Regression test for #2654
+  context "on_hand + in_taxon" do
+    before do
+      FactoryGirl.create(:taxon)
+    end
+
+    it "on_hand and in_taxon can be used together" do
+      lambda { Spree::Product.on_hand.in_taxon(Spree::Taxon.first) }.should_not raise_error
+    end
+  end
 end
