@@ -115,3 +115,8 @@ information, please read the <%= link_to "Payments", :payments %> guide.
 ## Return Authorizations
 
 TODO: document return authorizations.
+
+## OrderPopulator
+
+TODO: Add documentation about the OrderPopulator class here
+
