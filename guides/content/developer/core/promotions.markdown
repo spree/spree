@@ -143,3 +143,4 @@ Rails.application.config.spree.promotion.rules << MyPromotionRule```
 Once this rule has been registered, it will be available within Spree's
 interface.
 
+TODO: Write about Spree::Promo::CouponApplicator
