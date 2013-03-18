@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'json', '>= 1.5.5'
   # Because Money 5.1.0 removes compatibility with Ruby 1.8
   s.add_dependency 'money', '5.0.0'
-  s.add_dependency 'rails', '~> 3.2.12'
+  s.add_dependency 'rails', '~> 3.2.13'
   s.add_dependency 'kaminari', '0.13.0'
   s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.3.2'
