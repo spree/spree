@@ -64,7 +64,7 @@ var handle_delete = function(e, data){
       $.ajax({
         type: "POST",
         dataType: "json",
-        url: base_url + node.attr("id"),
+        url: base_url + '/' + node.attr("id"),
         data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
         error: handle_ajax_error
       });
