@@ -38,11 +38,10 @@ module Spree
 
     # Creates permalink based on Stringex's .to_url method
     def set_permalink
-      if parent_id.nil?
-        self.permalink = name.to_url if permalink.blank?
+      if parent.present?
+        self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
       else
-        parent_taxon = Taxon.find(parent_id)
-        self.permalink = [parent_taxon.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
+        self.permalink = name.to_url if permalink.blank?
       end
     end
 
