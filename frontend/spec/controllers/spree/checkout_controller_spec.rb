@@ -31,11 +31,6 @@ describe Spree::CheckoutController do
       response.should redirect_to(spree.cart_path)
     end
 
-    it "should change to the requested state" do
-      order.should_receive(:state=).with("payment").and_return true
-      spree_get :edit, { :state => "payment" }
-    end
-
     it "should redirect to cart if order is completed" do
       order.stub(:completed? => true)
       spree_get :edit, {:state => "address"}
