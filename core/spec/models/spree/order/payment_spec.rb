@@ -38,7 +38,7 @@ module Spree
 
       payment_1.should be_completed
       payment_2.should be_completed
-      payment_3.should be_pending
+      payment_3.should be_checkout
     end
 
     it "does not use failed payments" do
