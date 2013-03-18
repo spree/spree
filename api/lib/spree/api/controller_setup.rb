@@ -19,7 +19,6 @@ module Spree
           include ActionController::Head
 
           include CanCan::ControllerAdditions
-
           include Spree::Core::ControllerHelpers::Auth
 
           prepend_view_path Rails.root + "app/views"
