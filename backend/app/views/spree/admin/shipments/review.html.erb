@@ -31,6 +31,7 @@
         <% @locations.each do |location| %>
         <td>
           <%= location.count_on_hand(variant) %>
+          (<%= location.backorderable?(variant) ? "can b/o" : "no b/o" %>)
         </td>
         <% end %>
       </tr>

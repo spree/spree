@@ -20,11 +20,8 @@ module Spree
           return redirect_to review_admin_order_shipments_path(order)
         end
 
-        package = Stock::Package.new(stock_location, order)
-        order_counter.variants_with_remaining.each do |variant|
-          package.add variant, order_counter.remaining(variant), :on_hand
-        end
-
+        packer = Stock::RemainingPacker.new(stock_location, order)
+        package = packer.default_package
         @shipment = package.to_shipment
 
         estimator = Stock::Estimator.new(order)

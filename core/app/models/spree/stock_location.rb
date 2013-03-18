@@ -23,6 +23,10 @@ module Spree
       stock_item(variant).try(:count_on_hand)
     end
 
+    def backorderable?(variant)
+      stock_item(variant).try(:backorderable?)
+    end
+
     def find_or_create_stock_item_for_variant(variant)
       variant_stock_item = stock_item(variant)
       variant_stock_item.present? ? variant_stock_item : stock_items.create!
