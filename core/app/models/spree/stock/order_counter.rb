@@ -17,6 +17,10 @@ module Spree
         variants.select { |variant| remaining(variant) > 0 }
       end
 
+      def remaining?
+        not variants_with_remaining.empty?
+      end
+
       def ordered(variant)
         @ordered_counts[variant]
       end
