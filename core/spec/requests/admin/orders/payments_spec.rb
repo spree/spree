@@ -41,7 +41,7 @@ describe "Payments" do
       within_row(1) do
         column_text(2).should == "$49.98"
         column_text(3).should == "Credit Card"
-        column_text(4).should == "PENDING"
+        column_text(4).should == "CHECKOUT"
       end
 
       click_icon :void
