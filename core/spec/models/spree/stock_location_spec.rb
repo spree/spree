@@ -18,6 +18,10 @@ module Spree
       subject.count_on_hand(variant).should eq 10
     end
 
+    it 'finds determines if you a variant is backorderable' do
+      subject.backorderable?(variant).should be_true
+    end
+
     it 'can be deactivated' do
       create(:stock_location, :active => true)
       create(:stock_location, :active => false)

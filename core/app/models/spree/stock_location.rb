@@ -13,6 +13,8 @@ module Spree
 
     scope :active, where(active: true)
 
+    after_create :populate_stock_items
+
     def stock_item(variant)
       stock_items.where(variant_id: variant).first
     end
@@ -21,9 +23,19 @@ module Spree
       stock_item(variant).try(:count_on_hand)
     end
 
+    def backorderable?(variant)
+      stock_item(variant).try(:backorderable?)
+    end
+
     def find_or_create_stock_item_for_variant(variant)
       variant_stock_item = stock_item(variant)
       variant_stock_item.present? ? variant_stock_item : stock_items.create!
+    end
+
+    def populate_stock_items
+      Spree::Variant.all.each do |v|
+          self.stock_items.create!(:variant => v)
+      end
     end
   end
 end

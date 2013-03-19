@@ -3,6 +3,8 @@ module Spree
     class ShipmentsController < Spree::Admin::BaseController
       respond_to :html
 
+      before_filter :order_counter, :only => [:index, :review, :new]
+
       def index
         @shipments = order.shipments
       end
@@ -14,21 +16,20 @@ module Spree
 
       def new
         stock_location = Spree::StockLocation.find_by_id(params[:stock_location])
-        redirect_to review_admin_order_shipments_path(order) unless stock_location
-
-        #TODO build shipment from location and populate with needed stock
-        build_shipment
-      end
-
-      def create
-        build_shipment
-        assign_inventory_units
-        if shipment.save
-          flash[:success] = flash_message_for(shipment, :successfully_created)
-          redirect_to edit_admin_order_shipment_path(order, shipment)
-        else
-          render :action => 'new'
+        unless stock_location and order_counter.remaining?
+          return redirect_to review_admin_order_shipments_path(order)
         end
+
+        packer = Stock::RemainingPacker.new(stock_location, order)
+        package = packer.default_package
+        @shipment = package.to_shipment
+
+        estimator = Stock::Estimator.new(order)
+        @shipment.shipping_rates = estimator.shipping_rates(package)
+
+        @shipment.save!
+
+        redirect_to edit_admin_order_shipment_path(order, @shipment)
       end
 
       def edit
@@ -77,15 +78,12 @@ module Spree
         authorize! action, @order
       end
 
-      def shipment
-        @shipment ||= order.shipments.find_by_number(params[:id])
+      def order_counter
+        @order_counter ||= Stock::OrderCounter.new(order)
       end
 
-      def build_shipment
-        @shipment = order.shipments.build
-        @shipment.address ||= order.ship_address
-        @shipment.address ||= Address.new(:country_id => Spree::Config[:default_country_id])
-        @shipment.attributes = params[:shipment]
+      def shipment
+        @shipment ||= order.shipments.find_by_number(params[:id])
       end
 
       def model_class

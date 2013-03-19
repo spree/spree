@@ -8,7 +8,6 @@
   <i class="icon-arrow-right"></i> <%= t(:shipments) %>
 <% end %>
 
-<% order_counter = Spree::Stock::OrderCounter.new(@order) %>
 
 <table class="index">
   <thead>
@@ -23,15 +22,16 @@
     </tr>
   </thead>
   <tbody>
-    <% order_counter.variants.each do |variant| %>
+    <% @order_counter.variants.each do |variant| %>
       <tr>
         <td><%= variant.name %></td>
-        <td><%= order_counter.ordered(variant) %></td>
-        <td><%= order_counter.assigned(variant) %></td>
-        <td><%= order_counter.remaining(variant) %></td>
+        <td><%= @order_counter.ordered(variant) %></td>
+        <td><%= @order_counter.assigned(variant) %></td>
+        <td><%= @order_counter.remaining(variant) %></td>
         <% @locations.each do |location| %>
         <td>
           <%= location.count_on_hand(variant) %>
+          (<%= location.backorderable?(variant) ? "can b/o" : "no b/o" %>)
         </td>
         <% end %>
       </tr>
@@ -43,7 +43,9 @@
         <td>&nbsp;</td>
         <% @locations.each do |location| %>
         <td>
-          <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order, :stock_location => location), :icon => 'icon-plus' %>
+          <% if @order_counter.remaining? %>
+            <%= button_link_to t(:new_shipment), new_admin_order_shipment_url(@order, :stock_location => location), :icon => 'icon-plus' %>
+          <% end %>
         </td>
         <% end %>
       </tr>

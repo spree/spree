@@ -621,6 +621,7 @@ en:
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
   new_state: "New State"
+  new_stock_location: "New Stock Location" 
   new_stock_movement: "New Stock Movement"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
