@@ -16,6 +16,13 @@ describe Spree::ShipmentMailer do
     shipment
   end
 
+  before do
+    Spree::MailMethod.create!(
+      :environment => Rails.env,
+      :preferred_mails_from => "spree@example.com"
+    )
+  end
+
   it "doesn't include out of stock html span in the email body" do
     Spree::Config.allow_backorders = false
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
