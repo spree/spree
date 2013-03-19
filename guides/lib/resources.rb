@@ -706,6 +706,20 @@ module Spree
         "created_at"=>"2012-10-24T23:26:23Z",
         "updated_at"=>"2012-10-24T23:26:23Z"
       }
+
+    STOCK_LOCATION =
+      {
+        "id"=>1,
+        "name"=>"default",
+        "address1"=>"7735 Old Georgetown Road",
+        "address2"=>"Suite 510",
+        "city"=>"Bethesda",
+        "state_id"=>26,
+        "country_id"=>49,
+        "zipcode"=>"20814",
+        "phone"=>"",
+        "active"=>true
+      }
     end
 end
 
