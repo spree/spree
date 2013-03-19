@@ -69,7 +69,7 @@ module Spree
       inventory_units.map { |iu| iu.update_column(:pending, false) }
       inventory_units.group_by(&:variant_id).each do |variant_id, iu|
         stock_item = iu.first.find_stock_item
-        Spree::StockMovement.create!(:stock_item => stock_item, :quantity => -iu.size)
+        Spree::StockMovement.create!(:stock_item => stock_item, :quantity => -iu.size, :originator => order)
       end
     end
 
