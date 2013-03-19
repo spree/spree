@@ -48,17 +48,6 @@ describe Spree::InventoryUnit do
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(other_variant_unit)
     end
-
-    context "does not find inventory units from other stock locations" do
-      before do
-        stock_item.stock_location = create(:stock_location)
-        stock_item.save!
-      end
-
-      specify do
-        Spree::InventoryUnit.backordered_for_stock_item(stock_item).should be_empty
-      end
-    end
   end
 
   context "#increase" do
