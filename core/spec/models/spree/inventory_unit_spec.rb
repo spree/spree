@@ -76,9 +76,9 @@ describe Spree::InventoryUnit do
     end
 
     it "should create a stock movement" do
-      inventory_unit.stub(:stock_item, FactoryGirl.create(:stock_item))
-      expect {inventory_unit.finalize!}.to change{Spree::StockMovement.count}.by(1)
-
+      Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
+      Spree::InventoryUnit.finalize_units!(inventory_units)
+      inventory_units.any?(&:pending).should be_false
     end
   end
 end

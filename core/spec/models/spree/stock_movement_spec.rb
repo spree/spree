@@ -46,4 +46,3 @@ describe Spree::StockMovement do
     end
   end
 end
-
