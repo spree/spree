@@ -224,6 +224,11 @@ module Spree
 
       context "can cancel an order" do
         before do
+          Spree::MailMethod.create!(
+            :environment => Rails.env,
+            :preferred_mails_from => "spree@example.com"
+          )
+
           order.completed_at = Time.now
           order.state = 'complete'
           order.shipment_state = 'ready'
