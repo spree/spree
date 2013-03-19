@@ -1,8 +1,7 @@
 module Spree
   class StockMovement < ActiveRecord::Base
     belongs_to :stock_item
-    belongs_to :source, polymorphic: true
-    belongs_to :destination, polymorphic: true
+    belongs_to :originator, polymorphic: true
 
     attr_accessible :quantity, :stock_item, :stock_item_id
 
