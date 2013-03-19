@@ -42,7 +42,7 @@ module Spree
 
       #set on_hand if configured
       if self.track_levels?(stock_item.variant)
-        Spree::StockMovement.create!(stock_item: stock_item, action: 'sold', quantity: quantity)
+        Spree::StockMovement.create!(stock_item: stock_item, quantity: -quantity)
       end
 
       #create units if configured
@@ -53,7 +53,7 @@ module Spree
 
     def self.decrease(order, stock_item, quantity)
       if self.track_levels?(stock_item.variant)
-        Spree::StockMovement.create!(stock_item: stock_item, action: 'received', quantity: quantity)
+        Spree::StockMovement.create!(stock_item: stock_item, quantity: quantity)
       end
 
       if Spree::Config[:create_inventory_units]
@@ -69,7 +69,7 @@ module Spree
       inventory_units.map { |iu| iu.update_column(:pending, false) }
       inventory_units.group_by(&:variant_id).each do |variant_id, iu|
         stock_item = iu.first.find_stock_item
-        Spree::StockMovement.create!(:stock_item => stock_item, :quantity => iu.size, :action => 'sold')
+        Spree::StockMovement.create!(:stock_item => stock_item, :quantity => -iu.size)
       end
     end
 
