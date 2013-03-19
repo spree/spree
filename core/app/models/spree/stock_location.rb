@@ -15,7 +15,7 @@ module Spree
 
     after_create :create_stock_items
 
-    after_create :populate_stock_items
+    after_create :create_stock_items
 
     def stock_item(variant)
       stock_items.where(variant_id: variant).first
