@@ -9,13 +9,7 @@ module Spree
       subject { Packer.new(stock_location, order) }
 
       before :all do
-        order.reload
-        order.line_items.each do |line_item|
-          create(:stock_item,
-                 variant: line_item.variant,
-                 count_on_hand: 5,
-                 stock_location: stock_location)
-        end
+        Spree::StockItem.update_all(count_on_hand: 5)
       end
 
       context 'packages' do
