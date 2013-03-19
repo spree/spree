@@ -720,6 +720,16 @@ module Spree
         "phone"=>"",
         "active"=>true
       }
+
+    STOCK_ITEM =
+      {
+        "id"=>1,
+        "count_on_hand"=>10,
+        "backorderable"=>true,
+        "lock_version"=>1,
+        "stock_location_id"=>1,
+        "variant_id"=>1
+      }
     end
 end
 
