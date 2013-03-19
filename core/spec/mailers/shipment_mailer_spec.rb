@@ -17,6 +17,13 @@ describe Spree::ShipmentMailer do
     shipment
   end
 
+  before do
+    Spree::MailMethod.create!(
+      :environment => Rails.env,
+      :preferred_mails_from => "spree@example.com"
+    )
+  end
+
   # Regression test for #2196
   it "doesn't include out of stock in the email body" do
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
