@@ -70,6 +70,7 @@
       table {
         margin-bottom: 0;
         border-collapse: collapse;
+        min-height: 102px;
 
         thead {
           th {
@@ -89,6 +90,7 @@
           tr {
             td {
               padding: 5px 10px;
+              vertical-align: middle;
 
               &:first-child {
                 border-left: none;
