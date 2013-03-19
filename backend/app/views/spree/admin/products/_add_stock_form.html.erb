@@ -1,0 +1,6 @@
+<%= form_for [:admin, Spree::StockMovement.new] do |f| %>
+  <fieldset>
+    <legend align="center"><%= t(:add_stock_management)%></legend>
+    <%= render :partial => 'spree/admin/shared/stock_movement_form', :locals => { :f => f } %>
+  </fieldset>
+<% end %>
