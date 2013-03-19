@@ -1,8 +1,5 @@
 <% content_for :page_actions do %>
   <li><%= button_link_to t(:back_to_products_list), session[:return_to] || admin_products_url, :icon => 'icon-arrow-left' %></li>
-  <li id="new_product_link">
-    <%= button_link_to t(:add_stock_management), '#', { :icon => 'icon-plus', :id => 'admin_add_stock_management' } %>
-  </li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
@@ -11,10 +8,10 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
-<% content_for :page_actions do %>
-  <li>
-  </li>
-<% end %>
+
+<div id="add_stock_form">
+  <%= render 'add_stock_form' %>
+</div>
 
 <table class="index" id="listing_product_stock">
   <colgroup>
@@ -57,19 +54,11 @@
                   <tr class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
                     <td><%= stock_location.name %></td>
                     <td class="align-center">
-                      <% if stock_location.stock_item(variant) %>
-                        <%= stock_location.stock_item(variant).count_on_hand %>
-                      <% else %>
-                        N/A
-                      <% end %>
+                      <%= stock_location.stock_item(variant).count_on_hand %>
                     </td>
                     <td class="align-center">
-                      <% if stock_location.stock_item(variant) %>
-                        <%= form_tag admin_stock_item_path(stock_location.stock_item(variant)), method: :put, id: 'toggle_stock_item_backorderable' do %>
-                          <%= check_box_tag 'stock_item[backorderable]', true, stock_location.stock_item(variant).backorderable? %>
-                        <% end %>
-                      <% else %>
-                        N/A
+                      <%= form_tag admin_stock_item_path(stock_location.stock_item(variant)), method: :put, id: 'toggle_stock_item_backorderable' do %>
+                        <%= check_box_tag 'stock_item[backorderable]', true, stock_location.stock_item(variant).backorderable? %>
                       <% end %>
                     </td>
                   </tr>
@@ -83,10 +72,3 @@
     <% end %>
   </tbody>
 </table>
-
-<%= form_for [:admin, Spree::StockMovement.new] do |f| %>
-  <fieldset class="no-border-top">
-    <%= render :partial => 'spree/admin/shared/stock_movement_form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
-<% end %>
