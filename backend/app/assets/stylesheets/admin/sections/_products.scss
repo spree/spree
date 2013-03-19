@@ -9,7 +9,7 @@
 
 [data-hook="admin_product_form_fields"] {
   label {
-    display: inline-block;      
+    display: inline-block;
   }
   input, select, textarea, .select2-container {
     width: 100%;
@@ -22,5 +22,92 @@
 
   strong {
     color: $color-2;
+  }
+}
+
+#listing_product_stock {
+  > tbody {
+    > tr {
+      &.even {
+        td {
+          background-color: $color-tbl-even;
+        }
+      }
+      &.odd:hover > td {
+        background-color: $color-tbl-even;
+      }
+      > td {
+        background-color: $color-tbl-odd;
+
+        > table {
+          > tbody {
+            > tr {
+              > td {
+                border-color: lighten($color-border, 4);
+              }
+            }
+            > tr.even {
+              td {
+                background-color: lighten($color-tbl-even, 2);
+              }
+            }
+            > tr.odd {
+              td {
+                background-color: $color-tbl-odd;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  td {
+    vertical-align: top;
+
+    &.stock_location_info {
+      padding: 0;
+
+      table {
+        margin-bottom: 0;
+        border-collapse: collapse;
+        min-height: 102px;
+
+        thead {
+          th {
+            border-top: none;
+            padding: 5px 10px;
+            text-transform: none;
+
+            &:first-child {
+              border-left: none;
+            }
+            &:last-child {
+              border-right: none;
+            }
+          }
+        }
+        tbody {
+          tr {
+            td {
+              padding: 5px 10px;
+              vertical-align: middle;
+
+              &:first-child {
+                border-left: none;
+              }
+              &:last-child {
+                border-right: none;
+              }
+            }
+
+            &:last-child {
+              td {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
