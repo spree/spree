@@ -47,6 +47,7 @@ module Spree
     preference :default_meta_keywords, :string, :default => 'spree, demo'
     preference :default_seo_title, :string, :default => ''
     preference :dismissed_spree_alerts, :string, :default => ''
+    preference :emails_sent_from, :string, :default => 'spree@example.com'
     preference :last_check_for_spree_alerts, :string, :default => nil
     preference :layout, :string, :default => '/spree/layouts/spree_application'
     preference :logo, :string, :default => 'admin/bg/spree_50.png'

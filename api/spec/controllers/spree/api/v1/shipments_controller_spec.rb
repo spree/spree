@@ -35,6 +35,12 @@ describe Spree::Api::V1::ShipmentsController do
 
     context "can transition a shipment from ready to ship" do
       before do
+        # For the shipment notification email
+        Spree::MailMethod.create!(
+          :environment => Rails.env,
+          :preferred_mails_from => "spree@example.com"
+        )
+
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
       end
