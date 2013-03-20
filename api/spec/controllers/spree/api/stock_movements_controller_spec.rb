@@ -6,7 +6,7 @@ module Spree
 
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_movement) { create(:stock_movement, stock_item: stock_location.stock_items.first) }
-    let!(:attributes) { [:id, :quantity, :action, :stock_item_id] }
+    let!(:attributes) { [:id, :quantity, :stock_item_id] }
 
     before do
       stub_authentication!
@@ -35,7 +35,6 @@ module Spree
       expected_result = create(:stock_movement, :received, quantity: 10, stock_item: stock_location.stock_items.first)
       api_get :index, stock_location_id: stock_location.to_param, q: { quantity_eq: '10' }
       json_response['count'].should == 1
-      json_response['stock_movements'].first['action'].should eq expected_result.action
     end
 
     it 'gets a stock movement' do
@@ -51,8 +50,6 @@ module Spree
         params = {
           stock_location_id: stock_location.to_param,
           stock_movement: {
-            quantity: '20',
-            action: 'received',
             stock_item_id: stock_location.stock_items.first.to_param
           }
         }
@@ -66,13 +63,11 @@ module Spree
         params = {
           id: stock_movement.to_param,
           stock_movement: {
-            action: 'sold',
           }
         }
 
         api_put :update, params
         response.status.should == 200
-        json_response['action'].should eq 'sold'
       end
 
       it 'can delete a stock movement' do

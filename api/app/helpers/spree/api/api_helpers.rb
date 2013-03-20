@@ -101,7 +101,7 @@ module Spree
       end
 
       def stock_movement_attributes
-        [:id, :quantity, :action, :stock_item_id]
+        [:id, :quantity, :stock_item_id]
       end
 
       def stock_item_attributes
