@@ -730,6 +730,14 @@ module Spree
         "stock_location_id"=>1,
         "variant_id"=>1
       }
+
+    STOCK_MOVEMENT =
+      {
+        "id"=>1,
+        "quantity"=>10,
+        "action"=>"received",
+        "stock_item_id"=>1
+      }
     end
 end
 
