@@ -106,10 +106,6 @@ module Spree
       def stock_item_attributes
         [:id, :count_on_hand, :backorderable, :lock_version, :stock_location_id, :variant_id]
       end
-
-      def stock_item_attributes
-        [:id, :count_on_hand, :backorderable, :lock_version, :stock_location_id, :variant_id]
-      end
     end
   end
 end
