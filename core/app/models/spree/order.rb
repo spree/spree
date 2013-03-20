@@ -374,6 +374,10 @@ module Spree
       CreditCard.scoped(:conditions => { :id => credit_card_ids })
     end
 
+    def invalidate_old_payments
+      self.payments.with_state("checkout").map(&:invalidate)
+    end
+
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
