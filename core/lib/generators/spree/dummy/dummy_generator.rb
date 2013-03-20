@@ -45,6 +45,7 @@ module Spree
       template "rails/boot.rb", "#{dummy_path}/config/boot.rb", :force => true
       template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
       template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
+      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", :force => true
       template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
       template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
     end
