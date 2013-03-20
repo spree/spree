@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Shipping Methods" do
   stub_authorization!
   let!(:zone) { create(:global_zone) }
-  let!(:shipping_method) { create(:shipping_method, :zone => zone) }
+  let!(:shipping_method) { create(:shipping_method, :zones => [zone]) }
 
   before(:each) do
     # HACK: To work around no email prompting on check out
