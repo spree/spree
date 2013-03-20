@@ -52,7 +52,6 @@ module Spree
 
     has_many :state_changes, :as => :stateful
     has_many :line_items, :dependent => :destroy, :order => "created_at ASC"
-    has_many :inventory_units
     has_many :payments, :dependent => :destroy
 
     has_many :shipments, :dependent => :destroy do
@@ -183,8 +182,9 @@ module Spree
 
     # Indicates whether there are any backordered InventoryUnits associated with the Order.
     def backordered?
-      return false unless Spree::Config[:track_inventory_levels]
-      inventory_units.backordered.present?
+      # return false unless Spree::Config[:track_inventory_levels]
+      #TODO check shipments if they are backordered
+      # inventory_units.backordered.present?
     end
 
     # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
@@ -366,7 +366,8 @@ module Spree
     def finalize!
       touch :completed_at
 
-      Spree::InventoryUnit.finalize_units!(inventory_units)
+      # Spree::InventoryUnit.finalize_units!(inventory_units)
+      # TODO notify shipments
 
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
@@ -553,9 +554,10 @@ module Spree
       end
 
       def restock_items!
-        line_items.each do |line_item|
-          InventoryUnit.decrease(self, line_item.variant, line_item.quantity)
-        end
+        # TODO notify shipments
+        # line_items.each do |line_item|
+        #   InventoryUnit.decrease(self, line_item.variant, line_item.quantity)
+        # end
       end
 
       def after_resume
@@ -563,9 +565,10 @@ module Spree
       end
 
       def unstock_items!
-        line_items.each do |line_item|
-          InventoryUnit.increase(self, line_item.variant, line_item.quantity)
-        end
+        # NOTIFY shipments
+        # line_items.each do |line_item|
+        #   InventoryUnit.increase(self, line_item.variant, line_item.quantity)
+        # end
       end
 
       def use_billing?
