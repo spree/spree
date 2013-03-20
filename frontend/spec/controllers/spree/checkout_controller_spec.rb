@@ -55,6 +55,14 @@ describe Spree::CheckoutController do
         spree_get :edit, {}, :spree_user_signup => true
       end
     end
+    
+    context "when entering payment" do
+      # Regression test for #2687
+      it "invalidates all previous payments" do
+        order.should_receive(:invalidate_old_payments)
+        spree_get :edit, { :state => "payment" }
+      end
+    end
   end
 
   context "#update" do
