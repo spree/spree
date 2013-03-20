@@ -2,8 +2,6 @@ require 'spec_helper'
 
 module Spree
   class GatewayWithPassword < PaymentMethod
-    attr_accessible :preferred_password
-
     preference :password, :string, :default => "password"
   end
 end
