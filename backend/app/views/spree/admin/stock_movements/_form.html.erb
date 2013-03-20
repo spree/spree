@@ -4,11 +4,6 @@
       <%= f.label :quantity, t(:quantity) %>
       <%= f.text_field :quantity, :class => 'fullwidth' %>
     <% end %>
-    <%= f.field_container :action do %>
-      <%= f.label :action, t(:action) %>
-      <%= collection_select 'stock_movement', 'action', allowed_stock_movement_actions, :to_s, :to_s,
-        { selected: @stock_movement.action }, class: 'select2 fullwidth' %>
-    <% end %>
     <%= f.field_container :stock_item_id do %>
       <%= f.label :stock_item_id, t(:stock_item_id) %>
       <%= collection_select 'stock_movement', 'stock_item_id', stock_location.stock_items, :id, :variant_name,
