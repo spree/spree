@@ -18,7 +18,7 @@ module Spree
     attr_accessible :quantity, :variant_id
 
     # before_save :update_inventory
-    before_destroy :ensure_not_shipped, :remove_inventory
+    before_destroy :ensure_not_shipped #, :remove_inventory
 
     after_save :update_order
     after_destroy :update_order
@@ -81,11 +81,11 @@ module Spree
     #   end
     # end
 
-    def remove_inventory
-      return true unless order.completed?
+    # def remove_inventory
+    #   return true unless order.completed?
 
-      InventoryUnit.decrease(order, variant, quantity)
-    end
+    #   InventoryUnit.decrease(order, variant, quantity)
+    # end
 
     def update_order
       # update the order totals, etc.
