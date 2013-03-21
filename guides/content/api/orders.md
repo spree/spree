@@ -118,48 +118,7 @@ POST /api/orders?order[line_items][0][variant_id]=1&order[line_items][0][quantit
 
 ## Modifying address information
 
-To add address information to an order, make this request with the correct parameters:
-
-```text
-PUT /api/orders/:number/address```
-
-You may choose to pass through both the shipping address or billing address.
-
-With an order number of R1234567, updating an address would be done like this:
-
-```text
-PUT /api/orders/:number/address?shipping_address[firstname]...```
-
-The valid address parameters are:
-
-* firstname
-* lastname
-* company
-* address1
-* address2
-* city
-* zipcode
-* phone
-* alternative_phone
-* country_id
-* state_id
-
-Once valid address information has been submitted, the shipping methods available for this order will be returned inside a `shipping_methods` key inside the order:
-
-<%= json(:shipping_method) do |h|
- { :order => { :shipping_methods => [h] } }
-end %>
-
-## Selecting a delivery method
-
-To choose a delivery method for the order, pass along one ID from the `shipping_methods` response that you would receive from making a request to update the order\'s address, or by making another request to `GET /api/orders/R1234567` while the order is in the \"delivery\" state.
-
-Make a request like this to select the delivery method:
-
-```text
-PUT /api/orders/R1234567?shipping_method_id=1```
-
-Upon a successful request, the order will transition to the `payment` state.
+To add address information to an order, please see the [address to delivery](/api/order/checkouts#address-to-delivery) section of the Checkouts guide.
 
 ## Emptying an Order
 

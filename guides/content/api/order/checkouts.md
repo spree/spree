@@ -37,28 +37,63 @@ The newly created order is currently in the `cart` state. After [adding line ite
 
 ## Address to delivery
 
-After [updating the order's addresses](/orders/#modifying-address-information) the order can be advanced to the `delivery` state and the available shipping methods can be viewed by making this request:
+To advance to the next state, `delivery`, the order will first need both a shipping and billing address.
+
+In order to update the addresses, make this request with the necessary parameters:
 
     PUT /api/checkouts/R335381310
+
+As an example, here are the required address attributes and how they should be formatted:
+
+<%= json \
+  :order => {
+    :bill_address_attributes => {
+      :firstname  => 'John',
+      :lastname   => 'Doe',
+      :address1   => '7735 Old Georgetown Road',
+      :city       => 'Bethesda',
+      :phone      => '3014445002',
+      :zipcode    => '20814',
+      :state_id   => 1,
+      :country_id => 1 
+    },
+
+    :ship_address_attributes => {
+      :firstname  => 'John',
+      :lastname   => 'Doe',
+      :address1   => '7735 Old Georgetown Road',
+      :city       => 'Bethesda',
+      :phone      => '3014445002',
+      :zipcode    => '20814',
+      :state_id   => 1,
+      :country_id => 1 
+    }
+  }
+%>
 
 ### Response
 
 <%= headers 200 %>
 <%= json(:order_show_delivery_state) %>
 
+Once valid address information has been submitted, the shipments and shipping rates available for this order will be returned inside a `shipments` key inside the order:
+
 ## Delivery to payment
 
-To advance to the next state, `payment`, the order will need a shipping method.
+To advance to the next state, `payment`, you will need to select a shipping rate for the order. These were returned when transitioning to the `delivery` step. If you need want to see them again, make the following request:
 
-If the order already has a shipping method, you can advance it to the `payment` state by making this request:
+    GET /api/orders/R335381310
+
+If the order already has a shipping rate selected, you can advance it to the `payment` state by making this request:
 
     PUT /api/checkouts/R335381310
 
-If the order doesn't have an assigned shipping method, make the following request to setup a shipping method and advance the order:
+If the order doesn't have an assigned shipping rate, make the following request to select one and advance the order's state:
 
-    PUT /api/checkouts/R335381310?order[shipping_method_id]=1
+    PUT /api/checkouts/R366605801?order[shipments_attributes][0]
+    [selected_shipping_rate_id]=1&order[shipments_attributes][0][id]=1
 
-For more information on shipping methods, view the [selecting a delivery method](/orders/#selecting-a-delivery-method) section of the Orders documentation.
+**NOTE**: Please ensure you select a shipping rate for each shipment in the order. In the request above, the `selected_shipping_rate_id` should be the id of the shipping rate you want to use and the `id` should be the id of the shipment you are choosing this shipping rate for.
 
 ### Response
 
