@@ -225,6 +225,16 @@ describe Spree::Shipment do
     end
   end
 
+  context "#cancel" do
+    it 'cancels all the inventory units' do
+      shipment.stub(:ensure_correct_adjustment)
+      shipment.order.stub(:update!) # TODO figure out why this is called?
+
+      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :cancel! => true)])
+      shipment.cancel!
+    end
+  end
+
   context "#ship" do
     before do
       order.stub(:update!)
