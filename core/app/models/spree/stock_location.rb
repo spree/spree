@@ -27,6 +27,15 @@ module Spree
       stock_item(variant).try(:backorderable?)
     end
 
+    def move(variant, quantity, originator=nil)
+      return unless track_stock_movements?
+      stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
+    end
+
+    def track_stock_movements?
+      Spree::Config[:track_inventory_levels]
+    end
+
     private
     def create_stock_items
       Spree::Variant.all.each do |v|
