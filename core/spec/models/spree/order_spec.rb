@@ -226,19 +226,10 @@ describe Spree::Order do
     end
   end
 
-  context "#backordered?" do
-    xit "should indicate whether any units in the order are backordered" do
-      order.stub_chain(:inventory_units, :backordered).and_return []
-      order.backordered?.should be_false
-      order.stub_chain(:inventory_units, :backordered).and_return [mock_model(Spree::InventoryUnit)]
-      order.backordered?.should be_true
-    end
-
-    xit "should always be false when inventory tracking is disabled" do
-      Spree::Config.set :track_inventory_levels => false
-      order.stub_chain(:inventory_units, :backordered).and_return [mock_model(Spree::InventoryUnit)]
-      order.backordered?.should be_false
-    end
+  it 'is backordered if one of the shipments is backordered' do
+    order.stub(:shipments => [mock_model(Spree::Shipment, :backordered? => false),
+                              mock_model(Spree::Shipment, :backordered? => true)])
+    order.should be_backordered
   end
 
   context "#allow_checkout?" do

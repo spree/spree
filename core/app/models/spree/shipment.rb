@@ -43,6 +43,10 @@ module Spree
       number.to_s.to_url.upcase
     end
 
+    def backordered?
+      inventory_units.any? { |iu| iu.backordered? }
+    end
+
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.now

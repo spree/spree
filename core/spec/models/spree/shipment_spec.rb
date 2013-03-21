@@ -13,6 +13,12 @@ describe Spree::Shipment do
 
   let(:charge) { create(:adjustment) }
 
+  it 'is backordered if one if its inventory_units is backordered' do
+    shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :backordered? => false),
+                                       mock_model(Spree::InventoryUnit, :backordered? => true)])
+    shipment.should be_backordered
+  end
+
   context "#cost" do
     it "should return the amount of any shipping charges that it originated" do
       shipment.stub_chain :adjustment, :amount => 10
