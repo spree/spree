@@ -1,3 +1,3 @@
-child(:rate_hash => :shipping_methods) do
-  attributes :id, :name, :cost
+child(:shipments => :shipments) do
+  extends "spree/api/shipments/show"
 end
