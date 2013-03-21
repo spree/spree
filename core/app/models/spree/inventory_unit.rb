@@ -20,6 +20,7 @@ module Spree
       event :ship do
         transition to: :shipped, if: :allow_ship?
       end
+      after_transition :to => 'returned', :do => :restock_variant
 
       event :return do
         transition to: :returned, from: :shipped
