@@ -137,15 +137,10 @@ describe Spree::Shipment do
     context "with inventory tracking" do
       before { Spree::Config.set :track_inventory_levels => true }
 
-      it "should not validate without inventory" do
-        shipment.valid?.should be_false
-      end
-
       it "should validate with inventory" do
         shipment.inventory_units = [create(:inventory_unit)]
         shipment.valid?.should be_true
       end
-
     end
 
     context "without inventory tracking" do
@@ -156,6 +151,16 @@ describe Spree::Shipment do
       end
     end
 
+  end
+
+  context "#cancel" do
+    it 'cancels all the inventory units' do
+      shipment.stub(:ensure_correct_adjustment)
+      shipment.order.stub(:update!) # TODO figure out why this is called?
+
+      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :cancel! => true)])
+      shipment.cancel!
+    end
   end
 
   context "#ship" do

@@ -543,18 +543,10 @@ module Spree
       end
 
       def after_cancel
-        restock_items!
+        shipments.each { |shipment| shipment.cancel! }
 
-        #TODO: make_shipments_pending
         OrderMailer.cancel_email(self).deliver
         self.payment_state = 'credit_owed' unless shipped?
-      end
-
-      def restock_items!
-        # TODO notify shipments
-        # line_items.each do |line_item|
-        #   InventoryUnit.decrease(self, line_item.variant, line_item.quantity)
-        # end
       end
 
       def after_resume

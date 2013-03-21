@@ -25,9 +25,6 @@ module Spree
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
-
-    validates :inventory_units, :presence => true, :if => :require_inventory
-
     make_permalink :field => :number
 
     scope :with_state, lambda { |s| where(:state => s) }
@@ -111,11 +108,16 @@ module Spree
       event :pend do
         transition :from => 'ready', :to => 'pending'
       end
+
       event :ship do
         transition :from => 'ready', :to => 'shipped'
       end
-
       after_transition :to => 'shipped', :do => :after_ship
+
+      event :cancel do
+        transition :to => 'canceled'
+      end
+      after_transition :to => 'canceled', :do => :after_cancel
     end
 
     def editable_by?(user)
@@ -134,6 +136,17 @@ module Spree
       else
         order.line_items
       end
+    end
+
+    def after_cancel
+      inventory_units.each { |iu| iu.cancel! }
+      # TODO stock movements
+    end
+
+    def resume(order)
+      #move inventory units to canceled?
+      #stock movements
+      # let it create the stock movement
     end
 
     # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
@@ -181,14 +194,6 @@ module Spree
         unless shipping_method.nil?
           errors.add :shipping_method, I18n.t(:is_not_available_to_shipment_address) unless shipping_method.include?(address)
         end
-      end
-
-      # Determines whether or not inventory units should be associated with the shipment.  This is always +false+ when
-      # +Spree::Config[:track_inventory_levels]+ is set to +false.+  Otherwise its +true+ whenever the order is completed
-      # (and not canceled.)
-      def require_inventory
-        return false unless Spree::Config[:track_inventory_levels]
-        order.completed? && !order.canceled?
       end
 
       def after_ship

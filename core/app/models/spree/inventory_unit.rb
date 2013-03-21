@@ -22,6 +22,10 @@ module Spree
         transition :to => 'returned', :from => 'shipped'
       end
 
+      event :cancel do
+        transition :to => 'canceled'
+      end
+
       after_transition :on => :fill_backorder, :do => :update_order
       after_transition :to => 'returned', :do => :restock_variant
     end
