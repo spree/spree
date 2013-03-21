@@ -363,16 +363,17 @@ module Spree
     def finalize!
       touch :completed_at
 
-      # Spree::InventoryUnit.finalize_units!(inventory_units)
-      # TODO notify shipments
-
       # lock all adjustments (coupon promotions, etc.)
       adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
 
       # update payment and shipment(s) states, and save
       updater = OrderUpdater.new(self)
       updater.update_payment_state
-      shipments.each { |shipment| shipment.update!(self) }
+      shipments.each do |shipment|
+        shipment.update!(self)
+        shipment.order_completed
+      end
+
       updater.update_shipment_state
       save
 
@@ -550,14 +551,7 @@ module Spree
       end
 
       def after_resume
-        unstock_items!
-      end
-
-      def unstock_items!
-        # NOTIFY shipments
-        # line_items.each do |line_item|
-        #   InventoryUnit.increase(self, line_item.variant, line_item.quantity)
-        # end
+        shipments.each { |shipment| shipment.resume! }
       end
 
       def use_billing?

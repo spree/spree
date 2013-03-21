@@ -163,6 +163,19 @@ describe Spree::Shipment do
     end
   end
 
+  context "#resume" do
+    it 'cancels all the inventory units' do
+      shipment.stub(:ensure_correct_adjustment)
+      shipment.order.stub(:update!) # TODO figure out why this is called?
+      shipment.state = 'canceled'
+
+      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :resume! => true)])
+      shipment.stock_location = mock_model(Spree::StockLocation)
+      shipment.stock_location.should_receive(:decrease).exactly(5).times
+      shipment.resume!
+    end
+  end
+
   context "#ship" do
     before do
       order.stub(:update!)

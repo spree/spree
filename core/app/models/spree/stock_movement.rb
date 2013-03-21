@@ -3,7 +3,7 @@ module Spree
     belongs_to :stock_item
     belongs_to :originator, polymorphic: true
 
-    attr_accessible :quantity, :stock_item, :stock_item_id
+    attr_accessible :quantity, :stock_item, :stock_item_id, :originator
 
     before_save :update_stock_item_quantity
 
@@ -11,7 +11,6 @@ module Spree
     validates :quantity, presence: true
 
     private
-
     def update_stock_item_quantity
       changes = self.changes["quantity"]
       if changes.present?

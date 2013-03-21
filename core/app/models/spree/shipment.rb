@@ -115,9 +115,15 @@ module Spree
       after_transition :to => 'shipped', :do => :after_ship
 
       event :cancel do
-        transition :to => 'canceled'
+        transition :to => 'canceled', :from => ['pending', 'ready']
       end
       after_transition :to => 'canceled', :do => :after_cancel
+
+      event :resume do
+        transition :to => 'pending', :from => 'canceled'
+      end
+      after_transition :from => 'canceled', :to => 'pending', :do => :after_resume
+
     end
 
     def editable_by?(user)
@@ -138,15 +144,26 @@ module Spree
       end
     end
 
-    def after_cancel
-      inventory_units.each { |iu| iu.cancel! }
-      # TODO stock movements
+    def order_completed
+      inventory_units.finalize_units!
+
+      manifest.each do |item|
+        stock_location.move item.variant, item.quantity, self
+      end
     end
 
-    def resume(order)
-      #move inventory units to canceled?
-      #stock movements
-      # let it create the stock movement
+    def after_cancel
+      # should units ?
+      manifest.each do |item|
+        stock_location.move item.variant, -item.quantity, self
+      end
+    end
+
+    def after_resume
+      # should units ?
+      manifest.each do |item|
+        stock_location.move item.variant, item.quantity, self
+      end
     end
 
     # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
