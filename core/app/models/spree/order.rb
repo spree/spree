@@ -180,11 +180,8 @@ module Spree
       line_items.sum(:quantity)
     end
 
-    # Indicates whether there are any backordered InventoryUnits associated with the Order.
     def backordered?
-      # return false unless Spree::Config[:track_inventory_levels]
-      #TODO check shipments if they are backordered
-      # inventory_units.backordered.present?
+      shipments.any? { |shipment| shipment.backordered? }
     end
 
     # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
