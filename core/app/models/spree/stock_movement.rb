@@ -12,6 +12,7 @@ module Spree
 
     private
     def update_stock_item_quantity
+      return unless Spree::Config[:track_inventory_levels]
       changes = self.changes["quantity"]
       if changes.present?
         original = changes[0]
