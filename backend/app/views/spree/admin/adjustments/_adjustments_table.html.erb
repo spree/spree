@@ -27,8 +27,8 @@
     <% end %>
     <tr>
       <td class="align-center" colspan='4'>
-        <%= button_to t(:open_all_adjustments), open_adjustments_admin_order_path(@order) %>&nbsp;
-        <%= button_to t(:close_all_adjustments), close_adjustments_admin_order_path(@order) %>
+        <%= button_to t(:open_all_adjustments), open_adjustments_admin_order_path(@order), :method => :get %>&nbsp;
+        <%= button_to t(:close_all_adjustments), close_adjustments_admin_order_path(@order), :method => :get %>
       </td>
       <td class='actions'>&nbsp;</td>
     </tr>

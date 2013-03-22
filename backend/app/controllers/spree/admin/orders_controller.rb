@@ -3,7 +3,7 @@ module Spree
     class OrdersController < Spree::Admin::BaseController
       require 'spree/core/gateway_error'
       before_filter :initialize_order_events
-      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend]
+      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend, :open_adjustments, :close_adjustments]
 
       respond_to :html
 
