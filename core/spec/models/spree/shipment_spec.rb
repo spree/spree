@@ -292,5 +292,27 @@ describe Spree::Shipment do
       shipment.tracking_url.should == :some_url
     end
   end
+
+  context "add" do
+    let(:shipment) { create(:shipment) }
+    let(:order) { shipment.order }
+    let(:variant) { create(:variant) }
+
+    it 'should add line item if one does not exist' do
+      shipment.add(variant, 1)
+      line_item = order.find_line_item_by_variant(variant)
+      line_item.quantity.should == 1
+      order.line_items.size.should == 1
+    end
+
+    it 'should update line itme if one exists' do
+      order.add_variant(variant, 1)
+      shipment.add(variant, 1)
+      line_item = order.find_line_item_by_variant(variant)
+      line_item.quantity.should == 2
+      order.line_items.size.should == 1
+    end
+
+  end
 end
 

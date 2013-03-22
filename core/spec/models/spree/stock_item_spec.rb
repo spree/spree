@@ -64,4 +64,50 @@ describe Spree::StockItem do
       end
     end
   end
+
+  context "#determine_backorder" do
+    context "when :track_inventory_levels is true" do
+      before { Spree::Config.set :track_inventory_levels => true }
+
+      context "and all units are in stock" do
+        it "should return zero back orders" do
+          subject.determine_backorder(5).should == 0
+        end
+      end
+
+      context "and partial units are in stock" do
+        before { subject.stub(:count_on_hand).and_return(2) }
+
+        it "should return correct back order amount" do
+          subject.determine_backorder(5).should == 3
+        end
+      end
+
+      context "and zero units are in stock" do
+        before { subject.stub(:count_on_hand).and_return(0) }
+
+        it "should return correct back order amount" do
+          subject.determine_backorder(5).should == 5
+        end
+      end
+
+      context "and less than zero units are in stock" do
+        before { subject.stub(:count_on_hand).and_return(-9) }
+
+        it "should return entire amount as back order" do
+          subject.determine_backorder(5).should == 5
+        end
+      end
+    end
+
+    context "when :track_inventory_levels is false" do
+      before { Spree::Config.set :track_inventory_levels => false }
+
+      it "should return zero back orders" do
+        subject.determine_backorder(50).should == 0
+      end
+    end
+
+  end
+
 end
