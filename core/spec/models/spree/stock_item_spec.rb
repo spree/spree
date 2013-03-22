@@ -66,6 +66,5 @@ describe Spree::StockItem do
     subject.count_on_hand = 100
     expect { subject.save }.to raise_error ActiveRecord::StaleObjectError
   end
-
 end
 
