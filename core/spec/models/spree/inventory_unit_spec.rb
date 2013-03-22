@@ -50,121 +50,6 @@ describe Spree::InventoryUnit do
     end
   end
 
-  # context "#increase" do
-  #   context "when :track_inventory_levels is true" do
-  #     before do
-  #       Spree::Config.set :track_inventory_levels => true
-  #       Spree::InventoryUnit.stub(:create_units)
-  #     end
-
-  #     it "should create a new stock movement" do
-  #       lambda {
-  #         Spree::InventoryUnit.increase(order, stock_item, 5)
-  #       }.should change(Spree::StockMovement, :count).by(1)
-  #     end
-
-  #   end
-
-#     context "when :track_inventory_levels is false" do
-#       before do
-#         Spree::Config.set :track_inventory_levels => false
-#         Spree::InventoryUnit.stub(:create_units)
-#       end
-
-#       it "should not create a new stock movement" do
-#         lambda {
-#           Spree::InventoryUnit.increase(order, stock_item, 5)
-#         }.should_not change(Spree::StockMovement, :count)
-#       end
-
-#     end
-
-#     context "when :create_inventory_units is true" do
-#       before do
-#         Spree::Config.set :create_inventory_units => true
-#         variant.stub(:decrement!)
-#       end
-
-#       it "should create units" do
-#         Spree::InventoryUnit.should_receive(:create_units)
-#         Spree::InventoryUnit.increase(order, stock_item, 5)
-#       end
-
-#     end
-
-#     context "when :create_inventory_units is false" do
-#       before do
-#         Spree::Config.set :create_inventory_units => false
-#         variant.stub(:decrement!)
-#       end
-
-#       it "should not create units" do
-#         Spree::InventoryUnit.should_not_receive(:create_units)
-#         Spree::InventoryUnit.increase(order, stock_item, 5)
-#       end
-
-#     end
-
-#   end
-
-  context "#decrease" do
-    context "when :track_inventory_levels is true" do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        Spree::InventoryUnit.stub(:destroy_units)
-      end
-
-      it "should create a new stock movement" do
-        lambda {
-          Spree::InventoryUnit.decrease(order, stock_item, 5)
-        }.should change(Spree::StockMovement, :count).by(1)
-      end
-
-    end
-
-    context "when :track_inventory_levels is false" do
-      before do
-        Spree::Config.set :track_inventory_levels => false
-        Spree::InventoryUnit.stub(:destroy_units)
-      end
-
-      it "should not create a new stock movement" do
-        lambda {
-          Spree::InventoryUnit.decrease(order, stock_item, 5)
-        }.should_not change(Spree::StockMovement, :count)
-      end
-
-    end
-
-    context "when :create_inventory_units is true" do
-      before do
-        Spree::Config.set :create_inventory_units => true
-        variant.stub(:increment!)
-      end
-
-      it "should destroy units" do
-        stock_item.stub(:variant => variant)
-        Spree::InventoryUnit.should_receive(:destroy_units).with(order, variant, 5)
-        Spree::InventoryUnit.decrease(order, stock_item, 5)
-      end
-
-    end
-
-    context "when :create_inventory_units is false" do
-      before do
-        Spree::Config.set :create_inventory_units => false
-        variant.stub(:increment!)
-      end
-
-      it "should destroy units" do
-        Spree::InventoryUnit.should_not_receive(:destroy_units)
-        Spree::InventoryUnit.decrease(order, stock_item, 5)
-      end
-
-    end
-
-  end
-
   context "#create_units" do
     let(:shipment) { mock_model(Spree::Shipment) }
     before { order.shipments.stub :detect => shipment }
@@ -232,17 +117,6 @@ describe Spree::InventoryUnit do
       inventory_unit.variant.should_receive(:on_hand=).with(96)
       inventory_unit.variant.should_receive(:save)
       inventory_unit.return!
-    end
-
-    # Regression test for #2074
-    context "with inventory tracking disabled" do
-      before { Spree::Config[:track_inventory_levels] = false }
-
-      it "does not update on_hand for variant" do
-        inventory_unit.variant.should_not_receive(:on_hand=).with(96)
-        inventory_unit.variant.should_not_receive(:save)
-        inventory_unit.return!
-      end
     end
   end
 
