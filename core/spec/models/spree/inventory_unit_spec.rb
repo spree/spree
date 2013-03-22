@@ -64,23 +64,6 @@ describe Spree::InventoryUnit do
       inventory_units.any?(&:pending).should be_false
     end
   end
-
-  context "#finalize!" do
-    let(:inventory_unit) { FactoryGirl.create(:inventory_unit)  }
-    
-    it "should mark the shipment not pending" do
-      inventory_unit.stub(:stock_item, FactoryGirl.create(:stock_item))
-      inventory_unit.pending.should == true
-      inventory_unit.finalize!
-      inventory_unit.pending.should == false
-    end
-
-    # it "should create a stock movement" do
-    #   Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
-    #   Spree::InventoryUnit.finalize_units!(inventory_units)
-    #   inventory_units.any?(&:pending).should be_false
-    # end
-  end
 end
 
 
