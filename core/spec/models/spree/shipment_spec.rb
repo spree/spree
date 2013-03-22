@@ -226,25 +226,41 @@ describe Spree::Shipment do
   end
 
   context "#cancel" do
-    it 'cancels all the inventory units' do
+    it 'cancels the shipment' do
       shipment.stub(:ensure_correct_adjustment)
-      shipment.order.stub(:update!) # TODO figure out why this is called?
+      shipment.order.stub(:update!)
 
-      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :cancel! => true)])
+      shipment.state = 'pending'
+      shipment.should_receive(:after_cancel)
       shipment.cancel!
+      shipment.state.should eq 'canceled'
+    end
+
+    it 'creates a negative movement' do
+      variant = mock_model(Spree::Variant)
+      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :variant => variant)])
+      shipment.stock_location.should_receive(:move).with(variant, -1, shipment)
+      shipment.after_cancel
     end
   end
 
   context "#resume" do
-    it 'cancels all the inventory units' do
+    it 'will determine new state based on order' do
       shipment.stub(:ensure_correct_adjustment)
-      shipment.order.stub(:update!) # TODO figure out why this is called?
-      shipment.state = 'canceled'
+      shipment.order.stub(:update!)
 
-      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :resume! => true)])
-      shipment.stock_location = mock_model(Spree::StockLocation)
-      shipment.stock_location.should_receive(:decrease).exactly(5).times
+      shipment.state = 'canceled'
+      shipment.should_receive(:determine_state).and_return('ready')
+      shipment.should_receive(:after_resume)
       shipment.resume!
+      shipment.state.should eq 'ready'
+    end
+
+    it 'creates a postive movement' do
+      variant = mock_model(Spree::Variant)
+      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :variant => variant)])
+      shipment.stock_location.should_receive(:move).with(variant, 1, shipment)
+      shipment.after_resume
     end
   end
 

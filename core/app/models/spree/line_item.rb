@@ -77,7 +77,6 @@ module Spree
     end
 
     private
-
       def update_inventory
         Spree::OrderInventory.new(self.order).verify(self, target_shipment)
       end
