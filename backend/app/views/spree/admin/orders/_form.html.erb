@@ -23,10 +23,15 @@
       <% @order.shipments.each do |shipment| %>
         <tbody>
           <tr class="stock-location" data-hook="stock-location">
-            <td colspan="5" style="background-color: #eff5fc;">
+            <td colspan="4" style="background-color: #eff5fc;">
               <%= shipment.state.capitalize %>
               <%= t(:package_from) %>
               <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
+            </td>
+            <td style="background-color: #eff5fc;">
+              <% if shipment.ready? %>
+                <%= link_to 'ship', '#', :class => 'ship', :data => {'shipment-number' => shipment.number} %>
+              <% end %>
             </td>
           </tr>
           <% shipment.manifest.each do |item| %>
