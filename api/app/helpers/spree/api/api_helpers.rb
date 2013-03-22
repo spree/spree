@@ -64,8 +64,7 @@ module Spree
       end
 
       def inventory_unit_attributes
-        [:id, :lock_version, :state, :variant_id, :order_id,
-         :shipment_id, :return_authorization_id]
+        [:id, :lock_version, :state, :variant_id, :shipment_id, :return_authorization_id]
       end
 
       def return_authorization_attributes

@@ -3,65 +3,86 @@
     <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
   <% end %>
 
-  <%= form_for @order, :url => admin_order_url(@order), :method => :put do |f| %>
-    <fieldset class="no-border-top">
-      <%= f.hidden_field :number %>
-      <table class="index">
-        <colgroup>
-           <col style="width: 49%;">
-           <col style="width: 14%;">
-           <col style="width: 10%;">
-           <col style="width: 14%;">
-           <col style="width: 8%;">
-        </colgroup>
-        <thead id="line-items">
-          <tr data-hook="admin_order_form_line_items_headers">
-            <th><%= t(:item_description) %></th>
-            <th class="price"><%= t(:price) %></th>
-            <th class="qty"><%= t(:qty) %></th>
-            <th class="total"><span><%= t(:total) %></span></th>
-            <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
+  <fieldset>
+    <table class="stock-contents" data-hook="stock-contents">
+      <colgroup>
+        <col style="width: 10%;" />
+        <col style="width: 40%;" />
+        <col style="width: 20%;" />
+        <col style="width: 10%;" />
+        <col style="width: 20%;" />
+        <col style="width: 8%;" />
+      </colgroup>
+      <thead>
+        <th colspan="2"><%= t(:item_description) %></th>
+        <th><%= t(:price) %></th>
+        <th><%= t(:quantity) %></th>
+        <th><%= t(:total) %></th>
+        <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
+      </thead>
+      <% @order.shipments.each do |shipment| %>
+        <tbody>
+          <tr class="stock-location" data-hook="stock-location">
+            <td colspan="5" style="background-color: #eff5fc;">
+              <%= shipment.state.capitalize %>
+              <%= t(:package_from) %>
+              <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
+            </td>
           </tr>
-        </thead>
-        <tbody data-hook="admin_order_form_line_items">
-          <%= f.fields_for :line_items do |li_form| %>
-            <%= render :partial => 'spree/admin/orders/line_item', :locals => { :f => li_form } %>
-          <% end %>
-        </tbody>
-        <tbody id="subtotal" data-hook="admin_order_form_subtotal" class="no-border-top">
-          <tr id="subtotal-row">
-            <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-            <td class="total align-center"><span><%= @order.display_item_total.to_html %></span></td>
-            <td class="actions"></td>
-          </tr>
-        </tbody>
-        <tbody id="order-charges" data-hook="admin_order_form_adjustments" class="no-border-top">
-          <% @order.adjustments.eligible.each do |adjustment| %>
-            <tr>
-              <td colspan="3"><strong><%= adjustment.label %>:</strong></td>
-              <td class="total align-center"><span><%= adjustment.display_amount.to_html %></span></td>
-              <td class="actions"></td>
+          <% shipment.manifest.each do |item| %>
+            <% line_item = order.find_line_item_by_variant(item.variant) %>
+            <tr class="stock-item">
+              <td class="item-image"><%= mini_image(item.variant) %></td>
+              <td class="item-name"><%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
+              <td class="item-price"><%= line_item.single_money.to_html %></td>
+              <td class="item-qty-show">
+                <%= item.quantity %>
+              </td>
+              <td class="item-qty-edit hidden">
+                <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
+              </td>
+              <td class="item-total"><%= line_item.display_amount.to_html %></td>
+              <td class="cart-item-delete" data-hook="cart_item_delete">
+                <%= link_to 'save', '#', :class => 'save hidden', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id } %>
+                <%= link_to 'cancel', '#', :class => 'cancel hidden' %>
+                <%= link_to 'edit', '#', :class => 'edit' %>
+                <%= link_to 'delete', '#', :class => 'delete', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id } %>
+              </td>
             </tr>
           <% end %>
-        </tbody>
-        <tbody id="order-total" data-hook="admin_order_form_total" class="grand-total no-border-top">
-          <tr>
-            <td colspan="3"><b><%= t(:order_total) %>:</b></td>
-            <td class="total align-center"><span id="order_total"><%= @order.display_total.to_html %></span></td>
-            <td class="actions"></td>
+          <tr class="total">
+            <td colspan="4"><strong><%= shipment.adjustment.label %>:</strong></td>
+            <td class="total"><span><%= shipment.adjustment.display_amount %></span></td>
           </tr>
         </tbody>
-      </table>
+      <% end %>
 
-      <div class="filter-actions actions" data-hook="admin_order_form_buttons">
-        <%= button t(:update), 'icon-refresh' %>
-        <span class="or"><%= t(:or) %></span>
-        <%= link_to_with_icon 'button icon-arrow-left', t(:back), admin_orders_url %>
-      </div>
-    </fieldset>
-  <% end %>
+      <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
+        <% order.adjustments.eligible.each do |adjustment| %>
+          <% next if ((adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0)) || adjustment.originator_type == 'Spree::ShippingMethod' %>
+          <tr class="total">
+            <td colspan="4"><strong><%= adjustment.label %>:</strong></td>
+            <td class="total"><span><%= adjustment.display_amount %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tbody id="order-total" data-hook="order_details_total" class="with-border grand-total">
+        <tr>
+          <td colspan="4" ><%= t(:order_total) %>:</td>
+          <td class="total" id="order-total"><span id="order_total"><%= order.display_total %></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
 
   <%= javascript_tag do -%>
+    var order_number = '<%= @order.number %>';
+    var shipments = [];
+
+    <% @order.shipments.each do |shipment| %>
+      shipments.push(<%== shipment.to_json(:root => false, :include => :inventory_units) %>);
+    <% end %>
+
     <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
   <% end -%>
 </div>

@@ -4,12 +4,127 @@
 $(document).ready(function() {
   if ($('#variant_autocomplete_template').length > 0) {
     window.variantTemplate = Handlebars.compile($('#variant_autocomplete_template').text());
+    window.variantStockTemplate = Handlebars.compile($('#variant_autocomplete_stock_template').text());
+
+    // handle variant selection, show stock level.
+    $('#add_variant_id').change(function(){
+      var variant_id = $(this).val();
+
+      var variant = _.find(window.variants, function(variant){
+        return variant.id == variant_id
+      })
+      $('#stock_details').html(variantStockTemplate({variant: variant}));
+      $('#stock_details').show();
+
+      $('button.add_variant').click(addVariantFromStockLocation);
+
+    });
+
+    //handle edit click
+    $('a.edit').click(toggleLineEdit);
+
+    //handle cancel click
+    $('a.cancel').click(toggleLineEdit);
+
+    //handle save click
+    $('a.save').click(function(){
+      var save = $(this);
+      var shipment_number = save.data('shipment-number');
+      var variant_id = save.data('variant-id');
+
+      var quantity = $('input.line_item_quantity').val();
+
+      toggleLineEdit();
+
+      adjustItems(shipment_number, variant_id, quantity);
+
+    });
+
+    //handle delete click
+    $('a.delete').click(function(){
+      var del = $(this);
+      var shipment_number = del.data('shipment-number');
+      var variant_id = del.data('variant-id');
+
+      toggleLineEdit();
+
+      adjustItems(shipment_number, variant_id, 0);
+
+    });
   }
-})
+});
+
+adjustItems = function(shipment_number, variant_id, quantity){
+    var shipment = _.findWhere(shipments, {number: shipment_number});
+    var inventory_units = _.where(shipment.inventory_units, {variant_id: variant_id});
+
+    var url = "/api/orders/" + order_number + "/shipments/" + shipment_number;
+
+    var new_quantity = 0;
+    if(inventory_units.length<quantity){
+      url += "/add"
+      new_quantity = (quantity - inventory_units.length);
+    }else if(inventory_units.length>quantity){
+      url += "/remove"
+      new_quantity = (inventory_units.length - quantity);
+    }
+    url += '.json';
+
+
+    if(new_quantity!=0){
+      $.ajax({
+        type: "PUT",
+        url: url,
+        data: { variant_id: variant_id, quantity: new_quantity }
+      }).done(function( msg ) {
+        window.location.reload();
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+    }
+}
+
+toggleLineEdit = function(){
+  var link = $(this);
+  link.parent().find('a.edit').toggle();
+  link.parent().find('a.cancel').toggle();
+  link.parent().find('a.save').toggle();
+  link.parent().find('a.delete').toggle();
+  link.parents('tr').find('td.item-qty-show').toggle();
+  link.parents('tr').find('td.item-qty-edit').toggle();
+}
+
+addVariantFromStockLocation = function() {
+  $('#stock_details').hide();
+
+  var variant_id = $('input.variant_autocomplete').val();
+  var stock_location_id = $(this).data('stock-location-id');
+  var quantity = $("input.quantity[data-stock-location-id='" + stock_location_id + "']").val();
+
+  var shipment = _.find(shipments, function(shipment){
+    return shipment.stock_location_id == stock_location_id && (shipment.state == 'ready' || shipment.state == 'pending');
+  });
+
+  if(shipment==undefined){
+    $.ajax({
+      type: "POST",
+      url: "/api/orders/" + order_number + "/shipments.json",
+      data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
+    }).done(function( msg ) {
+      window.location.reload();
+    }).error(function( msg ) {
+      console.log(msg);
+    });
+  }else{
+    //add to existing shipment
+    adjustItems(shipment.number, variant_id, quantity);
+  }
+  return 1
+}
 
 formatVariantResult = function(variant) {
-  if (variant["images"][0] != undefined && variant["images"][0].image != undefined) {
-    variant.image = variant.images[0].image.mini_url
+  if (variant["images"][0] != undefined && variant["images"][0].urls != undefined) {
+    variant.image = variant.images[0].urls.mini
   }
   return variantTemplate({ variant: variant })
 }
@@ -25,11 +140,13 @@ $.fn.variantAutocomplete = function() {
       data: function(term, page) {
         return {
           q: {
-            "products_name_or_sku": term
+            "product_name_or_sku_cont": term
           }
         }
       },
       results: function (data, page) {
+        window.variants = data['variants'];
+
         return { results: data['variants'] }
       }
     },
