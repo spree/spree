@@ -8,3 +8,7 @@ end
 child :shipping_method => :shipping_method do
   attributes :name, :zone_id, :shipping_category_id
 end
+
+child :inventory_units => :inventory_units do
+  attribute *inventory_unit_attributes
+end

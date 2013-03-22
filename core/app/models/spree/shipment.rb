@@ -19,7 +19,7 @@ module Spree
 
     attr_accessor :special_instructions
 
-    attr_accessible :order, :special_instructions,
+    attr_accessible :order, :special_instructions, :stock_location_id,
                     :tracking, :address, :inventory_units, :selected_shipping_rate_id
 
     accepts_nested_attributes_for :address
@@ -193,6 +193,39 @@ module Spree
 
     def tracking_url
       @tracking_url ||= shipping_method.build_tracking_url(tracking)
+    end
+
+    def add(variant, quantity)
+      #update line item
+      order.add_variant(variant, quantity)
+
+      #figure out backorder situation
+      stock_item = stock_location.stock_item(variant)
+      back_order = InventoryUnit.determine_backorder(order, stock_item, quantity)
+      sold = quantity - back_order
+
+      #create inventory_units
+      sold.times do
+        inventory_units.create({:variant_id => variant.id,
+                                          :state => 'sold'}, :without_protection => true)
+      end
+
+      back_order.times do
+        inventory_units.create({:variant_id => variant.id,
+                                         :state => 'backordered'}, :without_protection => true)
+      end
+
+      #create stock_movement
+      stock_location.move variant, quantity, self
+      update_order
+    end
+
+    def to_package
+      package = Stock::Package.new(stock_location, order)
+      inventory_units.each do |inventory_unit|
+        package.add inventory_unit.variant, 1, inventory_unit.state
+      end
+      package
     end
 
     private
