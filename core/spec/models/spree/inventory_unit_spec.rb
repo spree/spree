@@ -75,11 +75,11 @@ describe Spree::InventoryUnit do
       inventory_unit.pending.should == false
     end
 
-    it "should create a stock movement" do
-      Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
-      Spree::InventoryUnit.finalize_units!(inventory_units)
-      inventory_units.any?(&:pending).should be_false
-    end
+    # it "should create a stock movement" do
+    #   Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
+    #   Spree::InventoryUnit.finalize_units!(inventory_units)
+    #   inventory_units.any?(&:pending).should be_false
+    # end
   end
 end
 
