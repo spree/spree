@@ -51,6 +51,21 @@ $(document).ready(function() {
       adjustItems(shipment_number, variant_id, 0);
 
     });
+
+    $('a.ship').click(function(){
+      var link = $(this);
+      var shipment_number = link.data('shipment-number');
+      var url = "/api/orders/" + order_number + "/shipments/" + shipment_number + "/ship.json";
+      $.ajax({
+        type: "PUT",
+        url: url
+      }).done(function( msg ) {
+        window.location.reload();
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+
+    });
   }
 });
 
