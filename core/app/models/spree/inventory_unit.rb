@@ -35,37 +35,6 @@ module Spree
       where(:state => "backordered").order("created_at ASC")
     end
 
-    # manages both variant.count_on_hand and inventory unit creation
-    #
-    def self.increase(order, stock_item, quantity)
-      back_order = stock_item.determine_backorder(quantity)
-      sold = quantity - back_order
-
-      #set on_hand if configured
-      if self.track_levels?(stock_item.variant)
-        Spree::StockMovement.create!(stock_item: stock_item, quantity: -quantity)
-      end
-
-      #create units if configured
-      if Spree::Config[:create_inventory_units]
-        create_units(order, stock_item.variant, sold, back_order)
-      end
-    end
-
-    def self.decrease(order, stock_item, quantity)
-      if self.track_levels?(stock_item.variant)
-        Spree::StockMovement.create!(stock_item: stock_item, quantity: quantity)
-      end
-
-      if Spree::Config[:create_inventory_units]
-        destroy_units(order, stock_item.variant, quantity)
-      end
-    end
-
-    def self.track_levels?(variant)
-      Spree::Config[:track_inventory_levels]
-    end
-
     def self.finalize_units!(inventory_units)
       inventory_units.map { |iu| iu.update_column(:pending, false) }
     end
@@ -107,10 +76,8 @@ module Spree
       end
 
       def restock_variant
-        if self.class.track_levels?(variant)
-          variant.on_hand += 1
-          variant.save
-        end
+        variant.on_hand += 1
+        variant.save
       end
   end
 end
