@@ -120,10 +120,15 @@ module Spree
       after_transition :to => 'canceled', :do => :after_cancel
 
       event :resume do
-        transition :to => 'pending', :from => 'canceled'
+        transition :from => 'canceled', :to => 'ready', :if => lambda { |shipment|
+          shipment.determine_state(shipment.order) == 'ready'
+        }
+        transition :from => 'canceled', :to => 'pending', :if => lambda { |shipment|
+          shipment.determine_state(shipment.order) == 'ready'
+        }
+        transition :from => 'canceled', :to => 'pending'
       end
-      after_transition :from => 'canceled', :to => 'pending', :do => :after_resume
-
+      after_transition :from => 'canceled', :to => ['pending', 'ready'], :do => :after_resume
     end
 
     def editable_by?(user)
@@ -144,23 +149,20 @@ module Spree
       end
     end
 
-    def order_completed
-      inventory_units.finalize_units!
-
+    def finalize!
+      InventoryUnit.finalize_units!(inventory_units)
       manifest.each do |item|
         stock_location.move item.variant, item.quantity, self
       end
     end
 
     def after_cancel
-      # should units ?
       manifest.each do |item|
         stock_location.move item.variant, -item.quantity, self
       end
     end
 
     def after_resume
-      # should units ?
       manifest.each do |item|
         stock_location.move item.variant, item.quantity, self
       end
@@ -182,6 +184,7 @@ module Spree
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
+      return 'canceled' if order.canceled?
       return 'pending' unless order.can_ship?
       return 'pending' if inventory_units.any? &:backordered?
       return 'shipped' if state == 'shipped'

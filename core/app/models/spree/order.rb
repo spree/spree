@@ -371,7 +371,7 @@ module Spree
       updater.update_payment_state
       shipments.each do |shipment|
         shipment.update!(self)
-        shipment.order_completed
+        shipment.finalize!
       end
 
       updater.update_shipment_state

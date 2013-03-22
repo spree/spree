@@ -30,7 +30,6 @@ describe Spree::StockItem do
 
   context "count_on_hand=" do
     context "when :track_inventory_levels is true" do
-      before { Spree::Config.set :track_inventory_levels => true }
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
