@@ -50,6 +50,7 @@ Spree::Core::Engine.routes.prepend do
 
       resources :shipments, :only => [:create, :update] do
         member do
+          put :create
           put :ready
           put :ship
           put :add
