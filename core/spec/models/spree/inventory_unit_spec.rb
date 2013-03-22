@@ -50,62 +50,62 @@ describe Spree::InventoryUnit do
     end
   end
 
-  context "#increase" do
-    context "when :track_inventory_levels is true" do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        Spree::InventoryUnit.stub(:create_units)
-      end
+  # context "#increase" do
+  #   context "when :track_inventory_levels is true" do
+  #     before do
+  #       Spree::Config.set :track_inventory_levels => true
+  #       Spree::InventoryUnit.stub(:create_units)
+  #     end
 
-      it "should create a new stock movement" do
-        lambda {
-          Spree::InventoryUnit.increase(order, stock_item, 5)
-        }.should change(Spree::StockMovement, :count).by(1)
-      end
+  #     it "should create a new stock movement" do
+  #       lambda {
+  #         Spree::InventoryUnit.increase(order, stock_item, 5)
+  #       }.should change(Spree::StockMovement, :count).by(1)
+  #     end
 
-    end
+  #   end
 
-    context "when :track_inventory_levels is false" do
-      before do
-        Spree::Config.set :track_inventory_levels => false
-        Spree::InventoryUnit.stub(:create_units)
-      end
+#     context "when :track_inventory_levels is false" do
+#       before do
+#         Spree::Config.set :track_inventory_levels => false
+#         Spree::InventoryUnit.stub(:create_units)
+#       end
 
-      it "should not create a new stock movement" do
-        lambda {
-          Spree::InventoryUnit.increase(order, stock_item, 5)
-        }.should_not change(Spree::StockMovement, :count)
-      end
+#       it "should not create a new stock movement" do
+#         lambda {
+#           Spree::InventoryUnit.increase(order, stock_item, 5)
+#         }.should_not change(Spree::StockMovement, :count)
+#       end
 
-    end
+#     end
 
-    context "when :create_inventory_units is true" do
-      before do
-        Spree::Config.set :create_inventory_units => true
-        variant.stub(:decrement!)
-      end
+#     context "when :create_inventory_units is true" do
+#       before do
+#         Spree::Config.set :create_inventory_units => true
+#         variant.stub(:decrement!)
+#       end
 
-      it "should create units" do
-        Spree::InventoryUnit.should_receive(:create_units)
-        Spree::InventoryUnit.increase(order, stock_item, 5)
-      end
+#       it "should create units" do
+#         Spree::InventoryUnit.should_receive(:create_units)
+#         Spree::InventoryUnit.increase(order, stock_item, 5)
+#       end
 
-    end
+#     end
 
-    context "when :create_inventory_units is false" do
-      before do
-        Spree::Config.set :create_inventory_units => false
-        variant.stub(:decrement!)
-      end
+#     context "when :create_inventory_units is false" do
+#       before do
+#         Spree::Config.set :create_inventory_units => false
+#         variant.stub(:decrement!)
+#       end
 
-      it "should not create units" do
-        Spree::InventoryUnit.should_not_receive(:create_units)
-        Spree::InventoryUnit.increase(order, stock_item, 5)
-      end
+#       it "should not create units" do
+#         Spree::InventoryUnit.should_not_receive(:create_units)
+#         Spree::InventoryUnit.increase(order, stock_item, 5)
+#       end
 
-    end
+#     end
 
-  end
+#   end
 
   context "#decrease" do
     context "when :track_inventory_levels is true" do
@@ -297,11 +297,11 @@ describe Spree::InventoryUnit do
     let(:variant) { create(:variant) }
     let(:inventory_units) { [create(:inventory_unit, :variant => variant), create(:inventory_unit, :variant => variant)] }
 
-    it "should create a stock movement" do
-      Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
-      Spree::InventoryUnit.finalize_units!(inventory_units)
-      inventory_units.any?(&:pending).should be_false
-    end
+    # it "should create a stock movement" do
+    #   Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
+    #   Spree::InventoryUnit.finalize_units!(inventory_units)
+    #   inventory_units.any?(&:pending).should be_false
+    # end
   end
 end
 
