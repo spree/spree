@@ -374,25 +374,66 @@ describe Spree::Shipment do
     end
   end
 
-  context "add" do
+  context 'updating contents' do
     let(:shipment) { create(:shipment) }
     let(:order) { shipment.order }
     let(:variant) { create(:variant) }
 
-    it 'should add line item if one does not exist' do
-      shipment.add(variant, 1)
-      line_item = order.find_line_item_by_variant(variant)
-      line_item.quantity.should == 1
-      order.line_items.size.should == 1
+    context 'add' do
+      it 'should add line item if one does not exist' do
+        shipment.add(variant, 1)
+        line_item = order.find_line_item_by_variant(variant)
+        line_item.quantity.should == 1
+        order.line_items.size.should == 1
+      end
+
+      it 'should update line itme if one exists' do
+        order.add_variant(variant, 1)
+        shipment.add(variant, 1)
+        line_item = order.find_line_item_by_variant(variant)
+        line_item.quantity.should == 2
+        order.line_items.size.should == 1
+      end
+
+      it 'should create inventory_units in the necessary states' do
+        Spree::StockItem.any_instance.should_receive(:determine_backorder).with(5).and_return(2)
+        shipment.add(variant, 5)
+        units = shipment.inventory_units.group_by &:state
+        units['backordered'].size.should == 2
+        units['sold'].size.should == 3
+      end
+
+      it 'should create stock_movement' do
+        shipment.add(variant, 5)
+
+        stock_item = shipment.stock_location.stock_item(variant)
+        movement = stock_item.stock_movements.last
+        # movement.originator.should == shipment
+        movement.quantity.should == -5
+      end
     end
 
-    it 'should update line itme if one exists' do
-      order.add_variant(variant, 1)
-      shipment.add(variant, 1)
-      line_item = order.find_line_item_by_variant(variant)
-      line_item.quantity.should == 2
-      order.line_items.size.should == 1
-    end
+    context 'remove' do
+      xit 'should create stock_movement' do
+        shipment.add(variant, 5)
 
+        stock_item = shipment.stock_location.stock_item(variant)
+        movement = stock_item.stock_movements.last
+        # movement.originator.should == shipment
+        movement.quantity.should == 5
+      end
+
+      xit 'should reduce line_item quantity if quantity is less the line_item quantity' do
+      end
+
+      xit 'should remove line_item if quantity matches line_item quantity' do
+      end
+
+      xit 'should destroy unshipped units' do
+      end
+
+      xit 'should destroy self if not inventory units remain' do
+      end
+    end
   end
 end
