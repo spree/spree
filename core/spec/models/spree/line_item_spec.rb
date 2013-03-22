@@ -114,27 +114,6 @@ describe Spree::LineItem do
         Spree::InventoryUnit.should_not_receive(:decrease)
       end
     end
-
-    context 'with inventory units' do
-      let(:inventory_unit) { mock_model(Spree::InventoryUnit, :variant_id => variant.id, :shipped? => false) }
-      before do
-        order.stub(:inventory_units => [inventory_unit])
-        line_item.stub(:order => order, :variant_id => variant.id)
-      end
-
-      it 'should allow destroy when no units have shipped' do
-        # We don't care about this method for this test
-        line_item.stub(:update_order)
-        # line_item.should_receive(:remove_inventory)
-        line_item.destroy.should be_true
-      end
-
-      it 'should not allow destroy when units have shipped' do
-        inventory_unit.stub(:shipped? => true)
-        line_item.should_not_receive(:remove_inventory)
-        line_item.destroy.should be_false
-      end
-    end
   end
 
   context '(in)sufficient_stock?' do

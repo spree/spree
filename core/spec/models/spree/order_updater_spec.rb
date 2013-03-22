@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe OrderUpdater do
-    let(:order) { stub_model(Spree::Order) }
+    let(:order) { stub_model(Spree::Order, :backordered? => false) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     it "updates totals" do

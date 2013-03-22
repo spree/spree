@@ -135,6 +135,7 @@ describe Spree::Order do
 
     it "should send a cancel email" do
       # Stub methods that cause side-effects in this test
+      shipment.stub(:cancel!)
       order.stub :has_available_shipment
       order.stub :restock_items!
       mail_message = mock "Mail::Message"
@@ -152,12 +153,6 @@ describe Spree::Order do
 
         order.stub :has_available_shipment
       end
-
-      # Regression fix for #729
-      specify do
-        Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2).once
-        order.cancel!
-      end
     end
 
     context "resets payment state" do
@@ -168,6 +163,7 @@ describe Spree::Order do
         mail_message.stub :deliver
         order.stub :has_available_shipment
         order.stub :restock_items!
+        shipment.stub(:cancel!)
       end
 
       context "without shipped items" do
@@ -201,26 +197,5 @@ describe Spree::Order do
       # Stubs method that cause unwanted side effects in this test
       order.stub :has_available_shipment
     end
-
-    context "unstocks inventory" do
-      let(:variant) { stub_model(Spree::Variant) }
-
-      before do
-        shipment = stub_model(Spree::Shipment)
-        line_item = stub_model(Spree::LineItem, :variant => variant, :quantity => 2)
-        order.stub :line_items => [line_item]
-        order.line_items.stub :find_by_variant_id => line_item
-
-        order.stub :shipments => [shipment]
-        shipment.stub :inventory_units => [stub_model(Spree::InventoryUnit, :variant => variant),
-                                           stub_model(Spree::InventoryUnit, :variant => variant) ]
-      end
-
-      specify do
-        Spree::InventoryUnit.should_receive(:increase).with(order, variant, 2).once
-        order.resume!
-      end
-    end
-
   end
 end
