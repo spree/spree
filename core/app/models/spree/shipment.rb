@@ -220,6 +220,46 @@ module Spree
       update_order
     end
 
+
+    def remove(variant, quantity)
+      #create stock_movement
+      stock_location.move variant.id, -quantity, self
+
+      #update line_item
+      line_item = order.find_line_item_by_variant(variant)
+      line_item.quantity += -quantity
+
+      if line_item.quantity == 0
+        line_item.destroy
+      else
+        line_item.save!
+      end
+
+      #destroy inventory_units
+      variant_units = inventory_units.group_by(&:variant_id)
+      if variant_units.include? variant.id
+
+        variant_units = variant_units[variant.id].reject do |variant_unit|
+          variant_unit.state == 'shipped'
+        end.sort_by(&:state)
+
+        quantity.times do
+          inventory_unit = variant_units.shift
+          inventory_unit.destroy
+        end
+      else
+        #raise exception variant does not belong to shipment
+      end
+
+      reload
+
+      if inventory_units.size == 0
+        destroy
+      else
+        update_order
+      end
+    end
+
     def to_package
       package = Stock::Package.new(stock_location, order)
       inventory_units.each do |inventory_unit|

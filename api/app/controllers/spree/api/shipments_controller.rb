@@ -55,41 +55,7 @@ module Spree
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
-        #create stock_movement
-        @shipment.stock_location.move variant.id, -quantity, @shipment
-
-        #update line_item
-        line_item = @order.find_line_item_by_variant(variant)
-        line_item.quantity += -quantity
-
-        if line_item.quantity == 0
-          line_item.destroy
-        else
-          line_item.save!
-        end
-
-        #destroy inventory_units
-        variant_units = @shipment.inventory_units.group_by(&:variant_id)
-        if variant_units.include? variant.id
-
-          variant_units = variant_units[variant.id].reject do |variant_unit|
-            variant_unit.state == 'shipped'
-          end.sort_by(&:state)
-
-          quantity.times do
-            inventory_unit = variant_units.shift
-            inventory_unit.destroy
-          end
-        else
-          #raise exception variant does not belong to shipment
-        end
-
-        @shipment.reload
-        @shipment.order.update!
-
-        if @shipment.reload.inventory_units.size == 0
-          @shipment.destroy
-        end
+        @shipment.remove(variant, quantity)
 
         respond_with(@shipment, :default_template => :show)
       end
