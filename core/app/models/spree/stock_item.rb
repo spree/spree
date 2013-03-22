@@ -21,6 +21,18 @@ module Spree
       variant.name
     end
 
+    def determine_backorder(quantity)
+      return 0 unless Spree::Config[:track_inventory_levels]
+
+      if count_on_hand == 0
+        quantity
+      elsif count_on_hand < quantity
+        quantity - (count_on_hand < 0 ? 0 : count_on_hand)
+      else
+        0
+      end
+    end
+
     private
     def process_backorders
       if count_changes = changes['count_on_hand']

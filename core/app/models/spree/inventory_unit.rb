@@ -38,7 +38,7 @@ module Spree
     # manages both variant.count_on_hand and inventory unit creation
     #
     def self.increase(order, stock_item, quantity)
-      back_order = determine_backorder(order, stock_item, quantity)
+      back_order = stock_item.determine_backorder(quantity)
       sold = quantity - back_order
 
       #set on_hand if configured
@@ -77,16 +77,6 @@ module Spree
     private
       def allow_ship?
         Spree::Config[:allow_backorder_shipping] || self.sold?
-      end
-
-      def self.determine_backorder(order, stock_item, quantity)
-        if stock_item.count_on_hand == 0
-          quantity
-        elsif stock_item.count_on_hand.present? and stock_item.count_on_hand < quantity
-          quantity - (stock_item.count_on_hand < 0 ? 0 : stock_item.count_on_hand)
-        else
-          0
-        end
       end
 
       def self.destroy_units(order, variant, quantity)

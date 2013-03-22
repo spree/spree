@@ -165,52 +165,6 @@ describe Spree::InventoryUnit do
 
   end
 
-  context "#determine_backorder" do
-    context "when :track_inventory_levels is true" do
-      before { Spree::Config.set :create_inventory_units => true }
-
-      context "and all units are in stock" do
-        it "should return zero back orders" do
-          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 0
-        end
-      end
-
-      context "and partial units are in stock" do
-        before { stock_item.stub(:count_on_hand).and_return(2) }
-
-        it "should return correct back order amount" do
-          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 3
-        end
-      end
-
-      context "and zero units are in stock" do
-        before { stock_item.stub(:count_on_hand).and_return(0) }
-
-        it "should return correct back order amount" do
-          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 5
-        end
-      end
-
-      context "and less than zero units are in stock" do
-        before { stock_item.stub(:count_on_hand).and_return(-9) }
-
-        it "should return entire amount as back order" do
-          Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 5
-        end
-      end
-    end
-
-    context "when :track_inventory_levels is false" do
-      before { Spree::Config.set :track_inventory_levels => false }
-
-      it "should return zero back orders" do
-        stock_item.stub(:count_on_hand).and_return(nil)
-        Spree::InventoryUnit.determine_backorder(order, stock_item, 5).should == 0
-      end
-    end
-
-  end
-
   context "#create_units" do
     let(:shipment) { mock_model(Spree::Shipment) }
     before { order.shipments.stub :detect => shipment }

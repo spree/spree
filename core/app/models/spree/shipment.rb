@@ -201,7 +201,7 @@ module Spree
 
       #figure out backorder situation
       stock_item = stock_location.stock_item(variant)
-      back_order = InventoryUnit.determine_backorder(order, stock_item, quantity)
+      back_order = stock_item.determine_backorder(quantity)
       sold = quantity - back_order
 
       #create inventory_units
@@ -215,15 +215,17 @@ module Spree
                                          :state => 'backordered'}, :without_protection => true)
       end
 
-      #create stock_movement
-      stock_location.move variant, quantity, self
+      # create stock_movement, we're adding to shipment,
+      # removing from stock_location/item so quantity is negative
+      stock_location.move variant, -quantity, self
       update_order
     end
 
 
     def remove(variant, quantity)
-      #create stock_movement
-      stock_location.move variant.id, -quantity, self
+      # create stock_movement, we're removing from shipment,
+      # adding to stock_location/item so quantity is positive
+      stock_location.move variant.id, quantity, self
 
       #update line_item
       line_item = order.find_line_item_by_variant(variant)
