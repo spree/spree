@@ -5,6 +5,7 @@ describe Spree::OrderMailer do
   let(:mail_method) { mock("mail_method", :preferred_mails_from => nil, :preferred_intercept_email => nil, :preferred_mail_bcc => nil) }
   let(:order) { Spree::Order.new(:email => "customer@example.com") }
   let(:message) { Spree::OrderMailer.confirm_email(order) }
+  let(:mail_method) { create(:mail_method) }
   #let(:email) { mock "email" }
 
   before(:all) do
