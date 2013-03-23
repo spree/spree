@@ -47,8 +47,8 @@ module Spree
     private
       def ensure_valid_state
         unless skip_state_validation?
-          if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
-             (!params[:state] && !@order.checkout_steps.include?(@order.state))
+          if (params[:state] && !@order.has_checkout_step?(params[:state])) ||
+             (!params[:state] && !@order.has_checkout_step?(@order.state))
             @order.state = 'cart'
             redirect_to checkout_state_path(@order.checkout_steps.first)
           end
@@ -65,7 +65,10 @@ module Spree
         @order = current_order
         redirect_to spree.cart_path and return unless @order
 
-        @order.state = params[:state] if params[:state]
+        if params[:state]
+          redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
+          @order.state = params[:state]
+        end
         setup_for_current_state
       end
 
