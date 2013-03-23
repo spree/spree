@@ -11,7 +11,6 @@ describe Spree::CheckoutController do
   end
 
   context "#edit" do
-
     it 'should check if the user is authorized for :edit' do
       controller.should_receive(:authorize!).with(:edit, order, token)
       spree_get :edit, { :state => 'address' }, { :access_token => token }
@@ -31,8 +30,15 @@ describe Spree::CheckoutController do
 
     it "should redirect to cart if order is completed" do
       order.stub(:completed? => true)
-      spree_get :edit, {:state => "address"}
+      spree_get :edit, { :state => "address" }
       response.should redirect_to(spree.cart_path)
+    end
+
+    # Regression test for #2280
+    it "should redirect to current step trying to access a future step" do
+      order.update_column(:state, "address")
+      spree_get :edit, { :state => "delivery" }
+      response.should redirect_to spree.checkout_state_path("address")
     end
 
     context "when entering the checkout" do
@@ -56,7 +62,6 @@ describe Spree::CheckoutController do
   end
 
   context "#update" do
-
     it 'should check if the user is authorized for :edit' do
       controller.should_receive(:authorize!).with(:edit, order, token)
       spree_post :update, { :state => 'address' }, { :access_token => token }
@@ -158,6 +163,7 @@ describe Spree::CheckoutController do
 
     context "when current_order is nil" do
       before { controller.stub! :current_order => nil }
+
       it "should not change the state if order is completed" do
         order.should_not_receive(:update_attribute)
         spree_post :update, {:state => "confirm"}
@@ -170,7 +176,6 @@ describe Spree::CheckoutController do
     end
 
     context "Spree::Core::GatewayError" do
-
       before do
         order.stub :user => user
         order.stub(:update_attributes).and_raise(Spree::Core::GatewayError)
@@ -188,11 +193,11 @@ describe Spree::CheckoutController do
   context "When last inventory item has been purchased" do
     let(:product) { mock_model(Spree::Product, :name => "Amazing Object") }
     let(:variant) { mock_model(Spree::Variant, :on_hand => 0) }
-    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true, :amount => 0 }
     let(:order) { create(:order) }
 
     before do
-      order.stub(:line_items => [line_item])
+      order.stub(:line_items => [line_item], :state => "payment")
 
       configure_spree_preferences do |config|
         config.track_inventory_levels = true
@@ -201,21 +206,18 @@ describe Spree::CheckoutController do
 
     end
 
-    context "and back orders == false" do
+    context "and back orders are not allowed" do
       before do
-        spree_post :update, {:state => "payment"}
+        spree_post :update, { :state => "payment" }
       end
 
-      it "should render edit template" do
+      it "should redirect to cart" do
         response.should redirect_to spree.cart_path
       end
 
       it "should set flash message for no inventory" do
         flash[:error].should == I18n.t(:spree_inventory_error_flash_for_insufficient_quantity , :names => "'#{product.name}'" )
       end
-
     end
-
   end
-
 end
