@@ -7,8 +7,6 @@ module Spree
             helper_method :title
             helper_method :title=
             helper_method :accurate_title
-            helper_method :current_order
-            helper_method :current_currency
 
             layout :get_layout
 
@@ -56,19 +54,11 @@ module Spree
           Spree::Config[:default_seo_title]
         end
 
-        def current_currency
-          Spree::Config[:currency]
-        end
-
         def render_404(exception = nil)
           respond_to do |type|
             type.html { render :status => :not_found, :file    => "#{::Rails.root}/public/404", :formats => [:html], :layout => nil}
             type.all  { render :status => :not_found, :nothing => true }
           end
-        end
-
-        def ip_address
-          request.env['HTTP_X_REAL_IP'] || request.env['REMOTE_ADDR']
         end
 
         private
