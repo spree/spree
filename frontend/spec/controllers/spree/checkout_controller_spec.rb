@@ -3,9 +3,7 @@ require 'spec_helper'
 describe Spree::CheckoutController do
   let(:token) { 'some_token' }
   let(:user) { stub_model(Spree::LegacyUser) }
-  let(:order) do
-    order = FactoryGirl.create(:order_with_totals)
-  end
+  let(:order) { FactoryGirl.create(:order_with_totals) }
 
   before do
     controller.stub :try_spree_current_user => user
