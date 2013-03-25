@@ -18,7 +18,6 @@ module Spree
     after_save :ensure_correct_adjustment, :ensure_selected_shipping_rate, :update_order
 
     attr_accessor :special_instructions
-
     attr_accessible :order, :special_instructions, :stock_location_id,
                     :tracking, :address, :inventory_units, :selected_shipping_rate_id
 
@@ -202,11 +201,11 @@ module Spree
       order.add_variant(variant, quantity)
 
       #create inventory_units
-      sold, back_order = stock_location.fill_status(variant, quantity)
+      on_hand, back_order = stock_location.fill_status(variant, quantity)
 
-      sold.times do
+      on_hand.times do
         inventory_units.create({:variant_id => variant.id,
-                                          :state => 'sold'}, :without_protection => true)
+                                          :state => 'on_hand'}, :without_protection => true)
       end
 
       back_order.times do

@@ -13,7 +13,7 @@ module Spree
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'on_hand' do
       event :fill_backorder do
-        transition :to => 'sold', :from => 'backordered'
+        transition :to => 'on_hand', :from => 'backordered'
       end
       after_transition :on => :fill_backorder, :do => :update_order
 
@@ -45,7 +45,7 @@ module Spree
 
     private
       def allow_ship?
-        Spree::Config[:allow_backorder_shipping] || self.sold?
+        Spree::Config[:allow_backorder_shipping] || self.on_hand?
       end
 
       def update_order
