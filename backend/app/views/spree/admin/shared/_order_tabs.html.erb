@@ -39,9 +39,6 @@
       <li<%== ' class="active"' if current == 'Payments' %>>
         <%= link_to_with_icon 'icon-credit-card', t(:payments), admin_order_payments_url(@order) %>
       </li>
-      <li<%== ' class="active"' if current == 'Shipments' %>>
-        <%= link_to_with_icon 'icon-road', t(:shipments), admin_order_shipments_url(@order) %>
-      </li>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Return Authorizations' %>>
           <%= link_to_with_icon 'icon-share-alt', t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
