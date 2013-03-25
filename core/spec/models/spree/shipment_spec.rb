@@ -248,10 +248,21 @@ describe Spree::Shipment do
 
     it "should update originator when adjustment is present" do
       shipment.stub(:selected_shipping_rate => mock_model(Spree::ShippingRate, :cost => 10.00))
-      shipment.stub_chain(:adjustment, :originator)
+      shipment.stub(:adjustment => mock_model(Spree::Adjustment, :open? => true))
       shipment.adjustment.should_receive(:originator=).with(shipping_method)
       shipment.adjustment.should_receive(:label=).with(shipping_method.name)
       shipment.adjustment.should_receive(:amount=).with(10.00)
+      shipment.adjustment.should_receive(:save!)
+      shipment.adjustment.should_receive(:reload)
+      shipment.send(:ensure_correct_adjustment)
+    end
+
+    it 'should not update amount if adjustment is not open?' do
+      shipment.stub(:selected_shipping_rate => mock_model(Spree::ShippingRate, :cost => 10.00))
+      shipment.stub(:adjustment => mock_model(Spree::Adjustment, :open? => false))
+      shipment.adjustment.should_receive(:originator=).with(shipping_method)
+      shipment.adjustment.should_receive(:label=).with(shipping_method.name)
+      shipment.adjustment.should_not_receive(:amount=).with(10.00)
       shipment.adjustment.should_receive(:save!)
       shipment.adjustment.should_receive(:reload)
       shipment.send(:ensure_correct_adjustment)
@@ -311,7 +322,7 @@ describe Spree::Shipment do
         shipment.add(variant, 5)
         units = shipment.inventory_units.group_by &:state
         units['backordered'].size.should == 2
-        units['sold'].size.should == 3
+        units['on_hand'].size.should == 3
       end
 
       it 'should create stock_movement' do
@@ -327,7 +338,7 @@ describe Spree::Shipment do
     context 'remove' do
       before do
         order.add_variant(variant, 1)
-        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold') ] )
+        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand') ] )
       end
 
       it 'should create stock_movement' do
@@ -347,7 +358,7 @@ describe Spree::Shipment do
       it 'should destroy backordered units first' do
         order.add_variant(variant, 3)
         shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
-                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold'),
+                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand'),
                                             mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered') ])
 
         shipment.inventory_units[0].should_receive(:destroy)
@@ -359,7 +370,7 @@ describe Spree::Shipment do
       it 'should destroy unshipped units first' do
         order.add_variant(variant, 2)
         shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
-                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold') ] )
+                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand') ] )
 
         shipment.inventory_units[0].should_not_receive(:destroy)
         shipment.inventory_units[1].should_receive(:destroy)

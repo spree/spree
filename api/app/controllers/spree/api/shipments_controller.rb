@@ -14,9 +14,6 @@ module Spree
 
         estimator = Stock::Estimator.new(@order)
         @shipment.shipping_rates = estimator.shipping_rates(@shipment.to_package)
-        rate = @shipment.shipping_rates.first
-        rate.selected = true
-        rate.save!
         @shipment.save!
 
         respond_with(@shipment, :default_template => :show)
