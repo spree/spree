@@ -225,6 +225,26 @@ module Spree
 
 
     def remove(variant, quantity)
+      #destroy inventory_units
+      variant_units = inventory_units.group_by(&:variant_id)
+      if variant_units.include? variant.id
+
+        variant_units = variant_units[variant.id].reject do |variant_unit|
+          variant_unit.state == 'shipped'
+        end.sort_by(&:state)
+
+        if quantity > variant_units.size
+          raise 'Shipment does not contain enough deletable inventory_units'
+        end
+        quantity.times do
+          inventory_unit = variant_units.shift
+          inventory_unit.destroy
+        end
+      else
+        raise 'Variant does not belong to this shipment'
+        #raise exception variant does not belong to shipment
+      end
+
       # create stock_movement, we're removing from shipment,
       # adding to stock_location/item so quantity is positive
       stock_location.move variant.id, quantity, self
@@ -237,22 +257,6 @@ module Spree
         line_item.destroy
       else
         line_item.save!
-      end
-
-      #destroy inventory_units
-      variant_units = inventory_units.group_by(&:variant_id)
-      if variant_units.include? variant.id
-
-        variant_units = variant_units[variant.id].reject do |variant_unit|
-          variant_unit.state == 'shipped'
-        end.sort_by(&:state)
-
-        quantity.times do
-          inventory_unit = variant_units.shift
-          inventory_unit.destroy
-        end
-      else
-        #raise exception variant does not belong to shipment
       end
 
       reload
