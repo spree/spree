@@ -299,19 +299,9 @@ describe Spree::Shipment do
     let(:variant) { create(:variant) }
 
     context 'add' do
-      it 'should add line item if one does not exist' do
+      it 'should update line_items' do
+        shipment.order.should_receive(:add_variant).with(variant, 1)
         shipment.add(variant, 1)
-        line_item = order.find_line_item_by_variant(variant)
-        line_item.quantity.should == 1
-        order.line_items.size.should == 1
-      end
-
-      it 'should update line itme if one exists' do
-        order.add_variant(variant, 1)
-        shipment.add(variant, 1)
-        line_item = order.find_line_item_by_variant(variant)
-        line_item.quantity.should == 2
-        order.line_items.size.should == 1
       end
 
       it 'should create inventory_units in the necessary states' do
@@ -347,20 +337,9 @@ describe Spree::Shipment do
         movement.quantity.should == 1
       end
 
-      it 'should reduce line_item quantity if quantity is less the line_item quantity' do
-        line_item = order.add_variant(variant, 3)
+      it 'should update line_items' do
+        shipment.order.should_receive(:remove_variant).with(variant, 1)
         shipment.remove(variant, 1)
-
-        line_item.reload.quantity.should == 3
-      end
-
-      it 'should remove line_item if quantity matches line_item quantity' do
-        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
-                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered') ])
-        order.add_variant(variant, 1)
-        shipment.remove(variant, 2)
-
-        order.reload.find_line_item_by_variant(variant).should be_nil
       end
 
       it 'should destroy backordered units first' do

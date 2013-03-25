@@ -217,7 +217,6 @@ module Spree
       # create stock_movement, we're adding to shipment,
       # removing from stock_location/item so quantity is negative
       stock_location.move variant, -quantity, self
-      update_order
     end
 
 
@@ -242,27 +241,17 @@ module Spree
         #raise exception variant does not belong to shipment
       end
 
-      # create stock_movement, we're removing from shipment,
-      # adding to stock_location/item so quantity is positive
-      stock_location.move variant.id, quantity, self
 
       #update line_item
-      line_item = order.find_line_item_by_variant(variant)
-      line_item.quantity += -quantity
-
-      if line_item.quantity == 0
-        line_item.destroy
-      else
-        line_item.save!
-      end
+      order.remove_variant(variant, quantity)
 
       reload
 
-      if inventory_units.size == 0
-        destroy
-      else
-        update_order
-      end
+      destroy if inventory_units.size == 0
+
+      # create stock_movement, we're removing from shipment,
+      # adding to stock_location/item so quantity is positive
+      stock_location.move variant.id, quantity, self
     end
 
     def to_package
