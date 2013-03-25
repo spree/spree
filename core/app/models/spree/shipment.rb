@@ -136,8 +136,10 @@ module Spree
     end
 
     def manifest
-      inventory_units.group_by(&:variant).map do |i|
-        OpenStruct.new(:variant => i.first, :quantity => i.last.length)
+      inventory_units.group_by(&:variant).map do |variant, units|
+        states = {}
+        units.group_by(&:state).each { |state, iu| states[state] = iu.count }
+        OpenStruct.new(:variant => variant, :quantity => units.length, :states => states)
       end
     end
 
