@@ -27,11 +27,11 @@ module Spree
       stock_item(variant).try(:backorderable?)
     end
 
-    def add(variant, quantity, originator=nil)
+    def restock(variant, quantity, originator=nil)
       move(variant, quantity, originator)
     end
 
-    def remove(variant, quantity, originator=nil)
+    def unstock(variant, quantity, originator=nil)
       move(variant, -quantity, originator)
     end
 

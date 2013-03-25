@@ -27,16 +27,16 @@ module Spree
       subject.backorderable?(variant).should be_true
     end
 
-    it 'adds a variant with a positive stock movement' do
+    it 'restocks a variant with a positive stock movement' do
       originator = double
       subject.should_receive(:move).with(variant, 5, originator)
-      subject.add(variant, 5, originator)
+      subject.restock(variant, 5, originator)
     end
 
-    it 'removes a variant with a negative stock movement' do
+    it 'unstocks a variant with a negative stock movement' do
       originator = double
       subject.should_receive(:move).with(variant, -5, originator)
-      subject.remove(variant, 5, originator)
+      subject.unstock(variant, 5, originator)
     end
 
     it 'it creates a stock_movement' do

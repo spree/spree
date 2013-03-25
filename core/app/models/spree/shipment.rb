@@ -154,19 +154,19 @@ module Spree
     def finalize!
       InventoryUnit.finalize_units!(inventory_units)
       manifest.each do |item|
-        stock_location.move item.variant, item.quantity, self
+        stock_location.unstock item.variant, item.quantity, self
       end
     end
 
     def after_cancel
       manifest.each do |item|
-        stock_location.move item.variant, -item.quantity, self
+        stock_location.restock item.variant, item.quantity, self
       end
     end
 
     def after_resume
       manifest.each do |item|
-        stock_location.move item.variant, item.quantity, self
+        stock_location.unstock item.variant, item.quantity, self
       end
     end
 
@@ -214,9 +214,9 @@ module Spree
                                          :state => 'backordered'}, :without_protection => true)
       end
 
-      # create stock_movement, we're adding to shipment,
-      # removing from stock_location/item so quantity is negative
-      stock_location.move variant, -quantity, self
+      # adding to this shipment, and removing from stock_location
+      stock_location.unstock variant, quantity, self
+      update_order
     end
 
 
@@ -241,7 +241,6 @@ module Spree
         #raise exception variant does not belong to shipment
       end
 
-
       #update line_item
       order.remove_variant(variant, quantity)
 
@@ -250,8 +249,8 @@ module Spree
       destroy if inventory_units.size == 0
 
       # create stock_movement, we're removing from shipment,
-      # adding to stock_location/item so quantity is positive
-      stock_location.move variant.id, quantity, self
+      # and restocking it at location
+      stock_location.restock variant.id, quantity, self
     end
 
     def to_package
