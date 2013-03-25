@@ -7,9 +7,9 @@
     <table class="stock-contents" data-hook="stock-contents">
       <colgroup>
         <col style="width: 10%;" />
-        <col style="width: 40%;" />
+        <col style="width: 30%;" />
         <col style="width: 20%;" />
-        <col style="width: 10%;" />
+        <col style="width: 20%;" />
         <col style="width: 20%;" />
         <col style="width: 8%;" />
       </colgroup>
@@ -38,10 +38,14 @@
             <% line_item = order.find_line_item_by_variant(item.variant) %>
             <tr class="stock-item">
               <td class="item-image"><%= mini_image(item.variant) %></td>
-              <td class="item-name"><%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
+              <td class="item-name">
+                <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+              </td>
               <td class="item-price"><%= line_item.single_money.to_html %></td>
-              <td class="item-qty-show">
-                <%= item.quantity %>
+              <td class="item-qty-show" style="text-align:right;">
+                  <% item.states.each do |state,count| %>
+                    <%= count %> x <%= state.humanize.downcase %>
+                  <% end %>
               </td>
               <td class="item-qty-edit hidden">
                 <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
