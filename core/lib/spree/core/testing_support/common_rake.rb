@@ -21,5 +21,13 @@ namespace :common do
     end
 
     system(cmd)
+
+    begin
+      require "generators/#{ENV['LIB_NAME']}/install_generator"
+      puts 'Running extension installation generator...'
+      "#{ENV['LIB_NAME'].classify}::Generators::InstallGenerator".constantize.start
+    rescue LoadError
+      puts 'Skipping installation no generator to run...'
+    end
   end
 end
