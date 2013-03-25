@@ -414,25 +414,84 @@ describe Spree::Shipment do
     end
 
     context 'remove' do
-      xit 'should create stock_movement' do
-        shipment.add(variant, 5)
+      before do
+        order.add_variant(variant, 1)
+        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold') ] )
+      end
+
+      it 'should create stock_movement' do
+        shipment.remove(variant, 1)
 
         stock_item = shipment.stock_location.stock_item(variant)
         movement = stock_item.stock_movements.last
         # movement.originator.should == shipment
-        movement.quantity.should == 5
+        movement.quantity.should == 1
       end
 
-      xit 'should reduce line_item quantity if quantity is less the line_item quantity' do
+      it 'should reduce line_item quantity if quantity is less the line_item quantity' do
+        line_item = order.add_variant(variant, 3)
+        shipment.remove(variant, 1)
+
+        line_item.reload.quantity.should == 3
       end
 
-      xit 'should remove line_item if quantity matches line_item quantity' do
+      it 'should remove line_item if quantity matches line_item quantity' do
+        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
+                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered') ])
+        order.add_variant(variant, 1)
+        shipment.remove(variant, 2)
+
+        order.reload.find_line_item_by_variant(variant).should be_nil
       end
 
-      xit 'should destroy unshipped units' do
+      it 'should destroy backordered units first' do
+        order.add_variant(variant, 3)
+        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
+                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold'),
+                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered') ])
+
+        shipment.inventory_units[0].should_receive(:destroy)
+        shipment.inventory_units[1].should_not_receive(:destroy)
+        shipment.inventory_units[2].should_receive(:destroy)
+        shipment.remove(variant, 2)
       end
 
-      xit 'should destroy self if not inventory units remain' do
+      it 'should destroy unshipped units first' do
+        order.add_variant(variant, 2)
+        shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
+                                            mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'sold') ] )
+
+        shipment.inventory_units[0].should_not_receive(:destroy)
+        shipment.inventory_units[1].should_receive(:destroy)
+        shipment.remove(variant, 1)
+      end
+
+      it 'should raise exception if not enough deletable units are present' do
+        expect {
+          order.add_variant(variant, 2)
+          shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
+                                              mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped') ] )
+
+          shipment.remove(variant, 1)
+
+        }.to raise_error(/Shipment does not contain enough deletable inventory_units/)
+      end
+
+      it 'should raise exception if variant does not belong to shipment' do
+        expect {
+          order.add_variant(variant, 2)
+          shipment.stub(:inventory_units => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
+                                              mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped') ] )
+
+          shipment.remove(create(:variant), 1)
+
+        }.to raise_error(/Variant does not belong to this shipment/)
+      end
+
+      it 'should destroy self if not inventory units remain' do
+        shipment.inventory_units.stub(:size => 0)
+        shipment.should_receive(:destroy)
+        shipment.remove(variant,1)
       end
     end
   end
