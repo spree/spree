@@ -48,29 +48,6 @@ module Spree
         Spree::Config[:allow_backorder_shipping] || self.sold?
       end
 
-      def self.destroy_units(order, variant, quantity)
-        variant_units = order.inventory_units.group_by(&:variant_id)
-        return unless variant_units.include? variant.id
-
-        variant_units = variant_units[variant.id].reject do |variant_unit|
-          variant_unit.state == 'shipped'
-        end.sort_by(&:state)
-
-        quantity.times do
-          inventory_unit = variant_units.shift
-          inventory_unit.destroy
-        end
-      end
-
-      def self.create_units(order, variant, sold, back_order)
-        return if back_order > 0 && !Spree::Config[:allow_backorders]
-
-        shipment = order.shipments.detect { |shipment| !shipment.shipped? }
-
-        sold.times { order.inventory_units.create({:variant => variant, :state => 'sold', :shipment => shipment}, :without_protection => true) }
-        back_order.times { order.inventory_units.create({:variant => variant, :state => 'backordered', :shipment => shipment}, :without_protection => true) }
-      end
-
       def update_order
         order.update!
       end
