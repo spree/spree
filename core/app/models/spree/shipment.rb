@@ -204,32 +204,8 @@ module Spree
       @tracking_url ||= shipping_method.build_tracking_url(tracking)
     end
 
-<<<<<<< HEAD
     def include?(variant)
       inventory_units_for(variant).present?
-=======
-    def add(variant, quantity)
-      #update line item
-      order.add_variant(variant, quantity)
-
-      #create inventory_units
-      sold, back_order = stock_location.fill_status(variant, quantity)
-
-      sold.times do
-        inventory_units.create({:variant_id => variant.id,
-                                          :state => 'sold'}, :without_protection => true)
-      end
-
-      back_order.times do
-        inventory_units.create({:variant_id => variant.id,
-                                         :state => 'backordered'}, :without_protection => true)
-      end
-
-      # create stock_movement, we're adding to shipment,
-      # removing from stock_location/item so quantity is negative
-      stock_location.move variant, -quantity, self
-      update_order
->>>>>>> make stock_location responsible for determing status for a varaint
     end
 
     def inventory_units_for(variant)
