@@ -315,7 +315,7 @@ describe Spree::Shipment do
       end
 
       it 'should create inventory_units in the necessary states' do
-        Spree::StockItem.any_instance.should_receive(:determine_backorder).with(5).and_return(2)
+        shipment.stock_location.should_receive(:fill_status).with(variant, 5).and_return([3, 2])
         shipment.add(variant, 5)
         units = shipment.inventory_units.group_by &:state
         units['backordered'].size.should == 2

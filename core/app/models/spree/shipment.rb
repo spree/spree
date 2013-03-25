@@ -201,12 +201,9 @@ module Spree
       #update line item
       order.add_variant(variant, quantity)
 
-      #figure out backorder situation
-      stock_item = stock_location.stock_item(variant)
-      back_order = stock_item.determine_backorder(quantity)
-      sold = quantity - back_order
-
       #create inventory_units
+      sold, back_order = stock_location.fill_status(variant, quantity)
+
       sold.times do
         inventory_units.create({:variant_id => variant.id,
                                           :state => 'sold'}, :without_protection => true)
