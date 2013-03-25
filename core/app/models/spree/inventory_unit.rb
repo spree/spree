@@ -46,7 +46,6 @@ module Spree
     end
 
     private
-
       def allow_ship?
         Spree::Config[:allow_backorder_shipping] || self.on_hand?
       end
