@@ -297,9 +297,11 @@ module Spree
         if adjustment
           adjustment.originator = shipping_method
           adjustment.label = shipping_method.name
-          adjustment.amount = selected_shipping_rate.cost
+          if adjustment.open?
+            adjustment.amount = selected_shipping_rate.cost
+          end
           adjustment.save!
-      	  adjustment.reload
+          adjustment.reload
 
         elsif shipping_method
           shipping_method.create_adjustment(shipping_method.adjustment_label, order, self, true)

@@ -48,9 +48,8 @@ Spree::Core::Engine.routes.prepend do
         end
       end
 
-      resources :shipments, :only => [:create] do
+      resources :shipments, :only => [:create, :update] do
         member do
-          put :create
           put :ready
           put :ship
           put :add

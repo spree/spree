@@ -21,37 +21,38 @@ $(document).ready(function() {
     });
 
     //handle edit click
-    $('a.edit').click(toggleLineEdit);
+    $('a.edit-item').click(toggleItemEdit);
 
     //handle cancel click
-    $('a.cancel').click(toggleLineEdit);
+    $('a.cancel-item').click(toggleItemEdit);
 
     //handle save click
-    $('a.save').click(function(){
+    $('a.save-item').click(function(){
       var save = $(this);
       var shipment_number = save.data('shipment-number');
       var variant_id = save.data('variant-id');
 
       var quantity = $('input.line_item_quantity').val();
 
-      toggleLineEdit();
+      toggleItemEdit();
 
       adjustItems(shipment_number, variant_id, quantity);
 
     });
 
     //handle delete click
-    $('a.delete').click(function(){
+    $('a.delete-item').click(function(){
       var del = $(this);
       var shipment_number = del.data('shipment-number');
       var variant_id = del.data('variant-id');
 
-      toggleLineEdit();
+      toggleItemEdit();
 
       adjustItems(shipment_number, variant_id, 0);
 
     });
 
+    //handle ship click
     $('a.ship').click(function(){
       var link = $(this);
       var shipment_number = link.data('shipment-number');
@@ -66,6 +67,30 @@ $(document).ready(function() {
       });
 
     });
+
+    //handle shipping method edit click
+    $('a.edit-method').click(toggleMethodEdit);
+    $('a.cancel-method').click(toggleMethodEdit);
+
+    //handle method save
+    $('a.save-method').click(function(){
+      var link = $(this);
+      var shipment_number = link.data('shipment-number');
+      var selected_shipping_rate_id = $("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
+      var unlock = $("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']").val();
+
+      $.ajax({
+        type: "PUT",
+        url: "/api/orders/" + order_number + "/shipments/" + shipment_number + ".json",
+        data: { shipment: { selected_shipping_rate_id: selected_shipping_rate_id, unlock: unlock  } }
+      }).done(function( msg ) {
+        window.location.reload();
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+
+    });
+
   }
 });
 
@@ -99,12 +124,18 @@ adjustItems = function(shipment_number, variant_id, quantity){
     }
 }
 
-toggleLineEdit = function(){
+toggleMethodEdit = function(){
   var link = $(this);
-  link.parent().find('a.edit').toggle();
-  link.parent().find('a.cancel').toggle();
-  link.parent().find('a.save').toggle();
-  link.parent().find('a.delete').toggle();
+  link.parents('tbody').find('tr.edit-method').toggle();
+  link.parents('tbody').find('tr.show-method').toggle();
+}
+
+toggleItemEdit = function(){
+  var link = $(this);
+  link.parent().find('a.edit-item').toggle();
+  link.parent().find('a.cancel-item').toggle();
+  link.parent().find('a.save-item').toggle();
+  link.parent().find('a.delete-item').toggle();
   link.parents('tr').find('td.item-qty-show').toggle();
   link.parents('tr').find('td.item-qty-edit').toggle();
 }
