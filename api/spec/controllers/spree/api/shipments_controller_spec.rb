@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::ShipmentsController do
   render_views
   let!(:shipment) { create(:shipment) }
-  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at] }
+  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_method, :inventory_units] }
 
   before do
     stub_authentication!
@@ -24,7 +24,34 @@ describe Spree::Api::ShipmentsController do
   end
 
   context "as an admin" do
+    let!(:order) { create(:completed_order_with_totals, shipments: [shipment]) }
+    let!(:stock_location) { create(:stock_location_with_items) }
+    let!(:variant) { create(:variant) }
     sign_in_as_admin!
+
+    it 'can create a new shipment' do
+      params = {
+        variant_id: stock_location.stock_items.first.variant.to_param,
+        order_id: order.number,
+        stock_location_id: stock_location.to_param,
+      }
+
+      api_post :create, params
+      response.status.should == 200
+      json_response.should have_attributes(attributes)
+    end
+
+    it 'can update a shipment' do
+      params = {
+        shipment: {
+          stock_location_id: stock_location.to_param
+        }
+      }
+
+      api_put :update, params
+      response.status.should == 200
+      json_response['stock_location_name'].should == stock_location.name
+    end
 
     it "can make a shipment ready" do
       Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
@@ -39,6 +66,36 @@ describe Spree::Api::ShipmentsController do
       api_put :ready
       json_response["error"].should == "Cannot ready shipment."
       response.status.should == 422
+    end
+
+    it 'can add a variant to a shipment' do
+      params = {
+        order_id: order.number,
+        id: order.shipments.first.to_param,
+        variant_id: variant.to_param,
+        quantity: 2
+      }
+
+      api_put :add, params
+      response.status.should == 200
+      json_response['inventory_units'][0]['variant_id'].should == variant.id
+      json_response['inventory_units'].size.should == 2
+    end
+
+    it 'can remove a variant from a shipment' do
+      order.shipments.first.add(variant, 2)
+
+      params = {
+        order_id: order.number,
+        id: order.shipments.first.to_param,
+        variant_id: variant.to_param,
+        quantity: 1
+      }
+
+      api_put :remove, params
+      response.status.should == 200
+      json_response['inventory_units'][0]['variant_id'].should == variant.id
+      json_response['inventory_units'].size.should == 1
     end
 
     context "can transition a shipment from ready to ship" do
