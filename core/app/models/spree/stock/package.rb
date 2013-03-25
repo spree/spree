@@ -77,8 +77,12 @@ module Spree
         #TODO calculate from first variant?
       end
 
-      def shipping_category
-        contents.first.variant.shipping_category
+      def shipping_categories
+        contents.map { |item| item.variant.shipping_category }.uniq
+      end
+
+      def shipping_methods
+        shipping_categories.map { |sc| sc.shipping_methods }.flatten.uniq
       end
 
       def inspect
