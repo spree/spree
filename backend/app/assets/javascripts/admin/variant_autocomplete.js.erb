@@ -32,7 +32,7 @@ $(document).ready(function() {
       var shipment_number = save.data('shipment-number');
       var variant_id = save.data('variant-id');
 
-      var quantity = $('input.line_item_quantity').val();
+      var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val());
 
       toggleItemEdit();
 
