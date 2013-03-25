@@ -27,13 +27,30 @@ module Spree
       stock_item(variant).try(:backorderable?)
     end
 
+    def add(variant, quantity, originator=nil)
+      move(variant, quantity, originator)
+    end
+
+    def remove(variant, quantity, originator=nil)
+      move(variant, -quantity, originator)
+    end
+
     def move(variant, quantity, originator=nil)
-      return unless track_stock_movements?
       stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
     end
 
-    def track_stock_movements?
-      Spree::Config[:track_inventory_levels]
+    def fill_status(variant, quantity)
+      item = stock_item(variant)
+
+      if item.count_on_hand >= quantity
+        on_hand = quantity
+        backordered = 0
+      else
+        on_hand = item.count_on_hand
+        backordered = item.backorderable? ? (quantity - on_hand) : 0
+      end
+
+      [on_hand, backordered]
     end
 
     private

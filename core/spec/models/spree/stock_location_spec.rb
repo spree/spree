@@ -27,23 +27,84 @@ module Spree
       subject.backorderable?(variant).should be_true
     end
 
+    it 'adds a variant with a positive stock movement' do
+      originator = double
+      subject.should_receive(:move).with(variant, 5, originator)
+      subject.add(variant, 5, originator)
+    end
+
+    it 'removes a variant with a negative stock movement' do
+      originator = double
+      subject.should_receive(:move).with(variant, -5, originator)
+      subject.remove(variant, 5, originator)
+    end
+
     it 'it creates a stock_movement' do
       expect {
         subject.move variant, 5
       }.to change { subject.stock_movements.where(stock_item_id: stock_item).count }.by(1)
     end
 
-    it 'it does not create a stock_movement' do
-      subject.should_receive(:track_stock_movements?).and_return(false)
-      expect {
-        subject.move variant, 5
-      }.not_to change { subject.stock_movements.count }.by(1)
-    end
-
     it 'can be deactivated' do
       create(:stock_location, :active => true)
       create(:stock_location, :active => false)
       Spree::StockLocation.active.count.should eq 1
+    end
+
+    context 'fill_status' do
+      it 'all on_hand with no backordered' do
+        on_hand, backordered = subject.fill_status(variant, 5)
+        on_hand.should eq 5
+        backordered.should eq 0
+      end
+
+      it 'some on_hand with some backordered' do
+        on_hand, backordered = subject.fill_status(variant, 20)
+        on_hand.should eq 10
+        backordered.should eq 10
+      end
+
+      it 'zero on_hand with all backordered' do
+        zero_stock_item = mock_model(StockItem,
+                                     count_on_hand: 0,
+                                     backorderable?: true)
+        subject.should_receive(:stock_item).with(variant).and_return(zero_stock_item)
+
+        on_hand, backordered = subject.fill_status(variant, 20)
+        on_hand.should eq 0
+        backordered.should eq 20
+      end
+
+      context 'when backordering is not allowed' do
+        before do
+          @stock_item = mock_model(StockItem, backorderable?: false)
+          subject.should_receive(:stock_item).with(variant).and_return(@stock_item)
+        end
+
+        it 'all on_hand' do
+          @stock_item.stub(count_on_hand: 10)
+
+          on_hand, backordered = subject.fill_status(variant, 5)
+          on_hand.should eq 5
+          backordered.should eq 0
+        end
+
+        it 'some on_hand' do
+          @stock_item.stub(count_on_hand: 10)
+
+          on_hand, backordered = subject.fill_status(variant, 20)
+          on_hand.should eq 10
+          backordered.should eq 0
+        end
+
+        it 'zero on_hand' do
+          @stock_item.stub(count_on_hand: 0)
+
+          on_hand, backordered = subject.fill_status(variant, 20)
+          on_hand.should eq 0
+          backordered.should eq 0
+        end
+      end
     end
   end
 end
