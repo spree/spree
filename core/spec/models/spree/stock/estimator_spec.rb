@@ -4,7 +4,6 @@ module Spree
   module Stock
     describe Estimator do
       let!(:shipping_method) { create(:shipping_method_with_category) }
-      let(:shipping_category) { shipping_method.shipping_categories.first }
       let(:package) { build(:stock_package_fulfilled) }
       let(:order) { package.order }
       subject { Estimator.new(order) }
@@ -16,7 +15,7 @@ module Spree
           ShippingMethod.any_instance.stub_chain(:calculator, :compute).and_return(4.00)
           ShippingMethod.any_instance.stub_chain(:calculator, :preferences).and_return({:currency => "USD"})
 
-          package.stub(:shipping_category => shipping_category)
+          package.stub(:shipping_methods => [shipping_method])
         end
 
         it "returns shipping rates from a shipping method if the order's ship address is in the same zone" do
