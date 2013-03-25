@@ -277,6 +277,20 @@ module Spree
       current_item
     end
 
+    def remove_variant(variant, quantity = 1)
+      current_item = find_line_item_by_variant(variant)
+      current_item.quantity += -quantity
+
+      if current_item.quantity == 0
+        current_item.destroy
+      else
+        current_item.save!
+      end
+
+      self.reload
+      current_item
+    end
+
     # Associates the specified user with the order.
     def associate_user!(user)
       self.user = user
