@@ -17,9 +17,9 @@
 <%= render :partial => 'add_product' %>
 
 <% unless @order.line_items.any? %>
-  <div data-hook="admin_order_new_form">
+  <div data-hook="admin_order_new">
     <div id="order-form-wrapper">
-      <%= render :partial => 'form' %>
+      <%= render :partial => 'form', :locals => { :order => @order } %>
     </div>
   </div>
 <% else %>
