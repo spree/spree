@@ -106,13 +106,11 @@ describe Spree::Order do
       order.finalize!
     end
 
-    xit "should sell inventory units" do
-      order.finalize!
-      order.inventory_units.all? { |iu| !iu.pending }.should be_true
-    end
-
-    xit "should finalize all inventory units" do
-      Spree::InventoryUnit.should_receive(:finalize_units!).with(order.inventory_units)
+    it "should sell inventory units" do
+      order.shipments.each do |shipment|
+        shipment.should_receive(:update!)
+        shipment.should_receive(:finalize!)
+      end
       order.finalize!
     end
 
