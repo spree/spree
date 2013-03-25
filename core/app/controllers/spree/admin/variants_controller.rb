@@ -36,6 +36,7 @@ module Spree
         def create_before
           option_values = params[:new_variant]
           option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
+          @object.position = Spree::Variant.where(:product_id => @object.product_id).count - 1 # Add that variant to the end of variant position list
           @object.save
         end
 
