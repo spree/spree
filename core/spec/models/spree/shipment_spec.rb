@@ -236,10 +236,11 @@ describe Spree::Shipment do
       shipment.state.should eq 'canceled'
     end
 
-    it 'creates a negative movement' do
+    it 'restocks the items' do
       variant = mock_model(Spree::Variant)
       shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :variant => variant)])
-      shipment.stock_location.should_receive(:move).with(variant, -1, shipment)
+      shipment.stock_location = mock_model(Spree::StockLocation)
+      shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
     end
   end
@@ -256,10 +257,11 @@ describe Spree::Shipment do
       shipment.state.should eq 'ready'
     end
 
-    it 'creates a postive movement' do
+    it 'unstocks them items' do
       variant = mock_model(Spree::Variant)
       shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :variant => variant)])
-      shipment.stock_location.should_receive(:move).with(variant, 1, shipment)
+      shipment.stock_location = mock_model(Spree::StockLocation)
+      shipment.stock_location.should_receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
     end
   end
