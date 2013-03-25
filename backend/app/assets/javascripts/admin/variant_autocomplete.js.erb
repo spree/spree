@@ -77,7 +77,7 @@ $(document).ready(function() {
       var link = $(this);
       var shipment_number = link.data('shipment-number');
       var selected_shipping_rate_id = $("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
-      var unlock = $("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']").val();
+      var unlock = $("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
 
       $.ajax({
         type: "PUT",
