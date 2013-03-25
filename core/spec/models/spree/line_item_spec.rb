@@ -43,35 +43,6 @@ describe Spree::LineItem do
           line_item.save
         end
       end
-
-      # context 'and quantity is increased' do
-      #   before { line_item.stub(:changed_attributes => {'quantity' => 5}, :quantity => 6) }
-
-      #   # xit 'should increase inventory' do
-      #   #   Spree::InventoryUnit.should_not_receive(:decrease)
-      #   #   Spree::InventoryUnit.should_receive(:increase).with(order, variant, 1)
-      #   #   line_item.save
-      #   # end
-      # end
-
-      # context 'and quantity is decreased' do
-      #   before { line_item.stub(:changed_attributes => {'quantity' => 5}, :quantity => 3) }
-
-      #   it 'should decrease inventory' do
-      #     # Spree::InventoryUnit.should_not_receive(:increase)
-      #     # Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 2)
-      #     line_item.save
-      #   end
-      # end
-
-      # context 'and quantity is not changed' do
-
-      #   it 'should not manager inventory' do
-      #     Spree::InventoryUnit.should_not_receive(:increase)
-      #     Spree::InventoryUnit.should_not_receive(:decrease)
-      #     line_item.save
-      #   end
-      # end
     end
 
     context 'when order#completed? is false' do
@@ -174,36 +145,6 @@ describe Spree::LineItem do
           line_item.sufficient_stock?.should be_true
         end
       end
-    end
-  end
-
-  context 'after shipment made' do
-    before do
-      shipping_method = mock_model(Spree::ShippingMethod, :calculator => mock(:calculator))
-      shipment = Spree::Shipment.new :order => order
-      shipment.shipping_rates = [mock_model(Spree::ShippingRate)]
-
-      shipment.stub(:state => 'shipped')
-      shipped_inventory_units = 5.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'shipped' }, :without_protection => true) }
-      unshipped_inventory_units = 2.times.map { Spree::InventoryUnit.new({ :variant => line_item.variant, :state => 'sold' }, :without_protection => true) }
-      inventory_units = shipped_inventory_units + unshipped_inventory_units
-      order.stub(:shipments => [shipment])
-      shipment.stub(:inventory_units => inventory_units)
-      inventory_units.stub(:shipped => shipped_inventory_units)
-      shipped_inventory_units.stub(:where).with(:variant_id => line_item.variant_id).and_return(shipped_inventory_units)
-      # We don't care about this method for these test
-      line_item.stub(:update_order)
-    end
-
-    it 'should not allow quantity to be adjusted lower than already shipped units' do
-      line_item.quantity = 4
-      line_item.save.should be_false
-      line_item.errors.size.should == 1
-    end
-
-    it "should allow quantity to be adjusted higher than already shipped units" do
-      line_item.quantity = 6
-      line_item.save.should be_true
     end
   end
 
