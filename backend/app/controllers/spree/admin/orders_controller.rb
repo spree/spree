@@ -44,9 +44,6 @@ module Spree
         params[:q][:created_at_lt] = created_at_lt
       end
 
-      def show
-      end
-
       def new
         @order = Order.create
         redirect_to edit_admin_order_url(@order)

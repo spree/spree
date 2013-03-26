@@ -115,7 +115,7 @@ Spree::Core::Engine.routes.append do
     resource :inventory_settings
     resource :image_settings
 
-    resources :orders do
+    resources :orders, :except => [:show] do
       member do
         put :fire
         get :fire
@@ -133,10 +133,6 @@ Spree::Core::Engine.routes.append do
       end
       resources :line_items
       resources :shipments do
-        collection do
-          get :review
-        end
-
         member do
           put :fire
         end
