@@ -48,44 +48,52 @@
                     <%= count %> x <%= state.humanize.downcase %>
                   <% end %>
               </td>
-              <td class="item-qty-edit hidden">
-                <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
-              </td>
+              <% unless shipment.shipped? %>
+                <td class="item-qty-edit hidden">
+                  <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
+                </td>
+              <% end %>
               <td class="item-total"><%= line_item.display_amount.to_html %></td>
-              <td class="cart-item-delete" data-hook="cart_item_delete">
-                <%= link_to 'save', '#', :class => 'save-item hidden', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id } %>
-                <%= link_to 'cancel', '#', :class => 'cancel-item hidden' %>
-                <%= link_to 'edit', '#', :class => 'edit-item' %>
-                <%= link_to 'delete', '#', :class => 'delete-item', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id } %>
-              </td>
+              <% unless shipment.shipped? %>
+                <td class="cart-item-delete" data-hook="cart_item_delete">
+                  <%= link_to 'save', '#', :class => 'save-item hidden', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id } %>
+                  <%= link_to 'cancel', '#', :class => 'cancel-item hidden' %>
+                  <%= link_to 'edit', '#', :class => 'edit-item' %>
+                  <%= link_to 'delete', '#', :class => 'delete-item', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id } %>
+                </td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>
         <tbody>
-          <tr class="edit-method hidden total">
-            <td colspan="5">
-              <label><%= t(:shipping_method) %>:</label>
-              <%= select_tag :selected_shipping_rate_id, 
-                    options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
-                    {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
+          <% unless shipment.shipped? %>
+            <tr class="edit-method hidden total">
+              <td colspan="5">
+                <label><%= t(:shipping_method) %>:</label>
+                <%= select_tag :selected_shipping_rate_id, 
+                      options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
+                      {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
 
-              <% if shipment.adjustment.closed? %>
-                <%= t(:associated_adjustment_closed) %>
-                <%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %>Yes
-                <%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %>No
-              <% end %>
-            </td>
-            <td>
-              <%= link_to 'save', '#', :class => 'save-method', :data => {'shipment-number' => shipment.number } %>
-              <%= link_to 'cancel', '#', :class => 'cancel-method' %>
-            </td>
-          </tr>
+                <% if shipment.adjustment.closed? %>
+                  <%= t(:associated_adjustment_closed) %>
+                  <%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %>Yes
+                  <%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %>No
+                <% end %>
+              </td>
+              <td>
+                <%= link_to 'save', '#', :class => 'save-method', :data => {'shipment-number' => shipment.number } %>
+                <%= link_to 'cancel', '#', :class => 'cancel-method' %>
+              </td>
+            </tr>
+          <% end %>
           <tr class="show-method total">
             <td colspan="4"><strong><%= shipment.adjustment.label %>:</strong></td>
             <td class="total"><span><%= shipment.adjustment.display_amount %></span></td>
-            <td>
-              <%= link_to 'edit', '#', :class => 'edit-method' %>
-            </td>
+            <% unless shipment.shipped? %>
+              <td>
+                <%= link_to 'edit', '#', :class => 'edit-method' %>
+              </td>
+            <% end %>
           </tr>
           <tr class="edit-tracking hidden total">
             <td colspan="5">

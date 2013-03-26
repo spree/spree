@@ -15,7 +15,7 @@ module Spree
         @shipment.refresh_rates
         @shipment.save!
 
-        respond_with(@shipment, :default_template => :show)
+        respond_with(@shipment.reload, :default_template => :show)
       end
 
       def update
