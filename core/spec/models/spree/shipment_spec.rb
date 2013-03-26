@@ -56,7 +56,15 @@ describe Spree::Shipment do
         shipment.refresh_rates.should == shipping_rates
         shipment.reload.selected_shipping_rate.shipping_method_id.should == shipping_method2.id
       end
+
+      it 'should not refresh if shipment is shipped' do
+        Spree::Stock::Estimator.should_not_receive(:new)
+        shipment.shipping_rates.delete_all
+        shipment.stub(:shipped? => true)
+        shipment.refresh_rates.should == []
+      end
     end
+
 
   end
 
