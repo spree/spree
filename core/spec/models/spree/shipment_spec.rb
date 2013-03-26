@@ -47,14 +47,21 @@ describe Spree::Shipment do
     end
 
     context 'refresh_rates' do
-      it 'should request new rates, and maintain shipping_method selection' do
-        mock_estimator = mock('estimator', :shipping_rates => shipping_rates)
-        Spree::Stock::Estimator.should_receive(:new).with(shipment.order).and_return(mock_estimator)
+      let(:mock_estimator) { mock('estimator', :shipping_rates => shipping_rates) }
 
+      it 'should request new rates, and maintain shipping_method selection' do
+        Spree::Stock::Estimator.should_receive(:new).with(shipment.order).and_return(mock_estimator)
         shipment.stub(:shipping_method => shipping_method2)
 
         shipment.refresh_rates.should == shipping_rates
         shipment.reload.selected_shipping_rate.shipping_method_id.should == shipping_method2.id
+      end
+
+      it 'should handle no shipping_method selection' do
+        Spree::Stock::Estimator.should_receive(:new).with(shipment.order).and_return(mock_estimator)
+        shipment.stub(:shipping_method => nil)
+        shipment.refresh_rates.should == shipping_rates
+        shipment.reload.selected_shipping_rate.should_not be_nil
       end
 
       it 'should not refresh if shipment is shipped' do
