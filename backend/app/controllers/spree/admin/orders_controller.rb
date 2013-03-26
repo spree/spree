@@ -49,6 +49,7 @@ module Spree
 
       def new
         @order = Order.create
+        redirect_to edit_admin_order_url(@order)
       end
 
       def edit

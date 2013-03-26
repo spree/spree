@@ -321,6 +321,7 @@ en:
   cannot_create_payment_without_payment_methods: "You cannot create a payment for an order without any payment methods defined."
   cannot_create_returns: "Cannot create returns as this order has no shipped units."
   cannot_perform_operation: "Cannot perform requested operation"
+  cannot_set_shipping_method_without_address: "Cannot set shipping method until customer details are provided."
   capture: Capture
   card_code: "Card Code"
   card_details: "Card details"
