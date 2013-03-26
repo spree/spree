@@ -34,15 +34,30 @@ describe Spree::Shipment do
   end
 
   context 'shipping_rates' do
-    xit 'can be assigned by array' do
-      shipping_method1 = mock_model Spree::ShippingMethod
-      shipping_method2 = mock_model Spree::ShippingMethod
-      shipping_rates = [Spree::ShippingRate.new(:shipping_method => shipping_method1, :cost => 10.00, :selected => true),
-                        Spree::ShippingRate.new(:shipping_method => shipping_method2, :cost => 20.00)]
+    let(:shipment) { create(:shipment) }
+    let(:shipping_method1) { create(:shipping_method) }
+    let(:shipping_method2) { create(:shipping_method) }
+    let(:shipping_rates) { [Spree::ShippingRate.new(:shipping_method => shipping_method1, :cost => 10.00, :selected => true),
+                        Spree::ShippingRate.new(:shipping_method => shipping_method2, :cost => 20.00)] }
 
+    it 'returns shipping_method from selected shipping_rate' do
+      shipment.shipping_rates.delete_all
       shipment.shipping_rates.create :shipping_method => shipping_method1, :cost => 10.00, :selected => true
       shipment.shipping_method.should eq shipping_method1
     end
+
+    context 'refresh_rates' do
+      it 'should request new rates, and maintain shipping_method selection' do
+        mock_estimator = mock('estimator', :shipping_rates => shipping_rates)
+        Spree::Stock::Estimator.should_receive(:new).with(shipment.order).and_return(mock_estimator)
+
+        shipment.stub(:shipping_method => shipping_method2)
+
+        shipment.refresh_rates.should == shipping_rates
+        shipment.reload.selected_shipping_rate.shipping_method_id.should == shipping_method2.id
+      end
+    end
+
   end
 
   context "#update!" do
@@ -278,6 +293,7 @@ describe Spree::Shipment do
 
   context "after_save" do
     it "should run correct callbacks" do
+      shipment.should_receive(:ensure_selected_shipping_rate)
       shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
       shipment.run_callbacks(:save, :after)

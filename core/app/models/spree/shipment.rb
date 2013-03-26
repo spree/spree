@@ -76,6 +76,17 @@ module Spree
         shipping_rates.limit(1).update_all(selected: true)
     end
 
+    def refresh_rates
+      shipping_method_id = self.shipping_method.id
+      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
+
+      selected_rate = self.shipping_rates.detect{|rate| rate.shipping_method_id == shipping_method_id}
+      if selected_rate
+        self.selected_shipping_rate_id = selected_rate.id
+      end
+
+      self.shipping_rates
+    end
 
     def currency
       order.nil? ? Spree::Config[:currency] : order.currency
