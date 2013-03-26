@@ -52,6 +52,7 @@ module Spree
       end
 
       def edit
+        @order.shipments.map &:refresh_rates
       end
 
       def update
