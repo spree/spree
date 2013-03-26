@@ -119,7 +119,7 @@ module Spree
 
     # For compatiblity with Calculator::PriceSack
     def amount
-      line_items.sum(&:amount)
+      line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
 
     def currency
@@ -177,7 +177,7 @@ module Spree
 
     # Indicates the number of items in the order
     def item_count
-      line_items.sum(:quantity)
+      line_items.inject(0) { |sum, li| sum + li.quantity }
     end
 
     def backordered?
