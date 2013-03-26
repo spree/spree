@@ -72,17 +72,39 @@ $(document).ready(function() {
     $('a.edit-method').click(toggleMethodEdit);
     $('a.cancel-method').click(toggleMethodEdit);
 
-    //handle method save
+    //handle shipping method save
     $('a.save-method').click(function(){
       var link = $(this);
       var shipment_number = link.data('shipment-number');
-      var selected_shipping_rate_id = $("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
-      var unlock = $("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
+      var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
+      var unlock = link.parents('tbody').find("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
 
       $.ajax({
         type: "PUT",
         url: "/api/orders/" + order_number + "/shipments/" + shipment_number + ".json",
         data: { shipment: { selected_shipping_rate_id: selected_shipping_rate_id, unlock: unlock  } }
+      }).done(function( msg ) {
+        window.location.reload();
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+
+    });
+
+    //handle tracking edit click
+    $('a.edit-tracking').click(toggleTrackingEdit);
+    $('a.cancel-tracking').click(toggleTrackingEdit);
+
+    //handle tracking save
+    $('a.save-tracking').click(function(){
+      var link = $(this);
+      var shipment_number = link.data('shipment-number');
+      var tracking = link.parents('tbody').find('input#tracking').val();
+
+      $.ajax({
+        type: "PUT",
+        url: "/api/orders/" + order_number + "/shipments/" + shipment_number + ".json",
+        data: { shipment: { tracking: tracking } }
       }).done(function( msg ) {
         window.location.reload();
       }).error(function( msg ) {
@@ -122,6 +144,12 @@ adjustItems = function(shipment_number, variant_id, quantity){
         console.log(msg);
       });
     }
+}
+
+toggleTrackingEdit = function(){
+  var link = $(this);
+  link.parents('tbody').find('tr.edit-tracking').toggle();
+  link.parents('tbody').find('tr.show-tracking').toggle();
 }
 
 toggleMethodEdit = function(){

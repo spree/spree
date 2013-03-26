@@ -64,6 +64,7 @@
         <tbody>
           <tr class="edit-method hidden total">
             <td colspan="5">
+              <label><%= t(:shipping_method) %>:</label>
               <%= select_tag :selected_shipping_rate_id, 
                     options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
                     {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
@@ -84,6 +85,28 @@
             <td class="total"><span><%= shipment.adjustment.display_amount %></span></td>
             <td>
               <%= link_to 'edit', '#', :class => 'edit-method' %>
+            </td>
+          </tr>
+          <tr class="edit-tracking hidden total">
+            <td colspan="5">
+              <label><%= t(:tracking_number) %>:</label>
+              <%= text_field_tag :tracking, shipment.tracking %>
+            </td>
+            <td>
+              <%= link_to 'save', '#', :class => 'save-tracking', :data => {'shipment-number' => shipment.number } %>
+              <%= link_to 'cancel', '#', :class => 'cancel-tracking' %>
+            </td>
+          </tr>
+          <tr class="show-tracking total">
+            <td colspan="5">
+              <% if shipment.tracking.present? %>
+                <strong><%= t(:tracking) %>:</strong> <%= shipment.tracking %>
+              <% else %>
+                <%= t(:no_tracking_present) %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to 'edit', '#', :class => 'edit-tracking' %>
             </td>
           </tr>
         </tbody>
