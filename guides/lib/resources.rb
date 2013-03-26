@@ -387,6 +387,25 @@ module Spree
         "shipping_category_id" => 1
       }
 
+    SHIPPING_RATE =
+      {
+        "id"=>1,
+        "cost"=>5,
+        "selected"=>true,
+        "shipment_id"=>1,
+        "shipping_method_id"=>5
+      }
+
+    INVENTORY_UNIT =
+      {
+        "id"=>1,
+        "lock_version"=>1,
+        "state"=>"on_hand",
+        "variant_id"=>10,
+        "shipment_id"=>1,
+        "return_authorization_id"=>nil
+      }
+
     SHIPMENT =
       {
         "id"=>1,
@@ -396,7 +415,10 @@ module Spree
         "shipped_at"=>nil,
         "state"=>"pending",
         "order_id"=>"R1234567",
-        "shipping_method"=> SHIPPING_METHOD
+        "stock_location_name"=>"NY Warehouse",
+        "shipping_rates"=>[SHIPPING_RATE],
+        "shipping_method"=> SHIPPING_METHOD,
+        "inventory_units"=>[INVENTORY_UNIT]
       }
 
     temp = SHIPMENT.merge({
