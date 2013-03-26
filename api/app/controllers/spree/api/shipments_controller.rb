@@ -12,8 +12,7 @@ module Spree
         @shipment = @order.shipments.create(:stock_location_id => params[:stock_location_id])
         @shipment.add(variant, quantity)
 
-        estimator = Stock::Estimator.new(@order)
-        @shipment.shipping_rates = estimator.shipping_rates(@shipment.to_package)
+        @shipment.refresh_rates
         @shipment.save!
 
         respond_with(@shipment, :default_template => :show)
