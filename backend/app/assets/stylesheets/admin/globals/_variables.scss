@@ -53,8 +53,12 @@ $color-action-remove-bg:         very-light($color-error,   5  ) !default;
 $color-action-remove-brd:        very-light($color-error,   10 ) !default;
 $color-action-void-bg:           very-light($color-error,   10 ) !default;
 $color-action-void-brd:          very-light($color-error,   20 ) !default;
+$color-action-cancel-bg:         very-light($color-notice,  10 ) !default;
+$color-action-cancel-brd:        very-light($color-notice,  20 ) !default;
 $color-action-capture-bg:        very-light($color-success, 5  ) !default;
 $color-action-capture-brd:       very-light($color-success, 20 ) !default;
+$color-action-save-bg:           very-light($color-success, 5  ) !default;
+$color-action-save-brd:          very-light($color-success, 20 ) !default;
 $color-action-mail-bg:           very-light($color-success, 5  ) !default;
 $color-action-mail-brd:          very-light($color-success, 20 ) !default;
 
@@ -117,9 +121,9 @@ $states-bg-colors:            $color-ste-completed-bg,   $color-ste-complete-bg,
 $states-text-colors:          $color-ste-completed-text, $color-ste-complete-text, $color-ste-sold-text, $color-ste-pending-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text, $color-ste-checkout-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text, $color-ste-canceled-text, $color-ste-ready-text, $color-ste-void-text, $color-ste-active-text, $color-ste-inactive-text !default;
 
 // Avaliable actions
-$actions:                        edit,                   clone,                   remove,                   void,                   capture,                   mail  !default;
-$actions-bg-colors:              $color-action-edit-bg,  $color-action-clone-bg,  $color-action-remove-bg,  $color-action-void-bg,  $color-action-capture-bg,  $color-action-mail-bg  !default;
-$actions-brd-colors:             $color-action-edit-brd, $color-action-clone-brd, $color-action-remove-brd, $color-action-void-brd, $color-action-capture-brd, $color-action-mail-brd !default;
+$actions:                        edit,                   clone,                   remove,                   void,                   capture,                   save,                      cancel,                   mail  !default;
+$actions-bg-colors:              $color-action-edit-bg,  $color-action-clone-bg,  $color-action-remove-bg,  $color-action-void-bg,  $color-action-capture-bg,  $color-action-save-bg,     $color-action-cancel-bg,  $color-action-mail-bg  !default;
+$actions-brd-colors:             $color-action-edit-brd, $color-action-clone-brd, $color-action-remove-brd, $color-action-void-brd, $color-action-capture-brd, $color-action-save-brd,    $color-action-cancel-brd, $color-action-mail-brd !default;
 
 // Sizes
 //--------------------------------------------------------------
