@@ -77,6 +77,8 @@ module Spree
     end
 
     def refresh_rates
+      return self.shipping_rates if self.shipped?
+
       shipping_method_id = self.shipping_method.id
       self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
 
