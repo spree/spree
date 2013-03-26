@@ -19,7 +19,8 @@ module Spree
         I18n.t(:shipping_price_sack)
       end
 
-      def compute(content_items)
+      def compute(package)
+        content_items = package.contents
         if total(content_items) < self.preferred_minimal_amount
           self.preferred_normal_amount
         else

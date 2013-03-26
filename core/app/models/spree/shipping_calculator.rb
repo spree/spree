@@ -2,11 +2,11 @@ module Spree
   class ShippingCalculator < Calculator
     belongs_to :calculable, :polymorphic => true
 
-    def compute(content_items)
+    def compute(package)
       raise(NotImplementedError, 'please use concrete calculator')
     end
 
-    def available?(content_items)
+    def available?(package)
       true
     end
 
