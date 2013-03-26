@@ -642,6 +642,7 @@ en:
   no_shipments_for_this_order: "There are no shipments for this order"
   no_shipping_methods_found: "No shipping methods found"
   no_trackers_found: "No Trackers Found"
+  no_tracking_present: "No tracking details provided."
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
