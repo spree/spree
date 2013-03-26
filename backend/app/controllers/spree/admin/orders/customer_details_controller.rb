@@ -17,22 +17,9 @@ module Spree
 
         def update
           if @order.update_attributes(params[:order])
-            shipping_method = @order.available_shipping_methods.first
-            if shipping_method
-              @order.shipping_method = shipping_method
-
-              if params[:user_id].present?
-                @order.user_id = params[:user_id]
-                @order.user true
-              end
-              @order.save
-              @order.create_shipment!
-              flash[:success] = t('customer_details_updated')
-              redirect_to edit_admin_order_shipment_path(@order, @order.shipment)
-            else
-              flash[:error] = t('errors.messages.no_shipping_methods_available')
-              redirect_to admin_order_customer_path(@order)
-            end
+            @order.shipments.map &:refresh_rates
+            flash[:success] = t('customer_details_updated')
+            redirect_to admin_order_customer_path(@order)
           else
             render :action => :edit
           end

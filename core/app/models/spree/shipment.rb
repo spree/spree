@@ -15,7 +15,7 @@ module Spree
     has_one :adjustment, :as => :source, :dependent => :destroy
 
     before_create :generate_shipment_number
-    after_save :ensure_correct_adjustment, :ensure_selected_shipping_rate, :update_order
+    after_save :ensure_selected_shipping_rate, :ensure_correct_adjustment, :update_order
 
     attr_accessor :special_instructions
     attr_accessible :order, :special_instructions, :stock_location_id,
