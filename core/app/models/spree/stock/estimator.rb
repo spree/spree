@@ -31,7 +31,7 @@ module Spree
       end
 
       def calculate_cost(shipping_method, package)
-        shipping_method.calculator.compute(self)
+        shipping_method.calculator.compute(package)
       end
     end
   end
