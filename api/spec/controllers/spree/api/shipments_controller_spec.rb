@@ -53,6 +53,22 @@ describe Spree::Api::ShipmentsController do
       json_response['stock_location_name'].should == stock_location.name
     end
 
+    it "can unlock a shipment's adjustment when updating" do
+      Spree::Calculator::FlatRate.any_instance.stub(:preferred_amount => 5)
+      shipment.shipping_rates.first.update_column(:cost, 5)
+      params = {
+        order_id: order.number,
+        id: order.shipments.first.to_param,
+        shipment: {
+          unlock: 'yes'
+        }
+      }
+      api_put :update, params
+      response.status.should == 200
+      json_response.should have_attributes(attributes)
+      shipment.adjustment.amount.should == 5
+    end
+
     it "can make a shipment ready" do
       Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
       api_put :ready
