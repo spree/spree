@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Estimator do
-      let!(:shipping_method) { create(:shipping_method_with_category) }
+      let!(:shipping_method) { create(:shipping_method) }
       let(:package) { build(:stock_package_fulfilled) }
       let(:order) { package.order }
       subject { Estimator.new(order) }

@@ -3,29 +3,19 @@ require 'spec_helper'
 describe "Payments" do
   stub_authorization!
 
+  let(:order) { create(:completed_order_with_totals, :number => "R100", :state => "complete") }
+
   before(:each) do
 
     configure_spree_preferences do |config|
       config.allow_backorders = true
     end
-
-    @order = create(:completed_order_with_totals, :number => "R100", :state => "complete")
-    product = create(:product, :name => 'spree t-shirt')
-    product.master.save
-    @order.add_variant(product.master, 2)
-    @order.update!
-
-    @order.inventory_units.each do |iu|
-      iu.update_attribute_without_callbacks('state', 'sold')
-    end
-    @order.update!
-
   end
 
   context "payment methods" do
 
     before(:each) do
-      create(:payment, :order => @order, :amount => @order.outstanding_balance, :payment_method => create(:bogus_payment_method, :environment => 'test'))
+      create(:payment, :order => order, :amount => order.outstanding_balance, :payment_method => create(:bogus_payment_method, :environment => 'test'))
       visit spree.admin_path
       click_link "Orders"
       within_row(1) do
@@ -67,9 +57,9 @@ describe "Payments" do
     # Regression test for #1269
     it "cannot create a payment for an order with no payment methods" do
       Spree::PaymentMethod.delete_all
-      @order.payments.delete_all
+      order.payments.delete_all
 
-      visit spree.new_admin_order_payment_path(@order)
+      visit spree.new_admin_order_payment_path(order)
       page.should have_content("You cannot create a payment for an order without any payment methods defined.")
       page.should have_content("Please define some payment methods first.")
     end
@@ -77,22 +67,22 @@ describe "Payments" do
     # Regression tests for #1453
     context "with a check payment" do
       before do
-        @order.payments.delete_all
-        create(:payment, :order => @order,
+        order.payments.delete_all
+        create(:payment, :order => order,
                         :state => "checkout",
-                        :amount => @order.outstanding_balance,
+                        :amount => order.outstanding_balance,
                         :payment_method => create(:bogus_payment_method, :environment => 'test'))
       end
 
       it "capturing a check payment from a new order" do
-        visit spree.admin_order_payments_path(@order)
+        visit spree.admin_order_payments_path(order)
         click_icon(:capture)
         page.should_not have_content("Cannot perform requested operation")
         page.should have_content("Payment Updated")
       end
 
       it "voids a check payment from a new order" do
-        visit spree.admin_order_payments_path(@order)
+        visit spree.admin_order_payments_path(order)
         click_icon(:void)
         page.should have_content("Payment Updated")
       end

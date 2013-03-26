@@ -33,7 +33,7 @@
           <td class="align-center">
             <%= variant.sku %>
             <br>
-            <% if variant.images %>
+            <% if variant.images.present? %>
               <%= image_tag variant.images.first.attachment.url(:mini) %>
             <% end %>
           </td>

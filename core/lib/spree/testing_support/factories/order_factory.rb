@@ -27,21 +27,16 @@ FactoryGirl.define do
       end
     end
 
-    factory :order_with_inventory_unit_shipped do
-      after(:create) do |order|
-        FactoryGirl.create(:line_item, :order => order)
-        FactoryGirl.create(:inventory_unit, :order => order, :state => 'shipped')
-      end
-    end
-
     factory :completed_order_with_totals do
       bill_address { FactoryGirl.create(:address) }
       ship_address { FactoryGirl.create(:address) }
-      after(:create) do |order|
-        FactoryGirl.create(:inventory_unit, :order => order, :state => 'shipped')
-      end
       state 'complete'
       completed_at Time.now
+
+      after(:create) do |order|
+        shipment = FactoryGirl.create(:shipment, :order => order)
+        shipment.add(FactoryGirl.create(:variant), 3)
+      end
     end
   end
 

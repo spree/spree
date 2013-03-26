@@ -20,7 +20,7 @@ describe "Customer Details" do
     end
 
     create(:shipping_method, :display_on => "front_end")
-    create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
+    create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15")
     # We need a unique name that will appear for the customer dropdown
     ship_address = create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin")
     bill_address = create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin")
@@ -82,7 +82,7 @@ describe "Customer Details" do
         fill_in "Phone",                   :with => "123-456-7890"
       end
 
-      click_button "Continue"
+      click_button "Update"
 
       click_link "Customer Details"
       find_field('order_ship_address_attributes_firstname').value.should == "John 99"
@@ -91,7 +91,7 @@ describe "Customer Details" do
 
   it "should show validation errors" do
     click_link "Customer Details"
-    click_button "Continue"
+    click_button "Update"
     page.should have_content("Shipping address first name can't be blank")
   end
 

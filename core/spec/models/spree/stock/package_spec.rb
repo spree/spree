@@ -63,8 +63,8 @@ module Spree
       end
 
       it 'builds a list of shipping methods from all categories' do
-        shipping_method1 = create(:shipping_method_with_category)
-        shipping_method2 = create(:shipping_method_with_category)
+        shipping_method1 = create(:shipping_method)
+        shipping_method2 = create(:shipping_method)
         variant1 = mock_model(Variant, shipping_category: shipping_method1.shipping_categories.first)
         variant2 = mock_model(Variant, shipping_category: shipping_method2.shipping_categories.first)
         contents  = [Package::ContentItem.new(variant1, 1),

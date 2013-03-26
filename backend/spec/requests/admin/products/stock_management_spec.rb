@@ -26,8 +26,8 @@ describe "Stock Management" do
 
         within_row(1) do
           page.should have_content('Count On Hand')
-          within(:css, '.stock_location_details') do
-            column_text(1).should eq '10'
+          within(:css, '.stock_location_info') do
+            column_text(2).should have_content('10')
           end
         end
       end
@@ -49,8 +49,7 @@ describe "Stock Management" do
 
         fill_in "stock_movement_quantity", with: 5
         select2 "default", from: "Stock Location"
-        select2 "sold", from: "Action"
-        click_button "Create"
+        click_button "Add Stock"
 
         page.should have_content('successfully created')
 
