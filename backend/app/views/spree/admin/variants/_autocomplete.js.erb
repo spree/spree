@@ -42,6 +42,7 @@
           <th><%= t(:location) %></th>
           <th><%= t(:count_on_hand) %></th>
           <th><%= t(:quantity) %></th>
+          <th class="actions"></th>
         </thead>
         <tbody>
           {{#each variant.stock_items}}
@@ -56,8 +57,8 @@
               <td>
                 <input class="quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
               </td>
-              <td>
-                <button class="add_variant" data-stock-location-id="{{this.stock_location_id}}">add</button>
+              <td class="actions">
+                <button class="add_variant no-text icon-plus icon_link with-tip" data-stock-location-id="{{this.stock_location_id}}" title="Add" data-action="add"></button>
               </td>
             </tr>
           {{/each}}
