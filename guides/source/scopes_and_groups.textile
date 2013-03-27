@@ -46,7 +46,7 @@ h4. Primitive selection scopes
 
 * +price_between(low,high)+ - selects for a master price being in the limits (using SQL's +BETWEEN+ operator)
 
-* +in_taxon(thing)+ and +in_taxon(thing1,thing2,...)+ - selects products in the given taxon(s) _and their descendants_. The arguments can be taxon ids, taxon objects, names of taxons, or (suffixes of) permalinks.
+* +in_taxon(thing)+ and +in_taxons(thing1,thing2,...)+ - selects products in the given taxon(s) _and their descendants_. The arguments can be taxon ids, taxon objects, names of taxons, or (suffixes of) permalinks.
 
 * _having_ a product property (+with_property(thing)+) or option type (+with_option(thing)+) associated with the product - but not checking for actual values, where +thing+ can be a string, id, or property/option_type object
 
