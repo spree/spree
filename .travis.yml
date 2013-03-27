@@ -1,0 +1,36 @@
+before_script:
+  - sh -e /etc/init.d/xvfb start
+  - export DISPLAY=:99.0
+bundler_args: --without development production --quiet
+env:
+  - GEM=api DB=sqlite
+  - GEM=api DB=mysql
+  - GEM=api DB=postgres
+  - GEM=backend DB=sqlite
+  - GEM=backend DB=mysql
+  - GEM=backend DB=postgres
+  - GEM=core DB=sqlite
+  - GEM=core DB=mysql
+  - GEM=core DB=postgres
+  - GEM=dash DB=sqlite
+  - GEM=dash DB=mysql
+  - GEM=dash DB=postgres
+  - GEM=frontend DB=sqlite
+  - GEM=frontend DB=mysql
+  - GEM=frontend DB=postgres
+before_install:
+  - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
+script:
+  - bundle exec rake test_app
+  - bundle exec rspec spec
+notifications:
+  email:
+    - ryan@spreecommerce.com
+  irc:
+    use_notice: true
+    skip_join: true
+    channels:
+      - "irc.freenode.org#spree"
+rvm:
+  - 1.9.3
+  - 2.0.0
