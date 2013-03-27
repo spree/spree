@@ -16,7 +16,6 @@ describe "Inventory Settings" do
 
     it "should have the right content" do
       page.should have_content("Inventory Settings")
-      page.should have_content("Show out-of-stock products")
       page.should have_content("Allow Backorders")
     end
 
