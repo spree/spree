@@ -27,7 +27,6 @@ module Spree
       api_get :index, stock_location_id: stock_location.to_param, per_page: 1
       json_response['count'].should == 1
       json_response['current_page'].should == 1
-      json_response['pages'].should == 2
     end
 
     it 'can query the results through a paramter' do

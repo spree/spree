@@ -146,7 +146,8 @@ module Spree
 
       context "with a line item" do
         before do
-          order.line_items << create(:line_item)
+          create(:line_item, :order => order)
+          order.reload
         end
 
         it "can empty an order" do

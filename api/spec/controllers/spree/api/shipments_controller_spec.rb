@@ -24,7 +24,7 @@ describe Spree::Api::ShipmentsController do
   end
 
   context "as an admin" do
-    let!(:order) { create(:completed_order_with_totals, shipments: [shipment]) }
+    let!(:order) { shipment.order }
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:variant) { create(:variant) }
     sign_in_as_admin!
@@ -55,7 +55,11 @@ describe Spree::Api::ShipmentsController do
 
     it "can unlock a shipment's adjustment when updating" do
       Spree::Calculator::FlatRate.any_instance.stub(:preferred_amount => 5)
-      shipment.shipping_rates.first.update_column(:cost, 5)
+      adjustment = order.adjustments.create(amount: 1, label: 'shipping')
+      adjustment.source = shipment
+      adjustment.originator = shipment.shipping_method
+      adjustment.save!
+
       params = {
         order_id: order.number,
         id: order.shipments.first.to_param,
@@ -63,10 +67,11 @@ describe Spree::Api::ShipmentsController do
           unlock: 'yes'
         }
       }
+
       api_put :update, params
       response.status.should == 200
       json_response.should have_attributes(attributes)
-      shipment.adjustment.amount.should == 5
+      shipment.reload.adjustment.amount.should == 5
     end
 
     it "can make a shipment ready" do

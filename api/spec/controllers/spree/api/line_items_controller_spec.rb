@@ -4,11 +4,7 @@ module Spree
   describe Api::LineItemsController do
     render_views
 
-    let!(:order) do
-     order = create(:order)
-     order.line_items << create(:line_item)
-     order
-    end
+    let!(:order) { create(:order_with_line_items) }
 
     let(:product) { create(:product) }
     let(:attributes) { [:id, :quantity, :price, :variant] }
