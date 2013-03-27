@@ -2,10 +2,14 @@ require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
   let(:inventory_unit) { Spree::InventoryUnit.create({:variant => mock_model(Spree::Variant), :state => "shipped"}, :without_protection => true) }
-  let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :awaiting_return? => false) }
+  let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :shipped_shipments => [], :awaiting_return? => false) }
+  let(:full_order) { FactoryGirl.create(:shipped_order)}
   let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order}, :without_protection => true) }
+  let(:full_return_authorization) { Spree::ReturnAuthorization.new({:order => full_order}, :without_protection => true) }
 
-  before { inventory_unit.stub(:shipped?).and_return(true) }
+  before do 
+    inventory_unit.stub(:shipped?).and_return(true) 
+  end
 
   context "save" do
     it "should be invalid when order has no inventory units" do
@@ -15,8 +19,8 @@ describe Spree::ReturnAuthorization do
     end
 
     it "should generate RMA number" do
-      return_authorization.should_receive(:generate_number)
-      return_authorization.save
+      full_return_authorization.should_receive(:generate_number)
+      full_return_authorization.save
     end
   end
 

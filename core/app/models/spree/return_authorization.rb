@@ -35,6 +35,7 @@ module Spree
     def add_variant(variant_id, quantity)
       order_units = returnable_inventory.group_by(&:variant_id)
       returned_units = inventory_units.group_by(&:variant_id)
+      return false if order_units.empty?
 
       count = 0
 
@@ -60,12 +61,12 @@ module Spree
     end
 
     def returnable_inventory
-      order.shipments.shipped.collect{|s| s.inventory_units.all}.flatten
+      order.shipped_shipments.collect{|s| s.inventory_units.all}.flatten
     end
 
     private
       def must_have_shipped_units
-        errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.shipments.any?(&:shipped?)
+        errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.shipped_shipments.any?
       end
 
       def generate_number
