@@ -8,7 +8,7 @@ module Spree
     scope :backordered, lambda { where(:state => 'backordered') }
     scope :shipped, lambda { where(:state => 'shipped') }
 
-    attr_accessible :shipment
+    attr_accessible :shipment, :variant_id
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'on_hand' do
