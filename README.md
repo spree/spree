@@ -32,7 +32,7 @@ available in the spree gem which will add Spree to an existing Rails application
     $ gem install rails -v 3.2.13
     $ gem install spree
     $ rails _3.2.13_ new my_store
-    $  spree install my_store
+    $ spree install my_store
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations and
 optionally generate sample products and orders.
