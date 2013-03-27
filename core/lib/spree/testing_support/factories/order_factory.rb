@@ -37,6 +37,16 @@ FactoryGirl.define do
         shipment = FactoryGirl.create(:shipment, :order => order)
         shipment.add(FactoryGirl.create(:variant), 3)
       end
+
+      factory :shipped_order do
+        after(:create) do |order|
+          order.shipments.each do |shipment|
+            shipment.inventory_units.each { |u| u.update_attribute('state', 'shipped') }
+            shipment.update_attribute('state', 'shipped')
+          end
+          order.reload
+        end
+      end
     end
   end
 

@@ -4,15 +4,7 @@ module Spree
   describe Api::ReturnAuthorizationsController do
     render_views
 
-    let!(:order) do
-     order = create(:order)
-     order.line_items << create(:line_item)
-     order.shipments << create(:shipment, :state => 'shipped')
-     order.finalize!
-     order.shipments.update_all(:state => 'shipped')
-     order.inventory_units.update_all(:state => 'shipped')
-     order
-    end
+    let!(:order) { create(:shipped_order) }
 
     let(:product) { create(:product) }
     let(:attributes) { [:id, :reason, :amount, :state] }
@@ -60,8 +52,6 @@ module Spree
 
     context "as an admin" do
       sign_in_as_admin!
-
-      let(:order) { create(:completed_order_with_totals) }
 
       it "can show return authorization" do
         FactoryGirl.create(:return_authorization, :order => order)
@@ -132,8 +122,6 @@ module Spree
     end
 
     context "as just another user" do
-      let(:order) { create(:completed_order_with_totals) }
-
       it "cannot add a return authorization to the order" do
         api_post :create, :return_autorization => { :order_id => order.number, :amount => 14.22, :reason => "Defective" }
         assert_unauthorized!
