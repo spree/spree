@@ -1,5 +1,5 @@
-Deface::Override.new(:virtual_path => "spree/admin/shared/_configuration_menu",
+Deface::Override.new(:virtual_path => "spree/admin/configurations/index",
                      :name => "add_dashboard_sidebar_link",
-                     :insert_bottom => ".sidebar",
-                     :text => "<%= configurations_sidebar_menu_item t(:jirafe), admin_analytics_path %>",
+                     :insert_bottom => "tbody[data-hook=admin_configurations_menu]",
+                     :partial => "spree/admin/dash/configurations/jirafe",
                      :original => 'a74f177275dc303c9cd5994b2e24e027434c3cbb')

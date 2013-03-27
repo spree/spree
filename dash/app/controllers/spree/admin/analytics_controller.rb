@@ -51,7 +51,7 @@ module Spree
       Spree::Dash::Config.app_token = params[:app_token]
       Spree::Dash::Config.site_id = params[:site_id]
       Spree::Dash::Config.token = params[:token]
-      flash[:success] = t(:jirafe_settings_updated, :scope => "spree.dash")
+      flash[:notice] = t(:jirafe_settings_updated, :scope => "spree.dash")
       redirect_to admin_analytics_path
     end
 
@@ -59,7 +59,7 @@ module Spree
 
     def redirect_if_registered
       if Spree::Dash::Config.configured?
-        flash[:success] = t(:already_signed_up_for_analytics)
+        flash[:notice] = t(:already_signed_up_for_analytics)
         redirect_to admin_path and return true
       end
     end
