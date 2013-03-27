@@ -122,9 +122,19 @@ describe Spree::ReturnAuthorization do
   end
 
   context "display_amount" do
-    it "retuns a Spree::Money" do
+    it "returns a Spree::Money" do
       return_authorization.amount = 21.22
       return_authorization.display_amount.should == Spree::Money.new(21.22)
+    end
+  end
+
+  context "returnable_inventory" do
+    it "should return inventory from shipped shipments" do
+      return_authorization.returnable_inventory.should == [inventory_unit]
+    end
+
+    it "should not return inventory from unshipped shipments" do
+      return_authorization.returnable_inventory.should == []
     end
   end
 end

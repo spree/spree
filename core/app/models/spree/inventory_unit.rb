@@ -23,7 +23,6 @@ module Spree
       event :return do
         transition :to => 'returned', :from => 'shipped'
       end
-      after_transition :to => 'returned', :do => :restock_variant
     end
 
     def self.backordered_for_stock_item(stock_item)
@@ -50,11 +49,6 @@ module Spree
 
       def update_order
         order.update!
-      end
-
-      def restock_variant
-        variant.on_hand += 1
-        variant.save
       end
   end
 end

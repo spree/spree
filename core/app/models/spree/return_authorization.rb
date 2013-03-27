@@ -3,6 +3,7 @@ module Spree
     belongs_to :order
 
     has_many :inventory_units
+    has_one :stock_location
     before_create :generate_number
     before_save :force_positive_amount
 
@@ -10,7 +11,7 @@ module Spree
     validates :amount, :numericality => true
     validate :must_have_shipped_units
 
-    attr_accessible :amount, :reason
+    attr_accessible :amount, :reason, :stock_location_id
 
     state_machine :initial => 'authorized' do
       after_transition :to => 'received', :do => :process_return
@@ -32,7 +33,7 @@ module Spree
     end
 
     def add_variant(variant_id, quantity)
-      order_units = order.inventory_units.group_by(&:variant_id)
+      order_units = returnable_inventory.group_by(&:variant_id)
       returned_units = inventory_units.group_by(&:variant_id)
 
       count = 0
@@ -58,9 +59,13 @@ module Spree
       order.authorize_return! if inventory_units.reload.size > 0 && !order.awaiting_return?
     end
 
+    def returnable_inventory
+      order.shipments.shipped.collect{|s| s.inventory_units.all}.flatten
+    end
+
     private
       def must_have_shipped_units
-        errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.inventory_units.any?(&:shipped?)
+        errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.shipments.any?(&:shipped?)
       end
 
       def generate_number
@@ -75,11 +80,16 @@ module Spree
       end
 
       def process_return
-        inventory_units.each &:return!
+        inventory_units.each do |iu|
+          iu.return!
+          Spree::StockMovement.create!(:stock_location_id => stock_location_id, :stock_item_id => iu.find_stock_item.id, :quantity => 1)
+        end
+
         credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
         credit.source = self
         credit.adjustable = order
         credit.save
+
         order.return if inventory_units.all?(&:returned?)
       end
 
