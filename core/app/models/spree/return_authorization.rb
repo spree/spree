@@ -83,7 +83,7 @@ module Spree
       def process_return
         inventory_units.each do |iu|
           iu.return!
-          Spree::StockMovement.create!(:stock_location_id => stock_location_id, :stock_item_id => iu.find_stock_item.id, :quantity => 1)
+          Spree::StockMovement.create!(:stock_item_id => iu.find_stock_item.id, :quantity => 1)
         end
 
         credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
