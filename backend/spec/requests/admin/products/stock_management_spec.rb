@@ -53,8 +53,8 @@ describe "Stock Management" do
 
         page.should have_content('successfully created')
 
-        within(:css, '.stock_location_details') do
-          column_text(1).should eq '5'
+        within(:css, '.stock_location_info table') do
+          column_text(2).should eq '15'
         end
       end
 
@@ -68,14 +68,14 @@ describe "Stock Management" do
           click_link "Stock Management"
           fill_in "stock_movement_quantity", with: 10
           select2 "SPREEC", from: "Variant"
-          click_button "Create"
+          click_button "Add Stock"
 
           page.should have_content('successfully created')
 
           within_row(2) do
             page.should have_content("SPREEC")
-            within(:css, '.stock_location_details') do
-              column_text(1).should eq '20'
+            within(:css, '.stock_location_info table') do
+              column_text(2).should eq '40'
             end
           end
         end
