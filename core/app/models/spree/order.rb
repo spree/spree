@@ -73,7 +73,7 @@ module Spree
     validates :email, :presence => true, :if => :require_email
     validates :email, :email => true, :if => :require_email, :allow_blank => true
     validate :has_available_shipment
-    validate :has_available_payment, :if => :payment_required?
+    validate :has_available_payment
 
     make_permalink :field => :number
 
