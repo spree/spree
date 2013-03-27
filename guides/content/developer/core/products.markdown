@@ -180,3 +180,7 @@ This model exists so that when a product is deleted, all the links for that
 product to its taxon are deleted automatically. A similar action takes place when a taxon is
 deleted: all the links to a product are deleted automatically.
 
+Linking to a taxon in a controller or a template should be done using the
+`spree.nested_taxons_path` helper, which will use the taxon's permalink to
+generate a URL such as `/t/categories/brand`.
+
