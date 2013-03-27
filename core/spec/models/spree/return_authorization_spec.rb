@@ -7,7 +7,7 @@ describe Spree::ReturnAuthorization do
   let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order,
                                                                :stock_location_id => stock_location.id}, :without_protection => true) }
 
-    context "save" do
+  context "save" do
     it "should be invalid when order has no inventory units" do
       order.shipments.destroy_all
       return_authorization.save
@@ -15,8 +15,8 @@ describe Spree::ReturnAuthorization do
     end
 
     it "should generate RMA number" do
-      return_authorization.should_receive(:generate_number)
-      return_authorization.save
+      full_return_authorization.should_receive(:generate_number)
+      full_return_authorization.save
     end
   end
 
