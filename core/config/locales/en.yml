@@ -1017,6 +1017,10 @@ en:
   shipping_category: "Shipping Category"
   shipping_category_choose: "Shipping Category"
   shipping_cost: Cost
+  shipping_flexible_rate: "Flexible Rate per package item"
+  shipping_flat_rate_per_order: "Flat rate"
+  shipping_flat_rate_per_item: "Flat rate per package item"
+  shipping_price_sack: "Price stack"
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"
   shipping_method: "Shipping Method"
