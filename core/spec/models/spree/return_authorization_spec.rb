@@ -122,11 +122,11 @@ describe Spree::ReturnAuthorization do
   end
 
   context "returnable_inventory" do
-    pending "should return inventory from shipped shipments" do
+    it "should return inventory from shipped shipments" do
       return_authorization.returnable_inventory.should == [inventory_unit]
     end
 
-    pending "should not return inventory from unshipped shipments" do
+    it "should not return inventory from unshipped shipments" do
       return_authorization.returnable_inventory.should == []
     end
   end
