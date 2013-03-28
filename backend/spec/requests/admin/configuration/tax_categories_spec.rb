@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Tax Categories" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Configuration"
   end
@@ -22,7 +22,7 @@ describe "Tax Categories" do
   end
 
   context "admin creating new tax category" do
-    before(:each) do
+    before do
       click_link "Tax Categories"
       click_link "admin_new_tax_categories_link"
     end

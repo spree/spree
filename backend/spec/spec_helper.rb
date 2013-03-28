@@ -32,7 +32,7 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  config.before(:each) do
+  config.before do
     if example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else
@@ -40,13 +40,13 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each) do
+  config.before do
     WebMock.disable!
     DatabaseCleaner.start
     reset_spree_preferences
   end
 
-  config.after(:each) do
+  config.after do
     DatabaseCleaner.clean
   end
 

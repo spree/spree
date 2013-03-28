@@ -48,7 +48,7 @@ describe Spree::Admin::ImageSettingsController do
       end
 
       context "headers" do
-        before(:each) { Spree::Config[:use_s3] = true }
+        before { Spree::Config[:use_s3] = true }
 
         it "should be able to update the s3 headers" do
           spree_put :update, { :preferences => { "use_s3" => "1" }, "s3_headers" => { "Cache-Control" => "max-age=1111" } }

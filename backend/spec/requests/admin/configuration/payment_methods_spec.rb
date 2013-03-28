@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Payment Methods" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Configuration"
   end
@@ -41,7 +41,7 @@ describe "Payment Methods" do
   end
 
   context "admin editing a payment method" do
-    before(:each) do
+    before do
       create(:payment_method)
       click_link "Payment Methods"
       within("table#listing_payment_methods") do

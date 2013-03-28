@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Properties" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Products"
   end
@@ -40,7 +40,7 @@ describe "Properties" do
   end
 
   context "editing a property" do
-    before(:each) do
+    before do
       create(:property)
       click_link "Properties"
       within_row(1) { click_icon :edit }

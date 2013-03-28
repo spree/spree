@@ -20,7 +20,6 @@ describe "return authorizations" do
     click_link order.number
     click_link "Return Authorizations"
     click_link "Edit"
-    lambda { click_button "receive" }.should_not raise_error(ActiveRecord::UnknownAttributeError)
+    expect { click_button "receive" }.not_to raise_error(ActiveRecord::UnknownAttributeError)
   end
-
 end

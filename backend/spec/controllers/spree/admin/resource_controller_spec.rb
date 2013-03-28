@@ -4,7 +4,6 @@ describe Spree::Admin::ResourceController do
   stub_authorization!
 
   describe 'POST#update_positions' do
-
     before do
       Spree::Admin::ResourceController.any_instance.stub(:model_class).and_return Spree::Variant
     end
@@ -17,6 +16,5 @@ describe Spree::Admin::ResourceController do
         variant.reload
       }.to change(variant, :position).from(nil).to(2)
     end
-
   end
 end

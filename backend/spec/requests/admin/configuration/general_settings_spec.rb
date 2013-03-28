@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "General Settings" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Configuration"
     click_link "General Settings"

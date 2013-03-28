@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Zones" do
   stub_authorization!
 
-  before(:each) do
+  before do
     Spree::Zone.delete_all
     visit spree.admin_path
     click_link "Configuration"

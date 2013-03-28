@@ -3,8 +3,7 @@ require 'spec_helper'
 describe "Payments" do
   stub_authorization!
 
-  before(:each) do
-
+  before do
     configure_spree_preferences do |config|
       config.allow_backorders = true
     end
@@ -20,12 +19,10 @@ describe "Payments" do
       iu.update_attribute_without_callbacks('state', 'sold')
     end
     @order.update!
-
   end
 
   context "payment methods" do
-
-    before(:each) do
+    before do
       create(:payment, :order => @order, :amount => @order.outstanding_balance, :payment_method => create(:bogus_payment_method, :environment => 'test'))
       visit spree.admin_path
       click_link "Orders"
@@ -35,7 +32,6 @@ describe "Payments" do
     end
 
     it "should be able to list and create payment methods for an order", :js => true do
-
       click_link "Payments"
       find("#payment_status").text.should == "BALANCE DUE"
       within_row(1) do
@@ -98,6 +94,5 @@ describe "Payments" do
         page.should have_content("Payment Updated")
       end
     end
-
   end
 end

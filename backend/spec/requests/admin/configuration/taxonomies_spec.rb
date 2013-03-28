@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Taxonomies" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Configuration"
   end
@@ -19,7 +19,7 @@ describe "Taxonomies" do
   end
 
   context "create" do
-    before(:each) do
+    before do
       click_link "Taxonomies"
       click_link "admin_new_taxonomy_link"
     end

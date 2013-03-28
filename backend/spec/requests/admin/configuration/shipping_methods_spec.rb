@@ -5,7 +5,7 @@ describe "Shipping Methods" do
   let!(:zone) { create(:global_zone) }
   let!(:shipping_method) { create(:shipping_method, :zone => zone) }
 
-  before(:each) do
+  before do
     # HACK: To work around no email prompting on check out
     Spree::Order.any_instance.stub(:require_email => false)
     create(:payment_method, :environment => 'test')
@@ -14,13 +14,12 @@ describe "Shipping Methods" do
     click_link "Configuration"
   end
 
-
   context "show" do
     it "should display exisiting shipping methods" do
       click_link "Shipping Methods"
 
       within_row(1) do
-        column_text(1).should == shipping_method.name 
+        column_text(1).should == shipping_method.name
         column_text(2).should == zone.name
         column_text(3).should == "Flat Rate (per order)"
         column_text(4).should == "Both"

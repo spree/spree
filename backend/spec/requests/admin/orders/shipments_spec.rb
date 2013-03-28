@@ -5,9 +5,8 @@ describe "Shipments" do
 
   let!(:order) { OrderWalkthrough.up_to(:complete) }
 
-  before(:each) do
+  before do
     # Clear all the shipments and then re-create them in this test
-
     order.shipments.delete_all
     configure_spree_preferences do |config|
       config.allow_backorders = true
@@ -19,7 +18,6 @@ describe "Shipments" do
   end
 
   it "should be able to create and list shipments for an order", :js => true do
-
     click_link "Shipments"
 
     click_on "New Shipment"
@@ -43,5 +41,4 @@ describe "Shipments" do
 
     page.should have_content("##{shipment.number}")
   end
-
 end
