@@ -7,7 +7,7 @@ describe Spree::ReturnAuthorization do
   let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order,
                                                                :stock_location_id => stock_location.id}, :without_protection => true) }
 
-  context "save" do
+    context "save" do
     it "should be invalid when order has no inventory units" do
       order.shipments.destroy_all
       return_authorization.save
@@ -15,8 +15,8 @@ describe Spree::ReturnAuthorization do
     end
 
     it "should generate RMA number" do
-      full_return_authorization.should_receive(:generate_number)
-      full_return_authorization.save
+      return_authorization.should_receive(:generate_number)
+      return_authorization.save
     end
   end
 
@@ -73,26 +73,22 @@ describe Spree::ReturnAuthorization do
 
     it "should mark all inventory units are returned" do
       inventory_unit.should_receive(:return!)
-      full_return_authorization.receive!
+      return_authorization.receive!
     end
 
     it "should add credit for specified amount" do
-<<<<<<< HEAD
       return_authorization.amount = 20
-=======
-      full_return_authorization.amount = 20
->>>>>>> Fix Improper create statement in ReturnAuthorization, Specs
       mock_adjustment = mock
-      mock_adjustment.should_receive(:source=).with(full_return_authorization)
+      mock_adjustment.should_receive(:source=).with(return_authorization)
       mock_adjustment.should_receive(:adjustable=).with(order)
       mock_adjustment.should_receive(:save)
       Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => I18n.t(:rma_credit)).and_return(mock_adjustment)
-      full_return_authorization.receive!
+      return_authorization.receive!
     end
 
     it "should update order state" do
       order.should_receive :update!
-      full_return_authorization.receive!
+      return_authorization.receive!
     end
   end
 
