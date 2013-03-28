@@ -25,8 +25,8 @@ class OrderWalkthrough
   private
 
   def self.add_line_item!(order)
-    order.line_items << FactoryGirl.create(:line_item)
-    order.save
+    FactoryGirl.create(:line_item, order: order)
+    order.reload
   end
 
   def self.address(order)
