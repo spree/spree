@@ -39,7 +39,7 @@ describe "Checkout" do
         find('input#order_use_billing').should be_checked
       end
 
-      it "should remain checked when used and visitor steps back to address step", :js => true do
+      xit "should remain checked when used and visitor steps back to address step", :js => true do
         address = "order_bill_address_attributes"
         fill_in "#{address}_firstname", :with => "Ryan"
         fill_in "#{address}_lastname", :with => "Bigg"
