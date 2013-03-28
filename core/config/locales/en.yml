@@ -1,7 +1,7 @@
 ---
 en:
-  no: "No"
-  yes: "Yes"
+  say_no: "No"
+  say_yes: "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
