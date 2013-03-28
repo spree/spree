@@ -96,7 +96,6 @@ describe Spree::Api::ShipmentsController do
         variant_id: variant.to_param,
         quantity: 2
       }
-
       api_put :add, params
       response.status.should == 200
       json_response['inventory_units'][0]['variant_id'].should == variant.id

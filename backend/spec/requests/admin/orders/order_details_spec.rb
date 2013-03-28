@@ -8,19 +8,17 @@ describe "Order Details" do
 
     before do
       create(:country)
+      create(:stock_location_with_items)
     end
 
     after(:each) { I18n.reload! }
 
-    let(:product) { create(:product, :name => 'spree t-shirt', :price => 19.99) }
-    let(:order) { create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100") }
+    let(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
+    let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
+    let(:shipment) { create(:shipment, :order => order) }
 
-    xit "should allow me to edit order details", :js => true do
-      order.add_variant(product.master, 2)
-      order.inventory_units.each do |iu|
-        iu.update_attribute_without_callbacks('state', 'sold')
-      end
-
+    it "should allow me to edit order details", :js => true do
+      shipment.add(product.master, 2)
       visit spree.admin_path
       click_link "Orders"
 
@@ -29,11 +27,15 @@ describe "Order Details" do
       end
 
       page.should have_content("spree t-shirt")
-      page.should have_content("$39.98")
-      click_link "Edit"
-      fill_in "order_line_items_attributes_0_quantity", :with => "1"
-      click_button "Update"
-      page.should have_content("Total: $19.99")
+      page.should have_content("$40.00")
+
+      within("table.stock-contents") do
+        click_icon :edit
+        fill_in "quantity", :with => "1"
+      end
+      click_icon :ok
+      sleep 1
+      page.should have_content("Total: $20.00")
     end
 
     it "should render details properly" do

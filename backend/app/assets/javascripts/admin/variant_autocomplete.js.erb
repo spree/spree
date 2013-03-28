@@ -125,7 +125,7 @@ $(document).ready(function() {
 });
 
 adjustItems = function(shipment_number, variant_id, quantity){
-    var shipment = _.findWhere(shipments, {number: shipment_number});
+    var shipment = _.findWhere(shipments, {number: shipment_number + ''});
     var inventory_units = _.where(shipment.inventory_units, {variant_id: variant_id});
 
     var url = "/api/orders/" + order_number + "/shipments/" + shipment_number;
