@@ -11,7 +11,7 @@ module Spree
         I18n.t(:shipping_flat_rate_per_item)
       end
 
-      def compute(package)
+      def compute_package(package)
         content_items = package.contents
         self.preferred_amount * content_items.sum { |item| item.quantity }
       end

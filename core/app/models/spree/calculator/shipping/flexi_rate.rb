@@ -17,7 +17,7 @@ module Spree
         I18n.t(:shipping_flexible_rate)
       end
 
-      def compute(package)
+      def compute_package(package)
         content_items = package.contents
         sum = 0
         max = self.preferred_max_items.to_i

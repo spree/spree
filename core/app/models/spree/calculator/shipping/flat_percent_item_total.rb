@@ -10,7 +10,7 @@ module Spree
         I18n.t(:flat_percent)
       end
 
-      def compute(package)
+      def compute_package(package)
         content_items = package.contents
         item_total = total(content_items)
         value = item_total * BigDecimal(self.preferred_flat_percent.to_s) / 100.0
