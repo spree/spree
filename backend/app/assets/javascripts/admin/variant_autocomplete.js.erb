@@ -215,7 +215,7 @@ $.fn.variantAutocomplete = function() {
   this.parent().children(".options_placeholder").attr('id', this.parent().data('index'))
   this.select2({
     placeholder: "Select a variant",
-    minimumInputLength: 4,
+    minimumInputLength: 3,
     ajax: {
       url: Spree.routes.variants_search,
       datatype: 'json',
