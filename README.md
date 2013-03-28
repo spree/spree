@@ -96,11 +96,23 @@ Once you've done that, then you can install these gems using this command:
 bundle install
 ```
 
-Use the install generator to copy migrations, initializers and generate
-sample data.
+Use the install generator to set up Spree:
 
 ```shell
-rails g spree:install
+rails g spree:install --sample=false --seed=false
+```
+
+At this point, if you are using spree_auth_devise you will need to change this line in
+`config/initializers/spree.rb`:
+
+```ruby
+Spree.user_class = "Spree::LegacyUser"
+```
+
+To this:
+
+```ruby
+Spree.user_class = "Spree::User"
 ```
 
 You can avoid running migrations or generating seed and sample data by passing
