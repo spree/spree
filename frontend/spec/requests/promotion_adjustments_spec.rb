@@ -61,14 +61,14 @@ describe "Promotion adjustments", :js => true do
       end
 
       it "informs about an invalid coupon code" do
-        fill_in "Coupon code", :with => "coupon_codes_rule_man"
+        fill_in "order_coupon_code", :with => "coupon_codes_rule_man"
         click_button "Save and Continue"
         page.should have_content(I18n.t(:coupon_code_not_found))
       end
 
       context "with a promotion" do
         it "applies a promotion to an order" do
-          fill_in "Coupon code", :with => "onetwo"
+          fill_in "order_coupon_code", :with => "onetwo"
           click_button "Save and Continue"
           page.should have_content(I18n.t(:coupon_code_applied))
         end
@@ -85,13 +85,13 @@ describe "Promotion adjustments", :js => true do
       end
 
       it "can enter a coupon code and receives success notification" do
-        fill_in "Coupon code", :with => "onetwo"
+        fill_in "order_coupon_code", :with => "onetwo"
         click_button "Apply"
         page.should have_content(I18n.t(:coupon_code_applied))
       end
 
       it "can enter a promotion code with both upper and lower case letters" do
-        fill_in "Coupon code", :with => "ONETwO"
+        fill_in "order_coupon_code", :with => "ONETwO"
         click_button "Apply"
         page.should have_content(I18n.t(:coupon_code_applied))
       end
@@ -100,7 +100,7 @@ describe "Promotion adjustments", :js => true do
         promotion.update_column(:usage_limit, 5)
         promotion.class.any_instance.stub(:credits_count => 10)
 
-        fill_in "Coupon code", :with => "onetwo"
+        fill_in "order_coupon_code", :with => "onetwo"
         click_button "Apply"
         page.should have_content(I18n.t(:coupon_code_max_usage))
       end
@@ -116,11 +116,11 @@ describe "Promotion adjustments", :js => true do
         specify do
           visit spree.cart_path
 
-          fill_in "Coupon code", :with => "50off"
+          fill_in "order_coupon_code", :with => "50off"
           click_button "Apply"
           page.should have_content(I18n.t(:coupon_code_applied))
 
-          fill_in "Coupon code", :with => "onetwo"
+          fill_in "order_coupon_code", :with => "onetwo"
           click_button "Apply"
           page.should have_content(I18n.t(:coupon_code_better_exists))
         end
@@ -137,7 +137,7 @@ describe "Promotion adjustments", :js => true do
         specify do
           visit spree.cart_path
 
-          fill_in "Coupon code", :with => "onetwo"
+          fill_in "order_coupon_code", :with => "onetwo"
           click_button "Apply"
           page.should have_content(I18n.t(:coupon_code_not_eligible))
         end
@@ -147,7 +147,7 @@ describe "Promotion adjustments", :js => true do
         promotion.expires_at = Date.today.beginning_of_week
         promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
         promotion.save!
-        fill_in "Coupon code", :with => "onetwo"
+        fill_in "order_coupon_code", :with => "onetwo"
         click_button "Apply"
         page.should have_content(I18n.t(:coupon_code_expired))
       end
