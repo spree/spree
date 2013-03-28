@@ -18,8 +18,14 @@ module Spree
     end
 
     private
-      def accurate_title
-        @taxon ? @taxon.name : super
+
+    def accurate_title
+      if @taxon
+        @taxon.seo_title
+      else
+        super
       end
+    end
+
   end
 end
