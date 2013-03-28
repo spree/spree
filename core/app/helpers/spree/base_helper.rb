@@ -56,7 +56,7 @@ module Spree
       end
 
       if meta[:description].blank? && object.kind_of?(Spree::Product)
-        meta[:description] = strip_tags(object.description)
+        meta[:description] = strip_tags(truncate(object.description, :length => 160, :separator => ' '))
       end
 
       meta.reverse_merge!({

@@ -41,8 +41,8 @@ describe "Checkout" do
         shipping_method = create(:shipping_method)
         shipping_method.zone.zone_members << Spree::ZoneMember.create(:zoneable => country)
 
-        @order = OrderWalkthrough.up_to(:address)
-        @order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
+        # So that the order can transition from address
+        payment_method = create(:payment_method)
 
         visit spree.root_path
         click_link "RoR Mug"
@@ -69,6 +69,36 @@ describe "Checkout" do
         click_link "Address"
 
         find('input#order_use_billing').should be_checked
+      end
+    end
+
+    #regression test for #2694
+    context "doesn't allow bad credit card numbers" do
+      before(:each) do
+        order = OrderWalkthrough.up_to(:delivery)
+        order.stub :confirmation_required? => true
+        order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
+        order.reload
+        user = create(:user)
+        order.user = user
+        order.update!
+
+        Spree::CheckoutController.any_instance.stub(:current_order => order)
+        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
+        Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
+
+      end
+      it "redirects to payment page" do
+        visit spree.checkout_state_path(:delivery)
+        click_button "Save and Continue"
+        choose "Credit Card"
+        fill_in "Card Number", :with => '123'
+        fill_in "Card Code", :with => '123'
+        click_button "Save and Continue"
+        click_button "Place Order"
+        page.should have_content("Payment could not be processed")
+        click_button "Place Order"
+        page.should have_content("Payment could not be processed")
       end
     end
 

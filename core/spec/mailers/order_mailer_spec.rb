@@ -16,6 +16,14 @@ describe Spree::OrderMailer do
     order
   end
 
+  before do
+    Spree::MailMethod.create!(
+      :environment => Rails.env,
+      :preferred_mails_from => "spree@example.com"
+    )
+  end
+  
+
   it "doesn't aggressively escape double quotes in confirmation body" do
     confirmation_email = Spree::OrderMailer.confirm_email(order)
     confirmation_email.body.should_not include("&quot;")
@@ -95,6 +103,19 @@ describe Spree::OrderMailer do
           cancel_email.body.should include("Resumo da Pedido [CANCELADA]")
         end
       end
+    end
+
+    context "using EUR as the currency" do
+      before do
+        Spree::Config[:currency] = "EUR"
+      end
+
+      # Regression test for #2690
+      it "doesn't aggressively escape money amounts" do
+        confirm_email = Spree::OrderMailer.confirm_email(order)
+        confirm_email.body.should_not include("&#x20AC;") # escaped € symbol
+      end
+
     end
   end
 end

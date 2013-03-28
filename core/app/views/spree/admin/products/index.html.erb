@@ -3,13 +3,9 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <div class="toolbar" data-hook="toolbar">
-    <ul class="actions header-action-links inline-menu">
-      <li id="new_product_link">
-        <%= button_link_to t(:new_product), new_object_url, { :remote => true, :icon => 'icon-plus', :id => 'admin_new_product' } %>
-      </li>
-    </ul>
-  </div>
+  <li id="new_product_link">
+    <%= button_link_to t(:new_product), new_object_url, { :remote => true, :icon => 'icon-plus', :id => 'admin_new_product' } %>
+  </li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
@@ -20,8 +16,8 @@
 
 <% content_for :table_filter do %>
   <div data-hook="admin_products_sidebar">
-    
-    <%= search_form_for [:admin, @search] do |f| %>      
+
+    <%= search_form_for [:admin, @search] do |f| %>
 
         <%- locals = {:f => f} %>
 
@@ -30,7 +26,7 @@
             <div class="field">
               <%= f.label :name_cont, t(:name) %>
               <%= f.text_field :name_cont, :size => 15 %>
-            </div>  
+            </div>
           </div>
           <div class="four columns">
             <div class="field">
@@ -42,12 +38,12 @@
             <div class="field checkbox">
               <label>
                 <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null].blank?}, '', '1' %>
-                <%= t(:show_deleted) %>  
+                <%= t(:show_deleted) %>
               </label>
             </div>
           </div>
         </div>
-        
+
         <div class="clear"></div>
 
         <div class="form-buttons actions filter-actions" data-hook="admin_products_index_search_buttons">
@@ -74,8 +70,8 @@
         <th colspan="2"><%= sort_link @search,:name, t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
         <th><%= sort_link @search,:master_default_price_amount, t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
         <th data-hook="admin_products_index_header_actions" class="actions"></th>
-      </tr>  
-    </thead>  
+      </tr>
+    </thead>
     <tbody>
       <% @collection.each do |product| %>
           <tr <%= "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">

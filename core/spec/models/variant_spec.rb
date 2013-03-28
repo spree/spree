@@ -276,9 +276,9 @@ describe Spree::Variant do
   end
 
   context "#display_amount" do
-    it "retuns a Spree::Money" do
+    it "returns a Spree::Money" do
       variant.price = 21.22
-      variant.display_amount.should == "$21.22"
+      variant.display_amount.to_s.should == "$21.22"
     end
   end
 
@@ -296,14 +296,13 @@ describe Spree::Variant do
     before do
       variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
     end
-
     subject { variant.price_in(currency).display_amount }
 
     context "when currency is not specified" do
       let(:currency) { nil }
 
-      it "returns nil" do
-        subject.should be_nil
+      it "returns 0" do
+        subject.to_s.should == "$0.00"
       end
     end
 
@@ -311,7 +310,7 @@ describe Spree::Variant do
       let(:currency) { 'EUR' }
 
       it "returns the value in the EUR" do
-        subject.should == "€33.33"
+        subject.to_s.should == "€33.33"
       end
     end
 
@@ -319,7 +318,7 @@ describe Spree::Variant do
       let(:currency) { 'USD' }
 
       it "returns the value in the USD" do
-        subject.should == "$19.99"
+        subject.to_s.should == "$19.99"
       end
     end
   end

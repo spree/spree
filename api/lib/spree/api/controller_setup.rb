@@ -16,6 +16,7 @@ module Spree
           include ActionController::MimeResponds
 
           include CanCan::ControllerAdditions
+          include SslRequirement
           prepend_view_path Rails.root + "app/views"
           append_view_path File.expand_path("../../../app/views", File.dirname(__FILE__))
 

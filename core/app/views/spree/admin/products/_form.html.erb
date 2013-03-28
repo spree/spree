@@ -1,6 +1,6 @@
 <div data-hook="admin_product_form_fields">
-  
-  <div class="left eight columns alpha" data-hook="admin_product_form_left">    
+
+  <div class="left eight columns alpha" data-hook="admin_product_form_left">
     <%= f.field_container :name do %>
       <%= f.label :name, raw(t(:name) + content_tag(:span, ' *', :class => 'required')) %>
       <%= f.text_field :name, :class => 'fullwidth title' %>
@@ -56,7 +56,7 @@
         <%= f.text_field :sku, :size => 16 %>
       <% end %>
 
-      <% if Spree::Config[:track_inventory_levels] %>        
+      <% if Spree::Config[:track_inventory_levels] %>
         <div class="alpha two columns">
           <%= f.field_container :on_hand do %>
             <%= f.label :on_hand, t(:on_hand) %>
@@ -116,11 +116,10 @@
 
     <%= f.field_container :option_types do %>
       <%= f.label :option_type_ids, t(:option_types) %>
-      <%= f.select :option_type_ids, option_types_options_for(@product), {}, :class => "select2", :multiple => true %>
+      <%= f.select :option_type_ids, option_types_options_for(@product), {}, :multiple => true %>
     <% end %>
   </div>
 
-  <!-- <h2><%= t(:metadata) %></h2> -->
   <div data-hook="admin_product_form_meta" class="alpha omega twelve columns">
     <%= f.field_container :meta_keywords do %>
       <%= f.label :meta_keywords, t(:meta_keywords) %>
@@ -140,10 +139,6 @@
   <div class="clear"></div>
 </div>
 
-<% unless Rails.env.test? %>
-  <script>
-  $("#product_option_type_ids").select2();
-
-  $('.select2-container').css({width: '20em'})
-  </script>
-<% end %>
+<script>
+$("#product_option_type_ids").select2();
+</script>

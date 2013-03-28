@@ -8,13 +8,12 @@ module Spree
     attr_accessible :variant_id, :currency, :amount
 
     def display_amount
-      return nil if amount.nil?
-      money.to_s
+      money
     end
     alias :display_price :display_amount
 
     def money
-      Spree::Money.new(amount, { :currency => currency })
+      Spree::Money.new(amount || 0, { :currency => currency })
     end
 
     def price

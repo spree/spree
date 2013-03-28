@@ -3,7 +3,7 @@
     <li>
       <%= button_link_to t(:ship), fire_admin_order_shipment_path(@order, @shipment, :e => 'ship'), :method => :put, :data => { :confirm => t(:are_you_sure) } %>
     </li>
-  <% end %>  
+  <% end %>
   <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
@@ -14,7 +14,7 @@
 <% end %>
 
 <div data-hook="admin_shipment_edit_header">
-  
+
   <% if @shipment.cost %>
     <h5 class="outstanding-balance"><%= t(:charges) %> <span class="green"><%= @shipment.display_cost %></span></h5>
   <% end %>
@@ -27,17 +27,17 @@
     <fieldset class="no-border-top">
       <%= render :partial => 'form', :locals => { :shipment_form => shipment_form } %>
 
-      <div data-hook="admin_shipment_edit_form_buttons">
-        <div class="filter-actions actions">
-          <% if @shipment.editable_by?(try_spree_current_user) %>
-            <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
-            <span class="or"><%= t(:or) %></span>
-            <%= button_link_to t(:cancel), admin_order_shipments_path(@order), :icon => 'icon-remove' %>
-          <% else %>
-            <%= button_link_to t(:back), edit_admin_order_shipment_path(@order), :icon => 'icon-arrow-left' %>
-          <% end %>
-        </div>
+
+      <div class="form-buttons filter-actions actions" data-hook="admin_shipment_edit_form_buttons">
+        <% if @shipment.editable_by?(try_spree_current_user) %>
+          <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
+          <span class="or"><%= t(:or) %></span>
+          <%= button_link_to t(:cancel), admin_order_shipments_path(@order), :icon => 'icon-remove' %>
+        <% else %>
+          <%= button_link_to t(:back), edit_admin_order_shipment_path(@order), :icon => 'icon-arrow-left' %>
+        <% end %>
       </div>
+
     </fieldset>
   <% end %>
 </div>

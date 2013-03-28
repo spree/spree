@@ -3,7 +3,6 @@ Spree::Sample.load_sample("tax_categories")
 clothing = Spree::TaxCategory.find_by_name!("Clothing")
 
 default_attrs = {
-  :count_on_hand => 10,
   :description => Faker::Lorem.paragraph,
   :available_on => Time.zone.now
 }

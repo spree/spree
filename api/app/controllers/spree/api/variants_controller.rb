@@ -21,7 +21,7 @@ module Spree
 
       def create
         authorize! :create, Variant
-        @variant = scope.new(params[:product])
+        @variant = scope.new(params[:variant])
         if @variant.save
           respond_with(@variant, :status => 201, :default_template => :show)
         else

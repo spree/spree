@@ -13,7 +13,15 @@ describe Spree::ShipmentMailer do
     line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
     shipment = stub_model(Spree::Shipment)
     shipment.stub(:line_items => [line_item], :order => order)
+    shipment.stub(:tracking_url => "TRACK_ME")
     shipment
+  end
+
+  before do
+    Spree::MailMethod.create!(
+      :environment => Rails.env,
+      :preferred_mails_from => "spree@example.com"
+    )
   end
 
   # Regression test for #2196

@@ -20,8 +20,8 @@ describe Spree::Taxon do
 
     context "with parent taxon" do
       before do
-        taxon.stub(:parent_id => 123)
-        Spree::Taxon.should_receive(:find).with(123).and_return(mock_model(Spree::Taxon, :permalink => "brands"))
+        taxon.stub :parent_id => 123
+        taxon.stub :parent => mock_model(Spree::Taxon, :permalink => "brands")
       end
 
       it "should set permalink correctly when taxon has parent" do
@@ -40,9 +40,17 @@ describe Spree::Taxon do
         taxon.set_permalink
         taxon.permalink.should == "brands/wo"
       end
-
     end
+  end
 
+  # Regression test for #2620
+  context "creating a child node using first_or_create" do
+    let(:taxonomy) { FactoryGirl.create(:taxonomy) }
+
+    it "does not error out" do
+      action = lambda { taxonomy.root.children.where(:name => "Some name").first_or_create }
+      action.should_not raise_error
+    end
   end
 
 end
