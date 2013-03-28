@@ -33,6 +33,7 @@ describe "Order Details" do
         click_icon :edit
         fill_in "quantity", :with => "1"
       end
+
       click_icon :ok
       sleep 1
       page.should have_content("Total: $20.00")
@@ -60,6 +61,43 @@ describe "Order Details" do
       sleep 1
       page.should_not have_content("spree t-shirt")
     end
+
+    it "should display price from line item" do
+      # Regression test for #2772
+      order.add_variant(product.master, 2)
+
+      order.inventory_units.each do |iu|
+        iu.update_attribute_without_callbacks('state', 'sold')
+      end
+
+      line_item = order.line_items.first
+      line_item.price = 19.00
+      line_item.save!
+
+      visit spree.admin_path
+      click_link "Orders"
+
+      within_row(1) do
+        click_link "R100"
+      end
+
+      # Tests view spree/admin/shared/_order_details
+      within "td.price" do
+        page.should have_content "19.00"
+      end
+
+      # Tests view spree/admin/orders/_line_item
+      visit spree.edit_admin_order_path(order)
+
+      within "td.price" do
+        page.should have_content "19.00"
+      end
+    end
+
+    it "should render details properly" do
+      order.state = :complete
+      order.currency = 'GBP'
+      order.save!
 
     it "can add tracking information" do
       visit spree.edit_admin_order_path(order)

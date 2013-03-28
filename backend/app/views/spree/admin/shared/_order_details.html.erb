@@ -28,7 +28,7 @@
           <td class="item-name"><%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
           <td class="item-price"><%= line_item.display_amount.to_html %></td>
           <td class="item-qty"><%= item.quantity %></td>
-          <td class="item-total"><%= line_item.amount * item.quantity %></td>
+          <td class="item-total"><%= line_item.display_amount %></td>
         </tr>
       <% end %>
       <tr class="total">
