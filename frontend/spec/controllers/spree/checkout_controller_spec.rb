@@ -207,6 +207,7 @@ describe Spree::CheckoutController do
 
     context "and back orders are not allowed" do
       before do
+        controller.should_receive(:before_payment)
         spree_post :update, { :state => "payment" }
       end
 
