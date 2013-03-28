@@ -26,7 +26,7 @@ module Spree
       rescue Exception => e
         flash[:error] = t('admin.mail_methods.testmail.error') % {:e => e}
       ensure
-        redirect_to :back
+        redirect_to edit_admin_mail_method_url
       end
 
       private

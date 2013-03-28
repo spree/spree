@@ -3,7 +3,6 @@ require 'spec_helper'
 # We'll use the OrderMailer as a quick and easy way to test. IF it works here
 # it works for all email (in theory.)
 describe Spree::OrderMailer do
-  let(:mail_method) { mock("mail_method", :preferred_mails_from => "spree@example.com", :preferred_intercept_email => nil, :preferred_mail_bcc => nil) }
   let(:order) { Spree::Order.new(:email => "customer@example.com") }
   let(:message) { Spree::OrderMailer.confirm_email(order) }
 
@@ -15,8 +14,8 @@ describe Spree::OrderMailer do
   context "#deliver" do
     before do
       ActionMailer::Base.delivery_method = :test
-      Spree::MailMethod.stub :current => mail_method
     end
+
     after { ActionMailer::Base.deliveries.clear }
 
     it "should use the from address specified in the preference" do

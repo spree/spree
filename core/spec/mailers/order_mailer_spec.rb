@@ -17,10 +17,7 @@ describe Spree::OrderMailer do
   end
 
   before do
-    Spree::MailMethod.create!(
-      :environment => Rails.env,
-      :preferred_mails_from => "spree@example.com"
-    )
+    Spree::Config[:mails_from] = "spree@example.com"
   end
 
   it "doesn't aggressively escape double quotes in confirmation body" do

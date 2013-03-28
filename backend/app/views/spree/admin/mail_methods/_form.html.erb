@@ -57,13 +57,13 @@
         <div class="field">
           <%= label_tag :secure_connection_type, t(:secure_connection_type) %><br />
           <%= select_tag(:secure_connection_type, 
-                         options_from_collection_for_select(Spree::MailMethod::SECURE_CONNECTION_TYPES, :to_s, :to_s, Spree::Config[:secure_connection_type]),
+                         options_from_collection_for_select(Spree::Core::MailSettings::SECURE_CONNECTION_TYPES, :to_s, :to_s, Spree::Config[:secure_connection_type]),
                          :class => 'select2 fullwidth') %>
         </div>
         <div class="field">
           <%= label_tag :mail_auth_type, t(:smtp_authentication_type) %><br />
           <%= select_tag(:mail_auth_type,
-                         options_from_collection_for_select(Spree::MailMethod::MAIL_AUTH, :to_s, :to_s, Spree::Config[:mail_auth_type]),
+                         options_from_collection_for_select(Spree::Core::MailSettings::MAIL_AUTH, :to_s, :to_s, Spree::Config[:mail_auth_type]),
                          :class => 'select2 fullwidth') %>
         </div>
         <div class="field">

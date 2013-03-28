@@ -122,10 +122,7 @@ describe Spree::Api::ShipmentsController do
       before do
         Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
         # For the shipment notification email
-        Spree::MailMethod.create!(
-          :environment => Rails.env,
-          :preferred_mails_from => "spree@example.com"
-        )
+        Spree::Config[:mails_from] = "spree@example.com"
 
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
