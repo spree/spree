@@ -56,14 +56,6 @@ describe Spree::Product do
       end
     end
 
-    # Test for #2167
-    context "#on_sale?" do
-      xit "is on sale if allow_backorders preference is set to true" do
-        Spree::Config[:allow_backorders] = true
-        assert product.on_sale?
-      end
-    end
-
     context "#price" do
       # Regression test for #1173
       it 'strips non-price characters' do
