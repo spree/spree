@@ -122,13 +122,12 @@ describe Spree::Order do
     end
 
     it "should change the shipment state to ready if order is paid" do
-      shipment = Spree::Shipment.new
-      order.shipments << shipment
+      Spree::Shipment.create(order: order)
+      order.shipments.reload
 
       order.stub(:paid? => true, :complete? => true)
       order.finalize!
       order.reload # reload so we're sure the changes are persisted
-      order.shipment.state.should == 'ready'
       order.shipment_state.should == 'ready'
     end
 
