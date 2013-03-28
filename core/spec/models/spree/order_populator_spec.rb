@@ -32,8 +32,6 @@ describe Spree::OrderPopulator do
       # Regression test for #2430
       context "respects allow_backorders setting" do
         before do
-          Spree::Config[:allow_backorders] = true
-          # Variant is available due to allow_backorders
           variant.stub :available? => true
         end
 
@@ -46,8 +44,6 @@ describe Spree::OrderPopulator do
 
       # Regression test for #2695
       it "restricts quantities to reasonable sizes (less than 2.1 billion, seriously)" do
-        Spree::Config[:allow_backorders] = false
-
         order.should_not_receive(:add_variant)
         subject.populate(:products => { 1 => 2 }, :quantity => 2_147_483_648)
         subject.should_not be_valid

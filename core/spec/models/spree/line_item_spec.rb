@@ -15,7 +15,6 @@ describe Spree::LineItem do
   before do
     line_item.stub(:order => order, :variant => variant, :new_record? => false)
     variant.stub(:currency => "USD")
-    Spree::Config.set :allow_backorders => true
   end
 
   context '#save' do
@@ -89,8 +88,6 @@ describe Spree::LineItem do
 
   context '(in)sufficient_stock?' do
     context 'when backordering is disabled' do
-      before { Spree::Config.set :allow_backorders => false }
-
       xit 'should report insufficient stock when variant is out of stock' do
         line_item.stub_chain :variant, :on_hand => 0
         line_item.insufficient_stock?.should be_true
@@ -136,7 +133,6 @@ describe Spree::LineItem do
     end
 
     context 'when backordering is enabled' do
-      before { Spree::Config.set :allow_backorders => true }
 
       xit 'should report sufficient stock regardless of on_hand value' do
         [-99,0,99].each do |i|

@@ -5,13 +5,6 @@ describe "Payments" do
 
   let(:order) { create(:completed_order_with_totals, :number => "R100", :state => "complete") }
 
-  before(:each) do
-
-    configure_spree_preferences do |config|
-      config.allow_backorders = true
-    end
-  end
-
   context "payment methods" do
 
     before(:each) do

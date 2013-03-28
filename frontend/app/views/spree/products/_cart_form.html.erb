@@ -7,10 +7,10 @@
         <ul>
           <% has_checked = false
           @product.variants.active(current_currency).each_with_index do |v,index|
-            checked = !has_checked && Spree::Config[:allow_backorders]
+            checked = !has_checked
             has_checked = true if checked %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, :disabled => !Spree::Config[:allow_backorders], 'data-price' => v.price_in(current_currency).display_price %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, 'data-price' => v.price_in(current_currency).display_price %>
               <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>

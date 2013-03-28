@@ -201,7 +201,6 @@ describe Spree::CheckoutController do
 
       configure_spree_preferences do |config|
         config.track_inventory_levels = true
-        config.allow_backorders = false
       end
 
     end
