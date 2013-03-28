@@ -39,7 +39,7 @@ describe "Checkout" do
         find('input#order_use_billing').should be_checked
       end
 
-      xit "should remain checked when used and visitor steps back to address step", :js => true do
+      it "should remain checked when used and visitor steps back to address step", :js => true do
         address = "order_bill_address_attributes"
         fill_in "#{address}_firstname", :with => "Ryan"
         fill_in "#{address}_lastname", :with => "Bigg"
@@ -61,11 +61,9 @@ describe "Checkout" do
       before do
         @product.shipping_category = shipping_method.shipping_categories.first
         @product.save!
-
-        Spree::Stock::Estimator.any_instance.should_receive(:shipping_methods).and_return([shipping_method])
       end
 
-      pending "does not break the per-item shipping method calculator", :js => true do
+      it "does not break the per-item shipping method calculator", :js => true do
         visit spree.root_path
         click_link "RoR Mug"
         click_button "add-to-cart-button"
@@ -82,11 +80,9 @@ describe "Checkout" do
         fill_in "#{address}_zipcode", :with => "12345"
         fill_in "#{address}_phone", :with => "(555) 5555-555"
 
-
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
 
-        choose(shipping_method.name)
         click_button "Save and Continue"
         page.should have_content(shipping_method.name)
       end
@@ -109,7 +105,7 @@ describe "Checkout" do
       Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
     end
 
-    xit "redirects to payment page" do
+    it "redirects to payment page" do
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"
       choose "Credit Card"
@@ -139,7 +135,7 @@ describe "Checkout" do
       Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
     end
 
-    xit "prevents double clicking the payment button on checkout", :js => true do
+    it "prevents double clicking the payment button on checkout", :js => true do
       visit spree.checkout_state_path(:payment)
 
       # prevent form submit to verify button is disabled
@@ -150,7 +146,7 @@ describe "Checkout" do
       page.should have_selector('input.button[disabled]')
     end
 
-    xit "prevents double clicking the confirm button on checkout", :js => true do
+    it "prevents double clicking the confirm button on checkout", :js => true do
       visit spree.checkout_state_path(:confirm)
 
       # prevent form submit to verify button is disabled
