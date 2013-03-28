@@ -115,7 +115,7 @@ describe Spree::BaseHelper do
       @test = Spree::Product.new(:description => text)
       tags = Nokogiri::HTML.parse(meta_data_tags)
       content = tags.css("meta[name=description]").first["content"]
-      assert content.length < 159, "content length is not truncated to 160 characters"
+      assert content.length <= 160, "content length is not truncated to 160 characters"
     end
   end
 
