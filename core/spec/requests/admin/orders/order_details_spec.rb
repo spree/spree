@@ -18,6 +18,8 @@ describe "Order Details" do
     let(:product) { create(:product, :name => 'spree t-shirt', :on_hand => 5, :price => 19.99) }
     let(:order) { create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100") }
 
+
+
     it "should allow me to edit order details", :js => true do
       order.add_variant(product.master, 2)
       order.inventory_units.each do |iu|
@@ -37,6 +39,39 @@ describe "Order Details" do
       fill_in "order_line_items_attributes_0_quantity", :with => "1"
       click_button "Update"
       page.should have_content("Total: $19.99")
+    end
+
+    it "should display price from line item" do
+      # Regression test for #2772
+      order.add_variant(product.master, 2)
+
+      order.inventory_units.each do |iu|
+        iu.update_attribute_without_callbacks('state', 'sold')
+      end
+
+      line_item = order.line_items.first
+      line_item.price = 19.00
+      line_item.save!
+
+      visit spree.admin_path
+      click_link "Orders"
+
+      within_row(1) do
+        click_link "R100"
+      end
+
+      # Tests view spree/admin/shared/_order_details
+      within "td.price" do
+        page.should have_content "19.00"
+      end
+
+      # Tests view spree/admin/orders/_line_item
+      visit spree.edit_admin_order_path(order)
+
+      within "td.price" do
+        page.should have_content "19.00"
+      end
+
     end
 
     it "should render details properly" do
@@ -67,5 +102,6 @@ describe "Order Details" do
       end
 
     end
+
   end
 end

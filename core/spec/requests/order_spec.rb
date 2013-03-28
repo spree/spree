@@ -14,6 +14,20 @@ describe 'orders' do
     lambda { visit spree.order_path(order) }.should_not raise_error
   end
 
+  it "should display line item price" do
+    # Regression test for #2772
+    line_item = order.line_items.first
+    line_item.price = 19.00
+    line_item.save!
+
+    visit spree.order_path(order)
+
+    # Tests view spree/shared/_order_details
+    within 'td.price' do
+      page.should have_content "19.00"
+    end
+  end
+
   it "should have credit card info if paid with credit card" do
     create(:payment, :order => order)
     visit spree.order_path(order)
