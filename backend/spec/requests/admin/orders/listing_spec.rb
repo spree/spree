@@ -3,14 +3,14 @@ require 'spec_helper'
 describe "Orders Listing" do
   stub_authorization!
 
-  before(:each) do
+  before do
     create(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
     create(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")
     visit spree.admin_path
   end
 
   context "listing orders" do
-    before(:each) do
+    before do
       click_link "Orders"
     end
 
@@ -45,7 +45,7 @@ describe "Orders Listing" do
   end
 
   context "searching orders" do
-    before(:each) do
+    before do
       click_link "Orders"
     end
 

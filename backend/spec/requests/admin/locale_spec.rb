@@ -6,11 +6,11 @@ describe "setting locale" do
   before do
     I18n.locale = I18n.default_locale
     I18n.backend.store_translations(:fr, {
-     :orders => "Ordres",
-     :listing_orders => "Ordres",
-     :date => {
-       :month_names => [],
-     }
+      :orders => "Ordres",
+      :listing_orders => "Ordres",
+      :date => {
+        :month_names => [],
+      }
     })
     Spree::Backend::Config[:locale] = "fr"
   end

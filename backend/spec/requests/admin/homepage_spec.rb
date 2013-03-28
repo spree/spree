@@ -4,7 +4,7 @@ describe "Homepage" do
   stub_authorization!
 
   context "visiting the homepage" do
-    before(:each) do
+    before do
       visit spree.admin_path
     end
 
@@ -34,7 +34,7 @@ describe "Homepage" do
   end
 
   context "visiting the products tab" do
-    before(:each) do
+    before do
       visit spree.admin_products_path
     end
 
@@ -53,6 +53,5 @@ describe "Homepage" do
     it "should have a link to prototypes" do
       within('#sub-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
     end
-
   end
 end

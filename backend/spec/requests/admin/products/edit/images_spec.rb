@@ -49,7 +49,6 @@ describe "Product Images" do
       within("tbody") do
         page.should have_content("Size: S")
       end
-
     end
   end
 

@@ -22,7 +22,6 @@ describe Spree::OrderMailer do
       :preferred_mails_from => "spree@example.com"
     )
   end
-  
 
   it "doesn't aggressively escape double quotes in confirmation body" do
     confirmation_email = Spree::OrderMailer.confirm_email(order)

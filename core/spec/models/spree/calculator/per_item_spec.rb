@@ -26,7 +26,7 @@ describe Spree::Calculator::PerItem do
     calculator.compute(object).to_f.should == 50 # 5 x 10
   end
 
-  it 'correctly calculates per item promotion with no rules i.e. no product restrictions' do
+  it "correctly calculates per item promotion with no rules i.e. no product restrictions" do
     calculator.stub(:calculable => double("Calculable", :promotion => promotion_without_rules))
     calculator.compute(object).to_f.should == 80 # 5 x 10 + 3 x 10
   end
@@ -44,9 +44,10 @@ describe Spree::Calculator::PerItem do
   # Regression test for #2322
   context "does not fail if a promotion rule does not respond to products" do
     before { promotion.stub :rules => [double("Rule")] }
+
     specify do
       calculator.stub(:calculable => promotion_calculable)
-      lambda { calculator.matching_products }.should_not raise_error
+      expect { calculator.matching_products }.not_to raise_error
     end
   end
 end

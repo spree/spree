@@ -28,5 +28,4 @@ describe Spree::PaymentMethod do
       Spree::PaymentMethod.available(:back_end).size.should == 2
     end
   end
-
 end

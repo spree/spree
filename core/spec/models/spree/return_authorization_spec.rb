@@ -55,9 +55,7 @@ describe Spree::ReturnAuthorization do
         order.should_not_receive(:authorize_return!)
         return_authorization.add_variant(inventory_unit.variant.id, 1)
       end
-
     end
-
   end
 
   context "can_receive?" do

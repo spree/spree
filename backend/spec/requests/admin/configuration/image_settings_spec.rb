@@ -20,6 +20,4 @@ describe "image settings" do
     Spree::Config[:attachment_default_url].should == "barfoo"
     Spree::Config[:attachment_path].should == "spec/dummy/tmp/bfaoro"
   end
-
 end
-

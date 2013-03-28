@@ -36,7 +36,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
   end
 
   context "#destroy" do
-    before(:each) do
+    before do
       promotion.promotion_actions = [action]
     end
 
@@ -51,7 +51,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     context "when order is complete" do
       let(:order) { create(:order, :state => "complete") }
 
-      before(:each) do
+      before do
         action.perform(:order => order)
         action.destroy
       end
@@ -78,6 +78,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.calculator.stub(:compute => 300)
       action.compute_amount(order).to_i.should == -300
     end
+
     it "should not return an amount that exceeds order's item_total + ship_total" do
       order.stub(:item_total => 1000, :ship_total => 100)
       action.calculator.stub(:compute => 1000)
@@ -88,6 +89,4 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.compute_amount(order).to_i.should == -1100
     end
   end
-
 end
-

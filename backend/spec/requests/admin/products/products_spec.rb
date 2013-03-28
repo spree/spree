@@ -4,7 +4,7 @@ describe "Products" do
   stub_authorization!
 
   context "as admin user" do
-    before(:each) do
+    before do
       visit spree.admin_path
     end
 
@@ -82,7 +82,7 @@ describe "Products" do
 
     context "creating a new product from a prototype" do
       def build_option_type_with_values(name, values)
-        ot = FactoryGirl.create(:option_type, :name => name)
+        ot = create(:option_type, :name => name)
         values.each do |val|
           ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
         end
@@ -92,12 +92,12 @@ describe "Products" do
       let(:product_attributes) do
         # FactoryGirl.attributes_for is un-deprecated!
         #   https://github.com/thoughtbot/factory_girl/issues/274#issuecomment-3592054
-        FactoryGirl.attributes_for(:simple_product)
+        attributes_for(:simple_product)
       end
 
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
-        FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
+        create(:prototype, :name => "Size", :option_types => [ size ])
       end
 
       let(:option_values_hash) do
@@ -108,7 +108,7 @@ describe "Products" do
         hash
       end
 
-      before(:each) do
+      before do
         @option_type_prototype = prototype
         @property_prototype = create(:prototype, :name => "Random")
         click_link "Products"
@@ -151,7 +151,7 @@ describe "Products" do
     end
 
     context "creating a new product" do
-      before(:each) do
+      before do
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
@@ -231,6 +231,5 @@ describe "Products" do
         Spree::Product.last.available_on.should == 'Tue, 25 Dec 2012 00:00:00 UTC +00:00'
       end
     end
-
   end
 end

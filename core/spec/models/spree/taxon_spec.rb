@@ -1,12 +1,10 @@
-# coding: UTF-8
-
+# coding: utf-8
 require 'spec_helper'
 
 describe Spree::Taxon do
   let(:taxon) { Spree::Taxon.new(:name => "Ruby on Rails") }
 
   context "set_permalink" do
-
     it "should set permalink correctly when no parent present" do
       taxon.set_permalink
       taxon.permalink.should == "ruby-on-rails"
@@ -45,12 +43,12 @@ describe Spree::Taxon do
 
   # Regression test for #2620
   context "creating a child node using first_or_create" do
-    let(:taxonomy) { FactoryGirl.create(:taxonomy) }
+    let(:taxonomy) { create(:taxonomy) }
 
     it "does not error out" do
-      action = lambda { taxonomy.root.children.where(:name => "Some name").first_or_create }
-      action.should_not raise_error
+      expect {
+        taxonomy.root.children.where(:name => "Some name").first_or_create
+        }.not_to raise_error
     end
   end
-
 end

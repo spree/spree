@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Core::Search::Base do
-
   before do
     include Spree::Core::ProductFilters
     @product1 = create(:product, :name => "RoR Mug", :price => 9.00, :on_hand => 1)
@@ -63,5 +62,4 @@ describe Spree::Core::Search::Base do
     searcher.current_currency = 'EUR'
     searcher.retrieve_products.should == [@product1]
   end
-
 end

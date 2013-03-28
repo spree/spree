@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Adjustments" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
     create(:adjustment, :adjustable => order, :state => 'open')
@@ -22,7 +22,7 @@ describe "Adjustments" do
   end
 
   context "admin creating a new adjustment" do
-    before(:each) do
+    before do
       click_link "New Adjustment"
     end
 
@@ -47,7 +47,7 @@ describe "Adjustments" do
   end
 
   context "admin editing an adjustment" do
-    before(:each) do
+    before do
       within_row(1) { click_icon :edit }
     end
 

@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 describe Spree::Order do
   let(:order) { Spree::Order.new }
 
@@ -38,11 +39,9 @@ describe Spree::Order do
       end
     end
   end
-  
 
   context "#price_adjustment_totals" do
     before { @order = Spree::Order.create! }
-
 
     context "when there are no price adjustments" do
       before { @order.stub :price_adjustments => [] }
@@ -127,4 +126,3 @@ describe Spree::Order do
     end
   end
 end
-

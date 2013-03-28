@@ -1,5 +1,4 @@
-# encoding: utf-8
-
+# coding: utf-8
 require 'spec_helper'
 
 describe Spree::Variant do
@@ -93,7 +92,6 @@ describe Spree::Variant do
           variant.save!
           variant.count_on_hand.should == -5
         end
-
       end
 
       context "and count is negative" do
@@ -108,9 +106,7 @@ describe Spree::Variant do
           variant.inventory_units.should_not_receive(:with_state)
           variant.on_hand = 10
         end
-
       end
-
     end
 
     context "when :track_inventory_levels is false" do
@@ -118,11 +114,9 @@ describe Spree::Variant do
 
       it "should raise an exception" do
         variant = create(:base_variant)
-        lambda { variant.on_hand = 100 }.should raise_error
+        expect { variant.on_hand = 100 }.to raise_error
       end
-
     end
-
   end
 
   context "on_hand" do
@@ -140,9 +134,7 @@ describe Spree::Variant do
       it "should return nil" do
         variant.on_hand.should eql(1.0/0) # Infinity
       end
-
     end
-
   end
 
   context "in_stock?" do
@@ -170,13 +162,12 @@ describe Spree::Variant do
       it "should be true" do
         variant.in_stock?.should be_true
       end
-
     end
 
     context "product has other variants" do
       describe "option value accessors" do
         before {
-          @multi_variant = FactoryGirl.create :variant, :product => variant.product
+          @multi_variant = create(:variant, :product => variant.product)
           variant.product.reload
         }
 
@@ -205,7 +196,6 @@ describe Spree::Variant do
         end
       end
     end
-
   end
 
   context "price parsing" do

@@ -1,10 +1,7 @@
-# encoding: utf-8
-#
-
+# coding: utf-8
 require 'spec_helper'
 
 describe Spree::Adjustment do
-
   let(:order) { mock_model(Spree::Order, :update! => nil) }
   let(:adjustment) { Spree::Adjustment.new }
 
@@ -121,17 +118,21 @@ describe Spree::Adjustment do
     context "with no originator" do
       specify { adjustment.should be_eligible_for_originator }
     end
+
     context "with originator that doesn't have 'eligible?'" do
       before { adjustment.originator = mock_model(Spree::TaxRate) }
       specify { adjustment.should be_eligible_for_originator }
     end
+
     context "with originator that has 'eligible?'" do
       let(:originator) { Spree::TaxRate.new }
       before { adjustment.originator = originator }
+
       context "and originator is eligible for order" do
         before { originator.stub(:eligible? => true) }
         specify { adjustment.should be_eligible_for_originator }
       end
+
       context "and originator is not eligible for order" do
         before { originator.stub(:eligible? => false) }
         specify { adjustment.should_not be_eligible_for_originator }

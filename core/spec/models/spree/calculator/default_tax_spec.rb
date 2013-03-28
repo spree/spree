@@ -47,10 +47,8 @@ describe Spree::Calculator::DefaultTax do
             # Amount is 0.51665, which will be rounded to...
             calculator.compute(order).should == 0.52
           end
-
         end
       end
-
 
       context "when more than one item matches the tax category" do
         it "should be equal to the sum of the item totals * rate" do

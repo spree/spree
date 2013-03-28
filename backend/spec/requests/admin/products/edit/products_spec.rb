@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# coding: utf-8
 require 'spec_helper'
 
 describe 'Product Details' do
@@ -49,7 +49,6 @@ describe 'Product Details' do
       fill_in "product_permalink", :with => 'another-random-permalink-value'
       click_button "Update"
       page.should have_content("successfully updated!")
-
     end
   end
 end

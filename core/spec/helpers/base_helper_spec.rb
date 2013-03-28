@@ -58,11 +58,11 @@ describe Spree::BaseHelper do
     end
 
     it "should not raise errors when style exists" do
-      lambda { very_strange_image(product) }.should_not raise_error
+      expect { very_strange_image(product) }.not_to raise_error
     end
 
     it "should raise NoMethodError when style is not exists" do
-      lambda { another_strange_image(product) }.should raise_error(NoMethodError)
+      expect { another_strange_image(product) }.to raise_error(NoMethodError)
     end
 
   end
@@ -127,6 +127,7 @@ describe Spree::BaseHelper do
       # Because the controller_name method returns "test"
       # controller_name is used by this method to infer what it is supposed
       # to be generating meta_data_tags for
+      # This test fails randomly!
       text = Faker::Lorem.paragraphs(2).join(" ")
       @test = Spree::Product.new(:description => text)
       tags = Nokogiri::HTML.parse(meta_data_tags)

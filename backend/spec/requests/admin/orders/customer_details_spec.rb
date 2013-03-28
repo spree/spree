@@ -95,7 +95,6 @@ describe "Customer Details" do
     page.should have_content("Shipping address first name can't be blank")
   end
 
-
   # Regression test for #942
   context "errors when no shipping methods are available" do
     before do
@@ -114,10 +113,7 @@ describe "Customer Details" do
       fill_in "order_ship_address_attributes_zipcode",    :with => "20170"
       fill_in "order_ship_address_attributes_state_name", :with => "Alabama"
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
-      lambda { click_button "Continue" }.should_not raise_error(NoMethodError)
+      expect { click_button "Continue" }.not_to raise_error(NoMethodError)
     end
-
-
   end
-
 end

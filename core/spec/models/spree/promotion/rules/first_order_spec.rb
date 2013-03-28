@@ -12,7 +12,7 @@ describe Spree::Promotion::Rules::FirstOrder do
   context "first order" do
     context "for a signed user" do
       context "with no completed orders" do
-        before(:each) do
+        before do
           user.stub_chain(:orders, :complete => [])
         end
 
@@ -27,7 +27,7 @@ describe Spree::Promotion::Rules::FirstOrder do
       end
 
       context "with completed orders" do
-        before(:each) do
+        before do
           order.stub(:user => user)
         end
 

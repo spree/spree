@@ -4,7 +4,7 @@ describe "Analytics Tracker" do
   stub_authorization!
 
   context "index" do
-    before(:each) do
+    before do
       2.times { create(:tracker, :environment => "test") }
       visit spree.admin_path
       click_link "Configuration"
@@ -31,7 +31,7 @@ describe "Analytics Tracker" do
    end
 
   context "create" do
-    before(:each) do
+    before do
       visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"

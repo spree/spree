@@ -24,7 +24,6 @@ describe Spree::Shipment do
   end
 
   context "#update!" do
-
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
         shipment.state = "shipped"
@@ -93,7 +92,6 @@ describe Spree::Shipment do
   end
 
   context "when track_inventory is false" do
-
     before { Spree::Config.set :track_inventory_levels => false }
     after { Spree::Config.set :track_inventory_levels => true }
 
@@ -103,7 +101,6 @@ describe Spree::Shipment do
       order.stub :line_items => line_items
       shipment.line_items.should == line_items
     end
-
   end
 
   context "when order is completed" do
@@ -113,7 +110,6 @@ describe Spree::Shipment do
       order.stub :completed? => true
       order.stub :canceled? => false
     end
-
 
     context "with inventory tracking" do
       before { Spree::Config.set :track_inventory_levels => true }
@@ -126,7 +122,6 @@ describe Spree::Shipment do
         shipment.inventory_units = [create(:inventory_unit)]
         shipment.valid?.should be_true
       end
-
     end
 
     context "without inventory tracking" do
@@ -136,7 +131,6 @@ describe Spree::Shipment do
         shipment.valid?.should be_true
       end
     end
-
   end
 
   context "#ship" do

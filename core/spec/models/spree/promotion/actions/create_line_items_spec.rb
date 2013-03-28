@@ -44,4 +44,3 @@ describe Spree::Promotion::Actions::CreateLineItems do
     end
   end
 end
-

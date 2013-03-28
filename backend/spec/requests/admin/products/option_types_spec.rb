@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Option Types" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Products"
   end

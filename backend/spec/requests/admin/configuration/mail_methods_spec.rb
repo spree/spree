@@ -3,13 +3,13 @@ require 'spec_helper'
 describe "Mail Methods" do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link "Configuration"
   end
 
   context "index" do
-    before(:each) do
+    before do
       create(:mail_method)
       click_link "Mail Methods"
     end
@@ -60,6 +60,5 @@ describe "Mail Methods" do
       mail_method.reload
       mail_method.preferred_smtp_password.should_not be_blank
     end
-
   end
 end

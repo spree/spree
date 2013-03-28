@@ -232,7 +232,7 @@ describe Spree::LineItem do
       line_item = create(:line_item)
       adjustment = line_item.adjustments.create(:amount => 10, :label => "test")
       line_item.destroy
-      lambda { adjustment.reload }.should raise_error(ActiveRecord::RecordNotFound)
+      expect { adjustment.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 

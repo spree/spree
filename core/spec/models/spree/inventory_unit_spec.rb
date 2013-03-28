@@ -7,12 +7,10 @@ describe Spree::InventoryUnit do
 
   context "#assign_opening_inventory" do
     context "when order is complete" do
-
       it "should increase inventory" do
         Spree::InventoryUnit.should_receive(:increase).with(order, variant, 5).and_return([])
         Spree::InventoryUnit.assign_opening_inventory(order)
       end
-
     end
 
     context "when order is not complete" do
@@ -22,7 +20,6 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.should_not_receive(:increase)
         Spree::InventoryUnit.assign_opening_inventory(order).should == []
       end
-
     end
   end
 
@@ -37,7 +34,6 @@ describe Spree::InventoryUnit do
         variant.should_receive(:decrement!).with(:count_on_hand, 5)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
-
     end
 
     context "when :track_inventory_levels is false" do
@@ -50,7 +46,6 @@ describe Spree::InventoryUnit do
         variant.should_not_receive(:decrement!)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
-
     end
 
     context "when on_demand is true" do
@@ -63,7 +58,6 @@ describe Spree::InventoryUnit do
         variant.should_not_receive(:decrement!)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
-
     end
 
     context "when :create_inventory_units is true" do
@@ -76,7 +70,6 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.should_receive(:create_units)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
-
     end
 
     context "when :create_inventory_units is false" do
@@ -89,9 +82,7 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.should_not_receive(:create_units)
         Spree::InventoryUnit.increase(order, variant, 5)
       end
-
     end
-
   end
 
   context "#decrease" do
@@ -105,7 +96,6 @@ describe Spree::InventoryUnit do
         variant.should_receive(:increment!).with(:count_on_hand, 5)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
-
     end
 
     context "when :track_inventory_levels is false" do
@@ -118,7 +108,6 @@ describe Spree::InventoryUnit do
         variant.should_not_receive(:increment!)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
-
     end
 
     context "when on_demand is true" do
@@ -131,7 +120,6 @@ describe Spree::InventoryUnit do
         variant.should_not_receive(:increment!)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
-
     end
 
     context "when :create_inventory_units is true" do
@@ -144,7 +132,6 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.should_receive(:destroy_units).with(order, variant, 5)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
-
     end
 
     context "when :create_inventory_units is false" do
@@ -157,9 +144,7 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.should_not_receive(:destroy_units)
         Spree::InventoryUnit.decrease(order, variant, 5)
       end
-
     end
-
   end
 
   context "#determine_backorder" do
@@ -214,7 +199,6 @@ describe Spree::InventoryUnit do
         Spree::InventoryUnit.determine_backorder(order, variant, 5).should == 0
       end
     end
-
   end
 
   context "#create_units" do
@@ -229,7 +213,6 @@ describe Spree::InventoryUnit do
         order.inventory_units.should_receive(:create).with({:variant => variant, :state => "backordered", :shipment => shipment}, :without_protection => true).exactly(3).times
         Spree::InventoryUnit.create_units(order, variant, 2, 3)
       end
-
     end
 
     context "when :allow_backorders is false" do
@@ -239,9 +222,7 @@ describe Spree::InventoryUnit do
         order.inventory_units.should_receive(:create).with({:variant => variant, :state => "sold", :shipment => shipment}, :without_protection => true).exactly(2).times
         Spree::InventoryUnit.create_units(order, variant, 2, 0)
       end
-
     end
-
   end
 
   context "#destroy_units" do
@@ -305,7 +286,5 @@ describe Spree::InventoryUnit do
         inventory_unit.return!
       end
     end
-
   end
 end
-

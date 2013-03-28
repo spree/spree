@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Admin::SearchController do
   stub_authorization!
+
   # Regression test for ernie/ransack#176
   let(:user) { create(:user, :email => "spree_commerce@example.com") }
 
@@ -35,5 +36,4 @@ describe Spree::Admin::SearchController do
     spree_xhr_get :users, :q => user.bill_address.lastname
     assigns[:users].should include(user)
   end
-
 end

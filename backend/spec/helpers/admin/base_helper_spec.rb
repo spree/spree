@@ -14,5 +14,4 @@ describe Spree::Admin::BaseHelper do
       datepicker_field_value(date).should == "2013/08/14"
     end
   end
-
 end

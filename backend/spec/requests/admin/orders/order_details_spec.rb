@@ -13,7 +13,7 @@ describe "Order Details" do
       create(:country)
     end
 
-    after(:each) { I18n.reload! }
+    after { I18n.reload! }
 
     let(:product) { create(:product, :name => 'spree t-shirt', :on_hand => 5, :price => 19.99) }
     let(:order) { create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100") }
@@ -65,7 +65,6 @@ describe "Order Details" do
         find("#shipment_status").text.should == "some text"
         find("#payment_status").text.should == "other text"
       end
-
     end
   end
 end

@@ -4,7 +4,7 @@ describe "Inventory Settings" do
   stub_authorization!
 
   context "changing settings" do
-    before(:each) do
+    before do
       configure_spree_preferences do |config|
         config.allow_backorders = true
       end

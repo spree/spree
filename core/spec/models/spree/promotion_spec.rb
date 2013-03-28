@@ -126,10 +126,10 @@ describe Spree::Promotion do
      it "should have its usage limit exceeded" do
        promotion.usage_limit = 2
        promotion.stub(:credits_count => 2)
-       promotion.usage_limit_exceeded?.should == true
+       promotion.usage_limit_exceeded?.should be_true
 
        promotion.stub(:credits_count => 3)
-       promotion.usage_limit_exceeded?.should == true
+       promotion.usage_limit_exceeded?.should be_true
      end
    end
 
