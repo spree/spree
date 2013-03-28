@@ -74,6 +74,7 @@ describe Spree::CheckoutController do
           order.stub :user => user
 
           # Must have *a* shipping method and a payment method so updating from address works
+          order.stub :available_shipping_methods => [stub_model(Spree::ShippingMethod)]
           order.stub :available_payment_methods => [stub_model(Spree::PaymentMethod)]
         end
 
@@ -192,7 +193,7 @@ describe Spree::CheckoutController do
   context "When last inventory item has been purchased" do
     let(:product) { mock_model(Spree::Product, :name => "Amazing Object") }
     let(:variant) { mock_model(Spree::Variant) }
-    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true, :amount => 0 }
     let(:order) { create(:order) }
 
     before do
