@@ -16,6 +16,22 @@
       <%= f.label :icon, t(:icon) %><br />
       <%= f.file_field :icon %>
     <% end %>
+
+    <%= f.field_container :meta_title do %>
+      <%= f.label :meta_title, t(:meta_title) %><br />
+      <%= f.text_field :meta_title, :class => 'fullwidth', :rows => 6 %>
+    <% end %>
+
+    <%= f.field_container :meta_description do %>
+      <%= f.label :meta_description, t(:meta_description) %><br />
+      <%= f.text_field :meta_description, :class => 'fullwidth', :rows => 6 %>
+    <% end %>
+
+    <%= f.field_container :meta_description do %>
+      <%= f.label :meta_keywords, t(:meta_keywords) %><br />
+      <%= f.text_field :meta_keywords, :class => 'fullwidth', :rows => 6 %>
+    <% end %>
+
   </div>
 
   <div class="omega seven columns">
@@ -24,4 +40,5 @@
       <%= f.text_area :description, :class => 'fullwidth', :rows => 6 %>
     <% end %>
   </div>
+
 </div>
