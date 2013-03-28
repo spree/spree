@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Preferences::Store do
-  before :each do
+  before do
     @store = Spree::Preferences::StoreInstance.new
   end
 
@@ -43,5 +43,4 @@ describe Spree::Preferences::Store do
   it "should return nil when key can't be found and fallback value is not supplied" do
     @store.get(:random_key).should be_nil
   end
-
 end

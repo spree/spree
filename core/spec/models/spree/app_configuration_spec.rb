@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::AppConfiguration do
-
   let (:prefs) { Rails.application.config.spree.preferences }
 
   it "should be available from the environment" do
@@ -18,6 +17,4 @@ describe Spree::AppConfiguration do
     prefs.searcher_class = nil
     prefs.searcher_class.should eq Spree::Core::Search::Base
   end
-
 end
-

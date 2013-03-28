@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::CreditCard do
-
   let(:valid_credit_card_attributes) { {:number => '4111111111111111', :verification_value => '123', :month => 12, :year => 2014} }
 
   def self.payment_states
@@ -14,8 +13,7 @@ describe Spree::CreditCard do
 
   let(:credit_card) { Spree::CreditCard.new }
 
-  before(:each) do
-
+  before do
     @order = create(:order)
     @payment = Spree::Payment.create({:amount => 100, :order => @order}, :without_protection => true)
 
@@ -50,7 +48,6 @@ describe Spree::CreditCard do
                                                :order => mock_model(Spree::Order, :payment_state => 'credit_owed')) }
 
     context "#can_credit?" do
-
       it "should be true when payment state is 'completed' and order payment_state is 'credit_owed' and credit_allowed is greater than amount" do
         credit_card.can_credit?(payment).should be_true
       end
@@ -71,7 +68,6 @@ describe Spree::CreditCard do
           credit_card.can_credit?(payment).should be_false
         end
       end
-
     end
 
     context "#can_void?" do
@@ -105,7 +101,6 @@ describe Spree::CreditCard do
         payment.stub :state => 'void'
         credit_card.can_void?(payment).should be_false
       end
-
     end
   end
 
@@ -176,7 +171,7 @@ describe Spree::CreditCard do
   end
 
   context "#set_card_type" do
-    before :each do
+    before do
       stub_rails_env("production")
       credit_card.attributes = valid_credit_card_attributes
     end
@@ -213,8 +208,7 @@ describe Spree::CreditCard do
 
   context "#associations" do
     it "should be able to access its payments" do
-      lambda { credit_card.payments.all }.should_not raise_error ActiveRecord::StatementInvalid
+      expect { credit_card.payments.all }.not_to raise_error ActiveRecord::StatementInvalid
     end
   end
 end
-

@@ -23,7 +23,6 @@ describe Spree::Zone do
     context "when there are two qualified zones with same member type" do
       let(:address) { create(:address, :country => country, :state => country.states.first) }
       let(:second_zone) { create(:zone, :name => "SecondZone") }
-
       before { second_zone.members.create(:zoneable => country) }
 
       context "when both zones have the same number of members" do
@@ -34,7 +33,6 @@ describe Spree::Zone do
 
       context "when one of the zones has fewer members" do
         let(:country2) { create(:country) }
-
         before { country_zone.members.create(:zoneable => country2) }
 
         it "should return the zone with fewer members" do
@@ -46,7 +44,6 @@ describe Spree::Zone do
     context "when there are two qualified zones with different member types" do
       let(:state_zone) { create(:zone, :name => "StateZone") }
       let(:address) { create(:address, :country => country, :state => country.states.first) }
-
       before { state_zone.members.create(:zoneable => country.states.first) }
 
       it "should return the zone with the more specific member type" do
@@ -67,7 +64,6 @@ describe Spree::Zone do
 
     context "when zone consists of countries" do
       let(:country_zone) { create(:zone, :name => "CountryZone") }
-
       before { country_zone.members.create(:zoneable => country) }
 
       it 'should return a list of countries' do
@@ -77,7 +73,6 @@ describe Spree::Zone do
 
     context "when zone consists of states" do
       let(:state_zone) { create(:zone, :name => "StateZone") }
-
       before { state_zone.members.create(:zoneable => state) }
 
       it 'should return a list of countries' do
@@ -220,7 +215,6 @@ describe Spree::Zone do
       before { @source.members.create(:zoneable => country1) }
 
       context "when all states contained in one of the countries we check against" do
-
         before do
           state1 = create(:state, :country => country1)
           @target.members.create(:zoneable => state1)
@@ -232,7 +226,6 @@ describe Spree::Zone do
       end
 
       context "when some states contained in one of the countries we check against" do
-
         before do
           state1 = create(:state, :country => country1)
           @target.members.create(:zoneable => state1)
@@ -245,7 +238,6 @@ describe Spree::Zone do
       end
 
       context "when none of the states contained in any of the countries we check against" do
-
         before do
           @target.members.create(:zoneable => create(:state, :country => country2))
           @target.members.create(:zoneable => create(:state, :country => country2))
@@ -256,7 +248,6 @@ describe Spree::Zone do
         end
       end
     end
-
   end
 
   context "#save" do
@@ -264,7 +255,7 @@ describe Spree::Zone do
       it "should clear previous default tax zone" do
         zone1 = create(:zone, :name => "foo", :default_tax => true)
         zone = create(:zone, :name => "bar", :default_tax => true)
-        zone1.reload.default_tax.should == false
+        zone1.reload.default_tax.should be_false
       end
     end
 

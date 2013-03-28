@@ -39,5 +39,4 @@ describe Spree::Calculator::PercentPerItem do
     calculator.stub(:calculable => promotion_calculable)
     calculator.send(:compute_on_promotion?).should be_true
   end
-
 end

@@ -5,7 +5,7 @@ describe Spree::Promo::CouponApplicator do
     Spree::Promo::CouponApplicator.new(order)
   end
 
-  describe "#apply" do
+  context "#apply" do
     let(:order) { create(:order, :state => "payment", :coupon_code => "tenoff") }
 
     it "can apply a coupon code to an order" do

@@ -1,5 +1,4 @@
-# encoding: utf-8
-
+# coding: utf-8
 require 'spec_helper'
 
 class FakeCalculator < Spree::Calculator
@@ -324,7 +323,6 @@ describe Spree::Order do
 
   context "insufficient_stock_lines" do
     let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
-
     before { order.stub(:line_items => [line_item]) }
 
     it "should return line_item that has insufficient stock on hand" do
@@ -415,7 +413,7 @@ describe Spree::Order do
 
     it "destroys the other order" do
       order_1.merge!(order_2)
-      lambda { order_2.reload }.should raise_error(ActiveRecord::RecordNotFound)
+      expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     context "merging together two orders with line items for the same variant" do

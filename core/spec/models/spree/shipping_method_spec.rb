@@ -10,7 +10,7 @@ describe Spree::ShippingMethod do
   end
 
   context 'available?' do
-    before(:each) do
+    before do
       @shipping_method = create(:shipping_method)
       variant = create(:variant, :product => create(:product))
       @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
@@ -40,7 +40,7 @@ describe Spree::ShippingMethod do
   end
 
   context 'available_to_order?' do
-    before(:each) do
+    before do
       @shipping_method = create(:shipping_method)
       @shipping_method.zone.stub(:include? => true)
       @shipping_method.stub(:available? => true)
@@ -89,7 +89,7 @@ describe Spree::ShippingMethod do
 
   context "#category_match?" do
     context "when no category is specified" do
-      before(:each) do
+      before do
         @shipping_method = create(:shipping_method)
       end
 
@@ -102,7 +102,7 @@ describe Spree::ShippingMethod do
       before { @shipping_method = create(:shipping_method_with_category) }
 
       context "when all products match" do
-        before(:each) do
+        before do
           variant = create(:variant, :product => create(:product, :shipping_category => @shipping_method.shipping_category))
           @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
         end
@@ -133,7 +133,7 @@ describe Spree::ShippingMethod do
       end
 
       context "when no products match" do
-        before(:each) do
+        before do
           variant = create(:variant, :product => create(:product, :shipping_category => create(:shipping_category)))
           @order = create(:order, :line_items => [create(:line_item, :variant => variant)])
         end
@@ -164,7 +164,7 @@ describe Spree::ShippingMethod do
       end
 
       context "when some products match" do
-        before(:each) do
+        before do
           variant1 = create(:variant, :product => create(:product, :shipping_category => @shipping_method.shipping_category))
           variant2 = create(:variant, :product => create(:product, :shipping_category => create(:shipping_category)))
           @order = create(:order, :line_items => [create(:line_item, :variant => variant1), create(:line_item, :variant => variant2)])

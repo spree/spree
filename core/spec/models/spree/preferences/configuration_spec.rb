@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Preferences::Configuration do
-
   before :all do
     class AppConfig < Spree::Preferences::Configuration
       preference :color, :string, :default => :blue
@@ -23,8 +22,4 @@ describe Spree::Preferences::Configuration do
     @config.set :color, 'green'
     @config.get(:color).should eq 'green'
   end
-
 end
-
-
-

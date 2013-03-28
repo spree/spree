@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Preferences::Preferable do
-
-  before :all do
+  before(:all) do
     class A
       include Spree::Preferences::Preferable
       attr_reader :id
@@ -19,7 +18,7 @@ describe Spree::Preferences::Preferable do
     end
   end
 
-  before :each do
+  before do
     @a = A.new
     @a.stub(:persisted? => true)
     @b = B.new
@@ -54,9 +53,9 @@ describe Spree::Preferences::Preferable do
     end
 
     it "can be asked and raises" do
-      lambda {
+      expect {
         @a.has_preference! :flavor
-      }.should raise_error(NoMethodError, "flavor preference not defined")
+      }.to raise_error(NoMethodError, "flavor preference not defined")
     end
 
     it "has a type" do
@@ -75,11 +74,10 @@ describe Spree::Preferences::Preferable do
     end
 
     it "raises if not defined" do
-      lambda {
+      expect {
         @a.get_preference :flavor
-      }.should raise_error(NoMethodError, "flavor preference not defined")
+      }.to raise_error(NoMethodError, "flavor preference not defined")
     end
-
   end
 
   describe "preference access" do
@@ -106,9 +104,9 @@ describe Spree::Preferences::Preferable do
     end
 
     it "raises when preference not defined" do
-      lambda {
+      expect {
         @a.set_preference(:bad, :bone)
-      }.should raise_exception(NoMethodError, "bad preference not defined")
+      }.to raise_exception(NoMethodError, "bad preference not defined")
     end
 
     it "builds a hash of preferences" do
@@ -147,7 +145,6 @@ describe Spree::Preferences::Preferable do
         @a.set_preference(:is_integer, '')
         @a.preferences[:is_integer].should == 0
       end
-
     end
 
     context "converts decimal preferences to BigDecimal values" do
@@ -219,7 +216,6 @@ describe Spree::Preferences::Preferable do
         @a.preferences[:product_attributes].should == {:id => 1, :name => 2}
       end
     end
-
   end
 
   describe "persisted preferables" do
@@ -251,7 +247,7 @@ describe Spree::Preferences::Preferable do
       ActiveRecord::Migration.verbose = @migration_verbosity
     end
 
-    before(:each) do
+    before do
       @pt = PrefTest.create
     end
 
@@ -325,7 +321,4 @@ describe Spree::Preferences::Preferable do
     @a.has_preference?(:test_temp).should be_false
     @a.respond_to?(:preferred_test_temp).should be_false
   end
-
 end
-
-

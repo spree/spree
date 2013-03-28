@@ -4,7 +4,6 @@ require 'spec_helper'
 # extends ActiveRecord::Base and has a corresponding table in the database.  So we'll just test it using Order and
 # ShippingMethod instead since those classes are including the module.
 describe Spree::Core::CalculatedAdjustments do
-
   let(:calculator) { mock_model(Spree::Calculator, :compute => 10, :[]= => nil) }
 
   it "should add has_one :calculator relationship" do
@@ -54,7 +53,6 @@ describe Spree::Core::CalculatedAdjustments do
         end
       end
     end
-
   end
 
   context "#update_adjustment" do
@@ -65,5 +63,4 @@ describe Spree::Core::CalculatedAdjustments do
       tax_rate.update_adjustment(adjustment, calculable)
     end
   end
-
 end
