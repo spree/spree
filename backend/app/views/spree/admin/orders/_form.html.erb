@@ -73,7 +73,7 @@
           <tr class="edit-method hidden total">
             <td colspan="5">
               <div class="field alpha five columns">
-                <label><%= t(:shipping_method) %>:</label>
+                <%= label_tag 'selected_shipping_rate_id', t(:shipping_method) %>
                 <%= select_tag :selected_shipping_rate_id,
                       options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
                       {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
