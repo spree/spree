@@ -239,6 +239,11 @@ You can also enable fail fast in order to stop tests at the first failure
 FAIL_FAST=true bundle exec rspec spec/models/state_spec.rb
 ```
 
+If you want to run the simplecov code coverage report
+```shell
+COVERAGE=true bundle exec rspec spec
+```
+
 Contributing
 ------------
 
