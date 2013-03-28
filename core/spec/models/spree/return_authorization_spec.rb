@@ -2,57 +2,48 @@ require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
   let(:stock_location) {Spree::StockLocation.create(:name => "test")}
-  let(:variant) {FactoryGirl.create(:variant)}
-  let(:inventory_unit) { Spree::InventoryUnit.create({:variant => variant, :state => "shipped", :shipment => FactoryGirl.create(:shipment)}, :without_protection => true) }
-  let(:order) { mock_model(Spree::Order, :inventory_units => [inventory_unit], :shipped_shipments => [], :awaiting_return? => false) }
-  let(:full_order) { FactoryGirl.create(:shipped_order)}
-  let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order, :stock_location_id => stock_location.id}, :without_protection => true) }
-  let(:full_return_authorization) { Spree::ReturnAuthorization.new({:order => full_order, :inventory_units => [inventory_unit], :stock_location_id => stock_location.id}, :without_protection => true) }
+  let(:order) { FactoryGirl.create(:shipped_order)}
+  let(:variant) { order.shipments.first.inventory_units.first.variant }
+  let(:return_authorization) { Spree::ReturnAuthorization.new({:order => order,
+                                                               :stock_location_id => stock_location.id}, :without_protection => true) }
 
-  before do 
-    inventory_unit.stub(:shipped?).and_return(true) 
-  end
-
-  context "save" do
+    context "save" do
     it "should be invalid when order has no inventory units" do
-      inventory_unit.stub(:shipped?).and_return(false)
+      order.shipments.destroy_all
       return_authorization.save
       return_authorization.errors[:order].should == ["has no shipped units"]
     end
 
     it "should generate RMA number" do
-      full_return_authorization.should_receive(:generate_number)
-      full_return_authorization.save
+      return_authorization.should_receive(:generate_number)
+      return_authorization.save
     end
   end
 
   context "add_variant" do
     context "on empty rma" do
       it "should associate inventory unit" do
-        return_authorization.add_variant(inventory_unit.variant.id, 1)
+        return_authorization.add_variant(variant.id, 1)
         return_authorization.inventory_units.size.should == 1
-        inventory_unit.return_authorization.should == return_authorization
       end
 
       it "should update order state" do
         order.should_receive(:authorize_return!)
-        return_authorization.add_variant(inventory_unit.variant.id, 1)
+        return_authorization.add_variant(variant.id, 1)
       end
     end
 
     context "on rma that already has inventory_units" do
-      let(:inventory_unit_2)  { Spree::InventoryUnit.create({:variant => inventory_unit.variant, :state => "shipped"}, :without_protection => true) }
-      before { order.stub(:inventory_units => [inventory_unit, inventory_unit_2], :awaiting_return? => true) }
+      before { order.stub(:awaiting_return? => true) }
 
       it "should associate inventory unit" do
         order.stub(:authorize_return!)
-        return_authorization.add_variant(inventory_unit.variant.id, 2)
+        return_authorization.add_variant(variant.id, 2)
         return_authorization.inventory_units.size.should == 2
-        inventory_unit_2.return_authorization.should == return_authorization
       end
 
       it "should not update order state" do
-        return_authorization.add_variant(inventory_unit.variant.id, 1)
+        return_authorization.add_variant(variant.id, 1)
       end
 
     end
@@ -61,18 +52,20 @@ describe Spree::ReturnAuthorization do
 
   context "can_receive?" do
     it "should allow_receive when inventory units assigned" do
-      return_authorization.stub(:inventory_units => [inventory_unit])
+      return_authorization.stub(:inventory_units => [1,2,3])
       return_authorization.can_receive?.should be_true
     end
 
     it "should not allow_receive with no inventory units" do
+      return_authorization.stub(:inventory_units => [])
       return_authorization.can_receive?.should be_false
     end
   end
 
   context "receive!" do
+    let(:inventory_unit) { order.shipment.inventory_units.first }
+
     before  do
-      inventory_unit.stub(:state => "shipped", :return! => true)
       return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
       Spree::Adjustment.stub(:create)
       order.stub(:update!)
@@ -80,22 +73,22 @@ describe Spree::ReturnAuthorization do
 
     it "should mark all inventory units are returned" do
       inventory_unit.should_receive(:return!)
-      full_return_authorization.receive!
+      return_authorization.receive!
     end
 
     it "should add credit for specified amount" do
-      full_return_authorization.amount = 20
+      return_authorization.amount = 20
       mock_adjustment = mock
-      mock_adjustment.should_receive(:source=).with(full_return_authorization)
+      mock_adjustment.should_receive(:source=).with(return_authorization)
       mock_adjustment.should_receive(:adjustable=).with(order)
       mock_adjustment.should_receive(:save)
       Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => I18n.t(:rma_credit)).and_return(mock_adjustment)
-      full_return_authorization.receive!
+      return_authorization.receive!
     end
 
     it "should update order state" do
       order.should_receive :update!
-      full_return_authorization.receive!
+      return_authorization.receive!
     end
   end
 
