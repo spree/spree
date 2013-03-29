@@ -33,7 +33,7 @@ describe Spree::Variant do
     copy.save!
 
     variant.count_on_hand = 100
-    expect { variant.save }.to raise_error ActiveRecord::StaleObjectError
+    expect { variant.save }.to raise_error(ActiveRecord::StaleObjectError)
 
     variant.reload.count_on_hand.should == 200
     variant.count_on_hand = 100
@@ -118,7 +118,7 @@ describe Spree::Variant do
 
       it "should raise an exception" do
         variant = create(:base_variant)
-        lambda { variant.on_hand = 100 }.should raise_error
+        expect { variant.on_hand = 100 }.to raise_error
       end
 
     end
@@ -176,7 +176,7 @@ describe Spree::Variant do
     context "product has other variants" do
       describe "option value accessors" do
         before {
-          @multi_variant = FactoryGirl.create :variant, :product => variant.product
+          @multi_variant = create(:variant, :product => variant.product)
           variant.product.reload
         }
 

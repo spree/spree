@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Order do
+  describe Spree::Order do
     let(:order) { stub_model(Spree::Order) }
 
     context "#tax_zone" do

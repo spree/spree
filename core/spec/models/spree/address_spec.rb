@@ -62,7 +62,7 @@ describe Spree::Address do
 
     let(:country) { mock_model(Spree::Country, :states => [state], :states_required => true) }
     let(:state) { stub_model(Spree::State, :name => 'maryland', :abbr => 'md') }
-    let(:address) { FactoryGirl.build(:address, :country => country) }
+    let(:address) { build(:address, :country => country) }
 
     before do
       country.states.stub :find_all_by_name_or_abbr => [state]
