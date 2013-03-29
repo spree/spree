@@ -58,6 +58,20 @@ describe "Stock Management" do
         end
       end
 
+      it "can create a new negative stock movement", js: true do
+        click_link "Stock Management"
+
+        fill_in "stock_movement_quantity", with: -5
+        select2 "default", from: "Stock Location"
+        click_button "Add Stock"
+
+        page.should have_content('successfully created')
+
+        within(:css, '.stock_location_info table') do
+          column_text(2).should eq '5'
+        end
+      end
+
       context "with multiple variants" do
         before do
           v = @product.variants.create!(sku: 'SPREEC')
