@@ -21,7 +21,7 @@ describe Spree::OrderPopulator do
       end
 
       it "should add an error if the variant is out of stock" do
-        variant.stub :available? => false
+        Spree::Stock::Quantifier.any_instance.stub(can_supply?: false)
 
         order.should_not_receive(:add_variant)
         subject.populate(:products => { 1 => 2 }, :quantity => 1)
@@ -32,7 +32,9 @@ describe Spree::OrderPopulator do
       # Regression test for #2430
       context "respects allow_backorders setting" do
         before do
-          variant.stub :available? => true
+          Spree::Config[:allow_backorders] = true
+          # Variant is available due to allow_backorders
+          Spree::Stock::Quantifier.any_instance.stub(can_supply?: true)
         end
 
         it "allows an order to be populated, even though item stock is depleted" do

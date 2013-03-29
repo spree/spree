@@ -11,6 +11,9 @@ FactoryGirl.define do
     # associations:
     product { |p| p.association(:base_product) }
     option_values { [FactoryGirl.create(:option_value)] }
+
+    # ensure stock item will be created for this variant
+    before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
   end
 
   factory :variant, :parent => :base_variant do

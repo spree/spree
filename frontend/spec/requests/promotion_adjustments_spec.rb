@@ -6,7 +6,7 @@ describe "Promotion adjustments", :js => true do
   let!(:zone) { create(:zone) }
   let!(:shipping_method) do
     shipping_method = create(:shipping_method)
-    calculator = Spree::Calculator::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
+    calculator = Spree::Calculator::Shipping::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
     shipping_method.calculator = calculator
     shipping_method.save
 

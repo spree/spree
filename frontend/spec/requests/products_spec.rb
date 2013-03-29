@@ -145,7 +145,7 @@ describe "Visiting Products" do
   end
 
   it "should be able to put a product without a description in the cart" do
-    product = FactoryGirl.create(:simple_product, :description => nil, :name => 'Sample', :price => '19.99')
+    product = FactoryGirl.create(:base_product, :description => nil, :name => 'Sample', :price => '19.99')
     visit spree.product_path(product)
     page.should have_content "This product has no description"
     click_button 'add-to-cart-button'
@@ -153,11 +153,11 @@ describe "Visiting Products" do
   end
 
   it "shouldn't be able to put a product without a current price in the cart" do
-    product = FactoryGirl.create(:simple_product, :description => nil, :name => 'Sample', :price => '19.99') 
+    product = FactoryGirl.create(:base_product, :description => nil, :name => 'Sample', :price => '19.99')
     Spree::Config.currency = "CAN"
     Spree::Config.show_products_without_price = true
     visit spree.product_path(product)
     page.should have_content "This product is not available in the selected currency."
     page.should_not have_content "add-to-cart-button"
-  end  
+  end
 end

@@ -56,11 +56,6 @@ module Spree
       inventory_units.with_state('backordered').size
     end
 
-    # returns true if this variant is allowed to be placed on a new order
-    def available?
-      Spree::Config[:track_inventory_levels]
-    end
-
     def options_text
       values = self.option_values.joins(:option_type).order("#{Spree::OptionType.table_name}.position asc")
 

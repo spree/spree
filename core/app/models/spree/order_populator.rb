@@ -57,7 +57,7 @@ module Spree
       display_name = %Q{#{variant.name}}
       display_name += %Q{ (#{variant.options_text})} unless variant.options_text.blank?
 
-      if variant.available?
+      if Stock::Quantifier.new(variant).can_supply? quantity
         true
       else
         errors.add(:base, %Q{#{display_name.inspect} is out of stock.})

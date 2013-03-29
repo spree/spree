@@ -6,6 +6,7 @@ describe 'orders' do
 
   before do
     order.update_attribute(:user_id, user.id)
+    order.shipments.destroy_all
     Spree::OrdersController.any_instance.stub(:try_spree_current_user => user)
   end
 

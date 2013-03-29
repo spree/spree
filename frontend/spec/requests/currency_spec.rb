@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Switching currencies in backend" do
   before do
-    create(:simple_product, :name => "RoR Mug")
+    create(:base_product, :name => "RoR Mug")
   end
 
   # Regression test for #2340

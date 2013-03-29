@@ -4,7 +4,7 @@ FactoryGirl.define do
     price { BigDecimal.new('10.00') }
 
     # associations:
-    association(:order, :factory => :order)
-    association(:variant, :factory => :variant)
+    order
+    variant
   end
 end
