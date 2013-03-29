@@ -477,7 +477,6 @@ describe Spree::Order do
     end
 
     it "transitions from delivery to payment" do
-      persisted_order.shipping_method = shipping_method
       persisted_order.stub(payment_required?: true)
       persisted_order.next!
       persisted_order.state.should == "payment"

@@ -17,7 +17,7 @@ module Spree
       go_to_state :delivery
       go_to_state :payment, :if => lambda { |order|
         # Fix for #2191
-        if order.shipping_method
+        if order.shipments
           order.update_totals
         end
         order.payment_required?
@@ -31,7 +31,7 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
                     :ship_address, :bill_address, :payments_attributes, :line_items_attributes, :number,
-                    :shipping_method_id, :email, :use_billing, :special_instructions, :currency, :coupon_code,
+                    :email, :use_billing, :special_instructions, :currency, :coupon_code,
                     :shipments_attributes
 
     attr_reader :coupon_code
@@ -47,8 +47,6 @@ module Spree
 
     belongs_to :ship_address, :foreign_key => :ship_address_id, :class_name => "Spree::Address"
     alias_attribute :shipping_address, :ship_address
-
-    belongs_to :shipping_method
 
     has_many :state_changes, :as => :stateful
     has_many :line_items, :dependent => :destroy, :order => "created_at ASC"
