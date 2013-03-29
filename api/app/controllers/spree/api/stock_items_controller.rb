@@ -15,8 +15,16 @@ module Spree
 
       def create
         authorize! :create, StockItem
+
+        count_on_hand = 0
+        if params[:stock_item].has_key?(:count_on_hand)
+          count_on_hand = params[:stock_item][:count_on_hand].to_i
+          params[:stock_item].delete(:count_on_hand)
+        end
+
         @stock_item = scope.new(params[:stock_item])
         if @stock_item.save
+          @stock_item.adjust_count_on_hand(count_on_hand)
           respond_with(@stock_item, status: 201, default_template: :show)
         else
           invalid_resource!(@stock_item)
@@ -26,7 +34,14 @@ module Spree
       def update
         authorize! :update, StockItem
         @stock_item = StockItem.find(params[:id])
-        if @stock_item.update_attributes(params[:stock_item])
+
+        count_on_hand = 0
+        if params[:stock_item].has_key?(:count_on_hand)
+          count_on_hand = params[:stock_item][:count_on_hand].to_i
+          params[:stock_item].delete(:count_on_hand)
+        end
+
+        if @stock_item.adjust_count_on_hand(count_on_hand)
           respond_with(@stock_item, status: 200, default_template: :show)
         else
           invalid_resource!(@stock_item)

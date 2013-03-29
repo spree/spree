@@ -59,17 +59,6 @@ module Spree
         json_response.should have_attributes(attributes)
       end
 
-      it 'can update a stock movement' do
-        params = {
-          id: stock_movement.to_param,
-          stock_movement: {
-          }
-        }
-
-        api_put :update, params
-        response.status.should == 200
-      end
-
       it 'can delete a stock movement' do
         api_delete :destroy, id: stock_movement.to_param
         response.status.should == 204

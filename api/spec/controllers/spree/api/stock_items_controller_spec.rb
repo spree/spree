@@ -6,7 +6,8 @@ module Spree
 
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_item) { stock_location.stock_items.first }
-    let!(:attributes) { [:id, :count_on_hand, :backorderable, :lock_version, :stock_location_id, :variant_id] }
+    let!(:attributes) { [:id, :count_on_hand, :backorderable,
+                         :stock_location_id, :variant_id] }
 
     before do
       stub_authentication!
@@ -51,7 +52,8 @@ module Spree
         params = {
           stock_location_id: stock_location.to_param,
           stock_item: {
-            count_on_hand: '20',
+            variant_id: variant.id,
+            count_on_hand: '20'
           }
         }
 
@@ -70,7 +72,7 @@ module Spree
 
         api_put :update, params
         response.status.should == 200
-        json_response['count_on_hand'].should eq 40
+        json_response['count_on_hand'].should eq 50
       end
 
       it 'can delete a stock item' do
