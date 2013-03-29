@@ -1,17 +1,17 @@
 FactoryGirl.define do
-  factory :global_zone, :class => Spree::Zone do
+  factory :global_zone, class: Spree::Zone do
     name 'GlobalZone'
-    description { Faker::Lorem.sentence }
+    description { generate(:random_string) }
     zone_members do |proxy|
       zone = proxy.instance_eval { @instance }
       Spree::Country.all.map do |c|
-        zone_member = Spree::ZoneMember.create(:zoneable => c, :zone => zone)
+        zone_member = Spree::ZoneMember.create(zoneable: c, zone: zone)
       end
     end
   end
 
-  factory :zone, :class => Spree::Zone do
-    name { Faker::Lorem.sentence }
-    description { Faker::Lorem.sentence }
+  factory :zone, class: Spree::Zone do
+    name { generate(:random_string) }
+    description { generate(:random_string) }
   end
 end
