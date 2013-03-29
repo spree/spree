@@ -46,7 +46,7 @@ describe Spree::Calculator::PerItem do
     before { promotion.stub :rules => [double("Rule")] }
     specify do
       calculator.stub(:calculable => promotion_calculable)
-      lambda { calculator.matching_products }.should_not raise_error
+      expect { calculator.matching_products }.not_to raise_error
     end
   end
 end

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 module Spree
-  describe ProductDuplicator do
-    let(:product) do 
+  describe Spree::ProductDuplicator do
+    let(:product) do
       double 'Product',
         :name => "foo",
         :taxons => [],

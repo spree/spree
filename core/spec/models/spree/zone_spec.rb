@@ -264,7 +264,7 @@ describe Spree::Zone do
       it "should clear previous default tax zone" do
         zone1 = create(:zone, :name => "foo", :default_tax => true)
         zone = create(:zone, :name => "bar", :default_tax => true)
-        zone1.reload.default_tax.should == false
+        zone1.reload.default_tax.should be_false
       end
     end
 

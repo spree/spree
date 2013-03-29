@@ -415,7 +415,7 @@ describe Spree::Order do
 
     it "destroys the other order" do
       order_1.merge!(order_2)
-      lambda { order_2.reload }.should raise_error(ActiveRecord::RecordNotFound)
+      expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     context "merging together two orders with line items for the same variant" do

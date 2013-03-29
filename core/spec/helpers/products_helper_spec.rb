@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 module Spree
-  describe ProductsHelper do
-    include ProductsHelper
+  describe Spree::ProductsHelper do
+    include Spree::ProductsHelper
 
     let(:product) { create(:product) }
     let(:currency) { 'USD' }
