@@ -8,20 +8,15 @@ describe Spree::StockItem do
     subject.count_on_hand.should eq 10
   end
 
-  it "lock_version should prevent stale updates" do
+  it 'count_on_hand is updated pessimistically' do
     copy = Spree::StockItem.find(subject.id)
 
-    copy.count_on_hand = 200
-    copy.save!
+    subject.adjust_count_on_hand(5)
+    subject.count_on_hand.should eq 15
 
-    subject.count_on_hand = 100
-    expect { subject.save }.to raise_error ActiveRecord::StaleObjectError
-
-    subject.reload.count_on_hand.should == 200
-    subject.count_on_hand = 100
-    subject.save
-
-    subject.reload.count_on_hand.should == 100
+    copy.count_on_hand.should eq 10
+    copy.adjust_count_on_hand(5)
+    copy.count_on_hand.should eq 20
   end
 
   it "can return the stock item's variant's name" do
@@ -35,22 +30,20 @@ describe Spree::StockItem do
 
       context "and count is increased" do
         it "should fill backorders" do
-          subject.update_column(:count_on_hand, 0)
+          subject.adjust_count_on_hand(-10)
           subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
           inventory_unit.should_receive(:fill_backorder)
           inventory_unit_2.should_receive(:fill_backorder)
-          subject.count_on_hand = 2
-          subject.save!
+          subject.adjust_count_on_hand(2)
           subject.count_on_hand.should == 0
         end
 
         it "should only fill up to availability in back orders" do
-          subject.update_column(:count_on_hand, 0)
+          subject.adjust_count_on_hand(-10)
           subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
           inventory_unit.should_receive(:fill_backorder)
           inventory_unit_2.should_not_receive(:fill_backorder)
-          subject.count_on_hand = 1
-          subject.save!
+          subject.adjust_count_on_hand(1)
           subject.count_on_hand.should == 0
         end
       end
@@ -58,8 +51,7 @@ describe Spree::StockItem do
       context "and count is negative" do
         it "should not check for backordered units" do
           subject.should_not_receive(:backordered_inventory_units)
-          subject.count_on_hand = -10
-          subject.save!
+          subject.adjust_count_on_hand(-10)
         end
       end
     end

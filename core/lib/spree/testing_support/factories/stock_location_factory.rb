@@ -17,8 +17,8 @@ FactoryGirl.define do
         create(:variant)
         create(:variant)
 
-        stock_location.stock_items.first.update_attribute(:count_on_hand, 10)
-        stock_location.stock_items.second.update_attribute(:count_on_hand, 20)
+        stock_location.stock_items.first.adjust_count_on_hand(10)
+        stock_location.stock_items.second.adjust_count_on_hand(20)
       end
     end
   end

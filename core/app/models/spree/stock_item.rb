@@ -33,21 +33,31 @@ module Spree
       end
     end
 
-    private
-    def process_backorders
-      if count_changes = changes['count_on_hand']
-        new_level = count_changes.last
-        new_level = new_level.to_i
+    def adjust_count_on_hand(value)
+      self.with_lock do
+        self.reload
+        self.update_attribute(:count_on_hand, self.count_on_hand + value)
+        self.save!
+      end
+    end
 
-        if new_level > 0
-          backordered_units = backordered_inventory_units
-          # "lucky" because they're within the range of possibility to be filled
-          # Inventory units are only "backfilled" up to the available product levels
-          lucky_backordered_units = backordered_units.slice(0, new_level)
-          lucky_backordered_units.each(&:fill_backorder)
-          new_level -= lucky_backordered_units.length
-        end
-        self.update_column(:count_on_hand, new_level)
+    def in_stock?
+      self.count_on_hand > 0
+    end
+
+    private
+    def count_on_hand=(value)
+      write_attribute(:count_on_hand, value)
+    end
+
+    def process_backorders
+      return unless changes['count_on_hand'] && changes['count_on_hand'].last.to_i > 0
+
+      backordered_units = backordered_inventory_units
+      while in_stock? && !backordered_units.empty?
+        inventory_unit = backordered_units.shift
+        inventory_unit.fill_backorder
+        self.adjust_count_on_hand(-1)
       end
     end
   end

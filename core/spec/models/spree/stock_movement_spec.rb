@@ -9,6 +9,13 @@ describe Spree::StockMovement do
     subject.should respond_to(:stock_item)
   end
 
+  it 'is readonly unless new' do
+    subject.save
+    expect {
+      subject.save
+    }.to raise_error(ActiveRecord::ReadOnlyRecord)
+  end
+
   it 'does not update count on hand when track inventory levels is false' do
     Spree::Config[:track_inventory_levels] = false
     subject.quantity = 1
@@ -26,59 +33,11 @@ describe Spree::StockMovement do
         stock_item.count_on_hand.should == 9
       end
     end
-
-    context "after an update" do
-      it "should decrement the stock item count on hand based on previous value" do
-        subject.quantity = -1
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 9
-        subject.quantity = -3
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 7
-      end
-
-      it "should increment the stock item count on hand based on previous value" do
-        subject.quantity = -3
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 7
-        subject.quantity = -1
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 9
-      end
-    end
   end
 
   context "when quantity is positive" do
     context "after save" do
       it "should increment the stock item count on hand" do
-        subject.quantity = 1
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 11
-      end
-    end
-
-    context "after an update" do
-      it "should increment the stock item count on hand based on previous value" do
-        subject.quantity = 1
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 11
-        subject.quantity = 3
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 13
-      end
-
-      it "should decrement the stock item count on hand based on previous value" do
-        subject.quantity = 3
-        subject.save
-        stock_item.reload
-        stock_item.count_on_hand.should == 13
         subject.quantity = 1
         subject.save
         stock_item.reload
