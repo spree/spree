@@ -3,7 +3,7 @@
     <%= hidden_field_tag :stock_management, true %>
     <%= f.field_container :quantity do %>
       <%= f.label :quantity, t(:quantity) %>
-      <%= f.number_field :quantity, class: 'fullwidth', min: 1, value: 1 %>
+      <%= f.number_field :quantity, class: 'fullwidth', value: 1 %>
     <% end %>
   </div>
   <div class="five columns">
