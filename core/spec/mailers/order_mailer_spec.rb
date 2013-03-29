@@ -23,7 +23,6 @@ describe Spree::OrderMailer do
     )
   end
 
-
   it "doesn't aggressively escape double quotes in confirmation body" do
     confirmation_email = Spree::OrderMailer.confirm_email(order)
     confirmation_email.body.should_not include("&quot;")
