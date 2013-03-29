@@ -1,12 +1,11 @@
 FactoryGirl.define do
-  factory :stock_location, :class => Spree::StockLocation do
+  factory :stock_location, class: Spree::StockLocation do
     name 'NY Warehouse'
-    active true
-
     address1 '1600 Pennsylvania Ave NW'
     city 'Washington'
     zipcode '20500'
     phone '(202) 456-1111'
+    active true
 
     state  { |stock_location| stock_location.association(:state) }
     country  { |stock_location| stock_location.association(:country) }

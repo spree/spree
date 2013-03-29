@@ -3,15 +3,15 @@ FactoryGirl.define do
     "xxxx#{Time.now.to_i}#{rand(1000)}#{n}xxxxxxxxxxxxx"
   end
 
-  factory :user, :class => Spree.user_class do
-    email { Faker::Internet.email }
+  factory :user, class: Spree.user_class do
+    email { generate(:random_email) }
     login { email }
     password 'secret'
-    password_confirmation 'secret'
-    authentication_token { FactoryGirl.generate(:user_authentication_token) } if Spree.user_class.attribute_method? :authentication_token
-  end
+    password_confirmation { password }
+    authentication_token { generate(:user_authentication_token) } if Spree.user_class.attribute_method? :authentication_token
 
-  factory :admin_user, :parent => :user do
-    spree_roles { [Spree::Role.find_by_name('admin') || FactoryGirl.create(:role, :name => 'admin')] }
+    factory :admin_user do
+      spree_roles { [Spree::Role.find_by_name('admin') || create(:role, name: 'admin')] }
+    end
   end
 end
