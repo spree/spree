@@ -12,7 +12,7 @@ module Spree
     validates :variant, :presence => true
     validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int'), :greater_than => -1 }
     validates :price, :numericality => true
-    validate :stock_availability
+    validates_with Stock::AvailabilityValidator
 
     attr_accessible :quantity, :variant_id
 
@@ -67,12 +67,6 @@ module Spree
       # update the order totals, etc.
       order.create_tax_charge!
       order.update!
-    end
-
-    # Validation
-    def stock_availability
-      return if sufficient_stock?
-      errors.add(:quantity, I18n.t('validation.exceeds_available_stock'))
     end
   end
 end
