@@ -13,8 +13,7 @@ describe Spree::Product do
   context "#count_on_hand=" do
     it "cannot be set manually" do
       product = Spree::Product.new
-      setter = lambda { product.count_on_hand = 5 }
-      setter.should raise_error(I18n.t('exceptions.count_on_hand_setter'))
+      expect { product.count_on_hand = 5 }.to raise_error(I18n.t('exceptions.count_on_hand_setter'))
     end
   end
 
@@ -292,7 +291,7 @@ describe Spree::Product do
 
   context "properties" do
     it "should properly assign properties" do
-      product = FactoryGirl.create :product
+      product = create(:product)
       product.set_property('the_prop', 'value1')
       product.property('the_prop').should == 'value1'
 
@@ -301,25 +300,25 @@ describe Spree::Product do
     end
 
     it "should not create duplicate properties when set_property is called" do
-      product = FactoryGirl.create :product
+      product = create(:product)
 
-      lambda {
+      expect {
         product.set_property('the_prop', 'value2')
         product.save
         product.reload
-      }.should_not change(product.properties, :length)
+      }.not_to change(product.properties, :length)
 
-      lambda {
+      expect {
         product.set_property('the_prop_new', 'value')
         product.save
         product.reload
         product.property('the_prop_new').should == 'value'
-      }.should change { product.properties.length }.by(1)
+      }.to change { product.properties.length }.by(1)
     end
 
     # Regression test for #2455
     it "should not overwrite properties' presentation names" do
-      product = FactoryGirl.create :product
+      product = create(:product)
       Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
       product.set_property('foo', 'value1')
       product.set_property('bar', 'value2')
@@ -346,7 +345,7 @@ describe Spree::Product do
 
     context "when prototype with option types is supplied" do
       def build_option_type_with_values(name, values)
-        ot = FactoryGirl.create(:option_type, :name => name)
+        ot = create(:option_type, :name => name)
         values.each do |val|
           ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
         end
@@ -355,7 +354,7 @@ describe Spree::Product do
 
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
-        FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
+        create(:prototype, :name => "Size", :option_types => [ size ])
       end
 
       let(:option_values_hash) do

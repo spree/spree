@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 module Spree
-  describe Order do
-    let(:order) { stub_model(Order) }
+  describe Spree::Order do
+    let(:order) { stub_model(Spree::Order) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     before do

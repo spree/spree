@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe OrderUpdater do
+  describe Spree::OrderUpdater do
     let(:order) { stub_model(Spree::Order) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
@@ -110,7 +110,7 @@ module Spree
     end
 
     it "updates each shipment" do
-      shipment = stub_model(Shipment)
+      shipment = stub_model(Spree::Shipment)
       shipments = [shipment]
       order.stub :shipments => shipments
       shipments.stub :states => []
