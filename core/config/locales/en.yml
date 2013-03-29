@@ -539,8 +539,6 @@ en:
   invalid_promotion_rule: "Invalid promotion rule."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
-  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
-  inventory_settings: "Inventory Settings"
   is_not_available_to_shipment_address: "is not available to shipment address"
   iso_name: "Iso Name"
   issue_number: "Issue Number"

@@ -112,7 +112,6 @@ Spree::Core::Engine.routes.append do
       end
     end
 
-    resource :inventory_settings
     resource :image_settings
 
     resources :orders, :except => [:show] do
