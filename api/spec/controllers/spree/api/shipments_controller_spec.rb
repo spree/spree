@@ -89,33 +89,33 @@ describe Spree::Api::ShipmentsController do
       response.status.should == 422
     end
 
-    it 'can add a variant to a shipment' do
-      params = {
-        order_id: order.number,
-        id: order.shipments.first.to_param,
-        variant_id: variant.to_param,
-        quantity: 2
-      }
-      api_put :add, params
-      response.status.should == 200
-      json_response['inventory_units'][0]['variant_id'].should == variant.id
-      json_response['inventory_units'].size.should == 2
-    end
+    context 'for completed shipments' do
+      let(:order) { create :completed_order_with_totals }
 
-    it 'can remove a variant from a shipment' do
-      order.shipments.first.add(variant, 2)
+      let!(:resource_scoping) { { :order_id => order.to_param, :id => order.shipments.first.to_param } }
 
-      params = {
-        order_id: order.number,
-        id: order.shipments.first.to_param,
-        variant_id: variant.to_param,
-        quantity: 1
-      }
+      it 'can add a variant to a shipment' do
+        params = {
+          variant_id: variant.to_param,
+          quantity: 2
+        }
+        api_put :add, params
+        response.status.should == 200
+        json_response['inventory_units'].select { |h| h['variant_id'] == variant.id }.size.should == 2
+      end
 
-      api_put :remove, params
-      response.status.should == 200
-      json_response['inventory_units'][0]['variant_id'].should == variant.id
-      json_response['inventory_units'].size.should == 1
+      it 'can remove a variant from a shipment' do
+        order.contents.add(variant, 2)
+
+        params = {
+          variant_id: variant.to_param,
+          quantity: 1
+        }
+
+        api_put :remove, params
+        response.status.should == 200
+        json_response['inventory_units'].select { |h| h['variant_id'] == variant.id }.size.should == 1
+     end
     end
 
     context "can transition a shipment from ready to ship" do

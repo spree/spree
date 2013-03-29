@@ -253,40 +253,19 @@ module Spree
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
 
-    def add_variant(variant, quantity = 1, currency = nil)
-      current_item = find_line_item_by_variant(variant)
-      if current_item
-        current_item.quantity += quantity
-        current_item.currency = currency unless currency.nil?
-        current_item.save
-      else
-        current_item = LineItem.new(:quantity => quantity)
-        current_item.variant = variant
-        if currency
-          current_item.currency = currency unless currency.nil?
-          current_item.price    = variant.price_in(currency).amount
-        else
-          current_item.price    = variant.price
-        end
-        self.line_items << current_item
-      end
+    def contents
+      @contents ||= Spree::OrderContents.new(self)
+    end
 
-      self.reload
-      current_item
+    def add_variant(variant, quantity = 1, currency = nil)
+      # ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#add_variant will be deprecated in Spree 2.1, please use order.contents.add instead.")
+      contents.currency = currency unless currency.nil?
+      contents.add(variant, quantity)
     end
 
     def remove_variant(variant, quantity = 1)
-      current_item = find_line_item_by_variant(variant)
-      current_item.quantity += -quantity
-
-      if current_item.quantity == 0
-        current_item.destroy
-      else
-        current_item.save!
-      end
-
-      self.reload
-      current_item
+      # ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
+      contents.remove(variant, quantity)
     end
 
     # Associates the specified user with the order.

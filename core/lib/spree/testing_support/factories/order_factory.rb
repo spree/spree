@@ -21,22 +21,22 @@ FactoryGirl.define do
       end
       bill_address { FactoryGirl.create(:address) }
       ship_address { FactoryGirl.create(:address) }
+
       after(:create) do |order, evaluator|
+        FactoryGirl.create(:shipment, :order => order)
+        order.shipments.reload
+
         FactoryGirl.create_list(:line_item, evaluator.line_items_count, :order => order)
         order.line_items.reload
+        order.update!
       end
     end
 
-    factory :completed_order_with_totals do
+    factory :completed_order_with_totals, :parent => :order_with_line_items do
       bill_address { FactoryGirl.create(:address) }
       ship_address { FactoryGirl.create(:address) }
       state 'complete'
       completed_at Time.now
-
-      after(:create) do |order|
-        shipment = FactoryGirl.create(:shipment, :order => order)
-        shipment.add(FactoryGirl.create(:variant), 3)
-      end
 
       factory :shipped_order do
         after(:create) do |order|

@@ -212,60 +212,12 @@ module Spree
       @tracking_url ||= shipping_method.build_tracking_url(tracking)
     end
 
-    def add(variant, quantity)
-      #update line item
-      order.add_variant(variant, quantity)
-
-      #create inventory_units
-      on_hand, back_order = stock_location.fill_status(variant, quantity)
-
-      on_hand.times do
-        inventory_units.create({:variant_id => variant.id,
-                                          :state => 'on_hand'}, :without_protection => true)
-      end
-
-      back_order.times do
-        inventory_units.create({:variant_id => variant.id,
-                                         :state => 'backordered'}, :without_protection => true)
-      end
-
-      # adding to this shipment, and removing from stock_location
-      stock_location.unstock variant, quantity, self
-      update_order
+    def include?(variant)
+      inventory_units_for(variant).present?
     end
 
-
-    def remove(variant, quantity)
-      #destroy inventory_units
-      variant_units = inventory_units.group_by(&:variant_id)
-      if variant_units.include? variant.id
-
-        variant_units = variant_units[variant.id].reject do |variant_unit|
-          variant_unit.state == 'shipped'
-        end.sort_by(&:state)
-
-        if quantity > variant_units.size
-          raise 'Shipment does not contain enough deletable inventory_units'
-        end
-        quantity.times do
-          inventory_unit = variant_units.shift
-          inventory_unit.destroy
-        end
-      else
-        raise 'Variant does not belong to this shipment'
-        #raise exception variant does not belong to shipment
-      end
-
-      #update line_item
-      order.remove_variant(variant, quantity)
-
-      reload
-
-      destroy if inventory_units.size == 0
-
-      # create stock_movement, we're removing from shipment,
-      # and restocking it at location
-      stock_location.restock variant.id, quantity, self
+    def inventory_units_for(variant)
+      inventory_units.group_by(&:variant_id)[variant.id] || []
     end
 
     def to_package

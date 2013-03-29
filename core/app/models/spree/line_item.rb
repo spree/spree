@@ -16,8 +16,12 @@ module Spree
 
     attr_accessible :quantity, :variant_id
 
+    before_save :update_inventory
+
     after_save :update_order
     after_destroy :update_order
+
+    attr_accessor :target_shipment
 
     def copy_price
       if variant
@@ -62,7 +66,16 @@ module Spree
       !sufficient_stock?
     end
 
+    def assign_stock_changes_to=(shipment)
+      @preferred_shipment = shipment
+    end
+
     private
+
+    def update_inventory
+      Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+    end
+
     def update_order
       # update the order totals, etc.
       order.create_tax_charge!

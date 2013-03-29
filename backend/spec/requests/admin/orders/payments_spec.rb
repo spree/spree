@@ -21,7 +21,7 @@ describe "Payments" do
       click_link "Payments"
       find("#payment_status").text.should == "BALANCE DUE"
       within_row(1) do
-        column_text(2).should == "$59.97"
+        column_text(2).should == "$50.00"
         column_text(3).should == "Credit Card"
         column_text(4).should == "CHECKOUT"
       end
@@ -31,7 +31,7 @@ describe "Payments" do
       page.should have_content("Payment Updated")
 
       within_row(1) do
-        column_text(2).should == "$59.97"
+        column_text(2).should == "$50.00"
         column_text(3).should == "Credit Card"
         column_text(4).should == "VOID"
       end
