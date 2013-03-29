@@ -311,15 +311,14 @@ describe Spree::Order do
       order.item_total.to_f.should == 0.00
       order.total.to_f.should == 0.00
 
-      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
-      order.add_variant(product.master,2)
+      order.add_variant(variant,2)
 
-      order.item_total.to_f.should == 44.50
-      order.total.to_f.should == 44.50
+      order.item_total.to_f.should == 39.98
+      order.total.to_f.should == 39.98
 
-      order.remove_variant(product.master,1)
-      order.item_total.to_f.should == 22.25
-      order.total.to_f.should == 22.25
+      order.remove_variant(variant,1)
+      order.item_total.to_f.should == 19.99
+      order.total.to_f.should == 19.99
     end
 
   end
