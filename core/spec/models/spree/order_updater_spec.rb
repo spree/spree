@@ -110,7 +110,7 @@ module Spree
     end
 
     it "updates each shipment" do
-      shipment = stub_model(Shipment)
+      shipment = stub_model(Spree::Shipment)
       shipments = [shipment]
       order.stub :shipments => shipments
       shipments.stub :states => []

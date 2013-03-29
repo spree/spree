@@ -171,7 +171,7 @@ describe Spree::CreditCard do
 
   context "#associations" do
     it "should be able to access its payments" do
-      -> { credit_card.payments.all }.should_not raise_error ActiveRecord::StatementInvalid
+      expect { credit_card.payments.all }.not_to raise_error(ActiveRecord::StatementInvalid)
     end
   end
 end
