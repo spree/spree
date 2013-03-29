@@ -69,7 +69,9 @@ module Spree
     def remove_from_shipment(shipment, variant, quantity)
       return 0 if quantity == 0 || shipment.shipped?
 
-      shipment_units = shipment.inventory_units_for(variant)
+      shipment_units = shipment.inventory_units_for(variant).reject do |variant_unit|
+        variant_unit.state == 'shipped'
+      end.sort_by(&:state)
 
       removed_quantity = 0
 
