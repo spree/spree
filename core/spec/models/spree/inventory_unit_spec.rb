@@ -51,7 +51,7 @@ describe Spree::InventoryUnit do
     end
   end
 
-  context "finalize_units!" do
+  context "#finalize_units!" do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let(:inventory_units) { [
