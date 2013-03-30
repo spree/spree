@@ -2,12 +2,13 @@ require 'spec_helper'
 
 describe Spree::InventoryUnit do
   let(:variant) { mock_model(Spree::Variant) }
-  let(:line_item) { mock_model(Spree::LineItem, :variant => variant, :quantity => 5) }
-  let(:order) { mock_model(Spree::Order, :line_items => [line_item], :inventory_units => [], :shipments => mock('shipments'), :completed? => true) }
+  let(:line_item) { mock_model(Spree::LineItem, variant: variant, quantity: 5) }
+  let(:order) { mock_model(Spree::Order, line_items: [line_item],
+    inventory_units: [], shipments: mock('shipments'), completed?: true) }
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.first }
 
-  context "#backordered_inventory_units" do
+  context "#backordered_for_stock_item" do
     let(:order) { create(:order) }
     let(:shipment) do
       shipping_method = create(:shipping_method)
@@ -50,16 +51,18 @@ describe Spree::InventoryUnit do
     end
   end
 
-  context "finalize_units!" do
+  context "#finalize_units!" do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
-    let(:inventory_units) { [create(:inventory_unit, :variant => variant), create(:inventory_unit, :variant => variant)] }
+    let(:inventory_units) { [
+      create(:inventory_unit, variant: variant),
+      create(:inventory_unit, variant: variant)
+    ] }
 
-    # it "should create a stock movement" do
-    #   Spree::StockMovement.should_receive(:create!).with(hash_including(:quantity => -2))
-    #   Spree::InventoryUnit.finalize_units!(inventory_units)
-    #   inventory_units.any?(&:pending).should be_false
-    # end
+    it "should create a stock movement" do
+      Spree::InventoryUnit.finalize_units!(inventory_units)
+      inventory_units.any?(&:pending).should be_false
+    end
   end
 end
 
