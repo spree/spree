@@ -22,7 +22,7 @@ before_install:
   - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
   - bundle exec rake test_app
-  - bundle exec rspec spec
+  - bundle exec rake spec
 notifications:
   email:
     - ryan@spreecommerce.com
