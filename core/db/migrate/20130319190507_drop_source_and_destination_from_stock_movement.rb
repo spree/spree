@@ -1,7 +1,9 @@
 class DropSourceAndDestinationFromStockMovement < ActiveRecord::Migration
   def up
-    remove_column :spree_stock_movements, :source, polymorphic: true
-    remove_column :spree_stock_movements, :destination, polymorphic: true
+    change_table :spree_stock_movements do |t|
+      t.remove_references :source, :polymorphic => true
+      t.remove_references :destination, :polymorphic => true
+    end
   end
 
   def down
