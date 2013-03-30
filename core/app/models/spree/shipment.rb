@@ -5,14 +5,14 @@ module Spree
     belongs_to :order
 
     has_many :shipping_rates
-    has_many :shipping_methods, :through => :shipping_rates
+    has_many :shipping_methods, through: :shipping_rates
 
     belongs_to :address
     belongs_to :stock_location
 
-    has_many :state_changes, :as => :stateful
-    has_many :inventory_units, :dependent => :destroy
-    has_one :adjustment, :as => :source, :dependent => :destroy
+    has_many :state_changes, as: :stateful
+    has_many :inventory_units, dependent: :destroy
+    has_one :adjustment, as: :source, dependent: :destroy
 
     before_create :generate_shipment_number
     after_save :ensure_selected_shipping_rate, :ensure_correct_adjustment, :update_order
@@ -24,9 +24,9 @@ module Spree
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
-    make_permalink :field => :number
+    make_permalink field: :number
 
-    scope :with_state, lambda { |s| where(:state => s) }
+    scope :with_state, ->(s) { where(state: s) }
     scope :shipped, with_state('shipped')
     scope :ready, with_state('ready')
     scope :pending, with_state('pending')
@@ -53,8 +53,8 @@ module Spree
     end
 
     def add_shipping_method(shipping_method, selected=false)
-      shipping_rates << Spree::ShippingRate.create(:shipping_method => shipping_method,
-                                                                        :selected => selected)
+      shipping_rates << Spree::ShippingRate.create(shipping_method: shipping_method,
+                                                                        selected: selected)
     end
 
     def selected_shipping_rate
@@ -106,44 +106,44 @@ module Spree
     alias_method :amount, :cost
 
     def display_cost
-      Spree::Money.new(cost, { :currency => currency })
+      Spree::Money.new(cost, { currency: currency })
     end
 
     alias_method :display_amount, :display_cost
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine :initial => 'pending', :use_transactions => false do
+    state_machine initial: 'pending', use_transactions: false do
       event :ready do
-        transition :from => 'pending', :to => 'ready', :if => lambda { |shipment|
+        transition from: 'pending', to: 'ready', if: lambda { |shipment|
           # Fix for #2040
           shipment.determine_state(shipment.order) == 'ready'
         }
       end
 
       event :pend do
-        transition :from => 'ready', :to => 'pending'
+        transition from: 'ready', to: 'pending'
       end
 
       event :ship do
-        transition :from => 'ready', :to => 'shipped'
+        transition from: 'ready', to: 'shipped'
       end
-      after_transition :to => 'shipped', :do => :after_ship
+      after_transition to: 'shipped', do: :after_ship
 
       event :cancel do
-        transition :to => 'canceled', :from => ['pending', 'ready']
+        transition to: 'canceled', from: ['pending', 'ready']
       end
-      after_transition :to => 'canceled', :do => :after_cancel
+      after_transition to: 'canceled', do: :after_cancel
 
       event :resume do
-        transition :from => 'canceled', :to => 'ready', :if => lambda { |shipment|
+        transition from: 'canceled', to: 'ready', if: lambda { |shipment|
           shipment.determine_state(shipment.order) == 'ready'
         }
-        transition :from => 'canceled', :to => 'pending', :if => lambda { |shipment|
+        transition from: 'canceled', to: 'pending', if: lambda { |shipment|
           shipment.determine_state(shipment.order) == 'ready'
         }
-        transition :from => 'canceled', :to => 'pending'
+        transition from: 'canceled', to: 'pending'
       end
-      after_transition :from => 'canceled', :to => ['pending', 'ready'], :do => :after_resume
+      after_transition from: 'canceled', to: ['pending', 'ready'], do: :after_resume
     end
 
     def editable_by?(user)
@@ -154,7 +154,7 @@ module Spree
       inventory_units.group_by(&:variant).map do |variant, units|
         states = {}
         units.group_by(&:state).each { |state, iu| states[state] = iu.count }
-        OpenStruct.new(:variant => variant, :quantity => units.length, :states => states)
+        OpenStruct.new(variant: variant, quantity: units.length, states: states)
       end
     end
 
@@ -234,7 +234,7 @@ module Spree
         record = true
         while record
           random = "H#{Array.new(11) { rand(9) }.join}"
-          record = self.class.where(:number => random).first
+          record = self.class.where(number: random).first
         end
         self.number = random
       end

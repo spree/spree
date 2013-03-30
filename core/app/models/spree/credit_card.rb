@@ -1,15 +1,15 @@
 module Spree
   class CreditCard < ActiveRecord::Base
-    has_many :payments, :as => :source
+    has_many :payments, as: :source
 
     before_save :set_last_digits
     after_validation :set_card_type
 
     attr_accessor :number, :verification_value
 
-    validates :month, :year, :numericality => { :only_integer => true }
-    validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
-    validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
+    validates :month, :year, numericality: { only_integer: true }
+    validates :number, presence: true, unless: :has_payment_profile?, on: :create
+    validates :verification_value, presence: true, unless: :has_payment_profile?, on: :create
 
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
                     :month, :gateway_customer_profile_id, :gateway_payment_profile_id
@@ -67,7 +67,7 @@ module Spree
       cc_type
     end
 
-    scope :with_payment_profile, lambda { where('gateway_customer_profile_id IS NOT NULL') }
+    scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
 
     def actions
       %w{capture void credit}

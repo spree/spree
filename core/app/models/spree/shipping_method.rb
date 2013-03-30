@@ -3,13 +3,13 @@ module Spree
     include Spree::Core::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
-    default_scope where(:deleted_at => nil)
+    default_scope where(deleted_at: nil)
 
     has_many :shipments
-    validates :name, :presence => true
+    validates :name, presence: true
 
     has_many :shipping_method_categories
-    has_many :shipping_categories, :through => :shipping_method_categories
+    has_many :shipping_categories, through: :shipping_method_categories
 
     has_and_belongs_to_many :zones
 

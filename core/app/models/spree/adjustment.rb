@@ -26,23 +26,23 @@ module Spree
   class Adjustment < ActiveRecord::Base
     attr_accessible :amount, :label
 
-    belongs_to :adjustable, :polymorphic => true
-    belongs_to :source, :polymorphic => true
-    belongs_to :originator, :polymorphic => true
+    belongs_to :adjustable, polymorphic: true
+    belongs_to :source, polymorphic: true
+    belongs_to :originator, polymorphic: true
 
-    validates :label, :presence => true
-    validates :amount, :numericality => true
+    validates :label, presence: true
+    validates :amount, numericality: true
 
     after_save :update_adjustable
     after_destroy :update_adjustable
 
-    state_machine :state, :initial => :open do
+    state_machine :state, initial: :open do
       event :close do
-        transition :open => :closed
+        transition open: :closed
       end
 
       event :open do
-        transition :closed => :open
+        transition closed: :open
       end
 
       event :finalize do
@@ -50,14 +50,14 @@ module Spree
       end
     end
 
-    scope :tax, where(:originator_type => 'Spree::TaxRate', :adjustable_type => 'Spree::Order')
-    scope :price, where(:adjustable_type => 'Spree::LineItem')
-    scope :shipping, where(:originator_type => 'Spree::ShippingMethod')
-    scope :optional, where(:mandatory => false)
-    scope :eligible, where(:eligible => true)
-    scope :charge, where('amount >= 0')
-    scope :credit, where('amount < 0')
-    scope :promotion, where(:originator_type => 'Spree::PromotionAction')
+    scope :tax, -> { where(originator_type: 'Spree::TaxRate', adjustable_type: 'Spree::Order') }
+    scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
+    scope :shipping, -> { where(originator_type: 'Spree::ShippingMethod') }
+    scope :optional, -> { where(mandatory: false) }
+    scope :eligible, -> { where(eligible: true) }
+    scope :charge, -> { where('amount >= 0') }
+    scope :credit, -> { where('amount < 0') }
+    scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
 
     # Update the boolean _eligible_ attribute which determines which adjustments
     # count towards the order's adjustment_total.
@@ -94,7 +94,7 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new(amount, { :currency => currency })
+      Spree::Money.new(amount, { currency: currency })
     end
 
     def immutable?

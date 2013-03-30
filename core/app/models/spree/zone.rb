@@ -1,15 +1,15 @@
 module Spree
   class Zone < ActiveRecord::Base
-    has_many :zone_members, :dependent => :destroy, :class_name => "Spree::ZoneMember"
-    has_many :tax_rates, :dependent => :destroy
+    has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember"
+    has_many :tax_rates, dependent: :destroy
     has_and_belongs_to_many :shipping_methods
 
-    validates :name, :presence => true, :uniqueness => true
+    validates :name, presence: true, uniqueness: true
     after_save :remove_defunct_members
     after_save :remove_previous_default
 
     alias :members :zone_members
-    accepts_nested_attributes_for :zone_members, :allow_destroy => true, :reject_if => proc { |a| a['zoneable_id'].blank? }
+    accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
 
     attr_accessible :name, :description, :default_tax, :kind, :zone_members, :zone_members_attributes
 
@@ -74,7 +74,7 @@ module Spree
     end
 
     def self.default_tax
-      where(:default_tax => true).first
+      where(default_tax: true).first
     end
 
     # Indicates whether the specified zone falls entirely within the zone performing

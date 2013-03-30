@@ -7,20 +7,20 @@ module Spree
     before_create :generate_number
     before_save :force_positive_amount
 
-    validates :order, :presence => true
-    validates :amount, :numericality => true
+    validates :order, presence: true
+    validates :amount, numericality: true
     validate :must_have_shipped_units
 
     attr_accessible :amount, :reason, :stock_location_id
 
-    state_machine :initial => 'authorized' do
-      after_transition :to => 'received', :do => :process_return
+    state_machine initial: 'authorized' do
+      after_transition to: 'received', do: :process_return
 
       event :receive do
-        transition :to => 'received', :from => 'authorized', :if => :allow_receive?
+        transition to: 'received', from: 'authorized', if: :allow_receive?
       end
       event :cancel do
-        transition :to => 'canceled', :from => 'authorized'
+        transition to: 'canceled', from: 'authorized'
       end
     end
 
@@ -29,7 +29,7 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new(amount, { :currency => currency })
+      Spree::Money.new(amount, { currency: currency })
     end
 
     def add_variant(variant_id, quantity)
@@ -75,7 +75,7 @@ module Spree
         record = true
         while record
           random = "RMA#{Array.new(9){rand(9)}.join}"
-          record = self.class.where(:number => random).first
+          record = self.class.where(number: random).first
         end
         self.number = random
       end
@@ -83,10 +83,10 @@ module Spree
       def process_return
         inventory_units.each do |iu|
           iu.return!
-          Spree::StockMovement.create!(:stock_item_id => iu.find_stock_item.id, :quantity => 1)
+          Spree::StockMovement.create!(stock_item_id: iu.find_stock_item.id, quantity: 1)
         end
 
-        credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
+        credit = Adjustment.new(amount: amount.abs * -1, label: I18n.t(:rma_credit))
         credit.source = self
         credit.adjustable = order
         credit.save

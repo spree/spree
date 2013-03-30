@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :shipments, :update_hooks, :to => :order
+    delegate :payments, :line_items, :adjustments, :shipments, :update_hooks, to: :order
 
     def initialize(order)
       @order = order
@@ -26,12 +26,12 @@ module Spree
       update_totals
 
       order.update_attributes_without_callbacks({
-        :payment_state => order.payment_state,
-        :shipment_state => order.shipment_state,
-        :item_total => order.item_total,
-        :adjustment_total => order.adjustment_total,
-        :payment_total => order.payment_total,
-        :total => order.total
+        payment_state: order.payment_state,
+        shipment_state: order.shipment_state,
+        item_total: order.item_total,
+        adjustment_total: order.adjustment_total,
+        payment_total: order.payment_total,
+        total: order.total
       })
 
       update_hooks.each { |hook| order.send hook }
@@ -129,7 +129,7 @@ module Spree
       def choose_best_promotion_adjustment
         if best_promotion_adjustment = order.adjustments.promotion.reorder("amount ASC, created_at DESC").first
           other_promotions = order.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
-          other_promotions.update_all(:eligible => false)
+          other_promotions.update_all(eligible: false)
         end
       end
 

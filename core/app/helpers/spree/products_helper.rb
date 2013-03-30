@@ -15,9 +15,9 @@ module Spree
       diff = variant.amount_in(current_currency) - variant.product.amount_in(current_currency)
       return nil if diff == 0
       if diff > 0
-        "(#{t(:add)}: #{Spree::Money.new(diff.abs, { :currency => current_currency }).to_html})"
+        "(#{t(:add)}: #{Spree::Money.new(diff.abs, { currency: current_currency }).to_html})"
       else
-        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs, { :currency => current_currency }).to_html})"
+        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs, { currency: current_currency }).to_html})"
       end
     end
 
@@ -25,7 +25,7 @@ module Spree
     def variant_full_price(variant)
       product = variant.product
       unless product.variants.active(current_currency).all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price, { :currency => current_currency }).to_html
+        Spree::Money.new(variant.price, { currency: current_currency }).to_html
       end
     end
 
@@ -37,14 +37,14 @@ module Spree
     def line_item_description(variant)
       description = variant.product.description
       if description.present?
-        truncate(strip_tags(description.gsub('&nbsp;', ' ')), :length => 100)
+        truncate(strip_tags(description.gsub('&nbsp;', ' ')), length: 100)
       else
         t(:product_has_no_description)
       end
     end
 
     def get_taxonomies
-      @taxonomies ||= Spree::Taxonomy.includes(:root => :children)
+      @taxonomies ||= Spree::Taxonomy.includes(root: :children)
     end
   end
 end

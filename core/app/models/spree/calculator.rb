@@ -1,6 +1,6 @@
 module Spree
   class Calculator < ActiveRecord::Base
-    belongs_to :calculable, :polymorphic => true
+    belongs_to :calculable, polymorphic: true
 
     # This method must be overriden in concrete calculator.
     #

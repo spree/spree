@@ -12,7 +12,7 @@ module Spree
       self.event_names << name
     end
 
-    scope :event_name_starts_with, lambda{ |name| where('event_name LIKE ?', "#{name}%") }
+    scope :event_name_starts_with, ->(name) { where('event_name LIKE ?', "#{name}%") }
 
     def self.active
       where('(starts_at IS NULL OR starts_at < ?) AND (expires_at IS NULL OR expires_at > ?)', Time.now, Time.now)

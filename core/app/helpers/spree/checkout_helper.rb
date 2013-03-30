@@ -23,9 +23,9 @@ module Spree
         css_classes << 'first' if state_index == 0
         css_classes << 'last' if state_index == states.length - 1
         # It'd be nice to have separate classes but combining them with a dash helps out for IE6 which only sees the last class
-        content_tag('li', content_tag('span', text), :class => css_classes.join('-'))
+        content_tag('li', content_tag('span', text), class: css_classes.join('-'))
       end
-      content_tag('ol', raw(items.join("\n")), :class => 'progress-steps', :id => "checkout-step-#{@order.state}")
+      content_tag('ol', raw(items.join("\n")), class: 'progress-steps', id: "checkout-step-#{@order.state}")
     end
   end
 end

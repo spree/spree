@@ -1,12 +1,12 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < ActiveRecord::Base
-    belongs_to :promotion, :foreign_key => 'activator_id', :class_name => "Spree::Promotion"
+    belongs_to :promotion, foreign_key: 'activator_id', class_name: 'Spree::Promotion'
 
-    scope :of_type, lambda {|t| {:conditions => {:type => t}}}
+    scope :of_type, ->(t) { where(type: t) }
 
-    validate :promotion, :presence => true
-    validate :unique_per_activator, :on => :create
+    validate :promotion, presence: true
+    validate :unique_per_activator, on: :create
 
     attr_accessible :preferred_operator, :preferred_amount, :product, :product_ids_string, :preferred_match_policy
 
@@ -16,7 +16,7 @@ module Spree
 
     private
     def unique_per_activator
-      if Spree::PromotionRule.exists?(:activator_id => activator_id, :type => self.class.name)
+      if Spree::PromotionRule.exists?(activator_id: activator_id, type: self.class.name)
         errors[:base] << "Promotion already contains this rule type"
       end
     end

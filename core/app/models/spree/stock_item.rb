@@ -5,13 +5,13 @@ module Spree
     has_many :stock_movements, dependent: :destroy
 
     validates_presence_of :stock_location
-    validates_uniqueness_of :variant_id, :scope => :stock_location_id
+    validates_uniqueness_of :variant_id, scope: :stock_location_id
 
     attr_accessible :count_on_hand, :variant, :stock_location, :backorderable, :variant_id
 
     after_save :process_backorders
 
-    delegate :weight, :to => :variant
+    delegate :weight, to: :variant
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)

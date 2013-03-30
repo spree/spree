@@ -26,7 +26,7 @@ module Spree
         css_class = 'full'
       end
 
-      link_to text, spree.cart_path, :class => css_class
+      link_to text, spree.cart_path, class: css_class
     end
 
     # human readable list of variant options
@@ -44,16 +44,16 @@ module Spree
       end
 
       if meta[:description].blank? && object.kind_of?(Spree::Product)
-        meta[:description] = strip_tags(truncate(object.description, :length => 160, :separator => ' '))
+        meta[:description] = strip_tags(truncate(object.description, length: 160, separator: ' '))
       end
 
       meta.reverse_merge!({
-        :keywords => Spree::Config[:default_meta_keywords],
-        :description => Spree::Config[:default_meta_description]
+        keywords: Spree::Config[:default_meta_keywords],
+        description: Spree::Config[:default_meta_description]
       })
 
       meta.map do |name, content|
-        tag('meta', :name => name, :content => content)
+        tag('meta', name: name, content: content)
       end.join("\n")
     end
 
@@ -71,7 +71,7 @@ module Spree
 
       flash.each do |msg_type, text|
         unless opts[:ignore_types].include?(msg_type)
-          concat(content_tag :div, text, :class => "flash #{msg_type}")
+          concat(content_tag :div, text, class: "flash #{msg_type}")
         end
       end
       nil
@@ -88,16 +88,16 @@ module Spree
       else
         crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
-      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), :class => 'inline')
-      content_tag(:nav, crumb_list, :id => 'breadcrumbs', :class => 'sixteen columns')
+      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), class: 'inline')
+      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'sixteen columns')
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
       return '' if max_level < 1 || root_taxon.children.empty?
-      content_tag :ul, :class => 'taxons-list' do
+      content_tag :ul, class: 'taxons-list' do
         root_taxon.children.map do |taxon|
           css_class = (current_taxon && current_taxon.self_and_ancestors.include?(taxon)) ? 'current' : nil
-          content_tag :li, :class => css_class do
+          content_tag :li, class: css_class do
            link_to(taxon.name, seo_url(taxon)) +
            taxons_tree(taxon, current_taxon, max_level - 1)
           end
@@ -115,7 +115,7 @@ module Spree
       end
 
       countries.collect do |country|
-        country.name = I18n.t(country.iso, :scope => 'country_names', :default => country.name)
+        country.name = I18n.t(country.iso, scope: 'country_names', default: country.name)
         country
       end.sort { |a, b| a.name <=> b.name }
     end
@@ -138,7 +138,7 @@ module Spree
     end
 
     def pretty_time(time)
-      [I18n.l(time.to_date, :format => :long),
+      [I18n.l(time.to_date, format: :long),
         time.strftime("%H:%m %p")].join(" ")
     end
 
@@ -178,7 +178,7 @@ module Spree
           image_tag "noimage/#{style}.png", options
         else
           image = product.images.first
-          options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
+          options.reverse_merge! alt: image.alt.blank? ? product.name : image.alt
           image_tag image.attachment.url(style), options
         end
       end

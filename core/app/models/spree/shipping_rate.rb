@@ -16,7 +16,7 @@ module Spree
         price = cost
       end
 
-      Spree::Money.new(price, { :currency => currency })
+      Spree::Money.new(price, { currency: currency })
     end
   end
 end

@@ -2,16 +2,16 @@ module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
     belongs_to :order
-    belongs_to :variant, :class_name => "Spree::Variant"
+    belongs_to :variant, class_name: "Spree::Variant"
 
-    has_one :product, :through => :variant
-    has_many :adjustments, :as => :adjustable, :dependent => :destroy
+    has_one :product, through: :variant
+    has_many :adjustments, as: :adjustable, dependent: :destroy
 
     before_validation :copy_price
 
-    validates :variant, :presence => true
-    validates :quantity, :numericality => { :only_integer => true, :message => I18n.t('validation.must_be_int'), :greater_than => -1 }
-    validates :price, :numericality => true
+    validates :variant, presence: true
+    validates :quantity, numericality: { only_integer: true, message: I18n.t('validation.must_be_int'), greater_than: -1 }
+    validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
     attr_accessible :quantity, :variant_id
@@ -44,12 +44,12 @@ module Spree
     alias total amount
 
     def single_money
-      Spree::Money.new(price, { :currency => currency })
+      Spree::Money.new(price, { currency: currency })
     end
     alias single_display_amount single_money
 
     def money
-      Spree::Money.new(amount, { :currency => currency })
+      Spree::Money.new(amount, { currency: currency })
     end
     alias display_total money
     alias display_amount money

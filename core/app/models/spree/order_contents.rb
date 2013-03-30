@@ -33,7 +33,7 @@ module Spree
         line_item.currency = currency unless currency.nil?
         line_item.save
       else
-        line_item = LineItem.new(:quantity => quantity)
+        line_item = LineItem.new(quantity: quantity)
         line_item.target_shipment = shipment
         line_item.variant = variant
         if currency

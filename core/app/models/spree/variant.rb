@@ -1,6 +1,6 @@
 module Spree
   class Variant < ActiveRecord::Base
-    belongs_to :product, :touch => true
+    belongs_to :product, touch: true
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
                         :tax_category_id, :shipping_category_id, :meta_description,
@@ -14,27 +14,27 @@ module Spree
     has_many :inventory_units
     has_many :line_items
 
-    has_many :stock_items, :dependent => :destroy
-    has_many :stock_locations, :through => :stock_items
+    has_many :stock_items, dependent: :destroy
+    has_many :stock_locations, through: :stock_items
     has_many :stock_movements
 
-    has_and_belongs_to_many :option_values, :join_table => :spree_option_values_variants
-    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+    has_and_belongs_to_many :option_values, join_table: :spree_option_values_variants
+    has_many :images, as: :viewable, order: :position, dependent: :destroy
 
     has_one :default_price,
-      :class_name => 'Spree::Price',
-      :conditions => proc { { :currency => Spree::Config[:currency] } },
-      :dependent => :destroy
+      class_name: 'Spree::Price',
+      conditions: proc { { currency: Spree::Config[:currency] } },
+      dependent: :destroy
 
     delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency if Spree::Price.table_exists?
 
     has_many :prices,
-      :class_name => 'Spree::Price',
-      :dependent => :destroy
+      class_name: 'Spree::Price',
+      dependent: :destroy
 
     validate :check_price
-    validates :price, :numericality => { :greater_than_or_equal_to => 0 }, :presence => true, :if => proc { Spree::Config[:require_master_price] }
-    validates :cost_price, :numericality => { :greater_than_or_equal_to => 0, :allow_nil => true } if self.table_exists? && self.column_names.include?('cost_price')
+    validates :price, numericality: { greater_than_or_equal_to: 0 }, presence: true, if: proc { Spree::Config[:require_master_price] }
+    validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true } if self.table_exists? && self.column_names.include?('cost_price')
 
     before_validation :set_cost_currency
     after_save :save_default_price
@@ -44,7 +44,7 @@ module Spree
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
 
     def self.active(currency = nil)
-      joins(:prices).where(:deleted_at => nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
+      joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
 
     def cost_price=(price)
@@ -63,7 +63,7 @@ module Spree
         "#{ov.option_type.presentation}: #{ov.presentation}"
       end
 
-      values.to_sentence({ :words_connector => ", ", :two_words_connector => ", " })
+      values.to_sentence({ words_connector: ", ", two_words_connector: ", " })
     end
 
     def gross_profit
@@ -81,7 +81,7 @@ module Spree
       # no option values on master
       return if self.is_master
 
-      option_type = Spree::OptionType.where(:name => opt_name).first_or_initialize do |o|
+      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
         o.presentation = opt_name
         o.save!
       end
@@ -99,7 +99,7 @@ module Spree
         end
       end
 
-      option_value = Spree::OptionValue.where(:option_type_id => option_type.id, :name => opt_value).first_or_initialize do |o|
+      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
         o.presentation = opt_value
         o.save!
       end
@@ -117,7 +117,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.select{ |price| price.currency == currency }.first || Spree::Price.new(:variant_id => self.id, :currency => currency)
+      prices.select{ |price| price.currency == currency }.first || Spree::Price.new(variant_id: self.id, currency: currency)
     end
 
     def amount_in(currency)
@@ -168,7 +168,7 @@ module Spree
 
       def create_stock_items
         Spree::StockLocation.all.each do |stock_location|
-          stock_location.stock_items.create!(:variant => self)
+          stock_location.stock_items.create!(variant: self)
         end
       end
   end

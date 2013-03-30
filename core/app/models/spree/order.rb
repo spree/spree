@@ -15,16 +15,16 @@ module Spree
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
-      go_to_state :payment, :if => lambda { |order|
+      go_to_state :payment, if: lambda { |order|
         # Fix for #2191
         if order.shipments
           order.update_totals
         end
         order.payment_required?
       }
-      go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
-      go_to_state :complete, :if => lambda { |order| (order.payment_required? && order.has_unprocessed_payments?) || !order.payment_required? }
-      remove_transition :from => :delivery, :to => :confirm
+      go_to_state :confirm, if: lambda { |order| order.confirmation_required? }
+      go_to_state :complete, if: lambda { |order| (order.payment_required? && order.has_unprocessed_payments?) || !order.payment_required? }
+      remove_transition from: :delivery, to: :confirm
     end
 
     token_resource
@@ -37,29 +37,29 @@ module Spree
     attr_reader :coupon_code
 
     if Spree.user_class
-      belongs_to :user, :class_name => Spree.user_class.to_s
+      belongs_to :user, class_name: Spree.user_class.to_s
     else
       belongs_to :user
     end
 
-    belongs_to :bill_address, :foreign_key => :bill_address_id, :class_name => "Spree::Address"
+    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: "Spree::Address"
     alias_attribute :billing_address, :bill_address
 
-    belongs_to :ship_address, :foreign_key => :ship_address_id, :class_name => "Spree::Address"
+    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: "Spree::Address"
     alias_attribute :shipping_address, :ship_address
 
-    has_many :state_changes, :as => :stateful
-    has_many :line_items, :dependent => :destroy, :order => "created_at ASC"
-    has_many :payments, :dependent => :destroy
+    has_many :state_changes, as: :stateful
+    has_many :line_items, dependent: :destroy, order: "created_at ASC"
+    has_many :payments, dependent: :destroy
 
-    has_many :shipments, :dependent => :destroy do
+    has_many :shipments, dependent: :destroy do
       def states
         pluck(:state).uniq
       end
     end
 
-    has_many :return_authorizations, :dependent => :destroy
-    has_many :adjustments, :as => :adjustable, :dependent => :destroy, :order => "created_at ASC"
+    has_many :return_authorizations, dependent: :destroy
+    has_many :adjustments, as: :adjustable, dependent: :destroy, order: "created_at ASC"
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
@@ -69,29 +69,29 @@ module Spree
 
     # Needs to happen before save_permalink is called
     before_validation :set_currency
-    before_validation :generate_order_number, :on => :create
-    before_validation :clone_billing_address, :if => :use_billing?
+    before_validation :generate_order_number, on: :create
+    before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
     before_create :link_by_email
     after_create :create_tax_charge!
 
-    validates :email, :presence => true, :if => :require_email
-    validates :email, :email => true, :if => :require_email, :allow_blank => true
+    validates :email, presence: true, if: :require_email
+    validates :email, email: true, if: :require_email, allow_blank: true
     validate :has_available_shipment
     validate :has_available_payment
 
-    make_permalink :field => :number
+    make_permalink field: :number
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
 
     def self.by_number(number)
-      where(:number => number)
+      where(number: number)
     end
 
     def self.between(start_date, end_date)
-      where(:created_at => start_date..end_date)
+      where(created_at: start_date..end_date)
     end
 
     def self.by_customer(customer)
@@ -99,7 +99,7 @@ module Spree
     end
 
     def self.by_state(state)
-      where(:state => state)
+      where(state: state)
     end
 
     def self.complete
@@ -107,7 +107,7 @@ module Spree
     end
 
     def self.incomplete
-      where(:completed_at => nil)
+      where(completed_at: nil)
     end
 
     # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
@@ -125,19 +125,19 @@ module Spree
     end
 
     def display_outstanding_balance
-      Spree::Money.new(outstanding_balance, { :currency => currency })
+      Spree::Money.new(outstanding_balance, { currency: currency })
     end
 
     def display_item_total
-      Spree::Money.new(item_total, { :currency => currency })
+      Spree::Money.new(item_total, { currency: currency })
     end
 
     def display_adjustment_total
-      Spree::Money.new(adjustment_total, { :currency => currency })
+      Spree::Money.new(adjustment_total, { currency: currency })
     end
 
     def display_total
-      Spree::Money.new(total, { :currency => currency })
+      Spree::Money.new(total, { currency: currency })
     end
 
     def to_param
@@ -213,7 +213,7 @@ module Spree
     def price_adjustment_totals
       Hash[price_adjustments.group_by(&:label).map do |label, adjustments|
         total = adjustments.sum(&:amount)
-        [label, Spree::Money.new(total, { :currency => currency })]
+        [label, Spree::Money.new(total, { currency: currency })]
       end]
     end
 
@@ -274,7 +274,7 @@ module Spree
       self.email = user.email
       # disable validations since they can cause issues when associating
       # an incomplete address during the address step
-      save(:validate => false)
+      save(validate: false)
     end
 
     # FIXME refactor this method and implement validation using validates_* utilities
@@ -282,7 +282,7 @@ module Spree
       record = true
       while record
         random = "R#{Array.new(9){rand(9)}.join}"
-        record = self.class.where(:number => random).first
+        record = self.class.where(number: random).first
       end
       self.number = random if self.number.blank?
       self.number
@@ -350,7 +350,7 @@ module Spree
 
     def credit_cards
       credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
-      CreditCard.scoped(:conditions => { :id => credit_card_ids })
+      CreditCard.scoped(conditions: { id: credit_card_ids })
     end
 
     # Finalizes an in progress order after checkout is complete.
@@ -375,11 +375,11 @@ module Spree
       deliver_order_confirmation_email
 
       self.state_changes.create({
-        :previous_state => 'cart',
-        :next_state     => 'complete',
-        :name           => 'order' ,
-        :user_id        => self.user_id
-      }, :without_protection => true)
+        previous_state: 'cart',
+        next_state:     'complete',
+        name:           'order' ,
+        user_id:        self.user_id
+      }, without_protection: true)
     end
 
     def deliver_order_confirmation_email
@@ -478,11 +478,11 @@ module Spree
       if persisted?
         old_state = self.send("#{state}_was")
         self.state_changes.create({
-          :previous_state => old_state,
-          :next_state     => self.send(state),
-          :name           => name,
-          :user_id        => self.user_id
-        }, :without_protection => true)
+          previous_state: old_state,
+          next_state:     self.send(state),
+          name:           name,
+          user_id:        self.user_id
+        }, without_protection: true)
       end
     end
 

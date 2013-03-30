@@ -1,23 +1,23 @@
 module Spree
   class Taxon < ActiveRecord::Base
-    acts_as_nested_set :dependent => :destroy
+    acts_as_nested_set dependent: :destroy
 
     belongs_to :taxonomy
-    has_many :classifications, :dependent => :delete_all
-    has_many :products, :through => :classifications
+    has_many :classifications, dependent: :delete_all
+    has_many :products, through: :classifications
 
     before_create :set_permalink
 
     attr_accessible :name, :parent_id, :position, :icon, :description, :permalink, :taxonomy_id
 
-    validates :name, :presence => true
+    validates :name, presence: true
 
     has_attached_file :icon,
-      :styles => { :mini => '32x32>', :normal => '128x128>' },
-      :default_style => :mini,
-      :url => '/spree/taxons/:id/:style/:basename.:extension',
-      :path => ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
-      :default_url => '/assets/default_taxon.png'
+      styles: { mini: '32x32>', normal: '128x128>' },
+      default_style: :mini,
+      url: '/spree/taxons/:id/:style/:basename.:extension',
+      path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
+      default_url: '/assets/default_taxon.png'
 
     include Spree::Core::S3Support
     supports_s3 :icon

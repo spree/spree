@@ -11,7 +11,7 @@ module Spree
     attr_accessible :name, :active, :address1, :address2, :city, :zipcode,
                     :state_name, :state_id, :country_id, :phone
 
-    scope :active, where(active: true)
+    scope :active, -> { where(active: true) }
 
     after_create :create_stock_items
 
@@ -27,15 +27,15 @@ module Spree
       stock_item(variant).try(:backorderable?)
     end
 
-    def restock(variant, quantity, originator=nil)
+    def restock(variant, quantity, originator = nil)
       move(variant, quantity, originator)
     end
 
-    def unstock(variant, quantity, originator=nil)
+    def unstock(variant, quantity, originator = nil)
       move(variant, -quantity, originator)
     end
 
-    def move(variant, quantity, originator=nil)
+    def move(variant, quantity, originator = nil)
       stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
     end
 
@@ -55,10 +55,11 @@ module Spree
     end
 
     private
-    def create_stock_items
-      Spree::Variant.all.each do |v|
-        self.stock_items.create!(:variant => v)
+
+      def create_stock_items
+        Spree::Variant.all.each do |v|
+          self.stock_items.create!(variant: v)
+        end
       end
-    end
   end
 end

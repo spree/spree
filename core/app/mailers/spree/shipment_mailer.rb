@@ -14,9 +14,9 @@ module Spree
       @shipment = shipment
       subject = (resend ? "[#{t(:resend).upcase}] " : '')
       subject += "#{Spree::Config[:site_name]} #{t('shipment_mailer.shipped_email.subject')} ##{shipment.order.number}"
-      mail(:to => shipment.order.email,
-           :from => from_address,
-           :subject => subject)
+      mail(to: shipment.order.email,
+           from: from_address,
+           subject: subject)
     end
   end
 end
