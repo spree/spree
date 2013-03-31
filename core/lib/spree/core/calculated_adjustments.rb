@@ -9,7 +9,7 @@ module Spree
           validates :calculator, :presence => true
 
           def self.calculators
-            Rails.application.config.spree.calculators.send(self.to_s.tableize.gsub('/', '_').sub('spree_', ''))
+            spree_calculators.send model_name_without_spree_namespace
           end
 
           def calculator_type
@@ -18,7 +18,7 @@ module Spree
 
           def calculator_type=(calculator_type)
             klass = calculator_type.constantize if calculator_type
-            self.calculator = klass.new if klass and not self.calculator.is_a? klass
+            self.calculator = klass.new if klass && !self.calculator.is_a?(klass)
           end
 
           # Creates a new adjustment for the target object (which is any class that has_many :adjustments) and
@@ -46,6 +46,15 @@ module Spree
           # Such as Spree::Promotion::Action::CreateAdjustment.
           def compute_amount(calculable)
             self.calculator.compute(calculable)
+          end
+
+          private
+          def self.model_name_without_spree_namespace
+            self.to_s.tableize.gsub('/', '_').sub('spree_', '')
+          end
+
+          def self.spree_calculators
+            Rails.application.config.spree.calculators
           end
         end
       end
