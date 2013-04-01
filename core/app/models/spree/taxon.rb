@@ -45,6 +45,11 @@ module Spree
       end
     end
 
+    # For #2759
+    def to_param
+      permalink
+    end
+
     def active_products
       scope = products.active
       scope = scope.on_hand unless Spree::Config[:show_zero_stock_products]
