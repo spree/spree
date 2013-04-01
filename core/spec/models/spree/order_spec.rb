@@ -361,8 +361,8 @@ describe Spree::Order do
 
     context "merging together two orders with line items for the same variant" do
       before do
-        order_1.add_variant(variant)
-        order_2.add_variant(variant)
+        order_1.contents.add(variant, 1)
+        order_2.contents.add(variant, 1)
       end
 
       specify do
@@ -379,8 +379,8 @@ describe Spree::Order do
       let(:variant_2) { create(:variant) }
 
       before do
-        order_1.add_variant(variant)
-        order_2.add_variant(variant_2)
+        order_1.contents.add(variant, 1)
+        order_2.contents.add(variant_2, 1)
       end
 
       specify do

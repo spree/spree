@@ -28,7 +28,7 @@ describe Spree::Promotion::Actions::CreateLineItems do
     end
 
     it "only adds the delta of quantity to an order" do
-      order.add_variant(@v2, 1)
+      order.contents.add(@v2, 1)
       action.perform(:order => order)
       line_item = order.line_items.find_by_variant_id(@v2.id)
       line_item.should_not be_nil
@@ -36,7 +36,7 @@ describe Spree::Promotion::Actions::CreateLineItems do
     end
 
     it "doesn't add if the quantity is greater" do
-      order.add_variant(@v2, 3)
+      order.contents.add(@v2, 3)
       action.perform(:order => order)
       line_item = order.line_items.find_by_variant_id(@v2.id)
       line_item.should_not be_nil

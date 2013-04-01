@@ -148,7 +148,7 @@ describe Spree::TaxRate do
     end
 
     context "when order has no taxable line items" do
-      before { @order.add_variant @nontaxable.master }
+      before { @order.contents.add(@nontaxable.master, 1) }
 
       it "should not create a tax adjustment" do
         @rate.adjust(@order)
@@ -167,7 +167,7 @@ describe Spree::TaxRate do
     end
 
     context "when order has one taxable line item" do
-      before { @order.add_variant @taxable.master }
+      before { @order.contents.add(@taxable.master, 1) }
 
       context "when price includes tax" do
         before { @rate.included_in_price = true }
@@ -236,8 +236,8 @@ describe Spree::TaxRate do
     context "when order has multiple taxable line items" do
       before do
         @taxable2 = create(:product, :tax_category => @category)
-        @order.add_variant @taxable.master
-        @order.add_variant @taxable2.master
+        @order.contents.add(@taxable.master, 1)
+        @order.contents.add(@taxable2.master, 1)
       end
 
       context "when price includes tax" do
