@@ -48,7 +48,7 @@
           </div>
           <div class="alpha nine columns">
             <div class="field">
-              <%= f.label :taxons_id_eq, t(:taxon) %><br />
+              <%= f.label :taxons_id_in, t(:taxon) %>
               <%= f.grouped_collection_select :taxons_id_in, Spree::Taxonomy.all, :taxons, :name, :id, :name, {}, {:multiple => true, :class => 'select2 fullwidth'} %>
             </div>
           </div>

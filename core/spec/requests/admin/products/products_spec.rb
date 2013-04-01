@@ -78,6 +78,24 @@ describe "Products" do
         page.should_not have_content("apache baseball cap2")
         page.should_not have_content("zomg shirt")
       end
+
+      it 'should be able to search products by taxon', :js => true do
+        baseball = create(:taxon, :name => 'baseball')
+        shirt = create(:taxon, :name => 'shirt')
+        create(:product, :name => 'apache baseball cap', :sku => "A100", :taxons => [baseball])
+        create(:product, :name => 'bteam tshirt', :sku => "B100", :taxons => [baseball])
+        create(:product, :name => 'zomg shirt', :taxons => [shirt])
+
+        click_link "Products"
+
+        select2 'shirt', :from => 'Taxon', :remote => false
+
+        click_icon :search
+        page.should have_content('zomg shirt')
+        page.should_not have_content('bteam tshirt')
+        page.should_not have_content('apache baseball cap')
+      end
+
     end
     context "creating a new product from a prototype" do
 
