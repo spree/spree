@@ -4,7 +4,7 @@ Spree::Order.class_eval do
     params[:line_items_attributes] ||= []
     unless params[:line_items_attributes].empty?
       params[:line_items_attributes].each_key do |k|
-        order.add_variant(Spree::Variant.find(params[:line_items_attributes][k][:variant_id]), params[:line_items_attributes][k][:quantity])
+        order.contents.add(Spree::Variant.find(params[:line_items_attributes][k][:variant_id]), params[:line_items_attributes][k][:quantity])
       end
     end
 

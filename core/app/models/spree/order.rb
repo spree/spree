@@ -260,7 +260,7 @@ module Spree
     end
 
     def add_variant(variant, quantity = 1, currency = nil)
-      # ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#add_variant will be deprecated in Spree 2.1, please use order.contents.add instead.")
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#add_variant will be deprecated in Spree 2.1, please use order.contents.add instead.")
       contents.currency = currency unless currency.nil?
       contents.add(variant, quantity)
     end
