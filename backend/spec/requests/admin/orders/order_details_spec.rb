@@ -71,10 +71,10 @@ describe "Order Details" do
       page.should have_content("Tracking: FOOBAR")
     end
 
-    xit "can add change the shipping method" do
+    it "can add change the shipping method" do
       order = create(:completed_order_with_totals)
       visit spree.edit_admin_order_path(order)
-      within("table.index tr:nth-child(3)") do
+      within("table.index tr.show-method") do
         click_icon :edit
       end
       select2 "Default", :from => "Shipping Method"
