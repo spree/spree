@@ -38,15 +38,15 @@ module Spree
 
     state_machine :state, initial: :open do
       event :close do
-        transition open: :closed
+        transition from: :open, to: :closed
       end
 
       event :open do
-        transition closed: :open
+        transition from: :closed, to: :open
       end
 
       event :finalize do
-        transition [:open, :closed] => :finalized
+        transition from: [:open, :closed], to: :finalized
       end
     end
 
@@ -83,14 +83,12 @@ module Spree
     def update!(src = nil)
       src ||= source
       return if immutable?
-      if originator.present?
-        originator.update_adjustment(self, src)
-      end
+      originator.update_adjustment(self, src) if originator.present?
       set_eligibility
     end
 
     def currency
-      adjustable.nil? ? Spree::Config[:currency] : adjustable.currency
+      adjustable ? adjustable.currency : Spree::Config[:currency]
     end
 
     def display_amount
@@ -101,11 +99,8 @@ module Spree
       state != "open"
     end
 
-    def finalized?
-      state == "finalized"
-    end
-
     private
+
       def update_adjustable
         adjustable.update! if adjustable.is_a? Order
       end
