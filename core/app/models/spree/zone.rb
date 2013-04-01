@@ -9,7 +9,8 @@ module Spree
     after_save :remove_previous_default
 
     alias :members :zone_members
-    accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: ->(m) { m[:zoneable_id].blank? }
+    accepts_nested_attributes_for :zone_members, allow_destroy: true,
+      reject_if: ->(m) { m[:zoneable_id].blank? }
 
     attr_accessible :name, :description, :default_tax, :kind, :zone_members,
                     :zone_members_attributes
