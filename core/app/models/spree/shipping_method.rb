@@ -20,6 +20,10 @@ module Spree
       I18n.t(:shipping)
     end
 
+    def self.calculators
+       Rails.application.config.spree.calculators.send(self.to_s.tableize.gsub('/', '_').sub('spree_', '')).select{|c| c.name.start_with?("Spree::Calculator::Shipping::")}
+    end
+
     def zone
       raise "DEPRECATION WARNING: ShippingMethod#zone is no longer correct. Multiple zones need to be supported"
       Rails.logger.error "DEPRECATION WARNING: ShippingMethod#zone is no longer correct. Multiple zones need to be supported"
