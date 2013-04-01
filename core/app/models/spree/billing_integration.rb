@@ -15,9 +15,7 @@ module Spree
 
     def options
       options_hash = {}
-      self.preferences.each do |key,value|
-        options_hash[key.to_sym] = value
-      end
+      preferences.each { |key, value| options_hash[key.to_sym] = value }
       options_hash
     end
   end
