@@ -23,16 +23,17 @@ module Spree
 
     has_one :default_price,
       class_name: 'Spree::Price',
-      conditions: -> { { currency: Spree::Config[:currency] } },
+      conditions: proc { { currency: Spree::Config[:currency] } },
       dependent: :destroy
 
-    delegate_belongs_to :default_price, :display_price, :display_amount,
-      :price, :price=, :currency if Spree::Price.table_exists?
+    delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency if Spree::Price.table_exists?
 
-    has_many :prices, class_name: 'Spree::Price', dependent: :destroy
+    has_many :prices,
+      class_name: 'Spree::Price',
+      dependent: :destroy
 
     validate :check_price
-    validates :price, numericality: { greater_than_or_equal_to: 0 }, presence: true, if: -> { Spree::Config[:require_master_price] }
+    validates :price, numericality: { greater_than_or_equal_to: 0 }, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true } if self.table_exists? && self.column_names.include?('cost_price')
 
     before_validation :set_cost_currency
@@ -40,7 +41,7 @@ module Spree
     after_create :create_stock_items
 
     # default variant scope only lists non-deleted variants
-    scope :deleted, -> { where('deleted_at IS NOT NULL') }
+    scope :deleted, lambda { where('deleted_at IS NOT NULL') }
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')

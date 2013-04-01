@@ -82,7 +82,7 @@ module Spree
 
 
       if shipping_method_id
-        selected_rate = shipping_rates.detect { |rate| 
+        selected_rate = shipping_rates.detect { |rate|
           rate.shipping_method_id == shipping_method_id
         }
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
@@ -112,9 +112,9 @@ module Spree
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
       event :ready do
-        transition from: :pending, to: :ready, if: ->(shipment) {
+        transition from: :pending, to: :ready, if: lambda { |shipment|
           # Fix for #2040
-          shipment.determine_state(shipment.order) == 'ready'
+          shipment.determine_state(shipment.order) == :ready
         }
       end
 
@@ -133,11 +133,11 @@ module Spree
       after_transition to: :canceled, do: :after_cancel
 
       event :resume do
-        transition from: :canceled, to: :ready, if: ->(shipment) {
-          shipment.determine_state(shipment.order) == 'ready'
+        transition from: :canceled, to: :ready, if: lambda { |shipment|
+          shipment.determine_state(shipment.order) == :ready
         }
-        transition from: :canceled, to: :pending, if: ->(shipment) {
-          shipment.determine_state(shipment.order) == 'ready'
+        transition from: :canceled, to: :pending, if: lambda { |shipment|
+          shipment.determine_state(shipment.order) == :ready
         }
         transition from: :canceled, to: :pending
       end
