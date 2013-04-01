@@ -18,20 +18,19 @@ module Spree
     after_save :ensure_selected_shipping_rate, :ensure_correct_adjustment, :update_order
 
     attr_accessor :special_instructions
-    attr_accessible :order, :special_instructions, :stock_location_id,
-                    :tracking, :address, :inventory_units, :selected_shipping_rate_id
+    attr_accessible :order, :special_instructions, :stock_location_id, :tracking,
+                    :address, :inventory_units, :selected_shipping_rate_id
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
     make_permalink field: :number
 
-    scope :with_state, ->(s) { where(state: s) }
-    scope :shipped, with_state('shipped')
-    scope :ready, with_state('ready')
-    scope :pending, with_state('pending')
-    scope :trackable, where("spree_shipments.tracking is not null
-                             and spree_shipments.tracking != ''")
+    scope :shipped, -> { with_state('shipped') }
+    scope :ready,   -> { with_state('ready') }
+    scope :pending, -> { with_state('pending') }
+    scope :with_state, ->(*s) { where(state: s) }
+    scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
 
     def to_param
       number if number
@@ -40,7 +39,7 @@ module Spree
     end
 
     def backordered?
-      inventory_units.any? { |iu| iu.backordered? }
+      inventory_units.any? { |inventory_unit| inventory_unit.backordered? }
     end
 
     def shipped=(value)
@@ -49,12 +48,11 @@ module Spree
     end
 
     def shipping_method
-      shipping_rates.where(selected: true).first.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
+      selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
     end
 
-    def add_shipping_method(shipping_method, selected=false)
-      shipping_rates << Spree::ShippingRate.create(shipping_method: shipping_method,
-                                                                        selected: selected)
+    def add_shipping_method(shipping_method, selected = false)
+      shipping_rates.create(shipping_method: shipping_method, selected: selected)
     end
 
     def selected_shipping_rate
@@ -77,24 +75,24 @@ module Spree
     end
 
     def refresh_rates
-      return self.shipping_rates if self.shipped?
+      return shipping_rates if shipped?
 
-      shipping_method_id = self.shipping_method.try(:id)
+      shipping_method_id = shipping_method.try(:id)
       self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
 
 
       if shipping_method_id
-        selected_rate = self.shipping_rates.detect{|rate| rate.shipping_method_id == shipping_method_id}
-        if selected_rate
-          self.selected_shipping_rate_id = selected_rate.id
-        end
+        selected_rate = shipping_rates.detect { |rate| 
+          rate.shipping_method_id == shipping_method_id
+        }
+        self.selected_shipping_rate_id = selected_rate.id if selected_rate
       end
 
-      self.shipping_rates
+      shipping_rates
     end
 
     def currency
-      order.nil? ? Spree::Config[:currency] : order.currency
+      order ? order.currency : Spree::Config[:currency]
     end
 
     # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match
@@ -112,38 +110,38 @@ module Spree
     alias_method :display_amount, :display_cost
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine initial: 'pending', use_transactions: false do
+    state_machine initial: :pending, use_transactions: false do
       event :ready do
-        transition from: 'pending', to: 'ready', if: ->(shipment) {
+        transition from: :pending, to: :ready, if: ->(shipment) {
           # Fix for #2040
           shipment.determine_state(shipment.order) == 'ready'
         }
       end
 
       event :pend do
-        transition from: 'ready', to: 'pending'
+        transition from: :ready, to: :pending
       end
 
       event :ship do
-        transition from: 'ready', to: 'shipped'
+        transition from: :ready, to: :shipped
       end
-      after_transition to: 'shipped', do: :after_ship
+      after_transition to: :shipped, do: :after_ship
 
       event :cancel do
-        transition to: 'canceled', from: ['pending', 'ready']
+        transition to: :canceled, from: [:pending, :ready]
       end
-      after_transition to: 'canceled', do: :after_cancel
+      after_transition to: :canceled, do: :after_cancel
 
       event :resume do
-        transition from: 'canceled', to: 'ready', if: ->(shipment) {
+        transition from: :canceled, to: :ready, if: ->(shipment) {
           shipment.determine_state(shipment.order) == 'ready'
         }
-        transition from: 'canceled', to: 'pending', if: ->(shipment) {
+        transition from: :canceled, to: :pending, if: ->(shipment) {
           shipment.determine_state(shipment.order) == 'ready'
         }
-        transition from: 'canceled', to: 'pending'
+        transition from: :canceled, to: :pending
       end
-      after_transition from: 'canceled', to: ['pending', 'ready'], do: :after_resume
+      after_transition from: :canceled, to: [:pending, :ready], do: :after_resume
     end
 
     def editable_by?(user)
@@ -168,21 +166,15 @@ module Spree
 
     def finalize!
       InventoryUnit.finalize_units!(inventory_units)
-      manifest.each do |item|
-        stock_location.unstock item.variant, item.quantity, self
-      end
+      manifest.each { |item| manifest_unstock }
     end
 
     def after_cancel
-      manifest.each do |item|
-        stock_location.restock item.variant, item.quantity, self
-      end
+      manifest.each { |item| manifest_restock(item) }
     end
 
     def after_resume
-      manifest.each do |item|
-        stock_location.unstock item.variant, item.quantity, self
-      end
+      manifest.each { |item| manifest_unstock(item) }
     end
 
     # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
@@ -191,7 +183,7 @@ module Spree
     def update!(order)
       old_state = state
       new_state = determine_state(order)
-      update_column 'state', new_state
+      update_column :state, new_state
       after_ship if new_state == 'shipped' and old_state != 'shipped'
     end
 
@@ -229,6 +221,15 @@ module Spree
     end
 
     private
+
+      def manifest_unstock(item)
+        stock_location.unstock item.variant, item.quantity, self
+      end
+
+      def manifest_restock(item)
+        stock_location.restock item.variant, item.quantity, self
+      end
+
       def generate_shipment_number
         return number unless number.blank?
         record = true
@@ -264,14 +265,11 @@ module Spree
         if adjustment
           adjustment.originator = shipping_method
           adjustment.label = shipping_method.name
-          if adjustment.open?
-            adjustment.amount = selected_shipping_rate.cost
-          end
+          adjustment.amount = selected_shipping_rate.cost if adjustment.open?
           adjustment.save!
           adjustment.reload
-
         elsif shipping_method
-          shipping_method.create_adjustment(shipping_method.adjustment_label, order, self, true)
+          shipping_method.create_adjustment shipping_method.adjustment_label, order, self, true
           reload #ensure adjustment is present on later saves
         end
       end
