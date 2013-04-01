@@ -42,5 +42,9 @@ module Spree
     def build_tracking_url(tracking)
       tracking_url.gsub(/:tracking/, tracking) unless tracking.blank? || tracking_url.blank?
     end
+
+    def self.calculators
+      spree_calculators.send(model_name_without_spree_namespace).select{|c| c.name.start_with?("Spree::Calculator::Shipping::")}
+    end
   end
 end
