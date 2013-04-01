@@ -114,7 +114,7 @@ module Spree
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: 'pending', use_transactions: false do
       event :ready do
-        transition from: 'pending', to: 'ready', if: lambda { |shipment|
+        transition from: 'pending', to: 'ready', if: ->(shipment) {
           # Fix for #2040
           shipment.determine_state(shipment.order) == 'ready'
         }
@@ -135,10 +135,10 @@ module Spree
       after_transition to: 'canceled', do: :after_cancel
 
       event :resume do
-        transition from: 'canceled', to: 'ready', if: lambda { |shipment|
+        transition from: 'canceled', to: 'ready', if: ->(shipment) {
           shipment.determine_state(shipment.order) == 'ready'
         }
-        transition from: 'canceled', to: 'pending', if: lambda { |shipment|
+        transition from: 'canceled', to: 'pending', if: ->(shipment) {
           shipment.determine_state(shipment.order) == 'ready'
         }
         transition from: 'canceled', to: 'pending'
