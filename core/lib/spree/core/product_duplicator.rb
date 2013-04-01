@@ -44,7 +44,9 @@ module Spree
     end
 
     def duplicate_image(image)
-      image.dup.assign_attributes(:attachment => image.attachment.clone)
+      new_image = image.dup
+      new_image.assign_attributes(:attachment => image.attachment.clone)
+      new_image
     end
 
     def reset_properties
