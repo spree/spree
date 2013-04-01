@@ -15,7 +15,7 @@ module Spree
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
-      go_to_state :payment, if: ->(order) do
+      go_to_state :payment, if: lambda { |order|
         # Fix for #2191
         if order.shipments
           order.update_totals
