@@ -22,8 +22,8 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :code, presence: true, if: lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
-    validates :path, presence: true, if: lambda{|r| r.event_name == 'spree.content.visited' }
+    validates :code, presence: true, if: ->(r) { r.event_name == 'spree.checkout.coupon_code_added' }
+    validates :path, presence: true, if: ->(r) { r.event_name == 'spree.content.visited' }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
@@ -62,7 +62,7 @@ module Spree
 
     def rules_are_eligible?(order, options = {})
       return true if rules.none?
-      eligible = lambda { |r| r.eligible?(order, options) }
+      eligible = ->(r) { r.eligible?(order, options) }
       if match_policy == 'all'
         rules.all?(&eligible)
       else

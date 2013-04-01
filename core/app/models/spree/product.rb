@@ -67,7 +67,7 @@ module Spree
     accepts_nested_attributes_for :variants, allow_destroy: true
 
     validates :name, :permalink, presence: true
-    validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
+    validates :price, presence: true, if: -> { Spree::Config[:require_master_price] }
 
     attr_accessor :option_values_hash
 
@@ -79,7 +79,7 @@ module Spree
 
     attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
+    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
 
     make_permalink order: :name
 
