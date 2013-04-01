@@ -166,7 +166,7 @@ module Spree
 
     def finalize!
       InventoryUnit.finalize_units!(inventory_units)
-      manifest.each { |item| manifest_unstock }
+      manifest.each { |item| manifest_unstock(item) }
     end
 
     def after_cancel
