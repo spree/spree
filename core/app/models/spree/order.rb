@@ -264,7 +264,7 @@ module Spree
     end
 
     def remove_variant(variant, quantity = 1)
-      # ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
       contents.remove(variant, quantity)
     end
 
