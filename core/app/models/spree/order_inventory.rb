@@ -13,17 +13,14 @@ module Spree
 
       if variant_units.size < line_item.quantity
         #add
-
         quantity = line_item.quantity - variant_units.size
 
-        shipment ||= order.shipments.detect { |shipment| (shipment.ready? || shipment.pending?) && shipment.include?(line_item.variant) }
-        shipment ||= order.shipments.detect { |shipment| (shipment.ready? || shipment.pending?) && line_item.variant.stock_location_ids.include?(shipment.stock_location_id) }
+        shipment = determine_target_shipment(line_item.variant) unless shipment
 
-        add_to_shipment(shipment,line_item.variant, quantity)
+        add_to_shipment(shipment, line_item.variant, quantity)
 
       elsif variant_units.size > line_item.quantity
         #remove
-
         quantity = variant_units.size - line_item.quantity
 
         order.shipments.each do |shipment|
@@ -43,6 +40,17 @@ module Spree
     end
 
     private
+
+    def determine_target_shipment(variant)
+      # get first unshipped shipment that already includes this variant
+      shipment = order.shipments.detect { |shipment| (shipment.ready? || shipment.pending?) && shipment.include?(variant) }
+
+      # get first unshipped shipment that's leaving from the a stock_location that stocks this variant
+      shipment ||= order.shipments.detect { |shipment| (shipment.ready? || shipment.pending?) && variant.stock_location_ids.include?(shipment.stock_location_id) }
+
+      # ship it!
+      shipment
+    end
 
     def add_to_shipment(shipment, variant, quantity)
       #create inventory_units
