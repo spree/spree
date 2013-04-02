@@ -31,10 +31,11 @@ module Spree
 
     token_resource
 
-    attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes, :payments_attributes,
-                    :ship_address, :bill_address, :payments_attributes, :line_items_attributes, :number,
-                    :email, :use_billing, :special_instructions, :currency, :coupon_code,
-                    :shipments_attributes
+    attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes,
+                    :payments_attributes, :ship_address, :bill_address, :currency,
+                    :payments_attributes, :line_items_attributes, :number, :email,
+                    :use_billing, :special_instructions, :shipments_attributes,
+                    :coupon_code
 
     attr_reader :coupon_code
 
@@ -44,14 +45,14 @@ module Spree
       belongs_to :user
     end
 
-    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: "Spree::Address"
+    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address'
     alias_attribute :billing_address, :bill_address
 
-    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: "Spree::Address"
+    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
     has_many :state_changes, as: :stateful
-    has_many :line_items, dependent: :destroy, order: "created_at ASC"
+    has_many :line_items, dependent: :destroy, order: 'created_at ASC'
     has_many :payments, dependent: :destroy
 
     has_many :shipments, dependent: :destroy do
@@ -61,7 +62,7 @@ module Spree
     end
 
     has_many :return_authorizations, dependent: :destroy
-    has_many :adjustments, as: :adjustable, dependent: :destroy, order: "created_at ASC"
+    has_many :adjustments, as: :adjustable, dependent: :destroy, order: 'created_at ASC'
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
@@ -112,7 +113,8 @@ module Spree
       where(completed_at: nil)
     end
 
-    # Use this method in other gems that wish to register their own custom logic that should be called after Order#updat
+    # Use this method in other gems that wish to register their own custom logic
+    # that should be called after Order#update
     def self.register_update_hook(hook)
       self.update_hooks.add(hook)
     end
@@ -150,9 +152,10 @@ module Spree
       !! completed_at
     end
 
-    # Indicates whether or not the user is allowed to proceed to checkout.  Currently this is implemented as a
-    # check for whether or not there is at least one LineItem in the Order.  Feel free to override this logic
-    # in your own application if you require additional steps before allowing a checkout.
+    # Indicates whether or not the user is allowed to proceed to checkout.
+    # Currently this is implemented as a check for whether or not there is at
+    # least one LineItem in the Order.  Feel free to override this logic in your
+    # own application if you require additional steps before allowing a checkout.
     def checkout_allowed?
       line_items.count > 0
     end
@@ -181,37 +184,37 @@ module Spree
     end
 
     def backordered?
-      shipments.any? { |shipment| shipment.backordered? }
+      shipments.any?(&:backordered?)
     end
 
-    # Returns the relevant zone (if any) to be used for taxation purposes.  Uses default tax zone
-    # unless there is a specific match
+    # Returns the relevant zone (if any) to be used for taxation purposes.
+    # Uses default tax zone unless there is a specific match
     def tax_zone
       zone_address = Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
       Zone.match(zone_address) || Zone.default_tax
     end
 
-    # Indicates whether tax should be backed out of the price calcualtions in cases where prices
-    # include tax but the customer is not required to pay taxes in that case.
+    # Indicates whether tax should be backed out of the price calcualtions in
+    # cases where prices include tax but the customer is not required to pay
+    # taxes in that case.
     def exclude_tax?
       return false unless Spree::Config[:prices_inc_tax]
       return tax_zone != Zone.default_tax
     end
 
-    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
-    # include tax (ex. VAT) and you need to record the tax amount separately.
+    # Array of adjustments that are inclusive in the variant price. Useful for when
+    # prices include tax (ex. VAT) and you need to record the tax amount separately.
     def price_adjustments
       adjustments = []
 
-      line_items.each do |line_item|
-        adjustments.concat line_item.adjustments
-      end
+      line_items.each { |line_item| adjustments.concat line_item.adjustments }
 
       adjustments
     end
 
-    # Array of totals grouped by Adjustment#label.  Useful for displaying price adjustments on an
-    # invoice.  For example, you can display tax breakout for cases where tax is included in price.
+    # Array of totals grouped by Adjustment#label. Useful for displaying price
+    # adjustments on an invoice. For example, you can display tax breakout for
+    # cases where tax is included in price.
     def price_adjustment_totals
       Hash[price_adjustments.group_by(&:label).map do |label, adjustments|
         total = adjustments.sum(&:amount)
@@ -246,7 +249,8 @@ module Spree
     end
 
     def allow_resume?
-      # we shouldn't allow resume for legacy orders b/c we lack the information necessary to restore to a previous state
+      # we shouldn't allow resume for legacy orders b/c we lack the information
+      # necessary to restore to a previous state
       return false if state_changes.empty? || state_changes.last.previous_state.nil?
       true
     end
@@ -403,7 +407,7 @@ module Spree
     end
 
     def pending_payments
-      payments.select {|p| p.state == "checkout"}
+      payments.select(&:checkout?)
     end
 
     def process_payments!
@@ -431,7 +435,7 @@ module Spree
     end
 
     def products
-      line_items.map { |li| li.product }
+      line_items.map(&:product)
     end
 
     def variants
@@ -519,6 +523,7 @@ module Spree
     end
 
     private
+
       def link_by_email
         self.email = user.email if self.user
       end
@@ -552,7 +557,7 @@ module Spree
       end
 
       def use_billing?
-        @use_billing == true || @use_billing == "true" || @use_billing == "1"
+        @use_billing == true || @use_billing == 'true' || @use_billing == '1'
       end
 
       def set_currency
