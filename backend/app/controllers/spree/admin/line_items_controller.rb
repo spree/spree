@@ -10,7 +10,7 @@ module Spree
 
       def create
         variant = Variant.find(params[:line_item][:variant_id])
-        @line_item = @order.add_variant(variant, params[:line_item][:quantity].to_i)
+        @line_item = @order.contents.add(variant, params[:line_item][:quantity].to_i)
 
         if @order.save
           render_order_form
