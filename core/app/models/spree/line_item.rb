@@ -35,10 +35,12 @@ module Spree
     end
 
     def increment_quantity
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::LineItem#increment_quantity will be deprecated in Spree 2.1, please use quantity.increment! instead.")
       self.quantity.increment!
     end
 
     def decrement_quantity
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::LineItem#decrement_quantity will be deprecated in Spree 2.1, please use quantity.decrement! instead.")
       self.quantity.decrement!
     end
 
