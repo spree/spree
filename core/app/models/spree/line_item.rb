@@ -2,7 +2,7 @@ module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
     belongs_to :order
-    belongs_to :variant, class_name: "Spree::Variant"
+    belongs_to :variant
 
     has_one :product, through: :variant
     has_many :adjustments, as: :adjustable, dependent: :destroy
@@ -10,7 +10,11 @@ module Spree
     before_validation :copy_price
 
     validates :variant, presence: true
-    validates :quantity, numericality: { only_integer: true, message: I18n.t('validation.must_be_int'), greater_than: -1 }
+    validates :quantity, numericality: {
+      only_integer: true,
+      greater_than: -1,
+      message: I18n.t('validation.must_be_int')
+    }
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
@@ -31,11 +35,11 @@ module Spree
     end
 
     def increment_quantity
-      self.quantity += 1
+      self.quantity.increment!
     end
 
     def decrement_quantity
-      self.quantity -= 1
+      self.quantity.decrement!
     end
 
     def amount
@@ -72,14 +76,14 @@ module Spree
 
     private
 
-    def update_inventory
-      Spree::OrderInventory.new(self.order).verify(self, target_shipment)
-    end
+      def update_inventory
+        Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+      end
 
-    def update_order
-      # update the order totals, etc.
-      order.create_tax_charge!
-      order.update!
-    end
+      def update_order
+        # update the order totals, etc.
+        order.create_tax_charge!
+        order.update!
+      end
   end
 end
