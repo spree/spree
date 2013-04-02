@@ -5,6 +5,11 @@ describe Spree::OrderInventory do
   let(:line_item) { order.line_items.first }
   subject { described_class.new(order) }
 
+  it 'inventory_units_for should return array of units for a given variant' do
+    units = subject.inventory_units_for(line_item.variant)
+    units.map(&:variant_id).should == [line_item.variant.id]
+  end
+
   context 'when order is missing inventory units' do
 
     before do
