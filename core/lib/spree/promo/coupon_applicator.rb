@@ -28,10 +28,9 @@ module Spree
       private
 
       def handle_present_promotion(promotion)
-        promotion_expired if promotion.expired?
-        promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?
+        return promotion_expired if promotion.expired?
+        return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?
 
-        previous_promo = @order.adjustments.promotion.eligible.first
         event_name = "spree.checkout.coupon_code_added"
         ActiveSupport::Notifications.instrument(event_name, :coupon_code => @order.coupon_code, :order => @order)
         promo = @order.adjustments.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
@@ -39,14 +38,15 @@ module Spree
       end
 
       def promotion_expired
-        return { :coupon_applied? => false, :error => I18n.t(:coupon_code_expired) }
+        { :coupon_applied? => false, :error => I18n.t(:coupon_code_expired) }
       end
 
       def promotion_usage_limit_exceeded
-        return { :coupon_applied? => false, :error => I18n.t(:coupon_code_max_usage) }
+        { :coupon_applied? => false, :error => I18n.t(:coupon_code_max_usage) }
       end
 
       def determine_promotion_application_result(promo)
+        previous_promo = @order.adjustments.promotion.eligible.first
         if promo.present? and promo.eligible
           return { :coupon_applied? => true, :success => I18n.t(:coupon_code_applied) }
         elsif previous_promo.present? and promo.present?
