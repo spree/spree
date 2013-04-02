@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shThemeRailsGuides.css" />
     <link rel='stylesheet' type='text/css' href='stylesheets/overrides.style.css' />
     <link rel='stylesheet' type='text/css' href='stylesheets/guides.css' />
+    <link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
   </head>
     <!--[if IE]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -71,7 +72,7 @@
             <%= yield %>
           </div>
         </div>
-        <div class="sidebar">
+        <div class="sidebar <%= yield :sidebar_classes %>">
           <div class="sidebar-inner">
             <div class="spot">
               <div class="spot-inner" id="chapter-listing">
@@ -80,6 +81,23 @@
             </div>
           </div>
         </div>
+
+        <% unless @show_popup == false %>
+          <div id="share-window">
+            <a class="close-widget" href="#">x</a>
+
+              <h4 class="title">Want to learn more about Spree?</h4>
+              <img src="images/spreeconf-badge.jpg" alt="Spree Conf DC">
+              <h2>May 20 - 21</h2>
+              <h3>Washington, DC</h3>
+
+            <p>
+              Save $75 with code <strong>"GUIDES"</strong>
+            </p>
+            <a href="http://spreeconf.com" target="_blank" class="button">Learn More</a>
+          </div>
+        <% end %>
+
       </div>
     </div>
   </div>
@@ -114,6 +132,35 @@
     <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
     <script type="text/javascript">
       SyntaxHighlighter.all()
+    </script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var widget = $("#share-window");
+
+        $("#share-window a.close-widget").click(function(e){
+          e.preventDefault();
+          widget.animate({
+            bottom: "-400px",
+            opacity: 0
+          }, 1000)
+        });
+
+        $(window).scroll(function(){
+          if($.browser.webkit) {
+            var scroll_top = $('body').scrollTop();
+          }
+          else {
+            var scroll_top = document.documentElement.scrollTop;
+          }
+          if(scroll_top > $(window).height()){
+            widget.animate({
+              bottom: "-5px"
+            });
+            $(window).unbind('scroll');
+          }
+        });
+      });
     </script>
 
     <% if @ga %>

@@ -1,3 +1,4 @@
+<% @show_popup = false %>
 <% content_for :header_section do %>
   <h2>Spree Guides</h2>
   <p>
@@ -14,6 +15,12 @@
       <%= link_to "Legacy Guides", "http://guides.spreecommerce.com/legacy" %> - for legacy versions of Spree
     </li>
   </ul>
+<% end %>
+
+<% content_for :sidebar_classes do %>spreeconf banner<% end %>
+
+<% content_for :index_section do %>
+  <a href="http://spreeconf.com" target="_blank"><img src="images/spreeconf-banner.jpg" alt=""></a>
 <% end %>
 
 <%= render "full_index", :guides => all_guides %>
