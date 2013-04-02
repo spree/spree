@@ -210,7 +210,7 @@ describe Spree::Shipment do
       shipment.order.stub(:update!)
 
       shipment.state = 'canceled'
-      shipment.should_receive(:determine_state).and_return('ready')
+      shipment.should_receive(:determine_state).and_return(:ready)
       shipment.should_receive(:after_resume)
       shipment.resume!
       shipment.state.should eq 'ready'
