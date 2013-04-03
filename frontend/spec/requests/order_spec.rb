@@ -18,6 +18,7 @@ describe 'orders' do
   it "should display line item price" do
     # Regression test for #2772
     line_item = order.line_items.first
+    line_item.target_shipment = create(:shipment)
     line_item.price = 19.00
     line_item.save!
 
