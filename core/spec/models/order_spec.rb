@@ -122,13 +122,13 @@ describe Spree::Order do
 
     it "should send an order confirmation email" do
       mail_message = mock "Mail::Message"
-      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_return mail_message
+      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_return mail_message
       mail_message.should_receive :deliver
       order.finalize!
     end
 
     it "should continue even if confirmation email delivery fails" do
-      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_raise 'send failed!'
+      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_raise 'send failed!'
       order.finalize!
     end
 

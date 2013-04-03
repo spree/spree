@@ -388,7 +388,7 @@ module Spree
 
     def deliver_order_confirmation_email
       begin
-        OrderMailer.confirm_email(self).deliver
+        OrderMailer.confirm_email(self.id).deliver
       rescue Exception => e
         logger.error("#{e.class.name}: #{e.message}")
         logger.error(e.backtrace * "\n")
@@ -637,7 +637,7 @@ module Spree
         restock_items!
 
         #TODO: make_shipments_pending
-        OrderMailer.cancel_email(self).deliver
+        OrderMailer.cancel_email(self.id).deliver
         unless %w(partial shipped).include?(shipment_state)
           self.payment_state = 'credit_owed'
         end
