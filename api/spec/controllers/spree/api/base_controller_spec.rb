@@ -11,7 +11,7 @@ describe Spree::Api::BaseController do
   context "signed in as a user using an authentication extension" do
     before do
       controller.stub :try_spree_current_user => stub(:email => "spree@example.com")
-      Spree::Api::Config[:requires_authentication] = false
+      Spree::Api::Config[:requires_authentication] = true
     end
 
     it "can make a request" do
