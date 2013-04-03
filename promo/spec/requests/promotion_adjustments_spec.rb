@@ -309,6 +309,7 @@ describe "Promotion Adjustments" do
 
       within('#actions_container') { click_button "Update" }
 
+      sleep(1)
       select2 "Create adjustment", :from => "Add action of type"
       within('#new_promotion_action_form') { click_button "Add" }
       select2 "Flat Rate (per order)", :from => "Calculator"
