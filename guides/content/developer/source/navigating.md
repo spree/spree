@@ -257,9 +257,10 @@ the following in your Gemfile.
 ```ruby
 gem 'spree', :path => '../spree'
 ```
-
-NOTE: See the excellent [bundler documentation](http://gembundler.com)
+***
+See the excellent [bundler documentation](http://gembundler.com)
 for more details.
+***
 
 ### Creating Extensions
 
