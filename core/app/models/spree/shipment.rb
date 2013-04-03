@@ -144,7 +144,7 @@ module Spree
       end
 
       def send_shipped_email
-        ShipmentMailer.shipped_email(self.id).deliver
+        ShipmentMailer.shipped_email(self).deliver
       end
 
       def ensure_correct_adjustment
