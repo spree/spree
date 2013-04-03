@@ -56,15 +56,5 @@ describe Spree::StockItem do
       end
     end
   end
-
-  it "lock_version should prevent stale updates" do
-    copy = Spree::StockItem.find(subject.id)
-
-    copy.count_on_hand = 200
-    copy.save!
-
-    subject.count_on_hand = 100
-    expect { subject.save }.to raise_error ActiveRecord::StaleObjectError
-  end
 end
 
