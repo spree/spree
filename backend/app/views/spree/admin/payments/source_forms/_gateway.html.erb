@@ -27,6 +27,14 @@
         </div>
       </div>
     </div>
+    <div class="alpha four columns">
+      <div data-hook="card_name">
+        <div class="field">
+          <%= label_tag 'card_name', raw(t(:name) + content_tag(:span, ' *', :class => 'required')) %>
+          <%= text_field_tag "#{param_prefix}[name]", '', :class => 'required fullwidth', :id => 'card_name', :maxlength => 19 %>
+        </div>
+      </div>
+    </div>
     <div class="three columns">
       <div data-hook="card_expiration" class="field">
         <%= label_tag 'card_month', raw(t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>

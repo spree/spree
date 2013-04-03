@@ -28,14 +28,6 @@ module Spree
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
-    def name?
-      first_name? && last_name?
-    end
-
-    def name
-      "#{first_name} #{last_name}"
-    end
-
     def verification_value?
       verification_value.present?
     end
