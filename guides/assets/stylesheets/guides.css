@@ -177,8 +177,18 @@ ul.nav {
   border: none;
 }
 
-.sidebar.spreeconf.banner .spot-inner{
-  padding: 0 !important;
+.sidebar.spreeconf.banner .spot-inner {
+  background-color: white;
+  box-shadow: none;
+  text-align: center;
+  -webkit-box-shadow: 0px 0px 2px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow:    0px 0px 2px rgba(50, 50, 50, 0.75);
+  box-shadow:         0px 0px 2px rgba(50, 50, 50, 0.75);
+}
+
+.sidebar.spreeconf.banner .spot-inner .illo img {
+  margin-top: 0;
+  margin-left: -15px;
 }
 
 #share-window * {
