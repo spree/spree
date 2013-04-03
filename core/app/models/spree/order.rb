@@ -390,7 +390,7 @@ module Spree
 
     def deliver_order_confirmation_email
       begin
-        OrderMailer.confirm_email(self).deliver
+        OrderMailer.confirm_email(self.id).deliver
       rescue Exception => e
         logger.error("#{e.class.name}: #{e.message}")
         logger.error(e.backtrace * "\n")
@@ -548,7 +548,7 @@ module Spree
       def after_cancel
         shipments.each { |shipment| shipment.cancel! }
 
-        OrderMailer.cancel_email(self).deliver
+        OrderMailer.cancel_email(self.id).deliver
         self.payment_state = 'credit_owed' unless shipped?
       end
 
