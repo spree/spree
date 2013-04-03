@@ -120,3 +120,17 @@ TODO: document return authorizations.
 
 TODO: Add documentation about the OrderPopulator class here
 
+## Updating an order
+
+If you change any aspect of an `Order` object within code and you wish to update
+the order's totals -- including associated adjustments and shipments -- call the `update!` method
+on that object, which calls out to the `OrderUpdater` class.
+
+For example, if you create or modify an existing payment for the order which would change the
+order's `payment_state` to a different value, calling `update!` will cause the
+`payment_state` to be recalculated for that order.
+
+Another example is if a `LineItem` within the order had its price changed.
+Calling `update!` will cause the totals for the order to be updated, the
+adjustments for the order to be recalculated, and then a final total to be
+established.
