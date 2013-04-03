@@ -78,7 +78,7 @@ module Spree
     private
 
       def accurate_title
-        @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : t(:shopping_cart)
+        @order && @order.completed? ? "#{I18n.t(:order)} #{@order.number}" : t(:shopping_cart)
       end
   end
 end
