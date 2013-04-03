@@ -29,6 +29,13 @@ describe Spree::ShipmentMailer do
     shipment_email.body.should_not include(%Q{Out of Stock})
   end
 
+  it "shipment_email accepts an shipment id as an alternative to an Shipment object" do
+    Spree::Shipment.should_receive(:find).with(shipment.id).and_return(shipment)
+    lambda {
+      shipped_email = Spree::ShipmentMailer.shipped_email(shipment.id)
+    }.should_not raise_error
+  end
+
   context "emails must be translatable" do
     context "shipped_email" do
       context "en locale" do
