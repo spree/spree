@@ -12,6 +12,11 @@ Heroku application already created on the Heroku stack for this application. If
 you don't have a Heroku app already, follow [this
 guide](https://devcenter.heroku.com/articles/creating-apps).
 
+***
+Heroku's tools assume that your application is version controlled by Git, as
+Git is used to push the code to Heroku.
+***
+
 ## Configuring your application
 
 There are two major things you will need to edit before you can deploy your
@@ -86,6 +91,26 @@ to Heroku:
 ```bash
 $ git push heroku master
 ```
+
+Once your application is on Heroku, you will need to set up the schema by
+running this command:
+
+```bash
+heroku run rake db:migrate```
+
+You may then wish to set up an admin user as well which can be done by loading
+the rails console:
+
+```bash
+heroku run rails console```
+
+And then running this code:
+
+```ruby
+Spree::User.create!(:email => "you@example.com", :password => "yourpassword")```
+
+Exit out of the console and then attempt to sign in to your application to
+verify these credentials.
 
 ## SSL Support
 
