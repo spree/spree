@@ -135,7 +135,7 @@ This section steps through the basics of what is involved in determining shipmen
 
 The process of determining shipments for an order is triggered by calling `#create_proposed_shipments` on an order object while transitioning to the delivery step during a checkout. This process will first delete any existing shipments for an order and then determine the possible shipments available for that order.
 
-This process is triggered by a call to `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a splitter, described in more detail [below](#).
+`#create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a splitter, described in more detail [below](#).
 
 After obtaining the array of available packages, they are converted to shipments on the order object. Shipping rates are determined and inventory units are created during this process as well.
 
@@ -145,7 +145,7 @@ At this point, the checkout process can continue to the delivery step.
 
 ### The Coordinator
 
-The `Spree::Stock::Coordinator` is the starting point when determining shipments when calling `#create_proposed_shipments` on an order. Its job is to go through each `StockLocation` available and determine what can be shipped from that location.
+The `Spree::Stock::Coordinator` is the starting point for determining shipments when calling `#create_proposed_shipments` on an order. Its job is to go through each `StockLocation` available and determine what can be shipped from that location.
 
 The `Spree::Stock::Coordinator` will ultimately return an array of packages which can then be easily converted into shipments for an order by calling `#to_shipment` on them.
 
@@ -167,35 +167,8 @@ A `Spree::Stock::Prioritizer` object will decide which Stock Location should shi
 
 ### The Estimator
 
-The `Spree::Stock::Estimator` loops through the packages created by the packer and attaches shipping rates to them.
+The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them.
 
-## Stock Management
-
-### Stock Locations
-
-Stock Locations are the locations where your inventory is shipped from. Each stock location has many stock items and stock movements.
-
-Stock Locations are created in the admin interface (Configuration → Stock Locations). Note that a stock item will be added to the newly created stock location for each variant in your application.
-
-### Stock Items
-
-Stock Items represent the inventory at a stock location for a specific variant. Stock item count on hand can be increased or decreased by creating stock movements.
-
-***
-Note: Stock items are created automatically for each stock location you have. You don't need to manage these manually.
-***
-
-!!!
-**Count On Hand** is no longer an attribute on variants. It has been moved to stock items, as those are now used for inventory management.
-!!!
-
-### Stock Movements
-
-![image](http://i.minus.com/iboTuJLZLrINnM.png)
-
-Stock movements allow you to mange the inventory of a stock item for a stock location. Stock movements are created in the admin interface by first navigating to the product you want to manage. Then, follow the **Stock Management** link in the sidebar.
-
-As shown in the image above, you can increase or decrease the count on hand available for a variant at a stock location. To increase the count on hand, make a stock movement with a positive quantity. To decrease the count on hand, make a stock movement with a negative quantity.
 
 
 

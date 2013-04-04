@@ -136,3 +136,30 @@ theme \
 -   *p.has\_stock?* - returns true if any variant of the product is
     “on\_hand”
 
+## Stock Management
+
+### Stock Locations
+
+Stock Locations are the locations where your inventory is shipped from. Each stock location has many stock items and stock movements.
+
+Stock Locations are created in the admin interface (Configuration → Stock Locations). Note that a stock item will be added to the newly created stock location for each variant in your application.
+
+### Stock Items
+
+Stock Items represent the inventory at a stock location for a specific variant. Stock item count on hand can be increased or decreased by creating stock movements.
+
+***
+Note: Stock items are created automatically for each stock location you have. You don't need to manage these manually.
+***
+
+!!!
+**Count On Hand** is no longer an attribute on variants. It has been moved to stock items, as those are now used for inventory management.
+!!!
+
+### Stock Movements
+
+![image](http://i.minus.com/iboTuJLZLrINnM.png)
+
+Stock movements allow you to mange the inventory of a stock item for a stock location. Stock movements are created in the admin interface by first navigating to the product you want to manage. Then, follow the **Stock Management** link in the sidebar.
+
+As shown in the image above, you can increase or decrease the count on hand available for a variant at a stock location. To increase the count on hand, make a stock movement with a positive quantity. To decrease the count on hand, make a stock movement with a negative quantity.
