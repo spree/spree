@@ -193,7 +193,7 @@ Up until now we've been discussing the general preference system that was adapte
 
 h4. Reading the Current Preferences
 
-At the heart of Spree preferences lies the +Spree::Config+ constant.  This object provides general access to the configuration settings anywhere in the application.
+At the heart of Spree preferences lies the +Spree::Config+ constant.  It's instantiated during the SpreeCore Engine initialization process.  This object provides general access to the configuration settings anywhere in the application. 
 
 These settings can be accessed from initializers, models, controllers, views, etc.
 
