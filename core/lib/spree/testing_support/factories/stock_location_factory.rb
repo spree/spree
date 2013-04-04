@@ -13,8 +13,9 @@ FactoryGirl.define do
     factory :stock_location_with_items do
       after(:create) do |stock_location, evaluator|
         # variant will add itself to all stock_locations in an after_create
-        create(:variant)
-        create(:variant)
+        # creating a product will automatically create a master variant
+        create(:product)
+        create(:product)
 
         stock_location.stock_items.first.adjust_count_on_hand(10)
         stock_location.stock_items.second.adjust_count_on_hand(20)
