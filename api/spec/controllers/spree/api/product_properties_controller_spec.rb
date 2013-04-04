@@ -18,7 +18,7 @@ module Spree
 
     context "if product is deleted" do
       before do
-        product.update_column(:deleted_at, Time.now)
+        product.update_column(:deleted_at, 1.day.ago)
       end
 
       it "can not see a list of product properties" do
