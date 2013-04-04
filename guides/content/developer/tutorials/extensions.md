@@ -14,7 +14,7 @@ Now that we know what an extension is, let's figure out how to use one and then 
 
 ## Installing an Extension
 
-We are going to be adding the [spree_fancy](http://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme meant to be applied to the base Spree install. It's intended as a starting point to show how a barebones Spree install can be easily modified to give a nice look in feel. Special bonus is it's fully responsive and looks good on mobile devices.
+We are going to be adding the [spree_fancy](http://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme so it only changes the look and feel of the application. Extensions can also add models, controllers, views to create new functionality but spree_fancy is intended as a starting point to show how a barebones Spree application can be easily modified to give a nice look and feel. As a special bonus it's fully responsive and looks good on mobile devices as well as on larger screens.
 
 There are three steps we need to take to install spree_fancy.
 
