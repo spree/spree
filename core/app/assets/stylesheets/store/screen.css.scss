@@ -788,6 +788,14 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #shipping_method {
     p {
+      &#minstrs {
+        clear: both;
+
+        label {
+          width: 100%;
+        }
+      }
+
       label {
         float: left;
         font-weight: bold;
