@@ -820,6 +820,12 @@ ul#products {
     color: white;
   }
 
+  .unshippable {
+    .stock-location {
+      background-color: $c_red;
+    }
+  }
+
   .shipping-methods {
     list-style: none;
     margin: 0;
