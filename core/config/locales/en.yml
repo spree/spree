@@ -380,8 +380,10 @@ en:
   credit_total: "Credit Total"
   credits: Credits
   currency: Currency
+  currency_decimal_mark: "Currency decimal mark"
   currency_settings: "Currency Settings"
   currency_symbol_position: "Put currency symbol before or after dollar amount?"
+  currency_thousands_separator: "Currency thousands separator"
   current: Current
   customer: Customer
   customer_details: "Customer Details"

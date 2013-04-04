@@ -62,6 +62,14 @@
                 </ul>
               </div>
             </div>
+            <div class="field">
+              <%= label_tag :currency_decimal_mark, t(:currency_decimal_mark) %><br>
+              <%= text_field_tag :currency_decimal_mark, Spree::Config[:currency_decimal_mark], :size => 3 %>
+            </div>
+            <div class="field">
+              <%= label_tag :currency_thousands_separator, t(:currency_thousands_separator) %><br>
+              <%= text_field_tag :currency_thousands_separator, Spree::Config[:currency_thousands_separator], :size => 3 %>
+            </div>
           </fieldset>
         </div>
       </div>
