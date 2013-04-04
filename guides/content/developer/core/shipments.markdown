@@ -86,7 +86,7 @@ To achieve this setup you need the following configuration:
 
 * 4 Shipping Categories: Default, light, regular and heavy
 * 3 Shipping Methods (Configuration->Shipping Methods): FedEx, DHL, USPS
-* 2 Stock Location (Configuration->Stock Locations): New York, Los Angeles
+* 2 Stock Locations (Configuration->Stock Locations): New York, Los Angeles
 
 
 |S. Category / S. Method|DHL|FedEx|USPS|
@@ -122,7 +122,88 @@ i.e. you can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground.
 
 If you are using shipping categories these can be used to qualify or disqualify a given shipping method.
 
-## Shipping Methods
+***
+**Note**: Shipping methods can now have multiple shipping categories assigned to them. This allows the shipping methods available to an order to be determined by the shipping categories of the items in a shipment.
+***
+
+### Zones
+
+Zones serve as a mechanism for grouping geographic areas together into a single entity.
+You can read all about how to configure and use Zones in the [Zones Guide](#).
+
+The Shipping Address entered during checkout will define the zone the customer is in
+and limit the Shipping Methods available to him.
+
+### Shipping Categories
+
+Shipping categories are useful if you sell products whose shipping pricing vary depending on the type of product (TVs and Mugs, for instance).
+
+For simple setups, where shipping for all products are priced the same (ie. t-shirt only shop), there is no need to setup your own shipping categories.
+
+Some examples of Shipping Categories would be:
+
+* light (for lightweight items like stickers)
+* regular
+* heavy (for items over a certain weight)
+
+Shipping Categories are created in the admin interface (Configuration -> Shipping Categories) and then assigned to products (Products->Products->Edit->Product Details pane).
+
+During checkout, the shipping categories of the products in your order will determine which calculator will be used to price its shipping for each Shipping Method.
+
+### Calculators
+
+A calculator is the component responsible for calculating the shipping price for each available Shipping Method.
+
+Spree ships with 4 default calculators:
+
+* Flat rate (per order)
+* Flat rate (per item/product)
+* Flat percent
+* Flexible rate
+* Price sack
+
+Flexible rate: Flat rate for the first product + Flat rate for each additional product.
+
+You can define your own calculator if you have more complex needs. In that case, check out the adjustments guide section on [calculators](#).
+
+## UI
+
+### What the Customer Sees
+
+In the standard system, there is no mention of shipping until the
+checkout phase.
+
+After entering a shipping address, the system displays
+the available shipping options and their costs for each shipment in the order.
+
+Only the shipping options whose zones include the _shipping_ address
+are presented.
+
+The Customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
+
+***
+You can enable collection of extra _shipping instructions_ by setting the option `Spree::Config.set(shipping_instructions: true)`. This is turned off by default. See [Shipping Instructions](#) below.
+***
+
+### What the Order's Administrator Sees
+
+Shipment objects are created during checkout for an order. Initially it records just the shipping method and the order it applies to. The administrator
+can update the record with actual shipping cost and a tracking code, and
+may also (once only) confirm the dispatch. This confirmation causes a
+shipping date to be set as the time of confirmation.
+
+
+### Advanced Shipping Methods
+
+Spree comes with a set of calculators that should fit most of the shipping situations that may arise. If the calculators that come with Spree are not enough for your needs, you might want to use an extension, if one exists, or create a custom one.
+
+
+### Extensions
+
+There are a few Spree extensions which provide additional shipping methods, including
+special support for fees imposed by common carriers, or support for bulk orders.
+See the [Spree Extension Registry](http://spreecommerce.com/extensions) for the latest
+information.
 
 
 ## Split Shipments
@@ -168,8 +249,3 @@ A `Spree::Stock::Prioritizer` object will decide which Stock Location should shi
 ### The Estimator
 
 The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them.
-
-
-
-
-
