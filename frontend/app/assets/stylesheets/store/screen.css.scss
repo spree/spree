@@ -790,6 +790,14 @@ ul#products {
 
 #shipping_method {
   p {
+    &#minstrs {
+      clear: both;
+
+      label {
+        width: 100%;
+      }
+    }
+
     label {
       float: left;
       font-weight: bold;
