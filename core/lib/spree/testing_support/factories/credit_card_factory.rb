@@ -4,7 +4,7 @@ class TestCard < Spree::CreditCard
 end
 
 FactoryGirl.define do
-  factory :credit_card, :class => TestCard do
+  factory :credit_card, class: TestCard do
     verification_value 123
     month 12
     year 2013

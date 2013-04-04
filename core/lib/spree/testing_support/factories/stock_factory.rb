@@ -1,6 +1,6 @@
 FactoryGirl.define do
   # must use build()
-  factory :stock_packer, :class => Spree::Stock::Packer do
+  factory :stock_packer, class: Spree::Stock::Packer do
     ignore do
       stock_location { build(:stock_location) }
       contents []
@@ -9,7 +9,7 @@ FactoryGirl.define do
     initialize_with { new(stock_location, contents) }
   end
 
-  factory :stock_package, :class => Spree::Stock::Package do
+  factory :stock_package, class: Spree::Stock::Package do
     ignore do
       stock_location { build(:stock_location) }
       order { create(:order_with_line_items, line_items_count: 2) }
