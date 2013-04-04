@@ -188,6 +188,11 @@ module Spree
         "property_name"=>"bag_type"
        }
 
+    MESSAGE = {} 
+    SYNC_MESSAGE_RESPONSE = {} 
+    ASYNC_MESSAGE_RESPONSE = {} 
+    UPDATE_REQUEST = {} 
+
     NEW_PRODUCT_EVENT =
       {
         "event" => 'product:new',
