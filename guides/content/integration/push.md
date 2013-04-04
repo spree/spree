@@ -1,60 +1,28 @@
 ---
-title: Spree Pro Integration Guide - Pushing Events
+title: Pushing Messages
 ---
 
-# Pushing Events
+## Pushing Messages
 
-Applications can push new events to Spree Professional. These can be triggered when an order has changed, a shipment has shipped, a payment has been captured or a new user has signed up.
+External systems can push messages on to the Integrators processing queue by using the Integrators API. These new messages are submmited by a HTTP POST to API at http://integrator.spreecommerce.com, and must contain the following fields:
 
-## Overview
+* _message_ - This key represents the message type, in colon notation for example: _order:new_, _order:updated_, _user:new_, _shipment:ready_
+* _store_id_ - This is the store identifier (BSON::ObjectId).
+* _payload_ - The payload contains all message specific details, for example in the case of _order:new_ it would contains orders details.
 
-Applications can be notified when events occur in Spree Professional and can push events back to Spree Professional. This creates a bidirectional conversation between Spree Professional and integrated services.
+Each message type may require specific details within the _payload_ field, please review the [Sample Messages](/integration/samples/) for the specific message type requirments.
 
-The Spree Professional Event API allows your application to have a single endpoint for notifications. Since Spree Professional has already been integrated into many 3rd party services, your events can be routed without any additional work.
+The API response will include all the details submitted, along with a _message_id_ for the newly created message.
 
-Spree professional accepts a standard description of orders and products. It will convert the descriptions into the format understood by each 3rd party service. You notify Spree Professional, we'll take care of the rest.
+All messages submitted via the API are first passed to the Incoming Queue where they are validated, and once processed they will be submitted to Accepted Queue. The _message_id_ returned by the API is message's Incoming Queue message_id, as the message maybe be duplicated several times when it's passed onto the Accepted Queue each new message with have its own _message_id_. Each new Accepted message will maintain a reference to its source Incoming message by storing the original _message_id_ in the _parent_id_ field.
 
-Events can be pushed to Spree Professional by POSTing JSON documents to new events url:
 
-    http://integrator.spreecommerce.com/events
 
-The posted events will be queued up for processing. The response will include an event ID. Events that can be posted include:
-
-* _New Order_ - after a successful checkout has been completed.
-* _Updated Order_ - any event that changes a completed order, for example: adding new products, changing shipments, etc.
-* _Canceled Order_ - after a completed order has been canceled.
-* _Payment Ready_ - when an authorized payment is deemed ready for capturing.
-* _Shipment Ready_ - when a shipment is considered ready to ship.
-* _Shipment Confirmation_ - after a shipment has been classified as dispatched.
-* _New Product_ - when a new product has been added to a store.
-* _Updated Product_ - any event that changes a product, for example: updating stock levels, descriptions, artwork etc.
-* _New User_ - after a new customer sign up
-* _Updated User_ - after a customer updates their personal details (email, shipping address, etc).
-
-## Updating a shipment
-
-If your integration was responsible for processing shipments, it may want to update the Spree store (and other systems) that it had just dispatched a shipment. In this case you could push a "Shipment Confirmation" message that would in turn update the Spree stores shipment record, and any other external systems that were subcribed to that event.
-
-### Pusing a Shipment Confirmation event
-When the shipment had disptached you can use an HTTP post to send the event to Spree Professional.
-
-    POST http://integrator.spreecommerce.com/events
-
-<pre class="headers"><code>Sample: Shipment Confirmation Push</code></pre>
-<%= json :push_shipment_confirmation %>
-
-response will be:
-
-<pre class="headers"><code>Sample: Shipment Confirmation Response</code></pre>
-<%= json :push_shipment_response %>
-
-Spree Professional when then route this message to the Spree store for processing, and any other consumers that are registered for that event.
-
-### New Product
+### New Product Example
 
 If your integration was responsible for managing products, it may want to add new products to the Spree store (and other systems) when they have been marked for sale. In this instance you would push a "New Product" message that would create the product within the Spree store and notify any other external systems that were subscribed to that event.
 
-    POST http://integrator.spreecommerce.com/events
+    POST http://integrator.spreecommerce.com/messages
 
 <pre class="headers"><code>Sample: New Product Push</code></pre>
 <%= json :new_product_push %>
