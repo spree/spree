@@ -360,8 +360,10 @@ en:
   credits: Credits
   current: Current
   currency: Currency
+  currency_decimal_mark: "Currency decimal mark"
   currency_symbol_position: "Put currency symbol before or after dollar amount?"
   currency_settings: "Currency Settings"
+  currency_thousands_separator: "Currency thousands separator"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
