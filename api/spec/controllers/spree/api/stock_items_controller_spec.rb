@@ -62,7 +62,8 @@ module Spree
         json_response.should have_attributes(attributes)
       end
 
-      it 'can update a stock item' do
+      it 'can update a stock item to add new inventory' do
+        stock_item.count_on_hand.should == 10
         params = {
           id: stock_item.to_param,
           stock_item: {
