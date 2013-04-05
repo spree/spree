@@ -1,6 +1,6 @@
 module Spree
   class StockMovement < ActiveRecord::Base
-    belongs_to :stock_item
+    belongs_to :stock_item, class_name: 'Spree::StockItem'
     belongs_to :originator, polymorphic: true
 
     attr_accessible :quantity, :stock_item, :stock_item_id, :originator

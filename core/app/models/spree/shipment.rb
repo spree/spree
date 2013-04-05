@@ -2,14 +2,12 @@ require 'ostruct'
 
 module Spree
   class Shipment < ActiveRecord::Base
-    belongs_to :order
+    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :address, class_name: 'Spree::Address'
+    belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
     has_many :shipping_rates
     has_many :shipping_methods, through: :shipping_rates
-
-    belongs_to :address
-    belongs_to :stock_location
-
     has_many :state_changes, as: :stateful
     has_many :inventory_units, dependent: :destroy
     has_one :adjustment, as: :source, dependent: :destroy

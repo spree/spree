@@ -1,7 +1,7 @@
 module Spree
   class ShippingRate < ActiveRecord::Base
-    belongs_to :shipment
-    belongs_to :shipping_method
+    belongs_to :shipment, class_name: 'Spree::Shipment'
+    belongs_to :shipping_method, class_name: 'Spree::ShippingMethod'
 
     attr_accessible :id, :shipping_method, :shipment,
                     :name, :cost, :selected
