@@ -30,14 +30,13 @@ A synchronous response indicates that the message has been completed / processed
 
 The synchronous response must contain at minimum the _message_id_ of the message that was processed, and may contain any / all of the following optional fields:
 
-* _messages_ - An array of new messages that should be accepted onto the internal queue of the Integrator as a result of the message being processed, for example the Mandrill endpoint consumes the _new:order_ message and generates an _order:confirmation:sent_ message as a result.
+* _messages_ - An array of new messages that should be accepted onto the internal queue of the Integrator as a result of the message being processed, for example the Mandrill endpoint consumes the _new:order_ message and generates an _order:confirmation:sent_ message as a result. For details on the specific fields required please review ["Pushing Messages"](/integration/push/).
 * _events_ - An array of new events which should be logged as a result of the message being processed.
 
 <pre class="headers"><code>Synchronous Response</code></pre>
 <%= json :sync_message_response %>
 
 A synchronous response may also include any additional attributes with the JSON response, which will be persisted for logging and diagnostic purposes.
-
 
 ### Asynchronous Response
 
@@ -52,14 +51,14 @@ An asynchronous response must ONLY contain the following fields:
 <pre class="headers"><code>Asynchronous Response</code></pre>
 <%= json :async_message_response %>
 
-On receipt of an asynchronous response, the Integrator will wait the alloted delay period and begin polling the _update_url_ using an exponential back-off algorithm for a completion response.
+On receipt of an asynchronous response, the Integrator will wait the alloted delay period and begin polling the _update_url_ for a completion response.
 
 Each poll to the _update_url_ will be a HTTP POST containing just the _message_id_:
 
 <pre class="headers"><code>Update Request</code></pre>
 <%= json :update_request %>
 
-The endpoint can respond with either the standard:
+The endpoint can then choose to respond to this update message with either the standard:
 
 * _asynchronous response_ - if the message has NOT yet been completed successfully.
 * _synchronous response_ - if the message HAS been completed successfully.

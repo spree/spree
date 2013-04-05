@@ -188,10 +188,27 @@ module Spree
         "property_name"=>"bag_type"
        }
 
-    MESSAGE = {} 
-    SYNC_MESSAGE_RESPONSE = {} 
-    ASYNC_MESSAGE_RESPONSE = {} 
-    UPDATE_REQUEST = {} 
+    MESSAGE = {
+      'message' => 'some.event',
+      'message_id' => ':guid',
+      'payload' => {}
+    }
+
+    SYNC_MESSAGE_RESPONSE = {
+      'message_id' => ':guid',
+      'messages' => [],
+      'events' => []
+    }
+
+    ASYNC_MESSAGE_RESPONSE = {
+      'message_id' => ':guid',
+      'delay' => 6000,
+      'update_url' => 'http://example.com/poll'
+    }
+
+    UPDATE_REQUEST = {
+      'message_id' => ':guid'
+    }
 
     NEW_PRODUCT_EVENT =
       {

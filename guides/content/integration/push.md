@@ -10,12 +10,13 @@ External systems can push messages on to the Integrators processing queue by usi
 * _store_id_ - This is the store identifier (BSON::ObjectId).
 * _payload_ - The payload contains all message specific details, for example in the case of _order:new_ it would contains orders details.
 
-Each message type may require specific details within the _payload_ field, please review the [Sample Messages](/integration/samples/) for the specific message type requirments.
+Each message type may require specific details within the _payload_ field, please review the [Message Library](/integration/library/) for the specific message type requirments.
 
 The API response will include all the details submitted, along with a _message_id_ for the newly created message.
 
-All messages submitted via the API are first passed to the Incoming Queue where they are validated, and once processed they will be submitted to Accepted Queue. The _message_id_ returned by the API is message's Incoming Queue message_id, as the message maybe be duplicated several times when it's passed onto the Accepted Queue each new message with have its own _message_id_. Each new Accepted message will maintain a reference to its source Incoming message by storing the original _message_id_ in the _parent_id_ field.
+All messages submitted via the API are first passed to the Incoming Queue where they are validated, and once processed they will be submitted to Accepted Queue. 
 
+NOTE: The _message_id_ returned by the API is message's Incoming Queue message_id, as the message maybe be duplicated several times when it's passed onto the Accepted Queue each new message with have its own _message_id_. Each new Accepted message will maintain a reference to its source Incoming message by storing the original _message_id_ in the _parent_id_ field.
 
 
 ### New Product Example
