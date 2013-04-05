@@ -47,6 +47,7 @@ To achieve this setup you need the following configuration:
 * 1 Stock Location: You are shipping all items from the same location, so you can use the default.
 
 |Name|Zone|Calculator|
+|----|----|----------|
 |USPS Ground|US|Flexi Rate($5,$2)|
 |FedEx|EU_VAT|FlatRate-per-item($10)|
 
