@@ -5,7 +5,8 @@ module Spree
     render_views
 
     let!(:stock_location) { create(:stock_location_with_items) }
-    let!(:stock_movement) { create(:stock_movement, stock_item: stock_location.stock_items.first) }
+    let!(:stock_item) { stock_location.stock_items.order(:id).first }
+    let!(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
     let!(:attributes) { [:id, :quantity, :stock_item_id] }
 
     before do
@@ -24,7 +25,7 @@ module Spree
     end
 
     it 'can control the page size through a parameter' do
-      create(:stock_movement, stock_item: stock_location.stock_items.first)
+      create(:stock_movement, stock_item: stock_item)
       api_get :index, stock_location_id: stock_location.to_param, per_page: 1
       json_response['count'].should == 1
       json_response['current_page'].should == 1
@@ -32,7 +33,7 @@ module Spree
     end
 
     it 'can query the results through a paramter' do
-      expected_result = create(:stock_movement, :received, quantity: 10, stock_item: stock_location.stock_items.first)
+      expected_result = create(:stock_movement, :received, quantity: 10, stock_item: stock_item)
       api_get :index, stock_location_id: stock_location.to_param, q: { quantity_eq: '10' }
       json_response['count'].should == 1
     end
@@ -50,7 +51,7 @@ module Spree
         params = {
           stock_location_id: stock_location.to_param,
           stock_movement: {
-            stock_item_id: stock_location.stock_items.first.to_param
+            stock_item_id: stock_item.to_param
           }
         }
 
