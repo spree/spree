@@ -241,6 +241,8 @@ instructions attached, they will be shown in an order's shipment admin page and 
 also be edited at that stage. Observe that instructions are currently attached to
 the order and not to actual shipments.
 
+<!---
+
 ## The Active Shipping Extension
 
 The popular active_shipping extension harnesses the active_shipping gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
@@ -258,7 +260,7 @@ As an example of how to use the [active_shipping extension](https://github.com/s
 
 For each USPS delivery service you want to offer (e.g. “USPS Media Mail”), you will need to create a Shipping Method with a descriptive name (Configuration -> Shipping Methods) and a calculator (registered in the active_shipping extension) that ties the delivery service and the shipping method together.
 
-## Default Calculators
+### Default Calculators
 
 The active_shipping extension comes with several pre-configured calculators out of the box. For example here are the ones provided for the USPS carrier:
 
@@ -291,7 +293,7 @@ The active_shipping gem needs some configuration variables set in order to consu
   Spree::ActiveShipping::Config.set(:origin_zip => "96778")
 ```
 
-## Adding Additional Calculators
+### Adding Additional Calculators
 
 Additional delivery services, that are not pre-configured as a calculator in the active_shipping extension, can be easily added. Say, for example, you need First Class International Parcels.
 
@@ -370,6 +372,8 @@ Finally, don’t forget to register the calculator you added. In extensions, thi
     Calculator::Usps::FirstClassMailInternationalParcels.register
   end
 ```
+
+-->
 
 ## Filtering Shipping Methods On Criteria Other Than the Zone
 
