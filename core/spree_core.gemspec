@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   # Frozen to 0.13.0 due to: https://github.com/amatsuda/kaminari/pull/282
   s.add_dependency 'kaminari', '0.13.0'
 
-  s.add_dependency 'state_machine', '= 1.1.2'
+  s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'ffaker', '~> 1.15.0'
   s.add_dependency 'paperclip', '~> 2.8.0'
   s.add_dependency 'aws-sdk', '~> 1.3.4'
