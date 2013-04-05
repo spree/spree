@@ -217,7 +217,7 @@ NOTE: Using this method will ensure your overrides are compatible with future th
 
 h4. More information on Deface
 
-For more information and sample overrides please refer to its "README":https://github.com/railsdog/deface file on GitHub.
+For more information and sample overrides please refer to its "README":https://github.com/spree/deface file on GitHub.
 
 You can also see how Deface internals work, and test selectors using the "Deface Test Harness":http://deface.heroku.com application.
 
