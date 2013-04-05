@@ -75,6 +75,9 @@ describe "Properties" do
       fill_in "product_product_properties_attributes_0_value", :with => "A Value"
       click_button "Update"
       click_link "Product Properties"
+      # Sometimes the page doesn't load before the all check is done
+      # lazily finding the element gives the page 10 seconds
+      lazily_find_element("tbody#product_properties")
       all("tbody#product_properties tr").count.should == 2
     end
   end

@@ -80,6 +80,21 @@ module CapybaraExt
     first(:xpath, "//label[text()[contains(.,'#{text}')]]")
   end
 
+  def lazily_find_element(locator)
+    element = first(:css, locator)
+    counter = 0
+
+    while element.nil? && counter < 10
+      sleep(1)
+      counter += 1
+      element = first(:css, locator)
+    end
+
+    if element.nil?
+      raise "Could not find element matching #{locator.inspect}"
+    end
+  end
+
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|
