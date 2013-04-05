@@ -1,3 +1,6 @@
+<% if agent_number = ENV['TC_AGENT_NUMBER']
+database_prefix = agent_number + "_"
+end %>
 <% case ENV['DB']
   when 'sqlite' %>
 development:
@@ -12,33 +15,33 @@ production:
 <% when 'mysql' %>
 development:
   adapter: mysql2
-  database: spree_development
+  database: <%= database_prefix %>spree_development
   username:
   encoding: utf8
 test:
   adapter: mysql2
-  database: spree_test
+  database: <%= database_prefix %>spree_test
   username:
   encoding: utf8
 production:
   adapter: mysql2
-  database: spree_production
+  database: <%= database_prefix %>spree_production
   username:
   encoding: utf8
 <% when 'postgres' %>
 development:
   adapter: postgresql
-  database: spree_development
+  database: <%= database_prefix %>spree_development
   username: postgres
   min_messages: warning
 test:
   adapter: postgresql
-  database: spree_test
+  database: <%= database_prefix %>spree_test
   username: postgres
   min_messages: warning
 production:
   adapter: postgresql
-  database: spree_production
+  database: <%= database_prefix %>spree_production
   username: postgres
   min_messages: warning
 <% else %>
