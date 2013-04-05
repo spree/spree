@@ -426,6 +426,10 @@ To ensure that First Class shipping is not available for orders that weigh more 
 
 ## Split Shipments
 
+### Introduction
+
+Split shipments are a new feature as of Spree 2.0 that addresses the needs of complex Spree stores that require sophisticated shipping and warehouse logic. This includes detailed inventory management and allows for shipping from multiple locations.
+
 ![image](http://i6.minus.com/ibrAmiN2MBxEFh.png)
 
 ### Creating Proposed Shipments
@@ -441,6 +445,8 @@ After obtaining the array of available packages, they are converted to shipments
 At this point, the checkout process can continue to the delivery step.
 
 ## The Components of Split Shipments
+
+This section describes the four main components that power split shipments.
 
 ### The Coordinator
 
@@ -458,7 +464,28 @@ For example, we may have two splitters for a stock location. One splitter has a 
 
 Note that splitters can be customized and creating your own can be done with relative ease. By inheriting from `Spree::Stock::Splitter::Base`, you can create your own splitter.
 
-For an example of a simple splitter, take a look at Spree's [weight based splitter](https://github.com/spree/spree/blob/235e470b242225d7c75c7c4c4c033ee3d739bb36/core/app/models/spree/stock/splitter/weight.rb). THis splitter pulls items with a weight greater than 150 into their own shipment.
+For an example of a simple splitter, take a look at Spree's [weight based splitter](https://github.com/spree/spree/blob/235e470b242225d7c75c7c4c4c033ee3d739bb36/core/app/models/spree/stock/splitter/weight.rb). This splitter pulls items with a weight greater than 150 into their own shipment.
+
+After creating your splitter, you need to add it to the array of splitters Spree uses. To do this, add the following to your application's `application.rb` file:
+
+```ruby
+initializer 'custom_spree_splitters', :after => 'spree.register.stock_splitters' do |app|
+    app.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
+end
+```
+
+You can also completely override the splitters used in spree, rearrange them, etc. To do this, add the following to your `application.rb` file:
+
+```ruby
+initializer 'custom_spree_splitters', :after => 'spree.register.stock_splitters' do |app|
+    app.config.spree.stock_splitters = [
+    Spree::Stock::Splitter::CustomSplitter,
+    Spree::Stock::Splitter::ShippingCategory
+    ]
+end
+```
+
+If you want to add different splitters for each stock location, you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
 
 ### The Prioritizer
 
@@ -466,4 +493,4 @@ A `Spree::Stock::Prioritizer` object will decide which Stock Location should shi
 
 ### The Estimator
 
-The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them.
+The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them. This information is then returned to the user so they can select shipments for their order and complete the checkout process.
