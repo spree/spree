@@ -31,7 +31,7 @@ module Spree
     end
 
     it 'can query the results through a paramter' do
-      stock_location.stock_items.first.update_column(:count_on_hand, 30)
+      stock_item.update_column(:count_on_hand, 30)
       api_get :index, stock_location_id: stock_location.to_param, q: { count_on_hand_eq: '30' }
       json_response['count'].should == 1
       json_response['stock_items'].first['count_on_hand'].should eq 30
