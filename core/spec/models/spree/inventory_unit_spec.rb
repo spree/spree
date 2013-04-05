@@ -6,7 +6,7 @@ describe Spree::InventoryUnit do
   let(:order) { mock_model(Spree::Order, line_items: [line_item],
     inventory_units: [], shipments: mock('shipments'), completed?: true) }
   let(:stock_location) { create(:stock_location_with_items) }
-  let(:stock_item) { stock_location.stock_items.first }
+  let(:stock_item) { stock_location.stock_items.order(:id).first }
 
   context "#backordered_for_stock_item" do
     let(:order) { create(:order) }
