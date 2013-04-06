@@ -71,8 +71,8 @@ $ ->
 
   if ($ '#checkout_form_payment').is('*')
     ($ 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(->
-      ($ '#payment-methods li').hide()
-      ($ '#payment_method_' + @value).show() if @checked
+      ($ '#payment-methods li').hide().find('input,select,textarea').attr('disabled', 'disabled')
+      ($ '#payment_method_' + @value).find('input,select,textarea').removeAttr('disabled').show() if @checked
     )
 
     ($ '#cvv_link').live('click', (event) ->
