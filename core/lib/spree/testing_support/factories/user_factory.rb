@@ -10,6 +10,11 @@ FactoryGirl.define do
     password_confirmation { password }
     authentication_token { generate(:user_authentication_token) } if Spree.user_class.attribute_method? :authentication_token
 
+    after :create do |user|
+      # SpreeAuthDevise assigns admin role to first user created so we will unset roles to ensure user is not admin.
+      user.spree_roles = []
+    end
+
     factory :admin_user do
       spree_roles { [Spree::Role.find_by_name('admin') || create(:role, name: 'admin')] }
     end
