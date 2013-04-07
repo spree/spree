@@ -2,5 +2,6 @@
 title: "Spree Documentation"
 ---
 
-* [API](/api)
-* [Developer](/developer)
+* [API](/api/)
+* [Developer](/developer/)
+* [Integration](/integration/)
