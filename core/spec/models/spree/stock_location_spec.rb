@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe StockLocation do
     subject { create(:stock_location_with_items) }
-    let(:stock_item) { subject.stock_items.first }
+    let(:stock_item) { subject.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
     before(:each) do
