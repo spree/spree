@@ -3,6 +3,9 @@
 require 'spec_helper'
 
 describe Spree::Product do
+
+  it { should validate_presence_of(:shipping_category) }
+
   context 'product instance' do
     let(:product) { create(:product) }
 
@@ -274,7 +277,7 @@ describe Spree::Product do
   context '#create' do
     before do
       @prototype = create(:prototype)
-      @product = Spree::Product.new(:name => "Foo", :price => 1.99)
+      @product = Spree::Product.new(:name => "Foo", :price => 1.99, :shipping_category_id => create(:shipping_category).id)
     end
 
     context "when prototype is supplied" do

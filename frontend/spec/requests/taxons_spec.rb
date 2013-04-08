@@ -30,7 +30,7 @@ describe "viewing products" do
       visit '/t/category/clothing/t-shirts'
       page.should have_meta(:description, 'Brand new Ruby on Rails TShirts')
       page.should have_meta(:keywords, 'ror, tshirt, ruby')
-
+    end
 
     it 'display title if set' do
       t_shirts.update_attributes metas

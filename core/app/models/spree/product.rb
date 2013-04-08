@@ -68,6 +68,7 @@ module Spree
 
     validates :name, :permalink, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
+    validates :shipping_category, presence: true
 
     attr_accessor :option_values_hash
 
