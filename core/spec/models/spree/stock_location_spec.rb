@@ -10,6 +10,10 @@ module Spree
       Spree::StockLocation.delete_all
     end
 
+    it { should validate_presence_of(:country) }
+    it { should validate_presence_of(:name) }
+    it { should validate_uniqueness_of(:name) }
+
     it 'creates stock_items for all variants' do
       subject.stock_items.count.should eq Variant.count
     end
