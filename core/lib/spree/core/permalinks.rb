@@ -16,9 +16,7 @@ module Spree
 
           validates permalink_options[:field], :uniqueness => true
 
-          if self.table_exists? && self.column_names.include?(permalink_options[:field].to_s)
-            before_validation(:on => :create) { save_permalink }
-          end
+          before_validation(:on => :create) { save_permalink }
         end
 
         def find_by_param(value, *args)
