@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'cancan'
-require 'spree/core/testing_support/bar_ability'
+require 'spree/testing_support/bar_ability'
 
 # Ability to test access to specific model instances
 class OrderSpecificAbility
