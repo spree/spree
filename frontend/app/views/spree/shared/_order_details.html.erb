@@ -18,6 +18,7 @@
           <% order.shipments.each do |shipment| %>
             <%= shipment.stock_location.name %>
             <%= shipment.shipping_method.name %>
+            <br/>
           <% end %>
         </div>
         <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => @order}) if @order.shipped? %>
@@ -28,7 +29,9 @@
   <div class="columns omega four">
     <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
     <div class="payment-info">
-      <%= render order.payments.valid %>
+      <% order.payments.valid.each do |payment| %>
+        <%= render payment%><br/>
+      <% end %>
     </div>
   </div>
 
