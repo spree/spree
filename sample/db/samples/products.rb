@@ -103,6 +103,11 @@ products = [
   }
 ]
 
+# Need to call reset_column information here
+# Otherwise running db:migrate db:seed spree_sample:load will fail
+# complaining about cost_currency missing
+Spree::Variant.reset_column_information
+
 products.each do |product_attrs|
   eur_price = product_attrs.delete(:eur_price)
   Spree::Config[:currency] = "USD"
