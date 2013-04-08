@@ -380,12 +380,14 @@ Finally, don’t forget to register the calculator you added. In extensions, thi
 Ordinarily it is the zone of the shipping address that determines which shipping methods are displayed to a customer at checkout. Here is how the availability of a shipping method is determined:
 
 ```ruby
-def shipping_methods(package)
-    shipping_methods = package.shipping_methods
-    shipping_methods.delete_if { |ship_method| !ship_method.calculator.available?(package.contents) }
-    shipping_methods.delete_if { |ship_method| !ship_method.include?(order.ship_address) }
-    shipping_methods.delete_if { |ship_method| !(ship_method.calculator.preferences[:currency].nil? || ship_method.calculator.preferences[:currency] == currency) }
-    shipping_methods
+class Spree::Stock::Estimator
+    def shipping_methods(package)
+        shipping_methods = package.shipping_methods
+        shipping_methods.delete_if { |ship_method| !ship_method.calculator.available?(package.contents) }
+        shipping_methods.delete_if { |ship_method| !ship_method.include?(order.ship_address) }
+        shipping_methods.delete_if { |ship_method| !(ship_method.calculator.preferences[:currency].nil? || ship_method.calculator.preferences[:currency] == currency) }
+        shipping_methods
+    end
 end
 ```
 
@@ -478,6 +480,28 @@ If you want to add different splitters for each stock location, you need to deco
 ### The Prioritizer
 
 A `Spree::Stock::Prioritizer` object will decide which Stock Location should ship which package from an order. The prioritizer will attempt to come up with the best shipping situation available to the user.
+
+By default, the prioritizer will first select packages where the items are on hand. Then it will try to find packages where items are backordered. During this process, the `Spree::Stock::Adjuster` is also used to ensure each package has the correct number of items.
+
+The prioritizer is also a customization point. If you want to customize which packages should take priority for the order during this process, you can override the `#sort_packages` method in `Spree::Stock::Prioritizer`.
+
+#### Customizing the Adjuster
+
+The Adjuster visits each package in an order and ensures the correct number of items are in each package. To customize this funcitonality, you need to do two things:
+
+* Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/a55db75bbebc40f5705fc3010d1e5a2190bde79b/core/app/models/spree/stock/adjuster.rb) class and override the the `#adjust` method to get the desired functionality.
+
+* Decorate the Spree::Stock::Coordinator and override the `#prioritize_packages` method, passing in your customer adjuster class to Prioritizer initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following:
+
+```ruby
+Spree::Stock::Coordinator.class_eval do
+    def prioritize_packages(packages)
+        prioritizer = Prioritizer.new(order, packages, Spree::Stock::CustomerAdjuster)
+        prioritizer.prioritized_packages
+    end
+end
+```
+
 
 ### The Estimator
 
