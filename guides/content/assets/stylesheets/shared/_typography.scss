@@ -1,6 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600);
 @import url(http://fonts.googleapis.com/css?family=Inconsolata);
-@include font-face(Bariol, '/shared/fonts/bariol_regular-webfont');
+@include font-face(Bariol, '../../shared/fonts/bariol_regular-webfont');
 
 body {
   font-size: $font-size;

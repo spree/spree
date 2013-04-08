@@ -420,11 +420,11 @@ pre.headers code {
   padding-top: 20px;
 }
 .developer.home #subheader .container {
-  background: url('/images/developer-banner.png') no-repeat center;
+  background: url('../../images/developer-banner.png') no-repeat center;
   min-height: 440px;
 }
 .developer #subheader {
-  background-image: url('/images/developer-pattern.jpg');
+  background-image: url('../../images/developer-pattern.jpg');
 }
 
 /* Browser fixes */

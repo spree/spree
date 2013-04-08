@@ -113,6 +113,34 @@ route '/static/*' do
   item.identifier[7..-2]
 end
 
+###############################################################
+# Flatten the developer guide stuff into single directory
+###############################################################
+route '/developer/deployment/*/' do
+  location = item.identifier.gsub('/deployment/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/source/*/' do
+  location = item.identifier.gsub('/source/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/core/*/' do
+  location = item.identifier.gsub('/core/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/tutorials/*/' do
+  location = item.identifier.gsub('/tutorials/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/customization/*/' do
+  location = item.identifier.gsub('/customization/', '/')
+  location.chop + ".html"
+end
+
 route '*' do
   item.identifier + 'index.html'
 end

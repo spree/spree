@@ -82,7 +82,7 @@ module Spree
         else
           url = link
         end
-        "<a href='#{url}'>#{text}</a>"
+        "<a href='#{url}.html'>#{text}</a>"
       end
 
       LINKS = {}
