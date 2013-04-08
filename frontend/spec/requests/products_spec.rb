@@ -23,6 +23,22 @@ describe "Visiting Products" do
     page.all('ul.product-listing li').size.should == 1
   end
 
+  context "a product with variants" do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+
+    before do
+      # Need to have two images to trigger the error
+      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
+      product.images.create!(:attachment => image)
+      product.images.create!(:attachment => image)
+      product.variants.create!(:price => 9.99)
+    end
+
+    it "should be displayed" do
+      lambda { click_link product.name }.should_not raise_error
+    end
+  end
+
   it "should be able to hide products without price" do
     page.all('ul.product-listing li').size.should == 9
     Spree::Config.show_products_without_price = false
