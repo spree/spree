@@ -78,7 +78,7 @@ To stop the web server, hit Ctrl-C in the terminal window where it’s running. 
 
 ### Logging Into the Backend
 
-The next thing you’ll probably want to do is to log into the admin interface. User your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
+The next thing you’ll probably want to do is to log into the admin interface. Use your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
 
 Upon successful authentication you should see the admin screen:
 

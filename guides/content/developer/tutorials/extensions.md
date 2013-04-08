@@ -14,7 +14,7 @@ Now that we know what an extension is, let's figure out how to use one and then 
 
 ## Installing an Extension
 
-We are going to be adding the [spree_fancy](http://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme so it only changes the look and feel of the application. Extensions can also add models, controllers, views to create new functionality but spree_fancy is intended as a starting point to show how a barebones Spree application can be easily modified to give a nice look and feel. As a special bonus it's fully responsive and looks good on mobile devices as well as on larger screens.
+We are going to be adding the [spree_fancy](http://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme so it only changes the look and feel of the application. Extensions can also add models, controllers, and views to create new functionality, but spree_fancy is intended as a starting point to show how a barebones Spree application can be easily modified to give a nice look and feel. As a special bonus it's fully responsive and looks good on mobile devices as well as on larger screens.
 
 There are three steps we need to take to install spree_fancy.
 
@@ -80,7 +80,7 @@ Before we continue development of our extension, let's add it to the Spree appli
 Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_simples_sales', :path => '../spree_simple_sales'```
+gem 'spree_simple_sales', :path => '../spree_simple_sales'```
 
 You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `mystore` application.
 
@@ -96,7 +96,7 @@ $ rails g spree_simple_sales:install```
 
 ### Adding a Controller Action to HomeController
 
-Now we need to extend `Spree::HomeController` and add an action that selects on sale products.
+Now we need to extend `Spree::HomeController` and add an action that selects "on sale" products.
 
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
@@ -134,7 +134,7 @@ So, in order to do this, first open up the rails console:
 ```bash
 $ rails console```
 
-Now, follow the steps I take in selecting a product and updating it's master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
+Now, follow the steps I take in selecting a product and updating its master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
 
 ```irb
 > product = Spree::Product.first
@@ -176,7 +176,7 @@ First, create the required directory structure for our new decorator:
 ```bash
 $ mkdir -p app/models/spree```
 
-Next, create the file `app/models/spree/variant_decorator` and add the following content to it:
+Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
 
 ```ruby
 module Spree
@@ -189,11 +189,11 @@ module Spree
   end
 end```
 
-Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implemenation of `price_in`.
+Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in`.
 
 ### Testing Our Decorator
 
-It's always a good idea to test your code. We should be extra careful to write tests for our Variant decorator since we are modifying core Spree functionality. Let's write a couple simple unit tests for `variant_decorator.rb`
+It's always a good idea to test your code. We should be extra careful to write tests for our Variant decorator since we are modifying core Spree functionality. Let's write a couple of simple unit tests for `variant_decorator.rb`
 
 #### Generating the Test App
 
@@ -252,6 +252,6 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 
 ## Summary
 
-In this tutorial you learned how to both install extensions and create your own. A lot of core spree development concepts were covered and you gained exposure to some of the Spree internals.
+In this tutorial you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
 
 In the [next part](/developer/tutorial/deface_overrides/) of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension.
