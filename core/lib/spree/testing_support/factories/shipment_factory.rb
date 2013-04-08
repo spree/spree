@@ -7,7 +7,6 @@ FactoryGirl.define do
     order
     address
     stock_location
-    # stock_location_id { stock_location.id }
 
     after(:create) do |shipment, evalulator|
       shipment.add_shipping_method(create(:shipping_method), true)
