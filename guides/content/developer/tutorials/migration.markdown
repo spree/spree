@@ -88,7 +88,7 @@ in this format.
 
 For example, your spreadsheet could have the following columns:
 
-** fixed details:
+#### Fixed Details
 
 -    product name
 -    master price
@@ -100,483 +100,381 @@ For example, your spreadsheet could have the following columns:
 -    list of images
 -    description
 
-** several properties:
+#### Several Properties
 -   one column for each property type used in your catalogue
 
-variant specifications:\
-**\* option types for the product\
-**\* one variant per column, each listing the option values and the
-price/sku
+#### Variant Specifications
+-   option types for the product\
+-   one variant per column, each listing the option values and the price/sku
 
 Note that if you know how many fixed columns and properties to expect,
 then it’s easy to determine which columns represent variants etc.
 
-Some of these columns might have simple punctuation etc to add
-structure\
-to the field. For example, we’ve used:\
-\* Html tags in the description\
-\* WxHxD for a shorthand for the dimensions\
-\* *“green & small = small\_green\_shirt @ \$10.00”* to code up a
-variant which is small and green, has sku *small\_green\_shirt* and
-costs \$10.\
-\* *“foo\\nbar”* in the taxons column to encode membership of two
-taxons\
-\* *“alpha \> beta \> gamma”* in the taxons column to encode membership
+Some of these columns might have simple punctuation etc. to add structure
+to the field. For example, we’ve used:
+
+-   Html tags in the description
+-   WxHxD for a shorthand for the dimensions
+-   “green & small = small_green_shirt @ $10.00” to code up a
+variant which is small and green, has sku *small_green_shirt* and
+costs $10.
+-   “foo\nbar” in the taxons column to encode membership of two
+taxons
+-   “alpha > beta > gamma” in the taxons column to encode membership
 a particular nesting.
 
-The taxon nesting notation is useful for when ‘gamma’ doesn’t uniquely\
+The taxon nesting notation is useful for when ‘gamma’ doesn’t uniquely
 identify a taxon (and so you need some context, ie a few ancestor
-taxons),\
-or for when the taxon structure isn’t fixed in advance and so is
-dynamically\
-created as the products are entered.
+taxons), or for when the taxon structure isn’t fixed in advance and so is
+dynamically created as the products are entered.
 
 Another possibility for coding variants is to have each variant on a
-separate\
-row, and to leave the fixed fields empty when a row is a variant of the\
+separate row, and to leave the fixed fields empty when a row is a variant of the
 last-introduced product. This is easier to read.
 
 #### Seed code
 
-This is more a technique for getting the data loaded at the right time.\
-Technically, the product catalogue is *seed data*, standard data which\
+This is more a technique for getting the data loaded at the right time.
+Technically, the product catalogue is *seed data*, standard data which
 is needed for the app to work properly.
 
 Spree has several options for loading seed data, but perhaps the easiest
-to\
-use here is to put ruby files in *site/db/default/*. These files are
-processed\
-when *rake db:seed* is called, and will be processed in the order of the
+to use here is to put ruby files in *site/db/default/*. These files are
+processed when *rake db:seed* is called, and will be processed in the order of the
 migration timestamps.
 
-Your ruby script can use one of the XLS or CSV format reading libraries\
+Your ruby script can use one of the XLS or CSV format reading libraries 
 to read an external file, or if the data set is not too big, you could
-embed\
-the CSV text in the script itself, eg. using the **END** convention.
+embed the CSV text in the script itself, eg. using the **END** convention.
 
 NOTE: If the order of loading is important, choose names for the files
 so that alphabetical order gives the correct load order…
 
 #### Important system-wide settings
 
-A related but important topic is the Spree core settings that your app\
+A related but important topic is the Spree core settings that your app
 will need to function correctly, eg to disable backordering or to
-configure\
-the mail subsystem. You can (mostly) set these from the admin
-interface,\
-but we recommend using initializers for these. See the\
+configure the mail subsystem. You can (mostly) set these from the admin
+interface, but we recommend using initializers for these. See the
 [preferences
 guide](preferences.html#persisting-modifications-to-preferences) for
-more\
-info.
+more info.
 
 ### Catalog creation
 
-This section covers everything relating to import of a product set,\
+This section covers everything relating to import of a product set,
 including the product details, variants, properties and options,
-images,\
-and taxons.
+images, and taxons.
 
 #### Preliminaries
 
 Let’s assume that you are working from a CSV-compatible format, and so
-are\
-reading one product per row, and each row contains values for the fixed
-details,\
-properties, and variants configuration.
+are reading one product per row, and each row contains values for the fixed
+details, properties, and variants configuration.
 
 We won’t always explicitly save changes to records: we assume that your
-upload\
-scripts will call *save* at appropriate times or use
-*update\_attribute+\
+upload scripts will call *save* at appropriate times or use
+*update_attribute+
 etc.
-\
-Note that Spree has support for easy addition of new fields to products
-and variants,\
-through the [additional
-fields](extensions.html#adding-fieldsto-productor-variants)\
-mechanism. This reduces the work for including extra information in
-these objects.
 
-\
 h4. Products
-\
+
 Products must have at least a name and a price in order to pass
-validation,\
-and we set the description too.\
-<ruby>\
-p = Spree::Product.create :name =\> ‘some product’, :price =\> 10.0,
-:description =\> ‘some text here’\
-</ruby>
-\
-Observe that the*permalink+ and timestamps are added automatically.\
+validation, and we set the description too.
+<% ruby do %>
+        p = Spree::Product.create :name => ‘some product’, :price => 10.0,
+:description => ‘some text here’
+<% end %>
+
+Observe that the*permalink+ and timestamps are added automatically.
 You may want to set the ‘meta’ fields for SEO purposes.
 
-NOTE: It’s important to set the *available\_on* field. Without this
+NOTE: It’s important to set the *available_on* field. Without this
 being a date in the past, the product won’t be listed in the standard
 displays.
 
-<ruby>\
-p.available\_on = Time.now\
-</ruby>
+<%ruby do %>
+    p.available_on = Time.now
+<% end %>
 
 ##### The Master variant
 
 Every product has a master variant, and this is created automatically
-when the\
-product is created. It is accessible via *p.master*, but note that many
-of its\
-fields are accessible through the product via delegation. Example:
-*p.price*\
-does the same as *p.master.price*. Delegation also allows field
-modification,\
-so *p.price = 2 \* p.price* doubles the product’s (master) price.
+when the product is created. It is accessible via *p.master*, but note that many
+of its fields are accessible through the product via delegation. Example:
+*p.price* does the same as *p.master.price*. Delegation also allows field
+modification, so *p.price = 2 * p.price* doubles the product’s (master) price.
 
-The dimensions and weight fields should be self-explanatory.\
-If you want to distinguish between a *sale* price and a RRP, you can
-assign the\
-latter to *p.cost\_price* (some partials will show both prices).\
+The dimensions and weight fields should be self-explanatory.
 The *sku* field holds the product’s stock code, and you will want to set
-this\
-if the product does not have option variants.
+this if the product does not have option variants.
 
 ##### Stock levels
 
-If you don’t have option variants, then you may also need to register\
+If you don’t have option variants, then you may also need to register
 some stock for the master variant. The exact steps depend on how you
-have\
-configured Spree’s [inventory system](inventory.html), but most sites\
-will just need to assign to *p.on\_hand*, eg *p.on\_hand = 100*.
+have configured Spree’s [inventory system](inventory.html), but most sites
+will just need to assign to *p.on_hand*, eg *p.on_hand = 100*.
 
 ##### Shipping category
 
-A product’s [shipping category](shipping.html#shipping-category) field\
-provides product-specific information for the shipping\
+A product’s [shipping category](shipping.html#shipping-category) field
+provides product-specific information for the shipping
 calculators, eg to indicate that a product requires additional insurance
-or\
-can only be surface shipped. If no special conditions are needed, you
-can\
-leave this field as nil.\
+or can only be surface shipped. If no special conditions are needed, you
+can leave this field as nil.
 The *Spree::ShippingCategory* model is effectively a wrapper for a
-string.\
-You can either generate the list of categories in advance, or use\
-*where.first\_or\_create* to reuse previous objects or create new ones
-when\
-required.
+string. You can either generate the list of categories in advance, or use
+*where.first_or_create* to reuse previous objects or create new ones
+when required.
 
-<ruby>\
-p.shipping\_category = Spree::ShippingCategory.where(:name =\> ‘Type
-A’).first\_or\_create\
-</ruby>
+<% ruby do %>
+    p.shipping_category = Spree::ShippingCategory.where(:name => ‘Type
+A’).first_or_create
+<% end %>
 
 ##### Tax category
 
 This is a similar idea to the shipping category, and guides the
-calculation\
-of product taxes, eg to distinguish clothing items from electrical
-goods.\
-The model wraps a name *and* a description (both strings), and you can\
+calculation of product taxes, eg to distinguish clothing items from electrical
+goods.
+The model wraps a name *and* a description (both strings), and you can
 leave the field as nil if no special treatment is needed.
 
-You can use the *where.first\_or\_create* technique, though you probably
-want to\
-set up the entire [tax configuration](taxation.html) before you start\
+You can use the *where.first_or_create* technique, though you probably
+want to set up the entire [tax configuration](taxation.html) before you start
 loading products.
 
-You can also fill in this information automatically at a *later* date,\
-e.g. use the taxon information to decide which tax categories something\
+You can also fill in this information automatically at a *later* date,
+e.g. use the taxon information to decide which tax categories something
 belongs in.
 
 #### Taxons
 
 Adding a product to a particular taxon is easy: just add the taxon to
-the\
-list of taxons for a product.\
-<ruby>\
-p.taxons \<\< some\_taxon\
-</ruby>
+the list of taxons for a product.
+
+<% ruby do %>
+    p.taxons << some_taxon
+<% end %>
 
 Recall that taxons work like subclassing in OO languages, so a product
-in taxon\
-T is also contained in T’s ancestors, so you should usually assign a
-product\
-to the most specific applicable taxon - and do not need to assign it to
-all\
-of the taxon’s ancestors.\
+in taxon T is also contained in T’s ancestors, so you should usually assign a
+product to the most specific applicable taxon - and do not need to assign it to
+all of the taxon’s ancestors.\
 However, you can assign products to as many taxons as you want,
-including\
-ancestor taxons. This feature is more useful with sibling taxons, e.g.\
+including ancestor taxons. This feature is more useful with sibling taxons, e.g.
 assigning a red and green shirt to both ‘red clothes’ and ‘green
-clothes’.\
-(Yes, this also means that child taxons don’t have to be distinct, ie
-they\
-can overlap.)
+clothes’. 
 
-When uploading from a spreadsheet, you might have one or more taxons\
-listed for a product, and these taxons will be identified by name.\
-Individual taxon names don’t have to be unique, e.g. you could have\
-‘shirts’ under ‘male clothing’, and ‘shirts’ under ‘female clothing’.\
-In this case, you need some context, eg ‘male clothing \> shirts’ vs\
-‘female clothing \> shirts’.
+***
+Yes, this also means that child taxons don’t have to be distinct, ie
+they can overlap.
+***
+
+When uploading from a spreadsheet, you might have one or more taxons
+listed for a product, and these taxons will be identified by name.
+Individual taxon names don’t have to be unique, e.g. you could have
+‘shirts’ under ‘male clothing’, and ‘shirts’ under ‘female clothing’.
+In this case, you need some context, eg ‘male clothing > shirts’ vs.
+‘female clothing > shirts’.
 
 Do you need to create the taxon structure in advance? Not always: as the
-code\
-below shows, it is possible to create taxons as and when they are
-needed,\
-but this can be cumbersome for deep hierarchies. One compromise is to\
-create the top levels (say the top 2 or 3 levels) in advance, then use\
+code below shows, it is possible to create taxons as and when they are
+needed, but this can be cumbersome for deep hierarchies. One compromise is to
+create the top levels (say the top 2 or 3 levels) in advance, then use
 the taxon information column to do some product-specific fine tuning.
 
-The following code uses a list of (newline-separated) taxon descriptions
--\
-possibly using ‘A \> B \> C’~~style of context~~\
-to assign the taxons for a product. Notice the use of
-*where.first\_or\_create*.
+The following code uses a list of (newline-separated) taxon descriptions-
+possibly using ‘A > B > C’ style of context to assign the taxons for a product. Notice the use of
+*where.first_or_create*.
 
-<ruby>\
-\# create outside of loop\
-main\_taxonomy = Spree::Taxonomy.where(:name =\>
-‘Products’).first\_or\_create
+<% ruby do %>
+    # create outside of loop
+      main_taxonomy = Spree::Taxonomy.where(:name => ‘Products’).first_or_create
 
-1.  … inside of main loop\
-     the\_taxons = []\
-     taxon\_col.split(/[\r\n]*/).each do |chain|\
-     taxon = nil\
-     names = chain.split\
-     names.each do |name|\
-     taxon = Spree::Taxon.where.first\_or\_create\
-     end\
-     the\_taxons \<\< taxon\
-     end\
-     p.taxons = the\_taxons\
-    </ruby>
-    \
-    You can use similar code to set up other taxonomies, e.g. to have a
-    taxonomy\
-    for brands and product ranges, like ‘Guitars’ with child
-    ‘Acoustic’.\
-    You could use various property or option values to drive the
-    creation of\
-    such taxonomies.
-    \
-    NOTE: We intend to provide automatic support for this in the near
-    future, via [product groups](scopes_and_groups.html).
+    # inside of main loop
+     the_taxons = []
+     taxon_col.split(/[\r\n]*/).each do |chain|
+         taxon = nil
+         names = chain.split
+         names.each do |name|
+            taxon = Spree::Taxon.where.first_or_create
+         end
+         the_taxons << taxon
+     end
+     p.taxons = the_taxons
 
-    \
-    h4. Product Properties
-    \
-    The first step is to create the property ‘types’. These should be
-    known in\
-    advance so you can define these at the start of the script. You
-    should give the\
-    internal name and presentation name. For simplicity, the code
-    examples\
-    have these names as the same string.
-    \
-    <ruby>\
-    size\_prop = Spree::Property.where.first\_or\_create\
-    </ruby>
-    \
-    Then you just set the value for the property-product pair.\
-    Assuming value*size\_info+ which is derived from the relevant
-    column, this\
-    means:\
-    <ruby>\
-    Spree::ProductProperty.create :property =\> size\_prop, :product =\>
-    p, :value =\> size\_info\
-    </ruby>
+<% end %>
+
+You can use similar code to set up other taxonomies, e.g. to have a
+taxonomy for brands and product ranges, like ‘Guitars’ with child
+‘Acoustic’. You could use various property or option values to drive the
+creation of such taxonomies.
+
+#### Product Properties
+
+The first step is to create the property ‘types’. These should be
+known in advance so you can define these at the start of the script. You
+should give the internal name and presentation name. For simplicity, the code
+examples have these names as the same string.
+
+<% ruby do %>
+    size_prop = Spree::Property.where.first_or_create
+<% end %>
+
+Then you just set the value for the property-product pair.
+Assuming value*size_info+ which is derived from the relevant
+column, this means:
+<% ruby do %>
+    Spree::ProductProperty.create :property => size_prop, :product =>
+      p, :value => size_info
+<% end %>
 
 ##### Product prototypes
 
 The admin interface uses a system of ‘prototypes’ to speed up data
-entry,\
-which seeds a product with a given set of option types and (empty)\
-property values. It probably isn’t so useful when creating products\
-programmatically, since the code will need to do the hard work of\
-creating variants and setting properties anyway. However, we mention it\
+entry, which seeds a product with a given set of option types and (empty)
+property values. It probably isn’t so useful when creating products
+programmatically, since the code will need to do the hard work of
+creating variants and setting properties anyway. However, we mention it
 here for completeness.
 
 #### Variants
 
 Variants allow different versions of a product to be offered, e.g.
-allowing\
-variations in size and color for clothing. If a product comes in only
-one\
-configuration, you don’t need to use variants - the master variant,
-already\
-created, is sufficient.
+allowing variations in size and color for clothing. If a product comes in only
+one configuration, you don’t need to use variants - the master variant,
+already created, is sufficient.
 
 Otherwise, you need to declare what the allowed option types are (e.g.
-size,\
-color, quality rating, etc) for your product, and then create variants
-which\
-(usually) have a single option value for each of the product’s option
-types\
-(e.g. ‘small’ and ‘red’ etc).
+size, color, quality rating, etc) for your product, and then create variants
+which (usually) have a single option value for each of the product’s option
+types (e.g. ‘small’ and ‘red’ etc).
 
-NOTE: Spree’s core generally assumes that each variant has exactly one
+***
+Spree’s core generally assumes that each variant has exactly one
 option value for each of the product’s option types, but the current
 code is tolerant of missing values. Certain extensions may be more
 strict, e.g. ones for providing advanced variant selection.
+***
 
 ##### Creating variants
 
 New variants require only a product to be associated with, but it is
-useful to set an\
-identifying *sku* code too. The price field is optional: if it is not
-explicitly set,\
-the new variant will use the master variant’s price (the same applies to
-*cost\_price*\
-too). You can also set the *weight*, *width*, *height*, and *depth* too.
+useful to set an identifying *sku* code too. The price field is optional: if it is not
+explicitly set, the new variant will use the master variant’s price (the same applies to
+*cost_price* too). You can also set the *weight*, *width*, *height*, and *depth* too.
 
-<ruby>\
-v = Spree::Variant.create :product =\> p, :sku =\> “some\_sku\_code”,
-:price =\> NNNN\
-</ruby>
+<% ruby do %>
+  v = Spree::Variant.create :product => p, :sku => “some_sku_code”, :price => NNNN
+<% end %>
 
-NOTE: The price is only copied at creation, so any subsequent changes to
+***
+The price is only copied at creation, so any subsequent changes to
 a product’s price will need to be copied to all of its variants.
+***
 
-Next, you may also want to register some stock for this variant.\
-The exact steps depend on how you have configured Spree’s\
-[inventory system](inventory.html), but most sites\
-will just need to assign to *v.on\_hand*, eg *v.on\_hand = 100*.
+Next, you may also want to register some stock for this variant.
+The exact steps depend on how you have configured Spree’s
+[inventory system](inventory.html), but most sites
+will just need to assign to *v.on_hand*, eg *v.on_hand = 100*.
 
 You now need to set some option types and values, so customers can
-choose between\
-the variants.
+choose between the variants.
 
 ##### Option types
 
-The option types to use will vary from product to product, so you will\
+The option types to use will vary from product to product, so you will
 need to give this information for each product - or assume a default
-and\
-only use different names when this column is empty.
+and only use different names when this column is empty.
 
-You can probably declare most of the option types in advance, and so\
-just look up the names when required, though for fine control, you can\
-use the *where.first\_or\_create* technique, with something like this:
+You can probably declare most of the option types in advance, and so
+just look up the names when required, though for fine control, you can
+use the *where.first_or_create* technique, with something like this:
 
-<ruby>\
-p.option\_types = option\_names\_col.map do |name|\
- Spree::OptionType.where(:name =\> name, :presentation =\>
-name).first\_or\_create\
-end\
-</ruby>
+<% ruby do %>
+    p.option_types = option_names_col.map do |name|
+      Spree::OptionType.where(:name => name, :presentation => name).first_or_create
+    end
+<% end %>
 
 ##### Option values
 
 Option values represent the choices possible for some option type.
-Again, you could\
-declare them in advance, or use *where.first\_or\_create*. You’ll
-probably find it easier to\
-create/retrieve the option values as you create each variant.
+Again, you could declare them in advance, or use *where.first_or_create*. You’ll
+probably find it easier to create/retrieve the option values as you create each variant.
 
-Suppose you are using a notation like *“Green & Small =
-small\_green\_shirt @ \$10.00”*\
-to encode each variant in the spreadsheet, and this is stored in the
-variable\
-*opt\_info*. The following extracts the three key pieces of information
-and sets\
+Suppose you are using a notation like *“Green & Small = small_green_shirt @ $10.00”*
+to encode each variant in the spreadsheet, and this is stored in the variable
+*opt_info*. The following extracts the three key pieces of information and sets
 the option values for the new variant (see below for variant creation).
 
-<ruby>\
-*,opts,sku,price = opt\_info.match\s*=\s*\s*@.\*?)/).to\_a
-\
-v = Spree::Variant.create :product =\> p, :sku =\> sku, :price =\> price
-\
-v.option\_values = opts.split.map do |nm|\
- Spree::OptionValue.where.first\_or\_create\
-end\
-</ruby>
-\
-Note that you don’t have to stick with system-wide option types: you can
-create\
-types specifically for groups of products such\
-as a product range from a single\
-manufacturer. In such cases, the range might have a particular color
-scheme\
-and there can be advantages to isolating the scheme’s options in its
-own\
-type and set of values, rather than trying to work with a more general\
-setup. It also avoids filling up a type with lots of similar options -
-and so\
-reduces the number of options when using faceted search etc. You can
-also\
-attach resources like color swatches to the more specific values.
-\
-h5. Ordering of option values
-\
-You might want option values to appear in a certain order, such as by
-increasing size\
-or by alphabetical order. The *Spree::OptionValue* model uses
-*acts\_as\_list* for setting the\
-order, and option types will use the *position* field when retrieving
-their associated\
-values. The position is scoped to the relevant option type.
-\
-If you create option values in advance, just create them in the required
-order and\
-the plugin will set the *position* automatically.
-\
-<ruby>\
-color\_type = Spree::OptionType.create :name =\> ‘Color’, :presentation
-=\> ‘Color’\
-color\_options = %w[Red Blue Green].split.map { |n|
-Spree::OptionValue.create :name =\> n, :presentation =\> n,
-:option\_type =\> color\_type }\
-</ruby>
-\
-Otherwise, you could enforce the ordering*after\_ loading up all of the
-variants,\
-using something like this:
+<% ruby do %>
+  *,opts,sku,price = opt_info.match\s*=\s*\s*@.\*?)/).to_a
+  v = Spree::Variant.create :product => p, :sku => sku, :price => price
+  v.option_values = opts.split.map do |nm|
+    Spree::OptionValue.where.first_or_create
+  end
+<% end %>
 
-<ruby>\
-color\_type.option\_values.sort\_by(&:name).each\_with\_index do |val,
-pos|\
- val.update\_attribute(:position, pos + 1)\
-end\
-</ruby>
+***
+You don’t have to stick with system-wide option types: you can
+create types specifically for groups of products such as a product range from a single
+manufacturer. In such cases, the range might have a particular color
+scheme and there can be advantages to isolating the scheme’s options in its
+own type and set of values, rather than trying to work with a more general
+setup. It also avoids filling up a type with lots of similar options -
+and so reduces the number of options when using faceted search etc. You can
+also attach resources like color swatches to the more specific values.
+
+##### Ordering of option values
+You might want option values to appear in a certain order, such as by
+increasing size or by alphabetical order. The *Spree::OptionValue* model uses
+*acts_as_list* for setting the order, and option types will use the *position* field when retrieving
+their associated values. The position is scoped to the relevant option type.
+
+If you create option values in advance, just create them in the required
+order and the plugin will set the *position* automatically.
+
+<% ruby do %>
+  color_type = Spree::OptionType.create :name => ‘Color’, :presentation => ‘Color’
+  color_options = %w[Red Blue Green].split.map { |n|
+    Spree::OptionValue.create :name => n, :presentation => n,
+                              :option_type => color_type }
+<% end %>
+
+Otherwise, you could enforce the ordering*after_ loading up all of the
+variants, using something like this:
+
+<% ruby do %>
+  color_type.option_values.sort_by(&:name).each_with_index do |val,pos|
+    val.update_attribute(:position, pos + 1)
+  end
+<% end %>
 
 ##### Further reading
 
 [Steph Skardal](https://github.com/stephskardal) has produced a useful
-blog post on\
-[product
-optioning](http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html).\
+blog post on [product
+optioning](http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments.html).
 This discusses how the variant option representation works and how she
-used it to build an\
-extension for enhanced product option selection.
+used it to build an extension for enhanced product option selection.
 
 #### Product and Variant images
 
 Spree uses [paperclip](https://github.com/thoughtbot/paperclip) to
-manage image\
-attachments and their various size formats. (See the [customization\
-guide](customization.html) for info on altering the image formats.)\
+manage image attachments and their various size formats. (See the [customization guide](customization.html) for info on altering the image formats.)
 You can attach images to products and to variants - the mechanism is
-polymorphic.\
-Given some local image file, the following will associate the image and
-create\
-all of the size formats.
+polymorphic. Given some local image file, the following will associate the image and
+create all of the size formats.
 
-<ruby>\
-\#for image for product (all variants) represented by master variant\
-img = Spree::Image.create(:attachment =\> File.open(path), :viewable =\>
-product.master)
+<% ruby do %>
+    #for image for product (all variants) represented by master variant
+    img = Spree::Image.create(:attachment => File.open(path), :viewable => product.master)
 
-\#for image for single variant\
-img = Spree::Image.create(:attachment =\> File.open(path), :viewable =\>
-variant)\
-</ruby>
+    #for image for single variant
+    img = Spree::Image.create(:attachment => File.open(path), :viewable => variant)
+<% end %>
 
-Paperclip also supports external [storage of images in\
-S3](https://github.com/thoughtbot/paperclip/blob/master/lib/paperclip/storage.rb)
-
-### Theme migration
-
-NOTE: To be written.
-
-<!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
-
-
+Paperclip also supports external [storage of images in S3](https://github.com/thoughtbot/paperclip/blob/master/lib/paperclip/storage.rb)
