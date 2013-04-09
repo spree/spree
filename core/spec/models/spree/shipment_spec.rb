@@ -36,6 +36,32 @@ describe Spree::Shipment do
     end
   end
 
+  context "display_cost" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:cost) { 21.22 }
+      shipment.display_cost.should == Spree::Money.new(21.22)
+    end
+  end
+
+  context "display_item_cost" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:item_cost) { 21.22 }
+      shipment.display_item_cost.should == Spree::Money.new(21.22)
+    end
+  end
+
+  context "display_total_cost" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:total_cost) { 21.22 }
+      shipment.display_total_cost.should == Spree::Money.new(21.22)
+    end
+  end
+
+  it "#item_cost" do
+    shipment = create(:shipment, order: create(:order_with_totals))
+    shipment.item_cost.should eql(10.0)
+  end
+
   context 'shipping_rates' do
     let(:shipment) { create(:shipment) }
     let(:shipping_method1) { create(:shipping_method) }
@@ -76,6 +102,12 @@ describe Spree::Shipment do
         shipment.refresh_rates.should == []
       end
     end
+  end
+
+  it '#total_cost' do
+    shipment.stub cost: 5.0
+    shipment.stub item_cost: 50.0
+    shipment.total_cost.should eql(55.0)
   end
 
   context "#update!" do
@@ -358,13 +390,6 @@ describe Spree::Shipment do
   context "currency" do
     it "returns the order currency" do
       shipment.currency.should == order.currency
-    end
-  end
-
-  context "display_cost" do
-    it "retuns a Spree::Money" do
-      shipment.stub(:cost) { 21.22 }
-      shipment.display_cost.should == Spree::Money.new(21.22)
     end
   end
 

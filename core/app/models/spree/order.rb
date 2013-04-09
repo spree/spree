@@ -308,6 +308,7 @@ module Spree
       self.number
     end
 
+    # TODO should be deprecated by split shipments
     # convenience method since many stores will not allow user to create multiple shipments
     def shipment
       @shipment ||= shipments.last

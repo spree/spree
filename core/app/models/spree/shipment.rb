@@ -107,6 +107,22 @@ module Spree
 
     alias_method :display_amount, :display_cost
 
+    def item_cost
+      line_items.map(&:amount).sum
+    end
+
+    def display_item_cost
+      Spree::Money.new(item_cost, { currency: currency })
+    end
+
+    def total_cost
+      cost + item_cost
+    end
+
+    def display_total_cost
+      Spree::Money.new(total_cost, { currency: currency })
+    end
+
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
       event :ready do
