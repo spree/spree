@@ -3,8 +3,8 @@ module Spree
     has_many :stock_items, dependent: :destroy
     has_many :stock_movements, through: :stock_items
 
-    belongs_to :state
-    belongs_to :country
+    belongs_to :state, class_name: 'Spree::State'
+    belongs_to :country, class_name: 'Spree::Country'
 
     validates_presence_of :name
 
@@ -12,8 +12,6 @@ module Spree
                     :state_name, :state_id, :country_id, :phone
 
     scope :active, -> { where(active: true) }
-
-    after_create :create_stock_items
 
     after_create :create_stock_items
 

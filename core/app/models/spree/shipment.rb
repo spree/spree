@@ -2,14 +2,12 @@ require 'ostruct'
 
 module Spree
   class Shipment < ActiveRecord::Base
-    belongs_to :order
+    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :address, class_name: 'Spree::Address'
+    belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
     has_many :shipping_rates
     has_many :shipping_methods, through: :shipping_rates
-
-    belongs_to :address
-    belongs_to :stock_location
-
     has_many :state_changes, as: :stateful
     has_many :inventory_units, dependent: :destroy
     has_one :adjustment, as: :source, dependent: :destroy
@@ -108,6 +106,22 @@ module Spree
     end
 
     alias_method :display_amount, :display_cost
+
+    def item_cost
+      line_items.map(&:amount).sum
+    end
+
+    def display_item_cost
+      Spree::Money.new(item_cost, { currency: currency })
+    end
+
+    def total_cost
+      cost + item_cost
+    end
+
+    def display_total_cost
+      Spree::Money.new(total_cost, { currency: currency })
+    end
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do

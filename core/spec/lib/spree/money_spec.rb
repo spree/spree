@@ -106,6 +106,20 @@ describe Spree::Money do
       money.to_s.should == "10.00 €"
     end
 
+    # Regression test for #2632
+    it "acknowledges decimal mark option" do
+      Spree::Config[:currency_decimal_mark] = ","
+      money = Spree::Money.new(10)
+      money.to_s.should == "10,00 €"
+    end
+
+    # Regression test for #2632
+    it "acknowledges thousands separator option" do
+      Spree::Config[:currency_thousands_separator] = "."
+      money = Spree::Money.new(1000)
+      money.to_s.should == "1.000.00 €"
+    end
+
     it "formats as HTML if asked (nicely) to" do
       money = Spree::Money.new(10)
       # The HTML'ified version of "10.00 €"

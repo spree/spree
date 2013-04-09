@@ -6,7 +6,7 @@ describe Spree::InventoryUnit do
   let(:order) { mock_model(Spree::Order, line_items: [line_item],
     inventory_units: [], shipments: mock('shipments'), completed?: true) }
   let(:stock_location) { create(:stock_location_with_items) }
-  let(:stock_item) { stock_location.stock_items.first }
+  let(:stock_item) { stock_location.stock_items.order(:id).first }
 
   context "#backordered_for_stock_item" do
     let(:order) { create(:order) }
@@ -36,7 +36,7 @@ describe Spree::InventoryUnit do
     it "does not find inventory units that aren't backordered" do
       on_hand_unit = shipment.inventory_units.build
       on_hand_unit.state = 'on_hand'
-      on_hand_unit.tap(&:save!)
+      on_hand_unit.save!
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(on_hand_unit)
     end
@@ -45,7 +45,7 @@ describe Spree::InventoryUnit do
       other_variant_unit = shipment.inventory_units.build
       other_variant_unit.state = 'backordered'
       other_variant_unit.variant = create(:variant)
-      other_variant_unit.tap(&:save!)
+      other_variant_unit.save!
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(other_variant_unit)
     end

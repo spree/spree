@@ -1,9 +1,9 @@
 module Spree
   class Payment < ActiveRecord::Base
     include Spree::Payment::Processing
-    belongs_to :order
+    belongs_to :order, class_name: 'Spree::Order'
     belongs_to :source, polymorphic: true, validate: true
-    belongs_to :payment_method
+    belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
 
     has_many :offsets, class_name: "Spree::Payment", foreign_key: :source_id, conditions: "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
     has_many :log_entries, as: :source
@@ -14,6 +14,8 @@ module Spree
 
     # update the order totals, etc.
     after_save :update_order
+    # invalidate previously entered payments
+    after_create :invalidate_old_payments
 
     attr_accessor :source_attributes
     after_initialize :build_source
@@ -21,7 +23,7 @@ module Spree
     attr_accessible :amount, :payment_method_id, :source_attributes
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
-    scope :with_state, ->(s) { where(state: s) }
+    scope :with_state, ->(s) { where(state: s.to_s) }
     scope :completed, with_state('completed')
     scope :pending, with_state('pending')
     scope :failed, with_state('failed')
@@ -117,6 +119,12 @@ module Spree
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
+      end
+
+      def invalidate_old_payments
+        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+          payment.invalidate!
+        end
       end
 
       def update_order

@@ -1,5 +1,5 @@
 <fieldset id='shipping_method' data-hook>
-  <legend align="center"><%= t(:shipping_method) %></legend>
+  <legend align="center"><%= t(:delivery) %></legend>
   <div class="inner" data-hook="shipping_method_inner">
     <div id="methods">
       <%= form.fields_for :shipments do |ship_form| %>
@@ -52,7 +52,7 @@
       <% end %>
 
       <% if @differentiator.missing? %>
-        <div class="shipment">
+        <div class="shipment unshippable">
           <h3 class="stock-location" data-hook="stock-location">
             <%= t(:unshippable_items) %>
           </h3>
@@ -84,7 +84,7 @@
       <% end %>
 
     </div>
-    <% if Spree::Config[:shipping_instructions] && @order.rate_hash.present? %>
+    <% if Spree::Config[:shipping_instructions] %>
       <p id="minstrs" data-hook>
         <%= form.label :special_instructions, t(:shipping_instructions) %><br />
         <%= form.text_area :special_instructions, :cols => 40, :rows => 7 %>

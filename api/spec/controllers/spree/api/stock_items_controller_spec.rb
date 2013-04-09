@@ -5,7 +5,7 @@ module Spree
     render_views
 
     let!(:stock_location) { create(:stock_location_with_items) }
-    let!(:stock_item) { stock_location.stock_items.first }
+    let!(:stock_item) { stock_location.stock_items.order(:id).first }
     let!(:attributes) { [:id, :count_on_hand, :backorderable,
                          :stock_location_id, :variant_id] }
 
@@ -31,7 +31,7 @@ module Spree
     end
 
     it 'can query the results through a paramter' do
-      stock_location.stock_items.first.update_column(:count_on_hand, 30)
+      stock_item.update_column(:count_on_hand, 30)
       api_get :index, stock_location_id: stock_location.to_param, q: { count_on_hand_eq: '30' }
       json_response['count'].should == 1
       json_response['stock_items'].first['count_on_hand'].should eq 30
@@ -62,7 +62,8 @@ module Spree
         json_response.should have_attributes(attributes)
       end
 
-      it 'can update a stock item' do
+      it 'can update a stock item to add new inventory' do
+        stock_item.count_on_hand.should == 10
         params = {
           id: stock_item.to_param,
           stock_item: {

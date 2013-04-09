@@ -1,7 +1,7 @@
 module Spree
   class StockItem < ActiveRecord::Base
-    belongs_to :stock_location
-    belongs_to :variant
+    belongs_to :stock_location, class_name: 'Spree::StockLocation'
+    belongs_to :variant, class_name: 'Spree::Variant'
     has_many :stock_movements, dependent: :destroy
 
     validates_presence_of :stock_location, :variant

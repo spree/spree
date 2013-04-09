@@ -26,7 +26,6 @@ group :test do
   gem 'pry'
   gem 'rspec-rails', '~> 2.12.0'
   gem 'selenium-webdriver', '2.30.0'
-  gem 'shoulda-matchers', '~> 1.0.0'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
 end

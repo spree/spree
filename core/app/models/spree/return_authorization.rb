@@ -1,6 +1,6 @@
 module Spree
   class ReturnAuthorization < ActiveRecord::Base
-    belongs_to :order
+    belongs_to :order, class_name: 'Spree::Order'
 
     has_many :inventory_units
     has_one :stock_location

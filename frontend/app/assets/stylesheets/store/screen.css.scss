@@ -790,6 +790,14 @@ ul#products {
 
 #shipping_method {
   p {
+    &#minstrs {
+      clear: both;
+
+      label {
+        width: 100%;
+      }
+    }
+
     label {
       float: left;
       font-weight: bold;
@@ -818,6 +826,12 @@ ul#products {
     font-weight: normal;
     background-color: $link_text_color;
     color: white;
+  }
+
+  .unshippable {
+    .stock-location {
+      background-color: $c_red;
+    }
   }
 
   .shipping-methods {
@@ -942,6 +956,10 @@ div[data-hook="inside_cart_form"] {
   margin-bottom: 15px;
   border: $default_border;
   padding: 10px;
+
+  dd {
+    margin-left: 0px;
+  }
 }
 
 /*--------------------------------------*/
