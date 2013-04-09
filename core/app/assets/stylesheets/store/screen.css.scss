@@ -886,6 +886,10 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     margin-bottom: 15px;
     border: $default_border;
     padding: 10px;
+
+    dd {
+      margin-left: 0px;
+    }
   }
 
   /*--------------------------------------*/
