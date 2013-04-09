@@ -122,7 +122,7 @@ module Spree
       end
 
       def invalidate_old_payments
-        order.payments.with_state(:checkout).where("id != ?", self.id).each do |payment|
+        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
           payment.invalidate!
         end
       end
