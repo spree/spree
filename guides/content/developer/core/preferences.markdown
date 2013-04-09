@@ -321,8 +321,7 @@ It is recommended to create the configuration file in the `lib/` directory.
 
 ***
 Extensions can also define site-wide preferences. For more information on
-using preferences like this with extensions, check out the
-[Creating Extensions Guide](/developer/tutorials/extensions/)
+using preferences like this with extensions, check out the <%= link_to "Extensions Tutorial", 'extensions' %>)
 ***
 
 ### Configuring Site-Wide Preferences

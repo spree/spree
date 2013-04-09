@@ -682,7 +682,7 @@ The `system` directory is where Paperclip typically would store assets. Spree's
 assets are located separately, under `spree`.
 
 The `assets` directory will contain the other assets for your application from
-the [asset pipeline](https://guides.rubyonrails.org/assets.html).
+the [asset pipeline](http://guides.rubyonrails.org/asset_pipeline.html).
 ***
 
 With these settings in place, you can start up nginx by running `service nginx

@@ -4,7 +4,7 @@ title: Extensions
 
 ## Introduction
 
-This tutorial continues where we left off in the [getting started](/developer/tutorials/getting_started/) tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
+This tutorial continues where we left off in the <%= link_to "Getting Started", 'getting_started' %>) tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
 
 ### What is a Spree Extension?
 
@@ -256,4 +256,4 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 
 In this tutorial you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
 
-In the [next part](/developer/tutorial/deface_overrides/) of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension.
+In the <%= link_to "next part", 'deface_overrides' %>) of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension.

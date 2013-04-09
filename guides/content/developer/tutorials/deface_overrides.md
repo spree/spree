@@ -4,7 +4,7 @@ title: Deface Overrides
 
 ## Introduction
 
-This tutorial is a continuation of the previous one, [Extensions](/developer/tutorials/extensions/), and begins where we left off in the last one. We have created a simple extension for promoting on-sale products on a "sales homepage".
+This tutorial is a continuation of the previous one, <%= link_to "Extensions", 'extensions' %>, and begins where we left off in the last one. We have created a simple extension for promoting on-sale products on a "sales homepage".
 
 In this tutorial we are going to learn about [Deface](http://github.com/spree/deface) and how we can use it to improve our extension. As part of improving our extension, we will be updating the existing Spree admin interface so that we are able to set the `sale_price` for products.
 
@@ -144,4 +144,4 @@ module Spree
   end
 end```
 
-Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application (created in the [Getting Started](/developer/tutorial/getting_started/) tutorial).
+Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application (created in the <%= link_to "Getting Started", 'getting_started' %> tutorial).
