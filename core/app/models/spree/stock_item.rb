@@ -7,7 +7,7 @@ module Spree
     validates_presence_of :stock_location, :variant
     validates_uniqueness_of :variant_id, scope: :stock_location_id
 
-    attr_accessible :count_on_hand, :variant, :stock_location, :backorderable, :variant_id
+    attr_accessible :count_on_hand, :min_level, :variant, :stock_location, :backorderable, :variant_id
 
     after_save :process_backorders
 
@@ -31,6 +31,20 @@ module Spree
 
     def in_stock?
       self.count_on_hand > 0
+    end
+
+    def stock_level
+      Integer(self.count_on_hand)
+    end
+
+    # def available
+    #   # Add to the PickingList if
+    #   # StockItems.restock if StockItem.stock_level =< StockItem.min_level_allowed
+      
+    # end
+
+    def min_level_allowed
+      Integer(self.min_level)
     end
 
     private

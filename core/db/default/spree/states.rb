@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+
 country = Spree::Country.find_by_name('United States')
 
 Spree::State.create!({"name"=>"Michigan", "abbr"=>"MI", :country=>country}, :without_protection => true)

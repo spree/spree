@@ -40,12 +40,14 @@
           <td colspan="3" class="stock_location_info">
             <table>
               <colgroup>
-                <col style="width: 60%" />
+                <col style="width: 40%" />
+                <col style="width: 20%" />
                 <col style="width: 20%" />
                 <col style="width: 20%" />
               </colgroup>
               <thead>
                 <th><%= t(:stock_location) %></th>
+                <th><%= t(:availability) %></th>
                 <th><%= t(:count_on_hand) %></th>
                 <th><%= t(:backorderable) %></th>
               </thead>
@@ -53,6 +55,13 @@
                 <% @stock_locations.each do |stock_location| %>
                   <tr class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
                     <td><%= stock_location.name %></td>
+                    <td class="align-center">
+                      <% if stock_location.stock_item(variant).in_stock? %>
+                        <span class="state paid">In Stock</span>
+                      <% else %>
+                        <span class="state balance_due">No Stock</span>
+                      <% end %>
+                    </td>
                     <td class="align-center">
                       <%= stock_location.stock_item(variant).count_on_hand %>
                     </td>
