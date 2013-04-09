@@ -38,9 +38,7 @@ module Spree
 
     def attempt_cart_add(variant_id, quantity)
       quantity = quantity.to_i
-      # 2,147,483,647 is crazy.
-      # See issue #2695.
-      if quantity > 2_147_483_647
+      if quantity > Spree::Config[:max_quantity]
         errors.add(:base, %Q{Please enter a reasonable quantity.})
         return false
       end

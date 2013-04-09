@@ -54,6 +54,7 @@ module Spree
     preference :layout, :string, :default => 'spree/layouts/spree_application'
     preference :logo, :string, :default => 'admin/bg/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, :default => 1 # maximum nesting level in taxons menu
+    preference :max_quantity, :integer, :default => 1000 # Maximum allowable quantity when checking out
     preference :orders_per_page, :integer, :default => 15
     preference :prices_inc_tax, :boolean, :default => false
     preference :products_per_page, :integer, :default => 12
