@@ -2,7 +2,10 @@
   <nav id="sidebar-menu">
     <ul>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/integration/overview/">Overview</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Overview', 'overview'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-right-dir"></i><%= link_to "Messages", 'overview', 'messages' %></li>
           <li><i class="icon-right-dir"></i><%= link_to "Queues", 'overview', "queues" %></li>
@@ -13,7 +16,10 @@
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/integration/consuming/">Consuming Messages</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Consuming Messages', 'consuming'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-right-dir"></i><%= link_to "Synchronous", "consuming", "synchronous-response" %></li>
           <li><i class="icon-right-dir"></i><%= link_to "Asynchronous", "consuming", "asynchronous-response" %></li>
@@ -21,9 +27,12 @@
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/integration/push/">Pushing Messages</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Pushing Messages', 'push'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><%= link_to "New", "events/payments", "new-payment-event" %></li>
+          <li><i class="icon-right-dir"></i><%= link_to "New", "push", "new-product-example" %></li>
         </ul>
       </li>
       <li class='js-topic'>

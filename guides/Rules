@@ -145,6 +145,10 @@ route '/api/*/' do
   item.identifier.chop + ".html"
 end
 
+route '/integration/*/' do
+  item.identifier.chop + ".html"
+end
+
 route '*' do
   item.identifier + 'index.html'
 end
