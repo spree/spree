@@ -15,7 +15,7 @@
 # a.get :color
 # a.preferred_color
 #
-require "#{Spree::Core::Engine.root}/lib/spree/core/search/base.rb"
+require "spree/core/search/base"
 
 module Spree
   class AppConfiguration < Preferences::Configuration
