@@ -121,6 +121,8 @@ module Spree
 
       def update_order
         order.payments.reload
+        order.invalidate_old_payments 
+
         order.update!
       end
 
