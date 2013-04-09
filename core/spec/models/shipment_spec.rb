@@ -158,9 +158,14 @@ describe Spree::Shipment do
 
     it "should send a shipment email" do
       mail_message = mock "Mail::Message"
-      Spree::ShipmentMailer.should_receive(:shipped_email).with(shipment).and_return mail_message
+      shipment_id = nil
+      Spree::ShipmentMailer.should_receive(:shipped_email) { |*args|
+        shipment_id = args[0]
+        mail_message
+      }
       mail_message.should_receive :deliver
       shipment.ship!
+      shipment_id.should == shipment.id
     end
   end
 
