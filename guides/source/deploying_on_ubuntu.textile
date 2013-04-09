@@ -229,7 +229,7 @@ set :user, "spree"
 You will also need to tell it the path to deploy at. By default in Capistrano, this path is +/u/apps/[application_name]+. There is no +/u/+ directory on the server, so that won't work for you immediately. You already have a self-contained user account on the server, so deploying the application to that user's home directory would make better sense. Add this line to +config/deploy.rb+ to do that:
 
 <ruby>
-set :deploy_to, "/home/spree/#{application_name}"
+set :deploy_to, "/home/spree/#{application}"
 </ruby>
 
 You will also need to tell Capistrano to never use sudo, since you're going to be operating as a user without sudo permission:
@@ -414,7 +414,7 @@ preload_app true
 # nuke workers after 30 seconds instead of 60 seconds (the default)
 timeout 30
 
-pid "/tmp/spree.[application's name].pid"
+pid "/tmp/unicorn.[application's name].pid"
 
 # Production specific settings
 if env == "production"
