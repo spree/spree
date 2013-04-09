@@ -47,6 +47,9 @@ describe "viewing products" do
 
   context "taxon pages" do
     include_context "custom products"
+    before do
+      visit spree.root_path
+    end
 
     it "should be able to visit brand Ruby on Rails" do
       within(:css, '#taxonomies') { click_link "Ruby on Rails" }
