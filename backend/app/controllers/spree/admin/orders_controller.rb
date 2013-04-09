@@ -91,7 +91,7 @@ module Spree
       end
 
       def resend
-        OrderMailer.confirm_email(@order, true).deliver
+        OrderMailer.confirm_email(@order.id, true).deliver
         flash[:success] = t(:order_email_resent)
 
         redirect_to :back

@@ -139,9 +139,14 @@ describe Spree::Order do
       order.stub :has_available_shipment
       order.stub :restock_items!
       mail_message = mock "Mail::Message"
-      Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
+      order_id = nil
+      Spree::OrderMailer.should_receive(:cancel_email) { |*args|
+        order_id = args[0]
+        mail_message
+      }
       mail_message.should_receive :deliver
       order.cancel!
+      order_id.should == order.id
     end
 
     context "restocking inventory" do
