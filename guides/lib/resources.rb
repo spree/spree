@@ -75,14 +75,18 @@ module Spree
         block.call + "</code></pre>"
       end
 
-      def link_to(text, link)
+      def link_to(text, link, anchor=nil)
         if link.is_a?(Symbol)
           url = LINKS[link]
           raise "No link found for #{link}" unless url
         else
           url = link
         end
-        "<a href='#{url}.html'>#{text}</a>"
+        if anchor
+          "<a href='#{url}.html##{anchor}'>#{text}</a>"
+        else
+          "<a href='#{url}.html'>#{text}</a>"
+        end
       end
 
       LINKS = {}
