@@ -31,7 +31,7 @@
       <% @shipping_methods.each do |shipping_method|%>
         <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows" class="<%= cycle('odd', 'even')%>">
           <td><%= shipping_method.name %></td>
-          <td><%= shipping_method.zones.collect(&:name).join(",") if shipping_method.zones %></td>
+          <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
           <td><%= shipping_method.calculator.description %></td>
           <td class="align-center"><%= shipping_method.display_on.blank? ? t(:both) : t(shipping_method.display_on) %></td>
           <td data-hook="admin_shipping_methods_index_row_actions" class="actions">
@@ -40,22 +40,8 @@
           </td>
         </tr>
       <% end %>
-      </thead>
-      <tbody>
-        <% @shipping_methods.each do |shipping_method|%>
-          <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows" class="<%= cycle('odd', 'even')%>">
-            <td><%= shipping_method.name %></td>
-            <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
-            <td><%= shipping_method.calculator.description %></td>
-            <td class="align-center"><%= shipping_method.display_on.blank? ? t(:both) : t(shipping_method.display_on) %></td>
-            <td data-hook="admin_shipping_methods_index_row_actions" class="actions">
-              <%= link_to_edit shipping_method, :no_text => true %>
-              <%= link_to_delete shipping_method, :no_text => true %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    </tbody>
+  </table>
 <% else %>
   <div class="alpha twelve columns no-objects-found"><%= t(:no_shipping_methods_found) %></div>
 <% end %>
