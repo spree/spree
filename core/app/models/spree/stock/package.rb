@@ -78,7 +78,7 @@ module Spree
       end
 
       def shipping_categories
-        contents.map { |item| item.variant.shipping_category }.uniq
+        contents.map { |item| item.variant.shipping_category }.compact.uniq
       end
 
       def shipping_methods

@@ -62,18 +62,22 @@ module Spree
         subject.backordered.size.should eq 1
       end
 
+      # Contains regression test for #2804
       it 'builds a list of shipping methods from all categories' do
         shipping_method1 = create(:shipping_method)
         shipping_method2 = create(:shipping_method)
         variant1 = mock_model(Variant, shipping_category: shipping_method1.shipping_categories.first)
         variant2 = mock_model(Variant, shipping_category: shipping_method2.shipping_categories.first)
-        contents  = [Package::ContentItem.new(variant1, 1),
-                     Package::ContentItem.new(variant1, 1),
-                     Package::ContentItem.new(variant2, 1)]
+        variant3 = mock_model(Variant, shipping_category: nil)
+        contents = [Package::ContentItem.new(variant1, 1),
+                    Package::ContentItem.new(variant1, 1),
+                    Package::ContentItem.new(variant2, 1),
+                    Package::ContentItem.new(variant3, 1)]
 
         package = Package.new(stock_location, order, contents)
         package.shipping_methods.size.should eq 2
       end
+
 
       it "can convert to a shipment" do
         flattened = [Package::ContentItem.new(variant, 2, :on_hand),
