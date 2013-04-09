@@ -37,6 +37,15 @@ describe "viewing products" do
       page.should have_title('Category - T-Shirts - Spree Demo Site')
     end
 
+    # Regression test for #2814
+    it "doesn't use meta_title as heading on page" do
+      t_shirts.update_attributes metas
+      visit '/t/category/clothing/t-shirts'
+      within("h1.taxon-title") do
+        page.should have_content(t_shirts.name)
+      end
+    end
+
   end
 
 end
