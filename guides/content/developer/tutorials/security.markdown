@@ -16,7 +16,7 @@ understanding the [Rails Security Guide](http://guides.rubyonrails.org/security.
 Please do not announce potential security vulnerabilities in public. We have a
 [dedicated email address](mailto:security@spreecommerce.com).
 We will work quickly to determine the severity of the issue and
-provide a fix for the appropriate versions. 
+provide a fix for the appropriate versions.
 
 ## Authentication
 
@@ -42,12 +42,12 @@ the default setup. If you're using your own authentication, please consult the
 manual for that authentication engine.
 ***
 
-We have configure Devise to handle only what is needed to authenticate with a
+We have configured Devise to handle only what is needed to authenticate with a
 Spree site. The following details cover the default configurations:
 
 * Passwords are stored in the database encrypted with the salt.
 * User authentication is done through the database query.
-* User registration is enabled and the users login is available immediately (no
+* User registration is enabled and the user's login is available immediately (no
   validation emails).
 * There is a remember me and password recovery tool built in and enabled through
   Devise.
@@ -63,8 +63,8 @@ wiki](https://github.com/plataformatec/devise/wiki) for more details.
 
 ### REST API
 
-The REST API behaves slightly differently that a standard user. First, an admin
-has to create the access key before any user can query the REST API, this
+The REST API behaves slightly differently than a standard user. First, an admin
+has to create the access key before any user can query the REST API. This
 includes generating the key for the admin him/herself. This is not the case if
 `Spree::Api::Config[:requires_authentication]` is set to `false`.
 
@@ -75,7 +75,7 @@ modify data within Spree, a user will need to have an API key and then their
 user record would need to have permission to perform those actions.
 ***
 
-It is up to you to communicate that key. As an added measure this
+It is up to you to communicate that key. As an added measure, this
 authentication has to occur on every request made through the REST API as no
 session or cookies are created or stored for the REST API.
 
@@ -84,7 +84,7 @@ session or cookies are created or stored for the REST API.
 Spree uses the excellent [CanCan](https://github.com/ryanb/cancan) gem to provide
 authorization services.  If you are unfamiliar with it, you should take a look
 at Ryan Bates' [excellent screencast](http://railscasts.com/episodes/192-authorization-with-cancan) on the topic
-(or read the [transcribed version](http://asciicasts.com/episodes/192-authorization-with-cancan.))  A
+(or read the [transcribed version](http://asciicasts.com/episodes/192-authorization-with-cancan)).  A
 detailed explanation of CanCan is beyond the scope of this guide.
 
 ### Default Rules
@@ -139,7 +139,7 @@ CanCan is only effective in enforcing authorization rules if it's asked.  In
 other words, if the source code does not check permissions there is no way to
 deny access based on those permissions.  This is generally handled by adding the
 appropriate code to your Rails controllers. For more information please see the
-[CanCan Wiki](https://github.com/ryanb/cancan/wiki)
+[CanCan Wiki](https://github.com/ryanb/cancan/wiki).
 
 ### Custom Authorization Rules
 
@@ -152,7 +152,7 @@ do so.
 The trick to adding custom authorization rules is to add an `AbilityDecorator`
 to your extension and then to register these abilities.  The following code is
 an example of how to restrict access so that only the owner of the artwork can
-update it or to view it.
+update it or view it.
 
 ```ruby
 class AbilityDecorator
@@ -247,7 +247,7 @@ authorization is performed, which is done in the controller.
 ```ruby
 authorize! action, resource, session[:access_token]```
 
-Of course this also assume that the token has been stored in the session.
+Of course this also assumes that the token has been stored in the session.
 Generally this can be achieved with a route that maps the token to the correct
 parameter:
 
@@ -264,7 +264,7 @@ access.
 
 ### PCI Compliance
 
-All store owner wishing to process credit card transactions should be familiar
+All store owners wishing to process credit card transactions should be familiar
 with [PCI Compliance](http://en.wikipedia.org/wiki/Pci_compliance).  Spree makes
 absolutely no warranty regarding PCI compliance (or anything else for that
 matter - see the [LICENSE](http://spreecommerce.com/license) for details.)  We
@@ -288,7 +288,7 @@ wanted and opt out of storing even that little bit of information.
 ### Payment Profiles
 
 Spree also supports the use of "payment profiles."  This means that you can
-"store" a customers credit card information in your database securely.  More
+"store" a customer's credit card information in your database securely.  More
 precisely you store a "token" that allows you to use the credit card again.  The
 credit card gateway is actually the place where the credit card is stored.
 Spree ends up storing a token that can be used to authorize new charges on that
@@ -308,7 +308,7 @@ processing of the credit card information offsite (the data never touches your
 server) and greatly simplify the requirements for PCI compliance.
 
 [Braintree](https://braintrepayments.com) also offers a very
-interesting gateway option that achieves a similar benefit as Express Checkout
+interesting gateway option that achieves a similar benefit to Express Checkout
 but allows the entire process to appear to be taking place on the site.  In
 other words, the customer never appears to leave the store during the checkout.
 They describe this as a "transparent redirect."  The Braintree team is very
