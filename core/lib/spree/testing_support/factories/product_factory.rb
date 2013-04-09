@@ -7,13 +7,13 @@ FactoryGirl.define do
     sku 'ABC'
     available_on { 1.year.ago }
     deleted_at nil
+    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
 
     # ensure stock item will be created for this products master
     before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
 
     factory :product do
       tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
-      shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
 
       factory :product_with_option_types do
         after(:create) { |product| create(:product_option_type, product: product) }
