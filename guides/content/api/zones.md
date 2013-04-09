@@ -2,7 +2,7 @@
 title: Zones
 ---
 
-## List zones
+## Index
 
 To get a list of zones, make this request:
 
@@ -32,7 +32,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching zones
+## Search
 
 To search for a particular zone, make a request like this:
 
@@ -60,7 +60,7 @@ Results can be returned in a specific order by specifying which field to sort by
 ```text
 GET /api/zones?q[s]=name%20desc```
 
-## A single zone
+## Show
 
 To get information for a single zone, make this request:
 
@@ -72,7 +72,7 @@ GET /api/zones/1```
 <%= headers 200 %>
 <%= json(:zone) %>
 
-## Create a zone
+## Create
 
 <%= admin_only %>
 
@@ -100,7 +100,7 @@ a zone member which is a `Spree::Country` record with the `id` attribute of 1, s
 <%= headers 201 %>
 <%= json(:zone) %>
 
-## Updating a zone
+## Update
 
 <%= admin_only %>
 
@@ -128,7 +128,7 @@ To update zone and zone member information, use parameters like this:
 <%= headers 200 %>
 <%= json(:zone) %>
 
-## Deleting a zone
+## Delete
 
 <%= admin_only %>
 

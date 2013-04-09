@@ -2,7 +2,7 @@
 title: Stock Locations
 ---
 
-## List stock locations
+## Index
 
 To get a list of stock locations, make this request:
 
@@ -32,7 +32,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching stock locations
+## Search
 
 To search for a particular stock location, make a request like this:
 
@@ -53,7 +53,7 @@ The search results are paginated.
   :current_page => 1 }
 end %>
 
-## A single stock location
+## Show
 
 To get information for a single stock location, make this request:
 
@@ -65,7 +65,7 @@ GET /api/stock_locations/1```
 <%= headers 200 %>
 <%= json(:stock_location) %>
 
-## Create a stock location
+## Create
 
 <%= admin_only %>
 

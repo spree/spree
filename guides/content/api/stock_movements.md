@@ -2,7 +2,7 @@
 title: Stock Movements
 ---
 
-## List stock movements
+## Index
 
 To return a paginated list of all stock movements for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
@@ -27,7 +27,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching stock movements
+## Search
 
 To search for a particular stock movement, make a request like this:
 
@@ -55,7 +55,7 @@ Results can be returned in a specific order by specifying which field to sort by
 ```text
 GET /api/stock_locations/1/stock_movements?q[s]=quantity%20asc```
 
-## A single stock movement
+## Show
 
 To view the details for a single stock movement, make a request using that stock movement's id, along with its `stock_location_id`:
 
@@ -71,7 +71,7 @@ GET /api/stock_locations/1/stock_movements/1```
 
 <%= not_found %>
 
-## Creating a new stock movement
+## Create
 
 <%= admin_only %>
 
@@ -103,7 +103,7 @@ For instance, a request to create a new stock movement with a quantity of 10, th
   }
 %>
 
-## Updating a stock movement
+## Update
 
 <%= admin_only %>
 
@@ -133,7 +133,7 @@ For instance, to update a stock movement's quantity, send it through like this:
   }
 %>
 
-## Deleting a stock movement
+## Delete
 
 <%= admin_only %>
 

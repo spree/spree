@@ -4,7 +4,7 @@ title: Payments
 
 # Payments API
 
-## Listing payments
+## Index
 
 To see details about an order's payments, make this request:
 
@@ -32,7 +32,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching payments
+## Search
 
 To search for a particular payment, make a request like this:
 
@@ -62,7 +62,7 @@ It is also possible to sort results using an associated object's field.
 
     GET /api/payments?q[s]=order_number%20asc
 
-## A new payment
+## New
 
 In order to create a new payment, you will need to know about the available payment methods and attributes. To find these out, make this request:
 
@@ -78,7 +78,7 @@ In order to create a new payment, you will need to know about the available paym
    "avs_response", "created_at", "updated_at"],
   :payment_methods => [Spree::Resources::PAYMENT_METHOD] %>
 
-## Creating a payment
+## Create
 
 To create a new payment, make a request like this:
 
@@ -89,7 +89,7 @@ To create a new payment, make a request like this:
 <%= headers 201 %>
 <%= json(:payment) %>
 
-## A single payment
+## Show
 
 To get information for a particular payment, make a request like this:
 
@@ -100,7 +100,7 @@ To get information for a particular payment, make a request like this:
 <%= headers 200 %>
 <%= json(:payment) %>
 
-## Authorizing a payment
+## Authorize
 
 To authorize a payment, make a request like this:
 
@@ -116,7 +116,7 @@ To authorize a payment, make a request like this:
 <%= headers 422 %>
 <%= json :error => "There was a problem with the payment gateway: [text]" %>
 
-## Capturing a payment
+## Capture
 
 <%= warning "Capturing a payment is typically done shortly after authorizing the payment. If you are auto-capturing payments, you may be able to use the purchase endpoint instead." %>
 
@@ -134,7 +134,7 @@ To capture a payment, make a request like this:
 <%= headers 422 %>
 <%= json :error => "There was a problem with the payment gateway: [text]" %>
 
-## Purchasing with a payment
+## Purchase
 
 <%= warning "Purchasing a payment is typically done only if you are not authorizing payments before-hand. If you are authorizing payments, then use the authorize and capture endpoints instead." %>
 
@@ -152,7 +152,7 @@ To make a purchase with a payment, make a request like this:
 <%= headers 422 %>
 <%= json :error => "There was a problem with the payment gateway: [text]" %>
 
-## Voiding a payment
+## Void
 
 To void a payment, make a request like this:
 
@@ -168,7 +168,7 @@ To void a payment, make a request like this:
 <%= headers 422 %>
 <%= json :error => "There was a problem with the payment gateway: [text]" %>
 
-## Crediting a payment
+## Credit
 
 To credit a payment, make a request like this:
 

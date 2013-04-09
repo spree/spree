@@ -2,7 +2,7 @@
 title: Taxonomies
 ---
 
-## List taxonomies
+## Index
 
 To get a list of all the taxonomies, including their root nodes and the
 immediate children for the root node, make a request like this:
@@ -28,7 +28,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching taxonomies
+## Search
 
 To search for a particular taxonomy, make a request like this:
 
@@ -61,7 +61,7 @@ It is also possible to sort results using an associated object's field.
 ```text
 GET /api/taxonomies?q[s]=root_name%20desc```
 
-## A single taxonomy
+## Show
 
 To get information for a single taxonomy, including its root node and the immediate children of the root node, make a request like this:
 
@@ -73,7 +73,7 @@ GET /api/taxonomies/1```
 <%= headers 200 %>
 <%= json(:taxonomy) %>
 
-## Creating a taxonomy
+## Create
 
 <%= admin_only %>
 
@@ -91,12 +91,12 @@ POST /api/taxonomies?taxonomy[name]=Brand```
 If you\'re creating a taxonomy without a root taxon, a root taxon will automatically be
 created for you with the same name as the taxon.
 
-## Response
+### Response
 
 <%= headers 201 %>
 <%= json(:new_taxonomy) %>
 
-## Updating a taxonomy
+## Update
 
 <%= admin_only %>
 
@@ -115,7 +115,7 @@ PUT /api/taxonomies/1?taxonomy[name]=Brand```
 <%= headers 200 %>
 <%= json(:taxonomy) %>
 
-## Deleting a taxonomy
+## Delete
 
 <%= admin_only %>
 
@@ -128,3 +128,75 @@ DELETE /api/taxonomies/1```
 
 <%= headers 204 %>
 
+## List taxons
+
+To get a list for all taxons underneath the root taxon for a taxonomy (and their immediate children) for a taxonomy, make this request:
+
+    GET /api/taxonomies/1/taxons
+
+### Response
+
+<%= headers 200 %>
+<%= json(:taxon_with_children) { |h| [h] } %>
+
+## A single taxon
+
+To see information about a taxon and its immediate children, make a request
+like this:
+
+    GET /api/taxonomies/1/taxons/1
+
+### Response
+
+<%= headers 200 %>
+<%= json(:taxon_with_children) %>
+
+
+## Taxon Create
+
+<%= admin_only %>
+
+To create a taxon, make a request like this:
+
+    POST /api/taxonomies/1/taxons
+
+To create a new taxon with the name "Brands", make this request:
+
+    POST /api/taxonomies/1/taxons?taxon[name]=Brands
+
+### Response
+
+<%= headers 201 %>
+<%= json(:taxon_without_children) %>
+
+
+## Taxon Update
+
+<%= admin_only %>
+
+To update a taxon, make a request like this:
+
+    PUT /api/taxonomies/1/taxons/1
+
+For example, to update the taxon's name to "Brand", make this request:
+
+    PUT /api/taxonomies/1/taxons/1?taxon[name]=Brand
+
+### Response
+
+<%= headers 200 %>
+<%= json(:taxon_with_children) %>
+
+## Taxon Delete
+
+<%= admin_only %>
+
+To delete a taxon, make a request like this:
+
+    DELETE /api/taxonomies/1/taxons/1
+
+<%= warning "This will cause all child taxons to be deleted as well." %>
+
+### Response
+
+<%= headers 204 %>

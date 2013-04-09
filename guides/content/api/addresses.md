@@ -2,7 +2,7 @@
 title: Address
 ---
 
-## A single address
+## Show
 
 Retrieve details about a particular address:
 
@@ -14,7 +14,7 @@ GET /api/address/1```
 <%= headers 200 %>
 <%= json(:address) %>
 
-## Updating an address
+## Update
 
 To update an address, make a request like this:
 

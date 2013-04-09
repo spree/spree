@@ -4,7 +4,7 @@ title: Line Items
 
 # Line Items API
 
-## Creating a line item
+## Create
 
 To create a new line item, make a request like this:
 
@@ -17,7 +17,7 @@ This will create a new line item representing a single item for the variant with
 <%= headers 201 %>
 <%= json(:line_item) %>
 
-## Updating a line item
+## Update
 
 To update the information for a line item, make a request like this:
 
@@ -30,7 +30,7 @@ This request will update the line item with the ID of 1 for the order, updating 
 <%= headers 200 %>
 <%= json(:line_item) %>
 
-## Deleting a line item
+## Delete
 
 To delete a line item, make a request like this:
 

@@ -2,7 +2,7 @@
 title: Stock Items
 ---
 
-## List stock items
+## Index
 
 To return a paginated list of all stock items for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
@@ -27,7 +27,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching stock items
+## Search
 
 To search for a particular stock item, make a request like this:
 
@@ -55,7 +55,7 @@ Results can be returned in a specific order by specifying which field to sort by
 ```text
 GET /api/stock_locations/1/stock_items?q[s]=variant_id%20asc```
 
-## A single stock item
+## Show
 
 To view the details for a single stock item, make a request using that stock item's id, along with its `stock_location_id`:
 
@@ -71,7 +71,7 @@ GET /api/stock_locations/1/stock_items/1```
 
 <%= not_found %>
 
-## Creating a new stock item
+## Create
 
 <%= admin_only %>
 
@@ -103,7 +103,7 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
   }
 %>
 
-## Updating a stock item
+## Update
 
 <%= admin_only %>
 
@@ -133,7 +133,7 @@ For instance, to update a stock item's count_on_hand, send it through like this:
   }
 %>
 
-## Deleting a stock item
+## Delete
 
 <%= admin_only %>
 

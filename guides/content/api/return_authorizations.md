@@ -6,7 +6,7 @@ title: Return Authorizations
 
 <%= admin_only %>
 
-## List return authorizations
+## Index
 
 To list all return authorizations for an order, make a request like this:
 
@@ -34,7 +34,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching return authorizations
+## Search
 
 To search for a particular return authorization, make a request like this:
 
@@ -60,7 +60,7 @@ Results can be returned in a specific order by specifying which field to sort by
    :current_page => 1 }
 end %>
 
-## A single return authorization
+## Show
 
 To get information for a single return authorization, make a request like this:
 
@@ -71,7 +71,7 @@ To get information for a single return authorization, make a request like this:
 <%= headers 200 %>
 <%= json(:return_authorization) %>
 
-## Creating a return authorization
+## Create
 
 <%= admin_only %>
 
@@ -84,12 +84,12 @@ this request:
 
      POST /api/orders/R1234567/return_authorizations?return_authorization[number]=123456
 
-## Response
+### Response
 
 <%= headers 201 %>
 <%= json(:return_authorization) %>
 
-## Updating a return authorization
+## Update
 
 <%= admin_only %>
 
@@ -106,7 +106,7 @@ For instance, to update a return authorization's number, make this request:
 <%= headers 200 %>
 <%= json(:return_authorization) %>
 
-## Deleting a return authorization
+## Delete
 
 <%= admin_only %>
 

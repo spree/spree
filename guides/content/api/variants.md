@@ -2,7 +2,7 @@
 title: Variants
 ---
 
-## List variants
+## Index
 
 To return a paginated list of all variants within the store, make this request:
 
@@ -40,7 +40,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching variants
+## Search
 
 To search for a particular variant, make a request like this:
 
@@ -84,7 +84,7 @@ It is also possible to sort results using an associated object's field.
 ```text
 GET /api/variants?q[s]=product_name%20asc```
 
-## A single variant
+## Show
 
 To view the details for a single variant, make a request using that variant\'s id, along with its `product_id`:
 
@@ -100,7 +100,7 @@ GET /api/products/1/variants/1```
 
 <%= not_found %>
 
-## Pre-creation of a variant
+## New
 
 You can learn about the potential attributes (required and non-required) for a variant by making this request:
 
@@ -118,7 +118,7 @@ GET /api/products/1/variants/new```
   :required_attributes => []
  %>
 
-## Creating a new variant
+## Create
 
 <%= admin_only %>
 
@@ -145,7 +145,7 @@ POST /api/products/1/variants/?variant[sku]=12345&variant[price]=19.99```
   }
 %>
 
-## Updating a variant
+## Update
 
 <%= admin_only %>
 
@@ -172,7 +172,7 @@ PUT /api/products/1/variants/2?variant[sku]=12345```
   }
 %>
 
-## Deleting a variant
+## Delete
 
 <%= admin_only %>
 

@@ -2,7 +2,7 @@
 title: Countries
 ---
 
-## Listing countries
+## Index
 
 Retrieve a list of all countries by making this request:
 
@@ -32,7 +32,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Searching countries
+## Search
 
 To search for a particular country, make a request like this:
 
@@ -58,7 +58,7 @@ Results can be returned in a specific order by specifying which field to sort by
 ```text
 GET /api/countries?q[s]=name%20desc```
 
-## A single country
+## Show
 
 Retrieve details about a particular country:
 

@@ -2,7 +2,7 @@
 title: Orders
 ---
 
-## List all orders
+## Index
 
 <%= admin_only %>
 
@@ -34,7 +34,7 @@ per_page
   :current_page => 1 }
 end %>
 
-## Order searching
+## Search
 
 To search for a particular order, make a request like this:
 
@@ -67,7 +67,7 @@ It is also possible to sort results using an associated object's field.
 ```text
 GET /api/orders?q[s]=user_name%20asc```
 
-## A single order
+## Show
 
 To view the details for a single product, make a request using that order\'s number:
 
@@ -89,7 +89,7 @@ Orders through the API will only be visible to admins and the users who own them
 
 <%= authorization_failure %>
 
-## Creating a new order
+## Create
 
 To create a new order through the API, make this request:
 
@@ -116,11 +116,11 @@ POST /api/orders?order[line_items][0][variant_id]=1&order[line_items][0][quantit
   }
 %>
 
-## Modifying address information
+## Update Address
 
 To add address information to an order, please see the [address to delivery](/api/order/checkouts#address-to-delivery) section of the Checkouts guide.
 
-## Emptying an Order
+## Empty
 
 To empty an order\'s cart, make this request:
 

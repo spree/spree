@@ -4,7 +4,7 @@ title: Shipments
 
 # Shipments API
 
-## Create a shipment
+## Create
 
 <%= admin_only %>
 
@@ -34,7 +34,7 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 <%= headers 200 %>
 <%= json(:shipment) %>
 
-## Updating a shipment
+## Update
 
 <%= admin_only %>
 
@@ -61,7 +61,7 @@ unlock
 <%= headers 200 %>
 <%= json(:shipment) %>
 
-## Marking a shipment as ready
+## Ready
 
 <%= admin_only %>
 
@@ -78,7 +78,7 @@ You may choose to update shipment attributes with this request as well:
 <%= headers 200 %>
 <%= json(:shipment) %>
 
-## Marking a shipment as shipped
+## Ship
 
 <%= admin_only %>
 
@@ -95,7 +95,7 @@ You may choose to update shipment attributes with this request as well:
 <%= headers 200 %>
 <%= json(:shipment) %>
 
-## Add a variant to a shipment
+## Add Variant
 
 <%= admin_only %>
 
@@ -108,7 +108,7 @@ To add a variant to a shipment, make a request like this:
 <%= headers 200 %>
 <%= json(:shipment) %>
 
-## Remove a variant from a shipment
+## Remove Variant
 
 <%= admin_only %>
 
