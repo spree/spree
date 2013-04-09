@@ -6,7 +6,8 @@ module Spree
     belongs_to :state, class_name: 'Spree::State'
     belongs_to :country, class_name: 'Spree::Country'
 
-    validates_presence_of :name
+    validates :country, presence: true
+    validates :name, presence: true, uniqueness: true
 
     attr_accessible :name, :active, :address1, :address2, :city, :zipcode,
                     :state_name, :state_id, :country_id, :phone

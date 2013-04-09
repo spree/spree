@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :stock_location, class: Spree::StockLocation do
-    name 'NY Warehouse'
+    sequence(:name) { |i| "NY Warehouse #{i}" }
     address1 '1600 Pennsylvania Ave NW'
     city 'Washington'
     zipcode '20500'
