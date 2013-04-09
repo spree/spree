@@ -83,6 +83,11 @@ DHL charges:
 * $5 per item if it's light or regular
 * $50 per item if it's heavy.
 
+USPS charges:
+
+* $8 per item if it's light or regular
+* $20 per item if it's heavy.
+
 To achieve this setup you need the following configuration:
 
 * 4 Shipping Categories: Default, light, regular and heavy
@@ -92,10 +97,9 @@ To achieve this setup you need the following configuration:
 
 |S. Category / S. Method|DHL|FedEx|USPS|
 |---|---|---|---:|
-|Default|Per Item ($5)|-|Weight Bucket|
-|Light|-|Flat Rate ($10)|-|
-|Regular|-|Per Item ($2)|-|
-|Heavy|Per Item ($50)|Flexi Rate($20,$15)|-|
+|Light|Per Item ($5)|Flat Rate ($10)|Per Item ($8)|
+|Regular|Per Item ($5)|Per Item ($2)|Per Item ($8)|
+|Heavy|Per Item ($50)|Flexi Rate($20,$15)|Per Item ($20)|
 
 ## Design & Functionality
 
