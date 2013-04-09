@@ -2,7 +2,10 @@
   <nav id="sidebar-menu">
     <ul>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/developer/tutorials/">Tutorials</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Tutorials', 'getting_started'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%=link_to "Getting Started", 'getting_started'%></li>
           <li><i class="icon-dot"></i><%=link_to "Extensions", 'extensions'%></li>
@@ -10,7 +13,10 @@
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/developer/source/">Source Code</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Source Code', 'about'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%=link_to "About", 'about'%></li>
           <li><i class="icon-dot"></i><%=link_to "Navigating", 'navigating'%></li>
@@ -19,7 +25,10 @@
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/developer/core/">The Core</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'The Core', 'activators'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%=link_to "Activators", 'activators'%></li>
           <li><i class="icon-dot"></i><%=link_to "Addresses", 'addresses'%></li>
@@ -35,17 +44,23 @@
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/developer/customization/">Customization</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Customization', 'authentication'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%=link_to "Authentication", 'authentication'%></li>
-	  <li><i class="icon-dot"></i><%=link_to "Internationalization (i18n)", 'i18n'%></li>
-	  <li><i class="icon-dot"></i><%=link_to "View", 'view'%></li>
-	  <li><i class="icon-dot"></i><%=link_to "Asset", 'asset'%></li>
-	  <li><i class="icon-dot"></i><%=link_to "Logic", 'logic'%></li>
+          <li><i class="icon-dot"></i><%=link_to "Internationalization (i18n)", 'i18n'%></li>
+          <li><i class="icon-dot"></i><%=link_to "View", 'view'%></li>
+          <li><i class="icon-dot"></i><%=link_to "Asset", 'asset'%></li>
+          <li><i class="icon-dot"></i><%=link_to "Logic", 'logic'%></li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/developer/deployment/">Deployment</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Deployment', 'deployment-service'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%=link_to "Deployment Service", 'deployment-service'%></li>
           <li><i class="icon-dot"></i><%=link_to "Ubuntu", 'ubuntu'%></li>
@@ -53,7 +68,10 @@
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/developer/advanced/">Advanced Topics</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Advanced Topics', 'products'%>
+        </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%= link_to "Products", 'products' %></li>
           <li><i class="icon-dot"></i><%= link_to "Orders", 'orders' %></li>
