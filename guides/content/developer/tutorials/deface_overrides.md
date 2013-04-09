@@ -71,10 +71,10 @@ Deface currently supports the following actions:
 * remove – Removes all elements that match the supplied selector
 * replace – Replaces all elements that match the supplied selector, with the content supplied
 * insert_after – Inserts content supplied after all elements that match the supplied selector
-* insert_before – Inserts content supplied before all elements that match the supplied * selector
+* insert_before – Inserts content supplied before all elements that match the supplied selector
 * insert_top – Inserts content supplied inside all elements that match the supplied selector, as the first child
-* insert_bottom – Inserts content supplied inside all elements that match the supplied * selector, as the last child
-* set_attributes – Sets (or adds) attributes to all elements that match the supplied selector, expects :attributes option to be passed
+* insert_bottom – Inserts content supplied inside all elements that match the supplied selector, as the last child
+* set_attributes – Sets (or adds) attributes to all elements that match the supplied selector, expects `:attributes` option to be passed
 
 ### Supplying Content
 
@@ -92,20 +92,22 @@ This just scratches the surface of what is possible using deface. For more detai
 
 ### The Goal
 
-Our goal is to add a field to the product edit admin page that allows the `sale_price` to be or updated. We could do this by overriding the view Spree provides, but there are potential problems with this technique. If Spree updates the view in a new release we won't get the updated view as we are already overriding it. We would need to update our view with the new content from Spree and then add our customizations back in to stay fully up to date.
+Our goal is to add a field to the product edit admin page that allows the `sale_price` to be added or updated. We could do this by overriding the view Spree provides, but there are potential problems with this technique. If Spree updates the view in a new release we won't get the updated view as we are already overriding it. We would need to update our view with the new content from Spree and then add our customizations back in to stay fully up to date.
 
-Let's do this instead using Deface, which we just learned about. Using Deface will allow us to keep our view customizations in one spot, `app/overrides`, and make sure we are always using the latest implementation the view provided by Spree.
+Let's do this instead using Deface, which we just learned about. Using Deface will allow us to keep our view customizations in one spot, `app/overrides`, and make sure we are always using the latest implementation of the view provided by Spree.
 
 ### The Implementation
 
-We want to override the product edit admin page, so the view we want to modify in this case is the product form partial. This file's path will be `spree/admin/product/_form`.
+**TODO**: Add mention of the fact that this work all needs to be done under /backend rather than /core
+
+We want to override the product edit admin page, so the view we want to modify in this case is the product form partial. This file's path will be `spree/admin/products/_form.html.erb`.
 
 First, let's create the overrides directory with the following command:
 
 ```bash
 $ mkdir app/overrides```
 
-So we want to override `spree/admin/product/_form`. Here is the part of the file we are going to add content to (you can also view the [full file](https://github.com/spree/spree/blob/1-3-stable/core/app/views/spree/admin/products/_form.html.erb)):
+So we want to override `spree/admin/products/_form.html.erb`. Here is the part of the file we are going to add content to (you can also view the [full file](https://github.com/spree/spree/blob/master/backend/app/views/spree/admin/products/_form.html.erb)):
 
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
@@ -129,16 +131,16 @@ Deface::Override.new(:virtual_path => "spree/admin/products/_form",
                        <%% end %>
                      ")```
 
-There is one more change we will need to make in order to get the updated product edit form working. We need to make `cost_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `cost_price`.
+There is one more change we will need to make in order to get the updated product edit form working. We need to make `sale_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `sale_price`.
 
 We can do this by creating a new file `app/models/spree/product_decorator.rb` and adding the following content to it:
 
 ```ruby
 module Spree
   Product.class_eval do
-  delegate_belongs_to :master, :sale_price
+    delegate_belongs_to :master, :sale_price
 
-  attr_accessible :sale_price
+    attr_accessible :sale_price
   end
 end```
 
