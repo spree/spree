@@ -2,106 +2,527 @@
   <nav id="sidebar-menu">
     <ul>
       <li class="js-topic">
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/summary/">Summary</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Summary', 'summary'%>
+        </h3>
         <ul class="js-guides">
           <li>
-            <i class="icon-right-dir"></i><a href="/api/summary/#overview">Overview</a>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Overview", 'summary', 'overview' %>
           </li>
           <li>
-            <i class="icon-right-dir"></i><a href="/api/summary/#rules">Rules</a>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Rules", 'summary', 'rules' %>
           </li>
           <li>
-            <i class="icon-right-dir"></i><a href="/api/summary/#customizing-responses">Customizing Responses</a>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Customizing", 'summary', 'customizing-responses' %>
           </li>
         </ul>
       </li>
-
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/products/">Products</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Products', 'products'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/products/#list-products">Index</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/products/#searching-products">Search</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/products/#a-single-product">Show</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/products/#pre-creation-of-a-product">New</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/products/#creating-a-new-product">Create</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/products/#updating-a-product">Update</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/products/#deleting-a-product">Delete</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/product/properties/">Properties</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'products', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'products', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'products', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "New", 'products', 'new' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'products', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'products', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'products', 'delete' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/variants/">Variants</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Product Properties', 'product_properties'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#list-variants">Index</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#searching-variants">Search</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#a-single-variant">Show</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#pre-creation-of-a-variant">New</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#creating-a-new-variant">Create</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#updating-a-variant">Update</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/variants/#deleting-a-variant">Delete</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'product_properties', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'product_properties', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'product_properties', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'product_properties', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'product_properties', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'product_properties', 'delete' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/orders/">Orders</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Variants', 'variants'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#list-all-orders">Index</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#order-searching">Search</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#a-single-order">Show</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#creating-a-new-order">Create</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#modifying-address-information">Address</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#selecting-a-delivery-method">Delivery</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/orders/#emptying-an-order">Empty</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/order/line_items/">Line items</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/order/payments/">Payments</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/order/shipments/">Shipments</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/order/return_authorizations/">Return Authorizations</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/order/checkouts/">Checkouts</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'variants', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'variants', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'variants', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "New", 'variants', 'new' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'variants', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'variants', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'variants', 'delete' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/taxonomies/">Taxonomies</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Orders', 'orders'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomies/#list-taxonomies">Index</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomies/#searching-taxonomies">Search</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomies/#a-single-taxonomy">Show</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomies/#creating-a-taxonomy">Create</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomies/#updating-a-taxonomy">Update</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomies/#deleting-a-taxonomy">Delete</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/taxonomy/taxons/">Taxons</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'orders', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'orders', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'orders', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'orders', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Address", 'orders', 'update-address' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Empty", 'orders', 'empty' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/addresses/">Addresses</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Line Items', 'line_items'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/addresses/#a-single-address">Show</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/addresses/#updating-an-address">Update</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'line_items', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'line_items', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'line_items', 'delete' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/countries/">Countries</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Checkouts', 'checkouts'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/countries/#listing-countries">Index</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/countries/#searching-countries">Search</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/countries/#a-single-country">Show</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'checkouts', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Address", 'checkouts', 'address' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delivery", 'checkouts', 'delivery' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Payment", 'checkouts', 'payment' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Confirm", 'checkouts', 'confirm' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Complete", 'checkouts', 'complete' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/stock_management/">Stock Management</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Payments', 'payments'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/stock/stock_locations">Stock Locations</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/stock/stock_items">Stock Items</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/stock/stock_movements">Stock Movements</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'payments', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'payments', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "New", 'payments', 'new' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'payments', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'payments', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Authorize", 'payments', 'authorize' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Capture", 'payments', 'capture' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Purchase", 'payments', 'purchase' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Void", 'payments', 'void' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Credit", 'payments', 'credit' %>
+          </li>
         </ul>
       </li>
       <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><a href="/api/zones/">Zones</a></h3>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Return Authorizations', 'return_authorizations'%>
+        </h3>
         <ul class="js-guides">
-          <li><i class="icon-right-dir"></i><a href="/api/zones/#list-zones">Index</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/zones/#searching-zones">Search</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/zones/#a-single-zone">Show</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/zones/#create-a-zone">Create</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/zones/#updating-a-zone">Update</a></li>
-          <li><i class="icon-right-dir"></i><a href="/api/zones/#deleting-a-zone">Delete</a></li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'return_authorizations', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'return_authorizations', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'return_authorizations', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "New", 'return_authorizations', 'new' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'return_authorizations', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'return_authorizations', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'return_authorizations', 'delete' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Shipments', 'shipments'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'shipments', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'shipments', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Ready", 'shipments', 'ready' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Ship", 'shipments', 'ship' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Add Variant", 'shipments', 'add-variant' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Remove Variant", 'shipments', 'remove-variant' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Taxonomies', 'taxonomies'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'taxonomies', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'taxonomies', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'taxonomies', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'taxonomies', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'taxonomies', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'taxonomies', 'delete' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Taxon Create", 'taxonomies', 'taxon-create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Taxon Update", 'taxonomies', 'taxon-update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Taxon Delete", 'taxonomies', 'taxon-delete' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Addresses', 'addresses'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'addresses', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'addresses', 'update' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Countries', 'countries'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'countries', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'countries', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'countries', 'show' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Stock Locations', 'stock_locations'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'stock_locations', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'stock_locations', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'stock_locations', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'stock_locations', 'create' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Stock Items', 'stock_items'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'stock_items', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'stock_items', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'stock_items', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'stock_items', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'stock_items', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'stock_items', 'delete' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Stock Movements', 'stock_movements'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'stock_movements', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'stock_movements', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'stock_movements', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'stock_movements', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'stock_movements', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'stock_movements', 'delete' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%=link_to 'Zones', 'zones'%>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Index", 'zones', 'index' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Search", 'zones', 'search' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Show", 'zones', 'show' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Create", 'zones', 'create' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Update", 'zones', 'update' %>
+          </li>
+          <li>
+            <i class="icon-right-dir"></i>
+            <%= link_to "Delete", 'zones', 'delete' %>
+          </li>
         </ul>
       </li>
     </ul>

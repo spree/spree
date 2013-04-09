@@ -141,6 +141,10 @@ route '/developer/customization/*/' do
   location.chop + ".html"
 end
 
+route '/api/*/' do
+  item.identifier.chop + ".html"
+end
+
 route '*' do
   item.identifier + 'index.html'
 end
