@@ -15,7 +15,7 @@ var handle_move = function(e, data) {
     type: "POST",
     dataType: "json",
     url: url.toString(),
-    data: ({_method: "put", "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
+    data: ({_method: "put", "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position }),
     error: handle_ajax_error
   });
 
@@ -33,7 +33,7 @@ var handle_create = function(e, data) {
     type: "POST",
     dataType: "json",
     url: base_url.toString(),
-    data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
+    data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position }),
     error: handle_ajax_error,
     success: function(data,result) {
       node.attr('id', data.id);
@@ -54,7 +54,7 @@ var handle_rename = function(e, data) {
     type: "POST",
     dataType: "json",
     url: url.toString(),
-    data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
+    data: {_method: "put", "taxon[name]": name },
     error: handle_ajax_error
   });
  };
@@ -70,7 +70,7 @@ var handle_delete = function(e, data){
         type: "POST",
         dataType: "json",
         url: delete_url.toString(),
-        data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
+        data: {_method: "delete"},
         error: handle_ajax_error
       });
     }else{
