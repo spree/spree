@@ -8,6 +8,14 @@ describe "Products" do
       visit spree.admin_path
     end
 
+    def build_option_type_with_values(name, values)
+      ot = FactoryGirl.create(:option_type, :name => name)
+      values.each do |val|
+        ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
+      end
+      ot
+    end
+
     context "listing products" do
       context "sorting" do
         before do
@@ -147,7 +155,6 @@ describe "Products" do
         field_labeled("Large").should be_checked
         field_labeled("Small").should_not be_checked
       end
-
     end
 
     context "creating a new product" do
@@ -219,6 +226,16 @@ describe "Products" do
 
     context 'updating a product', :js => true do
       let(:product) { create(:product) }
+      
+      let(:prototype) do
+        size = build_option_type_with_values("size", %w(Small Medium Large))
+        FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
+      end
+
+      before(:each) do
+         @option_type_prototype = prototype
+         @property_prototype = create(:prototype, :name => "Random")
+      end
 
       it 'should parse correctly available_on' do
         visit spree.admin_product_path(product)
@@ -226,6 +243,23 @@ describe "Products" do
         click_button "Update"
         page.should have_content("successfully updated!")
         Spree::Product.last.available_on.should == 'Tue, 25 Dec 2012 00:00:00 UTC +00:00'
+      end
+
+      it 'should add option_types when selecting a prototype' do
+        visit spree.admin_product_path(product)
+        click_link 'Product Properties'
+        page.should have_content("Select From Prototype")
+        click_link "Select From Prototype"
+
+        within(:css, "#prototypes tr#row_1") do
+          click_link 'Select'
+        end
+
+        wait_until { page.all('tr.product_property').size > 1 }
+
+        within(:css, "tr.product_property:first") do
+          first('input[type=text]')[:value].should eq('baseball_cap_color')
+        end
       end
     end
 
