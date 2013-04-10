@@ -51,5 +51,6 @@ $(function() {
 
   // Automatically open sidebar menu depending on section page belongs to
   var current_section = $('meta[name=section]').attr('content');
+  console.log(current_section);
   $('.toggle-' + current_section + '-menu i').click();
 });

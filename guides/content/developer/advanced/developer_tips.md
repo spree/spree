@@ -1,6 +1,6 @@
 ---
 title: "Developer Tips and Tricks"
-section: customization
+section: advanced
 ---
 
 This guide presents accumulated wisdom from person-years of Spree use.

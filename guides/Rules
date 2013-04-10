@@ -136,6 +136,11 @@ route '/developer/tutorials/*/' do
   location.chop + ".html"
 end
 
+route '/developer/advanced/*/' do
+  location = item.identifier.gsub('/advanced/', '/')
+  location.chop + ".html"
+end
+
 route '/developer/customization/*/' do
   location = item.identifier.gsub('/customization/', '/')
   location.chop + ".html"
