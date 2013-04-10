@@ -33,7 +33,11 @@ module Spree
 
       def compute_line_item(line_item)
         if line_item.product.tax_category == rate.tax_category
-          deduced_total_by_rate(line_item.total, rate)
+          if rate.included_in_price
+            deduced_total_by_rate(line_item.total, rate)
+          else
+            round_to_two_places(line_item.total * rate.amount)
+          end
         else
           0
         end
