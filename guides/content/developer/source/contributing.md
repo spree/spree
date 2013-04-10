@@ -25,7 +25,7 @@ One of the best places for communication is the [spree-user mailing list](http:/
 
 #### IRC
 
-There is a #spree chat room on the irc.freenode.net network. Sometimes the core contributors hang out there and you can get some feedback on your idea.
+There is a #spree chat room on the irc.freenode.net network. Sometimes the core contributors hang out there and you can get some feedback on your idea. More information on how to connect is on our [blog](http://spreecommerce.com/blog/irc-101).
 
 !!!
 The #spree chat room is not monitored as carefully as the mailing list.  Sometimes you'll get lucky and someone will answer your question but we can't provide real time responses to everyone with a question/problem/idea.  The mailing list is a much better way to communicate, and it gives everyone the chance to provide a thoughtful response. It's also more permanent than anything discussed on IRC.
@@ -118,7 +118,7 @@ If your code is associated with an existing issue then you can [provide a patch]
 
 #### Creating a Fork
 
-The official Spree source code is maintained in GitHub under the [spree/spree](https://github.com/spree/spree project). There is a [core team](http://spreecommerce.com/core_team) of developers who are responsible for maintaining the quality of the source code. Your changes will ultimately need to be merged into the official project by a core member.
+The official Spree source code is maintained in GitHub under the [spree/spree](https://github.com/spree/spree) project. There is a [core team](http://spreecommerce.com/core_team) of developers who are responsible for maintaining the quality of the source code. Your changes will ultimately need to be merged into the official project by a core member.
 
 Thanks to [GitHub](https://github.com/), however, you do not have to wait for a core member to get started with your fix.  You simply need to "fork" the project and then start hacking.
 
@@ -169,7 +169,7 @@ These are some guidelines and please use your best judgment in using them.
 
 #### Including a Test
 
-Ideally your pull request will also include a test that verifies a bug (or the absence of the new feature) before your fix and also verifies proper functionality when you are finished.  Please read the [testing guide](/developer/source/testing/) for more information on writing and running your tests.
+Ideally your pull request will also include a test that verifies a bug (or the absence of the new feature) before your fix and also verifies proper functionality when you are finished.  Please read the <%= link_to "testing guide",'testing' %> for more information on writing and running your tests.
 
 ***
 Pull requests with tests are given top priority.  Failure to include a test will likely delay acceptance of your patch.

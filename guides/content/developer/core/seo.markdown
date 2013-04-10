@@ -62,7 +62,7 @@ The Google Analytics setup includes e-commerce conversion tracking.
 Although several common search engine optimization issues have been
 addressed, we are always looking for the new best practices in SEO.
 Contributions to address issues will be very welcome. Visit the
-[contributing to spree section](contributing_to_spree.html) to learn
+[contributing to spree section](contributing.html) to learn
 more about contributing.
 
 #### Product and Taxonomy Page Title Enhancements

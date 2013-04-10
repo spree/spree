@@ -26,7 +26,7 @@ To create a new, empty order, make this request:
 
 ## Address
 
-The newly created order is currently in the `cart` state. After [adding line items](/order/line_items) to the order, it can be advanced to its next state, `address`, by making this request:
+The newly created order is currently in the `cart` state. After <%= link_to "adding line items", 'line_items' %> to the order, it can be advanced to its next state, `address`, by making this request:
 
     PUT /api/checkouts/R335381310
 
@@ -112,7 +112,7 @@ If the order doesn't have an assigned payment method, make the following request
 
     PUT /api/checkouts/R335381310?order[payments_attributes][][payment_method_id]=1
 
-For more information on payments, view the [payments documentation](/orders/payments).
+For more information on payments, view the <%= link_to "payments documentation",'payments' %>.
 
 ### Response
 

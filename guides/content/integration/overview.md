@@ -13,7 +13,7 @@ You'll see several terms used frequently when discussing the Integrator and it's
 Messages are the core of the integrator platform, a single action with a Spree store can result in several discreet messages being produced and consumed. Messages can be created in two locations:
 
 1. Within a Spree store as users complete actions like: customers signing up, completing checkouts, administrators processing orders or uploading new products.
-2. Externally inside other systems, which then transmit those messages to the Integrator for processing. For more see ["Pushing Messages"](/integration/push/).
+2. Externally inside other systems, which then transmit those messages to the Integrator for processing. For more see <%= link_to "Pushing Messages",'push' %>.
 
 Every messages contains (at least) the following details:
 
@@ -38,7 +38,7 @@ Endpoints are small standalone web applications that can be subscribed to certai
 
 Any message with the Integrator can be consumed by an endpoint, with each individual message resulting in a JSON encoded message being dispatched via a HTTP POST request to a pre-configured endpoint URL.
 
-Using the Integrator's control panel you can configure a list of the message types you want to subscribe to, and a list of corresponding endpoint URLs that will process them. For more see ["Consuming Messages"](/integration/consuming/).
+Using the Integrator's control panel you can configure a list of the message types you want to subscribe to, and a list of corresponding endpoint URLs that will process them. For more see <%= link_to "Consuming Messages", 'consuming' %>.
 
 ## Consumers
 

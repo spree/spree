@@ -47,7 +47,7 @@ frontend.
 
 Orders flow through a state machine, beginning at a "cart" start and ending up
 at a "complete" state. The intermediary states can be configured using the
-[Checkout Flow API](/developer/core/customization/checkout_flow).
+[Checkout Flow API](checkout_flow).
 
 The default states are as follows:
 

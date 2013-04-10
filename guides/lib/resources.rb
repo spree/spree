@@ -90,7 +90,7 @@ module Spree
       end
 
       LINKS = {}
-      LINKS[:core] = "/developer/core/"
+      LINKS[:core] = "/developer/"
       LINKS[:products] = LINKS[:core] + "products"
       LINKS[:variants] = LINKS[:products] + "#variants"
       LINKS[:prices] = LINKS[:core] + "#prices"

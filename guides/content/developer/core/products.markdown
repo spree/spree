@@ -39,8 +39,8 @@ flavours: master variants and normal variants.
 
 Variant records can track some individual properties regarding a variant, such
 as height, width, depth, and cost price. These properties are unique to each
-variant, and so are different from [Product
-Properties](/developer/core/models/product_properties), which apply to all
+variant, and so are different from <%= link_to "Product
+Properties", "products", "product-properties" %>, which apply to all
 variants of that product.
 
 ### Master Variants
@@ -48,8 +48,8 @@ variants of that product.
 Every single product has a master variant, which tracks basic information such
 as a count on hand, a price and a SKU.
 
-By having a master variant, the code within Spree to track [Line
-Items](/developer/core/models/line_item) is simplified.
+By having a master variant, the code within Spree to track <%= link_to "Line
+Items", 'orders', 'line_item' %> is simplified.
 
 ### Normal Variants
 
@@ -98,8 +98,8 @@ instance, a T-Shirt may have properties representing information about the kind
 of material used, as well as the type of fit the shirt is.
 
 Product properties should not be confused with <%= link_to "option values",
-"#option-types-and-option-values" %>, which are used when defining
-<%= link_to "variants", "#variants" %> for a product. Properties are for a product,
+"products", "option-types-and-option-values" %>, which are used when defining
+<%= link_to "variants","products", "variants" %> for a product. Properties are for a product,
 while option values are for variants.
 
 You can retrieve the value for a property on a `Product` object by calling the

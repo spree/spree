@@ -130,8 +130,8 @@ the environment:
 -   **Unicorn Workers** - This value is only required for servers with
     the **Application Server** role, and controls how many worker
     processes the unicorn master process will fork on startup. Setting
-    this value correctly is important, see the [Overview & Deployment
-    Options](server_configuration.html) Guide for details on memory
+    this value correctly is important, see the <%= link_to "Overview & Deployment
+    Options", 'server_configuration' %> Guide for details on memory
     requirements / workers.
 
 -   **Roles** - Select the required roles for the server, see the
@@ -197,8 +197,8 @@ to browser to your Application Servers IP address to view the store
 running.
 
 If you are deploying your own application, please refer to the
-[Deploying your application on Ubuntu](deploying_on_ubuntu.html) or the
-[Deploying your application on Heroku](deploying_on_heroku.html) Guide
+<%= link_to "Deploying your application on Ubuntu", 'ubuntu' %> or the
+<%= link_to "Deploying your application on Heroku", 'heroku' %> Guide
 for more.
 
 ## Application Process
@@ -419,6 +419,6 @@ software stack:
 
 -   `/etc/ssl` - You can upload your SSL certificate files into this
     directory and the will be automatically used by Puppet in your
-    application Nginx configuration file. See the [Requesting and
-    Configuring SSL Guide](requesting_and_configuring_ssl.html) for more
+    application Nginx configuration file. See the <%= link_to "Requesting and
+    Configuring SSL Guide", 'ssl' %> for more
     details.

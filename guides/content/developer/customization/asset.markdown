@@ -13,10 +13,6 @@ assets and how you can extend and customize them including:
 -   Managing extension specific assets
 -   Overriding Spree's core assets
 
-Be sure to read the other customization methods available in the
-[Customization Overview](customization.html) page.
-
-
 ### Spree's Asset Pipeline
 
 With the release of 3.1 Rails now supports powerful asset management

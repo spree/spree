@@ -10,9 +10,6 @@ your exact business requirements including:
 -   Changing the output from an existing Spree controller action
 -   Customizing the image handling functionality.
 
-Be sure to read the other customization methods available in the
-[Customization Overview](customization.html) page.
-
 ### Extending Classes
 
 All of Spree's business logic (models, controllers, helpers, etc) can

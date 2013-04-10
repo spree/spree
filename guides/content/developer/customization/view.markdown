@@ -10,10 +10,6 @@ Spree store. This guide explains the options available, including:
 -   Using Deface for view customization
 -   Replacing entire view templates
 
-Be sure to read the other customization methods available in the
-[Customization Overview](customization.html) page.
-
-
 ### Using Deface
 
 Deface is a standalone Rails 3 library that enables you to customize Erb
