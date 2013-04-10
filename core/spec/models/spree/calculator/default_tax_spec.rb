@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Spree::Calculator::DefaultTax do
   let!(:tax_category) { create(:tax_category, :tax_rates => []) }
-  let!(:rate) { mock_model(Spree::TaxRate, :tax_category => tax_category, :amount => 0.05) }
+  let!(:rate) { mock_model(Spree::TaxRate, :tax_category => tax_category, :amount => 0.05, :included_in_price => vat) }
+  let(:vat) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new({:calculable => rate}, :without_protection => true) }
   let!(:order) { create(:order) }
   let!(:product_1) { create(:product, :tax_category => tax_category) }
@@ -59,12 +60,24 @@ describe Spree::Calculator::DefaultTax do
       end
     end
 
-    context "when given a line item" do
+    context "when tax is included in price" do
+      let(:vat) { true }
       context "when the variant matches the tax category" do
         it "should be equal to the item total * rate" do
           calculator.compute(line_item_1).should == 1.43
         end
       end
+    end
+
+    context "when tax is not included in price" do
+      context "when the variant matches the tax category" do
+        it "should be equal to the item total * rate" do
+          calculator.compute(line_item_1).should == 1.50
+        end
+      end
+    end
+
+    context "when given a line item" do
 
       context "when the variant does not match the tax category" do
         before do
