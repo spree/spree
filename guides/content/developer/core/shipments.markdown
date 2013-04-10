@@ -246,13 +246,14 @@ instructions attached, they will be shown in an order's shipment admin page and 
 also be edited at that stage. Observe that instructions are currently attached to
 the order and not to actual shipments.
 
-<!---
 
 ## The Active Shipping Extension
 
 The popular active_shipping extension harnesses the active_shipping gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
 
-NOTE: To install the spree-active-shipping extension add the following to your Gemfile: 
+***
+     To install the spree-active-shipping extension add the following to your Gemfile: 
+***
 
 ```ruby
 gem 'spree_active_shipping'
@@ -377,8 +378,6 @@ Finally, don’t forget to register the calculator you added. In extensions, thi
     Calculator::Usps::FirstClassMailInternationalParcels.register
   end
 ```
-
--->
 
 ## Filtering Shipping Methods On Criteria Other Than the Zone
 

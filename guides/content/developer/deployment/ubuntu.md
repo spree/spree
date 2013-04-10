@@ -27,8 +27,10 @@ install.
 
 ### A user account
 
-NOTE: For the purposes of this guide, the user's account on the system will be
+***
+For the purposes of this guide, the user's account on the system will be
 called "spree", but you may choose to call it whatever you wish.
+***
 
 To set up this new user, run these commands on the server:
 
@@ -63,7 +65,9 @@ Set the filename to be [your home directory]/.ssh/spree_rsa.
 You can choose to enter a password if you wish. All that would mean is that you
 would need to provide that password to use the key.
 
-NOTE: If you already have a private key, you can use that one.
+***
+If you already have a private key, you can use that one.
+***
 
 Once you've finished generating this key, you will need to copy the public
 version of this key over to the new server. To do this, run this command:
@@ -694,9 +698,11 @@ your store's homepage here if everything is correctly set up.
 
 ### Setting up SSL
 
-NOTE: This part of the guide assumes you have the relevant SSL certificate files
+***
+This part of the guide assumes you have the relevant SSL certificate files
 (a file ending in `.crt`, and another in `.key`) already and just need to know
 where to put them.
+***
 
 The `*.crt` file belongs in `/etc/ssl/certs`, and the `*.key` file belongs in
 `/etc/ssl/private`. Put these files there now.

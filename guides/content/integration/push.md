@@ -16,8 +16,9 @@ The API response will include all the details submitted, along with a _message_i
 
 All messages submitted via the API are first passed to the Incoming Queue where they are validated, and once processed they will be submitted to Accepted Queue. 
 
-NOTE: The _message_id_ returned by the API is message's Incoming Queue message_id, as the message maybe be duplicated several times when it's passed onto the Accepted Queue each new message with have its own _message_id_. Each new Accepted message will maintain a reference to its source Incoming message by storing the original _message_id_ in the _parent_id_ field.
-
+***
+The _message_id_ returned by the API is message's Incoming Queue message_id, as the message maybe be duplicated several times when it's passed onto the Accepted Queue each new message with have its own _message_id_. Each new Accepted message will maintain a reference to its source Incoming message by storing the original _message_id_ in the _parent_id_ field.
+***
 
 ### New Product Example
 

@@ -36,10 +36,12 @@ something generic like "Taxable Goods." If you wish to tax certain products at
 different rates, however, then you will want to choose something more
 descriptive (ex. "Clothing.").
 
-NOTE: It can be somewhat tedious to set the tax category for every product.
+***
+It can be somewhat tedious to set the tax category for every product.
 We're currently exploring ways to make this simpler. If you are importing
 inventory from another source you will likely be writing your own custom Ruby
 program that automates this process.
+***
 
 ## Tax Rates
 

@@ -148,8 +148,10 @@ Your ruby script can use one of the XLS or CSV format reading libraries
 to read an external file, or if the data set is not too big, you could
 embed the CSV text in the script itself, eg. using the **END** convention.
 
-NOTE: If the order of loading is important, choose names for the files
+***
+If the order of loading is important, choose names for the files
 so that alphabetical order gives the correct load order…
+***
 
 #### Important system-wide settings
 
@@ -190,9 +192,11 @@ validation, and we set the description too.
 Observe that the*permalink+ and timestamps are added automatically.
 You may want to set the ‘meta’ fields for SEO purposes.
 
-NOTE: It’s important to set the *available_on* field. Without this
+***
+It’s important to set the *available_on* field. Without this
 being a date in the past, the product won’t be listed in the standard
 displays.
+***
 
 <%ruby do %>
     p.available_on = Time.now

@@ -95,9 +95,13 @@ prerequisites installed:
     (preferred), [MySQL](http://www.mysql.com), or
     [PostgreSQL](http://www.postgresql.org)
 
-NOTE: The SQLite database system is preferred for development, since it
+***
+The SQLite database system is the default for development, since it
 is relatively easy to set up compared to MySQL or PostgreSQL. For a
-production system, we would recommend MySQL or PostgreSQL.
+production system, we would recommend MySQL or PostgreSQL. Once you've decided, 
+You might consider using this in development as well, to reduce risk of 
+database specific bugs.
+***
 
 It is highly recommended that you **familiarize yourself with Ruby on
 Rails before diving into Spree**. You will find it much easier to follow

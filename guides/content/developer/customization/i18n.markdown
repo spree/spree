@@ -138,8 +138,10 @@ or the `spree_i18n` gem.
 
 ### Setting the Default Currency
 
-INFO: This functionality is new in Spree 1.2. Please refer to the appropriate
+***
+This functionality was new in Spree 1.2. Please refer to the appropriate
 guide if you are using an older version.
+***
 
 In earlier versions of Spree, we used `number_to_currency` to display prices for
 products. This caused a problem when somebody selected a different I18n locale,

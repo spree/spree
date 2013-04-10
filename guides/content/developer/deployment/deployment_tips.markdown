@@ -85,7 +85,7 @@ follows:
 |Production|True|
 
 ***
-NOTE: The “staging” environment is not one of the default environments
+The “staging” environment is not one of the default environments
 created by Rails. However, many developers use a staging environment,
 which generally should mimic the production environment as much as
 possible. You may, however, make minor changes such as disabling email

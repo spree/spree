@@ -81,14 +81,18 @@ listed in the database for the currently selected country.  If there are no
 states configured for a particular country, or if the user has JavaScript
 disabled, the select box will be replaced by a text field instead.
 
-INFO: The default "seed" data for Spree only includes the U.S. states.  It's
+***
+The default "seed" data for Spree only includes the U.S. states.  It's
 easy enough to add states or provinces for other countries but beyond the scope
-of the project to maintain such a list.
+of the Spree project to maintain such a list.
+***
 
-NOTE: The state field can be disabled entirely by using the
+***
+The state field can be disabled entirely by using the
 `Spree::Config[:address_requires_state]` preference.  You can also allow for an "alternate
 phone" field by using the `Spree::Config[:alternative_billing_phone]` and `Spree::Config[:alternative_shipping]`
 fields.
+***
 
 The list of countries that appear in the country select box can also be
 configured.  Spree will list all countries by default but you can configure
@@ -248,8 +252,10 @@ simple enough to write a quick script to periodically purge incomplete orders
 from the system.  The end result is a simplified data model along with the
 ability for store owners to search and report on incomplete/abandoned orders.
 
-INFO: For more information on the state machine gem please see the
+***
+For more information on the state machine gem please see the
 "README":https://github.com/pluginaweek/state_machine
+***
 
 ## Checkout Customization
 

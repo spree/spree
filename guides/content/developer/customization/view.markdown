@@ -80,7 +80,9 @@ Deface currently supports the following actions:
 * <tt>:insert_bottom</tt> - Inserts content supplied inside all elements that match the supplied selector, as the last child
 * <tt>:set_attributes</tt> - Sets (or adds) attributes to all elements that match the supplied selector, expects :attributes option to be passed
 
-NOTE: Not all actions are applicable to all elements. For example, <tt>:insert_top</tt> and <tt>:insert_bottom</tt> expects a parent element with children.
+***
+Not all actions are applicable to all elements. For example, <tt>:insert_top</tt> and <tt>:insert_bottom</tt> expects a parent element with children.
+***
 
 #### Supplying content
 
@@ -90,7 +92,9 @@ Deface supports three options for supplying content to be used by an override:
 * <tt>:partial</tt> - Relative path to a partial
 * <tt>:template</tt> - Relative path to a template
 
-NOTE: As Deface operates on the Erb source the content supplied to an override can include Erb, it is not limited to just HTML. You also have access to all variables accessible in the original Erb context.
+***
+As Deface operates on the Erb source the content supplied to an override can include Erb, it is not limited to just HTML. You also have access to all variables accessible in the original Erb context.
+***
 
 #### Targeting elements
 
@@ -248,9 +252,11 @@ after upgrades.
 Once you’ve reviewed the new source you can update the `:original` value
 to new source to clear the warning.
 
-NOTE: Deface removes all whitespace from both the actual and `:original`
+***
+Deface removes all whitespace from both the actual and `:original`
 source values before comparing, to reduce false warnings caused by basic
 whitespace differences.
+***
 
 #### Organizing Overrides
 
@@ -258,8 +264,10 @@ The suggested method for organizing your overrides is to create a
 separate file for each override inside the **app/overrides** directory,
 naming each file the same as the **:name** specified within.
 
-NOTE: Using this method will ensure your overrides are compatible with
+***
+Using this method will ensure your overrides are compatible with
 future theming developments (editor).
+***
 
 #### More information on Deface
 
@@ -283,11 +291,13 @@ directory.
 For example, to override the main layout, create the file
 YOUR_SITE_OR_EXTENSION/app/views/spree/layouts/spree_application.html.erb
 
-INFO: It’s important to ensure you copy the correct version of a view
+***
+It’s important to ensure you copy the correct version of a view
 into your application or extension, as copying a mismatched version
 could lead to hard to debug issues. We suggest using `bundle show spree`
 to get the location of the Spree code you’re actually running and then
 copying the relevant file from there.
+***
 
 #### Drawbacks of template replacements
 

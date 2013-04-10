@@ -93,7 +93,9 @@ If the order doesn't have an assigned shipping rate, make the following request 
     PUT /api/checkouts/R366605801?order[shipments_attributes][0]
     [selected_shipping_rate_id]=1&order[shipments_attributes][0][id]=1
 
-**NOTE**: Please ensure you select a shipping rate for each shipment in the order. In the request above, the `selected_shipping_rate_id` should be the id of the shipping rate you want to use and the `id` should be the id of the shipment you are choosing this shipping rate for.
+***
+Please ensure you select a shipping rate for each shipment in the order. In the request above, the `selected_shipping_rate_id` should be the id of the shipping rate you want to use and the `id` should be the id of the shipment you are choosing this shipping rate for.
+***
 
 ### Response
 
