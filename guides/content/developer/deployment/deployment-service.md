@@ -1,5 +1,6 @@
 ---
 title: Deployment Service
+section: deployment
 ---
 
 The Spree Deployment Service is a free tool that allows you to configure

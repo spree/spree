@@ -1,5 +1,6 @@
 ---
 title: "View Customization"
+section: customization
 ---
 
 ### Overview

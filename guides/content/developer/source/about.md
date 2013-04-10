@@ -1,5 +1,6 @@
 ---
 title: About the Code
+section: source-code
 ---
 
 ## What is Spree?

@@ -1,5 +1,6 @@
 ---
 title: Decorators
+section: tutorial
 ---
 
 ## Introduction

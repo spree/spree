@@ -1,5 +1,6 @@
 ---
 title: "Custom Authentication"
+section: customization
 ---
 
 ### Overview 

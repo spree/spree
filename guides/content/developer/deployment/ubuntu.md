@@ -1,5 +1,6 @@
 ---
 title: "Deploying to Heroku"
+section: deployment
 ---
 
 ## Overview

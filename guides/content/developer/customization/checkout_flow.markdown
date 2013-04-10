@@ -1,5 +1,6 @@
 --- 
 title: "The Checkout Flow API"
+section: customization
 ---
 
 ## Overview

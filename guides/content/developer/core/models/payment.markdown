@@ -1,5 +1,6 @@
 ---
 title: "Core | Models | Payment"
+section: core
 ---
 
 # Payment

@@ -1,5 +1,6 @@
 ---
 title: Navigating the Source
+section: source-code
 ---
 
 This guide covers obtaining and running the source code. This is

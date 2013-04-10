@@ -1,5 +1,6 @@
 ---
 title: "Asset Customization"
+section: customization
 ---
 
 ### Overview

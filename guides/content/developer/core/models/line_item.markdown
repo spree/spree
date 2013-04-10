@@ -1,5 +1,6 @@
 ---
 title: "Core | Models | Line Item"
+section: core
 ---
 
 # LineItem

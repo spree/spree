@@ -1,5 +1,6 @@
 ---
 title: Migrating to Spree
+section: tutorial
 ---
 
 This section explains how to convert existing sites or data sets for

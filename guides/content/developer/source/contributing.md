@@ -1,5 +1,6 @@
 ---
 title: Contributing to Spree
+section: source-code
 ---
 
 ## Overview

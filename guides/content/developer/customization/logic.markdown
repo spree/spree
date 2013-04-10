@@ -1,5 +1,6 @@
 ---
 title: Logic Customization
+section: customization
 ---
 
 This guide explains how to customize the internal Spree code to meet

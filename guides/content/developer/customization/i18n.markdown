@@ -1,5 +1,6 @@
 ---
 title: "Internationalization"
+section: customization
 ---
 
 This guide covers how Spree uses Rails' internationalization features, and how

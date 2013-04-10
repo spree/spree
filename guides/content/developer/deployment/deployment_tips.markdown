@@ -1,5 +1,6 @@
 ---
 title: "Deployment Tips"
+section: deployment
 ---
 
 This guide is intended to provide some generally useful hints and tips\

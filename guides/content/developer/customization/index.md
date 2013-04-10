@@ -1,5 +1,6 @@
 ---
 title: "Customization Overview"
+section: customization
 ---
 
 This guide explains the customization and extension techniques you can

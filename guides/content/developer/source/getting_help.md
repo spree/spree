@@ -1,5 +1,6 @@
 ---
 title: Getting Help
+section: source-code
 ---
 
 There may be times when using Spree that the documentation doesn't answer all

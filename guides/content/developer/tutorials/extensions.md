@@ -1,5 +1,6 @@
 ---
 title: Extensions
+section: tutorial
 ---
 
 ## Introduction

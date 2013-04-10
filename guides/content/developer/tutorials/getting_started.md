@@ -1,5 +1,6 @@
 ---
 title: Getting Started
+section: tutorial
 ---
 
 ## Prerequisites
