@@ -144,7 +144,7 @@ adjustItems = function(shipment_number, variant_id, quantity){
     if(new_quantity!=0){
       $.ajax({
         type: "PUT",
-        url: url,
+        url: Spree.url(url),
         data: { variant_id: variant_id, quantity: new_quantity }
       }).done(function( msg ) {
         window.location.reload();
