@@ -116,11 +116,9 @@ describe "Order Details" do
         end
 
         it "can increase quantity of the second shipment's items" do
-          within("table.stock-contents:nth-child(2)") do
-            within("tbody tr:nth-child(1)") do
-              click_icon :edit
-              fill_in "quantity", with: 4
-            end
+          within("table.stock-contents", :text => tote.name) do
+            click_icon :edit
+            fill_in "quantity", with: 4
             click_icon :ok
           end
 
@@ -129,11 +127,9 @@ describe "Order Details" do
         end
 
         it "can decrease quantity of the second shipment's items" do
-          within("table.stock-contents:nth-child(2)") do
-            within("tbody tr:nth-child(1)") do
-              click_icon :edit
-              fill_in "quantity", with: 1
-            end
+          within("table.stock-contents", :text => tote.name) do
+            click_icon :edit
+            fill_in "quantity", with: 1
             click_icon :ok
           end
 
