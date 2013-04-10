@@ -100,9 +100,8 @@ describe "Stock Management" do
 
           page.should have_content('successfully created')
 
-          within_row(2) do
-            page.should have_content("SPREEC")
-            within(:css, '.stock_location_info table') do
+          within("#listing_product_stock tr", :text => "SPREEC") do
+            within("table") do
               column_text(2).should eq '40'
             end
           end
