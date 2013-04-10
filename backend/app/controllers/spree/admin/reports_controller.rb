@@ -44,6 +44,12 @@ module Spree
         end
       end
 
+      private
+
+      def model_class
+        Spree::Admin::ReportsController
+      end
+
     end
   end
 end
