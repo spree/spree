@@ -37,7 +37,7 @@ describe "Shipments" do
 
     within_row(1) do
       column_text(1).should == shipment.number
-      column_text(5).should == "Pending"
+      column_text(5).should == "pending"
       click_icon(:edit)
     end
 
