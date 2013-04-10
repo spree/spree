@@ -38,26 +38,6 @@ module Spree
         respond_with(@shipment, :default_template => :show)
       end
 
-      def update
-        authorize! :read, Shipment
-        @shipment = @order.shipments.find_by_number!(params[:id])
-
-        unlock = params[:shipment].delete(:unlock)
-
-        if unlock == 'yes'
-          @shipment.adjustment.open
-        end
-
-        @shipment.update_attributes(params[:shipment])
-
-        if unlock == 'yes'
-          @shipment.adjustment.close
-        end
-
-        @shipment.reload
-        respond_with(@shipment, :default_template => :show)
-      end
-
       def ready
         authorize! :read, Shipment
         unless @shipment.ready?
