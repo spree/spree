@@ -10,7 +10,7 @@
   </li>
 <% end %>
 
-<%= form_for [:admin, @taxonomy, @taxon], :method => :put, :html => { :multipart => true } do |f| %>
+<%= form_for [:admin, @taxonomy, @taxon], :method => :put, :url => "/admin/taxonomies/#{@taxonomy.id}/taxons/#{@taxon.id}", :html => { :multipart => true } do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
 
   <div class="form-buttons" data-hook="buttons">
