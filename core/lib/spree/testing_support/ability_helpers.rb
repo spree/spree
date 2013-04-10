@@ -74,7 +74,7 @@ shared_examples_for 'read only' do
 end
 
 shared_examples_for 'update only' do
-  it 'should allow create' do
+  it 'should not allow create' do
     ability.should_not be_able_to(:create, resource)
   end
 
