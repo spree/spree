@@ -10,7 +10,9 @@
   </li>
 <% end %>
 
-<%= form_for [:admin, @taxonomy, @taxon], :method => :put, :html => { :multipart => true } do |f| %>
+<% # Because otherwise the form would attempt to use to_param of @taxon %>
+<% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
+<%= form_for [:admin, @taxonomy, @taxon], :method => :put, :url => form_url, :html => { :multipart => true } do |f| %>
   <%= render :partial => 'form', :locals => { :f => f } %>
 
   <div class="form-buttons" data-hook="buttons">
