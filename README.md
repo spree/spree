@@ -242,7 +242,7 @@ tests for the core project.
 ```shell
 cd core
 bundle exec rake test_app
-bundle exec rspec spec
+bundle exec rake spec
 ```
 
 If you want to run specs for only a single spec file
