@@ -20,7 +20,7 @@ module Spree
         end
 
         def build_package(contents=[])
-          Package.new(stock_location, order, contents)
+          Spree::Stock::Package.new(stock_location, order, contents)
         end
       end
     end
