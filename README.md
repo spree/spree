@@ -239,36 +239,18 @@ You can see the build statuses at [http://ci.spreecommerce.com](http://ci.spreec
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time
 creation of a test application and then you can use it to run the tests.  For example, to run the
 tests for the core project.
-
 ```shell
 cd core
 bundle exec rake test_app
-```
-
-If you're working on multiple facets of Spree, you may want
-to run this command at the root of the Spree project to
-generate test applications for all the facets:
-
-```shell
-bundle exec rake test_app
-```
-
-You can run all of the tests inside a facet by also running
-this command:
-
-```shell
-cd core
-bundle exec rake
+bundle exec rspec spec
 ```
 
 If you want to run specs for only a single spec file
-
 ```shell
 bundle exec rspec spec/models/state_spec.rb
 ```
 
 If you want to run a particular line of spec
-
 ```shell
 bundle exec rspec spec/models/state_spec.rb:7
 ```
@@ -281,6 +263,13 @@ FAIL_FAST=true bundle exec rspec spec/models/state_spec.rb
 If you want to run the simplecov code coverage report
 ```shell
 COVERAGE=true bundle exec rspec spec
+```
+
+If you're working on multiple facets of Spree, you may want
+to run this command at the root of the Spree project to
+generate test applications and run specs for all the facets:
+```shell
+bash build.sh
 ```
 
 Contributing
