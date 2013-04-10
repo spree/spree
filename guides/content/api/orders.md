@@ -118,7 +118,7 @@ POST /api/orders?order[line_items][0][variant_id]=1&order[line_items][0][quantit
 
 ## Update Address
 
-To add address information to an order, please see the <%= link_to "address to delivery", 'checkouts', 'address') section of the Checkouts guide.
+To add address information to an order, please see the [address to delivery](/api/checkouts.html#address) section of the Checkouts guide.
 
 ## Empty
 

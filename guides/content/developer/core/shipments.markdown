@@ -189,7 +189,7 @@ are presented.
 The Customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
 
 ***
-You can enable collection of extra _shipping instructions_ by setting the option `Spree::Config.set(shipping_instructions: true)`. This is turned off by default. See [Shipping Instructions](#) below.
+You can enable collection of extra _shipping instructions_ by setting the option `Spree::Config.set(shipping_instructions: true)`. This is turned off by default. See [Shipping Instructions](#shipping-instructions) below.
 ***
 
 ### What the Order's Administrator Sees
@@ -425,7 +425,7 @@ end
 
 Split shipments are a new feature as of Spree 2.0 that addresses the needs of complex Spree stores that require sophisticated shipping and warehouse logic. This includes detailed inventory management and allows for shipping from multiple locations.
 
-![image](http://i6.minus.com/ibrAmiN2MBxEFh.png)
+![image](/images/developer/core/split_shipments_checkout.png)
 
 ### Creating Proposed Shipments
 
@@ -433,7 +433,7 @@ This section steps through the basics of what is involved in determining shipmen
 
 The process of determining shipments for an order is triggered by calling `#create_proposed_shipments` on an order object while transitioning to the delivery step during a checkout. This process will first delete any existing shipments for an order and then determine the possible shipments available for that order.
 
-`#create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a splitter, described in more detail [below](#).
+`#create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a splitter, described in more detail [below](#the-packer).
 
 After obtaining the array of available packages, they are converted to shipments on the order object. Shipping rates are determined and inventory units are created during this process as well.
 
