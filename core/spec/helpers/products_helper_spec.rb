@@ -56,6 +56,22 @@ THIS IS THE BEST PRODUCT EVER!
         description.strip.should == %Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD}
       end
 
+      it "renders a product description without any formatting based on configuration" do
+        initialDescription = %Q{
+            <p>hello world</p>
+
+            <p>tihs is completely awesome and it works</p>
+
+            <p>why so many spaces in the code. and why some more formatting afterwards?</p>
+        }
+
+        product.description = initialDescription
+
+        Spree::Config[:show_raw_product_description] = true
+        description = product_description(product)
+        description.should == initialDescription
+      end
+
     end
   end
 end

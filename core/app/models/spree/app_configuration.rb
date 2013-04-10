@@ -64,6 +64,7 @@ module Spree
     preference :shipping_instructions, :boolean, :default => false # Request instructions/info for shipping
     preference :show_descendents, :boolean, :default => true
     preference :show_only_complete_orders_by_default, :boolean, :default => true
+    preference :show_raw_product_description, :boolean, :default => false
     preference :show_zero_stock_products, :boolean, :default => true
     preference :site_name, :string, :default => 'Spree Demo Site'
     preference :site_url, :string, :default => 'demo.spreecommerce.com'
