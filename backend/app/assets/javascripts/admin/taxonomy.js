@@ -10,10 +10,11 @@ var handle_move = function(e, data) {
   var node = data.rslt.o;
   var new_parent = data.rslt.np;
 
+  url.setPath(url.path() + '/' + node.attr("id"));
   $.ajax({
     type: "POST",
     dataType: "json",
-    url: base_url + '/' + node.attr("id"),
+    url: url.toString(),
     data: ({_method: "put", "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
@@ -31,7 +32,7 @@ var handle_create = function(e, data) {
   $.ajax({
     type: "POST",
     dataType: "json",
-    url: base_url,
+    url: base_url.toString(),
     data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error,
     success: function(data,result) {
@@ -46,10 +47,13 @@ var handle_rename = function(e, data) {
   var node = data.rslt.obj;
   var name = data.rslt.new_name;
 
+  url = new Uri(base_url);
+  url.setPath(url.path() + '/' + node.attr("id"));
+  url.addQueryParam('token', Spree.api_key);
   $.ajax({
     type: "POST",
     dataType: "json",
-    url: base_url + '/' + node.attr("id"),
+    url: url.toString(),
     data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
     error: handle_ajax_error
   });
@@ -58,13 +62,14 @@ var handle_rename = function(e, data) {
 var handle_delete = function(e, data){
   last_rollback = data.rlbk;
   var node = data.rslt.obj;
-
+  delete_url = base_url.clone(); 
+  delete_url.setPath(delete_url.path() + '/' + node.attr("id"));
   jConfirm(Spree.translations.are_you_sure_delete, Spree.translations.confirm_delete, function(r) {
     if(r){
       $.ajax({
         type: "POST",
         dataType: "json",
-        url: base_url + '/' + node.attr("id"),
+        url: delete_url.toString(),
         data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
         error: handle_ajax_error
       });
@@ -84,8 +89,9 @@ var setup_taxonomy_tree = function(taxonomy_id) {
       success: function(taxonomy) { 
 
         // this is defined within admin/taxonomies/edit
-        base_url = Spree.routes.taxonomy_taxons_path;
-        admin_base_url = Spree.routes.admin_taxonomy_taxons_path;
+        base_url = new Uri(Spree.routes.taxonomy_taxons_path);
+        base_url.addQueryParam('token', Spree.api_key);
+        admin_base_url = new Uri(Spree.routes.admin_taxonomy_taxons_path);
 
         is_cut = false;
         last_rollback = null;
@@ -130,6 +136,8 @@ var setup_taxonomy_tree = function(taxonomy_id) {
                 var id_of_node = obj.attr("id");
                 var type_of_node = obj.attr("rel");
                 var menu = {};
+                var edit_url = admin_base_url.clone();
+                edit_url.setPath(edit_url.path() + '/' + obj.attr("id") + "/edit");
                 if(type_of_node == "root") {
                   menu = {
                     create: {
@@ -145,7 +153,7 @@ var setup_taxonomy_tree = function(taxonomy_id) {
                     edit : {
                       separator_before: true,
                       label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action           : function (obj) { window.location = admin_base_url + '/' + obj.attr("id") + "/edit/"; }
+                      action           : function (obj) { window.location = admin_base_url.setPath(admin_base_url.path() + '/' + obj.attr("id") + "/edit/").toString; }
                     }
                   }
                 } else {
@@ -175,7 +183,7 @@ var setup_taxonomy_tree = function(taxonomy_id) {
                     edit: {
                       separator_before: true,
                       label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action: function (obj) { window.location = admin_base_url + '/' + obj.attr("id") + "/edit/"; }
+                      action: function (obj) { window.location = edit_url.toString() }
                     }
                   }
                 }
