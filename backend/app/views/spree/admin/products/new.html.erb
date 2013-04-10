@@ -3,67 +3,66 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
 <%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
+  <fieldset data-hook="new_product">
 
-<fieldset data-hook="new_product">
+    <legend align="center"><%= t(:new_product) %></legend>
 
-  <legend align="center"><%= t(:new_product) %></legend>
-
-  <%= f.field_container :name do %>
-    <%= f.label :name, t(:name) %> <span class="required">*</span><br />
-    <%= f.text_field :name, :class => 'fullwidth title' %>
-    <%= f.error_message_on :name %>
-  <% end %>
-
-  <div data-hook="new_product_attrs" class="row">
-    <% unless @product.has_variants? %>
-      <div class="alpha four columns">
-        <%= f.field_container :sku do %>
-          <%= f.label :sku, t(:sku) %><br />
-          <%= f.text_field :sku, :size => 16, :class => 'fullwidth' %>
-          <%= f.error_message_on :sku %>
-        <% end %>  
-      </div>      
+    <%= f.field_container :name do %>
+      <%= f.label :name, t(:name) %> <span class="required">*</span><br />
+      <%= f.text_field :name, :class => 'fullwidth title' %>
+      <%= f.error_message_on :name %>
     <% end %>
 
-    <div class="four columns">
-      <%= f.field_container :prototype do %>
-        <%= f.label :prototype_id, t(:prototype) %><br />
-        <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth'} %>
+    <div data-hook="new_product_attrs" class="row">
+      <% unless @product.has_variants? %>
+        <div class="alpha four columns">
+          <%= f.field_container :sku do %>
+            <%= f.label :sku, t(:sku) %><br />
+            <%= f.text_field :sku, :size => 16, :class => 'fullwidth' %>
+            <%= f.error_message_on :sku %>
+          <% end %>
+        </div>
       <% end %>
-    </div>
-      
-    <div class="four columns">
-      <%= f.field_container :price do %>
-        <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
-        <%= f.text_field :price, :class => 'fullwidth' %>
-        <%= f.error_message_on :price %>
-      <% end %>
+
+      <div class="four columns">
+        <%= f.field_container :prototype do %>
+          <%= f.label :prototype_id, t(:prototype) %><br />
+          <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth'} %>
+        <% end %>
+      </div>
+
+      <div class="four columns">
+        <%= f.field_container :price do %>
+          <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
+          <%= f.text_field :price, :class => 'fullwidth' %>
+          <%= f.error_message_on :price %>
+        <% end %>
+      </div>
+
+      <div class="omega four columns">
+        <%= f.field_container :available_on do %>
+          <%= f.label :available_on, t(:available_on) %>
+          <%= f.error_message_on :available_on %>
+          <%= f.text_field :available_on, :class => 'datepicker fullwidth' %>
+        <% end %>
+      </div>
+
     </div>
 
-    <div class="omega four columns">
-      <%= f.field_container :available_on do %>
-        <%= f.label :available_on, t(:available_on) %>
-        <%= f.error_message_on :available_on %>
-        <%= f.text_field :available_on, :class => 'datepicker fullwidth' %>
-      <% end %>
+    <div class="clearfix" data-hook="product-from-prototype" id="product-from-prototype">
+      <%= render :file => 'spree/admin/prototypes/show' if @prototype %>
     </div>
-    
-  </div>
-  
-  <div class="clearfix" data-hook="product-from-prototype" id="product-from-prototype">
-    <%= render :file => 'spree/admin/prototypes/show' if @prototype %>
-  </div>
 
-  <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-  
-</fieldset>
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+
+  </fieldset>
 <% end %>
 
 <script type="text/javascript">
 //<![CDATA[
   (function($){
     var base_url = "<%= admin_prototypes_url %>";
-    var prototype_select = $('#product_prototype_id');    
+    var prototype_select = $('#product_prototype_id');
     prototype_select.change(function() {
       var id = prototype_select.val();
       if (id.length) {
