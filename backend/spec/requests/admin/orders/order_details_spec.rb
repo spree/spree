@@ -96,7 +96,7 @@ describe "Order Details" do
           fill_in "stock_item_quantity", :with => 2
           click_icon :plus
         end
-        sleep 1
+        lazily_find_element("table.stock-contents")
         page.all("table.stock-contents").count.should == 2
         order.shipments.last.stock_location.should == london
         page.should have_content("London")
@@ -111,7 +111,7 @@ describe "Order Details" do
             fill_in "stock_item_quantity", :with => 2
             click_icon :plus
           end
-          sleep 1
+          lazily_find_element("table.stock-contents")
           page.all("table.stock-contents").count.should == 2
         end
 
