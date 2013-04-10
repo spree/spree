@@ -257,4 +257,4 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 
 In this tutorial you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
 
-In the <%= link_to "next part", 'deface_overrides' %>) of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension.
+In the <%= link_to "next part", 'deface_overrides' %> of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension.
