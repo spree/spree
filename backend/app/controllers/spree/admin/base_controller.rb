@@ -9,6 +9,7 @@ module Spree
 
       before_filter :check_alerts
       before_filter :authorize_admin
+      before_filter :generate_api_key
 
       protected
         def action
@@ -23,6 +24,16 @@ module Spree
           end
           authorize! :admin, record
           authorize! action, record
+        end
+
+        # Need to generate an API key for a user due to some backend actions
+        # requiring authentication to the Spree API
+        def generate_api_key
+          if user = try_spree_current_user
+            if user.spree_api_key.blank?
+              user.generate_spree_api_key!
+            end
+          end
         end
 
         def check_alerts
