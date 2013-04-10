@@ -248,7 +248,7 @@ collect and under what circumstances.
 ### Quebec Sales Tax (QST)
 
 In Quebec, Canada there are two different tax rates to consider. There is the
-Goods and Services Tax (GST) which iscalculated at 5% of the sales price. There
+Goods and Services Tax (GST) which is calculated at 5% of the sales price. There
 is also the Quebec Sales Tax of 9.5% on the sale price including GST.
 
 Since Spree does not currently support the notion of compound tax rates you can
