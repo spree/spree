@@ -420,5 +420,5 @@ software stack:
 -   `/etc/ssl` - You can upload your SSL certificate files into this
     directory and the will be automatically used by Puppet in your
     application Nginx configuration file. See the <%= link_to "Requesting and
-    Configuring SSL Guide", 'ssl' %> for more
+    Configuring SSL Guide", 'requesting_and_configuring_ssl' %> for more
     details.
