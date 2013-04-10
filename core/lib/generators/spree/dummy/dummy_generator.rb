@@ -50,6 +50,16 @@ module Spree
       template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
     end
 
+    def test_dummy_inject_extension_requirements
+      if DummyGeneratorHelper.inject_extension_requirements
+        inside dummy_path do
+          %w(spree_frontend spree_backend spree_api).each do |requirement|
+            inject_into_file 'config/application.rb', "require '#{requirement}'\n", :before => /require '#{@lib_name}'/, :verbose => true
+          end
+        end
+      end
+    end
+
     def test_dummy_clean
       inside dummy_path do
         remove_file ".gitignore"
@@ -108,6 +118,11 @@ module Spree
         '../../../../../Gemfile'
       end
     end
-
   end
 end
+
+module Spree::DummyGeneratorHelper
+  mattr_accessor :inject_extension_requirements
+  self.inject_extension_requirements = false
+end
+
