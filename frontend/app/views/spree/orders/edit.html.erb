@@ -24,7 +24,6 @@
 
         <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
           <%= order_form.text_field :coupon_code, :size => 10, :placeholder => t(:coupon_code) %>
-          <%= order_form.submit I18n.t(:apply) %>
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
             <%= t(:update) %>
           <% end %>
