@@ -94,7 +94,7 @@ The list of countries that appear in the country select box can also be
 configured.  Spree will list all countries by default but you can configure
 exactly which countries you would like to appear.  The list can be limited to a
 specific set of countries by configuring the new `Spree::Config[:checkout_zone]` preference and
-setting its value to the name of a <%= link_to "Zones", :zones %> containing the countries
+setting its value to the name of a <%= link_to "Zones", "addresses", "zones" %> containing the countries
 you wish to use.  Spree assumes that the list of billing and shipping countries
 will be the same.  You can always change this logic via an extension if this
 does not suit your needs.

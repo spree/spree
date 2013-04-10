@@ -100,7 +100,7 @@ module Spree
       LINKS[:payments] = LINKS[:core] + "payments"
       LINKS[:calculators] = LINKS[:core] + "calculators"
       LINKS[:taxation] = LINKS[:core] + "taxation"
-      LINKS[:shipping] = LINKS[:core] + "shipping"
+      LINKS[:shipping] = LINKS[:core] + "shipments"
       LINKS[:addresses] = LINKS[:core] + "addresses"
       LINKS[:zones] = LINKS[:addresses] + "#zones"
       LINKS[:promotions] = LINKS[:core] + "promotions"

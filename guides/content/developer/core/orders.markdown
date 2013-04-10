@@ -47,7 +47,7 @@ frontend.
 
 Orders flow through a state machine, beginning at a "cart" start and ending up
 at a "complete" state. The intermediary states can be configured using the
-[Checkout Flow API](checkout_flow).
+<%= link_to "Checkout Flow API", 'checkout_flow' %>.
 
 The default states are as follows:
 
@@ -78,7 +78,7 @@ cannot transition, check the result of an `errors` method call.
 
 Line items are used to keep track of items within the context of an order.
  These records provide a link between orders,
-and <%= link_to "Variants", :variants %>.
+and <%= link_to "Variants", 'products', 'variants' %>.
 
 When a variant is added to an order, the price of that item is tracked along
 with the line item to preserve that data. If the variant's price were to change,
