@@ -27,5 +27,9 @@ module Spree
         end
       end
     end
+
+    def model_class
+      Spree::Dash
+    end
   end
 end
