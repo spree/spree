@@ -29,6 +29,19 @@ shared_examples_for 'access denied' do
   end
 end
 
+shared_examples_for 'admin granted' do
+  it 'should allow admin' do
+    ability.should be_able_to(:admin, resource, token) if token
+    ability.should be_able_to(:admin, resource) unless token
+  end
+end
+
+shared_examples_for 'admin denied' do
+  it 'should not allow admin' do
+    ability.should_not be_able_to(:admin, resource)
+  end
+end
+
 shared_examples_for 'index allowed' do
   it 'should allow index' do
     ability.should be_able_to(:index, resource)
