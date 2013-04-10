@@ -11,7 +11,8 @@ $(document).ready(function() {
       placeholder: Spree.translations.taxon_placeholder,
       multiple: true,
       initSelection: function(element, callback) {
-        return $.getJSON(Spree.routes.taxon_search + "?ids=" + (element.val()), null, function(data) {
+        url = Spree.url(Spree.routes.taxon_search, { ids: element.val() })
+        return $.getJSON(url, null, function(data) {
           return callback(self.cleanTaxons(data));
         })
       },
