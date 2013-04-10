@@ -7,7 +7,10 @@ class window.Spree
   # Uses the JSUri library from here: https://code.google.com/p/jsuri/
   # Thanks to Jake Moffat for the suggestion: https://twitter.com/jakeonrails/statuses/321776992221544449
   @url: (uri, query) ->
-    uri = new Uri(uri)
+    if uri.path == undefined
+      uri = new Uri(uri)
     $.each query, (key, value) ->
       uri.addQueryParam(key, value)
+    if Spree.api_key
+      uri.addQueryParam('token', Spree.api_key)
     return uri

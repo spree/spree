@@ -64,7 +64,7 @@ $(document).ready(function() {
     $('a.ship').click(function(){
       var link = $(this);
       var shipment_number = link.data('shipment-number');
-      var url = "/api/orders/" + order_number + "/shipments/" + shipment_number + "/ship.json";
+      var url = Spree.url("/api/orders/" + order_number + "/shipments/" + shipment_number + "/ship.json");
       $.ajax({
         type: "PUT",
         url: url
@@ -190,7 +190,7 @@ addVariantFromStockLocation = function() {
   if(shipment==undefined){
     $.ajax({
       type: "POST",
-      url: "/api/orders/" + order_number + "/shipments.json",
+      url: Spree.url("/api/orders/" + order_number + "/shipments.json"),
       data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
     }).done(function( msg ) {
       window.location.reload();
@@ -217,7 +217,7 @@ $.fn.variantAutocomplete = function() {
     placeholder: "Select a variant",
     minimumInputLength: 3,
     ajax: {
-      url: Spree.routes.variants_search,
+      url: Spree.url(Spree.routes.variants_search),
       datatype: 'json',
       data: function(term, page) {
         return {

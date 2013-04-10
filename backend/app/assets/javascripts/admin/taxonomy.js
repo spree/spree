@@ -47,9 +47,9 @@ var handle_rename = function(e, data) {
   var node = data.rslt.obj;
   var name = data.rslt.new_name;
 
-  url = new Uri(base_url);
+  url = Spree.url(base_url);
   url.setPath(url.path() + '/' + node.attr("id"));
-  url.addQueryParam('token', Spree.api_key);
+
   $.ajax({
     type: "POST",
     dataType: "json",
@@ -89,9 +89,8 @@ var setup_taxonomy_tree = function(taxonomy_id) {
       success: function(taxonomy) { 
 
         // this is defined within admin/taxonomies/edit
-        base_url = new Uri(Spree.routes.taxonomy_taxons_path);
-        base_url.addQueryParam('token', Spree.api_key);
-        admin_base_url = new Uri(Spree.routes.admin_taxonomy_taxons_path);
+        base_url = Spree.url(Spree.routes.taxonomy_taxons_path);
+        admin_base_url = Spree.url(Spree.routes.admin_taxonomy_taxons_path);
 
         is_cut = false;
         last_rollback = null;
