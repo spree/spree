@@ -29,6 +29,7 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/controller_requests'
 
 RSpec.configure do |config|
+  config.color = true
   config.mock_with :rspec
 
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
