@@ -31,7 +31,7 @@
           <td><%= shipment.shipping_method.name if shipment.shipping_method %></td>
           <td><%= shipment.display_cost %></td>
           <td><%= shipment.tracking %></td>
-          <td><%= t(shipment.state.to_sym, :scope => :state_names, :default => shipment.state.to_s.humanize) %></td>
+          <td><%= t(shipment.state.to_sym, :scope => :shipment_states, :default => shipment.state.to_s.humanize) %></td>
           <td><%= shipment.shipped_at.to_s(:date_time24) if shipment.shipped_at %></td>
           <td class="actions" data-hook="admin_shipments_index_row_actions">
             <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_order_shipment_url(@order, shipment), :no_text => true, :data => {:action => 'edit'} %>

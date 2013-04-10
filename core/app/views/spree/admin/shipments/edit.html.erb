@@ -10,7 +10,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= t(:shipments) %> <i class="icon-arrow-right"></i> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :state_names, :default => @shipment.state.to_s.humanize) %>)
+  <i class="icon-arrow-right"></i> <%= t(:shipments) %> <i class="icon-arrow-right"></i> #<%= @shipment.number%> (<%= t(@shipment.state.to_sym, :scope => :shipment_states, :default => @shipment.state.to_s.humanize) %>)
 <% end %>
 
 <div data-hook="admin_shipment_edit_header">
