@@ -1,5 +1,6 @@
 ---
 title: Taxation
+section: core
 ---
 
 # Overview

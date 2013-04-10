@@ -49,4 +49,7 @@ $(function() {
     active_menu.parent().parent().show()
   }
 
+  // Automatically open sidebar menu depending on section page belongs to
+  var current_section = $('meta[name=section]').attr('content');
+  $('.toggle-' + current_section + '-menu i').click();
 });

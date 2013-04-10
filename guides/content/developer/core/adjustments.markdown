@@ -1,5 +1,6 @@
 ---
 title: "Adjustments"
+section: core
 ---
 
 ## Overview

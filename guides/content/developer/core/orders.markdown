@@ -1,5 +1,6 @@
 ---
 title: "Orders"
+section: core
 ---
 
 ## Overview

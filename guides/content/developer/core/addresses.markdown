@@ -1,5 +1,6 @@
 ---
 title: "Addresses"
+section: core
 ---
 
 ## Address

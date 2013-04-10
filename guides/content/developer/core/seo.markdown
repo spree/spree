@@ -1,5 +1,6 @@
 ---
 title: "SEO Considerations"
+section: core
 ---
 
 Search Engine Optimization is an important area to address when

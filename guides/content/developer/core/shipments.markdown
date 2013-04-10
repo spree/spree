@@ -1,5 +1,6 @@
 ---
 title: "Shipments"
+section: "core"
 ---
 
 ## Overview

@@ -1,5 +1,6 @@
 ---
 title: "Activators"
+section: core
 ---
 
 ## Overview

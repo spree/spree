@@ -1,5 +1,6 @@
 ---
 title: "Promotions"
+section: core
 ---
 
 ## Overview

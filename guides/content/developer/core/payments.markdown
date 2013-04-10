@@ -1,5 +1,6 @@
 ---
 title: "Payments"
+section: core
 ---
 
 ## Overview

@@ -1,5 +1,6 @@
 ---
 title: "Calculators"
+section: core
 ---
 
 ## Overview
