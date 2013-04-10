@@ -16,6 +16,7 @@ require 'spree/core/testing_support/controller_requests'
 require 'spree/core/testing_support/authorization_helpers'
 
 RSpec.configure do |config|
+  config.color = true
   config.mock_with :rspec
 
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
