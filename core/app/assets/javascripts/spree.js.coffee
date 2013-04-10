@@ -9,8 +9,9 @@ class window.Spree
   @url: (uri, query) ->
     if uri.path == undefined
       uri = new Uri(uri)
-    $.each query, (key, value) ->
-      uri.addQueryParam(key, value)
+    if query
+      $.each query, (key, value) ->
+        uri.addQueryParam(key, value)
     if Spree.api_key
       uri.addQueryParam('token', Spree.api_key)
     return uri
