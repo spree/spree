@@ -27,7 +27,7 @@ namespace :common do
     begin
       require "generators/#{ENV['LIB_NAME']}/install/install_generator"
       puts 'Running extension installation generator...'
-      "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start
+      "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(["--auto-run-migrations"])
     rescue LoadError
       puts 'Skipping installation no generator to run...'
     end
