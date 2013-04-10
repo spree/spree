@@ -8,7 +8,7 @@
     <% end %>
 
     <% if @product.has_variants? %>
-      <% @product_variant.images.each do |i| %>
+      <% @product.variant_images.each do |i| %>
         <% next if @product.images.include?(i) %>
         <li class='vtmb-<%= v.id %> vtmb' id='tmb-<%= i.id %>'>
           <%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %>
