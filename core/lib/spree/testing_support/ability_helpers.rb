@@ -72,3 +72,21 @@ shared_examples_for 'read only' do
     ability.should be_able_to(:index, resource)
   end
 end
+
+shared_examples_for 'update only' do
+  it 'should not allow create' do
+    ability.should_not be_able_to(:create, resource)
+  end
+
+  it 'should not allow read' do
+    ability.should_not be_able_to(:read, resource)
+  end
+
+  it 'should allow update' do
+    ability.should be_able_to(:update, resource)
+  end
+
+  it 'should not allow index' do
+    ability.should_not be_able_to(:index, resource)
+  end
+end
