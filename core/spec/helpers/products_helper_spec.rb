@@ -15,6 +15,7 @@ module Spree
         product.price = 10
         @variant.price = 15
         helper.variant_price_diff(@variant).should == "(Add: $5.00)"
+        helper.variant_price_diff(@variant).should be_html_safe
       end
 
       it "should be nil when variant is same as master" do
@@ -27,6 +28,7 @@ module Spree
         product.price = 15
         @variant.price = 10
         helper.variant_price_diff(@variant).should == "(Subtract: $5.00)"
+        helper.variant_price_diff(@variant).should be_html_safe
       end
     end
 
