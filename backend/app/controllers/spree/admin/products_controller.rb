@@ -54,7 +54,7 @@ module Spree
       def stock
         @variants = @product.variants
         @variants = [@product.master] if @variants.empty?
-        @stock_locations = StockLocation.all
+        @stock_locations = StockLocation.accessible_by(current_ability, :read)
       end
 
       protected
