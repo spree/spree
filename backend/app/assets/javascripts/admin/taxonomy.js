@@ -47,7 +47,7 @@ var handle_rename = function(e, data) {
   var node = data.rslt.obj;
   var name = data.rslt.new_name;
 
-  url = Spree.url(base_url);
+  url = Spree.url(base_url).clone();
   url.setPath(url.path() + '/' + node.attr("id"));
 
   $.ajax({
