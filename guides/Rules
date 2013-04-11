@@ -69,6 +69,16 @@ compile '/developer/*' do
   layout 'developer/default'
 end
 
+compile '/release/*' do
+  # Parses !!! for warnings, *** for notes.
+  filter :erb
+  filter :parse_info_boxes
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'developer/default'
+end
+
 compile '/api/' do
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~

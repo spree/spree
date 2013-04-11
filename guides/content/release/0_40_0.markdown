@@ -1,0 +1,181 @@
+Spree 0.40.0 Release Notes
+--------------------------
+
+endprologue.
+
+### Summary
+
+Spree 0.40.0 represents another step forward towards the eventual 1.0.0
+release. This version focuses heavily on authentication and
+authorization. Most sites running 0.30.x will be able to upgrade with
+very little difficulty. We’re still working on identifying all of the
+Spree extensions that run 0.40.x but its a fairly safe bet that any
+extension running 0.30.x will work with this release.
+
+INFO: We’re always looking for more help with the Spree documentation.
+If you’d like to offer assistance please contact us on the spree-user
+mailing list and we can give you commit access to the
+[spree-guides](http://github.com/spree/spree-guides) documentation
+project.
+
+### Database Migrations
+
+There are several new database changes in the 0.40.0 release. You will
+need to update your database migrations as follows:
+
+<shell>\
+\$ bundle exec rake spree:install:migrations\
+\$ bundle exec rake db:migrate\
+</shell>
+
+WARNING: Always be sure to perform a complete database backup before
+performing any operations. It is also suggested that you examine the new
+migrations closely before running them so you are aware of what changes
+are being made to your database.
+
+### Replacing Authlogic with Devise
+
+Spree has replaced the authlogic gem in favor of
+[Devise](http://github.com/plataformatec/devise) for all authentication
+methods. In part an effort to both simplify customization strategies,
+due to devise’s modular nature, and allow for much simpler creation of
+extensions needing different authentication schemas and scopes. We have
+made every effort to maintain the backward compatibility required to
+upgrade an existing site. This means that naming conventions, and
+routing have all remained intact where possible as well as the use of
+deprecation notices.
+
+The database changes, described below, are made to offer as much
+flexibility as Devise itself offers and enabling you to implement,
+adjust the behavior, or remove features fairly effortlessly for those
+familiar with Devise.
+
+#### Miscellaneous Clean Up
+
+Some of the biggest changes to the Spree authentication process is
+consolidation of most all the user management functions into the
+*spree\_auth* gem. Prior versions of Spree still had small bits of code
+floating around in *spree\_core* etc. So some files have simply been
+moved to where they should have been all along.
+
+#### Upgrading Existing Sites
+
+We have tried to minimize changes and when possible, naming conventions
+have be maintained. The result is that only one controller has been
+moved and renamed. Routing and the named route conventions having been
+maintained as well.
+
+NOTE: The file *core/password\_resets\_controller.rb* has been renamed
+and moved to *auth/user\_password\_resets\_controller.rb*
+
+We have already set up devise to handle the existing encryption scheme
+that authlogic used so there is no need to make any changes and the
+current users will work “out of the box”.
+
+### Changes to the REST API
+
+Spree 0.40.x introduces several minor but important changes to the REST
+API. If you are currently relying on the API you should be aware of a
+few important changes. Please also consult the detailed [REST
+Guide](/rest.html) for more details.
+
+#### New Authentication Mechanism
+
+The most significant change to the REST API is related to
+authentication. The recent adoption of
+[Devise](http://github.com/plataformatec/devise) for authentication in
+general has resulted in new opportunities to improve authentication for
+the API specifically.
+
+Prior to Spree 0.40.x the old method of authentication was to pass an
+authentication token in the header. This involved using the specially
+designated *X-SpreeAPIKey* header and passing a corresponding token
+value. The new approach is to use standard *HTTP\_AUTHORIZATION* which
+is already nicely implemented by Devise.
+
+If you were using curl you could achieve this authentication as follows:
+
+<shell>\
+curl ~~u V8WPYgRdSZN1mSQG17sK:x /\
+http://example.com/api/orders.json\
+</shell>
+\
+Note that we are using the token as the “user name” and passing “x” as a
+password here. There is nothing special about “x”, its just a
+placeholder since many HTTP Basic Authentication implementations require
+a password to be submitted. In our case the token is sufficient so we
+use a placeholder for the password.
+\
+h4. Support for *.json* Suffix
+\
+It is now recommended that you consider using a *.json* suffix in your
+URL when communicating via the REST API. This is technically not a new
+feature~~ it was always possible in older versions of the REST API.
+We’ve updated the documentation to suggest this simpler approach (which
+avoids the necessity of passing *Accept:application/json* in the
+header.)
+
+<shell>\
+curl -u V8WPYgRdSZN1mSQG17sK:x http://example.com/api/orders.json\
+</shell>
+
+### Tokenized Permissions
+
+There are situations where it may be desirable to restrict access to a
+particular resource without requiring a user to authenticate in order to
+have that access. Spree allows so-called “guest checkouts” where users
+just supply an email address and they’re not required to create an
+account. In these cases you still want to restrict access to that order
+so only the original customer can see it. The solution is to use a
+“tokenized” URL.
+
+<shell>\
+http://example.com/orders/token/aidik313dsfs49d\
+</shell>
+
+Spree provides a *TokenizedPermission* model used to grant access to
+various resources through a secure token. This model works in
+conjunction with the *Spree::TokenResource* module which can be used to
+add tokenized access functionality to any Spree resource.
+
+The *Order* model is one such model in Spree where this interface is
+already in use. The following code snippet shows how to add this
+functionality through the use of the *token\_resource* declaration:
+
+<ruby>\
+Order.class\_eval do\
+ token\_resource\
+end\
+</ruby>
+
+If we examine the default CanCan permissions for *Order* we can see how
+tokens can be used to grant access in cases where the user is not
+authenticated.
+
+<ruby>\
+can :read, Order do |order, token|\
+ order.user  user || order.token && token  order.token\
+end\
+can :update, Order do |order, token|\
+ order.user  user || order.token && token  order.token\
+end\
+can :create, Order\
+</ruby>
+
+This configuration states that in order to read or update an order, you
+must be either authenticated as the correct user, or supply the correct
+authorizing token.
+
+The final step is to ensure that the token is passed to CanCan when the
+authorization is performed. Most controllers will do this automatically
+if they declare *resource\_controller*.
+
+<ruby>\
+authorize! action, resource, session[:access\_token]\
+</ruby>
+
+NOTE: Since *OrdersController* does not implement *resource\_controller*
+this is done explicitly in the controller
+
+For more information on tokenized permissions please read the detailed
+[security guide](security.html#tokenized-permissions).
