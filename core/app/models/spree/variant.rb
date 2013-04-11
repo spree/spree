@@ -22,7 +22,7 @@ module Spree
     validates :count_on_hand, :numericality => true
 
     after_save :process_backorders
-    after_save :recalculate_product_on_hand, :if => :is_master?
+    after_save :recalculate_product_on_hand
 
     # default variant scope only lists non-deleted variants
     scope :active, lambda { where(:deleted_at => nil) }
