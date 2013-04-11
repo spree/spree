@@ -454,6 +454,15 @@ A `Spree::Stock::Packer` object is an important part of the `#create_proposed_sh
 
 For example, we may have two splitters for a stock location. One splitter has a rule that any order weighing more than 50lbs should be shipped in a separate package from items weighing less. Our other splitter is a catch all for any item weighing less than 50lbs. So, given one item in an order weighing 60lbs and two items weighing less, the Packer would use the rules defined in our splitters to come up with two separate packages: one containing the single 60lb item, the other containing our other two items.
 
+#### Default Splitters
+
+Spree comes with two default splitters which are run in sequence. This means that the first splitter takes the packages array from the order, and each subsequent splitter takes the output of the splitter that came before it.
+
+Let's take a look at what the default splitters do:
+
+* **Shipping Category Splitter**: Splits an order into packages based on items' shipping categories. This means that each package will only have items that all belong to the same shipping category.
+* **Weight Splitter**: Splits an order into packages based on a weight threshold. This means that each package has a mass weight. If a new item is added to the order and it causes a package to go over the weight threshold, a new package will be created so that all packages weigh less than the threshold. You can set the weight threshold by changing `Spree::Stock::Splitter::Weight.threshold` (defaults to 150) in an initializer.
+
 #### Custom Splitters
 
 Note that splitters can be customized and creating your own can be done with relative ease. By inheriting from `Spree::Stock::Splitter::Base`, you can create your own splitter.
