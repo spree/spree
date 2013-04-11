@@ -48,7 +48,7 @@ To achieve this setup you need the following configuration:
 * 1 Stock Location: You are shipping all items from the same location, so you can use the default.
 
 |Name|Zone|Calculator|
-|---|---|---:|
+|---:|---:|---:|
 |USPS Ground|US|Flexi Rate($5,$2)|
 |FedEx|EU_VAT|FlatRate-per-item($10)|
 
@@ -97,7 +97,7 @@ To achieve this setup you need the following configuration:
 
 
 |S. Category / S. Method|DHL|FedEx|USPS|
-|---|---|---|---:|
+|---:|---:|---:|---:|
 |Light|Per Item ($5)|Flat Rate ($10)|Per Item ($8)|
 |Regular|Per Item ($5)|Per Item ($2)|Per Item ($8)|
 |Heavy|Per Item ($50)|Flexi Rate($20,$15)|Per Item ($20)|
