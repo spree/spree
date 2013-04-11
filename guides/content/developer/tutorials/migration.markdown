@@ -1,6 +1,6 @@
 ---
 title: Migrating to Spree
-section: tutorial
+section: advanced 
 ---
 
 This section explains how to convert existing sites or data sets for
@@ -469,7 +469,7 @@ used it to build an extension for enhanced product option selection.
 #### Product and Variant images
 
 Spree uses [paperclip](https://github.com/thoughtbot/paperclip) to
-manage image attachments and their various size formats. (See the [customization guide](customization.html) for info on altering the image formats.)
+manage image attachments and their various size formats. (See the <%= link_to "Customization Guide", 'logic', 'product-images' %> for info on altering the image formats.)
 You can attach images to products and to variants - the mechanism is
 polymorphic. Given some local image file, the following will associate the image and
 create all of the size formats.

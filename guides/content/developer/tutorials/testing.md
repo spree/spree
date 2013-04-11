@@ -1,6 +1,6 @@
 ---
 title: Testing Spree Applications
-section: tutorial
+section: advanced 
 ---
 
 ## Overview

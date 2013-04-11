@@ -1,6 +1,6 @@
 ---
 title: Security
-section: tutorial
+section: advanced 
 ---
 
 ## Overview
@@ -24,7 +24,7 @@ If you install spree_auth_devise when setting up your app, we use a third party 
 ### Devise Configuration
 
 ***
-A default Spree install comes with the [spree_auth_devise](https://github.com/psree/spree_auth_devise) gem, which provides authentication for Spree using Devise. This section of the guide covers the default setup. If you're using your own authentication, please consult the manual for that authentication engine.
+A default Spree install comes with the [spree_auth_devise](https://github.com/spree/spree_auth_devise) gem, which provides authentication for Spree using Devise. This section of the guide covers the default setup. If you're using your own authentication, please consult the manual for that authentication engine.
 ***
 
 We have configured Devise to handle only what is needed to authenticate with a Spree site. The following details cover the default configurations:
@@ -211,7 +211,7 @@ Spree has out of the box support for [Authorize.net CIM](http://www.authorize.ne
 
 There are also third-party extensions for Paypal's [Express Checkout](https://merchant.paypal.com/cgi-bin/marketingweb?cmd=_render-content&content_ID=merchant/express_checkout) (formerly called Paypal Express.) These types of checkout services handle processing of the credit card information offsite (the data never touches your server) and greatly simplify the requirements for PCI compliance.
 
-[Braintree](https://braintrepayments.com) also offers a very interesting gateway option that achieves a similar benefit to Express Checkout but allows the entire process to appear to be taking place on the site. In other words, the customer never appears to leave the store during the checkout. They describe this as a "transparent redirect." The Braintree team is very interested in helping other Ruby developers use their gateway and have provided support to Spree developers in the past who were interested in using their product.
+[Braintree](https://braintreepayments.com) also offers a very interesting gateway option that achieves a similar benefit to Express Checkout but allows the entire process to appear to be taking place on the site. In other words, the customer never appears to leave the store during the checkout. They describe this as a "transparent redirect." The Braintree team is very interested in helping other Ruby developers use their gateway and have provided support to Spree developers in the past who were interested in using their product.
 
 ## Security Alerts
 
