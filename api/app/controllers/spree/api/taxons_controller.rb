@@ -15,18 +15,17 @@ module Spree
 
       def create
         authorize! :create, Taxon
-        
         @taxon = Taxon.new(params[:taxon])
         @taxon.taxonomy_id = params[:taxonomy_id]
         taxonomy = Taxonomy.find_by_id(params[:taxonomy_id])
-        
+
         if taxonomy.nil?
           @taxon.errors[:taxonomy_id] = "Invalid taxonomy_id."
           invalid_resource!(@taxon) and return 
         end
-        
-        @taxon.parent_id = taxonomy.root.id
-        
+
+        @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]
+
         if @taxon.save
           respond_with(@taxon, :status => 201, :default_template => :show)
         else
