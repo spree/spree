@@ -148,7 +148,6 @@ THIS IS THE BEST PRODUCT EVER!
         Spree::Config[:show_raw_product_description] = true
         description = product_description(product)
         description.should == initialDescription
-        Spree::Config[:show_raw_product_description] = false
       end
 
     end
