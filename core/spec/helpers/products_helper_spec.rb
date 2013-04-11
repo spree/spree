@@ -36,6 +36,8 @@ module Spree
           let(:variant_price) { 15 }
 
           it { should == "(Add: $5.00)" }
+          # Regression test for #2737
+          it { should be_html_safe }
         end
 
         context "when variant is less than master" do
