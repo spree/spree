@@ -72,7 +72,7 @@ describe "Option Types" do
     # What *is* visible is a new option value field, with blank values
     # Sometimes the page doesn't load before the all check is done
     # lazily finding the element gives the page 10 seconds
-    lazily_find_element("tbody#option_values")
+    page.should have_css("tbody#option_values")
     all("tbody#option_values tr input").all? { |input| input.value.blank? }
   end
 end

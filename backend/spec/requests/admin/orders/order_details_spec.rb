@@ -34,7 +34,7 @@ describe "Order Details" do
         fill_in "quantity", :with => "1"
       end
       click_icon :ok
-      sleep 1
+
       page.should have_content("Total: $20.00")
     end
 
@@ -46,7 +46,7 @@ describe "Order Details" do
         fill_in "stock_item_quantity", :with => 2
         click_icon :plus
       end
-      sleep 1
+
       page.should have_content("Total: $70.00")
     end
 
@@ -57,7 +57,7 @@ describe "Order Details" do
       within_row(1) do
         click_icon :trash
       end
-      sleep 1
+
       page.should_not have_content("spree t-shirt")
     end
 
@@ -68,7 +68,7 @@ describe "Order Details" do
       end
       fill_in "tracking", :with => "FOOBAR"
       click_icon :ok
-      sleep 1
+
       page.should have_content("Tracking: FOOBAR")
     end
 
@@ -80,7 +80,7 @@ describe "Order Details" do
       end
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
-      sleep 1
+
       page.should have_content("Default:")
     end
 
@@ -96,7 +96,7 @@ describe "Order Details" do
           fill_in "stock_item_quantity", :with => 2
           click_icon :plus
         end
-        lazily_find_element("table.stock-contents")
+        page.should have_css('table.stock-contents:nth-child(2)')
         page.all("table.stock-contents").count.should == 2
         order.shipments.last.stock_location.should == london
         page.should have_content("London")
@@ -111,7 +111,7 @@ describe "Order Details" do
             fill_in "stock_item_quantity", :with => 2
             click_icon :plus
           end
-          lazily_find_element("table.stock-contents")
+          page.should have_css("table.stock-contents:nth-child(2)")
           page.all("table.stock-contents").count.should == 2
         end
 
@@ -122,7 +122,6 @@ describe "Order Details" do
             click_icon :ok
           end
 
-          sleep 1
           page.should have_content("Total: $100.00")
         end
 
@@ -133,7 +132,6 @@ describe "Order Details" do
             click_icon :ok
           end
 
-          sleep 1
           page.should have_content("Total: $55.00")
         end
 
@@ -145,7 +143,7 @@ describe "Order Details" do
             fill_in "tracking", :with => "TRACKING_NUMBER"
           end
           click_icon :ok
-          sleep 1
+
           page.should have_content("Tracking: TRACKING_NUMBER")
         end
 
@@ -173,7 +171,7 @@ describe "Order Details" do
             select2 "Default", :from => "Shipping Method"
           end
           click_icon :ok
-          sleep 1
+
           page.should have_content("Default:")
         end
       end
