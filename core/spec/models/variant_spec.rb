@@ -26,6 +26,15 @@ describe Spree::Variant do
     variant.run_callbacks(:save)
   end
 
+  # Regression test for #2799
+  it "recalculates product's count_on_hnad when saved (non-master)" do
+    Spree::Config[:track_inventory_levels] = true
+    variant.stub :is_master? => false
+    variant.product.should_receive(:on_hand).and_return(3)
+    variant.product.should_receive(:update_column).with(:count_on_hand, 3)
+    variant.run_callbacks(:save)
+  end
+
   it "lock_version should prevent stale updates" do
     copy = Spree::Variant.find(variant.id)
 

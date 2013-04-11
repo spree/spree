@@ -35,7 +35,7 @@ module Spree
     before_validation :set_cost_currency
     after_save :process_backorders
     after_save :save_default_price
-    after_save :recalculate_product_on_hand, :if => :is_master?
+    after_save :recalculate_product_on_hand
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
