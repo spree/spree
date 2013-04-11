@@ -1,39 +1,41 @@
-Spree 0.60.0 Release Notes
---------------------------
+---
+title: "Spree 0.60.0 Release Notes"
+---
 
-endprologue.
-
-### Summary
+# Summary
 
 The 0.60.0 release contains a significant change to all controllers
 within Spree as they have been refactored to remove the use of the
 [resource\_controller](http://github.com/jamesgolick/resource_controller)
 gem. This release may have an impact on existing extensions or site
-customizations that leverage some of resource\_controllers features, so
+customizations that leverage some of resource_controllers features, so
 it’s important to read the details on it’s removal below and review any
 code which might be affected.
 
-While the removal of resource\_controller is not most glamous or
+While the removal of resource_controller is not most glamous or
 exciting change, it’s another significant stepping stone to our 1.0
 release.
 
-INFO: We’re always looking for more help with the Spree documentation.
+~~~
+We’re always looking for more help with the Spree documentation.
 If you’d like to offer assistance please contact us on the spree-user
 mailing list and we can give you commit access to the
-[spree-guides](http://github.com/spree/spree-guides) documentation
-project.
+documentation project.
+~~~
 
-### Database Migrations
+# Database Migrations
 
 There are no database migrations to worry about in this release
 (assuming you are already running Spree 0.50.x).
 
-WARNING: Always be sure to perform a complete database backup before
+!!!
+Always be sure to perform a complete database backup before
 performing any operations.
+!!!
 
-### Removal of resource\_controller
+# Removal of resource_controller
 
-The resource\_controller gem has been central to Spree’s controllers
+The resource_controller gem has been central to Spree’s controllers
 from one it’s earliest releases and was responsible for some of Spree’s
 customizability features. It’s removal has been discussed (endlessly)
 and worked on for quite some time. It’s original lack of Rails 3.0
@@ -46,18 +48,18 @@ Some earlier Spree releases removed its usage from the more complex
 front-end controllers (like OrdersController and CheckoutController) and
 this release extends this to all front-end controllers.
 
-#### Supported Functionality
+## Supported Functionality
 
 The majority of backend (Admin) controllers now base off of
 *Admin::ResourceController* class which provides a much simpler and
-slimmed down version of resource\_controllers existing features, while
+slimmed down version of resource_controllers existing features, while
 attempting to maintain backwards compatibility for the majority commonly
 used extension points.
 
-*Admin::ResourceController* provides several resource\_controller style
+*Admin::ResourceController* provides several resource_controller style
 features as follows.
 
-##### Standard CRUD Methods
+### Standard CRUD Methods
 
 There are basic implementations of all the standard CRUD methods:
 
@@ -68,54 +70,60 @@ There are basic implementations of all the standard CRUD methods:
 -   *:update*
 -   *:destroy*
 
-##### In Action Callbacks
+### In Action Callbacks
 
 -   *:update.before*
 -   *:create.before*
 -   *:update.after*
 -   etc.
 
-##### URL Helpers
+### URL Helpers
 
--   *new\_object\_url*
--   *edit\_object\_url*
--   *object\_url*
--   *collection\_url*
+-   *new_object_url*
+-   *edit_object_url*
+-   *object_url*
+-   *collection_url*
 
-WARNING: Use of these generic helpers is discouraged in favor of the
+!!!
+Use of these generic helpers is discouraged in favor of the
 default Rails helper urls.
+!!!
 
-##### Instance Variables
+### Instance Variables
 
 -   *`object+
     * +`collection*
 
-WARNING: Use of these variables is strongly discouraged. Use the actual
+!!!
+Use of these variables is strongly discouraged. Use the actual
 Rails standard variable names instead.
+!!!
 
-#### Unsupported Functionality
+## Unsupported Functionality
 
 *Admin::ResourceController* does **NOT** provide the following
-resource\_controller features:
+resource_controller features:
 
-##### Custom Responses
+### Custom Responses
 
 -   *create.wants.js*
 -   *update.wants.html*
 
 These have been replaced with a new method called *respond\_override*
 
-INFO: See the [Customization](customization.html) guide for more details
-on *respond\_override*
+~~~
+See the Customization guide for more details
+on *respond_override*
+~~~
 
-##### Deprecated Methods
+### Deprecated Methods
 
 These methods are deprecated and should either be removed or replaced
-with a custom *load\_resource* method (see *Admin::ResourceController*
+with a custom *load_resource* method (see *Admin::ResourceController*
 source for details).
 
 -   *object*
--   *collection\_ methods*
+-   *collection methods*
 
 The following method for custom flash messages has been removed entirely
 (with no replacement approach.)
@@ -128,12 +136,14 @@ be used on front-end or complex admin controllers, as you can see from
 the current source even certain core admin controllers do not use it
 (for example Admin::OrdersController).
 
-NOTE: While the use of resource\_controller has been completely removed
+~~~
+While the use of resource_controller has been completely removed
 from all of Spree’s core controllers, the dependency on
-resource\_controller gem will remain for a while to allow extension
+resource_controller gem will remain for a while to allow extension
 authors to update their projects.
+~~~
 
-### Miscellaneous Changes
+# Miscellaneous Changes
 
 There are also a series of minor bug fixes and improvments. Please see
 the [Github

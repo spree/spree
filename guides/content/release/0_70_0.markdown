@@ -1,21 +1,21 @@
-Spree 0.70.0 Release Notes
---------------------------
+---
+title: "Spree 0.70.0 Release Notes"
+---
 
-endprologue.
-
-### Summary
+# Summary
 
 This 0.70.0 release is the first Spree release to support Rails 3.1 and
 contains several exciting new features including a complete overhaul of
 the theming system and major improvements to the Promotions system.
 
-INFO: We’re always looking for more help with the Spree documentation.
+~~~
+We’re always looking for more help with the Spree documentation.
 If you’d like to offer assistance please contact us on the spree-user
-mailing list and we can give you commit access to the
-[spree-guides](http://github.com/spree/spree-guides) documentation
+mailing list and we can give you commit access to the documentation
 project.
+~~~
 
-### Theming Improvments
+# Theming Improvments
 
 Theming support in this release has change significantly and all the new
 features are covered in detail in the following guides:
@@ -29,11 +29,13 @@ features are covered in detail in the following guides:
     uses Rails’ new asset pipeline, and how you can use it to customize
     the stylesheets, javascripts and images provided by Spree.
 
-INFO: While the upgrade instructions that follow briefly cover the new
+~~~
+While the upgrade instructions that follow briefly cover the new
 asset pipeline features we suggest you review the guides above as part
 of your upgrade preparation.
+~~~
 
-#### Themes as engines
+## Themes as engines
 
 In previous versions (0.11.x and earlier) Spree encouraged the approach
 of bundling themes in their own extensions, with the advent of the asset
@@ -57,12 +59,12 @@ action:
 Both themes can be installed by just adding a reference to the git
 repository to your Gemfile, ie:
 
-<ruby>\
- gem ‘spree\_blue\_theme’, :git =\>
-‘git://github.com/spree/spree\_blue\_theme.git’\
-</ruby>
+<% ruby do %>
+        gem ‘spree_blue_theme’, :git =>
+        ‘git://github.com/spree/spree_blue_theme.git’
+<% end %>
 
-### Experimental SCSS/SASS Theme
+# Experimental SCSS/SASS Theme
 
 LESS proves to be unpopular amongst Spree developers so it is decided to
 retire LESS stylesheets of `spree_blue_theme` in favor for all-in-one
@@ -71,11 +73,11 @@ retire LESS stylesheets of `spree_blue_theme` in favor for all-in-one
 Yet with the recently adopted SCSS/SASS in Rails 3.1, we believe this
 technology could become de-facto standard for CSS someday. Thus, we
 create the experimental SCSS/SASS version of
-[spree\_blue\_sass\_theme]("https://github.com/spree/spree_blue_sass_theme")
+[spree_blue_sass_theme]("https://github.com/spree/spree_blue_sass_theme")
 to collect feedbacks before we could come up with a decision to opt for
 SCSS/SASS in future version of Spree.
 
-### The Asset Pipeline
+# The Asset Pipeline
 
 One of the more interesting new features included in Rails 3.1 is the
 asset pipeline, and a lot of the customization improvements in Spree are
@@ -90,7 +92,7 @@ single process application server like Webrick. This release of Spree
 includes a small tweak to the standard pre-compiling rake task that
 allows pre-compiling of assets for development mode.
 
-#### Pre-compiling in production
+## Pre-compiling in production
 
 Rails supports pre-compiling of assets which is intended to offload the
 overhead of generating and serving assets from the application server in
@@ -109,44 +111,50 @@ javascript and css files.
 To pre-compile assets for production you would normally execute the
 following rake task (on the production server).
 
-<ruby>\
- \$ bundle exec rake assets:precompile\
-</ruby>
+<% ruby do %>
+    $ bundle exec rake assets:precompile
+<% end %>
 
 This would write all the assets to the `public/assets` directory while
 including an MD5 fingerprint in the filename for added caching benefits.
 
-NOTE: In production all references to assets from views using
-image\_tag, asset\_path, javascript\_include\_tag, etc. will
+~~~
+In production all references to assets from views using
+image_tag, asset_path, javascript_include_tag, etc. will
 automatically include this fingerprint in the file name so the correct
 version will be served.
+~~~
 
-#### Pre-compiling for development
+## Pre-compiling for development
 
 Spree alters the behaviour of the precompile rake task as follows:
 
-<shell> \$ bundle exec rake assets:precompile:nondigest</shell>
+```bash
+$ bundle exec rake assets:precompile:nondigest```
 
 It will still output the assets to `public/assets` but it will not
 include the MD5 fingerprint in the filename, hence the files will be
 served in development directly by the web server (and not processed by
 Rails).
 
-WARNING: Using the precompile rake task in development will prevent any
+!!!
+Using the precompile rake task in development will prevent any
 changes to asset files from being automatically included in when you
 reload the page. You must re-run the precompile task for changes to
 become available.
+!!!
 
 Rail’s also provides the following rake task that will delete the entire
 `public/assets` directory, this can be helpful to clear out development
 assets before committing.
 
-<shell> \$ bundle exec rake assets:clean</shell>
+```bash
+$ bundle exec rake assets:clean```
 
 It might also be worthwhile to include the `public/assets` directory in
 your `.gitignore` file.
 
-### Promotions
+# Promotions
 
 Promotions have been extended well beyond their coupon roots to include
 new `activator` support, which can now fire or activate a promotion for
@@ -164,7 +172,7 @@ include creating an adjustment or adding additional items to a cart.
 For more details on these new promotions feature please refer to the
 [Promotions](promotions.html) guide.
 
-### New Extension Generator
+# New Extension Generator
 
 There is a new extension generator available as part of this release.
 The generator is utilized by a new executable contained within the gem.
@@ -172,27 +180,27 @@ The generator is utilized by a new executable contained within the gem.
 You can generate new extensions inside an existing rails application or
 as a standalone git repository using the following command
 
-<shell>\
- \$ spree extension foofah\
-</shell>
+```bash
+    $ spree extension foofah```
 
 One of the most important advances in this new generator is that you can
 now easily run specs for extensions in their own standalone repository.
 You just need to create a test application (one time only) as a context
 before running your specs.
 
-<shell>\
- \$ bundle exec rake test\_app\
- \$ bundle exec rspec spec\
-</shell>
+```bash
+ $ bundle exec rake test_app
+ $ bundle exec rspec spec```
 
 You can get more information on the extension generator in the [Creating
 Extensions](creating_extensions.html) guide.
 
-INFO: You must install the spree gem in order to use the new extension
+~~~
+You must install the spree gem in order to use the new extension
 generator.
+~~~
 
-### Upgrade Instructions
+# Upgrade Instructions
 
 These instructions are mainly concerned with upgrading Spree
 applications, extension developers should jump straight to the “Asset
@@ -200,7 +208,7 @@ Customization”asset\_customization.html and [View
 Customization](view_customization.html) guides for details on the
 changes that are required for extensions to fulling support 0.70.0.
 
-#### Before you begin
+## Before you begin
 
 To prevent problems later please ensure that you’ve copied all the
 migrations from your current version of Spree and all the extensions
@@ -210,23 +218,26 @@ the upgrade process.
 
 You can check that all Spree migrations are copied by running:
 
-<shell> \$ bundle exec rake spree:install:migrations</shell>
+```bash
+$ bundle exec rake spree:install:migrations```
 
 Each extension will provide it’s own rake task (or generator) for
 copying migrations so please refer to the extensions README for
 instructions.
 
-WARNING: It’s vital that you confirm this first before starting the
+!!!
+It’s vital that you confirm this first before starting the
 upgrade process as Rails 3.1 has altered how engine migrations are
 handled and incorrectly copying migrations later could result in data
 loss.
+!!!
 
-#### Changes required for Rails 3.1
+## Changes required for Rails 3.1
 
 Most of the changes required to upgrade a Spree application to 0.70.0 is
 same for any Rails 3.0.x application upgrading to 3.1.
 
-##### Gemfile changes
+### Gemfile changes
 
 You’ll need to make several additions and changes to your Gemfile:
 
@@ -235,48 +246,48 @@ You’ll need to make several additions and changes to your Gemfile:
 -   Update mysql2 to 0.3.6 - if your using it.
 -   Ensure the assets group is present:
 
-<ruby>\
- group :assets do\
- gem ‘sass-rails’, “~\>\\ 3.1.1"\
-\\ gem\\ ‘coffee-rails’,\\ "~\> 3.1.1”\
- gem ‘uglifier’\
- end\
-</ruby>
+<% ruby do %>
+    group :assets do
+        gem ‘sass-rails’, “~> 3.1.1"
+        gem ‘coffee-rails’, "~> 3.1.1”
+        gem ‘uglifier’
+    end
+<% end %>
 
-##### Update config/boot.rb
+### Update config/boot.rb
 
 Rails 3.1 simplifies the `config/boot.rb` file significantly, so update
 yours to match:
 
-<ruby>\
- require ‘rubygems’
+<% ruby do %>
+    require ‘rubygems’
 
-\# Set up gems listed in the Gemfile.\
- ENV[‘BUNDLE\_GEMFILE’] ||= File.expand\_path(‘../../Gemfile’, *FILE*)
+    # Set up gems listed in the Gemfile.
+    ENV[‘BUNDLE_GEMFILE’] ||= File.expand_path(‘../../Gemfile’, *FILE*)
 
-require ‘bundler/setup’ if File.exists?(ENV[‘BUNDLE\_GEMFILE’])\
-</ruby>
+    require ‘bundler/setup’ if File.exists?(ENV[‘BUNDLE_GEMFILE’])
+<% end %>
 
-##### Enable the asset pipeline
+### Enable the asset pipeline
 
 Add the following line to `config/application.rb`, this will enable the
 Asset Pipeline feature (required by 0.70.0):
 
-<ruby>\
- config.assets.enabled = true\
-</ruby>
+<% ruby do %>
+    config.assets.enabled = true
+<% end %>
 
-##### Remove deprecated configuration
+### Remove deprecated configuration
 
 Remove the following line from `config/environments/development.rb`.
 
-<ruby>\
- config.action\_view.debug\_rjs = true\
-</ruby>
+<% ruby do %>
+    config.action_view.debug_rjs = true
+<% end %>
 
-##### Retire lib/spree\_site.rb
+### Retire lib/spree_site.rb
 
-The spree\_site.rb file is no longer required so it’s important to
+The spree_site.rb file is no longer required so it’s important to
 migrate any existing code out of this file and into the correct
 location.
 
@@ -288,59 +299,66 @@ location.
     after you’ve ran the spree:site generator below. They will need to
     be inside the `config.to_prepare` block.
 
-NOTE: The decorator initialization block will be automatically included
+~~~
+The decorator initialization block will be automatically included
 in config/application.rb for you, when you run the spree:site generator
 below.
+~~~
 
-##### Remove spree\_site from config/application.rb
+### Remove spree\_site from config/application.rb
 
 Also ensure the following line is **not** present in
 config/application.rb:
 
-<ruby>\
- require ‘spree\_site’\
-</ruby>
+<%ruby do %>
+    require ‘spree_site’
+<% end %>
 
-#### Update gems & generate Spree files
+## Update gems & generate Spree files
 
 Once you’ve completed all the Rails 3.1 steps above, you can now update
 your dependencies and start generating the new asset pipeline
 placeholders.
 
-##### Install dependencies
+### Install dependencies
 
 Install all the required gems, and lock your dependencies by running:
 
-<shell> \$ bundle update</shell>
+```bash
+    $ bundle update```
 
-##### Generate & copy required files
+### Generate & copy required files
 
 Running the `spree:site` generator will create the skeleton structure
 for the asset pipeline, and also copy missing migrations.
 
-<shell> \$ rails g spree:site</shell>
+```bash
+    $ rails g spree:site```
 
 After running the generator above, it’s best to check to make sure you
 do not have multiple copies of the following line, in
 `config/application.rb`:
 
-<ruby>\
- config.middleware.use “RedirectLegacyProductUrl”\
- config.middleware.use “SeoAssist”\
-</ruby>
+<% ruby do %>
+    config.middleware.use “RedirectLegacyProductUrl”
+    config.middleware.use “SeoAssist”
+<% end %>
 
-##### Update your database
+### Update your database
 
 If you encounter any issues with this step please ensure you’ve
 completed the [Before you
 begin](release_notes_0_70_0.html#before-you-begin) section above.
 
-WARNING: Make sure you’ve taken a backup of the database before
+!!!
+Make sure you’ve taken a backup of the database before
 attempting this step.
+!!!
 
-<shell> \$ bundle exec rake db:migrate</shell>
+```bash
+$ bundle exec rake db:migrate```
 
-#### Migrating your assets
+## Migrating your assets
 
 Cleaning up your `/public` directory is one major advantage of using
 Rails 3.1. The main task required here is to separate your application
@@ -348,7 +366,7 @@ specific assets (javascript, stylesheets and images) from all of Spree’s
 (and all those belonging to all the extensions installed) which have
 been mingled together in your public directory.
 
-##### Asset Organization
+### Asset Organization
 
 Assets should be placed inside your application in one of three
 locations: `app/assets`, `lib/assets` or `vendor/assets`.
@@ -363,15 +381,17 @@ across applications.
 `vendor/assets` is for assets that are owned by outside entities, such
 as code for JavaScript plugins.
 
-NOTE: If you are using a library like Jammit solely for concatenating
+~~~
+If you are using a library like Jammit solely for concatenating
 and minifying your javascript and stylesheet files then we suggest you
 remove it from your application as part of the Rails 3.1 upgrade.
+~~~
 
 For a full explanation of how Spree uses Rails’ asset pipeline and how
 to update your site to use these new features please refer to the [Asset
 Customization](asset_customization.html) guide.
 
-##### Cleaning up /public
+### Cleaning up /public
 
 Once you’ve relocated all <b>your</b> applications assets, the only
 remaining directories and files in `/public` should be images that
@@ -386,7 +406,7 @@ directory, <b>EXCEPT YOUR PRODUCT IMAGES!</b>.
 NOTE: If you are using S3 (or another cloud storage system) for your
 Product images then your `/public` directory should be completly empty.
 
-#### Including old style theming hooks
+## Including old style theming hooks
 
 With the introduction of Deface the old style theming hooks have been
 deprecated, the old hooks will continue to function after the upgrade as
@@ -397,20 +417,22 @@ To include your previously defined old style theming hooks from
 `lib/site_hooks.rb` add the following to the bottom of
 `config/application.rb`
 
-<ruby>\
- require ‘lib/site\_hooks’\
-</ruby>
+<%ruby do %>
+ require ‘lib/site_hooks’
+<% end %>
 
-NOTE: The development log will include suggested replacement Deface
+~~~
+The development log will include suggested replacement Deface
 overrides anytime Rails encounters a old style hook call. These
 suggestions are a best effort replacement, but might need some tweaks as
 some elements have been moved while removing the old hook calls from
 Spree’s view files.
+~~~
 
 For more information about using Deface overrides, please refer to the
 [View Customization](view_customization.html) guide.
 
-### New way to register Calculators
+# New way to register Calculators
 
 Calculators no longer can be registered with *register* method. The
 register method is refactored to take advantage of default Rails
