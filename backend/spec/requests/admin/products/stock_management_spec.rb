@@ -14,6 +14,8 @@ describe "Stock Management" do
         @product = create(:product, name: 'apache baseball cap', price: 10)
         v = @product.variants.create!(sku: 'FOOBAR')
         v.stock_items.first.update_column(:count_on_hand, 10)
+        # Ensure locations are scoped to ability
+        Spree::StockLocation.should_receive(:accessible_by).at_least(1).times.and_return(Spree::StockLocation.all)
 
         click_link "Products"
         within_row(1) do
