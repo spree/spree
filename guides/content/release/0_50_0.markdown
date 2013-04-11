@@ -1,9 +1,8 @@
-Spree 0.50.0 Release Notes
---------------------------
+---
+title: "Spree 0.50.0 Release Notes"
+---
 
-endprologue.
-
-### Summary
+# Summary
 
 Spree 0.50.0 represents a minor update to the 0.40.x release. Several
 important bugs in the 0.40.x release have been addressed. There are no
@@ -25,22 +24,23 @@ mailing list and we can give you commit access to the
 [spree-guides](http://github.com/spree/spree-guides) documentation
 project.
 
-### Database Migrations
+# Database Migrations
 
 There is only one minor database changes in the 0.50.0 release. You will
 need to update your database migrations as follows:
 
-<shell>\
-\$ bundle exec rake spree:install:migrations\
-\$ bundle exec rake db:migrate\
-</shell>
+```bash
+$ bundle exec rake spree:install:migrations
+$ bundle exec rake db:migrate```
 
-WARNING: Always be sure to perform a complete database backup before
+!!!
+Always be sure to perform a complete database backup before
 performing any operations. It is also suggested that you examine the new
 migrations closely before running them so you are aware of what changes
 are being made to your database.
+!!!
 
-### Significant Improvements in Test Coverage
+# Significant Improvements in Test Coverage
 
 We have made drastic improvements to the level of test coverage. In
 particular, there are tons of new Cucumber features that perform
@@ -49,15 +49,15 @@ features. This doesn’t impact store owners in any way, but better test
 coverage means its safer to change the Spree code without breaking
 things so its a step towards more stability.
 
-INFO: See the [Testing
-Guide](http://spreecommerce.com/documentation/testing.html) for more
-details on testing in Spree.
+~~~
+See the Testing Guide for more details on testing in Spree.
+~~~
 
-### Replace search\_logic gem with meta\_search
+# Replace search_logic gem with meta_search
 
 We have also replaced the
-[search\_logic](https://github.com/binarylogic/searchlogic) gem with
-[meta\_search](https://github.com/ernie/meta_search). This is another
+[search_logic](https://github.com/binarylogic/searchlogic) gem with
+[meta_search](https://github.com/ernie/meta_search). This is another
 one of those behind the scenes changes that you’re not likely to notice.
 Our reason for making the switch was that search\_logic is not supported
 for Rails3 and it took us several days to get it working for Spree
@@ -65,10 +65,9 @@ for Rails3 and it took us several days to get it working for Spree
 our ongoing effort to get to stable a stable release of Spree that is
 easier to support.
 
-WARNING: If you are using one of the search related extensions for Spree
+!!!
+If you are using one of the search related extensions for Spree
 you may experience compatibility issues. Please report any troubles you
 have on the spree-user list and we’ll see if we can help. Eventually
 we’ll revisit these extensions and verify their compatibility.
-
-<!-- hack comment since guides gem doesn't allow you to end with INFO, NOTE, etc. -->
-
+!!!
