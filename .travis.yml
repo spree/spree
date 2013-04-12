@@ -6,18 +6,15 @@ env:
   - GEM=api DB=sqlite
   - GEM=api DB=mysql
   - GEM=api DB=postgres
-  - GEM=backend DB=sqlite
-  - GEM=backend DB=mysql
-  - GEM=backend DB=postgres
   - GEM=core DB=sqlite
   - GEM=core DB=mysql
   - GEM=core DB=postgres
   - GEM=dash DB=sqlite
   - GEM=dash DB=mysql
   - GEM=dash DB=postgres
-  - GEM=frontend DB=sqlite
-  - GEM=frontend DB=mysql
-  - GEM=frontend DB=postgres
+  - GEM=promo DB=sqlite
+  - GEM=promo DB=mysql
+  - GEM=promo DB=postgres
 before_install:
   - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
