@@ -1,10 +1,6 @@
 module Spree
   module Admin
     class ReportsController < Spree::Admin::BaseController
-      # setup default_locale
-      I18n.locale = I18n.default_locale
-      I18n.reload!
-
       before_filter :load_data
       respond_to :html
 
