@@ -11,7 +11,7 @@
         <span class="shipment-state"><%= shipment.state %></span>
         <%= t(:package_from) %>
         <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
-        <% if shipment.ready? %>
+        <% if shipment.ready? and can? :update, shipment %>
           -
           <%= link_to 'ship', '#', :class => 'ship button icon-arrow-right', :data => {'shipment-number' => shipment.number} %>
         <% end %>
@@ -59,15 +59,16 @@
             <td class="item-total align-center"><%= line_item.display_amount.to_html %></td>
             <% unless shipment.shipped? %>
               <td class="cart-item-delete actions" data-hook="cart_item_delete">
-                <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => 'save', :style => 'display: none' %>
-                <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel'), :style => 'display: none' %>
-                <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
-                <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => t('delete') %>
+                <% if can? :update, item %>
+                  <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => 'save', :style => 'display: none' %>
+                  <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel'), :style => 'display: none' %>
+                  <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+                  <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => t('delete') %>
+                <% end %>
               </td>
             <% end %>
           </tr>
         <% end %>
-
 
         <% unless shipment.shipped? %>
           <tr class="edit-method hidden total">
@@ -90,8 +91,10 @@
               <% end %>
             </td>
             <td class="actions">
-              <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-              <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
+              <% if can? :update, shipment %>
+                <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
+                <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
+              <% end %>
             </td>
           </tr>
         <% end %>
@@ -111,7 +114,9 @@
           </td>
           <% if shipment.adjustment.present? && !shipment.shipped? %>
             <td class="actions">
-              <%= link_to '', '#', :class => 'edit-method icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+              <% if can? :update, shipment %>
+                <%= link_to '', '#', :class => 'edit-method icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+              <% end %>
             </td>
           <% end %>
         </tr>
@@ -122,8 +127,10 @@
             <%= text_field_tag :tracking, shipment.tracking %>
           </td>
           <td class="actions">
-            <%= link_to '', '#', :class => 'save-tracking icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-            <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
+            <% if can? :update, shipment %>
+              <%= link_to '', '#', :class => 'save-tracking icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
+              <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
+            <% end %>
           </td>
         </tr>
 
@@ -136,7 +143,9 @@
             <% end %>
           </td>
           <td class="actions">
-            <%= link_to '', '#', :class => 'edit-tracking icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+            <% if can? :update, shipment %>
+              <%= link_to '', '#', :class => 'edit-tracking icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+            <% end %>
           </td>
         </tr>
 

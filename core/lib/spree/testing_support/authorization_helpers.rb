@@ -15,9 +15,9 @@ module Spree
 
           def initialize(user)
             # allow dispatch to :admin, :index, and :edit on Spree::Order
-            can [:admin, :index, :edit], Spree::Order
+            can [:admin, :edit, :index, :read], Spree::Order
             # allow dispatch to :index, :show, :create and :update shipments on the admin
-            can [:admin, :manage], Spree::Shipment
+            can [:admin, :manage, :read, :ship], Spree::Shipment
           end
         end
 
