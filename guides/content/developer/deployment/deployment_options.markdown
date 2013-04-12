@@ -27,10 +27,12 @@ our preconfigured and tested software stack.
 
 For more see the <%= link_to 'Deployment Service', 'deployment-service' %> Guide.
 
-INFO: This guide assumes basic familiarity with Spree. Please refer to
+***
+This guide assumes basic familiarity with Spree. Please refer to
 the <%= link_to 'Getting Started Guide', 'getting_started' %> for details on how to
 get up and running for Spree. You will have an easier time understanding
 the extra complications of a production setup.
+***
 
 ### Server Sizing & Configurations
 
@@ -40,11 +42,13 @@ handle a larger number of concurrent users frequently chose a
 multi-server configuration to distribute the workload and simplify
 server configurations.
 
-NOTE: Determining how many concurrent users any server configuration is
+***
+Determining how many concurrent users any server configuration is
 capable of handling is entirely dependant on the specific application
 and its use of extensions and customizations. All server sizing
 guidelines provided here are purely estimates based on basic Spree
 instances.
+***
 
 ### Memory (RAM) requirements
 
@@ -53,8 +57,10 @@ by number of application worker processes available to handle requests
 as they arrive. The number of worker processes you can configure for a
 given server is directly related the amount of RAM available.
 
-INFO: The **Spree Deployment Service** allows you to configure the
+***
+The **Spree Deployment Service** allows you to configure the
 number of unicorn workers deployed on each application server.
+***
 
 ### Single Server
 

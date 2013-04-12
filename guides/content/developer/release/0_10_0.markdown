@@ -87,7 +87,9 @@ script/generate theme foo```
 
 You can read more about themes in the very extensive "customization guide":customization.html
 
-INFO: Don't panic if you have already customized Spree views in your site extension for a previous release of Spree.  These view customizations should continue to work as long as they are loaded after the default theme extension.
+***
+Don't panic if you have already customized Spree views in your site extension for a previous release of Spree.  These view customizations should continue to work as long as they are loaded after the default theme extension.
+***
 
 ### Named Scopes and Product Groups
 
@@ -127,7 +129,9 @@ Lets say there is a bug with the +authorize+ method.  You could simply provide a
 
 Another benefit of the architecture is that it makes it possible for Spree to provide additional common functionality that was not envisioned by Active Merchant.  Specifically, it is possible to provide an abstraction for storing credit card profiles to be used with recurring payments.  There's a good reason for Active Merchant to not care about this functionality.  Its designed for people who just want to drop a single gateway provider into their application.  Most programmers don't need three different gateways at once.  Spree is a specialized use case.  Its providing multiple gateways for you to choose from and so its desirable to have a standard method for operations such as this.
 
-INFO: Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
+***
+Recurring payments are not yet supported in Spree although there are plans to provide this in the near future.
+***
 
 ### Multi Step Checkout
 

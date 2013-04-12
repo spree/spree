@@ -21,10 +21,12 @@ The CSR file contains some basic information on your domain name and
 company location, and this file is submitted to the Certificate
 Authority when purchasing your certificate.
 
-NOTE: The Key file contains the private key for this new SSL certificate
+***
+The Key file contains the private key for this new SSL certificate
 and should be stored in a secure location, and not shared with anyone.
 It should not be sent to the certificate authority when requesting the
 cert.
+***
 
 #### Required Information
 

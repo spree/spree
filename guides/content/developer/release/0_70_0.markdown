@@ -403,8 +403,10 @@ directory will override those provided by Spree or it’s extensions. So
 it’s vital that you delete all remaining files from the `/public`
 directory, <b>EXCEPT YOUR PRODUCT IMAGES!</b>.
 
-NOTE: If you are using S3 (or another cloud storage system) for your
+***
+If you are using S3 (or another cloud storage system) for your
 Product images then your `/public` directory should be completly empty.
+***
 
 ## Including old style theming hooks
 
