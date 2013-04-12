@@ -10,6 +10,17 @@ module Spree
       end
 
       module Request
+        class BarAbility
+          include CanCan::Ability
+
+          def initialize(user)
+            # allow dispatch to :admin, :index, and :edit on Spree::Order
+            can [:admin, :index, :edit], Spree::Order
+            # allow dispatch to :index, :show, :create and :update shipments on the admin
+            can [:admin, :manage], Spree::Shipment
+          end
+        end
+
         class SuperAbility
           include CanCan::Ability
 
