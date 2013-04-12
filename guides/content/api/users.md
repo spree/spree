@@ -42,7 +42,7 @@ GET /api/users/1```
 ## Pre-creation of a user
 
 You can learn about the potential attributes (required and non-required) for a
-product by making this request:
+user by making this request:
 
 ```text GET /api/users/new```
 
@@ -100,7 +100,7 @@ For instance, to update a user\'s password, send it through like this:
 <%= json \ :error => "Invalid resource. Please fix errors and try again.",
            :errors => { :email => ["can't be blank"] } %>
 
-## Deleting a product
+## Deleting a user
 
 <%= admin_only %>
 
