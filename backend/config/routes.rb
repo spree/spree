@@ -131,11 +131,6 @@ Spree::Core::Engine.routes.append do
         end
       end
       resources :line_items
-      resources :shipments do
-        member do
-          put :fire
-        end
-      end
       resources :return_authorizations do
         member do
           put :fire
