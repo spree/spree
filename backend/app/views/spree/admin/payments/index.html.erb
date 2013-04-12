@@ -17,7 +17,11 @@
   <h5 class="outstanding-balance"><%= @order.outstanding_balance < 0 ? t(:credit_owed) : t(:balance_due) %>: <strong><%= @order.display_outstanding_balance %></strong></h5>
 <% end %>
 
-<%= render :partial => 'list', :locals => { :payments => @payments } %>
+<% if @payments.any? %>
+  <%= render :partial => 'list', :locals => { :payments => @payments } %>
+<% else %>
+  <div class="alpha twelve columns no-objects-found"><%= t(:order_has_on_payments) %></div>
+<% end %>
 
 
 <%= button_link_to t(:continue), admin_orders_url, :icon => 'icon-arrow-right' %>
