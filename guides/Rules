@@ -156,6 +156,11 @@ route '/developer/customization/*/' do
   location.chop + ".html"
 end
 
+route '/developer/release/*/' do
+  location = item.identifier.gsub('/release/', '/release_notes_')
+  location.chop + ".html"
+end
+
 route '/api/*/' do
   item.identifier.chop + ".html"
 end
