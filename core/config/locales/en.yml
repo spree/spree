@@ -657,6 +657,10 @@ en:
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
+  order_populator:
+    please_enter_reasonable_quantity: "Please enter a reasonable quantity."
+    remainder_message: "There are only %{on_hand} of %{item} remaining. Please select a quantity less than or equal to this value."
+    out_of_stock: "%{item} is out of stock."
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_state:
