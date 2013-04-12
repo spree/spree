@@ -49,9 +49,9 @@ features. This doesn’t impact store owners in any way, but better test
 coverage means its safer to change the Spree code without breaking
 things so its a step towards more stability.
 
-~~~
+***
 See the Testing Guide for more details on testing in Spree.
-~~~
+***
 
 # Replace search_logic gem with meta_search
 

@@ -11,12 +11,12 @@ very little difficulty. We’re still working on identifying all of the
 Spree extensions that run 0.40.x but its a fairly safe bet that any
 extension running 0.30.x will work with this release.
 
-~~~
+***
 We’re always looking for more help with the Spree documentation.
 If you’d like to offer assistance please contact us on the spree-user
 mailing list and we can give you commit access to the documentation
 project.
-~~~
+***
 
 # Database Migrations
 
@@ -66,10 +66,10 @@ have be maintained. The result is that only one controller has been
 moved and renamed. Routing and the named route conventions having been
 maintained as well.
 
-~~~
+***
 The file *core/password_resets_controller.rb* has been renamed
 and moved to *auth/user_password_resets_controller.rb*
-~~~
+***
 
 We have already set up devise to handle the existing encryption scheme
 that authlogic used so there is no need to make any changes and the
@@ -175,10 +175,10 @@ if they declare *resource\_controller*.
     authorize! action, resource, session[:access\_token]
 <% end %>
 
-~~~
+***
 Since *OrdersController* does not implement *resource\_controller*
 this is done explicitly in the controller
-~~~
+***
 
 For more information on tokenized permissions please read the detailed
 [security guide](security.html#tokenized-permissions).

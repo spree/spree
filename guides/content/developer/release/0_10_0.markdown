@@ -19,7 +19,7 @@ spree —update```
 ```bash
 rm ~~rf config/initializers/compass.rb```
 
-h5. Remove defunct contents of public dirs 
+h5. Remove defunct contents of public dirs
 
 ```bash
 rm~~rf public/javascripts/
@@ -338,11 +338,11 @@ be
 copied to the *public/assets/products* directory when the sample data is
 loaded.
 
-~~~
+***
 Additional information on the release can be found in the
 *CHANGELOG* file as well as the [official ticket
 system](http://railsdog.lighthouseapp.com/projects/31096-spree/milestones/45833-10).
-~~~
+***
 
 ## Ruby 1.9 Support
 

@@ -156,12 +156,12 @@ shows how to configure a calculator to make it available for use with
      Coupon.register_calculator(self)
   end```
 
-~~~
+***
 Spree automatically configures your calculators for you when using
 the basic install and/or third party extensions. This discussion is
 intended to help developers and others interested in understanding the
 design behind calculators.
-~~~
+***
 
 Once your calculators have been registered correctly by your extensions,
 then they will become available as options in the appropriate admin
@@ -249,13 +249,13 @@ custom calculators. The *compute* method has access to the complete
 order (including shipping and other related information) and can simply
 return *nil* if the coupon is not to be applied in a specific situation
 
-~~~
+***
 The next version of Spree will also provide built in filtering for
 coupons based on product properties and taxon information. This will
 provide a standard way to restrict coupons to certain types of products.
 As a workaround, you can accomplish this by hard coding restrictions in
 your calculator.
-~~~
+***
 
 ## Discount Calculation
 

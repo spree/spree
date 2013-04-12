@@ -260,10 +260,10 @@ order. Price adjustments are tax calculations equivalent to the amount
 of tax included in a price. These adjustments are not counted against
 the order total but are sometimes useful for reporting purposes.
 
-~~~
+***
 You don’t need to worry about price adjustments unless your prices
 include tax (such as the case with Value Added Tax.)
-~~~
+***
 
 ## New `Order#price_adjustment_totals` method
 
@@ -301,10 +301,10 @@ You can also have multiple tax rates with this designation.
 This method is responsible for calculating the price. This is basically
 an internal change but some developers may be interested to know this.
 
-~~~
+***
 Marking a tax rate as including price is the new way to handle
 Value Added Tax (VAT) and other similar tax schemes.
-~~~
+***
 
 # Zones
 
@@ -325,11 +325,11 @@ practice of RSpec + Capybara.
 This section aims to walk you through upgrading to the newest version of
 Spree.
 
-~~~
+***
 This steps in this guide were written while upgrading from 0.70.x
 to 1.0.0. Upgrading older versions of Spree may require some additional
 steps.
-~~~
+***
 
 ## Upgrading the Spree Gem
 
@@ -345,12 +345,12 @@ Next, you will need to update this gem using this command:
 ```bash
 $ bundle update spree```
 
-~~~
+***
 If you run `bundle update` instead of `bundle update spree`,
 you run the risk of having all your application dependencies updated to
 their latest version. It is recommended to only update spree during the
 upgrade process.
-~~~
+***
 
 ## Extensions
 

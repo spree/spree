@@ -16,12 +16,12 @@ While the removal of resource_controller is not most glamous or
 exciting change, it’s another significant stepping stone to our 1.0
 release.
 
-~~~
+***
 We’re always looking for more help with the Spree documentation.
 If you’d like to offer assistance please contact us on the spree-user
 mailing list and we can give you commit access to the
 documentation project.
-~~~
+***
 
 # Database Migrations
 
@@ -111,10 +111,10 @@ resource_controller features:
 
 These have been replaced with a new method called *respond\_override*
 
-~~~
+***
 See the Customization guide for more details
 on *respond_override*
-~~~
+***
 
 ### Deprecated Methods
 
@@ -136,12 +136,12 @@ be used on front-end or complex admin controllers, as you can see from
 the current source even certain core admin controllers do not use it
 (for example Admin::OrdersController).
 
-~~~
+***
 While the use of resource_controller has been completely removed
 from all of Spree’s core controllers, the dependency on
 resource_controller gem will remain for a while to allow extension
 authors to update their projects.
-~~~
+***
 
 # Miscellaneous Changes
 

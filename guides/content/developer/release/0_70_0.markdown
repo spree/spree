@@ -8,12 +8,12 @@ This 0.70.0 release is the first Spree release to support Rails 3.1 and
 contains several exciting new features including a complete overhaul of
 the theming system and major improvements to the Promotions system.
 
-~~~
+***
 We’re always looking for more help with the Spree documentation.
 If you’d like to offer assistance please contact us on the spree-user
 mailing list and we can give you commit access to the documentation
 project.
-~~~
+***
 
 # Theming Improvments
 
@@ -29,11 +29,11 @@ features are covered in detail in the following guides:
     uses Rails’ new asset pipeline, and how you can use it to customize
     the stylesheets, javascripts and images provided by Spree.
 
-~~~
+***
 While the upgrade instructions that follow briefly cover the new
 asset pipeline features we suggest you review the guides above as part
 of your upgrade preparation.
-~~~
+***
 
 ## Themes as engines
 
@@ -118,12 +118,12 @@ following rake task (on the production server).
 This would write all the assets to the `public/assets` directory while
 including an MD5 fingerprint in the filename for added caching benefits.
 
-~~~
+***
 In production all references to assets from views using
 image_tag, asset_path, javascript_include_tag, etc. will
 automatically include this fingerprint in the file name so the correct
 version will be served.
-~~~
+***
 
 ## Pre-compiling for development
 
@@ -195,10 +195,10 @@ before running your specs.
 You can get more information on the extension generator in the [Creating
 Extensions](creating_extensions.html) guide.
 
-~~~
+***
 You must install the spree gem in order to use the new extension
 generator.
-~~~
+***
 
 # Upgrade Instructions
 
@@ -299,11 +299,11 @@ location.
     after you’ve ran the spree:site generator below. They will need to
     be inside the `config.to_prepare` block.
 
-~~~
+***
 The decorator initialization block will be automatically included
 in config/application.rb for you, when you run the spree:site generator
 below.
-~~~
+***
 
 ### Remove spree\_site from config/application.rb
 
@@ -381,11 +381,11 @@ across applications.
 `vendor/assets` is for assets that are owned by outside entities, such
 as code for JavaScript plugins.
 
-~~~
+***
 If you are using a library like Jammit solely for concatenating
 and minifying your javascript and stylesheet files then we suggest you
 remove it from your application as part of the Rails 3.1 upgrade.
-~~~
+***
 
 For a full explanation of how Spree uses Rails’ asset pipeline and how
 to update your site to use these new features please refer to the [Asset
@@ -421,13 +421,13 @@ To include your previously defined old style theming hooks from
  require ‘lib/site_hooks’
 <% end %>
 
-~~~
+***
 The development log will include suggested replacement Deface
 overrides anytime Rails encounters a old style hook call. These
 suggestions are a best effort replacement, but might need some tweaks as
 some elements have been moved while removing the old hook calls from
 Spree’s view files.
-~~~
+***
 
 For more information about using Deface overrides, please refer to the
 [View Customization](view_customization.html) guide.
