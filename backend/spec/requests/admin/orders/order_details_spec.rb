@@ -226,8 +226,9 @@ describe "Order Details", js: true do
       order = create(:order_ready_to_ship)
       visit spree.edit_admin_order_path(order)
       click_icon 'arrow-right'
+      sleep 1
       within '.shipment-state' do
-        page.should have_content('SHIPPED')
+        page.should have_content('shipped')
       end
     end
 
