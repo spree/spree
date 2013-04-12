@@ -1,5 +1,6 @@
-Spree 1.2.0 Release Notes
--------------------------
+---
+title: "Spree 1.2.0 Release Notes"
+---
 
 Spree 1.2.0 introduces some fairly major changes in the basic
 architecture of Spree, as well as minor alterations and bugfixes.
@@ -8,9 +9,7 @@ Due to the long development cycle of Spree 1.2 in parallel with
 continuing development of the 1.1 branch, there may be features released
 in 1.2 that are already present in 1.1.
 
-endprologue.
-
-### Summary
+# Summary
 
 There were two major topics addressed within this release of Spree:
 custom authentication and better checkout customization.
@@ -20,10 +19,10 @@ application that already provided its own way to authenticate users. Due
 to how Spree was architected in the past, this was not as easy as it
 could have been. In this release of Spree, the auth component of Spree
 has been removed completely and placed into a separate extension called
-[spree\_auth\_devise](https://github.com/spree/spree_auth_devise). If
+[spree_auth_devise](https://github.com/spree/spree_auth_devise). If
 you wish to continue using this component of Spree, you will need to
 specify this extension as a dependency in your Gemfile. See [Issue
-\#1512](https://github.com/spree/spree/pull/1512) for more detail about
+#1512](https://github.com/spree/spree/pull/1512) for more detail about
 the customization.
 
 The checkout process has always been hard to customize within Spree, and
@@ -31,85 +30,85 @@ that has generated complaints in the past. We are pleased to report in
 the 1.2 release of Spree that this has been substaintially easier with a
 new checkout DSL that allows you to re-define the checkout steps in a
 simple manner. For more information about this, please see [Issue
-\#1418](https://github.com/spree/spree/pull/1418) and [Issue
-\#1743](https://github.com/spree/spree/pull/1743).
+#1418](https://github.com/spree/spree/pull/1418) and [Issue
+#1743](https://github.com/spree/spree/pull/1743).
 
 Along with these two major issues, there were also a ton of minor
 improvements and bug fixes, explained in detail below.
 
-### Major changes (backwards incompatibility)
+# Major changes (backwards incompatibility)
 
-#### spree\_auth removal
+## spree_auth removal
 
 Authentication is disabled by default within Spree as of this release,
 with the application supposed to be providing its own authentication. If
 you are upgrading an existing Spree installation or just want it to
 work, you can achieve the behaviour of a 1.1 installation by adding
-“spree\_auth\_devise” to your Gemfile.
+“spree_auth_devise” to your Gemfile.
 
-<ruby>\
- gem ‘spree\_auth\_devise’, :git =\>
-“git://github.com/spree/spree\_auth\_devise”\
-</ruby>
+<%ruby do %>
+    gem ‘spree_auth_devise’, :git =>
+    “git://github.com/spree/spree_auth_devise”
+<% end %>
 
 For more information on how to customize authentication, please see the
 [Authentication
 guide](http://guides.spreecommerce.com/authentication.html).
 
-#### State machine customizations
+## State machine customizations
 
 Customizing the state machine within Spree now does not require you to
-override the entire *state\_machine* definition within Spree’s *Order*
+override the entire *state_machine* definition within Spree’s *Order*
 model. Instead, you are provided with the ability to define the “next”
 events for *Order* objects like this:
 
-<ruby>\
-Spree::Order.class\_eval do\
- checkout\_flow do\
- go\_to\_state :address\
- go\_to\_state :delivery\
- go\_to\_state :payment, :if =\> lambda { payment\_required? }\
- go\_to\_state :confirm, :if =\> lambda { confirmation\_required? }\
- go\_to\_state :complete\
- remove\_transition :from =\> :delivery, :to =\> :confirm\
- end\
-end\
-</ruby>
+<% ruby do %>
+Spree::Order.class_eval do
+ checkout_flow do
+ go_to_state :address
+ go_to_state :delivery
+ go_to_state :payment, :if => lambda { payment_required? }
+ go_to_state :confirm, :if => lambda { confirmation_required? }
+ go_to_state :complete
+ remove_transition :from => :delivery, :to => :confirm
+ end
+end
+<% end %>
 
 For more information about customizing the checkout process within
 Spree, please see the [Checkout
 guide](http://guides.spreecommerce.com/checkout.html).
 
-### Minor changes
+# Minor changes
 
-#### has\_role?, api\_key and roles methods now namespaced
+## has_role?, api_key and roles methods now namespaced
 
-On a usr object, the *has\_role?* method is now called
-*has\_spree\_role?*, the *api\_key* method is called *spree\_api\_key*
-and the *roles* association is now called *spree\_roles*. This allows
-for applications to define their own *has\_role?*, *api\_key* and
+On a usr object, the *has_role?* method is now called
+*has_spree_role?*, the *api_key* method is called *spree_api_key*
+and the *roles* association is now called *spree_roles*. This allows
+for applications to define their own *has_role?*, *api_key* and
 *roles* methods without them conflicting with the methods defined within
 Spree.
 
-#### Introduce Spree::Product\#master\_images and Spree::Product\#variant\_images
+## Introduce Spree::Product#master_images and Spree::Product#variant_images
 
-*Spree::Product\#master\_images* and its alias *Spree::Product\#images*
+*Spree::Product#master_images* and its alias *Spree::Product#images*
 only returns images belongs to master variant.
 
-*Spree::Product\#variant\_images* behaviour is changed, it is no longer
+*Spree::Product#variant_images* behaviour is changed, it is no longer
 return only images belongs to master variants but now also include all
 variants’ images.
 
-#### Spree::Zone\#country\_list renamed to \#zone\_member\_list
+## Spree::Zone#country_list renamed to #zone_member_list
 
 Please be noted that the underlying logics remain intact.
 
-#### Spree::Creditcard renamed to Spree::CreditCard
+## Spree::Creditcard renamed to Spree::CreditCard
 
 All occurences of Creditcard are changed to CreditCard to better follow
 Rails naming conventions.
 
-#### Assert that ImageMagick is installed during Spree installation
+## Assert that ImageMagick is installed during Spree installation
 
 When installing Spree, if the ImageMagick library was not installed on
 the system, then the *identify* command that Paperclip uses would fail
@@ -119,7 +118,7 @@ There is now a [check in
 place](https://github.com/spree/spree/commit/a6deb62) to ensure that
 ImageMagick is installed before Spree is.
 
-#### Sass variables can now be overriden
+## Sass variables can now be overriden
 
 The variable definitions for the sass files of Spree have been moved to
 a separate file within Core called
@@ -127,13 +126,13 @@ a separate file within Core called
 file within your application in order to re-define the colors and other
 variables that Spree uses for its stylesheets.
 
-#### Added support for serialized preferences
+## Added support for serialized preferences
 
 Preferences can now be defined as serialized. See
 [7415323](https://github.com/spree/spree/commit/7415323) for more
 information.
 
-#### New UI for defining taxons and option types for a product
+## New UI for defining taxons and option types for a product
 
 Rather than having the taxons and option types related to a product on
 two completely separate pages, they are now included on the product edit
@@ -141,11 +140,9 @@ form. This functionality is provided by the Select2 JavaScript plugin,
 and will fall back to a typical select box if JavaScript is not
 available.
 
-![select2 shiny](images/1-2-release-notes/select2.png "select2 shiny")
+## Using the Money gem to display currencies
 
-#### Using the Money gem to display currencies
-
-In earlier versions of Spree, we used *number\_to\_currency* to display
+In earlier versions of Spree, we used *number_to_currency* to display
 prices for products. This caused a problem when somebody selected a
 different I18n locale, as the prices would be displayed in their
 currency: 20 Japanese Yen, rather than 20 American Dollars, for
@@ -160,17 +157,17 @@ symbol across all prices of your store.
 Note: After the 1.2.0 release, more options to format the currency
 output have been introduced. Specifically the position of the currency
 symbol which is fixed to :before in 1.2.0 can be adjusted. To achieve
-this in the 1.2.0, you may wish to override the Spree::Money.to\_s
+this in the 1.2.0, you may wish to override the Spree::Money.to_s
 function.
 
-### Tiny changes / bugfixes
+# Tiny changes / bugfixes
 
-#### General
+## General
 
 -   Replaced uses of deprecated jQuery method live with on
     ([273987d](https://github.com/spree/spree/commit/273987d))
 
-#### API
+## API
 
 -   Added ability to make shipments ready and declare them shipped
     ([e933f36](https://github.com/spree/spree/commit/e933f36))
@@ -184,11 +181,11 @@ function.
     ([024b22a](https://github.com/spree/spree/commit/024b22a))
 -   Added zones
     ([b522703](https://github.com/spree/spree/commit/b522703)
-    [\#1615](https://github.com/spree/spree/issues/1615))
+    [#1615](https://github.com/spree/spree/issues/1615))
 -   Allow orders to be paginated
     ([873e9f8](https://github.com/spree/spree/commit/873e9f8))
 
-#### Core
+## Core
 
 -   Added more products in sample data
     ([6b66b3a](https://github.com/spree/spree/commit/6b66b3a))
@@ -197,7 +194,7 @@ function.
 -   Product images are now sorted by their position
     ([5115377](https://github.com/spree/spree/commit/5115377))
 -   The configuration menu/sidebar will now display on
-    */admin/shipping\_categories/index*
+    */admin/shipping_categories/index*
     ([459b5d0](https://github.com/spree/spree/commit/459b5d0))
 -   Datepickers are now localized in the admin backend
     ([e5f1680](https://github.com/spree/spree/commit/e5f1680))
@@ -208,7 +205,7 @@ function.
     ([ff0c837](https://github.com/spree/spree/commit/ff0c837))
 -   Account for purchased units in stock validation
     ([7c4cd77](https://github.com/spree/spree/commit/7c4cd77))
--   Sort all order adjustments by their created\_at timestamp
+-   Sort all order adjustments by their created_at timestamp
     ([aef2fd9](https://github.com/spree/spree/commit/aef2fd9))
 -   Use *ransack* method on classes rather than *search*, as this may be
     defined by an extension
@@ -216,22 +213,22 @@ function.
 -   Fix issue where redeeming a coupon code for a free product did not
     apply the coupon
     ([2459f75](https://github.com/spree/spree/commit/2459f75)
-    [\#1589](https://github.com/spree/spree/issues/1589))
--   Specify class name for all *belongs\_to* associations
+    [#1589](https://github.com/spree/spree/issues/1589))
+-   Specify class name for all *belongs_to* associations
     ([94a6859](https://github.com/spree/spree/commit/94a6859))
 -   Don’t rename users table if *User* constant is defined
     ([c77c822](https://github.com/spree/spree/commit/c77c822))
--   Removed all references to link\_to\_function throughout Spree,
+-   Removed all references to link_to_function throughout Spree,
     replace with 100% JavaScript
--   Moved *get\_taxonomies* helper method out of
+-   Moved *get_taxonomies* helper method out of
     *Spree::Core::ControllerHelpers* into *Spree::ProductsHelper*
     ([980348a](https://github.com/spree/spree/commit/980348a))
 
-#### Promo
+## Promo
 
 -   Coupon code input is now displayed on the cart page
     ([c030671](https://github.com/spree/spree/commit/c030671))
 -   Only acknowledge coupon codes for promos that have the
-    ‘spree.checkout.coupon\_code\_added’ event
+    ‘spree.checkout.coupon_code_added’ event
     ([4158979](https://github.com/spree/spree/commit/4158979))
 
