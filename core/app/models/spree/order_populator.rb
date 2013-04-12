@@ -41,7 +41,7 @@ module Spree
       # 2,147,483,647 is crazy.
       # See issue #2695.
       if quantity > 2_147_483_647
-        errors.add(:base, %Q{Please enter a reasonable quantity.})
+        errors.add(:base, I18n.t(:please_enter_reasonable_quantity, :scope => :order_populator))
         return false
       end
 
@@ -60,7 +60,7 @@ module Spree
       if Stock::Quantifier.new(variant).can_supply? quantity
         true
       else
-        errors.add(:base, %Q{#{display_name.inspect} is out of stock.})
+        errors.add(:base, I18n.t(:out_of_stock, :scope => :order_populator, :item => display_name.inspect))
         return false
       end
     end
