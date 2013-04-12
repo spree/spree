@@ -7,10 +7,10 @@ describe Spree::Promotion::Rules::UserLoggedIn do
     let(:order) { Spree::Order.new }
 
     it "should be eligible if user is logged in" do
-      user = mock_model(Spree::LegacyUser)
+      user = mock_model(Spree::LegacyUser, :anonymous? => false)
       order.stub(:user => user)
 
-      rule.should be_eligible(order, {:user => user, :order => order})
+      rule.should be_eligible(order)
     end
 
     it "should not be eligible if user is not logged in" do
