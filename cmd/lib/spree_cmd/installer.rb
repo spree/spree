@@ -125,7 +125,7 @@ module SpreeCmd
         parts = ["'#{name}'"]
         parts << ["'#{gem_options.delete(:version)}'"] if gem_options[:version]
         gem_options.each { |key, value| parts << ":#{key} => '#{value}'" }
-        append_file 'Gemfile', "gem #{parts.join(', ')}\n", :verbose => false
+        append_file 'Gemfile', "\ngem #{parts.join(', ')}", :verbose => false
       end
 
       def ask_with_default(message, default = 'yes')
