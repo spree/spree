@@ -240,24 +240,22 @@ module Spree
 
     NEW_PRODUCT_PUSH =
       {
-        "event"=> 'product:new',
-        "id"=>1123,
-        "name"=>"Example product",
-        "description"=> "Description",
-        "price"=>"15.99",
-        "available_on"=>"2012-10-17T03:43:57Z",
-        "permalink"=>"ruby-on-rails-tote",
-        "count_on_hand"=>10,
-        "meta_description"=>nil,
-        "meta_keywords"=>nil
+        "message"=> 'product:new',
+        "payload" => {
+          "id"=>1123,
+          "name"=>"Example product",
+          "description"=> "Description",
+          "price"=>"15.99",
+          "available_on"=>"2012-10-17T03:43:57Z",
+          "permalink"=>"ruby-on-rails-tote",
+          "meta_description"=>nil,
+          "meta_keywords"=>nil
+        }
       }
 
-    NEW_PRODUCT_PUSH_RESPONSE =
-      {
-        "event_id"=> 'guid',
-        "result" => 'accepted',
-        'payload' => NEW_PRODUCT_PUSH
-      }
+    temp = NEW_PRODUCT_PUSH.clone
+    temp['message_id'] = 'guid'
+    NEW_PRODUCT_PUSH_RESPONSE = temp
 
     UPDATE_PRODUCT_EVENT =
       {
