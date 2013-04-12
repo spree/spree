@@ -1,18 +1,14 @@
-require 'spree/core/ssl_requirement'
-
 module Spree
   module Core
     module ControllerHelpers
       module Auth
-        def self.included(base)
-          base.class_eval do
-            include SslRequirement
+        extend ActiveSupport::Concern
 
-            helper_method :try_spree_current_user
+        included do
+          helper_method :try_spree_current_user
 
-            rescue_from CanCan::AccessDenied do |exception|
-              return unauthorized
-            end
+          rescue_from CanCan::AccessDenied do |exception|
+            return unauthorized
           end
         end
 
