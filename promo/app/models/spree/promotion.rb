@@ -37,6 +37,10 @@ module Spree
       where(:advertise => true)
     end
 
+    def self.with_code
+      where(:event_name => 'spree.checkout.coupon_code_added')
+    end
+
     def activate(payload)
       return unless order_activatable? payload[:order]
 
