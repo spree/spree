@@ -4,7 +4,10 @@ describe Spree::Core::MailSettings do
   let(:mail_method) { Spree::MailMethod.new(:environment => "test") }
 
   context "init" do
-    before { Spree::MailMethod.stub :current => mail_method }
+    before do
+      Spree::MailMethod.stub :current => mail_method
+      ActionMailer::Base.smtp_settings = {}
+    end
 
     context "perform_delivery preference" do
       it "should override the application defaults" do

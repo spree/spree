@@ -20,7 +20,8 @@
     <div>
       <%= label_tag nil, t(:tree) %><br />
       <script>
-        Spree.routes.taxonomy_taxons_path = "<%= spree.api_taxonomy_taxons_path(@taxonomy) %>"
+        Spree.routes.taxonomy_taxons_path = "<%= spree.api_taxonomy_taxons_path(@taxonomy) %>";
+        Spree.routes.admin_taxonomy_taxons_path = "<%= spree.admin_taxonomy_taxons_path(@taxonomy) %>";
       </script>
       <div id="taxonomy_tree" class="tree"></div>
     </div>

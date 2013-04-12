@@ -15,6 +15,8 @@
 # a.get :color
 # a.preferred_color
 #
+require "spree/core/search/base"
+
 module Spree
   class AppConfiguration < Preferences::Configuration
 
@@ -57,6 +59,7 @@ module Spree
     preference :orders_per_page, :integer, default: 15
     preference :prices_inc_tax, :boolean, default: false
     preference :products_per_page, :integer, default: 12
+    preference :redirect_https_to_http, :boolean, :default => false
     preference :require_master_price, :boolean, default: true
     preference :shipment_inc_vat, :boolean, default: false
     preference :shipping_instructions, :boolean, default: false # Request instructions/info for shipping
@@ -64,6 +67,7 @@ module Spree
     preference :show_only_complete_orders_by_default, :boolean, default: true
     preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
+    preference :show_raw_product_description, :boolean, :default => false
     preference :site_name, :string, default: 'Spree Demo Site'
     preference :site_url, :string, default: 'demo.spreecommerce.com'
     preference :tax_using_ship_address, :boolean, default: true

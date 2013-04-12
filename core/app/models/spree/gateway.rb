@@ -33,7 +33,7 @@ module Spree
       if @provider.nil? || !@provider.respond_to?(method)
         super
       else
-        provider.send(method)
+        provider.send(method, *args)
       end
     end
 

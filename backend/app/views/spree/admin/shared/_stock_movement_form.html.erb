@@ -9,7 +9,7 @@
   <div class="five columns">
     <%= f.field_container :stock_location do %>
       <%= f.label :stock_location_id, t(:stock_location) %>
-      <%= collection_select 'stock_movement', 'stock_location_id', Spree::StockLocation.all, :id, :name,
+      <%= collection_select 'stock_movement', 'stock_location_id', @stock_locations, :id, :name,
         {}, class: 'select2 fullwidth' %>
     <% end %>
   </div>

@@ -16,6 +16,7 @@ end
 ENV["RAILS_ENV"] ||= 'test'
 
 RSpec.configure do |config|
+  config.color = true
   config.mock_with :rspec
 
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

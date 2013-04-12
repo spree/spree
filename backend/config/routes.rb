@@ -25,12 +25,6 @@ Spree::Core::Engine.routes.append do
     post :populate, :on => :collection
 
     resources :line_items
-
-    resources :shipments do
-      member do
-        get :shipping_method
-      end
-    end
   end
 
   get '/cart', :to => 'orders#edit', :as => :cart
@@ -131,11 +125,6 @@ Spree::Core::Engine.routes.append do
         end
       end
       resources :line_items
-      resources :shipments do
-        member do
-          put :fire
-        end
-      end
       resources :return_authorizations do
         member do
           put :fire

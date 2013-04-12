@@ -51,7 +51,7 @@ describe Spree::OrderPopulator do
         order.contents.should_not_receive(:add)
         subject.populate(:products => { 1 => 2 }, :quantity => 2_147_483_648)
         subject.should_not be_valid
-        output = %Q{Please enter a reasonable quantity.}
+        output = "Please enter a reasonable quantity."
         subject.errors.full_messages.join("").should == output
       end
     end

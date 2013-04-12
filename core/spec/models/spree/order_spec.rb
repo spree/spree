@@ -140,13 +140,13 @@ describe Spree::Order do
 
     it "should send an order confirmation email" do
       mail_message = mock "Mail::Message"
-      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_return mail_message
+      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_return mail_message
       mail_message.should_receive :deliver
       order.finalize!
     end
 
     it "should continue even if confirmation email delivery fails" do
-      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_raise 'send failed!'
+      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_raise 'send failed!'
       order.finalize!
     end
 
@@ -294,14 +294,14 @@ describe Spree::Order do
     let(:variant) { create(:variant) }
 
     it 'should reduce line_item quantity if quantity is less the line_item quantity' do
-      line_item = order.add_variant(variant, 3)
+      line_item = order.contents.add(variant, 3)
       order.remove_variant(variant, 1)
 
       line_item.reload.quantity.should == 2
     end
 
     it 'should remove line_item if quantity matches line_item quantity' do
-      order.add_variant(variant, 1)
+      order.contents.add(variant, 1)
       order.remove_variant(variant, 1)
 
       order.reload.find_line_item_by_variant(variant).should be_nil
@@ -311,7 +311,7 @@ describe Spree::Order do
       order.item_total.to_f.should == 0.00
       order.total.to_f.should == 0.00
 
-      order.add_variant(variant,2)
+      order.contents.add(variant, 2)
 
       order.item_total.to_f.should == 39.98
       order.total.to_f.should == 39.98

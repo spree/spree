@@ -14,6 +14,8 @@ describe "Stock Management" do
         @product = create(:product, name: 'apache baseball cap', price: 10)
         v = @product.variants.create!(sku: 'FOOBAR')
         v.stock_items.first.update_column(:count_on_hand, 10)
+        # Ensure locations are scoped to ability
+        Spree::StockLocation.should_receive(:accessible_by).at_least(1).times.and_return(Spree::StockLocation.all)
 
         click_link "Products"
         within_row(1) do
@@ -100,9 +102,8 @@ describe "Stock Management" do
 
           page.should have_content('successfully created')
 
-          within_row(2) do
-            page.should have_content("SPREEC")
-            within(:css, '.stock_location_info table') do
+          within("#listing_product_stock tr", :text => "SPREEC") do
+            within("table") do
               column_text(2).should eq '40'
             end
           end

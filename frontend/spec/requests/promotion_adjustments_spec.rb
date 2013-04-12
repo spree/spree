@@ -86,13 +86,13 @@ describe "Promotion adjustments", :js => true do
 
       it "can enter a coupon code and receives success notification" do
         fill_in "order_coupon_code", :with => "onetwo"
-        click_button "Apply"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_applied))
       end
 
       it "can enter a promotion code with both upper and lower case letters" do
         fill_in "order_coupon_code", :with => "ONETwO"
-        click_button "Apply"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_applied))
       end
 
@@ -101,7 +101,7 @@ describe "Promotion adjustments", :js => true do
         promotion.class.any_instance.stub(:credits_count => 10)
 
         fill_in "order_coupon_code", :with => "onetwo"
-        click_button "Apply"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_max_usage))
       end
 
@@ -117,11 +117,12 @@ describe "Promotion adjustments", :js => true do
           visit spree.cart_path
 
           fill_in "order_coupon_code", :with => "50off"
-          click_button "Apply"
+          click_button "Update"
           page.should have_content(I18n.t(:coupon_code_applied))
 
           fill_in "order_coupon_code", :with => "onetwo"
-          click_button "Apply"
+          click_button "Update"
+
           page.should have_content(I18n.t(:coupon_code_better_exists))
         end
       end
@@ -138,7 +139,7 @@ describe "Promotion adjustments", :js => true do
           visit spree.cart_path
 
           fill_in "order_coupon_code", :with => "onetwo"
-          click_button "Apply"
+          click_button "Update"
           page.should have_content(I18n.t(:coupon_code_not_eligible))
         end
       end
@@ -148,12 +149,9 @@ describe "Promotion adjustments", :js => true do
         promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
         promotion.save!
         fill_in "order_coupon_code", :with => "onetwo"
-        click_button "Apply"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_expired))
       end
     end
   end
 end
-
-
-

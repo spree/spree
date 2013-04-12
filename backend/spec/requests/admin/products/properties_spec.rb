@@ -77,7 +77,7 @@ describe "Properties" do
       click_link "Product Properties"
       # Sometimes the page doesn't load before the all check is done
       # lazily finding the element gives the page 10 seconds
-      lazily_find_element("tbody#product_properties")
+      page.should have_css("tbody#product_properties")
       all("tbody#product_properties tr").count.should == 2
     end
   end

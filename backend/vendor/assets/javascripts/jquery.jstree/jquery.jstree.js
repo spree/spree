@@ -1787,12 +1787,13 @@
 					obj.data("jstree-children", d);
 				}
 				if($.isArray(js)) {
-					d = $();
+					d = $('<ul>');
 					if(!js.length) { return false; }
 					for(i = 0, j = js.length; i < j; i++) {
 						tmp = this._parse_json(js[i], obj, true);
-						if(tmp.length) { d = d.add(tmp); }
+						if(tmp.length) { d = d.append(tmp); }
 					}
+					d = d.children();
 				}
 				else {
 					if(typeof js == "string") { js = { data : js }; }

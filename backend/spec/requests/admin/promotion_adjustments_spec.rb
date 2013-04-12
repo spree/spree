@@ -212,13 +212,12 @@ describe "Promotion Adjustments" do
       sleep(1)
       page.execute_script "$('.create_line_items .select2-choice').mousedown();"
       sleep(1)
-      page.execute_script "$('.select2-focused').val('RoR Mug').trigger('keyup-change');"
+      page.execute_script "$('.select2-input:visible').val('RoR Mug').trigger('keyup-change');"
       sleep(1)
       page.execute_script "$('.select2-highlighted').mouseup();"
 
       within('#actions_container') { click_button "Update" }
 
-      find_label_by_text("Add action of type")
       select2 "Create adjustment", :from => "Add action of type"
       within('#new_promotion_action_form') { click_button "Add" }
       select2 "Flat Rate (per order)", :from => "Calculator"

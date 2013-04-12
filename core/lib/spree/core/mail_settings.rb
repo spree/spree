@@ -6,8 +6,10 @@ module Spree
       # This makes it possible to configure the mail settings
       # through an admin interface instead of requiring changes to the Rails envrionment file.
       def self.init
-        ActionMailer::Base.default_url_options[:host] = Spree::Config[:site_url]
         return unless mail_method = Spree::MailMethod.current
+        # Email settings were configured in an initializer
+        return if ActionMailer::Base.smtp_settings[:user_name]
+        ActionMailer::Base.default_url_options[:host] ||= Spree::Config[:site_url]
         if mail_method.prefers_enable_mail_delivery?
           mail_server_settings = {
             :address => mail_method.preferred_mail_host,

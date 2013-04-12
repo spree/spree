@@ -45,5 +45,26 @@ describe Spree::Admin::BaseController do
         controller.send(:should_check_alerts?).should be_false
       end
     end
+
+    describe "#generate_api_key" do
+      let(:user) { mock_model(Spree.user_class) }
+
+      before do
+        controller.stub :authorize_admin => true
+        controller.stub :try_spree_current_user => user
+      end
+
+      it "generates the API key for a user when they visit" do
+        user.should_receive(:spree_api_key).and_return(nil)
+        user.should_receive(:generate_spree_api_key!)
+        process 'index'
+      end
+
+      it "does not attempt to regenerate the API key if the key is already set" do
+        user.should_receive(:spree_api_key).and_return('fake')
+        user.should_not_receive(:generate_spree_api_key!)
+        process 'index'
+      end
+    end
   end
 end
