@@ -378,4 +378,12 @@ describe Spree::Variant do
       variant.options_text
     end
   end
+
+  # Regression test for #2744
+  describe "set_position" do
+    it "sets variant position after creation" do
+      variant = create(:variant)
+      variant.position.should_not be_nil
+    end
+  end
 end
