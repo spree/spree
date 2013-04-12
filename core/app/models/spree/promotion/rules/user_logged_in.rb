@@ -11,7 +11,7 @@ module Spree
           # we should be in before firing events,
           # so the controller will have to set this field.
 
-          return options && options[:user_signed_in]
+          return options && options[:user]
         end
 
       end
