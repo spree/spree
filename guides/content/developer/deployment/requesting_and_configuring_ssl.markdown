@@ -64,7 +64,7 @@ the command directly on your server.
 This example command below is for illustration purposes only, you must
 substitue your information in the relevant locations.
 
-```shell
+```bash
 openssl req ~~new~~newkey rsa:2048 ~~nodes~~out www_example_com.csr
 ~~keyout www_example_com.key~~subj “/C=US/ST=MD/L=Chevy
 Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com”
@@ -98,20 +98,20 @@ your server:
 
 Copy the CRT file onto the server and save it to following location:
 
-```shell
+```bash
 /etc/ssl/spree.crt
 ```
 
 Move the private key (KEY file) to the following location:
 
-```shell
+```bash
 /etc/ssl/spree.key
 ```
 
 Execute the following command to have Puppet automatically install and
 restart your webserver:
 
-```shell
+```bash
 FACTER_db_pass=YOUR_DB_PASSWORD sudo puppet agent —test
 ```
 

@@ -56,7 +56,7 @@ This is the default setting of Rails so it’s also fine if this setting is miss
 
 The following is an example of how to configure Apache so that its document root is pointing to the `public` folder.
 
-```shell
+```bash
 <VirtualHost *:80>
 ServerName www.mystore.com
 DocumentRoot /webapps/mystore/public
@@ -175,7 +175,7 @@ If you are noticing that Spree seems to be running slowly you should
 make sure that you are running in “production mode.” You can start your
 server in production mode as follows:
 
-```shell
+```bash
  rails server -e production
 ```
 

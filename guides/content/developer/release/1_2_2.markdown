@@ -16,7 +16,7 @@ issue](https://github.com/spree/spree/blob/master/CONTRIBUTING.md).
 This new version of Spree contains new migrations. Please install them
 and run them with this command:
 
-```shell
+```bash
 bundle exec rake railties:install:migrations
 bundle exec rake db:migrate
 ```

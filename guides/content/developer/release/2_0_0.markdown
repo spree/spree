@@ -14,7 +14,7 @@ it is in the complete state.
 For instance, if you have an order in the “confirm” state that you would
 like to advance to the “complete” state, make the following request:
 
-```shell
+```bash
 PUT /api/checkouts/ORDER_NUMBER
 ```
 
