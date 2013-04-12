@@ -22,11 +22,11 @@ module Spree
         text = "#{text}: (#{t('empty')})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total}</span>".html_safe
+        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total.to_html}</span>".html_safe
         css_class = 'full'
       end
 
-      link_to text, spree.cart_path, :class => css_class
+      link_to text, spree.cart_path, :class => "cart-info #{css_class}"
     end
 
     # human readable list of variant options
@@ -147,6 +147,10 @@ module Spree
     def money(amount)
       ActiveSupport::Deprecation.warn("[SPREE] Spree::BaseHelper#money will be deprecated.  It relies upon a single master currency.  You can instead create a Spree::Money.new(amount, { :currency => your_currency}) or see if the object you're working with returns a Spree::Money object to use.")
       Spree::Money.new(amount)
+    end
+
+    def display_price(product_or_variant)
+      product_or_variant.price_in(current_currency).display_price.to_html
     end
 
     def pretty_time(time)
