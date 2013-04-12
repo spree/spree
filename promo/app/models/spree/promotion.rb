@@ -28,7 +28,7 @@ module Spree
     end
 
     validates :name, :presence => true
-    # validates :code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
+    validates :code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
     validates :path, :presence => true, :if => lambda{|r| r.event_name == 'spree.content.visited' }
     validates :usage_limit, :numericality => { :greater_than => 0, :allow_nil => true }
 
