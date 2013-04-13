@@ -50,6 +50,5 @@ tags
 *.swp
 rerun.txt
 test_app
-.rvmrc
 **/coverage
 */.sass-cache
