@@ -1,7 +1,7 @@
 var initProductActions = function(){
 
   // Add classes on promotion items for design
-  $('a.delete').live('mouseover mouseout', function(event) {
+  $(document).on('mouseover mouseout', 'a.delete', function(event) {
     if (event.type == 'mouseover') {
       $(this).parent().addClass('action-remove');
     } else {
@@ -9,7 +9,7 @@ var initProductActions = function(){
     }
   });
 
-  $(".variant_autocomplete").variantAutocomplete();
+  $('#promotion-filters').find(".variant_autocomplete").variantAutocomplete();
 
   $('.calculator-fields').each(function(){
     var $fields_container = $(this);

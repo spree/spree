@@ -225,3 +225,5 @@ Spree::Country.create!({"name"=>"Macedonia", "iso3"=>"MKD", "iso"=>"MK", "iso_na
 Spree::Country.create!({"name"=>"New Zealand", "iso3"=>"NZL", "iso"=>"NZ", "iso_name"=>"NEW ZEALAND", "numcode"=>"554"}, :without_protection => true)
 Spree::Country.create!({"name"=>"Saint Kitts and Nevis", "iso3"=>"KNA", "iso"=>"KN", "iso_name"=>"SAINT KITTS AND NEVIS", "numcode"=>"659"}, :without_protection => true)
 Spree::Country.create!({"name"=>"Serbia", "iso3"=>"SRB", "iso"=>"RS", "iso_name" => "SERBIA", "numcode"=>"999"}, :without_protection => true)
+
+Spree::Config[:default_country_id] = Spree::Country.find_by_name("United States").id

@@ -3,7 +3,6 @@ Spree::Sample.load_sample("tax_categories")
 clothing = Spree::TaxCategory.find_by_name!("Clothing")
 
 default_attrs = {
-  :count_on_hand => 10,
   :description => Faker::Lorem.paragraph,
   :available_on => Time.zone.now
 }
@@ -103,6 +102,11 @@ products = [
     :eur_price => 12
   }
 ]
+
+# Need to call reset_column information here
+# Otherwise running db:migrate db:seed spree_sample:load will fail
+# complaining about cost_currency missing
+Spree::Variant.reset_column_information
 
 products.each do |product_attrs|
   eur_price = product_attrs.delete(:eur_price)

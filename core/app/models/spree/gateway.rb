@@ -33,7 +33,7 @@ module Spree
       if @provider.nil? || !@provider.respond_to?(method)
         super
       else
-        provider.send(method)
+        provider.send(method, *args)
       end
     end
 
@@ -43,6 +43,12 @@ module Spree
 
     def method_type
       'gateway'
+    end
+
+    def supports?(source)
+      return true unless provider_class.respond_to? :supports?
+      return false unless source.brand
+      provider_class.supports?(source.brand)
     end
   end
 end

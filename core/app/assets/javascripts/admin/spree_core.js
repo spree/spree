@@ -14,6 +14,18 @@
 //= require equalize
 //= require responsive-tables
 //= require jquery.horizontalNav
+//= require jsuri
 //= require_tree .
 
-var Spree = {};
+var Spree = {
+  // Helper function to take a URL and add query parameters to it
+  // Uses the JSUri library from here: https://code.google.com/p/jsuri/
+  // Thanks to Jake Moffat for the suggestion: https://twitter.com/jakeonrails/statuses/321776992221544449
+  url: function(uri, query) {
+    var uri = new Uri(uri);
+    $.each(query, function (key, value) {
+      uri.addQueryParam(key, value);
+    });
+    return uri;
+  }
+};

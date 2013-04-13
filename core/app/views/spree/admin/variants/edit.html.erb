@@ -5,9 +5,11 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @variant } %>
 
 <%= form_for [:admin, @product, @variant] do |f| %>
-  <div data-hook="admin_variant_edit_form">
-    <%= render :partial => 'form', :locals => { :f => f } %>
-  </div>
+  <fieldset class="no-border-top">
+    <div data-hook="admin_variant_edit_form">
+      <%= render :partial => 'form', :locals => { :f => f } %>
+    </div>
 
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>

@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 describe "Products" do
@@ -38,6 +39,26 @@ describe "Products" do
           click_link "admin_products_listing_price_title"
           within_row(1) { page.should have_content("zomg shirt") }
           within_row(2) { page.should have_content('apache baseball cap') }
+        end
+      end
+
+      context "currency displaying" do
+        context "using Russian Rubles" do
+          before do
+            Spree::Config[:currency] = "RUB"
+          end
+
+          let!(:product) do
+            create(:product, :name => "Just a product", :price => 19.99)
+          end
+
+          # Regression test for #2737
+          context "uses руб as the currency symbol" do
+            it "on the products listing page" do
+              click_link "Products"
+              within_row(1) { page.should have_content("руб19.99") }
+            end
+          end
         end
       end
     end

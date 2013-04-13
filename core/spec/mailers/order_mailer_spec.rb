@@ -9,16 +9,37 @@ describe Spree::OrderMailer do
     order = stub_model(Spree::Order)
     product = stub_model(Spree::Product, :name => %Q{The "BEST" product})
     variant = stub_model(Spree::Variant, :product => product)
-    price = stub_model(Spree::Price, :variant => variant)
-    line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
+    price = stub_model(Spree::Price, :variant => variant, :amount => 5.00)
+    line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 4.99)
     variant.stub(:default_price => price)
     order.stub(:line_items => [line_item])
     order
   end
 
+  before do
+    Spree::MailMethod.create!(
+      :environment => Rails.env,
+      :preferred_mails_from => "spree@example.com"
+    )
+  end
+
   it "doesn't aggressively escape double quotes in confirmation body" do
     confirmation_email = Spree::OrderMailer.confirm_email(order)
     confirmation_email.body.should_not include("&quot;")
+  end
+
+  it "confirm_email accepts an order id as an alternative to an Order object" do
+    Spree::Order.should_receive(:find).with(order.id).and_return(order)
+    lambda {
+      confirmation_email = Spree::OrderMailer.confirm_email(order.id)
+    }.should_not raise_error
+  end
+
+  it "cancel_email accepts an order id as an alternative to an Order object" do
+    Spree::Order.should_receive(:find).with(order.id).and_return(order)
+    lambda {
+      cancel_email = Spree::OrderMailer.cancel_email(order.id)
+    }.should_not raise_error
   end
 
   context "only shows eligible adjustments in emails" do
@@ -41,6 +62,24 @@ describe Spree::OrderMailer do
 
     specify do
       cancel_email.body.should_not include("Ineligible Adjustment")
+    end
+  end
+
+  context "displays unit costs from line item" do
+    # Regression test for #2772
+
+    # Tests mailer view spree/order_mailer/confirm_email.text.erb
+    specify do
+      confirmation_email = Spree::OrderMailer.confirm_email(order)
+      confirmation_email.body.should include("4.99")
+      confirmation_email.body.should_not include("5.00")
+    end
+
+    # Tests mailer view spree/order_mailer/cancel_email.text.erb
+    specify do
+      cancel_email = Spree::OrderMailer.cancel_email(order)
+      cancel_email.body.should include("4.99")
+      cancel_email.body.should_not include("5.00")
     end
   end
 
@@ -95,6 +134,19 @@ describe Spree::OrderMailer do
           cancel_email.body.should include("Resumo da Pedido [CANCELADA]")
         end
       end
+    end
+
+    context "using EUR as the currency" do
+      before do
+        Spree::Config[:currency] = "EUR"
+      end
+
+      # Regression test for #2690
+      it "doesn't aggressively escape money amounts" do
+        confirm_email = Spree::OrderMailer.confirm_email(order)
+        confirm_email.body.should_not include("&#x20AC;") # escaped € symbol
+      end
+
     end
   end
 end

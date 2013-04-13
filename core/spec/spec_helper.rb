@@ -21,6 +21,7 @@ require 'spree/core/url_helpers'
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
+  config.color = true
   config.mock_with :rspec
 
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

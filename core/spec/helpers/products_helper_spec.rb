@@ -36,6 +36,8 @@ module Spree
           let(:variant_price) { 15 }
 
           it { should == "(Add: $5.00)" }
+          # Regression test for #2737
+          it { should be_html_safe }
         end
 
         context "when variant is less than master" do
@@ -53,13 +55,13 @@ module Spree
         context "when variant is more than master" do
           let(:variant_price) { 150 }
 
-          it { should == "(Add: ¥50)" }
+          it { should == "(Add: &#x00A5;50)" }
         end
 
         context "when variant is less than master" do
           let(:product_price) { 150 }
 
-          it { should == "(Subtract: ¥50)" }
+          it { should == "(Subtract: &#x00A5;50)" }
         end
       end
     end
@@ -96,7 +98,7 @@ module Spree
         it "should return the variant price if the price is different than master" do
           product.price = 100
           @variant1.price = 150
-          helper.variant_price(@variant1).should == "¥150"
+          helper.variant_price(@variant1).should == "&#x00A5;150"
         end
       end
 
@@ -132,6 +134,22 @@ THIS IS THE BEST PRODUCT EVER!
 
         description = product_description(product)
         description.strip.should == %Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD}
+      end
+
+      it "renders a product description without any formatting based on configuration" do
+        initialDescription = %Q{
+            <p>hello world</p>
+
+            <p>tihs is completely awesome and it works</p>
+
+            <p>why so many spaces in the code. and why some more formatting afterwards?</p>
+        }
+
+        product.description = initialDescription
+
+        Spree::Config[:show_raw_product_description] = true
+        description = product_description(product)
+        description.should == initialDescription
       end
 
     end

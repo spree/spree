@@ -28,21 +28,7 @@
   <div class="columns omega four">
     <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
     <div class="payment-info">
-      <% if order.credit_cards.empty? %>
-        <%= content_tag(:span, order.payment.payment_method.name) if order.payment %>
-      <% else %>
-        <span class="cc-type">
-          <% unless (cc_type = order.credit_cards.first.cc_type).blank? %>
-            <%= image_tag "credit_cards/icons/#{order.credit_cards.first.cc_type}.png" %>
-          <% end %>
-          <%= t(:ending_in)%> <%= order.credit_cards.first.last_digits %>
-        </span>
-        <br />
-        <span class="full-name">
-          <%= order.credit_cards.first.first_name %>
-          <%= order.credit_cards.first.last_name %>
-        </span>
-      <% end %>
+      <%= render order.payments.valid %>
     </div>
   </div>
 
@@ -50,14 +36,14 @@
 
 <hr />
 
-<table class="index columns alpha omega sixteen" data-hook="order_details">
+<table id='line-items' class="index columns alpha omega sixteen" data-hook="order_details">
   <col width="15%" valign="middle" halign="center">
   <col width="70%" valign="middle">
   <col width="5%" valign="middle" halign="center">
   <col width="5%" valign="middle" halign="center">
   <col width="5%" valign="middle" halign="center">
 
-  <thead id="line-items" data-hook>
+  <thead data-hook>
     <tr data-hook="order_details_line_items_headers">
       <th colspan="2"><%= t(:item) %></th>
       <th class="price"><%= t(:price) %></th>
@@ -66,7 +52,7 @@
     </tr>
   </thead>
 
-  <tbody id="line-items" data-hook>
+  <tbody data-hook>
     <% @order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
         <td data-hook="order_item_image">
@@ -81,16 +67,16 @@
           <%= truncated_product_description(item.variant.product) %>
           <%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %>
         </td>
-        <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount %></span></td>
+        <td data-hook="order_item_price" class="price"><span><%= item.single_money.to_html %></span></td>
         <td data-hook="order_item_qty"><%= item.quantity %></td>
-        <td data-hook="order_item_total" class="total"><span><%= item.display_amount %></span></td>
+        <td data-hook="order_item_total" class="total"><span><%= item.display_amount.to_html %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tfoot id="order-total" data-hook="order_details_total">
     <tr class="total">
       <td colspan="4"><b><%= t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= @order.display_total %></span></td>
+      <td class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
     </tr>
   </tfoot>
   <% if order.price_adjustment_totals.present? %>
@@ -106,7 +92,7 @@
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= @order.display_item_total %></span></td>
+      <td class="total"><span><%= @order.display_item_total.to_html %></span></td>
     </tr>
   </tfoot>
   <tfoot id="order-charges" data-hook="order_details_adjustments">
@@ -114,7 +100,7 @@
     <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="4"><strong><%= adjustment.label %></strong></td>
-        <td class="total"><span><%= adjustment.display_amount %></span></td>
+        <td class="total"><span><%= adjustment.display_amount.to_html %></span></td>
       </tr>
     <% end %>
   </tfoot>

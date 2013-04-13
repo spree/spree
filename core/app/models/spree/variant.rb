@@ -14,7 +14,7 @@ module Spree
     has_many :inventory_units
     has_many :line_items
     has_and_belongs_to_many :option_values, :join_table => :spree_option_values_variants
-    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
+    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy, :class_name => "Spree::Image"
 
     has_one :default_price,
       :class_name => 'Spree::Price',
@@ -35,7 +35,8 @@ module Spree
     before_validation :set_cost_currency
     after_save :process_backorders
     after_save :save_default_price
-    after_save :recalculate_product_on_hand, :if => :is_master?
+    after_save :recalculate_product_on_hand
+    after_create :set_position
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
@@ -220,6 +221,10 @@ module Spree
 
       def set_cost_currency
         self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+      end
+
+      def set_position
+        self.update_column(:position, product.variants.maximum(:position).to_i + 1)
       end
   end
 end

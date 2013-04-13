@@ -9,10 +9,43 @@ describe "viewing products" do
     product = create(:product, :name => "Superman T-Shirt")
     product.taxons << t_shirts
   end
+  let(:metas) { { :meta_description => 'Brand new Ruby on Rails TShirts', :meta_title => "Ruby On Rails TShirt", :meta_keywords => 'ror, tshirt, ruby' } }
 
   # Regression test for #1796
   it "can see a taxon's products, even if that taxon has child taxons" do
     visit '/t/category/clothing/t-shirts'
     page.should have_content("Superman T-Shirt")
   end
+
+  describe 'meta tags and title' do
+
+    it 'displays metas' do
+      t_shirts.update_attributes metas
+      visit '/t/category/clothing/t-shirts'
+      page.should have_meta(:description, 'Brand new Ruby on Rails TShirts')
+      page.should have_meta(:keywords, 'ror, tshirt, ruby')
+    end
+
+    it 'display title if set' do
+      t_shirts.update_attributes metas
+      visit '/t/category/clothing/t-shirts'
+      page.should have_title("Ruby On Rails TShirt")
+    end
+
+    it 'display title from taxon root and taxon name' do
+      visit '/t/category/clothing/t-shirts'
+      page.should have_title('Category - T-Shirts - Spree Demo Site')
+    end
+
+    # Regression test for #2814
+    it "doesn't use meta_title as heading on page" do
+      t_shirts.update_attributes metas
+      visit '/t/category/clothing/t-shirts'
+      within("h1.taxon-title") do
+        page.should have_content(t_shirts.name)
+      end
+    end
+
+  end
+
 end

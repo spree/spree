@@ -15,45 +15,59 @@ describe Spree::Order do
         order.state = "confirm"
         order.run_callbacks(:create)
         order.stub :payment_required? => true
-        order.stub_chain(:payments, :exists?).and_return(true)
         order.stub :process_payments!
         order.stub :has_available_shipment
       end
 
-      it "should finalize order when transitioning to complete state" do
-        order.should_receive(:finalize!)
-        order.next!
-      end
+      context "with unprocessed payments" do
+        before do
+          order.stub :has_unprocessed_payments? => true
+        end
 
-       context "when credit card payment fails" do
-         before do
-           order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
-         end
+        it "should finalize order when transitioning to complete state" do
+          order.should_receive(:finalize!)
+          order.next!
+        end
 
-         context "when not configured to allow failed payments" do
-            before do
-              Spree::Config.set :allow_checkout_on_gateway_error => false
-            end
-
-            it "should not complete the order" do
-               order.next
-               order.state.should == "confirm"
-             end
-          end
-
-         context "when configured to allow failed payments" do
+         context "when credit card payment fails" do
            before do
-             Spree::Config.set :allow_checkout_on_gateway_error => true
-             order.stub :finalize!
+             order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
            end
 
-           it "should complete the order" do
-              order.next!
-              order.state.should == "complete"
+           context "when not configured to allow failed payments" do
+              before do
+                Spree::Config.set :allow_checkout_on_gateway_error => false
+              end
+
+              it "should not complete the order" do
+                 order.next
+                 order.state.should == "confirm"
+               end
             end
 
-         end
+           context "when configured to allow failed payments" do
+             before do
+               Spree::Config.set :allow_checkout_on_gateway_error => true
+               order.stub :finalize!
+             end
 
+             it "should complete the order" do
+                order.next!
+                order.state.should == "complete"
+              end
+           end
+         end
+       end
+
+       context "with no unprocessed payments" do
+         before do
+           order.stub :has_unprocessed_payments? => false
+          end
+
+         it "cannot transition to complete" do
+           order.next
+           order.state.should == "confirm"
+         end
        end
     end
 
@@ -132,9 +146,14 @@ describe Spree::Order do
       order.stub :has_available_shipment
       order.stub :restock_items!
       mail_message = mock "Mail::Message"
-      Spree::OrderMailer.should_receive(:cancel_email).with(order).and_return mail_message
+      order_id = nil
+      Spree::OrderMailer.should_receive(:cancel_email) { |*args|
+        order_id = args[0]
+        mail_message
+      }
       mail_message.should_receive :deliver
       order.cancel!
+      order_id.should == order.id
     end
 
     context "restocking inventory" do

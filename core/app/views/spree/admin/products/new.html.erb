@@ -67,7 +67,9 @@
     prototype_select.change(function() {
       var id = prototype_select.val();
       if (id.length) {
-        $('#product-from-prototype').load([ base_url, id ].join("/"));
+        var url = new Uri(base_url);
+        url.setPath(url.path() + '/' + id);
+        $('#product-from-prototype').load(url.toString());
       } else {
         $('#product-from-prototype').empty();
       }

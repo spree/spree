@@ -92,34 +92,6 @@ variants = [
     :sku => "ROR-00012",
     :cost_price => 17
   },
-  {
-    :product => ror_baseball_jersey,
-    :sku => "ROR-001",
-    :cost_price => 17,
-    :is_master => true
-  },
-  {
-    :product => spree_baseball_jersey,
-    :option_values => [small],
-    :sku => "SPR-001",
-    :cost_price => 17,
-    :is_master => true
-  },
-  {
-    :product => spree_baseball_jersey,
-    :option_values => [medium],
-    :sku => "SPR-002",
-    :cost_price => 17,
-    :is_master => true
-  },
-  {
-    :product => spree_baseball_jersey,
-    :option_values => [large],
-    :sku => "SPR-003",
-    :cost_price => 17,
-    :is_master => true
-  },
-
 ]
 
 masters = {

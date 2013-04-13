@@ -1,7 +1,7 @@
 ---
 en:
-  no: "No"
-  yes: "Yes"
+  say_no: "No"
+  say_yes: "Yes"
   a_copy_of_all_mail_will_be_sent_to_the_following_addresses: A copy of all mail be sent to the following addresses
   abbreviation: Abbreviation
   access_denied: "Access Denied"
@@ -279,7 +279,7 @@ en:
   back_to_payment_methods_list: "Back To Payment Methods List"
   back_to_payments_list: "Back To Payments List"
   back_to_products_list: "Back To Products List"
-  back_to_properties_list: "Back To Products List"
+  back_to_properties_list: "Back To Properties List"
   back_to_prototypes_list: "Back To Prototypes List"
   back_to_reports_list: "Back To Reports List"
   back_to_shipping_categories: "Back To Shipping Categories"
@@ -360,8 +360,10 @@ en:
   credits: Credits
   current: Current
   currency: Currency
+  currency_decimal_mark: "Currency decimal mark"
   currency_symbol_position: "Put currency symbol before or after dollar amount?"
   currency_settings: "Currency Settings"
+  currency_thousands_separator: "Currency thousands separator"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
@@ -597,6 +599,12 @@ en:
   no_match_found: "No Match Found"
   no_products_found: "No products found"
   no_results: "No results"
+  no_promotions_found: "No promotions found"
+  no_payment_methods_found: "No payment methods found"
+  no_results: "No results"
+  no_shipments_for_this_order: "There are no shipments for this order"
+  no_shipping_methods_found: "No shipping methods found"
+  no_trackers_found: "No Trackers Found"
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
@@ -649,6 +657,10 @@ en:
   order_not_in_system: That order number is not valid on this site.
   order_number: Order
   order_operation_authorize: Authorize
+  order_populator:
+    please_enter_reasonable_quantity: "Please enter a reasonable quantity."
+    remainder_message: "There are only %{on_hand} of %{item} remaining. Please select a quantity less than or equal to this value."
+    out_of_stock: "%{item} is out of stock."
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_state:
@@ -693,6 +705,9 @@ en:
   pay: pay
   payment: Payment
   payment_actions: "Actions"
+  payment_counter:
+    one: "Payment #1"
+    other: "Payment #%{count}"
   payment_gateway: "Payment Gateway"
   payment_information: "Payment Information"
   payment_method: Payment Method

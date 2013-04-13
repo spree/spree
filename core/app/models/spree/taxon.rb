@@ -8,7 +8,8 @@ module Spree
 
     before_create :set_permalink
 
-    attr_accessible :name, :parent_id, :position, :icon, :description, :permalink, :taxonomy_id
+    attr_accessible :name, :parent_id, :position, :icon, :description, :permalink, :taxonomy_id,
+                    :meta_description, :meta_keywords, :meta_title
 
     validates :name, :presence => true
 
@@ -36,14 +37,27 @@ module Spree
       fs
     end
 
+    # Return meta_title if set otherwise generates from root name and/or taxon name
+    def seo_title
+      if meta_title
+        meta_title
+      else
+        root? ? name : "#{root.name} - #{name}"
+      end
+    end
+
     # Creates permalink based on Stringex's .to_url method
     def set_permalink
-      if parent_id.nil?
-        self.permalink = name.to_url if permalink.blank?
+      if parent.present?
+        self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
       else
-        parent_taxon = Taxon.find(parent_id)
-        self.permalink = [parent_taxon.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
+        self.permalink = name.to_url if permalink.blank?
       end
+    end
+
+    # For #2759
+    def to_param
+      permalink
     end
 
     def active_products

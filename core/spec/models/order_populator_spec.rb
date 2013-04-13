@@ -59,6 +59,17 @@ describe Spree::OrderPopulator do
           subject.should be_valid
         end
       end
+
+      # Regression test for #2695
+      it "restricts quantities to reasonable sizes (less than 2.1 billion, seriously)" do
+        Spree::Config[:allow_backorders] = false
+
+        order.should_not_receive(:add_variant)
+        subject.populate(:products => { 1 => 2 }, :quantity => Spree::Config[:max_quantity] + 1)
+        subject.should_not be_valid
+        output = "Please enter a reasonable quantity."
+        subject.errors.full_messages.join("").should == output
+      end
     end
 
     context "with variant parameters" do

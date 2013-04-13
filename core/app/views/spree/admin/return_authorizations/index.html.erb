@@ -21,15 +21,15 @@
         <th><%= t(:status) %></th>
         <th><%= t(:amount) %></th>
         <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-        <th class="action"></th>
-      </tr>  
+        <th class="actions"></th>
+      </tr>
     </thead>
     <tbody>
       <% @return_authorizations.each do |return_authorization| %>
         <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td><%= return_authorization.number %></td>
           <td><%= t(return_authorization.state.downcase) %></td>
-          <td><%= return_authorization.display_amount %></td>
+          <td><%= return_authorization.display_amount.to_html %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>
           <td class="actions">
             <%= link_to_edit return_authorization %>

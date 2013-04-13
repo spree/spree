@@ -38,6 +38,11 @@ module Spree
 
     def attempt_cart_add(variant_id, quantity)
       quantity = quantity.to_i
+      if quantity > Spree::Config[:max_quantity]
+        errors.add(:base, I18n.t(:please_enter_reasonable_quantity, :scope => :order_populator))
+        return false
+      end
+
       variant = Spree::Variant.find(variant_id)
       if quantity > 0
         if check_stock_levels(variant, quantity)
@@ -55,12 +60,15 @@ module Spree
         if on_hand >= quantity || Spree::Config[:allow_backorders]
           return true
         else
-          errors.add(:base, %Q{There are only #{on_hand} of #{display_name.inspect} remaining.} + 
-                            %Q{ Please select a quantity less than or equal to this value.})
+          remainder_message = I18n.t(:remainder_message,
+                                     :item => display_name.inspect,
+                                     :on_hand => on_hand,
+                                     :scope => :order_populator)
+          errors.add(:base, remainder_message)
           return false
         end
       else
-        errors.add(:base, %Q{#{display_name.inspect} is out of stock.})
+        errors.add(:base, I18n.t(:out_of_stock, :item => display_name.inspect, :scope => :order_populator))
         return false
       end
     end

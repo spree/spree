@@ -4,7 +4,7 @@ FactoryGirl.define do
     payment_method { FactoryGirl.create(:bogus_payment_method) }
     source { FactoryGirl.build(:credit_card) }
     order { FactoryGirl.create(:order) }
-    state 'pending'
+    state 'checkout'
     response_code '12345'
 
   end

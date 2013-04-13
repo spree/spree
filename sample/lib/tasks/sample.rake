@@ -5,25 +5,19 @@ require 'spree/sample'
 namespace :spree_sample do
   desc 'Loads sample data'
   task :load => :environment do
-    Spree::Sample.load_sample("payment_methods")
-    Spree::Sample.load_sample("shipping_categories")
-    Spree::Sample.load_sample("shipping_methods")
-    Spree::Sample.load_sample("tax_categories")
-    Spree::Sample.load_sample("tax_rates")
+    if ARGV.include?("db:migrate")
+      puts %Q{
+Please run db:migrate separately from spree_sample:load.
 
-    Spree::Sample.load_sample("products")
-    Spree::Sample.load_sample("taxons")
-    Spree::Sample.load_sample("option_values")
-    Spree::Sample.load_sample("product_option_types")
-    Spree::Sample.load_sample("product_properties")
-    Spree::Sample.load_sample("prototypes")
-    Spree::Sample.load_sample("variants")
-    Spree::Sample.load_sample("assets")
+Running db:migrate and spree_sample:load at the same time has been known to
+cause problems where columns may be not available during sample data loading.
 
-    Spree::Sample.load_sample("orders")
-    Spree::Sample.load_sample("line_items")
-    Spree::Sample.load_sample("adjustments")
-    Spree::Sample.load_sample("payments")
+Migrations have been run. Please run "rake spree_sample:load" by itself now.
+      }
+      exit(1)
+    end
+
+    SpreeSample::Engine.load_samples
   end
 end
 

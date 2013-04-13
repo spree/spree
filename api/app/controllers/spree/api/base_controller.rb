@@ -19,6 +19,8 @@ module Spree
 
       helper Spree::Api::ApiHelpers
 
+      ssl_allowed
+
       def set_jsonp_format
         if params[:callback] && request.get?
           self.response_body = "#{params[:callback]}(#{self.response_body})"

@@ -14,10 +14,11 @@ module Spree
     def variant_price_diff(variant)
       diff = variant.amount_in(current_currency) - variant.product.amount_in(current_currency)
       return nil if diff == 0
+      amount = Spree::Money.new(diff.abs, { :currency => current_currency }).to_html
       if diff > 0
-        "(#{t(:add)}: #{Spree::Money.new(diff.abs, { :currency => current_currency })})"
+        "(#{t(:add)}: #{amount})".html_safe
       else
-        "(#{t(:subtract)}: #{Spree::Money.new(diff.abs, { :currency => current_currency })})"
+        "(#{t(:subtract)}: #{amount})".html_safe
       end
     end
 
@@ -25,13 +26,17 @@ module Spree
     def variant_full_price(variant)
       product = variant.product
       unless product.variants.active(current_currency).all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price, { :currency => current_currency }).to_s
+        Spree::Money.new(variant.price, { :currency => current_currency }).to_html
       end
     end
 
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
-      raw(product.description.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>'))
+      if Spree::Config[:show_raw_product_description]
+        raw(product.description)
+      else
+        raw(product.description.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>'))
+      end
     end
 
     def line_item_description(variant)

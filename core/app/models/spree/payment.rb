@@ -14,6 +14,8 @@ module Spree
 
     # update the order totals, etc.
     after_save :update_order
+    # invalidate previously entered payments
+    after_create :invalidate_old_payments
 
     attr_accessor :source_attributes
     after_initialize :build_source
@@ -25,6 +27,15 @@ module Spree
     scope :completed, with_state('completed')
     scope :pending, with_state('pending')
     scope :failed, with_state('failed')
+    scope :valid, where("state NOT IN (?)", %w(failed invalid))
+
+    after_rollback :persist_invalid
+
+    def persist_invalid
+      return unless ['failed', 'invalid'].include?(state)
+      state_will_change!
+      save 
+    end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine :initial => 'checkout' do
@@ -46,6 +57,10 @@ module Spree
       end
       event :void do
         transition :from => ['pending', 'completed', 'checkout'], :to => 'void'
+      end
+      # when the card brand isnt supported
+      event :invalidate do
+        transition :from => ['checkout'], :to => 'invalid'
       end
     end
 
@@ -104,6 +119,12 @@ module Spree
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
+      end
+
+      def invalidate_old_payments
+        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+          payment.invalidate!
+        end
       end
 
       def update_order

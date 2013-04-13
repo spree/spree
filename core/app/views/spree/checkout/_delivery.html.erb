@@ -6,7 +6,7 @@
         <% @order.rate_hash.each do |shipping_method| %>
           <label>
             <%= radio_button(:order, :shipping_method_id, shipping_method[:id]) %>
-            <%= shipping_method.name %> <%= shipping_method.display_price %>
+            <%= shipping_method.name %> <%= shipping_method.display_price.to_html %>
           </label>
         <% end %>
       </p>
