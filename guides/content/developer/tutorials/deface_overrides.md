@@ -7,7 +7,7 @@ section: tutorial
 
 This tutorial is a continuation of the previous one, <%= link_to "Extensions", 'extensions' %>, and begins where we left off in the last one. We have created a simple extension for promoting on-sale products on a "sales homepage".
 
-In this tutorial we are going to learn about [Deface](http://github.com/spree/deface) and how we can use it to improve our extension. As part of improving our extension, we will be updating the existing Spree admin interface so that we are able to set the `sale_price` for products.
+In this tutorial we are going to learn about [Deface](https://github.com/spree/deface) and how we can use it to improve our extension. As part of improving our extension, we will be updating the existing Spree admin interface so that we are able to set the `sale_price` for products.
 
 ## What is Deface?
 
@@ -87,7 +87,7 @@ Deface supports three options for supplying content to be used by an override:
 
 ### More Information on Using Deface
 
-This just scratches the surface of what is possible using deface. For more detailed documentation, visit the [Deface Github repo](http://github.com/spree/deface).
+This just scratches the surface of what is possible using deface. For more detailed documentation, visit the [Deface Github repo](https://github.com/spree/deface).
 
 ## Improving Our Extension Using Deface
 

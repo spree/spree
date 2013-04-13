@@ -17,7 +17,7 @@ The [Spree Extension Registry](http://spreecommerce.com/extensions) is a searcha
 
 ## Installing an Extension
 
-We are going to be adding the [spree_fancy](http://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme so it only changes the look and feel of the application. Extensions can also add models, controllers, and views to create new functionality, but spree_fancy is intended as a starting point to show how a barebones Spree application can be easily modified to give a nice look and feel. As a special bonus it's fully responsive and looks good on mobile devices as well as on larger screens.
+We are going to be adding the [spree_fancy](https://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme so it only changes the look and feel of the application. Extensions can also add models, controllers, and views to create new functionality, but spree_fancy is intended as a starting point to show how a barebones Spree application can be easily modified to give a nice look and feel. As a special bonus it's fully responsive and looks good on mobile devices as well as on larger screens.
 
 There are three steps we need to take to install spree_fancy.
 
@@ -257,4 +257,4 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 
 In this tutorial you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
 
-In the <%= link_to "next part", 'deface_overrides' %> of this tutorial series, we will cover [Deface](http://github.com/spree/deface) overrides and look at ways to improve our current extension.
+In the <%= link_to "next part", 'deface_overrides' %> of this tutorial series, we will cover [Deface](https://github.com/spree/deface) overrides and look at ways to improve our current extension.
