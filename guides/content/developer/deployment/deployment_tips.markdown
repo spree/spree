@@ -109,7 +109,7 @@ For more information on preferences in general you may wish to read the
 
 If you do not wish to use SSL in production or staging, or if you wish to enable SSL in development mode, you will have to change the `:allow_ssl_in_production` configuration setting. This can be done via the admin interface as shown below:
 
-![Changing SSL Setting](images/server_configuration/change_ssl_setting.png "Changing SSL Setting")
+![Changing SSL Setting](../images/developer/change_ssl_setting.png "Changing SSL Setting")
 
 If you need to change any of the above default settings, it is also
 recommended to fix the setting in an initializer . In
@@ -124,7 +124,7 @@ config.allow_ssl_in_staging = false
 Mail delivery in Spree is disabled by default. Enabling it is simple
 procedure that is generally done via the admin interface as shown below.
 
-![Changing Mail Server Setting](images/server_configuration/change_mail_server_settings.png "Changing Mail Server Setting")
+![Changing Mail Server Setting](../images/developer/change_mail_server_settings.png "Changing Mail Server Setting")
 
 To properly enable email delivery, you need to provide valid SMTP
 information. This includes the following:

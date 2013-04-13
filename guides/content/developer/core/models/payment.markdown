@@ -13,4 +13,4 @@ processor used for processing this payment.
 
 A payment can go through many different states, as illustrated below.
 
-![Payment flow](/images/developer/core/payment_flow.jpg)
+![Payment flow](../images/developer/core/payment_flow.jpg)

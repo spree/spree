@@ -252,7 +252,7 @@ the order and not to actual shipments.
 The popular active_shipping extension harnesses the active_shipping gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
 
 ***
-     To install the spree-active-shipping extension add the following to your Gemfile: 
+     To install the spree-active-shipping extension add the following to your Gemfile:
 ***
 
 ```ruby
@@ -406,7 +406,7 @@ class Calculator::Usps::FirstClassMailParcels < Calculator::Usps::Base
     def self.description
         "USPS First-Class Mail Parcel"
     end
-    
+
     def available?(order)
         multiplier = 1.3
         weight = order.line_items.inject(0) do |weight, line_item|
@@ -424,7 +424,7 @@ end
 
 Split shipments are a new feature as of Spree 2.0 that addresses the needs of complex Spree stores that require sophisticated shipping and warehouse logic. This includes detailed inventory management and allows for shipping from multiple locations.
 
-![image](/images/developer/core/split_shipments_checkout.png)
+![image](../images/developer/core/split_shipments_checkout.png)
 
 ### Creating Proposed Shipments
 

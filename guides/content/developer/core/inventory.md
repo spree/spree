@@ -35,7 +35,7 @@ Note: Stock items are created automatically for each stock location you have. Yo
 
 ### Stock Movements
 
-![image](/images/developer/core/stock_movements.png)
+![image](../images/developer/core/stock_movements.png)
 
 Stock movements allow you to mange the inventory of a stock item for a stock location. Stock movements are created in the admin interface by first navigating to the product you want to manage. Then, follow the **Stock Management** link in the sidebar.
 
