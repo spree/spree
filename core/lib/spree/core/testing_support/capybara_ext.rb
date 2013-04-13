@@ -41,37 +41,25 @@ module CapybaraExt
     select_select2_result(value)
   end
 
-  # Usage :
-  #
-  # No remote data loading
-  # select2 'shirt', :from => 'Taxon', :remote => false
-  #
-  # With remote data loading
-  # select2 'shirt', :from => 'Taxon'
   def select2(value, options)
     id = find_label_by_text(options[:from])
 
-    if options.delete(:remote)
-      # generate select2 id
-      options[:from] = "#s2id_#{id}"
-      targetted_select2(value, options)
-    else
-      # when no remote data loading, select2 has different markup : a common container for select values
-      find('ul.select2-choices').click
-      first("#select2-drop div.select2-result-label:contains('#{value}')").click
-    end
+    # generate select2 id
+    options[:from] = "#s2id_#{id}"
+    targetted_select2(value, options)
   end
 
   def targetted_select2(value, options)
     # find select2 element and click it
-    find(options[:from]).find('a').click
+
+    find(options[:from]).find('a, ul.select2-choices').click
     select_select2_result(value)
   end
 
   def select_select2_result(value)
     #p %Q{$("div.select2-result-label:contains('#{value}')").mouseup()}
     sleep(1)
-    page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
+    find(:xpath, "//div[@class='select2-result-label' and contains(., '#{value}')]").click
   end
 
   def find_label_by_text(text)
