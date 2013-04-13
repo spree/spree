@@ -109,7 +109,7 @@ describe "Products" do
 
         click_link "Products"
 
-        select2 'shirt', :from => 'Taxon', :remote => false
+        select2 'shirt', :from => 'Taxon'
 
         click_icon :search
         page.should have_content('zomg shirt')

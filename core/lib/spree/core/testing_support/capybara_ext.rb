@@ -52,7 +52,7 @@ module CapybaraExt
   def targetted_select2(value, options)
     # find select2 element and click it
 
-    find(options[:from]).find('a, ul.select2-choices').click
+    find(options[:from]).find('ul.select2-choices').click
     select_select2_result(value)
   end
 
