@@ -223,7 +223,7 @@ will just need to assign to *p.on_hand*, eg *p.on_hand = 100*.
 
 ##### Shipping category
 
-A product’s [shipping category](shipping.html#shipping-category) field
+A product’s [shipping category](shipments.html#shipping-categories) field
 provides product-specific information for the shipping
 calculators, eg to indicate that a product requires additional insurance
 or can only be surface shipped. If no special conditions are needed, you
