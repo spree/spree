@@ -10,7 +10,7 @@
             checked = !has_checked
             has_checked = true if checked %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, 'data-price' => display_price(v) %>
+              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, 'data-price' => v.price_in(current_currency).display_price %>
               <label for="<%= ['products', @product.id, v.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options v %>
