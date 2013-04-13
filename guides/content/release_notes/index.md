@@ -1,5 +1,6 @@
 ---
 title: Spree
+section: version
 ---
 
 ## Release Notes
