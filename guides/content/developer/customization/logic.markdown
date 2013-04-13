@@ -19,7 +19,7 @@ standard Ruby idioms.
 Standard practice for including such changes in your application or
 extension is to create a file within the relevant **app/models** or
 **app/controllers** directory with the original class name with
-**\_decorator** appended.
+**_decorator** appended.
 
 **Adding a custom method to the Product model:**
 app/models/product_decorator.rb
@@ -109,7 +109,7 @@ ProductsController, you could include the following in your
 
 <% ruby do %>
     Spree::ProductsController.class_eval do
-      respond_override :index => { :html => 
+      respond_override :index => { :html =>
         { :success => lambda { render :partial => “shared/some_file” } } }
     end
 <% end %>
@@ -162,7 +162,7 @@ You may also add additional image sizes for use in your templates
 Default behavior is to resize the image and maintain aspect ratio (i.e.
 the :product version of a 480×400 image will be 240×200). Some commonly
 used options are:
-    
+
 -   trailing #, image will be centrally cropped, ensuring the requested
 dimensions
 -   trailing >, image will only be modified if it is currently larger

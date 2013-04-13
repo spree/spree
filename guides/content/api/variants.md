@@ -21,7 +21,7 @@ GET /api/variants?product_id=1```
 
 ### Parameters
 
-show\_deleted
+show_deleted
 : **boolean** - `true` to show deleted variants, `false` to hide them. Default: `false`. **Only available to users with an admin role.**
 
 page

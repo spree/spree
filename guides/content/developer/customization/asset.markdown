@@ -57,7 +57,7 @@ All core engines have been updated to provide four asset manifests that
 are responsible for bundling up all the JavaScript files and stylesheets
 required for that engine.
 
-For example, spree\_core provides the following manifests:
+For example, spree_core provides the following manifests:
 
     app
     |-- assets
@@ -110,7 +110,7 @@ you relocate all assets from the public directory into the relevant
 ### Managing your extension's assets
 
 We're suggesting that all third party extensions should adopt the same
-approach as spree\_core and provide the same four (or less depending on
+approach as spree_core and provide the same four (or less depending on
 what the extension requires) manifest files, using the same directory
 structure as outlined above.
 
@@ -121,8 +121,8 @@ a Rails generator to do so.
 
 For an example of an extension using a generator to install assets and
 migrations take a look at the recently added
-[install\_generator](https://github.com/spree/spree_wishlist/blob/rails3-1/lib/generators/spree_wishlist/install/install_generator.rb)
-on the rails3-1 branch of spree\_wishlist.
+[install_generator](https://github.com/spree/spree_wishlist/blob/rails3-1/lib/generators/spree_wishlist/install/install_generator.rb)
+on the rails3-1 branch of spree_wishlist.
 
 ### Overriding Spree's core assets
 
@@ -191,11 +191,11 @@ var show_variant_images = function(variant_id) {
   $('li.vtmb-' + variant_id).show();
   var currentThumb = $('#' +
     $("#main-image").data('selectedThumbId'));
- 
-  // if currently selected thumb does not belong to current variant, 
+
+  // if currently selected thumb does not belong to current variant,
   // nor to common images,
   // hide it and select the first available thumb instead.
- 
+
   if(!currentThumb.hasClass('vtmb-' + variant_id) &&
     !currentThumb.hasClass('tmb-all')) {
    var thumb = $($('ul.thumbnails li:visible').eq(0));

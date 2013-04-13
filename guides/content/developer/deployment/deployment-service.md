@@ -305,7 +305,7 @@ application, complete the following steps:
 Sample Procfile containing Delayed Job workers:
 
 ```bash
-web: bundle exec unicorn_rails -c /data/app\_name/shared/config/unicorn.rb -p $PORT -E production
+web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E production
 worker: bundle exec rake jobs:work```
 
 ### Changing process concurrency

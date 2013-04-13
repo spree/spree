@@ -14,7 +14,7 @@ take some time to review the [official Rails i18n
 guide](http://guides.rubyonrails.org/i18n.html) and the "rails-i18n.org
 wiki":http://rails-i18n.org/wiki to help you get started.
 
-### The spree\_i18n project
+### The spree_i18n project
 
 Spree now stores all of the translation information in a separate GitHub project
 known as [spree_i18n](https://github.com/spree/spree_i18n).  This is a stand

@@ -16,7 +16,7 @@ GET /api/products?page=2```
 
 ### Parameters
 
-show\_deleted
+show_deleted
 : **boolean** - `true` to show deleted products, `false` to hide them. Default: `false`. **Only available to users with an admin role.**
 
 page
