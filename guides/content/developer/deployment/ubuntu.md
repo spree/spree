@@ -1,5 +1,5 @@
 ---
-title: "Deploying to Heroku"
+title: "Deploying to Ubuntu"
 section: deployment
 ---
 
