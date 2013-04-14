@@ -5,7 +5,7 @@ section: tutorial
 
 ## Introduction
 
-This tutorial continues where we left off in the <%= link_to "Getting Started", 'getting_started' %>) tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
+This tutorial continues where we left off in the <%= link_to "Getting Started", 'getting_started' %> tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
 
 ### What is a Spree Extension?
 
