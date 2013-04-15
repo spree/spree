@@ -127,7 +127,8 @@ provides a simple way of installing a version of Ruby onto your server.
 
 To install it, run these command:
 
-    curl -L https://get.rvm.io | bash -s stable . ~/.bashrc
+    curl -L https://get.rvm.io | bash -s stable 
+    . ~/.bashrc
 
 Next, you will need to install the operating system dependencies required for
 Ruby. When you run `rvm requirements`, these dependencies are listed underneath
@@ -397,7 +398,8 @@ for your application to use. This database should have the same name as the
 server's deploy user account, which in this guide has been "spree" so far. Yours
 could be different. To set up this database, run this command as `root`:
 
-    sudo -u postgres createdb spree sudo -u postgres createuser spree
+    sudo -u postgres createdb spree 
+    sudo -u postgres createuser spree
 
 To get your application to connect to this database, you will need to set up a
 `database.yml` file on the server. This file needs to be kept on the server in a
