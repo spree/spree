@@ -33,5 +33,5 @@ response will be:
 <pre class="headers"><code>Sample: New Product Response</code></pre>
 <%= json :new_product_push_response %>
 
-Spree Professional when then route this message to the Spree store for processing, and any other consumers that are registered for that event.
+Spree Professional will then route this message to the Spree store for processing, and any other consumers that are registered for that event.
 
