@@ -170,6 +170,9 @@ Spree::Core::Engine.routes.append do
     resources :shipping_categories
     resources :stock_locations do
       resources :stock_movements
+      collection do
+        post :transfer_stock
+      end
     end
     resources :stock_movements
     resources :stock_items, :only => :update

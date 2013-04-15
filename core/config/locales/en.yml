@@ -595,6 +595,7 @@ en:
   missing_required_information: "Missing Required Information"
   month: Month
   more: More
+  move_stock_between_locations: "Move Stock Between Locations"
   my_account: "My Account"
   my_orders: "My Orders"
   name: Name
@@ -1085,6 +1086,8 @@ en:
   stock_location: "Stock Location"
   stock_movements_for_stock_location: "Stock Movements for %{stock_location_name}"
   stock_movements_for_product: "Stock Movements for %{product_name}"
+  stock_not_transferred: "There was a problem transferring stock between locations."
+  stock_successfully_transferred: "Stock was successfully transferred between locations."
   stop: Stop
   store: Store
   street_address: "Street Address"
@@ -1134,6 +1137,9 @@ en:
   tracking_url_placeholder: "e.g. http://quickship.com/package?num=:tracking"
   transaction: Transaction
   transactions: Transactions
+  transfer_from_location: "Transfer From"
+  transfer_stock: "Transfer Stock"
+  transfer_to_location: "Transfer To"
   tree: Tree
   try_again: "Try Again"
   type: Type
