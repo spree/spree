@@ -15,7 +15,7 @@ describe Spree::Admin::ResourceController do
       expect {
 				spree_post :update_positions, :id => variant.id, :positions => { variant.id => '2', variant2.id => '1' }, :format => "js"
         variant.reload
-      }.to change(variant, :position).from(nil).to(2)
+      }.to change(variant, :position).from(1).to(2)
     end
 
   end
