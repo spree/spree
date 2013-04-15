@@ -184,7 +184,7 @@ command:
 
 It should output something similar to this:
 
-    ruby 1.9.3p194 (2012-04-20 revision 35410) [i686-linux]
+    ruby 1.9.3p392 (2013-02-22 revision 39386) [i686-linux]
 
 You now have a version of Ruby correctly configured on your server.
 
