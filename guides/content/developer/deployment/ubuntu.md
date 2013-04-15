@@ -34,7 +34,8 @@ called "spree", but you may choose to call it whatever you wish.
 
 To set up this new user, run these commands on the server:
 
-    useradd -d /home/spree -m -s /bin/bash spree passwd spree
+    useradd -d /home/spree -m -s /bin/bash spree 
+    passwd spree
 
 Set a new password for the user and remember it, as you will require it in just
 a moment.
