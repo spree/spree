@@ -289,7 +289,8 @@ default_environment["RAILS_ENV"] = 'production'
 With that configuration, your `config/deploy.rb` should look like this:
 
 ```ruby
-set :application, "[name]" set :repository,  "[repository]"
+set :application, "[name]" 
+set :repository,  "[repository]"
 set :scm, :git
 server = "[your server's address]"
 
