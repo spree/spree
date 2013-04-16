@@ -8,7 +8,7 @@ SUMMARY
 
 Spree is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by a dedicated
-[core team](http://spreecommerce.com/core-team). You can find out more by
+[core team](https://github.com/spree/spree/wiki/Core-Team). You can find out more by
 visiting the [Spree e-commerce project page](http://spreecommerce.com).
 
 Spree actually consists of several different gems, each of which are maintained
