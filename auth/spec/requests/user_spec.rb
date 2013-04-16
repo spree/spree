@@ -22,7 +22,8 @@ describe "Users" do
   it "admin editing roles" do
     check "user_role_user"
     click_button "Update"
-    page.should have_content("Account updated!")
+    page.should have_content("User has been successfully updated!")
+    within('table#listing_users') { click_link "Edit" }
     find_field('user_role_user')['checked'].should be_true
   end
 
