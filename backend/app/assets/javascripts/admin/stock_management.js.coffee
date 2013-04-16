@@ -1,11 +1,9 @@
 jQuery ->
-  $('#stock_item_backorderable').live 'click', ->
+  $('.stock_item_backorderable').live 'click', ->
     $(@).parent('form').submit()
-  $('#toggle_stock_item_backorderable').submit ->
+  $('.toggle_stock_item_backorderable').submit ->
     $.ajax
       type: @method
       url: @action
       data: $(@).serialize()
-      success: ->
-        return
     false
