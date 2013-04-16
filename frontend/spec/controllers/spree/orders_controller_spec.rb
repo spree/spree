@@ -75,4 +75,18 @@ describe Spree::OrdersController do
       response.should redirect_to(spree.cart_path)
     end
   end
+
+  # Regression test for #2750
+  context "#update" do
+    before do
+      user.stub :last_incomplete_spree_order
+      controller.stub :set_current_order
+    end
+
+    it "cannot update a blank order" do
+      spree_put :update, :order => { :email => "foo" }
+      flash[:error] = I18n.t(:order_edit)
+      response.should redirect_to(spree.root_path)
+    end
+  end
 end
