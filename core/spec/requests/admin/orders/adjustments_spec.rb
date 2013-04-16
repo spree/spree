@@ -7,6 +7,8 @@ describe "Adjustments" do
     visit spree.admin_path
     order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
     create(:adjustment, :adjustable => order)
+    create(:adjustment, :label => 'ineligible', :eligible => false,
+           :locked => true, :adjustable => order)
     click_link "Orders"
     within(:css, 'table#listing_orders tbody tr:nth-child(1)') { click_link "Edit" }
     click_link "Adjustments"
@@ -16,6 +18,10 @@ describe "Adjustments" do
     it "should display the correct values for existing order adjustments" do
       find('table.index tr:nth-child(2) td:nth-child(2)').text.should == "Shipping"
       find('table.index tr:nth-child(2) td:nth-child(3)').text.should == "$100.00"
+    end
+
+    it "only shows eligible adjustments" do
+      page.should_not have_content("ineligible")
     end
   end
 
