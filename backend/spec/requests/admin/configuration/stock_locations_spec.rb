@@ -47,7 +47,7 @@ describe "Stock Locations" do
     page.should have_content("London")
   end
 
-  context "tranferring stock", js: true do
+  context "when tranferring stock", js: true do
     let!(:la) { create(:stock_location_with_items, name: "Los Angeles") }
     let!(:boston) { create(:stock_location_with_items, name: "Boston") }
 
@@ -69,21 +69,20 @@ describe "Stock Locations" do
       boston.reload.stock_item(variant).count_on_hand.should == 5
     end
 
-    it "shows an error when failing to transfer stock between two locations" do
-      Spree::StockMovement.any_instance.stub(save: false)
+    it "shows an error when the source location does not have enough stock" do
       visit current_path
       variant = la.stock_items.first.variant
-      la.stock_item(variant).count_on_hand.should == 10
-      boston.stock_item(variant).count_on_hand.should == 0
+      la.stock_item(variant).update_column(:count_on_hand, 0)
 
       select2 "Los Angeles", from: "Transfer From"
       select2 "Boston", from: "Transfer To"
       select2 "#{variant.name}", from: "Variant"
+      fill_in "Quantity", with: 5
 
       click_button "Transfer Stock"
 
-      page.should have_content("problem transferring")
-      la.reload.stock_item(variant).count_on_hand.should == 10
+      page.should have_content("not enough inventory")
+      la.reload.stock_item(variant).count_on_hand.should == 0
       boston.reload.stock_item(variant).count_on_hand.should == 0
     end
   end

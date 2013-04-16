@@ -39,6 +39,11 @@ module Spree
       stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
     end
 
+    def transfer_stock(variant, quantity, destination)
+      move(variant, -quantity, self)
+      destination.move(variant, quantity, self)
+    end
+
     def fill_status(variant, quantity)
       item = stock_item(variant)
 
