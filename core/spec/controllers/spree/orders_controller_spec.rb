@@ -81,5 +81,17 @@ describe Spree::OrdersController do
     end
   end
 
-  #TODO - move some of the assigns tests based on session, etc. into a shared example group once new block syntax released
+  # Regression test for #2750
+  context "#update" do
+    before do
+      user.stub :last_incomplete_spree_order
+      controller.stub :set_current_order
+    end
+
+    it "cannot update a blank order" do
+      spree_put :update, :order => { :email => "foo" }
+      flash[:error] = I18n.t(:order_edit)
+      response.should redirect_to(spree.root_path)
+    end
+  end
 end

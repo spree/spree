@@ -654,7 +654,8 @@ en:
       order_summary_canceled: "Order Summary [CANCELED]"
       subtotal: "Subtotal: %{subtotal}"
       total: "Order Total: %{total}"
-  order_not_in_system: That order number is not valid on this site.
+  order_not_found: "We couldn't find your order. Please try that action again."
+  order_not_in_system: "That order number is not valid on this site."
   order_number: Order
   order_operation_authorize: Authorize
   order_populator:
