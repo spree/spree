@@ -8,7 +8,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @order.adjustments.each do |adjustment|
+    <% @collection.each do |adjustment|
          @edit_url = edit_admin_order_adjustment_path(@order, adjustment)
          @delete_url = admin_order_adjustment_path(@order, adjustment)
     %>
