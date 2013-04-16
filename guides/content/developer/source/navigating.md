@@ -16,11 +16,8 @@ following topics:
 ## Git
 
 The Spree source code is currently maintained in a
-[Git](http://git.or.cz/) repository. Git is a distributed version
-control system (DVCS) and it allows us to do things never before
-possible with SVN. If you're skeptical of Git just remember how
-skeptical you were of SVN when you were using CVS. The differences are
-subtle but important and they are best understood by hands on use.
+[Git](http://git-scm.com/) repository. Git is a distributed version
+control system (DVCS)
 
 The authoritative git repository is hosted by
 [GitHub](https://github.com/) and is located in the
@@ -28,18 +25,12 @@ The authoritative git repository is hosted by
 clone the git repository using the following command:
 
 ```bash
-$ git clone git://github.com/spree/spree.git
-```
+$ git clone git://github.com/spree/spree.git```
 
 ***
 If you are planning on contributing to Spree you should create a
 fork through GitHub and push fixes to clearly labeled branches (see the
 <%= link_to "Contributors Guide", 'contributing' %> for details.)
-***
-
-***
-If the official GitHub repo is down you can try our mirror at
-[repo.or.cz](http://repo.or.cz/w/spree.git)
 ***
 
 ### Browsing the Repository and/or Downloading the Source Code
@@ -55,11 +46,6 @@ versions](https://github.com/spree/spree/tags).
 There are some well developed Git clients for Windows now. If you are on
 a Windows box you might want to check out the
 [msysgit](http://code.google.com/p/msysgit/) project.
-
-### SVN
-
-There are no immediate plans to support SVN clients. Since most of the
-Rails community is using git, SVN support is not really a priority.
 
 ### Monitoring Changes in the Source
 
@@ -79,8 +65,7 @@ You can install the gem dependencies for Spree after cloning the
 repository using this Bundler-provided command:
 
 ```bash
-$ bundle install
-```
+$ bundle install```
 
 This allows you to quickly and painlessly have the exact gem depedencies
 you need to work with Bundler.
@@ -98,16 +83,15 @@ functionality provided by each of these gems.
 Within the Spree source, each of the gems is organized into
 subdirectories as follows:
 
-| Gem          | Directory | Description               |
-| :------------| :---------| :-------------------------|
-| spree_api    | api       | Provides REST API access  |
-| spree_auth   | auth      | Provides authentication and authorization (via authlogic and cancan gems) |
-| spree_cmd    | cmd       | Command line utility for installing Spree and creating extensions |
-| spree_core   | core      | Core functionality - all other gems depend on this gem |
-| spree_dash   | dash      | Simple overview dashboard |
-| spree_promo  | promo     | Coupons and promotions    |
-| spree_sample | sample    | Sample data and images    |
-  
+| Gem            | Directory | Description               |
+| :--------------| :---------| :-------------------------|
+| spree_api      | api       | Provides REST API access  |
+| spree_backend  | core      | Backend functionality     |
+| spree_cmd      | cmd       | Command line utility for installing Spree and creating extensions |
+| spree_core     | core      | Core functionality - all other gems depend on this gem |
+| spree_frontend | promo     | Coupons and promotions    |
+| spree_dash     | dash      | Simple overview dashboard |
+| spree_sample   | sample    | Sample data and images    |
  
 ### Use of Rails Engines
 
@@ -140,8 +124,7 @@ appropriate here. Please consult the Rails Guides for more information.
 Using a Spree gem is as simple as adding it to your *Gemfile*:
 
 ```ruby
-gem 'spree_core', '0.70.3'
-```
+gem 'spree_core', '2.0.0'```
 
 Distribution of Spree (and its extensions) is also consistent with Rails
 standards and modularity (see next.)
@@ -168,17 +151,15 @@ For instance, if you were to specify something like this in your
 application's *Gemfile*:
 
 ```ruby
-gem 'spree', '0.70.3'
-```
+gem 'spree', '2.0.0'```
 
 It would require all the individual parts of Spree. However, if you only
-wanted to require the “core” and “promo” parts of Spree, you would do
+wanted to require the “core” and “backend” parts of Spree, you would do
 this:
 
 ```ruby
-gem 'spree_core', '0.70.3'
-gem 'spree_promo', '0.70.3'
-```
+gem 'spree_core', '2.0.0'
+gem 'spree_backend', '2.0.0'```
 
 ## Building a Sandbox Application
 
@@ -192,8 +173,7 @@ To run this Rake task, go into the root of the Spree project and run
 this command:
 
 ```bash
-$ bundle exec rake sandbox
-```
+$ bundle exec rake sandbox```
 
 This will create a barebones rails application configured with the Spree
 gem. It runs the migrations for you and sets up the sample data. The
@@ -207,22 +187,19 @@ commands in the root of the Spree project to do this:
 
 ```bash
 $ bundle exec rake clean
-$ bundle exec rake gem
-```
+$ bundle exec rake gem```
 
 Most likely you will want to build and install of the related gems.
 Fortunately there is a simple Rake task for that.
 
 ```bash
-$ bundle exec rake gem:install
-```
+$ bundle exec rake gem:install```
 
 You can also build just one specific gem.
 
 ```bash
 $ cd core
-$ bundle exec rake gem
-```
+$ bundle exec rake gem```
 
 ## Tips for Working with the Source
 
@@ -233,8 +210,7 @@ to contributing to it) then the simplest thing to do is add a *:git*
 directive to your *Gemfile* and point it at the master branch.
 
 ```ruby
-gem 'spree', :git => 'git://github.com/spree/spree.git'
-```
+gem 'spree', :github => 'spree/spree'```
 
 This will effectively use the latest code from the Git repository at the
 time you run *bundle install*. This version of the code will be “frozen”
@@ -244,8 +220,7 @@ are. You will need to update the bundle if you want to update to code
 that is newer since the last time you updated.
 
 ```bash
-$ bundle update
-```
+$ bundle update```
 
 ### Developing on the “Edge”
 
@@ -258,8 +233,9 @@ the following in your Gemfile.
 ```ruby
 gem 'spree', :path => '../spree'
 ```
+
 ***
-See the excellent [bundler documentation](http://gembundler.com)
+See the excellent [Bundler documentation](http://gembundler.com)
 for more details.
 ***
 
@@ -269,8 +245,7 @@ Spree provides a convenient generator for helping you to get started
 with extensions.
 
 ```bash
-$ spree extension foo
-```
+$ spree extension foo```
 
 ***
 You need to have the Spree gem installed in order to use the
