@@ -41,6 +41,19 @@ describe "Users" do
     end
   end
 
+  context "creating users" do
+    it "should let me create a new user" do
+      click_link "New User"
+      fill_in "user_email", :with => "new@example.com"
+      fill_in "user_password", :with => "password"
+      fill_in "user_password_confirmation", :with => "password"
+      click_button "Create"
+
+      page.should have_content("successfully created!")
+      page.should have_content("new@example.com")
+    end
+  end
+
   context "editing users" do
     before(:each) do
       click_link("a@example.com")
