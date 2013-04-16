@@ -23,7 +23,7 @@ describe Spree::CheckoutController do
     end
 
     it "should redirect to the cart path if current_order is nil" do
-      controller.stub!(:current_order).and_return(nil)
+      controller.stub(:current_order).and_return(nil)
       spree_get :edit, { :state => "delivery" }
       response.should redirect_to(spree.cart_path)
     end
@@ -162,7 +162,7 @@ describe Spree::CheckoutController do
     end
 
     context "when current_order is nil" do
-      before { controller.stub! :current_order => nil }
+      before { controller.stub :current_order => nil }
 
       it "should not change the state if order is completed" do
         order.should_not_receive(:update_attribute)
