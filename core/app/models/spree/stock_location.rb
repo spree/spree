@@ -9,7 +9,7 @@ module Spree
     validates_presence_of :name
 
     attr_accessible :name, :active, :address1, :address2, :city, :zipcode,
-                    :state_name, :state_id, :country_id, :phone
+                    :state_name, :state_id, :country_id, :phone, :country_id
 
     scope :active, -> { where(active: true) }
 
