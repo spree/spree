@@ -117,13 +117,13 @@ When tax is included in the price there is no order adjustment needed (unlike th
 
 Let's start by looking at an example where there is a 5% included on all products and it's included in the price. We'll further assume that this tax should only apply to orders within the United Kingdom (UK).
 
-In the case where the order address is within the UK and we purchase a single clothing item for £17.99 we see an order total of £17.99. The tax rate adjustment applied is £17.99 x 5%, which is £0.8995, and that is rounded up to two decimal places, becoming £0.90.
+In the case where the order address is within the UK and we purchase a single clothing item for &pound;17.99 we see an order total of &pound;17.99. The tax rate adjustment applied is &pound;17.99 x 5%, which is &pound;0.8995, and that is rounded up to two decimal places, becoming &pound;0.90.
 
-Now let's increase the quantity on the item from 1 to 2. The order total changes to £35.98 with a tax total of £1.799, which is again rounded up to now being £1.80.
+Now let's increase the quantity on the item from 1 to 2. The order total changes to &pound;35.98 with a tax total of &pound;1.799, which is again rounded up to now being &pound;1.80.
 
-Next we'll add a different clothing item costing £19.99 to our order. Since both items are clothing and taxed at the same rate, they can be reduced to a single total, which means there's a single adjustment still applied to the order, calculated like this: (£17.99 + £19.99) x 0.05 = £1.899, rounded up to two decimal places: £1.90.
+Next we'll add a different clothing item costing &pound;19.99 to our order. Since both items are clothing and taxed at the same rate, they can be reduced to a single total, which means there's a single adjustment still applied to the order, calculated like this: (&pound;17.99 + &pound;19.99) x 0.05 = &pound;1.899, rounded up to two decimal places: &pound;1.90.
 
-Now let's assume an additional tax rate of 10% on a "Consumer Electronics" tax category. When we add a product with this tax category to our order with a price of £16.99, there will be a second adjustment added to the order, with a calculated total of £16.99 x 10%, which is £1.699. Rounded up, it's £1.70.
+Now let's assume an additional tax rate of 10% on a "Consumer Electronics" tax category. When we add a product with this tax category to our order with a price of &pound;16.99, there will be a second adjustment added to the order, with a calculated total of &pound;16.99 x 10%, which is &pound;1.699. Rounded up, it's &pound;1.70.
 
 Finally, if the order's address is changed to being outside this tax zone, then there will be two negative adjustments applied to remove these tax rates from the order.
 
@@ -136,5 +136,6 @@ All of the examples in this guide are meant to be used for illustrative purposes
 ### Quebec Sales Tax (QST)
 
 In Quebec, Canada there are two different tax rates to consider. There is the Goods and Services Tax (GST) which is calculated at 5% of the sales price. There is also the Quebec Sales Tax of 9.5% on the sale price including GST.
+
 
 Since Spree does not currently support the notion of compound tax rates you can calculate a combined sales tax amount instead. In this case you can create a single sales tax rate of 14.975%. This approach is allowed [according to the Quebec government](http://www.revenuquebec.ca/en/entreprise/taxes/tvq_tps/calcul-taxes.aspx). Follow the link for details.
