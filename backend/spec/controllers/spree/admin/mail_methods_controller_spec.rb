@@ -12,7 +12,8 @@ describe Spree::Admin::MailMethodsController do
 
   it "can trigger testmail" do
     request.env["HTTP_REFERER"] = "/"
-    controller.stub(:try_spree_current_user => double('User', email: 'user@spree.com'))
+    user = double('User', email: 'user@spree.com', spree_api_key: 'fake')
+    controller.stub(:try_spree_current_user => user)
     Spree::Config[:enable_mail_delivery] = "1"
 
     expect {
