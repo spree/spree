@@ -222,7 +222,6 @@ describe "Order Details", js: true do
     end
 
     it 'can ship' do
-      create(:mail_method)
       order = create(:order_ready_to_ship)
       visit spree.edit_admin_order_path(order)
       click_icon 'arrow-right'

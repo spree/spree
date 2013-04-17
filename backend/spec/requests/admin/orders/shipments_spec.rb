@@ -7,7 +7,6 @@ describe "Shipments" do
 
   context "shipping an order", js: true do
     before(:each) do
-      create(:mail_method)
       visit spree.admin_path
       click_link "Orders"
       within_row(1) do
