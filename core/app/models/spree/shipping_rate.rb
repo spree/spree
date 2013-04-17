@@ -4,7 +4,7 @@ module Spree
     belongs_to :shipping_method, class_name: 'Spree::ShippingMethod'
 
     attr_accessible :id, :shipping_method, :shipment,
-                    :name, :cost, :selected
+                    :name, :cost, :selected, :shipping_method_id
 
     delegate :order, :currency, to: :shipment
     delegate :name, to: :shipping_method
