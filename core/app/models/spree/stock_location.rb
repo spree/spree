@@ -16,7 +16,7 @@ module Spree
     after_create :create_stock_items
 
     def stock_item(variant)
-      stock_items.where(variant_id: variant).first
+      stock_items.where(variant_id: variant).order(:id).first
     end
 
     def count_on_hand(variant)
