@@ -55,7 +55,7 @@ module Spree
       source = create(:stock_location_with_items)
       destination = create(:stock_location_with_items)
       source.stock_items.first.update_column(:count_on_hand, 10)
-      variant = source.stock_items.first.variant
+      variant = source.stock_items.order(:id).first.variant
 
       source.transfer_stock(variant, 5, destination)
       source.stock_item(variant).count_on_hand.should == 5
