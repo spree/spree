@@ -12,7 +12,7 @@ module Spree
         end
 
         variants = { @variant => params[:quantity].to_i }
-        stock_transfer = StockTransfer.create
+        stock_transfer = StockTransfer.create(:reference_number => params[:reference_number])
         stock_transfer.transfer(source_location,
                                 destination_location,
                                 variants)
