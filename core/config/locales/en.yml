@@ -289,6 +289,7 @@ en:
   back_to_tax_categories_list: "Back To Tax Categories List"
   back_to_taxonomies_list: "Back To Taxonomies List"
   back_to_trackers_list: "Back To Trackers List"
+  back_to_users_list: "Back To Users List"
   back_to_zones_list: "Back To Zones List"
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
