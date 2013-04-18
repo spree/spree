@@ -51,17 +51,6 @@ module Spree
       Spree::StockLocation.active.count.should eq 1
     end
 
-    it 'can transfer stock between two locations' do
-      source = create(:stock_location_with_items)
-      destination = create(:stock_location_with_items)
-      source.stock_items.first.update_column(:count_on_hand, 10)
-      variant = source.stock_items.first.variant
-
-      source.transfer_stock(variant, 5, destination)
-      source.stock_item(variant).count_on_hand.should == 5
-      destination.stock_item(variant).count_on_hand.should == 5
-    end
-
     context 'fill_status' do
       it 'all on_hand with no backordered' do
         on_hand, backordered = subject.fill_status(variant, 5)
