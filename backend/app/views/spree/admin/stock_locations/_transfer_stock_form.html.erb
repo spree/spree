@@ -30,6 +30,13 @@
       </div>
     </div>
 
+    <div class="ten columns">
+      <div class="field" id="stock_movement_reference_number_field">
+        <%= label_tag 'reference_number', t(:reference_number) %>
+        <%= text_field_tag :reference_number %> (<%= t(:optional) %>)
+      </div>
+    </div>
+
     <div class="form-buttons filter-actions actions" data-hook="buttons">
       <%= button t(:transfer_stock), 'icon-plus' %>
       <span class="or"><%= t(:or) %></span>
