@@ -3,14 +3,7 @@ require 'spec_helper'
 describe "Checkout" do
   let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
   let!(:state) { create(:state, :name => "Victoria", :country => country) }
-  let!(:shipping_method) do
-    shipping_method = create(:shipping_method)
-    calculator = Spree::Calculator::Shipping::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
-    shipping_method.calculator = calculator
-    shipping_method.save
-
-    shipping_method
-  end
+  let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
 
   let!(:payment_method) { create(:payment_method) }
@@ -85,6 +78,28 @@ describe "Checkout" do
 
         click_button "Save and Continue"
         page.should have_content(shipping_method.name)
+      end
+
+      # Regression test, no issue number
+      it "does not create a closed adjustment for an order's shipment upon reaching the delivery step", :js => true do
+        visit spree.root_path
+        click_link "RoR Mug"
+        click_button "add-to-cart-button"
+        click_button "Checkout"
+
+        fill_in "order_email", :with => "ryan@spreecommerce.com"
+        address = "order_bill_address_attributes"
+        fill_in "#{address}_firstname", :with => "Ryan"
+        fill_in "#{address}_lastname", :with => "Bigg"
+        fill_in "#{address}_address1", :with => "143 Swan Street"
+        fill_in "#{address}_city", :with => "Richmond"
+        select "Kangaland", :from => "#{address}_country_id"
+        select "Victoria", :from => "#{address}_state_id"
+        fill_in "#{address}_zipcode", :with => "12345"
+        fill_in "#{address}_phone", :with => "(555) 5555-555"
+
+        click_button "Save and Continue"
+        Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
       end
     end
   end

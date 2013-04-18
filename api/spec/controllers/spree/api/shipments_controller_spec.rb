@@ -129,6 +129,7 @@ describe Spree::Api::ShipmentsController do
 
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
+        Spree::ShippingRate.any_instance.stub(:cost => 5)
       end
 
       it "can transition a shipment from ready to ship" do
