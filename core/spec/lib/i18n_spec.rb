@@ -31,6 +31,10 @@ describe "i18n" do
     Spree.normal_t(:foo, :scope => ["bar"]).should eql("bar within bar scope")
   end
 
+  it "returns two translations" do
+    Spree.normal_t([:foo, 'bar.foo']).should eql(["bar", "bar within bar scope"])
+  end
+
   context "missed + unused translations" do
     def key_with_locale(key)
       "#{key} (#{I18n.locale})"
@@ -57,6 +61,12 @@ describe "i18n" do
 
       it "does not log present translations" do
         Spree.t(:foo)
+        Spree.check_missing_translations
+        Spree.missing_translation_messages.should be_empty
+      end
+
+      it "does not break when asked for multiple translations" do
+        Spree.t [:foo, 'bar.foo']
         Spree.check_missing_translations
         Spree.missing_translation_messages.should be_empty
       end
