@@ -18,12 +18,16 @@ module Spree
     original_args = args.dup
     options = args.extract_options!
     self.used_translations ||= []
-    self.used_translations << ([*options[:scope]] << args.first).join('.')
+    args.first.each do |translation_key|
+      key = ([*options[:scope]] << translation_key).join('.')
+      self.used_translations << key
+    end
     normal_t(*original_args)
   end
 
   def self.check_missing_translations
     self.missing_translation_messages = []
+    self.used_translations ||= []
     used_translations.map { |a| a.split('.') }.each do |translation_keys|
       root = translations
       processed_keys = []
