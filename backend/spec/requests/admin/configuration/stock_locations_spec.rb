@@ -48,44 +48,4 @@ describe "Stock Locations" do
     page.should have_content("successfully updated")
     page.should have_content("London")
   end
-
-  context "when tranferring stock", js: true do
-    let!(:la) { create(:stock_location_with_items, name: "Los Angeles") }
-    let!(:boston) { create(:stock_location_with_items, name: "Boston") }
-
-    it "can transfer stock between two locations" do
-      visit current_path
-      variant = la.stock_items.order(:id).first.variant
-      la.stock_item(variant).count_on_hand.should == 10
-      boston.stock_item(variant).count_on_hand.should == 0
-
-      select2 "Los Angeles", from: "Transfer From"
-      select2 "Boston", from: "Transfer To"
-      select2 "#{variant.name}", from: "Variant"
-      fill_in "Quantity", with: 5
-
-      click_button "Transfer Stock"
-
-      page.should have_content("successfully transferred")
-      la.reload.stock_item(variant).count_on_hand.should == 5
-      boston.reload.stock_item(variant).count_on_hand.should == 5
-    end
-
-    it "shows an error when the source location does not have enough stock" do
-      visit current_path
-      variant = la.stock_items.order(:id).first.variant
-      la.stock_item(variant).update_column(:count_on_hand, 0)
-
-      select2 "Los Angeles", from: "Transfer From"
-      select2 "Boston", from: "Transfer To"
-      select2 "#{variant.name}", from: "Variant"
-      fill_in "Quantity", with: 5
-
-      click_button "Transfer Stock"
-
-      page.should have_content("not enough inventory")
-      la.reload.stock_item(variant).count_on_hand.should == 0
-      boston.reload.stock_item(variant).count_on_hand.should == 0
-    end
-  end
 end

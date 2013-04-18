@@ -5,7 +5,7 @@ module Spree
       helper_method :stock_location
 
       def index
-        @stock_movements = stock_location.stock_movements
+        @stock_movements = stock_location.stock_movements.recent.page(params[:page])
       end
 
       def new

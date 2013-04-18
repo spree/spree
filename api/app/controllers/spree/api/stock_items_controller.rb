@@ -63,7 +63,7 @@ module Spree
       end
 
       def scope
-        @stock_location.stock_items
+        @stock_location.stock_items.includes(:variant => :product)
       end
     end
   end
