@@ -22,6 +22,7 @@ if ENV["CHECK_TRANSLATIONS"]
   require "support/i18n"
 end
 
+require "support/big_decimal"
 require "support/test_gateway"
 
 require 'spree/testing_support/factories'
