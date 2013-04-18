@@ -2,7 +2,7 @@ var update_state = function(region) {
   var country        = $('span#' + region + 'country .select2').select2('val');
   var states         = state_mapper[country];
 
-  var state_select   = $('span#' + region + 'state .select2');
+  var state_select   = $('span#' + region + 'state select.select2');
   var state_input    = $('span#' + region + 'state input');
 
   if(states) {
