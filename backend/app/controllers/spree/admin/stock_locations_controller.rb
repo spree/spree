@@ -32,7 +32,6 @@ module Spree
         source_location.stock_item(@variant).count_on_hand > params[:quantity].to_i
       end
 
-
       def source_location
         @source_location ||= StockLocation.find(params[:stock_location_from_id])
       end
