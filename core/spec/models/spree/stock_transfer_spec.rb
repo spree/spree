@@ -7,7 +7,9 @@ module Spree
     let(:stock_item) { source_location.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
-    subject { StockTransfer.create }
+    subject { StockTransfer.create(reference_number: 'PO123') }
+
+    its(:reference_number) { should eq 'PO123' }
 
     it 'transfers variants between 2 locations' do
       variants = { variant => 5 }
@@ -19,6 +21,15 @@ module Spree
       source_location.count_on_hand(variant).should eq 5
       destination_location.count_on_hand(variant).should eq 5
       subject.should have(2).stock_movements
+    end
+
+    it 'receive new inventory (from a vendor)' do
+      variants = { variant => 5 }
+
+      subject.receive(destination_location, variants)
+
+      destination_location.count_on_hand(variant).should eq 5
+      subject.should have(1).stock_movements
     end
   end
 end
