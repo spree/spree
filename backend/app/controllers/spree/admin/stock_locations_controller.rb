@@ -11,9 +11,13 @@ module Spree
           redirect_to :back and return
         end
 
-        if source_location.transfer_stock(@variant, params[:quantity].to_i, destination_location)
-          flash[:success] = t(:stock_successfully_transferred)
-        end
+        variants = { @variant => params[:quantity].to_i }
+        stock_transfer = StockTransfer.create
+        stock_transfer.transfer(source_location,
+                                destination_location,
+                                variants)
+        flash[:success] = t(:stock_successfully_transferred)
+
         redirect_to :back
       end
 
@@ -24,7 +28,8 @@ module Spree
       end
 
       def valid_stock_transfer?
-        source_location.stock_item(@variant).count_on_hand >= params[:quantity].to_i
+        source_location != destination_location &&
+        source_location.stock_item(@variant).count_on_hand > params[:quantity].to_i
       end
 
       def source_location
