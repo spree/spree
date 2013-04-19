@@ -11,6 +11,15 @@
   </ul>
 <% end %>
 
+<script type='text/template' id='bulk_variant_template'>
+  <tr>
+    <td>{{name}}</td>
+    <td>{{quantity}}</td>
+    <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
+    <input type='hidden' id='quantity[]' name='quantity[]' value='{{quantity}}'>
+  </tr>
+</script>
+
 <%= form_tag admin_bulk_transfer_path, :method => :post do %>
   <fieldset>
     <legend align="center"><%= t(:transfer_stock)%></legend>
@@ -23,7 +32,7 @@
         </div>
         <div class="five columns">
           <div class="field" id="receive_stock_field">
-            <%= check_box_tag :receive_stock %>
+            <%= check_box_tag :bulk_receive_stock %>
             <%= label_tag :receive_stock, t(:receive_stock) %>
           </div>
         </div>
@@ -43,32 +52,38 @@
         <div class="five columns">
           <div class="field" id="stock_movement_variant_id_field">
             <%= label_tag 'variant_id', t(:variant) %>
-            <%= select_tag 'variant[]', options_from_collection_for_select(@variants, :id, :name), class: 'select2 fullwidth' %>
+            <%= select_tag 'bulk_variant', options_from_collection_for_select(@variants, :id, :name), class: 'select2 fullwidth' %>
           </div>
         </div>
         <div class="five columns">
           <div class="field" id="stock_movement_quantity_field">
             <%= label_tag 'quantity', t(:quantity) %>
-            <%= number_field_tag 'quantity[]', 1, class: 'fullwidth' %>
+            <%= number_field_tag 'bulk_variant_quantity', 1, class: 'fullwidth' %>
           </div>
-        </div>
-        <div class="five columns">
-          <div class="field" id="stock_movement_variant_id_field">
-            <%= label_tag 'variant_id', t(:variant) %>
-            <%= select_tag 'variant[]', options_from_collection_for_select(@variants, :id, :name), class: 'select2 fullwidth' %>
-          </div>
-        </div>
-        <div class="five columns">
-          <div class="field" id="stock_movement_quantity_field">
-            <%= label_tag 'quantity', t(:quantity) %>
-            <%= number_field_tag 'quantity[]', 1, class: 'fullwidth' %>
-          </div>
+          <%= button t(:add), 'icon-plus bulk_add_variant' %>
         </div>
       </div>
+
+      <div class="ten columns">
+        <table class="index sortable">
+          <colgroup>
+            <col style="width: 50%" />
+            <col style="width: 50%" />
+          </colgroup>
+          <thead data-hook="bulk_variants_header">
+            <tr>
+              <th><%= t(:name) %></th>
+              <th><%= t(:quantity) %></th>
+            </tr>
+          </thead>
+          <tbody id="bulk_variants_tbody">
+          </tbody>
+        </table>
+      </div>
     </div>
+
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button t(:transfer_stock), 'icon-plus' %>
-      <span class="or"><%= t(:or) %></span>
+      <%= button t(:transfer_stock), 'icon-plus bulk_transfer' %>
     </div>
   </fieldset>
 <% end %>
