@@ -18,7 +18,7 @@ module Spree
     original_args = args.dup
     options = args.extract_options!
     self.used_translations ||= []
-    args.first.each do |translation_key|
+    [*args.first].each do |translation_key|
       key = ([*options[:scope]] << translation_key).join('.')
       self.used_translations << key
     end
