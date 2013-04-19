@@ -3,9 +3,9 @@
   paginated_products ||= products
 %>
 <% if products.empty? %>
-  <%= t(:no_products_found) %>
+  <%= Spree.t(:no_products_found) %>
 <% elsif params.key?(:keywords) %>
-  <h6 class="search-results-title"><%= t(:search_results, :keywords => h(params[:keywords])) %></h6>
+  <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
 <% end %>
 
 <% if products.any? %>
