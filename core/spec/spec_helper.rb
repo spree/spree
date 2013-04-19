@@ -18,12 +18,12 @@ require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
 
-if ENV["CHECK_TRANSLATIONS"]
-  require "support/i18n"
-end
-
 require "support/big_decimal"
 require "support/test_gateway"
+
+if ENV["CHECK_TRANSLATIONS"]
+  require "spree/testing_support/i18n"
+end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
