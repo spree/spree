@@ -82,12 +82,14 @@ RSpec.configure do |config|
       if Spree.missing_translation_messages.any?
         puts "\nThere are missing translations within Spree:"
         puts Spree.missing_translation_messages.sort
+        exit(1)
       end
 
       Spree.check_unused_translations
-      if Spree.unused_translation_messages.any?
+      if false && Spree.unused_translation_messages.any?
         puts "\nThere are unused translations within Spree:"
         puts Spree.unused_translation_messages.sort
+        exit(1)
       end
     end
   end
