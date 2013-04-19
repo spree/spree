@@ -24,7 +24,7 @@ module Spree
       end
 
       def valid_stock_transfer?
-        source_location.stock_item(@variant).count_on_hand > params[:quantity].to_i
+        source_location.stock_item(@variant).count_on_hand >= params[:quantity].to_i
       end
 
       def source_location
