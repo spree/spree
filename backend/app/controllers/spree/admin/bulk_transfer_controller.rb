@@ -24,7 +24,7 @@ module Spree
 
       private
       def source_location
-        @source_location ||= params.has_key?(:receive_stock) ? nil :
+        @source_location ||= params.has_key?(:bulk_receive_stock) ? nil :
                                StockLocation.find(params[:source_location_id])
       end
 
