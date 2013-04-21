@@ -16,8 +16,11 @@ describe Spree::ShipmentMailer do
     shipment
   end
 
-  before do
-    Spree::Config[:mails_from] = "spree@example.com"
+  context ":from not set explicitly" do
+    it "falls back to spree config" do
+      message = Spree::ShipmentMailer.shipped_email(shipment)
+      message.from.should == [Spree::Config[:mails_from]]
+    end
   end
 
   # Regression test for #2196
