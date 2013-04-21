@@ -88,11 +88,12 @@ module Spree
 
     # Default mail headers settings
     preference :enable_mail_delivery, :boolean, :default => false
-    preference :mails_from, :string, :default => 'no-reply@example.com'
+    preference :mails_from, :string, :default => 'spree@example.com'
     preference :mail_bcc, :string, :default => 'spree@example.com'
     preference :intercept_email, :string, :default => nil
 
     # Default smtp settings
+    preference :override_actionmailer_config, :boolean, :default => true
     preference :mail_host, :string, :default => 'localhost'
     preference :mail_domain, :string, :default => 'localhost'
     preference :mail_port, :integer, :default => 25

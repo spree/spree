@@ -6,16 +6,15 @@ module Spree
   module Core
     class MailInterceptor
       def self.delivering_email(message)
-        return if Spree::Config[:enable_mail_delivery].nil?
-        message.from ||= Spree::Config[:mails_from]
+        return unless MailSettings.override?
 
-        if Spree::Config[:intercept_email].present?
+        if Config[:intercept_email].present?
           message.subject = "#{message.to} #{message.subject}"
-          message.to = Spree::Config[:intercept_email]
+          message.to = Config[:intercept_email]
         end
 
-        if Spree::Config[:mail_bcc].present?
-          message.bcc ||= Spree::Config[:mail_bcc]
+        if Config[:mail_bcc].present?
+          message.bcc ||= Config[:mail_bcc]
         end
       end
     end
