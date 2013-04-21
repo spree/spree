@@ -2,6 +2,10 @@ $ ->
   $('#bulk_receive_stock').click ->
     $('#source_location_id_field').toggle(!this.checked)
 
+  $('button.bulk_remove_variant').live 'click', (event) ->
+    event.preventDefault()
+    $(this).parents('tr').remove()
+
   $('button.bulk_add_variant').click (event) ->
     event.preventDefault()
 
@@ -24,4 +28,3 @@ $ ->
     unless $('input#variant\\[\\]').length > 0
       alert('no variants to transfer')
       false
-
