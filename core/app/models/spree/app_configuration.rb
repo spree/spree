@@ -46,11 +46,13 @@ module Spree
     preference :default_meta_keywords, :string, :default => 'spree, demo'
     preference :default_seo_title, :string, :default => ''
     preference :dismissed_spree_alerts, :string, :default => ''
+    preference :emails_sent_from, :string, :default => 'spree@example.com'
     preference :hide_cents, :boolean, :default => false
     preference :last_check_for_spree_alerts, :string, :default => nil
     preference :layout, :string, :default => 'spree/layouts/spree_application'
     preference :logo, :string, :default => 'admin/bg/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, :default => 1 # maximum nesting level in taxons menu
+    preference :override_actionmailer_config, :boolean, :default => true
     preference :orders_per_page, :integer, :default => 15
     preference :prices_inc_tax, :boolean, :default => false
     preference :products_per_page, :integer, :default => 12
@@ -89,7 +91,5 @@ module Spree
     def searcher_class=(sclass)
       @searcher_class = sclass
     end
-
   end
-
 end
