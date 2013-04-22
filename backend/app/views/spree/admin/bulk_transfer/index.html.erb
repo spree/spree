@@ -52,7 +52,7 @@
 
           <div class="field" id="stock_movement_variant_id_field">
             <%= label_tag 'variant_id', t(:variant) %>
-            <%= select_tag 'bulk_variant', options_from_collection_for_select(@variants, :id, :name), class: 'select2 fullwidth' %>
+            <%= select_tag 'bulk_variant', options_from_collection_for_select(@variants, :id, :name_and_sku), class: 'select2 fullwidth' %>
           </div>
         </div>
         <div class="omega six columns">
