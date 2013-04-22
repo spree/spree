@@ -3,11 +3,19 @@
 # the one component of Spree.
 source 'http://rubygems.org'
 
+platforms :ruby do
+  gem 'sqlite3'
+  gem 'mysql2'
+  gem 'pg'
+end
+
+platforms :jruby do
+  gem 'jruby-openssl'
+  gem 'activerecord-jdbcsqlite3-adapter'
+end
+
 gem 'json'
-gem 'multi_json'
-gem 'mysql2'
-gem 'pg'
-gem 'sqlite3'
+gem 'multi_json', "1.2.0"
 
 # Gems used only for assets and not required
 # in production environments by default.
