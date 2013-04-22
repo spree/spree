@@ -4,6 +4,10 @@ module Spree
 
     attr_accessible :reference_number
 
+    def number
+      reference_number
+    end
+
     def transfer(source_location, destination_location, variants)
       transaction do
         variants.each_pair do |variant, quantity|
