@@ -64,7 +64,7 @@ module Spree
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     def brand
-      cc_type
+      spree_cc_type
     end
 
     scope :with_payment_profile, lambda { where('gateway_customer_profile_id IS NOT NULL') }
