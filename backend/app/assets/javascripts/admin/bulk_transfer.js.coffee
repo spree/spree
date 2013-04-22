@@ -22,7 +22,6 @@ $ ->
       quantity: quantity
 
     $('#bulk_variants_tbody').append(rendered)
-    $("#bulk_variant option[value=#{variant_id}]").remove()
 
   $('button.bulk_transfer').click ->
     unless $('input#variant\\[\\]').length > 0
