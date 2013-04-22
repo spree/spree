@@ -2,27 +2,27 @@
   <fieldset>
     <legend align="center"><%= t(:move_stock_between_locations)%></legend>
     <div data-hook="admin_stock_movements_form_fields" class="row">
-      <div class="five columns">
+      <div class="six columns alpha">
         <div class="field" id="stock_movement_transfer_from_field">
           <%= label_tag :stock_location_from_id, t(:transfer_from_location) %>
           <%= select_tag :stock_location_from_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
         </div>
       </div>
-      <div class="five columns">
+      <div class="six columns omega">
         <div class="field" id="stock_movement_transfer_to_field">
           <%= label_tag :stock_location_to_id, t(:transfer_to_location) %>
           <%= select_tag :stock_location_to_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
         </div>
       </div>
 
-      <div class="five columns">
+      <div class="six columns alpha">
         <div class="field" id="stock_movement_variant_id_field">
           <%= label_tag 'variant_id', t(:variant) %>
           <%= select_tag :variant_id, options_from_collection_for_select(@variants, :id, :name), class: 'select2 fullwidth' %>
         </div>
       </div>
 
-      <div class="five columns">
+      <div class="six columns omega">
         <div class="field" id="stock_movement_quantity_field">
           <%= label_tag 'quantity', t(:quantity) %>
           <%= number_field_tag :quantity, 1, class: 'fullwidth' %>
@@ -30,10 +30,12 @@
       </div>
     </div>
 
-    <div class="ten columns">
-      <div class="field" id="stock_movement_reference_number_field">
-        <%= label_tag 'reference_number', t(:reference_number) %>
-        <%= text_field_tag :reference_number %> (<%= t(:optional) %>)
+    <div class="row">
+      <div class="alpha twelve columns omega">
+        <div class="field align-center" id="stock_movement_reference_number_field">
+          <%= label_tag 'reference_number', raw("#{t(:reference_number)} (#{t(:optional)})"), :class => 'block' %>
+          <%= text_field_tag :reference_number %>
+        </div>
       </div>
     </div>
 
