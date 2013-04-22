@@ -18,7 +18,7 @@ role :db,  domain, :primary => true
 set :repository,  "git://github.com/spree/spree-guides"
 
 if exists?(:edge)
-  set :branch, "new_guides"
+  set :branch, "master"
 else
   set :branch, "1-2-x"
 end
