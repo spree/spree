@@ -1,6 +1,9 @@
 $ ->
   $('#bulk_receive_stock').click ->
-    $('#source_location_id_field').toggle(!this.checked)
+    if this.checked
+      $('#source_location_id_field').css('visibility', 'hidden')
+    else
+      $('#source_location_id_field').css('visibility', 'visible')
 
   $('button.bulk_remove_variant').live 'click', (event) ->
     event.preventDefault()
