@@ -132,7 +132,7 @@ standards and modularity (see next.)
 #### Consistency With a Rails Standard
 
 Prior to version 0.30.0, Spree used a complex custom mechanism for
-implementing “engine-like” functionality. While it was difficult to
+implementing "engine-like" functionality. While it was difficult to
 strip this functionality out of Spree, the benefits are well worth it.
 Spree now receives all of the massive testing and attention to detail
 that comes for free when using the Rails core engine functionality,
@@ -140,9 +140,9 @@ rather than a custom solution.
 
 #### Modularity
 
-There are differing opinions on what belongs in the “core.” People are
-often expressing their opinion that Spree is either “getting too fat” or
-“lacks basic features.” By relying on these engines (and distributing
+There are differing opinions on what belongs in the "core." People are
+often expressing their opinion that Spree is either "getting too fat" or
+"lacks basic features." By relying on these engines (and distributing
 them as gems), developers are free to use only the parts of Spree that
 they find useful. For instance, this would allow you to omit promotions
 functionality or to replace the authentication mechanism.
@@ -154,7 +154,7 @@ application's *Gemfile*:
 gem 'spree', '2.0.0'```
 
 It would require all the individual parts of Spree. However, if you only
-wanted to require the “core” and “backend” parts of Spree, you would do
+wanted to require the "core" and "backend" parts of Spree, you would do
 this:
 
 ```ruby
@@ -203,7 +203,7 @@ $ bundle exec rake gem```
 
 ## Tips for Working with the Source
 
-### Using the “Edge” Code
+### Using the "Edge" Code
 
 If you are interested in simply using the latest edge code (as opposed
 to contributing to it) then the simplest thing to do is add a *:git*
@@ -213,7 +213,7 @@ directive to your *Gemfile* and point it at the master branch.
 gem 'spree', :github => 'spree/spree'```
 
 This will effectively use the latest code from the Git repository at the
-time you run *bundle install*. This version of the code will be “frozen”
+time you run *bundle install*. This version of the code will be "frozen"
 in your *Gemfile.lock* and will ensure that anyone else using your
 project code is using the exact same version of the Spree code as you
 are. You will need to update the bundle if you want to update to code
@@ -222,7 +222,7 @@ that is newer since the last time you updated.
 ```bash
 $ bundle update```
 
-### Developing on the “Edge”
+### Developing on the "Edge"
 
 If you plan on using the edge code but also contributing back to Spree,
 then you may be interested in the following approach. Create your Rails

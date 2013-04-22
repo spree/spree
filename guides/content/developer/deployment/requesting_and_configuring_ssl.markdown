@@ -6,7 +6,7 @@ section: "deployment"
 ## Overview
 
 This article will walk you through generating an SSL Certificate Request
-and Private Key, and installing the certificate once it’s returned from
+and Private Key, and installing the certificate once it's returned from
 your Certificate Authority.
 
 ## Generating a Certificate Request and Private Key
@@ -38,13 +38,13 @@ name must be www.example.com or **.example.com for a wildcard
 certificate.
 
 **O - Organization Name:** The exact legal name of your organization.
-Example: “SpreeCommerce, Inc.” If you do not have a legal registered
+Example: "SpreeCommerce, Inc." If you do not have a legal registered
 organization name, you should enter your own full name here.
 
 **OU - Department :** Many people leave this field blank. This is the
 department within your organization which you want to appear in the
-certificate. It will be listed in the certificate’s subject as
-Organizational Unit, or “ou.” Example: Web Administration, Web Security,
+certificate. It will be listed in the certificate's subject as
+Organizational Unit, or "ou." Example: Web Administration, Web Security,
 Marketing
 
 **L - Location / City:** The city where your organization is legally
@@ -60,7 +60,7 @@ is legally located.
 ### Creating the Certificate Request & Private Key
 
 You must have the OpenSSL library installed to execute this command, all
-Spree Hosting servers have this command available so it’s best to run
+Spree Hosting servers have this command available so it's best to run
 the command directly on your server.
 
 This example command below is for illustration purposes only, you must
@@ -68,8 +68,8 @@ substitue your information in the relevant locations.
 
 ```bash
 openssl req ~~new~~newkey rsa:2048 ~~nodes~~out www_example_com.csr
-~~keyout www_example_com.key~~subj “/C=US/ST=MD/L=Chevy
-Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com”
+~~keyout www_example_com.key~~subj "/C=US/ST=MD/L=Chevy
+Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com"
 ```
 
 Be sure to change the `~~out` and `~~keyout` values to match your domain
@@ -117,5 +117,5 @@ restart your webserver:
 FACTER_db_pass=YOUR_DB_PASSWORD sudo puppet agent —test
 ```
 
-It’s important that the file names and locations match exactly those
+It's important that the file names and locations match exactly those
 listed above otherwise Puppet will not be able to locate them.

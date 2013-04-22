@@ -16,14 +16,14 @@ up-to-date by modifying *Gemfile* to match the new spree version and
 run *bundle update*.
 
 Thanks to Rails 3.1 Mountable Engine, the update process is
-“non-destructive” than in previous versions of Spree. The core files are encapsulated
+"non-destructive" than in previous versions of Spree. The core files are encapsulated
 separately from sandbox, thus upgrading to newer files will not override nor replace
-sandbox’s customized files.
+sandbox's customized files.
 
 This makes it easier to see when and how some file has changed – which
 is often useful if you need to update a customized version.
 
-#### Dos and Don’ts
+#### Dos and Don'ts
 
 !!!
 Try to avoid modifying *config/boot.rb* and
@@ -55,24 +55,24 @@ more information.
 
 #### Use tests!
 
-Use *rake spec* and *rake test* to test basic functioning after you’ve
+Use *rake spec* and *rake test* to test basic functioning after you've
 made changes.
 
 #### Analysing crashes on a non-local machine
 
-If you’re testing on a server, whether in production or development
+If you're testing on a server, whether in production or development
 mode, the following code in one
 of your *FOO_extension.rb* files might save some time. It triggers
 local behaviour for users who have
 an admin role. One useful consequence is that uncaught exceptions will
 show the detailed error page
-instead of *404.html*, so you don’t have to hunt through the server
+instead of *404.html*, so you don't have to hunt through the server
 logs.
 
 <% ruby do %>
     Spree::BaseController.class_eval do
       def local_request?
-        ENV[“RAILS_ENV] !=”production" || current_user.present? &&
+        ENV["RAILS_ENV] !="production" || current_user.present? &&
           current_user.has_role?(:admin)
       end
     end
@@ -82,21 +82,21 @@ logs.
 
 #### To fork or not to fork…
 
-Suppose there’s a few details of Spree that you want to override due to
+Suppose there's a few details of Spree that you want to override due to
 personal or client preference,
-but which aren’t the usual things that you’d override (like views) - so
+but which aren't the usual things that you'd override (like views) - so
 something like tweaks to the models or controllers.
 
 You could hide these away in your site extension, but they could get
 mixed up with your real site customizations. You could also fork Spree and run your site on this
-forked version, but this can also be a headache to get right. There’s also the hassle of tracking
+forked version, but this can also be a headache to get right. There's also the hassle of tracking
 changes to *spree/master* and pulling them into your project at the right time.
 
-So here’s a compromise: have an extra extension, say *spree-tweaks*, to
+So here's a compromise: have an extra extension, say *spree-tweaks*, to
 contain your small collection of modified files, which is loaded first in the extension order. The
 benefits are:
 
--   it’s clear what you are overriding, and easier to check against core
+-   it's clear what you are overriding, and easier to check against core
     changes
 -   you can base your project on an official gem release or a
     *spree/master* commit stage
@@ -104,7 +104,7 @@ benefits are:
     managed with SCM etc.
 
 If you find yourself wanting extensive changes to core, this technique
-probably won’t work so well.
+probably won't work so well.
 But then again, if this is the case, then you probably want to look
 seriously at splitting some
 code off into stand-alone extensions and then see whether any of the

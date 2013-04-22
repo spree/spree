@@ -10,7 +10,7 @@ in production and staging environments. After reading it, you should be
 familiar with:
 
 -   Common server configurations used when deploying Spree.
--   How memory availability affects Spree’s performance and scalability
+-   How memory availability affects Spree's performance and scalability
 -   Typical memory footprints for Spree servers.
 
 Spree can be deployed like any other Rails application using any
@@ -52,7 +52,7 @@ instances.
 
 ### Memory (RAM) requirements
 
-Spree’s scalability (like most Rails applications) is directly affected
+Spree's scalability (like most Rails applications) is directly affected
 by number of application worker processes available to handle requests
 as they arrive. The number of worker processes you can configure for a
 given server is directly related the amount of RAM available.
@@ -86,7 +86,7 @@ with less resources, generally half of what is listed below.
 
 !!!
 Adding too many workers for the amount of available memory will
-have a negative effect on overall performance so it’s important to get
+have a negative effect on overall performance so it's important to get
 the worker count correct for your application / memory combination.
 !!!
 

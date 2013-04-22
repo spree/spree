@@ -128,7 +128,7 @@ See the GitHub guide on [creating forks](https://help.github.com/articles/fork-a
 
 #### Topic Branches
 
-Git branches are “cheap.” Creating branches in Git is incredibly easy and it's an ideal way to isolate a specific set of changes. By keeping a specific set of changes isolated, it will help us to navigate your fork and apply only the changes we’re interested in. You should create a clean branch based on the latest spree/master when doing this. It is important you follow these steps exactly, it will prevent you from accidentally including unrelated changes from your local repository into the branch.
+Git branches are "cheap." Creating branches in Git is incredibly easy and it's an ideal way to isolate a specific set of changes. By keeping a specific set of changes isolated, it will help us to navigate your fork and apply only the changes we're interested in. You should create a clean branch based on the latest spree/master when doing this. It is important you follow these steps exactly, it will prevent you from accidentally including unrelated changes from your local repository into the branch.
 
 For example, if we were submitting a patch to fix an issue with the CSS in the flash error message you could create a branch as follows:
 
@@ -136,7 +136,7 @@ For example, if we were submitting a patch to fix an issue with the CSS in the f
     $ git fetch upstream
     $ git checkout -b fix-css-for-error-flash --track upstream/master
 
-The fetch command will grab all of the latest commits from the Spree master branch. Don’t worry, it doesn’t permanently alter your working repository and you can return to your master branch later. The track part of the command will tell git that this branch should track with the remote version of the upstream master.  This is another way of saying that the branch should be based on a clean copy of the latest official source code (without any of your unrelated local changes.)
+The fetch command will grab all of the latest commits from the Spree master branch. Don't worry, it doesn't permanently alter your working repository and you can return to your master branch later. The track part of the command will tell git that this branch should track with the remote version of the upstream master.  This is another way of saying that the branch should be based on a clean copy of the latest official source code (without any of your unrelated local changes.)
 
 You can then do work locally on this topic branch and push it up to your GitHub fork when you are done.  So in our previous example we do something like:
 

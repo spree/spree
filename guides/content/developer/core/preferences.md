@@ -346,7 +346,7 @@ A key from the list of styles from `Spree::Config[:attachment_styles]` that is t
 
 `auto_capture`
 
-Depending on whether or not Spree is configured to “auto capture” the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway).  Defaults to `false`.
+Depending on whether or not Spree is configured to "auto capture" the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway).  Defaults to `false`.
 
 `cache_static_content`
 

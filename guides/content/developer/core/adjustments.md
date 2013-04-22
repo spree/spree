@@ -7,7 +7,7 @@ section: core
 
 An adjustment in Spree tracks an adjustment to the price of an <%= link_to "Order", :orders %>, or an order's <%= link_to "Line Item", 'orders', 'line-items' %> within Spree.
 
-Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as “charges” while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one Spree::Adjustment model in Spree which handles this by allowing either positive or negative values.
+Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one Spree::Adjustment model in Spree which handles this by allowing either positive or negative values.
 
 Adjustments have the following attributes:
 

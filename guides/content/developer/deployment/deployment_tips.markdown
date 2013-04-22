@@ -44,14 +44,14 @@ webserver do what it does best (as described in the next section.)
 
 The recommended approach for handling static assets is to allow your web
 server to handle serving these files. If you want to follow this
-approach just make sure that it’s configured properly in the
+approach just make sure that it's configured properly in the
 `config/environments/production.rb` of your Rails app.
 
 ```ruby
  config.serve_static_assets = false
 ```
 ***
-This is the default setting of Rails so it’s also fine if this setting is missing or commented out.
+This is the default setting of Rails so it's also fine if this setting is missing or commented out.
 ***
 
 The following is an example of how to configure Apache so that its document root is pointing to the `public` folder.
@@ -85,7 +85,7 @@ follows:
 |Production|True|
 
 ***
-The “staging” environment is not one of the default environments
+The "staging" environment is not one of the default environments
 created by Rails. However, many developers use a staging environment,
 which generally should mimic the production environment as much as
 possible. You may, however, make minor changes such as disabling email
@@ -146,8 +146,8 @@ world customer when testing operations such as canceling an order or
 marking it shipped.
 
 !!!
-It’s generally considered a bad idea to send email on the same
-“thread” as a web request. Many web applications manage to get by doing
+It's generally considered a bad idea to send email on the same
+"thread" as a web request. Many web applications manage to get by doing
 this but high volume stores should consider using standard Rails
 techniques such as [Delayed Job](https://github.com/tobi/delayed_job)
 for handling email delivery as a separate process.
@@ -172,7 +172,7 @@ few additional settings that are not supplied by Rails.
 ### Running in Production Mode
 
 If you are noticing that Spree seems to be running slowly you should
-make sure that you are running in “production mode.” You can start your
+make sure that you are running in "production mode." You can start your
 server in production mode as follows:
 
 ```bash

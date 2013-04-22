@@ -45,7 +45,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 
 ### Creating the Rails Application
 
-Let’s start by creating a standard Rails application using the following command:
+Let's start by creating a standard Rails application using the following command:
 
 ```bash
 $ rails new mystore```
@@ -75,11 +75,11 @@ This will fire up an instance of the Webrick web server by default (Spree can al
 
 ![](http://guides.spreecommerce.com/images/spree_welcome.png)
 
-To stop the web server, hit Ctrl-C in the terminal window where it’s running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
+To stop the web server, hit Ctrl-C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
 
 ### Logging Into the Backend
 
-The next thing you’ll probably want to do is to log into the admin interface. Use your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
+The next thing you'll probably want to do is to log into the admin interface. Use your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
 
 Upon successful authentication you should see the admin screen:
 

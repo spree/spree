@@ -223,7 +223,7 @@ and run `$ bundle install`
 
 As an example of how to use the [spree_active_shipping extension](https://github.com/spree/spree_active_shipping) we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
 
-For each USPS delivery service you want to offer (e.g. “USPS Media Mail”), you will need to create a Shipping Method with a descriptive name (Configuration -> Shipping Methods) and a calculator (registered in the active_shipping extension) that ties the delivery service and the shipping method together.
+For each USPS delivery service you want to offer (e.g. "USPS Media Mail"), you will need to create a Shipping Method with a descriptive name (Configuration -> Shipping Methods) and a calculator (registered in the active_shipping extension) that ties the delivery service and the shipping method together.
 
 ### Default Calculators
 
@@ -325,7 +325,7 @@ From all of the viable shipping services in this hash, the `#compute` method sel
 ```ruby
 rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)```
 
-Finally, don’t forget to register the calculator you added. In extensions, this is accomplished in the `activate` method:
+Finally, don't forget to register the calculator you added. In extensions, this is accomplished in the `activate` method:
 
 ```ruby
 def activate
@@ -347,7 +347,7 @@ class Spree::Stock::Estimator
   end
 end```
 
-Unless overridden, the calculator’s `#available?` method returns true by default. It is therefore the zone of the destination address that filters out the shipping methods in most cases. However, in some circumstances it may be necessary to filter out additional shipping methods.
+Unless overridden, the calculator's `#available?` method returns true by default. It is therefore the zone of the destination address that filters out the shipping methods in most cases. However, in some circumstances it may be necessary to filter out additional shipping methods.
 
 Consider the case of the USPS First Class domestic shipping service, which is not offered if the weight of the package is greater than 13oz. Even though the USPS API does not return the option for First Class in this instance, First Class will appear as an option in the checkout view with an unfortunate value of 0, since it has been set as a Shipping Method.
 

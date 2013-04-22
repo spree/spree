@@ -10,7 +10,7 @@ Product records track unique products within your store. These differ from <%= l
 Products have the following attributes:
 
 * `name`: short name for the product
-* `description`: The most elegant, poetic turn of phrase for describing your product’s benefits and features to your site visitors
+* `description`: The most elegant, poetic turn of phrase for describing your product's benefits and features to your site visitors
 * `permalink`: An SEO slug based on the product name that is placed into the URL for the product
 * `available_on`: The first date the product becomes available for sale online in your shop
 * `deleted_at`: The date the product is no longer available for sale in the store

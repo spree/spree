@@ -26,9 +26,9 @@ make.
 #### Application Specific
 
 Application specific customizations are the most common type of
-customization applied to Spree. It’s generally used by developers and
-designers to tweak Spree’s behaviour or appearance to match a particular
-business’s operating procedures, branding, or provide a unique feature.
+customization applied to Spree. It's generally used by developers and
+designers to tweak Spree's behaviour or appearance to match a particular
+business's operating procedures, branding, or provide a unique feature.
 
 All application specific customizations are stored within the host
 application where Spree is installed (please see the Installation
@@ -53,7 +53,7 @@ get an idea of the type and volume of extensions available.
 
 Themes are designed to overhaul the entire look and feel of a Spree
 store (or its administration system). Themes are distributed in exactly
-the same manner as extensions, but don’t generally include logic
+the same manner as extensions, but don't generally include logic
 customizations.
 
 ***
@@ -63,7 +63,7 @@ refer to the [Extensions & Themes](extensions.html) guide.
 
 ### Customization Options
 
-Once you’ve decided how you’re going to manage your customizations, you
+Once you've decided how you're going to manage your customizations, you
 then need to choose the correct option to achieve the desired changes.
 
 #### View Customizations

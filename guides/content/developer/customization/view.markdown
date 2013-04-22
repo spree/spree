@@ -22,7 +22,7 @@ For example, take the Checkout Registration template, which looks like
 this:
 
 ```erb
-<%%= render :partial => ‘spree/shared/error_messages’, :locals => {:target => user } %>
+<%%= render :partial => 'spree/shared/error_messages', :locals => {:target => user } %>
 <h2><%%= t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account" class="columns alpha eight">
@@ -115,12 +115,12 @@ For example, spree/products/show.html.erb looks as follows:
 <div id="product-images" data-hook="product_images">
 
 <div id="main-image" data-hook>
-<%%= render :partial => ‘image’ %>
+<%%= render :partial => 'image' %>
 
 </div>
 
 <div id="thumbnails" data-hook>
-<%%= render :partial => ‘thumbnails’, :locals => { :product => product } %>
+<%%= render :partial => 'thumbnails', :locals => { :product => product } %>
         </div>
       </div>
 
@@ -144,12 +144,12 @@ For example, spree/products/show.html.erb looks as follows:
 </div>
 
 <div id="cart-form" data-hook="cart_form">
-<%%= render :partial => ‘cart_form’ %>
+<%%= render :partial => 'cart_form' %>
 
 </div>
 
 </div>
-<%%= render :partial => ‘taxons’ %>
+<%%= render :partial => 'taxons' %>
 
 </div>
 
@@ -177,18 +177,18 @@ attribute wherever possible. Here are a few examples based on
 **products/show.html.erb** above:
 
 <% ruby do %>
- :replace => “[data-hook=‘product_show’]”
+ :replace => "[data-hook='product_show']"
 
-:insert_top => “#thumbnails[data-hook]”
+:insert_top => "#thumbnails[data-hook]"
 
-:remove => “[data-hook=‘cart_form’]”
+:remove => "[data-hook='cart_form']"
 <% end %>
 
 You can also use a combination of both styles of selectors in a single
 override to ensure maximum protection against changes:
 
 <% ruby do %>
- :insert_top => “[data-hook=‘thumbnails’], #thumbnails[data-hook]”
+ :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"
 <% end %>
 
 #### Targeting ruby blocks
@@ -230,16 +230,16 @@ So you can target ruby code blocks with the same standard CSS3 style
 selectors, for example:
 
 <% ruby do %>
- :replace => “code[erb-loud]:contains(‘t(:products)’)”
+ :replace => "code[erb-loud]:contains('t(:products)')"
 
-:insert_before => “code[erb-silent]:contains(‘elsif’)”
+:insert_before => "code[erb-silent]:contains('elsif')"
 <% end %>
 
 #### View upgrade protection
 
 To ensure upgrading between versions of Spree is as painless as
 possible, Deface supports an `:original` option that can contain a
-string of the original content that’s being replaced. When Deface is
+string of the original content that's being replaced. When Deface is
 applying the override it will ensure that the current source matches the
 value supplied and will output to the Rails application log if they are
 different.
@@ -249,7 +249,7 @@ and ensure your replacement is adequately replacing all the
 functionality provided by Spree. This will help reduce unexpected issues
 after upgrades.
 
-Once you’ve reviewed the new source you can update the `:original` value
+Once you've reviewed the new source you can update the `:original` value
 to new source to clear the warning.
 
 ***
@@ -284,7 +284,7 @@ using a Deface override seems impractical. Spree also supports the
 duplication of views within an application or extension that will
 completely replace the file of the same name in Spree.
 
-To override any of Spree’s default views including those for the admin
+To override any of Spree's default views including those for the admin
 interface, simply create a file with the same filename in your app/views
 directory.
 
@@ -292,10 +292,10 @@ For example, to override the main layout, create the file
 YOUR_SITE_OR_EXTENSION/app/views/spree/layouts/spree_application.html.erb
 
 ***
-It’s important to ensure you copy the correct version of a view
+It's important to ensure you copy the correct version of a view
 into your application or extension, as copying a mismatched version
 could lead to hard to debug issues. We suggest using `bundle show spree`
-to get the location of the Spree code you’re actually running and then
+to get the location of the Spree code you're actually running and then
 copying the relevant file from there.
 ***
 
@@ -304,7 +304,7 @@ copying the relevant file from there.
 Whenever you copy an entire view into your extension or application you
 are adding a significant maintenance overhead to your application when
 it comes to upgrading to newer versions of Spree. When upgrading between
-versions you need to compare each template that’s been replaced to
+versions you need to compare each template that's been replaced to
 ensure to replicate any changes from the newer Spree version in your
 locally copied version.
 

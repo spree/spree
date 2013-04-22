@@ -14,8 +14,8 @@ Spree is 100% [open source](http://en.wikipedia.org/wiki/Open_source).  It is li
 The goal of the project is to build a complete open source commerce
 solution for Ruby on Rails. At the start of this project, the Rails
 commerce space was immature and lacking serious solutions for developers
-with complex business needs. In the past, Rails has suffered from “small
-project mentality.” Most open source projects in Rails are maintained by
+with complex business needs. In the past, Rails has suffered from "small
+project mentality." Most open source projects in Rails are maintained by
 a single individual and tend to be limited in scope. Spree seeks to
 create a large and healthy open source community that developers of
 other languages have come to expect.
@@ -32,26 +32,26 @@ considered to be a poor choice for long term maintainability.
 ### Opinionated Commerce
 
 David Heinemeier Hansson (the creator of Rails) is well known for saying
-that Rails is “opinionated software.” Spree continues this fine
+that Rails is "opinionated software." Spree continues this fine
 tradition of adopting a few strong (possibly controversial) opinions
 which drive its development.
 
 #### No Solution Will Satisfy Everyone
 
-No solution can possibly solve everyone’s needs perfectly. There are
+No solution can possibly solve everyone's needs perfectly. There are
 simply too many ways in which people do business for us to tailor to
 each individual need. Rather than come up short (like so many projects
-before it did), Spree’s approach is to simply accept this and not even
+before it did), Spree's approach is to simply accept this and not even
 try. Instead Spree tries to focus on solving 90% of the bulk that most
 commerce projects face. The remaining 10% will need to be addressed by
-the end developer familiar with the client’s exact business
+the end developer familiar with the client's exact business
 requirements.
 
-#### Online Commerce is not for “Noobs”
+#### Online Commerce is not for "Noobs"
 
 Rails developers are the target audience for this application - not
 business owners. No serious company would ever try to run an online
-store by just paying some fool on Craig’s List to install OSCommerce for
+store by just paying some fool on Craig's List to install OSCommerce for
 them. Serious businesses have complicated needs that require paying one
 or more software professionals to solve them. Spree seeks to be the
 platform that developers use as the foundation for their project rather
@@ -77,7 +77,7 @@ attempt to become a Content Management System (CMS). There are already
 some pretty good Rails based CMS projects out there such as
 [Radiant](http://radiantcms.org). CMS is definitely important but it is
 a big enough task to warrant its own project. Spree will definitely be
-looking at ways to integrate with existing CMS platforms, we just won’t
+looking at ways to integrate with existing CMS platforms, we just won't
 be attempting to reinvent the CMS concept.
 
 ## Requirements
@@ -105,7 +105,7 @@ database specific bugs.
 
 It is highly recommended that you **familiarize yourself with Ruby on
 Rails before diving into Spree**. You will find it much easier to follow
-what’s going on with a Spree application if you understand basic Ruby
+what's going on with a Spree application if you understand basic Ruby
 syntax.
 
 There are many excellent online resources for learning Ruby on Rails,
@@ -117,10 +117,10 @@ including:
 There are also some good free resources on the internet for learning
 Ruby, including:
 
--   [Mr. Neighborly’s Humble Little Ruby
+-   [Mr. Neighborly's Humble Little Ruby
     Book](http://www.humblelittlerubybook.com)
 -   [Programming Ruby](http://www.ruby-doc.org/docs/ProgrammingRuby/)
--   [Why’s (Poignant) Guide to
+-   [Why's (Poignant) Guide to
     Ruby](http://mislav.uniqpath.com/poignant-guide/)
 
 ## Performance Considerations

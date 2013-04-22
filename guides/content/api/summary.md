@@ -25,7 +25,7 @@ You will need an authentication token to access the API. These keys can be gener
 curl --header "X-Spree-Token: YOUR_KEY_HERE" http://example.com/api/products.json```
 
 
-Alternatively, you may also pass through the token as a parameter in the request if a header just won’t suit your purposes (i.e. JavaScript console debugging).
+Alternatively, you may also pass through the token as a parameter in the request if a header just won't suit your purposes (i.e. JavaScript console debugging).
 
 ```bash
 curl http://example.com/api/products.json?token=YOUR_KEY_HERE```

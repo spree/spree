@@ -29,7 +29,7 @@ to add this extra line to your *Gemfile*:
 
 By having this authentication component outside of Spree, applications
 that wish to use their own authentication may do so, and applications
-that have previously used *spree_auth*‘s functionality may continue
+that have previously used *spree_auth*'s functionality may continue
 doing so by using this gem.
 
 #### The User Model
@@ -49,7 +49,7 @@ substitution wherever you see *User*.
 
 h3. Initial Setup
 
-To begin using your custom *User* class, you must first edit Spree’s
+To begin using your custom *User* class, you must first edit Spree's
 initializer located at *config/initializers/spree.rb* by changing this
 line:
 
@@ -83,11 +83,11 @@ running this:
 rake db:migrate```
 
 Next you will need to define some methods to tell Spree where to find
-your application’s authentication routes.
+your application's authentication routes.
 
 h3. Authentication Helpers
 
-There are some authentication helpers of Spree’s that you will need to
+There are some authentication helpers of Spree's that you will need to
 possibly override. The file at *lib/spree/authentication_helpers.rb*
 contains the following code to help you do that:
 
@@ -142,12 +142,12 @@ URLs inside the *spree_login_path*, *spree_signup_path* and
 are inside your application. This is because Spree will otherwise
 attempt to route to a *login_path*, *signup_path* or *logout_path*
 inside of itself, which does not exist. By prefixing with *main_app*,
-you tell it to look at the application’s routes.
+you tell it to look at the application's routes.
 ***
 
 You will need to define the *login_path*, *signup_path* and
 *logout_path* routes yourself, by using code like this inside your
-application’s *config/routes.rb* if you’re using Devise:
+application's *config/routes.rb* if you're using Devise:
 
 <% ruby do %>
     devise_scope :person do
@@ -157,7 +157,7 @@ application’s *config/routes.rb* if you’re using Devise:
     end
 <% end %>
 
-Of course, this code will be different if you’re not using Devise.
+Of course, this code will be different if you're not using Devise.
 Simply do not use the *devise_scope* method and change the controllers
 and actions for these routes.
 
@@ -181,10 +181,10 @@ called "spree_roles". This association will retreive all the roles that
 a user has for Spree.
 
 The second of these is the *spree_orders* association. This will return
-all orders associated with the user in Spree. There’s also a
+all orders associated with the user in Spree. There's also a
 *last_incomplete_spree_order* method which will return the last
 incomplete spree order for the user. This is used internal to Spree to
-persist order data across a user’s login sessions.
+persist order data across a user's login sessions.
 
 The third and fourth associations are for address information for a
 user. When a user places an order, the address information for that
@@ -230,7 +230,7 @@ Deface override. Create a new file at
      :insert_before => "li#search-bar",
      :partial => "spree/shared/login_bar",
      :disabled => false, 
-     :original => ‘eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad’)
+     :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
 <% end %>
 
 This override references a partial called "spree/shared/login_bar".
@@ -262,7 +262,7 @@ Spree.
 ### Signup promotion
 
 In Spree, there is a promotion that acts on the user signup which will
-not work correctly automatically when you’re not using the standard
+not work correctly automatically when you're not using the standard
 authentication method with Spree. To fix this, you will need to trigger
 this event after a user has successfully signed up in your application
 by setting a session variable after successful signup in whatever

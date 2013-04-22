@@ -52,7 +52,7 @@ behavior for a site.
 #### Google Analytics integration
 
 Google Analytics has been integrated into the Spree core and can be
-managed from the “Analytics Trackers” section of the admin. Google
+managed from the "Analytics Trackers" section of the admin. Google
 Analytics is not included on your store if this preference is not set.
 The Google Analytics setup includes e-commerce conversion tracking.
 
@@ -68,10 +68,10 @@ more about contributing.
 
 Page titles are an important part of search engine optimization and
 should be meaningful and relevant to the page content. There are a few
-configuration settings for getting the best page titles possible. “Site
-Name” will appear in the beginning of each of your titles. When
+configuration settings for getting the best page titles possible. "Site
+Name" will appear in the beginning of each of your titles. When
 possible, we assign an appropriate title after that (product name, taxon
-name, etc), but when we can’t do that, we use the “Default Seo Title”.
+name, etc), but when we can't do that, we use the "Default Seo Title".
 
 #### Alt Attribute on Product Images
 

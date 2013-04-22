@@ -74,14 +74,14 @@ The deployment service can be accessed by via the
 [Stores](http://spreecommerce.com/stores/) tab under [My
 Account](http://spreecommerce.com/account).
 
-Each Store can have one or more “deployments” configured (for
+Each Store can have one or more "deployments" configured (for
 production, staging or qa environments), and each deployment can have
 one or more servers.
 
 To create a deployment:
 
 **1.** Add a new Store or click on an existing store, and choose the
-**“Add Deployment Service”** link.
+**"Add Deployment Service"** link.
 
 Each **deployment** has a number of global parameters which affects all
 servers configured within that environment including:
@@ -90,7 +90,7 @@ servers configured within that environment including:
     Ubuntu 12.04 LTS.
 
 -   **Rails Environment** - Sets the server wide rails environment,
-    default ‘production’.
+    default 'production'.
 
 -   **Ruby Version** - Select the preferred Ruby version you would like
     installed.
@@ -101,18 +101,18 @@ servers configured within that environment including:
     application,\
     the Spree Version affects the Capistrano Recipe that gets generated.
 
--   **What would you like deployed** - Choose “A Sample Application” if
-    you do not have a Spree application ready to deploy, or “My own
-    custom Spree application” if you do.
+-   **What would you like deployed** - Choose "A Sample Application" if
+    you do not have a Spree application ready to deploy, or "My own
+    custom Spree application" if you do.
 
 -   **Git URL for your application** - Only available when deploying
     your own application and this value is only used to complete your
     generated Capistrano Recipe.
 
-**2.** Once you’ve configured the global environments details, click
-“Add” to save the configuration.
+**2.** Once you've configured the global environments details, click
+"Add" to save the configuration.
 
-Now you need to provide details on each **server** that’s included in
+Now you need to provide details on each **server** that's included in
 the environment:
 
 -   **Fully Qualified Domain Name** - This should be something like
@@ -120,8 +120,8 @@ the environment:
     need to be registered or resolvable it is purely used for naming
     purposes.
 
--   **IP Address** - It’s important to supply the correct IP address
-    as it’s referenced in several locations within the configuration and
+-   **IP Address** - It's important to supply the correct IP address
+    as it's referenced in several locations within the configuration and
     supplying an invalid value will result in problems with the
     configuration. You can use internal / private addresses for your
     servers as the only requirement is that all servers can communicate
@@ -137,14 +137,14 @@ the environment:
 -   **Roles** - Select the required roles for the server, see the
     **Understanding Server Roles** section above for more details.
 
-**3.** When you’ve added the details for all the servers in your
+**3.** When you've added the details for all the servers in your
 deployment, you should then change the **Configuration Status** from
-“New” to “Complete”.
+"New" to "Complete".
 
 This will upload your server configurations to our deployment server,
 which may take a few moments. Refresh the page occasionally until you
-see each servers **Status** change from “Waiting for update from
-configuration server.” to “Ready to Deploy”.
+see each servers **Status** change from "Waiting for update from
+configuration server." to "Ready to Deploy".
 
 **4.** Now each server will have a **Initialize Configuration** command
 that must be copied and executed on the relevant server.
@@ -153,7 +153,7 @@ This needs to be done as root user, and can take several minutes to
 complete.
 
 ***
-It’s important to be aware that while all the **Initialize
+It's important to be aware that while all the **Initialize
 Configurations** commands appear similar they are server specific so be
 sure to run the correct command on each server.
 ***
@@ -162,23 +162,23 @@ sure to run the correct command on each server.
 !!!
 The **Initialize Configuration** command should only be run on
 servers that are intended to be dedicated Spree servers, it reconfigures
-large parts of the server to fulfill it’s assigned roles and many affect
+large parts of the server to fulfill it's assigned roles and many affect
 any other applications, configuration or data already present on a
 server.
 !!!
 
 **5.** When the initialize configuration command completes the server
-will report it’s result and you should see each server’s Status
-eventually update to **“Reported as ‘changed’”**.
+will report it's result and you should see each server's Status
+eventually update to **"Reported as 'changed'"**.
 
 ***
 If an error occurs during the build the status might not update or
-it may update as **“Reported as ‘failed’”**, in either event you should
+it may update as **"Reported as 'failed'"**, in either event you should
 attempt to run the **Update Configuration** command listed.
 ***
 
-**6.** Finally when all servers have reported as either **‘changed’** or
-**‘unchanged’** the final step is to run the **Update configuration**
+**6.** Finally when all servers have reported as either **'changed'** or
+**'unchanged'** the final step is to run the **Update configuration**
 command to set your site specific database passwords.
 
 The command is generally something like:
@@ -186,13 +186,13 @@ The command is generally something like:
 ```bash
 FACTER_db_pass=YOUR_DB_PASSWORD puppet agent —test```
 
-It’s important to substitute YOUR_DB_PASSWORD with the actual password
+It's important to substitute YOUR_DB_PASSWORD with the actual password
 you require.
 
 **7.** Congratulations you now have a fully configured environment ready
 for use.
 
-If you choose to deploy a “Sample Application” then you should be able
+If you choose to deploy a "Sample Application" then you should be able
 to browser to your Application Servers IP address to view the store
 running.
 
@@ -237,7 +237,7 @@ after 'deploy:update_code', 'deploy:symlink_shared'```
 
 
 ***
-It’s important to remember to not edit the Procfile above
+It's important to remember to not edit the Procfile above
 directly, any changes to this file will be reset automatically by our
 configuration management system. See the "Customizing Processes" section
 below for more details on how to correctly change this file.
@@ -247,7 +247,7 @@ below for more details on how to correctly change this file.
 
 After each deployment of your application the Procfile is exported to
 Upstart compatible configuration files which the operating system uses
-to manage your application’s processes.
+to manage your application's processes.
 
 Upstart is responsible for starting, stopping and restarting the
 processes and will detect if a process has stopped for some reason and
@@ -320,7 +320,7 @@ Custom Capistrano `deploy.rb` - creating 3 worker processes:
 
 ```ruby
 namespace :foreman do
-  desc “Export the Procfile to Ubuntu’s upstart scripts”
+  desc "Export the Procfile to Ubuntu's upstart scripts"
   task :export, :roles => :app do
     run "cd #{current_path} && bundle exec foreman export upstart /etc/init -a #{application} -c worker=3 -u spree"
   end
@@ -332,10 +332,10 @@ for the number of processes to start up. You specify mulitple types by
 comma separating as follows: `processname=2,processname=4`
 
 !!!
-It’s important to not export more than one :web process when
+It's important to not export more than one :web process when
 using the default unicorn configuration, as this refers to the master
 process and not the workers, the worker count can be configured via the
-Deployment’s Service UI.
+Deployment's Service UI.
 !!!
 
 ## Configuration & Customization
@@ -397,7 +397,7 @@ software stack:
     subdirectory).
 
 -   `/data/spree/releases/` - contains current and last 5 deployed
-    releases of the application’s code.
+    releases of the application's code.
 
 -   `/data/spree/shared/` - directories and files that are common
     among all deployed versions of an application (like assets,

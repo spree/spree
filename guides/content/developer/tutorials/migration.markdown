@@ -13,21 +13,21 @@ should know:
 -   examples of the API in use.
 
 !!!
-This documentation on this topic is out of date and we’re
+This documentation on this topic is out of date and we're
 working to update it. In the meantime if you see things in here that are
-confusing it’s possible that they no longer apply, etc.
+confusing it's possible that they no longer apply, etc.
 !!!
 
 ### Overview
 
 This guide is a mix of tips and information about the relevant APIs,
 intended to help simplify the process of getting a new site set up -
-whether you’re developing a fresh site or moving from an existing
+whether you're developing a fresh site or moving from an existing
 commerce platform.
 
 The first section discusses various formats of data. Then we look in
 detail at import of the product catalogue. Sometimes you may want to
-import legacy order details, so there’s a short discussion on this.
+import legacy order details, so there's a short discussion on this.
 
 Finally, there are some tips about how to ease the theme development
 process.
@@ -43,7 +43,7 @@ Can we just format our data as SQL tables and import it directly? In
 principle yes, but it takes effort to get the format right,
 particularly
 when dealing with associations between tables, and you need to ensure
-that the new data meets the system’s validation rules. It’s probably
+that the new data meets the system's validation rules. It's probably
 easier to go the code route.
 
 There are cases where direct import is useful. One key case is when
@@ -53,7 +53,7 @@ and save the time of the code import.
 
 #### Rails Fixtures
 
-Spree uses fixtures to load up the sample data. It’s a convenient
+Spree uses fixtures to load up the sample data. It's a convenient
 format for small collections of data, but can be tricky when working with
 large data sets, especially if there are many interconnections and if you
 need to be careful with validation.
@@ -67,7 +67,7 @@ This is the case where you are working with legacy data in formats like
 SQL or XML, and the question is more how to get the useful data out.
 
 Some systems may be able to export their data in various standard
-spreadsheet formats - it’s worth checking for this.
+spreadsheet formats - it's worth checking for this.
 
 Tools like REXML or Nokogiri can be used to parse XML and either build
 a spreadsheet representation or execute product-building actions
@@ -109,24 +109,24 @@ For example, your spreadsheet could have the following columns:
 -   one variant per column, each listing the option values and the price/sku
 
 Note that if you know how many fixed columns and properties to expect,
-then it’s easy to determine which columns represent variants etc.
+then it's easy to determine which columns represent variants etc.
 
 Some of these columns might have simple punctuation etc. to add structure
-to the field. For example, we’ve used:
+to the field. For example, we've used:
 
 -   Html tags in the description
 -   WxHxD for a shorthand for the dimensions
--   “green & small = small_green_shirt @ $10.00” to code up a
+-   "green & small = small_green_shirt @ $10.00" to code up a
 variant which is small and green, has sku *small_green_shirt* and
 costs $10.
--   “foo\nbar” in the taxons column to encode membership of two
+-   "foo\nbar" in the taxons column to encode membership of two
 taxons
--   “alpha > beta > gamma” in the taxons column to encode membership
+-   "alpha > beta > gamma" in the taxons column to encode membership
 a particular nesting.
 
-The taxon nesting notation is useful for when ‘gamma’ doesn’t uniquely
+The taxon nesting notation is useful for when 'gamma' doesn't uniquely
 identify a taxon (and so you need some context, ie a few ancestor
-taxons), or for when the taxon structure isn’t fixed in advance and so is
+taxons), or for when the taxon structure isn't fixed in advance and so is
 dynamically created as the products are entered.
 
 Another possibility for coding variants is to have each variant on a
@@ -171,11 +171,11 @@ images, and taxons.
 
 #### Preliminaries
 
-Let’s assume that you are working from a CSV-compatible format, and so
+Let's assume that you are working from a CSV-compatible format, and so
 are reading one product per row, and each row contains values for the fixed
 details, properties, and variants configuration.
 
-We won’t always explicitly save changes to records: we assume that your
+We won't always explicitly save changes to records: we assume that your
 upload scripts will call *save* at appropriate times or use
 *update_attribute+
 etc.
@@ -185,16 +185,16 @@ h4. Products
 Products must have at least a name and a price in order to pass
 validation, and we set the description too.
 <% ruby do %>
-        p = Spree::Product.create :name => ‘some product’, :price => 10.0,
-:description => ‘some text here’
+        p = Spree::Product.create :name => 'some product', :price => 10.0,
+:description => 'some text here'
 <% end %>
 
 Observe that the*permalink+ and timestamps are added automatically.
-You may want to set the ‘meta’ fields for SEO purposes.
+You may want to set the 'meta' fields for SEO purposes.
 
 ***
-It’s important to set the *available_on* field. Without this
-being a date in the past, the product won’t be listed in the standard
+It's important to set the *available_on* field. Without this
+being a date in the past, the product won't be listed in the standard
 displays.
 ***
 
@@ -208,22 +208,22 @@ Every product has a master variant, and this is created automatically
 when the product is created. It is accessible via *p.master*, but note that many
 of its fields are accessible through the product via delegation. Example:
 *p.price* does the same as *p.master.price*. Delegation also allows field
-modification, so *p.price = 2 * p.price* doubles the product’s (master) price.
+modification, so *p.price = 2 * p.price* doubles the product's (master) price.
 
 The dimensions and weight fields should be self-explanatory.
-The *sku* field holds the product’s stock code, and you will want to set
+The *sku* field holds the product's stock code, and you will want to set
 this if the product does not have option variants.
 
 ##### Stock levels
 
-If you don’t have option variants, then you may also need to register
+If you don't have option variants, then you may also need to register
 some stock for the master variant. The exact steps depend on how you
-have configured Spree’s [inventory system](inventory.html), but most sites
+have configured Spree's [inventory system](inventory.html), but most sites
 will just need to assign to *p.on_hand*, eg *p.on_hand = 100*.
 
 ##### Shipping category
 
-A product’s [shipping category](shipments.html#shipping-categories) field
+A product's [shipping category](shipments.html#shipping-categories) field
 provides product-specific information for the shipping
 calculators, eg to indicate that a product requires additional insurance
 or can only be surface shipped. If no special conditions are needed, you
@@ -234,8 +234,8 @@ string. You can either generate the list of categories in advance, or use
 when required.
 
 <% ruby do %>
-    p.shipping_category = Spree::ShippingCategory.where(:name => ‘Type
-A’).first_or_create
+    p.shipping_category = Spree::ShippingCategory.where(:name => 'Type
+A').first_or_create
 <% end %>
 
 ##### Tax category
@@ -264,25 +264,25 @@ the list of taxons for a product.
 <% end %>
 
 Recall that taxons work like subclassing in OO languages, so a product
-in taxon T is also contained in T’s ancestors, so you should usually assign a
+in taxon T is also contained in T's ancestors, so you should usually assign a
 product to the most specific applicable taxon - and do not need to assign it to
-all of the taxon’s ancestors.\
+all of the taxon's ancestors.\
 However, you can assign products to as many taxons as you want,
 including ancestor taxons. This feature is more useful with sibling taxons, e.g.
-assigning a red and green shirt to both ‘red clothes’ and ‘green
-clothes’. 
+assigning a red and green shirt to both 'red clothes' and 'green
+clothes'. 
 
 ***
-Yes, this also means that child taxons don’t have to be distinct, ie
+Yes, this also means that child taxons don't have to be distinct, ie
 they can overlap.
 ***
 
 When uploading from a spreadsheet, you might have one or more taxons
 listed for a product, and these taxons will be identified by name.
-Individual taxon names don’t have to be unique, e.g. you could have
-‘shirts’ under ‘male clothing’, and ‘shirts’ under ‘female clothing’.
-In this case, you need some context, eg ‘male clothing > shirts’ vs.
-‘female clothing > shirts’.
+Individual taxon names don't have to be unique, e.g. you could have
+'shirts' under 'male clothing', and 'shirts' under 'female clothing'.
+In this case, you need some context, eg 'male clothing > shirts' vs.
+'female clothing > shirts'.
 
 Do you need to create the taxon structure in advance? Not always: as the
 code below shows, it is possible to create taxons as and when they are
@@ -291,12 +291,12 @@ create the top levels (say the top 2 or 3 levels) in advance, then use
 the taxon information column to do some product-specific fine tuning.
 
 The following code uses a list of (newline-separated) taxon descriptions-
-possibly using ‘A > B > C’ style of context to assign the taxons for a product. Notice the use of
+possibly using 'A > B > C' style of context to assign the taxons for a product. Notice the use of
 *where.first_or_create*.
 
 <% ruby do %>
     # create outside of loop
-      main_taxonomy = Spree::Taxonomy.where(:name => ‘Products’).first_or_create
+      main_taxonomy = Spree::Taxonomy.where(:name => 'Products').first_or_create
 
     # inside of main loop
      the_taxons = []
@@ -313,13 +313,13 @@ possibly using ‘A > B > C’ style of context to assign the taxons for a produ
 <% end %>
 
 You can use similar code to set up other taxonomies, e.g. to have a
-taxonomy for brands and product ranges, like ‘Guitars’ with child
-‘Acoustic’. You could use various property or option values to drive the
+taxonomy for brands and product ranges, like 'Guitars' with child
+'Acoustic'. You could use various property or option values to drive the
 creation of such taxonomies.
 
 #### Product Properties
 
-The first step is to create the property ‘types’. These should be
+The first step is to create the property 'types'. These should be
 known in advance so you can define these at the start of the script. You
 should give the internal name and presentation name. For simplicity, the code
 examples have these names as the same string.
@@ -338,9 +338,9 @@ column, this means:
 
 ##### Product prototypes
 
-The admin interface uses a system of ‘prototypes’ to speed up data
+The admin interface uses a system of 'prototypes' to speed up data
 entry, which seeds a product with a given set of option types and (empty)
-property values. It probably isn’t so useful when creating products
+property values. It probably isn't so useful when creating products
 programmatically, since the code will need to do the hard work of
 creating variants and setting properties anyway. However, we mention it
 here for completeness.
@@ -349,17 +349,17 @@ here for completeness.
 
 Variants allow different versions of a product to be offered, e.g.
 allowing variations in size and color for clothing. If a product comes in only
-one configuration, you don’t need to use variants - the master variant,
+one configuration, you don't need to use variants - the master variant,
 already created, is sufficient.
 
 Otherwise, you need to declare what the allowed option types are (e.g.
 size, color, quality rating, etc) for your product, and then create variants
-which (usually) have a single option value for each of the product’s option
-types (e.g. ‘small’ and ‘red’ etc).
+which (usually) have a single option value for each of the product's option
+types (e.g. 'small' and 'red' etc).
 
 ***
-Spree’s core generally assumes that each variant has exactly one
-option value for each of the product’s option types, but the current
+Spree's core generally assumes that each variant has exactly one
+option value for each of the product's option types, but the current
 code is tolerant of missing values. Certain extensions may be more
 strict, e.g. ones for providing advanced variant selection.
 ***
@@ -368,20 +368,20 @@ strict, e.g. ones for providing advanced variant selection.
 
 New variants require only a product to be associated with, but it is
 useful to set an identifying *sku* code too. The price field is optional: if it is not
-explicitly set, the new variant will use the master variant’s price (the same applies to
+explicitly set, the new variant will use the master variant's price (the same applies to
 *cost_price* too). You can also set the *weight*, *width*, *height*, and *depth* too.
 
 <% ruby do %>
-  v = Spree::Variant.create :product => p, :sku => “some_sku_code”, :price => NNNN
+  v = Spree::Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
 <% end %>
 
 ***
 The price is only copied at creation, so any subsequent changes to
-a product’s price will need to be copied to all of its variants.
+a product's price will need to be copied to all of its variants.
 ***
 
 Next, you may also want to register some stock for this variant.
-The exact steps depend on how you have configured Spree’s
+The exact steps depend on how you have configured Spree's
 [inventory system](inventory.html), but most sites
 will just need to assign to *v.on_hand*, eg *v.on_hand = 100*.
 
@@ -407,10 +407,10 @@ use the *where.first_or_create* technique, with something like this:
 ##### Option values
 
 Option values represent the choices possible for some option type.
-Again, you could declare them in advance, or use *where.first_or_create*. You’ll
+Again, you could declare them in advance, or use *where.first_or_create*. You'll
 probably find it easier to create/retrieve the option values as you create each variant.
 
-Suppose you are using a notation like *“Green & Small = small_green_shirt @ $10.00”*
+Suppose you are using a notation like *"Green & Small = small_green_shirt @ $10.00"*
 to encode each variant in the spreadsheet, and this is stored in the variable
 *opt_info*. The following extracts the three key pieces of information and sets
 the option values for the new variant (see below for variant creation).
@@ -424,10 +424,10 @@ the option values for the new variant (see below for variant creation).
 <% end %>
 
 ***
-You don’t have to stick with system-wide option types: you can
+You don't have to stick with system-wide option types: you can
 create types specifically for groups of products such as a product range from a single
 manufacturer. In such cases, the range might have a particular color
-scheme and there can be advantages to isolating the scheme’s options in its
+scheme and there can be advantages to isolating the scheme's options in its
 own type and set of values, rather than trying to work with a more general
 setup. It also avoids filling up a type with lots of similar options -
 and so reduces the number of options when using faceted search etc. You can
@@ -443,7 +443,7 @@ If you create option values in advance, just create them in the required
 order and the plugin will set the *position* automatically.
 
 <% ruby do %>
-  color_type = Spree::OptionType.create :name => ‘Color’, :presentation => ‘Color’
+  color_type = Spree::OptionType.create :name => 'Color', :presentation => 'Color'
   color_options = %w[Red Blue Green].split.map { |n|
     Spree::OptionValue.create :name => n, :presentation => n,
                               :option_type => color_type }
