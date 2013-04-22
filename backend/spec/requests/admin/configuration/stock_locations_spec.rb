@@ -22,7 +22,7 @@ describe "Stock Locations" do
   end
 
   it "can delete an existing stock location", js: true do
-    create(:stock_location)
+    location = create(:stock_location)
     visit current_path
 
     page.should have_content("NY Warehouse")
@@ -30,7 +30,7 @@ describe "Stock Locations" do
     click_icon :trash
     page.driver.browser.switch_to.alert.accept
     visit current_path
-    page.should have_content("successfully removed")
+    page.should_not have_content("NY Warehouse")
   end
 
   it "can update an existing stock location" do
