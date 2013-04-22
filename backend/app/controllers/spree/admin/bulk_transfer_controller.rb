@@ -8,9 +8,9 @@ module Spree
       end
 
       def transfer
-        variants = {}
+        variants = Hash.new(0)
         params[:variant].each_with_index do |variant_id, i|
-          variants[variant_id] = params[:quantity][i].to_i
+          variants[variant_id] += params[:quantity][i].to_i
         end
 
         stock_transfer = StockTransfer.create(:reference_number => params[:reference_number])
