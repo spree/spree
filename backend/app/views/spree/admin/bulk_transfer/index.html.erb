@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:bulk_transfer) %>
+  <%= t(:bulk_transfer_stock) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -24,7 +24,7 @@
 
 <%= form_tag admin_bulk_transfer_path, :method => :post do %>
   <fieldset>
-    <legend align="center"><%= t(:transfer_stock)%></legend>
+    <legend align="center"><%= t(:bulk_transfer_stock)%></legend>
     <div data-hook="admin_stock_movements_form_fields" class="row">
         <div class="five columns">
           <div class="field" id="stock_movement_reference_number_field">
