@@ -99,7 +99,7 @@ module Spree
       # for payment methods other than the one selected
       def object_params
         # respond_to check is necessary due to issue described in #2910
-        if @order.respond_to?(:payment?) && @order.payment?
+        if @order.has_checkout_step?("payment") && @order.payment?
           if params[:payment_source].present?
             source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
 
