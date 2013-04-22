@@ -111,7 +111,13 @@ One thing: remember to add trailing slashes to all nanoc links!
 
 ## Deploy
 
+Standard deploy for the latest stable guides:
+
     $ bundle exec cap deploy
+
+To deploy the latest edge guides:
+
+    $ bundle exec cap deploy -S edge=true
 
 ## TODO
 
