@@ -43,6 +43,10 @@ label {
   &.inline {
     display: inline-block !important;
   }
+
+  &.block {
+    display: block !important;
+  }
 }
 
 .label-block label { display: block }
