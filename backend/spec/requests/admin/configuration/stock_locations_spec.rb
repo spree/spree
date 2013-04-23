@@ -53,7 +53,7 @@ describe "Stock Locations" do
 
     it "can transfer stock between two locations" do
       visit current_path
-      variant = la.stock_items.first.variant
+      variant = la.stock_items.order(:id).first.variant
       la.stock_item(variant).count_on_hand.should == 10
       boston.stock_item(variant).count_on_hand.should == 0
 
@@ -71,7 +71,7 @@ describe "Stock Locations" do
 
     it "shows an error when the source location does not have enough stock" do
       visit current_path
-      variant = la.stock_items.first.variant
+      variant = la.stock_items.order(:id).first.variant
       la.stock_item(variant).update_column(:count_on_hand, 0)
 
       select2 "Los Angeles", from: "Transfer From"
