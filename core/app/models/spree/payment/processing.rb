@@ -44,7 +44,7 @@ module Spree
             response = payment_method.capture(self, source, gateway_options)
           else
             # Standard ActiveMerchant capture usage
-            response = payment_method.capture((amount * 100).round,
+            response = payment_method.capture(money.money.cents,
                                               response_code,
                                               gateway_options)
           end
