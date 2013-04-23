@@ -22,10 +22,13 @@ describe Spree::Payment do
     payment.source = card
     payment.order = order
     payment.payment_method = gateway
+    payment.amount = 100
     payment
   end
 
   let(:amount_in_cents) { payment.amount.to_f * 100 }
+
+  let(:currency) { 'USD' }
 
   let!(:success_response) do
     mock('success_response', :success? => true,
@@ -38,6 +41,7 @@ describe Spree::Payment do
   before(:each) do
     # So it doesn't create log entries every time a processing method is called
     payment.log_entries.stub(:create)
+    order.stub(:currency) { currency }
   end
 
   # Regression test for https://github.com/spree/spree/pull/2224
@@ -200,19 +204,47 @@ describe Spree::Payment do
         end
 
         context "if successful" do
-          before do
-            payment.payment_method.should_receive(:capture).with(payment, card, anything).and_return(success_response)
+          context "when profiles are supported" do
+            before do
+              payment.payment_method.should_receive(:capture).with(payment, card, anything).and_return(success_response)
+            end
+
+            it "should make payment complete" do
+              payment.should_receive(:complete)
+              payment.capture!
+            end
+
+            it "should store the response_code" do
+              gateway.stub :capture => success_response
+              payment.capture!
+              payment.response_code.should == '123'
+            end
           end
 
-          it "should make payment complete" do
-            payment.should_receive(:complete)
-            payment.capture!
-          end
+          context "when profiles are not supported" do
+            before do
+              gateway.stub(:payment_profiles_supported?) { false }
+              gateway.should_receive(:capture).with(expected_amount, nil, anything).and_return(success_response)
+            end
 
-          it "should store the response_code" do
-            gateway.stub :capture => success_response
-            payment.capture!
-            payment.response_code.should == '123'
+            context "when currency has decimal places" do
+              let(:expected_amount) { 10000 }
+
+              it "should make payment complete" do
+                payment.should_receive(:complete)
+                payment.capture!
+              end
+            end
+
+            context "when currency does not have decimal places" do
+              let(:expected_amount) { 100 }
+              let(:currency) { 'JPY' }
+
+              it "should make payment complete" do
+                payment.should_receive(:complete)
+                payment.capture!
+              end
+            end
           end
         end
 
