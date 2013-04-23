@@ -63,7 +63,7 @@ module Spree
         # requiring authentication to the Spree API
         def generate_api_key
           if user = try_spree_current_user
-            if user.spree_api_key.blank?
+            if user.respond_to?(:spree_api_key) && user.spree_api_key.blank?
               user.generate_spree_api_key!
             end
           end
