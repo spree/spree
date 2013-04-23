@@ -53,9 +53,10 @@ module Spree
       order.currency
     end
 
-    def display_amount
+    def money
       Spree::Money.new(amount, { :currency => currency })
     end
+    alias display_amount money
 
     def offsets_total
       offsets.pluck(:amount).sum
