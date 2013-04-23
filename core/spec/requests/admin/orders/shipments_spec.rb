@@ -26,7 +26,7 @@ describe "Shipments" do
     click_link "Shipments"
     
     click_on "New Shipment"
-    check "inventory_units_1"
+    check "inventory_units_#{order.inventory_units.last.id}"
     click_button "Create"
     page.should have_content("successfully created!")
     order.reload
