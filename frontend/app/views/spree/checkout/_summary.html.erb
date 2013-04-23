@@ -4,7 +4,7 @@
   <tbody>
     <tr data-hook="item_total">
       <td><strong><%= t(:item_total) %>:</strong></td>
-      <td><strong><%= order.display_item_total %></strong></td>
+      <td><strong><%= order.display_item_total.to_html %></strong></td>
     </tr>
     <tbody id="summary-order-charges" data-hook>
       <% order.adjustments.eligible.each do |adjustment| %>
@@ -24,7 +24,7 @@
         <% @order.price_adjustment_totals.each do |label, total| %>
           <tr class="total">
             <td><strong><%= label %></strong></td>
-            <td><strong><span><%= total %></span></strong></td>
+            <td><strong><span><%= total.to_html %></span></strong></td>
           </tr>
         <% end %>
       </tbody>

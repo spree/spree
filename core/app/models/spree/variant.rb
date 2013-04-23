@@ -39,6 +39,7 @@ module Spree
     before_validation :set_cost_currency
     after_save :save_default_price
     after_create :create_stock_items
+    after_create :set_position
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
@@ -124,6 +125,10 @@ module Spree
       price_in(currency).try(:amount)
     end
 
+    def name_and_sku
+      "#{name} - #{sku}"
+    end
+
     private
 
       # Ensures a new variant takes the product master price when price is not supplied
@@ -170,6 +175,10 @@ module Spree
         Spree::StockLocation.all.each do |stock_location|
           stock_location.stock_items.create!(variant: self)
         end
+      end
+
+      def set_position
+        self.update_column(:position, product.variants.maximum(:position).to_i + 1)
       end
   end
 end

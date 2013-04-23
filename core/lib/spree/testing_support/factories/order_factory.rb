@@ -32,10 +32,21 @@ FactoryGirl.define do
       end
 
       factory :completed_order_with_totals do
-        # bill_address
-        # ship_address
         state 'complete'
         completed_at { Time.now }
+
+        factory :order_ready_to_ship do
+          payment_state 'paid'
+          shipment_state 'ready'
+          after(:create) do |order|
+            create(:payment, amount: order.total, order: order, state: 'completed')
+            order.shipments.each do |shipment|
+              shipment.inventory_units.each { |u| u.update_attribute('state', 'on_hand') }
+              shipment.update_attribute('state', 'ready')
+            end
+            order.reload
+          end
+        end
 
         factory :shipped_order do
           after(:create) do |order|

@@ -18,9 +18,13 @@ module Spree
       end
 
       private
-        def reload_order
-          @order.reload
-        end
+      def reload_order
+        @order.reload
+      end
+
+      def collection
+        parent.adjustments.eligible
+      end
     end
   end
 end

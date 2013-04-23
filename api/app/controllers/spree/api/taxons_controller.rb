@@ -32,8 +32,8 @@ module Spree
         taxonomy = Taxonomy.find_by_id(params[:taxonomy_id])
 
         if taxonomy.nil?
-          @taxon.errors[:taxonomy_id] = "Invalid taxonomy_id."
-          invalid_resource!(@taxon) and return 
+          @taxon.errors[:taxonomy_id] = I18n.t(:invalid_taxonomy_id, :scope => 'spree.api')
+          invalid_resource!(@taxon) and return
         end
 
         @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]

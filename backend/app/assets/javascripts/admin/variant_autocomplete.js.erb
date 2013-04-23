@@ -2,6 +2,7 @@
 // variant autocompletion
 
 $(document).ready(function() {
+
   if ($('#variant_autocomplete_template').length > 0) {
     window.variantTemplate = Handlebars.compile($('#variant_autocomplete_template').text());
     window.variantStockTemplate = Handlebars.compile($('#variant_autocomplete_stock_template').text());
@@ -59,68 +60,6 @@ $(document).ready(function() {
       adjustItems(shipment_number, variant_id, 0);
 
     });
-
-    //handle ship click
-    $('a.ship').click(function(){
-      var link = $(this);
-      var shipment_number = link.data('shipment-number');
-      var url = Spree.url("/api/orders/" + order_number + "/shipments/" + shipment_number + "/ship.json");
-      $.ajax({
-        type: "PUT",
-        url: url
-      }).done(function( msg ) {
-        window.location.reload();
-      }).error(function( msg ) {
-        console.log(msg);
-      });
-
-    });
-
-    //handle shipping method edit click
-    $('a.edit-method').click(toggleMethodEdit);
-    $('a.cancel-method').click(toggleMethodEdit);
-
-    //handle shipping method save
-    $('a.save-method').click(function(){
-      var link = $(this);
-      var shipment_number = link.data('shipment-number');
-      var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
-      var unlock = link.parents('tbody').find("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
-
-      $.ajax({
-        type: "PUT",
-        url: "/api/orders/" + order_number + "/shipments/" + shipment_number + ".json",
-        data: { shipment: { selected_shipping_rate_id: selected_shipping_rate_id, unlock: unlock  } }
-      }).done(function( msg ) {
-        window.location.reload();
-      }).error(function( msg ) {
-        console.log(msg);
-      });
-
-    });
-
-    //handle tracking edit click
-    $('a.edit-tracking').click(toggleTrackingEdit);
-    $('a.cancel-tracking').click(toggleTrackingEdit);
-
-    //handle tracking save
-    $('a.save-tracking').click(function(){
-      var link = $(this);
-      var shipment_number = link.data('shipment-number');
-      var tracking = link.parents('tbody').find('input#tracking').val();
-
-      $.ajax({
-        type: "PUT",
-        url: "/api/orders/" + order_number + "/shipments/" + shipment_number + ".json",
-        data: { shipment: { tracking: tracking } }
-      }).done(function( msg ) {
-        window.location.reload();
-      }).error(function( msg ) {
-        console.log(msg);
-      });
-
-    });
-
   }
 });
 

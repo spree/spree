@@ -14,8 +14,6 @@ describe "Stock Management" do
         @product = create(:product, name: 'apache baseball cap', price: 10)
         v = @product.variants.create!(sku: 'FOOBAR')
         v.stock_items.first.update_column(:count_on_hand, 10)
-        # Ensure locations are scoped to ability
-        Spree::StockLocation.should_receive(:accessible_by).at_least(1).times.and_return(Spree::StockLocation.all)
 
         click_link "Products"
         within_row(1) do
@@ -37,13 +35,27 @@ describe "Stock Management" do
       it "can toggle backorderable for a variant's stock item", js: true do
         click_link "Stock Management"
 
-        backorderable = find "#stock_item_backorderable"
+        backorderable = find ".stock_item_backorderable"
         backorderable.should be_checked
 
         backorderable.set(false)
         visit current_path
 
         backorderable.should_not be_checked
+      end
+
+      # Regression test for #2896
+      # The regression was that unchecking the last checkbox caused a redirect
+      # to happen. By ensuring that we're still on an /admin/products URL, we
+      # assert that the redirect is *not* happening.
+      it "can toggle backorderable for the second variant stock item", js: true do
+        new_location = create(:stock_location, name: "Another Location")
+        click_link "Stock Management"
+
+        new_location_backorderable = find "#stock_item_backorderable_#{new_location.id}"
+        new_location_backorderable.set(false)
+
+        page.current_url.should include("/admin/products")
       end
 
       it "can create a new stock movement", js: true do

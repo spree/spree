@@ -8,58 +8,24 @@ describe "Mail Methods" do
     click_link "Configuration"
   end
 
-  context "index" do
-    before(:each) do
-      create(:mail_method)
-      click_link "Mail Methods"
-    end
-
-    it "should be able to display information about existing mail methods" do
-      within_row(1) do
-        column_text(1).should == "Test"
-        column_text(2).should == "Yes"
-      end
-    end
-  end
-
-  context "create" do
-    it "should be able to create a new mail method" do
-      click_link "Mail Methods"
-      click_link "admin_new_mail_method_link"
-      page.should have_content("New Mail Method")
-      click_button "Create"
-      page.should have_content("successfully created!")
-    end
-  end
-
   context "edit" do
-    let!(:mail_method) { create(:mail_method, :preferred_smtp_password => "haxme") }
-
-    before do
-      click_link "Mail Methods"
+    before(:each) do
+      click_link "Mail Method Settings"
     end
 
-    it "should be able to edit an existing mail method" do
-      within_row(1) { click_icon :edit }
-
-      fill_in "mail_method_preferred_mail_bcc", :with => "spree@example.com99"
+    it "should be able to edit mail method settings" do
+      fill_in "mail_bcc", :with => "spree@example.com99"
       click_button "Update"
       page.should have_content("successfully updated!")
-
-      within_row(1) { click_icon :edit }
-      find_field("mail_method_preferred_mail_bcc").value.should == "spree@example.com99"
     end
 
     # Regression test for #2094
     it "does not clear password if not provided" do
-      mail_method.preferred_smtp_password.should == "haxme"
-      within_row(1) { click_icon :edit }
+      Spree::Config[:smtp_password] = "haxme"
       click_button "Update"
       page.should have_content("successfully updated!")
 
-      mail_method.reload
-      mail_method.preferred_smtp_password.should_not be_blank
+      Spree::Config[:smtp_password].should_not be_blank
     end
-
   end
 end

@@ -66,8 +66,12 @@
                       <%= stock_location.stock_item(variant).count_on_hand %>
                     </td>
                     <td class="align-center">
-                      <%= form_tag admin_stock_item_path(stock_location.stock_item(variant)), method: :put, id: 'toggle_stock_item_backorderable' do %>
-                        <%= check_box_tag 'stock_item[backorderable]', true, stock_location.stock_item(variant).backorderable? %>
+                      <% url = admin_stock_item_path(stock_location.stock_item(variant)) %>
+                      <%= form_tag url, method: :put, class: 'toggle_stock_item_backorderable' do %>
+                        <%= check_box_tag 'stock_item[backorderable]', true,
+                              stock_location.stock_item(variant).backorderable?,
+                              class: 'stock_item_backorderable',
+                              id: "stock_item_backorderable_#{stock_location.id}" %>
                       <% end %>
                     </td>
                   </tr>

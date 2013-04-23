@@ -1,31 +1,31 @@
 # coding: utf-8
 require 'spec_helper'
 
-describe "Order Details" do
+describe "Order Details", js: true do
+
+  let!(:stock_location) { create(:stock_location_with_items) }
+  let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
+  let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
+  let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
+  let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
+
+  before do
+    configure_spree_preferences do |config|
+      config.allow_backorders = true
+    end
+    create(:country)
+    create(:state, :country => create(:country))
+    create(:shipping_method, :name => "Default")
+    order.shipments.create({stock_location_id: stock_location.id}, without_protection: true)
+    order.contents.add(product.master, 2)
+  end
 
   context 'as Admin' do
 
     stub_authorization!
 
-    context "edit order page", :js => true do
+    context "edit order page" do
       after(:each) { I18n.reload! }
-
-      let!(:stock_location) { create(:stock_location_with_items) }
-      let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
-      let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
-      let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
-      let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
-
-      before(:each) do
-        configure_spree_preferences do |config|
-          config.allow_backorders = true
-        end
-        create(:country)
-        create(:state, :country => create(:country))
-        create(:shipping_method, :name => "Default")
-        order.shipments.create({stock_location_id: stock_location.id}, without_protection: true)
-        order.contents.add(product.master, 2)
-      end
 
       it "should allow me to edit order details" do
         visit spree.edit_admin_order_path(order)
@@ -186,21 +186,11 @@ describe "Order Details" do
 
     stub_bar_authorization!
 
-    let!(:stock_location) { create(:stock_location_with_items) }
-    let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
-    let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
-    let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
-
-    before(:each) do
-      create(:country)
-      create(:state, :country => create(:country))
-      create(:shipping_method, :name => "Default")
-      order.shipments.create({stock_location_id: stock_location.id}, without_protection: true)
-      order.contents.add(product.master, 2)
+    it 'should not display order tabs or edit buttons without ability' do
       visit spree.edit_admin_order_path(order)
-    end
-
-    it 'should not display order tabs without ability' do
+      # Order Form
+      page.should_not have_css('.edit-item')
+      # Order Tabs
       page.should_not have_link('Order Details')
       page.should_not have_link('Customer Details')
       page.should_not have_link('Adjustments')
@@ -208,7 +198,39 @@ describe "Order Details" do
       page.should_not have_link('Return Authorizations')
     end
 
+    it "can add tracking information" do
+      visit spree.edit_admin_order_path(order)
+      within("table.index tr:nth-child(5)") do
+        click_icon :edit
+      end
+      fill_in "tracking", :with => "FOOBAR"
+      click_icon :ok
+
+      page.should have_content("Tracking: FOOBAR")
+    end
+
+    it "can change the shipping method" do
+      order = create(:completed_order_with_totals)
+      visit spree.edit_admin_order_path(order)
+      within("table.index tr.show-method") do
+        click_icon :edit
+      end
+      select2 "Default", :from => "Shipping Method"
+      click_icon :ok
+
+      page.should have_content("Default:")
+    end
+
+    it 'can ship' do
+      order = create(:order_ready_to_ship)
+      visit spree.edit_admin_order_path(order)
+      click_icon 'arrow-right'
+      sleep 1
+      within '.shipment-state' do
+        page.should have_content('shipped')
+      end
+    end
+
   end
 
 end
-

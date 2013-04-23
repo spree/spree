@@ -87,6 +87,21 @@ module Spree
     preference :s3_protocol, :string
     preference :s3_host_alias, :string
 
+    # Default mail headers settings
+    preference :enable_mail_delivery, :boolean, :default => false
+    preference :mails_from, :string, :default => 'no-reply@example.com'
+    preference :mail_bcc, :string, :default => 'spree@example.com'
+    preference :intercept_email, :string, :default => nil
+
+    # Default smtp settings
+    preference :mail_host, :string, :default => 'localhost'
+    preference :mail_domain, :string, :default => 'localhost'
+    preference :mail_port, :integer, :default => 25
+    preference :secure_connection_type, :string, :default => Core::MailSettings::SECURE_CONNECTION_TYPES[0]
+    preference :mail_auth_type, :string, :default => Core::MailSettings::MAIL_AUTH[0]
+    preference :smtp_username, :string
+    preference :smtp_password, :string
+
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base
@@ -95,7 +110,5 @@ module Spree
     def searcher_class=(sclass)
       @searcher_class = sclass
     end
-
   end
-
 end

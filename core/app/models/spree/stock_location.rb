@@ -9,14 +9,14 @@ module Spree
     validates_presence_of :name
 
     attr_accessible :name, :active, :address1, :address2, :city, :zipcode,
-                    :state_name, :state_id, :country_id, :phone
+                    :state_name, :state_id, :country_id, :phone, :country_id
 
     scope :active, -> { where(active: true) }
 
     after_create :create_stock_items
 
     def stock_item(variant)
-      stock_items.where(variant_id: variant).first
+      stock_items.where(variant_id: variant).order(:id).first
     end
 
     def count_on_hand(variant)
@@ -37,6 +37,11 @@ module Spree
 
     def move(variant, quantity, originator = nil)
       stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
+    end
+
+    def transfer_stock(variant, quantity, destination)
+      move(variant, -quantity, self)
+      destination.move(variant, quantity, self)
     end
 
     def fill_status(variant, quantity)
@@ -63,4 +68,3 @@ module Spree
       end
   end
 end
-

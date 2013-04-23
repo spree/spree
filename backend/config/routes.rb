@@ -170,6 +170,9 @@ Spree::Core::Engine.routes.append do
     resources :shipping_categories
     resources :stock_locations do
       resources :stock_movements
+      collection do
+        post :transfer_stock
+      end
     end
     resources :stock_movements
     resources :stock_items, :only => :update
@@ -178,10 +181,8 @@ Spree::Core::Engine.routes.append do
 
     resources :trackers
     resources :payment_methods
-    resources :mail_methods do
-      member do
-        post :testmail
-      end
+    resource :mail_method, :only => [:edit, :update] do
+      post :testmail, :on => :collection
     end
   end
 

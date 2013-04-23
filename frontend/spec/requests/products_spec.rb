@@ -53,6 +53,15 @@ describe "Visiting Products" do
           page.should have_content("руб19.99")
         end
       end
+
+      it "when on the 'address' state of the cart" do
+        visit spree.product_path(product)
+        click_button "Add To Cart"
+        click_button "Checkout"
+        within("tr[data-hook=item_total]") do
+          page.should have_content("руб19.99")
+        end
+      end
     end
   end
 
