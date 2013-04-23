@@ -17,5 +17,10 @@ describe 'product filters' do
     it "can find products in the 'Nike' brand" do
       Spree::Product.brand_any("Nike").should include(product)
     end
+    it "sorts products without brand specified" do
+      product.set_property("brand", "Nike")
+      create(:product).set_property("brand", nil)
+      lambda { Spree::Core::ProductFilters.brand_filter[:labels] }.should_not raise_error(ArgumentError)
+    end
   end
 end
