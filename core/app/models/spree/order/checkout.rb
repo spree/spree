@@ -131,6 +131,10 @@ module Spree
             steps << "complete" unless steps.include?("complete")
             steps
           end
+
+          def has_checkout_step?(step)
+            step.present? ? self.checkout_steps.include?(step) : false
+          end
         end
       end
     end
