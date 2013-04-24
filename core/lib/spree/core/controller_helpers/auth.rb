@@ -45,7 +45,7 @@ module Spree
 
           disallowed_urls.map!{ |url| url[/\/\w+$/] }
           unless disallowed_urls.include?(request.fullpath)
-            session['user_return_to'] = request.fullpath.gsub('//', '/')
+            session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
           end
         end
 
@@ -56,8 +56,8 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session["user_return_to"] || default)
-          session["user_return_to"] = nil
+          redirect_to(session["spree_user_return_to"] || default)
+          session["spree_user_return_to"] = nil
         end
       end
     end
