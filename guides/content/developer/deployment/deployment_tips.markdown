@@ -121,29 +121,75 @@ config.allow_ssl_in_staging = false
 
 ### Configuring Email Options
 
-Mail delivery in Spree is disabled by default. Enabling it is simple
-procedure that is generally done via the admin interface as shown below.
+Mail delivery in Spree is disabled by default. You can enable it in two ways.
 
-![Changing Mail Server Setting](../images/developer/change_mail_server_settings.png "Changing Mail Server Setting")
+First, if you need to keep your default Rails app action mailer configs you need to
+tell Spree to not override them by setting the ``override_actionmailer_config``
+option to ``false``. You should also tell Spree which email should go on the
+header *from* using the ``mails_from`` option. A typical spree initializer which disables
+all Spree default mail settings and interceptor looks like this:
 
-To properly enable email delivery, you need to provide valid SMTP
-information. This includes the following:
+```ruby
+Spree.config do |config|
+  config.override_actionmailer_config = false
+  config.mails_from = "no-reply@yourdomain.com"
+end
+```
 
-* SMTP Domain
-* SMTP Mail Host
-* SMTP Port
-* Secure Connection Type
-* SMTP Authentication Type
-* SMTP Username
-* SMTP Password
+Secondly, in case you want to use Spree admin UI or config options via
+initializer to properly enable email delivery, you need to provide valid
+SMTP information. This includes the following (spree config options goes
+along):
 
-Note that mail settings are configured on a per-environment basis. This
-will allow you to configure the settings differently for staging or
-production mode. For example, you might want to intercept all outgoing
-email in the staging environment and re-route it to test@yourstore.com.
-This would prevent someone from accidentally sending an email to a real
-world customer when testing operations such as canceling an order or
-marking it shipped.
+* SMTP Domain (mail_domain, defaults to *localhost*)
+* SMTP Mail Host (mail_host, defaults to *localhost*)
+* SMTP Port (mail_port, defaults to *25*)
+* Secure Connection Type (secure_connection_type, defaults to *None*)
+* SMTP Authentication Type (mail_auth_type, defaults to *None*)
+* SMTP Username (smtp_username, defaults to *nil*)
+* SMTP Password (smtp_password, defaults to *nil*)
+
+Those can be updated either by an usual spree initializer block or through
+admin UI. You could set them as per environment as well. e.g.
+
+```ruby
+Spree.config do |config|
+  if Rails.env.production?
+    config.mail_port = 1025
+    # other configs ..
+  else 
+    config.mail_port = 25
+    # other configs ..
+  end
+end
+```
+
+The default ``override_actionmailer_config`` value also gives you the chance
+to set *bcc* headers for all spree outgoing emails and to intercept them and
+reroute to someone else. This could come in handy on staging servers since
+it prevents the store from accidentally sending emails to a real world
+customer when testing operations such as canceling an order or marking it
+shipped. At last you need to set ``enable_mail_delivery = true``
+as it defaults to ``false``. e.g.
+
+```ruby
+Spree.config do |config|
+  config.enable_mail_delivery = true
+  config.mail_bcc = "staff@yourstore.com"
+
+  if Rails.env.staging?
+    config.intercept_email = "testing@yourstore.com"
+  end
+end
+```
+
+Both smtp and inteceptor configs listed above can be found on the mail section
+in the configuration tab. Note that the *Mail Method Setting* link will not
+be displayed if ``override_actionmailer_config`` is ``false``.
+
+
+![Changing Mail Server Setting](../images/developer/mail_server_settings.png "Changing Mail Server Setting")
+
 
 !!!
 It's generally considered a bad idea to send email on the same
@@ -158,14 +204,6 @@ The Spree core team is actively working on a solution for improved
 email processing, perhaps involving an optional extension for Delayed
 Job support.
 ***
-
-!!!
-Spree overrides the default configuration of email by Rails and
-will ignore whatever settings you may have in your Rails application.
-This is to allow easier configuration of email by non-programmers
-through an admin interface. Spree also uses this mechanism to provide a
-few additional settings that are not supplied by Rails.
-!!!
 
 ## Performance Tips
 
