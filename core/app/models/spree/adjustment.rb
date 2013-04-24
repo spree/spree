@@ -80,10 +80,9 @@ module Spree
     # order#update_adjustments passes self as the src, this is so calculations can
     # be performed on the # current values. If we used source it would load the old
     # record from db for the association
-    def update!(src = nil)
-      src ||= source
+    def update!
       return if immutable?
-      originator.update_adjustment(self, src) if originator.present?
+      originator.update_adjustment(self, source) if originator.present?
       set_eligibility
     end
 
