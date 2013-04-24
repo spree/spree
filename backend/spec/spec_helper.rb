@@ -64,6 +64,7 @@ RSpec.configure do |config|
     if ActiveRecord::Base.connection.open_transactions < 0
       ActiveRecord::Base.connection.increment_open_transactions
     end
+
     DatabaseCleaner.start
     reset_spree_preferences
   end
