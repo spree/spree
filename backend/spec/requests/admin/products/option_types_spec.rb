@@ -59,6 +59,7 @@ describe "Option Types" do
     create(:option_value)
     click_link "Option Types"
     within('table#listing_option_types') { click_icon :edit }
+    page.should have_content("Editing Option Type")
     all("tbody#option_values tr").count.should == 1
     within("tbody#option_values") do
       find('.spree_remove_fields').click
@@ -69,6 +70,9 @@ describe "Option Types" do
     # Then assert that on a page refresh that it's still not visible
     visit page.current_url
     # What *is* visible is a new option value field, with blank values
+    # Sometimes the page doesn't load before the all check is done
+    # lazily finding the element gives the page 10 seconds
+    page.should have_css("tbody#option_values")
     all("tbody#option_values tr input").all? { |input| input.value.blank? }
   end
 end
