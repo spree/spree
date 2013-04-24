@@ -4,15 +4,7 @@ module Spree
   describe Api::ReturnAuthorizationsController do
     render_views
 
-    let!(:order) do
-     order = create(:order)
-     order.line_items << create(:line_item)
-     order.shipments << create(:shipment, :state => 'shipped')
-     order.finalize!
-     order.shipments.update_all(:state => 'shipped')
-     order.inventory_units.update_all(:state => 'shipped')
-     order
-    end
+    let!(:order) { create(:shipped_order) }
 
     let(:product) { create(:product) }
     let(:attributes) { [:id, :reason, :amount, :state] }

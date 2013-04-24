@@ -7,5 +7,18 @@ node(:pages) { @variants.num_pages }
 child(@variants => :variants) do
   attributes *variant_attributes
   child(:option_values => :option_values) { attributes *option_value_attributes }
-  child(:images => :images) { attributes *image_attributes }
+  child(:images => :images) do
+    attributes *image_attributes
+    code(:urls) do |v|
+      v.attachment.styles.keys.inject({}) { |urls, style| urls[style] = v.attachment.url(style); urls  }
+    end
+  end
+
+  child(:stock_items) do
+    attributes :id, :count_on_hand, :stock_location_id, :backorderable
+
+    glue(:stock_location) do
+      attribute :name => :stock_location_name
+    end
+  end
 end

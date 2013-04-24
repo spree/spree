@@ -6,12 +6,28 @@ describe 'orders' do
 
   before do
     order.update_attribute(:user_id, user.id)
+    order.shipments.destroy_all
     Spree::OrdersController.any_instance.stub(:try_spree_current_user => user)
   end
 
   it "can visit an order" do
     # Regression test for current_user call on orders/show
     lambda { visit spree.order_path(order) }.should_not raise_error
+  end
+
+  it "should display line item price" do
+    # Regression test for #2772
+    line_item = order.line_items.first
+    line_item.target_shipment = create(:shipment)
+    line_item.price = 19.00
+    line_item.save!
+
+    visit spree.order_path(order)
+
+    # Tests view spree/shared/_order_details
+    within 'td.price' do
+      page.should have_content "19.00"
+    end
   end
 
   it "should have credit card info if paid with credit card" do

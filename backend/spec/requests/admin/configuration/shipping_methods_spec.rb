@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Shipping Methods" do
   stub_authorization!
   let!(:zone) { create(:global_zone) }
-  let!(:shipping_method) { create(:shipping_method, :zone => zone) }
+  let!(:shipping_method) { create(:shipping_method, :zones => [zone]) }
 
   before(:each) do
     # HACK: To work around no email prompting on check out
@@ -48,20 +48,13 @@ describe "Shipping Methods" do
         click_icon :edit
       end
 
+      find(:css, ".calculator-settings-warning").should_not be_visible
+      select('Flexible Rate', :from => 'calc_type')
+      find(:css, ".calculator-settings-warning").should be_visible
+
       click_button "Update"
       page.should_not have_content("Shipping method is not found")
     end
   end
 
-  context "availability", :js => true do
-    it "can check shipping method match fields" do
-      click_link "Shipping Methods"
-      click_link "New Shipping Method"
-      ["none", "one", "all"].each do |type|
-        field = "shipping_method_match_#{type}"
-        check field
-        uncheck field
-      end
-    end
-  end
 end

@@ -26,18 +26,18 @@ module Spree
       self.clear_aliased_actions
 
       # override cancan default aliasing (we don't want to differentiate between read and index)
-      alias_action :edit, :to => :update
-      alias_action :new, :to => :create
-      alias_action :new_action, :to => :create
-      alias_action :show, :to => :read
-      alias_action :delete, :to => :destroy
+      alias_action :edit, to: :update
+      alias_action :new, to: :create
+      alias_action :new_action, to: :create
+      alias_action :show, to: :read
+      alias_action :delete, to: :destroy
 
       user ||= Spree.user_class.new
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
         #############################
-        can [:read,:update,:destroy], Spree.user_class, :id => user.id
+        can [:read,:update,:destroy], Spree.user_class, id: user.id
         can :create, Spree.user_class
         #############################
         can :read, Order do |order, token|

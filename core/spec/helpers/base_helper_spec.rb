@@ -58,11 +58,11 @@ describe Spree::BaseHelper do
     end
 
     it "should not raise errors when style exists" do
-      lambda { very_strange_image(product) }.should_not raise_error
+      expect { very_strange_image(product) }.not_to raise_error
     end
 
     it "should raise NoMethodError when style is not exists" do
-      lambda { another_strange_image(product) }.should raise_error(NoMethodError)
+      expect { another_strange_image(product) }.to raise_error(NoMethodError)
     end
 
   end
@@ -118,6 +118,20 @@ describe Spree::BaseHelper do
     def link_to_tracking_html(options = {})
       node = link_to_tracking(stub(:shipment, options))
       Nokogiri::HTML(node.to_s)
+    end
+  end
+
+  # Regression test for #2396
+  context "meta_data_tags" do
+    it "truncates a product description to 160 characters" do
+      # Because the controller_name method returns "test"
+      # controller_name is used by this method to infer what it is supposed
+      # to be generating meta_data_tags for
+      text = Faker::Lorem.paragraphs(2).join(" ")
+      @test = Spree::Product.new(:description => text)
+      tags = Nokogiri::HTML.parse(meta_data_tags)
+      content = tags.css("meta[name=description]").first["content"]
+      assert content.length <= 160, "content length is not truncated to 160 characters"
     end
   end
 end

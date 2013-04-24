@@ -12,8 +12,7 @@ module Spree
       end
 
       def product_attributes
-        [:id, :name, :description, :price, :available_on, :permalink,
-          :count_on_hand, :meta_description, :meta_keywords, :taxon_ids]
+        [:id, :name, :description, :price, :available_on, :permalink, :meta_description, :meta_keywords, :taxon_ids]
       end
 
       def product_property_attributes
@@ -21,7 +20,7 @@ module Spree
       end
 
       def variant_attributes
-        [:id, :name, :count_on_hand, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink]
+        [:id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink]
       end
 
       def image_attributes
@@ -65,8 +64,7 @@ module Spree
       end
 
       def inventory_unit_attributes
-        [:id, :lock_version, :state, :variant_id, :order_id,
-         :shipment_id, :return_authorization_id]
+        [:id, :lock_version, :state, :variant_id, :shipment_id, :return_authorization_id]
       end
 
       def return_authorization_attributes
@@ -96,6 +94,19 @@ module Spree
       def property_attributes
         [:id, :name, :presentation]
       end
+
+      def stock_location_attributes
+        [:id, :name, :address1, :address2, :city, :state_id, :state_name, :country_id, :zipcode, :phone, :active]
+      end
+
+      def stock_movement_attributes
+        [:id, :quantity, :stock_item_id]
+      end
+
+      def stock_item_attributes
+        [:id, :count_on_hand, :backorderable, :lock_version, :stock_location_id, :variant_id]
+      end
     end
   end
 end
+

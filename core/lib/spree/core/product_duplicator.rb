@@ -28,22 +28,25 @@ module Spree
         new_product.deleted_at = nil
         new_product.updated_at = nil
         new_product.product_properties = reset_properties
-        new_product.master = duplicate_variant
+        new_product.master = duplicate_master
       end
     end
 
-    def duplicate_variant
-      master.dup.tap do |new_product|
-        new_product.sku = "COPY OF #{master.sku}"
-        new_product.deleted_at = nil
-        new_product.images = master.images.map { |image| duplicate_imag image }
-        new_product.price = master.price
-        new_product.currency = master.currency
+    def duplicate_master
+      master = product.master
+      master.dup.tap do |new_master|
+        new_master.sku = "COPY OF #{master.sku}"
+        new_master.deleted_at = nil
+        new_master.images = master.images.map { |image| duplicate_image image }
+        new_master.price = master.price
+        new_master.currency = master.currency
       end
     end
 
     def duplicate_image(image)
-      image.dup.assign_attributes(:attachment => image.attachment.clone)
+      new_image = image.dup
+      new_image.assign_attributes(:attachment => image.attachment.clone)
+      new_image
     end
 
     def reset_properties
@@ -53,10 +56,6 @@ module Spree
           new_prop.updated_at = nil
         end
       end
-    end
-
-    def master
-      product.master
     end
   end
 end

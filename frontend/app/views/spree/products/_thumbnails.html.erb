@@ -8,13 +8,11 @@
     <% end %>
 
     <% if @product.has_variants? %>
-      <% @variants.select(&:available?).each do |v| %>
-        <% v.images.each do |i| %>
-          <% next if @product.images.include?(i) %>
-          <li class='vtmb-<%= v.id %> vtmb' id='tmb-<%= i.id %>'>
-            <%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %>
-          </li>
-        <% end %>
+      <% @product.variant_images.each do |i| %>
+        <% next if @product.images.include?(i) %>
+        <li class='vtmb' id='tmb-<%= i.id %>'>
+          <%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %>
+        </li>
       <% end %>
     <% end %>
   </ul>

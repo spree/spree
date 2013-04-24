@@ -9,7 +9,7 @@ module Spree
           validates :calculator, :presence => true
 
           def self.calculators
-            Rails.application.config.spree.calculators.send(self.to_s.tableize.gsub('/', '_').sub('spree_', ''))
+            spree_calculators.send model_name_without_spree_namespace
           end
 
           def calculator_type
@@ -18,13 +18,13 @@ module Spree
 
           def calculator_type=(calculator_type)
             klass = calculator_type.constantize if calculator_type
-            self.calculator = klass.new if klass and not self.calculator.is_a? klass
+            self.calculator = klass.new if klass && !self.calculator.is_a?(klass)
           end
 
           # Creates a new adjustment for the target object (which is any class that has_many :adjustments) and
           # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
           # By default the adjustment will not be considered mandatory
-          def create_adjustment(label, target, calculable, mandatory=false)
+          def create_adjustment(label, target, calculable, mandatory=false, state="closed")
             amount = compute_amount(calculable)
             return if amount == 0 && !mandatory
             target.adjustments.create({ :amount => amount,
@@ -32,7 +32,7 @@ module Spree
                                         :originator => self,
                                         :label => label,
                                         :mandatory => mandatory,
-                                        :state => "closed" }, :without_protection => true)
+                                        :state => state }, :without_protection => true)
           end
 
           # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
@@ -46,6 +46,15 @@ module Spree
           # Such as Spree::Promotion::Action::CreateAdjustment.
           def compute_amount(calculable)
             self.calculator.compute(calculable)
+          end
+
+          private
+          def self.model_name_without_spree_namespace
+            self.to_s.tableize.gsub('/', '_').sub('spree_', '')
+          end
+
+          def self.spree_calculators
+            Rails.application.config.spree.calculators
           end
         end
       end

@@ -12,7 +12,7 @@ describe "Cart" do
   end
 
   it "prevents double clicking the remove button on cart", :js => true do
-    @product = create(:product, :name => "RoR Mug", :on_hand => 1)
+    @product = create(:product, :name => "RoR Mug")
 
     visit spree.root_path
     click_link "RoR Mug"
@@ -35,7 +35,7 @@ describe "Cart" do
   end
 
   it 'allows you to remove an item from the cart', :js => true do
-    create(:product, :name => "RoR Mug", :on_hand => 1)
+    create(:product, :name => "RoR Mug")
     visit spree.root_path
     click_link "RoR Mug"
     click_button "add-to-cart-button"

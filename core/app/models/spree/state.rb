@@ -1,8 +1,8 @@
 module Spree
   class State < ActiveRecord::Base
-    belongs_to :country
+    belongs_to :country, class_name: 'Spree::Country'
 
-    validates :country, :name, :presence => true
+    validates :country, :name, presence: true
 
     attr_accessible :name, :abbr
 

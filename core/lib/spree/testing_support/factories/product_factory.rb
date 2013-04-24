@@ -1,41 +1,40 @@
 FactoryGirl.define do
-  factory :base_product, :class => Spree::Product do
+  factory :base_product, class: Spree::Product do
     sequence(:name) { |n| "Product ##{n} - #{Kernel.rand(9999)}" }
-    description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
+    description { generate(:random_description) }
     price 19.99
     cost_price 17.00
     sku 'ABC'
-    available_on 1.year.ago
+    available_on { 1.year.ago }
     deleted_at nil
+
+    # ensure stock item will be created for this products master
+    before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
+
+    factory :product do
+      tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
+      shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
+
+      factory :product_with_option_types do
+        after(:create) { |product| create(:product_option_type, product: product) }
+      end
+    end
   end
 
-  factory :simple_product, :parent => :base_product do
-    on_hand 5
-  end
-
-  factory :product, :parent => :simple_product do
-    tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
-    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
-  end
-
-  factory :product_with_option_types, :parent => :product do
-    after(:create) { |product| FactoryGirl.create(:product_option_type, :product => product) }
-  end
-
-  factory :custom_product, :class => Spree::Product do
-    name "Custom Product"
-    price "17.99"
-    description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
-    on_hand 5
-
-    # associations:
-    tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
-    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
-
+  factory :custom_product, class: Spree::Product do
+    name 'Custom Product'
+    description { generate(:random_description) }
+    price 17.99
     sku 'ABC'
-    available_on 1.year.ago
+    available_on { 1.year.ago }
     deleted_at nil
 
-    association :taxons
+    tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
+    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
+
+    # association :taxons
+
+    # ensure stock item will be created for this products master
+    before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
   end
 end

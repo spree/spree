@@ -25,6 +25,10 @@
   }
 }
 
+.hidden {
+  display: none;
+}
+
 // For block grids
 .frameless {
   margin-left: -10px;
@@ -65,10 +69,13 @@
 
   .page-title {
     font-size: 20px;
+    -webkit-font-smoothing: antialiased;
   }
   .page-actions {
     text-align: right;
-
+    form {
+      display: inline-block;
+    }
     .button {
       font-size: 85%;
     }

@@ -3,7 +3,7 @@ module Spree
     module AdjustmentsHelper
       def link_to_toggle_adjustment_state(order, adjustment, options={})
         return if adjustment.finalized?
-        icon = { :closed => 'icon-unlock', :open => 'icon-lock' }
+        icon = { closed: 'icon-unlock', open: 'icon-lock' }
         alt_text = adjustment.immutable? ? t(:open) : t(:close)
         link_to_with_icon(icon[adjustment.state.to_sym], alt_text, toggle_state_admin_order_adjustment_url(order, adjustment), options)
       end
@@ -18,8 +18,8 @@ module Spree
       end
 
       def icon_for(adjustment_state)
-        icon = { :closed => 'icon-lock', :open => 'icon-unlock' }
-        content_tag(:span, '', :class => icon[adjustment_state])
+        icon = { closed: 'icon-lock', open: 'icon-unlock' }
+        content_tag(:span, '', class: icon[adjustment_state])
       end
     end
   end

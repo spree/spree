@@ -6,9 +6,6 @@ class OrderWalkthrough
     end
 
     # A payment method must exist for an order to proceed through the Address state
-    unless Spree::ShippingMethod.exists?
-      FactoryGirl.create(:shipping_method)
-    end
 
     order = Spree::Order.create!(:email => "spree@example.com")
     add_line_item!(order)
@@ -25,19 +22,17 @@ class OrderWalkthrough
   private
 
   def self.add_line_item!(order)
-    order.line_items << FactoryGirl.create(:line_item)
-    order.save
+    FactoryGirl.create(:line_item, order: order)
+    order.reload
   end
 
   def self.address(order)
-
-    order.bill_address = FactoryGirl.create(:address)
-    order.ship_address = FactoryGirl.create(:address)
+    order.bill_address = FactoryGirl.create(:address, :country_id => Spree::Zone.global.members.first.zoneable.id)
+    order.ship_address = FactoryGirl.create(:address, :country_id => Spree::Zone.global.members.first.zoneable.id)
     order.next!
   end
 
   def self.delivery(order)
-    order.shipping_method = Spree::ShippingMethod.first
     order.next!
   end
 

@@ -1,12 +1,12 @@
 module Spree
   class Address < ActiveRecord::Base
-    belongs_to :country
-    belongs_to :state
+    belongs_to :country, class_name: "Spree::Country"
+    belongs_to :state, class_name: "Spree::State"
 
     has_many :shipments
 
-    validates :firstname, :lastname, :address1, :city, :zipcode, :country, :presence => true
-    validates :phone, :presence => true, :if => :require_phone?
+    validates :firstname, :lastname, :address1, :city, :zipcode, :country, presence: true
+    validates :phone, presence: true, if: :require_phone?
 
     validate :state_validate
 
@@ -28,7 +28,7 @@ module Spree
 
     def self.default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
-      new({:country => country}, :without_protection => true)
+      new({ country: country }, without_protection: true)
     end
 
     # Can modify an address if it's not been used in an order (but checkouts controller has finer control)
@@ -75,14 +75,14 @@ module Spree
     # Generates an ActiveMerchant compatible address hash
     def active_merchant_hash
       {
-        :name => full_name,
-        :address1 => address1,
-        :address2 => address2,
-        :city => city,
-        :state => state_text,
-        :zip => zipcode,
-        :country => country.try(:iso),
-        :phone => phone
+        name: full_name,
+        address1: address1,
+        address2: address2,
+        city: city,
+        state: state_text,
+        zip: zipcode,
+        country: country.try(:iso),
+        phone: phone
       }
     end
 

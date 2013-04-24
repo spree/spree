@@ -3,14 +3,13 @@ require 'spec_helper'
 describe "return authorizations" do
   stub_authorization!
 
-  let!(:order) { create(:completed_order_with_totals) }
+  let!(:order) { create(:shipped_order) }
 
   before do
-    order.inventory_units.update_all("state = 'shipped'")
     create(:return_authorization,
             :order => order,
             :state => 'authorized',
-            :inventory_units => order.inventory_units)
+            :inventory_units => order.shipments.first.inventory_units)
   end
 
   # Regression test for #1107

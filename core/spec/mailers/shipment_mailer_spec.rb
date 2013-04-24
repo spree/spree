@@ -9,7 +9,6 @@ describe Spree::ShipmentMailer do
     order = stub_model(Spree::Order)
     product = stub_model(Spree::Product, :name => %Q{The "BEST" product})
     variant = stub_model(Spree::Variant, :product => product)
-    variant.stub(:in_stock? => false)
     line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
     shipment = stub_model(Spree::Shipment)
     shipment.stub(:line_items => [line_item], :order => order)
@@ -17,10 +16,21 @@ describe Spree::ShipmentMailer do
     shipment
   end
 
+  before do
+    Spree::Config[:mails_from] = "spree@example.com"
+  end
+
   # Regression test for #2196
   it "doesn't include out of stock in the email body" do
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
     shipment_email.body.should_not include(%Q{Out of Stock})
+  end
+
+  it "shipment_email accepts an shipment id as an alternative to an Shipment object" do
+    Spree::Shipment.should_receive(:find).with(shipment.id).and_return(shipment)
+    lambda {
+      shipped_email = Spree::ShipmentMailer.shipped_email(shipment.id)
+    }.should_not raise_error
   end
 
   context "emails must be translatable" do

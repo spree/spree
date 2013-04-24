@@ -47,8 +47,8 @@ module Spree
     private
       def ensure_valid_state
         unless skip_state_validation?
-          if (params[:state] && !@order.checkout_steps.include?(params[:state])) ||
-             (!params[:state] && !@order.checkout_steps.include?(@order.state))
+          if (params[:state] && !@order.has_checkout_step?(params[:state])) ||
+             (!params[:state] && !@order.has_checkout_step?(@order.state))
             @order.state = 'cart'
             redirect_to checkout_state_path(@order.checkout_steps.first)
           end
@@ -65,7 +65,10 @@ module Spree
         @order = current_order
         redirect_to spree.cart_path and return unless @order
 
-        @order.state = params[:state] if params[:state]
+        if params[:state]
+          redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
+          @order.state = params[:state]
+        end
         setup_for_current_state
       end
 
@@ -95,7 +98,8 @@ module Spree
       # attributes for a single payment and its source, discarding attributes
       # for payment methods other than the one selected
       def object_params
-        if @order.payment?
+        # respond_to check is necessary due to issue described in #2910
+        if @order.has_checkout_step?("payment") && @order.payment?
           if params[:payment_source].present?
             source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
 
@@ -123,7 +127,19 @@ module Spree
 
       def before_delivery
         return if params[:order].present?
-        @order.shipping_method ||= (@order.rate_hash.first && @order.rate_hash.first[:shipping_method])
+
+        @order.create_proposed_shipments
+
+        packages = @order.shipments.map { |s| s.to_package }
+        @differentiator = Spree::Stock::Differentiator.new(@order, packages)
+      end
+
+      def before_payment
+        packages = @order.shipments.map { |s| s.to_package }
+        @differentiator = Spree::Stock::Differentiator.new(@order, packages)
+        @differentiator.missing.each do |variant, quantity|
+          @order.contents.remove(variant, quantity)
+        end
       end
 
       def rescue_from_spree_gateway_error

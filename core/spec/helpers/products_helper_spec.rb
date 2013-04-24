@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 module Spree
-  describe ProductsHelper do
-    include ProductsHelper
+  describe Spree::ProductsHelper do
+    include Spree::ProductsHelper
 
     let(:product) { create(:product) }
     let(:currency) { 'USD' }
@@ -36,6 +36,8 @@ module Spree
           let(:variant_price) { 15 }
 
           it { should == "(Add: $5.00)" }
+          # Regression test for #2737
+          it { should be_html_safe }
         end
 
         context "when variant is less than master" do
@@ -132,6 +134,22 @@ THIS IS THE BEST PRODUCT EVER!
 
         description = product_description(product)
         description.strip.should == %Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD}
+      end
+
+      it "renders a product description without any formatting based on configuration" do
+        initialDescription = %Q{
+            <p>hello world</p>
+
+            <p>tihs is completely awesome and it works</p>
+
+            <p>why so many spaces in the code. and why some more formatting afterwards?</p>
+        }
+
+        product.description = initialDescription
+
+        Spree::Config[:show_raw_product_description] = true
+        description = product_description(product)
+        description.should == initialDescription
       end
 
     end

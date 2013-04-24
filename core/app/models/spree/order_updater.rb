@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :shipments, :update_hooks, :to => :order
+    delegate :payments, :line_items, :adjustments, :shipments, :update_hooks, to: :order
 
     def initialize(order)
       @order = order
@@ -26,12 +26,12 @@ module Spree
       update_totals
 
       order.update_attributes_without_callbacks({
-        :payment_state => order.payment_state,
-        :shipment_state => order.shipment_state,
-        :item_total => order.item_total,
-        :adjustment_total => order.adjustment_total,
-        :payment_total => order.payment_total,
-        :total => order.total
+        payment_state: order.payment_state,
+        shipment_state: order.shipment_state,
+        item_total: order.item_total,
+        adjustment_total: order.adjustment_total,
+        payment_total: order.payment_total,
+        total: order.total
       })
 
       update_hooks.each { |hook| order.send hook }
@@ -72,10 +72,11 @@ module Spree
         else
           # will return nil if no shipments are found
           order.shipment_state = shipment_states.first
-          if order.shipment_state && order.inventory_units.where(:shipment_id => nil).exists?
-            # shipments exist but there are unassigned inventory units
-            order.shipment_state = 'partial'
-          end
+          # TODO inventory unit states?
+          # if order.shipment_state && order.inventory_units.where(:shipment_id => nil).exists?
+          #   shipments exist but there are unassigned inventory units
+          #   order.shipment_state = 'partial'
+          # end
         end
       end
 
@@ -128,7 +129,7 @@ module Spree
       def choose_best_promotion_adjustment
         if best_promotion_adjustment = order.adjustments.promotion.reorder("amount ASC, created_at DESC").first
           other_promotions = order.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
-          other_promotions.update_all(:eligible => false)
+          other_promotions.update_all(eligible: false)
         end
       end
 

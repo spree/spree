@@ -1,22 +1,24 @@
 FactoryGirl.define do
-  factory :base_variant, :class => Spree::Variant do
+  sequence(:random_float) { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
+
+  factory :base_variant, class: Spree::Variant do
     price 19.99
     cost_price 17.00
-    sku    { Faker::Lorem.sentence }
-    weight { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
-    height { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
-    width  { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
-    depth  { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
+    sku    { generate(:random_string) }
+    weight { generate(:random_float) }
+    height { generate(:random_float) }
+    width  { generate(:random_float) }
+    depth  { generate(:random_float) }
 
-    # associations:
     product { |p| p.association(:base_product) }
-    option_values { [FactoryGirl.create(:option_value)] }
-  end
+    option_values { [create(:option_value)] }
 
-  factory :variant, :parent => :base_variant do
-    on_hand 5
-    
-    # associations:
-    product { |p| p.association(:product) }
+    # ensure stock item will be created for this variant
+    before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
+
+    factory :variant do
+      # on_hand 5
+      product { |p| p.association(:product) }
+    end
   end
 end

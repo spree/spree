@@ -1,0 +1,24 @@
+module Spree
+  class StockMovement < ActiveRecord::Base
+    belongs_to :stock_item, class_name: 'Spree::StockItem'
+    belongs_to :originator, polymorphic: true
+
+    attr_accessible :quantity, :stock_item, :stock_item_id, :originator
+
+    after_create :update_stock_item_quantity
+
+    validates :stock_item, presence: true
+    validates :quantity, presence: true
+
+    def readonly?
+      !new_record?
+    end
+
+    private
+    def update_stock_item_quantity
+      return unless Spree::Config[:track_inventory_levels]
+      stock_item.adjust_count_on_hand quantity
+    end
+  end
+end
+

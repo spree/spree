@@ -6,10 +6,10 @@ module Spree
     Activator.event_names << 'spree.checkout.coupon_code_added'
     Activator.event_names << 'spree.content.visited'
 
-    has_many :promotion_rules, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
+    has_many :promotion_rules, foreign_key: :activator_id, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 
-    has_many :promotion_actions, :foreign_key => :activator_id, :autosave => true, :dependent => :destroy
+    has_many :promotion_actions, foreign_key: :activator_id, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
@@ -21,10 +21,10 @@ module Spree
 
     validates_associated :rules
 
-    validates :name, :presence => true
-    validates :code, :presence => true, :if => lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
-    validates :path, :presence => true, :if => lambda{|r| r.event_name == 'spree.content.visited' }
-    validates :usage_limit, :numericality => { :greater_than => 0, :allow_nil => true }
+    validates :name, presence: true
+    validates :code, presence: true, if: lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
+    validates :path, presence: true, if: lambda{|r| r.event_name == 'spree.content.visited' }
+    validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
@@ -34,7 +34,11 @@ module Spree
     end
 
     def self.advertised
-      where(:advertise => true)
+      where(advertise: true)
+    end
+
+    def self.with_code
+      where(event_name: 'spree.checkout.coupon_code_added')
     end
 
     def activate(payload)
@@ -91,7 +95,7 @@ module Spree
     end
 
     def credits
-      Adjustment.promotion.where(:originator_id => actions.map(&:id))
+      Adjustment.promotion.where(originator_id: actions.map(&:id))
     end
 
     def credits_count

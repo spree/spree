@@ -1,0 +1,48 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:stock_locations) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
+    <li>
+      <%= button_link_to t(:new_stock_location), new_object_url, { :icon => 'icon-plus', :id => 'admin_new_stock_location' } %> 
+    </li>
+  </ul>
+<% end %>
+
+<table class="index" id='listing_stock_locations' data-hook>
+  <colgroup>
+    <col style="width: 50%" />
+    <col style="width: 15%" />
+    <col style="width: 20%" />
+    <col style="width: 15%" />
+  </colgroup>
+  <thead>
+    <tr data-hook="stock_locations_header">
+      <th><%= t(:name) %></th>
+      <th><%= t(:state) %></th>
+      <th><%= t(:stock_movements) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @stock_locations.each do |stock_location|
+         @edit_url = edit_admin_stock_location_path(stock_location)
+         @delete_url = admin_stock_location_path(stock_location)
+    %>
+      <tr id="<%= spree_dom_id stock_location %>" data-hook="stock_location_row" class="<%= cycle('odd', 'even')%>">
+        <td><%= stock_location.name %></td>
+        <td><span class="state <%= stock_location.active? ? 'active' : 'inactive' %>"><%= stock_location.active? ? 'active' : 'inactive' %></span></td>
+        <td><%= link_to t(:stock_movements), admin_stock_location_stock_movements_path(stock_location.id) %> </td>
+        <td class="actions">
+          <%= link_to_edit stock_location, :no_text => true %>
+          <%= link_to_delete stock_location, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= render :partial => 'transfer_stock_form' %>

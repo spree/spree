@@ -14,6 +14,11 @@ module Spree
 
     def update
       @order = current_order
+      unless @order
+        flash[:error] = t(:order_not_found)
+        redirect_to root_path and return
+      end
+
       if @order.update_attributes(params[:order])
         return if after_update_attributes
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
@@ -64,7 +69,7 @@ module Spree
     end
 
     def accurate_title
-      @order && @order.completed? ? "#{Order.model_name.human} #{@order.number}" : t(:shopping_cart)
+      @order && @order.completed? ? "#{t(:order)} #{@order.number}" : t(:shopping_cart)
     end
 
     def check_authorization

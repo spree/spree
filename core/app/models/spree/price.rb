@@ -1,9 +1,9 @@
 module Spree
   class Price < ActiveRecord::Base
-    belongs_to :variant, :class_name => 'Spree::Variant'
+    belongs_to :variant, class_name: 'Spree::Variant'
 
     validate :check_price
-    validates :amount, :numericality => { :greater_than_or_equal_to => 0 }, :allow_nil => true
+    validates :amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
     attr_accessible :variant_id, :currency, :amount
 
@@ -13,7 +13,7 @@ module Spree
     alias :display_price :display_amount
 
     def money
-      Spree::Money.new(amount || 0, { :currency => currency })
+      Spree::Money.new(amount || 0, { currency: currency })
     end
 
     def price

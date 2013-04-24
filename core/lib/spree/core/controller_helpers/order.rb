@@ -5,6 +5,7 @@ module Spree
         def self.included(base)
           base.class_eval do
             helper_method :current_order
+            helper_method :current_currency
             before_filter :set_current_order
           end
         end
@@ -61,6 +62,14 @@ module Spree
               current_order.merge!(last_incomplete_order)
             end
           end
+        end
+
+        def current_currency
+          Spree::Config[:currency]
+        end
+
+        def ip_address
+          request.env['HTTP_X_REAL_IP'] || request.env['REMOTE_ADDR']
         end
       end
     end

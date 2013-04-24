@@ -18,13 +18,17 @@ module Spree
       ]
     end
 
-    simple_scopes.each do |name|
-      # We should not define price scopes here, as they require something slightly different
-      next if name.to_s.include?("master_price")
-      parts = name.to_s.match(/(.*)_by_(.*)/)
-      order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
-      self.scope(name.to_s, relation.order(order_text))
+    def self.add_simple_scopes(scopes)
+      scopes.each do |name|
+        # We should not define price scopes here, as they require something slightly different
+        next if name.to_s.include?("master_price")
+        parts = name.to_s.match(/(.*)_by_(.*)/)
+        order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+        self.scope(name.to_s, relation.order(order_text))
+      end
     end
+
+    add_simple_scopes simple_scopes
 
     add_search_scope :ascend_by_master_price do
       joins(:master => :default_price).order("#{price_table_name}.amount ASC")
@@ -50,7 +54,7 @@ module Spree
     # If you need products only within one taxon use
     #
     #   Spree::Product.taxons_id_eq(x)
-    # 
+    #
     # If you're using count on the result of this scope, you must use the
     # `:distinct` option as well:
     #
@@ -201,11 +205,6 @@ module Spree
       not_deleted.available(nil, currency)
     end
     search_scopes << :active
-
-    add_search_scope :on_hand do
-      variants_table = Variant.table_name
-      where("#{table_name}.id in (select product_id from #{variants_table} where product_id = #{table_name}.id and #{variants_table}.deleted_at IS NULL group by product_id having sum(count_on_hand) > 0)")
-    end
 
     add_search_scope :taxons_name_eq do |name|
       group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))

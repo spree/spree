@@ -31,19 +31,6 @@
       <%= f.label :cost_price, t(:cost_price) %>
       <%= f.text_field :cost_price, :value => number_to_currency(@variant.cost_price, :unit => ''), :class => 'fullwidth' %>
     </div>
-
-    <% if Spree::Config[:track_inventory_levels] %>
-      <div class="field checkbox" data-hook="on_hand">
-        <label>
-          <%= f.check_box :on_demand %>
-          <%= t(:on_demand) %>
-        </label>
-      </div>
-      <div class="field" data-hook="on_hand">
-        <%= f.label :on_hand, t(:on_hand) %>
-        <%= f.text_field :on_hand, :class => 'fullwidth' %>
-      </div>
-    <% end %>
   </div>
 </div>
 

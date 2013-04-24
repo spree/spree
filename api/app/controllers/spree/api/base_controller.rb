@@ -4,6 +4,7 @@ module Spree
   module Api
     class BaseController < ActionController::Metal
       include Spree::Api::ControllerSetup
+      include Spree::Core::ControllerHelpers::SSL
       include ::ActionController::Head
 
       self.responder = Spree::Api::Responders::AppResponder
@@ -63,13 +64,15 @@ module Spree
       end
 
       def authenticate_user
-        if requires_authentication? || api_key.present?
-          unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key.to_s)
-            render "spree/api/errors/invalid_api_key", :status => 401 and return
+        unless @current_api_user
+          if requires_authentication? || api_key.present?
+            unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key.to_s)
+              render "spree/api/errors/invalid_api_key", :status => 401 and return
+            end
+          else
+            # An anonymous user
+            @current_api_user = Spree.user_class.new
           end
-        else
-          # An authenticated user or an anonymous user
-          @current_api_user = try_spree_current_user || Spree.user_class.new
         end
       end
 

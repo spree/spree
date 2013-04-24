@@ -42,4 +42,12 @@ describe Spree::Admin::ProductsController do
       end
     end
   end
+
+  context "stock" do
+    let(:product) { create(:product) }
+    it "restricts stock location based on accessible attributes" do
+      Spree::StockLocation.should_receive(:accessible_by)
+      spree_get :stock, :id => product
+    end
+  end
 end

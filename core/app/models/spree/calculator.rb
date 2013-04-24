@@ -1,12 +1,12 @@
 module Spree
   class Calculator < ActiveRecord::Base
-    belongs_to :calculable, :polymorphic => true
+    belongs_to :calculable, polymorphic: true
 
     # This method must be overriden in concrete calculator.
     #
     # It should return amount computed based on #calculable and/or optional parameter
-    def compute(something=nil)
-      raise(NotImplementedError, 'please use concrete calculator')
+    def compute(something = nil)
+      raise NotImplementedError, 'please use concrete calculator'
     end
 
     # overwrite to provide description for your calculators

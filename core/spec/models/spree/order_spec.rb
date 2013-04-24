@@ -107,17 +107,27 @@ describe Spree::Order do
     end
 
     it "should sell inventory units" do
-      Spree::InventoryUnit.should_receive(:assign_opening_inventory).with(order)
+      order.shipments.each do |shipment|
+        shipment.should_receive(:update!)
+        shipment.should_receive(:finalize!)
+      end
+      order.finalize!
+    end
+
+    it "should decrease the stock for each variant in the shipment" do
+      order.shipments.each do |shipment|
+        shipment.stock_location.should_receive(:decrease_stock_for_variant)
+      end
       order.finalize!
     end
 
     it "should change the shipment state to ready if order is paid" do
-      order.stub :shipping_method => mock_model(Spree::ShippingMethod, :create_adjustment => true, :adjustment_label => "Shipping")
-      order.create_shipment!
+      Spree::Shipment.create(order: order)
+      order.shipments.reload
+
       order.stub(:paid? => true, :complete? => true)
       order.finalize!
       order.reload # reload so we're sure the changes are persisted
-      order.shipment.state.should == 'ready'
       order.shipment_state.should == 'ready'
     end
 
@@ -130,13 +140,13 @@ describe Spree::Order do
 
     it "should send an order confirmation email" do
       mail_message = mock "Mail::Message"
-      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_return mail_message
+      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_return mail_message
       mail_message.should_receive :deliver
       order.finalize!
     end
 
     it "should continue even if confirmation email delivery fails" do
-      Spree::OrderMailer.should_receive(:confirm_email).with(order).and_raise 'send failed!'
+      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_raise 'send failed!'
       order.finalize!
     end
 
@@ -213,19 +223,10 @@ describe Spree::Order do
     end
   end
 
-  context "#backordered?" do
-    it "should indicate whether any units in the order are backordered" do
-      order.stub_chain(:inventory_units, :backordered).and_return []
-      order.backordered?.should be_false
-      order.stub_chain(:inventory_units, :backordered).and_return [mock_model(Spree::InventoryUnit)]
-      order.backordered?.should be_true
-    end
-
-    it "should always be false when inventory tracking is disabled" do
-      Spree::Config.set :track_inventory_levels => false
-      order.stub_chain(:inventory_units, :backordered).and_return [mock_model(Spree::InventoryUnit)]
-      order.backordered?.should be_false
-    end
+  it 'is backordered if one of the shipments is backordered' do
+    order.stub(:shipments => [mock_model(Spree::Shipment, :backordered? => false),
+                              mock_model(Spree::Shipment, :backordered? => true)])
+    order.should be_backordered
   end
 
   context "#allow_checkout?" do
@@ -252,7 +253,8 @@ describe Spree::Order do
   context "#amount" do
     before do
       @order = create(:order, :user => user)
-      @order.line_items = [ create(:line_item, :price => 1.0, :quantity => 2), create(:line_item, :price => 1.0, :quantity => 1) ]
+      @order.line_items = [create(:line_item, :price => 1.0, :quantity => 2),
+                           create(:line_item, :price => 1.0, :quantity => 1)]
     end
     it "should return the correct lum sum of items" do
       @order.amount.should == 3.0
@@ -275,53 +277,6 @@ describe Spree::Order do
     end
   end
 
-  context "#shipped?" do
-    specify { order_with_shipment_state("partial").should   be_shipped }
-    specify { order_with_shipment_state("shipped").should   be_shipped }
-    specify { order_with_shipment_state("ready").should_not be_shipped }
-
-    def order_with_shipment_state(state)
-      order.tap {|o| o.shipment_state = state }
-    end
-  end
-
-  context "rate_hash" do
-    let(:shipping_method_1) { mock_model Spree::ShippingMethod, :name => 'Air Shipping', :id => 1, :calculator => mock('calculator') }
-    let(:shipping_method_2) { mock_model Spree::ShippingMethod, :name => 'Ground Shipping', :id => 2, :calculator => mock('calculator') }
-
-    before do
-      shipping_method_1.calculator.stub(:compute).and_return(10.0)
-      shipping_method_2.calculator.stub(:compute).and_return(0.0)
-      order.stub(:available_shipping_methods => [ shipping_method_1, shipping_method_2 ])
-    end
-
-    it "should return shipping methods sorted by cost" do
-      rate_1, rate_2 = order.rate_hash
-
-      rate_1.shipping_method.should == shipping_method_2
-      rate_1.cost.should == 0.0
-      rate_1.name.should == "Ground Shipping"
-      rate_1.id.should == 2
-
-      rate_2.shipping_method.should == shipping_method_1
-      rate_2.cost.should == 10.0
-      rate_2.name.should == "Air Shipping"
-      rate_2.id.should == 1
-    end
-
-    it "should not return shipping methods with nil cost" do
-      shipping_method_1.calculator.stub(:compute).and_return(nil)
-      order.rate_hash.count.should == 1
-      rate_1 = order.rate_hash.first
-
-      rate_1.shipping_method.should == shipping_method_2
-      rate_1.cost.should == 0
-      rate_1.name.should == "Ground Shipping"
-      rate_1.id.should == 2
-    end
-
-  end
-
   context "insufficient_stock_lines" do
     let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
 
@@ -334,19 +289,38 @@ describe Spree::Order do
 
   end
 
-  context "#add_variant" do
-    it "should update order totals" do
-      order = Spree::Order.create
+  context "#remove_variant" do
+    let(:order) { Spree::Order.create }
+    let(:variant) { create(:variant) }
 
+    it 'should reduce line_item quantity if quantity is less the line_item quantity' do
+      line_item = order.contents.add(variant, 3)
+      order.remove_variant(variant, 1)
+
+      line_item.reload.quantity.should == 2
+    end
+
+    it 'should remove line_item if quantity matches line_item quantity' do
+      order.contents.add(variant, 1)
+      order.remove_variant(variant, 1)
+
+      order.reload.find_line_item_by_variant(variant).should be_nil
+    end
+
+    it "should update order totals" do
       order.item_total.to_f.should == 0.00
       order.total.to_f.should == 0.00
 
-      product = Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 22.25)
-      order.add_variant(product.master)
+      order.contents.add(variant, 2)
 
-      order.item_total.to_f.should == 22.25
-      order.total.to_f.should == 22.25
+      order.item_total.to_f.should == 39.98
+      order.total.to_f.should == 39.98
+
+      order.remove_variant(variant,1)
+      order.item_total.to_f.should == 19.99
+      order.total.to_f.should == 19.99
     end
+
   end
 
   context "empty!" do
@@ -420,8 +394,8 @@ describe Spree::Order do
 
     context "merging together two orders with line items for the same variant" do
       before do
-        order_1.add_variant(variant)
-        order_2.add_variant(variant)
+        order_1.contents.add(variant, 1)
+        order_2.contents.add(variant, 1)
       end
 
       specify do
@@ -438,8 +412,8 @@ describe Spree::Order do
       let(:variant_2) { create(:variant) }
 
       before do
-        order_1.add_variant(variant)
-        order_2.add_variant(variant_2)
+        order_1.contents.add(variant, 1)
+        order_2.contents.add(variant_2, 1)
       end
 
       specify do
@@ -475,7 +449,7 @@ describe Spree::Order do
     end
 
     it "transitions from delivery to payment" do
-      persisted_order.shipping_method = shipping_method
+      persisted_order.stub(payment_required?: true)
       persisted_order.next!
       persisted_order.state.should == "payment"
     end
@@ -502,3 +476,4 @@ describe Spree::Order do
     end
   end
 end
+

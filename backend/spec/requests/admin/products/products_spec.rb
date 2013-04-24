@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 describe "Products" do
@@ -6,6 +7,14 @@ describe "Products" do
   context "as admin user" do
     before(:each) do
       visit spree.admin_path
+    end
+
+    def build_option_type_with_values(name, values)
+      ot = FactoryGirl.create(:option_type, :name => name)
+      values.each do |val|
+        ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
+      end
+      ot
     end
 
     context "listing products" do
@@ -38,6 +47,26 @@ describe "Products" do
           click_link "admin_products_listing_price_title"
           within_row(1) { page.should have_content("zomg shirt") }
           within_row(2) { page.should have_content('apache baseball cap') }
+        end
+      end
+
+      context "currency displaying" do
+        context "using Russian Rubles" do
+          before do
+            Spree::Config[:currency] = "RUB"
+          end
+
+          let!(:product) do
+            create(:product, :name => "Just a product", :price => 19.99)
+          end
+
+          # Regression test for #2737
+          context "uses руб as the currency symbol" do
+            it "on the products listing page" do
+              click_link "Products"
+              within_row(1) { page.should have_content("руб19.99") }
+            end
+          end
         end
       end
     end
@@ -147,7 +176,6 @@ describe "Products" do
         field_labeled("Large").should be_checked
         field_labeled("Small").should_not be_checked
       end
-
     end
 
     context "creating a new product" do
@@ -166,7 +194,6 @@ describe "Products" do
         fill_in "product_available_on", :with => "2012/01/24"
         click_button "Create"
         page.should have_content("successfully created!")
-        fill_in "product_on_hand", :with => "100"
         click_button "Update"
         page.should have_content("successfully updated!")
       end
@@ -182,9 +209,7 @@ describe "Products" do
         fill_in "product_price", :with => "100"
         click_button "Create"
         page.should have_content("successfully created!")
-        fill_in "product_on_hand", :with => ""
         click_button "Update"
-        page.should_not have_content("spree_products.count_on_hand may not be NULL")
         page.should have_content("successfully updated!")
       end
     end
@@ -222,6 +247,16 @@ describe "Products" do
 
     context 'updating a product', :js => true do
       let(:product) { create(:product) }
+      
+      let(:prototype) do
+        size = build_option_type_with_values("size", %w(Small Medium Large))
+        FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
+      end
+
+      before(:each) do
+         @option_type_prototype = prototype
+         @property_prototype = create(:prototype, :name => "Random")
+      end
 
       it 'should parse correctly available_on' do
         visit spree.admin_product_path(product)
@@ -229,6 +264,23 @@ describe "Products" do
         click_button "Update"
         page.should have_content("successfully updated!")
         Spree::Product.last.available_on.should == 'Tue, 25 Dec 2012 00:00:00 UTC +00:00'
+      end
+
+      it 'should add option_types when selecting a prototype' do
+        visit spree.admin_product_path(product)
+        click_link 'Product Properties'
+        page.should have_content("Select From Prototype")
+        click_link "Select From Prototype"
+
+        within(:css, "#prototypes tr#row_1") do
+          click_link 'Select'
+        end
+
+        wait_until { page.all('tr.product_property').size > 1 }
+
+        within(:css, "tr.product_property:first") do
+          first('input[type=text]')[:value].should eq('baseball_cap_color')
+        end
       end
     end
 

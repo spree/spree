@@ -14,7 +14,6 @@
 
       <ul class='variant-data'>
         <li class='variant-sku'><strong>{{t 'sku'}}:</strong> {{variant.sku}}</li>
-        <li class='variant-on_hand'><strong>{{t 'on_hand'}}:</strong> {{variant.count_on_hand}}</li>
       </ul>
 
       {{#if variant.option_values}}
@@ -27,4 +26,42 @@
 
     </div>
   </div>
+</script>
+
+<script type='text/template' id='variant_autocomplete_stock_template'>
+  <fieldset>
+    <legend align="center"><%= t(:select_stock) %></legend>
+      <table class="stock-levels" data-hook="stock-levels">
+        <colgroup>
+          <col style="width: 30%;" />
+          <col style="width: 40%;" />
+          <col style="width: 20%;" />
+          <col style="width: 10%;" />
+        </colgroup>
+        <thead>
+          <th><%= t(:location) %></th>
+          <th><%= t(:count_on_hand) %></th>
+          <th><%= t(:quantity) %></th>
+          <th class="actions"></th>
+        </thead>
+        <tbody>
+          {{#each variant.stock_items}}
+            <tr>
+              <td>{{this.stock_location_name}}</td>
+              <td>
+                {{this.count_on_hand}}
+                {{#if this.backorderable}}
+                  (backorders allowed)
+                {{/if}}
+              </td>
+              <td>
+                <input class="quantity" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
+              </td>
+              <td class="actions">
+                <button class="add_variant no-text icon-plus icon_link with-tip" data-stock-location-id="{{this.stock_location_id}}" title="Add" data-action="add"></button>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+  </fieldset>
 </script>

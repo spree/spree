@@ -5,15 +5,15 @@ require 'spec_helper'
 
 describe Spree::Adjustment do
 
-  let(:order) { mock_model(Spree::Order, :update! => nil) }
+  let(:order) { mock_model(Spree::Order, update!: nil) }
   let(:adjustment) { Spree::Adjustment.new }
 
   context "#update!" do
     context "when originator present" do
-      let(:originator) { mock("originator", :update_adjustment => nil) }
+      let(:originator) { mock("originator", update_adjustment: nil) }
       before do
-        originator.stub :update_amount => true
-        adjustment.stub :originator => originator, :label => 'adjustment', :amount => 0
+        originator.stub update_amount: true
+        adjustment.stub originator: originator, label: 'adjustment', amount: 0
       end
       it "should do nothing when closed" do
         adjustment.close
@@ -35,7 +35,7 @@ describe Spree::Adjustment do
       end
     end
     it "should do nothing when originator is nil" do
-      adjustment.stub :originator => nil
+      adjustment.stub originator: nil
       adjustment.should_not_receive(:amount=)
       adjustment.update!
     end
@@ -64,13 +64,13 @@ describe Spree::Adjustment do
       end
       it "should be eligible if not mandatory and eligible for the originator" do
         adjustment.mandatory = false
-        adjustment.stub(:eligible_for_originator? => true)
+        adjustment.stub(eligible_for_originator?: true)
         adjustment.set_eligibility
         adjustment.should be_eligible
       end
       it "should not be eligible if not mandatory not eligible for the originator" do
         adjustment.mandatory = false
-        adjustment.stub(:eligible_for_originator? => false)
+        adjustment.stub(eligible_for_originator?: false)
         adjustment.set_eligibility
         adjustment.should_not be_eligible
       end
@@ -79,14 +79,14 @@ describe Spree::Adjustment do
 
   context "#save" do
     it "should call order#update!" do
-      adjustment = Spree::Adjustment.new({:adjustable => order, :amount => 10, :label => "Foo"}, :without_protection => true)
+      adjustment = Spree::Adjustment.new({adjustable: order, amount: 10, label: "Foo"}, without_protection: true)
       order.should_receive(:update!)
       adjustment.save
     end
   end
 
   context "adjustment state" do
-    let(:adjustment) { create(:adjustment, :state => 'open') }
+    let(:adjustment) { create(:adjustment, state: 'open') }
 
     context "#immutable?" do
       it "is true when adjustment state isn't open" do
@@ -129,11 +129,11 @@ describe Spree::Adjustment do
       let(:originator) { Spree::TaxRate.new }
       before { adjustment.originator = originator }
       context "and originator is eligible for order" do
-        before { originator.stub(:eligible? => true) }
+        before { originator.stub(eligible?: true) }
         specify { adjustment.should be_eligible_for_originator }
       end
       context "and originator is not eligible for order" do
-        before { originator.stub(:eligible? => false) }
+        before { originator.stub(eligible?: false) }
         specify { adjustment.should_not be_eligible_for_originator }
       end
     end

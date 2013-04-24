@@ -12,18 +12,18 @@ module Spree
       self.event_names << name
     end
 
-    scope :event_name_starts_with, lambda{ |name| where('event_name LIKE ?', "#{name}%") }
+    scope :event_name_starts_with, ->(name) { where('event_name LIKE ?', "#{name}%") }
 
     def self.active
-      where('(starts_at IS NULL OR starts_at < ?) AND (expires_at IS NULL OR expires_at > ?)', Time.now, Time.now)
+      where('starts_at IS NULL OR starts_at < ?', Time.now).
+        where('expires_at IS NULL OR expires_at > ?', Time.now)
     end
 
     def activate(payload)
     end
 
     def expired?
-      starts_at && Time.now < starts_at ||
-      expires_at && Time.now > expires_at
+      starts_at && Time.now < starts_at || expires_at && Time.now > expires_at
     end
   end
 end

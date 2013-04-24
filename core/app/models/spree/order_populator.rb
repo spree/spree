@@ -41,14 +41,14 @@ module Spree
       # 2,147,483,647 is crazy.
       # See issue #2695.
       if quantity > 2_147_483_647
-        errors.add(:base, %Q{Please enter a reasonable quantity.})
+        errors.add(:base, I18n.t(:please_enter_reasonable_quantity, :scope => :order_populator))
         return false
       end
 
       variant = Spree::Variant.find(variant_id)
       if quantity > 0
         if check_stock_levels(variant, quantity)
-          @order.add_variant(variant, quantity, currency)
+          @order.contents.add(variant, quantity, currency)
         end
       end
     end
@@ -57,17 +57,10 @@ module Spree
       display_name = %Q{#{variant.name}}
       display_name += %Q{ (#{variant.options_text})} unless variant.options_text.blank?
 
-      if variant.available?
-        on_hand = variant.on_hand
-        if on_hand >= quantity || Spree::Config[:allow_backorders]
-          return true
-        else
-          errors.add(:base, %Q{There are only #{on_hand} of #{display_name.inspect} remaining.} + 
-                            %Q{ Please select a quantity less than or equal to this value.})
-          return false
-        end
+      if Stock::Quantifier.new(variant).can_supply? quantity
+        true
       else
-        errors.add(:base, %Q{#{display_name.inspect} is out of stock.})
+        errors.add(:base, I18n.t(:out_of_stock, :scope => :order_populator, :item => display_name.inspect))
         return false
       end
     end

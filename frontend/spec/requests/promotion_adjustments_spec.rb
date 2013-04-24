@@ -4,14 +4,7 @@ describe "Promotion adjustments", :js => true do
   let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
   let!(:state) { create(:state, :name => "Victoria", :country => country) }
   let!(:zone) { create(:zone) }
-  let!(:shipping_method) do
-    shipping_method = create(:shipping_method)
-    calculator = Spree::Calculator::PerItem.create!({:calculable => shipping_method}, :without_protection => true)
-    shipping_method.calculator = calculator
-    shipping_method.save
-
-    shipping_method
-  end
+  let!(:shipping_method) { create(:shipping_method) }
   let!(:payment_method) { create(:payment_method) }
   let!(:product) { create(:product, :name => "RoR Mug") }
 
@@ -28,7 +21,7 @@ describe "Promotion adjustments", :js => true do
 
      action = Spree::Promotion::Actions::CreateAdjustment.new
      action.calculator = calculator
-     action.promotion = promotion 
+     action.promotion = promotion
      action.save
 
      promotion.reload # so that promotion.actions is available
@@ -61,14 +54,14 @@ describe "Promotion adjustments", :js => true do
       end
 
       it "informs about an invalid coupon code" do
-        fill_in "Coupon code", :with => "coupon_codes_rule_man"
+        fill_in "order_coupon_code", :with => "coupon_codes_rule_man"
         click_button "Save and Continue"
         page.should have_content(I18n.t(:coupon_code_not_found))
       end
 
       context "with a promotion" do
         it "applies a promotion to an order" do
-          fill_in "Coupon code", :with => "onetwo"
+          fill_in "order_coupon_code", :with => "onetwo"
           click_button "Save and Continue"
           page.should have_content(I18n.t(:coupon_code_applied))
         end
@@ -85,14 +78,14 @@ describe "Promotion adjustments", :js => true do
       end
 
       it "can enter a coupon code and receives success notification" do
-        fill_in "Coupon code", :with => "onetwo"
-        click_button "Apply"
+        fill_in "order_coupon_code", :with => "onetwo"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_applied))
       end
 
       it "can enter a promotion code with both upper and lower case letters" do
-        fill_in "Coupon code", :with => "ONETwO"
-        click_button "Apply"
+        fill_in "order_coupon_code", :with => "ONETwO"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_applied))
       end
 
@@ -100,8 +93,8 @@ describe "Promotion adjustments", :js => true do
         promotion.update_column(:usage_limit, 5)
         promotion.class.any_instance.stub(:credits_count => 10)
 
-        fill_in "Coupon code", :with => "onetwo"
-        click_button "Apply"
+        fill_in "order_coupon_code", :with => "onetwo"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_max_usage))
       end
 
@@ -116,12 +109,13 @@ describe "Promotion adjustments", :js => true do
         specify do
           visit spree.cart_path
 
-          fill_in "Coupon code", :with => "50off"
-          click_button "Apply"
+          fill_in "order_coupon_code", :with => "50off"
+          click_button "Update"
           page.should have_content(I18n.t(:coupon_code_applied))
 
-          fill_in "Coupon code", :with => "onetwo"
-          click_button "Apply"
+          fill_in "order_coupon_code", :with => "onetwo"
+          click_button "Update"
+
           page.should have_content(I18n.t(:coupon_code_better_exists))
         end
       end
@@ -137,8 +131,8 @@ describe "Promotion adjustments", :js => true do
         specify do
           visit spree.cart_path
 
-          fill_in "Coupon code", :with => "onetwo"
-          click_button "Apply"
+          fill_in "order_coupon_code", :with => "onetwo"
+          click_button "Update"
           page.should have_content(I18n.t(:coupon_code_not_eligible))
         end
       end
@@ -147,13 +141,10 @@ describe "Promotion adjustments", :js => true do
         promotion.expires_at = Date.today.beginning_of_week
         promotion.starts_at = Date.today.beginning_of_week.advance(:day => 3)
         promotion.save!
-        fill_in "Coupon code", :with => "onetwo"
-        click_button "Apply"
+        fill_in "order_coupon_code", :with => "onetwo"
+        click_button "Update"
         page.should have_content(I18n.t(:coupon_code_expired))
       end
     end
   end
 end
-
-
-

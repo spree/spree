@@ -51,6 +51,12 @@ module Spree
         redirect_to edit_admin_product_url(@new)
       end
 
+      def stock
+        @variants = @product.variants
+        @variants = [@product.master] if @variants.empty?
+        @stock_locations = StockLocation.accessible_by(current_ability, :read)
+      end
+
       protected
 
         def find_resource

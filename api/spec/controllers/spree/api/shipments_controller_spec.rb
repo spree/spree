@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::ShipmentsController do
   render_views
   let!(:shipment) { create(:shipment) }
-  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at] }
+  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_method, :inventory_units] }
 
   before do
     stub_authentication!
@@ -24,7 +24,55 @@ describe Spree::Api::ShipmentsController do
   end
 
   context "as an admin" do
+    let!(:order) { shipment.order }
+    let!(:stock_location) { create(:stock_location_with_items) }
+    let!(:variant) { create(:variant) }
     sign_in_as_admin!
+
+    it 'can create a new shipment' do
+      params = {
+        variant_id: stock_location.stock_items.first.variant.to_param,
+        order_id: order.number,
+        stock_location_id: stock_location.to_param,
+      }
+
+      api_post :create, params
+      response.status.should == 200
+      json_response.should have_attributes(attributes)
+    end
+
+    it 'can update a shipment' do
+      params = {
+        shipment: {
+          stock_location_id: stock_location.to_param
+        }
+      }
+
+      api_put :update, params
+      response.status.should == 200
+      json_response['stock_location_name'].should == stock_location.name
+    end
+
+    it "can unlock a shipment's adjustment when updating" do
+      Spree::Calculator::FlatRate.any_instance.stub(:preferred_amount => 5)
+      adjustment = order.adjustments.create(amount: 1, label: 'shipping')
+      adjustment.source = shipment
+      adjustment.originator = shipment.shipping_method
+      adjustment.save!
+
+      params = {
+        order_id: order.number,
+        id: order.shipments.first.to_param,
+        shipment: {
+          unlock: 'yes'
+        }
+      }
+
+      api_put :update, params
+      response.status.should == 200
+      json_response.should have_attributes(attributes)
+      shipment.reload.adjustment.amount.should == 5
+    end
 
     it "can make a shipment ready" do
       Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
@@ -41,11 +89,44 @@ describe Spree::Api::ShipmentsController do
       response.status.should == 422
     end
 
+    context 'for completed shipments' do
+      let(:order) { create :completed_order_with_totals }
+
+      let!(:resource_scoping) { { :order_id => order.to_param, :id => order.shipments.first.to_param } }
+
+      it 'can add a variant to a shipment' do
+        params = {
+          variant_id: variant.to_param,
+          quantity: 2
+        }
+        api_put :add, params
+        response.status.should == 200
+        json_response['inventory_units'].select { |h| h['variant_id'] == variant.id }.size.should == 2
+      end
+
+      it 'can remove a variant from a shipment' do
+        order.contents.add(variant, 2)
+
+        params = {
+          variant_id: variant.to_param,
+          quantity: 1
+        }
+
+        api_put :remove, params
+        response.status.should == 200
+        json_response['inventory_units'].select { |h| h['variant_id'] == variant.id }.size.should == 1
+     end
+    end
+
     context "can transition a shipment from ready to ship" do
       before do
         Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
+        # For the shipment notification email
+        Spree::Config[:mails_from] = "spree@example.com"
+
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
+        Spree::ShippingRate.any_instance.stub(:cost => 5)
       end
 
       it "can transition a shipment from ready to ship" do

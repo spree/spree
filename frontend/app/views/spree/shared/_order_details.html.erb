@@ -13,9 +13,13 @@
 
     <% if @order.has_step?("delivery") %>
       <div class="columns alpha four">
-        <h6><%= t(:shipping_method) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
+        <h6><%= t(:shipments) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
         <div class="delivery">
-          <%= order.shipping_method.name %>
+          <% order.shipments.each do |shipment| %>
+            <%= shipment.stock_location.name %>
+            <%= shipment.shipping_method.name %>
+            <br/>
+          <% end %>
         </div>
         <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => @order}) if @order.shipped? %>
       </div>
@@ -25,7 +29,9 @@
   <div class="columns omega four">
     <h6><%= t(:payment_information) %> <%= link_to "(#{t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
     <div class="payment-info">
-      <%= render order.payments.valid %>
+      <% order.payments.valid.each do |payment| %>
+        <%= render payment%><br/>
+      <% end %>
     </div>
   </div>
 
@@ -33,14 +39,14 @@
 
 <hr />
 
-<table class="index columns alpha omega sixteen" data-hook="order_details">
+<table id='line-items' class="index columns alpha omega sixteen" data-hook="order_details">
   <col width="15%" valign="middle" halign="center">
   <col width="70%" valign="middle">
   <col width="5%" valign="middle" halign="center">
   <col width="5%" valign="middle" halign="center">
   <col width="5%" valign="middle" halign="center">
 
-  <thead id="line-items" data-hook>
+  <thead data-hook>
     <tr data-hook="order_details_line_items_headers">
       <th colspan="2"><%= t(:item) %></th>
       <th class="price"><%= t(:price) %></th>
@@ -49,7 +55,7 @@
     </tr>
   </thead>
 
-  <tbody id="line-items" data-hook>
+  <tbody data-hook>
     <% @order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
         <td data-hook="order_item_image">
@@ -64,7 +70,7 @@
           <%= truncated_product_description(item.variant.product) %>
           <%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %>
         </td>
-        <td data-hook="order_item_price" class="price"><span><%= item.variant.display_amount.to_html %></span></td>
+        <td data-hook="order_item_price" class="price"><span><%= item.single_money.to_html %></span></td>
         <td data-hook="order_item_qty"><%= item.quantity %></td>
         <td data-hook="order_item_total" class="total"><span><%= item.display_amount.to_html %></span></td>
       </tr>

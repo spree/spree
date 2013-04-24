@@ -22,28 +22,16 @@ module Spree
         text = "#{text}: (#{t('empty')})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total}</span>".html_safe
+        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total.to_html}</span>".html_safe
         css_class = 'full'
       end
 
-      link_to text, spree.cart_path, :class => css_class
+      link_to text, spree.cart_path, :class => "cart-info #{css_class}"
     end
 
     # human readable list of variant options
     def variant_options(v, options={})
-      list = v.options_text
-
-      # We shouldn't show out of stock if the product is infact in stock
-      # or when we're not allowing backorders.
-      unless v.in_stock?
-        list = if options[:include_style]
-          content_tag(:span, "(#{t(:out_of_stock)}) #{list}", :class => 'out-of-stock')
-        else
-          "#{t(:out_of_stock)} #{list}"
-        end
-      end
-
-      list
+      v.options_text
     end
 
     def meta_data_tags
@@ -56,16 +44,16 @@ module Spree
       end
 
       if meta[:description].blank? && object.kind_of?(Spree::Product)
-        meta[:description] = strip_tags(object.description)
+        meta[:description] = strip_tags(truncate(object.description, length: 160, separator: ' '))
       end
 
       meta.reverse_merge!({
-        :keywords => Spree::Config[:default_meta_keywords],
-        :description => Spree::Config[:default_meta_description]
+        keywords: Spree::Config[:default_meta_keywords],
+        description: Spree::Config[:default_meta_description]
       })
 
       meta.map do |name, content|
-        tag('meta', :name => name, :content => content)
+        tag('meta', name: name, content: content)
       end.join("\n")
     end
 
@@ -83,7 +71,7 @@ module Spree
 
       flash.each do |msg_type, text|
         unless opts[:ignore_types].include?(msg_type)
-          concat(content_tag :div, text, :class => "flash #{msg_type}")
+          concat(content_tag :div, text, class: "flash #{msg_type}")
         end
       end
       nil
@@ -100,16 +88,16 @@ module Spree
       else
         crumbs << content_tag(:li, content_tag(:span, t(:products)))
       end
-      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), :class => 'inline')
-      content_tag(:nav, crumb_list, :id => 'breadcrumbs', :class => 'sixteen columns')
+      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), class: 'inline')
+      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'sixteen columns')
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
       return '' if max_level < 1 || root_taxon.children.empty?
-      content_tag :ul, :class => 'taxons-list' do
+      content_tag :ul, class: 'taxons-list' do
         root_taxon.children.map do |taxon|
           css_class = (current_taxon && current_taxon.self_and_ancestors.include?(taxon)) ? 'current' : nil
-          content_tag :li, :class => css_class do
+          content_tag :li, class: css_class do
            link_to(taxon.name, seo_url(taxon)) +
            taxons_tree(taxon, current_taxon, max_level - 1)
           end
@@ -127,7 +115,7 @@ module Spree
       end
 
       countries.collect do |country|
-        country.name = I18n.t(country.iso, :scope => 'country_names', :default => country.name)
+        country.name = I18n.t(country.iso, scope: 'country_names', default: country.name)
         country
       end.sort { |a, b| a.name <=> b.name }
     end
@@ -149,8 +137,12 @@ module Spree
       Spree::Money.new(amount)
     end
 
+    def display_price(product_or_variant)
+      product_or_variant.price_in(current_currency).display_price.to_html
+    end
+
     def pretty_time(time)
-      [I18n.l(time.to_date, :format => :long),
+      [I18n.l(time.to_date, format: :long),
         time.strftime("%H:%m %p")].join(" ")
     end
 
@@ -190,7 +182,7 @@ module Spree
           image_tag "noimage/#{style}.png", options
         else
           image = product.images.first
-          options.reverse_merge! :alt => image.alt.blank? ? product.name : image.alt
+          options.reverse_merge! alt: image.alt.blank? ? product.name : image.alt
           image_tag image.attachment.url(style), options
         end
       end

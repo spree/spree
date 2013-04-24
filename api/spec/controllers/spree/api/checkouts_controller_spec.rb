@@ -12,8 +12,9 @@ module Spree
       @state = create(:state)
       @country = @state.country
       country_zone.members.create(:zoneable => @country)
+      create(:stock_location)
 
-      @shipping_method = create(:shipping_method, :zone => country_zone)
+      @shipping_method = create(:shipping_method, :zones => [country_zone])
       @payment_method = create(:payment_method)
     end
 
@@ -45,7 +46,7 @@ module Spree
     end
 
     context "PUT 'update'" do
-      let(:order) { create(:order) }
+      let(:order) { create(:order_with_line_items) }
 
       before(:each) do
         Order.any_instance.stub(:confirmation_required? => true)
@@ -90,7 +91,6 @@ module Spree
         api_put :update,
                 :id => order.to_param,
                 :order => { :bill_address_attributes => billing_address, :ship_address_attributes => shipping_address }
-
         json_response['state'].should == 'delivery'
         json_response['bill_address']['firstname'].should == 'John'
         json_response['ship_address']['firstname'].should == 'John'
@@ -99,8 +99,9 @@ module Spree
 
       it "can update shipping method and transition from delivery to payment" do
         order.update_column(:state, "delivery")
-        api_put :update, :id => order.to_param, :order => { :shipping_method_id => @shipping_method.id }
-
+        shipment = create(:shipment, :order => order)
+        shipping_rate = shipment.shipping_rates.first
+        api_put :update, :id => order.to_param, :order => { :shipments_attributes => { "0" => { :selected_shipping_rate_id => shipping_rate.id, :id => shipment.id } } }
         json_response['shipments'][0]['shipping_method']['name'].should == @shipping_method.name
         json_response['state'].should == 'payment'
         response.status.should == 200

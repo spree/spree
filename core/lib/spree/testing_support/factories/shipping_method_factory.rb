@@ -1,23 +1,18 @@
 FactoryGirl.define do
-  factory :shipping_method, :class => Spree::ShippingMethod do
-    zone { |a| Spree::Zone.find_by_name('GlobalZone') || a.association(:global_zone) }
+  factory :base_shipping_method, class: Spree::ShippingMethod do
+    zones { |a| [Spree::Zone.global] }
     name 'UPS Ground'
-    calculator { FactoryGirl.build(:calculator) }
-  end
 
-  factory :free_shipping_method, :class => Spree::ShippingMethod do
-    zone { |a| Spree::Zone.find_by_name('GlobalZone') || a.association(:global_zone) }
-    name 'UPS Ground'
-    calculator { FactoryGirl.build(:no_amount_calculator) }
-  end
+    after(:create) do |shipping_method, evaluator|
+      shipping_method.shipping_categories << (Spree::ShippingCategory.first || create(:shipping_category))
+    end
 
-  factory :shipping_method_with_category, :class => Spree::ShippingMethod do
-    zone { |a| Spree::Zone.find_by_name('GlobalZone') || a.association(:global_zone) }
-    name 'UPS Ground'
-    match_none nil
-    match_one nil
-    match_all nil
-    association(:shipping_category, :factory => :shipping_category)
-    calculator { FactoryGirl.build(:calculator) }
+    factory :shipping_method, class: Spree::ShippingMethod do
+      association(:calculator, factory: :calculator, strategy: :build)
+    end
+
+    factory :free_shipping_method, class: Spree::ShippingMethod do
+      association(:calculator, factory: :no_amount_calculator, strategy: :build)
+    end
   end
 end

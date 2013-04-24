@@ -1,18 +1,18 @@
 require 'spec_helper'
 
 module Spree
-  describe PromotionRule do
-    
-    class BadTestRule < PromotionRule; end
+  describe Spree::PromotionRule do
 
-    class TestRule < PromotionRule
+    class BadTestRule < Spree::PromotionRule; end
+
+    class TestRule < Spree::PromotionRule
       def eligible?
         true
       end
     end
 
     it "should force developer to implement eligible? method" do
-      lambda { BadTestRule.new.eligible? }.should raise_error
+      expect { BadTestRule.new.eligible? }.to raise_error
     end
 
     it "validates unique rules for a promotion" do

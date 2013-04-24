@@ -14,8 +14,17 @@ Testing
 
 Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
 
-    $ bundle
-    $ bundle exec rake test_app
-    $ bundle exec rspec spec
+```shell
+bundle
+bundle exec rake test_app
+bundle exec rspec spec
+```
+
+When testing your applications integration with this extension you may use it's factories.
+Simply add this require statement to your spec_helper:
+
+```ruby
+require '<%= file_name %>/factories'
+```
 
 Copyright (c) <%= Time.now.year %> [name of extension creator], released under the New BSD License

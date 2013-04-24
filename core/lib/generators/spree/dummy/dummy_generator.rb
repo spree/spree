@@ -45,8 +45,19 @@ module Spree
       template "rails/boot.rb", "#{dummy_path}/config/boot.rb", :force => true
       template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
       template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
+      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", :force => true
       template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
       template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
+    end
+
+    def test_dummy_inject_extension_requirements
+      if DummyGeneratorHelper.inject_extension_requirements
+        inside dummy_path do
+          %w(spree_frontend spree_backend spree_api).each do |requirement|
+            inject_into_file 'config/application.rb', "require '#{requirement}'\n", :before => /require '#{@lib_name}'/, :verbose => true
+          end
+        end
+      end
     end
 
     def test_dummy_clean
@@ -107,6 +118,11 @@ module Spree
         '../../../../../Gemfile'
       end
     end
-
   end
 end
+
+module Spree::DummyGeneratorHelper
+  mattr_accessor :inject_extension_requirements
+  self.inject_extension_requirements = false
+end
+

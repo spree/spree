@@ -14,7 +14,7 @@ table {
       border: 1px solid transparent;
     }
 
-    &:first-child {      
+    &:first-child {
       border-left: 1px solid $color-border;
     }
 
@@ -47,6 +47,12 @@ table {
           border-color: transparent;
         }
       }
+
+      button[class*='icon-'] {
+        color: $color-link;
+        padding: 0 !important;
+      }
+
       .icon-envelope-alt {
         color: $color-link;
         padding-left: 0px;
@@ -59,8 +65,12 @@ table {
       .icon-trash:hover, .icon-void:hover {
         background-color: $color-error;
         color: $color-1;
-      }    
-      .icon-edit:hover, .icon-capture:hover {
+      }
+      .icon-cancel:hover {
+        background-color: $color-notice;
+        color: $color-1;
+      }
+      .icon-edit:hover, .icon-capture:hover, .icon-ok:hover, .icon-plus:hover {
         background-color: $color-success;
         color: $color-1;
       }
@@ -106,7 +116,7 @@ table {
     }
   }
 
-  tbody {    
+  tbody {
     tr {
       &:first-child td {
         border-top: 1px solid $color-border;
@@ -150,7 +160,7 @@ table {
 
         td {
           background-color: lighten($color-3, 33);
-          border-bottom: 1px solid $color-border;          
+          border-bottom: 1px solid $color-border;
 
           &.actions {
             display: none;

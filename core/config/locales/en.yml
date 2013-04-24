@@ -86,7 +86,6 @@ en:
         description: Description
         master_price: "Master Price"
         name: Name
-        on_demand: "On Demand"
         on_hand: "On Hand"
         shipping_category: "Shipping Category"
         tax_category: "Tax Category"
@@ -252,7 +251,6 @@ en:
   all_adjustments_closed: "All adjustments successfully closed!"
   all_adjustments_opened: "All adjustments successfully opened!"
   all_departments: "All departments"
-  allow_backorders: "Allow Backorders"
   allow_ssl_in_development_and_test: "Allow SSL to be used when in development and test modes"
   allow_ssl_in_production: "Allow SSL to be used in production mode"
   allow_ssl_in_staging: "Allow SSL to be used in staging mode"
@@ -269,6 +267,7 @@ en:
   are_you_sure_delete: "Are you sure you want to delete this record?"
   are_you_sure_option_type: "Are you sure you want to delete this option type?"
   are_you_sure_you_want_to_capture: "Are you sure you want to capture?"
+  associated_adjustment_closed: "The associated adjustment is closed, and will not be recalculated. Do you want to open it?"
   assign_taxon: "Assign Taxon"
   assign_taxons: "Assign Taxons"
   attachment_default_style: "Attachments Style"
@@ -292,12 +291,13 @@ en:
   back_to_payment_methods_list: "Back To Payment Methods List"
   back_to_payments_list: "Back To Payments List"
   back_to_products_list: "Back To Products List"
-  back_to_properties_list: "Back To Products List"
+  back_to_properties_list: "Back To Properties List"
   back_to_prototypes_list: "Back To Prototypes List"
   back_to_reports_list: "Back To Reports List"
   back_to_shipping_categories: "Back To Shipping Categories"
   back_to_shipping_methods_list: "Back To Shipping Methods List"
   back_to_states_list: "Back To States List"
+  back_to_stock_movements_list: "Back to Stock Movements List"
   back_to_store: "Go Back To Store"
   back_to_tax_categories_list: "Back To Tax Categories List"
   back_to_taxonomies_list: "Back To Taxonomies List"
@@ -320,6 +320,7 @@ en:
   cannot_create_payment_without_payment_methods: "You cannot create a payment for an order without any payment methods defined."
   cannot_create_returns: "Cannot create returns as this order has no shipped units."
   cannot_perform_operation: "Cannot perform requested operation"
+  cannot_set_shipping_method_without_address: "Cannot set shipping method until customer details are provided."
   capture: Capture
   card_code: "Card Code"
   card_details: "Card details"
@@ -361,6 +362,7 @@ en:
   copy_all_mails_to: "Copy All Mails To"
   cost_currency: "Cost Currency"
   cost_price: "Cost Price"
+  could_not_create_stock_movement: "There was a problem saving this stock movement. Please try again."
   count_of_reduced_by: "count of '%{name}' reduced by %{count}"
   countries: Countries
   country: Country
@@ -378,8 +380,10 @@ en:
   credit_total: "Credit Total"
   credits: Credits
   currency: Currency
+  currency_decimal_mark: "Currency decimal mark"
   currency_settings: "Currency Settings"
   currency_symbol_position: "Put currency symbol before or after dollar amount?"
+  currency_thousands_separator: "Currency thousands separator"
   current: Current
   customer: Customer
   customer_details: "Customer Details"
@@ -424,6 +428,7 @@ en:
   editing_shipping_category: "Editing Shipping Category"
   editing_shipping_method: "Editing Shipping Method"
   editing_state: "Editing State"
+  editing_stock_movement: "Editing Stock Movement"
   editing_tax_category: "Editing Tax Category"
   editing_tax_rate: "Editing Tax Rate"
   editing_tracker: "Editing Tracker"
@@ -536,8 +541,6 @@ en:
   invalid_promotion_rule: "Invalid promotion rule."
   inventory: Inventory
   inventory_adjustment: "Inventory Adjustment"
-  inventory_setting_description: "Inventory Configuration, Backordering, Zero-Stock Display."
-  inventory_settings: "Inventory Settings"
   is_not_available_to_shipment_address: "is not available to shipment address"
   iso_name: "Iso Name"
   issue_number: "Issue Number"
@@ -592,6 +595,7 @@ en:
   missing_required_information: "Missing Required Information"
   month: Month
   more: More
+  move_stock_between_locations: "Move Stock Between Locations"
   my_account: "My Account"
   my_orders: "My Orders"
   name: Name
@@ -619,6 +623,8 @@ en:
   new_shipping_category: "New Shipping Category"
   new_shipping_method: "New Shipping Method"
   new_state: "New State"
+  new_stock_location: "New Stock Location"
+  new_stock_movement: "New Stock Movement"
   new_tax_category: "New Tax Category"
   new_tax_rate: "New Tax Rate"
   new_taxon: "New Taxon"
@@ -637,12 +643,14 @@ en:
   no_shipments_for_this_order: "There are no shipments for this order"
   no_shipping_methods_found: "No shipping methods found"
   no_trackers_found: "No Trackers Found"
+  no_tracking_present: "No tracking details provided."
   no_user_found: "No user was found with that email address"
   none: None
   none_available: "None Available"
   normal_amount: "Normal Amount"
   not: not
   not_available: N/A
+  not_enough_stock: "There is not enough inventory at the source location to complete this transfer."
   not_found: "%{resource} is not found"
   not_shown: "Not Shown"
   note: Note
@@ -654,7 +662,6 @@ en:
     product_not_deleted: "Product could not be deleted"
     variant_deleted: "Variant has been deleted"
     variant_not_deleted: "Variant could not be deleted"
-  on_demand: "On Demand"
   on_hand: "On Hand"
   one_default_category_with_default_tax_rate: "You should configure exactly one default category with your countries default tax rate"
   open: Open
@@ -672,6 +679,7 @@ en:
   order_date: "Order Date"
   order_details: "Order Details"
   order_email_resent: "Order Email Resent"
+  order_has_no_payments: "This order has no payments currently"
   order_information: "Order Information"
   order_mailer:
     cancel_email:
@@ -689,9 +697,13 @@ en:
       subtotal: "Subtotal: %{subtotal}"
       thanks: "Thank you for your business."
       total: "Order Total: %{total}"
+  order_not_found: "We couldn't find your order. Please try that action again."
   order_not_in_system: "That order number is not valid on this site."
   order_number: Order
   order_operation_authorize: Authorize
+  order_populator:
+    please_enter_reasonable_quantity: "Please enter a reasonable quantity."
+    out_of_stock: "%{item} is out of stock."
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_state:
@@ -717,6 +729,7 @@ en:
   out_of_stock: "Out of Stock"
   over_paid: "Over Paid"
   overview: Overview
+  package_from: "package from"
   page_only_viewable_when_logged_in: "You attempted to visit a page which can only be viewed when you are logged in"
   page_only_viewable_when_logged_out: "You attempted to visit a page which can only be viewed when you are logged out"
   pagination:
@@ -1010,6 +1023,10 @@ en:
   shipping_category: "Shipping Category"
   shipping_category_choose: "Shipping Category"
   shipping_cost: Cost
+  shipping_flexible_rate: "Flexible Rate per package item"
+  shipping_flat_rate_per_order: "Flat rate"
+  shipping_flat_rate_per_item: "Flat rate per package item"
+  shipping_price_sack: "Price sack"
   shipping_error: "Shipping Error"
   shipping_instructions: "Shipping Instructions"
   shipping_method: "Shipping Method"
@@ -1068,6 +1085,11 @@ en:
   states: States
   states_required: "States Required"
   status: Status
+  stock_location: "Stock Location"
+  stock_movements_for_stock_location: "Stock Movements for %{stock_location_name}"
+  stock_movements_for_product: "Stock Movements for %{product_name}"
+  stock_not_transferred: "There was a problem transferring stock between locations."
+  stock_successfully_transferred: "Stock was successfully transferred between locations."
   stop: Stop
   store: Store
   street_address: "Street Address"
@@ -1112,10 +1134,14 @@ en:
   to_state: "To State"
   total: Total
   tracking: Tracking
+  tracking_number: "Tracking Number"
   tracking_url: Tracking URL
   tracking_url_placeholder: "e.g. http://quickship.com/package?num=:tracking"
   transaction: Transaction
   transactions: Transactions
+  transfer_from_location: "Transfer From"
+  transfer_stock: "Transfer Stock"
+  transfer_to_location: "Transfer To"
   tree: Tree
   try_again: "Try Again"
   type: Type

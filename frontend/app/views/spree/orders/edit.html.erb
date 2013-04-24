@@ -23,6 +23,7 @@
         </div>
 
         <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
+          <%= order_form.text_field :coupon_code, :size => 10, :placeholder => t(:coupon_code) %>
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
             <%= t(:update) %>
           <% end %>
@@ -30,14 +31,6 @@
             <%= t(:checkout) %>
           <% end %>
         </div>
-
-        <% if Spree::Promotion.count > 0 %>
-          <div class="five columns alpha offset-by-nine coupon-code-field">
-            <%= order_form.label :coupon_code %><br />
-            <%= order_form.text_field :coupon_code, :size => 10 %>
-            <%= order_form.submit I18n.t(:apply) %>
-          </div>
-        <% end %>
       </div>
     <% end %>
   </div>

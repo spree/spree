@@ -1,18 +1,20 @@
 module Spree
   class CreditCard < ActiveRecord::Base
-    has_many :payments, :as => :source
+    has_many :payments, as: :source
 
     before_save :set_last_digits
     after_validation :set_card_type
 
     attr_accessor :number, :verification_value
 
-    validates :month, :year, :numericality => { :only_integer => true }
-    validates :number, :presence => true, :unless => :has_payment_profile?, :on => :create
-    validates :verification_value, :presence => true, :unless => :has_payment_profile?, :on => :create
+    validates :month, :year, numericality: { only_integer: true }
+    validates :number, presence: true, unless: :has_payment_profile?, on: :create
+    validates :verification_value, presence: true, unless: :has_payment_profile?, on: :create
 
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
                     :month, :gateway_customer_profile_id, :gateway_payment_profile_id
+
+    scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
 
     def number=(num)
       @number = num.gsub(/[^0-9]/, '') rescue nil
@@ -24,8 +26,8 @@ module Spree
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
-    # cheap hack to get to the type? method from deep within ActiveMerchant without stomping on
-    # potentially existing methods in CreditCard
+    # cheap hack to get to the type? method from deep within ActiveMerchant
+    # without stomping on potentially existing methods in CreditCard
     class CardDetector
       class << self
         include ActiveMerchant::Billing::CreditCardMethods::ClassMethods
@@ -39,14 +41,6 @@ module Spree
 
     def name?
       first_name? && last_name?
-    end
-
-    def first_name?
-      first_name.present?
-    end
-
-    def last_name?
-      last_name.present?
     end
 
     def name
@@ -64,10 +58,8 @@ module Spree
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     def brand
-      cc_type
+      spree_cc_type
     end
-
-    scope :with_payment_profile, lambda { where('gateway_customer_profile_id IS NOT NULL') }
 
     def actions
       %w{capture void credit}
@@ -75,18 +67,18 @@ module Spree
 
     # Indicates whether its possible to capture the payment
     def can_capture?(payment)
-      payment.state == 'pending' || payment.state == 'checkout'
+      payment.pending? || payment.checkout?
     end
 
     # Indicates whether its possible to void the payment.
     def can_void?(payment)
-      payment.state != 'void'
+      !payment.void?
     end
 
     # Indicates whether its possible to credit the payment.  Note that most gateways require that the
     # payment be settled first which generally happens within 12-24 hours of the transaction.
     def can_credit?(payment)
-      return false unless payment.state == 'completed'
+      return false unless payment.completed?
       return false unless payment.order.payment_state == 'credit_owed'
       payment.credit_allowed > 0
     end

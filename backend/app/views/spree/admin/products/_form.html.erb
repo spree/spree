@@ -56,25 +56,6 @@
         <%= f.text_field :sku, :size => 16 %>
       <% end %>
 
-      <% if Spree::Config[:track_inventory_levels] %>        
-        <div class="alpha two columns">
-          <%= f.field_container :on_hand do %>
-            <%= f.label :on_hand, t(:on_hand) %>
-            <%= f.number_field :on_hand, :min => 0 %>
-          <% end %>
-        </div>
-        <div class="omega two columns">
-          <%= f.field_container :on_demand, :class => ['checkbox'] do %>
-            <label>
-              <%= f.check_box :on_demand %>
-              <%= t(:on_demand) %>
-            </label>
-          <% end %>
-        </div>
-
-        <div class="clear"></div>
-      <% end %>
-
       <ul id="shipping_specs">
         <li id="shipping_specs_weight_field" class="field alpha two columns">
           <%= f.label :weight, t(:weight) %>

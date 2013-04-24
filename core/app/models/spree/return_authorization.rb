@@ -1,25 +1,26 @@
 module Spree
   class ReturnAuthorization < ActiveRecord::Base
-    belongs_to :order
+    belongs_to :order, class_name: 'Spree::Order'
 
     has_many :inventory_units
+    has_one :stock_location
     before_create :generate_number
     before_save :force_positive_amount
 
-    validates :order, :presence => true
-    validates :amount, :numericality => true
+    validates :order, presence: true
+    validates :amount, numericality: true
     validate :must_have_shipped_units
 
-    attr_accessible :amount, :reason
+    attr_accessible :amount, :reason, :stock_location_id
 
-    state_machine :initial => 'authorized' do
-      after_transition :to => 'received', :do => :process_return
+    state_machine initial: 'authorized' do
+      after_transition to: 'received', do: :process_return
 
       event :receive do
-        transition :to => 'received', :from => 'authorized', :if => :allow_receive?
+        transition to: 'received', from: 'authorized', if: :allow_receive?
       end
       event :cancel do
-        transition :to => 'canceled', :from => 'authorized'
+        transition to: 'canceled', from: 'authorized'
       end
     end
 
@@ -28,12 +29,13 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new(amount, { :currency => currency })
+      Spree::Money.new(amount, { currency: currency })
     end
 
     def add_variant(variant_id, quantity)
-      order_units = order.inventory_units.group_by(&:variant_id)
+      order_units = returnable_inventory.group_by(&:variant_id)
       returned_units = inventory_units.group_by(&:variant_id)
+      return false if order_units.empty?
 
       count = 0
 
@@ -58,9 +60,13 @@ module Spree
       order.authorize_return! if inventory_units.reload.size > 0 && !order.awaiting_return?
     end
 
+    def returnable_inventory
+      order.shipped_shipments.collect{|s| s.inventory_units.all}.flatten
+    end
+
     private
       def must_have_shipped_units
-        errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.inventory_units.any?(&:shipped?)
+        errors.add(:order, I18n.t(:has_no_shipped_units)) if order.nil? || !order.shipped_shipments.any?
       end
 
       def generate_number
@@ -69,17 +75,22 @@ module Spree
         record = true
         while record
           random = "RMA#{Array.new(9){rand(9)}.join}"
-          record = self.class.where(:number => random).first
+          record = self.class.where(number: random).first
         end
         self.number = random
       end
 
       def process_return
-        inventory_units.each &:return!
-        credit = Adjustment.new(:amount => amount.abs * -1, :label => I18n.t(:rma_credit))
+        inventory_units.each do |iu|
+          iu.return!
+          Spree::StockMovement.create!(stock_item_id: iu.find_stock_item.id, quantity: 1)
+        end
+
+        credit = Adjustment.new(amount: amount.abs * -1, label: I18n.t(:rma_credit))
         credit.source = self
         credit.adjustable = order
         credit.save
+
         order.return if inventory_units.all?(&:returned?)
       end
 

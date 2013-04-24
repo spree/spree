@@ -3,7 +3,7 @@ module Spree
     class OrdersController < Spree::Admin::BaseController
       require 'spree/core/gateway_error'
       before_filter :initialize_order_events
-      before_filter :load_order, :only => [:show, :edit, :update, :fire, :resend]
+      before_filter :load_order, :only => [:edit, :update, :fire, :resend, :open_adjustments, :close_adjustments]
 
       respond_to :html
 
@@ -44,14 +44,13 @@ module Spree
         params[:q][:created_at_lt] = created_at_lt
       end
 
-      def show
-      end
-
       def new
         @order = Order.create
+        redirect_to edit_admin_order_url(@order)
       end
 
       def edit
+        @order.shipments.map &:refresh_rates
       end
 
       def update
@@ -92,7 +91,7 @@ module Spree
       end
 
       def resend
-        OrderMailer.confirm_email(@order, true).deliver
+        OrderMailer.confirm_email(@order.id, true).deliver
         flash[:success] = t(:order_email_resent)
 
         redirect_to :back

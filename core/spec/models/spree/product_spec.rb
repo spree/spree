@@ -3,26 +3,6 @@
 require 'spec_helper'
 
 describe Spree::Product do
-  context "#on_hand=" do
-    it "should not complain of a missing master" do
-      product = Spree::Product.new
-      product.on_hand = 5
-    end
-  end
-
-  context "#count_on_hand=" do
-    it "cannot be set manually" do
-      product = Spree::Product.new
-      setter = lambda { product.count_on_hand = 5 }
-      setter.should raise_error(I18n.t('exceptions.count_on_hand_setter'))
-    end
-  end
-
-  it "should always have a master variant" do
-    product = Spree::Product.new
-    product.master.should_not be_nil
-  end
-
   context 'product instance' do
     let(:product) { create(:product) }
 
@@ -73,43 +53,6 @@ describe Spree::Product do
           product.deleted_at.should_not be_nil
           product.variants_including_master.all? { |v| !v.deleted_at.nil? }.should be_true
         end
-      end
-    end
-
-    context "#on_hand" do
-      # Regression test for #898
-      context 'returns the correct number of products on hand' do
-        before do
-          Spree::Config.set :track_inventory_levels => true
-          product.master.stub :on_hand => 2
-        end
-        specify { product.on_hand.should == 2 }
-      end
-    end
-
-    # Test for #2167
-    context "#on_display?" do
-      it "is on display if product has stock" do
-        product.stub :has_stock? => true
-        assert product.on_display?
-      end
-
-      it "is on display if show_zero_stock_products preference is set to true" do
-        Spree::Config[:show_zero_stock_products] = true
-        assert product.on_display?
-      end
-    end
-
-    # Test for #2167
-    context "#on_sale?" do
-      it "is on sale if the product has stock" do
-        product.stub :has_stock? => true
-        assert product.on_sale?
-      end
-
-      it "is on sale if allow_backorders preference is set to true" do
-        Spree::Config[:allow_backorders] = true
-        assert product.on_sale?
       end
     end
 
@@ -292,7 +235,7 @@ describe Spree::Product do
 
   context "properties" do
     it "should properly assign properties" do
-      product = FactoryGirl.create :product
+      product = create(:product)
       product.set_property('the_prop', 'value1')
       product.property('the_prop').should == 'value1'
 
@@ -301,25 +244,25 @@ describe Spree::Product do
     end
 
     it "should not create duplicate properties when set_property is called" do
-      product = FactoryGirl.create :product
+      product = create(:product)
 
-      lambda {
+      expect {
         product.set_property('the_prop', 'value2')
         product.save
         product.reload
-      }.should_not change(product.properties, :length)
+      }.not_to change(product.properties, :length)
 
-      lambda {
+      expect {
         product.set_property('the_prop_new', 'value')
         product.save
         product.reload
         product.property('the_prop_new').should == 'value'
-      }.should change { product.properties.length }.by(1)
+      }.to change { product.properties.length }.by(1)
     end
 
     # Regression test for #2455
     it "should not overwrite properties' presentation names" do
-      product = FactoryGirl.create :product
+      product = create(:product)
       Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
       product.set_property('foo', 'value1')
       product.set_property('bar', 'value2')
@@ -346,7 +289,7 @@ describe Spree::Product do
 
     context "when prototype with option types is supplied" do
       def build_option_type_with_values(name, values)
-        ot = FactoryGirl.create(:option_type, :name => name)
+        ot = create(:option_type, :name => name)
         values.each do |val|
           ot.option_values.create({:name => val.downcase, :presentation => val}, :without_protection => true)
         end
@@ -355,7 +298,7 @@ describe Spree::Product do
 
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
-        FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
+        create(:prototype, :name => "Size", :option_types => [ size ])
       end
 
       let(:option_values_hash) do
@@ -407,39 +350,6 @@ describe Spree::Product do
       end
     end
 
-  end
-
-  context '#has_stock?' do
-    let(:product) do
-      product = stub_model(Spree::Product)
-      product.stub :master => stub_model(Spree::Variant)
-      product
-    end
-
-    context 'nothing in stock' do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        product.master.stub :on_hand => 0
-      end
-      specify { product.has_stock?.should be_false }
-    end
-
-    context 'master variant has items in stock' do
-      before do
-        product.master.on_hand = 100
-      end
-      specify { product.has_stock?.should be_true }
-    end
-
-    context 'variant has items in stock' do
-      before do
-        Spree::Config.set :track_inventory_levels => true
-        product.master.stub :on_hand => 0
-        product.variants.build(:on_hand => 100)
-        product.stub :has_variants? => true
-      end
-      specify { product.has_stock?.should be_true }
-    end
   end
 
   context "#images" do

@@ -120,7 +120,7 @@ module Spree
                   # payment gateways happy.
                   #
                   # For more information, please see Spree::Payment#set_unique_identifier
-                  :order_id => "#{order.number}-#{self.identifier}" }
+                  :order_id => gateway_order_id }
 
       options.merge!({ :shipping => order.ship_total * 100,
                        :tax      => order.tax_total * 100,
@@ -195,5 +195,9 @@ module Spree
       raise Core::GatewayError.new(message)
     end
 
+    # The unique identifier to be passed in to the payment gateway
+    def gateway_order_id
+      "#{order.number}-#{self.identifier}"
+    end
   end
 end

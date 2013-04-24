@@ -70,10 +70,14 @@ describe "Properties" do
 
     # Regression test for #2279
     specify do
+      page.should have_content('Editing Product')
       fill_in "product_product_properties_attributes_0_property_name", :with => "A Property"
       fill_in "product_product_properties_attributes_0_value", :with => "A Value"
       click_button "Update"
       click_link "Product Properties"
+      # Sometimes the page doesn't load before the all check is done
+      # lazily finding the element gives the page 10 seconds
+      page.should have_css("tbody#product_properties")
       all("tbody#product_properties tr").count.should == 2
     end
   end

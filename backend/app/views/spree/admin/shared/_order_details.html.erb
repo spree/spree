@@ -1,51 +1,56 @@
-<table class="index" data-hook="order_details">
-  <thead id="line-items" data-hook>
-    <tr data-hook="order_details_line_items_headers">
-      <th><%= t(:item_description) %></th>
-      <th class="price"><%= t(:price) %></th>
-      <th class="qty"><%= t(:qty) %></th>
-      <th class="total"><span><%= t(:total) %></span></th>
-    </tr>
+<table class="stock-contents" data-hook="stock-contents">
+  <colgroup>
+    <col style="width: 10%;" />
+    <col style="width: 40%;" />
+    <col style="width: 20%;" />
+    <col style="width: 10%;" />
+    <col style="width: 20%;" />
+  </colgroup>
+  <thead>
+    <th colspan="2"><%= t(:item_description) %></th>
+    <th><%= t(:price) %></th>
+    <th><%= t(:quantity) %></th>
+    <th><%= t(:total) %></th>
   </thead>
-  <tbody>
-    <% order.line_items.each do |item| %>
-      <tr data-hook="order_details_line_item_row" class="<%= cycle('odd', 'even')%>">
-        <td width="300"><%= item.variant.product.name %> <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
-        <td class="price"><%= item.variant.display_amount %></td>
-        <td class="qty"><%= item.quantity %></td>
-        <td class="total"><span><%= item.display_amount %></span></td>
+  <% order.shipments.each do |shipment| %>
+    <tbody>
+      <tr class="stock-location" data-hook="stock-location">
+        <td colspan="5" style="background-color: #eff5fc;">
+          <%= shipment.state.capitalize %>
+          <%= t(:package_from) %>
+          <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
+        </td>
       </tr>
-    <% end %>
-  </tbody>
-  <tbody id="subtotal" data-hook="order_details_subtotal"  class="with-border">
-    <tr class="total" id="subtotal-row">
-      <td colspan="3"><b><%= t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= order.display_item_total %></span></td>
-    </tr>
-  </tbody>
+      <% shipment.manifest.each do |item| %>
+        <% line_item = order.find_line_item_by_variant(item.variant) %>
+        <tr class="stock-item">
+          <td class="item-image"><%= mini_image(item.variant) %></td>
+          <td class="item-name"><%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %></td>
+          <td class="item-price"><%= line_item.display_amount.to_html %></td>
+          <td class="item-qty"><%= item.quantity %></td>
+          <td class="item-total"><%= line_item.display_amount %></td>
+        </tr>
+      <% end %>
+      <tr class="total">
+        <td colspan="4"><strong><%= shipment.adjustment.label %>:</strong></td>
+        <td class="total"><span><%= shipment.adjustment.display_amount %></span></td>
+      </tr>
+    </tbody>
+  <% end %>
+
   <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
     <% order.adjustments.eligible.each do |adjustment| %>
-    <% next if (adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
+      <% next if ((adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0)) || adjustment.originator_type == 'Spree::ShippingMethod' %>
       <tr class="total">
-        <td colspan="3"><strong><%= adjustment.label %>:</strong></td>
+        <td colspan="4"><strong><%= adjustment.label %>:</strong></td>
         <td class="total"><span><%= adjustment.display_amount %></span></td>
       </tr>
     <% end %>
   </tbody>
   <tbody id="order-total" data-hook="order_details_total" class="with-border grand-total">
     <tr>
-      <td colspan="3" ><%= t(:order_total) %>:</td>
+      <td colspan="4" ><%= t(:order_total) %>:</td>
       <td class="total" id="order-total"><span id="order_total"><%= order.display_total %></span></td>
     </tr>
   </tbody>
-  <% if order.price_adjustment_totals.present? %>
-    <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
-      <% order.price_adjustment_totals.each do |label, total| %>
-        <tr>
-          <td colspan="3"><strong><%= label %></strong></td>
-          <td class="total"><span><%= total %></span></td>
-        </tr>
-      <% end %>
-    </tbody>
-  <% end %>
 </table>

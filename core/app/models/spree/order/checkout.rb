@@ -69,14 +69,12 @@ module Spree
                 end
               end
 
-              before_transition :to => :delivery, :do => :remove_invalid_shipments!
+              before_transition :to => :delivery, :do => :create_proposed_shipments
 
               after_transition :to => :complete, :do => :finalize!
               after_transition :to => :delivery, :do => :create_tax_charge!
               after_transition :to => :resumed,  :do => :after_resume
               after_transition :to => :canceled, :do => :after_cancel
-
-              after_transition :from => :delivery,  :do => :create_shipment!
             end
           end
 
@@ -129,6 +127,19 @@ module Spree
             # Ensure there is always a complete step
             steps << "complete" unless steps.include?("complete")
             steps
+          end
+
+          def has_checkout_step?(step)
+            step.present? ? self.checkout_steps.include?(step) : false
+          end
+
+          def checkout_step_index(step)
+            self.checkout_steps.index(step)
+          end
+
+          def can_go_to_state?(state)
+            return false unless self.state.present? && has_checkout_step?(state) && has_checkout_step?(self.state)
+            checkout_step_index(state) > checkout_step_index(self.state)
           end
         end
       end

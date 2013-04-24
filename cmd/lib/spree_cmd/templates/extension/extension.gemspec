@@ -18,11 +18,12 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree_core', '~> <%= spree_version %>'
 
-  s.add_development_dependency 'capybara', '~> 1.1.2'
+  s.add_development_dependency 'capybara', '~> 2.0'
   s.add_development_dependency 'coffee-rails'
-  s.add_development_dependency 'factory_girl', '~> 2.6.4'
+  s.add_development_dependency 'factory_girl', '~> 4.2'
   s.add_development_dependency 'ffaker'
-  s.add_development_dependency 'rspec-rails',  '~> 2.9'
+  s.add_development_dependency 'rspec-rails',  '~> 2.13'
   s.add_development_dependency 'sass-rails'
+  s.add_development_dependency 'simplecov'
   s.add_development_dependency 'sqlite3'
 end

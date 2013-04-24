@@ -48,10 +48,12 @@ Spree::Core::Engine.routes.prepend do
         end
       end
 
-      resources :shipments do
+      resources :shipments, :only => [:create, :update] do
         member do
           put :ready
           put :ship
+          put :add
+          put :remove
         end
       end
     end
@@ -75,5 +77,9 @@ Spree::Core::Engine.routes.prepend do
     resources :inventory_units, :only => [:show, :update]
     resources :users
     resources :properties
+    resources :stock_locations do
+      resources :stock_movements
+      resources :stock_items
+    end
   end
 end

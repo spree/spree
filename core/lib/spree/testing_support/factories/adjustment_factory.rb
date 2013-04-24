@@ -1,16 +1,17 @@
 FactoryGirl.define do
-  factory :adjustment, :class => Spree::Adjustment do
-    adjustable { FactoryGirl.create(:order) }
-    amount '100.0'
+  factory :adjustment, class: Spree::Adjustment do
+    association(:adjustable, factory: :order)
+    amount 100.0
     label 'Shipping'
-    source { FactoryGirl.create(:shipment) }
+    association(:source, factory: :shipment)
     eligible true
   end
-  factory :line_item_adjustment, :class => Spree::Adjustment do
-    adjustable { FactoryGirl.create(:line_item) }
-    amount '10.0'
+
+  factory :line_item_adjustment, class: Spree::Adjustment do
+    association(:adjustable, factory: :line_item)
+    amount 10.0
     label 'VAT 5%'
-    source { FactoryGirl.create(:tax_rate) }
+    association(:source, factory: :tax_rate)
     eligible true
   end
 end

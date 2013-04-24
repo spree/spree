@@ -18,17 +18,14 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   # Necessary for the install generator
-  s.add_dependency 'highline', '= 1.6.15'
+  s.add_dependency 'highline', '= 1.6.18'
 
   s.add_dependency 'acts_as_list', '= 0.1.9'
   s.add_dependency 'awesome_nested_set', '2.1.5'
-  s.add_dependency 'railties', '~> 3.2.9'
-  s.add_dependency 'activerecord', '~> 3.2.9'
-  s.add_dependency 'actionmailer', '~> 3.2.9'
   # Frozen to 0.13.0 due to: https://github.com/amatsuda/kaminari/pull/282
   s.add_dependency 'kaminari', '0.13.0'
 
-  s.add_dependency 'state_machine', '= 1.1.2'
+  s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'ffaker', '~> 1.15.0'
   s.add_dependency 'paperclip', '~> 2.8.0'
   s.add_dependency 'aws-sdk', '~> 1.3.4'
@@ -41,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'stringex', '~> 1.3.2'
   s.add_dependency 'cancan', '1.6.8'
   s.add_dependency 'truncate_html', '0.9.2'
-  s.add_dependency 'money', '5.1.0'
+  s.add_dependency 'money', '5.1.1'
 
   # For checking for alerts
   s.add_dependency 'httparty', '0.9.0'

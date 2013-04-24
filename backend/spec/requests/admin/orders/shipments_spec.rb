@@ -3,45 +3,23 @@ require 'spec_helper'
 describe "Shipments" do
   stub_authorization!
 
-  let!(:order) { OrderWalkthrough.up_to(:complete) }
+  let!(:order) { create(:order_ready_to_ship, :number => "R100", :state => "complete") }
 
-  before(:each) do
-    # Clear all the shipments and then re-create them in this test
-
-    order.shipments.delete_all
-    configure_spree_preferences do |config|
-      config.allow_backorders = true
+  context "shipping an order", js: true do
+    before(:each) do
+      visit spree.admin_path
+      click_link "Orders"
+      within_row(1) do
+        click_link "R100"
+      end
     end
 
-    visit spree.admin_path
-    click_link "Orders"
-    within_row(1) { click_link order.number }
+    it "can ship a completed order" do
+      click_link "ship"
+      sleep 1
+
+      page.should have_content("shipped package")
+      order.reload.shipment_state.should == "shipped"
+    end
   end
-
-  it "should be able to create and list shipments for an order", :js => true do
-
-    click_link "Shipments"
-
-    click_on "New Shipment"
-    within "table.index" do
-      # Check the first inventory unit box
-      find("input.inventory_unit").set(true)
-    end
-    click_button "Create"
-    page.should have_content("successfully created!")
-    order.reload
-    order.shipments.count.should == 1
-
-    click_link "Shipments"
-    shipment = order.shipments.last
-
-    within_row(1) do
-      column_text(1).should == shipment.number
-      column_text(5).should == "Pending"
-      click_icon(:edit)
-    end
-
-    page.should have_content("##{shipment.number}")
-  end
-
 end

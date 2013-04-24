@@ -27,5 +27,9 @@ module Spree
         end
       end
     end
+
+    def model_class
+      Spree::Admin::OverviewController
+    end
   end
 end

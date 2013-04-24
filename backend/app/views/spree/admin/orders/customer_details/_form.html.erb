@@ -57,7 +57,7 @@
   <div class="clear"></div>
 
   <div class="form-buttons filter-actions actions" data-hook="buttons">
-    <%= button @order.cart? ? t(:continue) : t(:update), @order.cart? ? 'icon-arrow-right' : 'icon-refresh' %>
+    <%= button t(:update), 'icon-refresh' %>
   </div>
 
   <% content_for :head do %>

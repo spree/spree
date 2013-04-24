@@ -7,7 +7,7 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords, :taxon_ids] }
+    let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :meta_description, :meta_keywords, :taxon_ids] }
 
     before do
       stub_authentication!
@@ -86,7 +86,6 @@ module Spree
         json_response.should have_attributes(attributes)
         json_response['variants'].first.should have_attributes([:name,
                                                               :is_master,
-                                                              :count_on_hand,
                                                               :price,
                                                               :images])
 
@@ -156,7 +155,7 @@ module Spree
       # Regression test for #1626
       context "deleted products" do
         before do
-          create(:product, :deleted_at => Time.now)
+          create(:product, :deleted_at => 1.day.ago)
         end
 
         it "does not include deleted products" do
