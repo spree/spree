@@ -219,7 +219,7 @@ describe "Order Details", js: true do
       click_icon 'arrow-right'
       wait_for_ajax
       within '.shipment-state' do
-        page.should have_content('shipped')
+        page.should have_content('SHIPPED')
       end
     end
   end
