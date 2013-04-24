@@ -49,12 +49,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:each) do
     WebMock.disable!
-    if example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
     DatabaseCleaner.start
     reset_spree_preferences
   end
