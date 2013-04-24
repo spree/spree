@@ -151,7 +151,7 @@ $(document).ready(function(){
     });
   });
 
-  $('.add_fields').click(function() {
+  $('.spree_add_fields').click(function() {
     var target = $(this).data("target");
     var new_table_row = $(target + ' tr:visible:last').clone();
     var new_id = new Date().getTime();
@@ -193,7 +193,7 @@ $(document).ready(function(){
     return false;
   });
 
-  $('body').on('click', 'a.remove_fields:not(.dynamic, .existing)', function() {
+  $('body').on('click', 'a.spree_remove_fields', function() {
     el = $(this);
     el.prev("input[type=hidden]").val("1");
     el.closest(".fields").hide();
