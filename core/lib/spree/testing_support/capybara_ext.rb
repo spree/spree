@@ -8,9 +8,9 @@ module CapybaraExt
   end
 
   def eventually_fill_in(field, options={})
-    Capybara.wait_until do
-      find_field field
-    end
+    # Capybara.wait_until do
+    #   find_field field
+    # end
     fill_in field, options
   end
 
@@ -79,7 +79,11 @@ module CapybaraExt
   def find_label(text)
     first(:xpath, "//label[text()[contains(.,'#{text}')]]")
   end
+end
 
+Capybara.configure do |config|
+  config.match = :prefer_exact
+  config.ignore_hidden_elements = true
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|

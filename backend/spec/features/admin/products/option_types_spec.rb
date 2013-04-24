@@ -33,9 +33,9 @@ describe "Option Types" do
       click_button "Create"
       page.should have_content("successfully created!")
 
-      click_link "Add Option Value"
-      page.find('table tr:last td.name input').set('color')
-      page.find('table tr:last td.presentation input').set('black')
+      page.find('#option_type_option_values_attributes_0_name').set('color')
+      page.find('#option_type_option_values_attributes_0_presentation').set('black')
+
       click_button "Update"
       page.should have_content("successfully updated!")
     end

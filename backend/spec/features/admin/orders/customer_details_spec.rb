@@ -86,7 +86,8 @@ describe "Customer Details" do
       fill_in "order_ship_address_attributes_address2",   :with => "#101"
       fill_in "order_ship_address_attributes_city",       :with => "Bethesda"
       fill_in "order_ship_address_attributes_zipcode",    :with => "20170"
-      fill_in "order_ship_address_attributes_state_name", :with => "Alabama"
+
+      page.select('Alabama', :from => 'order_ship_address_attributes_state_id')
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
       lambda { click_button "Continue" }.should_not raise_error(NoMethodError)
     end
