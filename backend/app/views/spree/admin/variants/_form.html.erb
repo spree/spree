@@ -1,19 +1,10 @@
 <div data-hook="admin_variant_form_fields" class="label-block left six columns alpha">
-  
   <div data-hook="variants">
-    <% @product.options.each do |option| %>
+    <% @product.option_types.each do |option_type| %>
       <div class="field" data-hook="presentation">
-        <%= label :new_variant, option.option_type.presentation %>
-        <% if @variant.new_record? %>
-          <%= select(:new_variant, option.option_type.presentation,
-            option.option_type.option_values.collect {|ov| [ ov.presentation, ov.id ] },
-            {}, {:class => 'select2 fullwidth'})
-          %>
-        <% else %>
-          <% if opt = @variant.option_values.detect {|o| o.option_type == option.option_type }.try(:presentation) %>
-            <%= text_field(:new_variant,  option.option_type.presentation, :value => opt, :disabled => 'disabled', :class => 'fullwidth') %>
-          <% end %>
-        <% end %>
+        <%= label :new_variant, option_type.presentation %>
+        <%= f.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
+          { :prompt => true }, { :name => 'variant[option_value_ids][]', :class => 'select2 fullwidth' } %>
       </div>
     <% end %>
 
@@ -33,8 +24,6 @@
     </div>
   </div>
 </div>
-
-
 
 <div class="right six columns omega label-block" data-hook="admin_variant_form_additional_fields">
   <% [:weight, :height, :width, :depth].each do |field| %>
