@@ -18,6 +18,7 @@ module Spree
           shipping_rates << ShippingRate.new( :shipping_method => shipping_method,
                                               :cost => cost)
         end
+        shipping_rates.first.selected = true unless shipping_rates.empty?
         shipping_rates
       end
 

@@ -6,8 +6,7 @@ describe Spree::Shipment do
                                          canceled?: false,
                                          can_ship?: true,
                                          currency: 'USD' }
-  let(:shipping_method) { mock_model Spree::ShippingMethod,
-    calculator: mock('calculator'), adjustment_label: 'Shipping' }
+  let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
     shipment = Spree::Shipment.new order: order
     shipment.stub(shipping_method: shipping_method)
@@ -345,37 +344,6 @@ describe Spree::Shipment do
     end
   end
 
-  context "ensure_correct_adjustment" do
-    before { shipment.stub(:reload) }
-
-    it "should create adjustment when not present" do
-      shipping_method.should_receive(:create_adjustment).with(I18n.t(:shipping), order, shipment, true)
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    it "should update originator when adjustment is present" do
-      shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
-      shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: true))
-      shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.name)
-      shipment.adjustment.should_receive(:amount=).with(10.00)
-      shipment.adjustment.should_receive(:save!)
-      shipment.adjustment.should_receive(:reload)
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    it 'should not update amount if adjustment is not open?' do
-      shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
-      shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: false))
-      shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.name)
-      shipment.adjustment.should_not_receive(:amount=).with(10.00)
-      shipment.adjustment.should_receive(:save!)
-      shipment.adjustment.should_receive(:reload)
-      shipment.send(:ensure_correct_adjustment)
-    end
-  end
-
   context "update_order" do
     it "should update order" do
       order.should_receive(:update!)
@@ -385,7 +353,6 @@ describe Spree::Shipment do
 
   context "after_save" do
     it "should run correct callbacks" do
-      shipment.should_receive(:ensure_selected_shipping_rate)
       shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
       shipment.run_callbacks(:save, :after)

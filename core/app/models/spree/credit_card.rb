@@ -55,7 +55,7 @@ module Spree
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     def brand
-      cc_type
+      spree_cc_type
     end
 
     def actions

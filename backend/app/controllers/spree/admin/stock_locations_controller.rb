@@ -4,15 +4,15 @@ module Spree
       before_filter :load_data
 
       def transfer_stock
-        prepare_stock_transfer
+        @variant = Variant.find(params[:variant_id])
 
-        movement_from = StockMovement.new(stock_item: @stock_item_from, originator: from_location, quantity: -params[:quantity].to_i)
-        movement_to = StockMovement.new(stock_item: @stock_item_to, originator: to_location, quantity: params[:quantity].to_i)
+        if !valid_stock_transfer?
+          flash[:error] = t(:not_enough_stock)
+          redirect_to :back and return
+        end
 
-        if movement_from.save && movement_to.save
+        if source_location.transfer_stock(@variant, params[:quantity].to_i, destination_location)
           flash[:success] = t(:stock_successfully_transferred)
-        else
-          flash[:error] = t(:stock_not_transferred)
         end
         redirect_to :back
       end
@@ -23,18 +23,16 @@ module Spree
         @variants = Variant.all
       end
 
-      def prepare_stock_transfer
-        variant = Variant.find(params[:variant_id])
-        @stock_item_from = from_location.stock_item(variant)
-        @stock_item_to = to_location.stock_item(variant)
+      def valid_stock_transfer?
+        source_location.stock_item(@variant).count_on_hand >= params[:quantity].to_i
       end
 
-      def from_location
-        @from ||= StockLocation.find(params[:stock_location_from_id])
+      def source_location
+        @source_location ||= StockLocation.find(params[:stock_location_from_id])
       end
 
-      def to_location
-        @to ||= StockLocation.find(params[:stock_location_to_id])
+      def destination_location
+        @destination_location ||= StockLocation.find(params[:stock_location_to_id])
       end
     end
   end
