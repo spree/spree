@@ -110,6 +110,17 @@ describe Spree::Product do
         product.should_not be_available
       end
     end
+
+    context "variants_and_option_values" do
+      let!(:high) { create(:variant, product: product) }
+      let!(:low) { create(:variant, product: product) }
+
+      before { high.option_values.destroy_all }
+
+      it "returns only variants with option values" do
+        product.variants_and_option_values.should == [low]
+      end
+    end
   end
 
   context "validations" do
@@ -383,5 +394,4 @@ describe Spree::Product do
       reflection.options[:dependent] = :delete_all
     end
   end
-
 end

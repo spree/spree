@@ -8,9 +8,9 @@ describe "Product Variants" do
   end
 
   context "editing variant option types", :js => true do
-    it "should allow an admin to create option types for a variant" do
-      create(:product)
+    let!(:product) { create(:product) }
 
+    it "should allow an admin to create option types for a variant" do
       click_link "Products"
 
       within_row(1) { click_icon :edit }
@@ -19,7 +19,7 @@ describe "Product Variants" do
       page.should have_content("To add variants, you must first define")
     end
 
-    it "should allow an admin to create a variant if there are option types" do
+    it "allows admin to create a variant if there are option types" do
       click_link "Products"
       click_link "Option Types"
       click_link "new_option_type_link"
@@ -34,8 +34,6 @@ describe "Product Variants" do
       click_button "Update"
       page.should have_content("successfully updated!")
 
-      create(:product)
-
       visit spree.admin_path
       click_link "Products"
       within('table.index tbody tr:nth-child(1)') do
@@ -48,11 +46,15 @@ describe "Product Variants" do
 
       within('#sidebar') { click_link "Variants" }
       click_link "New Variant"
+
+      targetted_select2 "black", :from => "#s2id_variant_option_value_ids"
       fill_in "variant_sku", :with => "A100"
       click_button "Create"
       page.should have_content("successfully created!")
+
       within(".index") do
         page.should have_content("19.99")
+        page.should have_content("black")
         page.should have_content("A100")
       end
     end

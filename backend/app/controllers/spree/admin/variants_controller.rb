@@ -2,11 +2,7 @@ module Spree
   module Admin
     class VariantsController < ResourceController
       belongs_to 'spree/product', :find_by => :permalink
-      create.before :create_before
       new_action.before :new_before
-
-      def index
-      end
 
       # override the destory method to set deleted_at value
       # instead of actually deleting the product.
@@ -26,14 +22,6 @@ module Spree
       end
 
       protected
-
-        def create_before
-          option_values = params[:new_variant]
-          option_values.each_value {|id| @object.option_values << OptionValue.find(id)}
-          @object.save
-        end
-
-
         def new_before
           @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
                                                                         'sku', 'is_master')
@@ -54,4 +42,3 @@ module Spree
     end
   end
 end
-

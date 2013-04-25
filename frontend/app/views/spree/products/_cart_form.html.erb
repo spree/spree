@@ -1,22 +1,19 @@
 <%= form_for :order, :url => populate_orders_path do |f| %>
   <div id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
-    <% if @product.has_variants? %>
+    <% if @product.variants_and_option_values(current_currency).any? %>
       <div id="product-variants" class="columns five alpha">
         <h6 class="product-section-title"><%= t(:variants) %></h6>
         <ul>
-          <% has_checked = false
-          @product.variants.active(current_currency).each_with_index do |v,index|
-            checked = !has_checked
-            has_checked = true if checked %>
+          <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", v.id, checked, 'data-price' => v.price_in(current_currency).display_price %>
-              <label for="<%= ['products', @product.id, v.id].join('_') %>">
+              <%= radio_button_tag "products[#{@product.id}]", variant.id, index == 0, 'data-price' => variant.price_in(current_currency).display_price %>
+              <label for="<%= ['products', @product.id, variant.id].join('_') %>">
                 <span class="variant-description">
-                  <%= variant_options v %>
+                  <%= variant_options variant %>
                 </span>
-                <% if variant_price v %>
-                  <span class="price diff"><%= variant_price v %></span>
+                <% if variant_price variant %>
+                  <span class="price diff"><%= variant_price variant %></span>
                 <% end %>
               </label>
             </li>
@@ -34,7 +31,7 @@
         </div>
 
         <div class="add-to-cart">
-          <%= number_field_tag (@product.has_variants? ? :quantity : "variants[#{@product.master.id}]"),
+          <%= number_field_tag (@product.variants_and_option_values.any? ? :quantity : "variants[#{@product.master.id}]"),
             1, :class => 'title', :min => 1 %>
           <%= button_tag :class => 'large primary', :id => 'add-to-cart-button', :type => :submit do %>
             <%= t(:add_to_cart) %>
@@ -47,6 +44,5 @@
           <div><span class="price selling" itemprop="price"><%= t('product_not_available_in_this_currency') %></span></div>
         </div>
     <% end %>    
-
   </div>
 <% end %>
