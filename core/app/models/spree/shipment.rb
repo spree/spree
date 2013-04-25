@@ -13,7 +13,7 @@ module Spree
     has_one :adjustment, as: :source, dependent: :destroy
 
     before_create :generate_shipment_number
-    after_save :ensure_selected_shipping_rate, :ensure_correct_adjustment, :update_order
+    after_save :ensure_correct_adjustment, :update_order
 
     attr_accessor :special_instructions
     accepts_nested_attributes_for :address
@@ -62,11 +62,6 @@ module Spree
       shipping_rates.update_all(selected: false)
       shipping_rates.update(id, selected: true)
       self.save!
-    end
-
-    def ensure_selected_shipping_rate
-      shipping_rates.exists?(selected: true) ||
-        shipping_rates.limit(1).update_all(selected: true)
     end
 
     def refresh_rates
@@ -279,8 +274,8 @@ module Spree
           adjustment.amount = selected_shipping_rate.cost if adjustment.open?
           adjustment.save!
           adjustment.reload
-        elsif shipping_method
-          shipping_method.create_adjustment shipping_method.adjustment_label, order, self, true
+        elsif selected_shipping_rate_id
+          shipping_method.create_adjustment shipping_method.name, order, self, true, "open"
           reload #ensure adjustment is present on later saves
         end
       end

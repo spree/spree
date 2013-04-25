@@ -122,13 +122,11 @@ describe Spree::Api::ShipmentsController do
       before do
         Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
         # For the shipment notification email
-        Spree::MailMethod.create!(
-          :environment => Rails.env,
-          :preferred_mails_from => "spree@example.com"
-        )
+        Spree::Config[:mails_from] = "spree@example.com"
 
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
+        Spree::ShippingRate.any_instance.stub(:cost => 5)
       end
 
       it "can transition a shipment from ready to ship" do

@@ -40,16 +40,7 @@ to know that you have a clean slate:
 refactoring and documentation changes require no new tests. If you are adding
 functionality or fixing a bug, we need tests!
 
-4. Make the test pass then commit your changes. Make sure the commit message has
-the ticket referencing, for example: 
-
-```
-Fix a critical bug
-
-[Closes #1234]
-```
-
-5. Push to your fork and submit a pull request. If the changes will apply cleanly
+4. Push to your fork and submit a pull request. If the changes will apply cleanly
 to the latest stable branches and master branch, you will only need to submit one
 pull request.
 

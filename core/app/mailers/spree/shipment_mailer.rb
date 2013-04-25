@@ -7,7 +7,7 @@ module Spree
     helper_method :money
 
     def from_address
-      MailMethod.current.preferred_mails_from
+      Spree::Config[:mails_from]
     end
 
     def shipped_email(shipment, resend = false)

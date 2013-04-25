@@ -650,6 +650,7 @@ en:
   normal_amount: "Normal Amount"
   not: not
   not_available: N/A
+  not_enough_stock: "There is not enough inventory at the source location to complete this transfer."
   not_found: "%{resource} is not found"
   not_shown: "Not Shown"
   note: Note

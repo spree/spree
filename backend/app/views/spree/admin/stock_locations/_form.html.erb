@@ -58,11 +58,13 @@
 
     <div class="four columns">
       <div class="field ">
-        <%= f.label :state_id, t(:state) + ':' %>
-        <span id="state" class="region">
-          <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
-          <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
-        </span>
+        <% if f.object.country %>
+          <%= f.label :state_id, t(:state) + ':' %>
+          <span id="state" class="region">
+            <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
+            <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+          </span>
+        <% end %>
       </div>
     </div>
 

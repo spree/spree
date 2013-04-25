@@ -43,7 +43,7 @@ module SpreeCmd
       @spree_gem_options = {}
 
       if options[:edge]
-        @spree_gem_options[:git] = 'git://github.com/spree/spree.git'
+        @spree_gem_options[:git] = 'https://github.com/spree/spree.git'
       elsif options[:path]
         @spree_gem_options[:path] = options[:path]
       elsif options[:git]
@@ -94,11 +94,11 @@ module SpreeCmd
         gem :spree, @spree_gem_options
 
         if @install_default_gateways
-          gem :spree_gateway, :github => "spree/spree_gateway"
+          gem :spree_gateway, :git => "https://github.com/spree/spree_gateway.git"
         end
 
         if @install_default_auth
-          gem :spree_auth_devise, :github => "spree/spree_auth_devise"
+          gem :spree_auth_devise, :git => "https://github.com/spree/spree_auth_devise.git"
         end
 
         run 'bundle install', :capture => true

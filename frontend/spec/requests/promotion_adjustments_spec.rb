@@ -4,14 +4,7 @@ describe "Promotion adjustments", :js => true do
   let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
   let!(:state) { create(:state, :name => "Victoria", :country => country) }
   let!(:zone) { create(:zone) }
-  let!(:shipping_method) do
-    shipping_method = create(:shipping_method)
-    calculator = Spree::Calculator::Shipping::PerItem.create!(:calculable => shipping_method)
-    shipping_method.calculator = calculator
-    shipping_method.save
-
-    shipping_method
-  end
+  let!(:shipping_method) { create(:shipping_method) }
   let!(:payment_method) { create(:payment_method) }
   let!(:product) { create(:product, :name => "RoR Mug") }
 
@@ -28,7 +21,7 @@ describe "Promotion adjustments", :js => true do
 
      action = Spree::Promotion::Actions::CreateAdjustment.new
      action.calculator = calculator
-     action.promotion = promotion 
+     action.promotion = promotion
      action.save
 
      promotion.reload # so that promotion.actions is available

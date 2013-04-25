@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   # Necessary for the install generator
-  s.add_dependency 'highline', '= 1.6.15'
+  s.add_dependency 'highline', '= 1.6.18'
 
   s.add_dependency 'acts_as_list', '= 0.1.9'
   s.add_dependency 'awesome_nested_set', '2.1.5'

@@ -120,6 +120,10 @@ module Spree
       price_in(currency).try(:amount)
     end
 
+    def name_and_sku
+      "#{name} - #{sku}"
+    end
+
     private
 
       # Ensures a new variant takes the product master price when price is not supplied
