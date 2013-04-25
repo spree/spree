@@ -102,6 +102,13 @@ compile '/user/' do
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'user'
 end
+compile '/user/*' do
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'user'
+end
 
 compile '/integration/' do
   filter :erb
