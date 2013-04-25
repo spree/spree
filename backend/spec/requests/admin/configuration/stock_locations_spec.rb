@@ -26,10 +26,10 @@ describe "Stock Locations" do
     visit current_path
 
     find('#listing_stock_locations').should have_content("NY Warehouse")
-
     click_icon :trash
     page.driver.browser.switch_to.alert.accept
-
+    # Wait for API request to complete.
+    sleep(1)
     visit current_path
 
     find('#listing_stock_locations').should_not have_content("NY Warehouse")
