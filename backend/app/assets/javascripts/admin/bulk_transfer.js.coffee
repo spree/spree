@@ -9,7 +9,15 @@ $ ->
     event.preventDefault()
     $(this).parents('tr').remove()
 
+    if $('#transfer-variants-table').find('tr').length < 2
+      $('#transfer-variants-table').hide()
+      $('.no-objects-found').show()
+
   $('button.bulk_add_variant').click (event) ->
+    if $('#transfer-variants-table:hidden')
+      $('#transfer-variants-table:hidden').show()
+      $('.no-objects-found').hide()
+
     event.preventDefault()
 
     source = $('#bulk_variant_template').html()
