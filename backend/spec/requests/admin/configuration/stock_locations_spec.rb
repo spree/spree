@@ -25,12 +25,14 @@ describe "Stock Locations" do
     location = create(:stock_location)
     visit current_path
 
-    page.should have_content("NY Warehouse")
+    find('#listing_stock_locations').should have_content("NY Warehouse")
 
     click_icon :trash
     page.driver.browser.switch_to.alert.accept
+
     visit current_path
-    page.should_not have_content("NY Warehouse")
+
+    find('#listing_stock_locations').should_not have_content("NY Warehouse")
   end
 
   it "can update an existing stock location" do
