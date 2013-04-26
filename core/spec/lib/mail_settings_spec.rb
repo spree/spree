@@ -1,76 +1,86 @@
 require 'spec_helper'
 
-describe Spree::Core::MailSettings do
-  context "init" do
-    before { ActionMailer::Base.smtp_settings = {} }
+module Spree
+  module Core
+    describe MailSettings do
+      let!(:subject) { MailSettings.new }
 
-    context "perform_delivery preference" do
-      it "should override the application defaults" do
-        Spree::Config[:enable_mail_delivery] = false
-        Spree::Core::MailSettings.init
-        ActionMailer::Base.perform_deliveries.should be_false
-        Spree::Config[:enable_mail_delivery] = false # why set true here?
+      context "override option is true" do
+        before { Config.override_actionmailer_config = true }
+
+        context "init" do
+          it "calls override!" do
+            MailSettings.should_receive(:new).and_return(subject)
+            subject.should_receive(:override!)
+            MailSettings.init
+          end
+        end
+
+        context "enable delivery" do
+          before { Config.enable_mail_delivery = true }
+
+          context "overrides appplication defaults" do
+
+            context "authentication method is none" do
+              before do
+                Config.mail_host = "smtp.example.com"
+                Config.mail_domain = "example.com"
+                Config.mail_port = 123
+                Config.mail_auth_type = MailSettings::SECURE_CONNECTION_TYPES[0]
+                Config.smtp_username = "schof"
+                Config.smtp_password = "hellospree!"
+                Config.secure_connection_type = "TLS"
+                subject.override!
+              end
+
+              it { ActionMailer::Base.smtp_settings[:address].should == "smtp.example.com" }
+              it { ActionMailer::Base.smtp_settings[:domain].should == "example.com" }
+              it { ActionMailer::Base.smtp_settings[:port].should == 123 }
+              it { ActionMailer::Base.smtp_settings[:authentication].should == "None" }
+              it { ActionMailer::Base.smtp_settings[:enable_starttls_auto].should be_true }
+
+              it "doesnt touch user name config" do
+                ActionMailer::Base.smtp_settings[:user_name].should == nil
+              end
+
+              it "doesnt touch password config" do
+                ActionMailer::Base.smtp_settings[:password].should == nil
+              end
+            end
+          end
+
+          context "when mail_auth_type is other than none" do
+            before do
+              Config.mail_auth_type = "login"
+              Config.smtp_username = "schof"
+              Config.smtp_password = "hellospree!"
+              subject.override!
+            end
+
+            context "overrides user credentials" do
+              it { ActionMailer::Base.smtp_settings[:user_name].should == "schof" }
+              it { ActionMailer::Base.smtp_settings[:password].should == "hellospree!" }
+            end
+          end
+        end
+
+        context "do not enable delivery" do
+          before do
+            Config.enable_mail_delivery = false
+            subject.override!
+          end
+
+          it { ActionMailer::Base.perform_deliveries.should be_false }
+        end
       end
-    end
 
-    context "when delivery is true" do
-      before { Spree::Config[:enable_mail_delivery] = true }
+      context "override option is false" do
+        before { Config.override_actionmailer_config = false }
 
-      context "when mail_auth_type is other than none" do
-        before { Spree::Config[:mail_auth_type] = "login" }
-
-        context "mail_auth_type preference" do
-          it "should override the application defaults" do
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:authentication].should == "login"
-          end
-        end
-
-        context "mail_host preference" do
-          it "should override the application defaults" do
-            Spree::Config[:mail_host] = "smtp.example.com"
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:address].should == "smtp.example.com"
-          end
-        end
-
-        context "mail_domain preference" do
-          it "should override the application defaults" do
-            Spree::Config[:mail_domain] = "example.com"
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:domain].should == "example.com"
-          end
-        end
-
-        context "mail_port preference" do
-          it "should override the application defaults" do
-            Spree::Config[:mail_port] = 123
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:port].should == 123
-          end
-        end
-
-        context "smtp_username preference" do
-          it "should override the application defaults" do
-            Spree::Config[:smtp_username] = "schof"
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:user_name].should == "schof"
-          end
-        end
-
-        context "smtp_password preference" do
-          it "should override the application defaults" do
-            Spree::Config[:smtp_password] = "hellospree!"
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:password].should == "hellospree!"
-          end
-        end
-
-        context "secure_connection_type preference" do
-          it "should override the application defaults" do
-            Spree::Config[:secure_connection_type] = "TLS"
-            Spree::Core::MailSettings.init
-            ActionMailer::Base.smtp_settings[:enable_starttls_auto].should be_true
+        context "init" do
+          it "doesnt calls override!" do
+            subject.should_not_receive(:override!)
+            MailSettings.init
           end
         end
       end
