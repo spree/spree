@@ -8,7 +8,7 @@ title: User
 
 [Understanding the Overview Page](overview.md)
 
-Products  
+Products
 * [Creating a New Product](products/creating.md)
 * [Options](products/options.md)
 * [Properties](products/properties.md)
@@ -32,7 +32,9 @@ Store Configuration
 [Promotions](promotions.md)
 
 Orders
+* [Manual Entry](orders/entering.md)
 * [Filtering](orders/filtering.md)
+* [Editing](orders/editing.md)
 * [Processing Payments](orders/processing_payments.md)
 * [Order States](orders/order_states.md)
 * [Returns](orders/returns.md)
