@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe "Reset Password" do
+  before do
+    Spree::MailMethod.create!(
+      environment: Rails.env,
+      preferred_mails_from: "spree@example.com"
+    )
+  end
+
   it "should allow the user to indicate they have forgotten their password" do
     visit spree.login_path
     click_link "Forgot Password?"
