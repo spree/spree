@@ -46,7 +46,7 @@ describe Spree::Admin::UsersController do
   describe 'resource callbacks' do
     [:create, :update].each do |action|
       describe "##{action}" do
-        let(:user) { stub('User', has_role?: true).as_null_object }
+        let(:user) { mock_model(Spree::User).as_null_object }
 
         before do
           Spree::User.stub(new: user, find: user)
