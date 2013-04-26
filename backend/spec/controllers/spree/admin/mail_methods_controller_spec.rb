@@ -15,6 +15,7 @@ describe Spree::Admin::MailMethodsController do
     user = double('User', email: 'user@spree.com', spree_api_key: 'fake')
     controller.stub(:try_spree_current_user => user)
     Spree::Config[:enable_mail_delivery] = "1"
+    ActionMailer::Base.perform_deliveries = true
 
     expect {
       spree_post :testmail

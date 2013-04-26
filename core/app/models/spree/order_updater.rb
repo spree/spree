@@ -117,7 +117,7 @@ module Spree
     # Adjustments will check if they are still eligible. Ineligible adjustments
     # are preserved but not counted towards adjustment_total.
     def update_adjustments
-      order.adjustments.reload.each { |adjustment| adjustment.update!(order) }
+      order.adjustments.reload.each { |adjustment| adjustment.update! }
       choose_best_promotion_adjustment
     end
 

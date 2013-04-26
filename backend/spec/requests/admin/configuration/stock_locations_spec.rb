@@ -25,12 +25,14 @@ describe "Stock Locations" do
     location = create(:stock_location)
     visit current_path
 
-    page.should have_content("NY Warehouse")
-
+    find('#listing_stock_locations').should have_content("NY Warehouse")
     click_icon :trash
     page.driver.browser.switch_to.alert.accept
+    # Wait for API request to complete.
+    sleep(1)
     visit current_path
-    page.should_not have_content("NY Warehouse")
+
+    find('#listing_stock_locations').should_not have_content("NY Warehouse")
   end
 
   it "can update an existing stock location" do
@@ -53,7 +55,7 @@ describe "Stock Locations" do
 
     it "can transfer stock between two locations" do
       visit current_path
-      variant = la.stock_items.first.variant
+      variant = la.stock_items.order(:id).first.variant
       la.stock_item(variant).count_on_hand.should == 10
       boston.stock_item(variant).count_on_hand.should == 0
 
@@ -71,7 +73,7 @@ describe "Stock Locations" do
 
     it "shows an error when the source location does not have enough stock" do
       visit current_path
-      variant = la.stock_items.first.variant
+      variant = la.stock_items.order(:id).first.variant
       la.stock_item(variant).update_column(:count_on_hand, 0)
 
       select2 "Los Angeles", from: "Transfer From"

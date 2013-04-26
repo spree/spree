@@ -50,7 +50,6 @@ module Spree
     preference :default_meta_keywords, :string, default: 'spree, demo'
     preference :default_seo_title, :string, default: ''
     preference :dismissed_spree_alerts, :string, default: ''
-    preference :emails_sent_from, :string, default: 'spree@example.com'
     preference :hide_cents, :boolean, default: false
     preference :last_check_for_spree_alerts, :string, default: nil
     preference :layout, :string, default: 'spree/layouts/spree_application'
@@ -89,11 +88,12 @@ module Spree
 
     # Default mail headers settings
     preference :enable_mail_delivery, :boolean, :default => false
-    preference :mails_from, :string, :default => 'no-reply@example.com'
+    preference :mails_from, :string, :default => 'spree@example.com'
     preference :mail_bcc, :string, :default => 'spree@example.com'
     preference :intercept_email, :string, :default => nil
 
     # Default smtp settings
+    preference :override_actionmailer_config, :boolean, :default => true
     preference :mail_host, :string, :default => 'localhost'
     preference :mail_domain, :string, :default => 'localhost'
     preference :mail_port, :integer, :default => 25

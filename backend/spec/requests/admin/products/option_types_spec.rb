@@ -62,7 +62,7 @@ describe "Option Types" do
     page.should have_content("Editing Option Type")
     all("tbody#option_values tr").count.should == 1
     within("tbody#option_values") do
-      find('.remove_fields').click
+      find('.spree_remove_fields').click
     end
     # Assert that the field is hidden automatically
     all("tbody#option_values tr").select(&:visible?).count.should == 0

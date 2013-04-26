@@ -174,6 +174,10 @@ describe "Order Details", js: true do
               select2 "Default", :from => "Shipping Method"
             end
             click_icon :ok
+            # Wait for API request to finish.
+            # If this is not done, database may be locked when
+            # database_cleaner attempts to clean it
+            sleep(1)
 
             page.should have_content("Default:")
           end

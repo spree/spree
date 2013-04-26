@@ -5,7 +5,7 @@ describe Spree::ProductsController do
 
   # Regression test for #1390
   it "allows admins to view non-active products" do
-    controller.stub :spree_current_user => mock_model(Spree.user_class, :has_spree_role? => true, :last_incomplete_spree_order => nil)
+    controller.stub :spree_current_user => mock_model(Spree.user_class, :has_spree_role? => true, :last_incomplete_spree_order => nil, :spree_api_key => 'fake')
     spree_get :show, :id => product.to_param
     response.status.should == 200
   end

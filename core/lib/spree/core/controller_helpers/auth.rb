@@ -5,6 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
+          before_filter :ensure_api_key
           helper_method :try_spree_current_user
 
           rescue_from CanCan::AccessDenied do |exception|
@@ -43,7 +44,7 @@ module Spree
 
           disallowed_urls.map!{ |url| url[/\/\w+$/] }
           unless disallowed_urls.include?(request.fullpath)
-            session['user_return_to'] = request.fullpath.gsub('//', '/')
+            session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
           end
         end
 
@@ -54,8 +55,18 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session["user_return_to"] || default)
-          session["user_return_to"] = nil
+          redirect_to(session["spree_user_return_to"] || default)
+          session["spree_user_return_to"] = nil
+        end
+
+        # Need to generate an API key for a user due to some actions potentially
+        # requiring authentication to the Spree API
+        def ensure_api_key
+          if user = try_spree_current_user
+            if user.respond_to?(:spree_api_key) && user.spree_api_key.blank?
+              user.generate_spree_api_key!
+            end
+          end
         end
       end
     end
