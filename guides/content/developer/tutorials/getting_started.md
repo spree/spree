@@ -25,9 +25,9 @@ $ gem install bundler```
 
 ### Installing Image Magick
 
-Spree also uses the Image Magick library for manipulating images. Using this library allows for automatic resizing of product images and the creation of product image thumbnails. Image Magick is not a Rubygem and it can be a bit tricky to install. There are, however, several excellent sources of information on the Web for how to install it. A basic Google search should help you if you get stuck.
+Spree also uses the ImageMagick library for manipulating images. Using this library allows for automatic resizing of product images and the creation of product image thumbnails. ImageMagick is not a Rubygem and it can be a bit tricky to install. There are, however, several excellent sources of information on the Web for how to install it. A basic Google search should help you if you get stuck.
 
-If you are using OSX, a recommended approach is to install Image Magick using [Homebrew](http://mxcl.github.com/homebrew/). This can be done with the following command:
+If you are using OSX, a recommended approach is to install ImageMagick using [Homebrew](http://mxcl.github.com/homebrew/). This can be done with the following command:
 
 ```bash
 $ brew install imagemagick```
@@ -41,7 +41,7 @@ $ gem install spree_cmd```
 
 ## Creating a New Spree Project
 
-The distribution of Spree as a Rubygem allows it to be used in a new Rails project or added to an existing Rails project. This guide will assume you are creating a brand new store and will walk you through the process starting with the creation of a new Rails application.
+The distribution of Spree as a Rubygem allows it to be used in a new Rails project or added to an existing Rails project. This guide will assume you are creating a brand new store and will walk you through the process, starting with the creation of a new Rails application.
 
 ### Creating the Rails Application
 
@@ -59,7 +59,7 @@ After you create the store application, switch to its folder to continue work di
 ```bash
 $ cd mystore```
 
-Now lets add Spree to our Rails application:
+Now let's add Spree to our Rails application:
 
 ```bash
 $ spree install --auto-accept```
@@ -81,7 +81,7 @@ To stop the web server, hit Ctrl-C in the terminal window where it's running. In
 
 The next thing you'll probably want to do is to log into the admin interface. Use your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
 
-Upon successful authentication you should see the admin screen:
+Upon successful authentication, you should see the admin screen:
 
 ![](http://guides.spreecommerce.com/images/analytics/overview.png)
 
