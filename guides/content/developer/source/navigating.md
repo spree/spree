@@ -50,7 +50,7 @@ a Windows box you might want to check out the
 ### Monitoring Changes in the Source
 
 If you would like to keep up to date on changes to the source you can
-subscribe to the GitHub\
+subscribe to the GitHub
 [RSS feed](https://github.com/feeds/spree/commits/spree/master) and you
 will be notified of all the commits.
 
@@ -74,7 +74,7 @@ you need to work with Bundler.
 
 ### Collection of Gems
 
-The Spree gem itself is very minimal and consists mostly as a collection
+The Spree gem itself is very minimal and consists mostly of a collection
 of gems. These gems are maintained together in a single GitHub
 repository and new versions of the gems are shipped with each new Spree
 release. The official documentation (which you are reading now) covers
@@ -86,13 +86,13 @@ subdirectories as follows:
 | Gem            | Directory | Description               |
 | :--------------| :---------| :-------------------------|
 | spree_api      | api       | Provides REST API access  |
-| spree_backend  | core      | Backend functionality     |
+| spree_backend  | backend   | Backend functionality     |
 | spree_cmd      | cmd       | Command line utility for installing Spree and creating extensions |
 | spree_core     | core      | Core functionality - all other gems depend on this gem |
-| spree_frontend | promo     | Coupons and promotions    |
 | spree_dash     | dash      | Simple overview dashboard |
+| spree_frontend | frontend  | Customer-facing functionality    |
 | spree_sample   | sample    | Sample data and images    |
- 
+
 ### Use of Rails Engines
 
 Each of the gems in Spree makes use of Rails Engines. This functionality
@@ -117,7 +117,7 @@ All of these elements can be overridden in the main Rails application.
 Therefore, it is relatively simple to add Spree to your Rails
 application and then customize it further by supplying your own elements
 in that same application. A full discussion of Rails Engines is not
-appropriate here. Please consult the Rails Guides for more information.
+appropriate here. Please [consult the Rails Guides](http://edgeguides.rubyonrails.org/engines.html) for more information.
 
 #### Simple Distribution and Installation as Gems
 
@@ -140,14 +140,13 @@ rather than a custom solution.
 
 #### Modularity
 
-There are differing opinions on what belongs in the "core." People are
-often expressing their opinion that Spree is either "getting too fat" or
+There are differing opinions on what belongs in the "core." People often express their opinion that Spree is either "getting too fat" or
 "lacks basic features." By relying on these engines (and distributing
 them as gems), developers are free to use only the parts of Spree that
 they find useful. For instance, this would allow you to omit promotions
 functionality or to replace the authentication mechanism.
 
-For instance, if you were to specify something like this in your
+For example, if you were to specify something like this in your
 application's *Gemfile*:
 
 ```ruby
@@ -189,8 +188,8 @@ commands in the root of the Spree project to do this:
 $ bundle exec rake clean
 $ bundle exec rake gem```
 
-Most likely you will want to build and install of the related gems.
-Fortunately there is a simple Rake task for that.
+Most likely you will want to build and install all of the related gems.
+Fortunately, there is a simple Rake task for that.
 
 ```bash
 $ bundle exec rake gem:install```
@@ -206,7 +205,7 @@ $ bundle exec rake gem```
 ### Using the "Edge" Code
 
 If you are interested in simply using the latest edge code (as opposed
-to contributing to it) then the simplest thing to do is add a *:git*
+to contributing to it) then the simplest thing to do is add a *:github*
 directive to your *Gemfile* and point it at the master branch.
 
 ```ruby
@@ -231,8 +230,7 @@ parent as a locally cloned version of the Spree source. Then simply use
 the following in your Gemfile.
 
 ```ruby
-gem 'spree', :path => '../spree'
-```
+gem 'spree', :path => '../spree'```
 
 ***
 See the excellent [Bundler documentation](http://gembundler.com)
