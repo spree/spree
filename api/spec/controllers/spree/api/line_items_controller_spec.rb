@@ -34,6 +34,9 @@ module Spree
       end
 
       it "can update a line item on the order" do
+        stub = Spree::LineItem.any_instance.should_receive(:update_attributes)
+        stub.with(anything, :as => :api).and_call_original
+
         line_item = order.line_items.first
         api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
         response.status.should == 200
