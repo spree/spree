@@ -20,7 +20,8 @@ As an example, let's look at what it would take to customize the Checkout Regist
 Here is what the erb template looks like in Spree:
 
 ```erb
-<%%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
+<%%= render :partial => 'spree/shared/error_messages',
+  :locals => { :target => @user } %>
 <h2><%%= t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account" class="columns alpha eight">
@@ -28,9 +29,11 @@ Here is what the erb template looks like in Spree:
   </div>
   <%% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout" data-hook class="columns omega eight">
-      <%%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
+      <%%= render :partial => 'spree/shared/error_messages',
+        :locals => { :target => @order } %>
       <h2><%%= t(:guest_user_account) %></h2>
-      <%%= form_for @order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
+      <%%= form_for @order, :url => update_checkout_registration_path, :method => :put,
+        :html => { :id => 'checkout_form_registration' } do |f| %>
         <p>
           <%%= f.label :email, t(:email) %><br />
           <%%= f.email_field :email, :class => 'title' %>
@@ -69,21 +72,21 @@ Deface applies an action to element(s) matching the supplied CSS selector. These
 
 Deface currently supports the following actions:
 
-* remove – Removes all elements that match the supplied selector
-* replace – Replaces all elements that match the supplied selector, with the content supplied
-* insert_after – Inserts content supplied after all elements that match the supplied selector
-* insert_before – Inserts content supplied before all elements that match the supplied selector
-* insert_top – Inserts content supplied inside all elements that match the supplied selector, as the first child
-* insert_bottom – Inserts content supplied inside all elements that match the supplied selector, as the last child
-* set_attributes – Sets (or adds) attributes to all elements that match the supplied selector, expects `:attributes` option to be passed
+* remove - Removes all elements that match the supplied selector
+* replace - Replaces all elements that match the supplied selector, with the content supplied
+* insert_after - Inserts content supplied after all elements that match the supplied selector
+* insert_before - Inserts content supplied before all elements that match the supplied selector
+* insert_top - Inserts content supplied inside all elements that match the supplied selector, as the first child
+* insert_bottom - Inserts content supplied inside all elements that match the supplied selector, as the last child
+* set_attributes - Sets (or adds) attributes to all elements that match the supplied selector, expects `:attributes` option to be passed
 
 ### Supplying Content
 
 Deface supports three options for supplying content to be used by an override:
 
-* text – String containing markup
-* partial – Relative path to a partial
-* template – Relative path to a template
+* text - String containing markup
+* partial - Relative path to a partial
+* template - Relative path to a template
 
 ### More Information on Using Deface
 
@@ -113,8 +116,10 @@ So we want to override `spree/admin/products/_form.html.erb`. Here is the part o
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
 <%%= f.field_container :price do %>
-    <%%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
-    <%%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
+    <%%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *',
+      :class => "required")) %>
+    <%%= f.text_field :price, :value => number_to_currency(@product.price,
+      :unit => '') %>
     <%%= f.error_message_on :price %>
 <%% end %>```
 
@@ -122,15 +127,16 @@ We want our override to insert another field container after the price field con
 
 ```ruby
 Deface::Override.new(:virtual_path => "spree/admin/products/_form",
-                     :name => "add_sale_price_to_product_edit",
-                     :insert_after => "code[erb-loud]:contains('text_field :price')",
-                     :text => "
-                       <%%= f.field_container :sale_price do %>
-                         <%%= f.label :sale_price, raw(t(:sale_price) + content_tag(:span, ' *')) %>
-                         <%%= f.text_field :sale_price, :value => number_to_currency(@product.sale_price, :unit => '') %>
-                         <%%= f.error_message_on :sale_price %>
-                       <%% end %>
-                     ")```
+  :name => "add_sale_price_to_product_edit",
+  :insert_after => "code[erb-loud]:contains('text_field :price')",
+  :text => "
+    <%%= f.field_container :sale_price do %>
+      <%%= f.label :sale_price, raw(t(:sale_price) + content_tag(:span, ' *')) %>
+      <%%= f.text_field :sale_price, :value =>
+        number_to_currency(@product.sale_price, :unit => '') %>
+      <%%= f.error_message_on :sale_price %>
+    <%% end %>
+  ")```
 
 There is one more change we will need to make in order to get the updated product edit form working. We need to make `sale_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `sale_price`.
 
