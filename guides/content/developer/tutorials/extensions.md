@@ -9,11 +9,11 @@ This tutorial continues where we left off in the <%= link_to "Getting Started", 
 
 ### What is a Spree Extension?
 
-Extensions are the primary mechanism for customizing a Spree site. They provide a convenient mechanism for Spree developers to share reusable code with one another. Even if you do not plan on sharing your extensions with the community they can still be a useful way to reuse code within your organization. Extensions are also a convenient mechanism for organizing and isolating discrete chunks of functionality.
+Extensions are the primary mechanism for customizing a Spree site. They provide a convenient mechanism for Spree developers to share reusable code with one another. Even if you do not plan on sharing your extensions with the community, they can still be a useful way to reuse code within your organization. Extensions are also a convenient mechanism for organizing and isolating discrete chunks of functionality.
 
-### Finding useful Spree Extensions in the Extension Registry
+### Finding Useful Spree Extensions in the Extension Registry
 
-The [Spree Extension Registry](http://spreecommerce.com/extensions) is a searchable collection of Spree Extensions written and maintained by members of the [Spree Community](http://spreecommerce.com/community). If you need to extend your Spree application's functionality, be sure to have a look in the Extension Registry first, you may find an extension that either implements what you need or provides a good starting point for your own implementation. If you write an extension and it might be useful to others, [publish it in the registry](http://spreecommerce.com/extensions/new) and people will be able to find it and contribute as well.
+The [Spree Extension Registry](http://spreecommerce.com/extensions) is a searchable collection of Spree Extensions written and maintained by members of the [Spree Community](http://spreecommerce.com/community). If you need to extend your Spree application's functionality, be sure to have a look in the Extension Registry first; you may find an extension that either implements what you need or provides a good starting point for your own implementation. If you write an extension and it might be useful to others, [publish it in the registry](http://spreecommerce.com/extensions/new) and people will be able to find it and contribute as well.
 
 ## Installing an Extension
 
