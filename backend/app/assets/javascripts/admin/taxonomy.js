@@ -83,7 +83,7 @@ var handle_delete = function(e, data){
 
 
 var setup_taxonomy_tree = function(taxonomy_id) {
-  if(taxonomy_id!=undefined){
+  if (taxonomy_id != undefined) {
     $.ajax({
       url: '/api/taxonomies/' + taxonomy_id + '/jstree', 
       success: function(taxonomy) { 
@@ -119,78 +119,26 @@ var setup_taxonomy_tree = function(taxonomy_id) {
                 var node = m.o;
                 var new_parent = m.np;
 
-                if(!new_parent) return false; //no parent
+                // no parent or can't drag root
+                if (!new_parent || node.attr("rel") == "root") {
+                  return false;
+                }
 
-                if(node.attr("rel")=="root") return false; //can't drag root
-
-                if(new_parent.attr("id")=="taxonomy_tree" && position==0) return false; // can't drop before root
+                if (new_parent.attr("id") == "taxonomy_tree" && position == 0) {
+                  return false; // can't drop before root
+                }
 
                 return true;
-
               }
             }
           },
           contextmenu: {
-             items: function(obj) {
-                var id_of_node = obj.attr("id");
-                var type_of_node = obj.attr("rel");
-                var menu = {};
-                var edit_url = admin_base_url.clone();
-                edit_url.setPath(edit_url.path() + '/' + obj.attr("id") + "/edit");
-                if(type_of_node == "root") {
-                  menu = {
-                    create: {
-                      label: "<i class='icon-plus'></i> " + Spree.translations.add,
-                      action: function (obj) { this.create(obj); }
-                    },
-                     paste: {
-                       separator_before: true,
-                       label: "<i class='icon-paste'></i> " + Spree.translations.paste,
-                       action: function (obj) { is_cut = false; this.paste(obj); },
-                       _disabled: is_cut == false
-                    },
-                    edit : {
-                      separator_before: true,
-                      label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action           : function (obj) { window.location = admin_base_url.setPath(admin_base_url.path() + '/' + obj.attr("id") + "/edit/").toString; }
-                    }
-                  }
-                } else {
-                  menu =  {
-                    create: {
-                      label: "<i class='icon-plus'></i> " + Spree.translations.add,
-                      action: function (obj) { this.create(obj); }
-                    },
-                    rename: {
-                      label: "<i class='icon-pencil'></i> " + Spree.translations.rename,
-                      action: function (obj) { this.rename(obj); }
-                    },
-                    remove: {
-                      label: "<i class='icon-trash'></i> " + Spree.translations.remove,
-                      action: function (obj) { this.remove(obj); }
-                    },
-                    cut: {
-                      separator_before : true,
-                      label: "<i class='icon-cut'></i> " + Spree.translations.cut,
-                      action: function (obj) { is_cut = true; this.cut(obj); }
-                    },
-                    paste: {
-                      label: "<i class='icon-paste'></i> " + Spree.translations.paste,
-                      action: function (obj) { is_cut = false; this.paste(obj); },
-                      "_disabled": is_cut == false
-                    },
-                    edit: {
-                      separator_before: true,
-                      label: "<i class='icon-edit'></i> " + Spree.translations.edit,
-                      action: function (obj) { window.location = edit_url.toString() }
-                    }
-                  }
-                }
-                return menu;
+            items: function(obj) {
+              return taxon_tree_menu(obj, this);
             }
           },
 
-          plugins: [ "themes", "json_data", "dnd", "crrm", "contextmenu"]
+          plugins: ["themes", "json_data", "dnd", "crrm", "contextmenu"]
         }
 
         $("#taxonomy_tree").jstree(conf)
@@ -201,14 +149,12 @@ var setup_taxonomy_tree = function(taxonomy_id) {
           .bind("loaded.jstree", function() {
             $(this).jstree("core").toggle_node($('.jstree-icon').first())
           })
-          }
-        })
+      }
+    })
 
     $("#taxonomy_tree a").on("dblclick", function (e) {
-     $("#taxonomy_tree").jstree("rename", this)
+      $("#taxonomy_tree").jstree("rename", this)
     });
-
-
 
     $(document).keypress(function(e){
       //surpress form submit on enter/return
