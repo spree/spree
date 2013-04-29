@@ -1,4 +1,4 @@
-Spree::Core::Engine.routes.prepend do
+Spree::Core::Engine.routes.draw do
   match '/admin' => 'admin/overview#index', :as => :admin
 
   get '/admin/analytics/register' => 'admin/analytics#register', :as => :admin_analytics_register
