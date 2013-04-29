@@ -73,7 +73,7 @@ $ rails server```
 
 This will fire up an instance of the Webrick web server by default (Spree can also use several other web servers). To see your application in action, open a browser window and navigate to http://localhost:3000. You should see the Spree default home page:
 
-![](http://guides.spreecommerce.com/images/spree_welcome.png)
+![Spree Application Home Page](http://guides.spreecommerce.com/images/spree_welcome.png)
 
 To stop the web server, hit Ctrl-C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
 
@@ -81,9 +81,16 @@ To stop the web server, hit Ctrl-C in the terminal window where it's running. In
 
 The next thing you'll probably want to do is to log into the admin interface. Use your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
 
+***
+If you elected not to use the `--auto-accept` option when you added Spree to your Rails app, and did not install the seed data, the admin user will not yet exist in your database. You can run a simple rake task to create a new admin user.
+
+```bash
+rake spree_auth:admin:create```
+***
+
 Upon successful authentication, you should see the admin screen:
 
-![](http://guides.spreecommerce.com/images/analytics/overview.png)
+![Admin Screen](http://guides.spreecommerce.com/images/analytics/overview.png)
 
 Feel free to explore some of the backend features that Spree has to offer and to verify that your installation is working properly.
 
