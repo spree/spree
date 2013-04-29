@@ -24,10 +24,12 @@ jQuery(function($) {
   <% # Re-adjusting admin menu during test causes tests to fail,
      # like states_spec and shipping_methods_spec. Let's not do this. %>
   <% unless Rails.env.test? %>
-    $('.main-menu-wrapper ul').AdaptiveMenu({
-      text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
-      klass: "dropdown"
-    });
+    if (Spree.translations) {
+      $('.main-menu-wrapper ul').AdaptiveMenu({
+        text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+        klass: "dropdown"
+      });
+    }
   <% end %>
 
   // Add some tips
@@ -112,15 +114,17 @@ $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
 }
 
 handle_date_picker_fields = function(){
-  $('.datepicker').datepicker({
-    dateFormat: Spree.translations.date_picker,
-    dayNames: Spree.translations.abbr_day_names,
-    dayNamesMin: Spree.translations.abbr_day_names,
-    monthNames: Spree.translations.month_names, 
-    prevText: Spree.translations.previous,
-    nextText: Spree.translations.next,
-    showOn: "focus"
-  });
+  if (Spree.translations) {
+    $('.datepicker').datepicker({
+      dateFormat: Spree.translations.date_picker,
+      dayNames: Spree.translations.abbr_day_names,
+      dayNamesMin: Spree.translations.abbr_day_names,
+      monthNames: Spree.translations.month_names, 
+      prevText: Spree.translations.previous,
+      nextText: Spree.translations.next,
+      showOn: "focus"
+    });
+  }
 
   // Correctly display range dates
   $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function(selectedDate) {
