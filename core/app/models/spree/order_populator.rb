@@ -17,7 +17,6 @@ module Spree
     #
     # * Multiple products at once
     # +:products => { product_id => variant_id, product_id => variant_id }, :quantity => quantity+
-    # +:products => { product_id => variant_id, product_id => variant_id }, :quantity => { variant_id => quantity, variant_id => quantity }+
     def populate(from_hash)
       from_hash[:products].each do |product_id,variant_id|
         attempt_cart_add(variant_id, from_hash[:quantity])
