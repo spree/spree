@@ -1049,6 +1049,7 @@ en:
   tax_categories: "Tax Categories"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
+  tax_rate_amount_explanation: "Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)"
   tax_rates: "Tax Rates"
   tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax Settings"
