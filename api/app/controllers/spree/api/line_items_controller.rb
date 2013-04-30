@@ -5,7 +5,7 @@ module Spree
 
       def create
         authorize! :read, order
-        @line_item = order.line_items.build(params[:line_item], :as => :api)
+        @line_item = order.line_items.build(params[:line_item])
         if @line_item.save
           respond_with(@line_item, :status => 201, :default_template => :show)
         else
