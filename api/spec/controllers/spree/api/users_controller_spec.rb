@@ -22,7 +22,7 @@ module Spree
       it "cannot get other users details" do
         api_get :show, :id => stranger.id
 
-        assert_unauthorized!
+        assert_not_found!
       end
 
       it "can learn how to create a new user" do
@@ -50,7 +50,7 @@ module Spree
 
       it "cannot update other users details" do
         api_put :update, :id => stranger.id, :user => { :email => "mine@example.com" }
-        assert_unauthorized!
+        assert_not_found!
       end
 
       it "can delete itself" do
@@ -60,7 +60,7 @@ module Spree
 
       it "cannot delete other user" do
         api_delete :destroy, :id => stranger.id
-        assert_unauthorized!
+        assert_not_found!
       end
 
       it "should only get own details on index" do

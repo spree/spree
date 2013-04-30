@@ -1,17 +1,16 @@
 module Spree
   module Api
     class TaxonomiesController < Spree::Api::BaseController
-      respond_to :json
 
       def index
-        @taxonomies = Taxonomy.order('name').includes(:root => :children).
+        @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
         respond_with(@taxonomies)
       end
 
       def show
-        @taxonomy = Taxonomy.find(params[:id])
+        @taxonomy = Taxonomy.accessible_by(current_ability, :read).find(params[:id])
         respond_with(@taxonomy)
       end
 
@@ -31,7 +30,7 @@ module Spree
       end
 
       def update
-        authorize! :update, Taxonomy
+        authorize! :update, taxonomy
         if taxonomy.update_attributes(params[:taxonomy])
           respond_with(taxonomy, :status => 200, :default_template => :show)
         else
@@ -40,7 +39,7 @@ module Spree
       end
 
       def destroy
-        authorize! :delete, Taxonomy
+        authorize! :destroy, taxonomy
         taxonomy.destroy
         respond_with(taxonomy, :status => 204)
       end
@@ -48,7 +47,7 @@ module Spree
       private
 
       def taxonomy
-        @taxonomy ||= Taxonomy.find(params[:id])
+        @taxonomy ||= Taxonomy.accessible_by(current_ability, :read).find(params[:id])
       end
 
     end

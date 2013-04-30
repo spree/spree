@@ -4,7 +4,6 @@ module Spree
   describe Api::VariantsController do
     render_views
 
-
     let!(:product) { create(:product) }
     let!(:variant) do
       variant = product.master
@@ -125,12 +124,12 @@ module Spree
 
     it "cannot update a variant" do
       api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }
-      assert_unauthorized!
+      assert_not_found!
     end
 
     it "cannot delete a variant" do
       api_delete :destroy, :id => variant.to_param
-      assert_unauthorized!
+      assert_not_found!
       lambda { variant.reload }.should_not raise_error
     end
 
@@ -170,7 +169,6 @@ module Spree
         lambda { variant.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
-
 
   end
 end

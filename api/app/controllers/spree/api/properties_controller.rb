@@ -1,12 +1,11 @@
 module Spree
   module Api
     class PropertiesController < Spree::Api::BaseController
-      respond_to :json
 
       before_filter :find_property, :only => [:show, :update, :destroy]
 
       def index
-        @properties = Spree::Property.
+        @properties = Spree::Property.accessible_by(current_ability, :read).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
         respond_with(@properties)
@@ -30,8 +29,9 @@ module Spree
       end
 
       def update
-        authorize! :update, Property
-        if @property && @property.update_attributes(params[:property])
+        if @property
+          authorize! :update, @property
+          @property.update_attributes(params[:property])
           respond_with(@property, :status => 200, :default_template => :show)
         else
           invalid_resource!(@property)
@@ -39,8 +39,8 @@ module Spree
       end
 
       def destroy
-        authorize! :delete, Property
-        if(@property)
+        if @property
+          authorize! :destroy, @property
           @property.destroy
           respond_with(@property, :status => 204)
         else
@@ -51,9 +51,9 @@ module Spree
       private
 
       def find_property
-        @property = Spree::Property.find(params[:id])
+        @property = Spree::Property.accessible_by(current_ability, :read).find(params[:id])
       rescue ActiveRecord::RecordNotFound
-        @property = Spree::Property.find_by_name!(params[:id])
+        @property = Spree::Property.accessible_by(current_ability, :read).find_by_name!(params[:id])
       end
 
     end

@@ -7,11 +7,17 @@ module Spree
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
 
-      respond_to :json
-
       def create
+        authorize! :create, Order
         @order = Order.build_from_api(current_api_user, nested_params)
         respond_with(@order, :default_template => 'spree/api/orders/show', :status => 201)
+      end
+
+      def next
+        @order.next!
+        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
+      rescue StateMachine::InvalidTransition
+        respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
       end
 
       def update
@@ -28,13 +34,6 @@ module Spree
         else
           invalid_resource!(@order)
         end
-      end
-
-      def next
-        @order.next!
-        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
-        rescue StateMachine::InvalidTransition
-          respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
       end
 
       private

@@ -6,6 +6,11 @@ module Spree
           JSON.parse(response.body)
         end
 
+        def assert_not_found!
+          json_response.should == { "error" => "The resource you were looking for could not be found." }
+          response.status.should == 404
+        end
+
         def assert_unauthorized!
           json_response.should == { "error" => "You are not authorized to perform that action." }
           response.status.should == 401

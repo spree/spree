@@ -73,6 +73,7 @@ module Spree
       it "will return an error if the order cannot transition" do
         order.update_column(:state, "address")
         api_put :update, :id => order.to_param
+        # Order has not transitioned
         response.status.should == 422
       end
 

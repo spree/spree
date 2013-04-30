@@ -32,8 +32,7 @@ module Spree
       end
 
       def update
-        authorize! :update, StockItem
-        @stock_item = StockItem.find(params[:id])
+        @stock_item = StockItem.accessible_by(current_ability, :update).find(params[:id])
 
         count_on_hand = 0
         if params[:stock_item].has_key?(:count_on_hand)
@@ -49,8 +48,7 @@ module Spree
       end
 
       def destroy
-        authorize! :delete, StockItem
-        @stock_item = StockItem.find(params[:id])
+        @stock_item = StockItem.accessible_by(current_ability, :destroy).find(params[:id])
         @stock_item.destroy
         respond_with(@stock_item, status: 204)
       end
@@ -59,11 +57,11 @@ module Spree
 
       def stock_location
         render 'spree/api/shared/stock_location_required', status: 422 and return unless params[:stock_location_id]
-        @stock_location ||= StockLocation.find(params[:stock_location_id])
+        @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
       end
 
       def scope
-        @stock_location.stock_items.includes(:variant => :product)
+        @stock_location.stock_items.accessible_by(current_ability, :read).includes(:variant => :product)
       end
     end
   end

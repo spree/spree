@@ -41,12 +41,12 @@ module Spree
 
       it "cannot update a return authorization" do
         api_put :update
-        assert_unauthorized!
+        assert_not_found!
       end
 
       it "cannot delete a return authorization" do
         api_delete :destroy
-        assert_unauthorized!
+        assert_not_found!
       end
     end
 

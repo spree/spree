@@ -10,7 +10,7 @@ module Spree
 
       def update
         @address = Address.find(params[:id])
-        authorize! :read, @address
+        authorize! :update, @address
 
         if @address.update_attributes(params[:address])
           respond_with(@address, :default_template => :show)

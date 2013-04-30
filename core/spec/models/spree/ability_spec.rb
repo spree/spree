@@ -122,57 +122,166 @@ describe Spree::Ability do
     end
   end
 
-  context 'for User' do
-    context 'requested by same user' do
-      let(:resource) { user }
-      it_should_behave_like 'access granted'
-      it_should_behave_like 'no index allowed'
+  context 'as Guest User' do
+
+    context 'for Address' do
+      context 'requested by any user' do
+        let(:resource) {
+          address = Spree::Address.new
+          address.stub user: create(:user)
+          address
+        }
+        it_should_behave_like 'access denied'
+      end
+
+      context 'requested by user' do
+        let(:resource) {
+          address = Spree::Address.new
+          address.stub user: user
+          address
+        }
+        it_should_behave_like 'access granted'
+      end
     end
-    context 'requested by other user' do
-      let(:resource) { Spree.user_class.new }
-      it_should_behave_like 'create only'
+
+    context 'for Country' do
+      let(:resource) { Spree::Country.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
     end
+
+    context 'for OptionType' do
+      let(:resource) { Spree::OptionType.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for OptionValue' do
+      let(:resource) { Spree::OptionType.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for Order' do
+      let(:resource) { Spree::Order.new }
+
+      context 'requested by same user' do
+        before(:each) { resource.user = user }
+        it_should_behave_like 'access granted'
+        it_should_behave_like 'no index allowed'
+      end
+
+      context 'requested by other user' do
+        before(:each) { resource.user = Spree.user_class.new }
+        it_should_behave_like 'create only'
+      end
+
+      context 'requested with proper token' do
+        let(:token) { 'TOKEN123' }
+        before(:each) { resource.stub :token => 'TOKEN123' }
+        it_should_behave_like 'access granted'
+        it_should_behave_like 'no index allowed'
+      end
+
+      context 'requested with inproper token' do
+        let(:token) { 'FAIL' }
+        before(:each) { resource.stub :token => 'TOKEN123' }
+        it_should_behave_like 'create only'
+      end
+    end
+
+    context 'for Product' do
+      let(:resource) { Spree::Product.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for ProductProperty' do
+      let(:resource) { Spree::Product.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for Property' do
+      let(:resource) { Spree::Product.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for State' do
+      let(:resource) { Spree::State.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for StockItem' do
+      let(:resource) { Spree::StockItem.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for StockLocation' do
+      let(:resource) { Spree::StockLocation.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for StockMovement' do
+      let(:resource) { Spree::StockMovement.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for Taxons' do
+      let(:resource) { Spree::Taxon.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for Taxonomy' do
+      let(:resource) { Spree::Taxonomy.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for User' do
+      context 'requested by same user' do
+        let(:resource) { user }
+        it_should_behave_like 'access granted'
+        it_should_behave_like 'no index allowed'
+      end
+      context 'requested by other user' do
+        let(:resource) { Spree.user_class.new }
+        it_should_behave_like 'create only'
+      end
+    end
+
+    context 'for Variant' do
+      let(:resource) { Spree::Variant.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
+    context 'for Zone' do
+      let(:resource) { Spree::Zone.new }
+      context 'requested by any user' do
+        it_should_behave_like 'read only'
+      end
+    end
+
   end
 
-  context 'for Order' do
-    let(:resource) { Spree::Order.new }
-
-    context 'requested by same user' do
-      before(:each) { resource.user = user }
-      it_should_behave_like 'access granted'
-      it_should_behave_like 'no index allowed'
-    end
-
-    context 'requested by other user' do
-      before(:each) { resource.user = Spree.user_class.new }
-      it_should_behave_like 'create only'
-    end
-
-    context 'requested with proper token' do
-      let(:token) { 'TOKEN123' }
-      before(:each) { resource.stub :token => 'TOKEN123' }
-      it_should_behave_like 'access granted'
-      it_should_behave_like 'no index allowed'
-    end
-
-    context 'requested with inproper token' do
-      let(:token) { 'FAIL' }
-      before(:each) { resource.stub :token => 'TOKEN123' }
-      it_should_behave_like 'create only'
-    end
-  end
-
-  context 'for Product' do
-    let(:resource) { Spree::Product.new }
-    context 'requested by any user' do
-      it_should_behave_like 'read only'
-    end
-  end
-
-  context 'for Taxons' do
-    let(:resource) { Spree::Taxon.new }
-    context 'requested by any user' do
-      it_should_behave_like 'read only'
-    end
-  end
 end

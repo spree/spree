@@ -21,10 +21,10 @@ module Spree
       private
         def scope
           if params[:country_id]
-            @country = Country.find(params[:country_id])
-            return @country.states
+            @country = Country.accessible_by(current_ability, :read).find(params[:country_id])
+            return @country.states.accessible_by(current_ability, :read)
           else
-            return State.scoped
+            return State.accessible_by(current_ability, :read)
           end
         end
     end
