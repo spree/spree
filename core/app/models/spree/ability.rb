@@ -26,42 +26,48 @@ module Spree
       self.clear_aliased_actions
 
       # override cancan default aliasing (we don't want to differentiate between read and index)
+      alias_action :delete, to: :destroy
       alias_action :edit, to: :update
       alias_action :new, to: :create
       alias_action :new_action, to: :create
       alias_action :show, to: :read
-      alias_action :delete, to: :destroy
 
       user ||= Spree.user_class.new
+
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
-        #############################
-        can [:read,:update,:destroy], Spree.user_class, id: user.id
-        can :create, Spree.user_class
-        #############################
+        can [:manage], Address do |address|
+          # The addresses user method will be dependent upon your authentication solution.
+          # Spree assumes you will add a user method to Address in order to authorize users other than admins to modify the address.
+          address.user == user
+        end
+        can [:index, :read], Country
+        can [:index, :read], OptionType
+        can [:index, :read], OptionValue
+        can :create, Order
         can :read, Order do |order, token|
           order.user == user || order.token && token == order.token
         end
         can :update, Order do |order, token|
           order.user == user || order.token && token == order.token
         end
-        can :create, Order
-
-        can :read, Address do |address|
-          address.user == user
-        end
-
-        #############################
-        can :read, Product
-        can :index, Product
-        #############################
-        can :read, Taxon
-        can :index, Taxon
-        #############################
+        can [:index, :read], Product
+        can [:index, :read], ProductProperty
+        can [:index, :read], Property
+        can :create, Spree.user_class
+        can [:read, :update, :destroy], Spree.user_class, id: user.id
+        can [:index, :read], State
+        can [:index, :read], StockItem
+        can [:index, :read], StockLocation
+        can [:index, :read], StockMovement
+        can [:index, :read], Taxon
+        can [:index, :read], Taxonomy
+        can [:index, :read], Variant
+        can [:index, :read], Zone
       end
 
-      #include any abilities registered by extensions, etc.
+      # Include any abilities registered by extensions, etc.
       Ability.abilities.each do |clazz|
         ability = clazz.send(:new, user)
         @rules = rules + ability.send(:rules)

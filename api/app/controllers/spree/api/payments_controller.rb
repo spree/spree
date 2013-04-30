@@ -1,7 +1,6 @@
 module Spree
   module Api
     class PaymentsController < Spree::Api::BaseController
-      respond_to :json
 
       before_filter :find_order
       before_filter :find_payment, :only => [:show, :authorize, :purchase, :capture, :void, :credit]

@@ -24,8 +24,7 @@ module Spree
       end
 
       def update
-        authorize! :update, StockMovement
-        @stock_movement = StockMovement.find(params[:id])
+        @stock_movement = StockMovement.accessible_by(current_ability, :update).find(params[:id])
         if @stock_movement.update_attributes(params[:stock_movement])
           respond_with(@stock_movement, status: 200, default_template: :show)
         else
@@ -34,8 +33,7 @@ module Spree
       end
 
       def destroy
-        authorize! :delete, StockMovement
-        @stock_movement = StockMovement.find(params[:id])
+        @stock_movement = StockMovement.accessible_by(current_ability, :destroy).find(params[:id])
         @stock_movement.destroy
         respond_with(@stock_movement, status: 204)
       end
@@ -44,11 +42,11 @@ module Spree
 
       def stock_location
         render 'spree/api/shared/stock_location_required', status: 422 and return unless params[:stock_location_id]
-        @stock_location ||= StockLocation.find(params[:stock_location_id])
+        @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
       end
 
       def scope
-        @stock_location.stock_movements
+        @stock_location.stock_movements.accessible_by(current_ability, :read)
       end
     end
   end

@@ -54,12 +54,12 @@ module Spree
 
       it "cannot update an image" do
         api_put :update, :id => 1
-        assert_unauthorized!
+        assert_not_found!
       end
 
       it "cannot delete an image" do
         api_delete :destroy, :id => 1
-        assert_unauthorized!
+        assert_not_found!
       end
     end
   end

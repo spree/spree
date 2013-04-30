@@ -2,15 +2,6 @@ module Spree
   module Api
     class ZonesController < Spree::Api::BaseController
 
-      def index
-        @zones = Zone.order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@zones)
-      end
-
-      def show
-        respond_with(zone)
-      end
-
       def create
         authorize! :create, Zone
         @zone = Zone.new(map_nested_attributes_keys(Spree::Zone, params[:zone]))
@@ -21,8 +12,23 @@ module Spree
         end
       end
 
+      def destroy
+        authorize! :destroy, zone
+        zone.destroy
+        respond_with(zone, :status => 204)
+      end
+
+      def index
+        @zones = Zone.accessible_by(current_ability, :read).order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        respond_with(@zones)
+      end
+
+      def show
+        respond_with(zone)
+      end
+
       def update
-        authorize! :update, Zone
+        authorize! :update, zone
         if zone.update_attributes(map_nested_attributes_keys(Spree::Zone, params[:zone]))
           respond_with(zone, :status => 200, :default_template => :show)
         else
@@ -30,15 +36,10 @@ module Spree
         end
       end
 
-      def destroy
-        authorize! :delete, Zone
-        zone.destroy
-        respond_with(zone, :status => 204)
-      end
-
       private
+
       def zone
-        @zone ||= Spree::Zone.find(params[:id])
+        @zone ||= Spree::Zone.accessible_by(current_ability, :read).find(params[:id])
       end
     end
   end

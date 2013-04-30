@@ -1,16 +1,15 @@
 module Spree
   module Api
     class TaxonsController < Spree::Api::BaseController
-      respond_to :json
 
       def index
         if taxonomy
           @taxons = taxonomy.root.children
         else
           if params[:ids]
-            @taxons = Taxon.where(:id => params[:ids].split(","))
+            @taxons = Taxon.accessible_by(current_ability, :read).where(:id => params[:ids].split(","))
           else
-            @taxons = Taxon.ransack(params[:q]).result
+            @taxons = Taxon.accessible_by(current_ability, :read).ransack(params[:q]).result
           end
         end
         respond_with(@taxons)
@@ -46,7 +45,7 @@ module Spree
       end
 
       def update
-        authorize! :update, Taxon
+        authorize! :update, taxon
         if taxon.update_attributes(params[:taxon])
           respond_with(taxon, :status => 200, :default_template => :show)
         else
@@ -55,7 +54,7 @@ module Spree
       end
 
       def destroy
-        authorize! :delete, Taxon
+        authorize! :destroy, taxon
         taxon.destroy
         respond_with(taxon, :status => 204)
       end
@@ -64,12 +63,12 @@ module Spree
 
       def taxonomy
         if params[:taxonomy_id].present?
-          @taxonomy ||= Taxonomy.find(params[:taxonomy_id])
+          @taxonomy ||= Taxonomy.accessible_by(current_ability, :read).find(params[:taxonomy_id])
         end
       end
 
       def taxon
-        @taxon ||= taxonomy.taxons.find(params[:id])
+        @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
       end
 
     end

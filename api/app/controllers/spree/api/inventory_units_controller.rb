@@ -8,7 +8,7 @@ module Spree
       end
 
       def update
-        authorize! :update, Order
+        authorize! :update, inventory_unit.order
 
         inventory_unit.transaction do
           if inventory_unit.update_attributes(params[:inventory_unit])
@@ -23,7 +23,7 @@ module Spree
       private
 
       def inventory_unit
-        @inventory_unit ||= InventoryUnit.find(params[:id])
+        @inventory_unit ||= InventoryUnit.accessible_by(current_ability, :read).find(params[:id])
       end
 
       def prepare_event

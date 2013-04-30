@@ -11,13 +11,13 @@ module Spree
       end
 
       def show
-      	@option_value = scope.find(params[:id])
-      	respond_with(@option_value)
+        @option_value = scope.find(params[:id])
+        respond_with(@option_value)
       end
 
       def create
-      	authorize! :create, Spree::OptionValue
-      	@option_value = scope.new(params[:option_value])
+        authorize! :create, Spree::OptionValue
+        @option_value = scope.new(params[:option_value])
         if @option_value.save
           render :show, :status => 201
         else
@@ -26,8 +26,7 @@ module Spree
       end
 
       def update
-        authorize! :update, Spree::OptionValue
-        @option_value = scope.find(params[:id])
+        @option_value = scope.accessible_by(current_ability, :update).find(params[:id])
         if @option_value.update_attributes(params[:option_value])
           render :show
         else
@@ -36,8 +35,7 @@ module Spree
       end
 
       def destroy
-        authorize! :destroy, Spree::OptionValue
-        @option_value = scope.find(params[:id])
+        @option_value = scope.accessible_by(current_ability, :destroy).find(params[:id])
         @option_value.destroy
         render :text => nil, :status => 204
       end
@@ -46,9 +44,9 @@ module Spree
 
         def scope
           if params[:option_type_id]
-            @scope ||= Spree::OptionType.find(params[:option_type_id]).option_values
+            @scope ||= Spree::OptionType.find(params[:option_type_id]).option_values.accessible_by(current_ability, :read)
           else
-            @scope ||= Spree::OptionValue.scoped
+            @scope ||= Spree::OptionValue.accessible_by(current_ability, :read).scoped
           end
         end
     end

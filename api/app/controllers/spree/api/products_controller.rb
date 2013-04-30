@@ -1,13 +1,12 @@
 module Spree
   module Api
     class ProductsController < Spree::Api::BaseController
-      respond_to :json
 
       def index
         if params[:ids]
-          @products = product_scope.where(:id => params[:ids])
+          @products = product_scope.accessible_by(current_ability, :read).where(:id => params[:ids])
         else
-          @products = product_scope.ransack(params[:q]).result
+          @products = product_scope.accessible_by(current_ability, :read).ransack(params[:q]).result
         end
 
         @products = @products.page(params[:page]).per(params[:per_page])
@@ -35,8 +34,8 @@ module Spree
       end
 
       def update
-        authorize! :update, Product
         @product = find_product(params[:id])
+        authorize! :update, @product
         if @product.update_attributes(params[:product])
           respond_with(@product, :status => 200, :default_template => :show)
         else
@@ -45,8 +44,8 @@ module Spree
       end
 
       def destroy
-        authorize! :delete, Product
         @product = find_product(params[:id])
+        authorize! :destroy, @product
         @product.update_attribute(:deleted_at, Time.now)
         @product.variants_including_master.update_all(:deleted_at => Time.now)
         respond_with(@product, :status => 204)

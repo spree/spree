@@ -1,10 +1,9 @@
 module Spree
   module Api
     class ImagesController < Spree::Api::BaseController
-      respond_to :json
 
       def show
-        @image = Image.find(params[:id])
+        @image = Image.accessible_by(current_ability, :read).find(params[:id])
         respond_with(@image)
       end
 
@@ -15,15 +14,13 @@ module Spree
       end
 
       def update
-        authorize! :update, Image
-        @image = Image.find(params[:id])
+        @image = Image.accessible_by(current_ability, :update).find(params[:id])
         @image.update_attributes(params[:image])
         respond_with(@image, :default_template => :show)
       end
 
       def destroy
-        authorize! :delete, Image
-        @image = Image.find(params[:id])
+        @image = Image.accessible_by(current_ability, :destroy).find(params[:id])
         @image.destroy
         respond_with(@image, :status => 204)
       end

@@ -1,12 +1,12 @@
 module Spree
   module Api
     class ShipmentsController < Spree::Api::BaseController
-      respond_to :json
 
       before_filter :find_order
       before_filter :find_and_update_shipment, :only => [:ship, :ready, :add, :remove]
 
       def create
+        authorize! :create, Shipment
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
         @shipment = @order.shipments.create(:stock_location_id => params[:stock_location_id])
@@ -19,8 +19,7 @@ module Spree
       end
 
       def update
-        authorize! :read, Shipment
-        @shipment = @order.shipments.find_by_number!(params[:id])
+        @shipment = @order.shipments.accessible_by(current_ability, :update).find_by_number!(params[:id])
 
         unlock = params[:shipment].delete(:unlock)
 
@@ -39,7 +38,6 @@ module Spree
       end
 
       def ready
-        authorize! :read, Shipment
         unless @shipment.ready?
           if @shipment.can_ready?
             @shipment.ready!
@@ -51,7 +49,6 @@ module Spree
       end
 
       def ship
-        authorize! :read, Shipment
         unless @shipment.shipped?
           @shipment.ship!
         end
@@ -84,7 +81,7 @@ module Spree
       end
 
       def find_and_update_shipment
-        @shipment = @order.shipments.find_by_number!(params[:id])
+        @shipment = @order.shipments.accessible_by(current_ability, :update).find_by_number!(params[:id])
         @shipment.update_attributes(params[:shipment])
         @shipment.reload
       end

@@ -3,7 +3,7 @@ module Spree
     class CountriesController < Spree::Api::BaseController
 
       def index
-        @countries = Country.ransack(params[:q]).result.
+        @countries = Country.accessible_by(current_ability, :read).ransack(params[:q]).result.
                      includes(:states).order('name ASC').
                      page(params[:page]).per(params[:per_page])
 
@@ -11,7 +11,7 @@ module Spree
       end
 
       def show
-        @country = Country.find(params[:id])
+        @country = Country.accessible_by(current_ability, :read).find(params[:id])
         respond_with(@country)
       end
     end
