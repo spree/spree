@@ -849,20 +849,17 @@ en:
       master_price_gte:
         args:
           amount: Amount
-        description: ""
         name: "Master price greater or equal to"
         sentence: "price greater or equal to <em>%.2f</em>"
       master_price_lte:
         args:
           amount: Amount
-        description: ""
         name: "Master price lesser or equal to"
         sentence: "price less or equal to <em>%.2f</em>"
       price_between:
         args:
           high: High
           low: Low
-        description: ""
         name: "Price between"
         sentence: "price between <em>%.2f</em> and <em>%.2f</em>"
       taxons_name_eq:
