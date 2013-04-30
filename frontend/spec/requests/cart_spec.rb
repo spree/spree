@@ -44,4 +44,20 @@ describe "Cart" do
     end
     page.should_not have_content("Line items quantity must be an integer")
   end
+
+  # regression for #2276
+  context "product contains variants but no option values" do
+    let(:variant) { create(:variant) }
+    let(:product) { variant.product }
+
+    before { variant.option_values.destroy_all }
+
+    it "still adds product to cart" do
+      visit spree.product_path(product)
+      click_button "add-to-cart-button"
+
+      visit spree.cart_path
+      page.should have_content(product.name)
+    end
+  end
 end

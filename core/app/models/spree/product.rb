@@ -96,7 +96,7 @@ module Spree
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end
 
-    # returns true if the product has any variants (the master variant is not a member of the variants array)
+    # the master variant is not a member of the variants array
     def has_variants?
       variants.any?
     end
@@ -159,6 +159,17 @@ module Spree
     def self.like_any(fields, values)
       where_str = fields.map { |field| Array.new(values.size, "#{self.quoted_table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
       self.where([where_str, values.map { |value| "%#{value}%" } * fields.size].flatten)
+    end
+
+    # Suitable for displaying only variants that has at least one option value.
+    # There may be scenarios where an option type is removed and along with it
+    # all option values. At that point all variants associated with only those
+    # values should not be displayed to frontend users. Otherwise it breaks the
+    # idea of having variants
+    def variants_and_option_values(current_currency = nil)
+      variants.includes(:option_values).active(current_currency).select do |variant|
+        variant.option_values.any?
+      end
     end
 
     def empty_option_values?

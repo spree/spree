@@ -25,21 +25,19 @@
     </thead>
     <tbody>
     <% @variants.each do |variant| %>
-      <!-- you can skip variant with no options: that's just the default variant that all products have -->
-      <% next if variant.option_values.empty? %>
-        <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="<%= cycle('odd', 'even')%>">
-          <td class="no-border">
-            <span class="handle"></span>
-          </td>
-          <td><%= variant.options_text %></td>
-          <td class="align-center"><%= variant.display_price.to_html %></td>
-          <td class="align-center"><%= variant.sku %></td>
-          <td class="actions">
-            <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
-            &nbsp;
-            <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
-          </td>
-        </tr>
+      <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="<%= cycle('odd', 'even')%>">
+        <td class="no-border">
+          <span class="handle"></span>
+        </td>
+        <td><%= variant.options_text %></td>
+        <td class="align-center"><%= variant.display_price.to_html %></td>
+        <td class="align-center"><%= variant.sku %></td>
+        <td class="actions">
+          <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
+          &nbsp;
+          <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
+        </td>
+      </tr>
       <% end %>
       <% unless @product.has_variants? %>
         <tr><td colspan="5"><%= t(:none) %></td></tr>
