@@ -86,6 +86,14 @@ describe "Customer Details" do
 
       click_link "Customer Details"
       find_field('order_ship_address_attributes_firstname').value.should == "John 99"
+      # Regression test for #2950 + #2433
+      # This act should transition the state of the order as far as it will go too
+      within("#order_tab_summary") do
+        within(".state") do
+          page.should have_content("COMPLETE")
+        end
+      end
+
     end
   end
 
