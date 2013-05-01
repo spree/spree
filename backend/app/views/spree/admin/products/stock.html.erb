@@ -1,5 +1,5 @@
 <% content_for :page_actions do %>
-  <li><%= button_link_to t(:back_to_products_list), session[:return_to] || admin_products_url, :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_products_list), session[:return_to] || admin_products_url, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
@@ -22,8 +22,8 @@
   </colgroup>
   <thead>
     <tr data-hook="admin_product_stock_management_index_headers">
-      <th><%= t(:variant) %></th>
-      <th colspan="3"><%= t(:stock_location_info) %></th>
+      <th><%= Spree.t(:variant) %></th>
+      <th colspan="3"><%= Spree.t(:stock_location_info) %></th>
     </tr>
   </thead>
   <tbody>
@@ -45,9 +45,9 @@
                 <col style="width: 20%" />
               </colgroup>
               <thead>
-                <th><%= t(:stock_location) %></th>
-                <th><%= t(:count_on_hand) %></th>
-                <th><%= t(:backorderable) %></th>
+                <th><%= Spree.t(:stock_location) %></th>
+                <th><%= Spree.t(:count_on_hand) %></th>
+                <th><%= Spree.t(:backorderable) %></th>
               </thead>
               <tbody>
                 <% @stock_locations.each do |stock_location| %>

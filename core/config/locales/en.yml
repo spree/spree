@@ -212,6 +212,7 @@ en:
     add_option_value: "Add Option Value"
     add_product: "Add Product"
     add_product_properties: "Add Product Properties"
+    #add_stock: "Add Stock"
     add_to_cart: "Add To Cart"
     additional_item: "Additional Item Cost"
     adjustment: Adjustment
@@ -226,6 +227,7 @@ en:
           delivery_error: "Test Mail delivery error"
           delivery_success: "Test Mail sent successfully"
           error: "Test Mail error: %{e}"
+    administration: "Administration"
     all: All
     all_adjustments_closed: "All adjustments successfully closed!"
     all_adjustments_opened: "All adjustments successfully opened!"
@@ -249,6 +251,7 @@ en:
     authorization_failure: "Authorization Failure"
     available_on: "Available On"
     back: Back
+    backorderable: "Backorderable"
     back_to_adjustments_list: "Back To Adjustments List"
     back_to_images_list: "Back To Images List"
     back_to_option_types_list: "Back To Option Types List"
@@ -307,7 +310,9 @@ en:
     cost_price: "Cost Price"
     could_not_create_stock_movement: "There was a problem saving this stock movement. Please try again."
     countries: Countries
+    count_on_hand: "Count On Hand"
     country: Country
+    country_name: "Name"
     country_names:
       US: "United States of America"
     country_based: "Country Based"
@@ -326,6 +331,10 @@ en:
     customer_details: "Customer Details"
     customer_search: "Customer Search"
     cut: Cut
+    date: Date
+    date_picker:
+      format: "%Y/%m/%d"
+      js_format: yy/mm/dd
     date_completed: "Date Completed"
     date_range: "Date Range"
     default: Default
@@ -595,6 +604,7 @@ en:
     payment_updated: "Payment Updated"
     payments: Payments
     permalink: Permalink
+    percent: Percent
     phone: Phone
     place_order: "Place Order"
     please_define_payment_methods: "Please define some payment methods first."
@@ -719,12 +729,6 @@ en:
     smtp_send_copy_to_this_addresses: "Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas."
     smtp_username: "SMTP Username"
     special_instructions: "Special Instructions"
-    spree:
-      date: Date
-      date_picker:
-        format: "%Y/%m/%d"
-        js_format: yy/mm/dd
-      time: Time
     spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
     spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."
     start: Start
@@ -735,6 +739,9 @@ en:
     states_required: "States Required"
     status: Status
     stock_location: "Stock Location"
+    stock_locations: "Stock Locations"
+    stock_management: "Stock Management"
+    stock_movements: "Stock Movements"
     stock_movements_for_stock_location: "Stock Movements for %{stock_location_name}"
     stock_successfully_transferred: "Stock was successfully transferred between locations."
     stop: Stop
@@ -771,6 +778,7 @@ en:
     thank_you_for_your_order: "Thank you for your business.  Please print out a copy of this confirmation page for your records."
     there_were_problems_with_the_following_fields: "There were problems with the following fields"
     thumbnail: Thumbnail
+    time: Time  
     to_add_variants_you_must_first_define: "To add variants, you must first define"
     total: Total
     tracking: Tracking

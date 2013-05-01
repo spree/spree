@@ -17,9 +17,9 @@
     </colgroup>
     <thead data-hook="variants_header">
       <tr>
-        <th colspan="2"><%= t(:options) %></th>
-        <th><%= t(:price) %></th>
-        <th><%= t(:sku) %></th>
+        <th colspan="2"><%= Spree.t(:options) %></th>
+        <th><%= Spree.t(:price) %></th>
+        <th><%= Spree.t(:sku) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -40,34 +40,34 @@
       </tr>
       <% end %>
       <% unless @product.has_variants? %>
-        <tr><td colspan="5"><%= t(:none) %></td></tr>
+        <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
       <% end %>
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= t(:no_results)%>.</div>
+  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:no_results)%>.</div>
 <% end %>
 
 <% if @product.empty_option_values? %>
   <p class='first_add_option_types no-objects-found' data-hook="first_add_option_types">
-    <%= t(:to_add_variants_you_must_first_define) %>
-    <%= link_to t(:option_types), admin_product_url(@product) %>
-    <%= t(:and) %>
-    <%= link_to t(:option_values), admin_option_types_url %>
+    <%= Spree.t(:to_add_variants_you_must_first_define) %>
+    <%= link_to Spree.t(:option_types), admin_product_url(@product) %>
+    <%= Spree.t(:and) %>
+    <%= link_to Spree.t(:option_values), admin_option_types_url %>
   </p>
 <% else %>
   <% content_for :page_actions do %>
     <ul class="inline-menu" data-hook="toolbar">
       <li id="new_var_link" data-hook>
         <%= link_to_with_icon('icon-plus', 
-                              t(:new_variant), 
+                              Spree.t(:new_variant), 
                               new_admin_product_variant_url(@product), 
                               :remote => :true, 
                               :'data-update' => 'new_variant', 
                               :class => 'button'
                              ) %>
       </li>
-      <li><%= link_to_with_icon('icon-filter', @deleted.blank? ? t(:show_deleted) : t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
+      <li><%= link_to_with_icon('icon-filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
     </ul>
   <% end %>
 

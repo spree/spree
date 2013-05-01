@@ -1,12 +1,12 @@
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:editing_prototype) %>
+  <%= Spree.t(:editing_prototype) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:back_to_prototypes_list), spree.admin_prototypes_path, :icon => 'icon-arrow-left' %>
+    <%= button_link_to Spree.t(:back_to_prototypes_list), spree.admin_prototypes_path, :icon => 'icon-arrow-left' %>
   </li>
 <% end %>
 

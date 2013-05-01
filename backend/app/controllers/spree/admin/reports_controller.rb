@@ -4,7 +4,7 @@ module Spree
       respond_to :html
 
       AVAILABLE_REPORTS = {
-        :sales_total => { :name => I18n.t(:sales_total), :description => I18n.t(:sales_total_description) }
+        :sales_total => { :name => Spree.t(:sales_total), :description => Spree.t(:sales_total_description) }
       }
 
       def index

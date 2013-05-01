@@ -5,7 +5,7 @@
   </colgroup>
   <thead>
     <tr data-hook="avilable_header">
-      <th><%= t(:name) %></th>
+      <th><%= Spree.t(:name) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
@@ -14,12 +14,12 @@
       <tr id="row_<%= prototype.id %>" data-hook="available_row" class="<%= cycle('odd', 'even')%>">
         <td><%= prototype.name %></td>
         <td class="actions">
-          <%= link_to t(:select), select_admin_prototype_url(prototype), :class => 'ajax button select_properties_from_prototype icon-ok' %>
+          <%= link_to Spree.t(:select), select_admin_prototype_url(prototype), :class => 'ajax button select_properties_from_prototype icon-ok' %>
         </td>
       </tr>
     <% end %>
     <% if @prototypes.empty? %>
-     <tr data-hook="available_none"><td colspan="2"><% t(:none) %>.</td></tr>
+     <tr data-hook="available_none"><td colspan="2"><% Spree.t(:none) %>.</td></tr>
     <% end %>
   </tbody>
 </table>

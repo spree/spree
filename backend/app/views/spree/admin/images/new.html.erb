@@ -1,13 +1,13 @@
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
   <fieldset data-hook="new_image">
-    <legend align="center"><%= t(:new_image) %></legend>
+    <legend align="center"><%= Spree.t(:new_image) %></legend>
 
       <%= render :partial => 'form', :locals => { :f => f } %>
     
       <div class="form-buttons filter-actions actions" data-hook="buttons">
-        <%= button t(:update), 'icon-refresh' %>
-        <span class="or"><%= t(:or) %></span>
-        <%= link_to_with_icon 'icon-remove', t(:cancel), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button' %>
+        <%= button Spree.t('actions.update'), 'icon-refresh' %>
+        <span class="or"><%= Spree.t(:or) %></span>
+        <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button' %>
       </div>
   </fieldset>
 <% end %>

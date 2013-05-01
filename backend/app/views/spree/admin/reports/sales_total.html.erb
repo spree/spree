@@ -1,14 +1,14 @@
 <% content_for :page_title do %>
-  <%= t(:sales_totals) %>
+  <%= Spree.t(:sales_totals) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'icon-arrow-left', t(:back_to_reports_list), spree.admin_reports_url, :class => 'button' %></li>
+  <li><%= link_to_with_icon 'icon-arrow-left', Spree.t(:back_to_reports_list), spree.admin_reports_url, :class => 'button' %></li>
 <% end %>
 
 
 <% content_for :table_filter_title do %>
-  <%= t(:date_range) %>
+  <%= Spree.t(:date_range) %>
 <% end %>
 
 <% content_for :table_filter do %>
@@ -18,10 +18,10 @@
 <table class="admin-report" data-hook="sales_total">
   <thead>
     <tr>
-      <th><%= t(:currency) %></th>
-      <th><%= t(:item_total) %></th>
-      <th><%= t(:adjustment_total) %></th>
-      <th><%= t(:sales_total) %></th>
+      <th><%= Spree.t(:currency) %></th>
+      <th><%= Spree.t(:item_total) %></th>
+      <th><%= Spree.t(:adjustment_total) %></th>
+      <th><%= Spree.t(:sales_total) %></th>
     </tr>
   </thead>
   <tbody>

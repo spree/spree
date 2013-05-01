@@ -1,15 +1,15 @@
 <% content_for :page_title do %>
-  <%= t(:listing_orders) %>
+  <%= Spree.t(:listing_orders) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_order), new_admin_order_url, :icon => 'icon-plus', :id => 'admin_new_order' %>
+    <%= button_link_to Spree.t(:new_order), new_admin_order_url, :icon => 'icon-plus', :id => 'admin_new_order' %>
   </li>
 <% end %>
 
 <% content_for :table_filter_title do %>
-  <%= t(:search) %>
+  <%= Spree.t(:search) %>
 <% end %>
 
 <% content_for :table_filter do %>
@@ -17,42 +17,42 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="field-block alpha four columns">
         <div class="date-range-filter field">
-          <%= label_tag nil, t(:date_range) %>
+          <%= label_tag nil, Spree.t(:date_range) %>
           <div class="date-range-fields">
-            <%= f.text_field :created_at_gt, :class => 'datepicker datepicker-from', :value => params[:q][:created_at_gt], :placeholder => t(:start) %>
+            <%= f.text_field :created_at_gt, :class => 'datepicker datepicker-from', :value => params[:q][:created_at_gt], :placeholder => Spree.t(:start) %>
 
             <span class="range-divider">
               <i class="icon-arrow-right"></i>
             </span>
 
-            <%= f.text_field :created_at_lt, :class => 'datepicker datepicker-to', :value => params[:q][:created_at_lt], :placeholder => t(:stop) %>
+            <%= f.text_field :created_at_lt, :class => 'datepicker datepicker-to', :value => params[:q][:created_at_lt], :placeholder => Spree.t(:stop) %>
           </div>
         </div>
 
         <div class="field">
-          <%= label_tag nil, t(:status) %>
-          <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [t("order_state.#{s.name}"), s.value]}, {:include_blank => true}, :class => 'select2' %>
+          <%= label_tag nil, Spree.t(:status) %>
+          <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {:include_blank => true}, :class => 'select2' %>
         </div>
       </div>
 
       <div class="four columns">
         <div class="field">
-          <%= label_tag nil, t(:order_number) %>
+          <%= label_tag nil, Spree.t(:order_number) %>
           <%= f.text_field :number_cont %>
         </div>
         <div class="field">
-          <%= label_tag nil, t(:email) %>
+          <%= label_tag nil, Spree.t(:email) %>
           <%= f.email_field :email_cont %>
         </div>
       </div>
 
       <div class="four columns">
         <div class="field">
-          <%= label_tag nil, t(:first_name_begins_with) %>
+          <%= label_tag nil, Spree.t(:first_name_begins_with) %>
           <%= f.text_field :bill_address_firstname_start, :size => 25 %>
         </div>
         <div class="field">
-          <%= label_tag nil, t(:last_name_begins_with) %>
+          <%= label_tag nil, Spree.t(:last_name_begins_with) %>
           <%= f.text_field :bill_address_lastname_start, :size => 25%>
         </div>
       </div>
@@ -61,7 +61,7 @@
         <div class="field checkbox">
           <label>
             <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '' %>
-            <%= t(:show_only_complete_orders) %>
+            <%= Spree.t(:show_only_complete_orders) %>
           </label>
         </div>
 
@@ -71,7 +71,7 @@
 
       <div class="actions filter-actions">
         <div data-hook="admin_orders_index_search_buttons">
-          <%= button t(:filter_results), 'icon-search' %>
+          <%= button Spree.t(:filter_results), 'icon-search' %>
         </div>
       </div>
     <% end %>
@@ -95,16 +95,16 @@
     <thead>
       <tr data-hook="admin_orders_index_headers">
         <% if @show_only_completed %>
-          <th><%= sort_link @search, :completed_at, t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
+          <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
         <% else %>
-          <th><%= sort_link @search, :created_at,   t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
+          <th><%= sort_link @search, :created_at,   I18n.t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
         <% end %>
-        <th><%= sort_link @search, :number,         t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :state,          t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :payment_state,  t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :shipment_state, t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :email,          t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :total,          t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :number,         I18n.t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :state,          I18n.t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :payment_state,  I18n.t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :shipment_state, I18n.t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :email,          I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :total,          I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
         <th data-hook="admin_orders_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -113,9 +113,9 @@
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
         <td class="align-center"><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
         <td class="align-center"><%= link_to order.number, edit_admin_order_path(order) %></td>
-        <td class="align-center"><span class="state <%= order.state.downcase %>"><%= t("order_state.#{order.state.downcase}") %></span></td>
+        <td class="align-center"><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
         <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
-        <td class="align-center"><span class="state <%= order.shipment_state %>"><%= t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
+        <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
         <td><%= mail_to order.email %></td>
         <td class="align-center"><%= order.display_total.to_html %></td>
         <td class='actions align-center' data-hook="admin_orders_index_row_actions">
@@ -127,7 +127,7 @@
   </table>
 <% else %>
   <div class="no-objects-found">
-    <%= t(:no_orders_found)%>
+    <%= Spree.t(:no_orders_found)%>
   </div>
 <% end %>
 
