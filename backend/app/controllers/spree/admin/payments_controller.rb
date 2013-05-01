@@ -38,7 +38,7 @@ module Spree
               @order.next!
             end
             flash[:success] = t(:new_order_completed)
-            redirect_to admin_order_url(@order)
+            redirect_to edit_admin_order_url(@order)
           end
 
         rescue Spree::Core::GatewayError => e
