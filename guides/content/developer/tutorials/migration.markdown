@@ -180,7 +180,7 @@ upload scripts will call *save* at appropriate times or use
 *update_attribute+
 etc.
 
-h4. Products
+#### Products
 
 Products must have at least a name and a price in order to pass
 validation, and we set the description too.
