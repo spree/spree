@@ -2,14 +2,14 @@
 
   <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), :remote => true, :id => 'new_product_rule_form' do %>
     <fieldset>
-      <legend align="center"><%= t(:rules) %></legend>
+      <legend align="center"><%= Spree.t(:rules) %></legend>
 
       <div class="field">
-        <%= label_tag :promotion_rule_type, t(:add_rule_of_type) %>  
+        <%= label_tag :promotion_rule_type, Spree.t(:add_rule_of_type) %>  
         <%= select_tag('promotion_rule[type]', options_for_promotion_rule_types(@promotion), :class => 'select2 fullwidth') %>
       </div>
       <div class="filter-actions actions">
-        <%= button t(:add), 'icon-plus' %>
+        <%= button Spree.t(:add), 'icon-plus' %>
       </div>
     </fieldset>
   <% end %>
@@ -20,7 +20,7 @@
         <div id="promotion-pilicy-select" class="align-center row">
           <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
             <div class="alpha four columns">
-              <label><%= f.radio_button :match_policy, policy %> <%= t "promotion_form.match_policies.#{policy}" %></label>  
+              <label><%= f.radio_button :match_policy, policy %> <%= Spree.t "promotion_form.match_policies.#{policy}" %></label>  
             </div>
           <% end %>
         </div>
@@ -30,13 +30,13 @@
             <%= render :partial => 'promotion_rule', :collection => @promotion.rules, :locals => {} %>
           <% else %>
             <div class="no-objects-found">
-              <%= t(:no_rules_added) %>
+              <%= Spree.t(:no_rules_added) %>
             </div>
           <% end %>
         </div>
 
         <div class="promotion-update filter-actions actions">
-          <%= button t(:update), 'icon-refresh' %>
+          <%= button Spree.t('actions.update'), 'icon-refresh' %>
         </div>
       </fieldset>
     <% end %>

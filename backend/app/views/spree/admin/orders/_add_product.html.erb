@@ -2,10 +2,10 @@
 
 <div id="add-line-item" data-hook>
   <fieldset class="no-border-bottom">
-    <legend align="center"><%= t(:add_product) %></legend>
+    <legend align="center"><%= Spree.t(:add_product) %></legend>
 
     <div data-hook="add_product_name" class="field twelve columns alpha">
-      <%= label_tag :add_variant_id, t(:name_or_sku) %>
+      <%= label_tag :add_variant_id, Spree.t(:name_or_sku) %>
       <%= hidden_field_tag :add_variant_id, "", :class => "variant_autocomplete fullwidth" %>
     </div>
 

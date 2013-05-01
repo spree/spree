@@ -37,7 +37,7 @@ module Spree
             until @order.completed?
               @order.next!
             end
-            flash[:success] = t(:new_order_completed)
+            flash[:success] = Spree.t(:new_order_completed)
             redirect_to edit_admin_order_url(@order)
           end
 
@@ -53,9 +53,9 @@ module Spree
         # Because we have a transition method also called void, we do this to avoid conflicts.
         event = "void_transaction" if event == "void"
         if @payment.send("#{event}!")
-          flash[:success] = t(:payment_updated)
+          flash[:success] = Spree.t(:payment_updated)
         else
-          flash[:error] = t(:cannot_perform_operation)
+          flash[:error] = Spree.t(:cannot_perform_operation)
         end
       rescue Spree::Core::GatewayError => ge
         flash[:error] = "#{ge.message}"

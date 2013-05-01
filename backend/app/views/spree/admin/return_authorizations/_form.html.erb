@@ -2,10 +2,10 @@
   <table class="index">
     <thead>
       <tr data-hook="rma_header">
-        <th><%= t(:product) %></th>
-        <th><%= t(:quantity_shipped) %></th>
-        <th><%= t(:quantity_returned) %></th>
-        <th><%= t(:return_quantity) %></th>
+        <th><%= Spree.t(:product) %></th>
+        <th><%= Spree.t(:quantity_shipped) %></th>
+        <th><%= Spree.t(:quantity_returned) %></th>
+        <th><%= Spree.t(:return_quantity) %></th>
       </tr>
     </thead>
     <tbody>
@@ -33,23 +33,23 @@
   </table>
 
   <%= f.field_container :amount do %>
-    <%= f.label :amount, t(:amount) %> <span class="required">*</span><br />
+    <%= f.label :amount, Spree.t(:amount) %> <span class="required">*</span><br />
     <% if @return_authorization.received? %>
       <%= @return_authorization.display_amount %>
     <% else %>
-      <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= t(:rma_value) %>: <span id="rma_value">0.00</span>
+      <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= Spree.t(:rma_value) %>: <span id="rma_value">0.00</span>
       <%= f.error_message_on :amount %>
     <% end %>
   <% end %>
 
   <%= f.field_container :reason do %>
-    <%= f.label :reason, t(:reason) %>
+    <%= f.label :reason, Spree.t(:reason) %>
     <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>
     <%= f.error_message_on :reason %>
   <% end %>
 
   <%= f.field_container :stock_location do %>
-    <%= f.label :stock_location, t(:stock_location) %>
+    <%= f.label :stock_location, Spree.t(:stock_location) %>
     <%= f.select :stock_location_id, Spree::StockLocation.active.all.collect{|l|[l.name, l.id]}, {:style => 'height:100px;', :class => 'fullwidth'} %>
     <%= f.error_message_on :reason %>
   <% end %>

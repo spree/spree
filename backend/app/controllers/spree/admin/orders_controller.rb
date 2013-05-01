@@ -80,9 +80,9 @@ module Spree
         # itself will make sure transitions are not applied in the wrong state)
         event = params[:e]
         if @order.send("#{event}")
-          flash[:success] = t(:order_updated)
+          flash[:success] = Spree.t(:order_updated)
         else
-          flash[:error] = t(:cannot_perform_operation)
+          flash[:error] = Spree.t(:cannot_perform_operation)
         end
       rescue Spree::Core::GatewayError => ge
         flash[:error] = "#{ge.message}"
@@ -92,7 +92,7 @@ module Spree
 
       def resend
         OrderMailer.confirm_email(@order.id, true).deliver
-        flash[:success] = t(:order_email_resent)
+        flash[:success] = Spree.t(:order_email_resent)
 
         redirect_to :back
       end
@@ -100,7 +100,7 @@ module Spree
       def open_adjustments
         adjustments = @order.adjustments.where(:state => 'closed')
         adjustments.update_all(:state => 'open')
-        flash[:success] = t(:all_adjustments_opened)
+        flash[:success] = Spree.t(:all_adjustments_opened)
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
       end
@@ -108,7 +108,7 @@ module Spree
       def close_adjustments
         adjustments = @order.adjustments.where(:state => 'open')
         adjustments.update_all(:state => 'closed')
-        flash[:success] = t(:all_adjustments_closed)
+        flash[:success] = Spree.t(:all_adjustments_closed)
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
       end

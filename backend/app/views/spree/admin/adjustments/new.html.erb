@@ -1,11 +1,11 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= t(:new_adjustment) %>
+  <i class="icon-arrow-right"></i> <%= Spree.t(:new_adjustment) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to t(:back_to_adjustments_list), spree.admin_order_adjustments_url(@order), :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_adjustments_list), spree.admin_order_adjustments_url(@order), :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @adjustment } %>
@@ -15,9 +15,9 @@
     <%= render :partial => 'form', :locals => { :f => f } %>
 
     <div class="filter-actions actions" data-hook="buttons">
-      <%= button t(:continue), 'icon-arrow-right' %>
-      <span class="or"><%= t(:or) %></span>
-      <%= button_link_to t('actions.cancel'), admin_order_adjustments_url(@order), :icon => 'icon-remove' %>
+      <%= button Spree.t(:continue), 'icon-arrow-right' %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= button_link_to Spree.t('actions.cancel'), admin_order_adjustments_url(@order), :icon => 'icon-remove' %>
     </div>
   </fieldset>
 <% end %>

@@ -1,18 +1,18 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:tax_settings) %>
+  <%= Spree.t(:tax_settings) %>
 <% end %>
 
 <%= form_tag admin_tax_settings_path, :method => :put do %>
   <div data-hook="shipment_vat" class="field align-center">
     <%= hidden_field_tag 'preferences[shipment_inc_vat]', '0' %>
     <%= check_box_tag 'preferences[shipment_inc_vat]', '1',  Spree::Config[:shipment_inc_vat] %>
-    <%= label_tag nil, t(:shipment_inc_vat) %>    
+    <%= label_tag nil, Spree.t(:shipment_inc_vat) %>    
 
   </div>
 
   <div class="form-buttons" data-hook="buttons">
-    <%= button t(:update), 'icon-refresh' %>
+    <%= button Spree.t('actions.update'), 'icon-refresh' %>
   </div>
 <% end %>

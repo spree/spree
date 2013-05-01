@@ -1,9 +1,9 @@
 <% content_for :page_title do %>
-  <%= t(:editing_stock_movement) %>
+  <%= Spree.t(:editing_stock_movement) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'icon-arrow-left', t(:back_to_stock_movements_list), admin_stock_location_stock_movements_path(stock_location), :class => 'button' %></li>
+  <li><%= link_to_with_icon 'icon-arrow-left', Spree.t(:back_to_stock_movements_list), admin_stock_location_stock_movements_path(stock_location), :class => 'button' %></li>
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @stock_movement } %>

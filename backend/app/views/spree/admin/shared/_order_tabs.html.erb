@@ -1,39 +1,39 @@
 <% content_for :page_title do %>
-  <%= t(:order) %> #<%= @order.number %>
+  <%= Spree.t(:order) %> #<%= @order.number %>
 <% end %>
 
 <% content_for :sidebar_title do %>
-  <%= t(:order_information) %>
+  <%= Spree.t(:order_information) %>
 <% end %>
 
 <% content_for :sidebar do %>
   <% checkout_steps = @order.checkout_steps %>
   <header id="order_tab_summary" data-hook>
     <dl class="additional-info">
-      <dt id="order_status" data-hook><%= t(:status) %>:</dt>
-      <dd><span class="state <%= @order.state %>"><%= t(@order.state, :scope => :order_state) %></span></dd>
-      <dt data-hook><%= t(:item_total) %>:</dt>
+      <dt id="order_status" data-hook><%= Spree.t(:status) %>:</dt>
+      <dd><span class="state <%= @order.state %>"><%= Spree.t(@order.state, :scope => :order_state) %></span></dd>
+      <dt data-hook><%= Spree.t(:item_total) %>:</dt>
       <dd id='item_total'><%= @order.display_item_total.to_html %></dd>
       <% if checkout_steps.include?("delivery") && @order.ship_total > 0 %>
-        <dt data-hook><%= t(:ship_total) %>:</dt>
+        <dt data-hook><%= Spree.t(:ship_total) %>:</dt>
         <dd id='item_total'><%= @order.display_ship_total.to_html %></dd>
       <% end %>
 
       <% if @order.tax_total > 0 %>
-        <dt data-hook><%= t(:tax_total) %>:</dt>
+        <dt data-hook><%= Spree.t(:tax_total) %>:</dt>
         <dd id='item_total'><%= @order.display_tax_total.to_html %></dd>
       <% end %>
 
-      <dt data-hook><%= t(:total) %>:</dt>
+      <dt data-hook><%= Spree.t(:total) %>:</dt>
       <dd id='order_total'><%= @order.display_total.to_html %></dd>
 
     
       <% if @order.completed? %>
-        <dt><%= t(:shipment) %>: </dt>
+        <dt><%= Spree.t(:shipment) %>: </dt>
         <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>
-        <dt><%= t(:payment) %>: </dt>
+        <dt><%= Spree.t(:payment) %>: </dt>
         <dd id='payment_status'><span class="state <%= @order.payment_state %>"><%= t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></span></dd>
-        <dt data-hook><%= t(:date_completed) %>:</dt>
+        <dt data-hook><%= Spree.t(:date_completed) %>:</dt>
         <dd id='date_complete'><%= pretty_time(@order.completed_at) %></dd>
       <% end %>
     </dl>
@@ -44,28 +44,28 @@
 
       <% if can? :update, @order %>
         <li<%== ' class="active"' if current == 'Order Details' %>>
-          <%= link_to_with_icon 'icon-edit', t(:order_details), edit_admin_order_url(@order) %>
+          <%= link_to_with_icon 'icon-edit', Spree.t(:order_details), edit_admin_order_url(@order) %>
         </li>
       <% end %>
       <% if can? :update, @order && checkout_steps.include?("address") %>
         <li<%== ' class="active"' if current == 'Customer Details' %>>
-          <%= link_to_with_icon 'icon-user', t(:customer_details), admin_order_customer_url(@order) %>
+          <%= link_to_with_icon 'icon-user', Spree.t(:customer_details), admin_order_customer_url(@order) %>
         </li>
       <% end %>
       <% if can? :index, @order.adjustments %>
         <li<%== ' class="active"' if current == 'Adjustments' %>>
-          <%= link_to_with_icon 'icon-cogs', t(:adjustments), admin_order_adjustments_url(@order) %>
+          <%= link_to_with_icon 'icon-cogs', Spree.t(:adjustments), admin_order_adjustments_url(@order) %>
         </li>
       <% end %>
       <% if can? :index, @order.payments && @payment_required %>
         <li<%== ' class="active"' if current == 'Payments' %>>
-          <%= link_to_with_icon 'icon-credit-card', t(:payments), admin_order_payments_url(@order) %>
+          <%= link_to_with_icon 'icon-credit-card', Spree.t(:payments), admin_order_payments_url(@order) %>
         </li>
       <% end %>
       <% if can? :index, @order.return_authorizations %>
         <% if @order.completed? %>
           <li<%== ' class="active"' if current == 'Return Authorizations' %>>
-            <%= link_to_with_icon 'icon-share-alt', t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
+            <%= link_to_with_icon 'icon-share-alt', Spree.t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
           </li>
         <% end %>
       <% end %>

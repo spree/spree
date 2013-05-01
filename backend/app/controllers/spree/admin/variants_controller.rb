@@ -10,9 +10,9 @@ module Spree
         @variant = Variant.find(params[:id])
         @variant.deleted_at = Time.now()
         if @variant.save
-          flash[:success] = I18n.t('notice_messages.variant_deleted')
+          flash[:success] = Spree.t('notice_messages.variant_deleted')
         else
-          flash[:success] = I18n.t('notice_messages.variant_not_deleted')
+          flash[:success] = Spree.t('notice_messages.variant_not_deleted')
         end
 
         respond_with(@variant) do |format|

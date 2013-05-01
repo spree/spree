@@ -44,7 +44,7 @@ describe "Order Details", js: true do
       it "can add an item to a shipment" do
         visit spree.edit_admin_order_path(order)
 
-        select2_search "Tote", :from => I18n.t(:name_or_sku)
+        select2_search "Tote", :from => Spree.t(:name_or_sku)
         within("table.stock-levels") do
           fill_in "stock_item_quantity", :with => 2
           click_icon :plus
@@ -94,7 +94,7 @@ describe "Order Details", js: true do
         it "creates a new shipment when adding a variant from the new location" do
           visit spree.edit_admin_order_path(order)
 
-          select2_search "Tote", :from => I18n.t(:name_or_sku)
+          select2_search "Tote", :from => Spree.t(:name_or_sku)
           within("table.stock-levels tr:nth-child(2)") do
             fill_in "stock_item_quantity", :with => 2
             click_icon :plus
@@ -109,7 +109,7 @@ describe "Order Details", js: true do
           before(:each) do
             visit spree.edit_admin_order_path(order)
 
-            select2_search "Tote", :from => I18n.t(:name_or_sku)
+            select2_search "Tote", :from => Spree.t(:name_or_sku)
             within("table.stock-levels tr:nth-child(2)") do
               fill_in "stock_item_quantity", :with => 2
               click_icon :plus
