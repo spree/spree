@@ -30,6 +30,41 @@ module Spree
     scope :with_state, ->(*s) { where(state: s) }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
 
+    # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
+    state_machine initial: :pending, use_transactions: false do
+      event :ready do
+        transition from: :pending, to: :ready, if: lambda { |shipment|
+          # Fix for #2040
+          shipment.determine_state(shipment.order) == :ready
+        }
+      end
+
+      event :pend do
+        transition from: :ready, to: :pending
+      end
+
+      event :ship do
+        transition from: :ready, to: :shipped
+      end
+      after_transition to: :shipped, do: :after_ship
+
+      event :cancel do
+        transition to: :canceled, from: [:pending, :ready]
+      end
+      after_transition to: :canceled, do: :after_cancel
+
+      event :resume do
+        transition from: :canceled, to: :ready, if: lambda { |shipment|
+          shipment.determine_state(shipment.order) == :ready
+        }
+        transition from: :canceled, to: :pending, if: lambda { |shipment|
+          shipment.determine_state(shipment.order) == :ready
+        }
+        transition from: :canceled, to: :pending
+      end
+      after_transition from: :canceled, to: [:pending, :ready], do: :after_resume
+    end
+
     def to_param
       number if number
       generate_shipment_number unless number
@@ -116,41 +151,6 @@ module Spree
 
     def display_total_cost
       Spree::Money.new(total_cost, { currency: currency })
-    end
-
-    # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine initial: :pending, use_transactions: false do
-      event :ready do
-        transition from: :pending, to: :ready, if: lambda { |shipment|
-          # Fix for #2040
-          shipment.determine_state(shipment.order) == :ready
-        }
-      end
-
-      event :pend do
-        transition from: :ready, to: :pending
-      end
-
-      event :ship do
-        transition from: :ready, to: :shipped
-      end
-      after_transition to: :shipped, do: :after_ship
-
-      event :cancel do
-        transition to: :canceled, from: [:pending, :ready]
-      end
-      after_transition to: :canceled, do: :after_cancel
-
-      event :resume do
-        transition from: :canceled, to: :ready, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == :ready
-        }
-        transition from: :canceled, to: :pending, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == :ready
-        }
-        transition from: :canceled, to: :pending
-      end
-      after_transition from: :canceled, to: [:pending, :ready], do: :after_resume
     end
 
     def editable_by?(user)
