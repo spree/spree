@@ -9,7 +9,7 @@ This guide presents accumulated wisdom from person-years of Spree use.
 
 #### The important commands
 
-*spree —update* was removed in favor of Bundler.
+*spree -update* was removed in favor of Bundler.
 
 Before updating, you will want to ensure the installed spree gem is
 up-to-date by modifying *Gemfile* to match the new spree version and
