@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:listing_countries) %>
+  <%= Spree.t(:listing_countries) %>
 <% end %>
 
 <table class="index" id='listing_countries' data-hook>
@@ -13,9 +13,9 @@
   </colgroup>
   <thead>
     <tr data-hook="tax_header">
-      <th><%= t(:name) %></th>
-      <th><%= t(:iso_name) %></th>
-      <th><%= t(:states_required) %></th>
+      <th><%= Spree.t(:country_name) %></th>
+      <th><%= Spree.t(:iso_name) %></th>
+      <th><%= Spree.t(:states_required) %></th>
       <th class="actions"></th>
     </tr>
   </thead>

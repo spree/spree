@@ -9,7 +9,7 @@
         <span class="shipment-number"><%= shipment.number %></span>
         -
         <span class="shipment-state"><%= shipment.state %></span>
-        <%= t(:package_from) %>
+        <%= Spree.t(:package_from) %>
         <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
         <% if shipment.ready? and can? :update, shipment %>
           -
@@ -29,10 +29,10 @@
       </colgroup>
 
       <thead>
-        <th colspan="2"><%= t(:item_description) %></th>
-        <th><%= t(:price) %></th>
-        <th><%= t(:quantity) %></th>
-        <th><%= t(:total) %></th>
+        <th colspan="2"><%= Spree.t(:item_description) %></th>
+        <th><%= Spree.t(:price) %></th>
+        <th><%= Spree.t(:quantity) %></th>
+        <th><%= Spree.t(:total) %></th>
         <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
       </thead>
 
@@ -61,9 +61,9 @@
               <td class="cart-item-delete actions" data-hook="cart_item_delete">
                 <% if can? :update, item %>
                   <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => 'save', :style => 'display: none' %>
-                  <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel'), :style => 'display: none' %>
-                  <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
-                  <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => t('delete') %>
+                  <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
+                  <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('actions.edit') %>
+                  <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('actions.delete') %>
                 <% end %>
               </td>
             <% end %>
@@ -74,7 +74,7 @@
           <tr class="edit-method hidden total">
             <td colspan="5">
               <div class="field alpha five columns">
-                <%= label_tag 'selected_shipping_rate_id', t(:shipping_method) %>
+                <%= label_tag 'selected_shipping_rate_id', Spree.t(:shipping_method) %>
                 <%= select_tag :selected_shipping_rate_id,
                       options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
                       {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
@@ -82,7 +82,7 @@
 
               <% if shipment.adjustment && shipment.adjustment.closed? %>
                 <div class="field omega four columns">
-                  <label><%= t(:associated_adjustment_closed) %></label>
+                  <label><%= Spree.t(:associated_adjustment_closed) %></label>
                   <ul>
                     <li><%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %> Yes</li>
                     <li><%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %> No</li>
@@ -93,7 +93,7 @@
             <td class="actions">
               <% if can? :update, shipment %>
                 <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-                <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
+                <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel') %>
               <% end %>
             </td>
           </tr>
@@ -104,7 +104,7 @@
             <% if shipment.adjustment.present? %>
               <strong><%= shipment.adjustment.label %>:</strong>
             <% else %>
-              <%= t(:cannot_set_shipping_method_without_address) %>
+              <%= Spree.t(:cannot_set_shipping_method_without_address) %>
             <% end %>
           </td>
           <td class="total">
@@ -115,7 +115,7 @@
           <% if shipment.adjustment.present? && !shipment.shipped? %>
             <td class="actions">
               <% if can? :update, shipment %>
-                <%= link_to '', '#', :class => 'edit-method icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+                <%= link_to '', '#', :class => 'edit-method icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('actions.edit') %>
               <% end %>
             </td>
           <% end %>
@@ -123,13 +123,13 @@
 
         <tr class="edit-tracking hidden total">
           <td colspan="5">
-            <label><%= t(:tracking_number) %>:</label>
+            <label><%= Spree.t(:tracking_number) %>:</label>
             <%= text_field_tag :tracking, shipment.tracking %>
           </td>
           <td class="actions">
             <% if can? :update, shipment %>
               <%= link_to '', '#', :class => 'save-tracking icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-              <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
+              <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel') %>
             <% end %>
           </td>
         </tr>
@@ -137,14 +137,14 @@
         <tr class="show-tracking total">
           <td colspan="5">
             <% if shipment.tracking.present? %>
-              <strong><%= t(:tracking) %>:</strong> <%= shipment.tracking %>
+              <strong><%= Spree.t(:tracking) %>:</strong> <%= shipment.tracking %>
             <% else %>
-              <%= t(:no_tracking_present) %>
+              <%= Spree.t(:no_tracking_present) %>
             <% end %>
           </td>
           <td class="actions">
             <% if can? :update, shipment %>
-              <%= link_to '', '#', :class => 'edit-tracking icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
+              <%= link_to '', '#', :class => 'edit-tracking icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('actions.edit') %>
             <% end %>
           </td>
         </tr>
@@ -154,11 +154,11 @@
   <% end %>
 
   <fieldset class="no-border-bottom">
-    <legend><%= t('spree.adjustments') %></legend>
+    <legend><%= Spree.t('adjustments') %></legend>
     <table>
       <thead>
-        <th><%= t('spree.name')%></th>
-        <th><%= t('spree.amount')%></th>
+        <th><%= Spree.t('name')%></th>
+        <th><%= Spree.t('adjustment_amount')%></th>
       </thead>
       <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
         <% order.adjustments.eligible.each do |adjustment| %>
@@ -173,7 +173,7 @@
   </fieldset>
 
   <fieldset class="no-border-bottom" id="order-total" data-hook="order_details_total">
-    <legend><%= t(:order_total) %></legend>
+    <legend><%= Spree.t(:order_total) %></legend>
     <span class="order-total"><%= order.display_total %></span>
   </fieldset>
 

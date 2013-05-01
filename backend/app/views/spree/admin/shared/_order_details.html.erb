@@ -7,17 +7,17 @@
     <col style="width: 20%;" />
   </colgroup>
   <thead>
-    <th colspan="2"><%= t(:item_description) %></th>
-    <th><%= t(:price) %></th>
-    <th><%= t(:quantity) %></th>
-    <th><%= t(:total) %></th>
+    <th colspan="2"><%= Spree.t(:item_description) %></th>
+    <th><%= Spree.t(:price) %></th>
+    <th><%= Spree.t(:quantity) %></th>
+    <th><%= Spree.t(:total) %></th>
   </thead>
   <% order.shipments.each do |shipment| %>
     <tbody>
       <tr class="stock-location" data-hook="stock-location">
         <td colspan="5" style="background-color: #eff5fc;">
           <%= shipment.state.capitalize %>
-          <%= t(:package_from) %>
+          <%= Spree.t(:package_from) %>
           <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
         </td>
       </tr>
@@ -49,7 +49,7 @@
   </tbody>
   <tbody id="order-total" data-hook="order_details_total" class="with-border grand-total">
     <tr>
-      <td colspan="4" ><%= t(:order_total) %>:</td>
+      <td colspan="4" ><%= Spree.t(:order_total) %>:</td>
       <td class="total" id="order-total"><span id="order_total"><%= order.display_total %></span></td>
     </tr>
   </tbody>

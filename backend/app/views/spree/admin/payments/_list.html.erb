@@ -2,9 +2,9 @@
   <thead>
     <tr data-hook="payments_header">
       <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-      <th><%= t(:amount, :scope => 'activerecord.attributes.spree/payment') %></th>
-      <th><%= t(:payment_method) %></th>
-      <th><%= t(:payment_state) %></th>
+      <th><%= I18n.t(:amount, :scope => 'activerecord.attributes.spree/payment') %></th>
+      <th><%= Spree.t(:payment_method) %></th>
+      <th><%= Spree.t(:payment_state) %></th>
       <th class="actions"></th>
     </tr>
   </thead>

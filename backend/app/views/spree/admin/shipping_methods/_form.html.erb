@@ -1,7 +1,7 @@
 <div data-hook="admin_shipping_method_form_fields" class="alpha twelve columns">
   <div class="alpha six columns">
     <%= f.field_container :name do %>
-      <%= f.label :name, t(:name) %><br />
+      <%= f.label :name, Spree.t(:name) %><br />
       <%= f.text_field :name, :class => 'fullwidth' %>
       <%= error_message_on :shipping_method, :name %>
     <% end %>
@@ -9,16 +9,16 @@
 
   <div class="omega six columns">
     <%= f.field_container :display_on do %>
-      <%= f.label :display_on, t(:display) %><br />
-      <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
+      <%= f.label :display_on, Spree.t(:display) %><br />
+      <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
       <%= error_message_on :shipping_method, :display_on %>
     <% end %>
   </div>
 
   <div class="alpha twelve columns">
     <%= f.field_container :tracking_url do %>
-      <%= f.label :tracking_url, t(:tracking_url) %><br />
-      <%= f.text_field :tracking_url, :class => 'fullwidth', :placeholder => t(:tracking_url_placeholder) %>
+      <%= f.label :tracking_url, Spree.t(:tracking_url) %><br />
+      <%= f.text_field :tracking_url, :class => 'fullwidth', :placeholder => Spree.t(:tracking_url_placeholder) %>
       <%= error_message_on :shipping_method, :tracking_url %>
     <% end %>
   </div>
@@ -27,7 +27,7 @@
 <div class="alpha six columns">
   <div data-hook="admin_shipping_method_form_availability_fields" class="alpha six columns">
     <fieldset class="categories no-border-bottom">
-      <legend align="center"><%= t(:categories) %></legend>
+      <legend align="center"><%= Spree.t(:categories) %></legend>
           <%= f.field_container :categories do %>
         <% Spree::ShippingCategory.all.each do |category| %>
           <%= f.label :shipping_category_id, category.name %>
@@ -40,7 +40,7 @@
 
   <div class="alpha six columns">
     <fieldset class="no-border-bottom">
-      <legend align="center"><%= t(:zones) %></legend>
+      <legend align="center"><%= Spree.t(:zones) %></legend>
       <%= f.field_container :zones do %>
         <% Spree::Zone.all.each do |zone| %>
           <%= f.label :zone_id, zone.name %>

@@ -1,34 +1,34 @@
 <div data-hook="admin_inside_taxon_form" class="row">
   <div class="alpha five columns">
     <%= f.field_container :name do %>
-      <%= f.label :name, t(:name) %> <span class="required">*</span><br />
+      <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
       <%= error_message_on :taxon, :name, :class => 'fullwidth title' %>
       <%= text_field :taxon, :name, :class => 'fullwidth' %>
     <% end %>
 
     <%= f.field_container :permalink_part do %>
-      <%= f.label :permalink_part, t(:permalink) %><span class="required">*</span><br />
+      <%= f.label :permalink_part, Spree.t(:permalink) %><span class="required">*</span><br />
       <%= @taxon.permalink.split("/")[0...-1].join("/") + "/" %>
       <%= text_field_tag :permalink_part, @permalink_part %>
     <% end %>
 
     <%= f.field_container :icon do %>
-      <%= f.label :icon, t(:icon) %><br />
+      <%= f.label :icon, Spree.t(:icon) %><br />
       <%= f.file_field :icon %>
     <% end %>
 
     <%= f.field_container :meta_title do %>
-      <%= f.label :meta_title, t(:meta_title) %><br />
+      <%= f.label :meta_title, Spree.t(:meta_title) %><br />
       <%= f.text_field :meta_title, :class => 'fullwidth', :rows => 6 %>
     <% end %>
 
     <%= f.field_container :meta_description do %>
-      <%= f.label :meta_description, t(:meta_description) %><br />
+      <%= f.label :meta_description, Spree.t(:meta_description) %><br />
       <%= f.text_field :meta_description, :class => 'fullwidth', :rows => 6 %>
     <% end %>
 
     <%= f.field_container :meta_description do %>
-      <%= f.label :meta_keywords, t(:meta_keywords) %><br />
+      <%= f.label :meta_keywords, Spree.t(:meta_keywords) %><br />
       <%= f.text_field :meta_keywords, :class => 'fullwidth', :rows => 6 %>
     <% end %>
 
@@ -36,7 +36,7 @@
 
   <div class="omega seven columns">
     <%= f.field_container :description do %>
-      <%= f.label :description, t(:description) %><br />
+      <%= f.label :description, Spree.t(:description) %><br />
       <%= f.text_area :description, :class => 'fullwidth', :rows => 6 %>
     <% end %>
   </div>

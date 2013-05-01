@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;
+  <%= Spree.t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;
 <% end %>
 
 <% content_for :sidebar_title do %>
@@ -10,19 +10,19 @@
   <nav class="menu">
     <ul data-hook="admin_product_tabs">
       <li<%== ' class="active"' if current == 'Product Details' %>>
-        <%= link_to_with_icon 'icon-edit', t(:product_details), edit_admin_product_url(@product) %>
+        <%= link_to_with_icon 'icon-edit', Spree.t(:product_details), edit_admin_product_url(@product) %>
       </li>
       <li<%== ' class="active"' if current == 'Images' %>>
-        <%= link_to_with_icon 'icon-picture', t(:images), admin_product_images_url(@product) %>
+        <%= link_to_with_icon 'icon-picture', Spree.t(:images), admin_product_images_url(@product) %>
       </li>
       <li<%== ' class="active"' if current == 'Variants' %>>
-        <%= link_to_with_icon 'icon-th-large', t(:variants),  admin_product_variants_url(@product) %>
+        <%= link_to_with_icon 'icon-th-large', Spree.t(:variants),  admin_product_variants_url(@product) %>
       </li>
       <li<%== ' class="active"' if current == 'Product Properties' %>>
-        <%= link_to_with_icon 'icon-tasks', t(:product_properties), admin_product_product_properties_url(@product) %>
+        <%= link_to_with_icon 'icon-tasks', Spree.t(:product_properties), admin_product_product_properties_url(@product) %>
       </li>
       <li<%== ' class="active"' if current == 'Stock Management' %>>
-        <%= link_to_with_icon 'icon-tasks', t(:stock_management), stock_admin_product_url(@product) %>
+        <%= link_to_with_icon 'icon-tasks', Spree.t(:stock_management), stock_admin_product_url(@product) %>
       </li>
     </ul>
   </nav>

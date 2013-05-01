@@ -1,18 +1,18 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:zones) %>
+  <%= Spree.t(:zones) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_zone), new_object_url, :icon => 'icon-plus', :id => 'admin_new_zone_link' %>
+    <%= button_link_to Spree.t(:new_zone), new_object_url, :icon => 'icon-plus', :id => 'admin_new_zone_link' %>
   </li>
 <% end %>
 
  <% if @zones.empty? %>
   <div class="no-objects-found">
-    <%= t(:none) %>
+    <%= Spree.t(:none) %>
   </div>
 <% else %>
   <table class="index" id='listing_zones' data-hook>
@@ -24,11 +24,11 @@
     </colgroup>
     <thead>
       <tr data-hook="zones_header">
-        <th><%= sort_link @search,:name, t(:name), :title => 'zones_order_by_name_title' %></th>
+        <th><%= sort_link @search,:name, Spree.t(:name), :title => 'zones_order_by_name_title' %></th>
         <th>
-          <%= sort_link @search,:description, t(:description), {}, {:title => 'zones_order_by_description_title'} %>
+          <%= sort_link @search,:description, Spree.t(:description), {}, {:title => 'zones_order_by_description_title'} %>
         </th>
-        <th><%= t(:default_tax) %></th>
+        <th><%= Spree.t(:default_tax) %></th>
         <th class="actions"></th>
       </tr>
     </thead>

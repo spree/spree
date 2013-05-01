@@ -8,7 +8,7 @@ module Spree
 
       def fire
         @return_authorization.send("#{params[:e]}!")
-        flash[:success] = t(:return_authorization_updated)
+        flash[:success] = Spree.t(:return_authorization_updated)
         redirect_to :back
       end
 

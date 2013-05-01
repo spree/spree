@@ -39,7 +39,7 @@
       <%= form.label :state, Spree.t(:state) %><span class='required' id=<%="#{address_id}state-required"%>>*</span><br/>
 
       <% state_elements = [
-         form.collection_selecSpree.t(:state_id, address.country.states,
+         form.collection_select(:state_id, address.country.states,
                             :id, :name,
                             {:include_blank => true},
                             {:class => have_states ? 'required' : 'hidden',
