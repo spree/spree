@@ -20,7 +20,7 @@
 <% if @payments.any? %>
   <%= render :partial => 'list', :locals => { :payments => @payments } %>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= t(:order_has_on_payments) %></div>
+  <div class="alpha twelve columns no-objects-found"><%= t(:order_has_no_payments) %></div>
 <% end %>
 
 
