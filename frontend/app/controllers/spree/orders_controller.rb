@@ -26,7 +26,7 @@ module Spree
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
-              @order.next_transition.run_callbacks
+              @order.next_transition.run_callbacks if @order.cart?
               redirect_to checkout_state_path(@order.checkout_steps.first)
             else
               redirect_to cart_path
