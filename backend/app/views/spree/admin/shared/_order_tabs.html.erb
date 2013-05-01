@@ -7,12 +7,26 @@
 <% end %>
 
 <% content_for :sidebar do %>
+  <% checkout_steps = @order.checkout_steps %>
   <header id="order_tab_summary" data-hook>
     <dl class="additional-info">
       <dt id="order_status" data-hook><%= t(:status) %>:</dt>
       <dd><span class="state <%= @order.state %>"><%= t(@order.state, :scope => :order_state) %></span></dd>
+      <dt data-hook><%= t(:item_total) %>:</dt>
+      <dd id='item_total'><%= @order.display_item_total.to_html %></dd>
+      <% if checkout_steps.include?("delivery") && @order.ship_total > 0 %>
+        <dt data-hook><%= t(:ship_total) %>:</dt>
+        <dd id='item_total'><%= @order.display_ship_total.to_html %></dd>
+      <% end %>
+
+      <% if @order.tax_total > 0 %>
+        <dt data-hook><%= t(:tax_total) %>:</dt>
+        <dd id='item_total'><%= @order.display_tax_total.to_html %></dd>
+      <% end %>
+
       <dt data-hook><%= t(:total) %>:</dt>
       <dd id='order_total'><%= @order.display_total.to_html %></dd>
+
     
       <% if @order.completed? %>
         <dt><%= t(:shipment) %>: </dt>
@@ -27,12 +41,13 @@
 
   <nav class="menu">
     <ul data-hook="admin_order_tabs">
+
       <% if can? :update, @order %>
         <li<%== ' class="active"' if current == 'Order Details' %>>
           <%= link_to_with_icon 'icon-edit', t(:order_details), edit_admin_order_url(@order) %>
         </li>
       <% end %>
-      <% if can? :update, @order %>
+      <% if can? :update, @order && checkout_steps.include?("address") %>
         <li<%== ' class="active"' if current == 'Customer Details' %>>
           <%= link_to_with_icon 'icon-user', t(:customer_details), admin_order_customer_url(@order) %>
         </li>
@@ -42,7 +57,7 @@
           <%= link_to_with_icon 'icon-cogs', t(:adjustments), admin_order_adjustments_url(@order) %>
         </li>
       <% end %>
-      <% if can? :index, @order.payments %>
+      <% if can? :index, @order.payments && @payment_required %>
         <li<%== ' class="active"' if current == 'Payments' %>>
           <%= link_to_with_icon 'icon-credit-card', t(:payments), admin_order_payments_url(@order) %>
         </li>
