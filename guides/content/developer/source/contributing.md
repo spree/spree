@@ -55,7 +55,7 @@ You should file an issue if you have found (or suspect) a bug in the "core" func
 
 #### Providing a Patch
 
-If you are filing and issue and supplying a patch at the same time, please file a ["Pull Request"](#creating-a-pull-request) instead.  The pull request will also create an issue at the same time but it's superior to just creating an issue because the code and issue can be linked.
+If you are filing an issue and supplying a patch at the same time, please file a ["Pull Request"](#creating-a-pull-request) instead.  The pull request will also create an issue at the same time but it's superior to just creating an issue because the code and issue can be linked.
 
 If the ticket already exists, however, and you want to supply a patch after the fact, you can simply reference the issue number in your commit message. For example, if your commit fixed issue #123 you could use the following commit message:
 
