@@ -769,10 +769,10 @@ cloud hosting provider. This section is only necessary for local file storage.
 ***
 
 The final step in configuring the server is symlinking the images so that on
-subsequent deploys they don't disappear. To do this, you can create a new
+subsequent deploys they don't disappear. To do this, you can create a new `spree`
 directory within the `shared` directory by using this command:
 
-    mkdir -p public/spree
+    mkdir -p /home/spree/[application's name]/shared/spree
 
 This is the directory where all the uploads for the application will live. This
 directory should be symlinked over to the application upon every deployment, and
@@ -781,13 +781,13 @@ to do that you can add this content to your `config/deploy.rb`:
 ```ruby
 namespace :images do
   task :symlink, :except => { :no_release => true } do
-    run "rm -rf #{release_path}/public/uploads"
-    run "ln -nfs #{shared_path}/uploads #{release_path}/public/uploads"
+    run "rm -rf #{release_path}/public/spree"
+    run "ln -nfs #{shared_path}/spree #{release_path}/public/spree"
   end
 end
 after "bundle:install", "images:symlink"
 ```
 
-Now upon every deploy, Capistrano will symlink the `public/spree` directory in the `shared`
+Now upon every deploy, Capistrano will symlink the `spree` directory in the `shared`
 directory into the current version of the app so that the product images are
 persisted across releases.
