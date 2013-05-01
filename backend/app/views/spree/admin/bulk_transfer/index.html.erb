@@ -12,14 +12,18 @@
 <% end %>
 
 <script type='text/template' id='bulk_variant_template'>
-  <tr>
-    <td>{{name}}</td>
-    <td class="align-center">{{quantity}}</td>
-    <td class="align-center"><button class='icon-trash bulk_remove_variant button'
-                data-variant-id='{{id}}' data-variant-name='{{name}}'>remove</button></td>
-    <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
-    <input type='hidden' id='quantity[]' name='quantity[]' value='{{quantity}}'>
-  </tr>
+  {{#each variants}}
+    <tr>
+      <td>{{name}}</td>
+      <td class="align-center">{{quantity}}</td>
+      <td class="align-center">
+        <button class='icon-trash bulk_remove_variant button'
+                data-variant-id='{{id}}'>remove</button>
+      </td>
+      <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
+      <input type='hidden' id='quantity[]' name='quantity[]' value='{{quantity}}'>
+    </tr>
+  {{/each}}
 </script>
 
 <%= form_tag admin_bulk_transfer_path, :method => :post do %>
@@ -67,7 +71,7 @@
       <div class="two columns">
         <div class="field" id="stock_movement_quantity_field">
           <%= label_tag 'quantity', t(:quantity) %>
-          <%= number_field_tag 'bulk_variant_quantity', 1, class: 'fullwidth' %>
+          <%= number_field_tag 'bulk_variant_quantity', 1, class: 'fullwidth', min: 0 %>
         </div>
       </div>
       <div class="two columns omega">
@@ -78,7 +82,7 @@
 
     </fieldset>
 
-    <div class="no-objects-found">No variants added for tranfer. Please, add one.</div>
+    <div class="no-objects-found">No variants added for transfer. Please, add one.</div>
 
     <div id="transfer-variants-table" class="twelve columns alpha" style="display:none">
       <table class="index sortable">
