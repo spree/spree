@@ -1,4 +1,24 @@
 $ ->
+  refresh_variants = ->
+    stock_location_id = $('#source_location_id').val()
+
+    $.getJSON "/api/stock_locations/#{stock_location_id}/stock_items", (data) ->
+      $('#bulk_variant option').remove()
+
+      _.each data.stock_items, (item) ->
+        option = $('<option></option>')
+                   .text("#{item.variant.name}-#{item.variant.sku} (#{item.count_on_hand})")
+                   .attr('value', item.variant.id)
+                   .data('count_on_hand', item.count_on_hand)
+
+        $('#bulk_variant').append(option)
+
+      $('#bulk_variant').select2()
+
+  refresh_variants()
+
+  $('#source_location_id').change refresh_variants
+
   $('#bulk_receive_stock').click ->
     if this.checked
       $('#source_location_id_field').css('visibility', 'hidden')

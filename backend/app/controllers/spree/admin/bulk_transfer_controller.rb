@@ -3,8 +3,7 @@ module Spree
     class BulkTransferController < Spree::Admin::BaseController
 
       def index
-        @stock_locations = StockLocation.active
-        @variants = Variant.all
+        @stock_locations = Spree::StockLocation.active
       end
 
       def transfer
