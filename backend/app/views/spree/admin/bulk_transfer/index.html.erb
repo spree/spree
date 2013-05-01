@@ -48,13 +48,13 @@
       <div class="alpha six columns">
         <div class="field" id="destination_location_id_field">
           <%= label_tag :destination_location_id, t(:transfer_to_location) %>
-          <%= select_tag :destination_location_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
+          <%= select_tag :destination_location_id, {}, class: 'select2 fullwidth' %>
         </div>
       </div>
       <div class="six columns omega">
         <div class="field" id="source_location_id_field">
           <%= label_tag :source_location_id, t(:transfer_from_location) %>
-          <%= select_tag :source_location_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
+          <%= select_tag :source_location_id, {}, class: 'select2 fullwidth' %>
         </div>
       </div>
     </div>
