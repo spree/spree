@@ -1,12 +1,12 @@
 <fieldset id='shipping_method' data-hook>
-  <legend align="center"><%= t(:delivery) %></legend>
+  <legend align="center"><%= Spree.t(:delivery) %></legend>
   <div class="inner" data-hook="shipping_method_inner">
     <div id="methods">
       <%= form.fields_for :shipments do |ship_form| %>
 
         <div class="shipment">
           <h3 class="stock-location" data-hook="stock-location">
-            <%= t(:package_from) %>
+            <%= Spree.t(:package_from) %>
             <strong class="stock-location-name" data-hook="stock-location-name"><%= ship_form.object.stock_location.name %></strong>
           </h3>
 
@@ -35,7 +35,7 @@
             </tbody>
           </table>
 
-          <h5 class="stock-shipping-method-title"><%= t(:shipping_method) %></h5>
+          <h5 class="stock-shipping-method-title"><%= Spree.t(:shipping_method) %></h5>
           <ul class="field radios shipping-methods">
             <% ship_form.object.shipping_rates.each do |rate| %>
               <li class="shipping-method">
@@ -54,7 +54,7 @@
       <% if @differentiator.missing? %>
         <div class="shipment unshippable">
           <h3 class="stock-location" data-hook="stock-location">
-            <%= t(:unshippable_items) %>
+            <%= Spree.t(:unshippable_items) %>
           </h3>
           <table class="stock-contents" data-hook="stock-missing">
             <colgroup>
@@ -86,7 +86,7 @@
     </div>
     <% if Spree::Config[:shipping_instructions] %>
       <p id="minstrs" data-hook>
-        <%= form.label :special_instructions, t(:shipping_instructions) %><br />
+        <%= form.label :special_instructions, Spree.t(:shipping_instructions) %><br />
         <%= form.text_area :special_instructions, :cols => 40, :rows => 7 %>
       </p>
     <% end %>
@@ -96,5 +96,5 @@
 <br />
 
 <div class="form-buttons" data-hook="buttons">
-  <%= submit_tag t(:save_and_continue), :class => 'continue button primary' %>
+  <%= submit_tag Spree.t(:save_and_continue), :class => 'continue button primary' %>
 </div>

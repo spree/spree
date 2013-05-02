@@ -2,7 +2,7 @@
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
   
   <div class="row" data-hook="checkout_header">
-    <h1 class="columns three alpha" data-hook="checkout_title"><%= t(:checkout) %></h1>
+    <h1 class="columns three alpha" data-hook="checkout_title"><%= Spree.t(:checkout) %></h1>
     <div class="columns thirteen omega" data-hook="checkout_progress"><%= checkout_progress %></div>
   </div>
   

@@ -7,7 +7,7 @@ hash["en"]["spree"].each do |k,v|
   	# Check for translations used in controllers, models, views, mailers, helpers and lib
     command = %Q{ack "t\\(:#{k}" */app/**/* */lib/**}
     # Check for possible preferences matching translations
-    # This is because preference_field within backend uses it like t(:<preference_key>)
+    # This is because preference_field within backend uses it like Spree.t(:<preference_key>)
     symbol_command = %Q{ack ":#{k}" */app/**/* */lib/**}
     `#{command}`
     command_status = $?.exitstatus
