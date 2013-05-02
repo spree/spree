@@ -1,5 +1,5 @@
 <fieldset id="payment" data-hook>
-  <legend align="center"><%= t(:payment_information) %></legend>
+  <legend align="center"><%= Spree.t(:payment_information) %></legend>
   <div data-hook="checkout_payment_step">
     <% @order.available_payment_methods.each do |method| %>
     <p>
@@ -32,6 +32,6 @@
 <br class="space" />
 
 <div class="form-buttons" data-hook="buttons">
-  <%= submit_tag t(:save_and_continue), :class => 'continue button primary' %>
+  <%= submit_tag Spree.t(:save_and_continue), :class => 'continue button primary' %>
   <script>Spree.disableSaveOnClick();</script>
 </div>

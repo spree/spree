@@ -1,12 +1,12 @@
 <% @body_id = 'cart' %>
 
-<h1><%= t(:shopping_cart) %></h1>
+<h1><%= Spree.t(:shopping_cart) %></h1>
 
 <% if @order.line_items.empty? %>
 
   <div data-hook="empty_cart">
-    <p><%= t(:your_cart_is_empty) %></p>
-    <p><%= link_to t(:continue_shopping), products_path, :class => 'button continue' %></p>
+    <p><%= Spree.t(:your_cart_is_empty) %></p>
+    <p><%= link_to Spree.t(:continue_shopping), products_path, :class => 'button continue' %></p>
   </div>
 
 <% else %>
@@ -19,16 +19,16 @@
         </div>
 
         <div id="subtotal" data-hook class="columns sixteen alpha omega">
-          <h5><%= t(:subtotal) %>: <span class="order-total"><%= @order.display_total.to_html %></span></h5>
+          <h5><%= Spree.t(:subtotal) %>: <span class="order-total"><%= @order.display_total.to_html %></span></h5>
         </div>
 
         <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
-          <%= order_form.text_field :coupon_code, :size => 10, :placeholder => t(:coupon_code) %>
+          <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code) %>
           <%= button_tag :class => 'primary', :id => 'update-button' do %>
-            <%= t(:update) %>
+            <%= Spree.t(:update) %>
           <% end %>
           <%= button_tag :class => 'button checkout primary', :id => 'checkout-link', :name => 'checkout' do %>
-            <%= t(:checkout) %>
+            <%= Spree.t(:checkout) %>
           <% end %>
         </div>
       </div>
@@ -38,9 +38,9 @@
   <div id="empty-cart" data-hook>
     <%= form_tag empty_cart_path, :method => :put do %>
       <p id="clear_cart_link" data-hook>
-        <%= submit_tag t(:empty_cart), :class => 'button gray' %>
-        <%= t(:or) %>
-        <%= link_to t(:continue_shopping), products_path, :class => 'continue button gray' %>
+        <%= submit_tag Spree.t(:empty_cart), :class => 'button gray' %>
+        <%= Spree.t(:or) %>
+        <%= link_to Spree.t(:continue_shopping), products_path, :class => 'continue button gray' %>
       </p>
     <% end %>
   </div>

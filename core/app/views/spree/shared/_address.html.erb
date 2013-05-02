@@ -25,13 +25,13 @@
   </div>
   <% unless address.phone.blank? %>
     <div class="tel">
-      <span class="type"><%= t(:phone) %></span>
+      <span class="type"><%= Spree.t(:phone) %></span>
       <%= address.phone %>
     </div>
   <% end %>
   <% unless address.alternative_phone.blank? %>
     <div class="alternative-phone tel">
-      <span class="type"><%= t(:alternative_phone) %></span>
+      <span class="type"><%= Spree.t(:alternative_phone) %></span>
       <%= address.alternative_phone %>
     </div>
   <% end %>
