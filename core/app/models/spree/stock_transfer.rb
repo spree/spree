@@ -5,10 +5,17 @@ module Spree
     belongs_to :source_location, :class_name => 'StockLocation'
     belongs_to :destination_location, :class_name => 'StockLocation'
 
-    has_many :source_movements, :through => :source_location, :source => :stock_movements
-    has_many :destination_movements, :through => :destination_location, :source => :stock_movements
-
     attr_accessible :reference_number
+
+    def source_movements
+      stock_movements.joins(:stock_item)
+        .where('spree_stock_items.stock_location_id' => source_location_id)
+    end
+
+    def destination_movements
+      stock_movements.joins(:stock_item)
+        .where('spree_stock_items.stock_location_id' => destination_location_id)
+    end
 
     def number
       reference_number

@@ -1,0 +1,45 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:stock_transfers) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
+    <li>
+      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-plus' } %>
+    </li>
+  </ul>
+<% end %>
+
+<table class="index" id='listing_stock_transfers' data-hook>
+  <colgroup>
+    <col style="width: 15%" />
+    <col style="width: 25%" />
+    <col style="width: 25%" />
+    <col style="width: 25%" />
+    <col style="width: 10%" />
+  </colgroup>
+  <thead>
+    <tr data-hook="stock_transfers_header">
+      <th><%= t(:created_at) %></th>
+      <th><%= t(:reference_number) %></th>
+      <th><%= t(:source_location) %></th>
+      <th><%= t(:destination_location) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @stock_transfers.each do |stock_transfer| %>
+      <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row" class="<%= cycle('odd', 'even')%>">
+        <td><%= stock_transfer.created_at %></td>
+        <td><%= stock_transfer.reference_number %></td>
+        <td><%= stock_transfer.source_location.try(:name) %></td>
+        <td><%= stock_transfer.destination_location.try(:name) %></td>
+        <td><%= link_to t(:show), admin_stock_transfer_path(stock_transfer) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @stock_transfers %>

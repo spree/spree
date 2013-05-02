@@ -168,6 +168,7 @@ Spree::Core::Engine.routes.draw do
 
     resources :shipping_methods
     resources :shipping_categories
+    resources :stock_transfers, :only => [:index, :show]
     resources :stock_locations do
       resources :stock_movements
       collection do
