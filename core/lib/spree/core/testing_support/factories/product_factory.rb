@@ -10,7 +10,9 @@ FactoryGirl.define do
   end
 
   factory :simple_product, :parent => :base_product do
-    on_hand 5
+    if Spree::Config[:track_inventory_levels]
+      on_hand 5
+    end
   end
 
   factory :product, :parent => :simple_product do
@@ -26,7 +28,10 @@ FactoryGirl.define do
     name "Custom Product"
     price "17.99"
     description { Faker::Lorem.paragraphs(1 + Kernel.rand(5)).join("\n") }
-    on_hand 5
+
+    if Spree::Config[:track_inventory_levels]
+      on_hand 5
+    end
 
     # associations:
     tax_category { |r| Spree::TaxCategory.first || r.association(:tax_category) }
