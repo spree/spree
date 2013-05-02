@@ -679,6 +679,7 @@ en:
     settings: Settings
     ship: ship
     ship_address: "Ship Address"
+    shipping: "Shipping"
     shipment: Shipment
     shipment_inc_vat: "Shipment including VAT"
     shipment_mailer:
