@@ -18,6 +18,14 @@ table {
       border-left: 1px solid $color-border;
     }
 
+    a {
+      border-bottom: 1px dotted lighten($color-link, 10);
+
+      &:hover {
+        border-color: lighten($color-link-hover, 10);
+      }
+    }
+
     &.actions {
       background-color: transparent;
       border: none !important;
