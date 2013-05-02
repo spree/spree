@@ -21,10 +21,12 @@ en:
     add_option_value: "Add Option Value"
     add_product: "Add Product"
     add_product_properties: "Add Product Properties"
-    #add_stock: "Add Stock"
+    add_stock: "Add Stock"
+    add_stock_management: "Add Stock Management"
     add_to_cart: "Add To Cart"
     additional_item: "Additional Item Cost"
     adjustment: Adjustment
+    adjustment_amount: "Amount"
     adjustment_successfully_closed: "Adjustment has been successfully closed!"
     adjustment_successfully_opened: "Adjustment has been successfully opened!"
     adjustment_total: "Adjustment Total"
@@ -60,6 +62,7 @@ en:
     authorization_failure: "Authorization Failure"
     available_on: "Available On"
     back: Back
+    back_end: "Backend"
     backorderable: "Backorderable"
     back_to_adjustments_list: "Back To Adjustments List"
     back_to_images_list: "Back To Images List"
@@ -97,6 +100,7 @@ en:
     card_type_is: "Card type is"
     categories: Categories
     category: Category
+    check_for_spree_alerts: "Check for Spree alerts"
     checkout: Checkout
     choose_a_customer: "Choose a customer"
     choose_currency: "Choose Currency"
@@ -261,6 +265,7 @@ en:
     listing_tax_categories: "Listing Tax Categories"
     loading: Loading
     locale_changed: "Locale Changed"
+    location: Location
     lock: Lock
     login: Login
     look_for_similar_items: Look for similar items
@@ -309,6 +314,7 @@ en:
     new_variant: "New Variant"
     new_zone: "New Zone"
     next: Next
+    no_orders_found: "No orders found"
     no_products_found: "No products found"
     no_promotions_found: "No promotions found"
     no_payment_methods_found: "No payment methods found"
@@ -469,6 +475,7 @@ en:
     s3_protocol: "S3 Protocol"
     s3_secret: "Secret Key"
     sales_total: "Sales Total"
+    sales_totals: "Sales Totals"
     sales_total_description: "Sales Total For All Orders"
     save_and_continue: "Save and Continue"
     say_no: "No"
@@ -481,6 +488,7 @@ en:
     security_settings: "Security Settings"
     select: Select
     select_from_prototype: "Select From Prototype"
+    select_stock: "Select stock"
     send_copy_of_all_mails_to: "Send Copy of All Mails To"
     send_mails_as: "Send Mails As"
     server: Server
@@ -550,6 +558,7 @@ en:
     states_required: "States Required"
     status: Status
     stock_location: "Stock Location"
+    stock_location_info: "Stock location info"
     stock_locations: "Stock Locations"
     stock_management: "Stock Management"
     stock_movements: "Stock Movements"
@@ -788,6 +797,8 @@ en:
         phone: "Shipping address phone"
         state: "Shipping address state"
         zipcode: "Shipping address zipcode"
+      spree/payment:
+        amount: "Amount"
       spree/payment_method:
         name: Name
       spree/product:
