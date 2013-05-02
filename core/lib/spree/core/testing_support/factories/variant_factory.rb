@@ -14,8 +14,10 @@ FactoryGirl.define do
   end
 
   factory :variant, :parent => :base_variant do
-    on_hand 5
-    
+    if Spree::Config[:track_inventory_levels]
+      on_hand 5
+    end
+
     # associations:
     product { |p| p.association(:product) }
   end
