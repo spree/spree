@@ -14,197 +14,6 @@ en:
       update: Update
     activate: Activate
     active: Active
-    activerecord:
-      attributes:
-        spree/address:
-          address1: Address
-          address2: "Address (contd.)"
-          city: City
-          country: Country
-          firstname: "First Name"
-          lastname: "Last Name"
-          phone: Phone
-          state: State
-          zipcode: "Zip Code"
-        spree/country:
-          iso: ISO
-          iso3: ISO3
-          iso_name: "ISO Name"
-          name: Name
-          numcode: "ISO Code"
-        spree/credit_card:
-          cc_type: Type
-          month: Month
-          number: Number
-          verification_value: "Verification Value"
-          year: Year
-        spree/inventory_unit:
-          state: State
-        spree/line_item:
-          price: Price
-          quantity: Quantity
-        spree/option_type:
-          name: Name
-          presentation: Presentation
-        spree/order:
-          checkout_complete: "Checkout Complete"
-          completed_at: "Completed At"
-          created_at: "Order Date"
-          email: "Customer E-Mail"
-          ip_address: "IP Address"
-          item_total: "Item Total"
-          number: Number
-          payment_state: "Payment State"
-          shipment_state: "Shipment State"
-          special_instructions: "Special Instructions"
-          state: State
-          total: Total
-        spree/order/bill_address:
-          address1: "Billing address street"
-          city: "Billing address city"
-          firstname: "Billing address first name"
-          lastname: "Billing address last name"
-          phone: "Billing address phone"
-          state: "Billing address state"
-          zipcode: "Billing address zipcode"
-        spree/order/ship_address:
-          address1: "Shipping address street"
-          city: "Shipping address city"
-          firstname: "Shipping address first name"
-          lastname: "Shipping address last name"
-          phone: "Shipping address phone"
-          state: "Shipping address state"
-          zipcode: "Shipping address zipcode"
-        spree/payment_method:
-          name: Name
-        spree/product:
-          available_on: "Available On"
-          cost_currency: "Cost Currency"
-          cost_price: "Cost Price"
-          description: Description
-          master_price: "Master Price"
-          name: Name
-          on_hand: "On Hand"
-          shipping_category: "Shipping Category"
-          tax_category: "Tax Category"
-        spree/promotion:
-          advertise: Advertise
-          code: Code
-          description: Description
-          event_name: Event Name
-          expires_at: Expires At
-          name: Name
-          path: Path
-          starts_at: Starts At
-          usage_limit: Usage Limit
-        spree/property:
-          name: Name
-          presentation: Presentation
-        spree/prototype:
-          name: Name
-        spree/return_authorization:
-          amount: Amount
-        spree/role:
-          name: Name
-        spree/state:
-          abbr: Abbreviation
-          name: Name
-        spree/tax_category:
-          description: Description
-          name: Name
-        spree/tax_rate:
-          amount: Rate
-          included_in_price: "Included in Price"
-          show_rate_in_label: "Show rate in label"
-        spree/taxon:
-          name: Name
-          permalink: Permalink
-          position: Position
-        spree/taxonomy:
-          name: Name
-        spree/user:
-          email: Email
-          password: Password
-          password_confirmation: "Password Confirmation"
-        spree/variant:
-          cost_currency: "Cost Currency"
-          cost_price: "Cost Price"
-          depth: Depth
-          height: Height
-          price: Price
-          sku: SKU
-          weight: Weight
-          width: Width
-        spree/zone:
-          description: Description
-          name: Name
-      models:
-        spree/address:
-          one: Address
-          other: Addresses
-        spree/country:
-          one: Country
-          other: Countries
-        spree/credit_card:
-          one: "Credit Card"
-          other: "Credit Cards"
-        spree/inventory_unit:
-          one: "Inventory Unit"
-          other: "Inventory Units"
-        spree/line_item:
-          one: "Line Item"
-          other: "Line Items"
-        spree/order:
-          one: Order
-          other: Orders
-        spree/payment:
-          one: Payment
-          other: Payments
-        spree/product:
-          one: Product
-          other: Products
-        spree/property:
-          one: Property
-          other: Properties
-        spree/prototype:
-          one: Prototype
-          other: Prototypes
-        spree/return_authorization:
-          one: "Return Authorization"
-          other: "Return Authorizations"
-        spree/role:
-          one: Roles
-          other: Roles
-        spree/shipment:
-          one: Shipment
-          other: Shipments
-        spree/shipping_category:
-          one: "Shipping Category"
-          other: "Shipping Categories"
-        spree/state:
-          one: State
-          other: States
-        spree/tax_category:
-          one: "Tax Category"
-          other: "Tax Categories"
-        spree/tax_rate:
-          one: "Tax Rate"
-          other: "Tax Rates"
-        spree/taxon:
-          one: Taxon
-          other: Taxons
-        spree/taxonomy:
-          one: Taxonomy
-          other: Taxonomies
-        spree/user:
-          one: User
-          other: Users
-        spree/variant:
-          one: Variant
-          other: Variants
-        spree/zone:
-          one: Zone
-          other: Zones
     add: Add
     add_new_header: "Add New Header"
     add_new_style: "Add New Style"
@@ -918,3 +727,195 @@ en:
       coupon_code: Coupon Code
     user_rule:
       choose_users: Choose users
+
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Address
+        address2: "Address (contd.)"
+        city: City
+        country: Country
+        firstname: "First Name"
+        lastname: "Last Name"
+        phone: Phone
+        state: State
+        zipcode: "Zip Code"
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: "ISO Name"
+        name: Name
+        numcode: "ISO Code"
+      spree/credit_card:
+        cc_type: Type
+        month: Month
+        number: Number
+        verification_value: "Verification Value"
+        year: Year
+      spree/inventory_unit:
+        state: State
+      spree/line_item:
+        price: Price
+        quantity: Quantity
+      spree/option_type:
+        name: Name
+        presentation: Presentation
+      spree/order:
+        checkout_complete: "Checkout Complete"
+        completed_at: "Completed At"
+        created_at: "Order Date"
+        email: "Customer E-Mail"
+        ip_address: "IP Address"
+        item_total: "Item Total"
+        number: Number
+        payment_state: "Payment State"
+        shipment_state: "Shipment State"
+        special_instructions: "Special Instructions"
+        state: State
+        total: Total
+      spree/order/bill_address:
+        address1: "Billing address street"
+        city: "Billing address city"
+        firstname: "Billing address first name"
+        lastname: "Billing address last name"
+        phone: "Billing address phone"
+        state: "Billing address state"
+        zipcode: "Billing address zipcode"
+      spree/order/ship_address:
+        address1: "Shipping address street"
+        city: "Shipping address city"
+        firstname: "Shipping address first name"
+        lastname: "Shipping address last name"
+        phone: "Shipping address phone"
+        state: "Shipping address state"
+        zipcode: "Shipping address zipcode"
+      spree/payment_method:
+        name: Name
+      spree/product:
+        available_on: "Available On"
+        cost_currency: "Cost Currency"
+        cost_price: "Cost Price"
+        description: Description
+        master_price: "Master Price"
+        name: Name
+        on_hand: "On Hand"
+        shipping_category: "Shipping Category"
+        tax_category: "Tax Category"
+      spree/promotion:
+        advertise: Advertise
+        code: Code
+        description: Description
+        event_name: Event Name
+        expires_at: Expires At
+        name: Name
+        path: Path
+        starts_at: Starts At
+        usage_limit: Usage Limit
+      spree/property:
+        name: Name
+        presentation: Presentation
+      spree/prototype:
+        name: Name
+      spree/return_authorization:
+        amount: Amount
+      spree/role:
+        name: Name
+      spree/state:
+        abbr: Abbreviation
+        name: Name
+      spree/tax_category:
+        description: Description
+        name: Name
+      spree/tax_rate:
+        amount: Rate
+        included_in_price: "Included in Price"
+        show_rate_in_label: "Show rate in label"
+      spree/taxon:
+        name: Name
+        permalink: Permalink
+        position: Position
+      spree/taxonomy:
+        name: Name
+      spree/user:
+        email: Email
+        password: Password
+        password_confirmation: "Password Confirmation"
+      spree/variant:
+        cost_currency: "Cost Currency"
+        cost_price: "Cost Price"
+        depth: Depth
+        height: Height
+        price: Price
+        sku: SKU
+        weight: Weight
+        width: Width
+      spree/zone:
+        description: Description
+        name: Name
+    models:
+      spree/address:
+        one: Address
+        other: Addresses
+      spree/country:
+        one: Country
+        other: Countries
+      spree/credit_card:
+        one: "Credit Card"
+        other: "Credit Cards"
+      spree/inventory_unit:
+        one: "Inventory Unit"
+        other: "Inventory Units"
+      spree/line_item:
+        one: "Line Item"
+        other: "Line Items"
+      spree/order:
+        one: Order
+        other: Orders
+      spree/payment:
+        one: Payment
+        other: Payments
+      spree/product:
+        one: Product
+        other: Products
+      spree/property:
+        one: Property
+        other: Properties
+      spree/prototype:
+        one: Prototype
+        other: Prototypes
+      spree/return_authorization:
+        one: "Return Authorization"
+        other: "Return Authorizations"
+      spree/role:
+        one: Roles
+        other: Roles
+      spree/shipment:
+        one: Shipment
+        other: Shipments
+      spree/shipping_category:
+        one: "Shipping Category"
+        other: "Shipping Categories"
+      spree/state:
+        one: State
+        other: States
+      spree/tax_category:
+        one: "Tax Category"
+        other: "Tax Categories"
+      spree/tax_rate:
+        one: "Tax Rate"
+        other: "Tax Rates"
+      spree/taxon:
+        one: Taxon
+        other: Taxons
+      spree/taxonomy:
+        one: Taxonomy
+        other: Taxonomies
+      spree/user:
+        one: User
+        other: Users
+      spree/variant:
+        one: Variant
+        other: Variants
+      spree/zone:
+        one: Zone
+        other: Zones
