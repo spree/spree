@@ -21,6 +21,12 @@ module Spree
       source_location.count_on_hand(variant).should eq 5
       destination_location.count_on_hand(variant).should eq 5
       subject.should have(2).stock_movements
+
+      subject.source_location.should eq source_location
+      subject.destination_location.should eq destination_location
+
+      subject.source_movements.first.quantity.should eq -5
+      subject.destination_movements.first.quantity.should eq 5
     end
 
     it 'receive new inventory (from a vendor)' do
@@ -30,6 +36,9 @@ module Spree
 
       destination_location.count_on_hand(variant).should eq 5
       subject.should have(1).stock_movements
+
+      subject.source_location.should be_nil
+      subject.destination_location.should eq destination_location
     end
   end
 end
