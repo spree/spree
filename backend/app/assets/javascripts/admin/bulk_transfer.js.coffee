@@ -22,7 +22,10 @@ $ ->
 
   # Manages source and destination selections
   class BulkLocations
-    constructor: (@source, @destination) ->
+    constructor: ->
+      @source = $('#source_location_id')
+      @destination = $('#destination_location_id')
+
       @source.change => @populate_destination()
 
       $.getJSON "/api/stock_locations", (data) =>
@@ -36,7 +39,6 @@ $ ->
 
     populate_destination: ->
       @populate_select @destination, parseInt(@source.val())
-      @destination.trigger('change')
 
     populate_select: (select, except=0) ->
       select.children('option').remove()
@@ -146,7 +148,7 @@ $ ->
 
   # Main
   if $('#source_location_id').length > 0
-    new BulkLocations $('#source_location_id'), $('#destination_location_id')
+    bulk_locations = new BulkLocations
     bulk_variants = new BulkVariants
     bulk_add_variants = new BulkAddVariants
 
