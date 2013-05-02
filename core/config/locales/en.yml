@@ -457,6 +457,7 @@ en:
     look_for_similar_items: Look for similar items
     maestro_or_solo_cards: Maestro/Solo cards
     mail_methods: "Mail Methods"
+    mail_method_settings: "Mail Method Settings"
     make_refund: "Make refund"
     master_price: "Master Price"
     match_choices:
@@ -627,6 +628,7 @@ en:
     provider: Provider
     provider_settings_warning: "If you are changing the provider type, you must save first before you can edit the provider settings"
     qty: Qty
+    quantity: Quantity
     quantity_returned: "Quantity Returned"
     quantity_shipped: "Quantity Shipped"
     rate: Rate
