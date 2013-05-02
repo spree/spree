@@ -15,7 +15,7 @@ module Spree
     def update
       @order = current_order
       unless @order
-        flash[:error] = t(:order_not_found)
+        flash[:error] = Spree.t(:order_not_found)
         redirect_to root_path and return
       end
 
@@ -69,7 +69,7 @@ module Spree
     end
 
     def accurate_title
-      @order && @order.completed? ? "#{t(:order)} #{@order.number}" : t(:shopping_cart)
+      @order && @order.completed? ? "#{t(:order)} #{@order.number}" : Spree.t(:shopping_cart)
     end
 
     def check_authorization
