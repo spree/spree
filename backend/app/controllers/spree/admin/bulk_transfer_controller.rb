@@ -27,7 +27,7 @@ module Spree
       end
 
       def destination_location
-        @destination_location ||= StockLocation.find(params[:source_location_id])
+        @destination_location ||= StockLocation.find(params[:destination_location_id])
       end
     end
   end
