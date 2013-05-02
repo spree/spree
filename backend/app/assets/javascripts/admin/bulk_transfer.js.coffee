@@ -23,8 +23,8 @@ $ ->
   # Manages source and destination selections
   class BulkLocations
     constructor: ->
-      @source = $('#source_location_id')
-      @destination = $('#destination_location_id')
+      @source = $('#bulk_source_location_id')
+      @destination = $('#bulk_destination_location_id')
 
       @source.change => @populate_destination()
 
@@ -51,7 +51,7 @@ $ ->
   # Populates variants drop down
   class BulkVariants
     constructor: ->
-      $('#source_location_id').change => @refresh_variants()
+      $('#bulk_source_location_id').change => @refresh_variants()
 
     receiving_stock: ->
       $( "#bulk_receive_stock:checked" ).length > 0
@@ -71,7 +71,7 @@ $ ->
           @populate_select @cached_variants
 
     _refresh_bulk_stock_items: ->
-      stock_location_id = $('#source_location_id').val()
+      stock_location_id = $('#bulk_source_location_id').val()
       $.getJSON "/api/stock_locations/#{stock_location_id}/stock_items", (data) =>
         @populate_select _.map(data.stock_items, (stock_item) -> new BulkStockItem(stock_item))
 
@@ -92,7 +92,7 @@ $ ->
       @variants = []
       @template = Handlebars.compile $('#bulk_variant_template').html()
 
-      $('#source_location_id').change (event) => @clear_variants()
+      $('#bulk_source_location_id').change (event) => @clear_variants()
 
       $('button.bulk_add_variant').click (event) =>
         event.preventDefault()
@@ -147,15 +147,15 @@ $ ->
         $('#bulk_variants_tbody').html(rendered)
 
   # Main
-  if $('#source_location_id').length > 0
+  if $('#bulk_source_location_id').length > 0
     bulk_locations = new BulkLocations
     bulk_variants = new BulkVariants
     bulk_add_variants = new BulkAddVariants
 
     $('#bulk_receive_stock').click ->
       if this.checked
-        $('#source_location_id_field').css('visibility', 'hidden')
+        $('#bulk_source_location_id_field').css('visibility', 'hidden')
       else
-        $('#source_location_id_field').css('visibility', 'visible')
+        $('#bulk_source_location_id_field').css('visibility', 'visible')
 
-      $('#source_location_id').trigger('change')
+      $('#bulk_source_location_id').trigger('change')

@@ -16,18 +16,18 @@ module Spree
                                 destination_location,
                                 variants)
 
-        flash[:success] = t(:transfer_successful)
+        flash[:success] = t(:stock_successfully_transferred)
         redirect_to :action => :index
       end
 
       private
       def source_location
         @source_location ||= params.has_key?(:bulk_receive_stock) ? nil :
-                               StockLocation.find(params[:source_location_id])
+                               StockLocation.find(params[:bulk_source_location_id])
       end
 
       def destination_location
-        @destination_location ||= StockLocation.find(params[:destination_location_id])
+        @destination_location ||= StockLocation.find(params[:bulk_destination_location_id])
       end
     end
   end

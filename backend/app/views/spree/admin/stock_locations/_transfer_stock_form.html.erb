@@ -4,21 +4,21 @@
     <div data-hook="admin_stock_movements_form_fields" class="row">
       <div class="six columns alpha">
         <div class="field" id="stock_movement_transfer_from_field">
-          <%= label_tag :stock_location_from_id, t(:transfer_from_location) %>
-          <%= select_tag :stock_location_from_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
+          <%= label_tag :bulk_source_location_id, t(:transfer_from_location) %>
+          <%= select_tag :bulk_source_location_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
         </div>
       </div>
       <div class="six columns omega">
         <div class="field" id="stock_movement_transfer_to_field">
-          <%= label_tag :stock_location_to_id, t(:transfer_to_location) %>
-          <%= select_tag :stock_location_to_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
+          <%= label_tag :bulk_destination_location_id, t(:transfer_to_location) %>
+          <%= select_tag :bulk_destination_location_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
         </div>
       </div>
 
       <div class="six columns alpha">
         <div class="field" id="stock_movement_variant_id_field">
-          <%= label_tag 'variant_id', t(:variant) %>
-          <%= select_tag :variant_id, options_from_collection_for_select(@variants, :id, :name_and_sku), class: 'select2 fullwidth' %>
+          <%= label_tag 'bulk_variant', t(:variant) %>
+          <%= select_tag :bulk_variant, {}, class: 'select2 fullwidth' %>
         </div>
       </div>
 
