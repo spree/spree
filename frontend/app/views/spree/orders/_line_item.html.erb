@@ -11,7 +11,7 @@
     <%= variant.options_text %>
     <% if @order.insufficient_stock_lines.include? line_item %>
       <span class="out-of-stock">
-        <%= t(:out_of_stock) %>&nbsp;&nbsp;<br />
+        <%= Spree.t(:out_of_stock) %>&nbsp;&nbsp;<br />
       </span>
     <% end %>
     <%= line_item_description(variant) %>

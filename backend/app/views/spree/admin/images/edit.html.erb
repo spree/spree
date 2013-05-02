@@ -5,14 +5,14 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @image } %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to t(:back_to_images_list), admin_product_images_url(@product), :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_images_list), admin_product_images_url(@product), :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
   <fieldset data-hook="edit_image">
     <legend align="center"><%= @image.attachment_file_name%></legend>
     <div data-hook="thumbnail" class="field alpha three columns align-center">
-      <%= f.label t(:thumbnail) %><br>
+      <%= f.label Spree.t(:thumbnail) %><br>
       <%= link_to image_tag(@image.attachment.url(:small)), @image.attachment.url(:product) %>
     </div>
     <div class="nine columns omega">
@@ -20,9 +20,9 @@
     </div>
     <div class="clear"></div>
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button t(:update), 'icon-refresh' %>
-      <span class="or"><%= t(:or) %></span>
-      <%= link_to t(:cancel), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button icon-remove' %>
+      <%= button Spree.t('actions.update'), 'icon-refresh' %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= link_to Spree.t('actions.cancel'), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button icon-remove' %>
     </div>
   </fieldset>
 <% end %>

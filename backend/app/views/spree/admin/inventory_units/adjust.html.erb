@@ -3,15 +3,15 @@
 <%= form_tag do %>
 <br /><br />
 
-<h1><%= t(:inventory_adjustment) %></h1>
+<h1><%= Spree.t(:inventory_adjustment) %></h1>
 
 <table class="basic-table">
   <thead data-hook="inventory_header">
     <tr>
-      <th><%= t(:sku) %></th>
-      <th><%= t(:product) %></th>
-      <th><%= t(:options) %></th>
-      <th><%= t(:adjustment) %></th>
+      <th><%= Spree.t(:sku) %></th>
+      <th><%= Spree.t(:product) %></th>
+      <th><%= Spree.t(:options) %></th>
+      <th><%= Spree.t(:adjustment) %></th>
     </tr>
   </thead>
   <tbody>
@@ -25,7 +25,7 @@
     </tr>
   </tbody>
 </table>
-<%= submit_tag t(:update) %>
-<%= t(:or) %>
-<%= link_to t(:cancel), :controller => 'overview', :action => :index %>
+<%= submit_tag Spree.t('actions.update') %>
+<%= Spree.t(:or) %>
+<%= link_to Spree.t('actions.cancel'), :controller => 'overview', :action => :index %>
 <% end %>

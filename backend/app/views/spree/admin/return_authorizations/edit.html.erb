@@ -1,12 +1,12 @@
 <% content_for :page_actions do %>
   <li>
     <% if @return_authorization.can_receive? %>
-      <%= button_link_to t(:receive), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :data => { :confirm => t(:are_you_sure) }, :icon => 'icon-download-alt' %>
+      <%= button_link_to Spree.t(:receive), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'receive'), :method => :put, :data => { :confirm => Spree.t(:are_you_sure) }, :icon => 'icon-download-alt' %>
     <% end %>
   </li>
   <li>
     <% if @return_authorization.can_cancel? %>
-      <%= button_link_to t(:cancel), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :data => { :confirm => t(:are_you_sure) }, :icon => 'icon-remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :data => { :confirm => Spree.t(:are_you_sure) }, :icon => 'icon-remove' %>
     <% end %>
   </li>
 <% end %>
@@ -14,7 +14,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= t(:return_authorization) %> <%= @return_authorization.number %> (<%= t(@return_authorization.state.downcase) %>)
+  <i class="icon-arrow-right"></i> <%= Spree.t(:return_authorization) %> <%= @return_authorization.number %> (<%= Spree.t(@return_authorization.state.downcase) %>)
 <% end %>
 
 
@@ -24,9 +24,9 @@
     <%= render :partial => 'form', :locals => { :f => f } %>
 
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button t(:update), 'icon-repeat' %>
-      <span class="or"><%= t(:or) %></span>
-      <%= button_link_to t(:cancel), admin_order_return_authorizations_url(@order), :icon => 'icon-remove' %>
+      <%= button Spree.t('actions.update'), 'icon-repeat' %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= button_link_to Spree.t('actions.cancel'), admin_order_return_authorizations_url(@order), :icon => 'icon-remove' %>
     </div>
   </fieldset>
 <% end %>

@@ -1,12 +1,12 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:stock_movements_for_stock_location, stock_location_name: @stock_location.name) %>
+  <%= Spree.t(:stock_movements_for_stock_location, stock_location_name: @stock_location.name) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'icon-plus', id: 'admin_new_stock_movement_link' %>
+    <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'icon-plus', id: 'admin_new_stock_movement_link' %>
   </li>
 <% end %>
 
@@ -18,9 +18,9 @@
   </colgroup>
   <thead>
     <tr data-hook="admin_stock_movements_index_headers">
-      <th><%= t(:stock_item) %>
-      <th><%= t(:quantity) %></th>
-      <th><%= t(:action) %></th>
+      <th><%= Spree.t(:stock_item) %>
+      <th><%= Spree.t(:quantity) %></th>
+      <th><%= Spree.t(:action) %></th>
       <th data-hook="admin_stock_movements_index_header_actions" class="actions"></th>
     </tr>
   </thead>
@@ -31,9 +31,9 @@
         <td class="align-center"><%= stock_movement.quantity %></td>
         <td class="align-center"><%= stock_movement.action %></td>
         <td data-hook="admin_stock_movements_index_row_actions" class="actions">
-          <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_stock_location_stock_movement_path(@stock_location, stock_movement), data: { action: 'edit' }, no_text: true %>
-          <%= link_to_with_icon 'icon-trash', t(:delete), admin_stock_location_stock_movement_path(@stock_location, stock_movement), method: :delete, 
-            data: { confirm: t(:are_you_sure), action: 'remove' }, no_text: true %>
+          <%= link_to_with_icon 'icon-edit', Spree.t(:edit), edit_admin_stock_location_stock_movement_path(@stock_location, stock_movement), data: { action: 'edit' }, no_text: true %>
+          <%= link_to_with_icon 'icon-trash', Spree.t(:delete), admin_stock_location_stock_movement_path(@stock_location, stock_movement), method: :delete, 
+            data: { confirm: Spree.t(:are_you_sure), action: 'remove' }, no_text: true %>
         </td>
       </tr>
     <% end %>

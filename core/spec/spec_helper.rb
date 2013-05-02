@@ -16,12 +16,14 @@ end
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
-
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
-
 require 'database_cleaner'
+
+require "support/big_decimal"
+require "support/test_gateway"
+
+if ENV["CHECK_TRANSLATIONS"]
+  require "spree/testing_support/i18n"
+end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'

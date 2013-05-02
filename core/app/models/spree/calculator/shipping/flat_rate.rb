@@ -9,7 +9,7 @@ module Spree
       attr_accessible :preferred_amount, :preferred_currency
 
       def self.description
-        I18n.t(:shipping_flat_rate_per_order)
+        Spree.t(:shipping_flat_rate_per_order)
       end
 
       def compute_package(package)

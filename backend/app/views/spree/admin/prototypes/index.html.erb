@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  <%= t(:prototypes) %>
+  <%= Spree.t(:prototypes) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li id="new_prototype_link">
-    <%= button_link_to t(:new_prototype), new_admin_prototype_url, {:remote => true, :icon => 'icon-plus', 'data-update' => 'new_prototype', :id => 'new_prototype_link'} %>
+    <%= button_link_to Spree.t(:new_prototype), new_admin_prototype_url, {:remote => true, :icon => 'icon-plus', 'data-update' => 'new_prototype', :id => 'new_prototype_link'} %>
   </li>
 <% end %>
 
@@ -22,7 +22,7 @@
   </colgroup>
   <thead>
     <tr data-hook="prototypes_header">
-      <th><%= t(:name) %></th>
+      <th><%= Spree.t(:name) %></th>
       <th class="actions"></th>
     </tr>
   </thead>

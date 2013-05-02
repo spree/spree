@@ -13,7 +13,7 @@ module Spree
           Spree::Config[name] = value
         end
 
-        flash[:success] = t(:successfully_updated, :resource => t(:mail_methods))
+        flash[:success] = Spree.t(:successfully_updated, :resource => Spree.t(:mail_methods))
         render :edit
       end
 

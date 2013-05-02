@@ -8,7 +8,7 @@ module Spree
     attr_accessible :preferred_amount, :preferred_currency
 
     def self.description
-      I18n.t(:flat_rate_per_item)
+      Spree.t(:flat_rate_per_item)
     end
 
     def compute(object=nil)

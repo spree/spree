@@ -7,12 +7,12 @@ module Spree
         @variant = Variant.find(params[:variant_id])
 
         if !valid_stock_transfer?
-          flash[:error] = t(:not_enough_stock)
+          flash[:error] = Spree.t(:not_enough_stock)
           redirect_to :back and return
         end
 
         if source_location.transfer_stock(@variant, params[:quantity].to_i, destination_location)
-          flash[:success] = t(:stock_successfully_transferred)
+          flash[:success] = Spree.t(:stock_successfully_transferred)
         end
         redirect_to :back
       end

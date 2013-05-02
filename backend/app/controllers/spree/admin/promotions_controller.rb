@@ -16,7 +16,7 @@ module Spree
         end
 
         def load_event_names
-          @event_names = Spree::Activator.event_names.map { |name| [t("events.#{name}"), name] }
+          @event_names = Spree::Activator.event_names.map { |name| [Spree.t("events.#{name}"), name] }
         end
     end
   end

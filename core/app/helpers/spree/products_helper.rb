@@ -16,9 +16,9 @@ module Spree
       return nil if diff == 0
       amount = Spree::Money.new(diff.abs, { currency: current_currency }).to_html
       if diff > 0
-        "(#{t(:add)}: #{amount})".html_safe
+        "(#{Spree.t(:add)}: #{amount})".html_safe
       else
-        "(#{t(:subtract)}: #{amount})".html_safe
+        "(#{Spree.t(:subtract)}: #{amount})".html_safe
       end
     end
 
@@ -44,7 +44,7 @@ module Spree
       if description.present?
         truncate(strip_tags(description.gsub('&nbsp;', ' ')), length: 100)
       else
-        t(:product_has_no_description)
+        Spree.t(:product_has_no_description)
       end
     end
 

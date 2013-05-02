@@ -17,7 +17,7 @@ module Spree
                     :match_none, :match_one, :match_all, :tracking_url
 
     def adjustment_label
-      I18n.t(:shipping)
+      Spree.t(:shipping)
     end
 
     def zone

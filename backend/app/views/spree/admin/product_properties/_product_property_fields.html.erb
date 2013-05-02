@@ -11,7 +11,7 @@
   </td>
   <td class="actions">
     <% unless @product.properties.empty? %>
-      <%= link_to_remove_fields t(:remove), f, :no_text => true %>
+      <%= link_to_remove_fields Spree.t(:remove), f, :no_text => true %>
     <% end %>
   </td>
 </tr>

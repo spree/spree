@@ -8,8 +8,8 @@
   </colgroup>
   <thead>
     <tr data-hook="states_header">
-      <th><%= t(:name) %></th>
-      <th><%= t(:abbreviation) %></th>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:abbreviation) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
@@ -19,13 +19,13 @@
         <td><%= state.name %></td>
         <td class="align-center"><%= state.abbr %></td>
         <td class="actions">
-          <%= link_to_with_icon 'icon-edit', t(:edit), edit_admin_country_state_url(@country, state), :no_text => true %>
+          <%= link_to_with_icon 'icon-edit', Spree.t(:edit), edit_admin_country_state_url(@country, state), :no_text => true %>
           <%= link_to_delete state, :no_text => true %>
         </td>
       </tr>
     <% end %>
     <% if @states.empty? %>
-      <tr><td colspan="3"><%= t(:none) %></td></tr>
+      <tr><td colspan="3"><%= Spree.t(:none) %></td></tr>
     <% end %>
   </tbody>
 </table>

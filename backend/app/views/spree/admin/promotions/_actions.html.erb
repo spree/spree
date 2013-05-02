@@ -1,15 +1,15 @@
 <fieldset id="action_fields" class="eight columns omega no-border-top">
 
   <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
-    <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
+    <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ Spree.t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
     <fieldset>
-      <legend align="center"><%= t(:promotion_actions) %></legend>
+      <legend align="center"><%= Spree.t(:promotion_actions) %></legend>
       <div class="field">
-        <%= label_tag :action_type, t(:add_action_of_type)%>
+        <%= label_tag :action_type, Spree.t(:add_action_of_type)%>
         <%= select_tag 'action_type', options, :class => 'select2 fullwidth' %>  
       </div>
       <div class="filter-actions actions">
-        <%= button t(:add), 'icon-plus', :class => 'fullwidth' %>
+        <%= button Spree.t(:add), 'icon-plus', :class => 'fullwidth' %>
       </div>
     </fieldset>
   <% end %>
@@ -20,12 +20,12 @@
         <%= render :partial => 'promotion_action',  :collection => @promotion.actions %>
       <% else %>
         <div class="no-objects-found">
-          <%= t(:no_actions_added) %>
+          <%= Spree.t(:no_actions_added) %>
         </div>
       <% end %>
     </div>
     <div class="filter-actions actions promotion-update">
-      <%= button t(:update), 'icon-refresh' %>
+      <%= button Spree.t('actions.update'), 'icon-refresh' %>
     </div>
   <% end %>
 

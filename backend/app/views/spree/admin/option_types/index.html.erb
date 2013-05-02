@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  <%= t(:option_types) %>
+  <%= Spree.t(:option_types) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li id="new_ot_link">
-    <%= button_link_to t(:new_option_type), new_admin_option_type_url, { :remote => true, :icon => 'icon-plus', :id => 'new_option_type_link' } %>
+    <%= button_link_to Spree.t(:new_option_type), new_admin_option_type_url, { :remote => true, :icon => 'icon-plus', :id => 'new_option_type_link' } %>
   </li>
 <% end %>
 
@@ -20,8 +20,8 @@
   </colgroup>
   <thead>
     <tr data-hook="option_header">
-      <th><%= t(:name) %></th>
-      <th><%= t(:presentation) %></th>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:presentation) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
