@@ -35,7 +35,7 @@ module Spree
       Spree::Dash::Config.app_token = params[:app_token]
       Spree::Dash::Config.site_id = params[:site_id]
       Spree::Dash::Config.token = params[:token]
-      flash[:success] = Spree.t(:jirafe_settings_updated, :scope => "spree.dash")
+      flash[:success] = Spree.t(:jirafe_settings_updated, :scope => "dash")
       redirect_to admin_analytics_path
     end
 
