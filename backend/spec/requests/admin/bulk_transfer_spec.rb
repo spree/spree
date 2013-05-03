@@ -22,48 +22,48 @@ describe 'Bulk Transfers' do
     transfer.should have(2).stock_movements
   end
 
-  it 'receive stock to a single location', :js => true do
-    source_location = create(:stock_location_with_items, :name => 'NY')
-    destination_location = create(:stock_location, :name => 'SF')
+  describe 'received stock transfer' do
+    def it_is_received_stock_transfer(page)
+      page.should have_content('Reference Number: PO 666')
+      page.should_not have_content('source:')
+      page.should have_content('destination: NY')
 
-    visit spree.admin_bulk_transfer_path
+      transfer = Spree::StockTransfer.last
+      transfer.should have(1).stock_movements
+      transfer.source_location.should be_nil
+    end
 
-    fill_in 'reference_number', :with => 'PO 666'
-    check 'bulk_receive_stock'
-    select('NY', :from => 'bulk_destination_location_id')
+    it 'receive stock to a single location', :js => true do
+      source_location = create(:stock_location_with_items, :name => 'NY')
+      destination_location = create(:stock_location, :name => 'SF')
 
-    click_button 'Add'
-    click_button 'Transfer Stock'
+      visit spree.admin_bulk_transfer_path
 
-    page.should have_content('Reference Number: PO 666')
-    page.should_not have_content('source:')
-    page.should have_content('destination: NY')
+      fill_in 'reference_number', :with => 'PO 666'
+      check 'bulk_receive_stock'
+      select('NY', :from => 'bulk_destination_location_id')
 
-    transfer = Spree::StockTransfer.last
-    transfer.should have(1).stock_movements
-    transfer.source_location.should be_nil
-  end
+      click_button 'Add'
+      click_button 'Transfer Stock'
 
-  it 'forced to only receive there is only one location', :js => true do
-    source_location = create(:stock_location_with_items, :name => 'NY')
+      it_is_received_stock_transfer page
+    end
 
-    visit spree.admin_bulk_transfer_path
+    it 'forced to only receive there is only one location', :js => true do
+      source_location = create(:stock_location_with_items, :name => 'NY')
 
-    fill_in 'reference_number', :with => 'PO 666'
+      visit spree.admin_bulk_transfer_path
 
-    find('#bulk_receive_stock').should be_checked
+      fill_in 'reference_number', :with => 'PO 666'
 
-    select('NY', :from => 'bulk_destination_location_id')
+      find('#bulk_receive_stock').should be_checked
 
-    click_button 'Add'
-    click_button 'Transfer Stock'
+      select('NY', :from => 'bulk_destination_location_id')
 
-    page.should have_content('Reference Number: PO 666')
-    page.should_not have_content('source:')
-    page.should have_content('destination: NY')
+      click_button 'Add'
+      click_button 'Transfer Stock'
 
-    transfer = Spree::StockTransfer.last
-    transfer.should have(1).stock_movements
-    transfer.source_location.should be_nil
+      it_is_received_stock_transfer page
+    end
   end
 end
