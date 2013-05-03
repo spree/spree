@@ -20,6 +20,30 @@ Nanoc has [some nice documentation](http://nanoc.stoneship.org/docs/3-getting-st
 
 [nanoc]: http://nanoc.stoneship.org/
 
+## Audience
+
+When contributing to the Spree documentation, it's important to make sure you understand your audience, and are speaking to them using appropriate terminology that they will both understand and appreciate.
+
+### API
+
+Those reading these guides are likely intermediate- to advanced-level developers. They are likely comfortable with complex technical language and concepts.
+
+### Developer
+
+The audience for guides in the /developer directory includes developers from beginners to advanced. They are expected to already be familiar with Ruby and Rails, but may not have as much experience with deployment and integration with external services.
+
+### Integration
+
+Consumers of this documentation are developers with intermediate to advanced skills. They should already be well-versed in Ruby and Rails; familiar with the core Spree application; and have knowledge of integrating with external services.
+
+### Release Notes
+
+Developers of all degrees of experience are the audience for these documents.
+
+### User
+
+Admins and store owners are the ones most likely to be using this documentation. These guides are where developers can send their clients to teach them how to maintain their store and process orders.
+
 ## Styleguide
 
 Not sure how to structure the docs?  Here's what the structure of the
