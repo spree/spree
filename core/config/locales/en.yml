@@ -100,6 +100,7 @@ en:
     card_code: "Card Code"
     card_number: "Card Number"
     card_type_is: "Card type is"
+    cart: "Cart"
     categories: Categories
     category: Category
     check_for_spree_alerts: "Check for Spree alerts"
@@ -130,6 +131,9 @@ en:
     country_name: "Name"
     country_names:
       US: "United States of America"
+      CA: "Canada"
+      ITA: "Italy"
+      FRA: "France"
     country_based: "Country Based"
     create: Create
     credit: Credit
@@ -251,6 +255,7 @@ en:
     invalid_promotion_rule: "Invalid promotion rule."
     inventory: Inventory
     inventory_adjustment: "Inventory Adjustment"
+    inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."
     is_not_available_to_shipment_address: "is not available to shipment address"
     iso_name: "Iso Name"
     item: Item
@@ -435,6 +440,7 @@ en:
     price_sack: "Price Sack"
     process: Process
     product: Product
+    product_not_available_in_this_currency: "This product is not available in the selected currency."
     product_details: "Product Details"
     product_has_no_description: "This product has no description"
     product_properties: "Product Properties"
@@ -552,7 +558,6 @@ en:
     smtp_username: "SMTP Username"
     special_instructions: "Special Instructions"
     spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
-    spree_inventory_error_flash_for_insufficient_quantity: "An item in your cart has become unavailable."
     start: Start
     start_date: "Valid from"
     state: State
@@ -618,6 +623,7 @@ en:
     under_price: "Under %{price}"
     unlock: Unlock
     unrecognized_card_type: "Unrecognized card type"
+    unshippable_items: "Unshippable Items"
     update: Update
     updating: Updating
     usage_limit: "Usage Limit"

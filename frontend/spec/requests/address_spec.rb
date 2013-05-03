@@ -20,7 +20,7 @@ describe "Address" do
   end
 
   it "shows the state collection selection for a country having states", :js => true do
-    canada = create(:country, :name => "Canada", :states_required => true)
+    canada = create(:country, :name => "Canada", :states_required => true, :iso => "CA")
     create(:state, :name => "Ontario", :country => canada)
 
     click_button "Checkout"
@@ -30,7 +30,7 @@ describe "Address" do
   end
 
   it "shows the state input field for a country with states required but for which states are not defined", :js => true do
-    italy = create(:country, :name => "Italy", :states_required => true)
+    italy = create(:country, :name => "Italy", :states_required => true, :iso => "ITA")
     click_button "Checkout"
 
     select italy.name, :from => @country_css
@@ -40,7 +40,7 @@ describe "Address" do
   end
 
   it "shows a disabled state input field for a country where states are not required", :js => true do
-     france = create(:country, :name => "France", :states_required => false)
+     france = create(:country, :name => "France", :states_required => false, :iso => "FRA")
      click_button "Checkout"
 
      select france.name, :from => @country_css
@@ -49,8 +49,8 @@ describe "Address" do
   end
 
   it "should clear the state name when selecting a country without states required", :js =>true do
-    italy = create(:country, :name => "Italy", :states_required => true)
-    france = create(:country, :name => "France", :states_required => false)
+    italy = create(:country, :name => "Italy", :states_required => true, :iso => "ITA")
+    france = create(:country, :name => "France", :states_required => false, :iso => "FRA")
 
     click_button "Checkout"
     select italy.name, :from => @country_css
