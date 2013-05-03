@@ -28,17 +28,43 @@ $ ->
 
       @source.change => @populate_destination()
 
+      $('#bulk_receive_stock').change (event) => @receive_stock_change(event)
+
       $.getJSON "/api/stock_locations", (data) =>
         @locations = (location for location in data.stock_locations)
+        @force_receive_stock() if @locations.length < 2
+
         @populate_source()
         @populate_destination()
+
+    force_receive_stock: ->
+      $('#receive_stock_field').hide()
+      $('#bulk_receive_stock').prop('checked', true)
+      @toggle_source_location true
+
+    is_source_location_hidden: ->
+      $('#bulk_source_location_id_field').css('visibility') == 'hidden'
+
+    toggle_source_location: (hide=false) ->
+      @source.trigger('change')
+      if @is_source_location_hidden() and not hide
+        $('#bulk_source_location_id_field').css('visibility', 'visible')
+      else
+        $('#bulk_source_location_id_field').css('visibility', 'hidden')
+
+    receive_stock_change: (event) ->
+      @toggle_source_location event.target.checked
+      @populate_destination(!event.target.checked)
 
     populate_source: ->
       @populate_select @source
       @source.trigger('change')
 
-    populate_destination: ->
-      @populate_select @destination, parseInt(@source.val())
+    populate_destination: (except_source=true) ->
+      if @is_source_location_hidden()
+        @populate_select @destination
+      else
+        @populate_select @destination, parseInt(@source.val())
 
     populate_select: (select, except=0) ->
       select.children('option').remove()
@@ -152,10 +178,4 @@ $ ->
     bulk_variants = new BulkVariants
     bulk_add_variants = new BulkAddVariants
 
-    $('#bulk_receive_stock').click ->
-      if this.checked
-        $('#bulk_source_location_id_field').css('visibility', 'hidden')
-      else
-        $('#bulk_source_location_id_field').css('visibility', 'visible')
 
-      $('#bulk_source_location_id').trigger('change')

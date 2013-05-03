@@ -9,6 +9,9 @@
   <%= button_link_to t(:back_to_stock_transfers),
                      spree.admin_stock_transfers_path, :icon => 'icon-arrow-left' %>
   </li>
+  <li>
+    <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-forward' } %>
+  </li>
 <% end %>
 
 <h3>Reference Number: <%= @stock_transfer.reference_number %></h3>
