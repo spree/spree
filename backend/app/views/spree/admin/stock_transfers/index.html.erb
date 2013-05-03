@@ -7,10 +7,50 @@
 <% content_for :page_actions do %>
   <ul class="actions inline-menu">
     <li>
-      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-plus' } %>
+      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-forward' } %>
     </li>
   </ul>
 <% end %>
+
+<div data-hook="admin_orders_index_search">
+  <%= search_form_for @q, :url => admin_stock_transfers_path do |f| %>
+
+    <div class="field-block alpha four columns">
+      <div class="field">
+        <%= f.label :reference_number_cont %>
+        <%= f.text_field :reference_number_cont %>
+      </div>
+    </div>
+
+    <div class="four columns">
+      <div class="field">
+        <%= f.label :source_location %>
+        <%= f.select :source_location_id_eq,
+             options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
+             include_blank: true,
+             class: 'select2 fullwidth' %>
+      </div>
+    </div>
+
+    <div class="omega four columns">
+      <div class="field">
+        <%= f.label :destination_location %>
+        <%= f.select :destination_location_id_eq,
+             options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
+             include_blank: true,
+             class: 'select2 fullwidth' %>
+      </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="actions filter-actions">
+      <div data-hook="admin_stock_transfers_index_search_buttons">
+        <%= button t(:filter_results), 'icon-search' %>
+      </div>
+    </div>
+  <% end %>
+</div>
 
 <table class="index" id='listing_stock_transfers' data-hook>
   <colgroup>

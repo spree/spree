@@ -1,21 +1,20 @@
 module Spree
   module Admin
     class StockTransfersController < ResourceController
+      before_filter :load_stock_locations, :only => :index
 
       def collection
-        collection = StockTransfer.includes(:stock_movements => { :stock_item => :stock_location })
-                       .order('created_at DESC')
-                       .page(params[:page])
+        @q = StockTransfer.search(params[:q])
 
-        if params.has_key? :source_location_id
-          collection = collection.where(:source_location_id => params[:source_location_id])
-        end
+        @q.result
+          .includes(:stock_movements => { :stock_item => :stock_location })
+          .order('created_at DESC')
+          .page(params[:page])
+      end
 
-        if params.has_key? :destination_location_id
-          collection = collection.where(:destination_location_id => params[:destination_location_id])
-        end
-
-        collection
+      private
+      def load_stock_locations
+        @stock_locations = Spree::StockLocation.active.order('name ASC')
       end
     end
   end

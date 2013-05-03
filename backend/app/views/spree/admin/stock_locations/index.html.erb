@@ -10,7 +10,10 @@
       <%= button_link_to t(:new_stock_location), new_object_url, { :icon => 'icon-plus', :id => 'admin_new_stock_location' } %>
     </li>
     <li>
-      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-plus' } %>
+      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-forward' } %>
+    </li>
+    <li>
+      <%= button_link_to t(:transfers), admin_stock_transfers_url, { :icon => 'icon-resize-full' } %>
     </li>
   </ul>
 <% end %>
