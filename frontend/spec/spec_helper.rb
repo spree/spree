@@ -68,6 +68,16 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  config.after(:each, :type => :request) do
+    missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
+    if missing_translations.any?
+      #binding.pry
+      puts "Found missing translations: #{missing_translations.inspect}"
+      puts "In spec: #{example.location}"
+    end
+  end
+
+
   config.include FactoryGirl::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences
