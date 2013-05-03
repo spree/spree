@@ -7,34 +7,39 @@ module Spree
     end
 
     def verify(line_item, shipment=nil)
-      return true unless order.completed?
+      # should only verify inventory for completed orders
+      # as carts have inventory assigned via create_proposed_shipment methh
+      #
+      # or when shipment is explicitly passed
+      if order.completed? || shipment.present?
 
-      variant_units = inventory_units_for(line_item.variant)
+        variant_units = inventory_units_for(line_item.variant)
 
-      if variant_units.size < line_item.quantity
-        #add
-        quantity = line_item.quantity - variant_units.size
+        if variant_units.size < line_item.quantity
+          #add
+          quantity = line_item.quantity - variant_units.size
 
-        shipment = determine_target_shipment(line_item.variant) unless shipment
+          shipment = determine_target_shipment(line_item.variant) unless shipment
 
-        add_to_shipment(shipment, line_item.variant, quantity)
+          add_to_shipment(shipment, line_item.variant, quantity)
 
-      elsif variant_units.size > line_item.quantity
-        #remove
-        quantity = variant_units.size - line_item.quantity
+        elsif variant_units.size > line_item.quantity
+          #remove
+          quantity = variant_units.size - line_item.quantity
 
-        order.shipments.each do |shipment|
-          break if quantity == 0
+          order.shipments.each do |shipment|
+            break if quantity == 0
 
-          quantity -= remove_from_shipment(shipment, line_item.variant, quantity)
+            quantity -= remove_from_shipment(shipment, line_item.variant, quantity)
+          end
+
         end
-
+      else
+        true
       end
     end
 
     def inventory_units_for(variant)
-      return [] unless order.completed?
-
       units = order.shipments.collect{|s| s.inventory_units.all}.flatten
       units.group_by(&:variant_id)[variant.id] || []
     end

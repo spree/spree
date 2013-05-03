@@ -10,7 +10,7 @@ module Spree
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
         @shipment = @order.shipments.create(:stock_location_id => params[:stock_location_id])
-        @order.contents.add(variant, quantity, @shipment)
+        @order.contents.add(variant, quantity, nil, @shipment)
 
         @shipment.refresh_rates
         @shipment.save!
@@ -62,7 +62,7 @@ module Spree
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
-        @order.contents.add(variant, quantity, @shipment)
+        @order.contents.add(variant, quantity, nil, @shipment)
 
         respond_with(@shipment, :default_template => :show)
       end

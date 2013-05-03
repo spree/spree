@@ -50,6 +50,35 @@ describe Spree::OrderInventory do
         movement.quantity.should == -5
       end
     end
+
+    context "#determine_target_shipment" do
+      let(:stock_location) { create :stock_location }
+      let(:variant) { line_item.variant }
+
+      before do
+        order.shipments.create(:stock_location_id => stock_location.id)
+        shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id)
+        shipped.update_attribute_without_callbacks(:state, 'shipped')
+      end
+
+      it 'should select first non-shipped shipment that already contains given variant' do
+        shipment = subject.send(:determine_target_shipment, variant)
+        shipment.shipped?.should be_false
+        shipment.inventory_units_for(variant).should_not be_empty
+        variant.stock_location_ids.include?(shipment.stock_location_id).should be_true
+      end
+
+      it 'should select first non-shipped shipment that leaves from same stock_location when no shipments already contain this varint' do
+        subject.send(:remove_from_shipment, order.shipments.first, variant, line_item.quantity)
+
+        shipment = subject.send(:determine_target_shipment, variant)
+        shipment.reload
+        shipment.shipped?.should be_false
+        shipment.inventory_units_for(variant).should be_empty
+        variant.stock_location_ids.include?(shipment.stock_location_id).should be_true
+      end
+
+    end
   end
 
   context 'when order has too many inventory units' do
