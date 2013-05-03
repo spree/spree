@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe "Promotion adjustments", :js => true do
-  let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
-  let!(:state) { create(:state, :name => "Victoria", :country => country) }
+  let!(:country) { create(:country, :name => "United States of America",:states_required => true) }
+  let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:payment_method) { create(:payment_method) }
