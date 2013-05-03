@@ -7,7 +7,7 @@ module Spree
     def checkout_progress
       states = checkout_states
       items = states.map do |state|
-        text = t("order_state.#{state}").titleize
+        text = Spree.t("order_state.#{state}").titleize
 
         css_classes = []
         current_index = states.index(@order.state)

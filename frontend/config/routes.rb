@@ -15,7 +15,7 @@ Spree::Core::Engine.routes.draw do
   get '/checkout', :to => 'checkout#edit' , :as => :checkout
 
   populate_redirect = redirect do |params, request|
-    request.flash[:error] = I18n.t(:populate_get_error)
+    request.flash[:error] = Spree.t(:populate_get_error)
     request.referer || '/cart'
   end
 

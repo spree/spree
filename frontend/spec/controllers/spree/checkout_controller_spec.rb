@@ -130,7 +130,7 @@ describe Spree::CheckoutController do
 
         it "should populate the flash message" do
           spree_post :update, {:state => "confirm"}
-          flash.notice.should == I18n.t(:order_processed_successfully)
+          flash.notice.should == Spree.t(:order_processed_successfully)
         end
 
         it "should remove completed order from the session" do
@@ -184,7 +184,7 @@ describe Spree::CheckoutController do
 
       it "should render the edit template" do
         response.should render_template :edit
-        flash[:error].should == I18n.t(:spree_gateway_error_flash_for_checkout)
+        flash[:error].should == Spree.t(:spree_gateway_error_flash_for_checkout)
       end
     end
 
@@ -216,7 +216,7 @@ describe Spree::CheckoutController do
       end
 
       it "should set flash message for no inventory" do
-        flash[:error].should == I18n.t(:spree_inventory_error_flash_for_insufficient_quantity , :names => "'#{product.name}'" )
+        flash[:error].should == Spree.t(:inventory_error_flash_for_insufficient_quantity , :names => "'#{product.name}'" )
       end
     end
   end
