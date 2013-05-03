@@ -348,7 +348,8 @@ describe Spree::Shipment do
     before { shipment.stub(:reload) }
 
     it "should create adjustment when not present" do
-      shipping_method.should_receive(:create_adjustment).with(Spree.t(:shipping), order, shipment, true)
+      shipment.stub(:selected_shipping_rate_id => 1)
+      shipping_method.should_receive(:create_adjustment).with("UPS", order, shipment, true, "open")
       shipment.send(:ensure_correct_adjustment)
     end
 
