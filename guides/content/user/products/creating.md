@@ -56,11 +56,76 @@ You have the option to associate a photo only with a particular **Variant** (aga
 
 When you click Update, not only is the product photo uploaded, it is automatically resized and cropped to fit your store's requirements, and it is associated with the correct versions of your product.
 
-## Variants
+## Understanding Variants
 
-A product can have many variants...
+Suppose that in your store, you sell drink tumblers. All are from the same manufacturer and have the same basic product specifications (materials used, machine washability rating, etc.), but your inventory includes several varieties:
 
-To set up variants you must first Option Types and Option Values set up...
+* **Size** - You carry both Medium and Large tumblers
+* **Decorative Wrap** - Your tumblers come with the option of several kinds of decorative plastic wraps on the outside. Customers can choose from Stars, Owls, Pink Paisley, Purple Paisley, or Skulls.
+* **Lid Color** - Every quality tumbler needs a quality lid. Yours are available with an assortment of lids to match the decorative wrap - the Star tumblers have Blue lids, the Owls have Orange lids, the Pink Paisley have Pink lids, the Purple Paisley have White lids, and the Skulls can be purchased with White *or* Black lids.
+
+Given this inventory, you need to have a Drink Tumbler *Product*, and twelve *Variants*:
+
+Size  | Wrap           | Lid Color
+------|----------------|----------
+Large | Stars          | Blue
+Small | Stars          | Blue
+Large | Owls           | Orange
+Small | Owls           | Orange
+Large | Pink Paisley   | Pink
+Small | Pink Paisley   | Pink
+Large | Purple Paisley | White
+Small | Purple Paisley | White
+Large | Skulls         | White
+Large | Skulls         | Black
+Small | Skulls         | White
+Small | Skulls         | Black
+
+As you can see, we need to establish three different *Option Types* - Size, Wrap, and Lid Color - with appropriate Option Values for each.
+
+Option Type | Option Values
+------------|--------------
+Size        | Large, Small
+Wrap        | Stars, Owls, Pink Paisley, Purple Paisley, Skulls
+Lid Color   | Blue, Orange, Pink, White, Black
+
+### Creating Option Types and Option Values
+
+You have to establish your Option Types and Option Values before you can set up your Variants. Click Products > Option Types > New Option Type.
+
+![New Option Type](images/user/products/new_option_type.jpg)
+
+Let's add the first Option Type for our tumblers. You are required to fill in two fields: **Name** and **Presentation**. You will see this same pattern several places in the Spree Admin interface. **Name** generally is the short term (usually one or two words) for the option you want to store. **Presentation** is the wordier, more descriptive term that gives you site's visitors a little more detail.
+
+***
+NOTE: Sometimes the term "Display" is used instead of "Presentation" to indicate what is shown to the user on the Product Variant's page.
+***
+
+For our first Option Type - Size - enter "Size" for the Name and "Size of the Tumbler" as the Presentation. Click Update.
+
+When the screen refreshes, you see that Spree has helpfully provided you with a blank row in which you can enter your first Option Value for the new Option Type.
+
+![New Option Value](images/user/products/new_option_value.jpg)
+
+Since we know we're going to need two Option Values (Large and Small) for the Size Option Value, go ahead and click the Add Option Value button. This gives you two blank rows to work with.
+
+**Name** is easy - "Large" for the first, and "Small" for the second. Let's input "24-ounce cup" in the **Display** field for the Large Option Value and "16-ounce cup" for the Small Option Value.
+
+![Completed Option Values](images/user/products/large_small_option_values.jpg)
+
+When you click Update, Spree saves the two new Option Values, associates them with the Size Option Type, and takes you to the list of all Option Types.
+
+Click the New Option Type button and similarly input the other two Option Types (along with their Option Values) we need for our tumblers.
+
+### Associating Option Values with a Product
+
+TODO: Edit product, associate option values
+
+### Creating Variants
+
+Now that you have set up the appropriate options for your Product's Variants and associated those options with the product, you can create the Variants themselves.
+
+TODO: Add one instructional variant as an example; have user make the other 11.
 
 ## Product Properties
 
