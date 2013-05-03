@@ -428,6 +428,14 @@ describe Spree::Order do
     end
   end
 
+  context "#confirmation_required?" do
+    it "does not bomb out when an order has an unpersisted payment" do
+      order = Spree::Order.new
+      order.payments.build
+      assert !order.confirmation_required?
+    end
+  end
+
   # Regression test for #2191
   context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
     let!(:persisted_order) { create(:order) }
