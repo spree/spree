@@ -8,26 +8,26 @@
   <fieldset>
     <legend><%= Spree.t(:settings)%></legend>
 
-    <p><%= Spree.t(:explanation, :scope => "spree.dash.jirafe") %></p>
+    <p><%= Spree.t(:explanation, :scope => "dash.jirafe") %></p>
     <div class="alpha five columns">
       <div class="field">
-        <%= label_tag 'app_id', Spree.t(:app_id, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'app_id', Spree.t(:app_id, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'app_id', Spree::Dash::Config.app_id %>
       </div>
       <div class="field">
-        <%= label_tag 'site_id', Spree.t(:site_id, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'site_id', Spree.t(:site_id, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'site_id', Spree::Dash::Config.site_id %>
       </div>
     </div>
 
     <div class="omega seven columns">
       <div class="field">
-        <%= label_tag 'app_token', Spree.t(:app_token, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'app_token', Spree.t(:app_token, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'app_token', Spree::Dash::Config.app_token, :size => 40 %>
       </div>
 
       <div class="field">
-        <%= label_tag 'token', Spree.t(:token, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'token', Spree.t(:token, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'token', Spree::Dash::Config.token, :size => 40 %>
       </div>
     </div>
