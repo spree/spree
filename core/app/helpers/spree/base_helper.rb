@@ -165,6 +165,13 @@ module Spree
       end
     end
 
+    def t(*args)
+      puts "WARNING: Spree's translations are now scoped to a 'spree' namespace. Please use the Spree.t helper."
+      puts "Called from: #{caller[0]}"
+      I18n.t(*args)
+    end
+
+
     private
 
     # Returns style of image or nil
