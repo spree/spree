@@ -123,130 +123,56 @@ describe Spree::Product do
     end
   end
 
-  context "validations" do
-    context "find_by_param" do
+  context "permalink" do
+    context "build product with similar name" do
+      let!(:other) { create(:product, :name => 'foo bar') }
+      let(:product) { build(:product, :name => 'foo') }
 
-      context "permalink should be incremented until the value is not taken" do
-        before do
-          @other_product = create(:product, :name => 'zoo')
-          @product1 = create(:product, :name => 'foo')
-          @product2 = create(:product, :name => 'foo')
-          @product3 = create(:product, :name => 'foo')
-        end
-        it "should have valid permalink" do
-          @product1.permalink.should == 'foo'
-          @product2.permalink.should == 'foo-1'
-          @product3.permalink.should == 'foo-2'
-        end
+      before { product.valid? }
+
+      it "increments name" do
+        product.permalink.should == 'foo-1'
       end
-
-      context "permalink should be incremented until the value is not taken when there are more than 10 products" do
-        before do
-          @products = 0.upto(11).map do
-            create(:product, :name => 'foo')
-          end
-        end
-        it "should have valid permalink" do
-          @products[11].permalink.should == 'foo-11'
-        end
-      end
-
-      context "permalink should be incremented until the value is not taken for similar names" do
-        before do
-          @other_product = create(:product, :name => 'foo bar')
-          @product1 = create(:product, :name => 'foo')
-          @product2 = create(:product, :name => 'foo')
-          @product3 = create(:product, :name => 'foo')
-        end
-        it "should have valid permalink" do
-          @product1.permalink.should == 'foo-1'
-          @product2.permalink.should == 'foo-2'
-          @product3.permalink.should == 'foo-3'
-        end
-      end
-
-      context "permalink should be incremented until the value is not taken for similar names when there are more than 10 products" do
-        before do
-          @other_product = create(:product, :name => 'foo a')
-          @products = 0.upto(11).map do
-            create(:product, :name => 'foo')
-          end
-        end
-        it "should have valid permalink" do
-          @products[11].permalink.should == 'foo-12'
-        end
-      end
-
-      context "permalink with quotes" do
-        it "should be saved correctly" do
-          product = create(:product, :name => "Joe's", :permalink => "joe's")
-          product.permalink.should == "joe's"
-        end
-
-        context "existing" do
-          before do
-            create(:product, :name => "Joe's", :permalink => "joe's")
-          end
-
-          it "should be detected" do
-            product = create(:product, :name => "Joe's", :permalink => "joe's")
-            product.permalink.should == "joe's-1"
-          end
-        end
-      end
-
-      context "make_permalink should declare validates_uniqueness_of" do
-        before do
-          @product1 = create(:product, :name => 'foo')
-          @product2 = create(:product, :name => 'foo')
-          @product2.update_attributes(:permalink => 'foo')
-        end
-
-        it "should have an error" do
-          @product2.errors.size.should == 1
-        end
-
-        it "should have error message that permalink is already taken" do
-          @product2.errors.full_messages.first.should == 'Permalink has already been taken'
-        end
-      end
-
     end
-  end
 
-  context "permalink generation" do
+    context "build permalink with quotes" do
+      it "saves quotes" do
+        product = create(:product, :name => "Joe's", :permalink => "joe's")
+        product.permalink.should == "joe's"
+      end
+    end
+
+    context "validate uniqueness" do
+      let!(:first) { create(:product, :name => 'foo') }
+      let!(:second) { create(:product, :name => 'foo') }
+
+      before { second.update_attributes(:permalink => 'foo') }
+
+      it { second.should have(1).error_on(:permalink) }
+    end
+
     it "supports Chinese" do
-      @product = create(:product, :name => "你好")
-      @product.permalink.should == "ni-hao"
-    end
-  end
-
-  context "manual permalink override" do
-    it "calling save_permalink with a parameter" do
-      @product = create(:product, :name => "foo")
-      @product.permalink.should == "foo"
-      @product.name = "foobar"
-      @product.save
-      @product.permalink.should == "foo"
-      @product.save_permalink(@product.name)
-      @product.permalink.should == "foobar"
+      create(:product, :name => "你好").permalink.should == "ni-hao"
     end
 
-    it "should be incremented until not taken with a parameter" do
-      @product = create(:product, :name => "foo")
-      @product2 = create(:product, :name => "foobar")
-      @product.permalink.should == "foo"
-      @product.name = "foobar"
-      @product.save
-      @product.permalink.should == "foo"
-      @product.save_permalink(@product.name)
-      @product.permalink.should == "foobar-1"
+    context "manual permalink override" do
+      let(:product) { create(:product, :name => "foo") }
+
+      it "calling save_permalink with a parameter" do
+        product.name = "foobar"
+        product.save
+        product.permalink.should == "foo"
+
+        product.save_permalink(product.name)
+        product.permalink.should == "foobar"
+      end
     end
   end
 
   context "properties" do
+    let(:product) { create(:product) }
+
     it "should properly assign properties" do
-      product = create(:product)
       product.set_property('the_prop', 'value1')
       product.property('the_prop').should == 'value1'
 
@@ -255,8 +181,6 @@ describe Spree::Product do
     end
 
     it "should not create duplicate properties when set_property is called" do
-      product = create(:product)
-
       expect {
         product.set_property('the_prop', 'value2')
         product.save
@@ -273,7 +197,6 @@ describe Spree::Product do
 
     # Regression test for #2455
     it "should not overwrite properties' presentation names" do
-      product = create(:product)
       Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
       product.set_property('foo', 'value1')
       product.set_property('bar', 'value2')
@@ -283,19 +206,16 @@ describe Spree::Product do
   end
 
   context '#create' do
-    before do
-      @prototype = create(:prototype)
-      @product = Spree::Product.new(:name => "Foo", :price => 1.99)
-    end
+    let!(:prototype) { create(:prototype) }
+    let!(:product) { Spree::Product.new(:name => "Foo", :price => 1.99) }
+
+    before { product.prototype_id = prototype.id }
 
     context "when prototype is supplied" do
-      before { @product.prototype_id = @prototype.id }
-
       it "should create properties based on the prototype" do
-        @product.save
-        @product.properties.count.should == 1
+        product.save
+        product.properties.count.should == 1
       end
-
     end
 
     context "when prototype with option types is supplied" do
@@ -320,32 +240,30 @@ describe Spree::Product do
         hash
       end
 
-      before { @product.prototype_id = prototype.id }
-
       it "should create option types based on the prototype" do
-        @product.save
-        @product.option_type_ids.length.should == 1
-        @product.option_type_ids.should == prototype.option_type_ids
+        product.save
+        product.option_type_ids.length.should == 1
+        product.option_type_ids.should == prototype.option_type_ids
       end
 
       it "should create product option types based on the prototype" do
-        @product.save
-        @product.product_option_types.pluck(:option_type_id).should == prototype.option_type_ids
+        product.save
+        product.product_option_types.pluck(:option_type_id).should == prototype.option_type_ids
       end
 
       it "should create variants from an option values hash with one option type" do
-        @product.option_values_hash = option_values_hash
-        @product.save
-        @product.variants.length.should == 3
+        product.option_values_hash = option_values_hash
+        product.save
+        product.variants.length.should == 3
       end
 
       it "should still create variants when option_values_hash is given but prototype id is nil" do
-        @product.option_values_hash = option_values_hash
-        @product.prototype_id = nil
-        @product.save
-        @product.option_type_ids.length.should == 1
-        @product.option_type_ids.should == prototype.option_type_ids
-        @product.variants.length.should == 3
+        product.option_values_hash = option_values_hash
+        product.prototype_id = nil
+        product.save
+        product.option_type_ids.length.should == 1
+        product.option_type_ids.should == prototype.option_type_ids
+        product.variants.length.should == 3
       end
 
       it "should create variants from an option values hash with multiple option types" do
@@ -353,27 +271,27 @@ describe Spree::Product do
         logo  = build_option_type_with_values("logo", %w(Ruby Rails Nginx))
         option_values_hash[color.id.to_s] = color.option_value_ids
         option_values_hash[logo.id.to_s] = logo.option_value_ids
-        @product.option_values_hash = option_values_hash
-        @product.save
-        @product = @product.reload
-        @product.option_type_ids.length.should == 3
-        @product.variants.length.should == 27
+        product.option_values_hash = option_values_hash
+        product.save
+        product.reload
+        product.option_type_ids.length.should == 3
+        product.variants.length.should == 27
       end
     end
-
   end
 
   context "#images" do
     let(:product) { create(:product) }
+    let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
+    let(:params) { {:viewable_id => product.master.id, :viewable_type => 'Spree::Variant', :attachment => image, :alt => "position 2", :position => 2} }
 
     before do
-      image = File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__))
-      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 2", :attachment => image, :position => 2})
-      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'Spree::Variant',        :alt => "position 1", :attachment => image, :position => 1})
-      Spree::Image.create({:viewable_id => product.master.id, :viewable_type => 'ThirdParty::Extension', :alt => "position 1", :attachment => image, :position => 2})
+      Spree::Image.create(params)
+      Spree::Image.create(params.merge({:alt => "position 1", :position => 1}))
+      Spree::Image.create(params.merge({:viewable_type => 'ThirdParty::Extension', :alt => "position 1", :position => 2}))
     end
 
-    it "should only look for variant images to support third-party extensions" do
+    it "only looks for variant images" do
       product.images.size.should == 2
     end
 
