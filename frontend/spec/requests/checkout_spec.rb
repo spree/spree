@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe "Checkout" do
-  let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
-  let!(:state) { create(:state, :name => "Victoria", :country => country) }
+  let!(:country) { create(:country, :name => "United States of America",:states_required => true) }
+  let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
 
@@ -38,8 +38,8 @@ describe "Checkout" do
         fill_in "#{address}_lastname", :with => "Bigg"
         fill_in "#{address}_address1", :with => "143 Swan Street"
         fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
+        select "United States of America", :from => "#{address}_country_id"
+        select "Alabama", :from => "#{address}_state_id"
         fill_in "#{address}_zipcode", :with => "12345"
         fill_in "#{address}_phone", :with => "(555) 5555-555"
         click_button "Save and Continue"
@@ -68,8 +68,8 @@ describe "Checkout" do
         fill_in "#{address}_lastname", :with => "Bigg"
         fill_in "#{address}_address1", :with => "143 Swan Street"
         fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
+        select "United States of America", :from => "#{address}_country_id"
+        select "Alabama", :from => "#{address}_state_id"
         fill_in "#{address}_zipcode", :with => "12345"
         fill_in "#{address}_phone", :with => "(555) 5555-555"
 
@@ -93,8 +93,8 @@ describe "Checkout" do
         fill_in "#{address}_lastname", :with => "Bigg"
         fill_in "#{address}_address1", :with => "143 Swan Street"
         fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
+        select "United States of America", :from => "#{address}_country_id"
+        select "Alabama", :from => "#{address}_state_id"
         fill_in "#{address}_zipcode", :with => "12345"
         fill_in "#{address}_phone", :with => "(555) 5555-555"
 
