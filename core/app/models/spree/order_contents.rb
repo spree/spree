@@ -6,21 +6,22 @@ module Spree
       @order = order
     end
 
-    def add(variant, quantity, currency=nil, shipment=nil)
-      #get current line item for variant if exists
+    # Gets current line item for variant if exists
+    # Adds variant qty to line_item
+    # Returns the line_item created or updated
+    def add(variant, quantity, currency = nil, shipment = nil)
       line_item = order.find_line_item_by_variant(variant)
-
-      #add variant qty to line_item
       add_to_line_item(line_item, variant, quantity, currency, shipment)
     end
 
-    def remove(variant, quantity, shipment=nil)
-      #get current line item for variant
+    # Gets current line item for variant
+    # Updates item quantity or destroys it if quantity is 0
+    # Returns the line_item updated or destroyed
+    def remove(variant, quantity, shipment = nil)
       line_item = order.find_line_item_by_variant(variant)
-
-      #TODO raise exception if line_item is nil
-
-      #remove variant qty from line_item
+      unless line_item
+        raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
+      end
       remove_from_line_item(line_item, variant, quantity, shipment)
     end
 
@@ -64,6 +65,5 @@ module Spree
       order.reload
       line_item
     end
-
   end
 end

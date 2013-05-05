@@ -49,7 +49,7 @@ module Spree
     def populate
       populator = Spree::OrderPopulator.new(current_order(true), current_currency)
       if populator.populate(params.slice(:products, :variants, :quantity))
-        fire_event('spree.cart.add')
+        fire_event('spree.cart.add', items: populator.items)
         fire_event('spree.order.contents_changed')
         respond_with(@order) do |format|
           format.html { redirect_to cart_path }

@@ -1,10 +1,10 @@
 module Spree
   class OrderPopulator
     attr_accessor :order, :currency
-    attr_reader :errors
+    attr_reader :errors, :items
 
     def initialize(order, currency)
-      @order = order
+      @order, @items = order, []
       @currency = currency
       @errors = ActiveModel::Errors.new(self)
     end
@@ -47,7 +47,7 @@ module Spree
       variant = Spree::Variant.find(variant_id)
       if quantity > 0
         if check_stock_levels(variant, quantity)
-          @order.contents.add(variant, quantity, currency)
+          items << @order.contents.add(variant, quantity, currency)
         end
       end
     end

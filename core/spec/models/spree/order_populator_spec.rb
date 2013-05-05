@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrderPopulator do
   let(:order) { double('Order') }
+  let(:item) { double('Item') }
   subject { Spree::OrderPopulator.new(order, "USD") }
 
   context "with stubbed out find_variant" do
@@ -11,16 +12,25 @@ describe Spree::OrderPopulator do
      order.should_receive(:contents).at_least(:once).and_return(Spree::OrderContents.new(self))
     end
 
-    context "with products parameters" do
-      it "can take a list of products and add them to the order" do
-        subject.stub(:check_stock_levels => true)
-        order.contents.should_receive(:add).with(variant, 1, subject.currency)
-        subject.populate(:products => { 1 => 2 }, :quantity => 1)
+    context "takes a list of products" do
+      context "quantity greater than 0" do
+        before do
+          subject.stub(:check_stock_levels => true)
+          order.contents.should_receive(:add).with(variant, 1, subject.currency).and_return(item)
+        end
+
+        it "adds record to items list" do
+          subject.populate(:products => { 1 => 2 }, :quantity => 1)
+          subject.items.should == [item]
+        end
       end
 
-      it "does not add any products if a quantity is set to 0" do
-        order.contents.should_not_receive(:add)
-        subject.populate(:products => { 1 => 2 }, :quantity => 0)
+      context "quantity is set to 0" do
+        it "keeps items list empty" do
+          order.contents.should_not_receive(:add)
+          subject.items.should be_empty
+          subject.populate(:products => { 1 => 2 }, :quantity => 0)
+        end
       end
 
       it "should add an error if the variant is out of stock" do
@@ -56,11 +66,15 @@ describe Spree::OrderPopulator do
       end
     end
 
-    context "with variant parameters" do
-      it "can take a list of variants with quantites and add them to the order" do
+    context "takes a list of variants with quantites" do
+      before do
         subject.stub(:check_stock_levels => true)
-        order.contents.should_receive(:add).with(variant, 5, subject.currency)
+        order.contents.should_receive(:add).with(variant, 5, subject.currency).and_return(item)
+      end
+
+      it "adds record to items list" do
         subject.populate(:variants => { 2 => 5 })
+        subject.items.should == [item]
       end
     end
   end

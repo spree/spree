@@ -23,6 +23,7 @@ describe Spree::OrdersController do
       let(:populator) { double('OrderPopulator') }
       before do
         Spree::OrderPopulator.should_receive(:new).and_return(populator)
+        populator.should_receive(:items)
       end
 
       it "should handle single variant/quantity pair" do
