@@ -16,6 +16,10 @@ group :assets do
   gem 'sass-rails', '~> 3.2'
 end
 
+group :development do
+  gem 'localeapp'
+end
+
 group :test do
   gem 'capybara', '~> 1.1'
   gem 'database_cleaner', '0.7.1'
