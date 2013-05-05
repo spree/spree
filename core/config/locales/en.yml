@@ -518,9 +518,6 @@ en:
     mail_methods: Mail Methods
     make_refund: Make refund
     master_price: Master Price
-    match_choices:
-      all: All
-      none: None
     max_items: Max Items
     meta_description: Meta Description
     meta_keywords: Meta Keywords
