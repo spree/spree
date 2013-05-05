@@ -3,19 +3,18 @@ describe Spree::Order do
   let(:order) { Spree::Order.new }
 
   context "clear_adjustments" do
-    it "should destroy all previous tax adjustments" do
-      adjustment = double
-      adjustment.should_receive :destroy
 
-      order.stub_chain :adjustments, :tax => [adjustment]
+    let(:adjustment) { double("Adjustment") }
+
+    it "destroys all order adjustments" do
+      order.stub(:adjustments => adjustment)
+      adjustment.should_receive(:destroy_all)
       order.clear_adjustments!
     end
 
-    it "should destroy all price adjustments" do
-      adjustment = double
-      adjustment.should_receive :destroy
-
-      order.stub :price_adjustments => [adjustment]
+    it "destroy all line item adjustments" do
+      order.stub(:line_item_adjustments => adjustment)
+      adjustment.should_receive(:destroy_all)
       order.clear_adjustments!
     end
   end
@@ -40,15 +39,15 @@ describe Spree::Order do
   end
   
 
-  context "#price_adjustment_totals" do
+  context "line item adjustment totals" do
     before { @order = Spree::Order.create! }
 
 
-    context "when there are no price adjustments" do
-      before { @order.stub :price_adjustments => [] }
+    context "when there are no line item adjustments" do
+      before { @order.stub_chain(:line_item_adjustments, :eligible => []) }
 
       it "should return an empty hash" do
-        @order.price_adjustment_totals.should == {}
+        @order.line_item_adjustment_totals.should == {}
       end
     end
 
@@ -57,16 +56,16 @@ describe Spree::Order do
       let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
 
       before do
-        @order.stub :price_adjustments => [adj1, adj2]
+        @order.stub_chain(:line_item_adjustments, :eligible => [adj1, adj2])
       end
 
       it "should return exactly two totals" do
-        @order.price_adjustment_totals.size.should == 2
+        @order.line_item_adjustment_totals.size.should == 2
       end
 
       it "should return the correct totals" do
-        @order.price_adjustment_totals["Foo"].should == Spree::Money.new(10)
-        @order.price_adjustment_totals["Bar"].should == Spree::Money.new(20)
+        @order.line_item_adjustment_totals["Foo"].should == Spree::Money.new(10)
+        @order.line_item_adjustment_totals["Bar"].should == Spree::Money.new(20)
       end
     end
 
@@ -76,20 +75,20 @@ describe Spree::Order do
       let(:adj3) { mock_model Spree::Adjustment, :amount => 40, :label => "Bar" }
 
       before do
-        @order.stub :price_adjustments => [adj1, adj2, adj3]
+        @order.stub_chain(:line_item_adjustments, :eligible => [adj1, adj2, adj3])
       end
 
       it "should return exactly two totals" do
-        @order.price_adjustment_totals.size.should == 2
+        @order.line_item_adjustment_totals.size.should == 2
       end
       it "should return the correct totals" do
-        @order.price_adjustment_totals["Foo"].should == Spree::Money.new(10)
-        @order.price_adjustment_totals["Bar"].should == Spree::Money.new(60)
+        @order.line_item_adjustment_totals["Foo"].should == Spree::Money.new(10)
+        @order.line_item_adjustment_totals["Bar"].should == Spree::Money.new(60)
       end
     end
   end
 
-  context "#price_adjustments" do
+  context "line item adjustments" do
     before do
       @order = Spree::Order.create!
       @order.stub :line_items => [line_item1, line_item2]
@@ -100,7 +99,7 @@ describe Spree::Order do
 
     context "when there are no line item adjustments" do
       it "should return nothing if line items have no adjustments" do
-        @order.price_adjustments.should be_empty
+        @order.line_item_adjustments.should be_empty
       end
     end
 
@@ -120,7 +119,7 @@ describe Spree::Order do
       end
 
       it "should return the adjustments for that line item" do
-         @order.price_adjustments.should =~ [@adj1, @adj2]
+         @order.line_item_adjustments.should =~ [@adj1, @adj2]
       end
     end
 
@@ -140,7 +139,7 @@ describe Spree::Order do
       end
 
       it "should return the adjustments for each line item" do
-        @order.price_adjustments.should == [@adj1, @adj2]
+        @order.line_item_adjustments.should == [@adj1, @adj2]
       end
     end
   end
