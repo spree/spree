@@ -128,6 +128,15 @@ module Spree
         res = CGI.escapeHTML(response)
         hs + %(<pre class="highlight"><code>) + res + "</code></pre>"
       end
+
+      # Used in the release notes to stop RSI
+      def issue(num)
+        "<a href='https://github.com/spree/spree/issues/#{num.to_s}'>##{num}</a>"
+      end
+
+      def commit(sha)
+        "<a href='https://github.com/spree/spree/commit/#{sha}'>commit #{sha[0..7]}</a>"
+      end
     end
 
     USER =
