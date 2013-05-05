@@ -192,6 +192,52 @@ en:
       spree/zone:
         one: Zone
         other: Zones
+  devise:
+    confirmations:
+      confirmed: Your account was successfully confirmed. You are now signed in.
+      send_instructions: You will receive an email with instructions about how to confirm your account in a few minutes.
+    failure:
+      inactive: Your account was not activated yet.
+      invalid: Invalid email or password.
+      invalid_token: Invalid authentication token.
+      locked: Your account is locked.
+      timeout: Your session expired, please sign in again to continue.
+      unauthenticated: You need to sign in or sign up before continuing.
+      unconfirmed: You have to confirm your account before continuing.
+    mailer:
+      confirmation_instructions:
+        subject: Confirmation instructions
+      reset_password_instructions:
+        subject: Reset password instructions
+      unlock_instructions:
+        subject: Unlock Instructions
+    oauth_callbacks:
+      failure: Could not authorize you from %{kind} because "%{reason}".
+      success: Successfully authorized from %{kind} account.
+    unlocks:
+      send_instructions: You will receive an email with instructions about how to unlock your account in a few minutes.
+      unlocked: Your account was successfully unlocked. You are now signed in.
+    user_passwords:
+      user:
+        cannot_be_blank: Your password cannot be blank.
+        send_instructions: You will receive an email with instructions about how to reset your password in a few minutes.
+        updated: Your password was changed successfully. You are now signed in.
+    user_registrations:
+      destroyed: Bye! Your account was successfully cancelled. We hope to see you again soon.
+      inactive_signed_up: You have signed up successfully. However, we could not sign you in because your account is %{reason}.
+      signed_up: Welcome! You have signed up successfully.
+      updated: You updated your account successfully.
+    user_sessions:
+      signed_in: Signed in successfully.
+      signed_out: Signed out successfully.
+  errors:
+    messages:
+      already_confirmed: was already confirmed
+      not_found: not found
+      not_locked: was not locked
+      not_saved:
+        one: ! '1 error prohibited this %{resource} from being saved:'
+        other: ! '%{count} errors prohibited this %{resource} from being saved:'
   spree:
     abbreviation: Abbreviation
     account: Account
@@ -287,6 +333,7 @@ en:
     back_to_tax_categories_list: Back To Tax Categories List
     back_to_taxonomies_list: Back To Taxonomies List
     back_to_trackers_list: Back To Trackers List
+    back_to_users_list: Back To Users List
     back_to_zones_list: Back To Zones List
     backorderable: Backorderable
     balance_due: Balance Due
@@ -324,6 +371,7 @@ en:
     configure_s3: Configure S3
     confirm: Confirm
     confirm_delete: Confirm Deletion
+    confirm_password: Password Confirmation
     continue: Continue
     continue_shopping: Continue shopping
     cost_currency: Cost Currency
@@ -350,6 +398,7 @@ en:
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     create: Create
+    create_a_new_account: Create a new account
     credit: Credit
     credit_card: Credit Card
     credit_cards: Credit Cards
@@ -454,6 +503,7 @@ en:
     flat_rate_per_item: Flat Rate (per item)
     flat_rate_per_order: Flat Rate (per order)
     flexible_rate: Flexible Rate
+    forgot_password: Forgot Password?
     free_shipping: Free Shipping
     front_end: Front End
     gateway: Gateway
@@ -507,17 +557,28 @@ en:
     listing_products: Listing Products
     listing_reports: Listing Reports
     listing_tax_categories: Listing Tax Categories
+    listing_users: Listing Users
     loading: Loading
     locale_changed: Locale Changed
     location: Location
     lock: Lock
+    logged_in_as: Logged in as
+    logged_in_succesfully: Logged in successfully
+    logged_out: You have been logged out.
     login: Login
+    login_as_existing: Login as Existing Customer
+    login_failed: Login authentication failed.
+    login_name: Login
+    logout: Logout
     look_for_similar_items: Look for similar items
     maestro_or_solo_cards: Maestro/Solo cards
     mail_method_settings: Mail Method Settings
     mail_methods: Mail Methods
     make_refund: Make refund
     master_price: Master Price
+    match_choices:
+      all: All
+      none: None
     max_items: Max Items
     meta_description: Meta Description
     meta_keywords: Meta Keywords
@@ -531,6 +592,7 @@ en:
     name_or_sku: Name or SKU (enter at least first 4 characters of product name)
     new: New
     new_adjustment: New Adjustment
+    new_customer: New Customer
     new_image: New Image
     new_option_type: New Option Type
     new_order: New Order
@@ -552,6 +614,7 @@ en:
     new_taxon: New Taxon
     new_taxonomy: New Taxonomy
     new_tracker: New Tracker
+    new_user: New User
     new_variant: New Variant
     new_zone: New Zone
     next: Next
@@ -743,6 +806,7 @@ en:
     received: Received
     refund: Refund
     registration: Registration
+    remember_me: Remember me
     remove: Remove
     rename: Rename
     reports: Reports
@@ -760,6 +824,7 @@ en:
     rma_credit: RMA Credit
     rma_number: RMA Number
     rma_value: RMA Value
+    roles: Roles
     rules: Rules
     s3_access_key: Access Key
     s3_bucket: Bucket
