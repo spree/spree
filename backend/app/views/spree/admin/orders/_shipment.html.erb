@@ -3,7 +3,7 @@
     <span class="shipment-number"><%= shipment.number %></span>
     -
     <span class="shipment-state"><%= shipment.state %></span>
-    <%= Spree.t(:package_from) %>
+    <%= I18n.t(:package_from) %>
     <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
     <% if shipment.ready? and can? :update, shipment %>
       -
@@ -24,10 +24,10 @@
   </colgroup>
 
   <thead>
-    <th colspan="2"><%= Spree.t(:item_description) %></th>
-    <th><%= Spree.t(:price) %></th>
-    <th><%= Spree.t(:quantity) %></th>
-    <th><%= Spree.t(:total) %></th>
+    <th colspan="2"><%= I18n.t(:item_description) %></th>
+    <th><%= I18n.t(:price) %></th>
+    <th><%= I18n.t(:quantity) %></th>
+    <th><%= I18n.t(:total) %></th>
     <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
   </thead>
 
@@ -56,7 +56,7 @@
           <td class="cart-item-delete actions" data-hook="cart_item_delete">
             <% if can? :update, item %>
               <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => 'save', :style => 'display: none' %>
-              <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
+              <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => I18n.t('actions.cancel'), :style => 'display: none' %>
               <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
               <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => t('delete') %>
             <% end %>
@@ -69,7 +69,7 @@
       <tr class="edit-method hidden total">
         <td colspan="5">
           <div class="field alpha five columns">
-            <%= label_tag 'selected_shipping_rate_id', Spree.t(:shipping_method) %>
+            <%= label_tag 'selected_shipping_rate_id', I18n.t(:shipping_method) %>
             <%= select_tag :selected_shipping_rate_id,
                   options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
                   {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
@@ -77,7 +77,7 @@
 
           <% if shipment.adjustment && shipment.adjustment.closed? %>
             <div class="field omega four columns">
-              <label><%= Spree.t(:associated_adjustment_closed) %></label>
+              <label><%= I18n.t(:associated_adjustment_closed) %></label>
               <ul>
                 <li><%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %> Yes</li>
                 <li><%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %> No</li>
@@ -88,7 +88,7 @@
         <td class="actions">
           <% if can? :update, shipment %>
             <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-            <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel') %>
+            <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => I18n.t('actions.cancel') %>
           <% end %>
         </td>
       </tr>
@@ -99,7 +99,7 @@
         <% if shipment.adjustment.present? %>
           <strong><%= shipment.adjustment.label %>:</strong>
         <% else %>
-          <%= Spree.t(:cannot_set_shipping_method_without_address) %>
+          <%= I18n.t(:cannot_set_shipping_method_without_address) %>
         <% end %>
       </td>
       <td class="total" align="center">
@@ -118,13 +118,13 @@
 
     <tr class="edit-tracking hidden total">
       <td colspan="5">
-        <label><%= Spree.t(:tracking_number) %>:</label>
+        <label><%= I18n.t(:tracking_number) %>:</label>
         <%= text_field_tag :tracking, shipment.tracking %>
       </td>
       <td class="actions">
         <% if can? :update, shipment %>
           <%= link_to '', '#', :class => 'save-tracking icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-          <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel') %>
+          <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => I18n.t('actions.cancel') %>
         <% end %>
       </td>
     </tr>
@@ -132,9 +132,9 @@
     <tr class="show-tracking total">
       <td colspan="5">
         <% if shipment.tracking.present? %>
-          <strong><%= Spree.t(:tracking) %>:</strong> <%= shipment.tracking %>
+          <strong><%= I18n.t(:tracking) %>:</strong> <%= shipment.tracking %>
         <% else %>
-          <%= Spree.t(:no_tracking_present) %>
+          <%= I18n.t(:no_tracking_present) %>
         <% end %>
       </td>
       <td class="actions">
