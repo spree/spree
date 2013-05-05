@@ -35,7 +35,7 @@
   <tbody id="order-total" data-hook="order_details_total" class="with-border grand-total">
     <tr>
       <td colspan="3" ><%= t(:order_total) %>:</td>
-      <td class="total" id="order-total"><span id="order_total"><%= order.display_total %></span></td>
+      <td class="total" id="order-total"><span id="order_display_total"><%= order.display_total %></span></td>
     </tr>
   </tbody>
   <% if order.price_adjustment_totals.present? %>
