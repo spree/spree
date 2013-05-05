@@ -78,6 +78,8 @@
   </div>
 <% end %>
 
+<%= paginate @orders %>
+
 <% unless @orders.empty? %>
   <table class="index responsive" id="listing_orders" data-hook>
     <colgroup>

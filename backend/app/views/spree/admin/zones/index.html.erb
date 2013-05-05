@@ -10,7 +10,9 @@
   </li>
 <% end %>
 
- <% if @zones.empty? %>
+<%= paginate @zones %>
+
+<% if @zones.empty? %>
   <div class="no-objects-found">
     <%= t(:none) %>
   </div>
