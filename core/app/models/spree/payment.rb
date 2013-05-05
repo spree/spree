@@ -104,12 +104,6 @@ module Spree
     end
 
     private
-      def amount_is_valid_for_outstanding_balance_or_credit
-        return unless order
-        if amount != order.outstanding_balance
-          errors.add(:amount, "does not match outstanding balance (#{order.outstanding_balance})")
-        end
-      end
 
       def profiles_supported?
         payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
