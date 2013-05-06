@@ -1,16 +1,13 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:bulk_transfer_stock) %>
+  <%= t(:new_stock_transfer) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <ul class="actions inline-menu">
     <li>
-      <%= button_link_to t(:transfers), admin_stock_transfers_url, { :icon => 'icon-resize-full' } %>
-    </li>
-    <li>
-      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-forward' } %>
+      <%= button_link_to t(:stock_transfers), admin_stock_transfers_url, { :icon => 'icon-resize-full' } %>
     </li>
   </ul>
 <% end %>
@@ -30,7 +27,7 @@
   {{/each}}
 </script>
 
-<%= form_tag admin_bulk_transfer_path, :method => :post do %>
+<%= form_tag admin_stock_transfers_path, :method => :post do %>
   <fieldset class="twelve columns alpha">
     <legend align="center"><%= t(:bulk_transfer_stock)%></legend>
 
