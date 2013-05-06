@@ -231,7 +231,7 @@ module Spree
     end
 
     def updater
-      OrderUpdater.new(self)
+      @updater ||= OrderUpdater.new(self)
     end
 
     def update!
@@ -391,7 +391,6 @@ module Spree
       adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
 
       # update payment and shipment(s) states, and save
-      updater = OrderUpdater.new(self)
       updater.update_payment_state
       shipments.each do |shipment|
         shipment.update!(self)
@@ -400,6 +399,7 @@ module Spree
 
       updater.update_shipment_state
       save
+      updater.run_hooks
 
       deliver_order_confirmation_email
 
