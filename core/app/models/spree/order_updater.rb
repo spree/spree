@@ -34,6 +34,10 @@ module Spree
         :total => order.total
       })
 
+      run_hooks
+    end
+
+    def run_hooks
       update_hooks.each { |hook| order.send hook }
     end
 
