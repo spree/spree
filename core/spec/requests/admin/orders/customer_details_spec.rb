@@ -4,12 +4,10 @@ describe "Customer Details" do
   stub_authorization!
 
   let(:order) { create(:order_with_inventory_unit_shipped, :completed_at => 1.year.ago) }
+  let!(:shipping_method) { create(:shipping_method) }
+  let!(:country) { shipping_method.zone.zone_members.first.zoneable }
 
-  let(:country) do
-    create(:country, :name => "Kangaland")
-  end
-
-  let(:state) do
+  let!(:state) do
     create(:state, :name => "Alabama", :country => country)
   end
 
@@ -18,8 +16,7 @@ describe "Customer Details" do
       config.default_country_id = country.id
       config.company = true
     end
-
-    create(:shipping_method, :display_on => "front_end")
+    
     create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
     ship_address = create(:address, :country => country, :state => state)
     bill_address = create(:address, :country => country, :state => state)
@@ -77,8 +74,8 @@ describe "Customer Details" do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
-        within(".state") do
-          page.should have_content("COMPLETE")
+        within("#order_status") do
+          page.should have_content("Status: address")
         end
       end
 
