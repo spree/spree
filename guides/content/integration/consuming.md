@@ -53,9 +53,10 @@ An asynchronous response must ONLY contain the following fields:
 
 On receipt of an asynchronous response, the Integrator will wait the alloted delay period and begin polling the _update_url_ for a completion response.
 
-Each poll to the _update_url_ will be a HTTP POST containing just the _message_id_:
+Each poll to the _update_url_ will be a HTTP POST containing the original message:
 
 <pre class="headers"><code>Update Request</code></pre>
+TODO: Update request
 <%= json :update_request %>
 
 The endpoint can then choose to respond to this update message with either the standard:
