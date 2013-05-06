@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe 'Bulk Transfers' do
+describe 'Stock Transfers' do
   stub_authorization!
 
   it 'transfer between 2 locations', :js => true do
     source_location = create(:stock_location_with_items, :name => 'NY')
     destination_location = create(:stock_location, :name => 'SF')
 
-    visit spree.admin_bulk_transfer_path
+    visit spree.new_admin_stock_transfer_path
 
     fill_in 'reference_number', :with => 'PO 666'
 
@@ -15,8 +15,8 @@ describe 'Bulk Transfers' do
     click_button 'Transfer Stock'
 
     page.should have_content('Reference Number: PO 666')
-    page.should have_content('source: NY')
-    page.should have_content('destination: SF')
+    page.should have_content('NY')
+    page.should have_content('SF')
 
     transfer = Spree::StockTransfer.last
     transfer.should have(2).stock_movements
@@ -25,8 +25,8 @@ describe 'Bulk Transfers' do
   describe 'received stock transfer' do
     def it_is_received_stock_transfer(page)
       page.should have_content('Reference Number: PO 666')
-      page.should_not have_content('source:')
-      page.should have_content('destination: NY')
+      page.should_not have_content('Source')
+      page.should have_content('Destination')
 
       transfer = Spree::StockTransfer.last
       transfer.should have(1).stock_movements
@@ -37,7 +37,7 @@ describe 'Bulk Transfers' do
       source_location = create(:stock_location_with_items, :name => 'NY')
       destination_location = create(:stock_location, :name => 'SF')
 
-      visit spree.admin_bulk_transfer_path
+      visit spree.new_admin_stock_transfer_path
 
       fill_in 'reference_number', :with => 'PO 666'
       check 'bulk_receive_stock'
@@ -52,7 +52,7 @@ describe 'Bulk Transfers' do
     it 'forced to only receive there is only one location', :js => true do
       source_location = create(:stock_location_with_items, :name => 'NY')
 
-      visit spree.admin_bulk_transfer_path
+      visit spree.new_admin_stock_transfer_path
 
       fill_in 'reference_number', :with => 'PO 666'
 
