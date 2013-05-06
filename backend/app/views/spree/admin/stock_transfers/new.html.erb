@@ -5,11 +5,9 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="actions inline-menu">
-    <li>
-      <%= button_link_to t(:stock_transfers), admin_stock_transfers_url, { :icon => 'icon-resize-full' } %>
-    </li>
-  </ul>
+  <li>
+    <%= button_link_to t(:stock_transfers), admin_stock_transfers_url, { :icon => 'icon-resize-full' } %>
+  </li>
 <% end %>
 
 <script type='text/template' id='bulk_variant_template'>
@@ -66,7 +64,7 @@
       <div class="alpha eight columns">
         <div class="field" id="stock_movement_variant_id_field">
           <%= label_tag 'variant_id', t(:variant) %>
-          <%= select_tag 'bulk_variant' %>
+          <%= select_tag 'bulk_variant', {}, class: 'fullwidth' %>
         </div>
       </div>
       <div class="two columns">
