@@ -114,7 +114,7 @@
         <td class="align-center"><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
         <td class="align-center"><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td class="align-center"><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
-        <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
+        <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
         <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
         <td><%= mail_to order.email %></td>
         <td class="align-center"><%= order.display_total.to_html %></td>

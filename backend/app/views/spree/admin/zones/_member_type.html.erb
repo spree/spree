@@ -11,9 +11,9 @@
         <%= render :partial => "#{type}_member", :locals => { :f => member_form } %>
       <% end %>
     </ul>
-    
+
     <div data-hook="buttons" class="field align-center">
-      <%= button_link_to t("add_#{type}"), "##{type}_member", { :icon => 'icon-plus', :id => "nested-#{type}" } %>
+      <%= button_link_to Spree.t("add_#{type}"), "##{type}_member", { :icon => 'icon-plus', :id => "nested-#{type}" } %>
     </div>
   </fieldset>
 </div>
