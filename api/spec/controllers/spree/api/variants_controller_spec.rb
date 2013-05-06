@@ -4,7 +4,6 @@ module Spree
   describe Api::VariantsController do
     render_views
 
-
     let!(:product) { create(:product) }
     let!(:variant) do
       variant = product.master
@@ -35,11 +34,20 @@ module Spree
       json_response['pages'].should == 3
     end
 
-    it 'can query the results through a paramter' do
-      expected_result = create(:variant, :sku => 'FOOBAR')
-      api_get :index, :q => { :sku_cont => 'FOO' }
-      json_response['count'].should == 1
-      json_response['variants'].first['sku'].should eq expected_result.sku
+    context "query results through parameters" do
+      it "should search by sku" do
+        api_get :index, :q => { :sku_cont => product.master.sku }
+
+        json_response['count'].should == 1
+        json_response['variants'].first['sku'].should eq product.master.sku
+      end
+
+      it "should search by sku or product name at the same time" do
+        api_get :index, :q => { :product_name_or_sku_cont => product.name }
+
+        json_response['count'].should == 1
+        json_response['variants'].first['name'].should eq product.name
+      end
     end
 
     it "variants returned contain option values data" do
@@ -170,7 +178,5 @@ module Spree
         lambda { variant.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
-
-
   end
 end
