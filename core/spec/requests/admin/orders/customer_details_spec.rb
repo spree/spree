@@ -89,9 +89,7 @@ describe "Customer Details" do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
-        within(".state") do
-          page.should have_content("COMPLETE")
-        end
+        find(".state").text.should == "ADDRESS"
       end
 
     end
