@@ -7,18 +7,20 @@
     <col style="width: 20%" />
   </colgroup>
   <thead data-hook="bulk_variants_header">
-    <th><%= t(:variant) %></th>
-    <th><%= t(:sku) %></th>
-    <th><%= t(:quantity) %></th>
-    <th><%= t(:count_on_hand) %></th>
+    <tr>
+      <th><%= t(:variant) %></th>
+      <th><%= t(:sku) %></th>
+      <th><%= t(:quantity) %></th>
+      <th><%= t(:count_on_hand) %></th>
+    </tr>
   </thead>
   <tbody id="bulk_variants_tbody">
     <% stock_movements.each do |movement| %>
     <tr>
       <td><%= movement.stock_item.variant.name %></td>
-      <td><%= movement.stock_item.variant.sku %></td>
-      <td><%= movement.quantity %></td>
-      <td><%= movement.stock_item.count_on_hand %></td>
+      <td class='align-center'><%= movement.stock_item.variant.sku %></td>
+      <td class='align-center'><%= movement.quantity %></td>
+      <td class='align-center'><%= movement.stock_item.count_on_hand %></td>
       <% end %>
     </tbody>
   </table>

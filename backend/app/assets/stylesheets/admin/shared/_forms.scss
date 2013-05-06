@@ -180,6 +180,10 @@ fieldset {
     text-align: center;
     padding: 8px 15px;
     -webkit-font-smoothing: antialiased;
+
+    i {
+      color: $color-link;
+    }
   }
 
   label {
