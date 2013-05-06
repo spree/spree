@@ -366,23 +366,37 @@ the `checkout_steps` method, which will return the steps in an array.
 
 ### Modifying the checkout flow
 
-To add or remove steps to the checkout flow, you must re-define the entire
-checkout flow. Imagine a situation where address and delivery were not required
-steps, as the store only "shipped" electronic goods, such as online games or
-movies. In this case, the checkout flow definition would be this:
+To add or remove steps to the checkout flow, you can use the `insert_checkout_step`
+and `remove_checkout_step` helpers respectively.
+
+The `insert_checkout_step` takes a `before` or `after` option to determine where to 
+insert the step:
 
 ```ruby
-checkout_flow do
-  go_to_state :payment, :if => lambda { |order| order.payment_required? }
-  go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
-  go_to_state :complete
-end
-```
+insert_checkout_step :new_step, :before => :address
+# or
+insert_checkout_step :new_step, :after => :address```
+
+The `remove_checkout_step` will remove just one checkout step at a time:
+
+```ruby
+remove_checkout_step :address
+remove_checkout_step :delivery```
 
 What will happen here is that when a user goes to checkout, they will be asked
 to (potentially) fill in their payment details and then (potentially) confirm
-the order. If they are not required to provide payment or confirmation for this
-order then checking out this order will result in its immediate completion.
+the order. This is the default behaviour of the payment and the confirm steps
+within the checkout. If they are not required to provide payment or confirmation 
+for this order then checking out this order will result in its immediate completion.
+
+To completely re-define the flow of the checkout, use the `checkout_flow` helper:
+
+```ruby
+checkout_flow do
+  go_to_state :payment
+  go_to_state :complete
+end
+```
 
 ### The Checkout "Breadcrumb"
 
