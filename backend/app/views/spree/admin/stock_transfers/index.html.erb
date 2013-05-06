@@ -5,81 +5,88 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="actions inline-menu">
-    <li>
-      <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-forward' } %>
-    </li>
-  </ul>
+  <li>
+    <%= button_link_to t(:bulk_transfer), admin_bulk_transfer_url, { :icon => 'icon-forward' } %>
+  </li>
 <% end %>
 
 <div data-hook="admin_orders_index_search">
-  <%= search_form_for @q, :url => admin_stock_transfers_path do |f| %>
+  <fieldset>
+    <legend><%= t('spree.search') %></legend>
+    <%= search_form_for @q, :url => admin_stock_transfers_path do |f| %>
 
-    <div class="field-block alpha four columns">
-      <div class="field">
-        <%= f.label :reference_number_cont %>
-        <%= f.text_field :reference_number_cont %>
+      <div class="field-block alpha four columns">
+        <div class="field">
+          <%= f.label :reference_number_cont %>
+          <%= f.text_field :reference_number_cont, class: 'fullwidth' %>
+        </div>
       </div>
-    </div>
 
-    <div class="four columns">
-      <div class="field">
-        <%= f.label :source_location %>
-        <%= f.select :source_location_id_eq,
-             options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
-             include_blank: true,
-             class: 'select2 fullwidth' %>
+      <div class="four columns">
+        <div class="field">
+          <%= f.label :source_location, t('spree.source_location') %>
+          <%= f.select :source_location_id_eq,
+               options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
+               { include_blank: true }, class: 'select2 fullwidth' %>
+        </div>
       </div>
-    </div>
 
-    <div class="omega four columns">
-      <div class="field">
-        <%= f.label :destination_location %>
-        <%= f.select :destination_location_id_eq,
-             options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
-             include_blank: true,
-             class: 'select2 fullwidth' %>
+      <div class="omega four columns">
+        <div class="field">
+          <%= f.label :destination_location, t('spree.destination_location') %>
+          <%= f.select :destination_location_id_eq,
+               options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
+               { include_blank: true }, class: 'select2 fullwidth' %>
+        </div>
       </div>
-    </div>
 
-    <div class="clearfix"></div>
+      <div class="clearfix"></div>
 
-    <div class="actions filter-actions">
-      <div data-hook="admin_stock_transfers_index_search_buttons">
-        <%= button t(:filter_results), 'icon-search' %>
+      <div class="actions filter-actions">
+        <div data-hook="admin_stock_transfers_index_search_buttons">
+          <%= button t(:filter_results), 'icon-search' %>
+        </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </fieldset>
 </div>
 
-<table class="index" id='listing_stock_transfers' data-hook>
-  <colgroup>
-    <col style="width: 15%" />
-    <col style="width: 25%" />
-    <col style="width: 25%" />
-    <col style="width: 25%" />
-    <col style="width: 10%" />
-  </colgroup>
-  <thead>
-    <tr data-hook="stock_transfers_header">
-      <th><%= t(:created_at) %></th>
-      <th><%= t(:reference_number) %></th>
-      <th><%= t(:source_location) %></th>
-      <th><%= t(:destination_location) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @stock_transfers.each do |stock_transfer| %>
-      <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row" class="<%= cycle('odd', 'even')%>">
-        <td><%= stock_transfer.created_at %></td>
-        <td><%= stock_transfer.reference_number %></td>
-        <td><%= stock_transfer.source_location.try(:name) %></td>
-        <td><%= stock_transfer.destination_location.try(:name) %></td>
-        <td><%= link_to t(:show), admin_stock_transfer_path(stock_transfer) %></td>
+<% if !@stock_transfers.empty? %>
+  <table class='index' id='listing_stock_transfers' data-hook>
+    <colgroup>
+      <col style='width: 25%' />
+      <col style='width: 20%' />
+      <col style='width: 20%' />
+      <col style='width: 25%' />
+      <col style='width: 10%' />
+    </colgroup>
+    <thead>
+      <tr data-hook='stock_transfers_header'>
+        <th><%= t(:created_at) %></th>
+        <th><%= t(:reference_number) %></th>
+        <th><%= t(:source_location) %></th>
+        <th><%= t(:destination_location) %></th>
+        <th class='actions'></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @stock_transfers.each do |stock_transfer| %>
+        <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row" class="<%= cycle('odd', 'even')%>">
+          <td><%= stock_transfer.created_at %></td>
+          <td class='align-center'><%= stock_transfer.reference_number %></td>
+          <td><%= stock_transfer.source_location.try(:name) %></td>
+          <td><%= stock_transfer.destination_location.try(:name) %></td>
+          <td class='actions'>
+            <%= link_to '', admin_stock_transfer_path(stock_transfer), title: 'view', class: 'view icon_link with-tip icon-eye-open no-text', data: {action: 'view'} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="no-objects-found">
+    <%= t('spree.emtpy') %>
+  </div>
+<% end %>
 
 <%= paginate @stock_transfers %>
