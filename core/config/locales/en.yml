@@ -588,6 +588,7 @@ en:
     more: More
     move_stock_between_locations: Move Stock Between Locations
     my_account: My Account
+    my_orders: My Orders
     name: Name
     name_or_sku: Name or SKU (enter at least first 4 characters of product name)
     new: New
@@ -1002,6 +1003,7 @@ en:
     what_is_this: What's This?
     width: Width
     year: Year
+    you_have_no_orders_yet: You have no orders yet
     your_cart_is_empty: Your cart is empty
     zip: Zip
     zone: Zone
