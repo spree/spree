@@ -16,6 +16,7 @@ module Spree
     it 'gets list of stock items' do
       api_get :index, stock_location_id: stock_location.to_param
       json_response['stock_items'].first.should have_attributes(attributes)
+      json_response['stock_items'].first['variant']['sku'].should eq 'ABC'
     end
 
     it 'requires a stock_location_id to be passed as a parameter' do
