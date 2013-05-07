@@ -40,5 +40,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'money', '5.1.1'
 
   # For checking for alerts
-  s.add_dependency 'httparty', '0.9.0'
+  s.add_dependency 'httparty', '~> 0.11'
 end
