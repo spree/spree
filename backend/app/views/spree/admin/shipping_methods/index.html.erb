@@ -33,7 +33,7 @@
           <td><%= shipping_method.name %></td>
           <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
           <td><%= shipping_method.calculator.description %></td>
-          <td class="align-center"><%= shipping_method.display_on.blank? ? Spree.t(:both) : t(shipping_method.display_on) %></td>
+          <td class="align-center"><%= shipping_method.display_on.blank? ? Spree.t(:both) : Spree.t(shipping_method.display_on) %></td>
           <td data-hook="admin_shipping_methods_index_row_actions" class="actions">
             <%= link_to_edit shipping_method, :no_text => true %>
             <%= link_to_delete shipping_method, :no_text => true %>

@@ -1,5 +1,5 @@
 <% unless @product_properties.empty? %>  
-  <h6 class="product-section-title"><%= t('properties')%></h6>
+  <h6 class="product-section-title"><%= Spree.t('properties')%></h6>
   <table id="product-properties" class="table-display" data-hook>
     <tbody>
       <% @product_properties.each do |product_property| %>

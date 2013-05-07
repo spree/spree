@@ -3,7 +3,7 @@
 
 <div id="<%= type %>_members" data-hook="member" class="omega six columns">
   <fieldset class="no-border-bottom">
-    <legend align="center"><%= t(type) %></legend>
+    <legend align="center"><%= Spree.t(type) %></legend>
 
     <ul id="ul-nested-<%= type %>" class="member-list fields">
       <% members_of_type = zone_form.object.zone_members.select { |member| member.zoneable_type && member.zoneable_type == "Spree::#{type.capitalize}" } %>

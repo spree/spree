@@ -20,7 +20,7 @@
         <th><%= Spree.t(:rma_number) %></th>
         <th><%= Spree.t(:status) %></th>
         <th><%= Spree.t(:amount) %></th>
-        <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
+        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -28,7 +28,7 @@
       <% @return_authorizations.each do |return_authorization| %>
         <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td><%= return_authorization.number %></td>
-          <td><%= t(return_authorization.state.downcase) %></td>
+          <td><%= Spree.t(return_authorization.state.downcase) %></td>
           <td><%= return_authorization.display_amount.to_html %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>
           <td class="actions">
