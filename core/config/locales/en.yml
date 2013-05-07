@@ -256,6 +256,7 @@ en:
     active: Active
     add: Add
     add_action_of_type: Add action of type
+    add_country: Add Country
     add_new_header: Add New Header
     add_new_style: Add New Style
     add_one: Add One
@@ -263,6 +264,7 @@ en:
     add_product: Add Product
     add_product_properties: Add Product Properties
     add_rule_of_type: Add rule of type
+    add_state: Add State
     add_stock: Add Stock
     add_stock_management: Add Stock Management
     add_to_cart: Add To Cart
@@ -328,6 +330,7 @@ en:
     back_to_shipping_categories: Back To Shipping Categories
     back_to_shipping_methods_list: Back To Shipping Methods List
     back_to_states_list: Back To States List
+    back_to_stock_locations_list: Back to Stock Movements List
     back_to_stock_movements_list: Back to Stock Movements List
     back_to_store: Go Back To Store
     back_to_tax_categories_list: Back To Tax Categories List
@@ -454,10 +457,12 @@ en:
     editing_shipping_category: Editing Shipping Category
     editing_shipping_method: Editing Shipping Method
     editing_state: Editing State
+    editing_stock_location: Editing Stock Location
     editing_stock_movement: Editing Stock Movement
     editing_tax_category: Editing Tax Category
     editing_tax_rate: Editing Tax Rate
     editing_tracker: Editing Tracker
+    editing_user: Editing User
     editing_zone: Editing Zone
     email: Email
     empty: Empty
@@ -855,6 +860,7 @@ en:
     settings: Settings
     ship: ship
     ship_address: Ship Address
+    ship_total: Ship Total
     shipment: Shipment
     shipment_inc_vat: Shipment including VAT
     shipment_mailer:
@@ -939,6 +945,7 @@ en:
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
     tax_settings: Tax Settings
+    tax_total: Tax Total
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon

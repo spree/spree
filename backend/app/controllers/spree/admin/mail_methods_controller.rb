@@ -19,12 +19,12 @@ module Spree
 
       def testmail
         if TestMailer.test_email(try_spree_current_user).deliver
-          flash[:success] = t('admin.mail_methods.testmail.delivery_success')
+          flash[:success] = Spree.t('admin.mail_methods.testmail.delivery_success')
         else
-          flash[:error] = t('admin.mail_methods.testmail.delivery_error')
+          flash[:error] = Spree.t('admin.mail_methods.testmail.delivery_error')
         end
       rescue Exception => e
-        flash[:error] = t('admin.mail_methods.testmail.error') % {:e => e}
+        flash[:error] = Spree.t('admin.mail_methods.testmail.error') % {:e => e}
       ensure
         redirect_to edit_admin_mail_method_url
       end
