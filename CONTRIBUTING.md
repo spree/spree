@@ -7,10 +7,10 @@ before contributing.
 When filing an issue on the Spree project, please provide these details:
 
 * A comprehensive list of steps to reproduce the issue.
+* What you're *expecting* to happen compared with what's *actually* happening.
 * The version of Spree *and* the version of Rails.
 * A list of all extensions.
 * Any relevant stack traces ("Full trace" preferred)
-
 
 In 99% of cases, this information is enough to determine the cause and solution
 to the problem that is being described.
