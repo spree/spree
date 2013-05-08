@@ -13,6 +13,12 @@
 
 <%= render :partial => 'add_product' %>
 
+<% if @order.line_items.empty? %>
+  <div class="no-objects-found">
+    <%= Spree.t(:your_order_is_empty_add_product)%>
+  </div>
+<% end %>
+
 <div data-hook="admin_order_edit_form">
   <div id="order-form-wrapper">
     <%= render :partial => 'form', :locals => { :order => @order } %>
