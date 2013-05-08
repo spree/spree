@@ -1012,6 +1012,7 @@ en:
     year: Year
     you_have_no_orders_yet: You have no orders yet
     your_cart_is_empty: Your cart is empty
+    your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
     zone: Zone
     zones: Zones

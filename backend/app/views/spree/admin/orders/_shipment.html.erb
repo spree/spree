@@ -87,8 +87,10 @@
         </td>
         <td class="actions">
           <% if can? :update, shipment %>
-            <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, Spree.t('actions.save') %>
-            <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel') %>
+            <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip',
+              :data => {'shipment-number' => shipment.number, :action => 'save'}, title: Spree.t('actions.save') %>
+            <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip',
+              :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel') %>
           <% end %>
         </td>
       </tr>
