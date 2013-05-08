@@ -57,7 +57,7 @@ module Spree
     private
 
       def create_stock_items
-        Spree::Variant.all.each do |v|
+        Spree::Variant.find_each do |v|
           self.stock_items.create!(variant: v)
         end
       end
