@@ -237,6 +237,24 @@ See the excellent [Bundler documentation](http://gembundler.com)
 for more details.
 ***
 
+### "-stable" branches
+
+The Spree Git repository also contains stable branches for each minor Spree
+version. For instance, there is a 1-3-stable branch which contains the latest
+work for the 1.3.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
+
+```ruby
+gem 'spree', :github => 'spree/spree', :branch => '1-3-stable'
+
+Similarly, all main Spree extensions use this versioning scheme as well. For example, here's a line that would be used for `spree_auth_devise`:
+
+```ruby
+gem 'spree_auth_devise', :github => 'spree/spree', :branch => '1-3-stable'```
+
+!!!
+While the best efforts of the Spree team are made to keep stable branches stable, there has been situations in the past where changes required for a net-positive result over the entire community have affected some applications or extensions. If a stable branch does break your application or an extension, please report those breakages on the appropriate GitHub page.
+!!!
+
 ### Creating Extensions
 
 Spree provides a convenient generator for helping you to get started
