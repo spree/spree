@@ -252,7 +252,11 @@ Similarly, all main Spree extensions use this versioning scheme as well. For exa
 gem 'spree_auth_devise', :github => 'spree/spree', :branch => '1-3-stable'```
 
 !!!
-While the best efforts of the Spree team are made to keep stable branches stable, there has been situations in the past where changes required for a net-positive result over the entire community have affected some applications or extensions. If a stable branch does break your application or an extension, please report those breakages on the appropriate GitHub page.
+While the best efforts of the Spree team are made to keep stable branches
+stable, there has been situations in the past where changes required for a
+net-positive result over the entire community have affected some applications
+or extensions. If a change to a stable branch does break your application or
+an extension, please report those breakages on the appropriate GitHub page.
 !!!
 
 ### Creating Extensions
