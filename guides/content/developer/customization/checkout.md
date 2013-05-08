@@ -287,7 +287,7 @@ before that transition, placing this code in a file called
 `app/models/spree/order_decorator.rb`:
 
 ```ruby
-Spree::Order.state_machine.before_transition :to => 'delivery', :do => :valid_zip_code?
+Spree::Order.state_machine.before_transition :to => :delivery, :do => :valid_zip_code?
 ```
 
 This callback would prevent transitioning to the `delivery` step if
