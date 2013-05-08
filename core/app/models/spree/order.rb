@@ -140,6 +140,14 @@ module Spree
       Spree::Money.new(adjustment_total, { currency: currency })
     end
 
+    def display_tax_total
+      Spree::Money.new(tax_total, { currency: currency })
+    end
+
+    def display_ship_total
+      Spree::Money.new(ship_total, { currency: currency })
+    end
+
     def display_total
       Spree::Money.new(total, { currency: currency })
     end
@@ -168,7 +176,7 @@ module Spree
 
     # If true, causes the confirmation step to happen during the checkout process
     def confirmation_required?
-      payments.map(&:payment_method).any?(&:payment_profiles_supported?)
+      payments.map(&:payment_method).compact.any?(&:payment_profiles_supported?)
     end
 
     # Used by the checkout state machine to check for unprocessed payments
@@ -223,7 +231,7 @@ module Spree
     end
 
     def updater
-      OrderUpdater.new(self)
+      @updater ||= OrderUpdater.new(self)
     end
 
     def update!
@@ -383,7 +391,6 @@ module Spree
       adjustments.each { |adjustment| adjustment.update_column('state', "closed") }
 
       # update payment and shipment(s) states, and save
-      updater = OrderUpdater.new(self)
       updater.update_payment_state
       shipments.each do |shipment|
         shipment.update!(self)
@@ -392,6 +399,7 @@ module Spree
 
       updater.update_shipment_state
       save
+      updater.run_hooks
 
       deliver_order_confirmation_email
 

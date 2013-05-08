@@ -4,7 +4,7 @@ table {
   border-collapse: separate;
 
   th, td {
-    padding: 15px 10px;
+    padding: 7px 5px;
     border-right: 1px solid $color-border;
     border-bottom: 1px solid $color-border;
     vertical-align: middle;
@@ -16,6 +16,14 @@ table {
 
     &:first-child {
       border-left: 1px solid $color-border;
+    }
+
+    a {
+      border-bottom: 1px dotted lighten($color-link, 10);
+
+      &:hover {
+        border-color: lighten($color-link-hover, 10);
+      }
     }
 
     &.actions {
@@ -53,7 +61,7 @@ table {
         padding: 0 !important;
       }
 
-      .icon-envelope-alt {
+      .icon-envelope-alt, .icon-eye-open {
         color: $color-link;
         padding-left: 0px;
 

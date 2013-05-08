@@ -7,7 +7,10 @@
 <% content_for :page_actions do %>
   <ul class="actions inline-menu">
     <li>
-      <%= button_link_to t(:new_stock_location), new_object_url, { :icon => 'icon-plus', :id => 'admin_new_stock_location' } %> 
+      <%= button_link_to t(:new_stock_location), new_object_url, { :icon => 'icon-plus', :id => 'admin_new_stock_location' } %>
+    </li>
+    <li>
+      <%= button_link_to t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
     </li>
   </ul>
 <% end %>
@@ -44,5 +47,3 @@
     <% end %>
   </tbody>
 </table>
-
-<%= render :partial => 'transfer_stock_form' %>

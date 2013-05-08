@@ -5,6 +5,13 @@ describe "Product Images" do
 
   let(:file_path) { Rails.root + "../../spec/support/ror_ringer.jpeg" }
 
+  before do
+    # Ensure attachment style keys are symbolized before running all tests
+    # Otherwise this would result in this error:
+    # undefined method `processors' for \"48x48>\
+    Spree::Image.attachment_definitions[:attachment][:styles].symbolize_keys!
+  end
+
   context "uploading and editing an image", :js => true do
     it "should allow an admin to upload and edit an image for a product" do
       Spree::Image.attachment_definitions[:attachment].delete :storage

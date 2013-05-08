@@ -5,25 +5,18 @@ describe "Checkout" do
   let!(:state) { create(:state, :name => "Victoria", :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
-
+  let!(:mug) { create(:product, :name => "RoR Mug") }
   let!(:payment_method) { create(:payment_method) }
+  let!(:zone) { create(:zone) }
 
   context "visitor makes checkout as guest without registration" do
     before(:each) do
-      Spree::Product.delete_all
-      @product = create(:product, :name => "RoR Mug")
-      @product.save
-
       stock_location.stock_items.update_all(count_on_hand: 1)
-
-      create(:zone)
     end
 
     context "defaults to use billing address" do
       before do
-        visit spree.root_path
-        click_link "RoR Mug"
-        click_button "add-to-cart-button"
+        add_mug_to_cart
         Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
         click_button "Checkout"
       end
@@ -33,18 +26,7 @@ describe "Checkout" do
       end
 
       it "should remain checked when used and visitor steps back to address step", :js => true do
-        address = "order_bill_address_attributes"
-        fill_in "#{address}_firstname", :with => "Ryan"
-        fill_in "#{address}_lastname", :with => "Bigg"
-        fill_in "#{address}_address1", :with => "143 Swan Street"
-        fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
-        fill_in "#{address}_zipcode", :with => "12345"
-        fill_in "#{address}_phone", :with => "(555) 5555-555"
-        click_button "Save and Continue"
-        click_link "Address"
-
+        fill_in_address
         find('input#order_use_billing').should be_checked
       end
     end
@@ -52,26 +34,16 @@ describe "Checkout" do
     # Regression test for #1596
     context "full checkout" do
       before do
-        @product.shipping_category = shipping_method.shipping_categories.first
-        @product.save!
+        mug.shipping_category = shipping_method.shipping_categories.first
+        mug.save!
       end
 
       it "does not break the per-item shipping method calculator", :js => true do
-        visit spree.root_path
-        click_link "RoR Mug"
-        click_button "add-to-cart-button"
+        add_mug_to_cart
         click_button "Checkout"
 
         fill_in "order_email", :with => "ryan@spreecommerce.com"
-        address = "order_bill_address_attributes"
-        fill_in "#{address}_firstname", :with => "Ryan"
-        fill_in "#{address}_lastname", :with => "Bigg"
-        fill_in "#{address}_address1", :with => "143 Swan Street"
-        fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
-        fill_in "#{address}_zipcode", :with => "12345"
-        fill_in "#{address}_phone", :with => "(555) 5555-555"
+        fill_in_address
 
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
@@ -82,21 +54,11 @@ describe "Checkout" do
 
       # Regression test, no issue number
       it "does not create a closed adjustment for an order's shipment upon reaching the delivery step", :js => true do
-        visit spree.root_path
-        click_link "RoR Mug"
-        click_button "add-to-cart-button"
+        add_mug_to_cart
         click_button "Checkout"
 
         fill_in "order_email", :with => "ryan@spreecommerce.com"
-        address = "order_bill_address_attributes"
-        fill_in "#{address}_firstname", :with => "Ryan"
-        fill_in "#{address}_lastname", :with => "Bigg"
-        fill_in "#{address}_address1", :with => "143 Swan Street"
-        fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
-        fill_in "#{address}_zipcode", :with => "12345"
-        fill_in "#{address}_phone", :with => "(555) 5555-555"
+        fill_in_address
 
         click_button "Save and Continue"
         Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
@@ -202,4 +164,47 @@ describe "Checkout" do
     end
   end
 
+  # regression for #2921
+  context "goes back from payment to add another item", js: true do
+    let!(:bag) { create(:product, :name => "RoR Bag") }
+
+    it "transit nicely through checkout steps again" do
+      add_mug_to_cart
+      click_on "Checkout"
+      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in_address
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+      expect(current_path).to eql(spree.checkout_state_path("payment"))
+
+      visit spree.root_path
+      click_link bag.name
+      click_button "add-to-cart-button"
+
+      click_on "Checkout"
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+  end
+
+  def fill_in_address
+    address = "order_bill_address_attributes"
+    fill_in "#{address}_firstname", :with => "Ryan"
+    fill_in "#{address}_lastname", :with => "Bigg"
+    fill_in "#{address}_address1", :with => "143 Swan Street"
+    fill_in "#{address}_city", :with => "Richmond"
+    select "Kangaland", :from => "#{address}_country_id"
+    select "Victoria", :from => "#{address}_state_id"
+    fill_in "#{address}_zipcode", :with => "12345"
+    fill_in "#{address}_phone", :with => "(555) 5555-555"
+  end
+
+  def add_mug_to_cart
+    visit spree.root_path
+    click_link mug.name
+    click_button "add-to-cart-button"
+  end
 end

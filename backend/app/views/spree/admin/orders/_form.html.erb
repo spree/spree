@@ -3,181 +3,34 @@
     <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
   <% end %>
 
-  <% @order.shipments.each do |shipment| %>
+  <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
+  <% if order.adjustments.eligible.exists? %>
     <fieldset class="no-border-bottom">
-      <legend align="center" class="stock-location" data-hook="stock-location">
-        <span class="shipment-number"><%= shipment.number %></span>
-        -
-        <span class="shipment-state"><%= shipment.state %></span>
-        <%= t(:package_from) %>
-        <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
-        <% if shipment.ready? and can? :update, shipment %>
-          -
-          <%= link_to 'ship', '#', :class => 'ship button icon-arrow-right', :data => {'shipment-number' => shipment.number} %>
-        <% end %>
-      </legend>
-    </fieldset>
-    <table class="stock-contents index" data-hook="stock-contents">
-
-      <colgroup>
-        <col style="width: 10%;" />
-        <col style="width: 30%;" />
-        <col style="width: 15%;" />
-        <col style="width: 15%;" />
-        <col style="width: 15%;" />
-        <col style="width: 15%;" />
-      </colgroup>
-
-      <thead>
-        <th colspan="2"><%= t(:item_description) %></th>
-        <th><%= t(:price) %></th>
-        <th><%= t(:quantity) %></th>
-        <th><%= t(:total) %></th>
-        <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
-      </thead>
-
-      <tbody>
-        <% shipment.manifest.each do |item| %>
-          <% line_item = order.find_line_item_by_variant(item.variant) %>
-
-          <tr class="stock-item">
-            <td class="item-image"><%= mini_image(item.variant) %></td>
-            <td class="item-name">
-              <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
-            </td>
-            <td class="item-price align-center"><%= line_item.single_money.to_html %></td>
-            <td class="item-qty-show align-center">
-                <% item.states.each do |state,count| %>
-                  <%= count %> x <%= state.humanize.downcase %>
-                <% end %>
-            </td>
-            <% unless shipment.shipped? %>
-              <td class="item-qty-edit hidden">
-                <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
-              </td>
-            <% end %>
-            <td class="item-total align-center"><%= line_item.display_amount.to_html %></td>
-            <% unless shipment.shipped? %>
-              <td class="cart-item-delete actions" data-hook="cart_item_delete">
-                <% if can? :update, item %>
-                  <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => 'save', :style => 'display: none' %>
-                  <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel'), :style => 'display: none' %>
-                  <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
-                  <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => t('delete') %>
-                <% end %>
-              </td>
-            <% end %>
-          </tr>
-        <% end %>
-
-        <% unless shipment.shipped? %>
-          <tr class="edit-method hidden total">
-            <td colspan="5">
-              <div class="field alpha five columns">
-                <%= label_tag 'selected_shipping_rate_id', t(:shipping_method) %>
-                <%= select_tag :selected_shipping_rate_id,
-                      options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
-                      {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
-              </div>
-
-              <% if shipment.adjustment && shipment.adjustment.closed? %>
-                <div class="field omega four columns">
-                  <label><%= t(:associated_adjustment_closed) %></label>
-                  <ul>
-                    <li><%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %> Yes</li>
-                    <li><%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %> No</li>
-                  </ul>
-                </div>
-              <% end %>
-            </td>
-            <td class="actions">
-              <% if can? :update, shipment %>
-                <%= link_to '', '#', :class => 'save-method icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-                <%= link_to '', '#', :class => 'cancel-method icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-
-        <tr class="show-method total">
-          <td colspan="4">
-            <% if shipment.adjustment.present? %>
-              <strong><%= shipment.adjustment.label %>:</strong>
-            <% else %>
-              <%= t(:cannot_set_shipping_method_without_address) %>
-            <% end %>
-          </td>
-          <td class="total">
-            <% if shipment.adjustment.present? %>
-              <span><%= shipment.adjustment.display_amount %></span>
-            <% end %>
-          </td>
-          <% if shipment.adjustment.present? && !shipment.shipped? %>
-            <td class="actions">
-              <% if can? :update, shipment %>
-                <%= link_to '', '#', :class => 'edit-method icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
-              <% end %>
-            </td>
+      <legend><%= t('spree.adjustments') %></legend>
+      <table>
+        <thead>
+          <th><%= t('spree.name')%></th>
+          <th><%= t('spree.amount')%></th>
+        </thead>
+        <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
+          <% order.adjustments.eligible.each do |adjustment| %>
+            <% next if ((adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0)) || adjustment.originator_type == 'Spree::ShippingMethod' %>
+            <tr class="total">
+              <td><strong><%= adjustment.label %>:</strong></td>
+              <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
+            </tr>
           <% end %>
-        </tr>
-
-        <tr class="edit-tracking hidden total">
-          <td colspan="5">
-            <label><%= t(:tracking_number) %>:</label>
-            <%= text_field_tag :tracking, shipment.tracking %>
-          </td>
-          <td class="actions">
-            <% if can? :update, shipment %>
-              <%= link_to '', '#', :class => 'save-tracking icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => 'save' %>
-              <%= link_to '', '#', :class => 'cancel-tracking icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => t('cancel') %>
-            <% end %>
-          </td>
-        </tr>
-
-        <tr class="show-tracking total">
-          <td colspan="5">
-            <% if shipment.tracking.present? %>
-              <strong><%= t(:tracking) %>:</strong> <%= shipment.tracking %>
-            <% else %>
-              <%= t(:no_tracking_present) %>
-            <% end %>
-          </td>
-          <td class="actions">
-            <% if can? :update, shipment %>
-              <%= link_to '', '#', :class => 'edit-tracking icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => t('edit') %>
-            <% end %>
-          </td>
-        </tr>
-
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </fieldset>
   <% end %>
 
-  <fieldset class="no-border-bottom">
-    <legend><%= t('spree.adjustments') %></legend>
-    <table>
-      <thead>
-        <th><%= t('spree.name')%></th>
-        <th><%= t('spree.amount')%></th>
-      </thead>
-      <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
-        <% order.adjustments.eligible.each do |adjustment| %>
-          <% next if ((adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0)) || adjustment.originator_type == 'Spree::ShippingMethod' %>
-          <tr class="total">
-            <td><strong><%= adjustment.label %>:</strong></td>
-            <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table
-  </fieldset>
-
-  <fieldset class="no-border-bottom" id="order-total" data-hook="order_details_total">
-    <legend><%= t(:order_total) %></legend>
-    <span class="order-total"><%= order.display_total %></span>
-  </fieldset>
-
-
+  <% if order.line_items.exists? %>
+    <fieldset class="no-border-bottom" id="order-total" data-hook="order_details_total">
+      <legend><%= t(:order_total) %></legend>
+      <span class="order-total"><%= order.display_total %></span>
+    </fieldset>
+  <% end %>
 
   <%= javascript_tag do -%>
     var order_number = '<%= @order.number %>';

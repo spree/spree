@@ -1,0 +1,108 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:new_stock_transfer) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to t(:stock_transfers), admin_stock_transfers_url, { :icon => 'icon-resize-full' } %>
+  </li>
+<% end %>
+
+<script type='text/template' id='transfer_variant_template'>
+  {{#each variants}}
+    <tr>
+      <td>{{name}}</td>
+      <td class="align-center">{{quantity}}</td>
+      <td class="align-center">
+        <button class='icon-trash transfer_remove_variant button'
+                data-variant-id='{{id}}'>remove</button>
+      </td>
+      <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
+      <input type='hidden' id='quantity[]' name='quantity[]' value='{{quantity}}'>
+    </tr>
+  {{/each}}
+</script>
+
+<%= form_tag admin_stock_transfers_path, :method => :post do %>
+  <fieldset class="twelve columns alpha">
+    <legend align="center"><%= t(:transfer_transfer_stock)%></legend>
+
+    <div class="row" data-hook="admin_stock_movements_form_fields">
+      <div class="alpha six columns">
+        <div class="field" id="stock_movement_reference_number_field">
+          <%= label_tag 'reference_number', raw("#{t(:reference_number)} (#{t(:optional)})") %>
+          <%= text_field_tag :reference_number, '', class: 'fullwidth' %>
+        </div>
+      </div>
+      <div class="six columns omega">
+        <div class="field checkbox" id="receive_stock_field">
+          <label for="receive_stock">
+            <%= check_box_tag :transfer_receive_stock %>
+            <%= t(:receive_stock) %>
+          </label>
+        </div>
+      </div>
+      <div class="alpha six columns">
+        <div class="field" id="transfer_source_location_id_field">
+          <%= label_tag :transfer_source_location_id, t(:transfer_from_location) %>
+          <%= select_tag :transfer_source_location_id, {}, class: 'select2 fullwidth' %>
+        </div>
+      </div>
+      <div class="six columns omega">
+        <div class="field" id="transfer_destination_location_id_field">
+          <%= label_tag :transfer_destination_location_id, t(:transfer_to_location) %>
+          <%= select_tag :transfer_destination_location_id, {}, class: 'select2 fullwidth' %>
+        </div>
+      </div>
+    </div>
+
+    <fieldset class="no-border-bottom" id="add-variant-to-transfer">
+      <legend>Add Variant</legend>
+
+      <div class="alpha eight columns">
+        <div class="field" id="stock_movement_variant_id_field">
+          <%= label_tag 'variant_id', t(:variant) %>
+          <%= select_tag 'transfer_variant', {}, class: 'fullwidth' %>
+        </div>
+      </div>
+      <div class="two columns">
+        <div class="field" id="stock_movement_quantity_field">
+          <%= label_tag 'quantity', t(:quantity) %>
+          <%= number_field_tag 'transfer_variant_quantity', 1, class: 'fullwidth', min: 0 %>
+        </div>
+      </div>
+      <div class="two columns omega">
+        <div class="field">
+          <%= button t(:add), 'icon-plus button transfer_add_variant' %>
+        </div>
+      </div>
+
+    </fieldset>
+
+    <div class="no-objects-found">No variants added for transfer. Please, add one.</div>
+
+    <div id="transfer-variants-table" class="twelve columns alpha" style="display:none">
+      <table class="index sortable">
+        <colgroup>
+          <col style="width: 60%" />
+          <col style="width: 20%" />
+          <col style="width: 20%" />
+        </colgroup>
+        <thead data-hook="transfer_variants_header">
+          <th><%= t(:name) %></th>
+          <th><%= t(:quantity) %></th>
+          <th><%= t(:remove) %></th>
+        </thead>
+        <tbody id="transfer_variants_tbody">
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="filter-actions actions" data-hook="buttons">
+      <%= button t(:transfer_stock), 'icon-plus transfer_transfer' %>
+    </div>
+  </fieldset>
+<% end %>

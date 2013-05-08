@@ -428,6 +428,14 @@ describe Spree::Order do
     end
   end
 
+  context "#confirmation_required?" do
+    it "does not bomb out when an order has an unpersisted payment" do
+      order = Spree::Order.new
+      order.payments.build
+      assert !order.confirmation_required?
+    end
+  end
+
   # Regression test for #2191
   context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
     let!(:persisted_order) { create(:order) }
@@ -473,6 +481,30 @@ describe Spree::Order do
       it "returns false" do
         assert !persisted_order.has_unprocessed_payments?
       end
+    end
+  end
+
+  context "add_update_hook" do
+    before do
+      Spree::Order.class_eval do
+        register_update_hook :add_awesome_sauce
+      end
+    end
+
+    after do
+      Spree::Order.update_hooks = Set.new
+    end
+
+    it "calls hook during update" do
+      order = create(:order)
+      order.should_receive(:add_awesome_sauce)
+      order.update!
+    end
+
+    it "calls hook during finalize" do
+      order = create(:order)
+      order.should_receive(:add_awesome_sauce)
+      order.finalize!
     end
   end
 end
