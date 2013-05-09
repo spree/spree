@@ -3,16 +3,13 @@ require 'spec_helper'
 module Spree
   class GatewayWithPassword < PaymentMethod
     attr_accessible :preferred_password
-
     preference :password, :string, :default => "password"
   end
-end
 
-module Spree
   describe Admin::PaymentMethodsController do
     stub_authorization!
 
-    let(:payment_method) { Spree::GatewayWithPassword.create!(:name => "Bogus", :preferred_password => "haxme") }
+    let(:payment_method) { GatewayWithPassword.create!(:name => "Bogus", :preferred_password => "haxme") }
 
     # regression test for #2094
     it "does not clear password on update" do
@@ -22,6 +19,14 @@ module Spree
 
       payment_method.reload
       payment_method.preferred_password.should == "haxme"
+    end
+
+    context "tries to save invalid payment" do
+      it "doesn't break, responds nicely" do
+        expect {
+          spree_post :create, :payment_method => { :name => "", :type => "Spree::Gateway::Bogus" }
+        }.not_to raise_error
+      end
     end
 
     it "can create a payment method of a valid type" do
