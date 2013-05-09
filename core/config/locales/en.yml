@@ -505,6 +505,7 @@ en:
     expiration: Expiration
     extension: Extension
     filename: Filename
+    fill_in_customer_info: Please fill in customer info
     filter_results: Filter Results
     finalize: Finalize
     first_item: First Item Cost
