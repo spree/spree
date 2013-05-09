@@ -37,7 +37,7 @@
     var shipments = [];
 
     <% @order.shipments.each do |shipment| %>
-      shipments.push(<%== shipment.to_json(:root => false, :include => :inventory_units) %>);
+      shipments.push(<%== shipment.to_json(:root => false, :include => [:inventory_units, :stock_location]) %>);
     <% end %>
 
     <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>

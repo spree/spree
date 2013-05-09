@@ -944,6 +944,7 @@ en:
     smtp_username: SMTP Username
     source: Source
     special_instructions: Special Instructions
+    split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
     start: Start
     start_date: Valid from

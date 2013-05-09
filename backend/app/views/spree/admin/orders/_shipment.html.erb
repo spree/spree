@@ -1,3 +1,4 @@
+<%= render :partial => "spree/admin/variants/split", :formats => :js %>
 <fieldset class="no-border-bottom">
   <legend align="center" class="stock-location" data-hook="stock-location">
     <span class="shipment-number"><%= shipment.number %></span>
@@ -30,11 +31,11 @@
     <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
   </thead>
 
-  <tbody>
+  <tbody data-shipment-number="<%= shipment.number %>" data-order-number="<%= order.number %>">
     <% shipment.manifest.each do |item| %>
       <% line_item = order.find_line_item_by_variant(item.variant) %>
 
-      <tr class="stock-item">
+      <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
         <td class="item-image"><%= mini_image(item.variant) %></td>
         <td class="item-name">
           <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
@@ -57,7 +58,8 @@
               <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
               <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
               <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
-              <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t(:delete) %>
+              <%= link_to '', '#', :class => 'split-item icon_link icon-resize-horizontal no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
+              <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('delete') %>
             <% end %>
           </td>
         <% end %>
