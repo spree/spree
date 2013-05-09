@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= t(:analytics_sign_up) %>
+  <%= Spree.t(:analytics_sign_up) %>
 <% end %>
 
 <% content_for :page_title_classes do %>
@@ -45,17 +45,17 @@
 
     <div class="field">
       <%= check_box_tag 'store[terms_of_service]', @store[:terms_of_service], @store.has_key?(:terms_of_service), :size => 50 %>
-      <%= label_tag 'store[terms_of_service]', t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/about/terms" target="_new"><%= t(:review) %></a>)
+      <%= label_tag 'store[terms_of_service]', Spree.t(:agree_to_terms_of_service) %> (<a href="http://jirafe.com/about/terms" target="_new"><%= Spree.t(:review) %></a>)
     </div>
     
     <div class="field">
       <%= check_box_tag 'store[privacy_policy]', @store[:privacy_policy], @store.has_key?(:privacy_policy), :size => 50 %>
-      <%= label_tag 'store[privacy_policy]', t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/about/privacy" target="_new"><%= t(:review) %></a>)
+      <%= label_tag 'store[privacy_policy]', Spree.t(:agree_to_privacy_policy) %> (<a href="http://jirafe.com/about/privacy" target="_new"><%= Spree.t(:review) %></a>)
     </div>
   </div>
   <div class="form-buttons" data-hook="buttons">
-    <%= button t(:activate), 'icon-ok' %>
-    <%= t(:or) %>
-    <%= link_to_with_icon 'icon-remove', t(:cancel), admin_path, :class => 'button' %>
+    <%= button Spree.t(:activate), 'icon-ok' %>
+    <%= Spree.t(:or) %>
+    <%= link_to_with_icon 'icon-remove', Spree.t(:cancel), admin_path, :class => 'button' %>
   </div>
 <% end %>

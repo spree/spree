@@ -14,7 +14,7 @@ module Spree
                       :preferred_currency
 
       def self.description
-        I18n.t(:shipping_flexible_rate)
+        Spree.t(:shipping_flexible_rate)
       end
 
       def compute_package(package)

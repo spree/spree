@@ -9,10 +9,10 @@ module Spree
 
         if @adjustment.immutable?
           @adjustment.fire_state_event(:open)
-          flash[:success] = t(:adjustment_successfully_opened)
+          flash[:success] = Spree.t(:adjustment_successfully_opened)
         else
           @adjustment.fire_state_event(:close)
-          flash[:success] = t(:adjustment_successfully_closed)
+          flash[:success] = Spree.t(:adjustment_successfully_closed)
         end
         redirect_to admin_order_adjustments_path(@order)
       end

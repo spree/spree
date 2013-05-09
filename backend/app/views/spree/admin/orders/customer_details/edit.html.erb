@@ -3,17 +3,17 @@
 <%= csrf_meta_tags %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= t(:customer_details) %>
+  <i class="icon-arrow-right"></i> <%= Spree.t(:customer_details) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
 <% if @order.cart? %>
   <div id="select-customer" data-hook>
     <fieldset class="no-border-bottom">
-      <legend align="center"><%= t(:customer_search) %></legend>
+      <legend align="center"><%= Spree.t(:customer_search) %></legend>
       <%= hidden_field_tag :customer_search,  nil, :class => 'fullwidth title' %>
       <%= render :partial => "spree/admin/orders/customer_details/autocomplete", :formats => :js %>
     </fieldset>

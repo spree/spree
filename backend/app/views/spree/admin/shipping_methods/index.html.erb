@@ -1,12 +1,12 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:shipping_methods) %>
+  <%= Spree.t(:shipping_methods) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_shipping_method), new_object_url,  :icon => 'icon-plus', :id => 'admin_new_shipping_method_link' %>
+    <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  :icon => 'icon-plus', :id => 'admin_new_shipping_method_link' %>
   </li>
 <% end %>
 <% if @shipping_methods.any? %>
@@ -20,10 +20,10 @@
     </colgroup>
     <thead>
       <tr data-hook="admin_shipping_methods_index_headers">
-        <th><%= t(:name) %></th>
-        <th><%= t(:zone) %></th>
-        <th><%= t(:calculator) %></th>
-        <th><%= t(:display) %></th>
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:zone) %></th>
+        <th><%= Spree.t(:calculator) %></th>
+        <th><%= Spree.t(:display) %></th>
         <th data-hook="admin_shipping_methods_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -33,7 +33,7 @@
           <td><%= shipping_method.name %></td>
           <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
           <td><%= shipping_method.calculator.description %></td>
-          <td class="align-center"><%= shipping_method.display_on.blank? ? t(:both) : t(shipping_method.display_on) %></td>
+          <td class="align-center"><%= shipping_method.display_on.blank? ? Spree.t(:both) : Spree.t(shipping_method.display_on) %></td>
           <td data-hook="admin_shipping_methods_index_row_actions" class="actions">
             <%= link_to_edit shipping_method, :no_text => true %>
             <%= link_to_delete shipping_method, :no_text => true %>
@@ -43,6 +43,6 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= t(:no_shipping_methods_found) %></div>
+  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:no_shipping_methods_found) %></div>
 <% end %>
 

@@ -1,33 +1,33 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:header, :scope => "spree.dash.jirafe") %>
+  <%= Spree.t(:header, :scope => "dash.jirafe") %>
 <% end %>
 
 <%= form_tag admin_analytics_path, :method => :put do %>
   <fieldset>
-    <legend><%= t(:settings)%></legend>
+    <legend><%= Spree.t(:settings)%></legend>
 
-    <p><%= t(:explanation, :scope => "spree.dash.jirafe") %></p>
+    <p><%= Spree.t(:explanation, :scope => "dash.jirafe") %></p>
     <div class="alpha five columns">
       <div class="field">
-        <%= label_tag 'app_id', t(:app_id, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'app_id', Spree.t(:app_id, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'app_id', Spree::Dash::Config.app_id %>
       </div>
       <div class="field">
-        <%= label_tag 'site_id', t(:site_id, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'site_id', Spree.t(:site_id, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'site_id', Spree::Dash::Config.site_id %>
       </div>
     </div>
 
     <div class="omega seven columns">
       <div class="field">
-        <%= label_tag 'app_token', t(:app_token, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'app_token', Spree.t(:app_token, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'app_token', Spree::Dash::Config.app_token, :size => 40 %>
       </div>
 
       <div class="field">
-        <%= label_tag 'token', t(:token, :scope => "spree.dash.jirafe") %><br>
+        <%= label_tag 'token', Spree.t(:token, :scope => "dash.jirafe") %><br>
         <%= text_field_tag 'token', Spree::Dash::Config.token, :size => 40 %>
       </div>
     </div>
@@ -35,7 +35,7 @@
     <div class="clear"></div>
 
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button t(:update), 'icon-refresh' %>
+      <%= button Spree.t(:update), 'icon-refresh' %>
     </div>
   </fieldset>
 <% end %>

@@ -1,0 +1,39 @@
+<%= form_tag transfer_stock_admin_stock_locations_path do %>
+  <fieldset>
+    <legend align="center"><%= Spree.t(:move_stock_between_locations)%></legend>
+    <div data-hook="admin_stock_movements_form_fields" class="row">
+      <div class="five columns">
+        <div class="field" id="stock_movement_transfer_from_field">
+          <%= label_tag :stock_location_from_id, Spree.t(:transfer_from_location) %>
+          <%= select_tag :stock_location_from_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
+        </div>
+      </div>
+      <div class="five columns">
+        <div class="field" id="stock_movement_transfer_to_field">
+          <%= label_tag :stock_location_to_id, Spree.t(:transfer_to_location) %>
+          <%= select_tag :stock_location_to_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2 fullwidth' %>
+        </div>
+      </div>
+
+      <div class="five columns">
+        <div class="field" id="stock_movement_variant_id_field">
+          <%= label_tag 'variant_id', Spree.t(:variant) %>
+          <%= select_tag :variant_id, options_from_collection_for_select(@variants, :id, :name_and_sku), class: 'select2 fullwidth' %>
+        </div>
+      </div>
+
+      <div class="five columns">
+        <div class="field" id="stock_movement_quantity_field">
+          <%= label_tag 'quantity', Spree.t(:quantity) %>
+          <%= number_field_tag :quantity, 1, class: 'fullwidth' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button Spree.t(:transfer_stock), 'icon-plus' %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), collection_url, :class => 'button' %>
+    </div>
+  </fieldset>
+<% end %>

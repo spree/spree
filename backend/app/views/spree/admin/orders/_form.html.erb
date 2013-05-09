@@ -6,11 +6,11 @@
   <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
   <% if order.adjustments.eligible.exists? %>
     <fieldset class="no-border-bottom">
-      <legend><%= t('spree.adjustments') %></legend>
+      <legend><%= Spree.t('adjustments') %></legend>
       <table>
         <thead>
-          <th><%= t('spree.name')%></th>
-          <th><%= t('spree.amount')%></th>
+          <th><%= Spree.t('name')%></th>
+          <th><%= Spree.t('amount')%></th>
         </thead>
         <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
           <% order.adjustments.eligible.each do |adjustment| %>
@@ -27,7 +27,7 @@
 
   <% if order.line_items.exists? %>
     <fieldset class="no-border-bottom" id="order-total" data-hook="order_details_total">
-      <legend><%= t(:order_total) %></legend>
+      <legend><%= Spree.t(:order_total) %></legend>
       <span class="order-total"><%= order.display_total %></span>
     </fieldset>
   <% end %>

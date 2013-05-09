@@ -2,12 +2,12 @@
 
   <div class="field alpha four columns">
     <% field_name = "#{param_prefix}[calculator_type]" %>
-    <%= label_tag field_name, t(:calculator) %>
+    <%= label_tag field_name, Spree.t(:calculator) %>
     <%= select_tag field_name,
                    options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
                    :class => 'type-select select2 fullwidth' %>
     <% if promotion_action.calculator.respond_to?(:preferences) %>
-      <span class="warning info"><%= t(:calculator_settings_warning) %></span>
+      <span class="warning info"><%= Spree.t(:calculator_settings_warning) %></span>
     <% end %>
   </div>
 
@@ -15,7 +15,7 @@
     <div class="settings field omega four columns">
       <% promotion_action.calculator.preferences.keys.map do |key| %>
         <% field_name = "#{param_prefix}[calculator_attributes][preferred_#{key}]" %>
-        <%= label_tag field_name, t(key.to_s) %>
+        <%= label_tag field_name, Spree.t(key.to_s) %>
         <%= preference_field_tag(field_name,
                                  promotion_action.calculator.get_preference(key),
                                  :type => promotion_action.calculator.preference_type(key)) %>

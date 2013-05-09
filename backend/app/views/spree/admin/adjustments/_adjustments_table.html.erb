@@ -2,9 +2,9 @@
   <thead data-hook="adjustmment_head">
     <tr>
       <th><%= "#{t('spree.date')}/#{t('spree.time')}" %></th>
-      <th><%= t(:description) %></th>
-      <th><%= t(:amount) %></th>
-      <th><%= t(:state) %></th>
+      <th><%= Spree.t(:description) %></th>
+      <th><%= Spree.t(:amount) %></th>
+      <th><%= Spree.t(:state) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
@@ -27,8 +27,8 @@
     <% end %>
     <tr>
       <td class="align-center" colspan='4'>
-        <%= button_to t(:open_all_adjustments), open_adjustments_admin_order_path(@order), :method => :get %>&nbsp;
-        <%= button_to t(:close_all_adjustments), close_adjustments_admin_order_path(@order), :method => :get %>
+        <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), :method => :get %>&nbsp;
+        <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), :method => :get %>
       </td>
       <td class='actions'>&nbsp;</td>
     </tr>

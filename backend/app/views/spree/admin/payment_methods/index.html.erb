@@ -1,12 +1,12 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:payment_methods) %>
+  <%= Spree.t(:payment_methods) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_payment_method), new_object_url, :icon => 'icon-plus', :id => 'admin_new_payment_methods_link' %>
+    <%= button_link_to Spree.t(:new_payment_method), new_object_url, :icon => 'icon-plus', :id => 'admin_new_payment_methods_link' %>
   </li>
 <% end %>
 
@@ -22,11 +22,11 @@
     </colgroup>
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
-        <th><%= t(:name) %></th>
-        <th><%= t(:provider) %></th>
-        <th><%= t(:environment) %></th>
-        <th><%= t(:display) %></th>
-        <th><%= t(:active) %></th>
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:provider) %></th>
+        <th><%= Spree.t(:environment) %></th>
+        <th><%= Spree.t(:display) %></th>
+        <th><%= Spree.t(:active) %></th>
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
       </tr>  
     </thead>
@@ -36,8 +36,8 @@
           <td class="align-center"><%= method.name %></td>
           <td><%= method.type %></td>
           <td class="align-center"><%= method.environment.to_s.titleize %></td>
-          <td class="align-center"><%= method.display_on.blank? ? t(:both) : t(method.display_on) %></td>
-          <td class="align-center"><%= method.active ? t(:say_yes) : t(:say_no) %></td>
+          <td class="align-center"><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
+          <td class="align-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td data-hook="admin_payment_methods_index_row_actions" class="actions">
             <%= link_to_edit method, :no_text => true %>
             <%= link_to_delete method, :no_text => true  %>
@@ -47,6 +47,6 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= t(:no_payment_methods_found) %></div>
+  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:no_payment_methods_found) %></div>
 <% end %>
 

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe "Promotion adjustments", :js => true do
-  let!(:country) { create(:country, :name => "Kangaland",:states_required => true) }
-  let!(:state) { create(:state, :name => "Victoria", :country => country) }
+  let!(:country) { create(:country, :name => "United States of America",:states_required => true) }
+  let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:payment_method) { create(:payment_method) }
@@ -56,14 +56,14 @@ describe "Promotion adjustments", :js => true do
       it "informs about an invalid coupon code" do
         fill_in "order_coupon_code", :with => "coupon_codes_rule_man"
         click_button "Save and Continue"
-        page.should have_content(I18n.t(:coupon_code_not_found))
+        page.should have_content(Spree.t(:coupon_code_not_found))
       end
 
       context "with a promotion" do
         it "applies a promotion to an order" do
           fill_in "order_coupon_code", :with => "onetwo"
           click_button "Save and Continue"
-          page.should have_content(I18n.t(:coupon_code_applied))
+          page.should have_content(Spree.t(:coupon_code_applied))
         end
       end
     end
@@ -80,13 +80,13 @@ describe "Promotion adjustments", :js => true do
       it "can enter a coupon code and receives success notification" do
         fill_in "order_coupon_code", :with => "onetwo"
         click_button "Update"
-        page.should have_content(I18n.t(:coupon_code_applied))
+        page.should have_content(Spree.t(:coupon_code_applied))
       end
 
       it "can enter a promotion code with both upper and lower case letters" do
         fill_in "order_coupon_code", :with => "ONETwO"
         click_button "Update"
-        page.should have_content(I18n.t(:coupon_code_applied))
+        page.should have_content(Spree.t(:coupon_code_applied))
       end
 
       it "informs the user about a coupon code which has exceeded its usage" do
@@ -95,7 +95,7 @@ describe "Promotion adjustments", :js => true do
 
         fill_in "order_coupon_code", :with => "onetwo"
         click_button "Update"
-        page.should have_content(I18n.t(:coupon_code_max_usage))
+        page.should have_content(Spree.t(:coupon_code_max_usage))
       end
 
       context "informs the user if the previous promotion is better" do
@@ -111,12 +111,12 @@ describe "Promotion adjustments", :js => true do
 
           fill_in "order_coupon_code", :with => "50off"
           click_button "Update"
-          page.should have_content(I18n.t(:coupon_code_applied))
+          page.should have_content(Spree.t(:coupon_code_applied))
 
           fill_in "order_coupon_code", :with => "onetwo"
           click_button "Update"
 
-          page.should have_content(I18n.t(:coupon_code_better_exists))
+          page.should have_content(Spree.t(:coupon_code_better_exists))
         end
       end
 
@@ -133,7 +133,7 @@ describe "Promotion adjustments", :js => true do
 
           fill_in "order_coupon_code", :with => "onetwo"
           click_button "Update"
-          page.should have_content(I18n.t(:coupon_code_not_eligible))
+          page.should have_content(Spree.t(:coupon_code_not_eligible))
         end
       end
 
@@ -143,7 +143,7 @@ describe "Promotion adjustments", :js => true do
         promotion.save!
         fill_in "order_coupon_code", :with => "onetwo"
         click_button "Update"
-        page.should have_content(I18n.t(:coupon_code_expired))
+        page.should have_content(Spree.t(:coupon_code_expired))
       end
     end
   end

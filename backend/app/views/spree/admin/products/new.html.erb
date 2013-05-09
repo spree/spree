@@ -5,10 +5,10 @@
 <%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
   <fieldset data-hook="new_product">
 
-    <legend align="center"><%= t(:new_product) %></legend>
+    <legend align="center"><%= Spree.t(:new_product) %></legend>
 
     <%= f.field_container :name do %>
-      <%= f.label :name, t(:name) %> <span class="required">*</span><br />
+      <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
       <%= f.text_field :name, :class => 'fullwidth title' %>
       <%= f.error_message_on :name %>
     <% end %>
@@ -17,7 +17,7 @@
       <% unless @product.has_variants? %>
         <div class="alpha four columns">
           <%= f.field_container :sku do %>
-            <%= f.label :sku, t(:sku) %><br />
+            <%= f.label :sku, Spree.t(:sku) %><br />
             <%= f.text_field :sku, :size => 16, :class => 'fullwidth' %>
             <%= f.error_message_on :sku %>
           <% end %>
@@ -26,14 +26,14 @@
 
       <div class="four columns">
         <%= f.field_container :prototype do %>
-          <%= f.label :prototype_id, t(:prototype) %><br />
+          <%= f.label :prototype_id, Spree.t(:prototype) %><br />
           <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth'} %>
         <% end %>
       </div>
 
       <div class="four columns">
         <%= f.field_container :price do %>
-          <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
+          <%= f.label :price, Spree.t(:master_price) %> <span class="required">*</span><br />
           <%= f.text_field :price, :class => 'fullwidth' %>
           <%= f.error_message_on :price %>
         <% end %>
@@ -41,7 +41,7 @@
 
       <div class="omega four columns">
         <%= f.field_container :available_on do %>
-          <%= f.label :available_on, t(:available_on) %>
+          <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
           <%= f.text_field :available_on, :class => 'datepicker fullwidth' %>
         <% end %>

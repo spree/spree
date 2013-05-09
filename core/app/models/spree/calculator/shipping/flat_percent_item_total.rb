@@ -7,7 +7,7 @@ module Spree
       attr_accessible :preferred_flat_percent
 
       def self.description
-        I18n.t(:flat_percent)
+        Spree.t(:flat_percent)
       end
 
       def compute_package(package)

@@ -15,11 +15,11 @@ module Spree
     def link_to_cart(text = nil)
       return "" if current_spree_page?(spree.cart_path)
 
-      text = text ? h(text) : t('cart')
+      text = text ? h(text) : Spree.t('cart')
       css_class = nil
 
       if current_order.nil? or current_order.line_items.empty?
-        text = "#{text}: (#{t('empty')})"
+        text = "#{text}: (#{Spree.t('empty')})"
         css_class = 'empty'
       else
         text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total.to_html}</span>".html_safe
@@ -80,13 +80,13 @@ module Spree
     def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
       return "" if current_page?("/") || taxon.nil?
       separator = raw(separator)
-      crumbs = [content_tag(:li, link_to(t(:home) , spree.root_path) + separator)]
+      crumbs = [content_tag(:li, link_to(Spree.t(:home), spree.root_path) + separator)]
       if taxon
-        crumbs << content_tag(:li, link_to(t(:products) , products_path) + separator)
+        crumbs << content_tag(:li, link_to(Spree.t(:products), products_path) + separator)
         crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
         crumbs << content_tag(:li, content_tag(:span, link_to(taxon.name , seo_url(taxon))))
       else
-        crumbs << content_tag(:li, content_tag(:span, t(:products)))
+        crumbs << content_tag(:li, content_tag(:span, Spree.t(:products)))
       end
       crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), class: 'inline')
       content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'sixteen columns')
@@ -115,7 +115,7 @@ module Spree
       end
 
       countries.collect do |country|
-        country.name = I18n.t(country.iso, scope: 'country_names', default: country.name)
+        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
         country
       end.sort { |a, b| a.name <=> b.name }
     end
@@ -164,6 +164,13 @@ module Spree
         content_tag(:span, shipment.tracking)
       end
     end
+
+    def t(*args)
+      puts "WARNING: Spree's translations are now scoped to a 'spree' namespace. Please use the Spree.t helper."
+      puts "Called from: #{caller[0]}"
+      I18n.t(*args)
+    end
+
 
     private
 

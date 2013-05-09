@@ -1,17 +1,17 @@
 <% content_for :page_title do %>
-  <%= t(:promotions) %>
+  <%= Spree.t(:promotions) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_promotion), spree.new_admin_promotion_path, :icon => 'icon-plus' %>
+    <%= button_link_to Spree.t(:new_promotion), spree.new_admin_promotion_path, :icon => 'icon-plus' %>
   </li>
 <% end %>
 
 <% unless @promotions.any? %>
   <div class="no-objects-found">
-    <%= t(:no_promotions_found) %>.
-    <%= link_to t(:add_one), spree.new_admin_promotion_path %>!
+    <%= Spree.t(:no_promotions_found) %>.
+    <%= link_to Spree.t(:add_one), spree.new_admin_promotion_path %>!
   </div>
 <% else %>
   <table class="index">
@@ -25,11 +25,11 @@
     </colgroup>
     <thead>
       <tr>
-        <th><%= t(:name) %></th>
-        <th><%= t(:code) %></th>
-        <th><%= t(:description) %></th>
-        <th><%= t(:usage_limit) %></th>
-        <th><%= t(:expiration) %></th>
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:code) %></th>
+        <th><%= Spree.t(:description) %></th>
+        <th><%= Spree.t(:usage_limit) %></th>
+        <th><%= Spree.t(:expiration) %></th>
         <th class="actions"></th>
       </tr>
     </thead>

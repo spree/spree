@@ -22,7 +22,7 @@ module Spree
       begin
         store = Spree::Dash::Jirafe.synchronize_resources(store_hash)
       rescue SocketError
-        flash[:error] = t(:could_not_connect_to_jirafe)
+        flash[:error] = Spree.t(:could_not_connect_to_jirafe)
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
       ensure
@@ -35,7 +35,7 @@ module Spree
       Spree::Dash::Config.app_token = params[:app_token]
       Spree::Dash::Config.site_id = params[:site_id]
       Spree::Dash::Config.token = params[:token]
-      flash[:success] = t(:jirafe_settings_updated, :scope => "spree.dash")
+      flash[:success] = Spree.t(:jirafe_settings_updated, :scope => "dash")
       redirect_to admin_analytics_path
     end
 
@@ -43,7 +43,7 @@ module Spree
 
     def redirect_if_registered
       if Spree::Dash::Config.configured?
-        flash[:success] = t(:already_signed_up_for_analytics)
+        flash[:success] = Spree.t(:already_signed_up_for_analytics)
         redirect_to admin_path and return true
       end
     end

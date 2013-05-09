@@ -19,7 +19,7 @@ module Spree
 
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
 
-        titleized_label = t(options[:label], :default => options[:label]).titleize
+        titleized_label = Spree.t(options[:label], :default => options[:label]).titleize
 
         css_classes = []
 
@@ -61,29 +61,29 @@ module Spree
 
       def link_to_clone(resource, options={})
         options[:data] = {:action => 'clone'}
-        link_to_with_icon('icon-copy', t(:clone), clone_admin_product_url(resource), options)
+        link_to_with_icon('icon-copy', Spree.t(:clone), clone_admin_product_url(resource), options)
       end
 
       def link_to_new(resource)
         options[:data] = {:action => 'new'}
-        link_to_with_icon('icon-plus', t(:new), edit_object_url(resource))
+        link_to_with_icon('icon-plus', Spree.t(:new), edit_object_url(resource))
       end
 
       def link_to_edit(resource, options={})
         options[:data] = {:action => 'edit'}
-        link_to_with_icon('icon-edit', t(:edit), edit_object_url(resource), options)
+        link_to_with_icon('icon-edit', Spree.t(:edit), edit_object_url(resource), options)
       end
 
       def link_to_edit_url(url, options={})
         options[:data] = {:action => 'edit'}
-        link_to_with_icon('icon-edit', t(:edit), url, options)
+        link_to_with_icon('icon-edit', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options={})
         url = options[:url] || object_url(resource)
-        name = options[:name] || t(:delete)
+        name = options[:name] || Spree.t(:delete)
         options[:class] = "delete-resource"
-        options[:data] = { :confirm => t(:are_you_sure), :action => 'remove' }
+        options[:data] = { :confirm => Spree.t(:are_you_sure), :action => 'remove' }
         link_to_with_icon 'icon-trash', name, url, options
       end
 

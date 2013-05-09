@@ -3,7 +3,7 @@
 
     <% if @product.variants_and_option_values(current_currency).any? %>
       <div id="product-variants" class="columns five alpha">
-        <h6 class="product-section-title"><%= t(:variants) %></h6>
+        <h6 class="product-section-title"><%= Spree.t(:variants) %></h6>
         <ul>
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
@@ -26,7 +26,7 @@
       <div data-hook="product_price" class="columns five <% if !@product.has_variants? %> alpha <% else %> omega <% end %>">
         
         <div id="product-price">
-          <h6 class="product-section-title"><%= t(:price) %></h6>
+          <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div><span class="price selling" itemprop="price"><%= display_price(@product) %></span></div>
         </div>
 
@@ -34,14 +34,14 @@
           <%= number_field_tag (@product.variants_and_option_values.any? ? :quantity : "variants[#{@product.master.id}]"),
             1, :class => 'title', :min => 1 %>
           <%= button_tag :class => 'large primary', :id => 'add-to-cart-button', :type => :submit do %>
-            <%= t(:add_to_cart) %>
+            <%= Spree.t(:add_to_cart) %>
           <% end %>
         </div>
       </div>
     <% else %>
         <div id="product-price">
           <br>
-          <div><span class="price selling" itemprop="price"><%= t('product_not_available_in_this_currency') %></span></div>
+          <div><span class="price selling" itemprop="price"><%= Spree.t('product_not_available_in_this_currency') %></span></div>
         </div>
     <% end %>    
   </div>

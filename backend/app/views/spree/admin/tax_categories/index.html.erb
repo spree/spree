@@ -1,13 +1,13 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:listing_tax_categories) %>
+  <%= Spree.t(:listing_tax_categories) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <ul class="actions inline-menu">
     <li>
-      <%= button_link_to t(:new_tax_category), new_object_url, :icon => 'icon-plus', :id => 'admin_new_tax_categories_link' %>
+      <%= button_link_to Spree.t(:new_tax_category), new_object_url, :icon => 'icon-plus', :id => 'admin_new_tax_categories_link' %>
     </li>
   </ul>
 <% end %>
@@ -21,9 +21,9 @@
   </colgroup>
   <thead>
     <tr data-hook="tax_header">
-      <th><%= t(:name) %></th>
-      <th><%= t(:description) %></th>
-      <th><%= t(:default) %></th>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:description) %></th>
+      <th><%= Spree.t(:default) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
@@ -42,7 +42,7 @@
       </tr>
     <% end %>
     <% if @tax_categories.empty? %>
-      <tr data-hook="tax_none"><td colspan="4"><%= t(:none) %></td></tr>
+      <tr data-hook="tax_none"><td colspan="4"><%= Spree.t(:none) %></td></tr>
     <% end %>
   </tbody>
 </table>
