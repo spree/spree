@@ -241,6 +241,7 @@ en:
   spree:
     abbreviation: Abbreviation
     account: Account
+    account_updated: Account updated
     action: Action
     actions:
       cancel: Cancel
@@ -536,6 +537,7 @@ en:
     images: Images
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
+    instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
@@ -825,6 +827,7 @@ en:
     remove: Remove
     rename: Rename
     reports: Reports
+    reset_password: Reset my password
     resend: Resend
     response_code: Response Code
     resume: resume
