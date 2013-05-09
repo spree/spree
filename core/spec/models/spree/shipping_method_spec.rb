@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 describe Spree::ShippingMethod do
-
   context 'calculators' do
-    let(:shipping_method){ create :shipping_method}
+    let(:shipping_method){ create(:shipping_method) }
 
     it "Should reject calculators that don't inherit from Spree::Calculator::Shipping::" do
       Spree::ShippingMethod.stub_chain(:spree_calculators, :shipping_methods).and_return([
@@ -12,6 +11,25 @@ describe Spree::ShippingMethod do
             Spree::Calculator::DefaultTax])
       Spree::ShippingMethod.calculators.should == [Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack ]
       Spree::ShippingMethod.calculators.should_not == [Spree::Calculator::DefaultTax]
+    end
+  end
+
+  context "validations" do
+    before { subject.valid? }
+
+    it "validates presence of name" do
+      subject.should have(1).error_on(:name)
+    end
+
+    context "shipping category" do
+      it "validates presence of at least one" do
+        subject.should have(1).error_on(:base)
+      end
+
+      context "one associated" do
+        before { subject.shipping_categories.push create(:shipping_category) }
+        it { subject.should have(0).error_on(:base) }
+      end
     end
   end
 
