@@ -17,6 +17,7 @@ module Spree
           redirect_to edit_admin_payment_method_path(@payment_method)
         else
           invoke_callbacks(:create, :fails)
+          respond_with(@payment_method)
         end
       end
 
