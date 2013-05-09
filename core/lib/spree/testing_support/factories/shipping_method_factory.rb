@@ -3,7 +3,7 @@ FactoryGirl.define do
     zones { |a| [Spree::Zone.global] }
     name 'UPS Ground'
 
-    after(:create) do |shipping_method, evaluator|
+    before(:create) do |shipping_method, evaluator|
       shipping_method.shipping_categories << (Spree::ShippingCategory.first || create(:shipping_category))
     end
 
