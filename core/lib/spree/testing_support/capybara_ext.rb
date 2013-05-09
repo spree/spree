@@ -58,6 +58,17 @@ module CapybaraExt
     select_select2_result(value)
   end
 
+  def select2_no_label value, options={}
+    raise "Must pass a hash containing 'from'" if not options.is_a?(Hash) or not options.has_key?(:from)
+
+    placeholder = options[:from]
+    minlength = options[:minlength] || 4
+
+    click_link placeholder
+
+    select_select2_result(value)
+  end
+
   def targetted_select2(value, options)
     # find select2 element and click it
     find(options[:from]).find('a').click

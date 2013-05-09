@@ -212,6 +212,114 @@ cancelItemSplit = function(event) {
   prev_row.find('a.delete-item').toggle();
 }
 
+startItemSplit = function(event){
+  event.preventDefault();
+  var link = $(this);
+  link.parent().find('a.edit-item').toggle();
+  link.parent().find('a.split-item').toggle();
+  link.parent().find('a.delete-item').toggle();
+  var variant_id = link.data('variant-id');
+
+  var variant = {};
+  $.ajax({
+    type: "GET",
+    async: false,
+    url: Spree.url("/api/variants.json"),
+    data: { 
+      q: {
+        "id_eq": variant_id
+      }
+    }
+  }).success(function( data ) {
+    variant = data['variants'][0];
+  }).error(function( msg ) {
+    console.log(msg);
+  });
+
+  var max_quantity = link.closest('tr').data('item-quantity');
+  var split_item_template = Handlebars.compile($('#variant_split_template').text()); 
+  link.closest('tr').after(split_item_template({ variant: variant, shipments: shipments, max_quantity: max_quantity }));
+  $('a.cancel-split').click(cancelItemSplit);
+  $('a.save-split').click(completeItemSplit);
+
+  // Add some tips
+  $('.with-tip').powerTip({
+    smartPlacement: true,
+    fadeInTime: 50,
+    fadeOutTime: 50,
+    intentPollInterval: 300
+  });
+  $('#item_stock_location').select2({ width: 'resolve', placeholder: 'Choose Location' });
+}
+
+completeItemSplit = function(event) {
+  event.preventDefault();
+  var link = $(this);
+  var stock_item_row = link.closest('tr');
+  var variant_id = stock_item_row.data('variant-id');
+  var stock_location_id = stock_item_row.find('#item_stock_location').val();
+  var quantity = stock_item_row.find('#item_quantity').val();
+  var original_shipment_number = link.closest('tbody').data('shipment-number');
+  var order_number = link.closest('tbody').data('order-number');
+  var new_shipment = stock_item_row.find($('#item_stock_location').select2('data').element).data('new-shipment');
+  
+  if (stock_location_id == 'new_shipment') {
+  } else { // move item to a shipment at a different stock location
+    var shipment = _.find(shipments, function(shipment){
+      return shipment.stock_location_id == stock_location_id && (shipment.state == 'ready' || shipment.state == 'pending');
+    });
+
+    if(shipment==undefined || new_shipment != undefined){ // If a shipment doesn't exist for this location already, create a new one
+      $.ajax({
+        type: "POST",
+        async: false,
+        url: Spree.url("/api/orders/" + order_number + "/shipments.json"),
+        data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
+      }).done(function( msg ) {
+        
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+
+      // remove item(s) from original shipment
+      $.ajax({
+        type: "PUT",
+        async: false,
+        url: Spree.url("/api/orders/" + order_number + "/shipments/" + original_shipment_number + "/remove.json"),
+        data: { variant_id: variant_id, quantity: quantity }
+      }).done(function( msg ) {
+        window.location.reload();
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+    } else { // if shipment alreadys exists for this location, add variant to it
+      adjustItems(shipment.number, variant_id, quantity);
+      // remove item(s) from original shipment
+      $.ajax({
+        type: "PUT",
+        async: false,
+        url: Spree.url("/api/orders/" + order_number + "/shipments/" + original_shipment_number + "/remove.json"),
+        data: { variant_id: variant_id, quantity: quantity }
+      }).done(function( msg ) {
+        console.log("Removed");
+        window.location.reload();
+      }).error(function( msg ) {
+        console.log(msg);
+      });
+    }
+  }
+}
+
+cancelItemSplit = function(event) {
+  event.preventDefault();
+  var link = $(this);
+  var prev_row = link.closest('tr').prev();
+  link.closest('tr').remove();
+  prev_row.find('a.edit-item').toggle();
+  prev_row.find('a.split-item').toggle();
+  prev_row.find('a.delete-item').toggle();
+}
+
 addVariantFromStockLocation = function() {
   $('#stock_details').hide();
 
