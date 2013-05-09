@@ -1,12 +1,12 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:stock_transfers) %>
+  <%= t('spree.stock_transfers') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
+    <%= button_link_to t('spree.new_stock_transfer'), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
   </li>
 <% end %>
 
@@ -24,7 +24,7 @@
 
       <div class="four columns">
         <div class="field">
-          <%= f.label :source_location, t('spree.source_location') %>
+          <%= f.label :source_location, t('spree.source') %>
           <%= f.select :source_location_id_eq,
                options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
                { include_blank: true }, class: 'select2 fullwidth' %>
@@ -33,7 +33,7 @@
 
       <div class="omega four columns">
         <div class="field">
-          <%= f.label :destination_location, t('spree.destination_location') %>
+          <%= f.label :destination_location, t('spree.destination') %>
           <%= f.select :destination_location_id_eq,
                options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
                { include_blank: true }, class: 'select2 fullwidth' %>
@@ -44,7 +44,7 @@
 
       <div class="actions filter-actions">
         <div data-hook="admin_stock_transfers_index_search_buttons">
-          <%= button t(:filter_results), 'icon-search' %>
+          <%= button t('spree.filter_results'), 'icon-search' %>
         </div>
       </div>
     <% end %>
@@ -62,10 +62,10 @@
     </colgroup>
     <thead>
       <tr data-hook='stock_transfers_header'>
-        <th><%= t(:created_at) %></th>
-        <th><%= t(:reference) %></th>
-        <th><%= t(:source_location) %></th>
-        <th><%= t(:destination_location) %></th>
+        <th><%= t('spree.created_at') %></th>
+        <th><%= t('spree.reference') %></th>
+        <th><%= t('spree.source') %></th>
+        <th><%= t('spree.destination') %></th>
         <th class='actions'></th>
       </tr>
     </thead>

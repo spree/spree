@@ -1,16 +1,16 @@
 <%= render :partial => 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= t(:stock_transfer) %>
+  <%= t('spree.stock_transfer') %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to t(:back_to_stock_transfers),
+    <%= button_link_to t('spree.back_to_stock_transfers_list'),
                      spree.admin_stock_transfers_path, :icon => 'icon-arrow-left' %>
   </li>
   <li>
-    <%= button_link_to t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
+    <%= button_link_to t('spree.new_stock_transfer'), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
   </li>
 <% end %>
 
@@ -19,7 +19,7 @@
 
   <div class="alpha six columns">
     <div class="field">
-      <label><%= t('reference') %>:</label>
+      <label><%= t('spree.reference') %>:</label>
       <div class="value"><%= @stock_transfer.reference %></div>
     </div>
   </div>
