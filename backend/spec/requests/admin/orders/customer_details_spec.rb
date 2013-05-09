@@ -5,13 +5,16 @@ describe "Customer Details" do
 
   let(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
   let(:order) { create(:completed_order_with_totals) }
-  let(:country) do
-    create(:country, :name => "Kangaland")
-  end
+  let(:country) { create(:country, :name => "Kangaland") }
+  let(:state) { create(:state, :name => "Alabama", :country => country) }
+  let!(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
+  let!(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15") }
 
-  let(:state) do
-    create(:state, :name => "Alabama", :country => country)
-  end
+  # We need a unique name that will appear for the customer dropdown
+  let!(:ship_address) { create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin") }
+  let!(:bill_address) { create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin") }
+
+  let!(:user) { create(:user, :email => 'foobar@example.com', :ship_address => ship_address, :bill_address => bill_address) }
 
   before do
     configure_spree_preferences do |config|
@@ -19,37 +22,25 @@ describe "Customer Details" do
       config.company = true
     end
 
-    create(:shipping_method, :display_on => "front_end")
-    create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15")
-    # We need a unique name that will appear for the customer dropdown
-    ship_address = create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin")
-    bill_address = create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin")
-    @user = create(:user, :email => 'foobar@example.com',
-                          :ship_address => ship_address,
-                          :bill_address => bill_address)
-
     visit spree.admin_path
     click_link "Orders"
     within('table#listing_orders') { click_icon(:edit) }
   end
 
   context "editing an order", :js => true do
-    it "should be able to populate customer details for an existing order" do
-      pending "Sometimes fails in actually clicking the search result in the select2 dropdown"
-      click_link "Customer Details"
-      targetted_select2_search("Rumpel", :from => "#customer_search", :dropdown_css => '.customer_search')
+    context "selected country has no state" do
+      before { create(:country, iso: "BRA", name: "Brazil") }
 
-      ["ship_address", "bill_address"].each do |address|
-        find_field("order_#{address}_attributes_firstname").value.should == "Rumpelstiltskin"
-        find_field("order_#{address}_attributes_lastname").value.should == "Doe"
-        find_field("order_#{address}_attributes_company").value.should == "Company"
-        find_field("order_#{address}_attributes_address1").value.should == "10 Lovely Street"
-        find_field("order_#{address}_attributes_address2").value.should == "Northwest"
-        find_field("order_#{address}_attributes_city").value.should == "Herndon"
-        find_field("order_#{address}_attributes_zipcode").value.should == "20170"
-        find_field("order_#{address}_attributes_state_id").value.should == state.id.to_s
-        find_field("order_#{address}_attributes_country_id").value.should == country.id.to_s
-        find_field("order_#{address}_attributes_phone").value.should == "123-456-7890"
+      it "changes state field to text input" do
+        click_link "Customer Details"
+
+        within("#billing") do
+          targetted_select2 "Brazil", :from => "#s2id_order_bill_address_attributes_country_id"
+          fill_in "order_bill_address_attributes_state_name", with: "Piaui"
+        end
+
+        click_button "Update"
+        find_field("order_bill_address_attributes_state_name").value.should == "Piaui"
       end
     end
 
@@ -58,40 +49,18 @@ describe "Customer Details" do
       order.save!
 
       click_link "Customer Details"
-      within "#shipping" do
-        fill_in "First Name",              :with => "John 99"
-        fill_in "Last Name",               :with => "Doe"
-        fill_in "Company",                 :with => "Company"
-        fill_in "Street Address",          :with => "100 first lane"
-        fill_in "Street Address (cont'd)", :with => "#101"
-        fill_in "City",                    :with => "Bethesda"
-        fill_in "Zip",                     :with => "20170"
-        targetted_select2 "Alabama",       :from => "#s2id_order_ship_address_attributes_state_id"
-        fill_in "Phone",                   :with => "123-456-7890"
-      end
-
-      within "#billing" do
-        fill_in "First Name",              :with => "John 99"
-        fill_in "Last Name",               :with => "Doe"
-        fill_in "Company",                 :with => "Company"
-        fill_in "Street Address",          :with => "100 first lane"
-        fill_in "Street Address (cont'd)", :with => "#101"
-        fill_in "City",                    :with => "Bethesda"
-        fill_in "Zip",                     :with => "20170"
-        targetted_select2 "Alabama",       :from => "#s2id_order_bill_address_attributes_state_id"
-        fill_in "Phone",                   :with => "123-456-7890"
-      end
+      within("#shipping") { fill_in_address "ship" }
+      within("#billing") { fill_in_address "bill" }
 
       click_button "Update"
-
       click_link "Customer Details"
+
       find_field('order_ship_address_attributes_firstname').value.should == "John 99"
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
         find(".state").text.should == "COMPLETE"
       end
-
     end
   end
 
@@ -100,7 +69,6 @@ describe "Customer Details" do
     click_button "Update"
     page.should have_content("Shipping address first name can't be blank")
   end
-
 
   # Regression test for #942
   context "errors when no shipping methods are available" do
@@ -122,8 +90,17 @@ describe "Customer Details" do
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
       lambda { click_button "Continue" }.should_not raise_error(NoMethodError)
     end
-
-
   end
 
+  def fill_in_address(kind = "bill")
+    fill_in "First Name",              :with => "John 99"
+    fill_in "Last Name",               :with => "Doe"
+    fill_in "Company",                 :with => "Company"
+    fill_in "Street Address",          :with => "100 first lane"
+    fill_in "Street Address (cont'd)", :with => "#101"
+    fill_in "City",                    :with => "Bethesda"
+    fill_in "Zip",                     :with => "20170"
+    targetted_select2 "Alabama",       :from => "#s2id_order_#{kind}_address_attributes_state_id"
+    fill_in "Phone",                   :with => "123-456-7890"
+  end
 end
