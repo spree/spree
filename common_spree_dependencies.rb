@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 
 gem 'json'
 gem 'multi_json'
-gem 'mysql2'
+# gem 'mysql2'
 gem 'pg'
 gem 'sqlite3'
 

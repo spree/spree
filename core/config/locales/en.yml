@@ -314,6 +314,7 @@ en:
     attachment_url: Attachments URL
     authorization_failure: Authorization Failure
     available_on: Available On
+    availability: Availability
     back: Back
     back_end: Backend
     back_to_adjustments_list: Back To Adjustments List
@@ -330,8 +331,9 @@ en:
     back_to_shipping_categories: Back To Shipping Categories
     back_to_shipping_methods_list: Back To Shipping Methods List
     back_to_states_list: Back To States List
-    back_to_stock_locations_list: Back to Stock Movements List
+    back_to_stock_locations_list: Back to Stock Locations List
     back_to_stock_movements_list: Back to Stock Movements List
+    back_to_stock_transfers: Back to Stock Transfers List
     back_to_store: Go Back To Store
     back_to_tax_categories_list: Back To Tax Categories List
     back_to_taxonomies_list: Back To Taxonomies List
@@ -402,6 +404,7 @@ en:
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     create: Create
     create_a_new_account: Create a new account
+    created_at: Created At
     credit: Credit
     credit_card: Credit Card
     credit_cards: Credit Cards
@@ -442,6 +445,7 @@ en:
     delivery: Delivery
     depth: Depth
     description: Description
+    destination_location: Destination Location
     destroy: Destroy
     discount_amount: Discount Amount
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
@@ -615,6 +619,7 @@ en:
     new_state: New State
     new_stock_location: New Stock Location
     new_stock_movement: New Stock Movement
+    new_stock_transfer: New Stock Transfer
     new_tax_category: New Tax Category
     new_tax_rate: New Tax Rate
     new_taxon: New Taxon
@@ -654,6 +659,7 @@ en:
     option_types: Option Types
     option_value: Option Value
     option_values: Option Values
+    optional: Optional
     options: Options
     or: or
     or_over_price: ! '%{price} or over'
@@ -811,6 +817,9 @@ en:
     reason: Reason
     receive: receive
     received: Received
+    receive_stock: Receive Stock
+    reference: Reference
+    reference_number: Reference Number
     refund: Refund
     registration: Registration
     remember_me: Remember me
@@ -911,6 +920,7 @@ en:
     smtp_send_all_emails_as_from_following_address: Send all mails as from the following address.
     smtp_send_copy_to_this_addresses: Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas.
     smtp_username: SMTP Username
+    source_location: Source Location
     special_instructions: Special Instructions
     spree/order:
       coupon_code: Coupon Code
@@ -922,11 +932,14 @@ en:
     states: States
     states_required: States Required
     status: Status
+    stock_item: Stock Item
+    stock_item_id: Stock Item ID
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
     stock_management: Stock Management
     stock_movements: Stock Movements
+    stock_transfers: Stock Transfers
     stock_movements_for_stock_location: Stock Movements for %{stock_location_name}
     stock_successfully_transferred: Stock was successfully transferred between locations.
     stop: Stop

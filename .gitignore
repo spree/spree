@@ -53,3 +53,5 @@ test_app
 .rvmrc
 **/coverage
 */.sass-cache
+.ruby-version
+.ruby-gemset
