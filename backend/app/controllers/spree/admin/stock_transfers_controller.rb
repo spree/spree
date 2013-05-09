@@ -13,7 +13,7 @@ module Spree
       end
 
       def show
-        @stock_transfer = StockTransfer.find(params[:id])
+        @stock_transfer = StockTransfer.find_by_param(params[:id])
       end
 
       def new
@@ -26,7 +26,7 @@ module Spree
           variants[variant_id] += params[:quantity][i].to_i
         end
 
-        stock_transfer = StockTransfer.create(:reference_number => params[:reference_number])
+        stock_transfer = StockTransfer.create(:reference => params[:reference])
         stock_transfer.transfer(source_location,
                                 destination_location,
                                 variants)

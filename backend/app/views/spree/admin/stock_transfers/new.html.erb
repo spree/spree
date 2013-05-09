@@ -31,9 +31,9 @@
 
     <div class="row" data-hook="admin_stock_movements_form_fields">
       <div class="alpha six columns">
-        <div class="field" id="stock_movement_reference_number_field">
-          <%= label_tag 'reference_number', raw("#{t(:reference_number)} (#{t(:optional)})") %>
-          <%= text_field_tag :reference_number, '', class: 'fullwidth' %>
+        <div class="field" id="stock_movement_reference_field">
+          <%= label_tag 'reference', raw("#{t(:reference)} (#{t(:optional)})") %>
+          <%= text_field_tag :reference, '', class: 'fullwidth' %>
         </div>
       </div>
       <div class="six columns omega">

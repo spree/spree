@@ -5,7 +5,13 @@ module Spree
     belongs_to :source_location, :class_name => 'StockLocation'
     belongs_to :destination_location, :class_name => 'StockLocation'
 
-    attr_accessible :reference_number
+    make_permalink field: :number, prefix: 'T'
+
+    attr_accessible :reference
+
+    def to_param
+      number
+    end
 
     def source_movements
       stock_movements.joins(:stock_item)
@@ -15,10 +21,6 @@ module Spree
     def destination_movements
       stock_movements.joins(:stock_item)
         .where('spree_stock_items.stock_location_id' => destination_location_id)
-    end
-
-    def number
-      reference_number
     end
 
     def transfer(source_location, destination_location, variants)
