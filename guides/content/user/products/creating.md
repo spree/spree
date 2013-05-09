@@ -2,8 +2,6 @@
 title: Creating a New Product
 ---
 
-[TODO] Fill in this user guide on all of the elements of a product and its variants.
-
 # Creating Products
 
 To create a new product for your store, go into the Admin Dashboard, click the *Products* tab, and click the *New Product* button.
@@ -119,13 +117,25 @@ Click the New Option Type button and similarly input the other two Option Types 
 
 ### Associating Option Values with a Product
 
-TODO: Edit product, associate option values
+Our Spree application now knows that we have three different Option Types, each with its own set of Option Values, but it doesn't know which of our products should have those Option Types. We have to explicitly tell it about those associations. We can do so either when we create a new Product (if the options already exist) or when we edit an existing one.
+
+At the bottom of the Product edit form is a text box labeled **Option Types**. When you click in this box, a drop-down appears with all of the Option Types you have defined for your store. All you have to do is click one or more of them to associate them with your Product. We, of course, want to associate all three Option Values with our tumbler Product.
+
+![Option Types Dropdown List](images/user/products/option_types_dropdown.jpg)
+
+Don't forget to click **Update** to save your changes.
 
 ### Creating Variants
 
 Now that you have set up the appropriate options for your Product's Variants and associated those options with the product, you can create the Variants themselves.
 
-TODO: Add one instructional variant as an example; have user make the other 11.
+Let's create the large, star-wrapped, blue-lidded tumbler Variant as an example. You can then use the same approach to creating all of the other Variants we mentioned earlier.
+
+On your tumbler product edit page, click the **Variants** link. Click the **New Variant** button. Select the appropriate values for the Option Types.
+
+As you can see, you also have the option to enter values for this particular Variant that may be different from what you input on the Product's main page. Let's raise the price on our Variant to $20, and indicate that we have 2 On Hand. Click the **Create** button.
+
+![New Product Variant](images/user/products/new_variant.jpg)
 
 ## Product Properties
 
