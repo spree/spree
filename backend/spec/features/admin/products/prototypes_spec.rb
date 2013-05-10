@@ -47,7 +47,7 @@ describe "Prototypes" do
       click_link "Products"
       click_link "Prototypes"
       click_link "new_prototype_link"
-      within('#new_prototype') { page.should have_content("New Prototype") }
+      within('#new_prototype') { page.should have_content("NEW PROTOTYPE") }
       fill_in "prototype_name", :with => "male shirts"
       click_button "Create"
       page.should have_content("successfully created!")

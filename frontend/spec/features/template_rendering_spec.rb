@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe "Template rendering" do
 
+  after do
+    Capybara.ignore_hidden_elements = true
+  end
+
+  before do
+    Capybara.ignore_hidden_elements = false
+  end
+
   context "with layout option set to 'application' in the configuration" do
 
     before do

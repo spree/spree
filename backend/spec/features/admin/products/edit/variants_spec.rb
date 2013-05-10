@@ -16,7 +16,7 @@ describe "Product Variants" do
       within_row(1) { click_icon :edit }
 
       within('#sidebar') { click_link "Variants" }
-      page.should have_content("To add variants, you must first define")
+      page.should have_content("TO ADD VARIANTS, YOU MUST FIRST DEFINE")
     end
 
     it "allows admin to create a variant if there are option types" do

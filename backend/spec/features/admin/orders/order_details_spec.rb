@@ -31,7 +31,7 @@ describe "Order Details", js: true do
         end
         click_icon :ok
 
-        page.should have_content("Total: $20.00")
+        page.should have_content("TOTAL: $20.00")
       end
 
       it "can add an item to a shipment" do
@@ -41,7 +41,7 @@ describe "Order Details", js: true do
           click_icon :plus
         end
 
-        page.should have_content("Total: $70.00")
+        page.should have_content("TOTAL: $70.00")
       end
 
       it "can remove an item from a shipment" do
@@ -103,7 +103,7 @@ describe "Order Details", js: true do
           page.should have_css('table.stock-contents:nth-child(2)')
           page.all("table.stock-contents").count.should == 2
           order.shipments.last.stock_location.should == london
-          page.should have_content("London")
+          page.should have_content("LONDON")
         end
 
         context "when two shipments exist" do
@@ -124,7 +124,7 @@ describe "Order Details", js: true do
             end
 
             wait_for_ajax
-            page.should have_content("Total: $100.00")
+            page.should have_content("TOTAL: $100.00")
           end
 
           it "can add tracking information for the second shipment" do

@@ -8,9 +8,7 @@ module CapybaraExt
   end
 
   def eventually_fill_in(field, options={})
-    # Capybara.wait_until do
-    #   find_field field
-    # end
+    page.should have_css('#' + field)
     fill_in field, options
   end
 
@@ -99,11 +97,6 @@ module CapybaraExt
       raise "AJAX request took longer than 5 seconds." if counter >= 50
     end
   end
-end
-
-Capybara.configure do |config|
-  config.match = :prefer_exact
-  config.ignore_hidden_elements = true
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|
