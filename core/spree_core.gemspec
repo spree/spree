@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paperclip', '~> 3.4.1'
   s.add_dependency 'paranoia', '~> 2.0'
   s.add_dependency 'rails', '~> 4.0.0'
+  s.add_dependency 'deface', '>= 1.0.0.rc3'
   s.add_dependency 'ransack', '0.7.2'
   s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'stringex', '~> 1.5.1'

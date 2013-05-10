@@ -282,10 +282,9 @@ describe "Products" do
           wait_for_ajax
         end
 
-        # wait_until { page.all('tr.product_property').size > 1 }
         page.all('tr.product_property').size > 1
 
-        within(:css, "tr.product_property:first") do
+        within(:css, "tr.product_property:first-child") do
           first('input[type=text]')[:value].should eq('baseball_cap_color')
         end
       end
