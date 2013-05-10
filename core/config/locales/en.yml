@@ -286,6 +286,8 @@ en:
           delivery_success: Test Mail sent successfully
           error: ! 'Test Mail error: %{e}'
     administration: Administration
+    address1: Address
+    address2: Address (contd.)
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
@@ -1031,5 +1033,6 @@ en:
     your_cart_is_empty: Your cart is empty
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
+    zipcode: Zip Code
     zone: Zone
     zones: Zones
