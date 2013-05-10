@@ -25,6 +25,14 @@ describe "viewing products" do
 
   describe 'meta tags and title' do
 
+    after do
+      Capybara.ignore_hidden_elements = true
+    end
+
+    before do
+      Capybara.ignore_hidden_elements = false
+    end
+
     it 'displays metas' do
       t_shirts.update_attributes metas
       visit '/t/category/super-clothing/t-shirts'

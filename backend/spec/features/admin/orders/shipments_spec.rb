@@ -18,7 +18,7 @@ describe "Shipments" do
       click_link "ship"
       wait_for_ajax
 
-      page.should have_content("shipped package")
+      page.should have_content("SHIPPED PACKAGE")
       order.reload.shipment_state.should == "shipped"
     end
   end

@@ -84,6 +84,7 @@ describe Spree::OrderMailer do
   end
 
   context "emails must be translatable" do
+
     context "pt-BR locale" do
       before do
         pt_br_confirm_mail = { :spree => { :order_mailer => { :confirm_email => { :dear_customer => 'Caro Cliente,' } } } }

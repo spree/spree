@@ -5,7 +5,12 @@ describe "Shipping Methods" do
   let!(:zone) { create(:global_zone) }
   let!(:shipping_method) { create(:shipping_method, :zones => [zone]) }
 
-  before(:each) do
+  after do
+    Capybara.ignore_hidden_elements = true
+  end
+
+  before do
+    Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     Spree::Order.any_instance.stub(:require_email => false)
     create(:payment_method, :environment => 'test')
