@@ -124,4 +124,10 @@ describe Spree::BaseHelper do
     taxon = create(:taxon, :name => "iphone")
     spree.nested_taxons_path(taxon).should == "/t/iphone"
   end
+
+  context "pretty_time" do
+    it "prints in a format" do
+      expect(pretty_time(DateTime.new(2012, 5, 6, 13, 33))).to eq "May 06, 2012  1:33 PM"
+    end
+  end
 end

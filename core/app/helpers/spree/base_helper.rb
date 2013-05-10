@@ -154,8 +154,8 @@ module Spree
     end
 
     def pretty_time(time)
-      [I18n.l(time.to_date, :format => :long),
-        time.strftime("%l:%m %p")].join(" ")
+      [I18n.l(time.to_date, format: :long),
+        time.strftime("%l:%M %p")].join(" ")
     end
 
     def method_missing(method_name, *args, &block)
