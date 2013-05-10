@@ -51,6 +51,7 @@
               </thead>
               <tbody>
                 <% @stock_locations.each do |stock_location| %>
+                <% next if stock_location.stock_item(variant).nil? %>
                   <tr class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
                     <td><%= stock_location.name %></td>
                     <td class="align-center">
