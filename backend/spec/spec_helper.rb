@@ -22,6 +22,7 @@ require 'rspec/rails'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'database_cleaner'
+require 'ffaker'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
@@ -38,20 +39,22 @@ RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
 
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
-
-  #config.include Devise::TestHelpers, :type => :controller
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
 
-  config.before(:each) do
-    DatabaseCleaner.strategy = :truncation
+  config.before :suite do
+    Capybara.match = :prefer_exact
   end
 
   config.before(:each) do
     WebMock.disable!
+    if example.metadata[:js]
+      DatabaseCleaner.strategy = :truncation
+    else
+      DatabaseCleaner.strategy = :transaction
+    end
     DatabaseCleaner.start
     reset_spree_preferences
   end
@@ -60,7 +63,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.after(:each, :type => :request) do
+  config.after(:each, :type => :feature) do
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
       #binding.pry

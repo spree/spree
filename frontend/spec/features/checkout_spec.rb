@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe "Checkout" do
-  let!(:country) { create(:country, :name => "United States of America",:states_required => true) }
-  let!(:state) { create(:state, :name => "Alabama", :country => country) }
+
+  let!(:country) { create(:country, :states_required => true) }
+  let!(:state) { create(:state, :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
   let!(:mug) { create(:product, :name => "RoR Mug") }
@@ -139,7 +140,12 @@ describe "Checkout" do
     let(:credit_cart_payment) {create(:bogus_payment_method, :environment => 'test') }
     let(:check_payment) {create(:payment_method, :environment => 'test') }
 
-    before(:each) do
+    after do
+      Capybara.ignore_hidden_elements = true
+    end
+
+    before do
+      Capybara.ignore_hidden_elements = false
       order = OrderWalkthrough.up_to(:delivery)
       order.stub(:available_payment_methods => [check_payment,credit_cart_payment])
       order.user = create(:user)

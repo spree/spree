@@ -247,7 +247,7 @@ describe "Products" do
 
     context 'updating a product', :js => true do
       let(:product) { create(:product) }
-      
+
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
         FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
@@ -269,17 +269,16 @@ describe "Products" do
       it 'should add option_types when selecting a prototype' do
         visit spree.admin_product_path(product)
         click_link 'Product Properties'
-        page.should have_content("Select From Prototype")
+        page.should have_content("SELECT FROM PROTOTYPE")
         click_link "Select From Prototype"
 
         within(:css, "#prototypes tr#row_1") do
           click_link 'Select'
         end
 
-        # wait_until { page.all('tr.product_property').size > 1 }
         page.all('tr.product_property').size > 1
 
-        within(:css, "tr.product_property:first") do
+        within(:css, "tr.product_property:first-child") do
           first('input[type=text]')[:value].should eq('baseball_cap_color')
         end
       end
