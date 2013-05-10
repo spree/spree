@@ -9,7 +9,6 @@ require 'paperclip'
 require 'paranoia'
 require 'ransack'
 require 'state_machine'
-require 'paranoia'
 
 begin
   require 'strong_parameters'

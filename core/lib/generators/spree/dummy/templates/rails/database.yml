@@ -6,15 +6,12 @@ end %>
 development:
   adapter: sqlite3
   database: db/spree_development.sqlite3
-  timeout: 30000
 test:
   adapter: sqlite3
   database: db/spree_test.sqlite3
-  timeout: 30000
 production:
   adapter: sqlite3
   database: db/spree_production.sqlite3
-  timeout: 30000
 <% when 'mysql' %>
 development:
   adapter: mysql2
@@ -51,13 +48,10 @@ production:
 development:
   adapter: sqlite3
   database: db/spree_development.sqlite3
-  timeout: 30000
 test:
   adapter: sqlite3
   database: db/spree_test.sqlite3
-  timeout: 30000
 production:
   adapter: sqlite3
   database: db/spree_production.sqlite3
-  timeout: 30000
 <% end %>

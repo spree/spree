@@ -18,7 +18,7 @@ describe "Shipments" do
       click_link "ship"
       sleep 1
 
-      page.should have_content("shipped package")
+      page.should have_content("SHIPPED PACKAGE")
       order.reload.shipment_state.should == "shipped"
     end
   end

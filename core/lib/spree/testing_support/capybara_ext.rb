@@ -113,11 +113,6 @@ module CapybaraExt
   end
 end
 
-Capybara.configure do |config|
-  config.match = :prefer_exact
-  config.ignore_hidden_elements = true
-end
-
 RSpec::Matchers.define :have_meta do |name, expected|
   match do |actual|
     has_css?("meta[name='#{name}'][content='#{expected}']")
