@@ -39,7 +39,7 @@
         <%= label_tag 'card_code', raw(Spree.t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
         <%= text_field_tag "#{param_prefix}[verification_value]", '', :class => 'required fullwidth', :size => 5, :id => 'card_code' %>
         <a href="/content/cvv" class="info" target="_blank" id="cvv_link">
-          (<%= Spree.t(:whats_is_this) %>)
+          (<%= Spree.t(:what_is_this) %>)
         </a>
       </div>
     </div>

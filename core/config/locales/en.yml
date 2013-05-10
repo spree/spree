@@ -245,6 +245,7 @@ en:
     action: Action
     actions:
       cancel: Cancel
+      continue: Continue
       create: Create
       destroy: Destroy
       edit: Edit
@@ -822,6 +823,7 @@ en:
     received: Received
     refund: Refund
     reference: Reference
+    register: Register
     registration: Registration
     remember_me: Remember me
     remove: Remove
