@@ -17,15 +17,14 @@ group :assets do
 end
 
 group :test do
-  gem 'capybara', '~> 2.1.0'
-  gem 'database_cleaner', '0.7.1'
+  gem 'capybara', '~> 2.1'
+  gem 'database_cleaner', '1.0.0.RC1'
   gem 'email_spec', '1.4.0'
   gem 'factory_girl_rails', '~> 4.2.1'
-  gem 'ffaker'
   gem 'launchy'
   gem 'pry'
-  gem 'rspec-rails', '~> 2.13.0'
-  gem 'selenium-webdriver', '2.32.0'
+  gem 'rspec-rails', '~> 2.13'
+  gem 'selenium-webdriver', '~> 2.32'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
 end

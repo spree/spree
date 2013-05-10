@@ -4,7 +4,8 @@ describe "Stock Management" do
   stub_authorization!
 
   context "as admin user" do
-    before(:each) do
+
+    before do
       visit spree.admin_path
     end
 
