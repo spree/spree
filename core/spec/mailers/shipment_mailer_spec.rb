@@ -38,21 +38,9 @@ describe Spree::ShipmentMailer do
 
   context "emails must be translatable" do
     context "shipped_email" do
-      context "en locale" do
-        before do
-          en_shipped_email = { :shipment_mailer => { :shipped_email => { :dear_customer => 'Dear Customer,' } } }
-          I18n.backend.store_translations :en, en_shipped_email
-          I18n.locale = :en
-        end
-
-        specify do
-          shipped_email = Spree::ShipmentMailer.shipped_email(shipment)
-          shipped_email.body.should include("Dear Customer,")
-        end
-      end
       context "pt-BR locale" do
         before do
-          pt_br_shipped_email = { :shipment_mailer => { :shipped_email => { :dear_customer => 'Caro Cliente,' } } }
+          pt_br_shipped_email = { :spree => { :shipment_mailer => { :shipped_email => { :dear_customer => 'Caro Cliente,' } } } }
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
           I18n.locale = :'pt-BR'
         end

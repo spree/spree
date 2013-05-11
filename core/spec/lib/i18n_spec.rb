@@ -35,6 +35,10 @@ describe "i18n" do
     Spree.normal_t([:foo, 'bar.foo']).should eql(["bar", "bar within bar scope"])
   end
 
+  it "returns reasonable string for missing translations" do
+    Spree.t(:missing_entry).should include("<span")
+  end
+
   context "missed + unused translations" do
     def key_with_locale(key)
       "#{key} (#{I18n.locale})"
