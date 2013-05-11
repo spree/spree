@@ -2,31 +2,23 @@
 require 'spec_helper'
 
 describe "Order Details", js: true do
-
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
   let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
   let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
+  let(:state) { create(:state) }
   let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
+  let!(:shipping_method) { create(:shipping_method, :name => "Default") }
 
   before do
-    configure_spree_preferences do |config|
-      config.allow_backorders = true
-    end
-    create(:country)
-    create(:state, :country => create(:country))
-    create(:shipping_method, :name => "Default")
     order.shipments.create({stock_location_id: stock_location.id}, without_protection: true)
     order.contents.add(product.master, 2)
   end
 
   context 'as Admin' do
-
     stub_authorization!
 
     context "edit order page" do
-      after(:each) { I18n.reload! }
-
       it "should allow me to edit order details" do
         visit spree.edit_admin_order_path(order)
         page.should have_content("spree t-shirt")
@@ -114,11 +106,9 @@ describe "Order Details", js: true do
               fill_in "stock_item_quantity", :with => 2
               click_icon :plus
             end
-            page.should have_css("table.stock-contents:nth-child(2)")
-            page.all("table.stock-contents").count.should == 2
           end
 
-          it "can increase quantity of the second shipment's items" do
+          it "updates quantity of the second shipment's items" do
             within("table.stock-contents", :text => tote.name) do
               click_icon :edit
               fill_in "quantity", with: 4
@@ -126,16 +116,6 @@ describe "Order Details", js: true do
             end
 
             page.should have_content("Total: $100.00")
-          end
-
-          it "can decrease quantity of the second shipment's items" do
-            within("table.stock-contents", :text => tote.name) do
-              click_icon :edit
-              fill_in "quantity", with: 1
-              click_icon :ok
-            end
-
-            page.should have_content("Total: $55.00")
           end
 
           it "can add tracking information for the second shipment" do
@@ -187,7 +167,6 @@ describe "Order Details", js: true do
   end
 
   context 'as Fakedispatch' do
-
     stub_bar_authorization!
 
     it 'should not display order tabs or edit buttons without ability' do
@@ -234,7 +213,5 @@ describe "Order Details", js: true do
         page.should have_content('shipped')
       end
     end
-
   end
-
 end
