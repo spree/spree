@@ -7,27 +7,32 @@ rescue ActiveRecord::RecordNotFound
 end
 
 europe_vat = Spree::Zone.find_by_name!("EU_VAT")
+shipping_category = Spree::ShippingCategory.find_or_create_by_name!('Default')
 
 shipping_methods = [
   {
     :name => "UPS Ground (USD)",
     :zones => [north_america],
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :shipping_categories => [shipping_category]
   },
   {
     :name => "UPS Two Day (USD)",
     :zones => [north_america],
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :shipping_categories => [shipping_category]
   },
   {
     :name => "UPS One Day (USD)",
     :zones => [north_america],
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :shipping_categories => [shipping_category]
   },
   {
     :name => "UPS Ground (EUR)",
     :zones => [europe_vat],
-    :calculator => Spree::Calculator::FlatRate.create!
+    :calculator => Spree::Calculator::FlatRate.create!,
+    :shipping_categories => [shipping_category]
   }
 ]
 
