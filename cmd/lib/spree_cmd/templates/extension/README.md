@@ -3,11 +3,21 @@
 
 Introduction goes here.
 
+Installation
+------------
 
-Example
-=======
+Add <%= file_name %> to your Gemfile:
 
-Example goes here.
+```ruby
+gem '<%= file_name %>'
+```
+
+Bundle your dependencies and run the installation generator:
+
+```shell
+bundle
+bundle exec rails g <%= file_name %>:install
+```
 
 Testing
 -------
