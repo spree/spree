@@ -355,6 +355,7 @@ en:
     cannot_create_returns: Cannot create returns as this order has no shipped units.
     cannot_perform_operation: Cannot perform requested operation
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
+    capture: Capture
     card_code: Card Code
     card_number: Card Number
     card_type_is: Card type is
@@ -420,6 +421,7 @@ en:
     current_promotion_usage: ! 'Current Usage: %{count}'
     customer: Customer
     customer_details: Customer Details
+    customer_details_updated: Customer Details Updated
     customer_search: Customer Search
     cut: Cut
     dash:

@@ -12,13 +12,11 @@ describe "Shipping Methods" do
 
     visit spree.admin_path
     click_link "Configuration"
+    click_link "Shipping Methods"
   end
 
-
   context "show" do
-    it "should display exisiting shipping methods" do
-      click_link "Shipping Methods"
-
+    it "should display existing shipping methods" do
       within_row(1) do
         column_text(1).should == shipping_method.name 
         column_text(2).should == zone.name
@@ -30,20 +28,22 @@ describe "Shipping Methods" do
 
   context "create" do
     it "should be able to create a new shipping method" do
-      click_link "Shipping Methods"
-      click_link "admin_new_shipping_method_link"
-      page.should have_content("New Shipping Method")
+      click_link "New Shipping Method"
+
       fill_in "shipping_method_name", :with => "bullock cart"
-      click_button "Create"
-      page.should have_content("successfully created!")
-      page.should have_content("Editing Shipping Method")
+
+      within("#shipping_method_categories_field") do
+        check first("input[type='checkbox']")["name"]
+      end
+
+      click_on "Create"
+      expect(current_path).to eql(spree.edit_admin_shipping_method_path(Spree::ShippingMethod.last))
     end
   end
 
   # Regression test for #1331
   context "update" do
     it "can change the calculator", :js => true do
-      click_link "Shipping Methods"
       within("#listing_shipping_methods") do
         click_icon :edit
       end
@@ -56,5 +56,4 @@ describe "Shipping Methods" do
       page.should_not have_content("Shipping method is not found")
     end
   end
-
 end
