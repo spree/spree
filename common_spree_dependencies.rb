@@ -17,7 +17,7 @@ group :assets do
 end
 
 group :development do
-  gem 'localeapp'
+  gem 'localeapp', require: false # Without require false localeapp causes rake test_app to fail.
 end
 
 group :test do
