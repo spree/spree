@@ -53,5 +53,9 @@ test_app
 .rvmrc
 **/coverage
 */.sass-cache
+<<<<<<< HEAD
 .ruby-version
 .ruby-gemset
+=======
+.localeapp
+>>>>>>> 733dcc0ea8df15bce2d658139be03077013c3b93

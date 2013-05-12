@@ -9,7 +9,7 @@ describe 'Stock Transfers' do
 
     visit spree.new_admin_stock_transfer_path
 
-    fill_in 'reference_number', :with => 'PO 666'
+    fill_in 'reference', :with => 'PO 666'
 
     click_button 'Add'
     click_button 'Transfer Stock'
@@ -39,7 +39,7 @@ describe 'Stock Transfers' do
 
       visit spree.new_admin_stock_transfer_path
 
-      fill_in 'reference_number', :with => 'PO 666'
+      fill_in 'reference', :with => 'PO 666'
       check 'transfer_receive_stock'
       select('NY', :from => 'transfer_destination_location_id')
 
@@ -54,7 +54,7 @@ describe 'Stock Transfers' do
 
       visit spree.new_admin_stock_transfer_path
 
-      fill_in 'reference_number', :with => 'PO 666'
+      fill_in 'reference', :with => 'PO 666'
 
       find('#transfer_receive_stock').should be_checked
 

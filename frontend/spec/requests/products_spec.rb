@@ -95,7 +95,7 @@ describe "Visiting Products" do
     visit spree.root_path
     page.all('ul.product-listing li').size.should == 0
   end
-  
+
 
   it "should be able to display products priced under 10 dollars" do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
@@ -160,5 +160,16 @@ describe "Visiting Products" do
     visit spree.product_path(product)
     page.should have_content "This product is not available in the selected currency."
     page.should_not have_content "add-to-cart-button"
+  end
+
+  it "should return the correct title when displaying a single product" do
+    product = Spree::Product.find_by_name("Ruby on Rails Baseball Jersey")
+    click_link product.name
+
+    within("div#product-description") do
+      within("h1.product-title") do
+        page.should have_content("Ruby on Rails Baseball Jersey")
+      end
+    end
   end
 end

@@ -33,13 +33,23 @@ module Spree
           permalink_options[:field]
         end
 
+        def permalink_prefix
+          permalink_options[:prefix] || ""
+        end
+
         def permalink_order
           order = permalink_options[:order]
           "#{order} ASC," if order
         end
       end
 
+      def generate_permalink
+        "#{self.class.permalink_prefix}#{Array.new(9){rand(9)}.join}"
+      end
+
       def save_permalink(permalink_value=self.to_param)
+        permalink_value ||= generate_permalink
+
         field = self.class.permalink_field
           # Do other links exist with this permalink?
           other = self.class.where("#{self.class.table_name}.#{field} LIKE ?", "#{permalink_value}%")

@@ -7,9 +7,10 @@ module Spree
     let(:stock_item) { source_location.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
-    subject { StockTransfer.create(reference_number: 'PO123') }
+    subject { StockTransfer.create(reference: 'PO123') }
 
-    its(:reference_number) { should eq 'PO123' }
+    its(:reference) { should eq 'PO123' }
+    its(:to_param) { should match /T\d+/ }
 
     it 'transfers variants between 2 locations' do
       variants = { variant => 5 }

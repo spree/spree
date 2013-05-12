@@ -19,6 +19,11 @@ module Spree
       stock_item.count_on_hand.should eq 10
     end
 
+    it 'finds a stock_item for a variant by id' do
+      stock_item = subject.stock_item(variant.id)
+      stock_item.variant.should eq variant
+    end
+
     it 'finds a count_on_hand for a variant' do
       subject.count_on_hand(variant).should eq 10
     end

@@ -4,11 +4,13 @@ module Spree
       before_filter :load_order, :only => [:create, :new, :index, :fire]
       before_filter :load_payment, :except => [:create, :new, :index]
       before_filter :load_data
+      before_filter :can_transition_to_payment
 
       respond_to :html
 
       def index
         @payments = @order.payments
+        redirect_to new_admin_order_payment_url(@order) if @payments.empty?
       end
 
       def new
@@ -83,6 +85,19 @@ module Spree
         @previous_cards = @order.credit_cards.with_payment_profile
       end
 
+      # At this point admin should have passed through Customer Details step
+      # where order.next is called which leaves the order in payment step
+      #
+      # Orders in complete step also allows to access this controller
+      #
+      # Otherwise redirect user to that step
+      def can_transition_to_payment
+        unless @order.payment? || @order.complete?
+          flash[:notice] = Spree.t(:fill_in_customer_info)
+          redirect_to edit_admin_order_customer_url(@order)
+        end
+      end
+
       def load_order
         @order = Order.find_by_number!(params[:order_id])
         authorize! action, @order
@@ -91,7 +106,6 @@ module Spree
       def load_payment
         @payment = Payment.find(params[:id])
       end
-
     end
   end
 end
