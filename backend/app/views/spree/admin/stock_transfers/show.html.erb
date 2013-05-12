@@ -15,7 +15,7 @@
 <% end %>
 
 <fieldset class="no-border-bottom">
-  <legend><%= Spree.t('stock_transfer') %></legend>
+  <legend align="center"><%= Spree.t('stock_transfer') %></legend>
 
   <div class="alpha six columns">
     <div class="field">
@@ -26,7 +26,7 @@
 
   <div class="omega six columns">
     <div class="field">
-      <label>Created:</label>
+      <label><%= Spree.t('created') %>:</label>
       <div class="value"><%= @stock_transfer.created_at %></div>
     </div>
   </div>

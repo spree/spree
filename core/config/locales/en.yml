@@ -409,6 +409,7 @@ en:
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     create: Create
     create_a_new_account: Create a new account
+    created: Created
     created_at: Created At
     credit: Credit
     credit_card: Credit Card
