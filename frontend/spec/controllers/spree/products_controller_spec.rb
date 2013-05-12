@@ -95,5 +95,4 @@ describe Spree::ProductsController do
       end
     end
   end
-
 end
