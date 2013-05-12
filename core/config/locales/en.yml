@@ -873,6 +873,7 @@ en:
     send_mails_as: Send Mails As
     server: Server
     server_error: The server returned an error
+    setting: Setting
     settings: Settings
     ship: ship
     ship_address: Ship Address
