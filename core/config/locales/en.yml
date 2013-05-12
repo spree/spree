@@ -318,6 +318,7 @@ en:
     attachment_styles: Paperclip Styles
     attachment_url: Attachments URL
     authorization_failure: Authorization Failure
+    availability: Availability
     available_on: Available On
     back: Back
     back_end: Backend
