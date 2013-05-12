@@ -338,11 +338,7 @@ en:
     back_to_states_list: Back To States List
     back_to_stock_locations_list: Back to Stock Locations List
     back_to_stock_movements_list: Back to Stock Movements List
-<<<<<<< HEAD
     back_to_stock_transfers: Back to Stock Transfers List
-=======
-    back_to_stock_transfers_list: Back to Stock Transfers List
->>>>>>> 733dcc0ea8df15bce2d658139be03077013c3b93
     back_to_store: Go Back To Store
     back_to_tax_categories_list: Back To Tax Categories List
     back_to_taxonomies_list: Back To Taxonomies List
@@ -454,11 +450,8 @@ en:
     delivery: Delivery
     depth: Depth
     description: Description
-<<<<<<< HEAD
-    destination_location: Destination Location
-=======
     destination: Destination
->>>>>>> 733dcc0ea8df15bce2d658139be03077013c3b93
+    destination_location: Destination Location
     destroy: Destroy
     discount_amount: Discount Amount
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
@@ -833,13 +826,9 @@ en:
     receive: receive
     receive_stock: Receive Stock
     received: Received
-<<<<<<< HEAD
     receive_stock: Receive Stock
     reference: Reference
     reference_number: Reference Number
-=======
-    reference: Reference
->>>>>>> 733dcc0ea8df15bce2d658139be03077013c3b93
     refund: Refund
     register: Register
     registration: Registration
@@ -942,11 +931,8 @@ en:
     smtp_send_all_emails_as_from_following_address: Send all mails as from the following address.
     smtp_send_copy_to_this_addresses: Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas.
     smtp_username: SMTP Username
-<<<<<<< HEAD
-    source_location: Source Location
-=======
     source: Source
->>>>>>> 733dcc0ea8df15bce2d658139be03077013c3b93
+    source_location: Source Location
     special_instructions: Special Instructions
     spree/order:
       coupon_code: Coupon Code
