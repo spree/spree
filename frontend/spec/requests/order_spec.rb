@@ -63,4 +63,12 @@ describe 'orders' do
       end
     end
   end
+
+  it "should return the correct title when displaying a completed order" do
+    visit spree.order_path(order)
+
+    within '#order_summary' do
+      page.should have_content("#{Spree.t(:order)} #{order.number}")
+    end
+  end
 end
