@@ -47,7 +47,7 @@ of this guide the model we will be referring to **will** be called
 *User*. If your model is called something else, do some mental
 substitution wherever you see *User*.
 
-h3. Initial Setup
+##### Initial Setup
 
 To begin using your custom *User* class, you must first edit Spree's
 initializer located at *config/initializers/spree.rb* by changing this
@@ -85,7 +85,7 @@ rake db:migrate```
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
 
-h3. Authentication Helpers
+##### Authentication Helpers
 
 There are some authentication helpers of Spree's that you will need to
 possibly override. The file at *lib/spree/authentication_helpers.rb*
