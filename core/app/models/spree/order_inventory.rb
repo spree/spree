@@ -23,7 +23,7 @@ module Spree
 
           add_to_shipment(shipment, line_item.variant, quantity)
 
-        elsif variant_units.size > line_item.quantity
+        elsif  !shipment.present? && variant_units.size > line_item.quantity
           #remove
           quantity = variant_units.size - line_item.quantity
 
@@ -33,6 +33,9 @@ module Spree
             quantity -= remove_from_shipment(shipment, line_item.variant, quantity)
           end
 
+        elsif shipment.present? && variant_units.size > line_item.quantity
+          quantity = variant_units.size - line_item.quantity
+          quantity -= remove_from_shipment(shipment, line_item.variant, quantity)
         end
       else
         true
