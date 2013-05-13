@@ -244,7 +244,7 @@ version. For instance, there is a 1-3-stable branch which contains the latest
 work for the 1.3.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-3-stable'
+gem 'spree', :github => 'spree/spree', :branch => '1-3-stable'```
 
 Similarly, all main Spree extensions use this versioning scheme as well. For example, here's a line that would be used for `spree_auth_devise`:
 
