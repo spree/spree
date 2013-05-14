@@ -73,7 +73,7 @@ module Spree
 
         @order.contents.remove(variant, quantity, @shipment)
 
-        respond_with(@shipment, :default_template => :show)
+        respond_with(@shipment.reload, :default_template => :show)
       end
 
       private
