@@ -49,7 +49,7 @@ describe "Shipping Methods" do
       end
 
       find(:css, ".calculator-settings-warning").should_not be_visible
-      select('Flexible Rate', :from => 'calc_type')
+      select2_search('Flexible Rate', :from => 'Calculator')
       find(:css, ".calculator-settings-warning").should be_visible
 
       click_button "Update"
