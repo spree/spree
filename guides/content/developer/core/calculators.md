@@ -95,7 +95,9 @@ Every matching product within an order will add to the calculator's total. For e
 
 The calculation would be:
 
-(2 x 5) + (1 x 5)
+
+    = (2 x 5) + (1 x 5)
+    = 10 + 5
 
 Meaning the calculator will compute an amount of 15.
 
@@ -111,9 +113,10 @@ Assuming a calculator amount of 10% and an order such as this:
 
 The calculation would be:
 
-($15 x 2 x 10%) + ($10 x 10%)
-($30 x 10%) + ($10 x 10%)
-$3 + $1
+
+    = ($15 x 2 x 10%) + ($10 x 10%)
+    = ($30 x 10%) + ($10 x 10%)
+    = $3 + $1
 
 The calculator will calculate a discount of $4.
 
