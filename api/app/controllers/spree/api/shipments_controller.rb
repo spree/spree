@@ -72,8 +72,8 @@ module Spree
         quantity = params[:quantity].to_i
 
         @order.contents.remove(variant, quantity, @shipment)
-
-        respond_with(@shipment.reload, :default_template => :show)
+        @shipment.reload if @shipment.persisted?
+        respond_with(@shipment, :default_template => :show)
       end
 
       private
