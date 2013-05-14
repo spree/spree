@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'awesome_nested_set', '2.1.5'
 
   s.add_dependency 'jquery-rails', '~> 2.2.0'
-  s.add_dependency 'select2-rails', '~> 3.2'
+  s.add_dependency 'select2-rails', '3.2.1'
 
   s.add_dependency 'highline', '= 1.6.18'
   s.add_dependency 'state_machine', '= 1.1.2'
