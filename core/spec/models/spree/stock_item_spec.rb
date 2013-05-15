@@ -2,9 +2,10 @@ require 'spec_helper'
 
 describe Spree::StockItem do
   let(:stock_location) { create(:stock_location_with_items) }
+
   subject { stock_location.stock_items.order(:id).first }
 
-  it 'maintains the count on hand for a varaint' do
+  it 'maintains the count on hand for a variant' do
     subject.count_on_hand.should eq 10
   end
 
@@ -21,6 +22,26 @@ describe Spree::StockItem do
 
   it "can return the stock item's variant's name" do
     subject.variant_name.should == subject.variant.name
+  end
+
+  context "available to be included in shipment" do
+    context "has stock" do
+      it { subject.should be_available }
+    end
+
+    context "backorderable" do
+      before { subject.backorderable = true }
+      it { subject.should be_available }
+    end
+
+    context "no stock and not backorderable" do
+      before do
+        subject.backorderable = false
+        subject.stub(count_on_hand: 0)
+      end
+
+      it { subject.should_not be_available }
+    end
   end
 
   context "count_on_hand=" do
@@ -57,4 +78,3 @@ describe Spree::StockItem do
     end
   end
 end
-
