@@ -18,9 +18,10 @@ describe "Order Details", js: true do
   context 'as Admin' do
     stub_authorization!
 
+    before { visit spree.edit_admin_order_path(order) }
+
     context "edit order page" do
       it "should allow me to edit order details" do
-        visit spree.edit_admin_order_path(order)
         page.should have_content("spree t-shirt")
         page.should have_content("$40.00")
 
@@ -34,8 +35,6 @@ describe "Order Details", js: true do
       end
 
       it "can add an item to a shipment" do
-        visit spree.edit_admin_order_path(order)
-
         select2_search "Tote", :from => Spree.t(:name_or_sku)
         within("table.stock-levels") do
           fill_in "stock_item_quantity", :with => 2
@@ -46,7 +45,6 @@ describe "Order Details", js: true do
       end
 
       it "can remove an item from a shipment" do
-        visit spree.edit_admin_order_path(order)
         page.should have_content("spree t-shirt")
 
         within_row(1) do
@@ -57,7 +55,6 @@ describe "Order Details", js: true do
       end
 
       it "can add tracking information" do
-        visit spree.edit_admin_order_path(order)
         within("table.index tr:nth-child(5)") do
           click_icon :edit
         end
@@ -79,13 +76,22 @@ describe "Order Details", js: true do
         page.should have_content("Default:")
       end
 
+      context "variant out of stock and not backorderable" do
+        before { product.master.stock_items.first.update_column(:backorderable, false) }
+
+        it "displays out of stock instead of add button" do
+          select2_search product.name, :from => Spree.t(:name_or_sku)
+          within("table.stock-levels") do
+            page.should have_content(Spree.t(:out_of_stock))
+          end
+        end
+      end
+
       context "when two stock locations exist" do
         let!(:london) { create(:stock_location, name: "London") }
         before(:each) { london.stock_items.each { |si| si.adjust_count_on_hand(10) } }
 
         it "creates a new shipment when adding a variant from the new location" do
-          visit spree.edit_admin_order_path(order)
-
           select2_search "Tote", :from => Spree.t(:name_or_sku)
           within("table.stock-levels tr:nth-child(2)") do
             fill_in "stock_item_quantity", :with => 2
@@ -99,8 +105,6 @@ describe "Order Details", js: true do
 
         context "when two shipments exist" do
           before(:each) do
-            visit spree.edit_admin_order_path(order)
-
             select2_search "Tote", :from => Spree.t(:name_or_sku)
             within("table.stock-levels tr:nth-child(2)") do
               fill_in "stock_item_quantity", :with => 2
