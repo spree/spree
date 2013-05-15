@@ -33,6 +33,11 @@ module Spree
       self.count_on_hand > 0
     end
 
+    # Tells whether it's available to be included in a shipment
+    def available?
+      self.in_stock? || self.backorderable?
+    end
+
     private
     def count_on_hand=(value)
       write_attribute(:count_on_hand, value)
