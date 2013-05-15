@@ -24,6 +24,9 @@
       <li<%== ' class="active"' if current == 'Stock Management' %>>
         <%= link_to_with_icon 'icon-tasks', Spree.t(:stock_management), stock_admin_product_url(@product) %>
       </li>
+      <li>
+        <%= link_to_with_icon 'icon-external-link', Spree.t(:view_product), product_url(@product), target: "_blank" %>
+      </li>
     </ul>
   </nav>
 
