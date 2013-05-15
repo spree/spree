@@ -173,7 +173,7 @@ module Spree
 
       def create_stock_items
         Spree::StockLocation.all.each do |stock_location|
-          stock_location.stock_items.create!(variant: self)
+          stock_location.stock_items.create!(variant: self, backorderable: stock_location.backorderable_default)
         end
       end
 
