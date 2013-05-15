@@ -9,7 +9,8 @@ module Spree
     validates_presence_of :name
 
     attr_accessible :name, :active, :address1, :address2, :city, :zipcode,
-                    :state_name, :state_id, :country_id, :phone, :country_id
+        :backorderable_default, :state_name, :state_id, :country_id, :phone,
+        :country_id
 
     scope :active, -> { where(active: true) }
 
@@ -55,10 +56,9 @@ module Spree
     end
 
     private
-
       def create_stock_items
         Spree::Variant.find_each do |v|
-          self.stock_items.create!(variant: v)
+          self.stock_items.create!(variant: v, backorderable: self.backorderable_default)
         end
       end
   end

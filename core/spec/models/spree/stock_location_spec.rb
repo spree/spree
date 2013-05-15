@@ -2,16 +2,31 @@ require 'spec_helper'
 
 module Spree
   describe StockLocation do
-    subject { create(:stock_location_with_items) }
+    subject { create(:stock_location_with_items, backorderable_default: true) }
     let(:stock_item) { subject.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
-    before(:each) do
-      Spree::StockLocation.delete_all
-    end
-
     it 'creates stock_items for all variants' do
       subject.stock_items.count.should eq Variant.count
+    end
+
+    context "backorderable default" do
+      let(:stock_items) { subject.stock_items }
+
+      context "true" do
+        it 'sets stock items backorderable true as well' do
+          stock_items.map(&:backorderable).first.should be_true
+        end
+      end
+
+      context "false" do
+        let(:stock_location) { StockLocation.create(name: "testing", backorderable_default: false) }
+        let(:stock_items) { stock_location.stock_items }
+
+        it 'sets stock items backorderable false' do
+          stock_items.map(&:backorderable).first.should be_false
+        end
+      end
     end
 
     it 'finds a stock_item for a variant' do
@@ -113,4 +128,3 @@ module Spree
     end
   end
 end
-
