@@ -7,8 +7,7 @@ class OrderSpecificAbility
   include CanCan::Ability
 
   def initialize(user)
-    can [:admin, :index], Spree::Order
-    can :manage, Spree::Order, :number => 'R987654321'
+    can [:admin, :manage], Spree::Order, :number => 'R987654321'
   end
 end
 
