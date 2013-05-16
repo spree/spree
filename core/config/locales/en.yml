@@ -34,6 +34,7 @@ en:
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
+        coupon_code: Coupon Code
         created_at: Order Date
         email: Customer E-Mail
         ip_address: IP Address
@@ -931,8 +932,6 @@ en:
     smtp_username: SMTP Username
     source: Source
     special_instructions: Special Instructions
-    spree/order:
-      coupon_code: Coupon Code
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
     start: Start
     start_date: Valid from
