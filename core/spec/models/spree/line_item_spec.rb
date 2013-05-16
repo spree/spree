@@ -3,9 +3,6 @@ require 'spec_helper'
 describe Spree::LineItem do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
-  before do
-    Spree::Config.set :allow_backorders => true
-  end
 
   context '#save' do
     it 'should update inventory, totals, and tax' do
