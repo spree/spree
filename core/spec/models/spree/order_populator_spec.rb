@@ -32,10 +32,8 @@ describe Spree::OrderPopulator do
       end
 
       # Regression test for #2430
-      context "respects allow_backorders setting" do
+      context "respects backorderable setting" do
         before do
-          Spree::Config[:allow_backorders] = true
-          # Variant is available due to allow_backorders
           Spree::Stock::Quantifier.any_instance.stub(can_supply?: true)
         end
 
