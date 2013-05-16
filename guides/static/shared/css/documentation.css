@@ -196,10 +196,6 @@ pre.headers code {
   font-weight: 400;
 }
 
-.home #subheader {
-  height: 400px;
-}
-
 #api-objects {
   width: 100%;
   height: 400px;
@@ -395,6 +391,9 @@ pre.headers code {
   height: 30px;
   border: 3px solid white;
   display: block;
+  box-sizing: content-box !important;
+  -webkit-box-sizing: content-box !important;
+  -moz-box-sizing: content-box !important;
 
   -webkit-border-radius: 30px;
      -moz-border-radius: 30px;

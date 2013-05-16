@@ -1,0 +1,10 @@
+@mixin shift($n-columns: 1) {
+
+  $direction: get-direction($layout-direction, $default-layout-direction);
+  $opposite-direction: get-opposite-direction($direction);
+
+  margin-#{$opposite-direction}: $n-columns * flex-grid(1, $parent-columns) + $n-columns * flex-gutter($parent-columns);
+
+  // Reset nesting context
+  $parent-columns: $grid-columns;
+}

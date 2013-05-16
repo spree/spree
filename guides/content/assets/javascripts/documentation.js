@@ -1,6 +1,9 @@
 // Init sidebar
 $(function() {
 
+  // SVG fallback
+  svgeezy.init(false, 'png');
+
   // Add anchor links to headers
   $("#content").find('h1, h2, h3').each(function(){
     $(this).prepend("<a href='#"+$(this).attr("id")+"'><i clas='icon-link'><i> ")

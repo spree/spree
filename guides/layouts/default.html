@@ -7,38 +7,10 @@
 <head>
   <title><%= @item[:title] %></title>
 
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
-  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:400italic,600italic,400,600' rel='stylesheet' type='text/css'>
-
-  <link href="/shared/css/icons.css" media="screen" rel="stylesheet" type="text/css">
-  <link href="/shared/css/icons-codes.css" media="screen" rel="stylesheet" type="text/css">
-
-  <!--[if IE 7]>
-    <link href="/shared/css/icons-ie7.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="/shared/css/icons-ie7-codes.css" media="screen" rel="stylesheet" type="text/css">
-  <![endif]-->
-
-  <link href="/shared/css/skeleton.css" media="screen" rel="stylesheet" type="text/css">
-  <link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
-  <link href="/shared/css/documentation.css" media="screen" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" type="text/css" href="/assets/stylesheets/guides.css" media="screen" />
-
-  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-  <script src="/assets/javascripts/css_browser_selector_dev.js" type="text/javascript"></script>
-  <script src="/assets/javascripts/antiscroll.js" type="text/javascript"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
-  <script src="/assets/javascripts/documentation.js" type="text/javascript"></script>
-  <script src="/assets/javascripts/guides.js" type="text/javascript"></script>
+  <%= render '_head' %>
 
 </head>
-<body>
+<body class="index">
 
   <!--TODO check if its still ege -->
   <div>
@@ -64,9 +36,42 @@
 
     <div id="subheader">
       <div class="container">
-        <div class="twelve columns">
-          <h1 class="page-title"><%= @item[:title] %></h1>
-        </div>
+
+          <h1 class="huge-title">Spree Documentation</h1>
+
+          <ul class="sections">
+            <li class="section">
+              <a href="/api">
+                <i class="index-header-api"></i>
+                <h1 class="section-title">API</h1>
+              </a>
+            </li>
+            <li class="section">
+              <a href="/developer">
+                <i class="index-header-developer"></i>
+                <h1 class="section-title">Developer</h1>
+              </a>
+            </li>
+            <li class="section">
+              <a href="/integration">
+                <i class="index-header-integration"></i>
+                <h1 class="section-title">Integration</h1>
+              </a>
+            </li>
+            <li class="section">
+              <a href="/user">
+                <i class="index-header-user"></i>
+                <h1 class="section-title">User</h1>
+              </a>
+            </li>
+            <li class="section">
+              <a href="/release_notes">
+                <i class="index-header-release-notes"></i>
+                <h1 class="section-title">Release Notes</h1>
+              </a>
+            </li>
+          </ul>
+
       </div>
     </div>
 

@@ -1,0 +1,12 @@
+@mixin reset-display {
+  $container-display-table: false;
+}
+
+@mixin reset-layout-direction {
+  $layout-direction: $default-layout-direction;
+}
+
+@mixin reset-all {
+  @include reset-display;
+  @include reset-layout-direction;
+}
