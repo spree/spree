@@ -18,23 +18,11 @@ describe Spree::Variant do
   end
 
   context "after create" do
-    context "stock items" do
-      let!(:product) { create(:product) }
+    let!(:product) { create(:product) }
 
-      it "creates a new record" do
-        lambda {
-          product.variants.create(:name => "Foobar")
-        }.should change(Spree::StockItem, :count).by(1)
-      end
-
-      context "backorderable" do
-        let!(:stock_location) { Spree::StockLocation.create(:name => "Default", backorderable_default: false) }
-        let(:variant) { product.variants.create(:name => "Foobar") }
-
-        it "sets backorderable based on the stock location config" do
-          stock_location.backorderable?(variant).should be_false
-        end
-      end
+    it "propagate to stock items" do
+      Spree::StockLocation.any_instance.should_receive(:propagate_variant)
+      product.variants.create(:name => "Foobar")
     end
   end
 
