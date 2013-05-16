@@ -18,6 +18,10 @@
             <%= f.label :active, Spree.t(:backorderable_default) + ':' %>
             <%= f.check_box :backorderable_default %>
           </li>
+          <li>
+            <%= f.label :active, Spree.t(:propagate_all_variants) + ':' %>
+            <%= f.check_box :propagate_all_variants %>
+          </li>
         </ul>
       <% end %>
     </div>
