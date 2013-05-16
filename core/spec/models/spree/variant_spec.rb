@@ -18,13 +18,23 @@ describe Spree::Variant do
   end
 
   context "after create" do
-    it "should create a stock item for the variant for each stock location" do
-      Spree::StockLocation.delete_all # FIXME leaky database
-      Spree::StockLocation.create(:name => "Default")
-      product = create(:product)
-      lambda {
-        product.variants.create(:name => "Foobar")
-      }.should change(Spree::StockItem, :count).by(1)
+    context "stock items" do
+      let!(:product) { create(:product) }
+
+      it "creates a new record" do
+        lambda {
+          product.variants.create(:name => "Foobar")
+        }.should change(Spree::StockItem, :count).by(1)
+      end
+
+      context "backorderable" do
+        let!(:stock_location) { Spree::StockLocation.create(:name => "Default", backorderable_default: false) }
+        let(:variant) { product.variants.create(:name => "Foobar") }
+
+        it "sets backorderable based on the stock location config" do
+          stock_location.backorderable?(variant).should be_false
+        end
+      end
     end
   end
 
