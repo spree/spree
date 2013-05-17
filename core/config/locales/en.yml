@@ -193,44 +193,6 @@ en:
       spree/zone:
         one: Zone
         other: Zones
-  devise:
-    confirmations:
-      confirmed: Your account was successfully confirmed. You are now signed in.
-      send_instructions: You will receive an email with instructions about how to confirm your account in a few minutes.
-    failure:
-      inactive: Your account was not activated yet.
-      invalid: Invalid email or password.
-      invalid_token: Invalid authentication token.
-      locked: Your account is locked.
-      timeout: Your session expired, please sign in again to continue.
-      unauthenticated: You need to sign in or sign up before continuing.
-      unconfirmed: You have to confirm your account before continuing.
-    mailer:
-      confirmation_instructions:
-        subject: Confirmation instructions
-      reset_password_instructions:
-        subject: Reset password instructions
-      unlock_instructions:
-        subject: Unlock Instructions
-    oauth_callbacks:
-      failure: Could not authorize you from %{kind} because "%{reason}".
-      success: Successfully authorized from %{kind} account.
-    unlocks:
-      send_instructions: You will receive an email with instructions about how to unlock your account in a few minutes.
-      unlocked: Your account was successfully unlocked. You are now signed in.
-    user_passwords:
-      user:
-        cannot_be_blank: Your password cannot be blank.
-        send_instructions: You will receive an email with instructions about how to reset your password in a few minutes.
-        updated: Your password was changed successfully. You are now signed in.
-    user_registrations:
-      destroyed: Bye! Your account was successfully cancelled. We hope to see you again soon.
-      inactive_signed_up: You have signed up successfully. However, we could not sign you in because your account is %{reason}.
-      signed_up: Welcome! You have signed up successfully.
-      updated: You updated your account successfully.
-    user_sessions:
-      signed_in: Signed in successfully.
-      signed_out: Signed out successfully.
   errors:
     messages:
       already_confirmed: was already confirmed
