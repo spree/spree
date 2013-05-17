@@ -1,6 +1,35 @@
-<%= form_for [:admin, Spree::StockMovement.new] do |f| %>
+<%= form_for [:admin, Spree::StockMovement.new], url: admin_stock_items_path do |f| %>
   <fieldset>
     <legend align="center"><%= Spree.t(:add_stock_management) %></legend>
-    <%= render :partial => 'spree/admin/shared/stock_movement_form', :locals => { :f => f } %>
+
+    <div data-hook="admin_stock_movements_form_fields" class="row">
+      <div class="alpha two columns">
+        <%= f.field_container :quantity do %>
+          <%= f.label :quantity, Spree.t(:quantity) %>
+          <%= f.number_field :quantity, class: 'fullwidth', value: 1 %>
+        <% end %>
+      </div>
+      <div class="five columns">
+        <%= f.field_container :stock_location do %>
+          <%= label_tag :stock_location_id, Spree.t(:stock_location) %>
+          <%= select_tag 'stock_location_id', options_from_collection_for_select(@stock_locations, :id, :name),
+            class: 'select2 fullwidth' %>
+        <% end %>
+      </div>
+
+      <div class="five columns omega">
+        <%= f.field_container :variant_id do %>
+          <%= label_tag 'variant_id', Spree.t(:variant) %>
+          <%= select_tag 'variant_id', options_from_collection_for_select(@variants, :id, :sku),
+            class: 'select2 fullwidth' %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button Spree.t(:add_stock), 'icon-plus' %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), collection_url, :class => 'button' %>
+    </div>
   </fieldset>
 <% end %>
