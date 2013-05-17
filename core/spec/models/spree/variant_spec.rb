@@ -24,6 +24,15 @@ describe Spree::Variant do
       Spree::StockLocation.any_instance.should_receive(:propagate_variant)
       product.variants.create(:name => "Foobar")
     end
+
+    context "stock location has disable propagate all variants" do
+      before { Spree::StockLocation.any_instance.stub(propagate_all_variants?: false) }
+
+      it "propagate to stock items" do
+        Spree::StockLocation.any_instance.should_not_receive(:propagate_variant)
+        product.variants.create(:name => "Foobar")
+      end
+    end
   end
 
   context "product has other variants" do
