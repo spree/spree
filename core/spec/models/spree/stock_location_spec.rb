@@ -13,47 +13,65 @@ module Spree
     context "handling stock items" do
       let!(:variant) { create(:variant) }
 
-      context "propagate variants" do
+      context "given a variant" do
         subject { StockLocation.create(name: "testing", propagate_all_variants: false) }
-        let(:stock_item) { subject.propagate_variant(variant) }
 
-        it "creates a new stock item" do
-          expect {
-            subject.propagate_variant(variant)
-          }.to change{ StockItem.count }.by(1)
+        context "set up" do
+          it "creates stock item" do
+            subject.should_receive(:propagate_variant)
+            subject.set_up_stock_item(variant)
+          end
+
+          context "stock item exists" do
+            let!(:stock_item) { subject.propagate_variant(variant) }
+
+            it "returns existing stock item" do
+              subject.set_up_stock_item(variant).should == stock_item
+            end
+          end
         end
 
-        context "passes backorderable default config" do
+        context "propagate variants" do
+          let(:stock_item) { subject.propagate_variant(variant) }
+
+          it "creates a new stock item" do
+            expect {
+              subject.propagate_variant(variant)
+            }.to change{ StockItem.count }.by(1)
+          end
+
+          context "passes backorderable default config" do
+            context "true" do
+              before { subject.backorderable_default = true }
+              it { stock_item.backorderable.should be_true }
+            end
+
+            context "false" do
+              before { subject.backorderable_default = false }
+              it { stock_item.backorderable.should be_false }
+            end
+          end
+        end
+
+        context "propagate all variants" do
+          subject { StockLocation.new(name: "testing") }
+
           context "true" do
-            before { subject.backorderable_default = true }
-            it { stock_item.backorderable.should be_true }
+            before { subject.propagate_all_variants = true }
+
+            specify do
+              subject.should_receive(:propagate_variant).at_least(:once)
+              subject.save!
+            end
           end
 
           context "false" do
-            before { subject.backorderable_default = false }
-            it { stock_item.backorderable.should be_false }
-          end
-        end
-      end
+            before { subject.propagate_all_variants = false }
 
-      context "propagate all variants" do
-        subject { StockLocation.new(name: "testing") }
-
-        context "true" do
-          before { subject.propagate_all_variants = true }
-
-          specify do
-            subject.should_receive(:propagate_variant).at_least(:once)
-            subject.save!
-          end
-        end
-
-        context "false" do
-          before { subject.propagate_all_variants = false }
-
-          specify do
-            subject.should_not_receive(:propagate_variant)
-            subject.save!
+            specify do
+              subject.should_not_receive(:propagate_variant)
+              subject.save!
+            end
           end
         end
       end

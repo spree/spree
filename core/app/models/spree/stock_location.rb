@@ -16,8 +16,16 @@ module Spree
 
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
 
+    # Wrapper for creating a new stock item respecting the backorderable config 
     def propagate_variant(variant)
       self.stock_items.create!(variant: variant, backorderable: self.backorderable_default)
+    end
+
+    # Return either an existing stock item or create a new one. Useful in
+    # scenarios where the user might not know whether there is already a stock
+    # item for a given variant
+    def set_up_stock_item(variant)
+      self.stock_item(variant) || propagate_variant(variant)
     end
 
     def stock_item(variant)
