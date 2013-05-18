@@ -40,9 +40,9 @@ module Spree
       if shipment.present?
         remove_from_shipment(shipment, line_item.variant, quantity)
       else
-        order.shipments.each do |shipment|
+        order.shipments.each do |_shipment|
           break if quantity == 0
-          quantity -= remove_from_shipment(shipment, line_item.variant, quantity)
+          quantity -= remove_from_shipment(_shipment, line_item.variant, quantity)
         end
       end
     end
@@ -57,8 +57,8 @@ module Spree
         (shipment.ready? || shipment.pending?) && shipment.include?(variant)
       end
 
-      shipment ||= order.shipments.detect do |shipment|
-        (shipment.ready? || shipment.pending?) && variant.stock_location_ids.include?(shipment.stock_location_id)
+      shipment ||= order.shipments.detect do |_shipment|
+        (_shipment.ready? || _shipment.pending?) && variant.stock_location_ids.include?(_shipment.stock_location_id)
       end
     end
 
