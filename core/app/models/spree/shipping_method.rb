@@ -23,14 +23,12 @@ module Spree
     end
 
     def zone
-      raise "DEPRECATION WARNING: ShippingMethod#zone is no longer correct. Multiple zones need to be supported"
-      Rails.logger.error "DEPRECATION WARNING: ShippingMethod#zone is no longer correct. Multiple zones need to be supported"
+      ActiveSupport::Deprecation.warn("[SPREE] ShippingMethod#zone is no longer correct. Multiple zones need to be supported")
       zones.first
     end
 
     def zone=(zone)
-      p "DEPRECATION WARNING: ShippingMethod#zone is no longer correct. Multiple zones need to be supported"
-      Rails.logger.error "DEPRECATION WARNING: ShippingMethod#zone= is no longer correct. Multiple zones need to be supported"
+      ActiveSupport::Deprecation.warn("[SPREE] ShippingMethod#zone= is no longer correct. Multiple zones need to be supported")
       zones = zone
     end
 
