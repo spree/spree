@@ -277,12 +277,9 @@ module Spree
       contents.add(variant, quantity)
     end
 
-    def remove_variant(variant, quantity = 1)
-      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
-      contents.remove(variant, quantity)
-    end
 
     def remove_variant(variant, quantity = 1)
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
       current_item = find_line_item_by_variant(variant)
       current_item.quantity += -quantity
 
