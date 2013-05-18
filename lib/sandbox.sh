@@ -9,7 +9,7 @@ if [ ! -d "sandbox" ]; then
 fi
 
 cd ./sandbox
-echo "gem 'spree', :path => '..'" >> Gemfile
+echo "gem 'spree', :path => '../..'" >> Gemfile
 echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise'" >> Gemfile
 
 bundle install --gemfile Gemfile
