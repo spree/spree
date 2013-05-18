@@ -273,23 +273,10 @@ module Spree
       contents.add(variant, quantity)
     end
 
+
     def remove_variant(variant, quantity = 1)
       ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
       contents.remove(variant, quantity)
-    end
-
-    def remove_variant(variant, quantity = 1)
-      current_item = find_line_item_by_variant(variant)
-      current_item.quantity += -quantity
-
-      if current_item.quantity == 0
-        current_item.destroy
-      else
-        current_item.save!
-      end
-
-      self.reload
-      current_item
     end
 
     # Associates the specified user with the order.
