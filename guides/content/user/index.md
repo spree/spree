@@ -11,7 +11,6 @@ title: User
 Products
 * [Creating a New Product](products/creating.md)
 * [Options](products/options.md)
-* [Properties](products/properties.md)
 * [Prototypes](products/prototypes.md)
 * [Cloning](products/cloning.md)
 * [Deleting](products/deleting.md)
