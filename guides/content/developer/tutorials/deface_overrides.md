@@ -22,7 +22,7 @@ Here is what the erb template looks like in Spree:
 ```erb
 <%%= render :partial => 'spree/shared/error_messages',
   :locals => { :target => @user } %>
-<h2><%%= t(:registration) %></h2>
+<h2><%%= Spree.t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account" class="columns alpha eight">
     <!-- TODO: add partial with registration form -->
@@ -31,14 +31,14 @@ Here is what the erb template looks like in Spree:
     <div id="guest_checkout" data-hook class="columns omega eight">
       <%%= render :partial => 'spree/shared/error_messages',
         :locals => { :target => @order } %>
-      <h2><%%= t(:guest_user_account) %></h2>
+      <h2><%%= Spree.t(:guest_user_account) %></h2>
       <%%= form_for @order, :url => update_checkout_registration_path, :method => :put,
         :html => { :id => 'checkout_form_registration' } do |f| %>
         <p>
-          <%%= f.label :email, t(:email) %><br />
+          <%%= f.label :email, Spree.t(:email) %><br />
           <%%= f.email_field :email, :class => 'title' %>
         </p>
-        <p><%%= f.submit t(:continue), :class => 'button primary' %></p>
+        <p><%%= f.submit Spree.t(:continue), :class => 'button primary' %></p>
       <%% end %>
     </div>
   <%% end %>
@@ -116,8 +116,8 @@ So we want to override `spree/admin/products/_form.html.erb`. Here is the part o
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
 <%%= f.field_container :price do %>
-    <%%= f.label :price, raw(t(:master_price) + content_tag(:span, ' *',
-      :class => "required")) %>
+    <%%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *',
+     :class => "required")) %>
     <%%= f.text_field :price, :value => number_to_currency(@product.price,
       :unit => '') %>
     <%%= f.error_message_on :price %>
@@ -131,7 +131,7 @@ Deface::Override.new(:virtual_path => "spree/admin/products/_form",
   :insert_after => "code[erb-loud]:contains('text_field :price')",
   :text => "
     <%%= f.field_container :sale_price do %>
-      <%%= f.label :sale_price, raw(t(:sale_price) + content_tag(:span, ' *')) %>
+      <%%= f.label :sale_price, raw(Spree.t(:sale_price) + content_tag(:span, ' *')) %>
       <%%= f.text_field :sale_price, :value =>
         number_to_currency(@product.sale_price, :unit => '') %>
       <%%= f.error_message_on :sale_price %>
