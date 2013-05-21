@@ -2,6 +2,11 @@ Spree::OrdersController.class_eval do
 
   def update
     @order = current_order
+    unless @order
+      flash[:error] = t(:order_not_found)
+      redirect_to root_path and return
+    end
+
     if @order.update_attributes(params[:order])
       render :edit and return unless apply_coupon_code
       
