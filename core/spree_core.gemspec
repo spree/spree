@@ -17,28 +17,22 @@ Gem::Specification.new do |s|
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'
 
-  # Necessary for the install generator
-  s.add_dependency 'highline', '= 1.6.18'
-
+  s.add_dependency 'activemerchant', '~> 1.31'
   s.add_dependency 'acts_as_list', '= 0.2.0'
   s.add_dependency 'awesome_nested_set', '2.1.5'
-  # Frozen to 0.13.0 due to: https://github.com/amatsuda/kaminari/pull/282
-  s.add_dependency 'kaminari', '0.13.0'
-
-  s.add_dependency 'state_machine', '1.2.0'
-  s.add_dependency 'ffaker', '~> 1.16.1'
-  s.add_dependency 'paperclip', '~> 3.4.1'
   s.add_dependency 'aws-sdk', '~> 1.3.4'
-  s.add_dependency 'ransack', '0.7.2'
-  s.add_dependency 'activemerchant', '~> 1.31'
+  s.add_dependency 'cancan', '~> 1.6.10'
+  s.add_dependency 'deface', '>= 1.0.0.rc2'
+  s.add_dependency 'ffaker', '~> 1.16'
+  s.add_dependency 'highline', '= 1.6.18' # Necessary for the install generator
+  s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '>= 1.7.7'
-  s.add_dependency 'rails', '~> 3.2.13'
-  s.add_dependency 'deface', '>= 0.9.0'
-  s.add_dependency 'stringex', '~> 1.5.1'
-  s.add_dependency 'cancan', '1.6.8'
-  s.add_dependency 'truncate_html', '0.9.2'
+  s.add_dependency 'kaminari', '0.13.0' # Frozen to 0.13.0 due to: https://github.com/amatsuda/kaminari/pull/282
   s.add_dependency 'money', '5.1.1'
-
-  # For checking for alerts
-  s.add_dependency 'httparty', '~> 0.11'
+  s.add_dependency 'paperclip', '~> 3.4.1'
+  s.add_dependency 'rails', '~> 3.2.13'
+  s.add_dependency 'ransack', '0.7.2'
+  s.add_dependency 'state_machine', '1.2.0'
+  s.add_dependency 'stringex', '~> 1.5.1'
+  s.add_dependency 'truncate_html', '0.9.2'
 end

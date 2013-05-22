@@ -4,7 +4,7 @@
       {{#if variant.image }}
         <img src='{{variant.image}}' />
       {{ else }}
-        <img src='/assets/noimage/mini.png' />
+        <img src='<%= image_path("noimage/mini.png") %>' />
       {{/if}}
     </figure>
 

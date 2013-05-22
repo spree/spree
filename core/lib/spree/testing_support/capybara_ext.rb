@@ -8,9 +8,7 @@ module CapybaraExt
   end
 
   def eventually_fill_in(field, options={})
-    Capybara.wait_until do
-      find_field field
-    end
+    page.should have_css('#' + field)
     fill_in field, options
   end
 
@@ -79,7 +77,6 @@ module CapybaraExt
   def find_label(text)
     first(:xpath, "//label[text()[contains(.,'#{text}')]]")
   end
-
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|

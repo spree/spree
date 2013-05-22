@@ -17,6 +17,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
+require 'ffaker'
 
 require "support/big_decimal"
 require "support/test_gateway"
@@ -53,9 +54,6 @@ RSpec.configure do |config|
     else
       DatabaseCleaner.strategy = :transaction
     end
-  end
-
-  config.before(:each) do
     DatabaseCleaner.start
     reset_spree_preferences
   end

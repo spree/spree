@@ -7,7 +7,7 @@
   <head data-hook="admin_inside_head">
     <%= render :partial => 'spree/admin/shared/head' %>
   </head>
-  
+
   <body class='admin'>
     <div id='wrapper' data-hook>
 
@@ -39,7 +39,7 @@
 
           <nav data-hook="admin_login_navigation_bar" class="columns eleven"></nav>
         </div>
-        
+
       </header>
 
       <nav id="admin-menu" data-hook>
@@ -55,11 +55,11 @@
       <% if content_for?(:sub_menu) %>
         <nav id="sub-menu" data-hook>
           <div class="container">
-            
+
               <div class="sixteen columns">
                 <%= yield :sub_menu %>
               </div>
-            
+
           </div>
         </nav>
       <% end %>
@@ -67,7 +67,7 @@
       <% if content_for?(:page_title) || content_for?(:page_actions) %>
         <div id="content-header" data-hook>
           <div class="container">
-            
+
               <div class="sixteen columns">
                 <div class="block-table">
                   <% if content_for?(:page_title) %>
@@ -84,7 +84,7 @@
                   <% end %>
                 </div>
               </div>
-            
+
           </div>
         </div>
       <% end %>
@@ -92,7 +92,6 @@
       <div class="container">
         <div class="row">
           <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %>" id="content" data-hook>
-            
             <% if content_for?(:table_filter) %>
               <div id="table-filter" data-hook class="<%= if content_for?(:sidebar) then 'twelve' else 'sixteen' end %> columns">
                 <fieldset>
@@ -106,7 +105,6 @@
               <%= yield %>
             </div>
 
-
             <% if content_for?(:sidebar) %>
               <aside id="sidebar" data-hook class="four columns">
 
@@ -117,19 +115,15 @@
                 <%= yield :sidebar %>
               </aside>
             <% end %>
-
           </div>
         </div>
-
       </div>
-
     </div>
 
     <div data-hook="admin_footer_scripts"></div>
 
-
-<script>
-  Spree.api_key = <%= raw(try_spree_current_user.try(:spree_api_key).to_s.inspect) %>;
-</script>
+    <script>
+      Spree.api_key = <%= raw(try_spree_current_user.try(:spree_api_key).to_s.inspect) %>;
+    </script>
   </body>
 </html>

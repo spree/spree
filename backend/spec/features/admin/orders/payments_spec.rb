@@ -33,7 +33,7 @@ describe "Payments" do
       within_row(1) do
         column_text(2).should == "$50.00"
         column_text(3).should == "Credit Card"
-        column_text(4).should == "VOID"
+        column_text(4).should == "void"
       end
 
       click_on "New Payment"
@@ -42,7 +42,7 @@ describe "Payments" do
       page.should have_content("successfully created!")
 
       click_icon(:capture)
-      find("#payment_status").text.should == "PAID"
+      find("#payment_status").text.should == "paid"
 
       page.should_not have_css('#new_payment_section')
     end

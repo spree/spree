@@ -1,7 +1,14 @@
 require 'spec_helper'
 
 describe "Header Tags" do
+
+  after do
+    Capybara.ignore_hidden_elements = true
+  end
+
   before do
+    Capybara.ignore_hidden_elements = false
+
     @product = create(:product, :name => "RoR Mug")
 
     Spree::DashConfiguration.new.app_id = 1111
@@ -9,7 +16,7 @@ describe "Header Tags" do
     Spree::DashConfiguration.new.token = "test_token"
   end
 
-  let(:analytics) { page.find("script#analytics") }
+  let(:analytics) { page.find('script#analytics') }
 
   it "includes the site_id on the home page" do
     visit spree.root_path

@@ -1,12 +1,12 @@
 require 'rails/all'
-require 'cancan'
-require 'state_machine'
-require 'paperclip'
-require 'kaminari'
-require 'awesome_nested_set'
-require 'acts_as_list'
 require 'active_merchant'
+require 'acts_as_list'
+require 'awesome_nested_set'
+require 'cancan'
+require 'kaminari'
+require 'paperclip'
 require 'ransack'
+require 'state_machine'
 
 module Spree
 
