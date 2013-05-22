@@ -70,11 +70,12 @@ handle_delete = (e, data) ->
 root = exports ? this
 root.setup_taxonomy_tree = (taxonomy_id) ->
   if taxonomy_id != undefined
+    # this is defined within admin/taxonomies/edit
+    root.base_url = Spree.url(Spree.routes.taxonomy_taxons_path)
+
     $.ajax
-      url: '/api/taxonomies/' + taxonomy_id + '/jstree', 
+      url: base_url.path().replace("/taxons", "/jstree"),
       success: (taxonomy) ->
-        # this is defined within admin/taxonomies/edit
-        root.base_url = Spree.url(Spree.routes.taxonomy_taxons_path)
         last_rollback = null
 
         conf =
@@ -82,7 +83,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
             data: taxonomy,
             ajax:
               url: (e) ->
-                '/api/taxonomies/' + taxonomy_id + '/taxons/' + e.attr('id') + '/jstree'
+                base_url.path() + '/' + e.attr('id') + '/jstree'
           themes:
             theme: "apple",
             url: "/assets/jquery.jstree/themes/apple/style.css"
