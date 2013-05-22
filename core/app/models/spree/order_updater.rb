@@ -19,7 +19,7 @@ module Spree
       update_payment_state
 
       # give each of the shipments a chance to update themselves
-      shipments.each { |shipment| shipment.update!(order) }#(&:update!)
+      shipments.each { |shipment| shipment.update!(order) }
       update_shipment_state
       update_adjustments
       # update totals a second time in case updated adjustments have an effect on the total
