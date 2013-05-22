@@ -3,26 +3,31 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Coordinator do
-      let(:package) { build(:stock_package_fulfilled) }
-      let(:order) { package.order }
-      let(:stock_location) { package.stock_location }
+      let!(:order) { create(:order_with_line_items) }
 
       subject { Coordinator.new(order) }
 
-      before :all do
-        Rails.application.config.spree.stock_splitters = [
-         Spree::Stock::Splitter::Backordered,
-         Spree::Stock::Splitter::ShippingCategory
-        ]
+      context "packages" do
+        it "builds, prioritizes and estimates" do
+          subject.should_receive(:build_packages).ordered
+          subject.should_receive(:prioritize_packages).ordered
+          subject.should_receive(:estimate_packages).ordered
+          subject.packages
+        end
       end
 
-      it 'builds a list of packages for an order' do
-        StockLocation.should_receive(:active).and_return([stock_location])
-        subject.should_receive(:build_packer).and_return(double(:packages => [package]))
-        Estimator.any_instance.should_receive(:shipping_rates).and_return([])
+      context "build packages" do
+        it "builds a package for every stock location" do
+          subject.packages.count == StockLocation.count
+        end
 
-        packages = subject.packages
-        packages.count.should == 1
+        context "missing stock items in stock location" do
+          let!(:another_location) { create(:stock_location, propagate_all_variants: false) }
+
+          it "builds packages only for valid stock locations" do
+            subject.build_packages.count.should == (StockLocation.count - 1)
+          end
+        end
       end
     end
   end
