@@ -10,7 +10,7 @@ fi
 
 cd ./sandbox
 echo "gem 'spree', :path => '..'" >> Gemfile
-echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise'" >> Gemfile
+echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '2-0-stable'" >> Gemfile
 
 bundle install --gemfile Gemfile
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User
