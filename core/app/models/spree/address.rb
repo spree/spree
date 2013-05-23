@@ -5,7 +5,8 @@ module Spree
 
     has_many :shipments
 
-    validates :firstname, :lastname, :address1, :city, :zipcode, :country, presence: true
+    validates :firstname, :lastname, :address1, :city, :country, presence: true
+    validates :zipcode, presence: true, if: :require_zipcode?
     validates :phone, presence: true, if: :require_phone?
 
     validate :state_validate
@@ -87,8 +88,11 @@ module Spree
     end
 
     private
-
       def require_phone?
+        true
+      end
+
+      def require_zipcode?
         true
       end
 
@@ -128,6 +132,5 @@ module Spree
         # ensure at least one state field is populated
         errors.add :state, :blank if state.blank? && state_name.blank?
       end
-
   end
 end
