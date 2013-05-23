@@ -14,3 +14,7 @@
 *   Removed `t()` override in `Spree::BaseHelper`. #3083
 
     *Washington Luiz*
+
+*   Improve performance of `Order#payment_required?` by not updating the totals every time. #3040 #3086
+
+    *Washington Luiz*
