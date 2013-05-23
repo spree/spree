@@ -62,7 +62,7 @@ module SpreeCmd
     def ask_questions
       @install_default_gateways = ask_with_default('Would you like to install the default gateways? (Recommended)')
       @install_default_auth = ask_with_default('Would you like to install the default authentication system?')
-      
+
       if @install_default_auth
         @user_class = "Spree::User"
       else
@@ -70,7 +70,7 @@ module SpreeCmd
         if @user_class.blank?
           @user_class = "User"
         end
-      end 
+      end
 
       if options[:skip_install_data]
         @run_migrations = false
@@ -98,7 +98,7 @@ module SpreeCmd
         end
 
         if @install_default_auth
-          gem :spree_auth_devise, :git => "https://github.com/spree/spree_auth_devise.git"
+          gem :spree_auth_devise, :git => "https://github.com/spree/spree_auth_devise.git", :branch => '2-0-stable'
         end
 
         run 'bundle install', :capture => true
