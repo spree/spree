@@ -9,10 +9,7 @@ module Spree
       go_to_state :address
       go_to_state :delivery
       go_to_state :payment, if: ->(order) {
-        # Fix for #2191
-        if order.shipments
-          order.update_totals
-        end
+        order.update_totals
         order.payment_required?
       }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
@@ -163,7 +160,6 @@ module Spree
 
     # Is this a free order in which case the payment step should be skipped
     def payment_required?
-      update_totals
       total.to_f > 0.0
     end
 

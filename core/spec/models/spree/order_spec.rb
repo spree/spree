@@ -463,6 +463,19 @@ describe Spree::Order do
     end
   end
 
+  context "payment required?" do
+    let(:order) { Spree::Order.new }
+
+    context "total is zero" do
+      it { order.payment_required?.should be_false }
+    end
+
+    context "total > zero" do
+      before { order.stub(total: 1) }
+      it { order.payment_required?.should be_true }
+    end
+  end
+
   # Related to the fix for #2694
   context "#has_unprocessed_payments?" do
     let!(:persisted_order) { create(:order) }
