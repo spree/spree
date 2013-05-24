@@ -9,7 +9,7 @@ for troubleshooting standard deployment issues, including:
 * How static assets are served in production
 * Enabling & Configuringn SSL use within Spree
 * Email configuration
-* and more…
+* and more ...
 
 ### Serving Static Assets
 
