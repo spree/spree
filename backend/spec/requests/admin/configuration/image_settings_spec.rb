@@ -21,5 +21,19 @@ describe "image settings" do
     Spree::Config[:attachment_path].should == "spec/dummy/tmp/bfaoro"
   end
 
-end
+  # Regression test for #3069
+  context "updates style configs and uploads products" do
+    let!(:product) { create(:product) }
+    let(:file_path) { Rails.root + "../../spec/support/ror_ringer.jpeg" }
 
+    it "still uploads image gracefully" do
+      click_button "Update"
+
+      visit spree.new_admin_product_image_path(product)
+      attach_file('image_attachment', file_path)
+      expect {
+        click_on "Update"
+      }.to_not raise_error(NoMethodError)
+    end
+  end
+end
