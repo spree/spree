@@ -536,6 +536,18 @@ en:
     height: Height
     hide_cents: Hide cents
     home: Home
+    i18n:
+      available_locales: Available Locales
+      fields: Fields
+      language: Language
+      localization_settings: Localization Settings
+      only_incomplete: Only incomplete
+      only_complete: Only complete
+      select_locale: Select locale
+      show_only: Show only
+      supported_locales: Supported Locales
+      this_file_language: English (US)
+      translations: Translations
     icon: Icon
     image: Image
     image_settings: Image Settings
