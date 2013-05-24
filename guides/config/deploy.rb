@@ -47,10 +47,8 @@ namespace :deploy do
 
   desc "Symlink shared configs and folders on each release."
   task :symlink_shared do
-    if exists?(:edge)
-      run "ln -nfs #{shared_path}/config/robots.txt #{release_path}/output/robots.txt"
-      run "ln -nfs #{shared_path}/config/favicon.ico #{release_path}/output/favicon.ico"
-    else
+    run "ln -nfs #{shared_path}/config/robots.txt #{release_path}/output/robots.txt"
+      #TODO - skip this w/edge
       run "ln -nfs #{shared_path}/legacy #{release_path}/output/legacy"
     end
   end
