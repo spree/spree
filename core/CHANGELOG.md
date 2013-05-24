@@ -10,3 +10,7 @@
     backorderable attribute of each new stock item
 
     *Washington Luiz*
+
+*   Removed `t()` override in `Spree::BaseHelper`. #3083
+
+    *Washington Luiz*
