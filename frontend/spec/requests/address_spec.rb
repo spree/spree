@@ -1,17 +1,16 @@
 require 'spec_helper'
 
 describe "Address" do
+  let!(:product) { create(:product, :name => "RoR Mug") }
+  let!(:order) { create(:order_with_totals, :state => 'cart') }
+
+  stub_authorization!
+
   before do
-    @product = create(:product, :name => "RoR Mug")
-    @product.save
-
-    @order = create(:order_with_totals, :state => 'cart')
-    @order.stub(:available_payment_methods => [create(:bogus_payment_method, :environment => 'test') ])
-
     visit spree.root_path
+
     click_link "RoR Mug"
     click_button "add-to-cart-button"
-    Spree::Order.last.update_column(:email, "funk@groove.com")
 
     address = "order_bill_address_attributes"
     @country_css = "#{address}_country_id"
@@ -19,44 +18,55 @@ describe "Address" do
     @state_name_css = "##{address}_state_name"
   end
 
-  it "shows the state collection selection for a country having states", :js => true do
-    canada = create(:country, :name => "Canada", :states_required => true, :iso => "CA")
-    create(:state, :name => "Ontario", :country => canada)
+  context "country requires state", :js => true do
+    let!(:canada) { create(:country, :name => "Canada", :states_required => true, :iso => "CA") }
 
-    click_button "Checkout"
-    select canada.name, :from => @country_css
-    page.find(@state_select_css).should be_visible
-    page.find(@state_name_css).should_not be_visible
+    context "but has no state" do
+      it "shows the state input field" do
+        click_button "Checkout"
+
+        select canada.name, :from => @country_css
+        page.should have_selector(@state_select_css, visible: false)
+        page.should have_selector(@state_name_css, visible: true)
+        page.should_not have_selector("input#{@state_name_css}[disabled]")
+      end
+    end
+
+    context "and has state" do
+      before { create(:state, :name => "Ontario", :country => canada) }
+
+      it "shows the state collection selection" do
+        click_button "Checkout"
+
+        select canada.name, :from => @country_css
+        page.should have_selector(@state_select_css, visible: true)
+        page.should have_selector(@state_name_css, visible: false)
+      end
+    end
+
+    context "user changes to country without states required" do
+      let!(:france) { create(:country, :name => "France", :states_required => false, :iso => "FRA") }
+
+      it "clears the state name" do
+        click_button "Checkout"
+        select canada.name, :from => @country_css
+        page.find(@state_name_css).set("Toscana")
+
+        select france.name, :from => @country_css
+        page.find(@state_name_css).should have_content('')
+      end
+    end
   end
 
-  it "shows the state input field for a country with states required but for which states are not defined", :js => true do
-    italy = create(:country, :name => "Italy", :states_required => true, :iso => "ITA")
-    click_button "Checkout"
+  context "country does not require state", :js => true do
+    let!(:france) { create(:country, :name => "France", :states_required => false, :iso => "FRA") }
 
-    select italy.name, :from => @country_css
-    page.find(@state_select_css).should_not be_visible
-    page.find(@state_name_css).should be_visible
-    page.should_not have_selector("input#{@state_name_css}[disabled]")
-  end
+    it "shows a disabled state input field" do
+       click_button "Checkout"
 
-  it "shows a disabled state input field for a country where states are not required", :js => true do
-     france = create(:country, :name => "France", :states_required => false, :iso => "FRA")
-     click_button "Checkout"
-
-     select france.name, :from => @country_css
-     page.find(@state_select_css).should_not be_visible
-     page.find(@state_name_css).should_not be_visible
-  end
-
-  it "should clear the state name when selecting a country without states required", :js =>true do
-    italy = create(:country, :name => "Italy", :states_required => true, :iso => "ITA")
-    france = create(:country, :name => "France", :states_required => false, :iso => "FRA")
-
-    click_button "Checkout"
-    select italy.name, :from => @country_css
-    page.find(@state_name_css).set("Toscana")
-
-    select france.name, :from => @country_css
-    page.find(@state_name_css).should have_content('')
+       select france.name, :from => @country_css
+       page.should have_selector(@state_select_css, visible: false)
+       page.should have_selector(@state_name_css, visible: false)
+    end
   end
 end
