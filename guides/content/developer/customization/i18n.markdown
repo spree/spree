@@ -11,21 +11,21 @@ extensions.
 
 Spree uses the standard Rails approach to internationalization so we suggest
 take some time to review the [official Rails i18n
-guide](http://guides.rubyonrails.org/i18n.html) and the "rails-i18n.org
-wiki":http://rails-i18n.org/wiki to help you get started.
+guide](http://guides.rubyonrails.org/i18n.html) and the
+[rails-i18n.org wiki](http://rails-i18n.org/wiki) to help you get started.
 
 ### The spree_i18n project
 
 Spree now stores all of the translation information in a separate GitHub project
-known as [spree_i18n](https://github.com/spree/spree_i18n).  This is a stand
+known as [spree_i18n](https://github.com/spree/spree_i18n). This is a stand
 alone project with a large number of volunteer committers who maintain the
-locale files.  This is basically the same approach followed by the Rails project
+locale files. This is basically the same approach followed by the Rails project
 which keeps their localizations in
 [rails-i18n](https://github.com/svenfuchs/rails-i18n).
 
-The project is actually a Spree extension.  This extension contains only
-translations. The rest of code needed to support the i18n features is part of the Spree
-core.
+The project is actually a Spree extension. This extension contains translations and
+uses the [globalize3 gem](https://github.com/svenfuchs/globalize3) to provide
+translations for model records.
 
 !!!
 You will need to install the [spree_i18n](https://github.com/spree/spree_i18n)
@@ -95,12 +95,6 @@ en:
     price: Price
 ```
 
-Alternatively, you can use symbol notation as follows:
-
-```erb
-<%%= t(:price) %>
-```
-
 ### The Default Locale
 
 Since Spree is basically a Rails application it has the same default locale as
@@ -165,8 +159,11 @@ currency.
 
 ## Creating and Modifying Locales
 
-TODO: Add this section once we switch to LocaleApp and work out how we're
-managing translations.
+A public project for spree_i18n was created on [LocaleApp](http://www.localeapp.com/projects/4605).
+The community should use that to add new files or modify
+existing ones. Those changes will be eventuallly imported by a member with
+commit access to the extension repo. Hopefully it will help us to get
+translations faster.
 
 ## Localizing Extensions
 
@@ -183,11 +180,4 @@ Since Spree extensions are equivalent to Rails Engines they can provide
 localization information automatically (just like a standalone Rails
 application.)
 ***
-
-## Disabling Internationalization
-
-If you don't want to allow users to change the language / locale you can disable
-locale switching by changing the `Spree::Config[:allow_locale_switching]` setting to `false` in the
-`Spree::AppConfiguration` model.
-
 
