@@ -19,14 +19,6 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
-    # Disconnected since there's no code to display error messages yet OR matching client-side validation
-    def phone_validate
-      return if phone.blank?
-      n_digits = phone.scan(/[0-9]/).size
-      valid_chars = (phone =~ /^[-+()\/\s\d]+$/)
-      errors.add :phone, :invalid unless (n_digits > 5 && valid_chars)
-    end
-
     def self.default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
       new({ country: country }, without_protection: true)
