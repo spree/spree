@@ -199,7 +199,7 @@ describe "Checkout" do
     select "United States of America", :from => "#{address}_country_id"
     select "Alabama", :from => "#{address}_state_id"
     fill_in "#{address}_zipcode", :with => "12345"
-    fill_in "#{address}_phone", :with => "(555) 5555-555"
+    fill_in "#{address}_phone", :with => "(555) 555-5555"
   end
 
   def add_mug_to_cart
