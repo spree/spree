@@ -17,11 +17,11 @@ role :db,  domain, :primary => true
 
 set :repository,  "git://github.com/spree/spree-guides"
 
-if exists?(:edge)
+#if exists?(:edge)
   set :branch, "master"
-else
-  set :branch, "1-2-x"
-end
+#else
+#  set :branch, "1-2-x"
+#end
 
 set :deploy_to,   "/data/#{application}"
 set :deploy_via,  :remote_cache
