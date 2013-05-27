@@ -2,6 +2,6 @@
 
 *   Symbolize attachment style keys on ImageSettingController otherwise users
     would get *undefined method `processors' for "48x48>":String>* since
-    paperclip can't handle key strings.
+    paperclip can't handle key strings. #3069 #3080
 
     *Washington Luiz*
