@@ -77,7 +77,7 @@ Spree.ready ($) ->
     updateState 'b'
     updateState 's'
 
-    ($ 'input#order_use_billing').click(->
+    ($ 'input#order_use_billing').change(->
       if ($ this).is(':checked')
         ($ '#shipping .inner').hide()
         ($ '#shipping .inner input, #shipping .inner select').prop 'disabled', true
@@ -85,7 +85,7 @@ Spree.ready ($) ->
         ($ '#shipping .inner').show()
         ($ '#shipping .inner input, #shipping .inner select').prop 'disabled', false
         updateState('s')
-    ).triggerHandler 'click'
+    ).triggerHandler 'change'
 
   if ($ '#checkout_form_payment').is('*')
     ($ 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(->
