@@ -14,7 +14,7 @@ gem 'sass-rails', '~> 4.0.0.rc1'
 
 group :test do
   gem 'capybara', '~> 1.1'
-  gem 'database_cleaner', '0.7.1'
+  gem 'database_cleaner', '~> 1.0.1'
   gem 'email_spec', '1.4.0'
   gem 'factory_girl_rails', '~> 4.2.1'
   gem 'ffaker'
