@@ -6,15 +6,7 @@ require 'kaminari'
 require 'awesome_nested_set'
 require 'acts_as_list'
 require 'active_merchant'
-require 'ransack'
-begin
-  require 'strong_parameters'
-rescue LoadError
-  puts "Couldn't find strong_parameters. Please add this line to your Gemfile:
-
-  gem 'strong_parameters', :github => 'rails/strong_parameters'"
-  exit
-end
+# require 'ransack'
 
 module Spree
 
