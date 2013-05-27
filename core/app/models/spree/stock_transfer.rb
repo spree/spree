@@ -7,8 +7,6 @@ module Spree
 
     make_permalink field: :number, prefix: 'T'
 
-    attr_accessible :reference
-
     def to_param
       number
     end

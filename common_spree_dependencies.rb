@@ -9,12 +9,8 @@ gem 'mysql2'
 gem 'pg'
 gem 'sqlite3'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'coffee-rails', '~> 3.2'
-  gem 'sass-rails', '~> 3.2'
-end
+gem 'coffee-rails', '~> 4.0.0.rc1'
+gem 'sass-rails', '~> 4.0.0.rc1'
 
 group :test do
   gem 'capybara', '~> 2.1'
@@ -28,7 +24,5 @@ group :test do
   gem 'simplecov'
   gem 'webmock', '1.8.11'
 end
-
-gem 'strong_parameters'
 
 gemspec
