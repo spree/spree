@@ -27,10 +27,12 @@ describe Spree::OrderMailer do
 
     it "should use the provided from address" do
       Spree::Config[:mails_from] = "preference@foobar.com"
-      message = ActionMailer::Base.mail(:from => "override@foobar.com", :to => "test@test.com")
+      message.from = "override@foobar.com"
+      message.to = "test@test.com"
       message.deliver
-      @email = ActionMailer::Base.deliveries.first
-      @email.from.should == ["override@foobar.com"]
+      email = ActionMailer::Base.deliveries.first
+      email.from.should == ["override@foobar.com"]
+      email.to.should == ["test@test.com"]
     end
 
     it "should add the bcc email when provided" do
