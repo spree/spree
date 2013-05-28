@@ -15,7 +15,7 @@ Spree.ready ($) ->
       countryId = getCountryId(region)
       if countryId?
         unless Spree.Checkout[countryId]?
-          $.get Spree.routes.states_search + "/?country_id=#{countryId}", (data) ->
+          $.get Spree.routes.states_search, {country_id: countryId}, (data) ->
             Spree.Checkout[countryId] =
               states: data.states
               states_required: data.states_required
