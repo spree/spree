@@ -27,7 +27,7 @@ app/models/product_decorator.rb
 <% ruby do %>
     Spree::Product.class_eval do
       def some_method
-        …
+        ...
       end
     end
 <% end %>
@@ -38,7 +38,7 @@ app/controllers/products_controller_decorator.rb
 <% ruby do %>
     Spree::ProductsController.class_eval do
       def some_action
-        …
+        ...
       end
     end
 <% end %>
@@ -58,7 +58,7 @@ the :load_data before_filter.
       before_filter :load_data, :only => :some_action
 
       def some_action
-        …
+        ...
       end
     end
 <% end %>
@@ -83,7 +83,7 @@ any action, and is built on top of Rails 3's **respond_with** method
 using the following syntax:
 
 <% ruby do %>
-    respond_override :action_name => { :format =>  { :result => lambda { … response … } } }
+    respond_override :action_name => { :format =>  { :result => lambda { ... response ... } } }
 <% end %>
 
 -   **:action_name** - Can be any existing action within a controller
@@ -160,11 +160,11 @@ You may also add additional image sizes for use in your templates
 #### Image resizing option syntax
 
 Default behavior is to resize the image and maintain aspect ratio (i.e.
-the :product version of a 480×400 image will be 240×200). Some commonly
+the :product version of a 480x400 image will be 240x200). Some commonly
 used options are:
 
 -   trailing #, image will be centrally cropped, ensuring the requested
 dimensions
 -   trailing >, image will only be modified if it is currently larger
-than the requested dimensions. (i.e. the :small thumb for a 100×100
+than the requested dimensions. (i.e. the :small thumb for a 100x100
 original image will be unchanged)
