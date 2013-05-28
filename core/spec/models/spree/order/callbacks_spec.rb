@@ -12,7 +12,7 @@ describe Spree::Order do
       it "o'brien@gmail.com is a valid email address" do
         order.state = 'address'
         order.email = "o'brien@gmail.com"
-        order.should be_valid
+        order.should have(:no).error_on(:email)
       end
     end
   end
@@ -36,7 +36,7 @@ describe Spree::Order do
     it "should not validate email address" do
       order.state = "cart"
       order.email = nil
-      order.should be_valid
+      order.should have(:no).error_on(:email)
     end
   end
 end
