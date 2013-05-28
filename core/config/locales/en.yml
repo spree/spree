@@ -535,6 +535,7 @@ en:
     has_no_shipped_units: has no shipped units
     height: Height
     hide_cents: Hide cents
+    hide_currency_symobl: Hide currency symbol
     home: Home
     i18n:
       available_locales: Available Locales

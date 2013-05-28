@@ -76,6 +76,21 @@ describe Spree::Money do
     end
   end
 
+  context "hide currency symbol" do
+    it "hides currency symbol" do
+      Spree::Config[:hide_currency_symbol] = true
+      money = Spree::Money.new(10)
+      money.to_s.should == "10.00"
+    end
+
+    it "shows currency symbol" do
+      Spree::Config[:hide_currency_symbol] = false
+      money = Spree::Money.new(10)
+      money.to_s.should == "$10.00"
+    end
+  end
+
+
   context "JPY" do
     before do
       configure_spree_preferences do |config|
