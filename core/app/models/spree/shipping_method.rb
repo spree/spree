@@ -9,7 +9,7 @@ module Spree
     has_many :shipping_method_categories
     has_many :shipping_categories, through: :shipping_method_categories
 
-    has_and_belongs_to_many :zones
+    has_and_belongs_to_many :zones, join_table: "shipping_methods_zones"
 
     validates :name, presence: true
 

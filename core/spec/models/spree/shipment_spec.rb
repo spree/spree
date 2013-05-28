@@ -387,7 +387,7 @@ describe Spree::Shipment do
     it "should run correct callbacks" do
       shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
-      shipment.run_callbacks(:save, :after)
+      shipment.run_callbacks(:save)
     end
   end
 
