@@ -35,7 +35,7 @@ module Spree
       event :ready do
         transition from: :pending, to: :ready, if: lambda { |shipment|
           # Fix for #2040
-          shipment.determine_state(shipment.order) == :ready
+          shipment.determine_state(shipment.order) == 'ready'
         }
       end
 
