@@ -175,15 +175,16 @@ describe Spree::Promotion do
     let(:promotion) { create(:promotion) }
 
     context "when it has product rules with products associated" do
+      let(:promotion_rule) { Spree::Promotion::Rules::Product.new }
+
       before do
-        promotion_rule = Spree::Promotion::Rules::Product.new
         promotion_rule.promotion = promotion
         promotion_rule.products << create(:product)
         promotion_rule.save
       end
 
       it "should have products" do
-        promotion.products.size.should == 1
+        promotion.reload.products.size.should == 1
       end
     end
 

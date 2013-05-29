@@ -102,7 +102,7 @@ describe Spree::ReturnAuthorization do
   context "after_save" do
     it "should run correct callbacks" do
       return_authorization.should_receive(:force_positive_amount)
-      return_authorization.run_callbacks(:save, :after)
+      return_authorization.run_callbacks(:save)
     end
   end
 
