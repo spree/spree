@@ -46,7 +46,7 @@ module Spree
     end
 
     def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace).select{|c| c.name.start_with?("Spree::Calculator::Shipping::")}
+      spree_calculators.send(model_name_without_spree_namespace).select{ |c| c < Spree::ShippingCalculator }
     end
 
     private
