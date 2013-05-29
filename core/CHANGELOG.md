@@ -1,5 +1,10 @@
 ## Spree 2.1.0 (unreleased) ##
 
+*   Remove after_save callback for stock items backorders processing and
+    fixes count on hand updates when there are backordered units #3066
+
+    *Washington Luiz*
+
 *   InventoryUnit#backordered_for_stock_item no longer returns readonly objects
     neither return an ActiveRecored::Association. It returns only an array of
     writable backordered units for a given stock item #3066
