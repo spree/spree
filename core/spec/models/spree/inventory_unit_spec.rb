@@ -37,6 +37,7 @@ describe Spree::InventoryUnit do
     it "does not find inventory units that aren't backordered" do
       on_hand_unit = shipment.inventory_units.build
       on_hand_unit.state = 'on_hand'
+      on_hand_unit.variant_id = 1
       on_hand_unit.save!
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(on_hand_unit)
