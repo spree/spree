@@ -12,3 +12,14 @@
 * Improve performance of `Order#payment_required?` by not updating the totals every time. #3040 #3086
 
     *Washington Luiz*
+    
+* Remove after_save callback for stock items backorders processing and
+    fixes count on hand updates when there are backordered units #3066
+
+    *Washington Luiz*
+
+* InventoryUnit#backordered_for_stock_item no longer returns readonly objects
+    neither return an ActiveRecored::Association. It returns only an array of
+    writable backordered units for a given stock item #3066
+
+    *Washington Luiz*

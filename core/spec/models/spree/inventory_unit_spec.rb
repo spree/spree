@@ -1,20 +1,16 @@
 require 'spec_helper'
 
 describe Spree::InventoryUnit do
-  let(:variant) { mock_model(Spree::Variant) }
-  let(:line_item) { mock_model(Spree::LineItem, variant: variant, quantity: 5) }
-  let(:order) { mock_model(Spree::Order, line_items: [line_item],
-    inventory_units: [], shipments: mock('shipments'), completed?: true) }
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.order(:id).first }
 
   context "#backordered_for_stock_item" do
     let(:order) { create(:order) }
+
     let(:shipment) do
-      shipping_method = create(:shipping_method)
       shipment = Spree::Shipment.new
       shipment.stock_location = stock_location
-      shipment.shipping_methods << shipping_method
+      shipment.shipping_methods << create(:shipping_method)
       shipment.order = order
       # We don't care about this in this test
       shipment.stub(:ensure_correct_adjustment)
@@ -28,6 +24,12 @@ describe Spree::InventoryUnit do
       unit.tap(&:save!)
     end
 
+    # Regression for #3066
+    it "returns modifiable objects" do
+      units = Spree::InventoryUnit.backordered_for_stock_item(stock_item)
+      expect { units.first.save! }.to_not raise_error
+    end
+
     it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
       stock_item.variant_id = 1
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should =~ [unit]
@@ -36,6 +38,7 @@ describe Spree::InventoryUnit do
     it "does not find inventory units that aren't backordered" do
       on_hand_unit = shipment.inventory_units.build
       on_hand_unit.state = 'on_hand'
+      on_hand_unit.variant_id = 1
       on_hand_unit.save!
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(on_hand_unit)
@@ -65,5 +68,3 @@ describe Spree::InventoryUnit do
     end
   end
 end
-
-

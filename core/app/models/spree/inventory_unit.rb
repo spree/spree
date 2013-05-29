@@ -6,7 +6,13 @@ module Spree
     belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
 
     scope :backordered, -> { where state: 'backordered' }
-    scope :shipped,     -> { where state: 'shipped' }
+    scope :shipped, -> { where state: 'shipped' }
+    scope :backordered_per_variant, ->(stock_item) do
+      includes(:shipment)
+        .where("spree_shipments.state != 'canceled'")
+        .where(variant_id: stock_item.variant_id)
+        .backordered.order("#{self.table_name}.created_at ASC")
+    end
 
     attr_accessible :shipment, :variant_id
 
@@ -26,14 +32,16 @@ module Spree
       end
     end
 
+    # This was refactored from a simpler query because the previous implementation
+    # lead to issues once users tried to modify the objects returned. That's due
+    # to ActiveRecord `joins(shipment: :stock_location)` only return readonly
+    # objects
+    # 
+    # Returns an array of backordered inventory units as per a given stock item
     def self.backordered_for_stock_item(stock_item)
-      stock_locations_table = Spree::StockLocation.table_name
-      shipments_table = Spree::Shipment.table_name
-      joins(shipment: :stock_location).
-      where("#{stock_locations_table}.id = ?", stock_item.stock_location_id).
-      where(variant_id: stock_item.variant_id).
-      where("#{shipments_table}.state != 'canceled'").
-      backordered.order('created_at ASC')
+      backordered_per_variant(stock_item).select do |unit|
+        unit.shipment.stock_location == stock_item.stock_location
+      end
     end
 
     def self.finalize_units!(inventory_units)
