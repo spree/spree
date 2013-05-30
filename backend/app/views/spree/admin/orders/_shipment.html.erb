@@ -90,8 +90,22 @@
 
       <tr class="edit-tracking hidden total">
         <td colspan="5">
-          <label><%= Spree.t(:tracking_number) %>:</label>
-          <%= text_field_tag :tracking, shipment.tracking %>
+          <div class="field alpha five columns">
+            <%= label_tag 'selected_shipping_rate_id', Spree.t(:shipping_method) %>
+            <%= select_tag :selected_shipping_rate_id,
+                  options_for_select(shipment.shipping_rates.backend.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
+                  {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
+          </div>
+
+          <% if shipment.adjustment && shipment.adjustment.closed? %>
+            <div class="field omega four columns">
+              <label><%= Spree.t(:associated_adjustment_closed) %></label>
+              <ul>
+                <li><%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %> Yes</li>
+                <li><%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %> No</li>
+              </ul>
+            </div>
+          <% end %>
         </td>
         <td class="actions">
           <% if can? :update, shipment %>
