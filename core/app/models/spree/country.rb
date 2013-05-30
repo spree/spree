@@ -1,6 +1,6 @@
 module Spree
   class Country < ActiveRecord::Base
-    has_many :states, order: 'name ASC'
+    has_many :states, -> { order('name ASC') }
 
     validates :name, :iso_name, presence: true
 

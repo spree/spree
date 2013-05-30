@@ -6,8 +6,6 @@ module Spree
     belongs_to :ship_address, class_name: 'Spree::Address'
     belongs_to :bill_address, class_name: 'Spree::Address'
 
-    scope :registered
-
     before_destroy :check_completed_orders
 
     class DestroyWithOrdersError < StandardError; end
