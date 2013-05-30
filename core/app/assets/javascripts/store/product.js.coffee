@@ -18,7 +18,7 @@ add_image_handlers = ->
 
 show_variant_images = (variant_id) ->
   ($ 'li.vtmb').hide()
-  ($ 'li.vtmb-' + variant_id).show()
+  ($ 'li.tmb-' + variant_id).show()
   currentThumb = ($ '#' + ($ '#main-image').data('selectedThumbId'))
   if not currentThumb.hasClass('vtmb-' + variant_id)
     thumb = ($ ($ 'ul.thumbnails li:visible.vtmb').eq(0))
