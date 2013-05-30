@@ -17,13 +17,13 @@ describe Spree::OrderInventory do
     end
 
     it 'should be a messed up order' do
-      order.shipment.inventory_units_for(line_item.variant).size.should == 1
+      order.shipments.first.inventory_units_for(line_item.variant).size.should == 1
       line_item.reload.quantity.should == 2
     end
 
     it 'should increase the number of inventory units' do
       subject.verify(line_item)
-      order.reload.shipment.inventory_units_for(line_item.variant).size.should == 2
+      order.reload.shipments.first.inventory_units_for(line_item.variant).size.should == 2
     end
 
     context "#add_to_shipment" do
@@ -91,13 +91,13 @@ describe Spree::OrderInventory do
     end
 
     it 'should be a messed up order' do
-      order.shipment.inventory_units_for(line_item.variant).size.should == 3
+      order.shipments.first.inventory_units_for(line_item.variant).size.should == 3
       line_item.quantity.should == 2
     end
 
     it 'should decrease the number of inventory units' do
       subject.verify(line_item)
-      order.reload.shipment.inventory_units_for(line_item.variant).size.should == 2
+      order.reload.shipments.first.inventory_units_for(line_item.variant).size.should == 2
     end
 
     context '#remove_from_shipment' do
