@@ -1,5 +1,10 @@
 ## Spree 2.1.0 (unreleased) ##
 
+*   Scope shipping rates as per shipping method display_on #3119
+    e.g. Shipping methods set to back_end only should not be displayed on frontend too
+
+    *Washington Luiz*
+
 *   Add `propagate_all_variants` attribute to StockLocation. It controls
     whether a stock items should be created fot the stock location every time
     a variant or a stock location is created
