@@ -3,12 +3,11 @@ module Spree
     validates :name, presence: true
 
     has_many :taxons
-    has_one :root, conditions: { parent_id: nil }, class_name: "Spree::Taxon",
-                   dependent: :destroy
+    has_one :root, -> { where parent_id: nil }, class_name: "Spree::Taxon", dependent: :destroy
 
     after_save :set_name
 
-    default_scope order: "#{self.table_name}.position"
+    default_scope -> { order("#{self.table_name}.position") }
 
     private
       def set_name
