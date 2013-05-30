@@ -66,7 +66,7 @@ module Spree
         Mail.register_interceptor(Spree::Core::MailInterceptor)
       end
 
-      initializer 'spree.promo.environment', :after => 'spree.environment' do |app|
+      initializer 'spree.promo.environment' do |app|
         app.config.spree.add_class('promotions')
         app.config.spree.promotions = Spree::Promo::Environment.new
       end
