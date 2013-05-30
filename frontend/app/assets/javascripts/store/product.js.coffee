@@ -18,7 +18,7 @@ Spree.addImageHandlers = ->
 
 Spree.showVariantImages = (variantId) ->
   ($ 'li.vtmb').hide()
-  ($ 'li#tmb-' + variantId).show()
+  ($ 'li.tmb-' + variantId).show()
   currentThumb = ($ '#' + ($ '#main-image').data('selectedThumbId'))
   if not currentThumb.hasClass('vtmb-' + variantId)
     thumb = ($ ($ 'ul.thumbnails li:visible.vtmb').eq(0))
