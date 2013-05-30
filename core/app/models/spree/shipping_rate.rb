@@ -5,7 +5,7 @@ module Spree
 
     scope :frontend, -> { includes(:shipping_method).where(ShippingMethod.on_frontend_query) }
     scope :backend, -> { includes(:shipping_method).where(ShippingMethod.on_backend_query) }
-
+    
     delegate :order, :currency, to: :shipment
     delegate :name, to: :shipping_method
 
