@@ -6,7 +6,7 @@ module Spree
     validates :property, presence: true
     validates :value, length: { maximum: 255 }
 
-    default_scope order: "#{self.table_name}.position"
+    default_scope -> { order("#{self.table_name}.position") }
 
     # virtual attributes for use with AJAX completion stuff
     def property_name

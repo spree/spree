@@ -1,7 +1,7 @@
 module Spree
   class Variant < ActiveRecord::Base
     #FIXME WARNING tested only under sqlite and postgresql
-    scope :descend_by_popularity, order("COALESCE((SELECT COUNT(*) FROM  #{LineItem.quoted_table_name} GROUP BY #{LineItem.quoted_table_name}.variant_id HAVING #{LineItem.quoted_table_name}.variant_id = #{Variant.quoted_table_name}.id), 0) DESC")
+    scope :descend_by_popularity, -> { order("COALESCE((SELECT COUNT(*) FROM  #{LineItem.quoted_table_name} GROUP BY #{LineItem.quoted_table_name}.variant_id HAVING #{LineItem.quoted_table_name}.variant_id = #{Variant.quoted_table_name}.id), 0) DESC") }
 
     class << self
       # Returns variants that match a given option value
