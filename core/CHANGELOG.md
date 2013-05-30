@@ -23,3 +23,8 @@
     writable backordered units for a given stock item #3066
 
     *Washington Luiz*
+
+* Scope shipping rates as per shipping method display_on #3119
+    e.g. Shipping methods set to back_end only should not be displayed on frontend too
+
+   *Washington Luiz*
