@@ -3,7 +3,7 @@ module Spree
     include Spree::Core::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
-    default_scope where(deleted_at: nil)
+    default_scope -> { where(deleted_at: nil) }
 
     has_many :shipments
     has_many :shipping_method_categories
