@@ -312,9 +312,8 @@ module Spree
       self.number
     end
 
-    # TODO should be deprecated by split shipments
-    # convenience method since many stores will not allow user to create multiple shipments
     def shipment
+      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#shipment is typically incorrect due to multiple shipments and will be deprecated in Spree 2.1, please process Spree::Order#shipments instead.")
       @shipment ||= shipments.last
     end
 
