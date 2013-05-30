@@ -10,8 +10,8 @@
     <%= f.text_field :value, :class => 'autocomplete' %>
   </td>
   <td class="actions">
-    <% unless @product.properties.empty? %>
-      <%= link_to_remove_fields Spree.t(:remove), f, :no_text => true %>
+    <% if f.object.persisted? %>
+      <%= link_to_delete f.object, :no_text => true %>
     <% end %>
   </td>
 </tr>
