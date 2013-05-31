@@ -20,7 +20,7 @@ describe Spree::InventoryUnit do
     let!(:unit) do
       unit = shipment.inventory_units.build
       unit.state = 'backordered'
-      unit.variant_id = 1
+      unit.variant_id = stock_item.variant.id
       unit.tap(&:save!)
     end
 
@@ -31,14 +31,12 @@ describe Spree::InventoryUnit do
     end
 
     it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
-      stock_item.variant_id = 1
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should =~ [unit]
     end
 
     it "does not find inventory units that aren't backordered" do
       on_hand_unit = shipment.inventory_units.build
       on_hand_unit.state = 'on_hand'
-      on_hand_unit.variant_id = 1
       on_hand_unit.save!
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(on_hand_unit)
