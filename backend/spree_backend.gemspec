@@ -24,8 +24,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'jquery-rails', '~> 2.0'
   s.add_dependency 'select2-rails', '3.2.1'
 
-  s.add_dependency 'rails', '~> 3.2.8'
-  s.add_dependency 'deface', '>= 0.9.0'
-
   s.add_development_dependency 'email_spec', '~> 1.2.1'
 end
