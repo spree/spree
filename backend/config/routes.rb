@@ -155,5 +155,5 @@ Spree::Core::Engine.routes.draw do
     end
   end
 
-  match '/admin', :to => 'admin/orders#index', :as => :admin
+  match '/admin', :to => 'admin/orders#index', :as => :admin, via: [:get]
 end
