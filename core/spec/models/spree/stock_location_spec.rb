@@ -110,6 +110,19 @@ module Spree
           backordered.should eq 0
         end
       end
+
+      context 'without stock_items' do
+        subject { create(:stock_location) }
+        let(:variant) { create(:base_variant) }
+
+        it 'zero on_hand and backordered', focus: true do
+          subject
+          variant.stock_items.destroy_all
+          on_hand, backordered = subject.fill_status(variant, 1)
+          on_hand.should eq 0
+          backordered.should eq 0
+        end
+      end
     end
   end
 end
