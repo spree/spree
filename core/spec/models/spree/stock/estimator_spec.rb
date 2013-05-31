@@ -45,6 +45,27 @@ module Spree
           shipping_rates = subject.shipping_rates(package)
           shipping_rates.should == []
         end
+
+        it "selects the most affordable shipping rate" do
+          shipping_methods = 3.times.map { create(:shipping_method) }
+          shipping_methods[0].stub_chain(:calculator, :compute).and_return(5.00)
+          shipping_methods[1].stub_chain(:calculator, :compute).and_return(3.00)
+          shipping_methods[2].stub_chain(:calculator, :compute).and_return(4.00)
+
+          subject.stub(:shipping_methods).and_return(shipping_methods)
+
+          expect(subject.shipping_rates(package).sort_by(&:cost).map(&:selected)).to eq [true, false, false]
+        end
+
+        it "selects the most affordable shipping rate and doesn't raise exception over nil cost" do
+          shipping_methods = 2.times.map { create(:shipping_method) }
+          shipping_methods[0].stub_chain(:calculator, :compute).and_return(1.00)
+          shipping_methods[1].stub_chain(:calculator, :compute).and_return(nil)
+
+          subject.stub(:shipping_methods).and_return(shipping_methods)
+
+          subject.shipping_rates(package)
+        end
       end
     end
   end
