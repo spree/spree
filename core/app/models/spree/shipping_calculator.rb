@@ -1,7 +1,5 @@
 module Spree
   class ShippingCalculator < Calculator
-    belongs_to :calculable, polymorphic: true
-
     def compute(package_or_shipment)
       package = package_or_shipment.respond_to?(:to_package) ?
                   package_or_shipment.to_package : package_or_shipment
