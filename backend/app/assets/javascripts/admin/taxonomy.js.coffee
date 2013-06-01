@@ -51,8 +51,8 @@ handle_rename = (e, data) ->
     error: handle_ajax_error
 
 handle_delete = (e, data) ->
-  last_rollback = data.rlb
-  node = data.rslt.ob
+  last_rollback = data.rlbk
+  node = data.rslt.obj
   delete_url = base_url.clone()
   delete_url.setPath delete_url.path() + '/' + node.attr("id")
   jConfirm Spree.translations.are_you_sure_delete, Spree.translations.confirm_delete, (r) ->
