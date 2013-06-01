@@ -398,7 +398,13 @@ Stores the last time that alerts were checked for. Alerts are checked for every 
 
 `layout`
 
-The path to the layout of your application, relative to the `app/views` directory. Defaults to `spree/layouts/spree_application`.
+The path to the layout of your application, relative to the `app/views` directory. Defaults to `spree/layouts/spree_application`. To make Spree use your application's layout rather than Spree's default, use this:
+
+```ruby
+Spree.config do |config|
+  config.layout = "application"
+end
+```
 
 `logo`
 
