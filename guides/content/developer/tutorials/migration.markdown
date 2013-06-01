@@ -325,7 +325,7 @@ should give the internal name and presentation name. For simplicity, the code
 examples have these names as the same string.
 
 <% ruby do %>
-    size_prop = Spree::Property.where.first_or_create
+    size_prop = Spree::Property.where(name: 'size', presentation: 'Size').first_or_create
 <% end %>
 
 Then you just set the value for the property-product pair.
