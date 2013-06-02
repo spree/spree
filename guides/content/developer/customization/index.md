@@ -13,7 +13,7 @@ functional requirements, including:
 
 For more detailed information and a step-by-step tutorial on creating
 extensions for Spree be sure to checkout the
-[Extensions](extensions.html) guide.
+[Extensions](extensions_tutorial.html) guide.
 
 ### Managing Customizations
 
@@ -32,7 +32,7 @@ business's operating procedures, branding, or provide a unique feature.
 
 All application specific customizations are stored within the host
 application where Spree is installed (please see the Installation
-section of the [Getting Started with Spree](getting_started.html) guide,
+section of the [Getting Started with Spree](getting_started_tutorial.html) guide,
 for how to setup the host application). Application customizations are
 not generally shared or re-used in any way.
 

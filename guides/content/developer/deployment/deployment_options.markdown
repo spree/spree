@@ -29,7 +29,7 @@ For more see the <%= link_to 'Deployment Service', 'deployment-service' %> Guide
 
 ***
 This guide assumes basic familiarity with Spree. Please refer to
-the <%= link_to 'Getting Started Guide', 'getting_started' %> for details on how to
+the <%= link_to 'Getting Started Guide', 'getting_started_tutorial' %> for details on how to
 get up and running for Spree. You will have an easier time understanding
 the extra complications of a production setup.
 ***

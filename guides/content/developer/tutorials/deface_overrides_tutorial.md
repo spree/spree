@@ -151,4 +151,4 @@ module Spree
   end
 end```
 
-Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application (created in the <%= link_to "Getting Started", 'getting_started' %> tutorial).
+Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application (created in the <%= link_to "Getting Started", 'getting_started_tutorial' %> tutorial).
