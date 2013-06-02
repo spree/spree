@@ -4,6 +4,7 @@ module Spree
       skip_before_filter :load_resource, :only => [:create]
       before_filter :load_data
       before_filter :validate_payment_method_provider, :only => :create
+      before_filter :permit_attributes
 
       respond_to :html
 
@@ -59,6 +60,10 @@ module Spree
           flash[:error] = Spree.t(:invalid_payment_provider)
           redirect_to new_admin_payment_method_path
         end
+      end
+
+      def permit_attributes
+        params.require(:payment_method).permit!
       end
     end
   end
