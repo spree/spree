@@ -102,6 +102,7 @@ compile '/user/' do
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'user'
 end
+
 compile '/user/*' do
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
@@ -162,6 +163,25 @@ route '/developer/customization/*/' do
   location = item.identifier.gsub('/customization/', '/')
   location.chop + ".html"
 end
+
+###############################################################
+# Flatten the user guide stuff into single directory
+###############################################################
+route '/user/config/*/' do
+  location = item.identifier.gsub('/config/', '/')
+  location.chop + ".html"
+end
+
+route '/user/orders/*/' do
+  location = item.identifier.gsub('/orders/', '/')
+  location.chop + ".html"
+end
+
+route '/user/products/*/' do
+  location = item.identifier.gsub('/products/', '/')
+  location.chop + ".html"
+end
+
 
 route '/release_notes/*/' do
   location = item.identifier.gsub('/release_notes/', '/release_notes/spree_')
