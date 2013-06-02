@@ -9,7 +9,7 @@ module Spree
           helper_method :try_spree_current_user
 
           rescue_from CanCan::AccessDenied do |exception|
-            return unauthorized
+            unauthorized
           end
         end
 
