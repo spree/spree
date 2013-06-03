@@ -2,7 +2,7 @@ h2. View Customization
 
 View customization allows you to extend or replace any view within a Spree store. This guide explains the options available, including:
 
-* Using Deface for view customization 
+* Using Deface for view customization
 * Replacing entire view templates
 
 Be sure to read the other customization methods available in the "Customization Overview":customization.html page.
@@ -17,29 +17,29 @@ For example, take the Checkout Registration template, which looks like this:
 <ruby>
 # app/views/spree/checkout/registration.html.erb
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
-<h2><%= t(:registration) %></h2>
+<%= render 'spree/shared/error_messages', :target => @user %>
+<h2><%= Spree.t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account" class="columns alpha eight">
     <!-- TODO: add partial with registration form -->
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout" data-hook class="columns omega eight">
-      <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
-      <h2><%= t(:guest_user_account) %></h2>
+      <%= render 'spree/shared/error_messages', :target => @order %>
+      <h2><%= Spree.t(:guest_user_account) %></h2>
       <%= form_for @order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
         <p>
-          <%= f.label :email, t(:email) %><br />
+          <%= f.label :email, Spree.t(:email) %><br />
           <%= f.email_field :email, :class => 'title' %>
         </p>
-        <p><%= f.submit t(:continue), :class => 'button primary' %></p>
+        <p><%= f.submit Spree.t(:continue), :class => 'button primary' %></p>
       <% end %>
     </div>
   <% end %>
 </div></ruby>
 
 If you wanted to insert some code just before the +#registration+ div on the page you would define an override as follows:
-  
+
 <ruby>
 Deface::Override.new(:virtual_path  => "spree/checkout/registration",
                      :insert_before => "div#registration",
@@ -100,17 +100,17 @@ For example, spree/products/show.html.erb looks as follows:
 
       <div id="product-images" data-hook="product_images">
         <div id="main-image" data-hook>
-          <%= render :partial => 'image' %>
+          <%= render 'image' %>
         </div>
         <div id="thumbnails" data-hook>
-          <%= render :partial => 'thumbnails', :locals => { :product => @product } %>
+          <%= render 'thumbnails', :product => @product %>
         </div>
       </div>
 
       <div data-hook="product_properties">
-        <%= render :partial => 'properties' %>
+        <%= render 'properties' %>
       </div>
-    
+
     </div>
   </div>
 
@@ -122,16 +122,16 @@ For example, spree/products/show.html.erb looks as follows:
         <h1 class="product-title" itemprop="name"><%= accurate_title %></h1>
 
         <div itemprop="description" data-hook="description">
-          <%= product_description(@product) rescue t(:product_has_no_description) %>
+          <%= product_description(@product) rescue Spree.t(:product_has_no_description) %>
         </div>
 
         <div id="cart-form" data-hook="cart_form">
-          <%= render :partial => 'cart_form' %>
+          <%= render 'cart_form' %>
         </div>
 
       </div>
 
-      <%= render :partial => 'taxons' %>
+      <%= render 'taxons' %>
 
     </div>
   </div>
@@ -170,10 +170,10 @@ Given the following Erb file:
 
 <ruby>
 <% if products.empty? %>
-  <%= t(:no_products_found) %>
+  <%= Spree.t(:no_products_found) %>
 <% elsif params.key?(:keywords) %>
   <h3>
-    <%= t(:products) %>
+    <%= Spree.t(:products) %>
   </h3>
 <% end %>
 </ruby>
@@ -182,10 +182,10 @@ Would be seen by Deface as:
 
 <html>
 <code erb-silent> if products.empty? </code>
-  <code erb-loud> t(:no_products_found) </code>
+  <code erb-loud> Spree.t(:no_products_found) </code>
 <code erb-silent> elsif params.key?(:keywords) </code>
   <h3>
-    <code erb-loud> t(:products) </code>
+    <code erb-loud> Spree.t(:products) </code>
   </h3>
 <code erb-silent> end </code>
 
@@ -194,7 +194,7 @@ Would be seen by Deface as:
 So you can target ruby code blocks with the same standard CSS3 style selectors, for example:
 
 <ruby>
-  :replace => "code[erb-loud]:contains('t(:products)')"
+  :replace => "code[erb-loud]:contains('Spree.t(:products)')"
 
   :insert_before => "code[erb-silent]:contains('elsif')"
 </ruby>
@@ -232,7 +232,7 @@ For example, to override the main layout, create the file YOUR_SITE_OR_EXTENSION
 
 INFO: It's important to ensure you copy the correct version of a view into your application or extension, as copying a mismatched version could lead to hard to debug issues. We suggest using <tt>bundle show spree</tt> to get the location of the Spree code you're actually running and then copying the relevant file from there.
 
-h4. Drawbacks of template replacements 
+h4. Drawbacks of template replacements
 
 Whenever you copy an entire view into your extension or application you are adding a significant maintenance overhead to your application when it comes to upgrading to newer versions of Spree. When upgrading between versions you need to compare each template that's been replaced to ensure to replicate any changes from the newer Spree version in your locally copied version.
 

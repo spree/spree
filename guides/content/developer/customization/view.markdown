@@ -22,26 +22,26 @@ For example, take the Checkout Registration template, which looks like
 this:
 
 ```erb
-<%%= render :partial => 'spree/shared/error_messages', :locals => {:target => user } %>
-<h2><%%= t(:registration) %></h2>
+<%%= render 'spree/shared/error_messages', :target => user %>
+<h2><%%= Spree.t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account" class="columns alpha eight">
     <!-- TODO: add partial with registration form -->
   </div>
   <%% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout" data-hook class="columns omega eight">
-      <%%= render :partial => 'spree/shared/error_messages', :locals => { :target => order }
+      <%%= render 'spree/shared/error_messages', :target => order
 
 <h2>
-<%%= t(:guest_user_account) %>
+<%%= Spree.t(:guest_user_account) %>
 
 </h2>
 <%%= form_for order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
         <p>
-          <%%= f.label :email, t(:email) %><br />
+          <%%= f.label :email, Spree.t(:email) %><br />
           <%%= f.email_field :email, :class => 'title' %>
         </p>
-        <p><%%= f.submit t(:continue), :class => 'button primary' %></p>
+        <p><%%= f.submit Spree.t(:continue), :class => 'button primary' %></p>
       <%% end %>
     </div>
   <%% end %>
@@ -115,17 +115,17 @@ For example, spree/products/show.html.erb looks as follows:
 <div id="product-images" data-hook="product_images">
 
 <div id="main-image" data-hook>
-<%%= render :partial => 'image' %>
+<%%= render 'image' %>
 
 </div>
 
 <div id="thumbnails" data-hook>
-<%%= render :partial => 'thumbnails', :locals => { :product => product } %>
+<%%= render 'thumbnails', :product => product %>
         </div>
       </div>
 
       <div data-hook="product_properties">
-        <%%= render :partial => 'properties' %>
+        <%%= render 'properties' %>
       </div>
 
     </div>
@@ -139,17 +139,17 @@ For example, spree/products/show.html.erb looks as follows:
         <h1 class="product-title" itemprop="name"><%%= accurate_title %></h1>
 
         <div itemprop="description" data-hook="description">
-          <%%= product_description(product) rescue t(:product_has_no_description) %>
+          <%%= product_description(product) rescue Spree.t(:product_has_no_description) %>
 
 </div>
 
 <div id="cart-form" data-hook="cart_form">
-<%%= render :partial => 'cart_form' %>
+<%%= render 'cart_form' %>
 
 </div>
 
 </div>
-<%%= render :partial => 'taxons' %>
+<%%= render 'taxons' %>
 
 </div>
 
@@ -177,7 +177,7 @@ attribute wherever possible. Here are a few examples based on
 **products/show.html.erb** above:
 
 <% ruby do %>
- :replace => "[data-hook='product_show']"
+:replace => "[data-hook='product_show']"
 
 :insert_top => "#thumbnails[data-hook]"
 
@@ -202,11 +202,11 @@ Given the following Erb file:
 
 <% ruby do %>
 <%% if products.empty? %>
- <%%= t(:no_products_found) %>
+ <%%= Spree.t(:no_products_found) %>
 <%% elsif params.key?(:keywords) %>
 
 <h3>
-<%%= t(:products) %>
+<%%= Spree.t(:products) %>
 
 </h3>
 <%% end %>
@@ -216,11 +216,11 @@ Would be seen by Deface as:
 
 <html>
 <code erb-silent> if products.empty? </code>
- <code erb-loud> t(:no_products_found) </code>
+ <code erb-loud> Spree.t(:no_products_found) </code>
 <code erb-silent> elsif params.key?(:keywords) </code>
 
 <h3>
-<code erb-loud> t(:products) </code>
+<code erb-loud> Spree.t(:products) </code>
 
 </h3>
 <code erb-silent> end </code>

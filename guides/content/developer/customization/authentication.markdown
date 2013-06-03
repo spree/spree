@@ -3,7 +3,7 @@ title: "Custom Authentication"
 section: customization
 ---
 
-### Overview 
+### Overview
 
 This guide covers using a custom authentication setup with Spree, such
 as one provided by your own application. This is ideal in situations
@@ -100,25 +100,25 @@ contains the following code to help you do that:
            receiver.send :helper_method, :spree_logout_path
            receiver.send :helper_method, :spree_current_user
          end
-        
+
          def spree_current_user
            current_person
          end
-        
+
          def spree_login_path
            main_app.login_path
          end
-        
+
          def spree_signup_path
            main_app.signup_path
          end
-        
+
          def spree_logout_path
            main_app.logout_path
          end
        end
     end
-    
+
     Spree::BaseController.send :include, Spree::AuthenticationHelpers
     ApplicationController.send :include, Spree::AuthenticationHelpers
 <% end %>
@@ -229,7 +229,7 @@ Deface override. Create a new file at
      :name => "auth_shared_login_bar",
      :insert_before => "li#search-bar",
      :partial => "spree/shared/login_bar",
-     :disabled => false, 
+     :disabled => false,
      :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
 <% end %>
 
@@ -242,14 +242,14 @@ important. This file will then contain this code:
 ```erb
 <%% if spree_current_user %>
   <li>
-    <%%= link_to t(:logout), spree_logout_path, :method => :delete %>
+    <%%= link_to Spree.t(:logout), spree_logout_path, :method => :delete %>
   </li>
 <%% else %>
   <li>
-    <%%= link_to t(:login), spree_login_path %>
+    <%%= link_to Spree.t(:login), spree_login_path %>
   </li>
   <li>
-    <%%= link_to t(:signup), spree_signup_path %>
+    <%%= link_to Spree.t(:signup), spree_signup_path %>
   </li>
 <%% end %>```
 

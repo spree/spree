@@ -80,7 +80,7 @@ When reviewing the source of any view in Spree you'll notice that all text is
 rendered by passing a string to a helper method similar to:
 
 ```erb
-<%%= Spree.t('price') %>
+<%%= Spree.t(:price) %>
 ```
 
 The *Spree.t()* helper method looks up the currently configured locale and retrieves
@@ -120,7 +120,7 @@ The `spree_i18n` gem is configured in the same manner as any Rubygem in a Rails
 application.  Simply add it to the `Gemfile.` using the git url.
 
 ```ruby
-gem 'spree_i18n', :github => "spree/spree_i18n"
+gem 'spree_i18n', :github => 'spree/spree_i18n'
 ```
 
 ### Setting the Default Locale

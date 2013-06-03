@@ -110,7 +110,7 @@ ProductsController, you could include the following in your
 <% ruby do %>
     Spree::ProductsController.class_eval do
       respond_override :index => { :html =>
-        { :success => lambda { render :partial => "shared/some_file" } } }
+        { :success => lambda { render 'shared/some_file' } } }
     end
 <% end %>
 
