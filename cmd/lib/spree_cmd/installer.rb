@@ -94,7 +94,7 @@ module SpreeCmd
         gem :spree, @spree_gem_options
 
         if @install_default_gateways
-          gem :spree_gateway, :git => "https://github.com/spree/spree_gateway.git"
+          gem :spree_gateway, :git => "https://github.com/spree/spree_gateway.git", :branch => '2-0-stable'
         end
 
         if @install_default_auth
