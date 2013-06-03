@@ -51,7 +51,7 @@ Spree uses [factory_girl](https://github.com/thoughtbot/factory_girl) to create 
 
 ```bash
 $ rails console
-require 'spree/core/testing_support/factories'```
+require 'spree/testing_support/factories'```
 
 The `spree_core` gem has a good number of factories which can be used for testing. If you are writing an extension or just testing Spree you can make use of these factories.
 
