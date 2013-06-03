@@ -1,4 +1,4 @@
---- 
+---
 title: "The Checkout Flow API"
 section: customization
 ---
@@ -58,8 +58,7 @@ def check_registration
   return if spree_current_user or current_order.email
   store_location
   redirect_to spree.checkout_registration_path
-end
-```
+end```
 
 The configuration of the guest checkout option is done via <%= link_to "Preferences", :preferences %>.  Spree will allow guest checkout by default. Use
 the `allow_guest_checkout` preference to change the default setting.
@@ -174,8 +173,7 @@ Three custom routes in spree_core handle all of the routing for a checkout:
 ```ruby
 put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
 get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
-get '/checkout', :to => 'checkout#edit', :as => :checkout
-```
+get '/checkout', :to => 'checkout#edit', :as => :checkout```
 
 The '/checkout' route maps to the `edit` action of the
 `Spree::CheckoutController`. A request to this route will redirect to the
@@ -183,7 +181,7 @@ current state of the current order. If the current order was in the "address"
 state, then a request to '/checkout' would redirect to '/checkout/address'.
 
 The '/checkout/:state' route is used for the previously mentioned route, and
-also maps to the `edit` action of `Spree::CheckoutController`. 
+also maps to the `edit` action of `Spree::CheckoutController`.
 
 The '/checkout/update/:state' route maps to the
 `Spree::CheckoutController#update` action and is used in the checkout form to
@@ -287,8 +285,7 @@ before that transition, placing this code in a file called
 `app/models/spree/order_decorator.rb`:
 
 ```ruby
-Spree::Order.state_machine.before_transition :to => :delivery, :do => :valid_zip_code?
-```
+Spree::Order.state_machine.before_transition :to => :delivery, :do => :valid_zip_code?```
 
 This callback would prevent transitioning to the `delivery` step if
 `valid_zip_code?` returns false.
@@ -309,7 +306,7 @@ different steps of your checkout. This new DSL allows you to customize *just*
 the checkout flow, while maintaining the unrelated admin states, such as
 "canceled" and "resumed", that an order can transition to. Ultimately, it
 provides a shorter syntax compared with overriding the entire state machine for
-the `Spree::Order` class. 
+the `Spree::Order` class.
 
 The default checkout flow for Spree is defined like this, adequately
 demonstrating the abilities of this new system:
@@ -328,9 +325,7 @@ checkout_flow do
   }
   go_to_state :confirm, :if => lambda { |order| order.confirmation_required? }
   go_to_state :complete, :if => lambda { |order| (order.payment_required? && order.payments.exists?) || !order.payment_required? }
-  remove_transition :from => :delivery, :to => :confirm
-```
-
+  remove_transition :from => :delivery, :to => :confirm```
 
 The first two states, `address` and `delivery`, will always be the first two
 states for any checkout processed through this store. There are no conditional
@@ -341,7 +336,7 @@ order, which is determined by the `payment_required?` method defined on the
 `Spree::Order` model. However, before checking the payment, the order is checked
 for a shipping method. If the order has a shipping method, a shipment is created
 (unless one already exists), and the payment totals are updated. This is to
-prevent a bug ([Issue #2191](https://github.com/spree/spree/issues/2191) that 
+prevent a bug ([Issue #2191](https://github.com/spree/spree/issues/2191) that
 previously happened in Spree.
 
 Similarly to the payment state, the confirm state is only used if confirmation is required.
@@ -369,7 +364,7 @@ the `checkout_steps` method, which will return the steps in an array.
 To add or remove steps to the checkout flow, you can use the `insert_checkout_step`
 and `remove_checkout_step` helpers respectively.
 
-The `insert_checkout_step` takes a `before` or `after` option to determine where to 
+The `insert_checkout_step` takes a `before` or `after` option to determine where to
 insert the step:
 
 ```ruby
@@ -386,7 +381,7 @@ remove_checkout_step :delivery```
 What will happen here is that when a user goes to checkout, they will be asked
 to (potentially) fill in their payment details and then (potentially) confirm
 the order. This is the default behaviour of the payment and the confirm steps
-within the checkout. If they are not required to provide payment or confirmation 
+within the checkout. If they are not required to provide payment or confirmation
 for this order then checking out this order will result in its immediate completion.
 
 To completely re-define the flow of the checkout, use the `checkout_flow` helper:
@@ -395,8 +390,7 @@ To completely re-define the flow of the checkout, use the `checkout_flow` helper
 checkout_flow do
   go_to_state :payment
   go_to_state :complete
-end
-```
+end```
 
 ### The Checkout "Breadcrumb"
 
@@ -410,8 +404,7 @@ a translation for that state in the relevant translation file located in the
 spree:
   checkout_steps:
     names:
-      calling_plan: Calling Plan
-```
+      calling_plan: Calling Plan```
 
 ***
 The default use of the breadcrumb is entirely optional.  It does not need
@@ -440,19 +433,17 @@ or not payment profiles are supported.  If you are adding Spree support to a
 is an example of the implementation of `create_profile` used in the
 `AuthorizeNetCim` class:
 
-
 ```ruby
 # Create a new CIM customer profile ready to accept a payment
 def create_profile(payment)
   if payment.source.gateway_customer_profile_id.nil?
     profile_hash = create_customer_profile(payment)
     payment.source.update_attributes({
-      :gateway_customer_profile_id => profile_hash[:customer_profile_id], 
+      :gateway_customer_profile_id => profile_hash[:customer_profile_id],
       :gateway_payment_profile_id => profile_hash[:customer_payment_profile_id])
     })
   end
-end
-```
+end```
 
 !!!
 Most gateways do not yet support payment profiles but the default

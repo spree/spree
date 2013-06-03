@@ -34,7 +34,7 @@ called "spree", but you may choose to call it whatever you wish.
 
 To set up this new user, run these commands on the server:
 
-    useradd -d /home/spree -m -s /bin/bash spree 
+    useradd -d /home/spree -m -s /bin/bash spree
     passwd spree
 
 Set a new password for the user and remember it, as you will require it in just
@@ -127,7 +127,7 @@ provides a simple way of installing a version of Ruby onto your server.
 
 To install it, run these command:
 
-    curl -L https://get.rvm.io | bash -s stable 
+    curl -L https://get.rvm.io | bash -s stable
     . ~/.bashrc
 
 Next, you will need to install the operating system dependencies required for
@@ -158,8 +158,7 @@ Or, you can put a dependency for `therubyracer` gem into your `Gemfile`:
 ```ruby
 group :production do
  gem 'therubyracer'
-end
-```
+end```
 
 You will also need the `imagemagick` package, which is used to handle image
 manipulation which is used when you upload product images in your store:
@@ -219,8 +218,7 @@ set :scm, :subversion
 role :web, "your web-server here" # Your HTTP server, Apache/etc
 role :app, "your app-server here" # This may be the same as your `Web` server
 role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-role :db,  "your slave db-server here"
-```
+role :db,  "your slave db-server here"```
 
 The contents of this file tell Capistrano about the deployment of your
 application.
@@ -241,8 +239,7 @@ will continue to do so. Therefore, these roles should look like this:
 server = "[your server's address]"
 role :web, server
 role :app, server
-role :db,  server, :primary => true
-```
+role :db,  server, :primary => true```
 
 After this, you will need to tell Capistrano the account name to use for
 deploying to your server. In this guide, we've used "spree" so far, but you may
@@ -250,8 +247,7 @@ have chosen to use something different. To tell Capistrano the user to use, put
 this line inside your `config/deploy.rb`:
 
 ```ruby
-set :user, "spree"
-```
+set :user, "spree"```
 
 You will also need to tell it the path to deploy at. By default in Capistrano,
 this path is `/u/apps/[application_name]`. There is probably no `/u/` directory on the
@@ -261,36 +257,32 @@ user's home directory would make better sense. Add this line to
 `config/deploy.rb` to do that:
 
 ```ruby
-set :deploy_to, "/home/spree/#{application}"
-```
+set :deploy_to, "/home/spree/#{application}"```
 
 You will also need to tell Capistrano to never use sudo, since you're going to
 be operating as a user without sudo permission:
 
 ```ruby
-set :use_sudo, false
-```
+set :use_sudo, false```
 
 Along with this, you will also need to tell it to use the `bash` shell, as you
 will need access to the commands for gems such as `bundler`, which are provided
 by RVM.
 
 ```ruby
-default_run_options[:shell] = '/bin/bash --login'
-```
+default_run_options[:shell] = '/bin/bash --login'```
 
 And because all the Rails-specific commands are going to need to run on the
 production environment, it'd be a great idea to add this to the configuration as
 well:
 
 ```ruby
-default_environment["RAILS_ENV"] = 'production'
-```
+default_environment["RAILS_ENV"] = 'production'```
 
 With that configuration, your `config/deploy.rb` should look like this:
 
 ```ruby
-set :application, "[name]" 
+set :application, "[name]"
 set :repository,  "[repository]"
 set :scm, :git
 server = "[your server's address]"
@@ -305,8 +297,7 @@ set :deploy_to, "/home/spree/#{application}"
 set :use_sudo, false
 
 default_run_options[:shell] = '/bin/bash --login'
-default_environment["RAILS_ENV"] = 'production'
-```
+default_environment["RAILS_ENV"] = 'production'```
 
 To set up the server for Capistrano, run `cap deploy:setup`. This will create
 the required Capistrano directories for your application inside
@@ -318,8 +309,7 @@ and the assets are precompiled. These two lines are this:
 
 ```ruby
 require "bundler/capistrano"
-load "deploy/assets"
-```
+load "deploy/assets"```
 
 To attempt to deploy the actual application to the server, run `cap deploy`. If
 the `repository` option points to GitHub, this will fail because the server has
@@ -398,7 +388,7 @@ for your application to use. This database should have the same name as the
 server's deploy user account, which in this guide has been "spree" so far. Yours
 could be different. To set up this database, run this command as `root`:
 
-    sudo -u postgres createdb spree 
+    sudo -u postgres createdb spree
     sudo -u postgres createuser spree
 
 To get your application to connect to this database, you will need to set up a
@@ -410,8 +400,7 @@ name]/shared/config/database.yml`. Inside this file, put this content:
 ```yaml
 production:
   adapter: postgresql
-  database: spree
-```
+  database: spree```
 
 If you're not already using the PostgreSQL adapter on your application, as
 specified by `gem 'pg'` in your `Gemfile`, you'll need to add this gem to your
@@ -420,8 +409,7 @@ specified by `gem 'pg'` in your `Gemfile`, you'll need to add this gem to your
 ```ruby
 group :production do
   gem 'pg'
-end
-```
+end```
 
 ***
 If you need to add this gem, you will need to run `bundle install` on your
@@ -444,8 +432,7 @@ task :symlink_database_yml do
   run "rm #{release_path}/config/database.yml"
   run "ln -sfn #{shared_path}/config/database.yml #{release_path}/config/database.yml"
 end
-after "bundle:install", "symlink_database_yml"
-```
+after "bundle:install", "symlink_database_yml"```
 
 After `bundle install` has finished running on the server, Capistrano will now
 copy over the `config/database.yml` into the current path. In order for
@@ -472,8 +459,7 @@ inside the `production` group:
 group :production do
   gem 'pg'
   gem 'unicorn'
-end
-```
+end```
 
 Unicorn requires some configuration in order to work, which belongs in
 `config/unicorn.rb`. This is the content required for Unicorn:
@@ -541,8 +527,7 @@ after_fork do |server, worker|
   # and Redis.  TokyoCabinet file handles are safe to reuse
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
-end
-```
+end```
 
 Remember to replace `[application's name]` above with your actual application
 name. Run `bundle install` and commit and push your `Gemfile`, `Gemfile.lock`
@@ -570,8 +555,7 @@ namespace :unicorn do
   end
 end
 
-after "deploy:restart", "unicorn:restart"
-```
+after "deploy:restart", "unicorn:restart"```
 
 Commit your `config/deploy.rb` to Git, push the changes to GitHub and run `cap
 deploy` again to ensure the latest code is available on your server. This will
@@ -751,8 +735,7 @@ the console and assign it the admin role, like this:
 ```ruby
 user = User.create!(:email => "email@example.com", :password => "topsekret")
 user.spree_roles << Spree::Role.find_by_name("admin")
-user.save!
-```
+user.save!```
 
 Note that your `User` model may require additional attributes before it can be
 created.
@@ -785,8 +768,7 @@ namespace :images do
     run "ln -nfs #{shared_path}/spree #{release_path}/public/spree"
   end
 end
-after "bundle:install", "images:symlink"
-```
+after "bundle:install", "images:symlink"```
 
 Now upon every deploy, Capistrano will symlink the `spree` directory in the `shared`
 directory into the current version of the app so that the product images are

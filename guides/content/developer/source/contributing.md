@@ -89,17 +89,16 @@ If you are filing an issue and supplying a patch at the same time, please file a
 If the ticket already exists, however, and you want to supply a patch after the fact, you can simply reference the issue number in your commit message. For example, if your commit fixed issue #123 you could use the following commit message:
 
 
-	Fixed a problem with Facebook authentication.
+  Fixed a problem with Facebook authentication.
 
-	[Fixes #123]
+  [Fixes #123]
 
 GitHub will automatically detect this commit message when you push it and link the issue.  Please see the detailed [GitHub Issues](https://github.com/blog/831-issues-2-0-the-next-generation) blog post for more details.
 
 We add code from Pull Requests to spree using the [hub gem](https://github.com/defunkt/hub), in particular the `hub am` command, which is used like this:
 
 ```bash
-hub am -3 https://github.com/spree/spree/pull/<number>
-```
+hub am -3 https://github.com/spree/spree/pull/<number>```
 
 This command will apply the commits from the pull request to the current branch, using a 3-way merge as a fallback. This means that we can run this command in order to apply the patch to different branches. A pull request applied in this way leads to tidier commit history, with no merge commits visible.
 
@@ -173,12 +172,12 @@ You can then do work locally on this topic branch and push it up to your GitHub 
 
 Of course if you want the fix for yourself to use in your own local code you should probably merge it down to your own personal master branch that you're using for development
 
-	$ git checkout master
-	$ git merge fix-css-for-error-flash
+  $ git checkout master
+  $ git merge fix-css-for-error-flash
 
 You should probably also clean up after yourself a little.  The branch has been pushed to GitHub and you've merged it locally so you don't really need a local copy of the branch laying around.
 
-	$ git branch -D fix-css-for-error-flash
+  $ git branch -D fix-css-for-error-flash
 
 #### Follow the Coding Conventions
 
@@ -218,15 +217,15 @@ Improvements to the documentation is encouraged.  The primary source of document
 
 To build the documentation normally simply clone and install.
 
-	$ git clone git://github.com/spree/spree-guides.git
-	$ cd spree-guides
-	$ bundle install
-	$ bundle exec guides build
-	
+  $ git clone git://github.com/spree/spree-guides.git
+  $ cd spree-guides
+  $ bundle install
+  $ bundle exec guides build
+
 Then simply use the nanoc command to compile and preview the guides in your browser at http://localhost:3000
 
-	$ nanoc compile
-	$ nanoc preview
+  $ nanoc compile
+  $ nanoc preview
 
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.

@@ -154,10 +154,7 @@ For example, spree/products/show.html.erb looks as follows:
 </div>
 
 </div>
-</div>
-
-```
-
+</div>```
 
 As you can see from the example above the `data-hook` can be present in
 a number of ways:

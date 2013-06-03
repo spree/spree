@@ -46,8 +46,7 @@ To work around this issue, put this line underneath the other `config.assets`
 lines inside `config/application.rb`:
 
 ```ruby
-config.assets.initialize_on_precompile = false
-```
+config.assets.initialize_on_precompile = false```
 
 The assets for your application will still be precompiled, it's just that Rails
 won't be intialized during this process.
@@ -71,8 +70,7 @@ Spree.config do |config|
   config.s3_bucket = '<bucket>'
   config.s3_access_key = "<key>"
   config.s3_secret = "<secret>"
-end
-```
+end```
 
 If you're using the Western Europe S3 server, you will need to set two
 additional options inside this block:
@@ -82,8 +80,7 @@ Spree.config do |config|
   ...
   config.attachment_url = ":s3_eu_url"
   config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end
-```
+end```
 
 And additionally you will need to tell paperclip how to construct the URLs for
 your images by placing this code outside the +config+ block inside
@@ -92,8 +89,7 @@ your images by placing this code outside the +config+ block inside
 ```ruby
 Paperclip.interpolates(:s3_eu_url) do |attachment, style|
 "#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/},"")}"
-end
-```
+end```
 
 ## Pushing to Heroku
 
@@ -101,8 +97,7 @@ Once you have configured the above settings, you can push your Spree application
 to Heroku:
 
 ```bash
-$ git push heroku master
-```
+$ git push heroku master```
 
 Once your application is on Heroku, you will need to set up the schema by
 running this command:

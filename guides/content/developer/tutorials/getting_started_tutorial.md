@@ -84,9 +84,8 @@ The next thing you'll probably want to do is to log into the admin interface. Us
 ***
 If you elected not to use the `--auto-accept` option when you added Spree to your Rails app, and did not install the seed data, the admin user will not yet exist in your database. You can run a simple rake task to create a new admin user.
 
-```
-$ rake spree_auth:admin:create
-```
+```bash
+$ rake spree_auth:admin:create```
 ***
 
 Upon successful authentication, you should see the admin screen:

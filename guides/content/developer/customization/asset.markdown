@@ -206,8 +206,7 @@ var show_variant_images = function(variant_id) {
    $("#main-image").data('selectedThumb', newImg);
    $("#main-image").data('selectedThumbId', thumb.attr('id'));
  }
-}
-```
+}```
 
 Again, just create a new JavaScript file inside
 `your_app/app/assets/stylesheets/store` and include the new method

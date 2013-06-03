@@ -40,8 +40,7 @@ Here is what the erb template looks like in Spree:
       <%% end %>
     </div>
   <%% end %>
-</div>
-```
+</div>```
 
 If you wanted to insert some code just before the `#registration` div on the page, you would define an override in `app/overrides` (creating a new file with an `rb` extension) as follows:
 
@@ -49,8 +48,7 @@ If you wanted to insert some code just before the `#registration` div on the pag
 Deface::Override.new(:virtual_path  => "spree/checkout/registration",
                      :insert_before => "div#registration",
                      :text          => "<p>Registration is the future!</p>",
-                     :name          => "registration_future")
-```
+                     :name          => "registration_future")```
 
 This override will insert a paragraph tag with the content "Registration is the future!" before the `#registration` div.
 
@@ -65,8 +63,7 @@ Deface applies an action to element(s) matching the supplied CSS selector. These
 
 :insert_after => "div#wow p.header"
 
-:insert_bottom => "ul#giant-list"
-```
+:insert_bottom => "ul#giant-list"```
 
 Deface currently supports the following actions:
 

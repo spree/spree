@@ -98,8 +98,8 @@ prerequisites installed:
 ***
 The SQLite database system is the default for development, since it
 is relatively easy to set up compared to MySQL or PostgreSQL. For a
-production system, we would recommend MySQL or PostgreSQL. Once you've decided, 
-You might consider using this in development as well, to reduce risk of 
+production system, we would recommend MySQL or PostgreSQL. Once you've decided,
+You might consider using this in development as well, to reduce risk of
 database specific bugs.
 ***
 
@@ -128,16 +128,14 @@ Ruby, including:
 Rails 3.1 introduced the concept of the asset pipeline. Unfortunately this causes some significant performance issues when running Spree in development mode. The good news is you can improve performance significantly by using a special precompile task.
 
 ```bash
-$ bundle exec rake assets:precompile:nondigest
-```
+$ bundle exec rake assets:precompile:nondigest```
 
 Using the precompile rake task in development will prevent any changes to asset files from being automatically included in when you reload the page. You must re-run the precompile task for changes to become available.
 
 Rails also provides the following rake task that will delete the entire `public/assets` directory, this can be helpful to clear out development assets before committing.
 
 ```bash
-$ bundle exec rake assets:clean
-```
+$ bundle exec rake assets:clean```
 
 It might also be worthwhile to include the public/assets directory in your `.gitignore` file.
 
