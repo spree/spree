@@ -39,6 +39,28 @@ You can also search existing bug reports/issues and file a new one if you do not
 The important thing is that you communicate your intention in advance of doing a lot of work.  Simple bug fixes and non-controversial changes do not require this approach but you can save some time by suggesting an improvement and having it rejected before you write a bunch of the code.
 ***
 
+### Spree's Release Policy
+
+* Master branch receives *all* patches, including new features and breaking API
+changes (with deprecation warnings, if necessary).
+
+* One branch "back" from master (currently 2-0-stable) receives patches that
+fix all bugs, and security issues, but no feature requests. Breaking API
+changes should be avoided, but if unavoidable then a deprecation warning MUST
+be provided before that change takes place. Subtle tweaking may take place.
+
+* Two branches "back" from master (currently 1-3-stable) receives patches for
+major and minor issues, and security problems. Absolutely no new features or
+tweaking, no API changes.
+
+* Three branches and more "back" from master (currently 1-2-stable and lesser)
+receive patches only for security issues, as people are still using these
+branches and may not be able to or wish to upgrade to the latest version of
+Spree.
+
+We strongly encourage people to upgrade to using the latest Spree releases to
+avoid being stuck on a release that is no longer maintained.
+
 ### Filing an Issue
 
 If you would like to file a bug report, please create an issue in our [GitHub Issues Tracker](https://github.com/spree/spree/issues).  You should do a basic search of the issues database before creating a new issue to ensure that you are not creating a duplicate issue.
