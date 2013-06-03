@@ -12,6 +12,8 @@ describe Spree::Admin::BaseController do
   end
 
   describe "check alerts" do
+    stub_authorization!
+
     it "checks alerts with before_filter" do
       controller.should_receive :check_alerts
       process :index
