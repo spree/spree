@@ -71,11 +71,35 @@ API docs should look like:
 
 **Note**: We're using [Kramdown Markdown extensions](http://kramdown.rubyforge.org/syntax.html), such as definition lists.
 
+### Markdown Conventions
+
+It is helpful to standardize some markdown conventions so readers learn to recognize visual cues as they work their way through the documentation and tutorials. Following are the conventions used for the Spree documentation:
+
+####Class names####
+
+When referencing the name of a class, it should be capitalized. If you are writing explanatory prose and not a section of code, the class name should be blocked out with tick (`) marks. For example:
+
+    To begin using your custom `User` class, you must first...
+
+Having the namespace for the class is optional, but should be included when omitting it could cause confusion.
+
+####Buttons, Links, Section Names####
+
+These should always reference the correct label and can have their names quoted. Examples:
+
+* Click the "Filter Results" button to update the results.
+* Follow the "Stock Transfers" link.
+* Information displayed in the "Purchase Funnel" section gives you information...
+
+####State Names####
+When referring to the state of an object - an order, for example - the state name should be lowercase and set off with tick (`) marks. For example:
+
+    Orders that are in the `address` state do not have valid shipping and billing addresses assigned to them yet.
+
 ### JSON Responses
 
 We specify the JSON responses in ruby so that we don't have to write
-them by hand all over the docs.  You can render the JSON for a resource
-like this:
+them by hand all over the docs. You can render the JSON for a resource like this:
 
     <%= json :product %>
 
