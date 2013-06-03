@@ -353,6 +353,14 @@ describe Spree::Shipment do
       shipment.send(:ensure_correct_adjustment)
     end
 
+    # Regression test for #3138
+    it "should use the shipping method's adjustment label" do
+      shipment.stub(:selected_shipping_rate_id => 1)
+      shipping_method.stub(:adjustment_label => "Foobar")
+      shipping_method.should_receive(:create_adjustment).with("Foobar", order, shipment, true, "open")
+      shipment.send(:ensure_correct_adjustment)
+    end
+
     it "should update originator when adjustment is present" do
       shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
       shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: true))
