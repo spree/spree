@@ -66,9 +66,12 @@ module Spree
         Mail.register_interceptor(Spree::Core::MailInterceptor)
       end
 
+      # We need to define promotions rules here so extensions and existing apps
+      # can add their custom classes on their initializer files
       initializer 'spree.promo.environment' do |app|
         app.config.spree.add_class('promotions')
         app.config.spree.promotions = Spree::Promo::Environment.new
+        app.config.spree.promotions.rules = []
       end
 
       initializer 'spree.promo.register.promotion.calculators' do |app|
@@ -83,8 +86,12 @@ module Spree
         ]
       end
 
-      initializer 'spree.promo.register.promotions.rules' do |app|
-        app.config.spree.promotions.rules = [
+      # Promotion rules need to be evaluated on after initialize otherwise
+      # Spree.user_class would be nil and users might experience errors related
+      # to malformed model associations (Spree.user_class is only defined on
+      # the app initializer)
+      config.after_initialize do
+        Rails.application.config.spree.promotions.rules.concat [
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,
