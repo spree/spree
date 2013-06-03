@@ -1,6 +1,4 @@
 Spree::Core::Engine.routes.draw do
-  root :to => 'home#index'
-
   namespace :admin do
     get '/search/users', :to => "search#users", :as => :search_users
 
@@ -154,6 +152,4 @@ Spree::Core::Engine.routes.draw do
       post :testmail, :on => :collection
     end
   end
-
-  match '/admin', :to => 'admin/orders#index', :as => :admin, via: [:get]
 end
