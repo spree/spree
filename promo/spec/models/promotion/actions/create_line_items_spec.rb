@@ -2,13 +2,15 @@ require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateLineItems do
   let(:order) { create(:order) }
-  let(:promotion) { Spree::Promotion.new }
+  let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::CreateLineItems.create }
 
   context "#perform" do
     before do
       @v1 = create(:variant)
       @v2 = create(:variant)
+      promotion.stub(:eligible? => true)
+      action.stub(:promotion => promotion)
       action.promotion_action_line_items.create!({
         :variant => @v1,
         :quantity => 1}, :without_protection => true
@@ -41,6 +43,16 @@ describe Spree::Promotion::Actions::CreateLineItems do
       line_item = order.line_items.find_by_variant_id(@v2.id)
       line_item.should_not be_nil
       line_item.quantity.should == 3
+    end
+
+    context "with ineligible promotion" do
+      before do
+        promotion.stub(:eligible? => false)
+      end
+      it "doesn't add line items" do
+        action.perform(:order => order)
+        order.line_items.count.should == 0
+      end
     end
   end
 
