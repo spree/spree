@@ -349,7 +349,7 @@ describe Spree::Shipment do
 
     it "should create adjustment when not present" do
       shipment.stub(:selected_shipping_rate_id => 1)
-      shipping_method.should_receive(:create_adjustment).with("UPS", order, shipment, true, "open")
+      shipping_method.should_receive(:create_adjustment).with("Shipping", order, shipment, true, "open")
       shipment.send(:ensure_correct_adjustment)
     end
 
@@ -365,7 +365,7 @@ describe Spree::Shipment do
       shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
       shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: true))
       shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.name)
+      shipment.adjustment.should_receive(:label=).with(shipping_method.adjustment_label)
       shipment.adjustment.should_receive(:amount=).with(10.00)
       shipment.adjustment.should_receive(:save!)
       shipment.adjustment.should_receive(:reload)
@@ -376,7 +376,7 @@ describe Spree::Shipment do
       shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
       shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: false))
       shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.name)
+      shipment.adjustment.should_receive(:label=).with(shipping_method.adjustment_label)
       shipment.adjustment.should_not_receive(:amount=).with(10.00)
       shipment.adjustment.should_receive(:save!)
       shipment.adjustment.should_receive(:reload)
