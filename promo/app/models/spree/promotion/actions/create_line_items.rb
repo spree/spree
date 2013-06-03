@@ -4,10 +4,13 @@ module Spree
       class CreateLineItems < PromotionAction
         has_many :promotion_action_line_items, :foreign_key => :promotion_action_id
 
+        delegate :eligible?, :to => :promotion
+
         attr_accessor :line_items_string
 
         def perform(options = {})
           return unless order = options[:order]
+          return unless eligible?(order)
           promotion_action_line_items.each do |item|
             current_quantity = order.quantity_of(item.variant)
             if current_quantity < item.quantity
