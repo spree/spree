@@ -16,7 +16,7 @@ module Spree
 
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
 
-    # Wrapper for creating a new stock item respecting the backorderable config 
+    # Wrapper for creating a new stock item respecting the backorderable config
     def propagate_variant(variant)
       self.stock_items.create!(variant: variant, backorderable: self.backorderable_default)
     end
@@ -30,6 +30,10 @@ module Spree
 
     def stock_item(variant)
       stock_items.where(variant_id: variant).order(:id).first
+    end
+
+    def stock_item_or_create(variant)
+      stock_item(variant) || stock_items.create(variant: variant)
     end
 
     def count_on_hand(variant)
@@ -49,7 +53,8 @@ module Spree
     end
 
     def move(variant, quantity, originator = nil)
-      stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
+      stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
+                                                            originator: originator)
     end
 
     def fill_status(variant, quantity)
