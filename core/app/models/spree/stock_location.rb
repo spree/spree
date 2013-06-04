@@ -19,6 +19,10 @@ module Spree
       stock_items.where(variant_id: variant).order(:id).first
     end
 
+    def stock_item_or_create(variant)
+      stock_item(variant) || stock_items.create(variant: variant)
+    end
+
     def count_on_hand(variant)
       stock_item(variant).try(:count_on_hand)
     end
@@ -36,7 +40,8 @@ module Spree
     end
 
     def move(variant, quantity, originator = nil)
-      stock_item(variant).stock_movements.create!(quantity: quantity, originator: originator)
+      stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
+                                                            originator: originator)
     end
 
     def fill_status(variant, quantity)

@@ -24,8 +24,22 @@ module Spree
       stock_item.variant.should eq variant
     end
 
+    it 'returns nil when stock_item is not found for variant' do
+      stock_item = subject.stock_item(100)
+      stock_item.should be_nil
+    end
+
+    it 'creates a stock_item if not found for a variant' do
+      variant = create(:variant)
+      variant.stock_items.destroy_all
+      variant.save
+
+      stock_item = subject.stock_item_or_create(variant)
+      stock_item.variant.should eq variant
+    end
+
     it 'finds a count_on_hand for a variant' do
-      subject.count_on_hand(variant).should eq 10
+       subject.count_on_hand(variant).should eq 10
     end
 
     it 'finds determines if you a variant is backorderable' do
