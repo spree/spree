@@ -7,7 +7,7 @@ Spree::Core::Engine.routes.draw do
   get '/locale/set', :to => 'locale#set'
 
   # non-restful checkout stuff
-  put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
+  patch '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
   get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
   get '/checkout', :to => 'checkout#edit' , :as => :checkout
 
@@ -24,7 +24,7 @@ Spree::Core::Engine.routes.draw do
   end
 
   get '/cart', :to => 'orders#edit', :as => :cart
-  put '/cart', :to => 'orders#update', :as => :update_cart
+  patch '/cart', :to => 'orders#update', :as => :update_cart
   put '/cart/empty', :to => 'orders#empty', :as => :empty_cart
 
   # route globbing for pretty nested taxon and product paths
