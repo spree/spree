@@ -83,6 +83,10 @@ When referencing the name of a class, it should be capitalized. If you are writi
 
 Having the namespace for the class is optional, but should be included when omitting it could cause confusion.
 
+An instance of a class should be lowercase, normal font:
+
+    You can view all of the orders for a particular user.
+
 ####Buttons, Links, Section Names####
 
 These should always reference the correct label and can have their names quoted. Examples:
@@ -91,11 +95,15 @@ These should always reference the correct label and can have their names quoted.
 * Follow the "Stock Transfers" link.
 * Information displayed in the "Purchase Funnel" section gives you information...
 
-####State Names####
+####State and Attribute Names####
 When referring to the state of an object - an order, for example - the state name should be lowercase and set off with tick (`) marks. For example:
 
     Orders that are in the `address` state do not have valid shipping and billing addresses assigned to them yet.
 
+This same style is used for attribute names:
+
+    The `expires_at` attribute is the time at which the activator is no longer valid.
+    
 ### JSON Responses
 
 We specify the JSON responses in ruby so that we don't have to write

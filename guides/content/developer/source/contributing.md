@@ -106,8 +106,6 @@ This command will apply the commits from the pull request to the current branch,
 For this reason, there is no need to create multiple pull requests for Spree's different branches. Please only create one pull request per change and simply mention inside the pull request that it can apply to multiple branches. If a patch does not apply cleanly to a branch, the Spree team may ask you for another one which applies to the other branch.
 ***
 
-
-
 ### Feature Requests
 
 We're interested in hearing your ideas for new features but creating feature requests in the Issue Tracker is not the proper way to ask for a feature.  A feature request is any idea you have to improve the software experience that is not strictly related to a bug or error of omission.
@@ -239,6 +237,10 @@ When referencing the name of a class, it should be capitalized. If you are writi
 
 Having the namespace for the class is optional, but should be included when omitting it could cause confusion.
 
+An instance of a class should be lowercase, normal font:
+
+    You can view all of the orders for a particular user.
+
 ####Buttons, Links, Section Names####
 
 These should always reference the correct label and can have their names quoted. Examples:
@@ -247,10 +249,14 @@ These should always reference the correct label and can have their names quoted.
 * Follow the "Stock Transfers" link.
 * Information displayed in the "Purchase Funnel" section gives you information...
 
-####State Names####
+####State and Attribute Names####
 When referring to the state of an object - an order, for example - the state name should be lowercase and set off with tick (`) marks. For example:
 
     Orders that are in the `address` state do not have valid shipping and billing addresses assigned to them yet.
+
+This same style is used for attribute names:
+
+    The `expires_at` attribute is the time at which the activator is no longer valid.
 
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.
