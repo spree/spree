@@ -5,7 +5,7 @@ section: core
 
 ## Address
 
-The Address model in Spree is used to track address information, mainly for orders. Address information can also be tied to the `Spree::User` objects which come from the `spree_auth_devise` extension.
+The `Address` model in Spree is used to track address information, mainly for orders. Address information can also be tied to the `Spree::User` objects which come from the `spree_auth_devise` extension.
 
 Addresses have the following attributes:
 

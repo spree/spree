@@ -7,7 +7,7 @@ section: core
 
 An adjustment in Spree tracks an adjustment to the price of an <%= link_to "Order", :orders %>, or an order's <%= link_to "Line Item", 'orders', 'line-items' %> within Spree.
 
-Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one Spree::Adjustment model in Spree which handles this by allowing either positive or negative values.
+Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one `Spree::Adjustment` model in Spree which handles this by allowing either positive or negative values.
 
 Adjustments have the following attributes:
 
@@ -15,7 +15,7 @@ Adjustments have the following attributes:
 * `label`: The label for the adjustment to indicate what the adjustment is for.
 * `mandatory`: Indicates if this adjustment is mandatory.
 * `eligible`: Indicates if the adjustment is eligible for the thing it's adjusting.
-* `state`: Can either be "open", "closed", or "finalized". Once it is in the "finalized" state, it cannot be changed.
+* `state`: Can either be `open`, `closed`, or `finalized`. Once it is in the `finalized` state, it cannot be changed.
 
 Along with these attributes, an adjustment links to three polymorphic objects:
 
@@ -37,7 +37,7 @@ Adjustments can come from one of three locations:
 
 An adjustment's `label` attribute can be used as a good indicator of where the adjustment is coming from.
 
-## Adjustment scopes
+## Adjustment Scopes
 
 There are some helper methods to return the different types of adjustments:
 

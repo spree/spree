@@ -10,7 +10,7 @@ Activators are used to subscribe to specific events within Spree. Activators hav
 * `description`: Useful text to be displayed in a list of activators.
 * `expires_at`: The time at which the activator is no longer active. Can be set to `nil` to indicate a never-ending activator.
 * `starts_at`: The time at which the activator should begin being active. Can be set to `nil` to indicate the activator has always been active.
-* `name`: The short name of the activator. Used with description to explain what the activator does.
+* `name`: The short name of the activator. Used with `description` to explain what the activator does.
 * `event_name`: The event to subscribe to.
 
 The subscription to these events is done with this code from inside the Spree Core gem, which uses ActiveSupport's Notifications API:
@@ -35,7 +35,7 @@ fire_event('spree.checkout.update')```
 
 This method itself calls `ActiveSupport::Notifications.instrument` and passes through the arguments from this method. While it would seem that `fire_event` is just a shorter way of calling the method, it's also configured to pass through a default payload. This payload contains a `:user` key and an `:order` key, containing information about the current user (`try_spree_current_user`) and the current order (`current_order`) respectively.
 
-The `fire_event` method can be used to pass additional payload information through too:
+The `fire_event` method can be used to pass additional payload information through, too:
 
 ```ruby
 fire_event('spree.checkout.update', :extra => "information")```

@@ -95,14 +95,12 @@ These should always reference the correct label and can have their names quoted.
 * Follow the "Stock Transfers" link.
 * Information displayed in the "Purchase Funnel" section gives you information...
 
-####State and Attribute Names####
+####States, Attributes, Methods, Events, and Parameters####
 When referring to the state of an object - an order, for example - the state name should be lowercase and set off with tick (`) marks. For example:
 
     Orders that are in the `address` state do not have valid shipping and billing addresses assigned to them yet.
 
-This same style is used for attribute names:
-
-    The `expires_at` attribute is the time at which the activator is no longer valid.
+This same style is used for attribute names and their settings, method names, event names, parameter names, and parameter settings.
     
 ### JSON Responses
 
