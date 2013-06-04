@@ -75,7 +75,7 @@ API docs should look like:
 
 It is helpful to standardize some markdown conventions so readers learn to recognize visual cues as they work their way through the documentation and tutorials. Following are the conventions used for the Spree documentation:
 
-####Class names####
+####Class Names####
 
 When referencing the name of a class, it should be capitalized. If you are writing explanatory prose and not a section of code, the class name should be blocked out with tick (`) marks. For example:
 

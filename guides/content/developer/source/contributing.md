@@ -227,6 +227,31 @@ Then simply use the nanoc command to compile and preview the guides in your brow
   $ nanoc compile
   $ nanoc preview
 
+### Markdown Conventions
+
+It is helpful to standardize some markdown conventions so readers learn to recognize visual cues as they work their way through the documentation and tutorials. Following are the conventions used for the Spree documentation:
+
+####Class Names####
+
+When referencing the name of a class, it should be capitalized. If you are writing explanatory prose and not a section of code, the class name should be blocked out with tick (`) marks. For example:
+
+    To begin using your custom `User` class, you must first...
+
+Having the namespace for the class is optional, but should be included when omitting it could cause confusion.
+
+####Buttons, Links, Section Names####
+
+These should always reference the correct label and can have their names quoted. Examples:
+
+* Click the "Filter Results" button to update the results.
+* Follow the "Stock Transfers" link.
+* Information displayed in the "Purchase Funnel" section gives you information...
+
+####State Names####
+When referring to the state of an object - an order, for example - the state name should be lowercase and set off with tick (`) marks. For example:
+
+    Orders that are in the `address` state do not have valid shipping and billing addresses assigned to them yet.
+
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.
 ***
