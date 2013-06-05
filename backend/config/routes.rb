@@ -1,4 +1,6 @@
 Spree::Core::Engine.routes.draw do
+  get '/admin', :to => 'admin/orders#index', :as => :admin
+
   namespace :admin do
     get '/search/users', :to => "search#users", :as => :search_users
 
