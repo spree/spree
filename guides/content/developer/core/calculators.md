@@ -5,7 +5,7 @@ section: core
 
 ## Overview
 
-Spree makes extensive use of the Spree::Calculator model and there are several subclasses provided to deal with various types of calculations (flat rate, percentage discount, sales tax, VAT, etc.) All calculators extend the `Spree::Calculator` class and must provide the following methods:
+Spree makes extensive use of the `Spree::Calculator` model and there are several subclasses provided to deal with various types of calculations (flat rate, percentage discount, sales tax, VAT, etc.) All calculators extend the `Spree::Calculator` class and must provide the following methods:
 
 ```ruby
 def self.description
@@ -24,7 +24,7 @@ The following are descriptions of the currently available calculators in Spree. 
 
 ### Default Tax
 
-For information about this calculator, please read the "Taxation" guide.
+For information about this calculator, please read the <%= link_to "Taxation", :taxation %> guide.
 
 ### Flat Percent Per Item Total
 
@@ -61,12 +61,20 @@ This calculator is typically used for promotional discounts when you want a spec
 This calculator takes three preferences:
 
 * `first_item`: The discounted price of the first item(s).
-* `max_items`: The maximum number of items this discount applies to.
 * `additional_item`: The discounted price of subsequent items.
+* `max_items`: The maximum number of items this discount applies to.
 
 The calculator computes based on this:
 
-([first item discount] x [max items]) + ([items_count] - [max items] x [additional item discount])
+[first item discount] + (([items_count*] - 1) x [additional item discount])
+
+* up to the `max_items`
+
+Thus, if you have ten items in your shopping cart, your `first_item` preference is set to $10, your `additional_items` preference is set to $5, and your `max_items` preference is set to 4, the total discount would be $25:
+
+* $10 for the first item
+* $5 for each of the 3 subsequent items: $5 * 3 = $15
+* $0 for the remaining 6 items
 
 ### Free Shipping
 
