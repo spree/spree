@@ -49,6 +49,27 @@ $(function() {
     active_menu.parent().parent().show()
   }
 
+  // TOC
+  var current_url = window.location.pathname.split('/')[2];
+  var active = sidebar_menu.find('a[href="'+current_url+'"]');
+  var toc = active.parent().find('.toc');
+  active.parent().addClass('current');
+  active.prev().removeClass('icon-dot').addClass('icon-down-dir');
+  toc.toc({
+    'container': '#content',
+    'anchorName': function(i, heading, prefix) { //custom function for anchor name
+      return $(heading).attr('id');
+    },
+    'smoothScrolling': false
+  });
+
+  // $('#sidebar-menu').waypoint('sticky', {
+  //   handler: function(){
+
+  //   },
+  //   offset: -45
+  // });
+
   // Automatically open sidebar menu depending on section page belongs to
   var current_section = $('meta[name=section]').attr('content');
   $('.toggle-' + current_section + '-menu i').click();
