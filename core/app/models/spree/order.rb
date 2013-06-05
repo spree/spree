@@ -299,8 +299,7 @@ module Spree
 
       if persisted?
         # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        update_column(:user_id, user.id)
-        update_column(:email, user.email)
+        self.class.where(id: id).update_all(email: user.email, user_id: user.id)
       end
     end
 
