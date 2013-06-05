@@ -82,7 +82,7 @@ module Spree
         #check if we need to rename child taxons if parent name or permalink changes
         @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
-        if @taxon.update_attributes(params[:taxon])
+        if @taxon.update_attributes(taxon_params)
           flash[:success] = flash_message_for(@taxon, :successfully_updated)
         end
 
@@ -107,6 +107,15 @@ module Spree
         respond_with(@taxon) { |format| format.json { render :json => '' } }
       end
 
+      private
+        def taxon_params
+          params.require(:taxon).permit(permitted_params)
+        end
+
+        def permitted_params
+          [:name, :parent_id, :position, :icon, :description, :permalink,
+           :taxonomy_id, :meta_description, :meta_keywords, :meta_title]
+        end
     end
   end
 end

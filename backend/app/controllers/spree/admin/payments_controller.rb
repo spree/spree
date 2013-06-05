@@ -71,7 +71,7 @@ module Spree
         if params[:payment] and params[:payment_source] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
           params[:payment][:source_attributes] = source_params
         end
-        params[:payment]
+        params.require(:payment).permit(:amount, :payment_method_id, :source_attributes)
       end
 
       def load_data
