@@ -3,7 +3,7 @@ module Spree
     module CalculatedAdjustments
       module ClassMethods
         def calculated_adjustments
-          has_one   :calculator, :as => :calculable, :dependent => :destroy
+          has_one   :calculator, :class_name => "Spree::Calculator", :as => :calculable, :dependent => :destroy
           accepts_nested_attributes_for :calculator
           attr_accessible :calculator_type, :calculator_attributes
           validates :calculator, :presence => true
