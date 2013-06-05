@@ -26,7 +26,7 @@ describe Spree::Calculator::FlexiRate do
 
     it "should compute amount correctly when additional_items and first_item have values AND max items has value" do
       calculator.stub :preferred_first_item => 5.0, :preferred_additional_item => 1.0, :preferred_max_items => 3
-      calculator.compute(order).round(2).should == 26.0
+      calculator.compute(order).round(2).should == 7.0
     end
 
     it "should allow creation of new object with all the attributes" do

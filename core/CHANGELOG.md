@@ -34,3 +34,7 @@
 *   Improve performance of `Order#payment_required?` by not updating the totals every time. #3040 #3086
 
     *Washington Luiz*
+
+*   Fixed the FlexiRate Calculator for cases when max_items is set. #3159
+
+    *Dana Jones*
