@@ -299,7 +299,7 @@ module Spree
 
       if persisted?
         # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        self.class.where(id: id).update_all(email: user.email, user_id: user.id)
+        self.class.unscoped.where(id: id).update_all(email: user.email, user_id: user.id)
       end
     end
 
