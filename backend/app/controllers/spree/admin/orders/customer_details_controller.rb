@@ -16,7 +16,7 @@ module Spree
         end
 
         def update
-          if @order.update_attributes(params[:order])
+          if @order.update_attributes(order_params)
             while @order.next; end
 
             @order.shipments.map &:refresh_rates
@@ -29,6 +29,14 @@ module Spree
         end
 
         private
+          def order_params
+            params.require(:order).permit(
+              :email,
+              :use_billing,
+              :bill_address_attributes => permitted_address_attributes,
+              :ship_address_attributes => permitted_address_attributes
+            )
+          end
 
           def load_order
             @order = Order.find_by_number!(params[:order_id], :include => :adjustments)
