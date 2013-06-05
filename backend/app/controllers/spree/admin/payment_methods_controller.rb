@@ -4,12 +4,11 @@ module Spree
       skip_before_filter :load_resource, :only => [:create]
       before_filter :load_data
       before_filter :validate_payment_method_provider, :only => :create
-      before_filter :permit_attributes
 
       respond_to :html
 
       def create
-        @payment_method = params[:payment_method].delete(:type).constantize.new(params[:payment_method])
+        @payment_method = params[:payment_method].delete(:type).constantize.new(payment_method_params)
         @object = @payment_method
         invoke_callbacks(:create, :before)
         if @payment_method.save
@@ -30,8 +29,8 @@ module Spree
           @payment_method = PaymentMethod.find(params[:id])
         end
 
-        payment_method_params = params[ActiveModel::Naming.param_key(@payment_method)] || {}
-        attributes = params[:payment_method].merge(payment_method_params)
+        update_params = params[ActiveModel::Naming.param_key(@payment_method)] || {}
+        attributes = payment_method_params.merge(update_params)
         attributes.each do |k,v|
           if k.include?("password") && attributes[k].blank?
             attributes.delete(k)
@@ -62,7 +61,7 @@ module Spree
         end
       end
 
-      def permit_attributes
+      def payment_method_params
         params.require(:payment_method).permit!
       end
     end

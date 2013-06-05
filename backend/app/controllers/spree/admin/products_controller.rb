@@ -3,7 +3,6 @@ module Spree
     class ProductsController < ResourceController
       helper 'spree/products'
 
-      before_filter :permit_attributes, only: [:create, :update]
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
@@ -109,10 +108,6 @@ module Spree
 
         def product_includes
          [{:variants => [:images, {:option_values => :option_type}]}, {:master => [:images, :default_price]}]
-        end
-
-        def permit_attributes
-          params.require(:product).permit!
         end
 
     end
