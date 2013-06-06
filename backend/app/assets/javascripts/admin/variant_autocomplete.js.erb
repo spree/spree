@@ -82,7 +82,6 @@ adjustItems = function(shipment_number, variant_id, quantity){
     }
     url += '.json';
 
-
     if(new_quantity!=0){
       $.ajax({
         type: "PUT",
@@ -90,8 +89,6 @@ adjustItems = function(shipment_number, variant_id, quantity){
         data: { variant_id: variant_id, quantity: new_quantity }
       }).done(function( msg ) {
         window.location.reload();
-      }).error(function( msg ) {
-        console.log(msg);
       });
     }
 }
@@ -109,6 +106,8 @@ toggleMethodEdit = function(){
 }
 
 toggleItemEdit = function(){
+  event.preventDefault();
+
   var link = $(this);
   link.parent().find('a.edit-item').toggle();
   link.parent().find('a.cancel-item').toggle();
@@ -162,56 +161,42 @@ startItemSplit = function(event){
 completeItemSplit = function(event) {
   event.preventDefault();
   var link = $(this);
+  var order_number = link.closest('tbody').data('order-number');
   var stock_item_row = link.closest('tr');
   var variant_id = stock_item_row.data('variant-id');
-  var stock_location_id = stock_item_row.find('#item_stock_location').val();
   var quantity = stock_item_row.find('#item_quantity').val();
+
+  var stock_location_id = stock_item_row.find('#item_stock_location').val();
   var original_shipment_number = link.closest('tbody').data('shipment-number');
-  var order_number = link.closest('tbody').data('order-number');
-  var new_shipment = stock_item_row.find($('#item_stock_location').select2('data').element).data('new-shipment');
-  
-  if (stock_location_id == 'new_shipment') {
-  } else { // move item to a shipment at a different stock location
-    var shipment = _.find(shipments, function(shipment){
-      return shipment.stock_location_id == stock_location_id && (shipment.state == 'ready' || shipment.state == 'pending');
+
+  var selected_shipment = stock_item_row.find($('#item_stock_location').select2('data').element);
+  var target_shipment_number = selected_shipment.data('shipment-number');
+  var new_shipment = selected_shipment.data('new-shipment');
+
+  if (stock_location_id != 'new_shipment') {
+    // first remove item(s) from original shipment
+    $.ajax({
+      type: "PUT",
+      async: false,
+      url: Spree.url("/api/orders/" + order_number + "/shipments/" + original_shipment_number + "/remove.json"),
+      data: { variant_id: variant_id, quantity: quantity }
+    }).done(function(msg) {
+      window.location.reload();
     });
 
-    if(shipment==undefined || new_shipment != undefined){ // If a shipment doesn't exist for this location already, create a new one
+    if (new_shipment != undefined) {
       $.ajax({
         type: "POST",
         async: false,
         url: Spree.url("/api/orders/" + order_number + "/shipments.json"),
         data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
-      }).done(function( msg ) {
-        
-      }).error(function( msg ) {
-        console.log(msg);
       });
-
-      // remove item(s) from original shipment
+    } else {
       $.ajax({
         type: "PUT",
         async: false,
-        url: Spree.url("/api/orders/" + order_number + "/shipments/" + original_shipment_number + "/remove.json"),
+        url: Spree.url("/api/orders/" + order_number + "/shipments/" + target_shipment_number + "/add.json"),
         data: { variant_id: variant_id, quantity: quantity }
-      }).done(function( msg ) {
-        window.location.reload();
-      }).error(function( msg ) {
-        console.log(msg);
-      });
-    } else { // if shipment alreadys exists for this location, add variant to it
-      adjustItems(shipment.number, variant_id, quantity);
-      // remove item(s) from original shipment
-      $.ajax({
-        type: "PUT",
-        async: false,
-        url: Spree.url("/api/orders/" + order_number + "/shipments/" + original_shipment_number + "/remove.json"),
-        data: { variant_id: variant_id, quantity: quantity }
-      }).done(function( msg ) {
-        console.log("Removed");
-        window.location.reload();
-      }).error(function( msg ) {
-        console.log(msg);
       });
     }
   }
