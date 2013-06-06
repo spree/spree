@@ -296,6 +296,7 @@ module Spree
         "name"=>"Example product",
         "description"=> "Description",
         "price"=>"15.99",
+        "display_price"=>"$15.99",
         "available_on"=>"2012-10-17T03:43:57Z",
         "permalink"=>"ruby-on-rails-tote",
         "count_on_hand"=>10,
