@@ -1,5 +1,6 @@
 object @product
 attributes *product_attributes
+node(:display_price) { |p| p. display_price.to_s }
 child :variants_including_master => :variants do
   attributes *variant_attributes
 

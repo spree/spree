@@ -12,7 +12,7 @@ module Spree
       end
 
       def product_attributes
-        [:id, :name, :description, :price, :available_on, :permalink, :meta_description, :meta_keywords, :taxon_ids]
+        [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :taxon_ids]
       end
 
       def product_property_attributes
