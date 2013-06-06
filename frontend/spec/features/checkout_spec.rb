@@ -47,8 +47,9 @@ describe "Checkout" do
         fill_in_address
 
         click_button "Save and Continue"
-        page.should have_content(shipping_method.name)
-        page.should_not have_content("undefined method `promotion'")
+        page.should_not have_content("undefined method `promotion'"
+        click_button "Save and Continue"
+        page.should have_content(shipping_method.adjustment_label)
       end
 
       # Regression test, no issue number
