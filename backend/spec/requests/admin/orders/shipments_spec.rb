@@ -34,36 +34,18 @@ describe "Shipments" do
       end
     end
 
-    it "can move a variant to a new shipment" do
-      page.all("table.stock-contents").count.should == 1
-      within_row(1) do
-        click_icon 'resize-horizontal'
-      end
-      select2_no_label 'LA', from: 'Choose Location'
+    it "can move a variant to a new and to an existing shipment" do
+      order.shipments.count.should == 1
+
+      within_row(1) { click_icon 'resize-horizontal' }
+      targetted_select2 'LA', from: '#s2id_item_stock_location'
       click_icon :ok
+      page.find("table.stock-contents:eq(2)").should be_visible
 
-      page.all("table.stock-contents").count.should == 2
-      order.shipments.last.stock_location.should == la
-      order.shipments.last.inventory_units.count.should == 1
-    end
-
-    it "can move a variant to an existing shipment" do
-      page.all("table.stock-contents").count.should == 1
-      within_row(1) do
-        click_icon 'resize-horizontal'
-      end
-      select2_no_label 'LA', from: 'Choose Location'
+      within_row(1) { click_icon 'resize-horizontal' }
+      targetted_select2 "LA(#{order.reload.shipments.last.number})", from: '#s2id_item_stock_location'
       click_icon :ok
-
-      within_row(1) do
-        click_icon 'resize-horizontal'
-      end
-      select2_no_label "LA(#{order.reload.shipments.last.number})", from: 'Choose Location'
-      click_icon :ok
-
-      page.all("table.stock-contents").count.should == 2
-      order.shipments.last.stock_location.should == la
-      order.shipments.last.inventory_units.count.should == 2
+      page.find("table.stock-contents:eq(2)").should be_visible
     end
   end
 end
