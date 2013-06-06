@@ -129,6 +129,10 @@ module Spree
       "#{name} - #{sku}"
     end
 
+    def in_stock?
+      Spree::Stock::Quantifier.new(self).can_supply?(1)
+    end
+
     private
 
       # Ensures a new variant takes the product master price when price is not supplied
