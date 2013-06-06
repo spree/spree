@@ -49,7 +49,7 @@ $(document).ready(function() {
       toggleItemEdit();
 
       adjustItems(shipment_number, variant_id, quantity);
-
+      return false;
     });
 
     //handle delete click
@@ -106,8 +106,6 @@ toggleMethodEdit = function(){
 }
 
 toggleItemEdit = function(){
-  event.preventDefault();
-
   var link = $(this);
   link.parent().find('a.edit-item').toggle();
   link.parent().find('a.cancel-item').toggle();
@@ -116,6 +114,8 @@ toggleItemEdit = function(){
   link.parent().find('a.delete-item').toggle();
   link.parents('tr').find('td.item-qty-show').toggle();
   link.parents('tr').find('td.item-qty-edit').toggle();
+
+  return false;
 }
 
 startItemSplit = function(event){
