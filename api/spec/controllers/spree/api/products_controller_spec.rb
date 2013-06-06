@@ -93,7 +93,10 @@ module Spree
                                                                                 :attachment_width,
                                                                                 :attachment_height,
                                                                                 :attachment_content_type,
-                                                                                :attachment_url])
+                                                                                :mini_url,
+                                                                                :small_url,
+                                                                                :product_url,
+                                                                                :large_url])
 
         json_response["product_properties"].first.should have_attributes([:value,
                                                                          :product_id,
