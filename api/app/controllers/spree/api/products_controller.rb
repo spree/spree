@@ -10,14 +10,11 @@ module Spree
         end
 
         @products = @products.page(params[:page]).per(params[:per_page])
-        last_updated_product = Spree::Product.order("updated_at ASC").last
-        if stale?(:etag => last_updated_product, :last_modified => last_updated_product.updated_at)
-          respond_with(@products)
-        end
       end
 
       def show
         @product = find_product(params[:id])
+        expires_in 3.minutes
         respond_with(@product)
       end
 
