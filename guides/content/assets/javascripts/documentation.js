@@ -56,7 +56,9 @@ $(function() {
   var active = sidebar_menu.find('a[href="'+current_url+'"]');
   var toc = active.parent().find('.toc');
   active.parent().addClass('current');
-  active.prev().removeClass('icon-dot').addClass('icon-down-dir');
+  if(active.prev().hasClass('icon-dot')){
+    active.prev().removeClass('icon-dot').addClass('icon-down-dir');
+  }
   toc.toc({
     'container': '#content',
     'anchorName': function(i, heading, prefix) { //custom function for anchor name
