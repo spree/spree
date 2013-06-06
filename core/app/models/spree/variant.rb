@@ -129,8 +129,8 @@ module Spree
       "#{name} - #{sku}"
     end
 
-    def in_stock?
-      Spree::Stock::Quantifier.new(self).can_supply?(1)
+    def in_stock?(quantity=1)
+      Spree::Stock::Quantifier.new(self).can_supply?(quantity)
     end
 
     private
