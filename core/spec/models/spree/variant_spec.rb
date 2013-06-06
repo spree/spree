@@ -270,4 +270,66 @@ describe Spree::Variant do
       variant.position.should_not be_nil
     end
   end
+
+  describe '#in_stock?' do
+    before do
+      Spree::Config.track_inventory_levels = true
+    end
+
+    context 'when stock_items are not backorderable' do
+      before do
+        Spree::StockItem.any_instance.stub(backorderable: false)
+      end
+
+      context 'when stock_items in stock' do
+        before do
+          Spree::StockItem.any_instance.stub(count_on_hand: 10)
+        end
+
+        it 'returns true if stock_items in stock' do
+          variant.in_stock?.should be_true
+        end
+      end
+
+      context 'when stock_items out of stock' do
+        before do
+          Spree::StockItem.any_instance.stub(backorderable: false)
+          Spree::StockItem.any_instance.stub(count_on_hand: 0)
+        end
+
+        it 'return false if stock_items out of stock' do
+          variant.in_stock?.should be_false
+        end
+      end
+
+      context 'when providing quantity param' do
+        before do
+          variant.stock_items.first.update_attribute(:count_on_hand, 10)
+        end
+
+        it 'returns correctt value' do
+          variant.in_stock?.should be_true
+          variant.in_stock?(2).should be_true
+          variant.in_stock?(10).should be_true
+          variant.in_stock?(11).should be_false
+        end
+      end
+    end
+
+    context 'when stock_items are backorderable' do
+      before do
+        Spree::StockItem.any_instance.stub(backorderable: true)
+      end
+
+      context 'when stock_items out of stock' do
+        before do
+          Spree::StockItem.any_instance.stub(count_on_hand: 0)
+        end
+
+        it 'returns true if stock_items in stock' do
+          variant.in_stock?.should be_true
+        end
+      end
+    end
+  end
 end
