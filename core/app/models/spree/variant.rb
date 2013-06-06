@@ -138,6 +138,10 @@ module Spree
       Spree::Product.unscoped { super }
     end
     
+    def in_stock?(quantity=1)
+      Spree::Stock::Quantifier.new(self).can_supply?(quantity)
+    end
+
     private
 >>>>>>> Use paranoia for deleted_at functionality
 
