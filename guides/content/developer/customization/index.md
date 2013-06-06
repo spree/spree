@@ -58,7 +58,7 @@ customizations.
 
 ***
 For more implementation details on Extensions and Themes please
-refer to the [Extensions & Themes](extensions.html) guide.
+refer to the [Extensions & Themes](extensions_tutorial.html) guide.
 ***
 
 ### Customization Options

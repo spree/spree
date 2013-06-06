@@ -48,7 +48,7 @@ Initializers are run during startup, and are the recommended way to
 execute certain settings. You can put initializers in extensions, thus have a way to execute
 extension-specific configurations.
 
-See the [extensions guide](extensions.html#extension-initializers) for
+See the [extensions guide](extensions_tutorial.html#extension-initializers) for
 more information.
 
 ### Debugging techniques
