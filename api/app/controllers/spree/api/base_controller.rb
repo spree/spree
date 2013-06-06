@@ -6,6 +6,7 @@ module Spree
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
       include ::ActionController::Head
+      include ::ActionController::ConditionalGet
 
       self.responder = Spree::Api::Responders::AppResponder
 

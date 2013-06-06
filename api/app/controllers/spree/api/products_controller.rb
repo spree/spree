@@ -10,12 +10,13 @@ module Spree
         end
 
         @products = @products.page(params[:page]).per(params[:per_page])
-
+        expires_in 3.minutes
         respond_with(@products)
       end
 
       def show
         @product = find_product(params[:id])
+        expires_in 3.minutes
         respond_with(@product)
       end
 
