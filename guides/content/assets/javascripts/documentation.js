@@ -30,10 +30,12 @@ $(function() {
     if($(this).parent().find('ul:hidden').length > 0){
       $(this).removeClass('icon-right-dir').addClass('icon-down-dir');
       $(this).parent().find('ul').stop().slideDown();
+      $(this).parent().removeClass('closed').addClass('opened');
     }
     else if($(this).parent().find('ul:visible')) {
       $(this).removeClass('icon-down-dir').addClass('icon-right-dir');
       $(this).parent().find('ul').stop().slideUp();
+      $(this).parent().removeClass('opened').addClass('closed');
     }
   });
 

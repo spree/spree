@@ -67,6 +67,12 @@
           }
         }
       }
+
+      &.closed {
+        .toc {
+          border-color: transparent;
+        }
+      }
     }
 
     h3 {
