@@ -11,3 +11,7 @@
 * Fix issue where calling OrdersController#update with line item parameters would *always* create new line items, rather than updating existing ones.
 
     *Ryan Bigg*
+
+* The Orders API endpoint now returns an additional key called `display_item_total`, which is the proper rendering of the total line item price of an order.
+
+    *Ryan Bigg*
