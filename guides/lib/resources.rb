@@ -350,7 +350,8 @@ module Spree
       {
         "id"=>1,
         "number"=>"R335381310",
-        "item_total"=>"0.0",
+        "item_total"=>"100.0",
+        "display_item_total"=>"$100.00",
         "total"=>"0.0",
         "state"=>"cart",
         "adjustment_total"=>"-12.0",
