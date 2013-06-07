@@ -107,6 +107,7 @@ module Spree
       LINKS[:activators] = LINKS[:core] + "activators"
       LINKS[:preferences] = LINKS[:core] + "preferences"
       LINKS[:checkout] = LINKS[:customization] + "checkout"
+      LINKS[:extensions] = LINKS[:core] + "extensions_tutorial"
 
       def warning(message)
         %(<div class='warning'>) + message + %(</div>)

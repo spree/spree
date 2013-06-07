@@ -98,4 +98,4 @@ Feel free to explore some of the backend features that Spree has to offer and to
 
 If you've followed the steps described in this tutorial, you should now have a fully functional Spree application up and running.
 
-This tutorial is part of a series. The next tutorial in this series is the <%= link_to "Extensions Tutorial", 'extensions_tutorial' %>.
+This tutorial is part of a series. The next tutorial in this series is the <%= link_to "Extensions Tutorial", LINKS[:extensions] %>.
