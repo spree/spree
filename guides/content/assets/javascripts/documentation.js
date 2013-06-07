@@ -39,9 +39,10 @@ $(function() {
     }
   });
 
-  var current_url = window.location.pathname
+  var current_url = window.location.pathname.split('/')[2];
 
   var active_menu = sidebar_menu.find('a[href="'+current_url+'"]')
+  console.log(active_menu)
   active_menu.addClass('active-open');
   if(active_menu.parent().next().attr('class') == 'js-guides'){
     active_menu.parent().next().show();
