@@ -119,7 +119,8 @@ heroku run rails console```
 And then running this code:
 
 ```ruby
-Spree::User.create!(:email => "you@example.com", :password => "yourpassword")```
+user = Spree::User.create!(:email => "you@example.com", :password => "yourpassword")
+user.spree_roles.create!(:name => "admin")```
 
 Exit out of the console and then attempt to sign in to your application to
 verify these credentials.
