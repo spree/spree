@@ -163,7 +163,11 @@ module Spree
         "attachment_height"=>360,
         "alt"=>nil,
         "viewable_type"=>"Spree::Variant",
-        "viewable_id"=>1}
+        "viewable_id"=>1,
+        "mini_url"=>"/spree/products/1/mini/file.png?1370533476",
+        "small_url"=>"/spree/products/1/small/file.png?1370533476",
+        "product_url"=>"/spree/products/1/product/file.png?1370533476",
+        "large_url"=>"/spree/products/1/large/file.png?1370533476"}
 
     OPTION_VALUE =
       {
