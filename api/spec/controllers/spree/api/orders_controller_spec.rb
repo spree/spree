@@ -98,7 +98,11 @@ module Spree
       let!(:payment_method) { create(:payment_method) }
 
       it "can add line items" do
-        api_put :update, :id => order.to_param, :order => { :line_item_attributes => [{:variant_id => create(:variant).id, :quantity => 2}] }
+        api_put :update, :id => order.to_param, :order => { 
+          :line_items_attributes => { 
+            "0" => { :variant_id => create(:variant).id, :quantity => 2 }
+          }
+        }
 
         response.status.should == 200
         json_response['item_total'].to_f.should_not == order.item_total.to_f
@@ -109,7 +113,9 @@ module Spree
         order.line_items.create!(:variant_id => variant.id, :quantity => 1)
 
         api_put :update, :id => order.to_param, :order => {
-          :line_items_attributes => [{ :variant_id => variant.id, :quantity => 10 }]
+          :line_items_attributes => { 
+            "0" => { :variant_id => variant.id, :quantity => 10 }
+          }
         }
 
         response.status.should == 200
