@@ -49,11 +49,11 @@ The "Complete" state can only be reached in one of two ways:
 1. No payment is required on the order.
 2. Payment is required on the order, and at least the order total has been received as payment.
 
-Assuming that an order meets the criteria for the next state, you will be able to transition it to the next state by calling `next` on that object. If this returns `false`, then the order does *not* meet the criteria. To work out why itcannot transition, check the result of an `errors` method call.
+Assuming that an order meets the criteria for the next state, you will be able to transition it to the next state by calling `next` on that object. If this returns `false`, then the order does *not* meet the criteria. To work out why it cannot transition, check the result of an `errors` method call.
 
-## Line Items
+## <a id="line-items"></a>Line Items
 
-Line items are used to keep track of items within the context of an order. These records provide a link between orders, and <%= link_to "Variants", 'products', 'variants' %>.
+Line items are used to keep track of items within the context of an order. These records provide a link between orders, and <%= link_to "Variants", 'products#variants' %>.
 
 When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
 

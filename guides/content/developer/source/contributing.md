@@ -241,13 +241,14 @@ An instance of a class should be lowercase, normal font:
 
     You can view all of the orders for a particular user.
 
-####Buttons, Links, Section Names####
+####Buttons, Links, Section Names, Form Elements####
 
 These should always reference the correct label and can have their names quoted. Examples:
 
 * Click the "Filter Results" button to update the results.
 * Follow the "Stock Transfers" link.
 * Information displayed in the "Purchase Funnel" section gives you information...
+* If you check "Receive Stock" while creating a new transfer...
 
 ####States, Attributes, Methods, Events, and Parameters####
 When referring to the state of an object - an order, for example - the state name should be lowercase and set off with tick (`) marks. For example:

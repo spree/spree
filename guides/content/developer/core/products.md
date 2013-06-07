@@ -25,7 +25,7 @@ Option types denote the different options for a variant. A typical option type w
 
 A product can be assigned many option types, but must be assigned at least one if you wish to create variants for that product.
 
-## Variants
+## <a id="variants"></a>Variants
 
 Variant records track the individual variants of a Product. Variants come in two flavours: master variants and normal variants.
 
