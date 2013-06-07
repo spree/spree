@@ -45,7 +45,13 @@ module Spree
       def update
         @order = Order.find_by_number!(params[:id])
         authorize! :update, @order
-        if @order.update_attributes(nested_params)
+        # Parsing line items through as an update_attributes call in the API will result in
+        # many line items for the same variant_id being created. We must be smarter about this,
+        # hence the use of the update_line_items method, defined within order_decorator.rb.
+        order_params = nested_params
+        line_items = order_params.delete("line_items_attributes")
+        if @order.update_attributes(order_params)
+          @order.update_line_items(line_items)
           @order.update!
           respond_with(@order, :default_template => :show)
         else
