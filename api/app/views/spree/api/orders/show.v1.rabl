@@ -1,6 +1,5 @@
 object @order
-attributes *order_attributes
-node(:display_item_total) { |o| o.display_item_total.to_s }
+extends "spree/api/orders/order"
 
 if lookup_context.find_all("spree/api/orders/#{@order.state}").present?
   extends "spree/api/orders/#{@order.state}"
