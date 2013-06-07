@@ -20,7 +20,7 @@ Calculators link to a `calculable` object, which are typically one of `Spree::Sh
 
 ## Available Calculators
 
-The following are descriptions of the currently available calculators in Spree. If you would like to add your own, please see the <%= link_to "Registering a calculator", "#registering-a-calculator" %> section.
+The following are descriptions of the currently available calculators in Spree. If you would like to add your own, please see the [Creating a New Calculator](#creating-a-calculator) section.
 
 ### Default Tax
 
@@ -80,7 +80,9 @@ Thus, if you have ten items in your shopping cart, your `first_item` preference 
 
 This calculator will take an object, and then work out the shipping total for that object. Useful for when you want to apply free shipping to an order.
 
-### Per Item
+TODO: This is a little confusing and vague. Need to investigate more and explain better. Also, might this be obsolete with the new split shipments functionality?
+
+### <a id="per-item"></a>Per Item
 
 The Per Item calculator computes a value for every item within an order. This is useful for providing a discount for a specific product, without it affecting others.
 
@@ -103,15 +105,14 @@ Every matching product within an order will add to the calculator's total. For e
 
 The calculation would be:
 
-
     = (2 x 5) + (1 x 5)
     = 10 + 5
 
-Meaning the calculator will compute an amount of 15.
+meaning the calculator will compute an amount of 15.
 
 ### Percent Per Item
 
-The Percent Per Item calculator works in a near-identical fashion to the <%= link_to "Per Item Calculator", "#per-item" %>, with the exception that rather than providing a flat-rate per item, it is a percentage.
+The Percent Per Item calculator works in a near-identical fashion to the [Per Item Calculator](#per-item), with the exception that rather than providing a flat-rate per item, it is a percentage.
 
 Assuming a calculator amount of 10% and an order such as this:
 
@@ -120,7 +121,6 @@ Assuming a calculator amount of 10% and an order such as this:
 * Product C: $20.00 x 4 (excluded from matching products)
 
 The calculation would be:
-
 
     = ($15 x 2 x 10%) + ($10 x 10%)
     = ($30 x 10%) + ($10 x 10%)
@@ -132,13 +132,14 @@ The calculator will calculate a discount of $4.
 
 The Price Sack calculator is useful for when you want to provide a discount for an order which is over a certain price. The calculator has four preferences:
 
-***TODO***: Verify these preferences are correct. I am not confident. Also, only 3 preferences are shown, but 4 are referenced above.
+* `minimal_amount`: The minimum amount for the line items total to trigger the calculator.
+* `discount_amount`: The amount to discount from the order if the line items total is equal to or greater than the `minimal_amount`.
+* `normal_amount`: The amount to discount from the order if the line items total is less than the `minimal_amount`.
+* `currency`: The currency for this calculator. Defaults to the currency you have set for your store with `Spree::Config[:currency]`
 
-* `minimal_amount`: The minimal amount to trigger the calculator.
-* `normal_amount`: The normal amount of discount to apply if the calculator isn't full applied.
-* `discount_amount`: The discount amount to apply.
+Suppose you have a Price Sack calculator with a `minimal_amount` preference of $50, a `normal_amount` preference of $2, and a `discount_amount` of $5. An order with a line items total of $60 would result in a discount of $5 for the whole order. An order of $20 would result in a discount of $2.
 
-## Creating a New Calculator
+## <a id="creating-a-calculator"></a>Creating a New Calculator
 
 To create a new calculator for Spree, you need to do two things. The first is to inherit from the `Spree::Calculator` class and define `description` and `compute` methods on that class:
 
@@ -208,5 +209,5 @@ To work out what the calculator would compute an amount to be:
 ```ruby
 plan.compute_amount(<calculable object>)```
 
-`create_adjustment`, `update_adjustment` and `compute_amount` will call `compute` on the `calculator` object. This `calculable` amount is whatever object your
+`create_adjustment`, `update_adjustment` and `compute_amount` will call `compute` on the `Calculator` object. This `calculable` amount is whatever object your
 `CustomCalculator` class supports.
