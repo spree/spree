@@ -14,7 +14,7 @@ Spree::Order.class_eval do
 
   def update_line_items(line_item_params)
     line_item_params.each do |k, line_item|
-      self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+      self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity].to_i)
     end
   end
 end
