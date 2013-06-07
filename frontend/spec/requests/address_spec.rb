@@ -18,7 +18,7 @@ describe "Address" do
     @state_name_css = "##{address}_state_name"
   end
 
-  context "country requires state", :js => true do
+  context "country requires state", :js => true, :focus => true do
     let!(:canada) { create(:country, :name => "Canada", :states_required => true, :iso => "CA") }
 
     context "but has no state" do
@@ -28,6 +28,9 @@ describe "Address" do
         select canada.name, :from => @country_css
         page.should have_selector(@state_select_css, visible: false)
         page.should have_selector(@state_name_css, visible: true)
+        find(@state_name_css)['class'].should_not =~ /hidden/
+        find(@state_name_css)['class'].should =~ /required/
+        find(@state_select_css)['class'].should_not =~ /required/
         page.should_not have_selector("input#{@state_name_css}[disabled]")
       end
     end
@@ -41,6 +44,8 @@ describe "Address" do
         select canada.name, :from => @country_css
         page.should have_selector(@state_select_css, visible: true)
         page.should have_selector(@state_name_css, visible: false)
+        find(@state_select_css)['class'].should =~ /required/
+        find(@state_name_css)['class'].should_not =~ /required/
       end
     end
 
@@ -54,6 +59,9 @@ describe "Address" do
 
         select france.name, :from => @country_css
         page.find(@state_name_css).should have_content('')
+        find(@state_name_css)['class'].should_not =~ /hidden/
+        find(@state_name_css)['class'].should_not =~ /required/
+        find(@state_select_css)['class'].should_not =~ /required/
       end
     end
   end

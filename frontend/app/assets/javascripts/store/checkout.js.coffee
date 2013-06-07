@@ -44,16 +44,22 @@ Spree.ready ($) ->
         stateInput.hide().prop 'disabled', true
         statePara.show()
         stateSpanRequired.show()
+        stateSelect.addClass('required') if statesRequired
+        stateInput.removeClass('required')
       else
         stateSelect.hide().prop 'disabled', true
         stateInput.show()
         if statesRequired
           stateSpanRequired.show()
+          stateInput.addClass('required')
         else
           stateInput.val ''
           stateSpanRequired.hide()
+          stateInput.removeClass('required')
         statePara.toggle(!!statesRequired)
         stateInput.prop('disabled', !statesRequired)
+        stateInput.removeClass('hidden')
+        stateSelect.removeClass('required')
 
     ($ 'p#bcountry select').change ->
       updateState 'b'
