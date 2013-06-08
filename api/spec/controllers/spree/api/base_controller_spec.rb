@@ -19,6 +19,11 @@ describe Spree::Api::BaseController do
       json_response.should == { "products" => [] }
       response.status.should == 200
     end
+
+    it "sets cache control on the requests" do
+      api_get :index
+      response.headers["Cache-Control"].should == "max-age=300, private"
+    end
   end
 
   context "cannot make a request to the API" do

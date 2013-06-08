@@ -15,6 +15,7 @@ module Spree
       attr_accessor :current_api_user
 
       before_filter :set_content_type
+      before_filter :set_expiry
       before_filter :check_for_user_or_api_key, :if => :requires_authentication?
       before_filter :authenticate_user
       after_filter  :set_jsonp_format
@@ -53,6 +54,10 @@ module Spree
           "text/xml"
         end
         headers["Content-Type"] = content_type
+      end
+
+      def set_expiry
+        expires_in Spree::Api::Config[:cache_timeout].minutes
       end
 
       def check_for_user_or_api_key
