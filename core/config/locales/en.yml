@@ -288,6 +288,13 @@ en:
           delivery_error: Test Mail delivery error
           delivery_success: Test Mail sent successfully
           error: ! 'Test Mail error: %{e}'
+      tab:
+        overview: "Overview"
+        orders: "Orders"
+        products: "Products"
+        reports: "Reports"
+        configuration: "Configuration"
+        promotions: "Promotions"
     administration: Administration
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service

@@ -38,3 +38,17 @@
 *   Fixed the FlexiRate Calculator for cases when max_items is set. #3159
 
     *Dana Jones*
+
+* Translation for admin tabs are now located under the `spree.admin.tab` key. Previously, they were on the top-level, which lead to conflicts when users wanted to override view translations, like this:
+
+```yml
+en:
+  spree:
+    orders:
+      show:
+        thank_you: "Thanks, buddy!"
+```
+
+See #3133 for more information.
+
+    * Ryan Bigg*
