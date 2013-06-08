@@ -15,3 +15,7 @@
 * The Orders API endpoint now returns an additional key called `display_item_total`, which is the proper rendering of the total line item price of an order.
 
     *Ryan Bigg*
+
+* All API responses now contain a `Cache-Control` header.
+
+    *Ryan Bigg*
