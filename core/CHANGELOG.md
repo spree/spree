@@ -28,3 +28,17 @@
     e.g. Shipping methods set to back_end only should not be displayed on frontend too
 
    *Washington Luiz*
+
+* Translation for admin tabs are now located under the `spree.admin.tab` key. Previously, they were on the top-level, which lead to conflicts when users wanted to override view translations, like this:
+
+```yml
+en:
+  spree:
+    orders:
+      show:
+        thank_you: "Thanks, buddy!"
+```
+
+See #3133 for more information.
+
+    * Ryan Bigg*
