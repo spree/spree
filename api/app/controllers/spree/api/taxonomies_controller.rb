@@ -6,6 +6,7 @@ module Spree
         @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
+        expires_in 3.minutes
         respond_with(@taxonomies)
       end
 
