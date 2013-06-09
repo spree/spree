@@ -19,3 +19,7 @@
 * All API responses now contain a `Cache-Control` header.
 
     *Ryan Bigg*
+
+* Include a `per_page` key in Products API end response so that libraries like jQuery.simplePagination can use this to display a pagination element on the page.
+
+    * Ryan Bigg*

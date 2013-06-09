@@ -20,6 +20,7 @@ module Spree
         json_response["count"].should == 1
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
+        json_response["per_page"].should == Kaminari.config.default_per_page
       end
 
       it "retrieves a list of products by id" do
@@ -28,6 +29,7 @@ module Spree
         json_response["count"].should == 1
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
+        json_response["per_page"].should == Kaminari.config.default_per_page
       end
 
       it "does not return inactive products when queried by ids" do
