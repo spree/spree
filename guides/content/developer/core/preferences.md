@@ -204,7 +204,7 @@ The default Spree preferences in `Spree::AppConfiguration` can be changed using 
 >> Spree::Config.admin_products_per_page
 => 20```
 
-Here we are changing a preference to something other then the default as specified in `Spree::AppConfiguration`. In this case the preference system will persist the new value in the `spree_preferences` table.
+Here we are changing a preference to something other than the default as specified in `Spree::AppConfiguration`. In this case the preference system will persist the new value in the `spree_preferences` table.
 
 ### Configuration Through the Spree Initializer
 

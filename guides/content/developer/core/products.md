@@ -114,7 +114,7 @@ TODO: Flesh out information about prototypes.
 
 Taxonomies provide a simple, yet robust way of categorizing products by enabling store administrators to define as many separate structures as needed.
 
-When working with Taxomonies there are two keys terms to understand:
+When working with Taxonomies there are two keys terms to understand:
 
 * Taxonomy – a hierarchical list which is made up of individual Taxons. Each taxonomy relates to one Taxon, which is its root node.
 * Taxon – a single child node which exists at a given point within a Taxonomy. Each Taxon can contain many (or no) sub / child taxons. Store administrators can define as many Taxonomies as required, and link a product to multiple Taxons from each Taxonomy.
