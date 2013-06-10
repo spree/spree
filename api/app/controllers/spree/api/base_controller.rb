@@ -103,7 +103,7 @@ module Spree
       end
 
       def api_key
-        request.headers["X-Spree-Token"] || params[:token]
+        request.headers.env["X-Spree-Token"] || params[:token]
       end
       helper_method :api_key
 
