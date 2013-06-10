@@ -7,7 +7,7 @@ title: Address
 Retrieve details about a particular address:
 
 ```text
-GET /api/address/1```
+GET /api/addresses/1```
 
 ### Response
 
@@ -19,7 +19,7 @@ GET /api/address/1```
 To update an address, make a request like this:
 
 ```text
-PUT /api/address/1?address[firstname]=Ryan```
+PUT /api/addresses/1?address[firstname]=Ryan```
 
 This request will update the `firstname` field for an address to the value of \"Ryan\"
 
