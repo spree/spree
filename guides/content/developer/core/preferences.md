@@ -403,8 +403,7 @@ The path to the layout of your application, relative to the `app/views` director
 ```ruby
 Spree.config do |config|
   config.layout = "application"
-end
-```
+end```
 
 `logo`
 
