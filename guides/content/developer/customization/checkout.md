@@ -257,7 +257,7 @@ For more information on the state machine gem please see the
 
 ## Checkout Customization
 
-It is possible to to override the default checkout workflow to meet your store's
+It is possible to override the default checkout workflow to meet your store's
 needs.
 
 ### Customizing an Existing Step
@@ -293,7 +293,7 @@ This callback would prevent transitioning to the `delivery` step if
 ### Customizing the View for a Particular Step
 
 Each of the default checkout steps has its own partial defined in the
-spree_core's `app/views/spree/checkout` directory. Changing the view for an
+spree frontend `app/views/spree/checkout` directory. Changing the view for an
 existing step is as simple as overriding the relevant partial in your site
 extension. It's also possible the default partial in question defines a usable
 theme hook, in which case you could add your functionality by using
