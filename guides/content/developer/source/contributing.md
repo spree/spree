@@ -255,7 +255,12 @@ When referring to the state of an object - an order, for example - the state nam
 
     Orders that are in the `address` state do not have valid shipping and billing addresses assigned to them yet.
 
-This same style is used for attribute names and their settings, method names, event names, parameter names, and parameter settings.
+This same style is used for attribute names and their settings, method names, event names, parameter names, parameter settings, and data types.
+
+####Path Names####
+Path names should be set off with tick (`) marks, and should include enough of the directory structure to make it clear which file is being referenced. For example:
+
+    They are defined in `core/app/models/spree/app_configuration.rb`...
 
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.

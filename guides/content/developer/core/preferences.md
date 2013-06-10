@@ -5,29 +5,27 @@ section: core
 
 ## Overview
 
-Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like site name and description. Additional preferences can be added by your application or included extensions.
+Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like `site_name` and`site_url`. Additional preferences can be added by your application or included extensions.
 
-Preferences for models can be added without modifying the database. All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to User for "e-mail notifications". Users would have the ability to modify this value without adding a column to your database table.
+Preferences for models can be added without modifying the database. All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to `User` for e-mail notifications. Users would have the ability to modify this value without adding a column to your database table.
 
 Extensions may add to the Spree General Settings or create their own namespaced preferences.
 
-The first several sections of this guide describe preferences in a very general way. If you're just interested in making modifications to the existing preferences, you can skip ahead to the [Configuring Spree Preferences]("#configuring-spree-preferences section"). If you would like a more in-depth understanding of the underlying concepts used by the preference system, please read on.
+The first several sections of this guide describe preferences in a very general way. If you're just interested in making modifications to the existing preferences, you can skip ahead to the [Configuring Spree Preferences section](#configuring-spree-preferences). If you would like a more in-depth understanding of the underlying concepts used by the preference system, please read on.
 
 ### Motivation
 
 Preferences for models within an application are very common. Although the rule of thumb is to keep the number of preferences available to a minimum, sometimes it's necessary if you want users to have optional preferences like disabling e-mail notifications.
 
-General Settings for an application like "site name" are also needed to customize your Spree store.
+General application settings like `site_name` are also available to help customize your Spree store.
 
-Both use cases are handled by the Spree Preferences. They are easy to define, provide quick cached reads, persist across restarts and do not require additional columns to be added to your models.
-
-The system was heavily refactored in Spree 1.0 for performance.
+Both use cases are handled by Spree Preferences. They are easy to define, provide quick cached reads, persist across restarts and do not require additional columns to be added to your models' tables.
 
 ## General Settings
 
-Spree comes with many application-wide preferences. They are defined in `core/app/models/spree/app_configuration.rb` and made available to your code through Spree::Config, e.g., `Spree::Config.site_name`.
+Spree comes with many application-wide preferences. They are defined in `core/app/models/spree/app_configuration.rb` and made available to your code through `Spree::Config`, e.g., `Spree::Config.site_name`.
 
-A limited set of the general settings are available in the admin interface (`/admin/general_settings`).
+A limited set of the general settings are available in the admin interface of your store (`/admin/general_settings`).
 
 You can add additional preferences under the `spree/app_configuration` namespace or create your own subclass of `Preferences::Configuration`.
 
@@ -69,19 +67,19 @@ end```
 
 In the above model, five preferences have been defined:
 
-* hot_salsa
-* dark_chocolate
-* color
-* favorite_number
-* language
+* `hot_salsa`
+* `dark_chocolate`
+* `color`
+* `favorite_number`
+* `language`
 
 For each preference, a data type is provided. The types available are:
 
-* boolean
-* string
-* password
-* integer
-* text
+* `boolean`
+* `string`
+* `password`
+* `integer`
+* `text`
 
 An optional default value may be defined.
 
@@ -116,7 +114,7 @@ Check if a preference is available:
 ```ruby
 user.has_preference? :hot_salsa```
 
-### Generic methods
+### Generic Methods
 
 Each shortcut method is essentially a wrapper for the various generic methods shown below:
 
@@ -142,14 +140,14 @@ Writer method:
 user.set_preference(:hot_salsa, false)     # => false
 user.set_preference(:language, "English")  # => "English"```
 
-### Accessing all preferences
+### Accessing All Preferences
 
 You can get a hash of all stored preferences by accessing the `preferences` helper:
 
 ```ruby
 user.preferences # => {"language"=>"English", "color"=>nil}```
 
-This hash will contain the value for every preference that has been defined for the model, whether that's the default value or one that has been previously stored.
+This hash will contain the value for every preference that has been defined for the model instance, whether the value is the default or one that has been previously stored.
 
 ### Default and Type
 
@@ -163,7 +161,7 @@ Types are used to generate forms or display the preference. You can also get the
 ```ruby
 user.preferred_color_type # => :string```
 
-## Configuring Spree Preferences
+## <a id="configuring-spree-preferences"></a>Configuring Spree Preferences
 
 Up until now we've been discussing the general preference system that was adapted to Spree. This has given you a general idea of what types of preference features are theoretically supported. Now, let's start to look specifically at how Spree is using these preferences for configuration.
 
