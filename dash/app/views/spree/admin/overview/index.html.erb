@@ -25,7 +25,7 @@
         }
     }, 10000);
   <% end %>
-<% else %>
+<% elsif Spree::Dash::Config.jirafe_available %>
   <div class="no-border-top analytics-description">
     <div class="description-text">
       <hgroup>
@@ -41,11 +41,12 @@
       </ul>
     </div>
     <div class="preview-buttons filter-actions actions">
-      <%= link_to_with_icon 'icon-ok', Spree.t(:activate), admin_analytics_sign_up_path, :class => 'button' %>
+      <%= link_to_with_icon 'icon-ok', Spree.t(:activate), admin_analytics_register_path, :class => 'button' %>
       <span class="or">&nbsp; <%= Spree.t(:or) %> &nbsp;</span>
       <%= link_to_with_icon 'icon-info-sign', Spree.t(:learn_more), "http://spreecommerce.com/blog/2012/01/31/introducing-spree-analytics/", :class => 'button', :target => '_blank' %>
     </div>
   </div>
-
   <div class="analytics_splash"></div>
+<% else %>
+  <%= Spree.t(:'dash.jirafe.currently_unavailable') %>
 <% end %>

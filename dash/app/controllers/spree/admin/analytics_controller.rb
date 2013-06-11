@@ -10,7 +10,14 @@ module Spree
         Spree::Dash::Config.app_token = store[:app_token]
         Spree::Dash::Config.site_id = store[:site_id]
         Spree::Dash::Config.token = store[:site_token]
+        Spree::Dash::Config.jirafe_available = true
         redirect_to admin_path
+
+      rescue Spree::Dash::JirafeUnavailable => e
+        session[:jirafe_unavailable_since] = Time.now.to_i
+        flash[:error] = e.message
+        Spree::Dash::Config.jirafe_available = false
+        redirect_to spree.admin_path
       rescue Spree::Dash::JirafeException => e
         flash[:error] = e.message
         redirect_to root_path

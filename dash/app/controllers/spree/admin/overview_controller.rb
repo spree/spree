@@ -8,7 +8,14 @@ module Spree
                        :japanese => 'ja_JA' }
 
     def index
-      redirect_to admin_analytics_register_path unless Spree::Dash::Config.configured?
+      if session[:jirafe_unavailable_since]
+        jirafe_unavailable_since = Time.at(session[:jirafe_unavailable_since])
+        if jirafe_unavailable_since < Time.now - 10.minutes
+          redirect_to admin_analytics_register_path if !dash_config.configured?
+        end
+      else
+        redirect_to admin_analytics_register_path if !dash_config.configured?
+      end
 
       if JIRAFE_LOCALES.values.include? params[:locale]
         Spree::Dash::Config.locale = params[:locale]
@@ -30,6 +37,10 @@ module Spree
 
     def model_class
       Spree::Admin::OverviewController
+    end
+
+    def dash_config
+      Spree::Dash::Config
     end
   end
 end
