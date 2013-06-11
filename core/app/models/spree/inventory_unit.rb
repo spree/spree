@@ -9,7 +9,7 @@ module Spree
     scope :shipped, -> { where state: 'shipped' }
     scope :backordered_per_variant, ->(stock_item) do
       includes(:shipment)
-        .where("spree_shipments.state != 'canceled'")
+        .where("spree_shipments.state != 'canceled'").references(:shipment)
         .where(variant_id: stock_item.variant_id)
         .backordered.order("#{self.table_name}.created_at ASC")
     end
