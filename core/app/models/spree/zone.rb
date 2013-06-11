@@ -2,7 +2,9 @@ module Spree
   class Zone < ActiveRecord::Base
     has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember"
     has_many :tax_rates, dependent: :destroy
-    has_and_belongs_to_many :shipping_methods
+    has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones',
+                                               :class_name => 'Spree::ShippingMethod',
+                                               :foreign_key => 'zone_id'
 
     validates :name, presence: true, uniqueness: true
     after_save :remove_defunct_members
