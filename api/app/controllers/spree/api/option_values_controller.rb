@@ -17,7 +17,7 @@ module Spree
 
       def create
         authorize! :create, Spree::OptionValue
-        @option_value = scope.new(params[:option_value])
+        @option_value = scope.new(option_value_params)
         if @option_value.save
           render :show, :status => 201
         else
@@ -27,7 +27,7 @@ module Spree
 
       def update
         @option_value = scope.accessible_by(current_ability, :update).find(params[:id])
-        if @option_value.update_attributes(params[:option_value])
+        if @option_value.update_attributes(option_value_params)
           render :show
         else
           invalid_resource!(@option_value)
@@ -48,6 +48,10 @@ module Spree
           else
             @scope ||= Spree::OptionValue.accessible_by(current_ability, :read).scoped
           end
+        end
+
+        def option_value_params
+          params.require(:option_value).permit(permitted_option_type_attributes)
         end
     end
   end

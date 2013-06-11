@@ -6,7 +6,7 @@ module Spree
 
       def create
         authorize! :create, Variant
-        @variant = scope.new(params[:variant])
+        @variant = scope.new(variant_params)
         if @variant.save
           respond_with(@variant, :status => 201, :default_template => :show)
         else
@@ -36,7 +36,7 @@ module Spree
 
       def update
         @variant = scope.accessible_by(current_ability, :update).find(params[:id])
-        if @variant.update_attributes(params[:variant])
+        if @variant.update_attributes(variant_params)
           respond_with(@variant, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
@@ -66,6 +66,10 @@ module Spree
             end
           end
           variants
+        end
+
+        def variant_params
+          params.require(:variant).permit(permitted_variant_attributes)
         end
     end
   end
