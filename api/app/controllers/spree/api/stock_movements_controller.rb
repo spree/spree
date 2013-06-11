@@ -23,21 +23,6 @@ module Spree
         end
       end
 
-      def update
-        @stock_movement = StockMovement.accessible_by(current_ability, :update).find(params[:id])
-        if @stock_movement.update_attributes(params[:stock_movement])
-          respond_with(@stock_movement, status: 200, default_template: :show)
-        else
-          invalid_resource!(@stock_movement)
-        end
-      end
-
-      def destroy
-        @stock_movement = StockMovement.accessible_by(current_ability, :destroy).find(params[:id])
-        @stock_movement.destroy
-        respond_with(@stock_movement, status: 204)
-      end
-
       private
 
       def stock_location
