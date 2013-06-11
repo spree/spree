@@ -12,12 +12,17 @@ module Spree
         @address = Address.find(params[:id])
         authorize! :update, @address
 
-        if @address.update_attributes(params[:address])
+        if @address.update_attributes(address_params)
           respond_with(@address, :default_template => :show)
         else
           invalid_resource!(@address)
         end
       end
+
+      private
+        def address_params
+          params.require(:address).permit(permitted_address_attributes)
+        end
     end
   end
 end
