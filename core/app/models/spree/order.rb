@@ -363,7 +363,7 @@ module Spree
 
     def credit_cards
       credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
-      CreditCard.scoped(conditions: { id: credit_card_ids })
+      CreditCard.all(conditions: { id: credit_card_ids })
     end
 
     # Finalizes an in progress order after checkout is complete.
