@@ -60,12 +60,6 @@ module Spree
         response.status.should == 201
         json_response.should have_attributes(attributes)
       end
-
-      it 'can delete a stock movement' do
-        api_delete :destroy, id: stock_movement.to_param
-        response.status.should == 204
-        lambda { stock_movement.reload }.should raise_error(ActiveRecord::RecordNotFound)
-      end
     end
   end
 end
