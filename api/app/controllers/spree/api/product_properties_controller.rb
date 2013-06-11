@@ -21,7 +21,7 @@ module Spree
 
       def create
         authorize! :create, ProductProperty
-        @product_property = @product.product_properties.new(params[:product_property])
+        @product_property = @product.product_properties.new(product_property_params)
         if @product_property.save
           respond_with(@product_property, :status => 201, :default_template => :show)
         else
@@ -32,7 +32,7 @@ module Spree
       def update
         if @product_property
           authorize! :update, @product_property
-          @product_property.update_attributes(params[:product_property])
+          @product_property.update_attributes(product_property_params)
           respond_with(@product_property, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product_property)
@@ -62,6 +62,10 @@ module Spree
             @product_property ||= @product.product_properties.includes(:property).where('spree_properties.name' => params[:id]).first
             authorize! :read, @product_property
           end
+        end
+
+        def product_property_params
+          params.require(:product_property).permit(permitted_product_properties_attributes)
         end
     end
   end

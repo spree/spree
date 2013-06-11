@@ -16,7 +16,7 @@ module Spree
       end
 
       def create
-        @payment = @order.payments.build(params[:payment])
+        @payment = @order.payments.build(payment_params)
         if @payment.save
           respond_with(@payment, :status => 201, :default_template => :show)
         else
@@ -73,6 +73,10 @@ module Spree
           @error = e.message
           render "spree/api/errors/gateway_error", :status => 422
         end
+      end
+
+      def payment_params
+        params.require(:payment).permit(permitted_payment_attributes)
       end
     end
   end

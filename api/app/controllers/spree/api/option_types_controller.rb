@@ -17,7 +17,7 @@ module Spree
 
       def create
         authorize! :create, Spree::OptionType
-        @option_type = Spree::OptionType.new(params[:option_type])
+        @option_type = Spree::OptionType.new(option_type_params)
         if @option_type.save
           render :show, :status => 201
         else
@@ -27,7 +27,7 @@ module Spree
 
       def update
         @option_type = Spree::OptionType.accessible_by(current_ability, :update).find(params[:id])
-        if @option_type.update_attributes(params[:option_type])
+        if @option_type.update_attributes(option_type_params)
           render :show
         else
           invalid_resource!(@option_type)
@@ -39,6 +39,11 @@ module Spree
         @option_type.destroy
         render :text => nil, :status => 204
       end
+
+      private
+        def option_type_params
+          params.require(:option_type).permit(permitted_option_type_attributes)
+        end
     end
   end
 end

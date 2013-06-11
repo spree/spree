@@ -3,8 +3,10 @@ require_dependency 'spree/api/controller_setup'
 module Spree
   module Api
     class BaseController < ActionController::Metal
+      include ActionController::StrongParameters
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
+      include Spree::Core::ControllerHelpers::StrongParameters
       include ::ActionController::Head
 
       self.responder = Spree::Api::Responders::AppResponder
@@ -103,7 +105,7 @@ module Spree
       end
 
       def api_key
-        request.headers["X-Spree-Token"] || params[:token]
+        request.headers.env["X-Spree-Token"] || params[:token]
       end
       helper_method :api_key
 

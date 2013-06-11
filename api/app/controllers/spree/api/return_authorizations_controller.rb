@@ -4,7 +4,7 @@ module Spree
 
       def create
         authorize! :create, ReturnAuthorization
-        @return_authorization = order.return_authorizations.build(params[:return_authorization], :as => :api)
+        @return_authorization = order.return_authorizations.build(return_authorization_params)
         if @return_authorization.save
           respond_with(@return_authorization, :status => 201, :default_template => :show)
         else
@@ -38,7 +38,7 @@ module Spree
 
       def update
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
-        if @return_authorization.update_attributes(params[:return_authorization])
+        if @return_authorization.update_attributes(return_authorization_params)
           respond_with(@return_authorization, :default_template => :show)
         else
           invalid_resource!(@return_authorization)
@@ -52,6 +52,9 @@ module Spree
         authorize! :read, @order
       end
 
+      def return_authorization_params
+        params.require(:return_authorization).permit(permitted_return_authorization_attributes)
+      end
     end
   end
 end
