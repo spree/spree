@@ -10,12 +10,11 @@ describe "Analytics Activation" do
     Spree::Dash::Config.app_token = nil
     Spree::Dash::Config.site_id = nil
     Spree::Dash::Config.token = nil
-
-    Spree::Dash::Jirafe.should_receive(:register).
-                        and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
   end
 
   it "user is signed up for analytics the first time they visit the dashboard" do
+    Spree::Dash::Jirafe.should_receive(:register).
+                        and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
       visit spree.admin_path
 
       Spree::Dash::Config.app_id.should eq '1'
@@ -24,7 +23,15 @@ describe "Analytics Activation" do
       Spree::Dash::Config.token.should eq '4'
   end
 
+  it "shows a 'service unavailable' error if Jirafe is unavailable" do
+    Spree::Dash::Jirafe.should_receive(:register).and_raise(Spree::Dash::JirafeUnavailable)
+    visit spree.admin_path
+    page.should have_content("Jirafe is currently unavailable. Spree will automatically try connecting later.")
+  end
+
   it "can edit exisiting anayltics information" do
+    Spree::Dash::Jirafe.should_receive(:register).
+                        and_return({ :app_id => '1', :app_token => '2', :site_id => '3', :site_token => '4' })
     visit spree.admin_path
 
     click_link "Configuration"

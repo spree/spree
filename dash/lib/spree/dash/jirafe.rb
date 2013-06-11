@@ -1,6 +1,7 @@
 module Spree
   module Dash
     class JirafeException < Exception; end
+    class JirafeUnavailable < Exception; end
 
     class Jirafe
       include HTTParty
@@ -32,12 +33,15 @@ module Spree
             }
           }
           response = post '/applications', options
-          raise JirafeException, 'unable to create jirafe application' unless response.code == 200 &&
-                                                                              response['app_id'].present? &&
-                                                                              response['token'].present?
-          store[:app_id] = response['app_id']
-          store[:app_token] = response['token']
-          store
+          if response.code == 200
+            store[:app_id] = response['app_id']
+            store[:app_token] = response['token']
+            return store
+          elsif response.code == 503
+            raise JirafeUnavailable, I18n.t(:'spree.dash.jirafe.currently_unavailable')
+          else
+            raise JirafeException, 'unable to create jirafe application'
+          end
         end
 
         def synchronize_resources(store)

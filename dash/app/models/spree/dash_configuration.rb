@@ -5,6 +5,7 @@ module Spree
     preference :site_id, :string
     preference :token, :string
     preference :locale, :string, :default => 'en_US'
+    preference :jirafe_available, :boolean, :default => true
 
     def configured?
       preferred_app_id.present? and preferred_site_id.present? and preferred_token.present?
