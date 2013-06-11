@@ -19,10 +19,9 @@ module Spree
         count_on_hand = 0
         if params[:stock_item].has_key?(:count_on_hand)
           count_on_hand = params[:stock_item][:count_on_hand].to_i
-          params[:stock_item].delete(:count_on_hand)
         end
 
-        @stock_item = scope.new(params[:stock_item])
+        @stock_item = scope.new(stock_item_params)
         if @stock_item.save
           @stock_item.adjust_count_on_hand(count_on_hand)
           respond_with(@stock_item, status: 201, default_template: :show)
@@ -62,6 +61,10 @@ module Spree
 
       def scope
         @stock_location.stock_items.accessible_by(current_ability, :read).includes(:variant => :product)
+      end
+
+      def stock_item_params
+        params.require(:stock_item).permit(permitted_stock_item_attributes)
       end
     end
   end

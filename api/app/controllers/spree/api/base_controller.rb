@@ -3,8 +3,10 @@ require_dependency 'spree/api/controller_setup'
 module Spree
   module Api
     class BaseController < ActionController::Metal
+      include ActionController::StrongParameters
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
+      include Spree::Core::ControllerHelpers::StrongParameters
       include ::ActionController::Head
       include ::ActionController::ConditionalGet
 

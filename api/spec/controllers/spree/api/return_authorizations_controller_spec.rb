@@ -161,7 +161,7 @@ module Spree
       end
 
       it "can add a new return authorization to an existing order" do
-        api_post :create, :return_autorization => { :order_id => order.number, :amount => 14.22, :reason => "Defective" }
+        api_post :create, :order_id => order.number, :return_authorization => { :amount => 14.22, :reason => "Defective" }
         response.status.should == 201
         json_response.should have_attributes(attributes)
         json_response["state"].should_not be_blank

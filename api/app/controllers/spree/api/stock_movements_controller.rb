@@ -15,7 +15,7 @@ module Spree
 
       def create
         authorize! :create, StockMovement
-        @stock_movement = scope.new(params[:stock_movement])
+        @stock_movement = scope.new(stock_movement_params)
         if @stock_movement.save
           respond_with(@stock_movement, status: 201, default_template: :show)
         else
@@ -32,6 +32,10 @@ module Spree
 
       def scope
         @stock_location.stock_movements.accessible_by(current_ability, :read)
+      end
+
+      def stock_movement_params
+        params.require(:stock_movement).permit(permitted_stock_movement_attributes)
       end
     end
   end
