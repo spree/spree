@@ -128,8 +128,6 @@ module Spree
       def before_delivery
         return if params[:order].present?
 
-        @order.create_proposed_shipments
-
         packages = @order.shipments.map { |s| s.to_package }
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
       end

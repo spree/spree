@@ -92,11 +92,6 @@ module Spree
           @order.ship_address ||= Address.default
         end
 
-        def before_delivery
-          return if params[:order].present?
-          @order.create_proposed_shipments
-        end
-
         def before_payment
           @order.payments.destroy_all if request.put?
         end
