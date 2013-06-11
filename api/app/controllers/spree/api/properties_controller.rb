@@ -20,7 +20,7 @@ module Spree
 
       def create
         authorize! :create, Property
-        @property = Spree::Property.new(params[:property])
+        @property = Spree::Property.new(property_params)
         if @property.save
           respond_with(@property, :status => 201, :default_template => :show)
         else
@@ -31,7 +31,7 @@ module Spree
       def update
         if @property
           authorize! :update, @property
-          @property.update_attributes(params[:property])
+          @property.update_attributes(property_params)
           respond_with(@property, :status => 200, :default_template => :show)
         else
           invalid_resource!(@property)
@@ -56,6 +56,9 @@ module Spree
         @property = Spree::Property.accessible_by(current_ability, :read).find_by_name!(params[:id])
       end
 
+      def property_params
+        params.require(:property).permit(permitted_property_attributes)
+      end
     end
   end
 end

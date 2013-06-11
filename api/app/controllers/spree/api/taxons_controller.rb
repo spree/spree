@@ -26,7 +26,7 @@ module Spree
 
       def create
         authorize! :create, Taxon
-        @taxon = Taxon.new(params[:taxon])
+        @taxon = Taxon.new(taxon_params)
         @taxon.taxonomy_id = params[:taxonomy_id]
         taxonomy = Taxonomy.find_by_id(params[:taxonomy_id])
 
@@ -46,7 +46,7 @@ module Spree
 
       def update
         authorize! :update, taxon
-        if taxon.update_attributes(params[:taxon])
+        if taxon.update_attributes(taxon_params)
           respond_with(taxon, :status => 200, :default_template => :show)
         else
           invalid_resource!(taxon)
@@ -71,6 +71,13 @@ module Spree
         @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
       end
 
+      def taxon_params
+        if params[:taxon] && !params[:taxon].empty?
+          params.require(:taxon).permit(permitted_taxon_attributes)
+        else
+          {}
+        end
+      end
     end
   end
 end

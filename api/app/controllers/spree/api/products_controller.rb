@@ -25,7 +25,7 @@ module Spree
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
-        @product = Product.new(params[:product])
+        @product = Product.new(product_params)
         if @product.save
           respond_with(@product, :status => 201, :default_template => :show)
         else
@@ -36,7 +36,7 @@ module Spree
       def update
         @product = find_product(params[:id])
         authorize! :update, @product
-        if @product.update_attributes(params[:product])
+        if @product.update_attributes(product_params)
           respond_with(@product, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
@@ -50,6 +50,11 @@ module Spree
         @product.variants_including_master.update_all(:deleted_at => Time.now)
         respond_with(@product, :status => 204)
       end
+
+      private
+        def product_params
+          params.require(:product).permit(permitted_product_attributes)
+        end
     end
   end
 end
