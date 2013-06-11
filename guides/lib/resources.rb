@@ -196,6 +196,7 @@ module Spree
           "permalink"=>"ruby-on-rails-tote",
           "option_values"=> [OPTION_VALUE],
           "images"=> [IMAGE],
+          "description"=>"A text description of the product."
        }
 
     PRODUCT_PROPERTY =
