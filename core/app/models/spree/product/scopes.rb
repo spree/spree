@@ -53,7 +53,7 @@ module Spree
     # This scope selects products in taxon AND all its descendants
     # If you need products only within one taxon use
     #
-    #   Spree::Product.taxons_id_eq(x)
+    #   Spree::Product.joins(:taxons).where(Taxon.table_name => { :id => taxon.id })
     #
     # If you're using count on the result of this scope, you must use the
     # `:distinct` option as well:
