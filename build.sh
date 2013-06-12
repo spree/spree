@@ -5,5 +5,4 @@
  cd api; set_gemfile; rm Gemfile.lock; bundle install; bundle exec rspec spec
  cd ../backend; set_gemfile; rm Gemfile.lock; bundle install; bundle exec rspec spec
  cd ../core; set_gemfile; rm Gemfile.lock; bundle install; bundle exec rspec spec
- cd ../dash; set_gemfile; rm Gemfile.lock; bundle install; bundle exec rspec spec
  cd ../frontend; set_gemfile; rm Gemfile.lock; bundle install; bundle exec rspec spec
