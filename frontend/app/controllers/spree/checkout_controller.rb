@@ -133,10 +133,12 @@ module Spree
       end
 
       def before_payment
-        packages = @order.shipments.map { |s| s.to_package }
-        @differentiator = Spree::Stock::Differentiator.new(@order, packages)
-        @differentiator.missing.each do |variant, quantity|
-          @order.contents.remove(variant, quantity)
+        if @order.checkout_steps.include? "delivery"
+          packages = @order.shipments.map { |s| s.to_package }
+          @differentiator = Spree::Stock::Differentiator.new(@order, packages)
+          @differentiator.missing.each do |variant, quantity|
+            @order.contents.remove(variant, quantity)
+          end
         end
       end
 
