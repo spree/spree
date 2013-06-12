@@ -21,7 +21,6 @@ Spree gem you automatically require all of the necessary gem dependencies which 
 * spree_backend (Admin area)
 * spree_cmd (Command-line tools)
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
-* spree_dash (Analytics dashboard, depends on backend)
 * spree_sample (Sample data)
 
 All of the gems are designed to work together to provide a fully functional
