@@ -14,10 +14,6 @@ describe "Homepage" do
         within('h1') { page.should have_content("Listing Orders") }
       end
 
-      it "should have a link to overview" do
-        page.find_link("Overview")['/admin']
-      end
-
       it "should have a link to orders" do
         page.find_link("Orders")['/admin/orders']
       end
@@ -63,7 +59,6 @@ describe "Homepage" do
 
     it 'should only display tabs fakedispatch has access to' do
       visit spree.admin_path
-      page.should have_link('Overview')
       page.should have_link('Orders')
       page.should_not have_link('Products')
       page.should_not have_link('Promotions')
