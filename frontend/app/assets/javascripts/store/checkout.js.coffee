@@ -45,6 +45,7 @@ Spree.ready ($) ->
         statePara.show()
         stateSpanRequired.show()
         stateSelect.addClass('required') if statesRequired
+        stateSelect.removeClass('hidden')
         stateInput.removeClass('required')
       else
         stateSelect.hide().prop 'disabled', true
