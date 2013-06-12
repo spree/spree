@@ -13,7 +13,7 @@ module Spree
         Spree::Dash::Config.jirafe_available = true
         redirect_to admin_path
 
-      rescue Spree::Dash::JirafeUnavailable => e
+      rescue Spree::Dash::JirafeUnavailable, SocketError => e
         session[:jirafe_unavailable_since] = Time.now.to_i
         flash[:error] = e.message
         Spree::Dash::Config.jirafe_available = false

@@ -26,7 +26,14 @@ describe "Analytics Activation" do
   it "shows a 'service unavailable' error if Jirafe is unavailable" do
     Spree::Dash::Jirafe.should_receive(:register).and_raise(Spree::Dash::JirafeUnavailable)
     visit spree.admin_path
-    page.should have_content("Jirafe is currently unavailable. Spree will automatically try connecting later.")
+    page.should have_content("Jirafe is currently unavailable. Spree will automatically connect to Jirafe once it is available.")
+  end
+
+  # Regression test for #3090
+  it "shows a 'service unavailable' error if Jirafe is unreachable" do
+    Spree::Dash::Jirafe.should_receive(:register).and_raise(SocketError)
+    visit spree.admin_path
+    page.should have_content("Jirafe is currently unavailable. Spree will automatically connect to Jirafe once it is available.")
   end
 
   it "can edit exisiting anayltics information" do
