@@ -9,9 +9,6 @@ env:
   - GEM=core DB=sqlite
   - GEM=core DB=mysql
   - GEM=core DB=postgres
-  - GEM=dash DB=sqlite
-  - GEM=dash DB=mysql
-  - GEM=dash DB=postgres
   - GEM=promo DB=sqlite
   - GEM=promo DB=mysql
   - GEM=promo DB=postgres
