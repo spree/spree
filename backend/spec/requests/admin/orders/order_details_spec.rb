@@ -72,6 +72,7 @@ describe "Order Details", js: true do
         end
         select2 "Default", :from => "Shipping Method"
         click_icon :ok
+        sleep(1) # wait for API request to finish
 
         page.should have_content("Default")
       end
@@ -204,6 +205,7 @@ describe "Order Details", js: true do
       end
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
+      sleep 1
 
       page.should have_content("Default")
     end
