@@ -438,6 +438,7 @@ en:
       jirafe:
         app_id: App ID
         app_token: App Token
+        currently_unavailable: Jirafe is currently unavailable. Spree will automatically connect to Jirafe once it is available.
         explanation: The fields below may already be populated if you chose to register with Jirafe from the admin dashboard.
         header: Jirafe Analytics Settings
         site_id: Site ID
