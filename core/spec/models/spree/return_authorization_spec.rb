@@ -27,6 +27,11 @@ describe Spree::ReturnAuthorization do
         return_authorization.inventory_units.size.should == 1
       end
 
+      it "should associate inventory units as shipped" do
+        return_authorization.add_variant(variant.id, 1)
+        expect(return_authorization.inventory_units.where(state: 'shipped').size).to eq 1
+      end
+
       it "should update order state" do
         order.should_receive(:authorize_return!)
         return_authorization.add_variant(variant.id, 1)
@@ -34,16 +39,17 @@ describe Spree::ReturnAuthorization do
     end
 
     context "on rma that already has inventory_units" do
-      before { order.stub(:awaiting_return? => true) }
+      before do 
+        return_authorization.add_variant(variant.id, 1)
+      end
 
-      xit "should associate inventory unit" do
-        order.stub(:authorize_return!)
-        return_authorization.add_variant(variant.id, 2)
-        return_authorization.inventory_units.size.should == 2
+      it "should not associate more inventory units than there are on the order" do
+        return_authorization.add_variant(variant.id, 1)
+        expect(return_authorization.inventory_units.size).to eq 1
       end
 
       it "should not update order state" do
-        return_authorization.add_variant(variant.id, 1)
+        expect{return_authorization.add_variant(variant.id, 1)}.to_not change{order.state}
       end
 
     end
