@@ -40,6 +40,7 @@ describe "Shipments" do
       within_row(1) { click_icon 'resize-horizontal' }
       targetted_select2 'LA', from: '#s2id_item_stock_location'
       click_icon :ok
+      sleep(1)
       page.should have_selector("table.stock-contents:eq(2)")
 
       within_row(2) { click_icon 'resize-horizontal' }
