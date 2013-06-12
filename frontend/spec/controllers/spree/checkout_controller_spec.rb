@@ -274,4 +274,22 @@ describe Spree::CheckoutController do
       end
     end
   end
+
+  context "order doesn't have a delivery step" do
+    before do
+      order.stub(:checkout_steps => ["cart", "payment"])
+    end
+
+    it "doesn't remove unshippable items before payment" do
+      expect {
+        spree_post :update, { :state => "payment" }
+      }.to_not change { order.line_items }
+    end
+  end
+
+  it "does remove unshippable items before payment" do
+    expect {
+      spree_post :update, { :state => "payment" }
+    }.to change { order.line_items }
+  end
 end
