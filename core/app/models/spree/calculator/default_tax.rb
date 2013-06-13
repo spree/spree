@@ -36,7 +36,8 @@ module Spree
           if rate.included_in_price
             deduced_total_by_rate(line_item.total, rate)
           else
-            round_to_two_places(line_item.total * rate.amount)
+	    adjusted_total = line_items_total + order.promo_total + order.ship_total
+            round_to_two_places(adjusted_total * rate.amount)
           end
         else
           0
