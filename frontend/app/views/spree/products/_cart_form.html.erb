@@ -27,10 +27,10 @@
         
         <div id="product-price">
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
-          <div><span class="price selling" itemprop="price"><%= display_price(@product) %></span></div>
+            <div><span class="price selling" itemprop="price"><%= display_price(@product) %></span><span itemprop="priceCurrency" content="<%= @product.currency %>"></span></div>
           <% if @product.master.in_stock? %>
             <link itemprop="availability" href="http://schema.org/InStock" />
-          <% end %>
+          <% end %> 
         </div>
 
         <div class="add-to-cart">
