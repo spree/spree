@@ -81,5 +81,7 @@ Spree::Core::Engine.routes.draw do
       resources :stock_movements
       resources :stock_items
     end
+
+    get '/config/money', :to => 'config#money'
   end
 end
