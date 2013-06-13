@@ -23,3 +23,7 @@
 * Include a `per_page` key in Products API end response so that libraries like jQuery.simplePagination can use this to display a pagination element on the page.
 
     * Ryan Bigg*
+
+* Line item responses now contain `single_display_amount` and `display_amount` for "pretty" versions of the single and total amount for a line item, as well as a `total` node which is an "ugly" version of the total amount of a line item.
+
+    * Ryan Bigg
