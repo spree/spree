@@ -472,9 +472,9 @@ env = ENV["RAILS_ENV"] || "development"
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete documentation.
 worker_processes 4
 
-# listen on both a Unix domain socket and a TCP port, # we use a shorter backlog
-# for quicker failover when busy listen "/tmp/[application's name].socket",
-backlog: 64
+# listen on both a Unix domain socket and a TCP port, 
+# we use a shorter backlog for quicker failover when busy
+listen "/tmp/[application's name].socket", backlog: 64
 
 # Preload our app for more speed
 preload_app true
