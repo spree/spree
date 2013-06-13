@@ -44,6 +44,11 @@ module Spree
       assert_unauthorized!
     end
 
+    it "can view an order if the token is known" do
+      api_get :show, :id => order.to_param, :token => order.token
+      response.status.should == 200
+    end
+
     it "cannot cancel an order that doesn't belong to them" do
       order.update_attribute(:completed_at, Time.now)
       order.update_attribute(:shipment_state, "ready")

@@ -27,3 +27,7 @@
 * Line item responses now contain `single_display_amount` and `display_amount` for "pretty" versions of the single and total amount for a line item, as well as a `total` node which is an "ugly" version of the total amount of a line item.
 
     * Ryan Bigg
+
+* /api/orders endpoints now accept a `?token` parameter which should be the order's token. This can be used to authorize actions on an order without having to pass in an API key.
+
+    * Ryan Bigg

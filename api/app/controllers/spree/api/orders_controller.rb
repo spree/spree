@@ -5,13 +5,14 @@ module Spree
       # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
       Order.checkout_steps.keys.each do |step|
         define_method step do
-          authorize! :update, @order
+          find_order
+          authorize! :update, @order, params[:token]
         end
       end
 
       def cancel
-        @order = Order.find_by_number!(params[:id])
-        authorize! :update, @order
+        find_order
+        authorize! :update, @order, params[:token]
         @order.cancel!
         render :show
       end
@@ -23,8 +24,7 @@ module Spree
       end
 
       def empty
-        @order = Order.find_by_number!(params[:id])
-        authorize! :update, @order
+        find_order
         @order.line_items.destroy_all
         @order.update!
         render :text => nil, :status => 200
@@ -37,14 +37,12 @@ module Spree
       end
 
       def show
-        @order = Order.find_by_number!(params[:id])
-        authorize! :read, @order
+        find_order
         respond_with(@order)
       end
 
       def update
-        @order = Order.find_by_number!(params[:id])
-        authorize! :update, @order
+        find_order
         # Parsing line items through as an update_attributes call in the API will result in
         # many line items for the same variant_id being created. We must be smarter about this,
         # hence the use of the update_line_items method, defined within order_decorator.rb.
@@ -71,6 +69,11 @@ module Spree
         else
           render :could_not_transition, :status => 422
         end
+      end
+
+      def find_order
+        @order = Order.find_by_number!(params[:id])
+        authorize! :update, @order, params[:token]
       end
 
     end
