@@ -20,7 +20,9 @@
       </ul>
       <div class="payment-method-settings">
         <% @payment_methods.each do |method| %>
-          <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
+          <% if method.source_required? %>
+            <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
+          <% end %>
         <% end %>
       </div>
     </div>
