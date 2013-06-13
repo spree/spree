@@ -393,8 +393,11 @@ module Spree
     LINE_ITEM =
       {
         "id"=>1,
-        "quantity"=>1,
+        "quantity"=>2,
         "price"=>"19.99",
+        "display_single_amount"=> "$19.99",
+        "total_amount"=> "39.99",
+        "display_total_amount"=> "$39.99",
         "variant_id"=>1,
         "variant" => line_item_variant
       }
@@ -404,7 +407,10 @@ module Spree
         "id"=>2,
         "quantity"=>2,
         "price"=>"19.99",
-        "variant_id"=>1,
+        "display_single_amount"=> "$19.99",
+        "total_amount"=> "39.99",
+        "display_total_amount"=> "$39.99",
+        "variant_id"=>2,
         "variant" => line_item_variant
       }
 
