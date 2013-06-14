@@ -4,7 +4,7 @@ module Spree
       before_filter :load_stock_locations, :only => :index
 
       def index
-        @q = StockTransfer.search(params[:q])
+        @q = StockTransfer.ransack(params[:q])
 
         @stock_transfers = @q.result
                              .includes(:stock_movements => { :stock_item => :stock_location })
