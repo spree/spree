@@ -175,7 +175,7 @@ This command will take a couple of minutes to finish running.
 Once it's finished running, run this command to make that version of Ruby the
 default for this user:
 
-rvm use 1.9.3 --default
+    rvm use 1.9.3 --default
 
 Ensure that this version of Ruby is really the new default by running this
 command:
