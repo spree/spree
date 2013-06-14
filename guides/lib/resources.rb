@@ -91,7 +91,6 @@ module Spree
 
       LINKS = {}
       LINKS[:core] = "/developer/"
-      LINKS[:custom] = "/customization/"
       LINKS[:products] = LINKS[:core] + "products"
       LINKS[:variants] = LINKS[:products] + "#variants"
       LINKS[:prices] = LINKS[:core] + "#prices"
@@ -109,7 +108,6 @@ module Spree
       LINKS[:preferences] = LINKS[:core] + "preferences"
       LINKS[:checkout] = LINKS[:core] + "checkout"
       LINKS[:extensions] = LINKS[:core] + "extensions_tutorial"
-      LINKS[:checkout] = LINKS[:custom] + "checkout"
 
       def warning(message)
         %(<div class='warning'>) + message + %(</div>)
