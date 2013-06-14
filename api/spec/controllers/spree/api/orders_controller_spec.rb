@@ -106,22 +106,21 @@ module Spree
 
       it "can add line items" do
         api_put :update, :id => order.to_param, :order => { 
-          :line_items_attributes => { 
+          :line_items => { 
             "0" => { :variant_id => create(:variant).id, :quantity => 2 }
           }
         }
-
         response.status.should == 200
         json_response['item_total'].to_f.should_not == order.item_total.to_f
       end
 
       it "can update quantities of existing line items" do
         variant = create(:variant)
-        order.line_items.create!(:variant_id => variant.id, :quantity => 1)
+        line_item = order.line_items.create!(:variant_id => variant.id, :quantity => 1)
 
         api_put :update, :id => order.to_param, :order => {
-          :line_items_attributes => { 
-            "0" => { :variant_id => variant.id, :quantity => 10 }
+          :line_items => { 
+            line_item.id => { :variant_id => variant.id, :quantity => 10 }
           }
         }
 
