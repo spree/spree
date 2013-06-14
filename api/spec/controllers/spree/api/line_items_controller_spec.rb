@@ -21,6 +21,15 @@ module Spree
       required_attributes.should include("quantity", "variant_id")
     end
 
+    context "authenticating with a token" do
+      it "can add a new line item to an existing order" do
+        api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }, :order_token => order.token
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+        json_response["variant"]["name"].should_not be_blank
+      end
+    end
+
     context "as the order owner" do
       before do
         Order.any_instance.stub :user => current_api_user
