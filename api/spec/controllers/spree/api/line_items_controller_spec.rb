@@ -7,7 +7,7 @@ module Spree
     let!(:order) { create(:order_with_line_items) }
 
     let(:product) { create(:product) }
-    let(:attributes) { [:id, :quantity, :price, :variant, :total_amount] }
+    let(:attributes) { [:id, :quantity, :price, :variant, :total, :display_amount, :single_display_amount] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 
     before do
