@@ -107,6 +107,7 @@ module Spree
       LINKS[:promotions] = LINKS[:core] + "promotions"
       LINKS[:activators] = LINKS[:core] + "activators"
       LINKS[:preferences] = LINKS[:core] + "preferences"
+      LINKS[:checkout] = LINKS[:core] + "checkout"
       LINKS[:extensions] = LINKS[:core] + "extensions_tutorial"
       LINKS[:checkout] = LINKS[:custom] + "checkout"
 
