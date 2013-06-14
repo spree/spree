@@ -3,7 +3,8 @@ module Spree
     class LineItemsController < Spree::Api::BaseController
 
       def create
-        @line_item = order.line_items.build(params[:line_item], :as => :api)
+        variant = Spree::Variant.find(params[:line_item][:variant_id])
+        @line_item = order.contents.add(variant, params[:line_item][:quantity])
         if @line_item.save
           respond_with(@line_item, :status => 201, :default_template => :show)
         else

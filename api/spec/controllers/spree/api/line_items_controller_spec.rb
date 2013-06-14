@@ -42,6 +42,16 @@ module Spree
         json_response["variant"]["name"].should_not be_blank
       end
 
+      it "increases a line item's quantity if it exists already" do
+        order.line_items.create(:variant_id => product.master.id, :quantity => 10)
+        api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
+        response.status.should == 201
+        order.reload
+        order.line_items.count.should == 6 # 5 original due to factory, + 1 in this test
+        json_response.should have_attributes(attributes)
+        json_response["quantity"].should == 11
+      end
+
       it "can update a line item on the order" do
         line_item = order.line_items.first
         api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }

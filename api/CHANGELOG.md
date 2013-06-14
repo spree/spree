@@ -31,3 +31,7 @@
 * /api/orders endpoints now accept a `?order_token` parameter which should be the order's token. This can be used to authorize actions on an order without having to pass in an API key.
 
     * Ryan Bigg
+
+* Requests to POST /api/line_items will now update existing line items. For example if you have a line item with a variant ID=2 and quantity=10 and you attempt to create a new line item for the same variant with a quantity of 5, the existing line item's quantity will be updated to 15. Previously, a new line item would erroneously be created.
+
+    * Ryan Bigg
