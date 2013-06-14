@@ -75,3 +75,7 @@
 * Attributes other than "quantity" and "variant_id" will be added to a line item when creating along with an order. #3404
 
     *Alex Marles & Ryan Bigg*
+
+* Requests to POST /api/line_items will now update existing line items. For example if you have a line item with a variant ID=2 and quantity=10 and you attempt to create a new line item for the same variant with a quantity of 5, the existing line item's quantity will be updated to 15. Previously, a new line item would erroneously be created.
+
+    * Ryan Bigg
