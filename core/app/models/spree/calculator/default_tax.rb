@@ -29,9 +29,7 @@ module Spree
 
 	 line_items_total = matched_line_items.sum(&:total)
 	 adjusted_total = line_items_total + order.promo_total + order.ship_total 
-	 if adjusted_total
-	    round_to_two_places(adjusted_total * rate.amount) 
-	 end
+	 round_to_two_places(adjusted_total * rate.amount) 
       end
 
       def compute_line_item(line_item)
