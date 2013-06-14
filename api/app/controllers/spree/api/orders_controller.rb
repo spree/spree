@@ -73,7 +73,7 @@ module Spree
 
       def find_order
         @order = Order.find_by_number!(params[:id])
-        authorize! :update, @order, params[:token]
+        authorize! :update, @order, params[:order_token]
       end
 
     end

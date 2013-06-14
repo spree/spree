@@ -28,6 +28,6 @@
 
     * Ryan Bigg
 
-* /api/orders endpoints now accept a `?token` parameter which should be the order's token. This can be used to authorize actions on an order without having to pass in an API key.
+* /api/orders endpoints now accept a `?order_token` parameter which should be the order's token. This can be used to authorize actions on an order without having to pass in an API key.
 
     * Ryan Bigg

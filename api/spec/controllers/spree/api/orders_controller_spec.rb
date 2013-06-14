@@ -45,7 +45,7 @@ module Spree
     end
 
     it "can view an order if the token is known" do
-      api_get :show, :id => order.to_param, :token => order.token
+      api_get :show, :id => order.to_param, :order_token => order.token
       response.status.should == 200
     end
 
