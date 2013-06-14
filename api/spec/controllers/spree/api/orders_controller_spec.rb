@@ -120,13 +120,13 @@ module Spree
 
         api_put :update, :id => order.to_param, :order => {
           :line_items => { 
-            line_item.id => { :variant_id => variant.id, :quantity => 10 }
+            line_item.id => { :quantity => 10 }
           }
         }
 
         response.status.should == 200
         json_response['line_items'].count.should == 1
-        json_response['line_items'].first['quantity'].should == 11
+        json_response['line_items'].first['quantity'].should == 10
       end
 
       it "can add billing address" do

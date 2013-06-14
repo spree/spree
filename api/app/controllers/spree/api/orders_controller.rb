@@ -50,6 +50,7 @@ module Spree
         line_items = order_params.delete("line_items_attributes")
         if @order.update_attributes(order_params)
           @order.update_line_items(line_items)
+          @order.line_items.reload
           @order.update!
           respond_with(@order, :default_template => :show)
         else

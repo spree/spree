@@ -14,8 +14,8 @@ Spree::Order.class_eval do
 
   def update_line_items(line_item_params)
     return if line_item_params.blank?
-    line_item_params.each do |k, line_item|
-      self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity].to_i)
+    line_item_params.each do |id, attributes|
+      self.line_items.find(id).update_attributes!(attributes)
     end
   end
 end
