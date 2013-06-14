@@ -367,6 +367,10 @@ module Spree
         "payment_state"=>nil,
         "email"=>nil,
         "special_instructions"=>nil,
+        "display_item_total" => "$10.00",
+        "total_quantity"=>1,
+        "token"=> "abcdef123456"
+
       }
 
 
