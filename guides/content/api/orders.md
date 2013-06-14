@@ -74,7 +74,17 @@ To view the details for a single product, make a request using that order\'s num
 ```text
 GET /api/orders/R123456789```
 
-Orders through the API will only be visible to admins and the users who own them. If a user attempts to access an order that does not belong to them, they will be met with an authorization error.
+Orders through the API will only be visible to admins and the users who own
+them. If a user attempts to access an order that does not belong to them, they
+will be met with an authorization error.
+
+Users may pass in the order's token in order to be authorized to view an order:
+
+```text
+GET /api/orders/R123456789?order_token=abcdef123456
+```
+
+The `order_token` parameter will work for authorizing any action for an order within Spree's API.
 
 ### Successful Response
 
