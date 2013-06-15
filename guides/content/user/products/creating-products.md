@@ -1,8 +1,9 @@
 ---
 title: Creating a New Product
+section: creating-products
 ---
 
-# Creating Products
+## Introduction
 
 To create a new product for your store, go into the Admin Dashboard, click the *Products* tab, and click the *New Product* button.
 
