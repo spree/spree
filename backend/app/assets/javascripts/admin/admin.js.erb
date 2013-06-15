@@ -197,7 +197,9 @@ $(document).ready(function(){
     el = $(this);
     el.prev("input[type=hidden]").val("1");
     el.closest(".fields").hide();
-    if (el.attr("href")) {
+    if (el.attr("href") == '#') {
+      el.parents("tr").fadeOut('hide');
+    }else if (el.attr("href")) {
       $.ajax({
         type: 'POST',
         url: el.attr("href"),

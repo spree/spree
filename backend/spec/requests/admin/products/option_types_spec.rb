@@ -75,4 +75,40 @@ describe "Option Types" do
     page.should have_css("tbody#option_values")
     all("tbody#option_values tr input").all? { |input| input.value.blank? }
   end
+  
+  # Regression test for #3204
+  it "can remove a non-persisted option value from an option type", :js => true do
+    create(:option_type)
+    click_link "Option Types"
+    within('table#listing_option_types') { click_icon :edit }
+    wait_until do
+      page.find("tbody#option_values", :visible => true)
+    end
+
+    all("tbody#option_values tr").select(&:visible?).count.should == 1
+
+    # Add a new option type
+    click_link "Add Option Value"
+    all("tbody#option_values tr").select(&:visible?).count.should == 2
+
+    # Remove default option type
+    within("tbody#option_values") do
+      find('.icon-trash').click
+    end
+    # Check that there was no HTTP request
+    all("div#progress[style]").count.should == 0
+    # Assert that the field is hidden automatically
+    all("tbody#option_values tr").select(&:visible?).count.should == 1
+
+    # Remove added option type
+    within("tbody#option_values") do
+      find('.icon-trash').click
+    end
+    # Check that there was no HTTP request
+    all("div#progress[style]").count.should == 0
+    # Assert that the field is hidden automatically
+    all("tbody#option_values tr").select(&:visible?).count.should == 0
+
+  end
+
 end
