@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]> <html class="ie lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>    <html class="ie lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>    <html class="ie lt-ie9"> <![endif]-->
-<!--[if IE 9]>    <html class="ie ie9"> <![endif]-->
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="lt-ie9"> <![endif]-->
+<!--[if IE 9]>    <html class="ie9"> <![endif]-->
 <!--[if gt IE 9]><!--> <html lang="en" > <!--<![endif]-->
 <head>
-  <title><%= @item[:title] %></title>
+  <title><%= @item[:title] %> - Spree API</title>
 
   <%= render '_head' %>
 
-
 </head>
-<body class="api home">
-
+<body class="api">
   <%= render '_edge_badge' %>
-
   <header id="header">
-
     <div id="top-header">
       <div class="container">
 
@@ -35,11 +31,8 @@
 
     <div id="subheader">
       <div class="container">
-        <div class="sixteen columns">
-          <hgroup id="site-title">
-            <h1 class="page-title">The Spree User</h1>
-            <h2 class="page-subtitle">Guide</h2>
-          </hgroup>
+        <div class="twelve columns">
+          <h1 class="page-title"><%= @item[:title] %> - User Guide</h1>
         </div>
       </div>
     </div>
@@ -57,8 +50,7 @@
 
     </section>
 
-    <%= render 'integration/_sidebar' %>
-
+    <%= render "api/_sidebar" %>
   </div>
 
   <%= render '_footer' %>
