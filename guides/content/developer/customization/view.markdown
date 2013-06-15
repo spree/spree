@@ -30,13 +30,11 @@ this:
   </div>
   <%% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout" data-hook class="columns omega eight">
-      <%%= render 'spree/shared/error_messages', :target => order
+      <%%= render 'spree/shared/error_messages', :target => order %>
 
-<h2>
-<%%= Spree.t(:guest_user_account) %>
+      <h2><%%= Spree.t(:guest_user_account) %></h2>
 
-</h2>
-<%%= form_for order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
+      <%%= form_for order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
         <p>
           <%%= f.label :email, Spree.t(:email) %><br />
           <%%= f.email_field :email, :class => 'title' %>
@@ -107,20 +105,15 @@ For example, spree/products/show.html.erb looks as follows:
 ```erb
 <div data-hook="product_show" itemscope itemtype="http://schema.org/Product">
   <%% body_id = 'product-details %>
+  <div class="columns six alpha" data-hook="product_left_part">
+    <div class="row" data-hook="product_left_part_wrap">
+      <div id="product-images" data-hook="product_images">
+        <div id="main-image" data-hook>
+          <%%= render 'image' %>
+        </div>
 
-<div class="columns six alpha" data-hook="product_left_part">
-
-<div class="row" data-hook="product_left_part_wrap">
-
-<div id="product-images" data-hook="product_images">
-
-<div id="main-image" data-hook>
-<%%= render 'image' %>
-
-</div>
-
-<div id="thumbnails" data-hook>
-<%%= render 'thumbnails', :product => product %>
+        <div id="thumbnails" data-hook>
+          <%%= render 'thumbnails', :product => product %>
         </div>
       </div>
 
@@ -140,20 +133,16 @@ For example, spree/products/show.html.erb looks as follows:
 
         <div itemprop="description" data-hook="description">
           <%%= product_description(product) rescue Spree.t(:product_has_no_description) %>
+        </div>
 
-</div>
+        <div id="cart-form" data-hook="cart_form">
+          <%%= render 'cart_form' %>
+        </div>
+      </div>
 
-<div id="cart-form" data-hook="cart_form">
-<%%= render 'cart_form' %>
-
-</div>
-
-</div>
-<%%= render 'taxons' %>
-
-</div>
-
-</div>
+      <%%= render 'taxons' %>
+    </div>
+  </div>
 </div>```
 
 As you can see from the example above the `data-hook` can be present in
@@ -173,20 +162,18 @@ The suggested way to target an element is to use the `data-hook`
 attribute wherever possible. Here are a few examples based on
 **products/show.html.erb** above:
 
-<% ruby do %>
+```ruby
 :replace => "[data-hook='product_show']"
 
 :insert_top => "#thumbnails[data-hook]"
 
-:remove => "[data-hook='cart_form']"
-<% end %>
+:remove => "[data-hook='cart_form']"```
 
 You can also use a combination of both styles of selectors in a single
 override to ensure maximum protection against changes:
 
-<% ruby do %>
- :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"
-<% end %>
+```ruby
+ :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"```
 
 #### Targeting ruby blocks
 
@@ -197,40 +184,33 @@ are converted into a pseudo markup as follows:
 
 Given the following Erb file:
 
-<% ruby do %>
+```erb
 <%% if products.empty? %>
  <%%= Spree.t(:no_products_found) %>
 <%% elsif params.key?(:keywords) %>
-
-<h3>
-<%%= Spree.t(:products) %>
-
-</h3>
-<%% end %>
-<% end %>
+  <h3><%%= Spree.t(:products) %></h3>
+<%% end %>```
 
 Would be seen by Deface as:
 
+```html
 <html>
-<code erb-silent> if products.empty? </code>
- <code erb-loud> Spree.t(:no_products_found) </code>
-<code erb-silent> elsif params.key?(:keywords) </code>
+  <code erb-silent> if products.empty? </code>
+  <code erb-loud> Spree.t(:no_products_found) </code>
+  <code erb-silent> elsif params.key?(:keywords) </code>
 
-<h3>
-<code erb-loud> Spree.t(:products) </code>
+  <h3><code erb-loud> Spree.t(:products) </code></h3>
 
-</h3>
-<code erb-silent> end </code>
+  <code erb-silent> end </code>
+</html>```
 
-</html>
 So you can target ruby code blocks with the same standard CSS3 style
 selectors, for example:
 
-<% ruby do %>
+```ruby
  :replace => "code[erb-loud]:contains('t(:products)')"
 
-:insert_before => "code[erb-silent]:contains('elsif')"
-<% end %>
+:insert_before => "code[erb-silent]:contains('elsif')"```
 
 #### View upgrade protection
 
