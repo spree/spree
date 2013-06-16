@@ -20,7 +20,7 @@ Calculators link to a `calculable` object, which are typically one of `Spree::Sh
 
 ## Available Calculators
 
-The following are descriptions of the currently available calculators in Spree. If you would like to add your own, please see the [Creating a New Calculator](#creating-a-calculator) section.
+The following are descriptions of the currently available calculators in Spree. If you would like to add your own, please see the [Creating a New Calculator](#creating-a-new-calculator) section.
 
 ### Default Tax
 
@@ -139,7 +139,7 @@ The Price Sack calculator is useful for when you want to provide a discount for 
 
 Suppose you have a Price Sack calculator with a `minimal_amount` preference of $50, a `normal_amount` preference of $2, and a `discount_amount` of $5. An order with a line items total of $60 would result in a discount of $5 for the whole order. An order of $20 would result in a discount of $2.
 
-## <a id="creating-a-calculator"></a>Creating a New Calculator
+## Creating a New Calculator
 
 To create a new calculator for Spree, you need to do two things. The first is to inherit from the `Spree::Calculator` class and define `description` and `compute` methods on that class:
 
