@@ -5,12 +5,12 @@ section: core
 
 ## Overview
 
-Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are *by far* the most
-complex area within Spree, as there are a large number of moving parts to consider.
+Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most
+complex areas within Spree, as there are a large number of moving parts to consider.
 
 The first of these moving parts is that promotions are based on <%= link_to "Activators", :activators %>, using the functionality provided by that area of Spree to know when to trigger the application of a promotion to an order. **Please read that guide first**.
 
-Promotions depend on activators to know when to activate. Promotions are only activatable for an order if the order is in any state except "complete", "awaiting return", or "returned".
+Promotions depend on activators to know when to activate. Promotions are only activatable for an order if the order is in any state except `complete`, `awaiting return`, or `returned`.
 
 Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable.
 
@@ -30,21 +30,22 @@ There are two actions which come with Spree: one action to apply adjustments (`S
 
 When a `CreateAdjustment` action is undertaken, an adjustment is automatically applied to the order, unless the promotion has already applied an adjustment to the order.
 
-Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Adjustment#eligible_for_originator?` method. This calls the `Promotion#eligible?` method, which uses `Promotion#rules_are_eligible?` to determine if the promotion is still eligible based on its rules. For how this process works, please see the rules section further down in this guide.
+Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Adjustment#eligible_for_originator?` method. This calls the `Promotion#eligible?` method, which uses `Promotion#rules_are_eligible?` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
 
 An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the <%= link_to "Calculators guide", :calculators %>.
 
 ### Adding a Line Item
 
-When a `LineItem` action is undertaken, a series of line items are automatically added to the order, which may alter the order's price. The promotion with an action to add a line item can also have another action to add an adjustment to the order to nullify the cost of adding the product to the order.
+When a `CreateLineItem` action is undertaken, a series of line items are automatically added to the order, which may alter the order's price. The promotion with an action to add a line item can also have another action to add an adjustment to the order to nullify the cost of adding the product to the order.
 
-### Registering a new action
+### Registering a New Action
 
 You can create a new action for Spree's promotion engine by inheriting from `Spree::PromotionAction`, like this:
 
 ```ruby
 class MyPromotionAction < Spree::PromotionAction
   def perform(options={})
+    ...
   end
 end```
 
@@ -55,7 +56,7 @@ You can access promotion information using the `promotion` method within any `Sp
 This action must then be registered with Spree, which can be done by adding this code to `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotions.actions << MyAction```
+Rails.application.config.spree.promotions.actions << MyPromotionAction```
 
 Once this has been registered, it will be available within Spree's interface. To provide translations for the interface, you will need to define them within your locale file. For instance, to define English translations for your new promotion action, use this code within `config/locales/en.yml`:
 
@@ -67,7 +68,7 @@ en:
         name: My Promotion Action
         description: Performs my promotion action.```
 
-## Rules
+## <a id="rules"></a> Rules
 
 There are five rules which come with Spree:
 
@@ -77,7 +78,7 @@ There are five rules which come with Spree:
 * `User` The order is by a specific user.
 * `UserLoggedIn`: The user is logged in.
 
-Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object.
+Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object.
 
 ***TODO***: Offer examples of ways to use the match_policy attribute
 
@@ -88,6 +89,7 @@ To register a new rule with Spree, first define a class that inherits from `Spre
 ```ruby
 class MyPromotionRule < Spree::PromotionRule
   def eligible?(order)
+    ...
   end
 end```
 
