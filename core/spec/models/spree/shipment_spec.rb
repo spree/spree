@@ -15,6 +15,7 @@ describe Spree::Shipment do
   end
 
   let(:charge) { create(:adjustment) }
+  let(:variant) { mock_model(Spree::Variant) }
 
   it 'is backordered if one if its inventory_units is backordered' do
     shipment.stub(inventory_units: [
@@ -227,8 +228,7 @@ describe Spree::Shipment do
     end
 
     it 'restocks the items' do
-      variant = mock_model(Spree::Variant)
-      shipment.stub(inventory_units: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(:inventory_units, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -248,35 +248,12 @@ describe Spree::Shipment do
     end
 
     it 'unstocks them items' do
-      variant = mock_model(Spree::Variant)
-      shipment.stub(inventory_units: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(:inventory_units, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
     end
-  end
 
-  context "#cancel" do
-    it 'cancels the shipment' do
-      shipment.stub(:ensure_correct_adjustment)
-      shipment.order.stub(:update!)
-
-      shipment.state = 'pending'
-      shipment.should_receive(:after_cancel)
-      shipment.cancel!
-      shipment.state.should eq 'canceled'
-    end
-
-    it 'restocks the items' do
-      variant = mock_model(Spree::Variant)
-      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :variant => variant)])
-      shipment.stock_location = mock_model(Spree::StockLocation)
-      shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
-      shipment.after_cancel
-    end
-  end
-
-  context "#resume" do
     it 'will determine new state based on order' do
       shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
@@ -287,14 +264,6 @@ describe Spree::Shipment do
       shipment.resume!
       # Shipment is pending because order is already paid
       shipment.state.should eq 'pending'
-    end
-
-    it 'unstocks them items' do
-      variant = mock_model(Spree::Variant)
-      shipment.stub(:inventory_units => [mock_model(Spree::InventoryUnit, :variant => variant)])
-      shipment.stock_location = mock_model(Spree::StockLocation)
-      shipment.stock_location.should_receive(:unstock).with(variant, 1, shipment)
-      shipment.after_resume
     end
   end
 
