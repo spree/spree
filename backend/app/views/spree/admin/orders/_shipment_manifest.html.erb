@@ -1,0 +1,33 @@
+<% shipment.manifest.each do |item| %>
+  <% line_item = order.find_line_item_by_variant(item.variant) %>
+
+  <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
+    <td class="item-image"><%= mini_image(item.variant) %></td>
+    <td class="item-name">
+      <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+    </td>
+    <td class="item-price align-center"><%= line_item.single_money.to_html %></td>
+    <td class="item-qty-show align-center">
+        <% item.states.each do |state,count| %>
+          <%= count %> x <%= state.humanize.downcase %>
+        <% end %>
+    </td>
+    <% unless shipment.shipped? %>
+      <td class="item-qty-edit hidden">
+        <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
+      </td>
+    <% end %>
+    <td class="item-total align-center"><%= line_item_shipment_price(line_item, item.quantity) %></td>
+    <% unless shipment.shipped? %>
+      <td class="cart-item-delete actions" data-hook="cart_item_delete">
+        <% if can? :update, item %>
+          <%= link_to '', '#', :class => 'save-item icon_link icon-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
+          <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
+          <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
+          <%= link_to '', '#', :class => 'split-item icon_link icon-resize-horizontal no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
+          <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove', :confirm => Spree.t(:are_you_sure)}, :title => Spree.t('delete') %>
+        <% end %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>
