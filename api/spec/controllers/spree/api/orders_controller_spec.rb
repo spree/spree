@@ -78,7 +78,9 @@ module Spree
         Order.any_instance.stub :user => current_api_user
         create(:payment_method)
         order.next # Switch from cart to address
-        order.ship_address.should be_nil
+        order.bill_address = nil
+        order.ship_address = nil
+        order.save
         order.state.should == "address"
       end
 
@@ -105,15 +107,12 @@ module Spree
       end
 
       it "can add billing address" do
-        order.bill_address.should be_nil
-
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
 
         order.reload.bill_address.should_not be_nil
       end
 
       it "receives error message if trying to add billing address with errors" do
-        order.bill_address.should be_nil
         billing_address[:firstname] = ""
 
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
