@@ -104,16 +104,6 @@ module Spree
                                  :country_id => Country.first.id, :state_id => State.first.id} }
       let!(:payment_method) { create(:payment_method) }
 
-      it "can add line items" do
-        api_put :update, :id => order.to_param, :order => { 
-          :line_items => { 
-            "0" => { :variant_id => create(:variant).id, :quantity => 2 }
-          }
-        }
-        response.status.should == 200
-        json_response['item_total'].to_f.should_not == order.item_total.to_f
-      end
-
       it "can update quantities of existing line items" do
         variant = create(:variant)
         line_item = order.line_items.create!(:variant_id => variant.id, :quantity => 1)
