@@ -10,8 +10,10 @@ describe "setting locale" do
         :month_names => [],
       },
       :spree => {
-       :orders => "Ordres",
-       :listing_orders => "Ordres",
+        :admin => {
+          :tab => { :orders => "Ordres" }
+        },
+        :listing_orders => "Ordres",
       })
     Spree::Backend::Config[:locale] = "fr"
   end
