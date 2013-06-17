@@ -88,6 +88,23 @@ describe "Visiting Products" do
     end
   end
 
+  context "a product with variants, images only for the variants" do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+
+    before do
+      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
+      v1 = product.variants.create!(:price => 9.99)
+      v2 = product.variants.create!(:price => 10.99)
+      v1.images.create!(:attachment => image)
+      v2.images.create!(:attachment => image)
+    end
+
+    it "should not display no image available" do
+      visit spree.root_path
+      page.should have_xpath("//img[contains(@src,'thinking-cat')]")
+    end
+  end
+
   it "should be able to hide products without price" do
     page.all('ul.product-listing li').size.should == 9
     Spree::Config.show_products_without_price = false
