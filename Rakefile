@@ -16,7 +16,7 @@ end
 desc "Generates a dummy app for testing for every Spree engine"
 task :test_app do
   require File.expand_path('../core/lib/generators/spree/install/install_generator', __FILE__)
-  %w(api backend core dash frontend).each do |engine|
+  %w(api backend core frontend).each do |engine|
     ENV['LIB_NAME'] = File.join('spree', engine)
     ENV['DUMMY_PATH'] = File.expand_path("../#{engine}/spec/dummy", __FILE__)
     Rake::Task['common:test_app'].execute
