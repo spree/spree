@@ -36,6 +36,10 @@ module Spree
       end
 
       context "order does not have a billing address" do
+        before do
+          order.bill_address = nil
+          order.save
+        end
 
         it "should redirect to the customer details page" do
           spree_get :index, { amount: 100, order_id: order.number }
