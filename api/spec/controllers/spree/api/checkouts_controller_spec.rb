@@ -71,6 +71,8 @@ module Spree
       end
 
       it "will return an error if the order cannot transition" do
+        order.bill_address = nil
+        order.save
         order.update_column(:state, "address")
         api_put :update, :id => order.to_param
         # Order has not transitioned
