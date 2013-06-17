@@ -53,15 +53,6 @@ describe "Visiting Products" do
           page.should have_content("руб19.99")
         end
       end
-
-      it "when on the 'address' state of the cart" do
-        visit spree.product_path(product)
-        click_button "Add To Cart"
-        click_button "Checkout"
-        within("tr[data-hook=item_total]") do
-          page.should have_content("руб19.99")
-        end
-      end
     end
   end
 
@@ -85,6 +76,23 @@ describe "Visiting Products" do
 
     it "should be displayed" do
       lambda { click_link product.name }.should_not raise_error
+    end
+  end
+
+  context "a product with variants, images only for the variants" do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+
+    before do
+      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
+      v1 = product.variants.create!(:price => 9.99)
+      v2 = product.variants.create!(:price => 10.99)
+      v1.images.create!(:attachment => image)
+      v2.images.create!(:attachment => image)
+    end
+
+    it "should not display no image available" do
+      visit spree.root_path
+      page.should have_xpath("//img[contains(@src,'thinking-cat')]")
     end
   end
 
