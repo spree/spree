@@ -3,8 +3,6 @@ FactoryGirl.define do
     user
     bill_address
     completed_at nil
-    bill_address_id nil
-    ship_address_id nil
     email { user.email }
 
     factory :order_with_totals do
