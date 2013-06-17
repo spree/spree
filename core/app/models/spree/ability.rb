@@ -41,10 +41,13 @@ module Spree
         can :create, Spree.user_class
         #############################
         can :read, Order do |order, token|
-          order.user == user || order.token && token == order.token
+          puts
+          puts "Checking order ability..."
+          puts
+          order.user == user || (order.token && token == order.token)
         end
         can :update, Order do |order, token|
-          order.user == user || order.token && token == order.token
+          order.user == user || (order.token && token == order.token)
         end
         can :create, Order
 
