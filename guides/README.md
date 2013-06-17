@@ -107,6 +107,11 @@ This same style is used for attribute names and their settings, method names, ev
 Path names should be set off with tick (`) marks, and should include enough of the directory structure to make it clear which file is being referenced. For example:
 
     They are defined in `core/app/models/spree/app_configuration.rb`...
+
+####Adding Emphasis####
+Any text that needs to be emphasized should be in _italics_.
+
+    Only the shipping options in the _shipping_ address are presented.
     
 ### JSON Responses
 

@@ -262,6 +262,11 @@ Path names should be set off with tick (`) marks, and should include enough of t
 
     They are defined in `core/app/models/spree/app_configuration.rb`...
 
+####Adding Emphasis####
+Any text that needs to be emphasized should be in _italics_.
+
+    Only the shipping options in the _shipping_ address are presented.
+    
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.
 ***
