@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Payments" do
   stub_authorization!
 
-  let(:order) { create(:completed_order_with_totals, :number => "R100", :state => "complete") }
+  let(:order) { create(:completed_order_with_totals, :number => "R100") }
 
   context "payment methods" do
 
