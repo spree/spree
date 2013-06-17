@@ -1,5 +1,6 @@
 ---
-title: Filtering Orders
+title: Searching Orders
+section: creating-products
 ---
 
 When you click the **Orders** tab on the Admin Dashboard, you are instantly presented with a summary of the most recent orders your store has received.
@@ -22,7 +23,7 @@ Next to each row is an Edit icon. Clicking this icon allows you to [make changes
 
 # Filtering Results
 
-You may not always want to see all of the most recent orders - the Spree default. You may want to view only those orders that you need to pack and ship, or only those from a particular customer. Spree gives you the flexibility to quickly find only those orders you need. 
+You may not always want to see all of the most recent orders - the Spree default. You may want to view only those orders that you need to pack and ship, or only those from a particular customer. Spree gives you the flexibility to quickly find only those orders you need.
 
 ![Order Filter Options](images/user/orders/filter_options.jpg)
 
@@ -61,7 +62,7 @@ At this time, the filter does not allow you to search for only part of an email 
 
 ## Name
 
-The **First Name Begins With** and **Last Name Begins With** fields will let you filter order results based on the *billing address*, not on the shipping address. You can use any number of letters, from just an initial to the full first and/or last name. 
+The **First Name Begins With** and **Last Name Begins With** fields will let you filter order results based on the *billing address*, not on the shipping address. You can use any number of letters, from just an initial to the full first and/or last name.
 
 ## Complete
 
