@@ -6,9 +6,11 @@ module Spree
         accepts_nested_attributes_for :promotion_action_line_items
         attr_accessible :promotion_action_line_items_attributes
 
+        delegate :eligible?, :to => :promotion
 
         def perform(options = {})
           return unless order = options[:order]
+          return unless eligible?(order)
           promotion_action_line_items.each do |item|
             current_quantity = order.quantity_of(item.variant)
             if current_quantity < item.quantity
