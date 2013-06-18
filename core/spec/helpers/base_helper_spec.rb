@@ -50,7 +50,7 @@ describe Spree::BaseHelper do
 
   # Regression test for #1436
   context "defining custom image helpers" do
-    let(:product) { mock_model(Spree::Product, :images => []) }
+    let(:product) { mock_model(Spree::Product, :images => [], :variant_images => []) }
     before do
       Spree::Image.class_eval do
         attachment_definitions[:attachment][:styles].merge!({:very_strange => '1x1'})
