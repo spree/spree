@@ -25,7 +25,7 @@ Spree::StoreController.class_eval do
             end
 
             previous_promo = @order.adjustments.promotion.eligible.first
-            fire_event(event_name, :coupon_code => @order.coupon_code)
+            promotion.activate(:order => @order, :coupon_code => @order.coupon_code, :path => "")
             promo = @order.adjustments.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
 
             if promo.present? and promo.eligible
