@@ -1,10 +1,12 @@
 Spree::Order.class_eval do
   def self.build_from_api(user, params)
-    order = create
-    params[:line_items_attributes] ||= []
-    unless params[:line_items_attributes].empty?
-      params[:line_items_attributes].each_key do |k|
-        line_item = params[:line_items_attributes][k]
+    line_items = params.delete(:line_items_attributes) || []
+
+    order = create(params)
+
+    unless line_items.empty?
+      line_items.each_key do |k|
+        line_item = line_items[k]
         order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
       end
     end

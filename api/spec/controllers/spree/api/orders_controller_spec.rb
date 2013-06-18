@@ -61,6 +61,15 @@ module Spree
       assert_unauthorized!
     end
 
+    let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
+    let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
+                              :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                              :country_id => Country.first.id, :state_id => State.first.id} }
+    let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
+                               :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                               :country_id => Country.first.id, :state_id => State.first.id} }
+    let!(:payment_method) { create(:payment_method) }
+
     it "can create an order" do
       variant = create(:variant)
       api_post :create, :order => { :line_items => { "0" => { :variant_id => variant.to_param, :quantity => 5 } } }
@@ -71,6 +80,25 @@ module Spree
       order.line_items.first.quantity.should == 5
       json_response["token"].should_not be_blank
       json_response["state"].should == "cart"
+    end
+
+    it "can create an order with parameters" do
+      variant = create(:variant)
+      api_post :create, :order => {
+        :email => 'test@spreecommerce.com',
+        :ship_address => shipping_address,
+        :bill_address => billing_address,
+        :line_items => {
+           "0" => { :variant_id => variant.to_param, :quantity => 5 } },
+      }
+
+      response.status.should == 201
+      order = Order.last
+
+      order.email.should eq 'test@spreecommerce.com'
+      order.ship_address.address1.should eq 'Av Paulista'
+      order.bill_address.address1.should eq 'Av Paulista'
+      order.line_items.count.should == 1
     end
 
     it "can create an order without any parameters" do
@@ -111,7 +139,7 @@ module Spree
         line_item = order.line_items.create!(:variant_id => variant.id, :quantity => 1)
 
         api_put :update, :id => order.to_param, :order => {
-          :line_items => { 
+          :line_items => {
             line_item.id => { :quantity => 10 }
           }
         }
