@@ -16,10 +16,6 @@
 
     *Ryan Bigg*
 
-* All API responses now contain a `Cache-Control` header.
-
-    *Ryan Bigg*
-
 * Include a `per_page` key in Products API end response so that libraries like jQuery.simplePagination can use this to display a pagination element on the page.
 
     * Ryan Bigg*
@@ -33,5 +29,9 @@
     * Ryan Bigg
 
 * Requests to POST /api/line_items will now update existing line items. For example if you have a line item with a variant ID=2 and quantity=10 and you attempt to create a new line item for the same variant with a quantity of 5, the existing line item's quantity will be updated to 15. Previously, a new line item would erroneously be created.
+
+    * Ryan Bigg
+
+* /api/countries now will a 304 response if no country has been changed since the last request.
 
     * Ryan Bigg
