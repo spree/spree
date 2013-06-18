@@ -23,11 +23,6 @@ script:
 notifications:
   email:
     - ryan@spreecommerce.com
-  irc:
-    use_notice: true
-    skip_join: true
-    channels:
-      - "irc.freenode.org#spree"
 rvm:
   - 1.9.3
   - 2.0.0
