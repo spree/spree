@@ -12,10 +12,6 @@ describe "Homepage" do
       within('h1') { page.should have_content("Listing Orders") }
     end
 
-    it "should have a link to overview" do
-      page.find_link("Overview")['/admin']
-    end
-
     it "should have a link to orders" do
       page.find_link("Orders")['/admin/orders']
     end
