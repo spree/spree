@@ -1,5 +1,5 @@
 //= require jquery-migrate-1.0.0
-//= require jquery-ui
+//= require jquery.ui.all
 //= require modernizr
 //= require jquery.cookie
 //= require jquery.delayedobserver
