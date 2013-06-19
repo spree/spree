@@ -158,8 +158,8 @@ $(document).ready(function(){
     new_table_row.find("input").each(function () {
       var el = $(this);
       el.val("");
-      el.attr("id", el.attr("id").replace(/\d+/, new_id))
-      el.attr("name", el.attr("name").replace(/\d+/, new_id))
+      if (typeof el.attr("id") !== 'undefined') el.attr("id", el.attr("id").replace(/\d+/, new_id))
+      if (typeof el.attr("name") !== 'undefined') el.attr("name", el.attr("name").replace(/\d+/, new_id))
     })
     // When cloning a new row, set the href of all icons to be an empty "#"
     // This is so that clicking on them does not perform the actions for the
