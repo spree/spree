@@ -9,11 +9,11 @@ This guide presents accumulated wisdom from person-years of Spree use.
 
 #### The important commands
 
-*spree -update* was removed in favor of Bundler.
+`spree -update` was removed in favor of Bundler.
 
 Before updating, you will want to ensure the installed spree gem is
-up-to-date by modifying *Gemfile* to match the new spree version and
-run *bundle update*.
+up-to-date by modifying `Gemfile` to match the new spree version and
+run `bundle update`.
 
 Thanks to Rails 3.1 Mountable Engine, the update process is
 "non-destructive" than in previous versions of Spree. The core files are encapsulated
@@ -26,8 +26,8 @@ is often useful if you need to update a customized version.
 #### Dos and Don'ts
 
 !!!
-Try to avoid modifying *config/boot.rb* and
-*config/environment.rb*: use [initializers](#initializers) instead.
+Try to avoid modifying `config/boot.rb` and
+`config/environment.rb`: use [initializers](#initializers) instead.
 !!!
 
 #### Tracking changes for overridden code
@@ -55,18 +55,18 @@ more information.
 
 #### Use tests!
 
-Use *rake spec* and *rake test* to test basic functioning after you've
+Use `rake spec` and `rake test` to test basic functioning after you've
 made changes.
 
 #### Analysing crashes on a non-local machine
 
 If you're testing on a server, whether in production or development
 mode, the following code in one
-of your *FOO_extension.rb* files might save some time. It triggers
+of your `FOO_extension.rb` files might save some time. It triggers
 local behaviour for users who have
 an admin role. One useful consequence is that uncaught exceptions will
 show the detailed error page
-instead of *404.html*, so you don't have to hunt through the server
+instead of `404.html`, so you don't have to hunt through the server
 logs.
 
 <% ruby do %>
@@ -90,16 +90,16 @@ something like tweaks to the models or controllers.
 You could hide these away in your site extension, but they could get
 mixed up with your real site customizations. You could also fork Spree and run your site on this
 forked version, but this can also be a headache to get right. There's also the hassle of tracking
-changes to *spree/master* and pulling them into your project at the right time.
+changes to `spree/master` and pulling them into your project at the right time.
 
-So here's a compromise: have an extra extension, say *spree-tweaks*, to
+So here's a compromise: have an extra extension, say `spree-tweaks`, to
 contain your small collection of modified files, which is loaded first in the extension order. The
 benefits are:
 
 -   it's clear what you are overriding, and easier to check against core
     changes
 -   you can base your project on an official gem release or a
-    *spree/master* commit stage
+    `spree/master` commit stage
 -   such tweaks can become part of your client site project and be
     managed with SCM etc.
 
