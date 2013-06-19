@@ -49,10 +49,10 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     has_many :state_changes, as: :stateful
-    has_many :line_items, dependent: :destroy, order: 'created_at ASC'
-    has_many :payments, dependent: :destroy
+    has_many :line_items, dependent: :destroy, order: 'created_at ASC', :class_name => "Spree::LineItem"
+    has_many :payments, dependent: :destroy, :class_name => "Spree::Payment"
 
-    has_many :shipments, dependent: :destroy do
+    has_many :shipments, dependent: :destroy, :class_name => "Shipment" do
       def states
         pluck(:state).uniq
       end
