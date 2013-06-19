@@ -349,49 +349,6 @@ module Spree
       }
     }
 
-    ORDER =
-      {
-        "id"=>1,
-        "number"=>"R335381310",
-        "item_total"=>"100.0",
-        "display_item_total"=>"$100.00",
-        "total"=>"0.0",
-        "state"=>"cart",
-        "adjustment_total"=>"-12.0",
-        "user_id"=>nil,
-        "created_at"=>"2012-10-24T01:02:25Z",
-        "updated_at"=>"2012-10-24T01:02:25Z",
-        "completed_at"=>nil,
-        "payment_total"=>"0.0",
-        "shipment_state"=>nil,
-        "payment_state"=>nil,
-        "email"=>nil,
-        "special_instructions"=>nil,
-        "display_item_total" => "$10.00",
-        "total_quantity"=>1,
-        "token"=> "abcdef123456"
-
-      }
-
-
-    ADJUSTMENT =
-    {
-      "id" => 1073043775,
-      "source_type" => "Spree::Order",
-      "source_id" => 1,
-      "adjustable_type" => "Spree::Order",
-      "adjustable_id" => 1,
-      "originator_type" => "Spree::PromotionAction",
-      "originator_id" => 1,
-      "amount" => "-12.0",
-      "label" => "Promotion (test)",
-      "mandatory" => false,
-      "locked" => false,
-      "eligible" => true,
-      "created_at" => "2012-10-24T01:02:25Z",
-      "updated_at" => "2012-10-24T01:02:25Z"
-    }
-
     line_item_variant = VARIANT
 
     LINE_ITEM =
@@ -418,6 +375,24 @@ module Spree
         "variant" => line_item_variant
       }
 
+    ADJUSTMENT =
+    {
+      "id" => 1073043775,
+      "source_type" => "Spree::Order",
+      "source_id" => 1,
+      "adjustable_type" => "Spree::Order",
+      "adjustable_id" => 1,
+      "originator_type" => "Spree::PromotionAction",
+      "originator_id" => 1,
+      "amount" => "-12.0",
+      "label" => "Promotion (test)",
+      "mandatory" => false,
+      "locked" => false,
+      "eligible" => true,
+      "created_at" => "2012-10-24T01:02:25Z",
+      "updated_at" => "2012-10-24T01:02:25Z"
+    }
+
     PAYMENT =
       {
         "id"=>1,
@@ -431,6 +406,7 @@ module Spree
         "created_at"=>"2012-10-24T23:26:23Z",
         "updated_at"=>"2012-10-24T23:26:23Z"
       }
+
 
     SHIPPING_METHOD =
       {
@@ -472,6 +448,67 @@ module Spree
         "shipping_method"=> SHIPPING_METHOD,
         "inventory_units"=>[INVENTORY_UNIT]
       }
+
+    ORDER =
+      {
+        "id"=>1,
+        "number"=>"R335381310",
+        "item_total"=>"100.0",
+        "display_item_total"=>"$100.00",
+        "total"=>"0.0",
+        "state"=>"cart",
+        "adjustment_total"=>"-12.0",
+        "user_id"=>nil,
+        "created_at"=>"2012-10-24T01:02:25Z",
+        "updated_at"=>"2012-10-24T01:02:25Z",
+        "completed_at"=>nil,
+        "payment_total"=>"0.0",
+        "shipment_state"=>nil,
+        "payment_state"=>nil,
+        "email"=>nil,
+        "special_instructions"=>nil,
+        "total_quantity"=>1,
+        "token"=> "abcdef123456",
+        "line_items"=>[],
+        "adjustments"=>[],
+        "payments"=>[],
+        "shipments"=>[]
+      }
+
+
+    NEW_ORDER = {
+      "id"=>1,
+      "number"=>"R335381310",
+      "item_total"=>"100.0",
+      "display_item_total"=>"$100.00",
+      "total"=>"0.0",
+      "state"=>"cart",
+      "adjustment_total"=>"-0.0",
+      "user_id"=>nil,
+      "created_at"=>"2012-10-24T01:02:25Z",
+      "updated_at"=>"2012-10-24T01:02:25Z",
+      "completed_at"=>nil,
+      "payment_total"=>"0.0",
+      "shipment_state"=>nil,
+      "payment_state"=>nil,
+      "email"=>nil,
+      "special_instructions"=>nil,
+      "total_quantity"=>1,
+      "token"=> "abcdef123456",
+      "line_items"=>[],
+      "adjustments"=>[],
+      "payments"=>[],
+      "shipments"=>[]
+    }
+
+    NEW_ORDER_WITH_LINE_ITEMS = NEW_ORDER.merge({
+      "line_items" => [LINE_ITEM]
+    })
+
+    ORDER_FAILED_TRANSITION = {
+      "error" => "The order could not be transitioned. Please fix the errors and try again.",
+      "errors" => { :email => ["can't be blank"] }
+    }
 
     temp = SHIPMENT.merge({
       "tracking" => "UPS1234566",

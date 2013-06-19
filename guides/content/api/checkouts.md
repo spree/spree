@@ -12,30 +12,59 @@ The checkout API can also be used to create a new, empty order. Send a `POST` re
 
 The following sections will walk through creating a new order and advancing an order from its `cart` state to its `complete state.
 
-## Create
+## Creating a blank order
 
 To create a new, empty order, make this request:
 
     POST /api/checkouts
 
-
 ### Response
 
 <%= headers 200 %>
-<%= json :order %>
+<%= json :new_order %>
 
-## Address
+## Creating an order with line items
 
-The newly created order is currently in the `cart` state. After <%= link_to "adding line items", 'line_items' %> to the order, it can be advanced to its next state, `address`, by making this request:
+To create a new order with line items, pass line item attributes through like this:
+
+    POST /api/checkouts?line_items[0][variant_id]=1&line_items[0][quantity]=5
+
+<%= headers 200 %>
+<%= json :new_order_with_line_items %>
+
+## Updating an order
+
+Updating an order using the Checkouts API will move the order automatically through its checkout flow. This is dissimilar to the Orders API, which will just update the order with the sent attributes.
+
+To update an order with the Checkout API, you must be authenticated as the order's user, and perform a request like this:
 
     PUT /api/checkouts/R335381310
 
+If you know the order's token, then you can also update the order:
+
+    PUT /api/checkouts/R335381310?order_token=abcdef123456
+
+Requests performed as a non-admin or non-authorized user will be met with a 401 response from this action.
+
+## Transitioning an order to next step
+
+To transition an order to its next step, make a request like this:
+
+    PUT /api/checkouts/R335381310/next
+
 ### Response
+
+This is a typical response from a transition to the "address" step
 
 <%= headers 200 %>
 <%= json(:order_show_address_state) %>
 
-## Delivery
+### Failed Response
+
+<%= headers 200 %>
+<%= json(:order_failed_transition) %>
+
+## Checkout transitions
 
 To advance to the next state, `delivery`, the order will first need both a shipping and billing address.
 
@@ -73,12 +102,12 @@ As an example, here are the required address attributes and how they should be f
 
 ### Response
 
+If the parameters are valid for the request, you will see a response like this
+
 <%= headers 200 %>
 <%= json(:order_show_delivery_state) %>
 
 Once valid address information has been submitted, the shipments and shipping rates available for this order will be returned inside a `shipments` key inside the order:
-
-## Payment
 
 To advance to the next state, `payment`, you will need to select a shipping rate for the order. These were returned when transitioning to the `delivery` step. If you need want to see them again, make the following request:
 
@@ -102,8 +131,6 @@ Please ensure you select a shipping rate for each shipment in the order. In the 
 <%= headers 201 %>
 <%= json(:order_show_payment_state) %>
 
-## Confirm
-
 To advance to the next state, `confirm`, the order will need to have a payment.
 
 If the order already has a payment, you can advance it to the `confirm` state by making this request:
@@ -120,8 +147,6 @@ For more information on payments, view the <%= link_to "payments documentation",
 
 <%= headers 200 %>
 <%= json(:order_show_confirm_state) %>
-
-## Complete
 
 Now the order is ready to be advanced to the final state, `complete`. To accomplish this, make this request:
 
