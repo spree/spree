@@ -83,5 +83,6 @@ Spree::Core::Engine.routes.draw do
     end
 
     get '/config/money', :to => 'config#money'
+    get '/config', :to => 'config#show'
   end
 end
