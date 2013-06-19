@@ -13,6 +13,7 @@ gem 'coffee-rails', '~> 4.0.0.rc1'
 gem 'sass-rails', '~> 4.0.0.rc1'
 
 gem 'ransack', github: 'ernie/ransack', branch: 'rails-4'
+gem 'awesome_nested_set', github: 'huoxito/awesome_nested_set', branch: 'rails4'
 
 group :test do
   gem 'capybara', '~> 2.1'
