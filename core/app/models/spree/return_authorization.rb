@@ -59,7 +59,7 @@ module Spree
     end
 
     def returnable_inventory
-      order.shipped_shipments.collect{|s| s.inventory_units.all}.flatten
+      order.shipped_shipments.collect{|s| s.inventory_units.to_a}.flatten
     end
 
     private

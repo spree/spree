@@ -61,13 +61,13 @@ describe Spree::Admin::OrdersController do
     end
 
     it 'should grant access to users with an admin role' do
-      user.spree_roles << Spree::Role.find_or_create_by_name('admin')
+      user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
       spree_post :index
       response.should render_template :index
     end
 
     it 'should grant access to users with an bar role' do
-      user.spree_roles << Spree::Role.find_or_create_by_name('bar')
+      user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
       spree_post :index
       response.should render_template :index
@@ -79,7 +79,7 @@ describe Spree::Admin::OrdersController do
       order.stub(:user).and_return Spree.user_class.new
       order.stub(:token).and_return nil
       user.spree_roles.clear
-      user.spree_roles << Spree::Role.find_or_create_by_name('bar')
+      user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
       spree_put :update, { :id => 'R123' }
       response.should redirect_to('/unauthorized')
