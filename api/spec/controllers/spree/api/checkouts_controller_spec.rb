@@ -53,11 +53,16 @@ module Spree
         Order.any_instance.stub(:payment_required? => true)
       end
 
+      it "cannot update without a token" do
+        api_put :update, :id => order.to_param
+        assert_unauthorized!
+      end
+
       it "will return an error if the recently created order cannot transition from cart to address" do
         order.state.should eq "cart"
         order.update_column(:email, nil) # email is necessary to transition from cart to address
 
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order_token => order.token
 
         # Order has not transitioned
         json_response['state'].should == 'cart'
@@ -66,7 +71,7 @@ module Spree
       it "should transition a recently created order from cart do address" do
         order.state.should eq "cart"
         order.email.should_not be_nil
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order_token => order.token
         order.reload.state.should eq "address"
       end
 
@@ -74,7 +79,7 @@ module Spree
         order.bill_address = nil
         order.save
         order.update_column(:state, "address")
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order_token => order.token
         response.status.should == 422
       end
 
@@ -91,7 +96,7 @@ module Spree
           :country_id => @country.id
         }
         api_put :update,
-                :id => order.to_param,
+                :id => order.to_param, :order_token => order.token,
                 :order => { :bill_address_attributes => billing_address, :ship_address_attributes => shipping_address }
         json_response['state'].should == 'delivery'
         json_response['bill_address']['firstname'].should == 'John'
@@ -103,7 +108,7 @@ module Spree
         order.update_column(:state, "delivery")
         shipment = create(:shipment, :order => order)
         shipping_rate = shipment.shipping_rates.first
-        api_put :update, :id => order.to_param, :order => { :shipments_attributes => { "0" => { :selected_shipping_rate_id => shipping_rate.id, :id => shipment.id } } }
+        api_put :update, :id => order.to_param, :order_token => order.token, :order => { :shipments_attributes => { "0" => { :selected_shipping_rate_id => shipping_rate.id, :id => shipment.id } } }
         json_response['shipments'][0]['shipping_method']['name'].should == @shipping_method.name
         json_response['state'].should == 'payment'
         response.status.should == 200
@@ -111,7 +116,7 @@ module Spree
 
       it "can update payment method and transition from payment to confirm" do
         order.update_column(:state, "payment")
-        api_put :update, :id => order.to_param, :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id }] }
+        api_put :update, :id => order.to_param, :order_token => order.token, :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id }] }
         json_response['state'].should == 'confirm'
         json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
         response.status.should == 200
@@ -120,14 +125,14 @@ module Spree
       it "can transition from confirm to complete" do
         order.update_column(:state, "confirm")
         Spree::Order.any_instance.stub(:payment_required? => false)
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order_token => order.token
         json_response['state'].should == 'complete'
         response.status.should == 200
       end
 
       it "returns the order if the order is already complete" do
         order.update_column(:state, "complete")
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order_token => order.token
         json_response['number'].should == order.number
         response.status.should == 200
       end
@@ -144,7 +149,7 @@ module Spree
       end
 
       it "can assign an email to the order" do
-        api_put :update, :id => order.to_param, :order => { :email => "guest@spreecommerce.com" }
+        api_put :update, :id => order.to_param, :order => { :email => "guest@spreecommerce.com" }, :order_token => order.token
         json_response['email'].should == "guest@spreecommerce.com"
         response.status.should == 200
       end
@@ -153,7 +158,7 @@ module Spree
         order.update_column(:state, "payment")
         Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
         Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return({:coupon_applied? => true})
-        api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }
+        api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }, :order_token => order.token
       end
     end
 
@@ -162,7 +167,7 @@ module Spree
       it "can transition an order to the next state" do
         order.update_column(:email, "spree@example.com")
 
-        api_put :next, :id => order.to_param
+        api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 200
         json_response['state'].should == 'address'
       end
@@ -170,7 +175,7 @@ module Spree
       it "cannot transition if order email is blank" do
         order.update_column(:email, nil)
 
-        api_put :next, :id => order.to_param
+        api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 422
         json_response['error'].should =~ /could not be transitioned/
       end
@@ -180,7 +185,7 @@ module Spree
         Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
         coupon_result = { :coupon_applied? => true }
         Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return(coupon_result)
-        api_put :update, :id => order.to_param, :order => { :coupon_code => "foobar" }
+        api_put :update, :id => order.to_param, :order_token => order.token, :order => { :coupon_code => "foobar" }
       end
     end
   end

@@ -16,6 +16,7 @@ module Spree
 
       def update
         user_id = object_params.delete(:user_id)
+        authorize! :update, @order, params[:order_token]
         if @order.update_attributes(object_params)
           # TODO: Replace with better code when we switch to strong_parameters
           # Also remove above user_id stripping
@@ -32,6 +33,7 @@ module Spree
 
       def next
         @order.next!
+        authorize! :update, @order, params[:order_token]
         respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
         rescue StateMachine::InvalidTransition
           respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
@@ -65,6 +67,7 @@ module Spree
 
         def load_order
           @order = Spree::Order.find_by_number!(params[:id])
+          authorize! :read, @order, params[:order_token]
           raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
           @order.state = params[:state] if params[:state]
           state_callback(:before)
