@@ -46,4 +46,13 @@ describe Spree::Calculator::PercentPerItem do
     calculator.send(:compute_on_promotion?).should be_true
   end
 
+  # test that we do not fail when one promorule does not respond to products
+  context "does not fail if a promotion rule does not respond to products" do
+    before { promotion.stub :rules => [double("Rule", :products => [product1]), double("Rule")] }
+    specify do
+      calculator.stub(:calculable => promotion_calculable)
+      expect { calculator.matching_products }.not_to raise_error
+    end
+  end
+
 end
