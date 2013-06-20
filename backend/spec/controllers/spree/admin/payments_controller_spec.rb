@@ -7,6 +7,19 @@ module Spree
 
       let(:order) { create(:order) }
 
+      # Regression test for #3233
+      context "with a backend payment method" do
+        before do
+          @payment_method = create(:payment_method, :display_on => "back_end")
+        end
+
+        it "loads backend payment methods" do
+          spree_get :new, :order_id => order.number
+          response.status.should == 200
+          assigns[:payment_methods].should include(@payment_method)
+        end
+      end
+
       context "order has billing address" do
 
         before do
