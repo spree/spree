@@ -65,7 +65,12 @@ Spree automatically handles creation and storage of several size versions of eac
   :large => '600x600>'
 }```
 
-These sizes can be changed by altering the value of `Spree::Config[:attachment_styles]`. (TODO: information about regenerating existing images)
+These sizes can be changed by altering the value of `Spree::Config[:attachment_styles]`. Once `Spree::Config[:attachment_styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
+
+```
+rake paperclip:refresh:thumbnails CLASS=Spree::Image```
+
+If you want to change the image that is displayed when a product has no image, simply create new versions of the files within [Spree's app/assets/images/noimage directory](https://github.com/spree/spree/tree/master/frontend/app/assets/images/noimage). These image names must match the keys within `Spree::Config[:attachment_styles]`.
 
 ## <a id="product-properties"></a>Product Properties
 
