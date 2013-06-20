@@ -223,7 +223,7 @@ To build the documentation normally simply clone and install.
 Then simply use the nanoc command to compile and preview the guides in your browser at http://localhost:3000
 
   $ nanoc compile
-  $ nanoc preview
+  $ nanoc view
 
 ### Markdown Conventions
 
