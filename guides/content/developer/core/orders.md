@@ -25,6 +25,14 @@ Orders have the following attributes:
 * `currency`: The currency for this order. Determined by the `Spree::Config[:currency]` value that was set at the time of order.
 * `last_ip_address`: The last IP address used to update this order in the frontend.
 
+Some methods you may find useful:
+
+* `outstanding_balance`: The outstanding balance for the order, calculated by taking the `total` and minusing `payment_total`.
+* `display_item_total`: A "pretty" version of `item_total`. If `item_total` was `10.0`, `display_item_total` would be `$10.00`.
+* `display_adjustment_total`: Same as above, except for `adjustment_total`.
+* `display_total`: Same as above, except for `total`.
+* `display_outstanding_balance`: Same as above, except for `outstanding_balance`.
+
 ## <a id="state_machine"></a>The Order State Machine
 
 Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the <%= link_to "Checkout Flow API", :checkout %>.
