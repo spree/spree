@@ -41,13 +41,12 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 To update a shipment, make a request like this:
 
 ```text
-PUT /api/orders/R1234567/shipments/1```
+PUT /api/orders/R1234567/shipments/H123456789```
 
 To update shipment information, use parameters like this:
 
 <%= json \
  :shipment => {
-   :number=>"12345",
    :tracking=>"TRK9000"
  } %>
 
@@ -67,11 +66,11 @@ unlock
 
 To mark a shipment as ready, make a request like this:
 
-    PUT /api/orders/R1234567/shipments/1/ready
+    PUT /api/orders/R1234567/shipments/H123456789/ready
 
 You may choose to update shipment attributes with this request as well:
 
-    PUT /api/orders/R1234567/shipments/1/ready?shipment[number]=1234567
+    PUT /api/orders/R1234567/shipments/H123456789/ready?shipment[number]=1234567
 
 ### Response
 
@@ -84,11 +83,11 @@ You may choose to update shipment attributes with this request as well:
 
 To mark a shipment as shipped, make a request like this:
 
-    PUT /api/orders/R1234567/shipments/1/ship
+    PUT /api/orders/R1234567/shipments/H123456789/ship
 
 You may choose to update shipment attributes with this request as well:
 
-    PUT /api/orders/R1234567/shipments/1/ship?shipment[number]=1234567
+    PUT /api/orders/R1234567/shipments/H123456789/ship?shipment[number]=1234567
 
 ### Response
 
@@ -101,7 +100,7 @@ You may choose to update shipment attributes with this request as well:
 
 To add a variant to a shipment, make a request like this:
 
-    PUT /api/orders/R1234567/shipments/1/add?variant_id=1&quantity=1
+    PUT /api/orders/R1234567/shipments/H123456789/add?variant_id=1&quantity=1
 
 ### Response
 
@@ -114,7 +113,7 @@ To add a variant to a shipment, make a request like this:
 
 To remove a variant from a shipment, make a request like this:
 
-    PUT /api/orders/R1234567/shipments/1/remove?variant_id=1&quantity=1
+    PUT /api/orders/R1234567/shipments/H123456789/remove?variant_id=1&quantity=1
 
 ### Response
 
