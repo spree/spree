@@ -43,7 +43,7 @@ module Spree
     end
 
     def self.find_with_destroyed *args
-      self.with_exclusive_scope { find(*args) }
+      unscoped { find(*args) }
     end
 
     def payment_profiles_supported?
