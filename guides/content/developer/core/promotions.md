@@ -68,7 +68,7 @@ en:
         name: My Promotion Action
         description: Performs my promotion action.```
 
-## <a id="rules"></a> Rules
+## Rules
 
 There are five rules which come with Spree:
 
