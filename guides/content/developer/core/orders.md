@@ -12,7 +12,7 @@ Orders have the following attributes:
 * `number`: The unique identifier for this order. It begins with the letter R and ends in a 9-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Order.find_by_number(number)`.
 * `item_total`: The sum of all the line items for this order.
 * `adjustment_total`: The sum of all adjustments on this order.
-* `total`: The result of `item_total` minus the `adjustment_total`.
+* `total`: The result of the sum of the `item_total` and the `adjustment_total`.
 * `state`: The current state of the order. To read more about the states an order goes through, read [The Order State Machine](#state_machine) section of this guide.
 * `email`: The email address for the user who placed this order. Stored in case this order is for a guest user.
 * `user_id`: The ID for the corresponding user record for this order. Stored only if the order is placed by a signed-in user.
