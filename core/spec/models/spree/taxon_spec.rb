@@ -48,6 +48,7 @@ describe Spree::Taxon do
     let(:taxonomy) { create(:taxonomy) }
 
     it "does not error out" do
+      pending "breaks in Rails 4 with postgres, see https://github.com/rails/rails/issues/10995"
       expect { taxonomy.root.children.where(:name => "Some name").first_or_create }.not_to raise_error
     end
   end
