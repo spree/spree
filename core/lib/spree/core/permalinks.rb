@@ -48,15 +48,20 @@ module Spree
       end
 
       def save_permalink(permalink_value=self.to_param)
-        permalink_value ||= generate_permalink
+        self.with_lock do
+          permalink_value ||= generate_permalink
 
-        field = self.class.permalink_field
-        other = self.class.where("#{self.class.table_name}.#{field} LIKE ?", "#{permalink_value}%")
-        if other.any?
-          number = other.map { |o| o.send(field)[/-(\d+)$/, 1].to_i }.max + 1
-          permalink_value += "-#{number.to_s}"
+          field = self.class.permalink_field
+            # Do other links exist with this permalink?
+            other = self.class.select(field).where("#{self.class.table_name}.#{field} LIKE ?", "#{permalink_value}%")
+            if other.any?
+              # Find the existing permalink with the highest number, and increment that number.
+              # (If none of the existing permalinks have a number, this will evaluate to 1.)
+              number = other.map { |o| o.send(field)[/-(\d+)$/, 1].to_i }.max + 1
+              permalink_value += "-#{number.to_s}"
+            end
+          write_attribute(field, permalink_value)
         end
-        write_attribute(field, permalink_value)
       end
     end
   end
