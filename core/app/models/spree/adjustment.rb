@@ -58,6 +58,7 @@ module Spree
     scope :charge, -> { where('amount >= 0') }
     scope :credit, -> { where('amount < 0') }
     scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
+    scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
 
     # Update the boolean _eligible_ attribute which determines which adjustments
     # count towards the order's adjustment_total.
