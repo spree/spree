@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @return_authorization.order.shipments.shipped.collect{|s| s.inventory_units.all}.flatten.group_by(&:variant).each do | variant, units| %>
+      <% @return_authorization.order.shipments.shipped.collect{|s| s.inventory_units.to_a}.flatten.group_by(&:variant).each do | variant, units| %>
         <tr id="<%= dom_id(variant) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td>
             <div class="variant-name"><%= variant.name %></div>
@@ -50,7 +50,7 @@
 
   <%= f.field_container :stock_location do %>
     <%= f.label :stock_location, Spree.t(:stock_location) %>
-    <%= f.select :stock_location_id, Spree::StockLocation.active.all.collect{|l|[l.name, l.id]}, {:style => 'height:100px;', :class => 'fullwidth'} %>
+    <%= f.select :stock_location_id, Spree::StockLocation.active.to_a.collect{|l|[l.name, l.id]}, {:style => 'height:100px;', :class => 'fullwidth'} %>
     <%= f.error_message_on :reason %>
   <% end %>
 </div>
