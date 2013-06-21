@@ -186,7 +186,11 @@ module Spree
           if !product.is_a?(Spree::Variant) && !product.variant_images.empty?
             create_product_image_tag(product.variant_images.first, product, options, style)
           else
-            image_tag "noimage/#{style}.png", options
+            if product.is_a?(Variant) && !product.product.variant_images.empty?
+              create_product_image_tag(product.product.variant_images.first, product, options, style)
+            else
+              image_tag "noimage/#{style}.png", options
+            end
           end
         else
           create_product_image_tag(product.images.first, product, options, style)
