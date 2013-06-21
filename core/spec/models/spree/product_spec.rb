@@ -319,4 +319,17 @@ describe Spree::Product do
       reflection.options[:dependent] = :delete_all
     end
   end
+
+  describe '#total_on_hand' do
+    it 'should be infinite if track_inventory_levels is false' do
+      Spree::Config[:track_inventory_levels] = false
+      build(:product).total_on_hand.should eql(Float::INFINITY)
+    end
+
+    it 'should return master variants quantity' do
+      product = build(:product)
+      product.stub stock_items: [mock(Spree::StockItem, count_on_hand: 5)]
+      product.total_on_hand.should eql(5)
+    end
+  end
 end
