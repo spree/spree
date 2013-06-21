@@ -350,5 +350,4 @@ describe Spree::Product do
       product.total_on_hand.should eql(5)
     end
   end
-
 end
