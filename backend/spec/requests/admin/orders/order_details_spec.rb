@@ -51,6 +51,8 @@ describe "Order Details", js: true do
           click_icon :trash
         end
 
+        # Click "ok" on confirmation dialog
+        page.driver.browser.switch_to.alert.accept
         page.should_not have_content("spree t-shirt")
       end
 
