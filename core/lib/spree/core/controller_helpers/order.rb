@@ -45,12 +45,12 @@ module Spree
           # This will trigger any "first order" promotions to be triggered
           # Assuming of course that this session variable was set correctly in
           # the authentication provider's registrations controller
-          if session[:spree_user_signup]
-            fire_event('spree.user.signup', :user => try_spree_current_user, :order => current_order(true))
+          if session[:spree_user_signup] && @order
+            fire_event('spree.user.signup', :user => try_spree_current_user, :order => @order)
+            session[:spree_user_signup] = nil
           end
 
           session[:guest_token] = nil
-          session[:spree_user_signup] = nil
         end
 
         def set_current_order
