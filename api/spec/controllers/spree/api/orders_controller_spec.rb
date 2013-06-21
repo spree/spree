@@ -210,6 +210,26 @@ module Spree
 
           json_response['line_items'].first['variant'].should have_attributes([:product_id])
         end
+
+        context "when in delivery" do
+          before do
+            order.state = 'delivery'
+            order.create_proposed_shipments
+            order.save
+          end
+
+          it "returns available shipments for an order" do
+            api_get :show, :id => order.to_param
+            json_response["shipments"].should_not be_empty
+            shipment = json_response["shipments"][0]
+            shipment["shipping_rates"].should_not be_nil
+            assert shipment.has_key?("shipping_method")
+            shipment["stock_location_name"].should_not be_blank
+            manifest_item = shipment["manifest"][0]
+            manifest_item["quantity"].should == 1
+            manifest_item["variant"].should have_attributes([:id, :name, :sku, :price])
+          end
+        end
       end
     end
 

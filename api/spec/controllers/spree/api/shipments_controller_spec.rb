@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::ShipmentsController do
   render_views
   let!(:shipment) { create(:shipment) }
-  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_method, :inventory_units] }
+  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_method] }
 
   before do
     stub_authentication!
@@ -96,7 +96,7 @@ describe Spree::Api::ShipmentsController do
       it 'adds a variant to a shipment' do
         api_put :add, { variant_id: variant.to_param, quantity: 2 }
         response.status.should == 200
-        json_response['inventory_units'].select { |h| h['variant_id'] == variant.id }.size.should == 2
+        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 2
       end
 
       it 'removes a variant from a shipment' do
@@ -104,7 +104,7 @@ describe Spree::Api::ShipmentsController do
 
         api_put :remove, { variant_id: variant.to_param, quantity: 1 }
         response.status.should == 200
-        json_response['inventory_units'].select { |h| h['variant_id'] == variant.id }.size.should == 1
+        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 1
      end
     end
 

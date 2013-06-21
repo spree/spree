@@ -35,3 +35,7 @@
 * /api/countries now will a 304 response if no country has been changed since the last request.
 
     * Ryan Bigg
+
+* The Shipments API no longer returns inventory units. Instead, it will return manifest objects. This is necessary due to the split shipments changes brought in by Spree 2.
+
+    * Ryan Bigg
