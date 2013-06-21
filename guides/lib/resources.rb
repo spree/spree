@@ -418,10 +418,18 @@ module Spree
     SHIPPING_RATE =
       {
         "id"=>1,
+        "name"=>"UPS Ground (USD)",
         "cost"=>5,
         "selected"=>true,
         "shipment_id"=>1,
         "shipping_method_id"=>5
+      }
+
+    MANIFEST =
+      {
+        "quantity"=>1,
+        "states"=>{"on_hand"=>1},
+        "variant" => VARIANT
       }
 
     INVENTORY_UNIT =
@@ -446,7 +454,7 @@ module Spree
         "stock_location_name"=>"NY Warehouse",
         "shipping_rates"=>[SHIPPING_RATE],
         "shipping_method"=> SHIPPING_METHOD,
-        "inventory_units"=>[INVENTORY_UNIT]
+        "manifest"=>[MANIFEST]
       }
 
     ORDER =
@@ -531,9 +539,8 @@ module Spree
 
     ORDER_SHOW = ORDER.merge({
       "line_items" => [LINE_ITEM],
-      "payments" => [PAYMENT],
-      "shipments" => [SHIPMENT],
-      "adjustments" => [ADJUSTMENT]
+      "payments" => [],
+      "adjustments" => []
 
     })
 
@@ -678,37 +685,7 @@ module Spree
     })
 
     ORDER_SHOW_DELIVERY_STATE = ORDER.merge({
-      "shipments"=>[{
-        "id"=>1,
-        "tracking"=>"FOOBAR",
-        "number"=>"H32535710153",
-        "cost"=>"5.0",
-        "state"=>"pending",
-        "order_id"=>"R366605801",
-        "stock_location_name"=>"default",
-        "shipping_rates"=>[{
-          "id"=>1,
-          "cost"=>"5.0",
-          "selected"=>true,
-          "shipment_id"=>1,
-          "shipping_method_id"=>1
-        }, {
-          "id"=>3,
-          "cost"=>"10.0",
-          "selected"=>false,
-          "shipment_id"=>1,
-          "shipping_method_id"=>2
-        }, {
-          "id"=>2,
-          "cost"=>"15.0",
-          "selected"=>false,
-          "shipment_id"=>1,
-          "shipping_method_id"=>3
-        }],
-        "shipping_method"=>{
-          "name"=>"UPS Ground (USD)"
-        },
-      }],
+      "shipments"=>[SHIPMENT],
       "state" => "delivery"
     })
 

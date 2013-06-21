@@ -99,6 +99,14 @@ The `order_token` parameter will work for authorizing any action for an order wi
 
 <%= authorization_failure %>
 
+## Show (delivery)
+
+When an order is in the "delivery" state, additional shipments information will be returned in the API:
+
+<%= json(:shipment) do |h|
+ { :shipments => [h] }
+end %>
+
 ## Create
 
 To create a new order through the API, make this request:

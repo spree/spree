@@ -107,15 +107,15 @@ If the parameters are valid for the request, you will see a response like this
 <%= headers 200 %>
 <%= json(:order_show_delivery_state) %>
 
-Once valid address information has been submitted, the shipments and shipping rates available for this order will be returned inside a `shipments` key inside the order:
+Once valid address information has been submitted, the shipments and shipping rates available for this order will be returned inside a `shipments` key inside the order, as seen above.
 
-To advance to the next state, `payment`, you will need to select a shipping rate for the order. These were returned when transitioning to the `delivery` step. If you need want to see them again, make the following request:
+To advance to the next state, `payment`, you will need to select a shipping rate for each shipment for the order. These were returned when transitioning to the `delivery` step. If you need want to see them again, make the following request:
 
     GET /api/orders/R335381310
 
-If the order already has a shipping rate selected, you can advance it to the `payment` state by making this request:
+If the order's shipments already have shipping rates selected, you can advance it to the `payment` state by making this request:
 
-    PUT /api/checkouts/R335381310
+    PUT /api/checkouts/R335381310/next
 
 If the order doesn't have an assigned shipping rate, make the following request to select one and advance the order's state:
 
