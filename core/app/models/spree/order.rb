@@ -168,8 +168,13 @@ module Spree
     end
 
     # Used by the checkout state machine to check for unprocessed payments
-    # The Order should be unable to proceed to complete if there are unprocessed
+    # The Order should be only be able to proceed to complete if there are unprocessed
     # payments and there is payment required.
+    #
+    # The reason for this is directly before an order transitions to complete, all
+    # of the order's payments have `process!` called on it (look in order/checkout.rb).
+    # If payment *is* required and there's no payments which haven't already been tried,
+    # then the order cannot be paid for and therefore should not be able to become complete.
     def has_unprocessed_payments?
       payments.with_state('checkout').reload.exists?
     end
