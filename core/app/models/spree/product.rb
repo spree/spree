@@ -50,6 +50,7 @@ module Spree
     has_many :variants_including_master_and_deleted, class_name: 'Spree::Variant'
 
     has_many :prices, through: :variants, order: 'spree_variants.position, spree_variants.id, currency'
+    has_many :stock_items, through: :variants
 
     delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
@@ -195,6 +196,14 @@ module Spree
     def possible_promotions
       promotion_ids = promotion_rules.map(&:activator_id).uniq
       Spree::Promotion.advertised.where(id: promotion_ids).reject(&:expired?)
+    end
+
+    def total_on_hand
+      if Spree::Config.track_inventory_levels
+        self.stock_items.sum(&:count_on_hand)
+      else
+        Float::INFINITY
+      end
     end
 
     private

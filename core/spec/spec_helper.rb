@@ -53,9 +53,6 @@ RSpec.configure do |config|
     else
       DatabaseCleaner.strategy = :transaction
     end
-  end
-
-  config.before(:each) do
     DatabaseCleaner.start
     reset_spree_preferences
   end
