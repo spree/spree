@@ -2,7 +2,7 @@ module Spree
   class Taxon < ActiveRecord::Base
     acts_as_nested_set dependent: :destroy
 
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy'
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', :touch => true
     has_many :classifications, dependent: :delete_all
     has_many :products, through: :classifications
 
