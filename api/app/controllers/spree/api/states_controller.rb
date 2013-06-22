@@ -12,7 +12,7 @@ module Spree
         end
 
         state = @states.last
-        if stale?(:etag => state, :last_modified => state.try(:updated_at))
+        if stale?(state)
           respond_with(@states)
         end
       end
