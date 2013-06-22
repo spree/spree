@@ -10,6 +10,9 @@ module Spree
 
     def show
       @order = Order.find_by_number!(params[:id])
+      if stale?(:etag => @order, :last_modified => @order.updated_at)
+        respond_with(@order)
+      end
     end
 
     def update
