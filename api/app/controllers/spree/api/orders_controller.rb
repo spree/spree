@@ -38,7 +38,11 @@ module Spree
 
       def show
         find_order
-        respond_with(@order)
+        if stale?(:etag => @order, :last_modified => @order.updated_at)
+          method = "before_#{@order.state}"
+          send(method) if respond_to?(method, true)
+          respond_with(@order)
+        end
       end
 
       def update
@@ -75,6 +79,10 @@ module Spree
       def find_order
         @order = Order.find_by_number!(params[:id])
         authorize! :update, @order, params[:order_token]
+      end
+
+      def before_delivery
+        @order.create_proposed_shipments
       end
 
     end

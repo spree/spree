@@ -214,12 +214,12 @@ module Spree
         context "when in delivery" do
           before do
             order.state = 'delivery'
-            order.create_proposed_shipments
             order.save
           end
 
           it "returns available shipments for an order" do
             api_get :show, :id => order.to_param
+            response.status.should == 200
             json_response["shipments"].should_not be_empty
             shipment = json_response["shipments"][0]
             shipment["shipping_rates"].should_not be_nil
