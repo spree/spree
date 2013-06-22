@@ -20,6 +20,12 @@ module Spree
 
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
 
+    def edit
+      if stale_order?
+        respond_with(@order)
+      end
+    end
+
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
@@ -61,6 +67,10 @@ module Spree
         false
       end
 
+      def stale_order?
+        stale?(:etag => @order, :last_modified => @order.updated_at)
+      end
+
       def load_order
         @order = current_order
         redirect_to spree.cart_path and return unless @order
@@ -69,7 +79,10 @@ module Spree
           redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
           @order.state = params[:state]
         end
-        setup_for_current_state
+
+        if stale_order?
+          setup_for_current_state
+        end
       end
 
       def ensure_checkout_allowed
