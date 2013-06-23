@@ -38,11 +38,9 @@ module Spree
 
       def show
         find_order
-        if stale?(:etag => @order, :last_modified => @order.updated_at)
-          method = "before_#{@order.state}"
-          send(method) if respond_to?(method, true)
-          respond_with(@order)
-        end
+        method = "before_#{@order.state}"
+        send(method) if respond_to?(method, true)
+        respond_with(@order)
       end
 
       def update
