@@ -100,6 +100,25 @@ Then register it using this code inside `config/initializers/spree.rb`:
 ```ruby
 Rails.application.config.spree.promotions.rules << MyPromotionRule```
 
-Once this rule has been registered, it will be available within Spree's interface.
+NOTE: proper location and file name for the rule in this example would be: app/models/spree/promotion/rules/my_promotion_rule.rb
+
+To get your rule to appear in the admin promotions interface you have a few more changes to make.
+
+Create a partial for your new rule in app/views/spree/admin/promotions/rules/_my_promotion_rule.html.erb.
+
+This file can be as simple as an empty file if your rule requires no parameters, or it may require more complex markup to enable setting values for your new rule. Check out some of the rule partials provided with Spree in the backend sources.
+
+And finally, your new rule must have a name and description defined for the locale you will be using it in. For English, edit config/locales/en.yml and add the following to support our new example rule:
+
+```
+en:
+  spree:
+    promotion_rule_types:
+            my_promotion_rule:
+              name: "My Promotion Rule"
+              description: "Rule to define my new promotion"
+```
+
+Restart your application. Once this rule has been registered, it will be available within Spree's admin interface.
 
 TODO: Write about Spree::Promo::CouponApplicator
