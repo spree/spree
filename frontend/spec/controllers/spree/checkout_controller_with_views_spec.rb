@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 # This spec is useful for when we just want to make sure a view is rendering correctly

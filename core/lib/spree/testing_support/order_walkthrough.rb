@@ -5,7 +5,20 @@ class OrderWalkthrough
       FactoryGirl.create(:payment_method)
     end
 
-    # A payment method must exist for an order to proceed through the Address state
+    # Need to create a valid zone too...
+    zone = FactoryGirl.create(:zone)
+    country = FactoryGirl.create(:country)
+    zone.members << Spree::ZoneMember.create(:zoneable => country)
+    country.states << FactoryGirl.create(:state, :country => country)
+
+    # A shipping method must exist for rates to be displayed on checkout page
+    unless Spree::ShippingMethod.exists?
+      FactoryGirl.create(:shipping_method).tap do |sm|
+        sm.calculator.preferred_amount = 10
+        sm.calculator.preferred_currency = Spree::Config[:currency]
+        sm.calculator.save
+      end
+    end
 
     order = Spree::Order.create!(:email => "spree@example.com")
     add_line_item!(order)
