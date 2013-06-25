@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'
 
-  s.add_dependency 'rails', '~> 4.0.0.rc1'
+  s.add_dependency 'rails', '~> 4.0.0'
 
   # Necessary for the install generator
   s.add_dependency 'highline', '= 1.6.18'
