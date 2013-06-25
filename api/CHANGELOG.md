@@ -42,6 +42,7 @@
 
 * The Shipments API no longer returns inventory units. Instead, it will return manifest objects. This is necessary due to the split shipments changes brought in by Spree 2.
 
+<<<<<<< HEAD
     *Ryan Bigg*
 
 * Checkouts API's update action will now correctly process line item attributes (either `line_items` or `line_item_attributes`)
@@ -77,5 +78,9 @@
     *Alex Marles & Ryan Bigg*
 
 * Requests to POST /api/line_items will now update existing line items. For example if you have a line item with a variant ID=2 and quantity=10 and you attempt to create a new line item for the same variant with a quantity of 5, the existing line item's quantity will be updated to 15. Previously, a new line item would erroneously be created.
+
+    * Ryan Bigg
+
+* Checkouts API's update action will now correctly process line item attributes (either `line_items` or `line_item_attributes`)
 
     * Ryan Bigg
