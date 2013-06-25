@@ -388,7 +388,7 @@ module Spree
 
       # update payment and shipment(s) states, and save
       updater.update_payment_state
-      shipments.each { |shipment| shipment.update!(self) }
+      shipments.reload.each { |shipment| shipment.update!(self) }
       updater.update_shipment_state
       save
       updater.run_hooks
