@@ -59,10 +59,14 @@ module Spree
     scope :credit, -> { where('amount < 0') }
     scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
 
+    def promotion?
+      originator_type == 'Spree::PromotionAction'
+    end
+
     # Update the boolean _eligible_ attribute which determines which adjustments
     # count towards the order's adjustment_total.
     def set_eligibility
-      result = self.mandatory || (self.amount != 0 && self.eligible_for_originator?)
+      result = mandatory || ((amount != 0 || promotion?) && eligible_for_originator?)
       update_attribute_without_callbacks(:eligible, result)
     end
 
@@ -73,7 +77,7 @@ module Spree
       !originator.respond_to?(:eligible?) || originator.eligible?(source)
     end
 
-    # Update both the eligibility and amount of the adjustment. Adjustments 
+    # Update both the eligibility and amount of the adjustment. Adjustments
     # delegate updating of amount to their Originator when present, but only if
     # +locked+ is false. Adjustments that are +locked+ will never change their amount.
     #
