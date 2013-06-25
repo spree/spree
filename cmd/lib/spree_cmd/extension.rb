@@ -27,7 +27,6 @@ module SpreeCmd
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
       template 'spec/spec_helper.rb.tt', "#{file_name}/spec/spec_helper.rb"
-      template 'Versionfile', "#{file_name}/Versionfile"
     end
 
     def final_banner
