@@ -21,6 +21,24 @@ describe "i18n" do
 
   it "translates within the spree scope" do
     Spree.normal_t(:foo).should eql("bar")
+    Spree.translate(:foo).should eql("bar")
+  end
+
+  it "translates within the spree scope using a path" do
+    Spree.stub(:virtual_path).and_return('bar')
+
+    Spree.normal_t('.legacy_translation').should eql("back in the day...")
+    Spree.translate('.legacy_translation').should eql("back in the day...")
+  end
+
+  it "raise error without any context when using a path" do
+    expect {
+      Spree.normal_t('.legacy_translation')
+    }.to raise_error
+
+    expect {
+      Spree.translate('.legacy_translation')
+    }.to raise_error
   end
 
   it "prepends a string scope" do
