@@ -85,7 +85,7 @@ describe Spree::OrdersController do
 
     it "cannot update a blank order" do
       spree_put :update, :order => { :email => "foo" }
-      flash[:error] = I18n.t(:order_edit)
+      flash[:error] = Spree.t(:order_edit)
       response.should redirect_to(spree.root_path)
     end
   end
