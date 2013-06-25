@@ -11,6 +11,7 @@ describe Spree::Calculator::PercentPerItem do
 
   let!(:promotion) { double("Promotion", :rules => [double("Rule", :products => [product1])]) }
   let!(:promotion_without_rules) { double("Promotion", :rules => []) }
+  let!(:promotion_without_products) { double("Promotion", :rules => [double("Rule", :products => [])]) }
 
   let!(:calculator) { Spree::Calculator::PercentPerItem.new(:preferred_percent => 25) }
 
@@ -26,6 +27,11 @@ describe Spree::Calculator::PercentPerItem do
 
   it "correctly calculates per item promotion without rules" do
     calculator.stub(:calculable => double("Calculable", :promotion => promotion_without_rules))
+    calculator.compute(object).to_f.should == 15.0
+  end
+
+  it "correctly calculates per item promotion without products" do
+    calculator.stub(:calculable => double("Calculable", :promotion => promotion_without_products))
     calculator.compute(object).to_f.should == 15.0
   end
 
