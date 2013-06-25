@@ -253,6 +253,14 @@ end```
 
 These specs test that the `price_in` method we overrode in our `VariantDecorator` returns the correct price both when the sale price is present and when it is not.
 
+## Versioning your extension
+
+Different versions of Spree may act differently with your extension. It's adviseable to keep different branches of your extension actively maintained for the different branches of Spree so that your extension will work with those different versions.
+
+It's advisable that your extension follows the same versioning pattern as Spree itself. If your extension is compatible with Spree 2.0.x, then create a `2-0-stable` branch on your extension and advise people to use that branch for your extension. If it's only compatible with 1.3.x, then create a 1-3-stable branch and advise the use of that branch.
+
+Having a consistent branching naming scheme across Spree and its extensions will reduce confusion in the long run.
+
 ## Summary
 
 In this tutorial you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
