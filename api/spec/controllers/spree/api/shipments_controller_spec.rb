@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::ShipmentsController do
   render_views
   let!(:shipment) { create(:shipment) }
-  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_method] }
+  let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
 
   before do
     stub_authentication!

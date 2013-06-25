@@ -43,3 +43,7 @@
 * Checkouts API's update action will now correctly process line item attributes (either `line_items` or `line_item_attributes`)
 
     *Ryan Bigg*
+
+* The structure of shipments data in the API has changed. Shipments can now have many shipping methods, shipping rates (which in turn have many zones and shipping categories), as well as a new key called "manifest" which returns the list of items contained within just this shipment for the order.
+
+    *Ryan Bigg*

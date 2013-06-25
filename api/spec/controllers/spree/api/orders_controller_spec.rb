@@ -212,7 +212,15 @@ module Spree
         end
 
         context "when in delivery" do
+          let!(:shipping_method) do
+            FactoryGirl.create(:shipping_method).tap do |shipping_method|
+              shipping_method.calculator.preferred_amount = 10
+              shipping_method.calculator.save
+            end
+          end
+
           before do
+            order.ship_address = FactoryGirl.create(:address)
             order.state = 'delivery'
             order.save
           end
@@ -222,8 +230,24 @@ module Spree
             response.status.should == 200
             json_response["shipments"].should_not be_empty
             shipment = json_response["shipments"][0]
+            # Test for correct shipping method attributes
+            # Regression test for #3206
+            shipment["shipping_methods"].should_not be_nil
+            json_shipping_method = shipment["shipping_methods"][0]
+            json_shipping_method["id"].should == shipping_method.id
+            json_shipping_method["name"].should == shipping_method.name
+            json_shipping_method["zones"].should_not be_empty
+            json_shipping_method["shipping_categories"].should_not be_empty
+
+            # Test for correct shipping rates attributes
+            # Regression test for #3206
             shipment["shipping_rates"].should_not be_nil
-            assert shipment.has_key?("shipping_method")
+            shipping_rate = shipment["shipping_rates"][0]
+            shipping_rate["name"].should == json_shipping_method["name"]
+            shipping_rate["cost"].should == "10.0"
+            shipping_rate["selected"].should be_true
+            shipping_rate["display_cost"].should == "$10.00"
+
             shipment["stock_location_name"].should_not be_blank
             manifest_item = shipment["manifest"][0]
             manifest_item["quantity"].should == 1
