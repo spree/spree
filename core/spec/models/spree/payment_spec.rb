@@ -30,7 +30,8 @@ describe Spree::Payment do
   let!(:success_response) do
     mock('success_response', :success? => true,
                              :authorization => '123',
-                             :avs_result => { 'code' => 'avs-code' })
+                             :avs_result => { 'code' => 'avs-code' },
+                             :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})
   end
 
   let(:failed_response) { mock('gateway_response', :success? => false) }
@@ -132,10 +133,12 @@ describe Spree::Payment do
                                                                  anything).and_return(success_response)
         end
 
-        it "should store the response_code and avs_response" do
+        it "should store the response_code, avs_response and cvv_response fields" do
           payment.authorize!
           payment.response_code.should == '123'
           payment.avs_response.should == 'avs-code'
+          payment.cvv_response_code.should == 'cvv-code'
+          payment.cvv_response_message.should == 'CVV Result'
         end
 
         it "should make payment pending" do
