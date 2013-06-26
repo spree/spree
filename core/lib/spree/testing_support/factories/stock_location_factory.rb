@@ -7,8 +7,8 @@ FactoryGirl.define do
     phone '(202) 456-1111'
     active true
 
-    state  { |stock_location| stock_location.association(:state) }
     country  { |stock_location| stock_location.association(:country) }
+    state  { |stock_location| stock_location.association(:state, :country => stock_location.country) }
 
     factory :stock_location_with_items do
       after(:create) do |stock_location, evaluator|
