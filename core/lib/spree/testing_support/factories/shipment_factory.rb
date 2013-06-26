@@ -12,7 +12,7 @@ FactoryGirl.define do
       shipment.add_shipping_method(create(:shipping_method), true)
 
       shipment.order.line_items.each do |line_item|
-        line_item.quantity.times { shipment.inventory_units.create(variant_id: line_item.variant) }
+        line_item.quantity.times { shipment.inventory_units.create(variant_id: line_item.variant_id) }
       end
     end
   end
