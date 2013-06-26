@@ -119,11 +119,18 @@ module Spree
       it "can update shipping method and transition from delivery to payment" do
         order.update_column(:state, "delivery")
         shipment = create(:shipment, :order => order)
-        shipping_rate = shipment.shipping_rates.first
+        shipment.refresh_rates
+        shipping_rate = shipment.shipping_rates.where(:selected => false).first
         api_put :update, :id => order.to_param, :order => { :shipments_attributes => { "0" => { :selected_shipping_rate_id => shipping_rate.id, :id => shipment.id } } }
-        json_response['shipments'][0]['shipping_method']['name'].should == @shipping_method.name
-        json_response['state'].should == 'payment'
         response.status.should == 200
+        # Find the correct shipment...
+        json_shipment = json_response['shipments'].detect { |s| s["id"] == shipment.id }
+        # Find the correct shipping rate for that shipment...
+        json_shipping_rate = json_shipment['shipping_rates'].detect { |sr| sr["id"] == shipping_rate.id }
+        # ... And finally ensure that it's selected
+        json_shipping_rate['selected'].should be_true
+        # Order should automatically transfer to payment because all criteria are met
+        json_response['state'].should == 'payment'
       end
 
       it "can update payment method and transition from payment to confirm" do
