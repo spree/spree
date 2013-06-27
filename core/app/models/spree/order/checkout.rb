@@ -64,7 +64,12 @@ module Spree
               end
 
               before_transition :to => :complete do |order|
-                order.process_payments! if order.payment_required?
+                if order.payment_required?
+                  unless order.process_payments!
+                    order.checkout_errors << Spree.t(:payment_processing_failed)
+                    false
+                  end
+                end
               end
 
               before_transition :to => :delivery, :do => :create_proposed_shipments
@@ -143,6 +148,10 @@ module Spree
 
           def self.add_transition(options)
             self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
+          end
+
+          def checkout_errors
+            @checkout_errors ||= [Spree.t(:server_error)]
           end
 
           def checkout_steps

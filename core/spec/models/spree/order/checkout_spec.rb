@@ -168,7 +168,7 @@ describe Spree::Order do
     it "should only call default transitions once when checkout_flow is redefined" do
       order = SubclassedOrder.new
       order.stub :payment_required? => true
-      order.should_receive(:process_payments!).once
+      order.should_receive(:process_payments!).once.and_return(true)
       order.state = "payment"
       order.next!
       order.state.should == "complete"
