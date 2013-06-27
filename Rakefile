@@ -16,7 +16,7 @@ end
 
 desc "Generates a dummy app for testing for every Spree engine"
 task :test_app do
-  %w(api core dash promo).each do |engine|
+  %w(api core promo).each do |engine|
     ENV['LIB_NAME'] = File.join('spree', engine)
     ENV['DUMMY_PATH'] = File.expand_path("../#{engine}/spec/dummy", __FILE__)
     Rake::Task['common:test_app'].execute
