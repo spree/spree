@@ -17,7 +17,7 @@ module Spree
         # through options hash
         def perform(options = {})
           order = options[:order]
-          return if order.promotion_credit_exists?(self.promotion)
+          return if order.promotion_credit_exists?(self)
 
           self.create_adjustment("#{Spree.t(:promotion)} (#{promotion.name})", order, order)
         end

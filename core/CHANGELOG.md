@@ -42,3 +42,10 @@ en:
 See #3133 for more information.
 
     * Ryan Bigg*
+
+*   Change `order.promotion_credit_exists?` api. Now it receives an adjustment
+    originator (PromotionAction instance) instead of a promotion. Allowing
+    multiple adjustments being created for the same promotion as the current
+    PromotionAction / Promotion api suggests #3262
+
+    * Washington Luiz *
