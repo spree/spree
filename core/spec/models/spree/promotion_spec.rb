@@ -90,6 +90,17 @@ describe Spree::Promotion do
       promotion.activate(@payload)
     end
 
+    context "database has uppercase code" do
+      it "always downcase code on comparison" do
+        promotion.stub(:code => 'xxX')
+        @payload[:coupon_code] = 'xxx'
+        @action1.should_receive(:perform).with(@payload)
+        @action2.should_receive(:perform).with(@payload)
+
+        promotion.activate(@payload)
+      end
+    end
+
     it "should check path if present" do
       promotion.path = 'content/cvv'
       @payload[:path] = 'content/cvv'
