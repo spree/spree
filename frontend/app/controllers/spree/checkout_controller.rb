@@ -18,8 +18,6 @@ module Spree
 
     helper 'spree/orders'
 
-    rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
-
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
@@ -138,11 +136,6 @@ module Spree
         @differentiator.missing.each do |variant, quantity|
           @order.contents.remove(variant, quantity)
         end
-      end
-
-      def rescue_from_spree_gateway_error
-        flash[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
-        render :edit
       end
 
       def check_authorization

@@ -174,20 +174,6 @@ describe Spree::CheckoutController do
         response.should redirect_to spree.cart_path
       end
     end
-
-    context "Spree::Core::GatewayError" do
-      before do
-        order.stub :user => user
-        order.stub(:update_attributes).and_raise(Spree::Core::GatewayError)
-        spree_post :update, {:state => "address"}
-      end
-
-      it "should render the edit template" do
-        response.should render_template :edit
-        flash[:error].should == Spree.t(:spree_gateway_error_flash_for_checkout)
-      end
-    end
-
   end
 
   context "When last inventory item has been purchased" do
