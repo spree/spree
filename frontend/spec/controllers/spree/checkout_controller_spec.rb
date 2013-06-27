@@ -76,6 +76,7 @@ describe Spree::CheckoutController do
           # Must have *a* shipping method and a payment method so updating from address works
           order.stub :available_shipping_methods => [stub_model(Spree::ShippingMethod)]
           order.stub :available_payment_methods => [stub_model(Spree::PaymentMethod)]
+          order.stub :create_proposed_shipments => []
         end
 
         let(:address_params) do

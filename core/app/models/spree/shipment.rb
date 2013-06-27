@@ -106,8 +106,11 @@ module Spree
       return shipping_rates if shipped?
 
       shipping_method_id = shipping_method.try(:id)
-      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
-
+      begin
+        self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
+      rescue Core::ShippingRateError
+        self.shipping_rates = []
+      end
 
       if shipping_method_id
         selected_rate = shipping_rates.detect { |rate|

@@ -72,7 +72,14 @@ module Spree
                 end
               end
 
-              before_transition :to => :delivery, :do => :create_proposed_shipments
+              before_transition :to => :delivery do |order|
+                begin
+                  order.create_proposed_shipments
+                rescue Core::ShippingRateError => error
+                  order.checkout_errors << error.message
+                  false
+                end
+              end
 
               after_transition :to => :complete, :do => :finalize!
               after_transition :to => :delivery, :do => :create_tax_charge!

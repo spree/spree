@@ -227,7 +227,7 @@ describe Spree::Order do
 
     context "raise gateway error" do
       before do
-        payments.first.should_receive(:process!) { raise Spree::Core::GatewayError.new }
+        payment.should_receive(:process!) { raise Spree::Core::GatewayError.new }
       end
 
       it "rescues the error" do
