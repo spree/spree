@@ -7,7 +7,7 @@ module Spree
     validates_presence_of :stock_location, :variant
     validates_uniqueness_of :variant_id, scope: :stock_location_id
 
-    after_save :process_backordersg
+    after_save :process_backorders
 
     delegate :weight, to: :variant
 

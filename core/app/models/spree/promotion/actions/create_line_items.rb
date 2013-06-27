@@ -5,6 +5,8 @@ module Spree
         has_many :promotion_action_line_items, foreign_key: :promotion_action_id
         accepts_nested_attributes_for :promotion_action_line_items
 
+        delegate :eligible?, :to => :promotion
+
         # Adds a line item to the Order if the promotion is eligible
         #
         # This doesn't play right with Add to Cart events because at the moment
