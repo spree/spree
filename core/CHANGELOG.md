@@ -1,5 +1,10 @@
 ## Spree 2.1.0 (unreleased) ##
 
+*   Change `order.promotion_credit_exists?` api. Now it receives an adjustment
+    originator (PromotionAction instance) instead of a promotion. Allowing
+    multiple adjustments being created for the same promotion as the current
+    PromotionAction / Promotion api suggests #3262
+
 *   Remove after_save callback for stock items backorders processing and
     fixes count on hand updates when there are backordered units #3066
 
