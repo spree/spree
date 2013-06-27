@@ -1,7 +1,7 @@
 $(document).ready(function() {
   if ($("#product_option_type_ids").length > 0) {
     $("#product_option_type_ids").select2({
-      placeholder: "Add an option type",
+      placeholder: Spree.translations.option_type_placeholder,
       multiple: true,
       initSelection: function(element, callback) {
         return $.getJSON(Spree.routes.option_type_search + "?ids=" + (element.val()), null, function(data) {
