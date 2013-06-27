@@ -5,7 +5,7 @@ require 'spec_helper'
 module ThirdParty
   class Extension < ActiveRecord::Base
     # nasty hack so we don't have to create a table to back this fake model
-    set_table_name :spree_products
+    self.table_name = 'spree_products'
   end
 end
 
