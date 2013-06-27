@@ -1,6 +1,6 @@
 <div data-hook="admin_mail_method_form_fields">
   <div class="row">
-      
+
     <div class="alpha six columns" data-hook="general">
       <fieldset class="no-border-bottom">
         <legend align="center"><%= Spree.t(:general) %></legend>
@@ -56,15 +56,11 @@
         </div>
         <div class="field">
           <%= label_tag :secure_connection_type, Spree.t(:secure_connection_type) %><br />
-          <%= select_tag(:secure_connection_type, 
-                         options_from_collection_for_select(Spree::Core::MailSettings::SECURE_CONNECTION_TYPES, :to_s, :to_s, Spree::Config[:secure_connection_type]),
-                         :class => 'select2 fullwidth') %>
+          <%= select_tag(:secure_connection_type, options_from_collection_for_select(Spree::Core::MailSettings::SECURE_CONNECTION_TYPES.map{|w| Spree.t(w.downcase.to_sym, :default => w)}, :to_s, :to_s, Spree::Config[:secure_connection_type]), :class => 'select2 fullwidth') %>
         </div>
         <div class="field">
           <%= label_tag :mail_auth_type, Spree.t(:smtp_authentication_type) %><br />
-          <%= select_tag(:mail_auth_type,
-                         options_from_collection_for_select(Spree::Core::MailSettings::MAIL_AUTH, :to_s, :to_s, Spree::Config[:mail_auth_type]),
-                         :class => 'select2 fullwidth') %>
+          <%= select_tag(:mail_auth_type, options_from_collection_for_select(Spree::Core::MailSettings::MAIL_AUTH.map{|w| Spree.t(w.downcase.to_sym, :default => w)}, :to_s, :to_s, Spree::Config[:mail_auth_type]), :class => 'select2 fullwidth') %>
         </div>
         <div class="field">
           <%= label_tag :smtp_username, Spree.t(:smtp_username) %><br />

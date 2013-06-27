@@ -131,7 +131,7 @@ startItemSplit = function(event){
     type: "GET",
     async: false,
     url: Spree.url("/api/variants.json"),
-    data: { 
+    data: {
       q: {
         "id_eq": variant_id
       }
@@ -143,7 +143,7 @@ startItemSplit = function(event){
   });
 
   var max_quantity = link.closest('tr').data('item-quantity');
-  var split_item_template = Handlebars.compile($('#variant_split_template').text()); 
+  var split_item_template = Handlebars.compile($('#variant_split_template').text());
   link.closest('tr').after(split_item_template({ variant: variant, shipments: shipments, max_quantity: max_quantity }));
   $('a.cancel-split').click(cancelItemSplit);
   $('a.save-split').click(completeItemSplit);
@@ -250,7 +250,7 @@ formatVariantResult = function(variant) {
 $.fn.variantAutocomplete = function() {
   this.parent().children(".options_placeholder").attr('id', this.parent().data('index'))
   this.select2({
-    placeholder: "Select a variant",
+    placeholder: Spree.translations.variant_placeholder,
     minimumInputLength: 3,
     ajax: {
       url: Spree.url(Spree.routes.variants_search),
