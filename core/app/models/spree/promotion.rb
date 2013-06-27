@@ -44,9 +44,10 @@ module Spree
     def activate(payload)
       return unless order_activatable? payload[:order]
 
+      # make sure code is always downcased (old databases might have mixed case codes)
       if code.present?
         event_code = payload[:coupon_code]
-        return unless event_code == self.code
+        return unless event_code == self.code.downcase.strip
       end
 
       if path.present?
