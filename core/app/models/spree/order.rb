@@ -428,6 +428,8 @@ module Spree
                           :cost => cost,
                           :currency => currency)
       end.compact.sort_by { |r| r.cost }
+      raise Spree::ShippingError.new("#{I8n.t(:shipping_error)}: #{I18n.t(:no_shipping_services)}") if @rate_hash.empty?
+      @rate_hash
     end
 
     def paid?

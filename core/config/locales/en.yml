@@ -605,6 +605,7 @@ en:
   no_results: "No results"
   no_shipments_for_this_order: "There are no shipments for this order"
   no_shipping_methods_found: "No shipping methods found"
+  no_shipping_services: "There are no valid services available for the shipping destination."
   no_trackers_found: "No Trackers Found"
   no_user_found: "No user was found with that email address"
   none: None
