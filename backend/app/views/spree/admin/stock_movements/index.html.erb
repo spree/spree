@@ -8,6 +8,9 @@
   <li>
     <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'icon-plus', id: 'admin_new_stock_movement_link' %>
   </li>
+  <li>
+    <%= link_to_with_icon 'icon-arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'button' %>
+  </li>
 <% end %>
 
 <table class="index" id='listing_stock_movements'>
