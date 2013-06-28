@@ -197,13 +197,32 @@ describe Spree::Order do
   end
 
   context "#process_payments!" do
+    let(:payment) { stub_model(Spree::Payment) }
+    before { order.stub :pending_payments => [payment], :total => 10 }
+
     it "should process the payments" do
-      order.stub(:total).and_return(10)
-      payment = stub_model(Spree::Payment)
-      payments = [payment]
-      order.stub(:payments).and_return(payments)
-      payments.first.should_receive(:process!)
-      order.process_payments!
+      payment.should_receive(:process!)
+      order.process_payments!.should be_true
+    end
+
+    it "should return false if no pending_payments available" do
+      order.stub :pending_payments => []
+      order.process_payments!.should be_false
+    end
+
+    context "when a payment raises a GatewayError" do
+      before { payment.should_receive(:process!).and_raise(Spree::Core::GatewayError) }
+
+      it "should return true when :allow_checkout_on_gateway_error if true" do
+        Spree::Config.set :allow_checkout_on_gateway_error => true
+        order.process_payments!.should be_true
+      end
+
+      it "should return false when :allow_checkout_on_gateway_error is false" do
+        Spree::Config.set :allow_checkout_on_gateway_error => false
+        order.process_payments!.should be_false
+      end
+
     end
   end
 
