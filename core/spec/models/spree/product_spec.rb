@@ -149,13 +149,17 @@ describe Spree::Product do
       end
     end
 
-    context "validate uniqueness" do
-      let!(:first) { create(:product, :name => 'foo') }
-      let!(:second) { create(:product, :name => 'foo') }
+    context "permalinks must be unique" do
+      before do
+        @product1 = create(:product, :name => 'foo')
+      end
 
-      before { second.update_attributes(:permalink => 'foo') }
-
-      it { second.should have(1).error_on(:permalink) }
+      it "cannot create another product with the same permalink" do
+        @product2 = create(:product, :name => 'foo')
+        lambda do
+          @product2.update_attributes(:permalink => @product1.permalink)
+        end.should raise_error(ActiveRecord::RecordNotUnique)
+      end
     end
 
     it "supports Chinese" do
