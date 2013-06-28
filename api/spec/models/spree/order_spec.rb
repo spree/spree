@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Order do
+    let!(:country) { FactoryGirl.create(:country) }
+    let!(:state) { country.states.first || FactoryGirl.create(:state, :country => country) }
     let(:user) { stub_model(LegacyUser) }
     let(:product) { create :product }
     let(:variant_id) { product.master.id }
@@ -12,8 +14,8 @@ module Spree
        :firstname => 'Fox',
        :lastname => 'Mulder',
        :city => 'Washington',
-       :country_id => '1',
-       :state_id => '1',
+       :country_id => country.id,
+       :state_id => state.id,
        :zipcode => '666',
        :phone => '666-666-6666'
      }}
@@ -69,7 +71,6 @@ module Spree
     end
 
     it 'ensures_country_id for country fields' do
-      country = create(:country)
       [:name, :iso, :iso_name, :iso3].each do |field|
         address = { :country => { field => country.send(field) }}
         Order.ensure_country_id_from_api(address)
@@ -78,7 +79,6 @@ module Spree
     end
 
     it 'ensures_state_id for state fields' do
-      state = create(:state)
       [:name, :abbr].each do |field|
         address = { :state => { field => state.send(field) }}
         Order.ensure_state_id_from_api(address)
