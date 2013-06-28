@@ -213,12 +213,12 @@ describe Spree::Order do
     context "when a payment raises a GatewayError" do
       before { payment.should_receive(:process!).and_raise(Spree::Core::GatewayError) }
 
-      it "should return true when :allow_checkout_on_gateway_error if true" do
+      it "should return true when configured to allow checkout on gateway failures" do
         Spree::Config.set :allow_checkout_on_gateway_error => true
         order.process_payments!.should be_true
       end
 
-      it "should return false when :allow_checkout_on_gateway_error is false" do
+      it "should return false when not configured to allow checkout on gateway failures" do
         Spree::Config.set :allow_checkout_on_gateway_error => false
         order.process_payments!.should be_false
       end
