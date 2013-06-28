@@ -8,6 +8,9 @@
   <li>
     <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'icon-plus', id: 'admin_new_stock_movement_link' %>
   </li>
+  <li>
+    <%= link_to_with_icon 'icon-arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'button' %>
+  </li>
 <% end %>
 
 <table class="index" id='listing_stock_movements'>
@@ -33,7 +36,7 @@
         <td data-hook="admin_stock_movements_index_row_actions" class="actions">
           <%= link_to_with_icon 'icon-edit', Spree.t(:edit), edit_admin_stock_location_stock_movement_path(@stock_location, stock_movement), data: { action: 'edit' }, no_text: true %>
           <%= link_to_with_icon 'icon-trash', Spree.t(:delete), admin_stock_location_stock_movement_path(@stock_location, stock_movement), method: :delete,
-            data: { confirm: t(:are_you_sure), action: 'remove' }, no_text: true %>
+            data: { confirm: Spree.t(:are_you_sure), action: 'remove' }, no_text: true %>
         </td>
       </tr>
     <% end %>
