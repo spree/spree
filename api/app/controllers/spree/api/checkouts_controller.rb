@@ -1,7 +1,7 @@
 module Spree
   module Api
     class CheckoutsController < Spree::Api::BaseController
-      before_filter :load_order, :only => [:update, :next]
+      before_filter :load_order, :only => [:show, :update, :next]
       before_filter :associate_user, :only => :update
 
       include Spree::Core::ControllerHelpers::Auth
@@ -18,6 +18,10 @@ module Spree
         respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
       rescue StateMachine::InvalidTransition
         respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
+      end
+
+      def show
+        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
       end
 
       def update
