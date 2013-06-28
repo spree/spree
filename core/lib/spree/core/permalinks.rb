@@ -14,8 +14,6 @@ module Spree
           options[:field] ||= :permalink
           self.permalink_options = options
 
-          validates permalink_options[:field], :uniqueness => true
-
           if self.table_exists? && self.column_names.include?(permalink_options[:field].to_s)
             before_validation(:on => :create) { save_permalink }
           end
