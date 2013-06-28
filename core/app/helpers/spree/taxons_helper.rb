@@ -5,7 +5,7 @@ module Spree
     # to show the most popular products for a particular taxon (that is an exercise left to the developer.)
     def taxon_preview(taxon, max=4)
       products = taxon.active_products.limit(max)
-      if (products.size < max) && Spree::Config[:show_descendents]
+      if (products.size < max)
         taxon.descendants.each do |taxon|
           to_get = max - products.length
           products += taxon.active_products.limit(to_get)
