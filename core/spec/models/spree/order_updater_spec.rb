@@ -164,6 +164,22 @@ module Spree
         order.adjustments.eligible.promotion.first.label.should == 'Promotion C'
       end
 
+      context "multiple adjustments and the best one is not eligible" do
+        let!(:promo_a) { create_adjustment("Promotion A", -100) }
+        let!(:promo_c) { create_adjustment("Promotion C", -300) }
+
+        before do
+          promo_a.update_attribute_without_callbacks(:eligible, true)
+          promo_c.update_attribute_without_callbacks(:eligible, false)
+        end
+
+        # regression for #3274
+        it "still makes the previous best eligible adjustment valid" do
+          updater.update_adjustments
+          order.adjustments.eligible.promotion.first.label.should == 'Promotion A'
+        end
+      end
+
       it "should only leave one adjustment even if 2 have the same amount" do
         create_adjustment("Promotion A", -100)
         create_adjustment("Promotion B", -200)
