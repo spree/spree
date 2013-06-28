@@ -24,8 +24,8 @@ module Spree
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
-        @product = Product.new(product_params)
         begin
+          @product = Product.new(product_params)
           if @product.save
             respond_with(@product, :status => 201, :default_template => :show)
           else
@@ -35,7 +35,7 @@ module Spree
           @product.permalink = nil
           retry
         end
-      end
+      end 
 
       def update
         @product = find_product(params[:id])
