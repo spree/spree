@@ -45,6 +45,34 @@ module Spree
         end
       end
 
+      def add
+        @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
+        @return_authorization.add_variant params[:variant_id].to_i, params[:quantity].to_i
+        if @return_authorization.valid?
+          respond_with @return_authorization, default_template: :show
+        else
+          invalid_resource!(@return_authorization)
+        end
+      end
+
+      def receive
+        @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
+        if @return_authorization.receive
+          respond_with @return_authorization, default_template: :show
+        else
+          invalid_resource!(@return_authorization)
+        end
+      end
+
+      def cancel
+        @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
+        if @return_authorization.cancel
+          respond_with @return_authorization, default_template: :show
+        else
+          invalid_resource!(@return_authorization)
+        end
+      end
+
       private
 
       def order

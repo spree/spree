@@ -29,7 +29,13 @@ Spree::Core::Engine.routes.draw do
     end
 
     resources :orders do
-      resources :return_authorizations
+      resources :return_authorizations do
+        member do
+          put :add
+          put :cancel
+          put :receive
+        end
+      end
       member do
         put :address
         put :delivery
