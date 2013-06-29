@@ -64,14 +64,17 @@ Spree Hosting servers have this command available so it's best to run
 the command directly on your server.
 
 This example command below is for illustration purposes only, you must
-substitue your information in the relevant locations.
+substitue your information in the relevant locations. There are some tools
+available that will generate the proper `openssl` command for you
+([this one](https://www.digicert.com/easy-csr/openssl.htm), for example).
 
 ```bash
-openssl req ~~new~~newkey rsa:2048 ~~nodes~~out www_example_com.csr
-~~keyout www_example_com.key~~subj "/C=US/ST=MD/L=Chevy
-Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com"```
+openssl req -new -newkey rsa:2048 -nodes -out www_example_com.csr
+-keyout www_example_com.key -subj "/C=US/ST=MD/L=Chevy
+Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com"
+```
 
-Be sure to change the `~~out` and `~~keyout` values to match your domain
+Be sure to change the `-out` and `-keyout` values to match your domain
 name, while preserving the correct extensions.
 
 Once the command is executed you will have two new files created within
