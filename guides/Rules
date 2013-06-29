@@ -113,17 +113,19 @@ compile '/user/*' do
 end
 
 compile '/integration/' do
+  filter :fenced_code_blocks
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
-  filter :fenced_code_blocks
+  filter :parse_info_boxes
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration'
 end
 
 compile '/integration/*' do
+  filter :fenced_code_blocks
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
-filter :fenced_code_blocks
+  filter :parse_info_boxes
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration/default'
 end
