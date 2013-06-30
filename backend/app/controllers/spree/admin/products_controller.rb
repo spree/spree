@@ -6,6 +6,7 @@ module Spree
       before_filter :load_data, :except => :index
       create.before :create_before
       update.before :update_before
+      helper_method :clone_object_url
 
       def show
         session[:return_to] ||= request.referer
@@ -110,6 +111,9 @@ module Spree
          [{:variants => [:images, {:option_values => :option_type}]}, {:master => [:images, :default_price]}]
         end
 
+        def clone_object_url resource
+          clone_admin_product_url resource
+        end
     end
   end
 end
