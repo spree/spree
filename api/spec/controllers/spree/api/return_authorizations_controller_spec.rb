@@ -45,17 +45,17 @@ module Spree
       end
 
       it "cannot add a variant to a return authorization" do
-        api_put :add
+        api_put :add, :id => 1
         assert_unauthorized!
       end
 
       it "cannot mark a return authorization as received" do
-        api_put :receive
+        api_put :receive, :id => 1
         assert_unauthorized!
       end
 
       it "cannot cancel a return authorization" do
-        api_put :cancel
+        api_put :cancel, :id => 1
         assert_unauthorized!
       end
 
