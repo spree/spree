@@ -138,6 +138,7 @@ module Spree
         api_put :update, :id => order.to_param, :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id }] }
         json_response['state'].should == 'confirm'
         json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
+        json_response['payments'][0]['amount'].should == order.total.to_s
         response.status.should == 200
       end
 

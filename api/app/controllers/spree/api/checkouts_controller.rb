@@ -53,8 +53,8 @@ module Spree
             if object_params[:payment_source].present? && source_params = object_params.delete(:payment_source)[object_params[:order][:payments_attributes].first[:payment_method_id].underscore]
               object_params[:order][:payments_attributes].first[:source_attributes] = source_params
             end
-            if object_params[:order].present? && object_params[:order][:payments_attributes]
-              object_params[:order][:payments_attributes].first[:amount] = @order.total
+            if object_params[:payments_attributes]
+              object_params[:payments_attributes].first[:amount] = @order.total.to_s
             end
           end
           object_params
