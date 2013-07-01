@@ -4,7 +4,7 @@
       <li class='js-topic'>
         <h3>
           <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%=link_to 'Overview', 'overview'%>
+          <%= link_to 'Overview', 'overview' %>
         </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%= link_to "Messages", 'overview', 'messages' %></li>
@@ -18,7 +18,7 @@
       <li class='js-topic'>
         <h3>
           <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%=link_to 'Consuming Messages', 'consuming'%>
+          <%= link_to 'Consuming Messages', 'consuming' %>
         </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%= link_to "Synchronous", "consuming", "synchronous-response" %></li>
@@ -29,17 +29,26 @@
       <li class='js-topic'>
         <h3>
           <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%=link_to 'Pushing Messages', 'push'%>
+          <%= link_to 'Pushing Messages', 'push' %>
         </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%= link_to "New", "push", "new-product-example" %></li>
         </ul>
-	</li>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%= link_to 'Tutorials', 'tutorials' %>
+        </h3>
+        <ul class="js-guides">
+          <li><i class="icon-dot"></i><%= link_to "Creating Endpoints", 'tutorials/creating_endpoints' %></li>
+        </ul>
+      </li>
    <!----
       <li class='js-topic'>
         <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><%= link_to "Message Library", "events/users" %></h3>
-	</li>
-	--->
+  </li>
+  --->
     </ul>
   </nav>
 </aside>
