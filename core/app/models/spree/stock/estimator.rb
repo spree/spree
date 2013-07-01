@@ -8,18 +8,28 @@ module Spree
         @currency = order.currency
       end
 
-      def shipping_rates(package)
+      def shipping_rates(package, frontend_only = true)
         shipping_rates = Array.new
         shipping_methods = shipping_methods(package)
         return [] unless shipping_methods
+
         shipping_methods.each do |shipping_method|
           cost = calculate_cost(shipping_method, package)
-
-          shipping_rates << ShippingRate.new( :shipping_method => shipping_method,
-                                              :cost => cost)
+          shipping_rates << shipping_method.shipping_rates.new(:cost => cost)
         end
+
         shipping_rates.sort_by! { |r| r.cost || 0 }
-        shipping_rates.first.selected = true unless shipping_rates.empty?
+
+        unless shipping_rates.empty?
+          if frontend_only
+            shipping_rates.each do |rate|
+              rate.selected = true and break if rate.shipping_method.frontend?
+            end
+          else
+            shipping_rates.first.selected = true
+          end
+        end
+
         shipping_rates
       end
 
