@@ -47,3 +47,7 @@
 * The structure of shipments data in the API has changed. Shipments can now have many shipping methods, shipping rates (which in turn have many zones and shipping categories), as well as a new key called "manifest" which returns the list of items contained within just this shipment for the order.
 
     *Ryan Bigg*
+
+* Address responses now contain a `full_name` attribute.
+
+    *Ryan Bigg*
