@@ -685,6 +685,7 @@ en:
     open: Open
     open_all_adjustments: Open All Adjustments
     option_type: Option Type
+    option_type_placeholder: Choose an option type
     option_types: Option Types
     option_value: Option Value
     option_values: Option Values
@@ -1043,6 +1044,7 @@ en:
       must_be_non_negative: must be a non-negative value
     value: Value
     variant: Variant
+    variant_placeholder: Choose a variant
     variants: Variants
     version: Version
     void: Void
