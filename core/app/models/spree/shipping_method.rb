@@ -8,6 +8,7 @@ module Spree
     has_many :shipments
     has_many :shipping_method_categories
     has_many :shipping_categories, through: :shipping_method_categories
+    has_many :shipping_rates
 
     has_and_belongs_to_many :zones, :join_table => 'spree_shipping_methods_zones',
                                     :class_name => 'Spree::Zone',
@@ -47,6 +48,11 @@ module Spree
 
     def self.calculators
       spree_calculators.send(model_name_without_spree_namespace).select{|c| c.name.start_with?("Spree::Calculator::Shipping::")}
+    end
+
+    # Some shipping methods are only meant to be set via backend
+    def frontend?
+      self.display_on != "back_end"
     end
 
     private
