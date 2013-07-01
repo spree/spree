@@ -185,6 +185,14 @@ route '/user/products/*/' do
   location.chop + ".html"
 end
 
+###############################################################
+# Flatten the integration guide stuff into single directory
+###############################################################
+route '/integration/tutorials/*/' do
+  location = item.identifier.gsub('/tutorials/', '/')
+  location.chop + ".html"
+end
+
 
 route '/release_notes/*/' do
   location = item.identifier.gsub('/release_notes/', '/release_notes/spree_')
