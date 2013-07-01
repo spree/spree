@@ -34,6 +34,7 @@ module Spree
             invalid_resource!(@product)
           end
         rescue ActiveRecord::RecordNotUnique
+          @product.permalink = nil
           retry
         end
       end
