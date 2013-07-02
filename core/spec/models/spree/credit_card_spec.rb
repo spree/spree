@@ -95,14 +95,14 @@ describe Spree::CreditCard do
       credit_card.month = nil
       credit_card.year = Time.now.year
       credit_card.should_not be_valid
-      credit_card.errors[:card].should be_blank
+      credit_card.errors[:base].should be_blank
     end
 
     it "does not run expiration in the past validation if year is not set" do
       credit_card.month = Time.now.month
       credit_card.year = nil
       credit_card.should_not be_valid
-      credit_card.errors[:card].should be_blank
+      credit_card.errors[:base].should be_blank
     end
 
     it "should only validate on create" do
