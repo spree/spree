@@ -44,21 +44,6 @@ module Spree
         assert_not_found!
       end
 
-      it "cannot add a variant to a return authorization" do
-        api_put :add, :id => 1
-        assert_unauthorized!
-      end
-
-      it "cannot mark a return authorization as received" do
-        api_put :receive, :id => 1
-        assert_unauthorized!
-      end
-
-      it "cannot cancel a return authorization" do
-        api_put :cancel, :id => 1
-        assert_unauthorized!
-      end
-
       it "cannot delete a return authorization" do
         api_delete :destroy
         assert_not_found!
