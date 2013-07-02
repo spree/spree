@@ -51,3 +51,7 @@
 * Address responses now contain a `full_name` attribute.
 
     *Ryan Bigg*
+
+* Shipments responses now contain a `selected_shipping_rate` key, so that you don't have to sort through the list of `shipping_rates` to get the selected one.
+
+    *Ryan Bigg*
