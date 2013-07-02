@@ -527,24 +527,17 @@ describe Spree::Payment do
   context "#build_source" do
     it "should build the payment's source" do
       params = { :amount => 100, :payment_method => gateway,
-        :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'}}
+        :source_attributes => {
+          :year => 1.month.from_now.year,
+          :month =>1.month.from_now.month,
+          :number => '1234567890123',
+          :verification_value => '123'
+        }
+      }
 
       payment = Spree::Payment.new(params, :without_protection => true)
       payment.should be_valid
       payment.source.should_not be_nil
-    end
-
-    context "with the params hash ordered differently" do
-      it "should build the payment's source" do
-        params = {
-          :source_attributes => {:year=>"2012", :month =>"1", :number => '1234567890123',:verification_value => '123'},
-          :amount => 100, :payment_method => gateway
-        }
-
-        payment = Spree::Payment.new(params, :without_protection => true)
-        payment.should be_valid
-        payment.source.should_not be_nil
-      end
     end
 
     it "errors when payment source not valid" do
