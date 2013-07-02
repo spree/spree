@@ -40,12 +40,11 @@ $(function() {
   });
 
   var current_url = window.location.pathname.split('/')[2];
-
   var active_menu = sidebar_menu.find('a[href="'+current_url+'"]')
-  console.log(active_menu)
+
   active_menu.addClass('active-open');
   if(active_menu.parent().next().attr('class') == 'js-guides'){
-    active_menu.parent().next().show();
+    active_menu.parent().next().attr('style', 'display: block !important');
     active_menu.prev().find('i.icon-right-open').removeClass('icon-right-open').addClass('icon-down-open')
   }
   else {
@@ -57,9 +56,9 @@ $(function() {
   var active = sidebar_menu.find('a[href="'+current_url+'"]');
   var toc = active.parent().find('.toc');
   active.parent().addClass('current');
-  if(active.prev().hasClass('icon-dot')){
-    active.prev().removeClass('icon-dot').addClass('icon-down-dir');
-  }
+  // if(active.prev().hasClass('icon-dot')){
+  //   active.prev().removeClass('icon-dot').addClass('icon-down-dir');
+  // }
   toc.toc({
     'container': '#content',
     'anchorName': function(i, heading, prefix) { //custom function for anchor name
