@@ -166,7 +166,6 @@ module Spree
       end
 
       it "can add shipping address" do
-        pending "need to figure out how to get shipping methods for an order"
         order.ship_address.should be_nil
 
         api_put :update, :id => order.to_param, :order => { :ship_address_attributes => shipping_address }
