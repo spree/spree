@@ -49,3 +49,7 @@ See #3133 for more information.
     PromotionAction / Promotion api suggests #3262
 
     * Washington Luiz *
+
+* CreditCard model now validates that the card is not expired.
+
+    *Ryan Bigg*
