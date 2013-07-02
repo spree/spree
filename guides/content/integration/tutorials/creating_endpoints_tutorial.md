@@ -70,9 +70,9 @@ Test your new endpoint by running the following curl command:
 ```bash
 curl --data @./give_id.json -X POST -H 'Content-type:application/json' http://localhost:9292```
 
-You should see the message_id returned.
+You should see the `message_id` returned.
 
-    Sinatra doesn't reload after changes; need to stop/restart server - unless a fix for that can be found.
+<div class='warning'>Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a <%= link_to 'Sinatra Reloader', 'http://www.sinatrarb.com/contrib/reloader' %> gem, but the use of it is beyond the scope of this tutorial.</div>
 
 ### Using EndpointBase
 
