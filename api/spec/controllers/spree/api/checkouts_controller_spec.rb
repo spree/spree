@@ -76,7 +76,7 @@ module Spree
         order.bill_address = nil
         order.save
         order.update_column(:state, "address")
-        api_put :update, :id => order.to_param
+        api_put :update, :id => order.to_param, :order_token => order.token
         # Order has not transitioned
         response.status.should == 422
       end
@@ -200,14 +200,6 @@ module Spree
         Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return({:coupon_applied? => true})
         api_put :update, :id => order.to_param, :order_token => order.token, :order => { :coupon_code => "foobar" }
       end
-
-      it "can apply a coupon code to an order" do
-        order.update_column(:state, "payment")
-        Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
-        coupon_result = { :coupon_applied? => true }
-        Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return(coupon_result)
-        api_put :update, :id => order.to_param, :order_token => order.token, :order => { :coupon_code => "foobar" }
-      end
     end
 
     context "PUT 'next'" do
@@ -238,8 +230,15 @@ module Spree
 
       it "returns a sensible error when no payment method is specified" do
         order.update_column(:state, "payment")
+<<<<<<< HEAD
         api_put :next, :id => order.to_param, :order_token => order.token, :order => {}
         json_response["errors"]["base"].should include(Spree.t(:no_pending_payments))
+=======
+        Spree::Promo::CouponApplicator.should_receive(:new).with(order).and_call_original
+        coupon_result = { :coupon_applied? => true }
+        Spree::Promo::CouponApplicator.any_instance.should_receive(:apply).and_return(coupon_result)
+        api_put :update, :id => order.to_param, :order_token => order.token, :order => { :coupon_code => "foobar" }
+>>>>>>> [api] Require authorization to update an order
       end
     end
   end
