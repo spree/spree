@@ -2,12 +2,13 @@ module Spree
   class Payment < ActiveRecord::Base
     include Spree::Payment::Processing
     belongs_to :order, class_name: 'Spree::Order'
-    belongs_to :source, polymorphic: true, validate: true
+    belongs_to :source, polymorphic: true
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
 
     has_many :offsets, class_name: "Spree::Payment", foreign_key: :source_id, conditions: "source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'"
     has_many :log_entries, as: :source
 
+    before_validation :validate_source
     before_save :set_unique_identifier
 
     after_save :create_payment_profile, if: :profiles_supported?
@@ -104,6 +105,16 @@ module Spree
     end
 
     private
+
+      def validate_source
+        if source && !source.valid?
+          source.errors.each do |field, error|
+            field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
+            self.errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
+          end
+        end
+        return !errors.present?
+      end
 
       def profiles_supported?
         payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
