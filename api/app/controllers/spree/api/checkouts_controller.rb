@@ -14,6 +14,7 @@ module Spree
       end
 
       def next
+        authorize! :update, @order, params[:order_token]
         @order.next!
         respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
       rescue StateMachine::InvalidTransition
@@ -25,6 +26,7 @@ module Spree
       end
 
       def update
+        authorize! :update, @order, params[:order_token]
         order_params = object_params
         user_id = order_params.delete(:user_id)
         line_items = order_params.delete("line_items_attributes")
