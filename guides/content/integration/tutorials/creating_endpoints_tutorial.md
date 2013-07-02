@@ -68,7 +68,7 @@ rackup```
 Test your new endpoint by running the following curl command:
 
 ```bash
-curl --data @./give_id.json -X POST -H 'Content-type:application/json' http://localhost:9292```
+curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
 
 You should see the `message_id` returned.
 
