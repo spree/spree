@@ -72,25 +72,69 @@ Test your new endpoint by running the following curl command:
 ```bash
 curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
 
-You should see the `message_id` returned, as follows
+You should see the `message_id` returned as part of the endpoint's payload message, as follows:
 
-***
-Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a <%= link_to 'Sinatra Reloader', 'http://www.sinatrarb.com/contrib/reloader' %> gem, but the use of it is beyond the scope of this tutorial.
-***
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Length: 35
+X-Content-Type-Options: nosniff
+Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
+Date: Tue, 02 Jul 2013 20:12:23 GMT
+Connection: Keep-Alive
 
-So great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library.
+{"message_id":"518726r84910000001"}```
 
+So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change the `Gemfile` and our actual endpoint:
+
+<pre class="headers"><code>Gemfile</code></pre>
 ```ruby
-class SimpleEndpoint < EndpointBase
+source 'https://rubygems.org'
+
+gem 'endpoint_base', git: "git@github.com:spree/endpoint_base.git"```
+
+<pre class="headers"><code>myapp.rb</code></pre>
+```ruby
+require 'endpoint_base'
+
+class Myapp < EndpointBase
   post '/' do
     message = JSON.parse(request.body.read)
     json 'message_id' => message['message_id']
   end
 end```
 
-This endpoint will take an incoming message from the Spree Integrator, and return the message_id in JSON format.
+Install the new gem and restart your server:
 
-For more info about Sinatra....
+```bash
+bundle install
+rackup```
+
+***
+Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a <%= link_to 'Sinatra Reloader', 'http://www.sinatrarb.com/contrib/reloader' %> gem, but the use of it is beyond the scope of this tutorial.
+***
+
+Now, when you re-run the curl command:
+
+```bash
+curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
+
+you should still get the same output:
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Length: 35
+X-Content-Type-Options: nosniff
+Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
+Date: Tue, 02 Jul 2013 20:12:23 GMT
+Connection: Keep-Alive
+
+{"message_id":"518726r84910000001"}```
+
+!!!
+TODO But you don't because instead you get a 404 error from Sinatra.
+!!!
 
 ### Getting More Info Returned
 
