@@ -57,3 +57,7 @@ en:
 See #3133 for more information.
 
     * Ryan Bigg*
+
+* CreditCard model now validates that the card is not expired.
+
+    *Ryan Bigg*
