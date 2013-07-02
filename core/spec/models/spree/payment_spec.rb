@@ -41,6 +41,18 @@ describe Spree::Payment do
     payment.log_entries.stub(:create)
   end
 
+  context 'validations' do
+    it "returns useful error messages when source is invalid" do
+      payment.source = Spree::CreditCard.new
+      payment.should_not be_valid
+      cc_errors = payment.errors['Credit Card']
+      cc_errors.should include("Number can't be blank")
+      cc_errors.should include("Month is not a number")
+      cc_errors.should include("Year is not a number")
+      cc_errors.should include("Verification Value can't be blank")
+    end
+  end
+
   # Regression test for https://github.com/spree/spree/pull/2224
   context 'failure' do
 

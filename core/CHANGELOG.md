@@ -61,3 +61,7 @@ See #3133 for more information.
 * CreditCard model now validates that the card is not expired.
 
     *Ryan Bigg*
+
+* Payment model will now no longer provide a vague error message for when the source is invalid. Instead, it will provide error messages like "Credit Card Number can't be blank"
+
+    *Ryan Bigg*
