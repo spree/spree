@@ -55,3 +55,7 @@
 * Shipments responses now contain a `selected_shipping_rate` key, so that you don't have to sort through the list of `shipping_rates` to get the selected one.
 
     *Ryan Bigg*
+
+* Checkouts API now correctly processes incoming payment data during the payment step.
+
+    *Ryan Bigg*

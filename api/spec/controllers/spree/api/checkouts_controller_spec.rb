@@ -15,7 +15,7 @@ module Spree
       create(:stock_location)
 
       @shipping_method = create(:shipping_method, :zones => [country_zone])
-      @payment_method = create(:payment_method)
+      @payment_method = create(:bogus_payment_method)
     end
 
     after do
@@ -142,6 +142,36 @@ module Spree
         json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
         json_response['payments'][0]['amount'].should == order.total.to_s
         response.status.should == 200
+      end
+
+      it "can update payment method with source and transition from payment to confirm" do
+        order.update_column(:state, "payment")
+        source_attributes = {
+          "number" => "4111111111111111",
+          "month" => 1.month.from_now.month,
+          "year" => 1.month.from_now.year,
+          "verification_value" => "123"
+        }
+
+        api_put :update, :id => order.to_param, :order_token => order.token,
+          :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }],
+                      :payment_source => { @payment_method.id.to_s => source_attributes } }
+        json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
+        json_response['payments'][0]['amount'].should == order.total.to_s
+        response.status.should == 200
+      end
+
+      it "returns errors when source is missing attributes" do
+        order.update_column(:state, "payment")
+        api_put :update, :id => order.to_param, :order_token => order.token,
+          :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }],
+                      :payment_source => { @payment_method.id.to_s => { } } }
+        response.status.should == 422
+        cc_errors = json_response['errors']['payments.Credit Card']
+        cc_errors.should include("Number can't be blank")
+        cc_errors.should include("Month is not a number")
+        cc_errors.should include("Year is not a number")
+        cc_errors.should include("Verification Value can't be blank")
       end
 
       it "can transition from confirm to complete" do
