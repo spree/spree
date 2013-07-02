@@ -6,7 +6,9 @@ title: Creating Endpoints
 
 This tutorial assumes that you have installed bundler and Sinatra, and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), [Sinatra](http://www.sinatrarb.com/), and [Rack](http://rack.rubyforge.org).
 
+***
 For detailed information about Endpoints, check out the <%= link_to "endpoints", "overview", "endpoints" %> section of the Overview guide.
+***
 
 ### Hello, World!
 
@@ -70,13 +72,13 @@ Test your new endpoint by running the following curl command:
 ```bash
 curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
 
-You should see the `message_id` returned.
+You should see the `message_id` returned, as follows
 
-<div class='warning'>Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a <%= link_to 'Sinatra Reloader', 'http://www.sinatrarb.com/contrib/reloader' %> gem, but the use of it is beyond the scope of this tutorial.</div>
+***
+Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a <%= link_to 'Sinatra Reloader', 'http://www.sinatrarb.com/contrib/reloader' %> gem, but the use of it is beyond the scope of this tutorial.
+***
 
-### Using EndpointBase
-
-The easiest way to write an endpoint is to have it inherit from the [Endpoint Base](https://github.com/spree/endpoint_base) library.
+So great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library.
 
 ```ruby
 class SimpleEndpoint < EndpointBase
