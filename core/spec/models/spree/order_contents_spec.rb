@@ -34,6 +34,14 @@ describe Spree::OrderContents do
   context "#remove" do
     let(:variant) { create(:variant) }
 
+    context "given an invalid variant" do
+      it "raises an exception" do
+        expect {
+          subject.remove(variant, 1)
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
     it 'should reduce line_item quantity if quantity is less the line_item quantity' do
       line_item = subject.add(variant, 3)
       subject.remove(variant, 1)
