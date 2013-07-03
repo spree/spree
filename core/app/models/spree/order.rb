@@ -13,9 +13,7 @@ module Spree
         order.payment_required?
       }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
-      go_to_state :complete, if: ->(order) {
-        (order.payment_required? && order.has_unprocessed_payments?) || !order.payment_required?
-      }
+      go_to_state :complete
       remove_transition from: :delivery, to: :confirm
     end
 
@@ -165,18 +163,6 @@ module Spree
     # If true, causes the confirmation step to happen during the checkout process
     def confirmation_required?
       payments.map(&:payment_method).compact.any?(&:payment_profiles_supported?)
-    end
-
-    # Used by the checkout state machine to check for unprocessed payments
-    # The Order should be only be able to proceed to complete if there are unprocessed
-    # payments and there is payment required.
-    #
-    # The reason for this is directly before an order transitions to complete, all
-    # of the order's payments have `process!` called on it (look in order/checkout.rb).
-    # If payment *is* required and there's no payments which haven't already been tried,
-    # then the order cannot be paid for and therefore should not be able to become complete.
-    def has_unprocessed_payments?
-      payments.with_state('checkout').reload.exists?
     end
 
     # Indicates the number of items in the order
@@ -414,8 +400,23 @@ module Spree
       payments.select(&:checkout?)
     end
 
+    # processes any pending payments and must return a boolean as it's
+    # return value is used by the checkout state_machine to determine
+    # success or failure of the 'complete' event for the order
+    #
+    # Returns:
+    # - true if all pending_payments processed successfully
+    # - true if a payment failed, ie. raised a GatewayError
+    #   which gets rescued and converted to TRUE when
+    #   :allow_checkout_gateway_error is set to true
+    # - false if a payment failed, ie. raised a GatewayError
+    #   which gets rescued and converted to FALSE when
+    #   :allow_checkout_on_gateway_error is set to false
+    #
     def process_payments!
-      begin
+      if pending_payments.empty?
+        raise Core::GatewayError.new Spree.t(:no_pending_payments)
+      else
         pending_payments.each do |payment|
           break if payment_total >= total
 
@@ -425,9 +426,9 @@ module Spree
             self.payment_total += payment.amount
           end
         end
-      rescue Core::GatewayError
-        !!Spree::Config[:allow_checkout_on_gateway_error]
       end
+    rescue Core::GatewayError
+      !!Spree::Config[:allow_checkout_on_gateway_error]
     end
 
     def billing_firstname
