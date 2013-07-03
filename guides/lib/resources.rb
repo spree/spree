@@ -196,7 +196,8 @@ module Spree
           "permalink"=>"ruby-on-rails-tote",
           "option_values"=> [OPTION_VALUE],
           "images"=> [IMAGE],
-          "description"=>"A text description of the product."
+          "description"=>"A text description of the product.",
+          "options_text"=> "(Size: small, Colour: red)"
        }
 
     PRODUCT_PROPERTY =
@@ -318,6 +319,7 @@ module Spree
         "id"=>732545999,
         "name"=>"Check",
         "description"=>"Pay by check."
+        "method_type"=>"check"
       }
 
 
@@ -385,6 +387,7 @@ module Spree
       "originator_type" => "Spree::PromotionAction",
       "originator_id" => 1,
       "amount" => "-12.0",
+      "display_amount" => "-$12.00"
       "label" => "Promotion (test)",
       "mandatory" => false,
       "locked" => false,
@@ -463,7 +466,8 @@ module Spree
         "number"=>"R335381310",
         "item_total"=>"100.0",
         "display_item_total"=>"$100.00",
-        "total"=>"0.0",
+        "total"=>"100.0",
+        "display_total"=>"$100.00"
         "state"=>"cart",
         "adjustment_total"=>"-12.0",
         "user_id"=>nil,
