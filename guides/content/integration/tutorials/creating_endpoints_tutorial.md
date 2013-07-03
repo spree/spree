@@ -96,11 +96,11 @@ gem 'endpoint_base', :git => 'git@github.com:spree/endpoint_base.git'```
 <pre class="headers"><code>myapp.rb</code></pre>
 ```ruby
 require 'endpoint_base'
+require 'multi_json'
 
 class Myapp < EndpointBase
   post '/' do
-    message = JSON.parse(request.body.read)
-    json 'message_id' => message['message_id']
+    process_result 200, { 'message_id' => @message[:message_id] }
   end
 end```
 
@@ -132,14 +132,10 @@ Content-Type: application/json;charset=utf-8
 Content-Length: 35
 X-Content-Type-Options: nosniff
 Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Tue, 02 Jul 2013 20:12:23 GMT
+Date: Wed, 03 Jul 2013 01:41:01 GMT
 Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
-
-!!!
-TODO But you don't because instead you get a JSON parser error on the #parse line: "A JSON text must at least contain two octets!"
-!!!
 
 ### Getting More Info Returned
 
