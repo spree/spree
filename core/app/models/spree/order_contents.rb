@@ -6,21 +6,22 @@ module Spree
       @order = order
     end
 
+    # Get current line item for variant if exists
+    # Add variant qty to line_item
     def add(variant, quantity, currency=nil, shipment=nil)
-      #get current line item for variant if exists
       line_item = order.find_line_item_by_variant(variant)
-
-      #add variant qty to line_item
       add_to_line_item(line_item, variant, quantity, currency, shipment)
     end
 
+    # Get current line item for variant
+    # Remove variant qty from line_item
     def remove(variant, quantity, shipment=nil)
-      #get current line item for variant
       line_item = order.find_line_item_by_variant(variant)
 
-      #TODO raise exception if line_item is nil
+      unless line_item
+        raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
+      end
 
-      #remove variant qty from line_item
       remove_from_line_item(line_item, variant, quantity, shipment)
     end
 
