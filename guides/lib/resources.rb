@@ -318,7 +318,7 @@ module Spree
       {
         "id"=>732545999,
         "name"=>"Check",
-        "description"=>"Pay by check."
+        "description"=>"Pay by check.",
         "method_type"=>"check"
       }
 
@@ -387,7 +387,7 @@ module Spree
       "originator_type" => "Spree::PromotionAction",
       "originator_id" => 1,
       "amount" => "-12.0",
-      "display_amount" => "-$12.00"
+      "display_amount" => "-$12.00",
       "label" => "Promotion (test)",
       "mandatory" => false,
       "locked" => false,
@@ -467,7 +467,7 @@ module Spree
         "item_total"=>"100.0",
         "display_item_total"=>"$100.00",
         "total"=>"100.0",
-        "display_total"=>"$100.00"
+        "display_total"=>"$100.00",
         "state"=>"cart",
         "adjustment_total"=>"-12.0",
         "user_id"=>nil,
