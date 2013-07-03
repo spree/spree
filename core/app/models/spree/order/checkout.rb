@@ -64,11 +64,7 @@ module Spree
               end
 
               before_transition :to => :complete do |order|
-                begin
-                  order.process_payments! if order.payment_required?
-                rescue Spree::Core::GatewayError
-                  !!Spree::Config[:allow_checkout_on_gateway_error]
-                end
+                order.process_payments! if order.payment_required?
               end
 
               before_transition :to => :delivery, :do => :create_proposed_shipments
