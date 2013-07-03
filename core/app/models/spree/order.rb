@@ -43,15 +43,15 @@ module Spree
     has_many :state_changes, as: :stateful
     has_many :line_items, dependent: :destroy, order: 'created_at ASC'
     has_many :payments, dependent: :destroy
+    has_many :return_authorizations, dependent: :destroy
+    has_many :adjustments, as: :adjustable, dependent: :destroy, order: 'created_at ASC'
+    has_many :line_item_adjustments, through: :line_items, source: :adjustments
 
     has_many :shipments, dependent: :destroy do
       def states
         pluck(:state).uniq
       end
     end
-
-    has_many :return_authorizations, dependent: :destroy
-    has_many :adjustments, as: :adjustable, dependent: :destroy, order: 'created_at ASC'
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
@@ -203,24 +203,24 @@ module Spree
       return tax_zone != Zone.default_tax
     end
 
-    # Array of adjustments that are inclusive in the variant price. Useful for when
-    # prices include tax (ex. VAT) and you need to record the tax amount separately.
     def price_adjustments
-      adjustments = []
-
-      line_items.each { |line_item| adjustments.concat line_item.adjustments }
-
-      adjustments
+      ActiveSupport::Deprecation.warn("Order#price_adjustments will be deprecated in Spree 2.1, please use Order#line_item_adjustments instead.")
+      self.line_item_adjustments
     end
 
-    # Array of totals grouped by Adjustment#label. Useful for displaying price
+    # Array of totals grouped by Adjustment#label. Useful for displaying line item
     # adjustments on an invoice. For example, you can display tax breakout for
     # cases where tax is included in price.
-    def price_adjustment_totals
-      Hash[price_adjustments.group_by(&:label).map do |label, adjustments|
+    def line_item_adjustment_totals
+      Hash[self.line_item_adjustments.eligible.group_by(&:label).map do |label, adjustments|
         total = adjustments.sum(&:amount)
         [label, Spree::Money.new(total, { currency: currency })]
       end]
+    end
+
+    def price_adjustment_totals
+      ActiveSupport::Deprecation.warn("Order#price_adjustment_totals will be deprecated in Spree 2.1, please use Order#line_item_adjustment_totals instead.")
+      self.line_item_adjustment_totals
     end
 
     def updater
@@ -472,11 +472,9 @@ module Spree
       adjustments.destroy_all
     end
 
-    # destroy any previous adjustments.
-    # Adjustments will be recalculated during order update.
     def clear_adjustments!
-      adjustments.tax.each(&:destroy)
-      price_adjustments.each(&:destroy)
+      self.adjustments.destroy_all
+      self.line_item_adjustments.destroy_all
     end
 
     def has_step?(step)
