@@ -6,10 +6,7 @@ module Spree
         @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
-        last_taxonomy = Spree::Taxonomy.order("updated_at ASC").last
-        if stale?(:etag => last_taxonomy, :last_modified => last_taxonomy.updated_at)
-          respond_with(@taxonomies)
-        end
+        respond_with(@taxonomies)
       end
 
       def show
