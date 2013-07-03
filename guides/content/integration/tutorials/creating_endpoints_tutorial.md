@@ -152,6 +152,9 @@ In the `get_id.json` message that we passed to our endpoint, we indicated with t
 require 'endpoint_base'
 require 'multi_json'
 
+require 'endpoint_base'
+require 'multi_json'
+
 class HelloEndpoint < EndpointBase
   post '/' do
     process_result 200, { 'message_id' => @message[:message_id] }
@@ -161,12 +164,12 @@ class HelloEndpoint < EndpointBase
     product_names = JSON.parse(File.read("product_catalog.json"))['products'].map{|p| p["name"]}
 
     if product_names.include?(@message[:payload]['product']['name'])
-      process_result 200, { 'message_id' => @message[:message_id], 'payload' => { 'message' => 'product:in_stock' } }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:in_stock' }
     else
-      process_result 200, { 'message_id' => @message[:message_id], 'payload' => { 'message' => 'product:not_in_stock' } }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:not_in_stock' }
     end
   end
-end```
+```
 
 ***
 We've added a new route to our endpoint, so we'll need to remember to update our curl command with the new URL path.
@@ -226,17 +229,74 @@ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/jso
 Skipping the headers this time, you can see that the response we get is what we expect:
 
 ```bash
-{"message_id":"518726r84910000015","payload":{"message":"product:in_stock"}}```
+{"message_id":"518726r84910000015","message":"product:in_stock"}```
 
 Now, let's try a product our supplier does not carry. There is no need to restart rack here, since we haven't changed our endpoint.
 
 ```bash
 curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
 
-{"message_id":"518726r84910000004","payload":{"message":"product:not_in_stock"}}```
+{"message_id":"518726r84910000004","message":"product:not_in_stock"}```
 
 The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets WIthout Awesomeness" somewhere else.
 
-### Getting Even More Info
+### Returning Information About a Record
 
-<< Get shipment message as event and new message.>>
+Now that we know the product is in stock, it would be helpful if we knew how much it cost should we buy it from our supplier. For that, we need to once again add some logic to our endpoint.
+
+<pre class="headers"><code>hello_endpoint.rb</code></pre>
+```ruby
+require 'endpoint_base'
+require 'multi_json'
+
+class HelloEndpoint < EndpointBase
+  post '/' do
+    process_result 200, { 'message_id' => @message[:message_id] }
+  end
+
+  post '/product_existence_check' do
+    get_product_names
+
+    if @product_names.include?(@message[:payload]['product']['name'])
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:in_stock' }
+    else
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:not_in_stock' }
+    end
+  end
+
+  post '/query_price' do
+    passed_in_name = @message[:payload]['product']['name']
+    get_product_names
+
+    if @product_names.include?(passed_in_name)
+      ## Find the product whose name matches what we're passing.
+      product = JSON.parse(File.read("product_catalog.json"))['products'].find{ |x| x['name'] == passed_in_name }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:in_stock',
+        'payload' => { 'product' => { 'name' => product['name'], 'price' => product['price'] }}}
+    else
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:not_in_stock' }
+    end
+  end
+
+private
+  def get_product_names
+    @product_names = JSON.parse(File.read("product_catalog.json"))['products'].map{|p| p["name"]}
+  end
+end```
+
+As you can see, some of the code from our previous example was extracted out to reuse with this new request scenario. We've also persisted the passed-in product name in a variable, to make it easier to reference in our conditional clause.
+
+If the product exists in the catalog, our endpoint returns a message with a success code (200), the `message_id` of our passed-in JSON, a `message` of `product:in_stock` and the name and price of the matching product in the catalog.
+
+```bash
+rackup -p 9292
+curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+
+{"message_id":"518726r84910000015","message":"product:in_stock","payload":{"product":{"name":"Somewhat Less Awesome Widgets","price":"8.00"}}}```
+
+If the product doesn't exist in the catalog, our endpoint still returns a message with a success code and our referenced `message_id`, but the `message` key's value is now `product:not_in_stock`, and of course, there is no product in the payload.
+
+```bash
+curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+
+{"message_id":"518726r84910000004","message":"product:not_in_stock"}```
