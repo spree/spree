@@ -59,3 +59,7 @@
 * Checkouts API now correctly processes incoming payment data during the payment step.
 
     *Ryan Bigg*
+
+* Fix issue where `set_current_order` before filter would be called when CheckoutsController actions were run, causing the order object to be deleted. #3306
+
+*Ryan Bigg*
