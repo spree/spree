@@ -1,3 +1,7 @@
+# Spree::StockMovement
+# StockMovement is used for tracking stock item's total count_on_hand.
+# An existing StockMovement udner a StockLocation can not be updated or destroyed.
+#
 module Spree
   class StockMovement < ActiveRecord::Base
     belongs_to :stock_item, class_name: 'Spree::StockItem'
@@ -12,8 +16,16 @@ module Spree
 
     scope :recent, order('created_at DESC')
 
+    # existing StockMovement is readonly as it should not be updated.
     def readonly?
       !new_record?
+    end
+
+    # existing StockMovement can not be destroy as it is used for 
+    # tracking stock item's total count_on_hand.
+    def destroy
+      raise Spree.t(:can_not_destroy_stock_movement) if !new_record?
+      super
     end
 
     private

@@ -16,6 +16,13 @@ describe Spree::StockMovement do
     }.to raise_error(ActiveRecord::ReadOnlyRecord)
   end
 
+  it 'can not be destroyed unless new' do
+    subject.save
+    expect {
+      subject.destroy
+    }.to raise_error(RuntimeError)
+  end
+
   it 'does not update count on hand when track inventory levels is false' do
     Spree::Config[:track_inventory_levels] = false
     subject.quantity = 1
