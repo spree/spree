@@ -210,7 +210,7 @@ module Spree
        }
 
     MESSAGE = {
-      'message' => 'some.event',
+      'message' => 'some:event',
       'message_id' => ':guid',
       'payload' => {}
     }

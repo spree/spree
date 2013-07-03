@@ -137,9 +137,105 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
-### Getting More Info Returned
+### Adding Content to the Message
 
-<< Get shipment message as event>>
+The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing more interesting information that the Integrator can then act on.
+
+***
+For more information about Messages, be sure to read the <%= link_to "Integration Overview Guide", "overview", "messages" %> thoroughly.
+***
+
+In the `get_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our store. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
+
+<pre class="headers"><code>hello_endpoint.rb</code></pre>
+```ruby
+require 'endpoint_base'
+require 'multi_json'
+
+class HelloEndpoint < EndpointBase
+  post '/' do
+    process_result 200, { 'message_id' => @message[:message_id] }
+  end
+
+  post '/product_existence_check' do
+    product_names = JSON.parse(File.read("product_catalog.json"))['products'].map{|p| p["name"]}
+
+    if product_names.include?(@message[:payload]['product']['name'])
+      process_result 200, { 'message_id' => @message[:message_id], 'payload' => { 'message' => 'product:in_stock' } }
+    else
+      process_result 200, { 'message_id' => @message[:message_id], 'payload' => { 'message' => 'product:not_in_stock' } }
+    end
+  end
+end```
+
+***
+We've added a new route to our endpoint, so we'll need to remember to update our curl command with the new URL path.
+***
+
+Now, let's create a dummy product catalog to query against, and a couple of new JSON files - one for a product that is in our supplier's catalog, and one that is not.
+
+<pre class="headers"><code>product_catalog.json</code></pre>
+```json
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Really Awesome Widgets",
+      "price": "10.00"
+    },
+    {
+      "id": "2",
+      "name": "Somewhat Less Awesome Widgets",
+      "price": "8.00"
+    }
+  ]
+}```
+
+<pre class="headers"><code>in_stock_product.json</code></pre>
+```json
+{
+  "message": "product:new",
+  "message_id": "518726r84910000015",
+  "payload": {
+    "product": {
+      "id": "92675",
+      "name": "Somewhat Less Awesome Widgets"
+    }
+  }
+}```
+
+<pre class="headers"><code>not_in_stock_product.json</code></pre>
+```json
+{
+  "message": "product:new",
+  "message_id": "518726r84910000004",
+  "payload": {
+    "product": {
+      "id": "92676",
+      "name": "Widgets Without Awesomeness"
+    }
+  }
+}```
+
+We've laid the groundwork, so now it's time to test out our endpoint. First, let's pass it a product we know is in the catalog:
+
+```bash
+rackup -p 9292
+curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check```
+
+Skipping the headers this time, you can see that the response we get is what we expect:
+
+```bash
+{"message_id":"518726r84910000015","payload":{"message":"product:in_stock"}}```
+
+Now, let's try a product our supplier does not carry. There is no need to restart rack here, since we haven't changed our endpoint.
+
+```bash
+curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
+
+{"message_id":"518726r84910000004","payload":{"message":"product:not_in_stock"}}```
+
+The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets WIthout Awesomeness" somewhere else.
 
 ### Getting Even More Info
 
