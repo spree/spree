@@ -52,7 +52,10 @@ module Spree
           # respond_to check is necessary due to issue described in #2910
           object_params = nested_params
           if @order.has_checkout_step?("payment") && @order.payment?
-            if object_params[:payment_source].present? && source_params = object_params.delete(:payment_source)[object_params[:payments_attributes].first[:payment_method_id].underscore]
+            if object_params[:payments_attributes].is_a?(Hash)
+              object_params[:payments_attributes] = [object_params[:payments_attributes]]
+            end
+            if object_params[:payment_source].present? && source_params = object_params.delete(:payment_source)[object_params[:payments_attributes].first[:payment_method_id]]
               object_params[:payments_attributes].first[:source_attributes] = source_params
             end
             if object_params[:payments_attributes]
