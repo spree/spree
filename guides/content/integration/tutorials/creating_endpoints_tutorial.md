@@ -85,13 +85,13 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
-So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change the `Gemfile` and our actual endpoint:
+So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
 
 <pre class="headers"><code>Gemfile</code></pre>
 ```ruby
 source 'https://rubygems.org'
 
-gem 'endpoint_base', git: "git@github.com:spree/endpoint_base.git"```
+gem 'endpoint_base', :git => 'git@github.com:spree/endpoint_base.git'```
 
 <pre class="headers"><code>myapp.rb</code></pre>
 ```ruby
@@ -103,6 +103,11 @@ class Myapp < EndpointBase
     json 'message_id' => message['message_id']
   end
 end```
+
+<pre class="headers"><code>config.ru</code></pre>
+```ruby
+require './myapp'
+run Myapp```
 
 Install the new gem and restart your server:
 
@@ -133,7 +138,7 @@ Connection: Keep-Alive
 {"message_id":"518726r84910000001"}```
 
 !!!
-TODO But you don't because instead you get a 404 error from Sinatra.
+TODO But you don't because instead you get a JSON parser error on the #parse line: "A JSON text must at least contain two octets!"
 !!!
 
 ### Getting More Info Returned
