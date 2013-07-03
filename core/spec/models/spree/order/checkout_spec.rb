@@ -131,11 +131,10 @@ describe Spree::Order do
         before do
           order.stub :confirmation_required? => false
           order.stub :payment_required? => true
-          order.stub_chain(:has_unprocessed_payments?).and_return(true)
         end
 
         it "transitions to complete" do
-          order.should_receive(:process_payments!).once
+          order.should_receive(:process_payments!).once.and_return true
           order.next!
           order.state.should == "complete"
         end
