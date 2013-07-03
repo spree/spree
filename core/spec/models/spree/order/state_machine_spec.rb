@@ -15,60 +15,38 @@ describe Spree::Order do
         order.state = "confirm"
         order.run_callbacks(:create)
         order.stub :payment_required? => true
-        order.stub :process_payments!
+        order.stub :process_payments! => true
         order.stub :has_available_shipment
       end
 
-      context "with unprocessed payments" do
-        before do
-          order.stub :has_unprocessed_payments? => true
-        end
+      context "when payment processing succeeds" do
+        before { order.stub :process_payments! => true }
 
         it "should finalize order when transitioning to complete state" do
           order.should_receive(:finalize!)
           order.next!
         end
 
-         context "when credit card payment fails" do
-           before do
-             order.stub(:process_payments!).and_raise(Spree::Core::GatewayError)
+        context "when credit card processing fails" do
+          before { order.stub :process_payments! => false }
+
+          it "should not complete the order" do
+             order.next
+             order.state.should == "confirm"
            end
+        end
 
-           context "when not configured to allow failed payments" do
-              before do
-                Spree::Config.set :allow_checkout_on_gateway_error => false
-              end
+      end
 
-              it "should not complete the order" do
-                 order.next
-                 order.state.should == "confirm"
-               end
-            end
+      context "when payment processing fails" do
+        before { order.stub :process_payments! => false }
 
-           context "when configured to allow failed payments" do
-             before do
-               Spree::Config.set :allow_checkout_on_gateway_error => true
-               order.stub :finalize!
-             end
+        it "cannot transition to complete" do
+         order.next
+         order.state.should == "confirm"
+        end
+      end
 
-             it "should complete the order" do
-                order.next!
-                order.state.should == "complete"
-              end
-           end
-         end
-       end
-
-       context "with no unprocessed payments" do
-         before do
-           order.stub :has_unprocessed_payments? => false
-          end
-
-         it "cannot transition to complete" do
-           order.next
-           order.state.should == "confirm"
-         end
-       end
     end
 
     context "when current state is address" do
