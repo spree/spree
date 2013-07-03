@@ -12,13 +12,13 @@ For detailed information about Endpoints, check out the <%= link_to "endpoints",
 
 ### Hello, World!
 
-Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a simple lightweight web server.
+Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby applications.
 
 ```bash
-mkdir myapp
-cd myapp```
+mkdir hello_endpoint
+cd hello_endpoint```
 
-Within your new `myapp` directory, you will need a few files:
+Within your new `hello_endpoint` directory, you will need a few files:
 
 <pre class="headers"><code>Gemfile</code></pre>
 ```ruby
@@ -32,10 +32,10 @@ gem 'multi_json'```
 
 <pre class="headers"><code>config.ru</code></pre>
 ```ruby
-require './myapp'
+require './hello_endpoint'
 run Sinatra::Application```
 
-<pre class="headers"><code>myapp.rb</code></pre>
+<pre class="headers"><code>hello_endpoint.rb</code></pre>
 ```ruby
 require 'sinatra'
 require 'sinatra/json'
@@ -62,10 +62,10 @@ This is enough to function as an endpoint that echoes back the `message_id` of t
   }
 }```
 
-Launch your Sinatra server.
+Launch your Sinatra application on rack:
 
 ```bash
-rackup```
+rackup -p 9292```
 
 Test your new endpoint by running the following curl command:
 
@@ -91,14 +91,14 @@ So, great - we have success! But surely, there must be an easier way, right? Let
 ```ruby
 source 'https://rubygems.org'
 
-gem 'endpoint_base', :git => 'git@github.com:spree/endpoint_base.git'```
+gem 'endpoint_base', github: 'spree/endpoint_base'```
 
-<pre class="headers"><code>myapp.rb</code></pre>
+<pre class="headers"><code>hello_endpoint.rb</code></pre>
 ```ruby
 require 'endpoint_base'
 require 'multi_json'
 
-class Myapp < EndpointBase
+class HelloEndpoint < EndpointBase
   post '/' do
     process_result 200, { 'message_id' => @message[:message_id] }
   end
@@ -106,17 +106,17 @@ end```
 
 <pre class="headers"><code>config.ru</code></pre>
 ```ruby
-require './myapp'
-run Myapp```
+require './hello_endpoint'
+run HelloEndpoint```
 
-Install the new gem and restart your server:
+Install the new gem and restart your application:
 
 ```bash
 bundle install
-rackup```
+rackup -p 9292```
 
 ***
-Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a <%= link_to 'Sinatra Reloader', 'http://www.sinatrarb.com/contrib/reloader' %> gem, but the use of it is beyond the scope of this tutorial.
+Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a [Sinatra Reloader](http://www.sinatrarb.com/contrib/reloader) gem, but the use of it is beyond the scope of this tutorial.
 ***
 
 Now, when you re-run the curl command:
