@@ -41,7 +41,7 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     has_many :state_changes, as: :stateful
-    has_many :line_items, dependent: :destroy, order: 'spree_line_items.created_at ASC'
+    has_many :line_items, dependent: :destroy, order: "#{Spree::LineItem.table_name}.created_at ASC"
     has_many :payments, dependent: :destroy
 
     has_many :shipments, dependent: :destroy do
@@ -51,7 +51,7 @@ module Spree
     end
 
     has_many :return_authorizations, dependent: :destroy
-    has_many :adjustments, as: :adjustable, dependent: :destroy, order: 'spree_adjustments.created_at ASC'
+    has_many :adjustments, as: :adjustable, dependent: :destroy, order: "#{Spree::Adjustment.table_name}.created_at ASC"
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
