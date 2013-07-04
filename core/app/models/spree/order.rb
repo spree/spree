@@ -396,7 +396,7 @@ module Spree
 
     # Helper methods for checkout steps
     def paid?
-      payment_state == 'paid'
+      payment_state == 'paid' || payment_state == 'credit_owed'
     end
 
     def available_payment_methods
