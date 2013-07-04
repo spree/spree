@@ -67,8 +67,15 @@ describe Spree::Order do
     end
 
     it "transitions to address" do
+      order.line_items << FactoryGirl.create(:line_item)
+      order.email = "user@example.com"
       order.next!
       order.state.should == "address"
+    end
+
+    it "cannot transition to address without any line items" do
+      order.line_items.should be_blank
+      lambda { order.next! }.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
     end
 
     context "from address" do
