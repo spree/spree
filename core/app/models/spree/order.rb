@@ -314,12 +314,6 @@ module Spree
       adjustments.tax.map(&:amount).sum
     end
 
-    # Clear shipment when transitioning to delivery step of checkout if the
-    # current shipping address is not eligible for the existing shipping method
-    def remove_invalid_shipments!
-      shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
-    end
-
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
