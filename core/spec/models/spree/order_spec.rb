@@ -125,6 +125,18 @@ describe Spree::Order do
     end
   end
 
+  context "checking if order is paid" do
+    context "payment_state is paid" do
+      before { order.stub payment_state: 'paid' }
+      it { expect(order).to be_paid }
+    end
+
+    context "payment_state is credit_owned" do
+      before { order.stub payment_state: 'credit_owed' }
+      it { expect(order).to be_paid }
+    end
+  end
+
   context "#finalize!" do
     let(:order) { Spree::Order.create }
     it "should set completed_at" do
