@@ -193,6 +193,10 @@ route '/integration/tutorials/*/' do
   location.chop + ".html"
 end
 
+route '/integration/messages/*/' do
+  location = item.identifier.gsub('/messages/', '/')
+  location.chop + ".html"
+end
 
 route '/release_notes/*/' do
   location = item.identifier.gsub('/release_notes/', '/release_notes/spree_')
