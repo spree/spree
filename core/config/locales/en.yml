@@ -968,6 +968,7 @@ en:
     stock_location_info: Stock location info
     stock_locations: Stock Locations
     stock_management: Stock Management
+    stock_management_requires_a_stock_location: Please create a stock location in order to manage stock.
     stock_movements: Stock Movements
     stock_movements_for_stock_location: Stock Movements for %{stock_location_name}
     stock_successfully_transferred: Stock was successfully transferred between locations.
