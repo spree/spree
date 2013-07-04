@@ -25,7 +25,7 @@ module Spree
         return if after_update_attributes
 
         unless @order.next
-          flash[:error] = @order.checkout_errors.join(" ")
+          flash[:error] = @order.checkout_error
           redirect_to checkout_state_path(@order.state) and return
         end
 

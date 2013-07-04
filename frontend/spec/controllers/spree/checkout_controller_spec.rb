@@ -76,7 +76,6 @@ describe Spree::CheckoutController do
           # Must have *a* shipping method and a payment method so updating from address works
           order.stub :available_shipping_methods => [stub_model(Spree::ShippingMethod)]
           order.stub :available_payment_methods => [stub_model(Spree::PaymentMethod)]
-          order.stub :create_proposed_shipments => []
         end
 
         let(:address_params) do
@@ -89,26 +88,26 @@ describe Spree::CheckoutController do
           assigns[:order].should_not be_nil
         end
 
-        it "should advance the state" do
-          spree_post :update, {
-            :state => "address",
-            :order => {
-              :bill_address_attributes => address_params,
-              :use_billing => true
-            }
-          }
-          order.reload.state.should == "delivery"
-        end
+        context "update address attributes" do
+          before do
+            order.stub :create_proposed_shipments => []
 
-        it "should redirect the next state" do
-          spree_post :update, {
-            :state => "address",
-            :order => {
-              :bill_address_attributes => address_params,
-              :use_billing => true
+            spree_post :update, {
+              :state => "address",
+              :order => {
+                :bill_address_attributes => address_params,
+                :use_billing => true
+              }
             }
-          }
-          response.should redirect_to spree.checkout_state_path("delivery")
+          end
+
+          it "advances the state" do
+            order.reload.state.should == "delivery"
+          end
+
+          it "redirects the next state" do
+            response.should redirect_to spree.checkout_state_path("delivery")
+          end
         end
       end
 
