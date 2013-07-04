@@ -535,6 +535,12 @@ module Spree
         return true unless new_record? or state == 'cart'
       end
 
+      def ensure_line_items_present
+        unless line_items.present?
+          errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) and return false
+        end
+      end
+
       def has_available_shipment
         return unless has_step?("delivery")
         return unless address?

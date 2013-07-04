@@ -63,9 +63,11 @@ module Spree
                 transition :to => :awaiting_return
               end
 
+
               before_transition :to => :complete do |order|
                 order.process_payments! if order.payment_required?
               end
+              before_transition :from => :cart, :do => :ensure_line_items_present
 
               before_transition :to => :delivery, :do => :create_proposed_shipments
               before_transition :to => :delivery, :do => :ensure_available_shipping_rates
