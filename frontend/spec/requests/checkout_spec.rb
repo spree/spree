@@ -164,6 +164,24 @@ describe "Checkout" do
     end
   end
 
+  # regression for #2958
+  context "cant generate shipping rate for every package", js: true do
+    let!(:bag) { create(:product, :name => "RoR Bag", shipping_category: nil) }
+
+    before { Spree::ShippingMethod.destroy_all }
+
+    it "raises error and doesn't go to next step" do
+      add_mug_to_cart
+      click_on "Checkout"
+      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in_address
+      click_on "Save and Continue"
+
+      expect(current_path).to eql(spree.checkout_state_path("address"))
+      page.should have_content(Spree.t(:no_shipping_rates_found))
+    end
+  end
+
   # regression for #2921
   context "goes back from payment to add another item", js: true do
     let!(:bag) { create(:product, :name => "RoR Bag") }

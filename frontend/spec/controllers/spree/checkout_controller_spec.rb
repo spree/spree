@@ -88,26 +88,26 @@ describe Spree::CheckoutController do
           assigns[:order].should_not be_nil
         end
 
-        it "should advance the state" do
-          spree_post :update, {
-            :state => "address",
-            :order => {
-              :bill_address_attributes => address_params,
-              :use_billing => true
-            }
-          }
-          order.reload.state.should == "delivery"
-        end
+        context "update address attributes" do
+          before do
+            order.stub :create_proposed_shipments => []
 
-        it "should redirect the next state" do
-          spree_post :update, {
-            :state => "address",
-            :order => {
-              :bill_address_attributes => address_params,
-              :use_billing => true
+            spree_post :update, {
+              :state => "address",
+              :order => {
+                :bill_address_attributes => address_params,
+                :use_billing => true
+              }
             }
-          }
-          response.should redirect_to spree.checkout_state_path("delivery")
+          end
+
+          it "advances the state" do
+            order.reload.state.should == "delivery"
+          end
+
+          it "redirects the next state" do
+            response.should redirect_to spree.checkout_state_path("delivery")
+          end
         end
       end
 
@@ -174,20 +174,6 @@ describe Spree::CheckoutController do
         response.should redirect_to spree.cart_path
       end
     end
-
-    context "Spree::Core::GatewayError" do
-      before do
-        order.stub :user => user
-        order.stub(:update_attributes).and_raise(Spree::Core::GatewayError)
-        spree_post :update, {:state => "address"}
-      end
-
-      it "should render the edit template" do
-        response.should render_template :edit
-        flash[:error].should == Spree.t(:spree_gateway_error_flash_for_checkout)
-      end
-    end
-
   end
 
   context "When last inventory item has been purchased" do

@@ -667,6 +667,7 @@ en:
     no_results: No results
     no_rules_added: No rules added
     no_shipping_methods_found: No shipping methods found
+    no_shipping_rates_found: No shipping rates found
     no_trackers_found: No Trackers Found
     no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.

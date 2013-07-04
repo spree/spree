@@ -224,6 +224,20 @@ describe Spree::Order do
       end
 
     end
+
+    context "raise gateway error" do
+      before do
+        payment.should_receive(:process!) { raise Spree::Core::GatewayError.new }
+      end
+
+      it "rescues the error" do
+        expect { order.process_payments!  }.to_not raise_error
+      end
+
+      it "returns allow_checkout_on_gateway_error config value" do
+        expect(order.process_payments!).to eql Spree::Config.allow_checkout_on_gateway_error
+      end
+    end
   end
 
   context "#outstanding_balance" do

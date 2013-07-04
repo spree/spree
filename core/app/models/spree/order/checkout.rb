@@ -9,6 +9,8 @@ module Spree
           class_attribute :checkout_steps
           class_attribute :removed_transitions
 
+          attr_writer :checkout_error
+
           def self.checkout_flow(&block)
             if block_given?
               @checkout_flow = block
@@ -64,10 +66,22 @@ module Spree
               end
 
               before_transition :to => :complete do |order|
-                order.process_payments! if order.payment_required?
+                if order.payment_required?
+                  unless order.process_payments!
+                    order.checkout_error = Spree.t(:payment_processing_failed)
+                    false
+                  end
+                end
               end
 
-              before_transition :to => :delivery, :do => :create_proposed_shipments
+              before_transition :to => :delivery do |order|
+                begin
+                  order.create_proposed_shipments
+                rescue Core::ShippingRateError => error
+                  order.checkout_error = error.message
+                  false
+                end
+              end
 
               after_transition :to => :complete, :do => :finalize!
               after_transition :to => :delivery, :do => :create_tax_charge!
@@ -143,6 +157,10 @@ module Spree
 
           def self.add_transition(options)
             self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
+          end
+
+          def checkout_error
+            @checkout_error ||= Spree.t(:server_error)
           end
 
           def checkout_steps

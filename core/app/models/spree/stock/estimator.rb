@@ -20,7 +20,9 @@ module Spree
 
         shipping_rates.sort_by! { |r| r.cost || 0 }
 
-        unless shipping_rates.empty?
+        if shipping_rates.empty?
+          raise Core::ShippingRateError.new(Spree.t(:no_shipping_rates_found))
+        else
           if frontend_only
             shipping_rates.each do |rate|
               rate.selected = true and break if rate.shipping_method.frontend?
