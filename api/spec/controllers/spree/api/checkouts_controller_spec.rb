@@ -228,6 +228,7 @@ module Spree
       let!(:order) { create(:order) }
       it "can transition an order to the next state" do
         order.update_column(:email, "spree@example.com")
+        FactoryGirl.create(:line_item, :order => order)
 
         api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 200
