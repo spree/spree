@@ -542,6 +542,12 @@ module Spree
         # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
       end
 
+      def ensure_available_shipping_rates
+        if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
+          errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
+        end
+      end
+
       def has_available_payment
         return unless delivery?
         # errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
