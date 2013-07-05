@@ -69,6 +69,7 @@ Use this type of Message whenever a new order is created.
 ```json
 {
   "message": "order:new",
+  "message_id": "518726r84910000004",
   "payload": {
     "order": {
       "actual": {
@@ -127,6 +128,7 @@ This type of Message should be sent when an existing order is updated.
 ```json
 {
   "message": "order:updated",
+  "message_id": "518726r84910000004",
   "payload": {
     "order": {
       "actual": {
@@ -185,6 +187,7 @@ You should send this type of Message whenever an order is canceled, whether by t
 ```json
 {
   "message": "order:canceled",
+  "message_id": "518726r84910000004",
   "payload": {
     "order": {
       "actual": {
@@ -232,5 +235,26 @@ You should send this type of Message whenever an order is canceled, whether by t
         ...
       }
     }
+  }
+}```
+
+### Confirmed Shipment
+
+This type of Message is sent whenever an order shipment is confirmed and sent. It includes the tracking information so the customer can use it to track his/her order.
+
+TODO: confirm the tracking url and carrier values supplied.
+
+<pre class="headers"><code>order:new</code></pre>
+```json
+{
+  "message": "shipment:confirmation",
+  "message_id": "518726r84910000004",
+  "payload": {
+    "shipment_number": 1,
+    "tracking_number": "71N4i304",
+    "tracking_url": "http://www.ups.com/WebTracking/track",
+    "carrier": "UPS",
+    "shipped_date": "2013-06-27T13:29:46Z",
+    "TODO": "line_items and items and orders, oh my! What else goes here?"
   }
 }```

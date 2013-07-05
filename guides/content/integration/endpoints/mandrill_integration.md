@@ -72,6 +72,22 @@ If a user or an admin cancels an existing order, the store should send a JSON me
 
 After an order moves to the `shipped` order state, the store should send notice via the Integrator to theEndpoint's `/shipment_confirmation` URL, with the relevant order and shipment data. The Endpoint will then instruct Mandrill to email the customer, notifying them that the order is en route.
 
+```json
+{
+  "message": "shipment:confirmation",
+  "message_id": "518726r84910000004",
+  "payload": {
+    "shipment_number": 1,
+    "tracking_number": "71N4i304",
+    "tracking_url": "http://www.ups.com/WebTracking/track",
+    "carrier": "UPS",
+    "shipped_date": "2013-06-27T13:29:46Z",
+    ...
+  }
+}```
+
+TODO: Supply whatever substitutes for the "..." above
+
 ## Configuration
 
 TODO: Elaborate when we finalize the connector.
