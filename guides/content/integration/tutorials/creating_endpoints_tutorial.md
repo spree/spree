@@ -15,8 +15,8 @@ For detailed information about Endpoints, check out the <%= link_to "endpoints",
 Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby applications.
 
 ```bash
-mkdir hello_endpoint
-cd hello_endpoint```
+$ mkdir hello_endpoint
+$ cd hello_endpoint```
 
 Within your new `hello_endpoint` directory, you will need a few files:
 
@@ -70,7 +70,7 @@ rackup -p 9292```
 Test your new endpoint by running the following curl command:
 
 ```bash
-curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
+$ curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
 
 You should see the `message_id` returned as part of the endpoint's payload message, as follows:
 
@@ -112,8 +112,8 @@ run HelloEndpoint```
 Install the new gem and restart your application:
 
 ```bash
-bundle install
-rackup -p 9292```
+$ bundle install
+$ rackup -p 9292```
 
 ***
 Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a [Sinatra Reloader](http://www.sinatrarb.com/contrib/reloader) gem, but the use of it is beyond the scope of this tutorial.
@@ -122,7 +122,7 @@ Sinatra doesn't reload after changes by default; you will need to stop and resta
 Now, when you re-run the curl command:
 
 ```bash
-curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
+$ curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292```
 
 you should still get the same output:
 
@@ -223,8 +223,8 @@ Now, let's create a dummy product catalog to query against, and a couple of new 
 We've laid the groundwork, so now it's time to test out our endpoint. First, let's pass it a product we know is in the catalog:
 
 ```bash
-rackup -p 9292
-curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check```
+$ rackup -p 9292
+$ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check```
 
 Skipping the headers this time, you can see that the response we get is what we expect:
 
@@ -234,7 +234,7 @@ Skipping the headers this time, you can see that the response we get is what we 
 Now, let's try a product our supplier does not carry. There is no need to restart rack here, since we haven't changed our endpoint.
 
 ```bash
-curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
+$ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
 
 {"message_id":"518726r84910000004","message":"product:not_in_stock"}```
 
@@ -289,15 +289,15 @@ As you can see, some of the code from our previous example was extracted out to 
 If the product exists in the catalog, our endpoint returns a message with a success code (200), the `message_id` of our passed-in JSON, a `message` of `product:in_stock` and the name and price of the matching product in the catalog.
 
 ```bash
-rackup -p 9292
-curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+$ rackup -p 9292
+$ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
 
 {"message_id":"518726r84910000015","message":"product:in_stock","payload":{"product":{"name":"Somewhat Less Awesome Widgets","price":"8.00"}}}```
 
 If the product doesn't exist in the catalog, our endpoint still returns a message with a success code and our referenced `message_id`, but the `message` key's value is now `product:not_in_stock`, and of course, there is no product in the payload.
 
 ```bash
-curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+$ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
 
 {"message_id":"518726r84910000004","message":"product:not_in_stock"}```
 
