@@ -6,10 +6,10 @@ title: Shipment Messages
 
 ## Message Types
 
-### shipment:new
+### New
 
-### shipment:update
+### Update
 
-### shipment:confirm
+### Confirm
 
-### order:cancel
+### Cancel

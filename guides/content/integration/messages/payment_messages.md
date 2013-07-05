@@ -6,10 +6,10 @@ title: Payment Messages
 
 ## Message Types
 
-### payment:new
+### New
 
-### payment:capture
+### Capture
 
-### payment:cancel
+### Cancel
 
-### payment:void
+### Void
