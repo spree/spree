@@ -38,9 +38,66 @@ Using the Integrator's control panel, you can configure a list of the Message Ty
 
 ## Services
 
+Endpoint expose one or more Service to the outside world. Each Service maps to an `HTTP POST` method which is implemented in the Endpoint.
+
+Take the following example from the [Hubspot Integration](hubspot_integration) which exposes a Service for recording new customers in Hubspot.
+
+<pre class="headers"><code>hubspot_endpoint.rb</code></pre>
+```ruby
+class HubspotEndpoint < EndpointBase
+
+  post '/record_customer' do
+      base_message = { message_id: @message}
+
+      begin
+        importer = ContactImporter.new(@config, @message[:payload]['order']['actual'])
+        response = base_message.merge({ success: 'Contact Updated' })
+        code = 200
+      rescue => e
+        response = base_message.merge({ error: 'Coult not update contact' })
+        code = 500
+      end
+
+      process_result code, response
+  end
+end
+```
+
+***
+For more information on how Services communicate please see [Messaging Basics](messaging basics).
+***
+
 ### Service Requests
 
+A Service Request refers to the act of sending an `HTTP POST` to an Endpoint. Service Requests are automatically issued to the appropriate Endpoints automatically based on user-defined Mappings. Behind the scenes a service request looks something like this example taken from the [Creating Endpoints Tutorial](creating_endpoints_tutorial):
+
+```bash
+POST /query_price HTTP/1.1
+Host: localhost:9292
+Accept: */*
+Content-type:application/json
+Content-Length: 169
+```
+
+***
+If you are building your own Integration Endpoint you may want to try some of the [Testing Tools](testing_tools) which provide a convenient way to send Service Requests to your Endpoint.
+***
+
 ### Service Responses
+
+A Service Response refers to the HTTP Response sent by an Endpoint in answer to a Service Request. Service Responses that execute successfully (without encoutering an exception) will return a `200 OK` response. If the Endpoint encounters an exception while processing the Service Request it should return a `5XX SERVER ERROR` response code. These types of Service Response will be considerd [Failures](#failures).
+
+Here's an example of a successful Service Response taken from the [Creating Endpoints Tutorial](creating_endpoints_tutorial):
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Length: 142
+X-Content-Type-Options: nosniff
+Server: WEBrick/1.3.1 (Ruby/1.9.3/2011-10-30)
+
+{"message_id":"518726r84910000015","message":"product:in_stock","payload":{"product":{"name":"Somewhat Less Awesome Widgets","price":"8.00"}}}
+```
 
 ## Mappings
 
