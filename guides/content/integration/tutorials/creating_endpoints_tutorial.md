@@ -113,7 +113,7 @@ Install the new gem and restart your application:
 
 ```bash
 $ bundle install
-$ rackup -p 9292```
+$ bundle exec rackup -p 9292```
 
 ***
 Sinatra doesn't reload after changes by default; you will need to stop and restart your server any time you change your application. There is a [Sinatra Reloader](http://www.sinatrarb.com/contrib/reloader) gem, but the use of it is beyond the scope of this tutorial.
@@ -223,7 +223,7 @@ Now, let's create a dummy product catalog to query against, and a couple of new 
 We've laid the groundwork, so now it's time to test out our endpoint. First, let's pass it a product we know is in the catalog:
 
 ```bash
-$ rackup -p 9292
+$ bundle exec rackup -p 9292
 $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check```
 
 Skipping the headers this time, you can see that the response we get is what we expect:
@@ -289,7 +289,7 @@ As you can see, some of the code from our previous example was extracted out to 
 If the product exists in the catalog, our endpoint returns a message with a success code (200), the `message_id` of our passed-in JSON, a `message` of `product:in_stock` and the name and price of the matching product in the catalog.
 
 ```bash
-$ rackup -p 9292
+$ bundle exec rackup -p 9292
 $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
 
 {"message_id":"518726r84910000015","message":"product:in_stock","payload":{"product":{"name":"Somewhat Less Awesome Widgets","price":"8.00"}}}```
