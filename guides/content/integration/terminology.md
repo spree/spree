@@ -48,6 +48,8 @@ Using the Integrator's control panel, you can configure a list of the Message Ty
 
 ## Parameters
 
+## Failures
+
 ## Log Entries
 
 ## Schedulers
