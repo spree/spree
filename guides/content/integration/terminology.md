@@ -6,20 +6,20 @@ title: Terminology
 
 ## Messages
 
-Messages are the core of the Integrator platform. A single action within a Spree store can result in several discrete Messages being sent to multiple End Points. A Messages can be created in one of two ways:
+Messages are the core of the Integrator platform. A single action within a Spree store can result in several discrete Messages being sent to multiple Endpoints. A Message can be created in one of two ways:
 
-1. Indirectly as the result of events within a Spree store which are then discovered by the Integrator when it polls the store.  Examples of such events are new customers, orders and shipments.
+1. Indirectly as the result of events within a Spree store which the Integrator discovers when it polls the store. Examples of such events are new customers, orders, and shipments.
 2. In response to a Message that is being processed by an Endpoint.
 
 ### Attributes
 
-Every Messages contains (at least) the following details:
+Every Message contains (at least) the following details:
 
 | Attribute       | Description               |
 | :---------------| :-------------------------|
-| **message**     | This key represents the Message Type, in colon notation for example: `order:new`, `order:updated`, `user:new`, `shipment:ready`  |
+| **message**     | This key represents the Message type, in colon notation for example: `order:new`, `order:updated`, `user:new`, `shipment:ready` |
 | **message_id**  | A unique id (BSON::ObjectId) for the Message. |
-| **payload**     | The payload contains all Message specific details, for example in the case of `order:new` it would contain Order details.  |
+| **payload**     | The payload contains all Message-specific details. For example, in the case of `order:new` it would contain Order details. |
 
 ### Example
 
@@ -30,17 +30,17 @@ The following is an example of the JSON representation of a typical message:
 
 ## Endpoints
 
-Endpoints are small standalone web applications that can be subscribed to certain Message Types. The integrator delivers and tracks each Message as a Service Request is sent to all of its subscribed Endpoints. The Integrator includes lots of existing Endpoints for popular services and applications, but you can also create custom or private Endpoints to help integrate with proprietary systems.
+Endpoints are small standalone web applications that can be subscribed to certain Message types. The Integrator delivers and tracks each Message as a Service Request is sent to all of its subscribed Endpoints. The Integrator includes lots of existing Endpoints for popular services and applications, but you can also create custom or private Endpoints to help integrate with proprietary systems.
 
-Any message within the Integrator can be consumed by an Endpoint, with each individual Message resulting in a JSON encoded Message being sent via an HTTP POST request to a pre-configured Endpoint URL.
+Any Message within the Integrator can be consumed by an Endpoint, with each individual Message resulting in a JSON-encoded Message being sent via an `HTTP POST` request to a pre-configured Endpoint URL.
 
-Using the Integrator's control panel, you can configure a list of the Message Types you want to subscribe to and a list of corresponding Endpoint URLs that will process them.
+Using the Integrator's control panel, you can configure a list of the Message types you want to subscribe to, and a list of corresponding Endpoint URLs that will process them.
 
 ## Services
 
-Endpoint expose one or more Service to the outside world. Each Service maps to an `HTTP POST` method which is implemented in the Endpoint.
+Endpoints expose one or more Services to the outside world. Each Service maps to an `HTTP POST` method which is implemented in the Endpoint.
 
-Take the following example from the [Hubspot Integration](hubspot_integration) which exposes a Service for recording new customers in Hubspot.
+Take the following example from the [Hubspot Integration](hubspot_integration), which exposes a Service for recording new customers in Hubspot.
 
 <pre class="headers"><code>hubspot_endpoint.rb</code></pre>
 ```ruby
@@ -68,7 +68,7 @@ For more information on how Services communicate please see [Messaging Basics](m
 
 ### Service Requests
 
-A Service Request refers to the act of sending an `HTTP POST` to an Endpoint. Service Requests are automatically issued to the appropriate Endpoints automatically based on user-defined Mappings. Behind the scenes a service request looks something like this example taken from the [Creating Endpoints Tutorial](creating_endpoints_tutorial):
+A Service Request refers to the act of sending an `HTTP POST` to an Endpoint. Service Requests are automatically issued to the appropriate Endpoints based on user-defined Mappings. Behind the scenes, a Service Request looks something like this example, taken from the [Creating Endpoints Tutorial](creating_endpoints_tutorial):
 
 ```bash
 POST /query_price HTTP/1.1
@@ -83,7 +83,7 @@ If you are building your own Integration Endpoint you may want to try some of th
 
 ### Service Responses
 
-A Service Response refers to the HTTP Response sent by an Endpoint in answer to a Service Request. Service Responses that execute successfully (without encoutering an exception) will return a `200 OK` response. If the Endpoint encounters an exception while processing the Service Request it should return a `5XX SERVER ERROR` response code. These types of Service Response will be considerd [Failures](#failures).
+A Service Response refers to the `HTTP Response` sent by an Endpoint in answer to a Service Request. Service Responses that execute successfully (without encountering an exception) will return a `200 OK` response. If the Endpoint encounters an exception while processing the Service Request, it should return a `5XX SERVER ERROR` response code. These types of Service Response will be considered [Failures](#failures).
 
 Here's an example of a successful Service Response taken from the [Creating Endpoints Tutorial](creating_endpoints_tutorial):
 
@@ -108,6 +108,6 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2011-10-30)
 
 ## Schedulers
 
-Pollers are responsible for monitoring a Spree store's API for changes and converting these changes to new messages as events are detected. This polling approach simplifies integration from a store owner's perspective as there are no components of the Integrator operating within the Spree store itself.
+Pollers are responsible for monitoring a Spree store's API for changes and converting these changes to new messages as events are detected. This polling approach simplifies integration from a store owner's perspective, as there are no components of the Integrator operating within the Spree store itself.
 
 The Poller also provides a heart beat monitor for a store which can raise alerts quickly when failures occur.
