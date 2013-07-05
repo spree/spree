@@ -6,8 +6,8 @@ title: Order Messages
 
 ## Message Types
 
-### order:new
+### New
 
-### order:update
+### Update
 
-### order:cancel
+### Cancel
