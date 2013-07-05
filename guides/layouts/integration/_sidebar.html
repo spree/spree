@@ -4,35 +4,14 @@
       <li class='js-topic'>
         <h3>
           <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%= link_to 'Overview', 'overview' %>
+          <%= link_to 'Spree Integrator', '#' %>
         </h3>
         <ul class="js-guides">
-          <li><i class="icon-dot"></i><%= link_to "Messages", 'overview', 'messages' %></li>
-          <li><i class="icon-dot"></i><%= link_to "Queues", 'overview', "queues" %></li>
-          <li><i class="icon-dot"></i><%= link_to "Endpoints", 'overview', "endpoints" %></li>
-          <li><i class="icon-dot"></i><%= link_to "Consumers", 'overview', "consumers" %></li>
-          <li><i class="icon-dot"></i><%= link_to "Pollers", 'overview', "pollers" %></li>
-          <li><i class="icon-dot"></i><%= link_to "Events", 'overview', "events" %></li>
-        </ul>
-      </li>
-      <li class='js-topic'>
-        <h3>
-          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%= link_to 'Consuming Messages', 'consuming' %>
-        </h3>
-        <ul class="js-guides">
-          <li><i class="icon-dot"></i><%= link_to "Synchronous", "consuming", "synchronous-response" %></li>
-          <li><i class="icon-dot"></i><%= link_to "Asynchronous", "consuming", "asynchronous-response" %></li>
-          <li><i class="icon-dot"></i><%= link_to "Failures", "consuming", "failures" %></li>
-        </ul>
-      </li>
-      <li class='js-topic'>
-        <h3>
-          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%= link_to 'Pushing Messages', 'push' %>
-        </h3>
-        <ul class="js-guides">
-          <li><i class="icon-dot"></i><%= link_to "New", "push", "new-product-example" %></li>
+          <li><i class="icon-dot"></i><%= link_to "Introduction", 'overview' %></li>
+          <li><i class="icon-dot"></i><%= link_to "Terminology", 'terminology' %><div class="toc"></div></li>
+          <li><i class="icon-dot"></i><%= link_to "Mappings", 'mapping_basics' %></li>
+          <li><i class="icon-dot"></i><%= link_to "Message Basics", 'message_basics' %></li>
+          <li><i class="icon-dot"></i><%= link_to "Configuration", 'configuration' %></li>
         </ul>
       </li>
       <li class='js-topic'>
@@ -42,15 +21,36 @@
         </h3>
         <ul class="js-guides">
           <li><i class="icon-dot"></i><%= link_to "Creating Endpoints", 'creating_endpoints_tutorial' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Creating Fulfillment Integration", 'creating_fulfillment_tutorial' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Creating a Support Integration", 'creating_a_support_integration' %> <div class="toc"></div> </li>
         </ul>
       </li>
       <li class='js-topic'>
         <h3>
           <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
-          <%= link_to 'Endpoints', 'mandrill_endpoint' %>
+          <%= link_to 'Customization', 'custom_integrations' %>
         </h3>
         <ul class="js-guides">
-          <li><i class="icon-dot"></i><%= link_to "Mandrill", 'mandrill_endpoint' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Custom Integrations", 'custom_integrations' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Custom Messages", 'custom_messages' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Testing Tools", 'testing_tools' %> <div class="toc"></div> </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
+          <%= link_to 'Supported Integrations', 'supported_integrations' %>
+        </h3>
+        <ul class="js-guides">
+          <li><i class="icon-dot"></i><%= link_to "Quickbooks", 'quickbooks_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Mandrill", 'mandrill_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Shipwire", 'shipwire_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "PCH", 'pch_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Quiet Logistics", 'quiet_logistics_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "RLM", 'rlm_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Mailchimp", 'mailchimp_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Zendesk", 'zendesk_integration' %> <div class="toc"></div> </li>
+          <li><i class="icon-dot"></i><%= link_to "Hubspot", 'hubspot_integration' %> <div class="toc"></div> </li>
         </ul>
       </li>
       <li class='js-topic'>
@@ -65,11 +65,6 @@
           <li><i class="icon-dot"></i><%= link_to "Notifcation", "notification_messages" %><div class="toc"></div></li>
         </ul>
       </li>
-   <!----
-      <li class='js-topic'>
-        <h3><a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a><%= link_to "Message Library", "events/users" %></h3>
-  </li>
-  --->
     </ul>
   </nav>
 </aside>
