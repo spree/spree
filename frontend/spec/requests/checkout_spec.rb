@@ -90,9 +90,9 @@ describe "Checkout" do
       fill_in "Card Code", :with => '123'
       click_button "Save and Continue"
       click_button "Place Order"
-      page.should have_content("Payment could not be processed")
+      page.should have_content("Bogus Gateway: Forced failure")
       click_button "Place Order"
-      page.should have_content("Payment could not be processed")
+      page.should have_content("No pending payments")
     end
   end
 

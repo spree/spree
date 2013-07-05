@@ -188,6 +188,58 @@ describe Spree::CheckoutController do
       end
     end
 
+    context "fails to transition from address" do
+      let(:order) do
+        FactoryGirl.create(:order_with_line_items).tap do |order|
+          order.next!
+          order.state.should == 'address'
+          order.ship_address.tap do |address|
+            # A different country which is not included in the list of shippable countries
+            address.country = FactoryGirl.create(:country, :name => "Australia")
+            address.state_name = 'Victoria'
+            address.save
+          end
+        end
+      end
+
+      before do
+        controller.stub :current_order => order
+        controller.stub :check_authorization => true
+      end
+
+      it "due to no available shipping rates for any of the shipments" do
+        order.shipments.count.should == 1
+        order.shipments.first.shipping_rates.delete_all
+        spree_put :update, :order => {}
+        flash[:error].should == Spree.t(:items_cannot_be_shipped)
+        response.should redirect_to(spree.checkout_state_path('address'))
+      end
+    end
+
+    context "fails to transition from payment to complete" do
+      let(:order) do
+        FactoryGirl.create(:order_with_line_items).tap do |order|
+          until order.state == 'payment'
+            order.next!
+          end
+          # So that the confirmation step is skipped and we get straight to the action.
+          payment_method = FactoryGirl.create(:bogus_simple_payment_method)
+          payment = FactoryGirl.create(:payment, :payment_method => payment_method)
+          order.payments << payment
+        end
+      end
+
+      before do
+        controller.stub :current_order => order
+        controller.stub :check_authorization => true
+      end
+
+      it "when GatewayError is raised" do
+        order.payments.first.stub(:process!).and_raise(Spree::Core::GatewayError.new(Spree.t(:payment_processing_failed)))
+        spree_put :update, :order => {}
+        flash[:error].should == Spree.t(:payment_processing_failed)
+      end
+    end
   end
 
   context "When last inventory item has been purchased" do
