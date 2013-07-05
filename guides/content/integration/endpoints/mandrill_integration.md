@@ -18,13 +18,69 @@ In order to configure and use the mandrill_endpoint, you will need to first have
 * an API token from that account, and
 * templates set up in your Mandrill account
 
-## Service Requests
+## Services
 
-There are message types that the mandrill_endpoint can respond to (incoming), and those that it can, in turn, generate (outgoing). A Service Request is the sequence of actions the endpoint takes when the Integrator sends it a Message.
+There are message types that the mandrill_endpoint can respond to (incoming), and those that it can, in turn, generate (outgoing). A Service Request is the sequence of actions the endpoint takes when the Integrator sends it a Message. There are several types of Service Requests you can make to the mandrill_endpoint. Each is listed below, along with one or more sample JSON Messages like the ones you would send.
 
 ### Order Confirmation
 
-When the mandrill_endpoint receives a validly-formatted Message to the `/order_confirmation` URL, it passes the order information on to Mandrill's API. Mandrill then sends an email using its matching stored [template](#template) to the user, confirming to them that their order was received.
+TODO: The trigger language here is sloppy. Presume it's when an order reaches a particular state(s).
+This Service should be triggered any time a new order is created, or when an existing order is updated. When the `mandrill_endpoint` receives a validly-formatted Message to the `/order_confirmation` URL, it passes the order information on to Mandrill's API. Mandrill then sends an email using its matching stored [template](#template) to the user, confirming that their order was received.
+
+<pre class="headers"><code>A new order is created</code></pre>
+
+```json
+{
+  "message": "order:new",
+  "payload": {
+    "order": {
+      "actual": {
+        "number": "R186559068",
+        "ship_address": {
+          "firstname": "John",
+          "lastname": "Doe",
+          "company": "ABC Widgets",
+          "address1": "123 Main St.",
+          "address2": "",
+          "city": "Ambrosio",
+          "state_id": 123,
+          "country": {
+            "iso": "US"
+          },
+          "zipcode": "25501"
+        },
+        "bill_address": {
+          "firstname": "Jane",
+          "lastname": "Doe",
+          "company": "ABC Widgets",
+          "address1": "456 Oak Ave.",
+          "address2": "",
+          "city": "Ambrosio",
+          "state_id": 123,
+          "country": {
+            "iso": "US"
+          },
+          "zipcode": "25501"
+        },
+        "item_total": "25.0",
+        "total": "23.0",
+        "shipment_state": "ready",
+        "line_items": [
+          {
+            "quantity": 5,
+            "price": "5.0",
+            "variant": {
+              "name": "Wiggly Worm Widget"
+            }
+          }
+        ],
+      },
+      "original": {
+        ...
+      }
+    }
+  }
+}```
 
 ### Order Cancellation
 
