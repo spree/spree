@@ -52,6 +52,7 @@ describe Spree::Order do
     context "when current state is address" do
       before do
         order.stub(:has_available_payment)
+        order.stub(:ensure_available_shipping_rates)
         order.state = "address"
       end
 
