@@ -101,6 +101,16 @@ describe Spree::Shipment do
         shipment.stub(shipped?: true)
         shipment.refresh_rates.should == []
       end
+
+      context 'to_package' do
+        it 'should use symbols for states when adding contents to package' do
+          shipment.stub_chain(:inventory_units, includes: [ build(:inventory_unit, variant: variant, state: 'on_hand'),
+                                                            build(:inventory_unit, variant: variant, state: 'backordered') ] )
+          package = shipment.to_package
+          package.on_hand.count.should eq 1
+          package.backordered.count.should eq 1
+        end
+      end
     end
   end
 
