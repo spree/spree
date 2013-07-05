@@ -81,24 +81,20 @@ describe Spree::Order do
     context "from address" do
       before do
         order.state = 'address'
+        order.stub(:has_available_payment)
+        shipment = FactoryGirl.create(:shipment, :order => order)
+        order.email = "user@example.com"
+        order.save!
       end
 
       it "transitions to delivery" do
-        order.stub(:has_available_payment)
+        order.stub(:ensure_available_shipping_rates => true)
         order.next!
         order.state.should == "delivery"
       end
 
       context "cannot transition to delivery" do
         context "if there are no shipping rates for any shipment" do
-          before do
-            order.stub(:has_available_payment)
-            shipment = FactoryGirl.create(:shipment, :order => order)
-            order.email = "user@example.com"
-            order.save!
-            shipment.shipping_rates.delete_all
-          end
-
           specify do
             transition = lambda { order.next! }
             transition.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
