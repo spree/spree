@@ -219,6 +219,7 @@ module Spree
     context "PUT 'next'" do
       let!(:order) { create(:order_with_line_items) }
       it "cannot transition to address without a line item" do
+        order.line_items.delete_all
         order.update_column(:email, "spree@example.com")
         api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 422
