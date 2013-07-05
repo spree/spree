@@ -111,6 +111,7 @@ module Spree
     context "working with an order" do
       before do
         Order.any_instance.stub :user => current_api_user
+        order.line_items << FactoryGirl.create(:line_item)
         create(:payment_method)
         order.next # Switch from cart to address
         order.bill_address = nil
