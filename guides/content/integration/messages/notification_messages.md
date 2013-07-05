@@ -63,12 +63,70 @@ Do not use this message for exceptional situations such as the inability to conn
 
 ### New Order
 
-Use this type of Message whenever a new order is created. The `current` and `actual` order keys help the Integrator distinguish ...? (TODO: Ask Brian what these do, again.)
+Use this type of Message whenever a new order is created.
 
 <pre class="headers"><code>order:new</code></pre>
 ```json
 {
   "message": "order:new",
+  "payload": {
+    "order": {
+      "actual": {
+        "number": "R186559068",
+        "ship_address": {
+          "firstname": "John",
+          "lastname": "Doe",
+          "company": "ABC Widgets",
+          "address1": "123 Main St.",
+          "address2": "",
+          "city": "Ambrosio",
+          "state_id": 123,
+          "country": {
+            "iso": "US"
+          },
+          "zipcode": "25501"
+        },
+        "bill_address": {
+          "firstname": "Jane",
+          "lastname": "Doe",
+          "company": "ABC Widgets",
+          "address1": "456 Oak Ave.",
+          "address2": "",
+          "city": "Ambrosio",
+          "state_id": 123,
+          "country": {
+            "iso": "US"
+          },
+          "zipcode": "25501"
+        },
+        "item_total": "25.0",
+        "total": "23.0",
+        "shipment_state": "ready",
+        "line_items": [
+          {
+            "quantity": 5,
+            "price": "5.0",
+            "variant": {
+              "name": "Wiggly Worm Widget"
+            }
+          }
+        ],
+      },
+      "original": {
+        ...
+      }
+    }
+  }
+}```
+
+### Updated Order
+
+This type of Message should be sent when an existing order is updated.
+
+<pre class="headers"><code>order:new</code></pre>
+```json
+{
+  "message": "order:updated",
   "payload": {
     "order": {
       "actual": {
