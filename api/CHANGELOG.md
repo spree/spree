@@ -62,4 +62,8 @@
 
 * Fix issue where `set_current_order` before filter would be called when CheckoutsController actions were run, causing the order object to be deleted. #3306
 
-*Ryan Bigg*
+    *Ryan Bigg*
+
+* An order can no longer transition past the "cart" state without first having a line item. #3312
+
+    *Ryan Bigg*

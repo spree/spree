@@ -226,6 +226,13 @@ module Spree
 
     context "PUT 'next'" do
       let!(:order) { create(:order) }
+      it "cannot transition to address without a line item" do
+        order.update_column(:email, "spree@example.com")
+        api_put :next, :id => order.to_param, :order_token => order.token
+        response.status.should == 422
+        json_response["errors"]["base"].should include(Spree.t(:there_are_no_items_for_this_order))
+      end
+
       it "can transition an order to the next state" do
         order.update_column(:email, "spree@example.com")
         FactoryGirl.create(:line_item, :order => order)
