@@ -27,7 +27,7 @@ module Spree
         return if after_update_attributes
 
         unless @order.next
-          flash[:error] = Spree.t(:payment_processing_failed)
+          flash[:error] = @order.errors[:base].join("\n")
           redirect_to checkout_state_path(@order.state) and return
         end
 
