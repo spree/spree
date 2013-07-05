@@ -217,7 +217,7 @@ module Spree
     end
 
     context "PUT 'next'" do
-      let!(:order) { create(:order) }
+      let!(:order) { create(:order_with_line_items) }
       it "cannot transition to address without a line item" do
         order.update_column(:email, "spree@example.com")
         api_put :next, :id => order.to_param, :order_token => order.token
@@ -227,7 +227,6 @@ module Spree
 
       it "can transition an order to the next state" do
         order.update_column(:email, "spree@example.com")
-        FactoryGirl.create(:line_item, :order => order)
 
         api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 200
@@ -240,6 +239,12 @@ module Spree
         api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 422
         json_response['error'].should =~ /could not be transitioned/
+      end
+
+      it "returns a sensible error when no payment method is specified" do
+        order.update_column(:state, "payment")
+        api_put :next, :id => order.to_param, :order_token => order.token, :order => {}
+        json_response["errors"]["base"].should include(Spree.t(:no_pending_payments))
       end
     end
   end
