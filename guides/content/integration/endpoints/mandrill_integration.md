@@ -58,6 +58,16 @@ This Service should be triggered any time a new order is created, or when an exi
 TODO: Is this the correct scenario?
 If a user or an admin cancels an existing order, the store should send a JSON message with the relevant data to the `/order_cancellation` URL. The Endpoint will transmit a Message to Mandrill, which then sends an email to the user, confirming that the order was canceled.
 
+```json
+{
+  "message": "order:canceled",
+  "payload": {
+    "order": {
+      ...
+    }
+  }
+}```
+
 ### Shipment Confirmation
 
 After an order moves to the `shipped` order state, the store should send notice via the Integrator to theEndpoint's `/shipment_confirmation` URL, with the relevant order and shipment data. The Endpoint will then instruct Mandrill to email the customer, notifying them that the order is en route.
