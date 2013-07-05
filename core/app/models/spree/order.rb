@@ -250,18 +250,6 @@ module Spree
       @contents ||= Spree::OrderContents.new(self)
     end
 
-    def add_variant(variant, quantity = 1, currency = nil)
-      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#add_variant will be deprecated in Spree 2.1, please use order.contents.add instead.")
-      contents.currency = currency unless currency.nil?
-      contents.add(variant, quantity)
-    end
-
-
-    def remove_variant(variant, quantity = 1)
-      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#remove_variant will be deprecated in Spree 2.1, please use order.contents.remove instead.")
-      contents.remove(variant, quantity)
-    end
-
     # Associates the specified user with the order.
     def associate_user!(user)
       self.user = user
@@ -282,11 +270,6 @@ module Spree
       end
       self.number = random if self.number.blank?
       self.number
-    end
-
-    def shipment
-      ActiveSupport::Deprecation.warn("[SPREE] Spree::Order#shipment is typically incorrect due to multiple shipments and will be deprecated in Spree 2.1, please process Spree::Order#shipments instead.")
-      @shipment ||= shipments.last
     end
 
     def shipped_shipments

@@ -334,40 +334,6 @@ describe Spree::Order do
 
   end
 
-  context "#remove_variant" do
-    let(:order) { Spree::Order.create }
-    let(:variant) { create(:variant) }
-
-    it 'should reduce line_item quantity if quantity is less the line_item quantity' do
-      line_item = order.contents.add(variant, 3)
-      order.remove_variant(variant, 1)
-
-      line_item.reload.quantity.should == 2
-    end
-
-    it 'should remove line_item if quantity matches line_item quantity' do
-      order.contents.add(variant, 1)
-      order.remove_variant(variant, 1)
-
-      order.reload.find_line_item_by_variant(variant).should be_nil
-    end
-
-    it "should update order totals" do
-      order.item_total.to_f.should == 0.00
-      order.total.to_f.should == 0.00
-
-      order.contents.add(variant, 2)
-
-      order.item_total.to_f.should == 39.98
-      order.total.to_f.should == 39.98
-
-      order.remove_variant(variant,1)
-      order.item_total.to_f.should == 19.99
-      order.total.to_f.should == 19.99
-    end
-
-  end
-
   context "empty!" do
     it "should clear out all line items and adjustments" do
       order = stub_model(Spree::Order)

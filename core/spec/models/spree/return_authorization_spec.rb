@@ -69,7 +69,7 @@ describe Spree::ReturnAuthorization do
   end
 
   context "receive!" do
-    let(:inventory_unit) { order.shipment.inventory_units.first }
+    let(:inventory_unit) { order.shipments.first.inventory_units.first }
 
     before  do
       return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
