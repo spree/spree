@@ -258,3 +258,13 @@ TODO: confirm the tracking url and carrier values supplied.
     "TODO": "line_items and items and orders, oh my! What else goes here?"
   }
 }```
+
+### Retrieve New Amazon Orders
+
+This message is used for you to poll the Amazon API, retrieve any new orders you have for your seller account, and import them into your Spree store.
+
+```json
+{
+  "message": "amazon:order:poll",
+  "message_id": "1234567"
+}```

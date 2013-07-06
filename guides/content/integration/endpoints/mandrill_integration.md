@@ -20,8 +20,6 @@ In order to configure and use the [mandrill_endpoint](https://github.com/spree/m
 
 ## Services
 
-There are Message types that the Endpoint can respond to (incoming), and those that it can, in turn, generate (outgoing). A Service Request is the sequence of actions the Endpoint takes when the Integrator sends it a Message. There are several types of Service Requests you can make to the Endpoint. Each is listed below, along with one or more sample JSON Messages like the ones you would send.
-
 ***
 To see thorough detail on how a particular JSON Message should be formatted, check out the [Notification Messages guide](notification_messages).
 ***
