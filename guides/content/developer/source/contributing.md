@@ -158,24 +158,28 @@ Git branches are "cheap." Creating branches in Git is incredibly easy and it's a
 
 For example, if we were submitting a patch to fix an issue with the CSS in the flash error message you could create a branch as follows:
 
-    $ git remote add upstream git://github.com/spree/spree.git
-    $ git fetch upstream
-    $ git checkout -b fix-css-for-error-flash --track upstream/master
+```bash
+$ git remote add upstream git://github.com/spree/spree.git
+$ git fetch upstream
+$ git checkout -b fix-css-for-error-flash --track upstream/master```
 
 The fetch command will grab all of the latest commits from the Spree master branch. Don't worry, it doesn't permanently alter your working repository and you can return to your master branch later. The track part of the command will tell git that this branch should track with the remote version of the upstream master.  This is another way of saying that the branch should be based on a clean copy of the latest official source code (without any of your unrelated local changes.)
 
 You can then do work locally on this topic branch and push it up to your GitHub fork when you are done.  So in our previous example we do something like:
 
-    $ git push origin fix-css-for-error-flash
+```bash
+$ git push origin fix-css-for-error-flash```
 
 Of course if you want the fix for yourself to use in your own local code you should probably merge it down to your own personal master branch that you're using for development
 
-  $ git checkout master
-  $ git merge fix-css-for-error-flash
+```bash
+$ git checkout master
+$ git merge fix-css-for-error-flash```
 
 You should probably also clean up after yourself a little.  The branch has been pushed to GitHub and you've merged it locally so you don't really need a local copy of the branch laying around.
 
-  $ git branch -D fix-css-for-error-flash
+```bash
+$ git branch -D fix-css-for-error-flash```
 
 #### Follow the Coding Conventions
 
@@ -215,15 +219,17 @@ Improvements to the documentation is encouraged.  The primary source of document
 
 To build the documentation normally simply clone and install.
 
-  $ git clone git://github.com/spree/spree-guides.git
-  $ cd spree-guides
-  $ bundle install
-  $ bundle exec guides build
+```bash
+$ git clone git://github.com/spree/spree-guides.git
+$ cd spree-guides
+$ bundle install
+$ bundle exec guides build```
 
 Then simply use the nanoc command to compile and preview the guides in your browser at http://localhost:3000
 
-  $ nanoc compile
-  $ nanoc view
+```bash
+$ nanoc compile
+$ nanoc view```
 
 ### Markdown Conventions
 
