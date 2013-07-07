@@ -65,7 +65,7 @@ This is enough to function as an endpoint that echoes back the `message_id` of t
 Launch your Sinatra application on rack:
 
 ```bash
-rackup -p 9292```
+$ bundle exec rackup -p 9292```
 
 Test your new endpoint by running the following curl command:
 
