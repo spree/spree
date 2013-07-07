@@ -30,11 +30,13 @@ describe Spree::Payment do
 
   let(:currency) { 'USD' }
 
-  let!(:success_response) do
-    mock('success_response', :success? => true,
-                             :authorization => '123',
-                             :avs_result => { 'code' => 'avs-code' },
-                             :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})
+  def success_response(options = {})
+    default = {:success? => true,
+               :authorization => '123',
+               :avs_result => { 'code' => 'avs-code' },
+               :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"}}
+
+    mock('success_response', default.merge(options))
   end
 
   let(:failed_response) { mock('gateway_response', :success? => false) }
