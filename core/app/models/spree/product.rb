@@ -47,9 +47,8 @@ module Spree
       class_name: 'Spree::Variant',
       dependent: :destroy
 
-    has_many :variants_including_master_and_deleted, class_name: 'Spree::Variant'
-
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
+    has_many :stock_items, through: :variants
 
     delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
