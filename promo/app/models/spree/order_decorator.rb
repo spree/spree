@@ -1,9 +1,12 @@
 Spree::Order.class_eval do
   attr_accessible :coupon_code
-  attr_reader :coupon_code
+
+  def coupon_code
+    formatted_coupon_code(@coupon_code)
+  end
 
   def coupon_code=(code)
-    @coupon_code = code.strip.downcase rescue nil
+    @coupon_code = formatted_coupon_code(code)
   end
 
   # Tells us if there if the specified promotion is already associated with the order
@@ -15,5 +18,11 @@ Spree::Order.class_eval do
 
   def promo_total
     adjustments.eligible.promotion.pluck(:amount).sum
+  end
+
+  private
+
+  def formatted_coupon_code(code)
+    code.strip rescue nil
   end
 end
