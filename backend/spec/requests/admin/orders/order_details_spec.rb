@@ -116,6 +116,7 @@ describe "Order Details", js: true do
           end
 
           it "updates quantity of the second shipment's items" do
+            wait_for_ajax
             within("table.stock-contents", :text => tote.name) do
               click_icon :edit
               fill_in "quantity", with: 4
