@@ -60,7 +60,7 @@ GET /api/stock_locations/1/stock_items?q[s]=variant_id%20asc```
 To view the details for a single stock item, make a request using that stock item's id, along with its `stock_location_id`:
 
 ```text
-GET /api/stock_locations/1/stock_items/1```
+GET /api/stock_locations/1/stock_items/2```
 
 ### Successful Response
 
@@ -110,7 +110,7 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
 To update a stock item's details, make this request with the necessary parameters:
 
 ```text
-PUT /api/stock_locations/1/stock_items/1```
+PUT /api/stock_locations/1/stock_items/2```
 
 For instance, to update a stock item's count_on_hand, send it through like this:
 
@@ -140,7 +140,7 @@ For instance, to update a stock item's count_on_hand, send it through like this:
 To delete a stock item, make this request:
 
 ```text
-DELETE /api/stock_locations/1/stock_item/1```
+DELETE /api/stock_locations/1/stock_items/2```
 
 ### Response
 
