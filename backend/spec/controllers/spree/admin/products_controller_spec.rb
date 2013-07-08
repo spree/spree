@@ -38,7 +38,7 @@ describe Spree::Admin::ProductsController do
       spree_delete :destroy, :id => product
       product.reload.deleted_at.should_not be_nil
       product.variants_including_master.each do |variant|
-        varaint.reload.deleted_at.should_not be_nil
+        variant.reload.deleted_at.should_not be_nil
       end
     end
   end
