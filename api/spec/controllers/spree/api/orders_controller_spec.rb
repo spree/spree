@@ -9,7 +9,7 @@ module Spree
                         :state, :adjustment_total,
                         :user_id, :created_at, :updated_at,
                         :completed_at, :payment_total, :shipment_state,
-                        :payment_state, :email, :special_instructions] }
+                        :payment_state, :email, :special_instructions, :token] }
 
 
     before do
