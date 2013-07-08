@@ -10,11 +10,17 @@ module Spree
       def self.description
         Spree.t(:shipping_flat_rate_per_item)
       end
-
-      def compute_package(package)
-        content_items = package.contents
-        self.preferred_amount * content_items.sum { |item| item.quantity }
+      
+      def compute_package(object)
+        return 0 if object.nil?
+        if object.is_a?(Spree::Order)
+          self.preferred_amount * object.line_items.map(&:quantity).sum
+        else
+          content_items = object.contents
+          self.preferred_amount * content_items.sum { |item| item.quantity }
+        end
       end
+      
     end
   end
 end
