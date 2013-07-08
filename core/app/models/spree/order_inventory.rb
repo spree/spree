@@ -54,7 +54,6 @@ module Spree
     #
     # first unshipped that already includes this variant
     # first unshipped that's leaving from a stock_location that stocks this variant
-    #
     def determine_target_shipment(variant)
       shipment = order.shipments.detect do |shipment|
         (shipment.ready? || shipment.pending?) && shipment.include?(variant)
@@ -101,9 +100,7 @@ module Spree
         removed_quantity += 1
       end
 
-      if shipment.inventory_units.count == 0
-        shipment.destroy
-      end
+      shipment.destroy if shipment.inventory_units.count == 0
 
       # removing this from shipment, and adding to stock_location
       if order.completed?
