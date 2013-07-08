@@ -103,7 +103,7 @@ module Spree
     end
 
     def code=(coupon_code)
-      write_attribute(:code, (coupon_code.downcase.strip rescue nil))
+      write_attribute(:code, (coupon_code.strip rescue nil))
     end
   end
 end
