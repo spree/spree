@@ -121,12 +121,12 @@ $color-ste-active-text:          $color-1 !default;
 $color-ste-inactive-bg:          $color-notice !default;
 $color-ste-inactive-text:        $color-1 !default;
 
-// Avaliable states
+// Available states
 $states:                      completed,                 complete,                 sold,                 pending,                 awaiting_return,                 returned,                 credit_owed,                 paid,                 shipped,                 balance_due,                 backorder,                 checkout,                 cart,                 address,                 delivery,                 payment,                 confirm,                 canceled,                 ready,                 void,                 active,                 inactive  !default;
 $states-bg-colors:            $color-ste-completed-bg,   $color-ste-complete-bg,   $color-ste-sold-bg,   $color-ste-pending-bg,   $color-ste-awaiting_return-bg,   $color-ste-returned-bg,   $color-ste-credit_owed-bg,   $color-ste-paid-bg,   $color-ste-shipped-bg,   $color-ste-balance_due-bg,   $color-ste-backorder-bg,   $color-ste-checkout-bg,   $color-ste-cart-bg,   $color-ste-address-bg,   $color-ste-delivery-bg,   $color-ste-payment-bg,   $color-ste-confirm-bg,   $color-ste-canceled-bg,   $color-ste-ready-bg,   $color-ste-void-bg,   $color-ste-active-bg,   $color-ste-inactive-bg  !default;
 $states-text-colors:          $color-ste-completed-text, $color-ste-complete-text, $color-ste-sold-text, $color-ste-pending-text, $color-ste-awaiting_return-text, $color-ste-returned-text, $color-ste-credit_owed-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text, $color-ste-checkout-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text, $color-ste-canceled-text, $color-ste-ready-text, $color-ste-void-text, $color-ste-active-text, $color-ste-inactive-text !default;
 
-// Avaliable actions
+// Available actions
 $actions:                        edit,                   clone,                   remove,                   void,                   capture,                   save,                      cancel,                   mail  !default;
 $actions-bg-colors:              $color-action-edit-bg,  $color-action-clone-bg,  $color-action-remove-bg,  $color-action-void-bg,  $color-action-capture-bg,  $color-action-save-bg,     $color-action-cancel-bg,  $color-action-mail-bg  !default;
 $actions-brd-colors:             $color-action-edit-brd, $color-action-clone-brd, $color-action-remove-brd, $color-action-void-brd, $color-action-capture-brd, $color-action-save-brd,    $color-action-cancel-brd, $color-action-mail-brd !default;
