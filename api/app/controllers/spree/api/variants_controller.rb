@@ -56,7 +56,7 @@ module Spree
             unless current_api_user.has_spree_role?("admin") || params[:show_deleted]
               variants = @product.variants_including_master
             else
-              variants = @product.variants_including_master_and_deleted
+              variants = @product.variants_including_master.with_deleted
             end
           else
             variants = Variant.scoped
