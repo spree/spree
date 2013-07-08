@@ -53,7 +53,7 @@ module Spree
             unless current_api_user.has_spree_role?("admin") || params[:show_deleted]
               variants = @product.variants_including_master.accessible_by(current_ability, :read)
             else
-              variants = @product.variants_including_master_and_deleted.accessible_by(current_ability, :read)
+              variants = @product.variants_including_master.with_deleted.accessible_by(current_ability, :read)
             end
           else
             variants = Variant.accessible_by(current_ability, :read)

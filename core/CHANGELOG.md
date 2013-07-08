@@ -65,3 +65,11 @@ See #3133 for more information.
 * Payment model will now no longer provide a vague error message for when the source is invalid. Instead, it will provide error messages like "Credit Card Number can't be blank"
 
     *Ryan Bigg*
+
+* Calling #destroy on any PaymentMethod, Product, TaxCategory, TaxRate or Variant object will now no longer delete that object. Instead, the `deleted_at` attribute on that object will be set to the current time. Attempting to find that object again using something such as `Spree::Product.find(1)` will fail because there is now a default scope to only find *non*-deleted records on these models. To remove this scope, use `Spree::Product.unscoped.find(1)`. #3321
+
+    *Ryan Bigg*
+
+* Removed `variants_including_master_and_deleted`, in favour of using the Paranoia gem. This scope would now be achieved using `variants_including_master.with_deleted`.
+
+    *Ryan Bigg*
