@@ -30,6 +30,15 @@ describe Spree::OrderInventory do
       let(:shipment) { order.shipments.first }
       let(:variant) { create :variant }
 
+      context "order is not completed" do
+        before { order.stub completed?: false }
+
+        it "doesn't unstock items" do
+          shipment.stock_location.should_not_receive(:unstock)
+          subject.send(:add_to_shipment, shipment, variant, 5).should == 5
+        end
+      end
+
       it 'should create inventory_units in the necessary states' do
         shipment.stock_location.should_receive(:fill_status).with(variant, 5).and_return([3, 2])
 
@@ -103,6 +112,15 @@ describe Spree::OrderInventory do
     context '#remove_from_shipment' do
       let(:shipment) { order.shipments.first }
       let(:variant) { order.line_items.first.variant }
+
+      context "order is not completed" do
+        before { order.stub completed?: false }
+
+        it "doesn't restock items" do
+          shipment.stock_location.should_not_receive(:restock)
+          subject.send(:remove_from_shipment, shipment, variant, 1).should == 1
+        end
+      end
 
       it 'should create stock_movement' do
         subject.send(:remove_from_shipment, shipment, variant, 1).should == 1
