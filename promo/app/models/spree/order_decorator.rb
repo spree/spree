@@ -23,6 +23,6 @@ Spree::Order.class_eval do
   private
 
   def formatted_coupon_code(code)
-    code.strip.downcase rescue nil
+    code.strip rescue nil
   end
 end
