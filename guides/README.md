@@ -112,7 +112,16 @@ Path names should be set off with tick (`) marks, and should include enough of t
 Any text that needs to be emphasized should be in _italics_.
 
     Only the shipping options in the _shipping_ address are presented.
-    
+
+####Terminal Blocks####
+You can specify terminal blocks by setting it off with <code>```bash</code>. In addition, you can differentiate commands you are using from output returned by using the `$` precursor.
+
+```bash
+$ irb
+$ c = "Hello world"
+$ c
+"Hello world"```
+
 ### JSON Responses
 
 We specify the JSON responses in ruby so that we don't have to write
@@ -125,19 +134,6 @@ This looks up `Spree::Resources::PRODUCT` in `lib/resources.rb`.
 Some actions return arrays.  You can modify the JSON by passing a block:
 
     <%= json(:issue) { |hash| [hash] } %>
-
-### Terminal blocks
-
-You can specify terminal blocks with `pre.terminal` elements.  It'd be
-nice if Markdown could do this more cleanly...
-
-    <pre class="terminal">
-    $ curl foobar
-    ....
-    </pre>
-
-This isn't a `curl` tutorial though, I'm not sure every API call needs
-to show how to access it with `curl`.
 
 ## Development
 

@@ -272,7 +272,17 @@ Path names should be set off with tick (`) marks, and should include enough of t
 Any text that needs to be emphasized should be in _italics_.
 
     Only the shipping options in the _shipping_ address are presented.
-    
+
+####Terminal Blocks####
+
+You can specify terminal blocks by setting it off with <code>```bash</code>. In addition, you can differentiate commands you are using from output returned by using the `$` precursor.
+
+```bash
+$ irb
+$ c = "Hello world"
+$ c
+"Hello world"```
+
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.
 ***
