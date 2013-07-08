@@ -36,7 +36,7 @@ The #spree chat room is not monitored as carefully as the mailing list.  Sometim
 You can also search existing bug reports/issues and file a new one if you do not find an issue relevant to your proposed change.  See [Filing an Issue](#filing-an-issue) for more details.
 
 ***
-The important thing is that you communicate your intention in advance of doing a lot of work.  Simple bug fixes and non-controversial changes do not require this approach but you can save some time by suggesting an improvement and having it rejected before you write a bunch of the code.
+The important thing is that you communicate your intention in advance of doing a lot of work. Simple bug fixes and non-controversial changes do not require this approach but you can save some time by suggesting an improvement and having it rejected before you write a bunch of the code.
 ***
 
 ### Spree's Release Policy
@@ -56,7 +56,7 @@ that change takes place.
 major and minor issues, and security problems. Absolutely no new features,
 tweaking or API changes.
 
-* Three branches back from master (currently 1-2-stable) receives patches for major issues and security problems. The severity of an issue will be determined by the perosn investigating the issue. Absolutely no features, tweaking or API changes.
+* Three branches back from master (currently 1-2-stable) receives patches for major issues and security problems. The severity of an issue will be determined by the person investigating the issue. Absolutely no features, tweaking or API changes.
 
 * Four branches and more "back" from master (currently 1-1-stable and lesser)
 receive patches only for security issues, as people are still using these
@@ -98,7 +98,7 @@ GitHub will automatically detect this commit message when you push it and link t
 We add code from Pull Requests to spree using the [hub gem](https://github.com/defunkt/hub), in particular the `hub am` command, which is used like this:
 
 ```bash
-hub am -3 https://github.com/spree/spree/pull/<number>```
+$ hub am -3 https://github.com/spree/spree/pull/<number>```
 
 This command will apply the commits from the pull request to the current branch, using a 3-way merge as a fallback. This means that we can run this command in order to apply the patch to different branches. A pull request applied in this way leads to tidier commit history, with no merge commits visible.
 
