@@ -74,6 +74,7 @@ describe "Order Details", js: true do
         end
         select2 "Default", :from => "Shipping Method"
         click_icon :ok
+        wait_for_ajax
 
         page.should have_content("Default")
       end
@@ -121,6 +122,7 @@ describe "Order Details", js: true do
               click_icon :ok
             end
 
+            wait_for_ajax
             page.should have_content("Total: $100.00")
           end
 
@@ -132,6 +134,7 @@ describe "Order Details", js: true do
               fill_in "tracking", :with => "TRACKING_NUMBER"
             end
             click_icon :ok
+            wait_for_ajax
 
             page.should have_content("Tracking: TRACKING_NUMBER")
           end
@@ -160,10 +163,7 @@ describe "Order Details", js: true do
               select2 "Default", :from => "Shipping Method"
             end
             click_icon :ok
-            # Wait for API request to finish.
-            # If this is not done, database may be locked when
-            # database_cleaner attempts to clean it
-            sleep(1)
+            wait_for_ajax
 
             page.should have_content("Default")
           end
@@ -194,6 +194,7 @@ describe "Order Details", js: true do
       end
       fill_in "tracking", :with => "FOOBAR"
       click_icon :ok
+      wait_for_ajax
 
       page.should have_content("Tracking: FOOBAR")
     end
@@ -206,6 +207,7 @@ describe "Order Details", js: true do
       end
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
+      wait_for_ajax
 
       page.should have_content("Default")
     end
@@ -214,7 +216,7 @@ describe "Order Details", js: true do
       order = create(:order_ready_to_ship)
       visit spree.edit_admin_order_path(order)
       click_icon 'arrow-right'
-      sleep 1
+      wait_for_ajax
       within '.shipment-state' do
         page.should have_content('shipped')
       end
