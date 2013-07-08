@@ -1,6 +1,6 @@
 ---
 title: Testing Spree Applications
-section: advanced 
+section: advanced
 ---
 
 ## Overview
@@ -16,7 +16,7 @@ Spree consists of several different gems (see the <%= link_to "Source Code Guide
 You can easily build such an application by using the Rake task designed for this purpose, running it inside the component you want to test:
 
 ```bash
-bundle exec rake test_app```
+$ bundle exec rake test_app```
 
 This will build the appropriate test application inside of your `spec` directory. It will also add the gem under test to your `Gemfile` along with the `spree_core` gem (since all of the gems depend on this.)
 
@@ -27,23 +27,22 @@ This rake task will regenerate the application (after deleting the existing one)
 Once your test application has been built, you can then run the specs in the standard RSpec manner:
 
 ```bash
-bundle exec rspec spec```
+$ bundle exec rspec spec```
 
 We also set up a build script that mimics what our build server performs. You can run it from the root of the Spree project like this:
 
 ```bash
-bash build.sh```
-
+$ bash build.sh```
 
 If you wish to run spec for a single file then you can do so like this:
 
 ```bash
-bundle exec rspec spec/models/spree/state_spec.rb```
+$ bundle exec rspec spec/models/spree/state_spec.rb```
 
 If you wish to test a particular line number of the spec file then you can do so like this:
 
 ```bash
-bundle exec rspec spec/models/spree/state_spec.rb:7```
+$ bundle exec rspec spec/models/spree/state_spec.rb:7```
 
 ### Using Factories
 
@@ -51,7 +50,7 @@ Spree uses [factory_girl](https://github.com/thoughtbot/factory_girl) to create 
 
 ```bash
 $ rails console
-require 'spree/testing_support/factories'```
+$ require 'spree/testing_support/factories'```
 
 The `spree_core` gem has a good number of factories which can be used for testing. If you are writing an extension or just testing Spree you can make use of these factories.
 

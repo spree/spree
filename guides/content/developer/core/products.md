@@ -68,7 +68,7 @@ Spree automatically handles creation and storage of several size versions of eac
 These sizes can be changed by altering the value of `Spree::Config[:attachment_styles]`. Once `Spree::Config[:attachment_styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
 
 ```bash
-rake paperclip:refresh:thumbnails CLASS=Spree::Image```
+$ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image```
 
 If you want to change the image that is displayed when a product has no image, simply create new versions of the files within [Spree's app/assets/images/noimage directory](https://github.com/spree/spree/tree/master/frontend/app/assets/images/noimage). These image names must match the keys within `Spree::Config[:attachment_styles]`.
 
@@ -81,7 +81,7 @@ A `Property` should not be confused with an [`OptionType`](#option_type), which 
 You can retrieve the value for a property on a `Product` object by calling the `property` method on it and passing through that property's name:
 
 ```bash
-product.property("material")
+$ product.property("material")
 => "100% Cotton"```
 
 You can set a property on a product by calling the `set_property` method:
@@ -100,13 +100,13 @@ This presence or lack of a price for a variant in a particular currency will det
 You may see what price a product would be in the current currency (`Spree::Config[:currency]`) by calling the `price` method on that instance:
 
 ```bash
-product.price
+$ product.price
 => "15.99"```
 
 To find a list of currencies that this product is available in, call `prices` to get a list of related `Price` objects:
 
 ```bash
-product.prices
+$ product.prices
 => [#<Spree::Price id: 2 ...]```
 
 ## Prototypes

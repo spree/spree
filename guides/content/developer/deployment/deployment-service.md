@@ -184,7 +184,7 @@ command to set your site specific database passwords.
 The command is generally something like:
 
 ```bash
-FACTER_db_pass=YOUR_DB_PASSWORD puppet agent —test```
+$ FACTER_db_pass=YOUR_DB_PASSWORD puppet agent —test```
 
 It's important to substitute YOUR_DB_PASSWORD with the actual password
 you require.
@@ -217,7 +217,7 @@ workers are configured via the Deployment Server UI.
 Default Procfile contents:
 
 ```bash
-web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E ENV```
+$ web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E ENV```
 
 The provided Capistrano deployment script symlinks the Procfile into
 location after each deploy.
@@ -234,7 +234,6 @@ namespace :deploy do
 end
 
 after 'deploy:update_code', 'deploy:symlink_shared'```
-
 
 ***
 It's important to remember to not edit the Procfile above
@@ -305,8 +304,8 @@ application, complete the following steps:
 Sample Procfile containing Delayed Job workers:
 
 ```bash
-web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E production
-worker: bundle exec rake jobs:work```
+$ web: bundle exec unicorn_rails -c /data/app_name/shared/config/unicorn.rb -p $PORT -E production
+$ worker: bundle exec rake jobs:work```
 
 ### Changing process concurrency
 

@@ -103,13 +103,13 @@ Once your application is on Heroku, you will need to set up the schema by
 running this command:
 
 ```bash
-heroku run rake db:migrate```
+$ heroku run rake db:migrate```
 
 You may then wish to set up an admin user as well which can be done by loading
 the rails console:
 
 ```bash
-heroku run rails console```
+$ heroku run rails console```
 
 And then running this code:
 

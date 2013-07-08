@@ -22,13 +22,13 @@ Developers communicate with the Spree API using the [JSON](http://www.json.org) 
 You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a `X-Spree-Token` header along with the request:
 
 ```bash
-curl --header "X-Spree-Token: YOUR_KEY_HERE" http://example.com/api/products.json```
+$ curl --header "X-Spree-Token: YOUR_KEY_HERE" http://example.com/api/products.json```
 
 
 Alternatively, you may also pass through the token as a parameter in the request if a header just won't suit your purposes (i.e. JavaScript console debugging).
 
 ```bash
-curl http://example.com/api/products.json?token=YOUR_KEY_HERE```
+$ curl http://example.com/api/products.json?token=YOUR_KEY_HERE```
 
 The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
 

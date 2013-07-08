@@ -64,14 +64,14 @@ Spree Hosting servers have this command available so it's best to run
 the command directly on your server.
 
 This example command below is for illustration purposes only, you must
-substitue your information in the relevant locations. There are some tools
+substitute your information in the relevant locations. There are some tools
 available that will generate the proper `openssl` command for you
 ([this one](https://www.digicert.com/easy-csr/openssl.htm), for example).
 
 ```bash
-openssl req -new -newkey rsa:2048 -nodes -out www_example_com.csr
--keyout www_example_com.key -subj "/C=US/ST=MD/L=Chevy
-Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com"
+$ openssl req -new -newkey rsa:2048 -nodes -out www_example_com.csr
+  -keyout www_example_com.key -subj "/C=US/ST=MD/L=Chevy
+  Chase/O=SpreeCommerce, Inc /OU= /CN=www.example.com"
 ```
 
 Be sure to change the `-out` and `-keyout` values to match your domain
@@ -85,7 +85,7 @@ be submitted to the Certificate Authority when purchasing your
 certificate.
 
 **www_example_com.key** - This is your Private Key and must be kept
-securely until the certificate is delivered to you by the Certifcate
+securely until the certificate is delivered to you by the Certificate
 Authority.
 
 ### Installing the Certificate
@@ -100,21 +100,15 @@ new CRT file and combine the contents of all CRT files provided.
 Now that you have one single CRT file you are ready to install it on
 your server:
 
-Copy the CRT file onto the server and save it to following location:
+Copy the CRT file onto the server and save it to `/etc/ssl/spree.crt` directory.
 
-```bash
-/etc/ssl/spree.crt```
-
-Move the private key (KEY file) to the following location:
-
-```bash
-/etc/ssl/spree.key```
+Move the private key (KEY file) to the `/etc/ssl/spree.key` directory.
 
 Execute the following command to have Puppet automatically install and
 restart your webserver:
 
 ```bash
-FACTER_db_pass=YOUR_DB_PASSWORD sudo puppet agent —test```
+$ FACTER_db_pass=YOUR_DB_PASSWORD sudo puppet agent —test```
 
 It's important that the file names and locations match exactly those
 listed above otherwise Puppet will not be able to locate them.

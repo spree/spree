@@ -47,7 +47,7 @@ approach just make sure that it's configured properly in the
 `config/environments/production.rb` of your Rails app.
 
 ```ruby
- config.serve_static_assets = false```
+config.serve_static_assets = false```
 ***
 This is the default setting of Rails so it's also fine if this setting is missing or commented out.
 ***
@@ -205,7 +205,7 @@ make sure that you are running in "production mode." You can start your
 server in production mode as follows:
 
 ```bash
- rails server -e production```
+$ bundle exec rails server -e production```
 
 Please consult your web server documentation for more details on
 enabling production mode for your particular web server.

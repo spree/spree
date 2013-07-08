@@ -72,15 +72,14 @@ lives at *lib/spree/authentication_helpers.rb* to the
 Run this generator with this command:
 
 ```bash
-rails g spree:custom_user User```
-
+$ bundle exec rails g spree:custom_user User```
 
 This will tell the generator that you want to use the *User* class as
 the class that represents users in Spree. Run the new migration by
 running this:
 
 ```bash
-rake db:migrate```
+$ bundle exec rake db:migrate```
 
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
