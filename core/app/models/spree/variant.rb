@@ -1,5 +1,7 @@
 module Spree
   class Variant < ActiveRecord::Base
+    acts_as_paranoid
+    
     belongs_to :product, touch: true, class_name: 'Spree::Product'
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
@@ -124,6 +126,13 @@ module Spree
       "#{name} - #{sku}"
     end
 
+    # Product may be created with deleted_at already set,
+    # which would make AR's default finder return nil.
+    # This is a stopgap for that little problem.
+    def product
+      Spree::Product.unscoped { super }
+    end
+    
     private
 
       # Ensures a new variant takes the product master price when price is not supplied

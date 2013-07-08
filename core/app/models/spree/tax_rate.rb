@@ -10,6 +10,7 @@ end
 
 module Spree
   class TaxRate < ActiveRecord::Base
+    acts_as_paranoid
     include Spree::Core::CalculatedAdjustments
     belongs_to :zone, class_name: "Spree::Zone"
     belongs_to :tax_category, class_name: "Spree::TaxCategory"

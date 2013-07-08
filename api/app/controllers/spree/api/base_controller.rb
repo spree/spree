@@ -119,7 +119,7 @@ module Spree
 
       def product_scope
         if current_api_user.has_spree_role?("admin")
-          scope = Product.accessible_by(current_ability, :read)
+          scope = Product.with_deleted.accessible_by(current_ability, :read)
           unless params[:show_deleted]
             scope = scope.not_deleted
           end

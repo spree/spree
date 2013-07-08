@@ -20,6 +20,7 @@
 
 module Spree
   class Product < ActiveRecord::Base
+    acts_as_paranoid
     has_many :product_option_types, dependent: :destroy
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy
@@ -46,9 +47,8 @@ module Spree
       class_name: 'Spree::Variant',
       dependent: :destroy
 
-    has_many :variants_including_master_and_deleted, class_name: 'Spree::Variant'
-
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
+    has_many :stock_items, through: :variants
 
     delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
     delegate_belongs_to :master, :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
@@ -98,13 +98,6 @@ module Spree
       else
         TaxCategory.find(self[:tax_category_id])
       end
-    end
-
-    # override the delete method to set deleted_at value
-    # instead of actually deleting the product.
-    def delete
-      self.update_column(:deleted_at, Time.now)
-      variants_including_master.update_all(deleted_at: Time.now)
     end
 
     # Adding properties and option types on creation based on a chosen prototype

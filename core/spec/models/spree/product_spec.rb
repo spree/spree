@@ -32,10 +32,9 @@ describe Spree::Product do
     end
 
     context "product has no variants" do
-      context "#delete" do
+      context "#destroy" do
         it "should set deleted_at value" do
-          product.delete
-          product.reload
+          product.destroy
           product.deleted_at.should_not be_nil
           product.master.deleted_at.should_not be_nil
         end
@@ -47,9 +46,9 @@ describe Spree::Product do
         create(:variant, :product => product)
       end
 
-      context "#delete" do
+      context "#destroy" do
         it "should set deleted_at value" do
-          product.delete
+          product.destroy
           product.deleted_at.should_not be_nil
           product.variants_including_master.all? { |v| !v.deleted_at.nil? }.should be_true
         end

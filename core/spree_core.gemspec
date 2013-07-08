@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'cancan', '1.6.8'
   s.add_dependency 'truncate_html', '0.9.2'
   s.add_dependency 'money', '5.1.1'
+  s.add_dependency 'paranoia', '~> 1.3'
 
   # For checking for alerts
   s.add_dependency 'httparty', '~> 0.11'
