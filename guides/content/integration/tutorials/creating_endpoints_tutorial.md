@@ -7,7 +7,7 @@ title: Creating Endpoints
 This tutorial assumes that you have installed bundler and Sinatra, and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), [Sinatra](http://www.sinatrarb.com/), and [Rack](http://rack.rubyforge.org).
 
 ***
-For detailed information about Endpoints, check out the <%= link_to "endpoints", "overview", "endpoints" %> section of the Overview guide.
+For detailed information about Endpoints, check out the [endpoints](terminology#endpoints) section of the Terminology guide.
 ***
 
 ### Hello, World!
@@ -142,7 +142,7 @@ Connection: Keep-Alive
 The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing more interesting information that the Integrator can then act on.
 
 ***
-For more information about Messages, be sure to read the <%= link_to "Integration Overview Guide", "overview", "messages" %> thoroughly.
+For more information about Messages, be sure to read the [Integration Terminology Guide](terminology) thoroughly.
 ***
 
 In the `get_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our store. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
