@@ -85,6 +85,10 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
+***
+The sample files for the preceding example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/hello_world).
+***
+
 So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
 
 <pre class="headers"><code>Gemfile</code></pre>
@@ -108,6 +112,10 @@ end```
 ```ruby
 require './hello_endpoint'
 run HelloEndpoint```
+
+***
+The sample files for this example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/hello_world_endpoint_base).
+***
 
 Install the new gem and restart your application:
 
@@ -139,6 +147,10 @@ Connection: Keep-Alive
 
 ### Adding Content to the Message
 
+***
+The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/in_stock).
+***
+
 The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing more interesting information that the Integrator can then act on.
 
 ***
@@ -169,6 +181,7 @@ class HelloEndpoint < EndpointBase
       process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:not_in_stock' }
     end
   end
+end
 ```
 
 ***
@@ -220,6 +233,8 @@ Now, let's create a dummy product catalog to query against, and a couple of new 
   }
 }```
 
+Our `config.ru` and `Gemfile` files don't change.
+
 We've laid the groundwork, so now it's time to test out our endpoint. First, let's pass it a product we know is in the catalog:
 
 ```bash
@@ -241,6 +256,10 @@ $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:applicati
 The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets WIthout Awesomeness" somewhere else.
 
 ### Returning Information About a Record
+
+***
+The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/price_check).
+***
 
 Now that we know the product is in stock, it would be helpful if we knew how much it cost should we buy it from our supplier. For that, we need to once again add some logic to our endpoint.
 
