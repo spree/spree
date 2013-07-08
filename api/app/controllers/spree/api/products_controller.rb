@@ -4,9 +4,9 @@ module Spree
 
       def index
         if params[:ids]
-          @products = product_scope.accessible_by(current_ability, :read).where(:id => params[:ids])
+          @products = product_scope.where(:id => params[:ids])
         else
-          @products = product_scope.accessible_by(current_ability, :read).ransack(params[:q]).result
+          @products = product_scope.ransack(params[:q]).result
         end
 
         @products = @products.page(params[:page]).per(params[:per_page])
