@@ -40,9 +40,9 @@ describe "New Order" do
 
     click_on "Order Details"
     click_on "ship"
+    wait_for_ajax
 
     page.should have_content("shipped")
-    sleep(1) # Otherwise it runs into locked db errors on DabataseCleaner.clean
   end
 
   def fill_in_address(kind = "bill")

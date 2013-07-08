@@ -29,7 +29,7 @@ describe "Stock Locations" do
     click_icon :trash
     page.driver.browser.switch_to.alert.accept
     # Wait for API request to complete.
-    sleep(1)
+    wait_for_ajax
     visit current_path 
     page.should have_content("No stock locations found")
   end
