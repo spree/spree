@@ -2,7 +2,19 @@ require 'spec_helper'
 
 describe Spree::OrdersController do
   let(:user) { create(:user) }
-  let(:order) { mock_model(Spree::Order, :number => "R123", :reload => nil, :save! => true, :coupon_code => nil, :user => user, :completed? => false, :currency => "USD", :token => 'a1b2c3d4')}
+
+  let(:order) do
+    mock_model(Spree::Order, :number => "R123",
+                             :reload => nil,
+                             :save! => true,
+                             :coupon_code => nil,
+                             :user => user,
+                             :completed? => false,
+                             :currency => "USD",
+                             :token => 'a1b2c3d4',
+                             :shipments => [])
+  end
+
   before do
     # Don't care about IP address being set here
     order.stub(:last_ip_address=)
