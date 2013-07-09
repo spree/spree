@@ -13,7 +13,11 @@ class ParseInfoBoxes < Nanoc::Filter
 
     content = content.gsub(/^\$\$\$\n(.*?)\$\$\$/m) do
       "<p>**************** TODO ****************</p>" + $1 + "<p>**************************************</p>"
-      #generate_div("todo", $1)
+    end
+
+    # add filename headers to code blocks
+    content = content.gsub(/^---(.*?)---/m) do
+      "<pre class='headers'><code>" + $1 + "</code></pre>"
     end
 
     content
