@@ -8,6 +8,7 @@ require 'acts_as_list'
 require 'active_merchant'
 require 'ransack'
 require 'paranoia'
+require 'mail'
 
 module Spree
 
