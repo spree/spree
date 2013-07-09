@@ -282,6 +282,14 @@ $ c = "Hello world"
 $ c
 => "Hello world"```
 
+####Special Blocks####
+
+Certain blocks of text can be wrapped in sets of three characters, which will place them in divs with appropriate CSS classes. They are:
+
+1. *** - Denote notes.
+2. !!! - Denote warnings.
+3. $$$ - Denote warnings.
+
 ***
 We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.
 ***

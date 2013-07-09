@@ -65,7 +65,9 @@ We can do this with the following command:
 ```bash
 rails g migration add_sale_price_to_spree_variants sale_price:decimal```
 
-**TODO**: Make above generator actually work in extension directories
+$$$
+Make above generator actually work in extension directories
+$$$
 
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
 

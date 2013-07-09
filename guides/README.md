@@ -123,6 +123,14 @@ $ c = "Hello world"
 $ c
 => "Hello world"```
 
+####Special Blocks####
+
+Certain blocks of text can be wrapped in sets of three characters, which will place them in divs with appropriate CSS classes. They are:
+
+1. *** - Denote notes.
+2. !!! - Denote warnings.
+3. $$$ - Denote warnings.
+
 ### JSON Responses
 
 We specify the JSON responses in ruby so that we don't have to write

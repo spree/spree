@@ -104,7 +104,9 @@ does not suit your needs.
 
 ### Delivery Options
 
-TODO: Better shipment documentation here after split_shipments merge.
+$$$
+Better shipment documentation here after split_shipments merge.
+$$$
 
 During this step, the user may choose a delivery method. Spree assumes the list
 of shipping methods to be dependent on the shipping address.  This is one of the
@@ -347,13 +349,15 @@ we never want to transition from delivery to confirm, and therefore have removed
 it using the `remove_transition` method of the Checkout DSL. The resulting
 transitions between states look like the image below:
 
-[TODO - State diagram]
+$$$
+State diagram
+$$$
 
 These two helper methods are provided on `Spree::Order` instances for your
-convinience:
+convenience:
 
 * `checkout_steps`: returns a list of all the potential states of the checkout.
-* `has_step?`: Used to check if the current order fufils the requirements for a
+* `has_step?`: Used to check if the current order fufills the requirements for a
   specific state.
 
 If you want a list of all the currently available states for the checkout, use

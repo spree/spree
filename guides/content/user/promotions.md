@@ -2,4 +2,6 @@
 title: Promotions
 ---
 
-[TODO] Explain how to create and manage promotions.
+$$$
+Explain how to create and manage promotions.
+$$$

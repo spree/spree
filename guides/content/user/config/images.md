@@ -2,4 +2,6 @@
 title: Image Settings
 ---
 
-[TODO] Explain how to manage image settings.
+$$$
+Explain how to manage image settings.
+$$$

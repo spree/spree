@@ -23,7 +23,10 @@ After you click the *Create* button, the Spree application brings you to a more 
 
 * **Name** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
 * **Permalink** - The permalink is automatically created by the application for you when the product is first saved, and is based on the product's name. This is what is appended to the end of a URL when someone visits the page for a particular product. You can change the permalink, but should exercise extreme caution in doing so to avoid naming collisions with other products in your database.
-* **Description** - This is where you will provide a detailed description of the product and its features. The application gives you plenty of room to be thorough. **TODO** Add a topic on available markup options for this field - lists, links, etc.
+* **Description** - This is where you will provide a detailed description of the product and its features. The application gives you plenty of room to be thorough.
+$$$
+Add a topic on available markup options for this field - lists, links, etc.
+$$$
 * **Master Price** - For now, just think about the Master Price as the price you charge someone to buy the item. Later in this guide, you will learn more about variants and how they impact a product's actual price.
 * **Cost Price** - What the item costs you, the seller, to purchase or produce.
 * **Cost Currency** - It may be that the currency used when you purchased the product is not the same as that you use in your store. Spree makes these conversions for you - just enter the code for the currency used in acquiring your inventory.
@@ -31,7 +34,9 @@ After you click the *Create* button, the Spree application brings you to a more 
 * **SKU** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
 * **On Hand** - Your current inventory of the product - those available for purchase.
 * **On Demand** - Means the item can be produced at will to match demand, so is not restricted by the number on hand. This can be used in concert with **On Hand** or alone.
-**TODO** Make sure what I have for On Demand is accurate.
+$$$
+Make sure what I have for On Demand is accurate.
+$$$
 * **Weight** - The product's weight in ounces. May be used to calculate shipping cost.
 * **Height** - The product's height in inches. May be used to calculate shipping cost.
 * **Width** - The product's width in inches. May be used to calculate shipping cost.

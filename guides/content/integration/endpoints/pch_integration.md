@@ -67,7 +67,9 @@ This Service should be triggered {when}. When the Endpoint receives a validly-fo
 
 ## Configuration
 
-TODO: Elaborate when we finalize the connector.
+$$$
+Elaborate when we finalize the connector.
+$$$
 
 ### Name
 

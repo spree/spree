@@ -58,4 +58,6 @@ The `spree_core` gem has a good number of factories which can be used for testin
 
 Currently, Spree does not come with any tests that you can install into your application. What we would advise doing instead is either copying the tests from the components of Spree and modifying them as you need them.
 
-***TODO:*** Rewrite the preceding paragraph - either copying/modifying or...?
+$$$
+Rewrite the preceding paragraph - either copying/modifying or...?
+$$$

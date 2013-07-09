@@ -93,7 +93,9 @@ To achieve this setup you need the following configuration:
 |Regular|Per Item ($5)|Per Item ($2)|Per Item ($8)|
 |Heavy|Per Item ($50)|Flexi Rate($20,$15)|Per Item ($20)|
 
-TODO: What do we do for calculating the default category?
+$$$
+What do we do for calculating the default category?
+$$$
 
 ## Design & Functionality
 
@@ -144,7 +146,9 @@ Some examples of Shipping Categories would be:
 
 Shipping Categories are created in the admin interface ("Configuration" -> "Shipping Categories") and then assigned to products ("Products" -> "Edit").
 
-TODO: Follow up: on a clean install + seed data I ended up with two Shipping Categories - "Default Shipping" and "Default"
+$$$
+Follow up: on a clean install + seed data I ended up with two Shipping Categories - "Default Shipping" and "Default"
+$$$
 
 During checkout, the shipping categories of the products in your order will determine which calculator will be used to price its shipping for each Shipping Method.
 

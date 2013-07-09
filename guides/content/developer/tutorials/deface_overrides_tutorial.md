@@ -97,7 +97,9 @@ Let's do this instead using Deface, which we just learned about. Using Deface wi
 
 ### The Implementation
 
-**TODO**: Add mention of the fact that this work all needs to be done under /backend rather than /core
+$$$
+Add mention of the fact that this work all needs to be done under /backend rather than /core
+$$$
 
 We want to override the product edit admin page, so the view we want to modify in this case is the product form partial. This file's path will be `spree/admin/products/_form.html.erb`.
 

@@ -32,7 +32,7 @@ The synchronous response must contain at minimum the `message_id` of the message
 
 * _messages_ - An array of new messages that should be accepted onto the internal queue of the Integrator as a result of the message being processed, for example the Mandrill endpoint consumes the _new:order_ message and generates an _order:confirmation:sent_ message as a result. For details on the specific fields required please review <%= link_to "Pushing Messages",'push' %>.
 * _events_ - An array of new events which should be logged as a result of the message being processed.
-* _parameters_ - Configuration variables to be persisted to the store which can be included in the payload of future messages. 
+* _parameters_ - Configuration variables to be persisted to the store which can be included in the payload of future messages.
 
 <pre class="headers"><code>Synchronous Response</code></pre>
 <%= json :sync_message_response %>
@@ -43,14 +43,14 @@ A synchronous response may also include any additional attributes with the JSON 
 
 An asynchronous (or delayed) response indicates that the message requires a longer period of time for processing (than the default 180 second endpoint response window) or may be dependent on a scheduled event to be considered fully processed.
 
-An asynchronous (or delayed) response indicates that the message either requires longer than 180 seconds to process or may be dependent on completion of a scheduled event. 
+An asynchronous (or delayed) response indicates that the message either requires longer than 180 seconds to process or may be dependent on completion of a scheduled event.
 
 An asynchronous response must contain _only_ the following fields:
 
 * `message_id` - The id of the current message that has been submitted for processing.
 * `delay` - An integer indicating the minimum number of seconds before attempting to poll the update_url.
 * `update_url` - The URL that the integrator should poll to check for message completion.
- 
+
 If you pass a relative URL for update_url, the integrator will inherit the base URL from the original message.
 
 <pre class="headers"><code>Asynchronous Response</code></pre>
@@ -61,7 +61,10 @@ On receipt of an asynchronous response, the Integrator will wait the allotted de
 Each poll to the `update_url` will be a HTTP POST containing the original message:
 
 <pre class="headers"><code>Update Request</code></pre>
-TODO: Update request
+
+$$$
+Update request
+$$$
 <%= json :update_request %>
 
 The endpoint can then choose to respond to this update message with either the standard:

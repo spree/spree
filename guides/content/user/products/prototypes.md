@@ -2,7 +2,9 @@
 title: Prototypes
 ---
 
-[TODO] Explain prototypes
+$$$
+Explain prototypes
+$$$
 
 # What is a Prototype?
 

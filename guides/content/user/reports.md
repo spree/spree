@@ -2,4 +2,6 @@
 title: Reports
 ---
 
-[TODO] Built-in Reports
+$$$
+Built-in Reports
+$$$

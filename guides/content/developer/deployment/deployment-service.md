@@ -131,8 +131,12 @@ the environment:
     the **Application Server** role, and controls how many worker
     processes the unicorn master process will fork on startup. Setting
     this value correctly is important, see the <%= link_to "Overview & Deployment
-    Options", '#TODO' %> Guide for details on memory
+    Options", '' %> Guide for details on memory
     requirements / workers.
+
+$$$
+Correct link above
+$$$
 
 -   **Roles** - Select the required roles for the server, see the
     **Understanding Server Roles** section above for more details.

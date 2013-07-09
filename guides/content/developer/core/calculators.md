@@ -80,7 +80,9 @@ Thus, if you have ten items in your shopping cart, your `first_item` preference 
 
 This calculator will take an object, and then work out the shipping total for that object. Useful for when you want to apply free shipping to an order.
 
-TODO: This is a little confusing and vague. Need to investigate more and explain better. Also, might this be obsolete with the new split shipments functionality?
+$$$
+This is a little confusing and vague. Need to investigate more and explain better. Also, might this be obsolete with the new split shipments functionality?
+$$$
 
 ### <a id="per-item"></a>Per Item
 

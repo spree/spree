@@ -2,4 +2,6 @@
 title: Jirafe
 ---
 
-[TODO] What is Jirafe?
+$$$
+What is Jirafe?
+$$$

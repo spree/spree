@@ -26,7 +26,10 @@ To see thorough detail on how a particular JSON Message should be formatted, che
 
 ### Order Confirmation
 
-TODO: The trigger language here is sloppy. Presume it's when an order reaches a particular state(s).
+$$$
+The trigger language here is sloppy. Presume it's when an order reaches a particular state(s).
+$$$
+
 This Service should be triggered any time a new order is created, or when an existing order is updated. When the Endpoint receives a validly-formatted Message to the `/order_confirmation` URL, it passes the order's information on to Mandrill's API. Mandrill then sends an email to the user using its matching stored [template](#template), confirming that their order was received.
 
 <pre class="headers"><code>A new order is created</code></pre>
@@ -53,7 +56,10 @@ This Service should be triggered any time a new order is created, or when an exi
 
 ### Order Cancellation
 
-TODO: Is this the correct scenario?
+$$$
+Is this the correct scenario?
+$$$
+
 If a user or an admin cancels an existing order, the store should send a JSON message with the relevant data to the `/order_cancellation` URL. The Endpoint will transmit a Message to Mandrill, which then sends an email to the user, confirming that the order was canceled.
 
 ```json
@@ -84,11 +90,15 @@ After an order moves to the `shipped` order state, the store should send notice 
   }
 }```
 
-TODO: Supply whatever substitutes for the "..." above
+$$$
+Supply whatever substitutes for the "..." above
+$$$
 
 ## Configuration
 
-TODO: Elaborate when we finalize the connector.
+$$$
+Elaborate when we finalize the connector.
+$$$
 
 ### Name
 

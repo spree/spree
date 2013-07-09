@@ -47,8 +47,10 @@ A `PaymentMethod` can have the following attributes:
 * `environment`: The Rails environment (`Rails.env`) where this payment method is active
 * `display_on`: Determines where the payment method can be visible. Values can be `front` for frontend, `back` for backend or `both` for both.
 
-TODO: What are the options for `type` above?
-TODO: What does it mean for a `PaymentMethod` to be `active`? What impact does that have? What activates/deactivates a `PaymentMethod`?
+$$$
+What are the options for `type` above?
+What does it mean for a `PaymentMethod` to be `active`? What impact does that have? What activates/deactivates a `PaymentMethod`?
+$$$
 
 ### Payment Method Visibility
 

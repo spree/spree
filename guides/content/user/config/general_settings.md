@@ -2,7 +2,9 @@
 title: General Settings
 ---
 
-[TODO] Complete tutorial
+$$$
+Complete tutorial
+$$$
 
 # Changing Basic Site Settings
 

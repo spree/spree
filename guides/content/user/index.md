@@ -4,7 +4,9 @@ title: User
 
 # Spree User Guide
 
-[TODO] Write welcome content here
+$$$
+Write welcome content here
+$$$
 
 [Understanding the Overview Page](overview.md)
 

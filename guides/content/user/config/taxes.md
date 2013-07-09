@@ -2,7 +2,9 @@
 title: Taxes
 ---
 
-[TODO] Explain all about taxes in Spree
+$$$
+Explain all about taxes in Spree
+$$$
 
 # Tax Categories
 

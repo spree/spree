@@ -36,7 +36,9 @@ When the Endpoint receives a validly-formatted Message to the `/get_orders` URL,
 
 ## Configuration
 
-TODO: Elaborate when we finalize the connector.
+$$$
+Elaborate when we finalize the connector.
+$$$
 
 ### Name
 

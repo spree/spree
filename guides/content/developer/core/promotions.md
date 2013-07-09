@@ -80,7 +80,9 @@ There are five rules which come with Spree:
 
 Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object.
 
-***TODO***: Offer examples of ways to use the match_policy attribute
+$$$
+Offer examples of ways to use the match_policy attribute
+$$$
 
 ### Registering a New Rule
 
@@ -121,4 +123,6 @@ en:
 
 Restart your application. Once this rule has been registered, it will be available within Spree's admin interface.
 
-TODO: Write about Spree::Promo::CouponApplicator
+$$$
+Write about Spree::Promo::CouponApplicator
+$$$

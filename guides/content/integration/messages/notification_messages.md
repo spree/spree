@@ -47,8 +47,12 @@ Use this Message type to indicate that a Service executed successfully but that 
 Use this Message type to indicate that a Service was unable to perform the requested action. Typically this is a validation problem with the service or some other type of permanent failure. For example, a shipment is being requested to a country that is not eligible for shipping by the carrier. Use `notification:error` messages when no amount of retrying will change the outcome and its time to notify someone in charge of troubleshooting problems with the store.
 
 !!!
-Do not use this message for exceptional situations such as the inability to connect to a third party server. Those types of exceptions are considered [Failures](TODO) and should be handled by returning a `5XX` error code instead.
+Do not use this message for exceptional situations such as the inability to connect to a third party server. Those types of exceptions are considered [Failures]() and should be handled by returning a `5XX` error code instead.
 !!!
+
+$$$
+Fix the link above
+$$$
 
 <pre class="headers"><code>notification:error</code></pre>
 ```json
@@ -242,7 +246,9 @@ You should send this type of Message whenever an order is canceled, whether by t
 
 This type of Message is sent whenever an order shipment is confirmed and sent. It includes the tracking information so the customer can use it to track his/her order.
 
-TODO: confirm the tracking url and carrier values supplied.
+$$$
+confirm the tracking url and carrier values supplied.
+$$$
 
 <pre class="headers"><code>order:new</code></pre>
 ```json
@@ -254,11 +260,13 @@ TODO: confirm the tracking url and carrier values supplied.
     "tracking_number": "71N4i304",
     "tracking_url": "http://www.ups.com/WebTracking/track",
     "carrier": "UPS",
-    "shipped_date": "2013-06-27T13:29:46Z",
-    "TODO": "line_items and items and orders, oh my! What else goes here?"
+    "shipped_date": "2013-06-27T13:29:46Z"
   }
 }```
 
+$$$
+Line_items, items, orders - the payload above is missing more stuff; not sure what
+$$$
 ### Retrieve New Amazon Orders
 
 This message is used for you to poll the Amazon API, retrieve any new orders you have for your seller account, and import them into your Spree store.

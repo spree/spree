@@ -9,11 +9,15 @@ External systems can push messages on to the Integrators processing queue by usi
 * `message` - This key represents the message type, in colon notation. For example: `order:new`, `order:updated`, `user:new`, `shipment:ready`
 * `payload` - The payload contains all message-specific details. For example, in the case of `order:new` it would contains order details.
 
-Each message type may require specific details within the `payload` field, please review the [Message Library](#TODO) for the specific message type requirements.
+Each message type may require specific details within the `payload` field, please review the [Message Library]() for the specific message type requirements.
+
+$$$
+Fix link above
+$$$
 
 The API response will include all the details submitted, along with a `message_id` for the newly-created message.
 
-All messages submitted via the API are first passed to the Incoming Queue where they are validated, and once processed they will be submitted to Accepted Queue. 
+All messages submitted via the API are first passed to the Incoming Queue where they are validated, and once processed they will be submitted to Accepted Queue.
 
 ***
 The `message_id` returned by the API is message's Incoming Queue message_id, as the message maybe be duplicated several times when it's passed onto the Accepted Queue each new message will have its own _message_id_. Each new Accepted message will maintain a reference to its source Incoming message by storing the original `message_id` in the `parent_id` field.

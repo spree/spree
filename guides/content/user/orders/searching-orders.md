@@ -17,7 +17,9 @@ The list shows you the following information about each order:
 * **Customer Email**
 * **Total** - This amount includes Tax, but not shipping cost.
 
-[TODO] Likely update what exactly does and doesn't go into the Total shown.
+$$$
+Likely update what exactly does and doesn't go into the Total shown.
+$$$
 
 Next to each row is an Edit icon. Clicking this icon allows you to [make changes to an order](editing.md).
 
