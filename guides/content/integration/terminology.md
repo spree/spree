@@ -51,6 +51,8 @@ class HubspotEndpoint < EndpointBase
 
       begin
         importer = ContactImporter.new(@config, @message[:payload]['order']['actual'])
+        importer.import
+        
         response = base_message.merge({ success: 'Contact Updated' })
         code = 200
       rescue => e
