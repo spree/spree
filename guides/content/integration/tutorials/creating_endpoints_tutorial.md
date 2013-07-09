@@ -253,7 +253,7 @@ $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:applicati
 
 {"message_id":"518726r84910000004","message":"product:not_in_stock"}```
 
-The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets WIthout Awesomeness" somewhere else.
+The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets Without Awesomeness" somewhere else.
 
 ### Returning Information About a Record
 
