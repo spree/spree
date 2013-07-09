@@ -7,8 +7,6 @@
   font-weight: normal;
   font-style: normal;
 }
-#content h2 a:before,
-#content h3 a:before,
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
   font-family: 'icons';
@@ -249,9 +247,7 @@
 .icon-lock-open:before { content: '🔓'; } /* '\1f513' */
 .icon-bell:before { content: '🔔'; } /* '\1f514' */
 .icon-bookmark:before { content: '🔖'; } /* '\1f516' */
-.icon-link:before,
-#content h2 a:before,
-#content h3 a:before { content: '\1f517'; } /* '\1f517' */
+.icon-link:before { content: '\1f517'; } /* '\1f517' */
 .icon-back:before { content: '🔙'; } /* '\1f519' */
 .icon-flashlight:before { content: '🔦'; } /* '\1f526' */
 .icon-chart-area:before { content: '🔾'; } /* '\1f53e' */

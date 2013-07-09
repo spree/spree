@@ -2,8 +2,14 @@
 $(function() {
 
   // Add anchor links to headers
-  $("#content").find('h1, h2, h3').each(function(){
-    $(this).prepend("<a href='#"+$(this).attr("id")+"'><i clas='icon-link'><i> ")
+  $("#content").find('h2').each(function(){
+    $(this).prepend("<a href='#"+$(this).attr("id")+"'><i class='icon-link'></i> ")
+  });
+  $("#content").find('h3').each(function(){
+    $(this).prepend("<a href='#"+$(this).attr("id")+"'><i class='icon-right-open-mini'></i> ")
+  });
+  $("#content").find('h4').each(function(){
+    $(this).prepend("<a href='#"+$(this).attr("id")+"'><i class='icon-dot'></i> ")
   });
 
   // Sidebar menu
