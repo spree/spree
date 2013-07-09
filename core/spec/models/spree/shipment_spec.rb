@@ -392,4 +392,12 @@ describe Spree::Shipment do
       shipment.tracking_url.should == :some_url
     end
   end
+
+  # Regression test for #3349
+  context "#destroy" do
+    it "destroys linked shipping_rates" do
+      reflection = Spree::Shipment.reflect_on_association(:shipping_rates)
+      reflection.options[:dependent] = :destroy
+    end
+  end
 end
