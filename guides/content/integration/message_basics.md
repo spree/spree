@@ -29,11 +29,15 @@ Let's look at a specific example where we are using an integration that takes ne
 ```ruby
 post '/process_shipment' do
   # DO STUFF HERE
-  process_result 200, { 'message_id' => @message[:message_id], 
-                        'message' => 'notification:info' {
-                          'subject' => 'Shipment transmitted', 
-                          'description' => '#H123456 transmitted successfully.'
-                        }
+  process_result 200, { 'message_id' => @message[:message_id],
+                        'messages' => [
+                          { 'message' => 'notification:info',
+                            'payload' => {
+                              'subject' => 'Shipment transmitted',
+                              'description' => '#H123456 transmitted successfully.'
+                            }
+                          }
+                        ]
                       }
 end```
 
