@@ -190,6 +190,48 @@ describe "Checkout" do
     end
   end
 
+  context "from payment step customer goes back to cart", js: true do
+    before do
+      add_mug_to_cart
+      click_on "Checkout"
+      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in_address
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+      expect(current_path).to eql(spree.checkout_state_path("payment"))
+    end
+
+    context "and updates line item quantity" do
+      it "uptades shipments properly" do
+        visit spree.cart_path
+        within ".cart-item-quantity" do
+          fill_in first("input")["name"], with: 3
+        end
+
+        click_on "Update"
+        visit spree.checkout_state_path("payment")
+        click_on "Save and Continue"
+
+        expect(Spree::InventoryUnit.count).to eq 3
+      end
+    end
+
+    context "and adds new product to cart" do
+      let!(:bag) { create(:product, :name => "RoR Bag") }
+
+      it "updates shipments properly" do
+        visit spree.root_path
+        click_link bag.name
+        click_button "add-to-cart-button"
+
+        visit spree.checkout_state_path("payment")
+        click_on "Save and Continue"
+
+        expect(Spree::InventoryUnit.count).to eq 2
+      end
+    end
+  end
+
   def fill_in_address
     address = "order_bill_address_attributes"
     fill_in "#{address}_firstname", :with => "Ryan"
