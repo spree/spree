@@ -7,6 +7,7 @@ require 'awesome_nested_set'
 require 'acts_as_list'
 require 'active_merchant'
 require 'ransack'
+require 'mail'
 
 module Spree
 
