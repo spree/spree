@@ -127,9 +127,10 @@ $ c
 
 Certain blocks of text can be wrapped in sets of three characters, which will place them in divs with appropriate CSS classes. They are:
 
-1. *** - Denote notes.
-2. !!! - Denote warnings.
-3. $$$ - Denote warnings.
+| *** | Notes. |
+| !!! | Warnings. |
+| $$$ | TODO's |
+| --- | A title bar; especially useful for headings for code samples. |
 
 ### JSON Responses
 
