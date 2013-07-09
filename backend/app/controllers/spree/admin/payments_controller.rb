@@ -95,6 +95,7 @@ module Spree
       def load_order
         @order = Order.find_by_number!(params[:order_id])
         authorize! action, @order
+        @order
       end
 
       def load_payment
