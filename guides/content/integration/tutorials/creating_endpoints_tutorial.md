@@ -10,7 +10,7 @@ This tutorial assumes that you have installed bundler and Sinatra, and that you 
 For detailed information about Endpoints, check out the [endpoints](terminology#endpoints) section of the Terminology guide.
 ***
 
-### Hello, World!
+## Hello, World!
 
 Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby applications.
 
@@ -145,13 +145,13 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
-### Adding Content to the Message
+## Simple Notification Message
 
 ***
 The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/in_stock).
 ***
 
-The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing more interesting information that the Integrator can then act on.
+The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing a simple Notification Message in response.
 
 ***
 For more information about Messages, be sure to read the [Integration Terminology Guide](terminology) thoroughly.
@@ -176,9 +176,9 @@ class HelloEndpoint < EndpointBase
     product_names = JSON.parse(File.read("product_catalog.json"))['products'].map{|p| p["name"]}
 
     if product_names.include?(@message[:payload]['product']['name'])
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:in_stock' }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:info' }
     else
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:not_in_stock' }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:warn' }
     end
   end
 end
@@ -244,18 +244,18 @@ $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/j
 Skipping the headers this time, you can see that the response we get is what we expect:
 
 ```bash
-{"message_id":"518726r84910000015","message":"product:in_stock"}```
+{"message_id":"518726r84910000015","message":"notification:info"}```
 
 Now, let's try a product our supplier does not carry. There is no need to restart rack here, since we haven't changed our endpoint.
 
 ```bash
 $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
 
-{"message_id":"518726r84910000004","message":"product:not_in_stock"}```
+{"message_id":"518726r84910000004","message":"notification:warn"}```
 
 The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets Without Awesomeness" somewhere else.
 
-### Returning Information About a Record
+## Custom Message
 
 ***
 The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/price_check).
@@ -277,9 +277,9 @@ class HelloEndpoint < EndpointBase
     get_product_names
 
     if @product_names.include?(@message[:payload]['product']['name'])
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:in_stock' }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:info' }
     else
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:not_in_stock' }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:warn' }
     end
   end
 
