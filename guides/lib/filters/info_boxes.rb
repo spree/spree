@@ -10,6 +10,12 @@ class ParseInfoBoxes < Nanoc::Filter
     content = content.gsub(/^\*\*\*\n(.*?)\*\*\*/m) do
       generate_div("note", $1)
     end
+
+    content = content.gsub(/^\$\$\$\n(.*?)\$\$\$/m) do
+      "<p>**************** TODO ****************</p>" + $1 + "<p>**************************************</p>"
+      #generate_div("todo", $1)
+    end
+
     content
   end
 
