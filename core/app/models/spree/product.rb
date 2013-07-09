@@ -44,7 +44,8 @@ module Spree
 
     has_many :variants_including_master,
       class_name: 'Spree::Variant',
-      dependent: :destroy
+      dependent: :destroy,
+      order: "#{::Spree::Variant.quoted_table_name}.position ASC"
 
     has_many :variants_including_master_and_deleted, class_name: 'Spree::Variant'
 
