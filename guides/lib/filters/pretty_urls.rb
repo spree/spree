@@ -1,3 +1,5 @@
+require 'nanoc'
+
 class PrettyUrls < Nanoc::Filter
 
   identifier :pretty_urls

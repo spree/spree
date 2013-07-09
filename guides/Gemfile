@@ -20,6 +20,7 @@ group :development do
   gem 'rb-fsevent'
   gem 'adsf'
   gem 'fssm'
+  gem 'rspec'
 end
 
 gem 'pry'
