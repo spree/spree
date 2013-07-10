@@ -2,44 +2,10 @@
 title: User
 ---
 
-# Spree User Guide
+## Spree User Guide
 
-$$$
-Write welcome content here
-$$$
+Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Maecenas sed diam eget risus varius blandit sit amet non magna. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam quis risus eget urna mollis ornare vel eu leo. Donec sed odio dui. Curabitur blandit tempus porttitor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
 
-[Understanding the Overview Page](overview.md)
+Donec sed odio dui. Vestibulum id ligula porta felis euismod semper. Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean lacinia bibendum nulla sed consectetur. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec id elit non mi porta gravida at eget metus.
 
-Products
-* [Creating a New Product](products/creating.md)
-* [Options](products/options.md)
-* [Prototypes](products/prototypes.md)
-* [Cloning](products/cloning.md)
-* [Deleting](products/deleting.md)
-
-Store Configuration
-* [General Settings](config/general_settings.md)
-* [Mail Methods](config/mail_methods.md)
-* [Image Settings](config/images.md)
-* [Taxes - Categories, Rates, Settings](config/taxes.md)
-* [Zones, Countries and States](config/zones_countries_states.md)
-* [Payment Methods](config/payment_methods.md)
-* [Taxonomies](config/taxonomies.md)
-* [Shipping - Methods and Categories](config/shipping.md)
-* [Inventory](config/inventory.md)
-* [Analytics Tracker](config/analytics.md)
-* [Jirafe](config/jirafe.md)
-
-[Promotions](promotions.md)
-
-Orders
-* [Manual Entry](orders/entering.md)
-* [Filtering](orders/filtering.md)
-* [Editing](orders/editing.md)
-* [Processing Payments](orders/processing_payments.md)
-* [Order States](orders/order_states.md)
-* [Returns](orders/returns.md)
-
-[Reports](reports.md)
-
-[Available Add-Ons](extensions.md)
+Curabitur blandit tempus porttitor. Donec sed odio dui. Donec id elit non mi porta gravida at eget metus. Donec ullamcorper nulla non metus auctor fringilla.
