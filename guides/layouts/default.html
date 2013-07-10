@@ -12,10 +12,11 @@
 </head>
 <body class="index">
 
-  <!--TODO check if its still edge -->
-  <div>
-    <img src="images/edge_badge.png" alt="edge-badge" id="edge-badge" />
-  </div>
+  <% if ENV['EDGE_DOCS'] == 'true' %>
+    <div>
+      <img src="images/edge_badge.png" alt="edge-badge" id="edge-badge" />
+    </div>
+  <% end %>
 
   <header id="header">
     <div id="top-header">
