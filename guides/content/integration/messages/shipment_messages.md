@@ -18,7 +18,7 @@ $$$
 confirm the tracking url and carrier values supplied.
 $$$
 
-<pre class="headers"><code>order:new</code></pre>
+---order:new---
 ```json
 {
   "message": "shipment:confirmation",
