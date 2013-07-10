@@ -179,9 +179,27 @@ Use a Notification Error when the problem is a "validation" type issue or some o
 ***
 
 !!!
-Error conditions should always be returned with status code `HTTP OK` even though there was technically a problem. They are distinct from [Failures](terminology#failures) which are returned with `HTTP 5XX` error codes.
+Error conditions should always be returned with status code `200 OK` even though there was technically a problem. They are distinct from [Failures](terminology#failures) which are returned with `HTTP 5XX` error codes.
 !!!
 
 ### Failed Delivery
+
+There are times where processing a service request results in an exceptional condition. These are situations where it makes sense to continue to retry the service request in the hopes that the sitaution has been resolved. In these situations it is appropriate to treat this service request as failed.
+
+#### How Failures are Generated
+
+Endpoints can sometimes encounter an exception when trying to communicate with a third-party service through their API (ex. Shipwire is down for maintenance.) Typically these situations will result in exceptions. In these instances there is typically no need to rescue the exception, you can just allow it to result in a `5XX Error` response and the Integrator will treat the request has failed.
+
+If the third party API is recuing exceptions or reporting permanent failure type situations as `200 OK` you may need to examine the respone more carefully and then raise your own exception (or just return `500 Internal Server Error` and supply your own error message.)
+
+#### How Failures are Handled
+
+The Integrator will treat a failure as extraordinary condition. It will continue to attempt to redeliver the message until it is successful. This is extremely useful when third party services experience temporary service disruptions since no messages are ever lost during the outage.
+
+***
+The Integrator uses an [Exponential Backoff](http://en.wikipedia.org/wiki/Exponential_backoff) algorithm to gradually increase the amount of time between retries.
+***
+
+Failure conditions in a live production environment are also monitored by the Spree staff. If you have a paid support plan they will take action to help rectify the situation.
 
 ## Message Parameters
