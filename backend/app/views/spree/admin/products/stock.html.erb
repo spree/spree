@@ -3,11 +3,8 @@
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Stock Management' } %>
-
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
-
 
 <div id="add_stock_form">
   <%= render 'add_stock_form' %>
@@ -37,10 +34,11 @@
               <%= image_tag variant.images.first.attachment.url(:mini) %>
             <% end %>
           </td>
-          <td colspan="3" class="stock_location_info">
+          <td colspan="4" class="stock_location_info">
             <table>
               <colgroup>
-                <col style="width: 60%" />
+                <col style="width: 40%" />
+                <col style="width: 20%" />
                 <col style="width: 20%" />
                 <col style="width: 20%" />
               </colgroup>
@@ -48,23 +46,26 @@
                 <th><%= Spree.t(:stock_location) %></th>
                 <th><%= Spree.t(:count_on_hand) %></th>
                 <th><%= Spree.t(:backorderable) %></th>
+                <th></th>
               </thead>
               <tbody>
-                <% @stock_locations.each do |stock_location| %>
-                <% next if stock_location.stock_item(variant).nil? %>
-                  <tr class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
-                    <td><%= stock_location.name %></td>
+                <% variant.stock_items.each do |item| %>
+                  <% next unless @stock_locations.include?(item.stock_location) %>
+
+                  <tr id="stock-item-<%= item.id %>" class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
+                    <td><%= item.stock_location.name %></td>
+                    <td class="align-center"><%= item.count_on_hand %></td>
                     <td class="align-center">
-                      <%= stock_location.stock_item(variant).count_on_hand %>
+                      <%= form_tag admin_stock_item_path(item), method: :put, class: 'toggle_stock_item_backorderable' do %>
+                        <%= check_box_tag 'stock_item[backorderable]', true,
+                              item.backorderable?,
+                              class: 'stock_item_backorderable',
+                              id: "stock_item_backorderable_#{item.stock_location.id}" %>
+                      <% end %>
                     </td>
                     <td class="align-center">
-                      <% url = admin_stock_item_path(stock_location.stock_item(variant)) %>
-                      <%= form_tag url, method: :put, class: 'toggle_stock_item_backorderable' do %>
-                        <%= check_box_tag 'stock_item[backorderable]', true,
-                              stock_location.stock_item(variant).backorderable?,
-                              class: 'stock_item_backorderable',
-                              id: "stock_item_backorderable_#{stock_location.id}" %>
-                      <% end %>
+                      <%= link_to "", [:admin, item], method: :delete, remote: true,
+                        confirm: Spree.t(:are_you_sure), class: "icon_link with-tip icon-trash" %>
                     </td>
                   </tr>
                 <% end %>

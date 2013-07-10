@@ -63,7 +63,8 @@ describe "Stock Management" do
 
         new_location_backorderable = find "#stock_item_backorderable_#{new_location.id}"
         new_location_backorderable.set(false)
-        wait_for_ajax
+        # Wait for API request to complete.
+        sleep(1)
 
         page.current_url.should include("/admin/products")
       end

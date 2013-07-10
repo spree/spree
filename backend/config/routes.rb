@@ -144,7 +144,7 @@ Spree::Core::Engine.routes.draw do
     end
 
     resources :stock_movements
-    resources :stock_items, :only => :update
+    resources :stock_items, :only => [:create, :update, :destroy]
     resources :tax_rates
     resource  :tax_settings
 
