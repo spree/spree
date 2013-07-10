@@ -4,7 +4,7 @@ title: Creating Endpoints
 
 ## Prerequisites
 
-This tutorial assumes that you have installed bundler and Sinatra, and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), [Sinatra](http://www.sinatrarb.com/), and [Rack](http://rack.rubyforge.org).
+This tutorial assumes that you have [installed bundler](http://bundler.io/#getting-started) and Sinatra, and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), [Sinatra](http://www.sinatrarb.com/), and [Rack](http://rack.rubyforge.org).
 
 ***
 For detailed information about Endpoints, check out the [endpoints](terminology#endpoints) section of the Terminology guide.
@@ -24,7 +24,7 @@ Let's start by creating an extremely basic endpoint. To build this first endpoin
 $ mkdir hello_endpoint
 $ cd hello_endpoint```
 
-Within your new `hello_endpoint` directory, you will need a few files:
+Within our new `hello_endpoint` directory, we'll need a few files:
 
 <pre class="headers"><code>Gemfile</code></pre>
 ```ruby
