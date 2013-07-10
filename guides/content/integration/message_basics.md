@@ -203,3 +203,58 @@ The Integrator uses an [Exponential Backoff](http://en.wikipedia.org/wiki/Expone
 Failure conditions in a live production environment are also monitored by the Spree staff. If you have a paid support plan they will take action to help rectify the situation.
 
 ## Message Parameters
+
+Integration endpoints are typically stateless, meaning that they don't retain information from one service request to the next. This allows the same endpoint to serve more than one store and to function in more than one environment at a time (ex. staging and production.) This poses a challenge, however, since each store may have its own API keys or other configuration inforamtion needed to talk to a third party service.
+
+[Parameters](terminology#parameters) serve as a mechanism for transmitting this type of information to the endpoint. They are configured on a per store basis using the mapping tool (see the [Mapping Configuration](mapping_configuration)) guide for more details.
+
+Once configured the Integrator will send the parameters for a particular mapping upon each request.
+
+---order_cancel.json---
+```ruby
+{
+  "message": "order:cancel",
+  "payload": {
+    "order": {
+    },
+    "parameters": [
+      {
+        "name": "api_key",
+        "value": "1234567890"
+      },
+    ]
+  }
+}```
+
+Message parameters can also contain lookup data. In addition to passing API type parameters there are usecases where parameters can provide lookup data needed to bridge two different systems. For instance, if you are importing orders into your Spree store you may need to translate the shipping method names Amazon uses into the ones used by your Spree store.  The following is an example of the type of message and parameters you could use to accomplish this.
+
+---order_import.json---
+```ruby
+{
+  "message": "order:import",
+  "payload": {
+    "parameters": [
+      {
+        "name": "amazon_login",
+        "value": "foo@example.com"
+      },
+      {
+        "name": "amazon_secret",
+        "value": "1234567890"
+      },
+      {
+        "name": "shipping_method_lookup",
+        "value": [
+          {
+            "standard": "UPS Next Day",
+            "amazon": "Express Next Day",
+          },
+          {
+            "standard": "USPS Priority",
+            "amazon": "Saver",
+          }
+        ]
+      }
+    ]
+  }
+}```
