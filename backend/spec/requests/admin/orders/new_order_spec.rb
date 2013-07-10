@@ -45,6 +45,26 @@ describe "New Order" do
     page.should have_content("shipped")
   end
 
+  # Regression test for #3336
+  it "transitions order after products are selected", js: true do
+    click_on "Customer Details"
+
+    within "#select-customer" do
+      targetted_select2_search user.email, :from => "#s2id_customer_search"
+    end
+    check "order_use_billing"
+    fill_in_address
+    click_on "Update"
+
+    click_on "Order Details"
+    select2_search product.name, :from => Spree.t(:name_or_sku)
+    click_icon :plus
+    wait_for_ajax
+    within(".additional-info .state") do
+      page.should have_content("payment")
+    end
+  end
+
   def fill_in_address(kind = "bill")
     fill_in "First Name",              :with => "John 99"
     fill_in "Last Name",               :with => "Doe"
