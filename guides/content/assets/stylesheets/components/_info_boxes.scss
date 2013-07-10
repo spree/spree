@@ -1,4 +1,4 @@
-.warning, .info, .note {
+.warning, .info, .note, .github {
   padding: 10px 20px;
   border-radius: 3px;
   border-width: 1px;
@@ -56,5 +56,23 @@
 
   &, &:before {
     border-color: lighten($c-yellow, 30);
+  }
+}
+
+.github {
+  @extend .icon-github;
+  background-color: #F3F3F3;
+  color: #333;
+
+  a {
+    color: #4183C4;
+
+    &:hover {
+      color: lighten(#4183C4, 10);
+    }
+  }
+
+  &, &:before {
+    border-color: #E5E5E5;
   }
 }
