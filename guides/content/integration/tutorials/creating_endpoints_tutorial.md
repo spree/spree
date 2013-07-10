@@ -14,7 +14,9 @@ For detailed information about Endpoints, check out the [endpoints](terminology#
 If you would like to download and/or fork this endpoint to try out for yourself, you can find it online at [github.com/spree/hello_endpoint](https://github.com/spree/hello_endpoint.git).
 +++
 
-## Hello, World!
+## Steps
+
+### Hello, World!
 
 Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby applications.
 
@@ -149,7 +151,7 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
-## Simple Notification Message
+### Simple Notification Message
 
 ***
 The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/in_stock).
@@ -259,7 +261,7 @@ $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:applicati
 
 The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets Without Awesomeness" somewhere else.
 
-## Custom Message
+### Custom Message
 
 ***
 The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/price_check).
