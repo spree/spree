@@ -83,10 +83,10 @@ Use this type of Message whenever a new order is created.
 
 This type of Message should be sent when an existing order is updated.
 
-<pre class="headers"><code>order:new</code></pre>
+---order:cancel---
 ```json
 {
-  "message": "order:updated",
+  "message": "order:cancel",
   "message_id": "518726r84910000004",
   "payload": {
     "order": {
@@ -142,10 +142,10 @@ This type of Message should be sent when an existing order is updated.
 
 You should send this type of Message whenever an order is canceled, whether by the customer or by a store administrator.
 
-<pre class="headers"><code>order:new</code></pre>
+---order:cancel---
 ```json
 {
-  "message": "order:canceled",
+  "message": "order:cancel",
   "message_id": "518726r84910000004",
   "payload": {
     "order": {
