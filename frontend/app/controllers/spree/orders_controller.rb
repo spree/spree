@@ -20,6 +20,7 @@ module Spree
       end
 
       if @order.update_attributes(params[:order])
+        @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         @order.create_proposed_shipments if @order.shipments.any?
         return if after_update_attributes
 
