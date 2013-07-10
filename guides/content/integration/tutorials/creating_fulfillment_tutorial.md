@@ -80,6 +80,10 @@ Connection: Keep-Alive
 
 The output (including headers, as we included the `-H` switch in our curl command) does exactly what we expect: it returns a success (200) status message along with the `message_id` of the JSON file we passed.
 
++++
+The sample files for the preceding example are available on [Github]().
++++
+
 ### Make the API Call
 
 ### Return Multiple Messages
