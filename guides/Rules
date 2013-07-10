@@ -15,8 +15,8 @@ compile '/static/*' do
 end
 
 compile '/' do
+  filter :pretty_urls  
   filter :erb
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2]
   layout 'default'
 end
@@ -50,93 +50,91 @@ route '/assets/*' do
 end
 
 compile '/feed/' do
-  filter :erb
   filter :pretty_urls
+  filter :erb
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
 end
 
 compile '/developer/' do
-  filter :erb
   filter :pretty_urls
+  filter :erb
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'developer'
 end
 
 compile '/developer/*' do
-  # Parses !!! for warnings, *** for notes.
+  filter :pretty_urls
   filter :erb
   filter :parse_info_boxes
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'developer/default'
 end
 
 compile '/release_notes/*' do
-  # Parses !!! for warnings, *** for notes.
+  filter :pretty_urls
   filter :erb
   filter :parse_info_boxes
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'release_notes/default'
 end
 
 compile '/api/' do
+  filter :pretty_urls
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'api'
 end
 
 compile '/api/*' do
+  filter :pretty_urls  
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
   filter :parse_info_boxes
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'api/default'
 end
 
 compile '/user/' do
+  filter :pretty_urls  
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'user'
 end
 
 compile '/user/*' do
+  filter :pretty_urls
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'user/default'
 end
 
 compile '/integration/' do
+  filter :pretty_urls
   filter :fenced_code_blocks
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :parse_info_boxes
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration'
 end
 
 compile '/integration/*' do
+  filter :pretty_urls
   filter :fenced_code_blocks
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :parse_info_boxes
-  filter :pretty_urls
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration/default'
 end

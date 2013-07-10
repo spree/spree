@@ -18,15 +18,15 @@ class PrettyUrls < Nanoc::Filter
 
     # [Hubspot Integration](hubspot_integration#foo) => [Hubspot Integration](hubspot_integration.html#foo)
     #content = content.gsub /\[(.+)\]\(([^#]+)(#\S*)?\)/ do
-    content = content.gsub /\[(.+)\]\(([^#\.]+)(#\S*)?\)/ do
+    # [Hubspot Integration](hubspot_integration) => [Hubspot Integration](hubspot_integration.html)
+    content = content.gsub /\[([^\]]*)\]\(([^[#\)]\.]+)(#\S*)?\)/ do
       "[#{$1}](#{$2}.html#{$3})"
     end
 
-    # [Hubspot Integration](hubspot_integration) => [Hubspot Integration](hubspot_integration.html)
     # content = content.gsub /\[(.+)\]\((\S+)\)/ do
-    content = content.gsub /\[(.+)\]\([^\.]+\)/ do      
-      "[#{$1}](#{$2}.html)"
-    end
+    # content = content.gsub /\[(.+)\]\([^\.]+\)/ do
+    #   "[#{$1}](#{$2}.html)"
+    # end
 
     content
   end
