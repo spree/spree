@@ -11,7 +11,7 @@ For detailed information about Endpoints, check out the [endpoints](terminology#
 ***
 
 +++
-If you would like to download and/or fork this endpoint to try out for yourself, you can find it online at [github.com/spree/hello_endpoint](https://github.com/spree/hello_endpoint.git).
+If you would like to download and/or fork this endpoint to try out for yourself, you can find it online at [https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial).
 +++
 
 ## Steps
@@ -26,7 +26,7 @@ $ cd hello_endpoint```
 
 Within our new `hello_endpoint` directory, we'll need a few files:
 
-<pre class="headers"><code>Gemfile</code></pre>
+---Gemfile---
 ```ruby
 source 'https://rubygems.org'
 
@@ -36,12 +36,12 @@ gem 'sinatra-contrib'
 gem 'json'
 gem 'multi_json'```
 
-<pre class="headers"><code>config.ru</code></pre>
+---config.ru---
 ```ruby
 require './hello_endpoint'
 run Sinatra::Application```
 
-<pre class="headers"><code>hello_endpoint.rb</code></pre>
+---hello_endpoint.rb---
 ```ruby
 require 'sinatra'
 require 'sinatra/json'
@@ -55,7 +55,7 @@ end```
 
 This is enough to function as an endpoint that echoes back the `message_id` of the message you pass. To test our endpoint, we need to create a fictional JSON message.
 
-<pre class="headers"><code>give_id.json</code></pre>
+---give_id.json---
 ```json
 {
   "message": "product:new",
@@ -91,19 +91,19 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
-***
-The sample files for the preceding example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/hello_world).
-***
++++
+The sample files for the preceding example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/hello_world).
++++
 
 So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
 
-<pre class="headers"><code>Gemfile</code></pre>
+---Gemfile---
 ```ruby
 source 'https://rubygems.org'
 
 gem 'endpoint_base', github: 'spree/endpoint_base'```
 
-<pre class="headers"><code>hello_endpoint.rb</code></pre>
+---hello_endpoint.rb---
 ```ruby
 require 'endpoint_base'
 require 'multi_json'
@@ -114,14 +114,14 @@ class HelloEndpoint < EndpointBase
   end
 end```
 
-<pre class="headers"><code>config.ru</code></pre>
+---config.ru---
 ```ruby
 require './hello_endpoint'
 run HelloEndpoint```
 
-***
-The sample files for this example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/hello_world_endpoint_base).
-***
++++
+The sample files for this example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/hello_world_endpoint_base).
++++
 
 Install the new gem and restart your application:
 
@@ -153,9 +153,9 @@ Connection: Keep-Alive
 
 ### Simple Notification Message
 
-***
-The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/in_stock).
-***
++++
+The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/in_stock).
++++
 
 The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing a simple Notification Message in response.
 
@@ -165,7 +165,7 @@ For more information about Messages, be sure to read the [Integration Terminolog
 
 In the `get_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our store. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
 
-<pre class="headers"><code>hello_endpoint.rb</code></pre>
+---hello_endpoint.rb---
 ```ruby
 require 'endpoint_base'
 require 'multi_json'
@@ -190,13 +190,13 @@ class HelloEndpoint < EndpointBase
 end
 ```
 
-***
+!!!
 We've added a new route to our endpoint, so we'll need to remember to update our curl command with the new URL path.
-***
+!!!
 
 Now, let's create a dummy product catalog to query against, and a couple of new JSON files - one for a product that is in our supplier's catalog, and one that is not.
 
-<pre class="headers"><code>product_catalog.json</code></pre>
+---product_catalog.json---
 ```json
 {
   "products": [
@@ -213,7 +213,7 @@ Now, let's create a dummy product catalog to query against, and a couple of new 
   ]
 }```
 
-<pre class="headers"><code>in_stock_product.json</code></pre>
+---in_stock_product.json---
 ```json
 {
   "message": "product:new",
@@ -226,7 +226,7 @@ Now, let's create a dummy product catalog to query against, and a couple of new 
   }
 }```
 
-<pre class="headers"><code>not_in_stock_product.json</code></pre>
+---not_in_stock_product.json---
 ```json
 {
   "message": "product:new",
@@ -263,13 +263,13 @@ The good news is that our endpoint works! The bad news is that we'll have to sou
 
 ### Custom Message
 
-***
-The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/price_check).
-***
++++
+The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/price_check).
++++
 
 Now that we know the product is in stock, it would be helpful if we knew how much it cost should we buy it from our supplier. For that, we need to once again add some logic to our endpoint.
 
-<pre class="headers"><code>hello_endpoint.rb</code></pre>
+---hello_endpoint.rb---
 ```ruby
 require 'endpoint_base'
 require 'multi_json'
