@@ -10,6 +10,10 @@ This tutorial assumes that you have installed bundler and Sinatra, and that you 
 For detailed information about Endpoints, check out the [endpoints](terminology#endpoints) section of the Terminology guide.
 ***
 
++++
+If you would like to download and/or fork this endpoint to try out for yourself, you can find it online at [github.com/spree/hello_endpoint](https://github.com/spree/hello_endpoint.git).
++++
+
 ## Hello, World!
 
 Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby applications.
@@ -319,7 +323,3 @@ If the product doesn't exist in the catalog, our endpoint still returns a messag
 $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
 
 {"message_id":"518726r84910000004","message":"product:not_in_stock"}```
-
-***
-If you would like to download and/or fork this endpoint to try out for yourself, you can find it online at [github.com/spree/hello_endpoint](https://github.com/spree/hello_endpoint.git).
-***
