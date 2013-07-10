@@ -180,6 +180,13 @@ Compilation times got you down?  Use `autocompile`!
 This starts a web server too, so there's no need to run `nanoc view`.
 One thing: remember to add trailing slashes to all nanoc links!
 
+## Edge guides
+
+Set `EDGE_DOCS=true` in an environment variable in order to generate the "edge" badge. You may need to remove any previously generated output for the change to take effect
+
+    $ export EDGE_DOCS=true
+    $ nanoc autocompile
+
 ## Deploy
 
 Standard deploy for the latest stable guides:
