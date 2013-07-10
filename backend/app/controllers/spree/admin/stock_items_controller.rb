@@ -40,7 +40,7 @@ module Spree
         end
 
         def determine_backorderable
-          stock_item.backorderable = params[:stock_item].present? && params[:stock_item][:backorderable].present? ? false : true
+          stock_item.backorderable = params[:stock_item].present? && params[:stock_item][:backorderable].present?
         end
     end
   end

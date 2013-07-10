@@ -57,8 +57,7 @@
                     <td class="align-center"><%= item.count_on_hand %></td>
                     <td class="align-center">
                       <%= form_tag admin_stock_item_path(item), method: :put, class: 'toggle_stock_item_backorderable' do %>
-                        <%= check_box_tag 'stock_item[backorderable]', true,
-                              item.backorderable?,
+                        <%= check_box_tag 'stock_item[backorderable]', 1, item.backorderable?,
                               class: 'stock_item_backorderable',
                               id: "stock_item_backorderable_#{item.stock_location.id}" %>
                       <% end %>
