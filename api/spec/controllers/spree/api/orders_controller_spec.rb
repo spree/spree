@@ -31,6 +31,13 @@ module Spree
       json_response["credit_cards"].should be_empty
     end
 
+    it "orders contain the basic checkout steps" do
+      Order.any_instance.stub :user => current_api_user
+      api_get :show, :id => order.to_param
+      response.status.should == 200
+      json_response["checkout_steps"].should == ["address", "delivery", "complete"]
+    end
+
     # Regression test for #1992
     it "can view an order not in a standard state" do
       Order.any_instance.stub :user => current_api_user
