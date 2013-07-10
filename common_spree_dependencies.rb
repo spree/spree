@@ -24,7 +24,7 @@ group :test do
   gem 'ffaker'
   gem 'launchy'
   gem 'pry'
-  gem 'rspec-rails', '~> 2.13.0'
+  gem 'rspec-rails', '~> 2.14.0'
   gem 'selenium-webdriver', '2.33.0'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
