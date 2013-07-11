@@ -19,6 +19,7 @@ end
 group :test do
   gem 'capybara', '~> 2.1'
   gem 'database_cleaner', '1.0.0.RC1'
+  gem 'capybara-accessible'
   gem 'email_spec', '1.4.0'
   gem 'factory_girl_rails', '~> 4.2.1'
   gem 'launchy'

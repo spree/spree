@@ -39,6 +39,8 @@ require 'spree/testing_support/order_walkthrough'
 
 require 'paperclip/matchers'
 
+Capybara.default_driver = :accessible
+
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
