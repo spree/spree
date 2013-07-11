@@ -9,6 +9,8 @@ module Spree
     let(:variant_id) { product.master.id }
     let(:sku) { product.master.sku }
     let(:line_items) {{ "0" => { :variant_id => variant_id, :quantity => 5 }}}
+    let(:stock_location) { create(:stock_location) }
+    let(:shipping_method) { create(:shipping_method) }
     let(:ship_address) {{
        :address1 => '123 Testable Way',
        :firstname => 'Fox',
@@ -84,6 +86,19 @@ module Spree
         Order.ensure_state_id_from_api(address)
         address[:state_id].should eq state.id
       end
+    end
+
+    it 'builds a shipments' do
+      params = { :shipments_attributes => [{ tracking: '123456789',
+                                             cost: '4.99',
+                                             stock_location: stock_location.name,
+                                             shipping_method: shipping_method.name,
+                                             inventory_units: [{ sku: sku }]
+                                           }] }
+      order = Order.build_from_api(user, params)
+      order.shipments.first.inventory_units.first.variant_id.should eq product.master.id
+      order.shipments.first.shipping_rates.first.cost.should eq 4.99
+      order.shipments.first.stock_location_id.should eq stock_location.id
     end
   end
 end
