@@ -41,6 +41,7 @@ require 'paperclip/matchers'
 require 'capybara/rails'
 require 'capybara/rspec'
 
+Capybara.default_driver = :accessible
 Capybara.configure do |config|
   config.match = :prefer_exact
   config.ignore_hidden_elements = false

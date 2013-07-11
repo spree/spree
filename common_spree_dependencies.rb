@@ -18,6 +18,7 @@ end
 
 group :test do
   gem 'capybara'
+  gem 'capybara-accessible'
   gem 'database_cleaner', '0.7.1'
   gem 'email_spec', '1.4.0'
   gem 'factory_girl_rails', '~> 4.2.1'
