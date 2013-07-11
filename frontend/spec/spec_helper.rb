@@ -38,6 +38,14 @@ require 'spree/testing_support/order_walkthrough'
 
 require 'paperclip/matchers'
 
+require 'capybara/rails'
+require 'capybara/rspec'
+
+Capybara.configure do |config|
+  config.match = :prefer_exact
+  config.ignore_hidden_elements = false
+end
+
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
@@ -52,11 +60,11 @@ RSpec.configure do |config|
 
   config.before(:each) do
     WebMock.disable!
-    if example.metadata[:js]
+    # if example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
+    # else
+      # DatabaseCleaner.strategy = :transaction
+    # end
   end
 
   config.before(:each) do
