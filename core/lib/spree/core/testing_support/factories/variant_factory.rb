@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :base_variant, :class => Spree::Variant do
     price 19.99
     cost_price 17.00
-    sku    { Faker::Lorem.sentence }
+    sku    { SecureRandom.hex }
     weight { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
     height { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
     width  { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
