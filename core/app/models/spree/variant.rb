@@ -16,7 +16,7 @@ module Spree
     has_many :inventory_units
     has_many :line_items
 
-    has_many :stock_items, dependent: :destroy
+    has_many :stock_items, dependent: :destroy, :order => "id ASC"
     has_many :stock_locations, through: :stock_items
     has_many :stock_movements
 
