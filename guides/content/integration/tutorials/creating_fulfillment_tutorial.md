@@ -290,7 +290,7 @@ module DummyShip
   end
 end```
 
-Naturally, our endpoint will need to have a service that taps into all this cool API functionality. Rather than writing a new service, it's more logical to change the `/drop_ship` service we wrote in the [first section of this tutorial](#create_a_basic_endpoint).
+Naturally, our endpoint will need to have a service that taps into all this cool API functionality. Rather than writing a new service, it's more logical to change the `/drop_ship` service we wrote in the [first section of this tutorial](#create-a-basic-endpoint).
 
 ---fulfillment_endpoint.rb---
 ```ruby
@@ -331,7 +331,7 @@ class FulfillmentEndpoint < EndpointBase
   end
 end```
 
-All that remains now is to test it! We can use the same `good_address.json` and `bad_address.json` files from the [preceding section of this tutorial](#make_the_api_call).
+All that remains now is to test it! We can use the same `good_address.json` and `bad_address.json` files from the [preceding section of this tutorial](#make-the-api-call).
 
 ```bash
 $ bundle exec rackup -p 9292
