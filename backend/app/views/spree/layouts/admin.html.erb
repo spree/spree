@@ -30,103 +30,29 @@
 
       <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>
 
-      <header id="header" data-hook>
+      <%= render :partial => 'spree/admin/shared/header' %>
+      <%= render :partial => 'spree/admin/shared/menu' %>
+      <%= render :partial => 'spree/admin/shared/sub_menu' %>
 
-        <div class="container">
-          <figure data-hook="logo-wrapper" class="columns five">
-            <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path %>
-          </figure>
-
-          <nav data-hook="admin_login_navigation_bar" class="columns eleven"></nav>
-        </div>
-        
-      </header>
-
-      <nav id="admin-menu" data-hook>
-        <div class="container">
-          <div class="sixteen columns main-menu-wrapper">
-            <ul data-hook="admin_tabs" class="inline-menu fullwidth-menu">
-              <%= render :partial => 'spree/admin/shared/tabs' %>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <% if content_for?(:sub_menu) %>
-        <nav id="sub-menu" data-hook>
-          <div class="container">
-            
-              <div class="sixteen columns">
-                <%= yield :sub_menu %>
-              </div>
-            
-          </div>
-        </nav>
-      <% end %>
-
-      <% if content_for?(:page_title) || content_for?(:page_actions) %>
-        <div id="content-header" data-hook>
-          <div class="container">
-            
-              <div class="sixteen columns">
-                <div class="block-table">
-                  <% if content_for?(:page_title) %>
-                    <div class="table-cell">
-                      <h1 class="page-title <%= yield :page_title_classes %>"><%= yield :page_title %></h1>
-                    </div>
-                  <% end %>
-                  <% if content_for?(:page_actions) %>
-                    <div class="page-actions table-cell toolbar" data-hook="toolbar">
-                      <ul class="inline-menu">
-                        <%= yield :page_actions %>
-                      </ul>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            
-          </div>
-        </div>
-      <% end %>
+      <%= render :partial => 'spree/admin/shared/content_header' %>
 
       <div class="container">
         <div class="row">
           <div class="<%= 'with-sidebar ' if content_for?(:sidebar) %>" id="content" data-hook>
             
-            <% if content_for?(:table_filter) %>
-              <div id="table-filter" data-hook class="<%= if content_for?(:sidebar) then 'twelve' else 'sixteen' end %> columns">
-                <fieldset>
-                  <legend align="center"><%= yield :table_filter_title %></legend>
-                  <%= yield :table_filter %>
-                </fieldset>
-              </div>
-            <% end %>
+            <%= render :partial => 'spree/admin/shared/table_filter' %>
 
             <div class="<%= if content_for?(:sidebar) then 'twelve' else 'sixteen' end %> columns">
               <%= yield %>
             </div>
 
-
-            <% if content_for?(:sidebar) %>
-              <aside id="sidebar" data-hook class="four columns">
-
-                <% if content_for?(:sidebar_title) %>
-                  <h5 class="sidebar-title"><span><%= yield :sidebar_title %></span></h5>
-                <% end %>
-
-                <%= yield :sidebar %>
-              </aside>
-            <% end %>
-
+            <%= render :partial => 'spree/admin/shared/sidebar' %>
           </div>
         </div>
-
       </div>
-
     </div>
 
     <div data-hook="admin_footer_scripts"></div>
-
 
 <script>
   Spree.api_key = <%= raw(try_spree_current_user.try(:spree_api_key).to_s.inspect) %>;
