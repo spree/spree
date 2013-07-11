@@ -57,6 +57,10 @@ Use this type of Message whenever a new order is created.
         "country": "US",  
         "state": "Viriginia"
       },
+      "adjustments":[
+        { "name": "Shipping Discount", "value": "-4.99" },
+        { "name": "Promotion Discount", "value": "-3.00" }
+      ],
       "shipments": [
         {
           "cost": 29.99,
