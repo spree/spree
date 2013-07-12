@@ -142,19 +142,35 @@ module Spree
                                  :country_id => Country.first.id, :state_id => State.first.id} }
       let!(:payment_method) { create(:payment_method) }
 
-      it "can update quantities of existing line items" do
-        variant = create(:variant)
-        line_item = order.line_items.create!(:variant_id => variant.id, :quantity => 1)
+      context "update quantities of existing line items" do
+        let!(:variant) { create(:variant) }
+        let!(:line_item) { order.contents.add(variant, 1) }
 
-        api_put :update, :id => order.to_param, :order => {
-          :line_items => {
-            line_item.id => { :quantity => 10 }
+        def update_line_item_quantity
+          api_put :update, :id => order.to_param, :order => {
+            :line_items => {
+              line_item.id => { :quantity => 10 }
+            }
           }
-        }
+        end
 
-        response.status.should == 200
-        json_response['line_items'].count.should == 1
-        json_response['line_items'].first['quantity'].should == 10
+        it "doesn't create a new line item record" do
+          update_line_item_quantity
+
+          response.status.should == 200
+          json_response['line_items'].count.should == 1
+          json_response['line_items'].first['quantity'].should == 10
+        end
+
+        context "order has shipments" do
+          before { order.create_proposed_shipments }
+
+          it "recreates shipments" do
+            previous_shipments = order.shipments
+            update_line_item_quantity
+            expect(order.reload.shipments).to_not eq previous_shipments
+          end
+        end
       end
 
       it "can add billing address" do
