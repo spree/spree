@@ -18,7 +18,7 @@ If you would like to download and/or fork this endpoint to try out for yourself,
 
 ### Hello, World!
 
-Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby applications.
+Let's start by creating an extremely basic endpoint. To build this first endpoint, we'll use Sinatra - a useful tool for creating lightweight Ruby web applications.
 
 ```bash
 $ mkdir hello_endpoint
@@ -167,9 +167,6 @@ In the `get_id.json` message that we passed to our endpoint, we indicated with t
 
 ---hello_endpoint.rb---
 ```ruby
-require 'endpoint_base'
-require 'multi_json'
-
 require 'endpoint_base'
 require 'multi_json'
 
