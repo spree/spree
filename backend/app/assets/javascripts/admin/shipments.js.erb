@@ -7,7 +7,7 @@ $(document).ready(function() {
   $('[data-hook=admin_order_edit_form] a.ship').click(function(){
     var link = $(this);
     var shipment_number = link.data('shipment-number');
-    var url = Spree.url("/api/orders/" + order_number + "/shipments/" + shipment_number + "/ship.json");
+    var url = Spree.url( Spree.routes.orders_api + order_number + "/shipments/" + shipment_number + "/ship.json");
     $.ajax({
       type: "PUT",
       url: url
@@ -28,7 +28,7 @@ $(document).ready(function() {
     var shipment_number = link.data('shipment-number');
     var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
     var unlock = link.parents('tbody').find("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
-    var url = Spree.url("/api/orders/" + order_number + "/shipments/" + shipment_number + ".json");
+    var url = Spree.url( Spree.routes.orders_api + order_number + "/shipments/" + shipment_number + ".json");
 
     $.ajax({
       type: "PUT",
@@ -50,7 +50,7 @@ $(document).ready(function() {
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var tracking = link.parents('tbody').find('input#tracking').val();
-    var url = Spree.url("/api/orders/" + order_number + "/shipments/" + shipment_number + ".json");
+    var url = Spree.url( Spree.routes.orders_api + order_number + "/shipments/" + shipment_number + ".json");
 
     $.ajax({
       type: "PUT",
