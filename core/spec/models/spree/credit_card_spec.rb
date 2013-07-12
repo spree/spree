@@ -180,4 +180,25 @@ describe Spree::CreditCard do
       expect { credit_card.payments.all }.not_to raise_error(ActiveRecord::StatementInvalid)
     end
   end
+  
+  context "#to_active_merchant" do
+    before do
+      credit_card.number = "4111111111111111"
+      credit_card.year = Time.now.year
+      credit_card.month = Time.now.month
+      credit_card.first_name = "Bob"
+      credit_card.last_name = "Boblaw"
+      credit_card.verification_value = 123
+    end
+
+    it "converts to an ActiveMerchant::Billing::CreditCard object" do
+      am_card = credit_card.to_active_merchant
+      am_card.number.should == "4111111111111111"
+      am_card.year.should == Time.now.year
+      am_card.month.should == Time.now.month
+      am_card.first_name.should == "Bob"
+      am_card.last_name = "Boblaw"
+      am_card.verification_value.should == 123
+    end
+  end
 end
