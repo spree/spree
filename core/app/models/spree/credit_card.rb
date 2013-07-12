@@ -28,6 +28,19 @@ module Spree
       end
     end
 
+    # Some payment gateways, such as USA EPay, only support an ActiveMerchant::Billing::CreditCard
+    # object, rather than an object *like* that. So we need to convert it.
+    def to_active_merchant
+      ActiveMerchant::Billing::CreditCard.new(
+        :number => number,
+        :month => month,
+        :year => year,
+        :verification_value => verification_value,
+        :first_name => first_name,
+        :last_name => last_name
+        )
+    end
+
     # sets self.cc_type while we still have the card number
     def set_card_type
       self.cc_type ||= CardDetector.brand?(number)
