@@ -512,6 +512,10 @@ module Spree
       shipments
     end
 
+    def ensure_updated_shipments
+      self.create_proposed_shipments if self.shipments.any?
+    end
+
     private
 
       def link_by_email
