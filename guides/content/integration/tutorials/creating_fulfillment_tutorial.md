@@ -269,9 +269,7 @@ class Shipment
   end
 
   def generate_shipment_number
-    record = true
-    random = "S#{Array.new(6){rand(6)}.join}"
-    random
+    "S#{Array.new(6){rand(6)}.join}"
   end
 end```
 
@@ -282,8 +280,7 @@ Now our fake API needs to get more complex, since it's going to be doing more in
 module DummyShip
   def self.ship_package(address, order)
     validate_address(address)
-    shipment = Shipment.new(order)
-    shipment
+    Shipment.new(order)
   end
 
   def self.validate_address(address)
