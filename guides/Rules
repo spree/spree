@@ -15,7 +15,7 @@ compile '/static/*' do
 end
 
 compile '/' do
-  filter :pretty_urls  
+  filter :pretty_urls
   filter :erb
   filter :kramdown, :toc_levels => [2]
   layout 'default'
@@ -36,7 +36,6 @@ end
 compile '/assets/stylesheets/*/' do
   filter :sass, syntax: :scss
 end
-
 
 route '/assets/stylesheets/*/' do
   item.identifier.chop + '.css' # so that the /assets/style/screen/ item is compiled to /assets/style/screen.css
@@ -92,7 +91,7 @@ compile '/api/' do
 end
 
 compile '/api/*' do
-  filter :pretty_urls  
+  filter :pretty_urls
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
@@ -102,7 +101,7 @@ compile '/api/*' do
 end
 
 compile '/user/' do
-  filter :pretty_urls  
+  filter :pretty_urls
   filter :erb
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
@@ -137,6 +136,26 @@ compile '/integration/*' do
   filter :parse_info_boxes
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
   layout 'integration/default'
+end
+
+compile '/release_notes/' do
+  filter :pretty_urls
+  filter :fenced_code_blocks
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :parse_info_boxes
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'release_notes'
+end
+
+compile '/release_notes/*' do
+  filter :pretty_urls
+  filter :fenced_code_blocks
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :parse_info_boxes
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'release_notes/default'
 end
 
 route '/static/*' do
