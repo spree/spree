@@ -103,7 +103,7 @@ module DummyShip
   def self.validate_address(address)
     ## Zipcode must be within a given range.
     unless (20170..20179).to_a.include?(address['zipcode'].to_i)
-      halt 406
+      raise "This order is outside our shipping zone."
     end
   end
 end```
@@ -138,7 +138,7 @@ class FulfillmentEndpoint < EndpointBase
         "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
     rescue Exception => e
       process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => "There was a problem with this address." } }
+        "payload" => { "result" => e.message } }
     end
   end
 end```
@@ -147,7 +147,7 @@ As you can see, our new `validate_address` service will accept an incoming JSON 
 
 If there is an exception, however, the endpoint elegantly rescues the exception, and returns a `notification:error` message with a payload indicating that our address is not valid.
 
-Our admittedly simplistic API does nothing more at this point than make sure the zip code we pass in is within a pre-defined range. If it's not, the API returns a 406 error ("Not Acceptable").
+Our admittedly simplistic API does nothing more at this point than make sure the zip code we pass in is within a pre-defined range. If it's not, the API raises an exception.
 
 Now we just need a couple of JSON files we can try out. Let's make one that passes an order whose shipping address is within the range, and one which is not.
 
@@ -207,12 +207,12 @@ Time to test it out in curl. First, the address that our API considers valid:
 $ bundle exec rackup -p 9292
 $ curl --data @./good_address.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/validate_address
 
-=>HTTP/1.1 200 OK
+=> HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 Content-Length: 141
 X-Content-Type-Options: nosniff
 Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Wed, 10 Jul 2013 23:09:47 GMT
+Date: Fri, 12 Jul 2013 22:41:57 GMT
 Connection: Keep-Alive
 
 {"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}```
@@ -224,19 +224,15 @@ $ curl --data @./bad_address.json -i -X POST -H 'Content-type:application/json' 
 
 => HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
-Content-Length: 128
+Content-Length: 130
 X-Content-Type-Options: nosniff
 Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Wed, 10 Jul 2013 23:11:16 GMT
+Date: Fri, 12 Jul 2013 22:42:49 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"There was a problem with this address."}}```
+{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}```
 
 As we expected, the zip code for this order is outside the API's acceptable range; this shipment can not be sent with the `DummyShip` fulfillment process.
-
-+++
-The sample files for the preceding example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/fulfillment_tutorial/dummy_ship).
-+++
 
 ### Return Multiple Messages
 
@@ -286,7 +282,7 @@ module DummyShip
   def self.validate_address(address)
     ## Zipcode must be within a given range.
     unless (20170..20179).to_a.include?(address['zipcode'].to_i)
-      halt 406
+      raise "This order is outside our shipping zone."
     end
   end
 end```
@@ -302,6 +298,7 @@ class FulfillmentEndpoint < EndpointBase
   post '/drop_ship' do
     get_address
     @order = @message[:payload]['order']
+
     begin
       result = DummyShip.ship_package(@address, @order)
       process_result 200, [ { 'message_id' => @message[:message_id], 'message' => "notification:info",
@@ -310,7 +307,7 @@ class FulfillmentEndpoint < EndpointBase
         "payload" => { "tracking_number" => result.tracking_number, "ship_date" => result.ship_date } } ]
     rescue Exception => e
       process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => "There was a problem with this address." } }
+        "payload" => { "result" => e.message } }
     end
   end
 
@@ -323,7 +320,7 @@ class FulfillmentEndpoint < EndpointBase
         "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
     rescue Exception => e
       process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => "There was a problem with this address." } }
+        "payload" => { "result" => e.message } }
     end
   end
 
@@ -332,29 +329,25 @@ class FulfillmentEndpoint < EndpointBase
   end
 end```
 
+###
+To keep the code as maintainable and DRY as possible, we extracted out the address-assignment functionality into the `get_address` method. That means we also need to make sure our calls to the API's methods pass in the `@address` variable, and not the `address` variable.
+###
+
 All that remains now is to test it! We can use the same `good_address.json` and `bad_address.json` files from the [preceding section of this tutorial](#make-the-api-call).
 
 ```bash
 $ bundle exec rackup -p 9292
 $ curl --data @./good_address.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/drop_ship
 
-=> HTTP/1.1 200 OKHTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-Content-Length: 128
-X-Content-Type-Options: nosniff
-Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Thu, 11 Jul 2013 15:03:46 GMT
-Connection: Keep-Alive
-
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"There was a problem with this address."}}
+=> HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 Content-Length: 273
 X-Content-Type-Options: nosniff
 Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Thu, 11 Jul 2013 15:00:40 GMT
+Date: Fri, 12 Jul 2013 22:50:31 GMT
 Connection: Keep-Alive
 
-[{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}},{"message_id":"518726r85010000001","message":"shipment:confirm","payload":{"tracking_number":"S054334","ship_date":"2013-07-11"}}]```
+[{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}},{"message_id":"518726r85010000001","message":"shipment:confirm","payload":{"tracking_number":"S350455","ship_date":"2013-07-12"}}]```
 
 As you can see, the endpoint returns an array of messages. The first is a `notification:info` like the ones we've used all along, basically just saying that the address is valid. The second is a `shipment:confirm` message that includes the new shipment's `tracking_number` and date of shipping. The tracking number is randomly-generated, so both it and the `ship_date` should be different from those shown above.
 
@@ -365,16 +358,12 @@ $ curl --data @./bad_address.json -i -X POST -H 'Content-type:application/json' 
 
 => HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
-Content-Length: 128
+Content-Length: 130
 X-Content-Type-Options: nosniff
 Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Thu, 11 Jul 2013 15:03:46 GMT
+Date: Fri, 12 Jul 2013 22:52:37 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"There was a problem with this address."}}```
+{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}```
 
 Exactly what we want to have happen: the shipment is not created, the exception is captured elegantly, and a `notification:error` message is returned.
-
-+++
-The sample files for the preceding example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/fulfillment_tutorial/multiple_messages).
-+++
