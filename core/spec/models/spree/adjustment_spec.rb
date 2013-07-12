@@ -19,7 +19,7 @@ describe Spree::Adjustment do
 
   context "#update!" do
     context "when originator present" do
-      let(:originator) { mock("originator", update_adjustment: nil) }
+      let(:originator) { double("originator", update_adjustment: nil) }
       before do
         originator.stub update_amount: true
         adjustment.stub originator: originator, label: 'adjustment', amount: 0
