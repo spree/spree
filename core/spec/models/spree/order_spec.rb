@@ -177,7 +177,7 @@ describe Spree::Order do
     end
 
     it "should send an order confirmation email" do
-      mail_message = mock "Mail::Message"
+      mail_message = double("Mail::Message")
       Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_return mail_message
       mail_message.should_receive :deliver
       order.finalize!
@@ -515,6 +515,15 @@ describe Spree::Order do
     end
   end
 
+  context "ensure updated shipments" do
+    before { order.stub(shipments: [double("Shipment")]) }
+
+    it "recreate shipments if order has any" do
+      expect(order).to receive(:create_proposed_shipments)
+      order.ensure_updated_shipments
+    end
+  end
+
   context "add_update_hook" do
     before do
       Spree::Order.class_eval do
@@ -539,4 +548,3 @@ describe Spree::Order do
     end
   end
 end
-

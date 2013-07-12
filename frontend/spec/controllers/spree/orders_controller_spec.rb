@@ -13,7 +13,7 @@ describe Spree::OrdersController do
                                :completed? => false,
                                :currency => "USD",
                                :token => 'a1b2c3d4',
-                               :shipments => [])
+                               :ensure_updated_shipments => [])
     end
 
     before do
