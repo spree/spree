@@ -123,7 +123,7 @@ describe Spree::Preferences::Preferable do
       end
 
       it "retrieves a preference from the database before falling back to default" do
-        preference = mock(:value => "chatreuse", :key => 'a/color/123')
+        preference = double(:value => "chatreuse", :key => 'a/color/123')
         Spree::Preference.should_receive(:find_by_key).and_return(preference)
         @a.preferred_color.should == 'chatreuse'
       end

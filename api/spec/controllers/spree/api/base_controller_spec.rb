@@ -10,7 +10,7 @@ describe Spree::Api::BaseController do
 
   context "signed in as a user using an authentication extension" do
     before do
-      controller.stub :try_spree_current_user => stub(:email => "spree@example.com")
+      controller.stub :try_spree_current_user => double(:email => "spree@example.com")
       Spree::Api::Config[:requires_authentication] = true
     end
 
@@ -49,7 +49,7 @@ describe Spree::Api::BaseController do
   end
 
   it "maps symantec keys to nested_attributes keys" do
-    klass = stub(:nested_attributes_options => { :line_items => {},
+    klass = double(:nested_attributes_options => { :line_items => {},
                                                   :bill_address => {} })
     attributes = { 'line_items' => { :id => 1 },
                    'bill_address' => { :id => 2 },

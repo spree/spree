@@ -132,7 +132,7 @@ describe Spree::Order do
       before do
         shipment.stub(:ensure_correct_adjustment)
         shipment.stub(:update_order)
-        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = double)
         mail_message.stub :deliver
 
         order.stub :has_available_shipment
