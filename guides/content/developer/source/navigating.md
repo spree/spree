@@ -271,4 +271,4 @@ $ spree extension foo```
 You need to have the Spree gem installed in order to use the `spree` command.
 ***
 
-Please see the <%= link_to "Creating Extensions", 'extensions' %> guide for more details.
+Please see the [Creating Extensions](extensions_tutorial) guide for more details.

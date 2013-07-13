@@ -19,13 +19,13 @@ Products have the following attributes:
 
 To understand how variants come to be, you must first understand option types and option values.
 
-## <a id="option_type"></a>Option Types and Option Values
+## Option Types and Option Values
 
 Option types denote the different options for a variant. A typical option type would be a size, with that option type's values being something such as "Small", "Medium" and "Large". Another typical option type could be a color, such as "Red", "Green", or "Blue".
 
 A product can be assigned many option types, but must be assigned at least one if you wish to create variants for that product.
 
-## <a id="variants"></a>Variants
+## Variants
 
 `Variant` records track the individual variants of a `Product`. Variants are of two types: master variants and normal variants.
 
@@ -35,7 +35,7 @@ Variant records can track some individual properties regarding a variant, such a
 
 Every single product has a master variant, which tracks basic information such as a count on hand, a price and a SKU.
 
-By having a master variant, the code within Spree to track <%= link_to "Line Items", :line_items %> is simplified.
+By having a master variant, the code within Spree to track [Line Items](orders#line_items) is simplified.
 
 ### Normal Variants
 
@@ -72,7 +72,7 @@ $ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image```
 
 If you want to change the image that is displayed when a product has no image, simply create new versions of the files within [Spree's app/assets/images/noimage directory](https://github.com/spree/spree/tree/master/frontend/app/assets/images/noimage). These image names must match the keys within `Spree::Config[:attachment_styles]`.
 
-## <a id="product-properties"></a>Product Properties
+## Product Properties
 
 Product properties track individual attributes for a product which don't apply to all products. These are typically additional information about the item. For instance, a T-Shirt may have properties representing information about the kind of material used, as well as the type of fit the shirt is.
 
@@ -124,7 +124,7 @@ When working with Taxonomies there are two key terms to understand:
 
 By default, both Taxons and Taxonomies are ordered by their `position` attribute.
 
-Taxons use the [Nested set model](http://en.wikipedia.org/wiki/Nested_set_model) for their heirarchy. The `lft` and `rgt` columns in the `spree_taxons` table represent the locations within the heirarchy of the item. This logic is handled by the [awesome_nested_set](https://github.com/collectiveidea/awesome_nested_set) gem.
+Taxons use the [Nested set model](http://en.wikipedia.org/wiki/Nested_set_model) for their heirarchy. The `lft` and `rgt` columns in the `spree_taxons` table represent the locations within the hierarchy of the item. This logic is handled by the [awesome_nested_set](https://github.com/collectiveidea/awesome_nested_set) gem.
 
 Taxons link to products through an intermediary model called `Classification`. This model exists so that when a product is deleted, all of the links from that product to its taxons are deleted automatically. A similar action takes place when a taxon is deleted; all of the links to products are deleted automatically.
 

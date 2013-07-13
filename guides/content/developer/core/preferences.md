@@ -161,7 +161,7 @@ Types are used to generate forms or display the preference. You can also get the
 ```ruby
 user.preferred_color_type # => :string```
 
-## <a id="configuring-spree-preferences"></a>Configuring Spree Preferences
+## Configuring Spree Preferences
 
 Up until now we've been discussing the general preference system that was adapted to Spree. This has given you a general idea of what types of preference features are theoretically supported. Now, let's start to look specifically at how Spree is using these preferences for configuration.
 

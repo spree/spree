@@ -27,13 +27,13 @@ Orders have the following attributes:
 
 Some methods you may find useful:
 
-* `outstanding_balance`: The outstanding balance for the order, calculated by taking the `total` and minusing `payment_total`.
+* `outstanding_balance`: The outstanding balance for the order, calculated by taking the `total` and subtracting `payment_total`.
 * `display_item_total`: A "pretty" version of `item_total`. If `item_total` was `10.0`, `display_item_total` would be `$10.00`.
 * `display_adjustment_total`: Same as above, except for `adjustment_total`.
 * `display_total`: Same as above, except for `total`.
 * `display_outstanding_balance`: Same as above, except for `outstanding_balance`.
 
-## <a id="state_machine"></a>The Order State Machine
+## The Order State Machine
 
 Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the <%= link_to "Checkout Flow API", :checkout %>.
 
@@ -57,9 +57,9 @@ The `complete` state can only be reached in one of two ways:
 
 Assuming that an order meets the criteria for the next state, you will be able to transition it to the next state by calling `next` on that object. If this returns `false`, then the order does *not* meet the criteria. To work out why it cannot transition, check the result of an `errors` method call.
 
-## <a id="line-items"></a>Line Items
+## Line Items
 
-Line items are used to keep track of items within the context of an order. These records provide a link between orders, and <%= link_to "Variants", 'products#variants' %>.
+Line items are used to keep track of items within the context of an order. These records provide a link between orders, and [Variants](products#variants).
 
 When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
 
