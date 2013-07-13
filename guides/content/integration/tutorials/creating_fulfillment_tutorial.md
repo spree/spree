@@ -329,9 +329,9 @@ class FulfillmentEndpoint < EndpointBase
   end
 end```
 
-###
+***
 To keep the code as maintainable and DRY as possible, we extracted out the address-assignment functionality into the `get_address` method. That means we also need to make sure our calls to the API's methods pass in the `@address` variable, and not the `address` variable.
-###
+***
 
 All that remains now is to test it! We can use the same `good_address.json` and `bad_address.json` files from the [preceding section of this tutorial](#make-the-api-call).
 

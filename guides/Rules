@@ -231,6 +231,11 @@ route '/integration/endpoints/*/' do
   location.chop + ".html"
 end
 
+route '/integration/customization/*/' do
+  location = item.identifier.gsub('/customization/', '/')
+  location.chop + ".html"
+end
+
 route '/release_notes/*/' do
   location = item.identifier.gsub('/release_notes/', '/release_notes/spree_')
   location.chop + ".html"
