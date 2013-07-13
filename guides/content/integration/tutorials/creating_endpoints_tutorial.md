@@ -11,7 +11,7 @@ For detailed information about Endpoints, check out the [endpoints](terminology#
 ***
 
 +++
-If you would like to download and/or fork this endpoint to try out for yourself, you can find it online at [https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial).
+The source code for the [Endpoint Creation Tutorial](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial) (along with all of the integration tutorials) is available on Github.
 +++
 
 ## Steps
@@ -91,10 +91,6 @@ Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}```
 
-+++
-The sample files for the preceding example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/hello_world).
-+++
-
 So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
 
 ---Gemfile---
@@ -118,10 +114,6 @@ end```
 ```ruby
 require './hello_endpoint'
 run HelloEndpoint```
-
-+++
-The sample files for this example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/hello_world_endpoint_base).
-+++
 
 Install the new gem and restart your application:
 
@@ -153,10 +145,6 @@ Connection: Keep-Alive
 
 ### Simple Notification Message
 
-+++
-The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/in_stock).
-+++
-
 The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing a simple Notification Message in response.
 
 ***
@@ -184,8 +172,7 @@ class HelloEndpoint < EndpointBase
       process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:warn' }
     end
   end
-end
-```
+end```
 
 !!!
 We've added a new route to our endpoint, so we'll need to remember to update our curl command with the new URL path.
@@ -259,10 +246,6 @@ $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:applicati
 The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets Without Awesomeness" somewhere else.
 
 ### Custom Message
-
-+++
-The sample files for the following example are available on [Github](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial/price_check).
-+++
 
 Now that we know the product is in stock, it would be helpful if we knew how much it cost should we buy it from our supplier. For that, we need to once again add some logic to our endpoint.
 
