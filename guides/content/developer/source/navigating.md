@@ -30,7 +30,7 @@ $ git clone git://github.com/spree/spree.git```
 ***
 If you are planning on contributing to Spree you should create a
 fork through GitHub and push fixes to clearly labeled branches (see the
-<%= link_to "Contributors Guide", 'contributing' %> for details.)
+[Contributors Guide](contributing) for details.)
 ***
 
 ### Browsing the Repository and/or Downloading the Source Code

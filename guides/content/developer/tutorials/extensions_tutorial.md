@@ -5,7 +5,7 @@ section: tutorial
 
 ## Introduction
 
-This tutorial continues where we left off in the <%= link_to "Getting Started", 'getting_started_tutorial' %> tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
+This tutorial continues where we left off in the [Getting Started](getting_started_tutorial) tutorial. Now that we have a basic Spree store up and running, let's spend some time customizing it. The easiest way to do this is by using Spree extensions.
 
 ### What is a Spree Extension?
 
@@ -267,4 +267,4 @@ Having a consistent branching naming scheme across Spree and its extensions will
 
 In this tutorial you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
 
-In the <%= link_to "next part", 'deface_overrides_tutorial' %> of this tutorial series, we will cover [Deface](https://github.com/spree/deface) overrides and look at ways to improve our current extension.
+In the [next part](deface_overrides_tutorial) of this tutorial series, we will cover [Deface](https://github.com/spree/deface) overrides and look at ways to improve our current extension.

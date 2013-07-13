@@ -8,9 +8,9 @@ section: core
 Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most
 complex areas within Spree, as there are a large number of moving parts to consider.
 
-The first of these moving parts is that promotions are based on <%= link_to "Activators", :activators %>, using the functionality provided by that area of Spree to know when to trigger the application of a promotion to an order. **Please read that guide first**.
+The first of these moving parts is that promotions are based on [Activators](activators), using the functionality provided by that area of Spree to know when to trigger the application of a promotion to an order. **Please read that guide first**.
 
-Promotions depend on activators to know when to activate. Promotions are only activatable for an order if the order is in any state except `complete`, `awaiting return`, or `returned`.
+Promotions depend on activators to know when to activate. Promotions can only be applied for an order if the order is in any state except `complete`, `awaiting return`, or `returned`.
 
 Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable.
 
@@ -32,7 +32,7 @@ When a `CreateAdjustment` action is undertaken, an adjustment is automatically a
 
 Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Adjustment#eligible_for_originator?` method. This calls the `Promotion#eligible?` method, which uses `Promotion#rules_are_eligible?` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
 
-An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the <%= link_to "Calculators guide", :calculators %>.
+An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
 
 ### Adding a Line Item
 

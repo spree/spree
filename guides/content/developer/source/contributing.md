@@ -199,10 +199,10 @@ These are some guidelines and please use your best judgment in using them.
 
 #### Including a Test
 
-Ideally your pull request will also include a test that verifies a bug (or the absence of the new feature) before your fix and also verifies proper functionality when you are finished.  Please read the <%= link_to "testing guide",'testing' %> for more information on writing and running your tests.
+Ideally your pull request will also include a test that verifies a bug (or the absence of the new feature) before your fix and also verifies proper functionality when you are finished. Please read the [Testing Guide](testing) for more information on writing and running your tests.
 
 ***
-Pull requests with tests are given top priority.  Failure to include a test will likely delay acceptance of your patch.
+Pull requests with tests are given top priority. Failure to include a test will likely delay acceptance of your patch.
 ***
 
 #### Creating the Pull Request

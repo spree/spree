@@ -130,13 +130,8 @@ the environment:
 -   **Unicorn Workers** - This value is only required for servers with
     the **Application Server** role, and controls how many worker
     processes the unicorn master process will fork on startup. Setting
-    this value correctly is important, see the <%= link_to "Overview & Deployment
-    Options", '' %> Guide for details on memory
+    this value correctly is important, see the [Deployment Options Guide](deployment_options) for details on memory
     requirements / workers.
-
-$$$
-Correct link above
-$$$
 
 -   **Roles** - Select the required roles for the server, see the
     **Understanding Server Roles** section above for more details.
@@ -161,7 +156,6 @@ It's important to be aware that while all the **Initialize
 Configurations** commands appear similar they are server specific so be
 sure to run the correct command on each server.
 ***
-
 
 !!!
 The **Initialize Configuration** command should only be run on
@@ -200,10 +194,7 @@ If you choose to deploy a "Sample Application" then you should be able
 to browser to your Application Servers IP address to view the store
 running.
 
-If you are deploying your own application, please refer to the
-<%= link_to "Deploying your application on Ubuntu", 'ubuntu' %> or the
-<%= link_to "Deploying your application on Heroku", 'heroku' %> Guide
-for more.
+If you are deploying your own application, please refer to the [Deploying your application on Ubuntu](ubuntu) or the [Deploying your application on Heroku](heroku) Guides for more.
 
 ## Application Process
 
@@ -406,7 +397,7 @@ software stack:
     among all deployed versions of an application (like assets,
     configuration files, etc).
 
--   `/data/spree/shared/config/` - conatins several application
+-   `/data/spree/shared/config/` - contains several application
     specific configuration files including:
     -   `database.yml` - Automatically generated configuration file
         for Rails / ActiveRecord, contains all the details required to
@@ -422,6 +413,5 @@ software stack:
 
 -   `/etc/ssl` - You can upload your SSL certificate files into this
     directory and the will be automatically used by Puppet in your
-    application Nginx configuration file. See the <%= link_to "Requesting and
-    Configuring SSL Guide", 'requesting_and_configuring_ssl' %> for more
-    details.
+    application Nginx configuration file. See the [Requesting and
+    Configuring SSL Guide](requesting_and_configuring_ssl) for more details.

@@ -30,7 +30,7 @@ A synchronous response indicates that the message has been completed / processed
 
 The synchronous response must contain at minimum the `message_id` of the message that was processed, and may additionally contain any / all of the following optional fields:
 
-* _messages_ - An array of new messages that should be accepted onto the internal queue of the Integrator as a result of the message being processed, for example the Mandrill endpoint consumes the _new:order_ message and generates an _order:confirmation:sent_ message as a result. For details on the specific fields required please review <%= link_to "Pushing Messages",'push' %>.
+* _messages_ - An array of new messages that should be accepted onto the internal queue of the Integrator as a result of the message being processed, for example the Mandrill endpoint consumes the _new:order_ message and generates an _order:confirmation:sent_ message as a result. For details on the specific fields required please review [Pushing Messages](push).
 * _events_ - An array of new events which should be logged as a result of the message being processed.
 * _parameters_ - Configuration variables to be persisted to the store which can be included in the payload of future messages.
 

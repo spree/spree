@@ -1,6 +1,6 @@
 ---
 title: Migrating to Spree
-section: advanced 
+section: advanced
 ---
 
 This section explains how to convert existing sites or data sets for
@@ -93,7 +93,7 @@ For example, your spreadsheet could have the following columns:
 
 -    product name
 -    master price
--    master sku 
+-    master sku
 -    taxon membership
 -    shipping category
 -    tax category
@@ -144,7 +144,7 @@ to use here is to put ruby files in *site/db/default/*. These files are
 processed when *rake db:seed* is called, and will be processed in the order of the
 migration timestamps.
 
-Your ruby script can use one of the XLS or CSV format reading libraries 
+Your ruby script can use one of the XLS or CSV format reading libraries
 to read an external file, or if the data set is not too big, you could
 embed the CSV text in the script itself, eg. using the **END** convention.
 
@@ -270,7 +270,7 @@ all of the taxon's ancestors.\
 However, you can assign products to as many taxons as you want,
 including ancestor taxons. This feature is more useful with sibling taxons, e.g.
 assigning a red and green shirt to both 'red clothes' and 'green
-clothes'. 
+clothes'.
 
 ***
 Yes, this also means that child taxons don't have to be distinct, ie
@@ -469,7 +469,7 @@ used it to build an extension for enhanced product option selection.
 #### Product and Variant images
 
 Spree uses [paperclip](https://github.com/thoughtbot/paperclip) to
-manage image attachments and their various size formats. (See the <%= link_to "Customization Guide", 'logic', 'product-images' %> for info on altering the image formats.)
+manage image attachments and their various size formats. (See the [Customization Guide](logic#product-images) for info on altering the image formats.)
 You can attach images to products and to variants - the mechanism is
 polymorphic. Given some local image file, the following will associate the image and
 create all of the size formats.
