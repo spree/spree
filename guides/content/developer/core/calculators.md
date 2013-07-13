@@ -16,7 +16,7 @@ def compute(object=nil)
   # Returns the value after performing the required calculation
 end```
 
-Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the <%= link_to "`Spree::Core::CalculatedAdjustment`", "#calculated-adjustments" %> module to provide an easy way to calculate adjustments for their objects.
+Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the [`Spree::Core::CalculatedAdjustment`](#calculated-adjustments) module to provide an easy way to calculate adjustments for their objects.
 
 ## Available Calculators
 
@@ -24,7 +24,7 @@ The following are descriptions of the currently available calculators in Spree. 
 
 ### Default Tax
 
-For information about this calculator, please read the <%= link_to "Taxation", :taxation %> guide.
+For information about this calculator, please read the [Taxation](taxation) guide.
 
 ### Flat Percent Per Item Total
 

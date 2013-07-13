@@ -141,7 +141,7 @@ If the order doesn't have an assigned payment method, make the following request
 
     PUT /api/checkouts/R335381310?order[payments_attributes][][payment_method_id]=1
 
-For more information on payments, view the <%= link_to "payments documentation",'payments' %>.
+For more information on payments, view the [payments documentation](payments).
 
 ### Response
 

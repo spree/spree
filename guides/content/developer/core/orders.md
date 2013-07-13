@@ -19,8 +19,11 @@ Orders have the following attributes:
 * `completed_at`: The timestamp of when the order was completed.
 * `bill_address_id`: The ID for the related `Address` object with billing address information.
 * `ship_address_id`: The ID for the related `Address` object with shipping address information.
-* `shipment_state`: The current shipment state of the order. For possible states, please see the Shipping guide. TODO: Find where shipment_states are described and link to them.
-* `payment_state`: The current payment state of the order. For possible states, please see the <%= link_to "Payments guide", :payments %>.
+* `shipment_state`: The current shipment state of the order. For possible states, please see the Shipping guide.
+$$$
+Find where shipment_states are described and link to them.
+$$$
+* `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](payments).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
 * `currency`: The currency for this order. Determined by the `Spree::Config[:currency]` value that was set at the time of order.
 * `last_ip_address`: The last IP address used to update this order in the frontend.
@@ -35,7 +38,7 @@ Some methods you may find useful:
 
 ## The Order State Machine
 
-Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the <%= link_to "Checkout Flow API", :checkout %>.
+Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the [Checkout Flow API](checkout).
 
 The default states are as follows:
 
@@ -75,17 +78,17 @@ An order can link to two `Address` objects. The shipping address indicates where
 
 The billing address indicates where the user who's paying for the order is located. This can alter the tax rate for the order, which in turn can change how much the final order total can be.
 
-For more information about addresses, please read the <%= link_to "Addresses", :addresses %> guide.
+For more information about addresses, please read the [Addresses](addresses) guide.
 
 ## Adjustments
 
-Adjustments are used to affect an order's final cost, either by decreasing it (<%= link_to "Promotions", :promotions %>) or by increasing it (<%= link_to "Shipping", :shipping %>, <%= link_to "Taxes", :taxation %>).
+Adjustments are used to affect an order's final cost, either by decreasing it ([Promotions](promotions)) or by increasing it ([Shipping](shipments), [Taxes](taxation)).
 
-For more information about adjustments, please see the <%= link_to "Adjustments", :adjustments %> guide.
+For more information about adjustments, please see the [Adjustments](adjustments) guide.
 
 ## Payments
 
-Payment records are used to track payment information about an order. For more information, please read the <%= link_to "Payments", :payments %> guide.
+Payment records are used to track payment information about an order. For more information, please read the [Payments](payments) guide.
 
 ## Return Authorizations
 
