@@ -76,6 +76,11 @@ module Spree
                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                                :country_id => Country.first.id, :state_id => State.first.id} }
     let!(:payment_method) { create(:payment_method) }
+    let(:current_api_user) do
+      user = Spree.user_class.new(:email => "spree@example.com")
+      user.generate_spree_api_key!
+      user
+    end
 
     it "can create an order" do
       variant = create(:variant)
@@ -87,6 +92,9 @@ module Spree
       order.line_items.first.quantity.should == 5
       json_response["token"].should_not be_blank
       json_response["state"].should == "cart"
+      order.user.should == current_api_user
+      order.email.should == current_api_user.email
+      json_response["user_id"].should == current_api_user.id
     end
 
     it "can create an order with parameters" do
@@ -102,7 +110,7 @@ module Spree
       response.status.should == 201
       order = Order.last
 
-      order.email.should eq 'test@spreecommerce.com'
+      order.email.should == current_api_user.email
       order.ship_address.address1.should eq 'Av Paulista'
       order.bill_address.address1.should eq 'Av Paulista'
       order.line_items.count.should == 1

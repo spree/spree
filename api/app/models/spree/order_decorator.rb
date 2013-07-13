@@ -6,10 +6,8 @@ Spree::Order.class_eval do
     ensure_country_id_from_api params[:ship_address_attributes]
     ensure_state_id_from_api params[:ship_address_attributes]
 
-    ensure_country_id_from_api params[:bill_address_attributes]
-    ensure_state_id_from_api params[:bill_address_attributes]
-
     order = create!(params)
+    order.associate_user!(user)
 
     order.create_shipments_from_api(shipments)
     order.create_line_items_from_api(line_items)
