@@ -277,9 +277,7 @@ class HelloEndpoint < EndpointBase
   end
 
   post '/product_existence_check' do
-    get_product_names
-
-    if @product_names.include?(@message[:payload]['product']['name'])
+    if product_names.include?(passed_in_name)
       process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:info' }
     else
       process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:warn' }
@@ -287,12 +285,8 @@ class HelloEndpoint < EndpointBase
   end
 
   post '/query_price' do
-    passed_in_name = @message[:payload]['product']['name']
-    get_product_names
-
-    if @product_names.include?(passed_in_name)
-      ## Find the product whose name matches what we're passing.
-      product = JSON.parse(File.read("product_catalog.json"))['products'].find{ |x| x['name'] == passed_in_name }
+    ## Find the product whose name matches what we're passing.
+    if product = products.find { |product| product['name'] == passed_in_name }
       process_result 200, { 'message_id' => @message[:message_id], 'message' => 'product:in_stock',
         'payload' => { 'product' => { 'name' => product['name'], 'price' => product['price'] }}}
     else
@@ -301,12 +295,20 @@ class HelloEndpoint < EndpointBase
   end
 
 private
-  def get_product_names
-    @product_names = JSON.parse(File.read("product_catalog.json"))['products'].map{|p| p["name"]}
+  def product_names
+    @product_names ||= products.map { |product| product["name"] }
+  end
+
+  def products
+    @products ||= JSON.parse(File.read("product_catalog.json"))['products']
+  end
+
+  def passed_in_name
+    @passed_in_name ||= @message[:payload]['product']['name']
   end
 end```
 
-As you can see, some of the code from our previous example was extracted out to reuse with this new request scenario. We've also persisted the passed-in product name in a variable, to make it easier to reference in our conditional clause.
+As you can see, some of the code from our previous example was extracted out to reuse with this new request scenario.
 
 If the product exists in the catalog, our endpoint returns a message with a success code (200), the `message_id` of our passed-in JSON, a `message` of `product:in_stock` and the name and price of the matching product in the catalog.
 
@@ -319,6 +321,6 @@ $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/j
 If the product doesn't exist in the catalog, our endpoint still returns a message with a success code and our referenced `message_id`, but the `message` key's value is now `product:not_in_stock`, and of course, there is no product in the payload.
 
 ```bash
-$ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+$ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
 
 {"message_id":"518726r84910000004","message":"product:not_in_stock"}```
