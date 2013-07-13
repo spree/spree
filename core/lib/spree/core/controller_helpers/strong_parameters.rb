@@ -3,7 +3,7 @@ module Spree
     module ControllerHelpers
       module StrongParameters
         def permitted_order_attributes
-          [:line_items_attributes, :coupon_code]
+          [:coupon_code, :line_items_attributes => [:quantity, :id]]
         end
 
         def permitted_address_attributes
