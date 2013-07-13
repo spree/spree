@@ -43,6 +43,8 @@ describe "Cart" do
       click_link "delete_line_item_1"
     end
     page.should_not have_content("Line items quantity must be an integer")
+    page.should_not have_content("RoR Mug")
+    page.should have_content("Your cart is empty")
   end
 
   # regression for #2276
