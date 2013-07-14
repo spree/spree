@@ -200,4 +200,20 @@ describe "Visiting Products" do
     page.should have_content "This product is not available in the selected currency."
     page.should_not have_content "add-to-cart-button"
   end  
+
+  context "a product with variants" do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:option_value) { create(:option_value) }
+    let!(:variant) { product.variants.create!(:price => 5.59) }
+
+    it "displays price of first variant listed", js: true do
+      product.option_types << option_value.option_type
+      variant.option_values << option_value
+
+      click_link product.name
+      within("#product-price") do
+        expect(page).to have_content variant.price
+      end
+    end
+  end
 end

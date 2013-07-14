@@ -35,8 +35,13 @@ update_variant_price = (variant) ->
   ($ '.price.selling').text(variant_price) if variant_price
 
 $ ->
+  radios = ($ '#product-variants input[type="radio"]')
   add_image_handlers()
-  show_variant_images ($ '#product-variants input[type="radio"]').eq(0).attr('value') if ($ '#product-variants input[type="radio"]').length > 0
+
+  if radios.length > 0
+    show_variant_images radios.eq(0).attr('value') 
+    update_variant_price radios.first()
+
   ($ '#product-variants input[type="radio"]').click (event) ->
     show_variant_images @value
     update_variant_price ($ this)
