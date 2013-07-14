@@ -64,6 +64,9 @@ module Spree
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
       json_response["state"].should == "cart"
+      json_response["user_id"].should == current_api_user.id
+      order.user.should == current_api_user
+      #order.email == current_api_user.email
     end
 
     it "can create an order without any parameters" do
