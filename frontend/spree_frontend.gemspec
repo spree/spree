@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'select2-rails', '3.2.1'
 
   s.add_dependency 'rails', '~> 3.2.13'
+  s.add_dependency 'canonical-rails'
   s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'stringex', '~> 1.5.1'
 
