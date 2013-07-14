@@ -27,7 +27,12 @@
         
         <div id="product-price">
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
-          <div><span class="price selling" itemprop="price"><%= display_price(@product) %></span></div>
+          <div>
+            <span class="price selling" itemprop="price">
+              <%= display_price(@product.master) %>
+            </span>
+            <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
+          </div>
         </div>
 
         <div class="add-to-cart">

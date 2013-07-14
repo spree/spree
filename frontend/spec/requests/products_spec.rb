@@ -74,17 +74,28 @@ describe "Visiting Products" do
 
   context "a product with variants" do
     let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:option_value) { create(:option_value) }
+    let!(:variant) { product.variants.create!(:price => 5.59) }
 
     before do
       # Need to have two images to trigger the error
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
       product.images.create!(:attachment => image)
       product.images.create!(:attachment => image)
-      product.variants.create!(:price => 9.99)
     end
 
     it "should be displayed" do
-      lambda { click_link product.name }.should_not raise_error
+      expect { click_link product.name }.to_not raise_error
+    end
+
+    it "displays price of first variant listed", js: true do
+      product.option_types << option_value.option_type
+      variant.option_values << option_value
+
+      click_link product.name
+      within("#product-price") do
+        expect(page).to have_content variant.price
+      end
     end
   end
 
