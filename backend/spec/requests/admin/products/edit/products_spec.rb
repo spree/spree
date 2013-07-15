@@ -49,7 +49,18 @@ describe 'Product Details' do
       fill_in "product_permalink", :with => 'another-random-permalink-value'
       click_button "Update"
       page.should have_content("successfully updated!")
+    end
+  end
 
+  # Regression test for #3385
+  context "deleting a product", :js => true do
+    it "is still able to find the master variant" do
+      create(:product)
+
+      visit spree.admin_path
+      click_link 'Products'
+      within_row(1) { click_icon :trash }
+      page.driver.browser.switch_to.alert.accept
     end
   end
 end

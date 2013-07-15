@@ -198,6 +198,13 @@ module Spree
       end
     end
 
+    # Master variant may be deleted (i.e. when the product is deleted)
+    # which would make AR's default finder return nil.
+    # This is a stopgap for that little problem.
+    def master
+      super || variants_including_master.with_deleted.where(:is_master => true).first
+    end
+
     private
 
       # Builds variants from a hash of option types & values
