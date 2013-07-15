@@ -1,6 +1,6 @@
 ---
 title: Security
-section: advanced 
+section: advanced
 ---
 
 ## Overview
@@ -113,6 +113,69 @@ class AbilityDecorator
 end
 
 Ability.register_ability(AbilityDecorator)```
+
+### Custom Roles in the Admin Namespace.
+
+If you plan on allowing a custom role you create to access the Spree administrative
+panels, there are a couple of considerations to keep in mind.
+
+Spree authorizes all of its administrative panels with two CanCan authorization
+commands: `:admin` and the name of the action being authorized. If you want a
+custom role to be able to access a particular admin panel, you have to specify
+that your role *can* access both :admin and the name of the action on the relevant
+resource. For example, if you want your Sales Representatives to be able to access the Admin
+Orders panel without giving them access to anything else in the Admin namespace,
+you would have to specify the following in an `AbilityDecorator`:
+
+```ruby
+class AbilityDecorator
+  include CanCan::Ability
+  def initialize(user)
+    if user.respond_to?(:has_spree_role?) && user.has_spree_role?('sales_rep')
+      can [:admin, :index, :show], Spree::Order
+    end
+  end
+end
+
+Ability.register_ability(AbilityDecorator)```
+
+This is required by the following code in Spree's `Admin::BaseController` which
+is the controller every controller in the Admin namespace inherits from.
+
+```ruby
+def authorize_admin
+  if respond_to?(:model_class, true) && model_class
+    record = model_class
+  else
+    record = Object
+  end
+  authorize! :admin, record
+  authorize! action, record
+end```
+
+If you need to create custom controllers for your own models under the Admin
+namespace, you will need to manually specify the model your controller manipulates
+by defining a `model_class` method in that controller.
+
+```ruby
+module Spree
+  module Admin
+    class WidgetsController < BaseController
+      def index
+        # Relevant code in here
+      end
+
+    private
+      def model_class
+        Widget
+      end
+    end
+  end
+end```
+
+This is necessary because CanCan cannot, by default, detect the model used to
+authorize controllers under the Admin namespace. By specifying `model_class`, Spree
+knows what to tell CanCan to use to authorize your controller.
 
 ### Tokenized Permissions
 
