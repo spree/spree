@@ -257,7 +257,7 @@ describe Spree::Variant do
     end
 
     it "orders options correctly" do
-      variant.option_values.should_receive(:joins).with(:option_type).and_return(scope = stub)
+      variant.option_values.should_receive(:joins).with(:option_type).and_return(scope = double)
       scope.should_receive(:order).with('spree_option_types.position asc').and_return(variant.option_values)
       variant.options_text
     end

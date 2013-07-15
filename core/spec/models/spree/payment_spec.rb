@@ -34,7 +34,7 @@ describe Spree::Payment do
                              :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})
   end
 
-  let(:failed_response) { mock('gateway_response', :success? => false) }
+  let(:failed_response) { double('gateway_response', :success? => false) }
 
   before(:each) do
     # So it doesn't create log entries every time a processing method is called

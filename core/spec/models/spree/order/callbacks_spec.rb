@@ -19,7 +19,7 @@ describe Spree::Order do
 
   context "#save" do
     context "when associated with a registered user" do
-      let(:user) { stub(:user, :email => "test@example.com") }
+      let(:user) { double(:user, :email => "test@example.com") }
 
       before do
         order.stub :user => user

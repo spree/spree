@@ -94,10 +94,9 @@ module Spree
       end
     end
 
-
     it "state change" do
       order.shipment_state = 'shipped'
-      state_changes = stub
+      state_changes = double
       order.stub :state_changes => state_changes
       state_changes.should_receive(:create).with({
         :previous_state => nil,

@@ -84,7 +84,7 @@ describe Spree::ReturnAuthorization do
 
     it "should add credit for specified amount" do
       return_authorization.amount = 20
-      mock_adjustment = mock
+      mock_adjustment = double
       mock_adjustment.should_receive(:source=).with(return_authorization)
       mock_adjustment.should_receive(:adjustable=).with(order)
       mock_adjustment.should_receive(:save)

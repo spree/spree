@@ -117,7 +117,7 @@ describe Spree::Order do
       shipment.stub(:cancel!)
       order.stub :has_available_shipment
       order.stub :restock_items!
-      mail_message = mock "Mail::Message"
+      mail_message = double "Mail::Message"
       order_id = nil
       Spree::OrderMailer.should_receive(:cancel_email) { |*args|
         order_id = args[0]
@@ -132,7 +132,7 @@ describe Spree::Order do
       before do
         shipment.stub(:ensure_correct_adjustment)
         shipment.stub(:update_order)
-        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = double)
         mail_message.stub :deliver
 
         order.stub :has_available_shipment
@@ -143,7 +143,7 @@ describe Spree::Order do
       before do
         # TODO: This is ugly :(
         # Stubs methods that cause unwanted side effects in this test
-        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = stub)
+        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = double)
         mail_message.stub :deliver
         order.stub :has_available_shipment
         order.stub :restock_items!
