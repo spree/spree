@@ -4,7 +4,7 @@ describe Spree::Order do
 
   context "clear_adjustments" do
     it "should destroy all previous tax adjustments" do
-      adjustment = stub
+      adjustment = double
       adjustment.should_receive :destroy
 
       order.stub_chain :adjustments, :tax => [adjustment]
@@ -12,7 +12,7 @@ describe Spree::Order do
     end
 
     it "should destroy all price adjustments" do
-      adjustment = stub
+      adjustment = double
       adjustment.should_receive :destroy
 
       order.stub :price_adjustments => [adjustment]

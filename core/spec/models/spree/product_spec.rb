@@ -421,7 +421,7 @@ describe Spree::Product do
 
     it 'should return master variants quantity' do
       product = build(:product)
-      product.stub stock_items: [mock(Spree::StockItem, count_on_hand: 5)]
+      product.stub stock_items: [double(Spree::StockItem, count_on_hand: 5)]
       product.total_on_hand.should eql(5)
     end
   end

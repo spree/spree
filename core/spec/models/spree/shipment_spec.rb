@@ -78,7 +78,7 @@ describe Spree::Shipment do
     end
 
     context 'refresh_rates' do
-      let(:mock_estimator) { mock('estimator', shipping_rates: shipping_rates) }
+      let(:mock_estimator) { double('estimator', shipping_rates: shipping_rates) }
 
       it 'should request new rates, and maintain shipping_method selection' do
         Spree::Stock::Estimator.should_receive(:new).with(shipment.order).and_return(mock_estimator)
@@ -296,7 +296,7 @@ describe Spree::Shipment do
     end
 
     it "should send a shipment email" do
-      mail_message = mock 'Mail::Message'
+      mail_message = double 'Mail::Message'
       shipment_id = nil
       Spree::ShipmentMailer.should_receive(:shipped_email) { |*args|
         shipment_id = args[0]

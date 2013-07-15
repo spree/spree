@@ -69,7 +69,7 @@ describe Spree::ReturnAuthorization do
   end
 
   context "receive!" do
-    let(:inventory_unit) { order.shipment.inventory_units.first }
+    let(:inventory_unit) { order.shipments.first.inventory_units.first }
 
     before  do
       return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
@@ -84,7 +84,7 @@ describe Spree::ReturnAuthorization do
 
     it "should add credit for specified amount" do
       return_authorization.amount = 20
-      mock_adjustment = mock
+      mock_adjustment = double
       mock_adjustment.should_receive(:source=).with(return_authorization)
       mock_adjustment.should_receive(:adjustable=).with(order)
       mock_adjustment.should_receive(:save)

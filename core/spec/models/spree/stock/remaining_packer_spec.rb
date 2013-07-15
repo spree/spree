@@ -5,7 +5,7 @@ module Spree
     describe RemainingPacker do
       let(:order) { mock_model(Order) }
       let(:stock_location) { mock_model(StockLocation) }
-      let(:order_counter) { mock(OrderCounter, :remaining => 4) }
+      let(:order_counter) { double(OrderCounter, :remaining => 4) }
 
       subject { RemainingPacker.new(stock_location, order, order_counter) }
 

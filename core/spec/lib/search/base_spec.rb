@@ -53,7 +53,7 @@ describe Spree::Core::Search::Base do
   end
 
   it "accepts a current user" do
-    user = stub
+    user = double
     searcher = Spree::Core::Search::Base.new({})
     searcher.current_user = user
     searcher.current_user.should eql(user)

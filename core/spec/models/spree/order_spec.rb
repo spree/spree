@@ -177,7 +177,7 @@ describe Spree::Order do
     end
 
     it "should send an order confirmation email" do
-      mail_message = mock "Mail::Message"
+      mail_message = double "Mail::Message"
       Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_return mail_message
       mail_message.should_receive :deliver
       order.finalize!
