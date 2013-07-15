@@ -4,9 +4,11 @@ title: Order States
 
 ## Introduction
 
-A new order is initiated when a customer places a product in their shopping cart. The order then passes through several states before it is considered **Complete**. The order states are listed below. An order cannot continue to the next state until the previous state has been succesfully completed. For example, an order cannot proceed to the **Delivery** state until the customer has provided their billing and shipping address for the order.
+A new order is initiated when a customer places a product in their shopping cart. The order then passes through several states before it is considered **Complete**. The order states are listed below. An order cannot continue to the next state until the previous state has been succesfully completed. For example, an order cannot proceed to the **Delivery** state until the customer has provided their billing and shipping address for the order during the **Address** step.
 
 ## Order States
+
+The states that an order passes through are as follows:
 
 * **Cart** - One or more products have been added to the Shopping Cart
 * **Address** - The store is ready to receive the billing and shipping address information for the order. 
@@ -16,5 +18,5 @@ A new order is initiated when a customer places a product in their shopping cart
 * **Complete** - The order has successfully completed all of the previous states and is now being processed. 
 
 ***
-The states described above are the default settings for Spree stores. You can customize the order states to suit your needs utilizing our API. This includes adding, removing or changing the order of certain states. Customization details are provided in the [Checkout Flow API Guide](developer/checkout.html#checkout-customization). 
+The states described above are the default settings for a Spree store. You can customize the order states to suit your needs utilizing our API. This includes adding, removing, or changing the order of certain states. Customization details are provided in the [Checkout Flow API Guide](developer/checkout.html#checkout-customization). 
 ***
