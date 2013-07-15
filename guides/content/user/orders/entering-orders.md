@@ -23,7 +23,7 @@ Type the name of the product you would like to add to the order in the search fi
 
 ## Customer Details
 
-Enter the customer's billing address and shipping address for the order. You can click the “use billing address” option to use the same address for both. If the order is for an existing customer, you can search for the customer in the **Customer Search** field. $$$Customer data isn't being returned for existing customers in the Sandbox$$$ If the order is for a new customer, then enter that person's billing and shipping address in the fields provided. Click the **Continue** button once complete.
+Enter the customer's billing address and shipping address for the order. You can click the **USE BILLING ADDRESS** option to use the same address for both. If the order is for an existing customer, you can search for the customer in the **Customer Search** field. $$$Customer data isn't being returned for existing customers in the Sandbox$$$ If the order is for a new customer, then enter that person's billing and shipping address in the fields provided. Click the **Continue** button once complete.
 
 
 ![Enter Customer Details](/images/user/order_customer_details.jpg)
