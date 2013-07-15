@@ -59,8 +59,8 @@ describe Spree::Core::CalculatedAdjustments do
 
   context "#update_adjustment" do
     it "should update the adjustment using its calculator (and the specified source)" do
-      adjustment = mock(:adjustment).as_null_object
-      calculable = mock :calculable
+      adjustment = double(:adjustment).as_null_object
+      calculable = double :calculable
       adjustment.should_receive(:update_attribute_without_callbacks).with(:amount, 10)
       tax_rate.update_adjustment(adjustment, calculable)
     end

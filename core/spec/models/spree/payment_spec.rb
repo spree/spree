@@ -28,7 +28,7 @@ describe Spree::Payment do
   let(:amount_in_cents) { payment.amount.to_f * 100 }
 
   let!(:success_response) do
-    mock('success_response', :success? => true,
+    double('success_response', :success? => true,
                              :authorization => '123',
                              :avs_result => { 'code' => 'avs-code' },
                              :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})

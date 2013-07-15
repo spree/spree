@@ -19,8 +19,8 @@ describe Spree::CreditCard do
     @order = create(:order)
     @payment = Spree::Payment.create({ amount: 100, order: @order }, without_protection: true)
 
-    @success_response = mock('gateway_response', success?: true, authorization: '123', avs_result: { 'code' => 'avs-code' })
-    @fail_response = mock('gateway_response', success?: false)
+    @success_response = double('gateway_response', success?: true, authorization: '123', avs_result: { 'code' => 'avs-code' })
+    @fail_response = double('gateway_response', success?: false)
 
     @payment_gateway = mock_model(Spree::PaymentMethod,
       payment_profiles_supported?: true,
