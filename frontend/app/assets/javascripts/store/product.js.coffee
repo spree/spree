@@ -35,8 +35,14 @@ Spree.updateVariantPrice = (variant) ->
   ($ '.price.selling').text(variantPrice) if variantPrice
 
 $ ->
+  radios = ($ '#product-variants input[type="radio"]')
+
+  if radios.length > 0
+    Spree.showVariantImages ($ '#product-variants input[type="radio"]').eq(0).attr('value')
+    Spree.updateVariantPrice radios.first()
+
   Spree.addImageHandlers()
-  Spree.showVariantImages ($ '#product-variants input[type="radio"]').eq(0).attr('value') if ($ '#product-variants input[type="radio"]').length > 0
-  ($ '#product-variants input[type="radio"]').click (event) ->
+
+  radios.click (event) ->
     Spree.showVariantImages @value
     Spree.updateVariantPrice ($ this)
