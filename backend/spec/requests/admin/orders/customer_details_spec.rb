@@ -88,7 +88,7 @@ describe "Customer Details" do
       fill_in "order_ship_address_attributes_zipcode",    :with => "20170"
       fill_in "order_ship_address_attributes_state_name", :with => "Alabama"
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
-      lambda { click_button "Continue" }.should_not raise_error
+      lambda { click_button "Update" }.should_not raise_error
     end
   end
 
