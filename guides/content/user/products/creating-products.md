@@ -62,13 +62,13 @@ When you click Update, not only is the product photo uploaded, it is automatical
 
 ## Understanding Variants
 
-Suppose that in your store, you sell drink tumblers. All are from the same manufacturer and have the same basic product specifications (materials used, machine washability rating, etc.), but your inventory includes several varieties:
+Suppose that in your store, you sell drink tumblers. All of the tumblers are made by the same manufacturer and have the same basic product specifications (materials used, machine washability rating, etc.), but your inventory includes several options:
 
 * **Size** - You carry both Medium and Large tumblers
-* **Decorative Wrap** - Your tumblers come with the option of several kinds of decorative plastic wraps on the outside. Customers can choose from Stars, Owls, Pink Paisley, Purple Paisley, or Skulls.
-* **Lid Color** - Every quality tumbler needs a quality lid. Yours are available with an assortment of lids to match the decorative wrap - the Star tumblers have Blue lids, the Owls have Orange lids, the Pink Paisley have Pink lids, the Purple Paisley have White lids, and the Skulls can be purchased with White *or* Black lids.
+* **Decorative Wrap** - Your tumblers come with the option of several kinds of decorative plastic wraps: Stars, Owls, Pink Paisley, Purple Paisley, or Skulls.
+* **Lid Color** - The tumblers also come with with an assortment of lids to match the decorative wrap - the Star tumblers have Blue lids, the Owls have Orange lids, the Pink Paisley have Pink lids, the Purple Paisley have White lids, and the Skulls can be purchased with White *or* Black lids.
 
-Given this inventory, you need to have a Drink Tumbler *Product*, and twelve *Variants*:
+Given this inventory, you will need to create a Drink Tumbler *Product*, with three *Options*, corresponding *Option Values*, and twelve *Variants*:
 
 Size  | Wrap           | Lid Color
 ------|----------------|----------
@@ -85,7 +85,7 @@ Large | Skulls         | Black
 Small | Skulls         | White
 Small | Skulls         | Black
 
-As you can see, we need to establish three different *Option Types* - Size, Wrap, and Lid Color - with appropriate Option Values for each.
+The *Option Types* you would create for this inventory are - Size, Wrap, and Lid Color - with the *Option Values* below.
 
 Option Type | Option Values
 ------------|--------------
@@ -95,7 +95,7 @@ Lid Color   | Blue, Orange, Pink, White, Black
 
 ### Creating Option Types and Option Values
 
-You have to establish your Option Types and Option Values before you can set up your Variants. Click Products > Option Types > New Option Type.
+You must establish your Option Types and Option Values before you can set up your Variants. Option Types and Option Values are created at the store level, not the product level. This means that you only have to create each Option Type and Option Value once. Once an Option Type and Option Value is created it can be associated with any product in your store. To create an Option Type and Option Value click Products > Option Types > New Option Type.
 
 ![New Option Type](/images/user/new_option_type.jpg)
 
@@ -111,13 +111,13 @@ When the screen refreshes, you see that Spree has helpfully provided you with a 
 
 ![New Option Value](/images/user/new_option_value.jpg)
 
-Since we know we're going to need two Option Values (Large and Small) for the Size Option Value, go ahead and click the Add Option Value button. This gives you two blank rows to work with.
+Since we know we're going to need two Option Values (Large and Small) for the Size Option Value, go ahead and click the **Add Option Value** button. This gives you two blank rows to work with.
 
 **Name** is easy - "Large" for the first, and "Small" for the second. Let's input "24-ounce cup" in the **Display** field for the Large Option Value and "16-ounce cup" for the Small Option Value.
 
 ![Completed Option Values](/images/user/large_small_option_values.jpg)
 
-When you click Update, Spree saves the two new Option Values, associates them with the Size Option Type, and takes you to the list of all Option Types.
+When you click **Update**, Spree saves the two new Option Values, associates them with the Size Option Type, and takes you to the list of all Option Types.
 
 Click the New Option Type button and similarly input the other two Option Types (along with their Option Values) we need for our tumblers.
 
@@ -145,7 +145,11 @@ As you can see, you also have the option to enter values for this particular Var
 
 ## Product Properties
 
-Depending on the nature of your store and the products you sell, you may want to add additional properties to your store's products. Let's suppose, for example, that you specialize in products from the [Fair World Project](http://fairworldproject.org/). You may want to add a property to all of the products to record the country of origin. The Spree application makes this very easy to do:
+Depending on the nature of your store and the products you sell, you may want to add **Properties** to your product descriptions. Properties are typically used to provide more information about a product to help the customer make a better purchase decision. Here is an example of how a product's properties would display on the customer facing version of a store:
+
+![New Product Variant](/images/user/properties_example.jpg)
+
+Follow these steps to add a product property. In this example, we are going to add a property called **Country of Origin** with a value of **USA**.
 
 1. Click the **Products** tab in your Admin Dashboard.
 2. Click **Properties**.
@@ -155,10 +159,10 @@ Depending on the nature of your store and the products you sell, you may want to
 6. Navigate to the edit page for one of the products in your store.
 7. Click the **Product Properties** link.
 8. Click in the empty text box field under **Property** and start typing the name of the property you want to use: "Origin". After you type a few letters, the property name will display, and you can click it to select it.
-9. Enter a country name for the **Value** field, such as "Honduras".
+9. Enter a country name for the **Value** field, such as "USA".
 10. Click **Update**.
 
-Now, when you navigate to the product's page in your store, you will see the new Origin property in the "Properties" list.
+Now, when you navigate to the product's page in your store, you will see the new Country of Origin property in the "Properties" list.
 
 ![Properties List](/images/user/properties_list.jpg)
 
