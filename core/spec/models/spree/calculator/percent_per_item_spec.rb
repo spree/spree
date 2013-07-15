@@ -51,7 +51,7 @@ describe Spree::Calculator::PercentPerItem do
     before { promotion.stub :rules => [double("Rule", :products => [product1]), double("Rule")] }
     specify do
       calculator.stub(:calculable => promotion_calculable)
-      expect { calculator.matching_products }.not_to raise_error
+      expect { calculator.send(:matching_products) }.not_to raise_error
     end
   end
 
