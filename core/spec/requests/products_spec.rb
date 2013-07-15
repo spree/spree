@@ -206,7 +206,7 @@ describe "Visiting Products" do
     let(:option_value) { create(:option_value) }
     let!(:variant) { product.variants.create!(:price => 5.59) }
 
-    it "displays price of first variant listed", js: true do
+    it "displays price of first variant listed", :js => true do
       product.option_types << option_value.option_type
       variant.option_values << option_value
 
