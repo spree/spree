@@ -1,5 +1,11 @@
 ## Spree 2.1.0 (unreleased) ##
 
+*   layouts/admin.html.erb was broken into partials for each section. e.g.
+    header, menu, submenu, sidebar. Extensions should update their deface
+    overrides accordingly
+
+    *Washington Luiz*
+
 *   No longer requires all jquery ui modules. Extensions should include the
     ones they need on their own manifest file. #3237
 

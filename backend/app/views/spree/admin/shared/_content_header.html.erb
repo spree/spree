@@ -1,0 +1,23 @@
+<% if content_for?(:page_title) || content_for?(:page_actions) %>
+  <div id="content-header" data-hook>
+    <div class="container">
+      <div class="sixteen columns">
+        <div class="block-table">
+          <% if content_for?(:page_title) %>
+            <div class="table-cell">
+              <h1 class="page-title <%= yield :page_title_classes %>"><%= yield :page_title %></h1>
+            </div>
+          <% end %>
+
+          <% if content_for?(:page_actions) %>
+            <div class="page-actions table-cell toolbar" data-hook="toolbar">
+              <ul class="inline-menu">
+                <%= yield :page_actions %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
