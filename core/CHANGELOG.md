@@ -1,5 +1,12 @@
 ## Spree 2.1.0 (unreleased) ##
 
+*   Set ActiveRecord::Base.include_root_in_json = false during install.
+    Originally set to false back in 2011 according to convention. After
+    https://groups.google.com/forum/#!topic/spree-user/D9dZQayC4z, it
+    was changed.
+
+    *Weston Platter*
+    
 *   Change `order.promotion_credit_exists?` api. Now it receives an adjustment
     originator (PromotionAction instance) instead of a promotion. Allowing
     multiple adjustments being created for the same promotion as the current

@@ -104,8 +104,6 @@ Disallow: /account
       end
     end
       APP
-
-      append_file "config/environment.rb", "\nActiveRecord::Base.include_root_in_json = true\n"
     end
 
     def include_seed_data
