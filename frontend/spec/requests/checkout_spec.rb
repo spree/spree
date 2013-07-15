@@ -232,6 +232,51 @@ describe "Checkout" do
     end
   end
 
+  context "in coupon promotion, submits coupon along with payment", js: true do
+    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", event_name: "spree.checkout.coupon_code_added", code: "huhu") }
+    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
+    let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create({calculator: calculator}, without_protection: true) }
+
+    before do
+      promotion.actions << action
+
+      add_mug_to_cart
+      click_on "Checkout"
+
+      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in_address
+      click_on "Save and Continue"
+
+      click_on "Save and Continue"
+      expect(current_path).to eql(spree.checkout_state_path("payment"))
+    end
+
+    it "makes sure payment reflects order total with discounts" do
+      fill_in "Coupon Code", with: promotion.code
+      click_on "Save and Continue"
+
+      page.should have_content(promotion.name)
+      expect(Spree::Payment.first.amount.to_f).to eq Spree::Order.last.total.to_f
+    end
+
+    context "invalid coupon" do
+      it "doesnt create a payment record" do
+        fill_in "Coupon Code", with: 'invalid'
+        click_on "Save and Continue"
+
+        expect(Spree::Payment.count).to eq 0
+        expect(page).to have_content(Spree.t(:coupon_code_not_found))
+      end
+    end
+
+    context "doesn't fill in coupon code input" do
+      it "advances just fine" do
+        click_on "Save and Continue"
+        expect(current_path).to eql(spree.order_path(Spree::Order.last))
+      end
+    end
+  end
+
   def fill_in_address
     address = "order_bill_address_attributes"
     fill_in "#{address}_firstname", :with => "Ryan"
