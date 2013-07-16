@@ -43,11 +43,9 @@ module Spree
       end
 
       context "pagination" do
-        default_per_page(1)
-
         it "can select the next page of products" do
           second_product = create(:product)
-          api_get :index, :page => 2
+          api_get :index, :page => 2, :per_page => 1
           json_response["products"].first.should have_attributes(attributes)
           json_response["total_count"].should == 2
           json_response["current_page"].should == 2
