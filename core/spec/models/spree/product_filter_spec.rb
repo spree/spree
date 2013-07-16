@@ -11,7 +11,7 @@ describe 'product filters' do
     end
 
     it "does not attempt to call value method on Arel::Table" do
-      lambda { Spree::ProductFilters.brand_filter }.should_not raise_error
+      lambda { Spree::Core::ProductFilters.brand_filter }.should_not raise_error
     end
 
     it "can find products in the 'Nike' brand" do
