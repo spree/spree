@@ -11,7 +11,7 @@ describe 'product filters' do
     end
 
     it "does not attempt to call value method on Arel::Table" do
-      lambda { Spree::ProductFilters.brand_filter }.should_not raise_error(NoMethodError)
+      lambda { Spree::Core::ProductFilters.brand_filter }.should_not raise_error
     end
 
     it "can find products in the 'Nike' brand" do
@@ -20,7 +20,7 @@ describe 'product filters' do
     it "sorts products without brand specified" do
       product.set_property("brand", "Nike")
       create(:product).set_property("brand", nil)
-      lambda { Spree::Core::ProductFilters.brand_filter[:labels] }.should_not raise_error(ArgumentError)
+      lambda { Spree::Core::ProductFilters.brand_filter[:labels] }.should_not raise_error
     end
   end
 end
