@@ -202,7 +202,7 @@ module Spree
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
         assert_unauthorized!
-        lambda { return_authorization.reload }.should_not raise_error(ActiveRecord::RecordNotFound)
+        lambda { return_authorization.reload }.should_not raise_error
       end
     end
   end

@@ -78,7 +78,7 @@ module Spree
     end
 
     it "can create an order without any parameters" do
-      lambda { api_post :create }.should_not raise_error(NoMethodError)
+      lambda { api_post :create }.should_not raise_error
       response.status.should == 201
       order = Order.last
       json_response["state"].should == "cart"

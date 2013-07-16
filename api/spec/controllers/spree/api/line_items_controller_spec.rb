@@ -65,7 +65,7 @@ module Spree
         line_item = order.line_items.first
         api_delete :destroy, :id => line_item.id
         assert_unauthorized!
-        lambda { line_item.reload }.should_not raise_error(ActiveRecord::RecordNotFound)
+        lambda { line_item.reload }.should_not raise_error
       end
     end
 

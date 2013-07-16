@@ -3,12 +3,12 @@ require 'spec_helper'
 describe "Cart" do
   it "shows cart icon on non-cart pages" do
     visit spree.root_path
-    lambda { find("li#link-to-cart a") }.should_not raise_error(Capybara::ElementNotFound)
+    page.should have_selector("li#link-to-cart a")
   end
 
   it "hides cart icon on cart page" do
     visit spree.cart_path
-    lambda { find("li#link-to-cart a") }.should raise_error(Capybara::ElementNotFound)
+    page.should_not have_selector("li#link-to-cart a")
   end
 
   it "prevents double clicking the remove button on cart", :js => true do
