@@ -10,7 +10,7 @@ The checkout API functionality can be used to advance an existing order's state.
 
 The checkout API can also be used to create a new, empty order. Send a `POST` request to `/api/checkouts` in order to accomplish this.
 
-The following sections will walk through creating a new order and advancing an order from its `cart` state to its `complete state.
+The following sections will walk through creating a new order and advancing an order from its `cart` state to its `complete` state.
 
 ## Creating a blank order
 
@@ -46,7 +46,7 @@ If you know the order's token, then you can also update the order:
 
 Requests performed as a non-admin or non-authorized user will be met with a 401 response from this action.
 
-## Transitioning an order to next step
+## Address
 
 To transition an order to its next step, make a request like this:
 
@@ -54,7 +54,7 @@ To transition an order to its next step, make a request like this:
 
 ### Response
 
-This is a typical response from a transition to the "address" step
+This is a typical response from a transition to the `address` state:
 
 <%= headers 200 %>
 <%= json(:order_show_address_state) %>
@@ -64,7 +64,7 @@ This is a typical response from a transition to the "address" step
 <%= headers 200 %>
 <%= json(:order_failed_transition) %>
 
-## Checkout transitions
+## Delivery
 
 To advance to the next state, `delivery`, the order will first need both a shipping and billing address.
 
@@ -109,6 +109,8 @@ If the parameters are valid for the request, you will see a response like this
 
 Once valid address information has been submitted, the shipments and shipping rates available for this order will be returned inside a `shipments` key inside the order, as seen above.
 
+## Payment
+
 To advance to the next state, `payment`, you will need to select a shipping rate for each shipment for the order. These were returned when transitioning to the `delivery` step. If you need want to see them again, make the following request:
 
     GET /api/orders/R335381310
@@ -131,6 +133,8 @@ Please ensure you select a shipping rate for each shipment in the order. In the 
 <%= headers 201 %>
 <%= json(:order_show_payment_state) %>
 
+## Confirm
+
 To advance to the next state, `confirm`, the order will need to have a payment.
 
 If the order already has a payment, you can advance it to the `confirm` state by making this request:
@@ -147,6 +151,8 @@ For more information on payments, view the [payments documentation](payments).
 
 <%= headers 200 %>
 <%= json(:order_show_confirm_state) %>
+
+## Complete
 
 Now the order is ready to be advanced to the final state, `complete`. To accomplish this, make this request:
 

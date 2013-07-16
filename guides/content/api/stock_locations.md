@@ -87,7 +87,7 @@ Assuming in this instance that you want to create a stock location with a name o
 <%= headers 201 %>
 <%= json(:stock_location) %>
 
-## Updating a stock location
+## Update
 
 <%= admin_only %>
 
@@ -109,7 +109,7 @@ To update stock location information, use parameters like this:
 <%= headers 200 %>
 <%= json(:stock_location) %>
 
-## Deleting a stock location
+## Delete
 
 <%= admin_only %>
 

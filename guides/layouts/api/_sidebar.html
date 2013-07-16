@@ -145,6 +145,10 @@
           </li>
           <li>
             <i class="icon-dot"></i>
+            <%= link_to "Show (delivery)", 'orders', 'show-delivery' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
             <%= link_to "Create", 'orders', 'create' %>
           </li>
           <li>
@@ -185,7 +189,19 @@
         <ul class="js-guides">
           <li>
             <i class="icon-dot"></i>
-            <%= link_to "Create", 'checkouts', 'create' %>
+            <%= link_to "Introduction", 'checkouts', 'introduction' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Create", 'checkouts', 'creating-a-blank-order' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Line Items", 'checkouts', 'creating-an-order-with-line-items' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Update", 'checkouts', 'updating-an-order' %>
           </li>
           <li>
             <i class="icon-dot"></i>
@@ -277,10 +293,6 @@
           </li>
           <li>
             <i class="icon-dot"></i>
-            <%= link_to "New", 'return_authorizations', 'new' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
             <%= link_to "Create", 'return_authorizations', 'create' %>
           </li>
           <li>
@@ -357,6 +369,14 @@
           </li>
           <li>
             <i class="icon-dot"></i>
+            <%= link_to "Taxon Index", 'taxonomies', 'list-taxons' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Taxon Show", 'taxonomies', 'a-single-taxon' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
             <%= link_to "Taxon Create", 'taxonomies', 'taxon-create' %>
           </li>
           <li>
@@ -426,6 +446,14 @@
           <li>
             <i class="icon-dot"></i>
             <%= link_to "Create", 'stock_locations', 'create' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Update", 'stock_locations', 'update' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Delete", 'stock_locations', 'delete' %>
           </li>
         </ul>
       </li>
