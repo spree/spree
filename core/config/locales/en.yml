@@ -193,6 +193,12 @@ en:
       spree/zone:
         one: Zone
         other: Zones
+    errors:
+      models:
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: "Card has expired"
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
