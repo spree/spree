@@ -9,7 +9,13 @@ Proper application design, intelligent programming, and secure infrastructure ar
 
 ## Reporting Security Issues
 
-Please do not announce potential security vulnerabilities in public. We have a [dedicated email address](mailto:security@spreecommerce.com). We will work quickly to determine the severity of the issue and provide a fix for the appropriate versions.
+Please do not announce potential security vulnerabilities in public. We have a [dedicated email address](mailto:security@spreecommerce.com). We will work quickly to determine the severity of the issue and provide a fix for the appropriate versions. We will credit you with the discovery of this patch by naming you in a blog post.
+
+If you would like to provide a patch yourself for the security issue **do not open a pull request for it**. Instead, create a commit on your fork of Spree and run this command:
+
+```git format-patch HEAD~1..HEAD --stdout > patch.txt```
+
+This command will generate a file called `patch.txt` with your changes. Please email a description of the patch along with the patch itself to our [dedicated email address](mailto:security@spreecommerce.com).
 
 ## Authentication
 
