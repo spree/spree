@@ -33,9 +33,11 @@ Variant records can track some individual properties regarding a variant, such a
 
 ### Master Variants
 
-Every single product has a master variant, which tracks basic information such as a count on hand, a price and a SKU.
+Every single product has a master variant, which tracks basic information such as a count on hand, a price and a SKU. Whenever a product is created, a master variant for that product will be created too.
 
-By having a master variant, the code within Spree to track [Line Items](orders#line_items) is simplified.
+Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and <%= link_to "line items", :orders, "line-items" %>. If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
+
+By having a master variant, the code within Spree to track  is simplified.
 
 ### Normal Variants
 
