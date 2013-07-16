@@ -10,6 +10,7 @@ order = Spree::Order.create!({
   :billing_address => Spree::Address.last
 }, :without_protection => true)
 order.state = "complete"
+order.completed_at = Time.now - 1.day
 order.save!
 
 order = Spree::Order.create!({
@@ -22,5 +23,6 @@ order = Spree::Order.create!({
   :billing_address => Spree::Address.last
 }, :without_protection => true)
 order.state = "complete"
+order.completed_at = Time.now - 1.day
 order.save!
 
