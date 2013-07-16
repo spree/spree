@@ -86,15 +86,6 @@ module Spree
         order.reload.state.should eq "address"
       end
 
-      it "will return an error if the order cannot transition" do
-        order.bill_address = nil
-        order.save
-        order.update_column(:state, "address")
-        api_put :update, :id => order.to_param, :order_token => order.token
-        # Order has not transitioned
-        response.status.should == 422
-      end
-
       it "can update addresses and transition from address to delivery" do
         order.update_column(:state, "address")
         shipping_address = billing_address = {
