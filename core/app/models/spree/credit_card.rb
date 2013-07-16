@@ -108,7 +108,7 @@ module Spree
       if year && month
         time = "#{year}-#{month}-1".to_time
         if time < Time.zone.now.beginning_of_month
-          errors.add("card", "has expired")
+          errors.add(:base, :card_expired)
         end
       end
     end

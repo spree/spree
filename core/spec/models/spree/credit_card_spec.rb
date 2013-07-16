@@ -88,7 +88,7 @@ describe Spree::CreditCard do
       credit_card.month = 1.month.ago.month
       credit_card.year = 1.month.ago.year
       credit_card.should_not be_valid
-      credit_card.errors[:card].should == ["has expired"]
+      credit_card.errors[:base].should == ["Card has expired"]
     end
 
     it "does not run expiration in the past validation if month is not set" do
