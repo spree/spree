@@ -68,7 +68,7 @@ Suppose that in your store, you sell drink tumblers. All of the tumblers are mad
 * **Decorative Wrap** - Your tumblers come with the option of several kinds of decorative plastic wraps: Stars, Owls, Pink Paisley, Purple Paisley, or Skulls.
 * **Lid Color** - The tumblers also come with with an assortment of lids to match the decorative wrap - the Star tumblers have Blue lids, the Owls have Orange lids, the Pink Paisley have Pink lids, the Purple Paisley have White lids, and the Skulls can be purchased with White *or* Black lids.
 
-Given this inventory, you will need to create a Drink Tumbler *Product*, with three *Options*, corresponding *Option Values*, and twelve *Variants*:
+Given this inventory, you will need to create a Drink Tumbler *Product*, with three *Options*, the corresponding *Option Values*, and twelve *Variants*:
 
 Size  | Wrap           | Lid Color
 ------|----------------|----------
@@ -85,7 +85,7 @@ Large | Skulls         | Black
 Small | Skulls         | White
 Small | Skulls         | Black
 
-The *Option Types* you would create for this inventory are - Size, Wrap, and Lid Color - with the *Option Values* below.
+The *Option Types* you would create for this inventory are - Size, Wrap, and Lid Color - with the corresponding *Option Values* below.
 
 Option Type | Option Values
 ------------|--------------
@@ -145,7 +145,7 @@ As you can see, you also have the option to enter values for this particular Var
 
 ## Product Properties
 
-Depending on the nature of your store and the products you sell, you may want to add **Properties** to your product descriptions. Properties are typically used to provide more information about a product to help the customer make a better purchase decision. Here is an example of how a product's properties would display on the customer facing version of a store:
+Depending on the nature of your store and the products you sell, you may want to add **Properties** to your product descriptions. Properties are typically used to provide additional information about a product to help the customer make a better purchase decision. Here is an example of how a product's properties would display on the customer facing version of a store:
 
 ![New Product Variant](/images/user/properties_example.jpg)
 
