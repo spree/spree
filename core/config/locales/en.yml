@@ -18,6 +18,7 @@ en:
         name: Name
         numcode: ISO Code
       spree/credit_card:
+        base: ''
         cc_type: Type
         month: Month
         number: Number
