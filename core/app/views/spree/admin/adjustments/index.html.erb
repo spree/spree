@@ -11,4 +11,4 @@
 
 <%= render :partial => 'adjustments_table' %>
 
-<%= button_link_to t(:continue), @order.payment_state == 'balance_due' ? new_admin_order_payment_url(@order) : admin_orders_url, :icon => 'icon-arrow-right' %>
+<%= button_link_to t(:continue), @order.payment? ? new_admin_order_payment_url(@order) : admin_orders_url, :icon => 'icon-arrow-right' %>
