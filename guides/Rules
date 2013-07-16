@@ -215,6 +215,11 @@ route '/user/products/*/' do
   location.chop + ".html"
 end
 
+route '/user/payments/*/' do
+  location = item.identifier.gsub('/payments/', '/')
+  location.chop + ".html"
+end
+
 ###############################################################
 # Flatten the integration guide stuff into single directory
 ###############################################################
