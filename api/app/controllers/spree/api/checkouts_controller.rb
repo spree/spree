@@ -101,11 +101,6 @@ module Spree
           send(method_name) if respond_to?(method_name, true)
         end
 
-        def before_address
-          @order.bill_address ||= Address.default
-          @order.ship_address ||= Address.default
-        end
-
         def before_payment
           @order.payments.destroy_all if request.put?
         end
