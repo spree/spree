@@ -131,6 +131,7 @@ rails g spree:install --migrate=false --sample=false --seed=false
 You can always perform the steps later by using these commands.
 
 ```shell
+bundle exec rake railties:install:migrations
 bundle exec rake db:migrate
 bundle exec rake db:seed
 bundle exec rake spree_sample:load
