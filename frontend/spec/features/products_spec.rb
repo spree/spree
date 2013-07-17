@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe "Visiting Products" do
+describe "Visiting Products", inaccessible: true do
   include_context "custom products"
 
   before(:each) do

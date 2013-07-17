@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Address" do
+describe "Address", inaccessible: true do
   let!(:product) { create(:product, :name => "RoR Mug") }
   let!(:order) { create(:order_with_totals, :state => 'cart') }
 
