@@ -3,6 +3,7 @@ Spree::Order.class_eval do
     line_items = params.delete(:line_items_attributes) || []
 
     order = create(params)
+    order.associate_user!(user)
 
     unless line_items.empty?
       line_items.each_key do |k|

@@ -55,15 +55,26 @@ module Spree
       assert_unauthorized!
     end
 
-    it "can create an order" do
-      variant = create(:variant)
-      api_post :create, :order => { :line_items => { "0" => { :variant_id => variant.to_param, :quantity => 5 } } }
-      response.status.should == 201
-      order = Order.last
-      order.line_items.count.should == 1
-      order.line_items.first.variant.should == variant
-      order.line_items.first.quantity.should == 5
-      json_response["state"].should == "cart"
+    context "create order" do
+      let(:current_api_user) do
+        user = Spree.user_class.new(:email => "spree@example.com")
+        user.generate_spree_api_key!
+        user
+      end
+
+      it "can create an order" do
+        variant = create(:variant)
+        api_post :create, :order => { :line_items => { "0" => { :variant_id => variant.to_param, :quantity => 5 } } }
+        response.status.should == 201
+        order = Order.last
+        order.line_items.count.should == 1
+        order.line_items.first.variant.should == variant
+        order.line_items.first.quantity.should == 5
+        json_response["state"].should == "cart"
+        order.user.should == current_api_user
+        order.email == current_api_user.email
+        json_response["user_id"].should == current_api_user.id
+      end
     end
 
     it "can create an order without any parameters" do
