@@ -21,7 +21,7 @@ describe "Checkout" do
         click_button "Checkout"
       end
 
-      it "should default checkbox to checked" do
+      it "should default checkbox to checked", inaccessible: true do
         find('input#order_use_billing').should be_checked
       end
 
@@ -82,7 +82,7 @@ describe "Checkout" do
       Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
     end
 
-    it "redirects to payment page" do
+    it "redirects to payment page", inaccessible: true do
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"
       choose "Credit Card"

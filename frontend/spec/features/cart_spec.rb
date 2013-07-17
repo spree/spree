@@ -52,7 +52,7 @@ describe "Cart" do
 
     before { variant.option_values.destroy_all }
 
-    it "still adds product to cart" do
+    it "still adds product to cart", inaccessible: true do
       visit spree.product_path(product)
       click_button "add-to-cart-button"
 
