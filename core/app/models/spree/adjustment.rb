@@ -83,6 +83,10 @@ module Spree
     # record from db for the association
     def update!
       return if immutable?
+      # Fix for #3381
+      # If we attempt to call 'source' before the reload, then source is currently
+      # the order object. After calling a reload, the source is the Shipment.
+      reload
       originator.update_adjustment(self, source) if originator.present?
       set_eligibility
     end
