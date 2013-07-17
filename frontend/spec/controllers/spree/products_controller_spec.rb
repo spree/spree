@@ -25,7 +25,7 @@ describe Spree::ProductsController do
 
   # Regression test for #2249
   it "doesn't error when given an invalid referer" do
-    controller.stub :spree_current_user => mock_model(Spree.user_class, :has_spree_role? => true, :last_incomplete_spree_order => nil)
+    controller.stub :spree_current_user => mock_model(Spree.user_class, :generate_spree_api_key! => true, :has_spree_role? => true, :last_incomplete_spree_order => nil)
     request.env['HTTP_REFERER'] = "not|a$url"
     # previously this would raise URI::InvalidURIError
     lambda { spree_get :show, :id => product.to_param }.should_not raise_error
