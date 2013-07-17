@@ -6,7 +6,13 @@ describe "Address" do
 
   stub_authorization!
 
+  after do
+    Capybara.ignore_hidden_elements = true
+  end
+
   before do
+    Capybara.ignore_hidden_elements = false
+
     visit spree.root_path
 
     click_link "RoR Mug"
