@@ -32,7 +32,6 @@ module Spree
             calculable = calculable.to_package if calculable.is_a?(Spree::Shipment)
             amount = compute_amount(calculable)
             return if amount == 0 && !mandatory
-
             target.adjustments.create(
               :amount => amount,
               :source => calculable,
