@@ -6,7 +6,7 @@ require 'spec_helper'
 describe Spree::Adjustment do
 
   let(:order) { mock_model(Spree::Order, update!: nil) }
-  let(:adjustment) { Spree::Adjustment.new }
+  let(:adjustment) { Spree::Adjustment.create(:label => "Adjustment", :amount => 5) }
 
   describe "scopes" do
     let!(:arbitrary_adjustment) { create(:adjustment, source: nil, label: "Arbitrary") }
