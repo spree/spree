@@ -29,8 +29,8 @@ $ bundle install
 $ bundle exec rake railties:install:migrations
 $ bundle exec rake db:migrate```
 
-$$$
-Would be nice to offer some sort of visual confirmation that the integrator has been set up. Maybe once the configuration piece is in place?
-$$$
+Now when you go to the `/admin` section of your store and look at a particular order, you will notice under the "Return Authorizations" link a new "Order Events" link. This allows you to see any Spree Integrator events for that particular order.
+
+![Order Events Link](/images/integration/order_events_link.jpg)
 
 ## Configuration
