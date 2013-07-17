@@ -59,6 +59,10 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
+  config.around(:each, :inaccessible => true) do |example|
+    Capybara::Accessible.skip_audit { example }
+  end
+
   config.before(:each) do
     WebMock.disable!
     # if example.metadata[:js]
