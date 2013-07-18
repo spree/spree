@@ -93,6 +93,7 @@ end
 compile '/api/*' do
   filter :pretty_urls
   filter :erb
+  filter :parse_info_boxes
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
   filter :parse_info_boxes
@@ -112,6 +113,7 @@ end
 compile '/user/*' do
   filter :pretty_urls
   filter :erb
+  filter :parse_info_boxes
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
   filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
