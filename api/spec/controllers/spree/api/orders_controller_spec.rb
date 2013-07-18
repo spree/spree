@@ -97,23 +97,37 @@ module Spree
       json_response["user_id"].should == current_api_user.id
     end
 
-    it "can create an order with parameters" do
+    # Regression test for #3404
+    it "can specify additional parameters for a line item" do
       variant = create(:variant)
-      api_post :create, :order => {
-        :email => 'test@spreecommerce.com',
-        :ship_address => shipping_address,
-        :bill_address => billing_address,
+      Order.should_receive(:create!).and_return(order = Spree::Order.new)
+      order.stub(:associate_user!)
+      order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
+      line_item.should_receive(:update_attributes).with("special" => true)
+      api_post :create, :order => { 
         :line_items => {
-           "0" => { :variant_id => variant.to_param, :quantity => 5 } },
+          "0" => {
+            :variant_id => variant.to_param, :quantity => 5, :special => true
+          }
+        }
       }
-
       response.status.should == 201
-      order = Order.last
+    end
 
-      order.email.should == current_api_user.email
-      order.ship_address.address1.should eq 'Av Paulista'
-      order.bill_address.address1.should eq 'Av Paulista'
-      order.line_items.count.should == 1
+    # Regression test for #3404
+    it "does not update line item needlessly" do
+      variant = create(:variant)
+      Order.should_receive(:create!).and_return(order = Spree::Order.new)
+      order.stub(:associate_user!)
+      order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
+      line_item.should_not_receive(:update_attributes)
+      api_post :create, :order => { 
+        :line_items => {
+          "0" => {
+            :variant_id => variant.to_param, :quantity => 5
+          }
+        }
+      }
     end
 
     it "can create an order without any parameters" do

@@ -67,3 +67,7 @@
 * An order can no longer transition past the "cart" state without first having a line item. #3312
 
     *Ryan Bigg*
+
+* Attributes other than "quantity" and "variant_id" will be added to a line item when creating along with an order. #3404
+
+    *Alex Marles & Ryan Bigg*

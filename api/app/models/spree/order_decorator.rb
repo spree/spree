@@ -50,7 +50,9 @@ Spree::Order.class_eval do
     line_items_hash.each_key do |k|
       line_item = line_items_hash[k]
       self.class.ensure_variant_id_from_api(line_item)
-      self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+      extra_params = line_item.except(:variant_id, :quantity)
+      line_item = self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+      line_item.update_attributes(extra_params) unless extra_params.empty?
     end
   end
 
