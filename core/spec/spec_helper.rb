@@ -27,13 +27,7 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
-
-require 'spree/testing_support/controller_requests'
-require 'spree/testing_support/authorization_helpers'
-require 'spree/testing_support/flash'
-require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/capybara_ext'
-
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
@@ -62,12 +56,7 @@ RSpec.configure do |config|
   end
 
   config.include FactoryGirl::Syntax::Methods
-
   config.include Spree::TestingSupport::Preferences
-  config.include Spree::TestingSupport::UrlHelpers
-  config.include Spree::TestingSupport::ControllerRequests
-  config.include Spree::TestingSupport::Flash
-
   config.include Paperclip::Shoulda::Matchers
 
   config.fail_fast = ENV['FAIL_FAST'] || false
