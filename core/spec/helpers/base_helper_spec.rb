@@ -116,7 +116,7 @@ describe Spree::BaseHelper do
     end
 
     def link_to_tracking_html(options = {})
-      node = link_to_tracking(stub(:shipment, options))
+      node = link_to_tracking(double(:shipment, options))
       Nokogiri::HTML(node.to_s)
     end
   end
