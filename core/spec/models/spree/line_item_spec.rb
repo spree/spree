@@ -22,6 +22,20 @@ describe Spree::LineItem do
     end
   end
 
+  # Test for #3391
+  context '#copy_price' do
+    it "copies over a variant's prices" do
+      line_item.price = nil
+      line_item.cost_price = nil
+      line_item.currency = nil
+      line_item.copy_price
+      variant = line_item.variant
+      line_item.price.should == variant.price
+      line_item.cost_price.should == variant.cost_price
+      line_item.currency.should == variant.currency
+    end
+  end
+
   describe '.currency' do
     it 'returns the globally configured currency' do
       line_item.currency == 'USD'
