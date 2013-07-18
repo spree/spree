@@ -36,8 +36,6 @@ Spree::Core::Engine.routes.draw do
         end
       end
       member do
-        put :address
-        put :delivery
         put :cancel
         put :empty
       end
