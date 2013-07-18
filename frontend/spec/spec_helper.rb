@@ -39,6 +39,12 @@ require 'spree/testing_support/order_walkthrough'
 
 require 'paperclip/matchers'
 
+require 'capybara/accessible'
+
+if ENV['WEBDRIVER'] == 'accessible'
+  Capybara.javascript_driver = :accessible
+end
+
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
@@ -49,6 +55,10 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
+
+  config.around(:each, :inaccessible => true) do |example|
+    Capybara::Accessible.skip_audit { example.run }
+  end
 
   config.before(:each) do
     WebMock.disable!
