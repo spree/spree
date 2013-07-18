@@ -8,7 +8,9 @@ Spree::Order.class_eval do
     unless line_items.empty?
       line_items.each_key do |k|
         line_item = line_items[k]
-        order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+        extra_params = line_item.except(:variant_id, :quantity)
+        line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+        line_item.update_attributes(extra_params) unless extra_params.empty?
       end
     end
 
