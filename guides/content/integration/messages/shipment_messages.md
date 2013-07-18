@@ -20,7 +20,8 @@ title: Shipment Messages
       "email": "sales@spreecommerce.com",
       "stock_location": "VPD",
       "shipping_method": "USPS 6-10 days",
-      "tracking_number": "",      
+      "status": "ready",
+      "tracking_number": "",
       "updated_at": "01/01/2013 12:34:22 UTC",
       "shipping_address": {
           "firstname": "Brian",
