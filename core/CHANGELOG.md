@@ -1,9 +1,9 @@
 ## Spree 2.1.0 (unreleased) ##
 
-*   Set ActiveRecord::Base.include_root_in_json = false during install.
+*   No longer set ActiveRecord::Base.include_root_in_json = true during install.
     Originally set to false back in 2011 according to convention. After
     https://groups.google.com/forum/#!topic/spree-user/D9dZQayC4z, it
-    was changed.
+    was changed. Applications should now decide their own setting for this value.
 
     *Weston Platter*
     
