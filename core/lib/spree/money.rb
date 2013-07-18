@@ -4,6 +4,8 @@ module Spree
   class Money
     attr_reader :money
 
+    delegate :cents, :to => :money
+
     def initialize(amount, options={})
       @money = ::Money.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
       @options = {}
