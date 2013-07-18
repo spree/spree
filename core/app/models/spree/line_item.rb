@@ -30,6 +30,7 @@ module Spree
     def copy_price
       if variant
         self.price = variant.price if price.nil?
+        self.cost_price = variant.cost_price if cost_price.nil?
         self.currency = variant.currency if currency.nil?
       end
     end
