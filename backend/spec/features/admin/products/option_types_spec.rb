@@ -81,9 +81,9 @@ describe "Option Types" do
     create(:option_type)
     click_link "Option Types"
     within('table#listing_option_types') { click_icon :edit }
-    wait_until do
-      page.find("tbody#option_values", :visible => true)
-    end
+
+    wait_for_ajax
+    page.find("tbody#option_values", :visible => true)
 
     all("tbody#option_values tr").select(&:visible?).count.should == 1
 

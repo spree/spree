@@ -31,7 +31,7 @@ describe "Stock Locations" do
     # Wait for API request to complete.
     wait_for_ajax
     visit current_path 
-    page.should have_content("No stock locations found")
+    page.should have_content("NO STOCK LOCATIONS FOUND")
   end
 
   it "can update an existing stock location" do
