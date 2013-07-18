@@ -100,10 +100,12 @@ describe "Order Details", js: true do
             fill_in "stock_item_quantity", :with => 2
             click_icon :plus
           end
-          page.should have_css('table.stock-contents:nth-child(2)')
-          page.all("table.stock-contents").count.should == 2
+          wait_for_ajax
+          page.should have_css("#shipment_#{order.shipments.last.id}")
           order.shipments.last.stock_location.should == london
-          page.should have_content("LONDON")
+          within "#shipment_#{order.shipments.last.id}" do
+            page.should have_content("LONDON")
+          end
         end
 
         context "when two shipments exist" do
@@ -128,15 +130,16 @@ describe "Order Details", js: true do
           end
 
           it "can add tracking information for the second shipment" do
-            within("table.stock-contents:nth-child(2)") do
+            within("#shipment_#{order.shipments.last.id}") do
               within("tr.show-tracking") do
                 click_icon :edit
               end
+              wait_for_ajax
               fill_in "tracking", :with => "TRACKING_NUMBER"
+              click_icon :ok
             end
-            click_icon :ok
-            wait_for_ajax
 
+            wait_for_ajax
             page.should have_content("Tracking: TRACKING_NUMBER")
           end
 
@@ -157,7 +160,7 @@ describe "Order Details", js: true do
 
             click_link "Order Details"
 
-            within("table.stock-contents:nth-child(2)") do
+            within("#shipment_#{order.shipments.last.id}") do
               within("tr.show-method") do
                 click_icon :edit
               end

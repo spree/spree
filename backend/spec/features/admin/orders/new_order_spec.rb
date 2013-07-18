@@ -61,7 +61,7 @@ describe "New Order" do
     click_icon :plus
     wait_for_ajax
     within(".additional-info .state") do
-      page.should have_content("payment")
+      page.should have_content("PAYMENT")
     end
   end
 
