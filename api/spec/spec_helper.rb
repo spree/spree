@@ -40,25 +40,26 @@ RSpec.configure do |config|
 
   config.fail_fast = ENV['FAIL_FAST'] || false
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, comment the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = false
-
   config.before do
     Spree::Api::Config[:requires_authentication] = true
-    if RUBY_VERSION >= '2.0.0'
-      DatabaseCleaner.strategy = :transaction
-    else
-      # Using truncation to prevent Ruby 1.9.3 specific error:
-      # SQLite3::SQLException: cannot start a transaction within a transaction: begin transaction
-      # http://stackoverflow.com/questions/12220901/sqlite3sqlexception-when-using-database-cleaner-with-rails-spork-rspec
-      DatabaseCleaner.strategy = :truncation
-    end
-    DatabaseCleaner.start
   end
 
-  config.after do
-    DatabaseCleaner.clean
+  # Using truncation to prevent Ruby 1.9.3 specific error:
+  # SQLite3::SQLException: cannot start a transaction within a transaction: begin transaction
+  # http://stackoverflow.com/questions/12220901/sqlite3sqlexception-when-using-database-cleaner-with-rails-spork-rspec
+  unless RUBY_VERSION >= '2.0.0'
+    # If you're not using ActiveRecord, or you'd prefer not to run each of your
+    # examples within a transaction, comment the following line or assign false
+    # instead of true.
+    config.use_transactional_fixtures = false
+
+    config.before do
+      DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner.start
+    end
+
+    config.after do
+      DatabaseCleaner.clean
+    end
   end
 end
