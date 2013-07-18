@@ -15,6 +15,11 @@ describe Spree::Money do
     money.to_s.should == "$10.00"
   end
 
+  it "can get cents" do
+    money = Spree::Money.new(10)
+    money.cents.should == 1000
+  end
+
   context "with currency" do
     it "passed in option" do
       money = Spree::Money.new(10, :with_currency => true, :html => false)
