@@ -6,7 +6,7 @@ require 'cgi'
 module Spree
   module Resources
     module Helpers
-      STATUSES = {
+      STATUSES ||= {
         200 => '200 OK',
         201 => '201 Created',
         202 => '202 Accepted',
@@ -23,7 +23,7 @@ module Spree
         500 => '500 Server Error'
       }
 
-      DefaultTimeFormat = "%B %-d, %Y".freeze
+      DefaultTimeFormat ||= "%B %-d, %Y".freeze
 
       def post_date(item)
         strftime item[:created_at]
@@ -89,7 +89,7 @@ module Spree
         end
       end
 
-      LINKS = {}
+      LINKS ||= {}
       LINKS[:core] = "/developer/"
       LINKS[:products] = LINKS[:core] + "products"
       LINKS[:variants] = LINKS[:products] + "#variants"
@@ -141,7 +141,7 @@ module Spree
       end
     end
 
-    USER =
+    USER ||=
       {
         "id"=>1,
         "email"=>"spree@example.com",
@@ -151,10 +151,10 @@ module Spree
         "updated_at"=>"Fri, 01 Feb 2013 20:38:57 UTC +00:00"
       }
 
-    UPDATED_USER = USER.merge({"spree_api_key" => "A13adsfq234",
+    UPDATED_USER ||= USER.merge({"spree_api_key" => "A13adsfq234",
       "updated_at" => "Fri, 01 Feb 2013 20:40:57 UTC +00:00"})
 
-    IMAGE =
+    IMAGE ||=
        {"id"=>1,
         "position"=>1,
         "attachment_content_type"=>"image/jpg",
@@ -171,7 +171,7 @@ module Spree
         "product_url"=>"/spree/products/1/product/file.png?1370533476",
         "large_url"=>"/spree/products/1/large/file.png?1370533476"}
 
-    OPTION_VALUE =
+    OPTION_VALUE ||=
       {
         "id"=>1,
         "name"=>"Small",
@@ -180,7 +180,7 @@ module Spree
         "option_type_id"=>1
       }
 
-    VARIANT =
+    VARIANT ||=
        {
          "id"=>1,
           "name"=>"Ruby on Rails Tote",
@@ -200,7 +200,7 @@ module Spree
           "options_text"=> "(Size: small, Colour: red)"
        }
 
-    PRODUCT_PROPERTY =
+    PRODUCT_PROPERTY ||=
       {
         "id"=>1,
         "product_id"=>1,
@@ -209,29 +209,29 @@ module Spree
         "property_name"=>"bag_type"
        }
 
-    MESSAGE = {
+    MESSAGE ||= {
       'message' => 'some:event',
       'message_id' => ':guid',
       'payload' => {}
     }
 
-    SYNC_MESSAGE_RESPONSE = {
+    SYNC_MESSAGE_RESPONSE ||= {
       'message_id' => ':guid',
       'messages' => [],
       'events' => []
     }
 
-    ASYNC_MESSAGE_RESPONSE = {
+    ASYNC_MESSAGE_RESPONSE ||= {
       'message_id' => ':guid',
       'delay' => 6000,
       'update_url' => 'http://example.com/poll'
     }
 
-    UPDATE_REQUEST = {
+    UPDATE_REQUEST ||= {
       'message_id' => ':guid'
     }
 
-    NEW_PRODUCT_EVENT =
+    NEW_PRODUCT_EVENT ||=
       {
         "event" => 'product:new',
         "event_id" => '510bfe8e7575e41e41000017',
@@ -247,7 +247,7 @@ module Spree
           "meta_keywords"=>nil }
       }
 
-    NEW_PRODUCT_EVENT_RESPONSE = {
+    NEW_PRODUCT_EVENT_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000004',
       "result" => 'OK',
       "details" => {
@@ -255,7 +255,7 @@ module Spree
       }
     }
 
-    NEW_PRODUCT_PUSH =
+    NEW_PRODUCT_PUSH ||=
       {
         "message"=> 'product:new',
         "payload" => {
@@ -270,11 +270,11 @@ module Spree
         }
       }
 
-    temp = NEW_PRODUCT_PUSH.clone
+    temp ||= NEW_PRODUCT_PUSH.clone
     temp['message_id'] = 'guid'
-    NEW_PRODUCT_PUSH_RESPONSE = temp
+    NEW_PRODUCT_PUSH_RESPONSE ||= temp
 
-    UPDATE_PRODUCT_EVENT =
+    UPDATE_PRODUCT_EVENT ||=
       {
         "event" => 'product:update',
         "event_id" => '510bfe8e7575e41e41000017',
@@ -290,7 +290,7 @@ module Spree
           "meta_keywords"=>nil }
     }
 
-    UPDATE_PRODUCT_EVENT_RESPONSE = {
+    UPDATE_PRODUCT_EVENT_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000004',
       "result" => 'OK',
       "details" => {
@@ -298,7 +298,7 @@ module Spree
       }
     }
 
-    PRODUCT =
+    PRODUCT ||=
       {
         "id"=>1,
         "name"=>"Example product",
@@ -314,7 +314,7 @@ module Spree
         "product_properties"=> [PRODUCT_PROPERTY]
       }
 
-    PAYMENT_METHOD =
+    PAYMENT_METHOD ||=
       {
         "id"=>732545999,
         "name"=>"Check",
@@ -323,7 +323,7 @@ module Spree
       }
 
 
-    ORDER_PAYMENT =
+    ORDER_PAYMENT ||=
       {
         "id"=>1,
         "amount"=>"10.00",
@@ -332,7 +332,7 @@ module Spree
         "payment_method" => PAYMENT_METHOD
       }
 
-    NEW_PAYMENT_EVENT =
+    NEW_PAYMENT_EVENT ||=
       {
         "event" => 'payment:new',
         "event_id" => '510bfe8e7575e41e41000017',
@@ -343,7 +343,7 @@ module Spree
           "payment_method_id"=>1 }
       }
 
-    NEW_PAYMENT_EVENT_RESPONSE = {
+    NEW_PAYMENT_EVENT_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000004',
       "result" => 'OK',
       "details" => {
@@ -353,7 +353,7 @@ module Spree
 
     line_item_variant = VARIANT
 
-    LINE_ITEM =
+    LINE_ITEM ||=
       {
         "id"=>1,
         "quantity"=>2,
@@ -365,7 +365,7 @@ module Spree
         "variant" => line_item_variant
       }
 
-    LINE_ITEM2 =
+    LINE_ITEM2 ||=
       {
         "id"=>2,
         "quantity"=>2,
@@ -377,7 +377,7 @@ module Spree
         "variant" => line_item_variant
       }
 
-    ADJUSTMENT =
+    ADJUSTMENT ||=
     {
       "id" => 1073043775,
       "source_type" => "Spree::Order",
@@ -396,7 +396,7 @@ module Spree
       "updated_at" => "2012-10-24T01:02:25Z"
     }
 
-    PAYMENT =
+    PAYMENT ||=
       {
         "id"=>1,
         "source_type"=>"Spree::CreditCard",
@@ -410,15 +410,14 @@ module Spree
         "updated_at"=>"2012-10-24T23:26:23Z"
       }
 
-
-    SHIPPING_METHOD =
+    SHIPPING_METHOD ||=
       {
         "name" => "UPS Ground",
         "zone_id" => 1,
         "shipping_category_id" => 1
       }
 
-    SHIPPING_RATE =
+    SHIPPING_RATE ||=
       {
         "id"=>1,
         "name"=>"UPS Ground (USD)",
@@ -428,14 +427,14 @@ module Spree
         "shipping_method_id"=>5
       }
 
-    MANIFEST =
+    MANIFEST ||=
       {
         "quantity"=>1,
         "states"=>{"on_hand"=>1},
         "variant" => VARIANT
       }
 
-    INVENTORY_UNIT =
+    INVENTORY_UNIT ||=
       {
         "id"=>1,
         "lock_version"=>1,
@@ -445,7 +444,7 @@ module Spree
         "return_authorization_id"=>nil
       }
 
-    SHIPMENT =
+    SHIPMENT ||=
       {
         "id"=>1,
         "tracking"=>nil,
@@ -460,7 +459,7 @@ module Spree
         "manifest"=>[MANIFEST]
       }
 
-    ORDER =
+    ORDER ||=
       {
         "id"=>1,
         "number"=>"R335381310",
@@ -487,8 +486,7 @@ module Spree
         "shipments"=>[]
       }
 
-
-    NEW_ORDER = {
+    NEW_ORDER ||= {
       "id"=>1,
       "number"=>"R335381310",
       "item_total"=>"100.0",
@@ -513,11 +511,11 @@ module Spree
       "shipments"=>[]
     }
 
-    NEW_ORDER_WITH_LINE_ITEMS = NEW_ORDER.merge({
+    NEW_ORDER_WITH_LINE_ITEMS ||= NEW_ORDER.merge({
       "line_items" => [LINE_ITEM]
     })
 
-    ORDER_FAILED_TRANSITION = {
+    ORDER_FAILED_TRANSITION ||= {
       "error" => "The order could not be transitioned. Please fix the errors and try again.",
       "errors" => { :email => ["can't be blank"] }
     }
@@ -529,26 +527,26 @@ module Spree
     })
     temp.delete('shipping_method')
     temp.delete('id')
-    PUSH_SHIPMENT_CONFIRMATION = temp
+    PUSH_SHIPMENT_CONFIRMATION ||= temp
 
-    PUSH_SHIPMENT_RESPONSE = {
+    PUSH_SHIPMENT_RESPONSE ||= {
       'event_id' => 'guid',
       'result' => 'accepted',
       'payload' => PUSH_SHIPMENT_CONFIRMATION
     }
 
-    READY_SHIPMENT = SHIPMENT.merge({"state" => "ready_to_ship"})
+    READY_SHIPMENT ||= SHIPMENT.merge({"state" => "ready_to_ship"})
 
-    SHIPPED_SHIPMENT = SHIPMENT.merge({"state" => "shipped"})
+    SHIPPED_SHIPMENT ||= SHIPMENT.merge({"state" => "shipped"})
 
-    ORDER_SHOW = ORDER.merge({
+    ORDER_SHOW ||= ORDER.merge({
       "line_items" => [LINE_ITEM],
       "payments" => [],
       "adjustments" => []
 
     })
 
-    ORDER_SHOW2 = ORDER.merge({
+    ORDER_SHOW2 ||= ORDER.merge({
       "line_items" => [LINE_ITEM2],
       "payments" => [PAYMENT],
       "shipments" => [SHIPMENT],
@@ -556,7 +554,7 @@ module Spree
 
     })
 
-    EVENT = {
+    EVENT ||= {
       "event" => 'event:name',
       "event_id" => 'guid',
       "payload" => {
@@ -564,7 +562,7 @@ module Spree
       }
     }
 
-    EVENT_RESPONSE = {
+    EVENT_RESPONSE ||= {
       "event_id" => 'guid',
       "result" => 'ok',
       "details" => {
@@ -572,7 +570,7 @@ module Spree
       }
     }
 
-    NEW_ORDER_EVENT = {
+    NEW_ORDER_EVENT ||= {
       "event" => 'order:new',
       "event_id" => '510bfe8e7575e41e41000001',
       "payload" => {
@@ -580,7 +578,7 @@ module Spree
       }
     }
 
-    NEW_ORDER_RESPONSE = {
+    NEW_ORDER_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000001',
       "result" => 'ok',
       "details" => {
@@ -588,7 +586,7 @@ module Spree
       }
     }
 
-    UPDATED_ORDER_EVENT = {
+    UPDATED_ORDER_EVENT ||= {
       "event" => 'order:updated',
       "event_id" => '510bfe8e7575e41e41000002',
       "payload" => {
@@ -596,7 +594,7 @@ module Spree
       }
     }
 
-    UPDATED_ORDER_RESPONSE = {
+    UPDATED_ORDER_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000002',
       "result" => 'ok',
       "details" => {
@@ -604,7 +602,7 @@ module Spree
       }
     }
 
-    CANCELLED_ORDER_EVENT = {
+    CANCELLED_ORDER_EVENT ||= {
       "event" => 'order:cancelled',
       "event_id" => '510bfe8e7575e41e41000003',
       "payload" => {
@@ -612,7 +610,7 @@ module Spree
       }
     }
 
-    CANCELLED_ORDER_RESPONSE = {
+    CANCELLED_ORDER_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000003',
       "result" => 'ok',
       "details" => {
@@ -620,7 +618,7 @@ module Spree
       }
     }
 
-    NEW_USER_EVENT = {
+    NEW_USER_EVENT ||= {
       "event" => 'create:user',
       "event_id" => '510bfe8e7575e41e41000017',
       "payload" => {
@@ -628,7 +626,7 @@ module Spree
       }
     }
 
-    NEW_USER_RESPONSE = {
+    NEW_USER_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000017',
       "result" => 'ok',
       "details" => {
@@ -636,7 +634,7 @@ module Spree
       }
     }
 
-    UPDATED_USER_EVENT = {
+    UPDATED_USER_EVENT ||= {
       "event" => 'update:event',
       "event_id" => '510bfe8e7575e41e41000018',
       "payload" => {
@@ -644,14 +642,14 @@ module Spree
       }
     }
 
-    UPDATED_USER_RESPONSE = {
+    UPDATED_USER_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000018',
       "result" => 'ok',
       "details" => {
         "message" => "User Account Updated"
       }
     }
-    SHIPMENT_READY_EVENT = {
+    SHIPMENT_READY_EVENT ||= {
       "event" => 'shipment:ready',
       "event_id" => '510bfe8e7575e41e41000004',
       "payload" => {
@@ -659,7 +657,7 @@ module Spree
       }
     }
 
-    SHIPMENT_READY_RESPONSE = {
+    SHIPMENT_READY_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000004',
       "result" => 'ok',
       "details" => {
@@ -667,7 +665,7 @@ module Spree
       }
     }
 
-    SHIPMENT_CONFIRMATION_EVENT = {
+    SHIPMENT_CONFIRMATION_EVENT ||= {
       "event" => 'shipment:confirmed',
       "event_id" => '510bfe8e7575e41e41000005',
       "payload" => {
@@ -675,7 +673,7 @@ module Spree
       }
     }
 
-    SHIPMENT_CONFIRMATION_RESPONSE = {
+    SHIPMENT_CONFIRMATION_RESPONSE ||= {
       "event_id" => '510bfe8e7575e41e41000005',
       "result" => 'ok',
       "details" => {
@@ -683,30 +681,30 @@ module Spree
       }
     }
 
-    ORDER_SHOW_ADDRESS_STATE = ORDER.merge({
+    ORDER_SHOW_ADDRESS_STATE ||= ORDER.merge({
       "state" => "address",
       "line_items" => [LINE_ITEM]
     })
 
-    ORDER_SHOW_DELIVERY_STATE = ORDER.merge({
+    ORDER_SHOW_DELIVERY_STATE ||= ORDER.merge({
       "shipments"=>[SHIPMENT],
       "state" => "delivery"
     })
 
-    ORDER_SHOW_PAYMENT_STATE = ORDER.merge({
+    ORDER_SHOW_PAYMENT_STATE ||= ORDER.merge({
       "payment_methods" => [PAYMENT_METHOD],
       "state" => "payment"
     })
 
-    ORDER_SHOW_CONFIRM_STATE = ORDER.merge({
+    ORDER_SHOW_CONFIRM_STATE ||= ORDER.merge({
       "state" => "confirm"
     })
 
-    ORDER_SHOW_COMPLETE_STATE = ORDER.merge({
+    ORDER_SHOW_COMPLETE_STATE ||= ORDER.merge({
       "state" => "complete"
     })
 
-    ADDRESS_COUNTRY =
+    ADDRESS_COUNTRY ||=
       {
         "id"=>1,
         "iso_name"=>"UNITED STATES",
@@ -716,7 +714,7 @@ module Spree
         "numcode"=>1
       }
 
-    ADDRESS_STATE =
+    ADDRESS_STATE ||=
       {
         "abbr"=>"NY",
         "country_id"=>1,
@@ -724,7 +722,7 @@ module Spree
         "name"=>"New York"
       }
 
-    ADDRESS =
+    ADDRESS ||=
       {
         "id"=>1,
         "firstname"=>"Spree",
@@ -743,9 +741,9 @@ module Spree
         "state" => ADDRESS_STATE
       }
 
-    COUNTRY_STATE = { "state"=> ADDRESS_STATE }
+    COUNTRY_STATE ||= { "state"=> ADDRESS_STATE }
 
-    COUNTRY =
+    COUNTRY ||=
       {
         "id"=>1,
         "iso_name"=>"UNITED STATES",
@@ -756,7 +754,7 @@ module Spree
         "states"=> [COUNTRY_STATE]
       }
 
-    STATE =
+    STATE ||=
       {
         "abbr"=>"NY",
         "country_id"=>1,
@@ -764,7 +762,7 @@ module Spree
         "name"=>"New York"
       }
 
-    TAXON =
+    TAXON ||=
       {
         "id"=>2,
         "name"=>"Ruby on Rails",
@@ -774,7 +772,7 @@ module Spree
         "taxonomy_id"=>1
       }
 
-    SECONDARY_TAXON =
+    SECONDARY_TAXON ||=
       {
         "id"=>3,
         "name"=>"T-Shirts",
@@ -784,24 +782,24 @@ module Spree
         "taxonomy_id"=>1
       }
 
-    TAXON_WITH_CHILDREN = TAXON.merge(:taxons => [SECONDARY_TAXON])
-    TAXON_WITHOUT_CHILDREN = TAXON.merge(:taxons => [])
+    TAXON_WITH_CHILDREN ||= TAXON.merge(:taxons => [SECONDARY_TAXON])
+    TAXON_WITHOUT_CHILDREN ||= TAXON.merge(:taxons => [])
 
-    TAXONOMY =
+    TAXONOMY ||=
      {
        "id"=>1,
        "name"=>"Brand",
        "root"=> TAXON_WITH_CHILDREN
      }
 
-    NEW_TAXONOMY =
+    NEW_TAXONOMY ||=
       {
         "id" => 1,
         "name" => "Brand",
         "root" => TAXON_WITHOUT_CHILDREN
       }
 
-    ZONE_MEMBER =
+    ZONE_MEMBER ||=
       {
         "id"=>1,
         "name"=>"United States",
@@ -809,7 +807,7 @@ module Spree
         "zoneable_id"=>1,
       }
 
-    ZONE =
+    ZONE ||=
       {
         "id"=>1,
         "name"=>"America",
@@ -817,7 +815,7 @@ module Spree
         "zone_members"=> [ZONE_MEMBER]
       }
 
-    RETURN_AUTHORIZATION =
+    RETURN_AUTHORIZATION ||=
       {
         "id"=>1,
         "number"=>"12345",
@@ -829,7 +827,7 @@ module Spree
         "updated_at"=>"2012-10-24T23:26:23Z"
       }
 
-    STOCK_LOCATION =
+    STOCK_LOCATION ||=
       {
         "id"=>1,
         "name"=>"default",
@@ -843,7 +841,7 @@ module Spree
         "active"=>true
       }
 
-    STOCK_ITEM =
+    STOCK_ITEM ||=
       {
         "id"=>1,
         "count_on_hand"=>10,
@@ -853,7 +851,7 @@ module Spree
         "variant_id"=>1
       }
 
-    STOCK_MOVEMENT =
+    STOCK_MOVEMENT ||=
       {
         "id"=>1,
         "quantity"=>10,
