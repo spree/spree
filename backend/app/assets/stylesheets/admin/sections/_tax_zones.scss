@@ -1,0 +1,15 @@
+#ul-nested-country {
+  > li {
+    margin-bottom: 10px;
+  }
+
+  .select2-container, select {
+    width: 90%;
+  }
+
+  a.remove {
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+}
