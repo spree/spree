@@ -135,6 +135,7 @@ describe "Order Details", js: true do
                 click_icon :edit
               end
               wait_for_ajax
+              sleep 1 # extra second for inconsistant results from wait_for_ajax
               fill_in "tracking", :with => "TRACKING_NUMBER"
               click_icon :ok
             end
