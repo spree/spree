@@ -25,4 +25,8 @@
 
 *   Fixed display of "Total" price for a line item on a shipment. #3135
 
-    *John Dyer
+    *John Dyer*
+
+*   Fixed issue where selecting an existing user in the customer details step would not associate them with an order.
+    
+    *Ryan Bigg and dan-ding"
