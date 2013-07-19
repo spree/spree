@@ -7,9 +7,7 @@ module Spree
     respond_to :html
 
     def index
-      @searcher = Config.searcher_class.new(params)
-      @searcher.current_user = try_spree_current_user
-      @searcher.current_currency = current_currency
+      @searcher = build_searcher(params)
       @products = @searcher.retrieve_products
     end
 
