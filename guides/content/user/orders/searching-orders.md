@@ -3,7 +3,7 @@ title: Searching Orders
 section: creating-products
 ---
 
-When you click the **Orders** tab on the Admin Dashboard, you are instantly presented with a summary of the most recent orders your store has received.
+When you click the **Orders** tab on the Admin Interface, you are instantly presented with a summary of the most recent orders your store has received.
 
 ![Initial List of Orders](/images/user/orders/list_of_orders.jpg)
 
