@@ -46,14 +46,24 @@ describe Spree::Calculator::DefaultTax do
             # Amount is 0.51665, which will be rounded to...
             calculator.compute(order).should == 0.52
           end
-
         end
       end
-
 
       context "when more than one item matches the tax category" do
         it "should be equal to the sum of the item totals * rate" do
           calculator.compute(order).should == 1.75
+        end
+      end
+
+      context "promo adjustments involved" do
+        before do
+          order.stub_chain(:line_items, select: [double("LineItem", total: 105)])
+          order.stub_chain(:adjustments, :promotion, :eligible, sum: -5)
+          calculator.stub_chain(:rate, amount: 0.05)
+        end
+
+        it "adds promo discounts to calculate accurate taxes" do
+          expect(calculator.compute(order)).to eql 5
         end
       end
     end

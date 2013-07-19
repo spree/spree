@@ -242,7 +242,6 @@ describe Spree::TaxRate do
             @order.adjustments.tax.charge.count.should == 0
           end
         end
-
       end
 
       context "when price does not include tax" do
