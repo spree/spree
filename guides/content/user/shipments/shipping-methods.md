@@ -63,7 +63,7 @@ Spree ships with 5 default Calculators:
 
 # Flate Rate (per order)
 
-The Flate Rate calculator allows you to charge the same shipping price per order regardless of the number of items in the order. 
+The Flate Rate calculator allows you to charge the same shipping price per order regardless of the number of items in the order. You can define the flat rate charged per order at the Shipping Method level. For example, if you have two Shipping Methods defined for your store ("UPS 1-Day" and "UPS 2-Day") and have selected "Flat Rate (per order)" as the Calculator type for each, you could charge a $15 flat rate shipping cost for the UPS 1-Day orders and a $10 flat rate shipping cost for the UPS 2-Day orders. To modify these settings, do to the Admin Interface. Click on "Shipping Methods" and then click on the "Edit" icon next to the shipping method you would like to modify. 
 
 # Flat Rate (per item/product)
 
