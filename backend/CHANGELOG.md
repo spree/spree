@@ -9,3 +9,7 @@
 * Fix bug where taxonomy URL was incorrect when Spree was mounted at a non-root path 50ac165c13f6d9123db704b72e9feae86971af70.
 
     *Washington Luiz*
+
+* Fixed issue where selecting an existing user in the customer details step would not associate them with an order.
+    
+    *Ryan Bigg and dan-ding"

@@ -27,6 +27,20 @@ describe "Customer Details" do
     within('table#listing_orders') { click_icon(:edit) }
   end
 
+  # Regression test for #3335
+  context "brand new order", :js => true do
+    it "associates a user when not using guest checkout" do
+      click_link "Orders"
+      click_link "New Order"
+      click_link "Customer Details" 
+      targetted_select2 "foobar@example.com", :from => "#s2id_customer_search"
+      fill_in_address
+      check "order_use_billing"
+      click_button "Update"
+      Spree::Order.last.user.should_not be_nil
+    end
+  end
+
   context "editing an order", :js => true do
     context "selected country has no state" do
       before { create(:country, iso: "BRA", name: "Brazil") }
