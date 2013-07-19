@@ -5,7 +5,6 @@ describe "Stock Locations" do
 
   before(:each) do
     country = create(:country)
-    Spree::Config[:default_country_id] = country.id
     visit spree.admin_path
     click_link "Configuration"
     click_link "Stock Locations"

@@ -7,7 +7,7 @@
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @stock_locations } %>
-<% @stock_location.country = Spree::Country.find(Spree::Config[:default_country_id]) %>
+
 <%= form_for [:admin, @stock_location] do |f| %>
   <fieldset class="no-border-top">
     <%= render :partial => 'form', :locals => { :f => f } %>
