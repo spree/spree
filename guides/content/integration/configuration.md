@@ -26,8 +26,7 @@ Next, run these commands:
 
 ```bash
 $ bundle install
-$ bundle exec rake railties:install:migrations
-$ bundle exec rake db:migrate```
+$ bundle exec rails generate spree_pro_connector:install```
 
 Now when you go to the `/admin` section of your store and look at a particular order, you will notice under the "Return Authorizations" link a new "Order Events" link. This allows you to see any Spree Integrator events for that particular order.
 
