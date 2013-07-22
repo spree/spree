@@ -42,6 +42,8 @@ module Spree
     has_many :line_items, dependent: :destroy, order: "#{Spree::LineItem.table_name}.created_at ASC"
     has_many :payments, dependent: :destroy, :class_name => "Spree::Payment"
 
+    belongs_to :shipping_method
+    
     has_many :shipments, dependent: :destroy do
       def states
         pluck(:state).uniq
