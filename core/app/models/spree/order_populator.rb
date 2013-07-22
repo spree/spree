@@ -53,12 +53,11 @@ module Spree
     end
 
     def check_stock_levels(variant, quantity)
-      display_name = %Q{#{variant.name}}
-      display_name += %Q{ (#{variant.options_text})} unless variant.options_text.blank?
-
       if Stock::Quantifier.new(variant).can_supply? quantity
         true
       else
+        display_name = %Q{#{variant.name}}
+        display_name += %Q{ (#{variant.options_text})} unless variant.options_text.blank?
         errors.add(:base, Spree.t(:out_of_stock, :scope => :order_populator, :item => display_name.inspect))
         return false
       end
