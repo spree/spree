@@ -6,6 +6,7 @@ describe Spree::OrderPopulator do
 
   context "with stubbed out find_variant" do
     let(:variant) { double('Variant', :name => "T-Shirt", :options_text => "Size: M") }
+
     before do
      Spree::Variant.stub(:find).and_return(variant) 
      order.should_receive(:contents).at_least(:once).and_return(Spree::OrderContents.new(self))
@@ -13,8 +14,7 @@ describe Spree::OrderPopulator do
 
     context "with products parameters" do
       it "can take a list of products and add them to the order" do
-        subject.stub(:check_stock_levels => true)
-        order.contents.should_receive(:add).with(variant, 1, subject.currency)
+        order.contents.should_receive(:add).with(variant, 1, subject.currency).and_return double.as_null_object
         subject.populate(:products => { 1 => 2 }, :quantity => 1)
       end
 
@@ -23,24 +23,17 @@ describe Spree::OrderPopulator do
         subject.populate(:products => { 1 => 2 }, :quantity => 0)
       end
 
-      it "should add an error if the variant is out of stock" do
-        Spree::Stock::Quantifier.any_instance.stub(can_supply?: false)
-        order.contents.should_not_receive(:add)
-        subject.populate(:products => { 1 => 2 }, :quantity => 1)
-        subject.should_not be_valid
-        subject.errors.full_messages.join("").should == %Q{"T-Shirt (Size: M)" is out of stock.}
-      end
-
-      # Regression test for #2430
-      context "respects backorderable setting" do
+      context "variant out of stock" do
         before do
-          Spree::Stock::Quantifier.any_instance.stub(can_supply?: true)
+          line_item = double("LineItem", valid?: false)
+          line_item.stub_chain(:errors, messages: { quantity: ["error message"] })
+          order.contents.stub(add: line_item)
         end
 
-        it "allows an order to be populated, even though item stock is depleted" do
-          order.contents.should_receive(:add).with(variant, 3, subject.currency)
-          subject.populate(:products => { 1 => 2 }, :quantity => 3)
-          subject.should be_valid
+        it "adds an error when trying to populate" do
+          subject.populate(:products => { 1 => 2 }, :quantity => 1)
+          expect(subject).not_to be_valid
+          expect(subject.errors.full_messages.join).to eql "error message"
         end
       end
 
@@ -56,8 +49,7 @@ describe Spree::OrderPopulator do
 
     context "with variant parameters" do
       it "can take a list of variants with quantites and add them to the order" do
-        subject.stub(:check_stock_levels => true)
-        order.contents.should_receive(:add).with(variant, 5, subject.currency)
+        order.contents.should_receive(:add).with(variant, 5, subject.currency).and_return double.as_null_object
         subject.populate(:variants => { 2 => 5 })
       end
     end
