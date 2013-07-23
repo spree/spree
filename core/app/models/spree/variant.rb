@@ -135,6 +135,10 @@ module Spree
       Spree::Stock::Quantifier.new(self).can_supply?(quantity)
     end
 
+    def total_on_hand
+      Spree::Stock::Quantifier.new(self).total_on_hand
+    end
+
     # Product may be created with deleted_at already set,
     # which would make AR's default finder return nil.
     # This is a stopgap for that little problem.
