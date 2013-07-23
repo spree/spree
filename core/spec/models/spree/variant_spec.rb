@@ -332,4 +332,16 @@ describe Spree::Variant do
       end
     end
   end
+
+  describe '#total_on_hand' do
+    it 'should be infinite if track_inventory_levels is false' do
+      Spree::Config[:track_inventory_levels] = false
+      build(:variant).total_on_hand.should eql(Float::INFINITY)
+    end
+
+    it 'should match quantifier total_on_hand' do
+      variant = build(:variant)
+      expect(variant.total_on_hand).to eq(Spree::Stock::Quantifier.new(variant).total_on_hand)
+    end
+  end
 end
