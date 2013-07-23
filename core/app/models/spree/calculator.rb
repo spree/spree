@@ -3,7 +3,6 @@ module Spree
     belongs_to :calculable, polymorphic: true
 
     # This method must be overriden in concrete calculator.
-    #
     # It should return amount computed based on #calculable and/or optional parameter
     def compute(something = nil)
       raise NotImplementedError, 'please use concrete calculator'
