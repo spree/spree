@@ -65,3 +65,7 @@ See #3133 for more information.
 * Removed `variants_including_master_and_deleted`, in favour of using the Paranoia gem. This scope would now be achieved using `variants_including_master.with_deleted`.
 
     *Ryan Bigg*
+
+* You can now find the total amount on hand of a variant by calling `Variant#total_on_hand`. #3427
+
+    *Ruben Ascencio*
