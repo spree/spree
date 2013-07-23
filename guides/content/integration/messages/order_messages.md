@@ -80,9 +80,7 @@ Use this type of Message whenever a new order is created.
       "payments": [
         {
           "amount": 29.99,
-          "type": "Visa",
-          "status": "complete",
-          "identifier": "xxxx-xxxx-xxxx-1234"
+          "payment_method": "Standard"
         }
       ],
       "shipments": [
