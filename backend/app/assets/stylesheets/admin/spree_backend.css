@@ -11,6 +11,7 @@
  *= require jquery.ui.datepicker
  *= require jquery.powertip
  *= require select2
+ *= require font-awesome
 
  *= require ./spree_admin
 */
