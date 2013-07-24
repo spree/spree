@@ -138,10 +138,21 @@ module Spree
     end
 
     context "working with an order" do
+
+      let(:variant) { create(:variant) }
+      let!(:line_item) { order.contents.add(variant, 1) }
+      let!(:payment_method) { create(:payment_method) }
+
+      let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
+      let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
+                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                :country_id => Country.first.id, :state_id => State.first.id} }
+      let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
+                                 :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                 :country_id => Country.first.id, :state_id => State.first.id} }
+
       before do
         Order.any_instance.stub :user => current_api_user
-        order.line_items << FactoryGirl.create(:line_item)
-        create(:payment_method)
         order.next # Switch from cart to address
         order.bill_address = nil
         order.ship_address = nil
@@ -155,19 +166,7 @@ module Spree
         address
       end
 
-      let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
-      let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
-                                :country_id => Country.first.id, :state_id => State.first.id} }
-      let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                 :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
-                                 :country_id => Country.first.id, :state_id => State.first.id} }
-      let!(:payment_method) { create(:payment_method) }
-
       it "can update quantities of existing line items" do
-        variant = create(:variant)
-        line_item = order.line_items.create!(:variant_id => variant.id, :quantity => 1)
-
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
             line_item.id => { :quantity => 10 }
