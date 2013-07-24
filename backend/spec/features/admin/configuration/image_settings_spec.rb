@@ -33,7 +33,7 @@ describe "image settings" do
       attach_file('image_attachment', file_path)
       expect {
         click_on "Update"
-      }.to_not raise_error(NoMethodError)
+      }.to_not raise_error
     end
   end
 end
