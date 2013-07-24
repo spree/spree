@@ -12,6 +12,7 @@
  *= require jquery.ui.autocomplete
  *= require jquery.powertip
  *= require select2
+ *= require font-awesome
 
  *= require ./spree_admin
 */
