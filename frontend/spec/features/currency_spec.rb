@@ -12,7 +12,7 @@ describe "Switching currencies in backend" do
     click_button "Add To Cart"
     # Now that we have an order...
     Spree::Config[:currency] = "AUD"
-    lambda { visit spree.root_path }.should_not raise_error(NoMethodError)
+    lambda { visit spree.root_path }.should_not raise_error
   end
 
 end
