@@ -1,13 +1,17 @@
 $ ->
-  if ($ '#country_based').is(':checked')
-    show_country()
-  else
-    show_state()
   ($ '#country_based').click ->
     show_country()
 
   ($ '#state_based').click ->
     show_state()
+
+  if ($ '#country_based').is(':checked')
+    show_country()
+  else if ($ '#state_based').is(':checked')
+    show_state()
+  else
+    show_state()
+    ($ '#state_based').click()
 
 
 show_country = ->
