@@ -21,7 +21,7 @@ title: Shipment Messages
       "stock_location": "VPD",
       "shipping_method": "USPS 6-10 days",
       "status": "ready",
-      "tracking_number": "",
+      "tracking_number": "ABC123456DEF",
       "updated_at": "01/01/2013 12:34:22 UTC",
       "shipping_address": {
           "firstname": "Brian",
@@ -39,17 +39,23 @@ title: Shipment Messages
           "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
           "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ]
     },
-    "order": {}
+    "order": {
+      ...
+    }
   }
 }```
 
@@ -88,17 +94,23 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
           "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
           "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ]
     },
-    "order": {}
+    "order": {
+      ...
+    }
   }
 }```
 
@@ -116,8 +128,8 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
       "email": "sales@spreecommerce.com",
       "stock_location": "VPD",
       "shipping_method": "USPS 6-10 days",
-      "status": "canceled",
-      "tracking_number": "",
+      "status": "ready",
+      "tracking_number": "ABC123456DEF",
       "updated_at": "01/01/2013 12:34:22 UTC",
       "shipping_address": {
           "firstname": "Brian",
@@ -135,17 +147,23 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
           "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
           "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ]
     },
-    "order": {}
+    "order": {
+      ...
+    }
   }
 }```
 
@@ -163,8 +181,8 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
       "email": "sales@spreecommerce.com",
       "stock_location": "VPD",
       "shipping_method": "USPS 6-10 days",
-      "status": "pending",
-      "tracking_number": "",
+      "status": "ready",
+      "tracking_number": "ABC123456DEF",
       "updated_at": "01/01/2013 12:34:22 UTC",
       "shipping_address": {
           "firstname": "Brian",
@@ -182,16 +200,22 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
           "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
           "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ]
     },
-    "order": {}
+    "order": {
+      ...
+    }
   }
 }```

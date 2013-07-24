@@ -41,18 +41,22 @@ Use this type of Message whenever a new order is created.
       ],
       "line_items": [
         {
-          "price": 19.99,
+          "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
           "name": "Foo T-Shirt Size(L)",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
-          "price": 23.99,
+          "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
           "name": "Foo Socks",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ],
       "shipping_address": {
@@ -94,13 +98,17 @@ Use this type of Message whenever a new order is created.
               "name": "Foo T-Shirt Size(L)",
               "sku": "ABC-123",
               "external_ref": "ABD-123",
-              "quantity": 1
+              "quantity": 1,
+              "price": 19.99,              
+              "options": {"color": "BLK", "size": "XL" }
             },
             {
               "name": "Foo Socks",
               "sku": "DEF-123",
               "external_ref": "DDD-123",
-              "quantity": 3
+              "quantity": 3,
+              "price": 23.99,              
+              "options": {"color": "BLK", "size": "XL" }
             }
           ]
         }
@@ -144,18 +152,22 @@ This type of Message should be sent when an existing order is updated.
       ],
       "line_items": [
         {
-          "price": 19.99,
+          "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
           "name": "Foo T-Shirt Size(L)",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
-          "price": 23.99,
+          "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
           "name": "Foo Socks",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ],
       "shipping_address": {
@@ -183,9 +195,7 @@ This type of Message should be sent when an existing order is updated.
       "payments": [
         {
           "amount": 29.99,
-          "type": "Visa",
-          "status": "complete",
-          "identifier": "xxxx-xxxx-xxxx-1234"
+          "payment_method": "Standard"
         }
       ],
       "shipments": [
@@ -199,13 +209,17 @@ This type of Message should be sent when an existing order is updated.
               "name": "Foo T-Shirt Size(L)",
               "sku": "ABC-123",
               "external_ref": "ABD-123",
-              "quantity": 1
+              "quantity": 1,
+              "price": 19.99,              
+              "options": {"color": "BLK", "size": "XL" }
             },
             {
               "name": "Foo Socks",
               "sku": "DEF-123",
               "external_ref": "DDD-123",
-              "quantity": 3
+              "quantity": 3,
+              "price": 23.99,              
+              "options": {"color": "BLK", "size": "XL" }
             }
           ]
         }
@@ -229,7 +243,7 @@ You should send this type of Message whenever an order is canceled, whether by t
       "currency": "USD",
       "placed_on": "01/01/2013 12:34:22 UTC",
       "updated_at": "01/01/2013 12:34:22 UTC",
-      "status": "canceled",
+      "status": "complete",
       "totals": {
         "item": 12.99,
         "adjustment": 10,
@@ -249,18 +263,22 @@ You should send this type of Message whenever an order is canceled, whether by t
       ],
       "line_items": [
         {
-          "price": 19.99,
+          "name": "Foo T-Shirt Size(L)",
           "sku": "ABC-123",
           "external_ref": "ABD-123",
           "name": "Foo T-Shirt Size(L)",
-          "quantity": 1
+          "quantity": 1,
+          "price": 19.99,
+          "options": {"color": "BLK", "size": "XL" }
         },
         {
-          "price": 23.99,
+          "name": "Foo Shoe",
           "sku": "DEF-123",
           "external_ref": "DDD-123",
           "name": "Foo Socks",
-          "quantity": 3
+          "quantity": 3,
+          "price": 23.99,
+          "options": {"color": "BLK", "size": "XL" }
         }
       ],
       "shipping_address": {
@@ -288,9 +306,7 @@ You should send this type of Message whenever an order is canceled, whether by t
       "payments": [
         {
           "amount": 29.99,
-          "type": "Visa",
-          "status": "complete",
-          "identifier": "xxxx-xxxx-xxxx-1234"
+          "payment_method": "Standard"
         }
       ],
       "shipments": [
@@ -304,13 +320,17 @@ You should send this type of Message whenever an order is canceled, whether by t
               "name": "Foo T-Shirt Size(L)",
               "sku": "ABC-123",
               "external_ref": "ABD-123",
-              "quantity": 1
+              "quantity": 1,
+              "price": 19.99,              
+              "options": {"color": "BLK", "size": "XL" }
             },
             {
               "name": "Foo Socks",
               "sku": "DEF-123",
               "external_ref": "DDD-123",
-              "quantity": 3
+              "quantity": 3,
+              "price": 23.99,              
+              "options": {"color": "BLK", "size": "XL" }
             }
           ]
         }
