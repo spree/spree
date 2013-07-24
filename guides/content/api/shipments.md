@@ -55,6 +55,10 @@ To update shipment information, use parameters like this:
 unlock
 : When set to `yes`, the shipment's adjustment will be recalculated.
 
+To update order ship method inspect order/shipments/shipping_rates for available shipping_rate_id values and use following api call:
+
+    PUT /api/orders/R1234567/shipments/H123456789?shipment[selected_shipping_rate_id]=162&shipment[unlock]=yes
+
 ### Response
 
 <%= headers 200 %>
