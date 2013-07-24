@@ -12,7 +12,7 @@ title: Shipment Messages
 ```json
 {
   "message_id": "51af1dc5fe53543f1200f519",
-  "message": "shipment:cancel",
+  "message": "shipment:ready",
   "payload": {
     "shipment": {
       "number": "H12345678901",
