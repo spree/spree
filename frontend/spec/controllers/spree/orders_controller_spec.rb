@@ -10,6 +10,7 @@ describe Spree::OrdersController do
                                :save! => true,
                                :coupon_code => nil,
                                :user => user,
+                               :created_by => nil,
                                :completed? => false,
                                :currency => "USD",
                                :token => 'a1b2c3d4',
@@ -17,8 +18,9 @@ describe Spree::OrdersController do
     end
 
     before do
-      # Don't care about IP address being set here
+      # Don't care about IP address or created_by being set here
       order.stub(:last_ip_address=)
+      order.stub(:created_by=)
       Spree::Order.stub(:find).with(1).and_return(order)
       controller.stub(:try_spree_current_user => user)
     end
