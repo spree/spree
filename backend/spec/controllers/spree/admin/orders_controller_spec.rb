@@ -63,6 +63,7 @@ describe Spree::Admin::OrdersController do
     let(:order) { create(:completed_order_with_totals, :number => 'R987654321') }
 
     before do
+      Spree::Order.stub :find_by_number! => order
       controller.stub :spree_current_user => user
     end
 
