@@ -174,8 +174,8 @@ module Spree
         }
 
         response.status.should == 200
-        json_response['line_items'].count.should == 2
-        json_response['line_items'].last['quantity'].should == 10
+        json_response['line_items'].count.should == 1
+        json_response['line_items'].first['quantity'].should == 10
       end
 
       it "can add billing address" do
