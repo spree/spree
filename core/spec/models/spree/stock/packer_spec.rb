@@ -39,6 +39,22 @@ module Spree
             packer.default_package.contents.should be_empty
           end
         end
+
+        context "doesn't track inventory levels" do
+          let(:order) { Order.create }
+          let!(:line_item) { order.contents.add(create(:variant), 30) }
+
+          before { Config.track_inventory_levels = false }
+
+          it "doesn't bother stock items status in stock location" do
+            expect(subject.stock_location).not_to receive(:fill_status)
+            subject.default_package
+          end
+
+          it "still creates package with proper quantity" do
+            expect(subject.default_package.quantity).to eql 30
+          end
+        end
       end
     end
   end
