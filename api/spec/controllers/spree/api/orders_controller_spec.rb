@@ -118,10 +118,21 @@ module Spree
     end
 
     context "working with an order" do
+
+      let(:variant) { create(:variant) }
+      let!(:line_item) { order.contents.add(variant, 1) }
+      let!(:payment_method) { create(:payment_method) }
+
+      let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
+      let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
+                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                :country_id => Country.first.id, :state_id => State.first.id} }
+      let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
+                                 :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                 :country_id => Country.first.id, :state_id => State.first.id} }
+
       before do
         Order.any_instance.stub :user => current_api_user
-        order.line_items << FactoryGirl.create(:line_item)
-        create(:payment_method)
         order.next # Switch from cart to address
         order.bill_address = nil
         order.ship_address = nil
@@ -150,7 +161,8 @@ module Spree
         response.status.should == 200
         json_response['item_total'].to_f.should_not == order.item_total.to_f
         json_response['line_items'].count.should == 2
-        json_response['line_items'].last['quantity'].should == 10
+        json_response['line_items'].first['quantity'].should == 1
+        json_response['line_items'].last['quantity'].should == 2
       end
 
       it "can add billing address" do
