@@ -18,7 +18,7 @@ module Spree
       text = text ? h(text) : Spree.t('cart')
       css_class = nil
 
-      if current_order.nil? or current_order.line_items.empty?
+      if current_order.nil? or current_order.item_count.zero?
         text = "#{text}: (#{Spree.t('empty')})"
         css_class = 'empty'
       else
