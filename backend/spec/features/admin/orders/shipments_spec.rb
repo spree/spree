@@ -41,6 +41,7 @@ describe "Shipments" do
       targetted_select2 'LA', from: '#s2id_item_stock_location'
       click_icon :ok
       wait_for_ajax
+      sleep(1)
       page.should have_selector("#shipment_#{order.shipments.last.id}")
 
       within_row(2) { click_icon 'resize-horizontal' }
