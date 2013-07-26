@@ -70,16 +70,16 @@ Disallow: /account
     def setup_assets
       @lib_name = 'spree'
       %w{javascripts stylesheets images}.each do |path|
-        empty_directory "app/assets/#{path}/store" if defined? Spree::Frontend
-        empty_directory "app/assets/#{path}/admin"
+        empty_directory "app/assets/#{path}/store" if defined? Spree::Frontend || Rails.env.test?
+        empty_directory "app/assets/#{path}/admin" if defined? Spree::Backend || Rails.env.test?
       end
 
-      if defined? Spree::Frontend
+      if defined? Spree::Frontend || Rails.env.test?
         template "app/assets/javascripts/store/all.js"
         template "app/assets/stylesheets/store/all.css"
       end
 
-      if defined? Spree::Backend
+      if defined? Spree::Backend || Rails.env.test?
         template "app/assets/javascripts/admin/all.js"
         template "app/assets/stylesheets/admin/all.css"
       end
