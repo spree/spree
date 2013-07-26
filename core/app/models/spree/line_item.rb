@@ -97,13 +97,17 @@ module Spree
 
     private
       def update_inventory
-        Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+        if changed?
+          Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+        end
       end
 
       def update_order
-        # update the order totals, etc.
-        order.create_tax_charge!
-        order.update!
+        if changed? || destroyed?
+          # update the order totals, etc.
+          order.create_tax_charge!
+          order.update!
+        end
       end
   end
 end
