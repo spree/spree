@@ -27,7 +27,6 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
-require 'paperclip/matchers'
 
 RSpec.configure do |config|
   config.color = true
@@ -46,7 +45,6 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
-  config.include Paperclip::Shoulda::Matchers
 
   config.fail_fast = ENV['FAIL_FAST'] || false
 end
