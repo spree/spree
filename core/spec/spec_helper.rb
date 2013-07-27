@@ -27,7 +27,6 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
-require 'spree/testing_support/capybara_ext'
 require 'paperclip/matchers'
 
 RSpec.configure do |config|
