@@ -34,28 +34,6 @@ describe Spree::ProductsController do
 
   # Regression tests for #2308 & Spree::Core::ControllerHelpers::SSL
   context "force_ssl enabled" do
-    after do
-      Rails.application.config.force_ssl = false
-      reset_spree_preferences
-      load "spree/base_controller.rb"
-    end
-
-    before do
-      Rails.application.config.force_ssl = true
-      reset_spree_preferences do |config|
-        config.allow_ssl_in_development_and_test = true
-      end
-      load "spree/base_controller.rb"
-    end
-
-    context "receives a non SSL request" do
-      it "should redirect to https" do
-        controller.should_receive(:redirect_to).with(hash_including(:protocol => 'https://'))
-        spree_get :index
-        request.protocol.should eql('http://')
-      end
-    end
-
     context "receive a SSL request" do
       before do
         request.env['HTTPS'] = 'on'
