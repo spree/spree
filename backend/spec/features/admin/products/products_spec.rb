@@ -2,6 +2,7 @@
 require 'spec_helper'
 
 describe "Products" do
+
   stub_authorization!
 
   context "as admin user" do
@@ -140,6 +141,7 @@ describe "Products" do
       before(:each) do
         @option_type_prototype = prototype
         @property_prototype = create(:prototype, :name => "Random")
+        @shipping_category = create(:shipping_category)
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
@@ -154,6 +156,7 @@ describe "Products" do
         fill_in "product_available_on", :with => "2012/01/24"
         select "Size", :from => "Prototype"
         check "Large"
+        select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
         page.should have_content("successfully created!")
         Spree::Product.last.variants.length.should == 1
@@ -180,6 +183,7 @@ describe "Products" do
 
     context "creating a new product" do
       before(:each) do
+        @shipping_category = create(:shipping_category)
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
@@ -192,6 +196,7 @@ describe "Products" do
         fill_in "product_sku", :with => "B100"
         fill_in "product_price", :with => "100"
         fill_in "product_available_on", :with => "2012/01/24"
+        select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
         page.should have_content("successfully created!")
         click_button "Update"
@@ -207,6 +212,7 @@ describe "Products" do
       it "can set the count on hand to a null value", :js => true do
         fill_in "product_name", :with => "Baseball Cap"
         fill_in "product_price", :with => "100"
+        select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
         page.should have_content("successfully created!")
         click_button "Update"
@@ -274,10 +280,10 @@ describe "Products" do
 
         within(:css, "#prototypes tr#row_1") do
           click_link 'Select'
+          wait_for_ajax
         end
 
         page.all('tr.product_property').size > 1
-
         within(:css, "tr.product_property:first-child") do
           first('input[type=text]')[:value].should eq('baseball_cap_color')
         end

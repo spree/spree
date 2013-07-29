@@ -4,6 +4,10 @@
 
     *Ryan Bigg*
 
+* The Products API endpoint now returns an additional key called `shipping_category_id`, and also requires `shipping_category_id` on create.
+
+    *Jeff Dutil*
+
 * Checkouts API's update action will now correctly process line item attributes (either `line_items` or `line_item_attributes`)
 
     * Ryan Bigg*

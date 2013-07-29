@@ -3,6 +3,15 @@
 *  Sandbox generator and installer now use the correct 2-0-stable branch of spree_auth_devise 
 3179a7ac85d4cfcb76622509fc739a0e17668d5a & 759fa3475f5230da3794aed86503913978dde22d.
 
+* Product requires `shipping_category_id` on create #3188.
+
+    *Jeff Dutil*
+
+*   No longer set ActiveRecord::Base.include_root_in_json = true during install.
+    Originally set to false back in 2011 according to convention. After
+    https://groups.google.com/forum/#!topic/spree-user/D9dZQayC4z, it
+    was changed. Applications should now decide their own setting for this value.
+
     *John Dyer and Sean Schofield*
 
 * Revert bump of Rubygems required version which made Spree 2.0.0 unusable on Heroku. 77103dc4f4c93c195ae20f47944f68ef31a7bbe9
@@ -12,7 +21,7 @@
 * Improve performance of `Order#payment_required?` by not updating the totals every time. #3040 #3086
 
     *Washington Luiz*
-    
+
 * Remove after_save callback for stock items backorders processing and
     fixes count on hand updates when there are backordered units #3066
 
