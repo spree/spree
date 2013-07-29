@@ -104,9 +104,9 @@ GET /api/products/new```
 <%= json \
   :attributes => [
     :id, :name, :description, :price, :available_on, :permalink,
-    :count_on_hand, :meta_description, :meta_keywords, :taxon_ids
+    :count_on_hand, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids
   ],
-  :required_attributes => [:name, :price]
+  :required_attributes => [:name, :price, :shipping_category_id]
  %>
 
 ## Create
@@ -134,7 +134,8 @@ POST /api/products?product[name]=Headphones&product[price]=100```
   :error => "Invalid resource. Please fix errors and try again.",
   :errors => {
     :name => ["can't be blank"],
-    :price => ["can't be blank"]
+    :price => ["can't be blank"],
+    :shipping_category_id => ["can't be blank"]
   }
 %>
 
@@ -163,7 +164,8 @@ PUT /api/products/a-product?product[name]=Headphones```
   :error => "Invalid resource. Please fix errors and try again.",
   :errors => {
     :name => ["can't be blank"],
-    :price => ["can't be blank"]
+    :price => ["can't be blank"],
+    :shipping_category_id => ["can't be blank"]
   }
 %>
 
