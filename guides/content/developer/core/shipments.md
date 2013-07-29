@@ -179,7 +179,7 @@ After entering a shipping address, the system displays the available shipping op
 The customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
 
 ***
-You can enable collection of extra _shipping instructions_ by setting the option `Spree::Config.shipping_instructions` to `true`. This is set to `false` by default. See [Shipping Instructions](#shipping_instructions) below.
+You can enable collection of extra _shipping instructions_ by setting the option `Spree::Config.shipping_instructions` to `true`. This is set to `false` by default. See [Shipping Instructions](#shipping-instructions) below.
 ***
 
 ### What the Order's Administrator Sees
@@ -216,7 +216,7 @@ Each product has a `ShippingCategory`, which adds product-specific information t
 
 Variants can be specified with weight and dimension information. Some shipping method calculators will use this information if it is present.
 
-## <a id="shipping_instructions"></a>Shipping Instructions
+## Shipping Instructions
 
 The option `Spree::Config[:shipping_instructions]` controls collection of additional shipping instructions. This is turned off (set to `false`) by default. If an order has any shipping instructions attached, they will be shown in an order's shipment admin page and can also be edited at that stage. Observe that instructions are currently attached to the _order_ and not to actual _shipments_.
 
@@ -390,27 +390,27 @@ Split shipments are a new feature as of Spree 2.0 that addresses the needs of co
 
 ### Creating Proposed Shipments
 
-This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](#components) section of this guide.
+This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](#components-of-split-shipments) section of this guide.
 
 The process of determining shipments for an order is triggered by calling `create_proposed_shipments` on an `Order` object while transitioning to the `delivery` state during checkout. This process will first delete any existing shipments for an order and then determine the possible shipments available for that order.
 
-`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](#packer).
+`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](#the-packer).
 
 After obtaining the array of available packages, they are converted to shipments on the order object. Shipping rates are determined and inventory units are created during this process as well.
 
 At this point, the checkout process can continue to the delivery step.
 
-## <a id="components"></a>Components of Split Shipments
+## Components of Split Shipments
 
-This section describes the four main components that power split shipments: [The Coordinator](#coordinator), [The Packer](#packer), [The Prioritizer](#prioritizer), and [The Estimator](#estimator).
+This section describes the four main components that power split shipments: [The Coordinator](#the-coordinator), [The Packer](#the-packer), [The Prioritizer](#the-prioritizer), and [The Estimator](#the-estimator).
 
-### <a id="coordinator"></a>The Coordinator
+### The Coordinator
 
 The `Spree::Stock::Coordinator` is the starting point for determining shipments when calling `create_proposed_shipments` on an order. Its job is to go through each `StockLocation` available and determine what can be shipped from that location.
 
 The `Spree::Stock::Coordinator` will ultimately return an array of packages which can then be easily converted into shipments for an order by calling `to_shipment` on them.
 
-### <a id="packer"></a>The Packer
+### The Packer
 
 A `Spree::Stock::Packer` object is an important part of the `create_proposed_shipments` process. Its job is to determine possible packages for a given StockLocation and order. It uses rules defined in classes known as `Splitters` to determine what packages can be shipped from a `StockLocation`.
 
@@ -450,7 +450,7 @@ end```
 
 If you want to add different splitters for each `StockLocation`, you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
 
-### <a id="prioritizer"></a>The Prioritizer
+### The Prioritizer
 
 A `Spree::Stock::Prioritizer` object will decide which `StockLocation` should ship which package from an order. The prioritizer will attempt to come up with the best shipping situation available to the user.
 
@@ -473,6 +473,6 @@ Spree::Stock::Coordinator.class_eval do
   end
 end```
 
-### <a id="estimator"></a>The Estimator
+### The Estimator
 
 The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them. This information is then returned to the user so they can select shipments for their order and complete the checkout process.
