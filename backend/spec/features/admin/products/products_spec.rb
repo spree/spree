@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe "Products" do
+  stub_authorization!
+
   context "as admin user" do
     stub_authorization!
 
@@ -283,7 +285,6 @@ describe "Products" do
         end
 
         page.all('tr.product_property').size > 1
-
         within(:css, "tr.product_property:first-child") do
           first('input[type=text]')[:value].should eq('baseball_cap_color')
         end
