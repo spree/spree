@@ -1,5 +1,9 @@
 ## Spree 2.1.0 (unreleased) ##
 
+* The Products API endpoint now returns an additional key called `shipping_category_id`, and also requires `shipping_category_id` on create.
+
+    *Jeff Dutil*
+
 * The Products API endpoint now returns an additional key called `display_price`, which is the proper rendering of the price of a product.
 
     *Ryan Bigg*

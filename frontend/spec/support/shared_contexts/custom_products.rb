@@ -23,5 +23,3 @@ shared_context "custom products" do
     FactoryGirl.create(:custom_product, :name => 'Apache Baseball Jersey', :price => '19.99', :taxons => [apache_taxon, clothing_taxon])
   end
 end
-
-

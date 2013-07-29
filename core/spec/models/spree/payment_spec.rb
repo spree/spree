@@ -444,7 +444,7 @@ describe Spree::Payment do
       end
 
       specify do
-        expect { payment.process! }.not_to raise_error(Spree::Core::GatewayError)
+        expect { payment.process! }.not_to raise_error
       end
     end
   end

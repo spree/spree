@@ -1,5 +1,9 @@
 ## Spree 2.1.0 (unreleased) ##
 
+* Product requires `shipping_category_id` on create #3188.
+
+    *Jeff Dutil*
+
 *   No longer set ActiveRecord::Base.include_root_in_json = true during install.
     Originally set to false back in 2011 according to convention. After
     https://groups.google.com/forum/#!topic/spree-user/D9dZQayC4z, it
