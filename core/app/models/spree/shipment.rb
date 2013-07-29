@@ -6,7 +6,7 @@ module Spree
     belongs_to :address, class_name: 'Spree::Address'
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
-    has_many :shipping_rates, dependent: :destroy
+    has_many :shipping_rates, dependent: :delete_all
     has_many :shipping_methods, through: :shipping_rates
     has_many :state_changes, as: :stateful
     has_many :inventory_units, dependent: :delete_all
