@@ -66,16 +66,35 @@ module Spree
 
     accepts_nested_attributes_for :variants, allow_destroy: true
 
-    validates :name, :permalink, presence: true
+    validates :name, presence: true
+    validates :permalink, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
+    validates :shipping_category_id, presence: true
 
     attr_accessor :option_values_hash
 
-    attr_accessible :name, :description, :available_on, :permalink, :meta_description,
-                    :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
-                    :option_values_hash, :weight, :height, :width, :depth,
-                    :shipping_category_id, :tax_category_id, :product_properties_attributes,
-                    :variants_attributes, :taxon_ids, :option_type_ids, :cost_currency
+    attr_accessible :available_on,
+                    :cost_currency,
+                    :deleted_at,
+                    :depth,
+                    :description,
+                    :height,
+                    :meta_description,
+                    :meta_keywords,
+                    :name,
+                    :option_type_ids,
+                    :option_values_hash,
+                    :permalink,
+                    :price,
+                    :product_properties_attributes,
+                    :prototype_id,
+                    :shipping_category_id,
+                    :sku,
+                    :tax_category_id,
+                    :taxon_ids,
+                    :weight,
+                    :width,
+                    :variants_attributes
 
     attr_accessible :cost_price if Variant.table_exists? && Variant.column_names.include?('cost_price')
 

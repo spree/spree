@@ -7,7 +7,7 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:attributes) { [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :taxon_ids] }
+    let(:attributes) { [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
 
     before do
       stub_authentication!
@@ -137,6 +137,7 @@ module Spree
         required_attributes = json_response["required_attributes"]
         required_attributes.should include("name")
         required_attributes.should include("price")
+        required_attributes.should include("shipping_category_id")
       end
 
       it_behaves_like "modifying product actions are restricted"
@@ -172,7 +173,8 @@ module Spree
 
       it "can create a new product" do
         api_post :create, :product => { :name => "The Other Product",
-                                        :price => 19.99 }
+                                        :price => 19.99,
+                                        :shipping_category_id => create(:shipping_category).id }
         json_response.should have_attributes(attributes)
         response.status.should == 201
       end
@@ -189,7 +191,8 @@ module Spree
 
         it "can still create a product" do
           api_post :create, :product => { :name => "The Other Product",
-                                          :price => 19.99 },
+                                          :price => 19.99,
+                                          :shipping_category_id => create(:shipping_category).id },
                             :token => "fake"
           json_response.should have_attributes(attributes)
           response.status.should == 201
@@ -202,7 +205,7 @@ module Spree
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
         errors = json_response["errors"]
         errors.delete("permalink") # Don't care about this one.
-        errors.keys.should =~ ["name", "price"]
+        errors.keys.should =~ ["name", "price", "shipping_category_id"]
       end
 
       it "can update a product" do

@@ -232,7 +232,7 @@ describe Spree::Product do
 
   context '#create' do
     let!(:prototype) { create(:prototype) }
-    let!(:product) { Spree::Product.new(:name => "Foo", :price => 1.99) }
+    let!(:product) { Spree::Product.new(name: "Foo", price: 1.99, shipping_category_id: create(:shipping_category).id) }
 
     before { product.prototype_id = prototype.id }
 
