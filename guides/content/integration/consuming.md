@@ -10,7 +10,7 @@ Each message will contain at least the following fields:
 
 * `message` - This key represents the message type, in colon notation. For example: `order:new`, `order:updated`, `user:new`, `shipment:ready`
 * `message_id` - A unique id (BSON::ObjectId) for the message.
-* `payload` - The payload contains all message specific details. For example, in the case of `order:new` it would contains order details.
+* `payload` - The payload contains all message specific details. For example, in the case of `order:new` it would contain order details.
 
 <pre class="headers"><code>Basic message fields</code></pre>
 <%= json :message %>
