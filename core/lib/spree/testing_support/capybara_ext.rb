@@ -25,9 +25,11 @@ module CapybaraExt
   end
 
   def select2_search(value, options)
-    id = find_label_by_text(options[:from])
-    options[:from] = "#s2id_#{id}"
-    targetted_select2_search(value, options)
+    label = find_label_by_text(options[:from])
+    within label.first(:xpath,".//..") do
+      options[:from] = "##{find(".select2-container")["id"]}"
+      targetted_select2_search(value, options)
+    end
   end
 
   def targetted_select2_search(value, options)
@@ -37,11 +39,12 @@ module CapybaraExt
   end
 
   def select2(value, options)
-    id = find_label_by_text(options[:from])
+    label = find_label_by_text(options[:from])
 
-    # generate select2 id
-    options[:from] = "#s2id_#{id}"
-    targetted_select2(value, options)
+    within label.first(:xpath,".//..") do
+      options[:from] = "##{find(".select2-container")["id"]}"
+      targetted_select2(value, options)
+    end
   end
 
   def select2_no_label value, options={}
@@ -82,7 +85,7 @@ module CapybaraExt
       raise "Could not find label by text #{text}"
     end
 
-    label ? label['for'] : text
+    label
   end
 
   def find_label(text)

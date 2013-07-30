@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'jquery-rails', '~> 3.0.0'
   s.add_dependency 'jquery-ui-rails', '~> 4.0.0'
-  s.add_dependency 'select2-rails', '3.2.1'
+  s.add_dependency 'select2-rails', '~> 3.4.1'
 
   s.add_dependency 'rails', '~> 3.2.8'
   s.add_dependency 'deface', '>= 0.9.0'
