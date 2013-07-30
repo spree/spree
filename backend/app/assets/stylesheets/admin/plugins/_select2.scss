@@ -67,9 +67,11 @@
 
   input {
     @extend input[type="text"];
-
-    padding: 6px 0 6px 25px;
-    margin: 5px 0 0 5px;
+    margin-top: 5px;
+    margin-left: -6px;
+    padding-left: 25px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     font-family: $base-font-family;
     font-size: 90%;
     box-shadow: none;
