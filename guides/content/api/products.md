@@ -121,7 +121,7 @@ POST /api/products```
 For instance, a request to create a new product called \"Headphones\" with a price of $100 would look like this:
 
 ```text
-POST /api/products?product[name]=Headphones&product[price]=100```
+POST /api/products?product[name]=Headphones&product[price]=100&product[shipping_category_id]=1```
 
 ### Successful response
 
