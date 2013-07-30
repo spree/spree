@@ -10,7 +10,7 @@ To properly leverage Spree’s shipping system’s flexibility you must understa
 
 * [Shipping Categories](shipping_categories)
 * [Zones](zones)
-* [Calculators](calculators) (to determine shipping rates)
 * [Shipping Methods](shipping_methods)
+* [Calculators](calculators) (to determine shipping rates)
 
 Let's begin by understanding what [Shipping Categories](shipping_categories) are and how you can use them to differentiate products in your store.
