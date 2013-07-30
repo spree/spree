@@ -18,14 +18,12 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', version
   s.add_dependency 'spree_api', version
+  s.add_dependency 'spree_core', version
 
-  s.add_dependency 'jquery-rails', '~> 3.0.0'
-
-  s.add_dependency 'rails', '~> 3.2.13'
   s.add_dependency 'canonical-rails'
   s.add_dependency 'deface', '>= 0.9.0'
+  s.add_dependency 'jquery-rails', '~> 3.0.0'
   s.add_dependency 'stringex', '~> 1.5.1'
 
   s.add_development_dependency 'email_spec', '~> 1.2.1'
