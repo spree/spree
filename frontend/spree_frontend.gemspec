@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'canonical-rails'
   s.add_dependency 'jquery-rails', '~> 3.0.0'
-  s.add_dependency 'select2-rails', '3.2.1'
   s.add_dependency 'stringex', '~> 1.5.1'
 
   s.add_development_dependency 'email_spec', '~> 1.2.1'
