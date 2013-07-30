@@ -301,6 +301,7 @@ en:
         reports: "Reports"
         configuration: "Configuration"
         promotions: "Promotions"
+        users: "Users"
     administration: Administration
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
