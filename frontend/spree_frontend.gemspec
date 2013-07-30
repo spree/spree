@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_core', version
 
   s.add_dependency 'canonical-rails'
-  s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'jquery-rails', '~> 3.0.0'
   s.add_dependency 'stringex', '~> 1.5.1'
 
