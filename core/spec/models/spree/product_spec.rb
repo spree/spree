@@ -303,7 +303,7 @@ describe Spree::Product do
   context '#create' do
     before do
       @prototype = create(:prototype)
-      @product = Spree::Product.new(:name => "Foo", :price => 1.99)
+      @product = Spree::Product.new(name: "Foo", price: 1.99, shipping_category_id: 1)
     end
 
     context "when prototype is supplied" do
