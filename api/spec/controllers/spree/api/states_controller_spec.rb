@@ -19,7 +19,7 @@ module Spree
 
     context "pagination" do
       before do
-        State.should_receive(:scoped).and_return(@scope = stub)
+        State.should_receive(:scoped).and_return(@scope = double)
         @scope.stub_chain(:ransack, :result, :includes, :order).and_return(@scope)
       end
 
