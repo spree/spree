@@ -104,6 +104,13 @@ describe Spree::CreditCard do
       credit_card.should_not be_valid
       credit_card.errors[:card].should be_blank
     end
+    
+    it "does not run expiration in the past validation if year and month are empty" do
+      credit_card.year = ""
+      credit_card.month = ""
+      credit_card.should_not be_valid
+      credit_card.errors[:card].should be_blank
+    end 
 
     it "should only validate on create" do
       credit_card.attributes = valid_credit_card_attributes
