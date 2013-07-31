@@ -1,45 +1,11 @@
 ---
-title: User
+title: Spree User Documentation
 ---
 
-## Spree User Guide
+## Spree User Documentation
 
-$$$
-Write welcome content here
-$$$
+Welcome to the Spree User Guides! This documentation is intended for business owners and site administrators of Spree e-commerce sites. Everything you need to know to configure and manage your Spree store can be found here.
 
-[Understanding the Overview Page](overview.md)
+Should you find any errors in these guides, or topics you wish to see covered, please let us know by joining, then sending an email to the [Spree user mailing list](http://groups.google.com/group/spree-user).
 
-Products
-* [Creating a New Product](products/creating.md)
-* [Options](products/options.md)
-* [Prototypes](products/prototypes.md)
-* [Cloning](products/cloning.md)
-* [Deleting](products/deleting.md)
-
-Store Configuration
-* [General Settings](config/general_settings.md)
-* [Mail Methods](config/mail_methods.md)
-* [Image Settings](config/images.md)
-* [Taxes - Categories, Rates, Settings](config/taxes.md)
-* [Zones, Countries and States](config/zones_countries_states.md)
-* [Payment Methods](config/payment_methods.md)
-* [Taxonomies](config/taxonomies.md)
-* [Shipping - Methods and Categories](config/shipping.md)
-* [Inventory](config/inventory.md)
-* [Analytics Tracker](config/analytics.md)
-* [Jirafe](config/jirafe.md)
-
-[Promotions](promotions.md)
-
-Orders
-* [Manual Entry](orders/entering.md)
-* [Filtering](orders/filtering.md)
-* [Editing](orders/editing.md)
-* [Processing Payments](orders/processing_payments.md)
-* [Order States](orders/order_states.md)
-* [Returns](orders/returns.md)
-
-[Reports](reports.md)
-
-[Available Add-Ons](extensions.md)
+If you are a Spree developer, you may find the Developer Guides to be of benefit to you, though we strongly urge you to read through both sets of guides.
