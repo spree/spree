@@ -4,32 +4,27 @@ title: Calculators
 
 ## Calculators
 
-A Calculator is the component responsible for calculating the shipping price for each available Shipping Method.
+A Calculator is the component of the Spree shipping system responsible for calculating the shipping price for each available [Shipping Method](shipping_methods).
 
-Spree ships with 5 default Calculators:
+Spree ships with 5 default calculators:
 
-* Flat rate (per order)
-* Flat rate (per item/product)
-* Flat percent
-* Flexible rate
-* Price sack
+* [Flat rate (per order)](#flat-rate-per-order)
+* [Flat rate (per item)](#flat-rate-per-item)
+* [Flat percent](#flat-percent)
+* [Flexible rate](#flexible-rate)
+* [Price sack](#price-sack)
 
 ### Flat Rate (per order)
 
-The Flat Rate (per order) calculator allows you to charge the same shipping price per order regardless of the number of items in the order. You can define the flat rate charged per order at the Shipping Method level. For example, if you have two Shipping Methods defined for your store ("UPS 1-Day" and "UPS 2-Day") and have selected "Flat Rate (per order)" as the Calculator type for each, you could charge a $15 flat rate shipping cost for the UPS 1-Day orders and a $10 flat rate shipping cost for the UPS 2-Day orders. To modify these settings, go to the Admin Interface. Click on "Shipping Methods" and then click on the "Edit" icon next to the shipping method you would like to modify.
+The Flat Rate (per order) calculator allows you to charge the same shipping price per order regardless of the number of items in the order. You define the flat rate charged per order at the shipping method level.
 
-![Flat Rate Shipping Per Order](/images/user/edit_flat_rate_calculator.jpg)
+For example, if you have two shipping methods defined for your store ("UPS 1-Day" and "UPS 2-Day"), and have selected "Flat rate" as the calculator type for each, you could charge a $15 flat rate shipping cost for the UPS 1-Day orders and a $10 flat rate shipping cost for the UPS 2-Day orders.
 
-Enter the updated "Amount" you would like to charge for orders that meet the Flat Rate (per order) shipping criteria for the Shipping Method you are editing. Click "Update" once complete.
+### Flat Rate (per item)
 
-![Edit Flat Rate Per Order Amount](/images/user/flat_rate_amount.jpg)
+The Flat Rate (per item/product) calculator allows you to determine the shipping costs based on the number of items in the order.
 
-### Flat Rate (per item/product)
-
-The Flat Rate (per item/product) calculator allows you to determine the shipping costs based on the number of items in the order. For example, if there are 4 items in an order and the flat rate per item amount is set to $10 then the total shipping costs for the order would be $40. You can modify the flat rate per item/product charge by following the same instructions used to modify the [Flat Rate (per order)](user/shipping-methods.html) shipping amount.
-$$$
-Fix link
-$$$
+For example, if there are 4 items in an order and the flat rate per item amount is set to $10 then the total shipping costs for the order would be $40.
 
 ### Flat Percent
 
@@ -38,19 +33,39 @@ The Flat Percent calculator allows you to calculate shipping costs as a percent 
 ```ruby
 [item total] x [flat percentage]```
 
-For example, if an order had an item total of $31 and the calculator was configured to have a flat percent amount of 10, the discount would be $3.10, because $31 x 10% = $3.10.
-
-To modify the flat percent amount, go to the Admin Interface. Click on "Shipping Methods" and then click on the "Edit" icon next to the shipping method you would like to modify. If "Flat Percent" is not already selected as the Calculator type, then select it from the "Calculator" drop down menu and click "Update". Once complete, a field will appear named "Flat Percent" where you can enter the value for the flat percentage you would like to charge for shipping costs per order. If "Flat Percent" is already selected as the Calculator type then you can jump to the step where you enter the flat percentage amount in the "Flat Percent" field. Click "Update" once complete.
-
-![Enter Flat Percent](/images/user/enter_flat_percent.jpg)
+For example, if an order had an item total of $31 and the calculator was configured to have a flat percent amount of 10, the shipping cost would be $3.10, because $31 x 10% = $3.10.
 
 ### Flexible Rate
 
-The Flexible Rate calculator is typically used for promotional discounts when you want to give a specific discount for the first product, and then subsequent discounts for other products, up to a certain amount. For example, if you wanted to charge $10 for the first item, $5 for the next 3 items, and $0 for items beyond
+The Flexible Rate calculator is typically used for promotional discounts when you want to give a specific discount for the first product, and then subsequent discounts for other products, up to a certain amount.
+
+The Flexible Rate calculator takes four inputs:
+
+* First Item Cost: the amount of shipping charged for the first item in the order.
+* Additional Item Cost: the amount of shipping charged for items beyond the first item.
+* Max Items: the maximum number of items on which shipping will be calculated.
+* Currency: defaults to the currency you have configured for your store.
+
+For example, if you set First Item Cost to $10, Additional Item Cost to $5, and Max Items to 4, you could be charging $10 for the first item, $5 for the next 3 items, and $0 for items beyond the first 4. Thus, an order with 1 item would have a shipping cost of $10. An order with two items would cost $15 to ship, and an order of 7 items would cost $25 to ship.
 
 ### Price Sack
 
-Flexible rate is defined as a flat rate for the first product, plus a different flat rate for each additional product.
+The Price Sack calculator is a way to offer discount shipping to orders over a certain dollar amount. The Price Sack calculator takes four inputs:
+
+* Minimal Amount
+* Normal Amount
+* Discount Amount
+* Currency (defaults to the currency you have configured for your store)
+
+Any order whose subtotal is under is less than what you set for Minimal Amount would be charged a shipping cost of Normal Amount. Orders whose subtotals are equal to or greater than the Minimal Amount would be charged the Discount Amount.
+
+For example, suppose you create a shipping calculator with these settings:
+
+* Minimal Amount - $50
+* Normal Amount - $15
+* Discount Amount - $5
+
+A customer whose order subtotal equals $35 would be offered a shipping cost of $15 using this shipping method. A different customer whose order subtotal equals $55 would be offered a shipping cost of only $5.
 
 ### Custom Calculators
 
