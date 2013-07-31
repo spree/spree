@@ -21,7 +21,7 @@ module Spree
       def update
         authorize! :read, Shipment
         @shipment = @order.shipments.find_by_number!(params[:id])
-
+        params[:shipment] ||= []
         unlock = params[:shipment].delete(:unlock)
 
         if unlock == 'yes'
