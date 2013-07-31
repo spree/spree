@@ -1,0 +1,3 @@
+---
+title: Stock Locations
+---
