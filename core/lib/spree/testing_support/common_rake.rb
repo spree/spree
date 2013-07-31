@@ -32,4 +32,17 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
   end
+
+  task :seed do |t, args|
+    puts "Seeding ..."
+    cmd = "bundle exec rake db:seed RAILS_ENV=test"
+
+    if RUBY_PLATFORM =~ /mswin/ #windows
+      cmd += " >nul"
+    else
+      cmd += " >/dev/null"
+    end
+
+    system(cmd)
+  end
 end
