@@ -6,7 +6,7 @@
   <li id="new_product_link">
     <%= button_link_to Spree.t(:new_product), new_object_url, { :remote => true, :icon => 'icon-plus', :id => 'admin_new_product' } %>
   </li>
-<% end %>
+<% end if can?(:create, Spree::Product) %>
 
 <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
@@ -82,11 +82,11 @@
             <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
             <td class="align-center"><%= product.display_price.to_html rescue '' %></td>
             <td class="actions" data-hook="admin_products_index_row_actions">
-              <%= link_to_edit product, :no_text => true, :class => 'edit' unless product.deleted? %>
+              <%= link_to_edit product, :no_text => true, :class => 'edit' if can?(:edit, product) && !product.deleted? %>
               &nbsp;
-              <%= link_to_clone product, :no_text => true, :class => 'clone' %>
+              <%= link_to_clone product, :no_text => true, :class => 'clone' if can?(:clone, product) %>
               &nbsp;
-              <%= link_to_delete product, :no_text => true unless product.deleted? %>
+              <%= link_to_delete product, :no_text => true if can?(:delete, product) && !product.deleted? %>
             </td>
           </tr>
       <% end %>

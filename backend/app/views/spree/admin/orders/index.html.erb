@@ -6,7 +6,7 @@
   <li>
     <%= button_link_to Spree.t(:new_order), new_admin_order_url, :icon => 'icon-plus', :id => 'admin_new_order' %>
   </li>
-<% end %>
+<% end if can? :edit, Spree::Order.new %>
 
 <% content_for :table_filter_title do %>
   <%= Spree.t(:search) %>
