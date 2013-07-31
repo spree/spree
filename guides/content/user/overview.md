@@ -22,7 +22,7 @@ There are a variety of ways to easily impact the information that is displayed t
 
 By default, the Overview page shows you data about your store from the last 7 days, and compares those figures to data from the previous 7 days.
 
-![Date Range Selector](/images/user/date_range_selector.jpg)
+![Date Range Selector](/images/user/jirafe/date_range_selector.jpg)
 
 You can choose to view data from any of the following:
 
@@ -52,7 +52,7 @@ $$$
 
 The Dashboard can give you an up-to-date summary of your store's data by simply clicking the Refresh data button.
 
-![Refresh Button](/images/user/refresh_dashboard_button.jpg)
+![Refresh Button](/images/user/jirafe/refresh_dashboard_button.jpg)
 
 # Sales Figures
 
@@ -90,7 +90,7 @@ The **Revenue Per Visit** is calculated by dividing the total Revenue by the num
 
 While the reports listed above are the ones shown on the Dashboard by default, you can easily remove the ones that are not as valuable to you, and/or add additional built-in reports.
 
-![Report Customizer Menu](/images/user/report_customizer_menu.jpg)
+![Report Customizer Menu](/images/user/jirafe/report_customizer.jpg)
 
 As you can see, there are additional built-in reports, including:
 
@@ -102,7 +102,7 @@ As you can see, there are additional built-in reports, including:
 
 Clicking on the star next to the name of any of these reports adds it to what is shown when you click the Overview tab. You can also click on the name of the report to see a more detailed breakdown of the aggregate information. For example, here is the detailed metrics for a sample store's Conversion Rate:
 
-![Conversion Rate Details](/images/user/conversion_rate_detail.jpg)
+![Conversion Rate Details](/images/user/jirafe/conversion_rate_detail.jpg)
 
 # The Purchase Funnel
 

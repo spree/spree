@@ -7,7 +7,7 @@ section: creating-products
 
 To create a new product for your store, go into the Admin Interface, click the "Products" tab, and click the "New Product" button.
 
-![New Product Entry Form](/images/user/new_product_entry_form.jpg)
+![New Product Entry Form](/images/user/products/new_product_entry_form.jpg)
 
 The two mandatory fields ("Name" and "Master Price") are denoted with an asterisk (&#42;) next to the label. You can leave SKU blank. If you don't add a value for "Available On" the product will not be shown in your store.
 
@@ -19,7 +19,7 @@ The two mandatory fields ("Name" and "Master Price") are denoted with an asteris
 
 After you click the "Create" button, the Spree application brings you to a more detailed product entry page, where you can input more information about your new product.
 
-![Product Edit Form](/images/user/product_edit_form.jpg)
+![Product Edit Form](/images/user/products/product_edit_form.jpg)
 
 * **Name** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
 * **Permalink** - The permalink is automatically created by the application for you when the product is first saved, and is based on the product's name. This is what is appended to the end of a URL when someone visits the page for a particular product. You can change the permalink, but should exercise extreme caution in doing so to avoid naming collisions with other products in your database.
@@ -97,7 +97,7 @@ Lid Color   | Blue, Orange, Pink, White, Black
 
 You must establish your Option Types and Option Values before you can set up your Variants. Option Types and Option Values are created at the store level, not the product level. This means that you only have to create each Option Type and Option Value once. Once an Option Type and Option Value is created it can be associated with any product in your store. To create an Option Type and Option Value click Products > Option Types > New Option Type.
 
-![New Option Type](/images/user/new_option_type.jpg)
+![New Option Type](/images/user/products/new_option_type.jpg)
 
 Let's add the first Option Type for our tumblers. You are required to fill in two fields: "Name" and "Presentation". You will see this same pattern several places in the Spree Admin interface. "Name" generally is the short term (usually one or two words) for the option you want to store. "Presentation" is the wordier, more descriptive term that gives you site's visitors a little more detail.
 
@@ -109,13 +109,13 @@ For our first Option Type - Size - enter "Size" for the Name and "Size of the Tu
 
 When the screen refreshes, you see that Spree has helpfully provided you with a blank row in which you can enter your first Option Value for the new Option Type.
 
-![New Option Value](/images/user/new_option_value.jpg)
+![New Option Value](/images/user/products/new_option_value.jpg)
 
 Since we know we're going to need two Option Values (Large and Small) for the Size Option Value, go ahead and click the "Add Option Value" button. This gives you two blank rows to work with.
 
 "Name" is easy - "Large" for the first, and "Small" for the second. Let's input "24-ounce cup" in the "Display" field for the Large Option Value and "16-ounce cup" for the Small Option Value.
 
-![Completed Option Values](/images/user/large_small_option_values.jpg)
+![Completed Option Values](/images/user/products/large_small_option_values.jpg)
 
 When you click "Update", Spree saves the two new Option Values, associates them with the Size Option Type, and takes you to the list of all Option Types.
 
@@ -127,7 +127,7 @@ Our Spree application now knows that we have three different Option Types, each 
 
 At the bottom of the Product edit form is a text box labeled "Option Types". When you click in this box, a drop-down appears with all of the Option Types you have defined for your store. All you have to do is click one or more of them to associate them with your Product. We, of course, want to associate all three Option Values with our tumbler Product.
 
-![Option Types Dropdown List](/images/user/option_types_dropdown.jpg)
+![Option Types Dropdown List](/images/user/products/option_types_dropdown.jpg)
 
 Don't forget to click "Update" to save your changes.
 
@@ -141,13 +141,13 @@ On your tumbler product edit page, click the "Variants" link. Click the "New Var
 
 As you can see, you also have the option to enter values for this particular Variant that may be different from what you input on the Product's main page. Let's raise the price on our Variant to $20, and indicate that we have 2 On Hand. Click the "Create" button.
 
-![New Product Variant](/images/user/new_variant.jpg)
+![New Product Variant](/images/user/products/new_variant.jpg)
 
 ## Product Properties
 
 Depending on the nature of your store and the products you sell, you may want to add "Properties" to your product descriptions. Properties are typically used to provide additional information about a product to help the customer make a better purchase decision. Here is an example of how a product's properties would display on the customer facing version of a store:
 
-![New Product Variant](/images/user/properties_example.jpg)
+![New Product Variant](/images/user/products/properties_example.jpg)
 
 Follow these steps to add a product property. In this example, we are going to add a property called "Country of Origin" with a value of "USA".
 
@@ -164,7 +164,7 @@ Follow these steps to add a product property. In this example, we are going to a
 
 Now, when you navigate to the product's page in your store, you will see the new Country of Origin property in the "Properties" list.
 
-![Properties List](/images/user/properties_list.jpg)
+![Properties List](/images/user/products/properties_list.jpg)
 
 ***
 You can add as many "Product Properties" to an individual "Product" as you like - just use the "Add Product Properties" button on the Product Properties page for an individual product.

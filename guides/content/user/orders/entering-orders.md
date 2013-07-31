@@ -15,11 +15,11 @@ This guide covers how to create a manual order from the Admin Interface.
 
 To create a new manual order, go into the Admin Interface, click the "Orders" tab, and click the "New Order" button.
 
-![Create New Order](/images/user/create_new_order.jpg)
+![Create New Order](/images/user/orders/create_new_order.jpg)
 
 Type the name of the product you would like to add to the order in the search field. A list of matching product and variant combinations will return in the drop down menu. Select the product/variant option you want to add to the order as well as the quantity for that item. Then click the "Add" button to add that item to the order. Follow the same steps to add more products to the same order. Click the "Update" button at the bottom of the page once complete.
 
-![Create New Order](/images/user/order_product_search.jpg)
+![Create New Order](/images/user/orders/order_product_search.jpg)
 
 ## Customer Details
 
@@ -31,7 +31,7 @@ $$$
 
 If the order is for a new customer, then enter that person's billing and shipping address in the fields provided. Click the "Continue" button once complete.
 
-![Enter Customer Details](/images/user/order_customer_details.jpg)
+![Enter Customer Details](/images/user/orders/order_customer_details.jpg)
 
 ## Shipment Details
 
@@ -43,13 +43,13 @@ $$$
 Is the Tracking field ever pre-populated with a tracking number?For example, if the user's store is integrate with USPS? No, because you'd have to post the package(s) and the service could return the tracking #s. But is this even the best implementation (having place for a single tracking #), since we could be sending this order out in split shipments? Should ping Brian about this when the Integrator storm has passed.
 $$$
 
-![Select Shipping Option](/images/user/select_shipping.jpg)
+![Select Shipping Option](/images/user/orders/select_shipping.jpg)
 
 ## Adjustments
 
 The Adjustments page will appear, showing any additional charges that are applicable for the order. This includes things like shipping costs and taxes. You can edit the amount for any of these charges by clicking the "Edit" icon next to the charge. You can also remove any of the charges by clicking the "Delete" icon next to the charge. If you need to add additional charges, you can do so by clicking on the "New Adjustments" button and entering the necessary information. Click the "Continue" button once you've confirmed the adjustments are correct.
 
-![Review Adjustments](/images/user/order_adjustments.jpg)
+![Review Adjustments](/images/user/orders/order_adjustments.jpg)
 
 $$$
 Finish documenting the rest of the steps once the bug is fixed. Currently, I can only get through the Adjustments step
