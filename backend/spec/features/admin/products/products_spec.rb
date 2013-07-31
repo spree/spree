@@ -2,10 +2,9 @@
 require 'spec_helper'
 
 describe "Products" do
-
-  stub_authorization!
-
   context "as admin user" do
+    stub_authorization!
+
     before(:each) do
       visit spree.admin_path
     end
@@ -145,7 +144,7 @@ describe "Products" do
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
-         page.should have_content("SKU")
+          page.should have_content("SKU")
         end
       end
 
@@ -187,7 +186,7 @@ describe "Products" do
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
-         page.should have_content("SKU")
+          page.should have_content("SKU")
         end
       end
 
@@ -260,8 +259,8 @@ describe "Products" do
       end
 
       before(:each) do
-         @option_type_prototype = prototype
-         @property_prototype = create(:prototype, :name => "Random")
+        @option_type_prototype = prototype
+        @property_prototype = create(:prototype, :name => "Random")
       end
 
       it 'should parse correctly available_on' do
@@ -289,6 +288,37 @@ describe "Products" do
         end
       end
     end
+  end
+  context 'with only product permissions' do
+    custom_authorization! do |user|
+      can [:admin, :update, :index, :read], Spree::Product
+    end
+    let!(:product) { create(:product) }
 
+    it "should only display accessible links on index" do
+      visit spree.admin_products_path
+      page.should have_link('Products')
+      page.should_not have_link('Option Types')
+      page.should_not have_link('Properties')
+      page.should_not have_link('Prototypes')
+
+      page.should_not have_link('New Product')
+      page.should_not have_css('a.clone')
+      page.should have_css('a.edit')
+      page.should_not have_css('a.delete-resource')
+    end
+    it "should only display accessible links on edit" do
+      visit spree.admin_product_path(product)
+
+      # product tabs should be hidden
+      page.should have_link('Product Details')
+      page.should_not have_link('Images')
+      page.should_not have_link('Variants')
+      page.should_not have_link('Product Properties')
+      page.should_not have_link('Stock Management')
+
+      # no create permission
+      page.should_not have_link('New Product')
+    end
   end
 end
