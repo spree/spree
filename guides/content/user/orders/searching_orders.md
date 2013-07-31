@@ -1,6 +1,6 @@
 ---
 title: Searching Orders
-section: creating-products
+section: searching_orders
 ---
 
 When you click the **Orders** tab on the Admin Interface, you are instantly presented with a summary of the most recent orders your store has received.

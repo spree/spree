@@ -12,4 +12,4 @@ To make changes to your product, go to your Admin Interface, click the "Products
 
 ![Edit Product Link](/images/user/products/edit_product_link.jpg)
 
-The edit form is the exact same one you use when [creating products](creating-products). See that guide for explanation of any of the fields when editing your product.
+The edit form is the exact same one you use when [creating products](creating_products). See that guide for explanation of any of the fields when editing your product.

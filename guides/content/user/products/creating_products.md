@@ -1,6 +1,6 @@
 ---
 title: Creating a New Product
-section: creating-products
+section: creating_products
 ---
 
 ## Introduction

@@ -12,10 +12,10 @@ From your store's Admin Interface, you can manage all of the common tasks associ
 
 From here you can:
 
-* [Create New Products](creating-products)
+* [Create New Products](creating_products)
 * [Search Existing Products](searching_products)
 * [Edit Existing Products](editing_products)
-* [Clone Existing Products](cloning-products)
-* [Delete Existing Products](deleting-products)
+* [Clone Existing Products](cloning_products)
+* [Delete Existing Products](deleting_products)
 
-In addition, you can set up new [Product Option Types and Values](product-options); add, edit, and remove [Product Properties](product_properties); and work with [Product Prototypes](product-prototypes).
+In addition, you can set up new [Product Option Types and Values](product_options); add, edit, and remove [Product Properties](product_properties); and work with [Product Prototypes](product_prototypes).

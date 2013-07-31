@@ -1,6 +1,6 @@
 ---
 title: Deleting Products
-section: deleting-products
+section: deleting_products
 ---
 
 ## Introduction
@@ -23,4 +23,4 @@ To re-activate a deleted product, find the product in your inventory following t
 
 ![Clone a Deleted Product](/images/user/products/clone_deleted_product.jpg)
 
-This will create a copy of the product, and it will now appear in your product inventory list as "COPY OF" with the product name appended afterward. A new permalink and SKU will also be created for the product. Follow the instructions from the [Cloning guide](cloning-products) to modify the information for this product.
+This will create a copy of the product, and it will now appear in your product inventory list as "COPY OF" with the product name appended afterward. A new permalink and SKU will also be created for the product. Follow the instructions from the [Cloning guide](cloning_products) to modify the information for this product.
