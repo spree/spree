@@ -74,7 +74,7 @@ Once you've made your calculator selection, click the "Create" button to finaliz
 
 ![Shipping Method Flat Percent](/images/user/shipments/shipping_method_flat_percent.jpg)
 
-Click the "Update" button, and your shipping method is now complete!
+If necessary, you can re-read the [Calculators](calculators) portion of this guide series to better understand the options. Click the "Update" button, and your shipping method is now complete!
 
 ### Editing a Shipping Method
 
