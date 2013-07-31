@@ -156,7 +156,7 @@ During checkout, the shipping categories of the products in your order will dete
 
 A Calculator is the component responsible for calculating the shipping price for each available Shipping Method.
 
-Spree ships with 4 default Calculators:
+Spree ships with 5 default Calculators:
 
 * Flat rate (per order)
 * Flat rate (per item/product)
