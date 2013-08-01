@@ -176,6 +176,32 @@ describe "Order Details", js: true do
     end
   end
 
+  context 'with only read permissions' do
+    custom_authorization! do |user|
+      can [:admin, :index, :read, :edit], Spree::Order
+    end
+    it "should not display forbidden links" do
+      visit spree.edit_admin_order_path(order)
+      page.should_not have_button('cancel')
+      page.should_not have_button('Resend')
+
+      # Order Tabs
+      page.should_not have_link('Order Details')
+      page.should_not have_link('Customer Details')
+      page.should_not have_link('Adjustments')
+      page.should_not have_link('Payments')
+      page.should_not have_link('Return Authorizations')
+
+      # Order item actions
+      page.should_not have_css('.delete-item')
+      page.should_not have_css('.split-item')
+      page.should_not have_css('.edit-item')
+      page.should_not have_css('.edit-tracking')
+
+      page.should_not have_css('#add-line-item')
+    end
+  end
+
   context 'as Fakedispatch' do
     custom_authorization! do |user|
       # allow dispatch to :admin, :index, and :edit on Spree::Order
