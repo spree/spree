@@ -1,11 +1,14 @@
 // Some fixes for fontwesome stylesheets
 [class^="icon-"], [class*=" icon-"] {
+  &:before {
+    padding-right: 5px;
+  }
+
   &.button, &.icon_link {
     width: auto;
 
     &:before {
       padding-top: 3px;
-      padding-right: 5px;
     }
   }
 }

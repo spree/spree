@@ -36,7 +36,6 @@
  * -------------------------- */
 [class^="icon-"],
 [class*=" icon-"] {
-  font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
@@ -45,6 +44,7 @@
 }
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
+  font-family: FontAwesome;
   text-decoration: inherit;
   display: inline-block;
   speak: none;

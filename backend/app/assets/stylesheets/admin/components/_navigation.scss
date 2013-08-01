@@ -67,17 +67,12 @@ nav.menu {
     min-width: 90px;
 
     a {
-      font-weight: bold;
       display: block;
       padding: 25px 20px;
       color: $color-1 !important;
       text-transform: uppercase;
       position: relative;
       text-align: center;
-
-      &:before {
-        font-weight: normal
-      }
 
       i {
         display: inline;
