@@ -106,6 +106,8 @@ module Spree
 
     after_initialize :ensure_master
 
+    before_destroy :punch_permalink
+
     def variants_with_only_master
       ActiveSupport::Deprecation.warn("[SPREE] Spree::Product#variants_with_only_master will be deprecated in Spree 1.3. Please use Spree::Product#master instead.")
       master
@@ -262,6 +264,10 @@ module Spree
         return unless new_record?
         self.master ||= Variant.new
       end
+
+      def punch_permalink
+        update_attribute :permalink, "#{Time.now.to_i}_#{permalink}" # punch permalink with date prefix
+      end  
   end
 end
 
