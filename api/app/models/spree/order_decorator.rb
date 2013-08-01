@@ -1,5 +1,6 @@
 Spree::Order.class_eval do
   def self.build_from_api(user, params)
+    completed_at = params.delete(:completed_at)
     line_items = params.delete(:line_items_attributes) || {}
     shipments = params.delete(:shipments_attributes) || []
     payments = params.delete(:payments_attributes) || []
@@ -17,6 +18,11 @@ Spree::Order.class_eval do
     order.create_line_items_from_api(line_items)
     order.create_adjustments_from_api(adjustments)
     order.create_payments_from_api(payments)
+
+    if completed_at
+      order.completed_at = completed_at
+      order.state = 'complete'
+    end
 
     order.save!
     order

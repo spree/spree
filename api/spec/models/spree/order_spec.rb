@@ -23,6 +23,16 @@ module Spree
        :phone => '666-666-6666'
     }}
 
+    it 'optionally add completed at' do
+      params = {email: 'test@test.com',
+                completed_at: Time.now,
+                line_items_attributes: line_items }
+
+      order = Order.build_from_api(user, params)
+      order.should be_completed
+      order.state.should eq 'complete'
+    end
+
     it 'can build an order from API with just line items' do
       params = { :line_items_attributes => line_items }
 
