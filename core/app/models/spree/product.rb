@@ -39,11 +39,10 @@ module Spree
       dependent: :destroy
 
     has_many :variants,
-      -> { where(is_master: false, deleted_at: nil).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
       class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
-      -> { where(deleted_at: nil) },
       class_name: 'Spree::Variant',
       dependent: :destroy
 
