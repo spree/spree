@@ -4,6 +4,12 @@ title: Orders
 
 ## Orders
 
-Vestibulum id ligula porta felis euismod semper. Aenean lacinia bibendum nulla sed consectetur. Nullam id dolor id nibh ultricies vehicula ut id elit. Sed posuere consectetur est at lobortis. Nullam quis risus eget urna mollis ornare vel eu leo. Donec sed odio dui.
+Much of your time administering your Spree store will be spent manipulating customer orders - processing payments, issuing refunds, confirming shipments, etc.
 
-Donec sed odio dui. Donec sed odio dui. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
+In these guides, you will learn how to:
+
+* [Manually enter an order](entering_orders)
+* [Edit an order](editing_orders)
+* [Understand the states an order goes through](order_states)
+* [Process the return of an order](returning_orders)
+* [Search through your orders](searching_orders)
