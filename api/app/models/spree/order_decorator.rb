@@ -90,7 +90,7 @@ Spree::Order.class_eval do
 
   def self.ensure_variant_id_from_api(hash)
     begin
-      unless hash[:variant_id]
+      unless hash[:variant_id].present?
         hash[:variant_id] = Spree::Variant.find_by_sku!(hash[:sku]).id
         hash.delete(:sku)
       end
@@ -100,7 +100,7 @@ Spree::Order.class_eval do
   end
 
   def self.ensure_country_id_from_api(address)
-    return if address.nil? or address[:country_id] or address[:country].nil?
+    return if address.nil? or address[:country_id].present? or address[:country].nil?
 
     begin
       search = {}
@@ -123,7 +123,7 @@ Spree::Order.class_eval do
   end
 
   def self.ensure_state_id_from_api(address)
-    return if address.nil? or address[:state_id] or address[:state].nil?
+    return if address.nil? or address[:state_id].present? or address[:state].nil?
 
     begin
       search = {}
