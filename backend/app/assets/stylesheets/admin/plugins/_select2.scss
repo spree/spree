@@ -27,23 +27,6 @@
       @extend [class^="icon-"]:before;
       margin-top: 2px;
     }
-
-    div {
-      background-image: none !important;
-      background-color: transparent !important;
-      border-radius: 0 !important;
-      border: none !important;
-
-      b {
-        background-image: none !important;
-        display: inherit !important;
-        width: auto !important;
-        height: auto !important;
-        margin-top: 10px;
-        @extend .icon-caret-down;
-        @extend [class^="icon-"]:before;
-      }
-    }
   }
 
   &.select2-container-active {
@@ -114,7 +97,7 @@
   }
 }
 
-.select2-results {
+.select2-results { 
   padding-left: 0 !important;
 
   li {
