@@ -177,7 +177,12 @@ describe "Order Details", js: true do
   end
 
   context 'as Fakedispatch' do
-    stub_bar_authorization!
+    custom_authorization! do |user|
+      # allow dispatch to :admin, :index, and :edit on Spree::Order
+      can [:admin, :edit, :index, :read], Spree::Order
+      # allow dispatch to :index, :show, :create and :update shipments on the admin
+      can [:admin, :manage, :read, :ship], Spree::Shipment
+    end
 
     it 'should not display order tabs or edit buttons without ability' do
       visit spree.edit_admin_order_path(order)
