@@ -2686,14 +2686,14 @@
 	$(function() {
 		var css_string = '' + 
 			'#vakata-dragged ins { display:block; text-decoration:none; width:16px; height:16px; margin:0 0 0 0; padding:0; position:absolute; top:4px; left:4px; ' + 
-			' -moz-border-radius:4px; border-radius:4px; -webkit-border-radius:4px; ' +
+			' border-radius:4px; -webkit-border-radius:4px; ' +
 			'} ' + 
 			'#vakata-dragged .jstree-ok { background:green; } ' + 
 			'#vakata-dragged .jstree-invalid { background:red; } ' + 
 			'#jstree-marker { padding:0; margin:0; font-size:12px; overflow:hidden; height:12px; width:8px; position:absolute; top:-30px; z-index:10001; background-repeat:no-repeat; display:none; background-color:transparent; text-shadow:1px 1px 1px white; color:black; line-height:10px; } ' + 
 			'#jstree-marker-line { padding:0; margin:0; line-height:0%; font-size:1px; overflow:hidden; height:1px; width:100px; position:absolute; top:-30px; z-index:10000; background-repeat:no-repeat; display:none; background-color:#456c43; ' + 
 			' cursor:pointer; border:1px solid #eeeeee; border-left:0; -moz-box-shadow: 0px 0px 2px #666; -webkit-box-shadow: 0px 0px 2px #666; box-shadow: 0px 0px 2px #666; ' + 
-			' -moz-border-radius:1px; border-radius:1px; -webkit-border-radius:1px; ' +
+			' border-radius:1px; -webkit-border-radius:1px; ' +
 			'}' + 
 			'';
 		$.vakata.css.add_sheet({ str : css_string, title : "jstree" });

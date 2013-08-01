@@ -13,7 +13,7 @@
 .jstree-apple .jstree-closed > ins { background-position:-54px 0; }
 .jstree-apple .jstree-leaf > ins { background-position:-36px 0; }
 
-.jstree-apple a { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-shadow:1px 1px 1px white; }
+.jstree-apple a { border-radius:4px; -webkit-border-radius:4px; text-shadow:1px 1px 1px white; }
 .jstree-apple .jstree-hovered { background:#e7f4f9; border:1px solid #d8f0fa; padding:0 3px 0 1px; text-shadow:1px 1px 1px silver; }
 .jstree-apple .jstree-clicked { background:#beebff; border:1px solid #99defd; padding:0 3px 0 1px; }
 .jstree-apple a .jstree-icon { background-position:-56px -20px; }
@@ -52,7 +52,7 @@
 #vakata-contextmenu.jstree-apple-context li { }
 #vakata-contextmenu.jstree-apple-context a { color:black; }
 #vakata-contextmenu.jstree-apple-context a:hover, 
-#vakata-contextmenu.jstree-apple-context .vakata-hover > a { padding:0 5px; background:#e8eff7; border:1px solid #aecff7; color:black; -moz-border-radius:2px; -webkit-border-radius:2px; border-radius:2px; }
+#vakata-contextmenu.jstree-apple-context .vakata-hover > a { padding:0 5px; background:#e8eff7; border:1px solid #aecff7; color:black; -webkit-border-radius:2px; border-radius:2px; }
 #vakata-contextmenu.jstree-apple-context li.jstree-contextmenu-disabled a, 
 #vakata-contextmenu.jstree-apple-context li.jstree-contextmenu-disabled a:hover { color:silver; background:transparent; border:0; padding:1px 4px; }
 #vakata-contextmenu.jstree-apple-context li.vakata-separator { background:white; border-top:1px solid #e0e0e0; margin:0; }
