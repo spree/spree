@@ -27,23 +27,6 @@
       @extend [class^="icon-"]:before;
       margin-top: 2px;
     }
-
-    div {
-      background-image: none !important;
-      background-color: transparent !important;
-      border-radius: 0 !important;
-      border: none !important;
-
-      b {
-        background-image: none !important;
-        display: inherit !important;
-        width: auto !important;
-        height: auto !important;
-        margin-top: 10px;
-        @extend .icon-caret-down;
-        @extend [class^="icon-"]:before;
-      }
-    }
   }
 
   &.select2-container-active {
@@ -85,6 +68,26 @@
     font-size: 90%;
     box-shadow: none;
     background-image: none;
+  }
+}
+
+.select2-container .select2-choice .select2-arrow {
+  background-image: none;
+  background: transparent;
+  border: 0;
+
+  b {
+    padding-top: 7px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: none;
+    font-family: FontAwesome;
+    font-weight: 200 !important;
+
+    &:before {
+      content: "\f0d7";
+    }
   }
 }
 
