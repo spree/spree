@@ -260,6 +260,17 @@ describe Spree::Product do
       @product.save_permalink(@product.name)
       @product.permalink.should == "foobar-1"
     end
+
+    context "override permalink of deleted product" do
+      before do
+        @product1 = create(:product, :name => 'foo')
+        @product1.destroy
+      end
+
+      it "should create product with same permalink from name like deleted product" do
+        @product2 = create(:product, :name => 'foo')
+      end
+    end
   end
 
   context "properties" do
