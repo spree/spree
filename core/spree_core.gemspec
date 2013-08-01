@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'highline', '= 1.6.18'
 
   s.add_dependency 'acts_as_list', '= 0.2.0'
-  # s.add_dependency 'awesome_nested_set', '2.1.5'
+  s.add_dependency 'awesome_nested_set', '~> 3.0.0.rc.1'
   # Frozen to 0.13.0 due to: https://github.com/amatsuda/kaminari/pull/282
   s.add_dependency 'kaminari', '0.13.0'
 
