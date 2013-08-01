@@ -68,22 +68,22 @@ Suppose that in your store, you sell drink tumblers. All of the tumblers are mad
 * **Decorative Wrap** - Your tumblers come with the option of several kinds of decorative plastic wraps: Stars, Owls, Pink Paisley, Purple Paisley, or Skulls.
 * **Lid Color** - The tumblers also come with with an assortment of lids to match the decorative wrap - the Star tumblers have Blue lids, the Owls have Orange lids, the Pink Paisley have Pink lids, the Purple Paisley have White lids, and the Skulls can be purchased with White *or* Black lids.
 
-Given this inventory, you will need to create a Drink Tumbler _Product_, with three _Options_, the corresponding _Option Values_, and twelve _Variants_:
+Given this inventory, you will need to create a Drink Tumbler _Product_, with three _Option Types_, the corresponding _Option Values_, and twelve _Variants_:
 
-Size  | Wrap           | Lid Color
-------|----------------|----------
-Large | Stars          | Blue
-Small | Stars          | Blue
-Large | Owls           | Orange
-Small | Owls           | Orange
-Large | Pink Paisley   | Pink
-Small | Pink Paisley   | Pink
+Size | Wrap | Lid Color
+--- | --- | ---
+Large | Stars | Blue
+Small | Stars | Blue
+Large | Owls | Orange
+Small | Owls | Orange
+Large | Pink Paisley | Pink
+Small | Pink Paisley | Pink
 Large | Purple Paisley | White
 Small | Purple Paisley | White
-Large | Skulls         | White
-Large | Skulls         | Black
-Small | Skulls         | White
-Small | Skulls         | Black
+Large | Skulls | White
+Large | Skulls | Black
+Small | Skulls | White
+Small | Skulls | Black
 
 The _Option Types_ you would create for this inventory are - Size, Wrap, and Lid Color - with the corresponding _Option Values_ below.
 
@@ -93,43 +93,7 @@ Size        | Large, Small
 Wrap        | Stars, Owls, Pink Paisley, Purple Paisley, Skulls
 Lid Color   | Blue, Orange, Pink, White, Black
 
-### Creating Option Types and Option Values
-
-You must establish your Option Types and Option Values before you can set up your Variants. Option Types and Option Values are created at the store level, not the product level. This means that you only have to create each Option Type and Option Value once. Once an Option Type and Option Value is created it can be associated with any product in your store. To create an Option Type and Option Value click Products > Option Types > New Option Type.
-
-![New Option Type](/images/user/products/new_option_type.jpg)
-
-Let's add the first Option Type for our tumblers. You are required to fill in two fields: "Name" and "Presentation". You will see this same pattern several places in the Spree Admin interface. "Name" generally is the short term (usually one or two words) for the option you want to store. "Presentation" is the wordier, more descriptive term that gives you site's visitors a little more detail.
-
-***
-NOTE: Sometimes the term "Display" is used instead of "Presentation" to indicate what is shown to the user on the Product Variant's page.
-***
-
-For our first Option Type - Size - enter "Size" for the Name and "Size of the Tumbler" as the Presentation. Click Update.
-
-When the screen refreshes, you see that Spree has helpfully provided you with a blank row in which you can enter your first Option Value for the new Option Type.
-
-![New Option Value](/images/user/products/new_option_value.jpg)
-
-Since we know we're going to need two Option Values (Large and Small) for the Size Option Value, go ahead and click the "Add Option Value" button. This gives you two blank rows to work with.
-
-"Name" is easy - "Large" for the first, and "Small" for the second. Let's input "24-ounce cup" in the "Display" field for the Large Option Value and "16-ounce cup" for the Small Option Value.
-
-![Completed Option Values](/images/user/products/large_small_option_values.jpg)
-
-When you click "Update", Spree saves the two new Option Values, associates them with the Size Option Type, and takes you to the list of all Option Types.
-
-Click the New Option Type button and similarly input the other two Option Types (along with their Option Values) we need for our tumblers.
-
-### Associating Option Values with a Product
-
-Our Spree application now knows that we have three different Option Types, each with its own set of Option Values, but it doesn't know which of our products should have those Option Types. We have to explicitly tell it about those associations. We can do so either when we create a new Product (if the options already exist) or when we edit an existing one.
-
-At the bottom of the Product edit form is a text box labeled "Option Types". When you click in this box, a drop-down appears with all of the Option Types you have defined for your store. All you have to do is click one or more of them to associate them with your Product. We, of course, want to associate all three Option Values with our tumbler Product.
-
-![Option Types Dropdown List](/images/user/products/option_types_dropdown.jpg)
-
-Don't forget to click "Update" to save your changes.
+Read the [Product Options Guide](product_options) for directions on creating Option Types and Option Values. You must establish your Option Types and Option Values before you can set up your Variants. Don't forget to associate the Option Types with the Tumbler product so they'll be available to you when you make your Variants.
 
 ### Creating Variants
 
