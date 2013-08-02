@@ -61,8 +61,7 @@ module Spree
     has_many :adjustments, 
       as: :adjustable,
       dependent: :destroy,
-      order: "#{Spree::Adjustment.table_name}.created_at ASC",
-      inverse_of: :source
+      order: "#{Spree::Adjustment.table_name}.created_at ASC"
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
