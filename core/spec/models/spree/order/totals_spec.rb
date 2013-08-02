@@ -14,7 +14,7 @@ module Spree
       end
 
       let!(:action) do
-        Promotion::Actions::CreateAdjustment.create({calculator: promo_calculator}, without_protection: true)
+        Promotion::Actions::CreateAdjustment.create(calculator: promo_calculator)
       end
 
       before do

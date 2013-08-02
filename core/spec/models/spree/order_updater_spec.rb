@@ -178,7 +178,7 @@ module Spree
       context "promotions" do
         let(:originator) do
           originator = Spree::Promotion::Actions::CreateAdjustment.create
-          calculator = Spree::Calculator::PerItem.create({:calculable => originator}, :without_protection => true)
+          calculator = Spree::Calculator::PerItem.create(:calculable => originator)
           originator.calculator = calculator
           originator.save
           originator
@@ -202,7 +202,11 @@ module Spree
                               :amount => -500,
                               :state => "closed",
                               :label => "Some other credit")
+<<<<<<< HEAD
           order.adjustments.each {|a| a.update_attribute_without_callbacks(:eligible, true)}
+=======
+          order.adjustments.each {|a| a.update_column(:eligible, true)}
+>>>>>>> Pass updated order object to `adjustment.update!`
 
           updater.update_promotion_adjustments
 
@@ -215,8 +219,13 @@ module Spree
           let!(:promo_c) { create_adjustment("Promotion C", -300) }
 
           before do
+<<<<<<< HEAD
             promo_a.update_attribute_without_callbacks(:eligible, true)
             promo_c.update_attribute_without_callbacks(:eligible, false)
+=======
+            promo_a.update_column(:eligible, true)
+            promo_c.update_column(:eligible, false)
+>>>>>>> Pass updated order object to `adjustment.update!`
           end
 
           # regression for #3274
