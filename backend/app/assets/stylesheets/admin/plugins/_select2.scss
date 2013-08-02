@@ -146,7 +146,7 @@
     @extend input[type="text"];
     padding: 6px 3px 3px 3px;
     box-shadow: none;
-    background-image: none;
+    background-image: none !important;
 
     .select2-search-choice {
       @include border-radius($border-radius);
