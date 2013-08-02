@@ -62,7 +62,6 @@ button, .button {
   color: $color-btn-text;
   text-transform: uppercase;
   font-size: 85%;
-  font-weight: 600;
 
   &:visited, &:active, &:focus { color: $color-btn-text }
 
@@ -78,6 +77,14 @@ button, .button {
   &.fullwidth {
     width: 100%;
     text-align: center;
+  }
+
+  span.text {
+    font-weight: 400;
+
+    /* Small fixes for better font rendering (mostly on OSX) */
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
   }
 }
 
@@ -179,7 +186,9 @@ fieldset {
     text-transform: uppercase;
     text-align: center;
     padding: 8px 15px;
+
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
     i {
       color: $color-link;

@@ -69,7 +69,9 @@
 
   .page-title {
     font-size: 20px;
+
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   .page-actions {
     text-align: right;
