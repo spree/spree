@@ -26,6 +26,12 @@ table {
       }
     }
 
+    .handle {
+      display: block !important;
+      text-align: center;
+      padding-right: 0;
+    }
+
     &.actions {
       background-color: transparent;
       border: none !important;
