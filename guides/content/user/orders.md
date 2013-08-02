@@ -8,6 +8,7 @@ Much of your time administering your Spree store will be spent manipulating cust
 
 In these guides, you will learn how to:
 
+* [Process orders](processing_orders) (capture payments, record shipments)
 * [Manually enter an order](entering_orders)
 * [Edit an order](editing_orders)
 * [Understand the states an order goes through](order_states)
