@@ -4,6 +4,6 @@ title: Configuration
 
 ## Configuration
 
-Vestibulum id ligula porta felis euismod semper. Aenean lacinia bibendum nulla sed consectetur. Nullam id dolor id nibh ultricies vehicula ut id elit. Sed posuere consectetur est at lobortis. Nullam quis risus eget urna mollis ornare vel eu leo. Donec sed odio dui.
+The Configuration page of the Admin Interface is that area of your store where you implement decisions about how you want your store to be set up. This is where you decide which shipping methods you offer, which categories you assign to product, how you want currency displayed, and dozens of other settings.
 
-Donec sed odio dui. Donec sed odio dui. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
+The guides in this section will walk you through making all of those configuration decisions, and show you how to customize your Spree store to best fit your particular needs.
