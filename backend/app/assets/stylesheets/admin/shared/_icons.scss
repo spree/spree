@@ -9,13 +9,10 @@
   }
 }
 
-[class^="icon-"]:before, [class*=" icon-"]:before {
-  -webkit-font-smoothing: antialiased;
-}
 .icon-email:before    { @extend .icon-envelope:before }
 .icon-resume:before   { @extend .icon-refresh:before  }
 
-.icon-cancel:before, 
+.icon-cancel:before,
 .icon-void:before     { @extend .icon-remove:before   }
 
 .icon-capture:before  { @extend .icon-ok:before       }
