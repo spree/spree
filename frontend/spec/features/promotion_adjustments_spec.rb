@@ -170,10 +170,11 @@ describe "Promotion adjustments", :js => true do
           click_button "Update"
 
           within '#cart_adjustments' do
-            page.should have_content("Promotion (Onetwo) $-10.00")
+            # 20% off $60 item_total (2x $10 + 2x $20)
+            page.should have_content("Promotion (Onetwo) $-12.00")
           end
           within '.order-total' do
-            page.should have_content("$50.00")
+            page.should have_content("$48.00")
           end
         end
       end
