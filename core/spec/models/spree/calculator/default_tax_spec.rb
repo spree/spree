@@ -6,10 +6,8 @@ describe Spree::Calculator::DefaultTax do
   let(:vat) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new({:calculable => rate}, :without_protection => true) }
   let!(:order) { create(:order) }
-  let!(:product_1) { create(:product, :tax_category => tax_category) }
-  let!(:product_2) { create(:product, :tax_category => tax_category) }
-  let!(:line_item_1) { create(:line_item, :product => product_1, :price => 10, :quantity => 3) }
-  let!(:line_item_2) { create(:line_item, :product => product_2, :price => 5, :quantity => 1) }
+  let!(:line_item_1) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
+  let!(:line_item_2) { create(:line_item, :price => 5, :quantity => 1, :tax_category => tax_category) }
 
   context "#compute" do
     context "when given an order" do
@@ -19,8 +17,8 @@ describe Spree::Calculator::DefaultTax do
 
       context "when no line items match the tax category" do
         before do
-          product_1.tax_category = nil
-          product_2.tax_category = nil
+          line_item_1.tax_category = nil
+          line_item_2.tax_category = nil
         end
 
         it "should be 0" do
@@ -30,8 +28,8 @@ describe Spree::Calculator::DefaultTax do
 
       context "when one item matches the tax category" do
         before do
-          product_1.tax_category = tax_category
-          product_2.tax_category = nil
+          line_item_1.tax_category = tax_category
+          line_item_2.tax_category = nil
         end
 
         it "should be equal to the item total * rate" do
@@ -81,7 +79,7 @@ describe Spree::Calculator::DefaultTax do
 
       context "when the variant does not match the tax category" do
         before do
-          line_item_2.product.tax_category = nil
+          line_item_2.tax_category = nil
         end
 
         it "should be 0" do
