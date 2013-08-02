@@ -221,7 +221,7 @@ Once configured the Integrator will send the parameters for a particular mapping
       {
         "name": "api_key",
         "value": "1234567890"
-      },
+      }
     ]
   }
 }```
@@ -233,6 +233,8 @@ Message parameters can also contain lookup data. In addition to passing API type
 {
   "message": "order:import",
   "payload": {
+    "order": {
+    },
     "parameters": [
       {
         "name": "amazon_login",
