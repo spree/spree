@@ -78,3 +78,7 @@ See #3133 for more information.
 * You can now find the total amount on hand of a variant by calling `Variant#total_on_hand`. #3427
 
     *Ruben Ascencio*
+
+* Tax categories are now stored on line items. This should make tax calculations slightly faster. #3481
+
+    *Ryan Bigg*
