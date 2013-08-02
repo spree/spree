@@ -36,6 +36,15 @@ describe Spree::LineItem do
     end
   end
 
+  # Test for #3481
+  context '#copy_tax_category' do
+    it "copies over a variant's tax category" do
+      line_item.tax_category = nil
+      line_item.copy_tax_category
+      line_item.tax_category.should == line_item.variant.product.tax_category
+    end
+  end
+
   describe '.currency' do
     it 'returns the globally configured currency' do
       line_item.currency == 'USD'
