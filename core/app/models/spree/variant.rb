@@ -1,7 +1,7 @@
 module Spree
   class Variant < ActiveRecord::Base
     acts_as_paranoid
-    
+
     belongs_to :product, touch: true, class_name: 'Spree::Product'
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
