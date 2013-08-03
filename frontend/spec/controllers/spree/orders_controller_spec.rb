@@ -21,6 +21,8 @@ describe Spree::OrdersController do
       # Don't care about IP address or created_by being set here
       order.stub(:last_ip_address=)
       order.stub(:created_by=)
+      # Don't care about shipments either as feature specs will cover it
+      order.stub :ensure_updated_shipments
       Spree::Order.stub(:find).with(1).and_return(order)
       controller.stub(:try_spree_current_user => user)
     end

@@ -17,6 +17,8 @@ module Spree
     before_filter :check_authorization
     before_filter :apply_coupon_code
 
+    before_filter :setup_for_current_state
+
     helper 'spree/orders'
 
     rescue_from Spree::Core::GatewayError, :with => :rescue_from_spree_gateway_error
@@ -69,7 +71,6 @@ module Spree
           redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
           @order.state = params[:state]
         end
-        setup_for_current_state
       end
 
       def ensure_checkout_allowed
