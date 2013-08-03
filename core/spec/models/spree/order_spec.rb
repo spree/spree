@@ -557,5 +557,18 @@ describe Spree::Order do
       order.finalize!
     end
   end
-end
 
+  context "ensure shipments will be updated" do
+    before { Spree::Shipment.create!(order: order) }
+
+    it "destroys current shipments" do
+      order.ensure_updated_shipments
+      expect(order.shipments).to be_empty
+    end
+
+    it "puts order back in address state" do
+      order.ensure_updated_shipments
+      expect(order.state).to eql "address"
+    end
+  end
+end
