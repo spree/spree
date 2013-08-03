@@ -206,30 +206,47 @@ describe "Checkout" do
       expect(current_path).to eql(spree.checkout_state_path("payment"))
     end
 
-    context "and updates line item quantity" do
-      it "uptades shipments properly" do
+    context "and updates line item quantity and try to reach payment page" do
+      before do
         visit spree.cart_path
         within ".cart-item-quantity" do
           fill_in first("input")["name"], with: 3
         end
 
         click_on "Update"
+      end
+
+      it "redirects user back to address step" do
         visit spree.checkout_state_path("payment")
+        expect(current_path).to eql(spree.checkout_state_path("address"))
+      end
+
+      it "updates shipments properly through step address -> delivery transitions" do
+        visit spree.checkout_state_path("payment")
+        click_on "Save and Continue"
         click_on "Save and Continue"
 
         expect(Spree::InventoryUnit.count).to eq 3
       end
     end
 
-    context "and adds new product to cart" do
+    context "and adds new product to cart and try to reach payment page" do
       let!(:bag) { create(:product, :name => "RoR Bag") }
 
-      it "updates shipments properly" do
+      before do
         visit spree.root_path
         click_link bag.name
         click_button "add-to-cart-button"
+      end
 
+      it "redirects user back to address step" do
         visit spree.checkout_state_path("payment")
+        expect(current_path).to eql(spree.checkout_state_path("address"))
+      end
+
+      it "updates shipments properly through step address -> delivery transitions" do
+        visit spree.checkout_state_path("payment")
+        click_on "Save and Continue"
         click_on "Save and Continue"
 
         expect(Spree::InventoryUnit.count).to eq 2

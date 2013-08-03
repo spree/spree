@@ -157,5 +157,6 @@ Spree::Order.class_eval do
     line_item_params.each do |id, attributes|
       self.line_items.find(id).update_attributes!(attributes)
     end
+    self.ensure_updated_shipments
   end
 end

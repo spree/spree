@@ -168,6 +168,18 @@ module Spree
         address
       end
 
+      it "updates quantities of existing line items" do
+        api_put :update, :id => order.to_param, :order => {
+          :line_items => {
+            line_item.id => { :quantity => 10 }
+          }
+        }
+
+        response.status.should == 200
+        json_response['line_items'].count.should == 1
+        json_response['line_items'].first['quantity'].should == 10
+      end
+
       it "can add billing address" do
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
 
@@ -201,6 +213,20 @@ module Spree
         json_response['error'].should_not be_nil
         json_response['errors'].should_not be_nil
         json_response['errors']['ship_address.firstname'].first.should eq "can't be blank"
+      end
+
+      context "order has shipments" do
+        before { order.create_proposed_shipments }
+
+        it "clears out all existing shipments on line item udpate" do
+          previous_shipments = order.shipments
+          api_put :update, :id => order.to_param, :order => {
+            :line_items => {
+              line_item.id => { :quantity => 10 }
+            }
+          }
+          expect(order.reload.shipments).to be_empty
+        end
       end
 
       context "with a line item" do
