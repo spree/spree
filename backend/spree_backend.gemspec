@@ -23,7 +23,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'jquery-rails', '~> 3.0.0'
   s.add_dependency 'jquery-ui-rails', '~> 4.0.0'
-  s.add_dependency 'select2-rails', '~> 3.4.1'
+  # Set to 3.4.5 until https://github.com/argerim/select2-rails/pull/51 is merged.
+  s.add_dependency 'select2-rails', '= 3.4.5'
 
   s.add_development_dependency 'email_spec', '~> 1.2.1'
 end
