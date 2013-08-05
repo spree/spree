@@ -1,4 +1,5 @@
-## Spree 2.0.1 (unreleased) ##
+## Spree 2.0.5 (unreleased)
+## Spree 2.0.4
 
 *   Symbolize attachment style keys on ImageSettingController otherwise users
     would get *undefined method `processors' for "48x48>":String>* since
@@ -12,4 +13,4 @@
 
 * Fixed issue where selecting an existing user in the customer details step would not associate them with an order.
     
-    *Ryan Bigg and dan-ding"
+    *Ryan Bigg and dan-ding
