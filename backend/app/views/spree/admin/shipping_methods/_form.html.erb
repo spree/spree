@@ -31,8 +31,8 @@
           <%= f.field_container :categories do %>
         <% Spree::ShippingCategory.all.each do |category| %>
           <%= label_tag do %>
-            <%= category.name %>
-            <%= check_box_tag('shipping_method[shipping_categories][]', category.id, @shipping_method.shipping_categories.include?(category)) %><br>
+            <%= check_box_tag('shipping_method[shipping_categories][]', category.id, @shipping_method.shipping_categories.include?(category)) %>
+            <%= category.name %><br>
           <% end %>
         <% end %>
         <%= error_message_on :shipping_method, :shipping_category_id %>
@@ -46,8 +46,8 @@
       <%= f.field_container :zones do %>
         <% Spree::Zone.all.each do |zone| %>
           <%= label_tag do %>
-            <%= zone.name %>
             <%= check_box_tag('shipping_method[zones][]', zone.id, @shipping_method.zones.include?(zone)) %>
+            <%= zone.name %>
           <% end %>
           <br>
         <% end %>
