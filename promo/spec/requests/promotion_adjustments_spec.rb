@@ -220,24 +220,9 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
-      click_button "Checkout"
 
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-
-      click_button "Save and Continue"
-      Spree::Order.last.total.to_f.should == 60.00 # bag(20) + mug(40) + free shipping(0)
       page.should have_content("Free Shipping")
+      Spree::Order.last.total.to_f.should == 60.00 # bag(20) + mug(40) + free shipping(0)
     end
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
