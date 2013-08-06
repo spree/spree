@@ -34,7 +34,7 @@ module Spree
             return if amount == 0 && !mandatory
             target.adjustments.create(
               :amount => amount,
-              :source => calculable,
+              :source => old_calculable,
               :originator => self,
               :label => label,
               :mandatory => mandatory,
