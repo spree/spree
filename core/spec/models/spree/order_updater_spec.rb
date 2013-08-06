@@ -108,23 +108,62 @@ module Spree
       order.state_changed('shipment')
     end
 
-    it "updates each shipment" do
-      shipment = stub_model(Spree::Shipment)
-      shipments = [shipment]
-      order.stub :shipments => shipments
-      shipments.stub :states => []
-      shipments.stub :ready => []
-      shipments.stub :pending => []
-      shipments.stub :shipped => []
+    context "completed order" do
+      before { order.stub completed?: true }
 
-      shipment.should_receive(:update!).with(order)
+      it "updates payment state" do
+        expect(updater).to receive(:update_payment_state)
+        updater.update
+      end
 
-      updater.update
+      it "updates shipment state" do
+        expect(updater).to receive(:update_shipment_state)
+        updater.update
+      end
+
+      it "updates each shipment" do
+        shipment = stub_model(Spree::Shipment)
+        shipments = [shipment]
+        order.stub :shipments => shipments
+        shipments.stub :states => []
+        shipments.stub :ready => []
+        shipments.stub :pending => []
+        shipments.stub :shipped => []
+
+        shipment.should_receive(:update!).with(order)
+        updater.update
+      end
+    end
+
+    context "incompleted order" do
+      before { order.stub completed?: false }
+
+      it "doesnt update payment state" do
+        expect(updater).not_to receive(:update_payment_state)
+        updater.update
+      end
+
+      it "doesnt update shipment state" do
+        expect(updater).not_to receive(:update_shipment_state)
+        updater.update
+      end
+
+      it "doesnt update each shipment" do
+        shipment = stub_model(Spree::Shipment)
+        shipments = [shipment]
+        order.stub :shipments => shipments
+        shipments.stub :states => []
+        shipments.stub :ready => []
+        shipments.stub :pending => []
+        shipments.stub :shipped => []
+
+        expect(shipment).not_to receive(:update!).with(order)
+        updater.update
+      end
     end
 
     it "updates totals twice" do
       updater.should_receive(:update_totals).twice
-
       updater.update
     end
 
