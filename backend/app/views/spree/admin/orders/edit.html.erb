@@ -1,8 +1,14 @@
 <%= csrf_meta_tags %>
 <% content_for :page_actions do %>
-  <li><%= event_links %></li>
-  <li><%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'icon-email' %></li>
-  <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+  <% if can?(:fire, @order) %>
+    <li><%= event_links %></li>
+  <% end %>
+  <% if can?(:resend, @order) %>
+    <li><%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'icon-email' %></li>
+  <% end %>
+  <% if can?(:admin, Spree::Order) %>
+    <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+  <% end %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Order Details' } %>
@@ -11,7 +17,7 @@
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 </div>
 
-<%= render :partial => 'add_product' %>
+<%= render :partial => 'add_product' if can?(:update, @order) %>
 
 <% if @order.line_items.empty? %>
   <div class="no-objects-found">

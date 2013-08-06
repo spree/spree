@@ -192,13 +192,10 @@ describe Spree::Order do
       # Stub this method as it's called due to a callback
       # and it's irrelevant to this test
       order.stub :has_available_shipment
-
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
-      adjustment1 = mock_model(Spree::Adjustment, :mandatory => true)
-      adjustment2 = mock_model(Spree::Adjustment, :mandatory => false)
-      order.stub :adjustments => [adjustment1, adjustment2]
-      adjustment1.should_receive(:update_column).with("state", "closed")
-      adjustment2.should_receive(:update_column).with("state", "closed")
+      adjustments = double
+      order.stub :adjustments => adjustments
+      expect(adjustments).to receive(:update_all).with(state: 'closed')
       order.finalize!
     end
 

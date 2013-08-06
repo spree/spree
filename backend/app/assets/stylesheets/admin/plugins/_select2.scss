@@ -27,23 +27,6 @@
       @extend [class^="icon-"]:before;
       margin-top: 2px;
     }
-
-    div {
-      background-image: none !important;
-      background-color: transparent !important;
-      border-radius: 0 !important;
-      border: none !important;
-
-      b {
-        background-image: none !important;
-        display: inherit !important;
-        width: auto !important;
-        height: auto !important;
-        margin-top: 10px;
-        @extend .icon-caret-down;
-        @extend [class^="icon-"]:before;
-      }
-    }
   }
 
   &.select2-container-active {
@@ -68,19 +51,25 @@
 }
 
 .select2-search {
-  @extend [class^="icon-"]:before;
   @extend .icon-search;
+
   font-size: 100%;
-  padding-left: 15px;
   color: darken($color-border, 15);
+  padding: 0 9px 0 0;
+
+  &:before {
+    @extend [class^="icon-"]:before;
+
+    position: absolute;
+    top: 13px;
+    left: 13px;
+  }
 
   input {
     @extend input[type="text"];
-    margin-top: 5px;
-    margin-left: -6px;
-    padding-left: 25px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+
+    padding: 6px 0 6px 25px;
+    margin: 5px 0 0 5px;
     font-family: $base-font-family;
     font-size: 90%;
     box-shadow: none;
@@ -88,7 +77,27 @@
   }
 }
 
-.select2-results {    
+.select2-container .select2-choice .select2-arrow {
+  background-image: none;
+  background: transparent;
+  border: 0;
+
+  b {
+    padding-top: 7px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: none;
+    font-family: FontAwesome;
+    font-weight: 200 !important;
+
+    &:before {
+      content: "\f0d7";
+    }
+  }
+}
+
+.select2-results { 
   padding-left: 0 !important;
 
   li {
@@ -113,7 +122,7 @@
       padding: 5px;
       background-color: transparent;
       color: $color-body-text;
-      text-align: center; 
+      text-align: center;
       font-weight: $font-weight-bold;
       text-transform: uppercase;
     }
@@ -137,7 +146,7 @@
     @extend input[type="text"];
     padding: 6px 3px 3px 3px;
     box-shadow: none;
-    background-image: none;
+    background-image: none !important;
 
     .select2-search-choice {
       @include border-radius($border-radius);
@@ -145,9 +154,9 @@
       background-image: none;
       background-color: $color-sel-bg;
       border: none;
-      box-shadow: none;      
-      color: $color-1 !important;    
-      font-size: 85%;            
+      box-shadow: none;
+      color: $color-1 !important;
+      font-size: 85%;
 
       &:hover {
         background-color: $color-sel-hover-bg;

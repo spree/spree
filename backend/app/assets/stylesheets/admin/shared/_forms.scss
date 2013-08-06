@@ -61,8 +61,11 @@ button, .button {
   background-color: $color-btn-bg;
   color: $color-btn-text;
   text-transform: uppercase;
-  font-size: 85%;
-  font-weight: 600;
+  font-weight: 600 !important;
+
+  &:before {
+    font-weight: normal !important;
+  }
 
   &:visited, &:active, &:focus { color: $color-btn-text }
 
@@ -179,7 +182,9 @@ fieldset {
     text-transform: uppercase;
     text-align: center;
     padding: 8px 15px;
+
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
     i {
       color: $color-link;

@@ -36,15 +36,16 @@
  * -------------------------- */
 [class^="icon-"],
 [class*=" icon-"] {
-  font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   *margin-right: .3em;
 }
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
+  font-family: FontAwesome;
   text-decoration: inherit;
   display: inline-block;
   speak: none;
@@ -102,7 +103,6 @@ a [class*=" icon-"] {
   border: solid 1px #eeeeee;
   padding: .2em .25em .15em;
   -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
   border-radius: 3px;
 }
 .icon-2x {
@@ -111,7 +111,6 @@ a [class*=" icon-"] {
 .icon-2x.icon-border {
   border-width: 2px;
   -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
   border-radius: 4px;
 }
 .icon-3x {
@@ -120,7 +119,6 @@ a [class*=" icon-"] {
 .icon-3x.icon-border {
   border-width: 3px;
   -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
   border-radius: 5px;
 }
 .icon-4x {
@@ -129,7 +127,6 @@ a [class*=" icon-"] {
 .icon-4x.icon-border {
   border-width: 4px;
   -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
   border-radius: 6px;
 }
 .icon-5x {
@@ -138,7 +135,6 @@ a [class*=" icon-"] {
 .icon-5x.icon-border {
   border-width: 5px;
   -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
   border-radius: 7px;
 }
 .pull-right {

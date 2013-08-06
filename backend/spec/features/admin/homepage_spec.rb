@@ -59,7 +59,9 @@ describe "Homepage" do
   end
 
   context 'as fakedispatch user' do
-    stub_bar_authorization!
+    custom_authorization! do |user|
+      can [:admin, :edit, :index, :read], Spree::Order
+    end
 
     it 'should only display tabs fakedispatch has access to' do
       visit spree.admin_path
