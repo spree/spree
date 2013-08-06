@@ -4,7 +4,7 @@ title: Image Settings
 
 ## Introduction
 
-The Image Settings section of the Admin Interface's Configuration panel is where you specify all of the elements that relate to your store's product and variant images. To reach this section, go to your store's Admin Interface, click "Configuration", and click "Image Settings".
+The Image Settings section of the Admin Interface's Configuration panel is where you specify all of the options that relate to your store's product and variant images. To reach this section, go to your store's Admin Interface, click "Configuration", and click "Image Settings".
 
 ![Image Settings](/images/user/config/image_settings.jpg)
 
@@ -59,7 +59,7 @@ As an alternative to storing the images directly on your site's server, many sto
 * **Access Key** - This is assigned by Amazon; think of it like your site's username.
 * **Secret Key** - Also assigned by Amazon. You can think of it as your site's password.
 * **Bucket** - Files are stored on Amazon S3 in virtual bins, or "buckets". You'll have to declare which bucket you want to store your Spree images in.
-* **S3 Protocol** - I have NFI what the options here could be.
+* **S3 Protocol** - Options are "HTTP" or "HTTPS" (both without the quotation marks).
 * **Cache Control** - This is an Amazon S3 Header. Explaining its use is beyond the scope of this guide, but you can read more about [the Cache Control header](http://www.bucketexplorer.com/documentation/amazon-s3--how-to-set-cache-control-header-for-s3-object.html).
 
 You can also add your own [Amazon S3 Headers](http://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html) by clicking the "Add New Header" button. Adding and removing S3 headers works the same way as [adding and removing Paperclip styles](#adding-paperclip-styles).
