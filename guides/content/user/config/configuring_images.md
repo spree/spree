@@ -56,10 +56,21 @@ As an alternative to storing the images directly on your site's server, many sto
 
 ![Amazon S3](/images/user/config/amazons3.jpg)
 
-* **Access Key** - This is assigned by Amazon; think of it like your site's username.
-* **Secret Key** - Also assigned by Amazon. You can think of it as your site's password.
+Here's what Spree asks for when you check that box:
+
+* **Access Key** and **Secret Key** - Provided by Amazon to authenticate requests to its services.
 * **Bucket** - Files are stored on Amazon S3 in virtual bins, or "buckets". You'll have to declare which bucket you want to store your Spree images in.
-* **S3 Protocol** - Options are "HTTP" or "HTTPS" (both without the quotation marks).
+* **S3 Protocol** - Should either be HTTP if you're using HTTP for your site, or HTTPS if you're using HTTPS.
 * **Cache Control** - This is an Amazon S3 Header. Explaining its use is beyond the scope of this guide, but you can read more about [the Cache Control header](http://www.bucketexplorer.com/documentation/amazon-s3--how-to-set-cache-control-header-for-s3-object.html).
+
+If you don't already have an account on Amazon, you will need to sign up in order to be able to use Amazon S3 for images. To make this work, you will need to find the access keys for your account on Amazon. To do this, sign in to Amazon, go to [http://aws.amazon.com/s3/](http://aws.amazon.com/s3/) click "My Account/Credentials" at the top right, then click "Security Credentials" from that menu. On this screen, you'll see a section called "Accces Keys".
+
+![Amazon Access Keys](/images/user/config/amazon_access_keys.jpg)
+
+ Click "Create New Root Key" in this area to create a new key. This will prompt you to download a file which contains the access key, and the secret key which you will need to put into Spree. 
+
+ On Amazon's site, you will need to also create a "bucket" which Spree will put all its uploaded photos into. To do this, go to [https://console.aws.amazon.com/console/home](https://console.aws.amazon.com/console/home), click "Services" at the top left of the screen, then click "S3". To create the bucket, click "Create Bucket", enter a unique name for your bucket and then click "Create".
+
+ Enter the Access Key, Secret Key and Bucket name into Spree, and you should be good to go.
 
 You can also add your own [Amazon S3 Headers](http://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html) by clicking the "Add New Header" button. Adding and removing S3 headers works the same way as [adding and removing Paperclip styles](#adding-paperclip-styles).
