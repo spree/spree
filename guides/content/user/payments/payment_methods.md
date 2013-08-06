@@ -30,15 +30,19 @@ Spree enables you to utilize the payment method of choice for your e-commerce st
 
 ### Add a Supported Gateway
 
-Follow these steps to add one of the supported payment gateways as a payment method on your store.
+Read through the following explanatory text to add one of the supported payment gateways as a payment method on your store.
 
-**1. Select Provider**
+#### Select Provider
 
-To configure one of the supported payment gateways, you must first install the [Spree_Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button. If you installed the [Spree_Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
+To configure one of the supported payment gateways, you must first install the [Spree_Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button.
+
+![New Payment Method Form](/images/user/payments/new_payment_method.jpg)
+
+If you installed the [Spree_Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
 
 ![Select Payment Gateway Provider](/images/user/payments/add_payment_provider.jpg)
 
-**2. Environment**
+#### Environment
 
 Choose the environment where you would like to enable the payment method. The choices are:
 
@@ -46,41 +50,33 @@ Choose the environment where you would like to enable the payment method. The ch
 * **Production** - Select if you want the payment gateway to appear on the customer-facing area of your store.
 * **Test** - Used by developers who are testing their Spree store, typically with our [test suite](/developer/testing.html).
 
-**3. Display**
+#### Display
 
-Select whether you want the payment method to appear on the Frontend or the Backend of your store, or both. The Frontend is the customer-facing area of your store, meaning that the payment method will display as a payment option to your customers during the checkout step. The Backend is the Admin Interface for your store. Users typically select this option when they want to make a payment option available to their internal staff but not to their end customers. For example, you might want to offer purchase orders as a payment option to customers on a one-off basis, but only if they contact one of your customer service representatives via email or telephone.
+Select whether you want the payment method to appear on the Frontend or the Backend of your store, or both.
 
-**4. Active**
+The Frontend is the customer-facing area of your store, meaning that the payment method will display as a payment option to your customers during the checkout step.
+
+The Backend is the Admin Interface for your store. Site administrators typically select this option when they want to make a payment option available to their internal staff but not to their end customers. For example, you might want to offer purchase orders as a payment option to customers on a one-off basis, but only if they contact one of your customer service representatives via email or telephone.
+
+#### Active
 
 Select "Yes" if you want the payment method to be active on your store. Select "No" if you want to create the payment method, but not present it on your store until a later point.
 
-**5. Name**
+#### Name
 
 Give the payment method a name. The value you enter will appear on the customer-facing area of your store, on the Payment page as seen below:
 
 ![Payment Method Name](/images/user/payments/payment_method_name.jpg)
 
-**6. Description**
+#### Description
 
 Add a description for the payment method. This field is optional and is only displayed to internal users and not to customers.
 
 Click "Update" once you've input the desired settings for your new payment method.
 
-**7. Additional Steps**
-
-Some payment methods may required an additional step to configure them for your store. For example, when you add the Braintree payment gateway you must provide
-
-$$$
-Insert screenshot of the additional info you need to add, and put in additional explanatory text above.
-$$$
-
 ### Add a Non-Supported Gateway
 
-It is possible to add a new payment gateway that is not included on the supported by default gateway [list](https://github.com/Shopify/active_merchant#supported-direct-payment-gateways).
-
-$$$
-Document how to do this
-$$$
+It is possible to add a new payment gateway that is not included on the supported by default gateway [list](https://github.com/Shopify/active_merchant#supported-direct-payment-gateways), but doing so is outside the scope of this tutorial. Please consult with your development team if you need this functionality.
 
 ## Edit a Payment Method
 
@@ -90,6 +86,6 @@ To edit the configuration settings for an existing payment method, go to the Adm
 
 Make the desired changes to the payment method settings and then click "Update" to save them.
 
-$$$
-Cover all of the steps involved in processing payments - including declined cards, chargebacks, refunds, etc.
-$$$
+## Processing Payments
+
+Processing orders and the payments associated with them are covered in detail in the [Processing Orders guide](processing_orders).
