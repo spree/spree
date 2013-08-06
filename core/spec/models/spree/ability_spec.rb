@@ -71,7 +71,7 @@ describe Spree::Ability do
 
     context 'with admin user' do
       it 'should be able to admin' do
-        user.spree_roles << Spree::Role.find_or_create_by_name('admin')
+        user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
         ability.should be_able_to :admin, resource
         ability.should be_able_to :index, resource_order
         ability.should be_able_to :show, resource_product
@@ -81,7 +81,7 @@ describe Spree::Ability do
 
     context 'with fakedispatch user' do
       it 'should be able to admin on the order and shipment pages' do
-        user.spree_roles << Spree::Role.find_or_create_by_name('bar')
+        user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
 
         Spree::Ability.register_ability(BarAbility)
 
