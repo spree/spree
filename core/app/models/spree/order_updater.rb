@@ -16,11 +16,15 @@ module Spree
     # associations try to save and then in turn try to call +update!+ again.)
     def update
       update_totals
-      update_payment_state
 
-      # give each of the shipments a chance to update themselves
-      shipments.each { |shipment| shipment.update!(order) }
-      update_shipment_state
+      if order.completed?
+        update_payment_state
+
+        # give each of the shipments a chance to update themselves
+        shipments.each { |shipment| shipment.update!(order) }
+        update_shipment_state
+      end
+      
       update_adjustments
       # update totals a second time in case updated adjustments have an effect on the total
       update_totals
