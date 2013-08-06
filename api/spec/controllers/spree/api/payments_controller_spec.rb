@@ -103,7 +103,7 @@ module Spree
 
         context "authorization fails" do
           before do
-            fake_response = stub(:success? => false, :to_s => "Could not authorize card")
+            fake_response = double(:success? => false, :to_s => "Could not authorize card")
             Spree::Gateway::Bogus.any_instance.should_receive(:authorize).and_return(fake_response)
           end 
 
@@ -129,12 +129,6 @@ module Spree
           api_put :capture, :id => payment.to_param
           response.status.should == 422
           json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
-
-          it "returns a 422 status on capture" do
-            api_put :capture, :id => payment.to_param
-            response.status.should == 422
-            json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
-          end
         end
 
         it "can purchase" do
@@ -146,7 +140,7 @@ module Spree
 
         context "purchasing fails" do
           before do
-            fake_response = stub(:success? => false, :to_s => "Insufficient funds")
+            fake_response = double(:success? => false, :to_s => "Insufficient funds")
             Spree::Gateway::Bogus.any_instance.should_receive(:purchase).and_return(fake_response)
           end
 
