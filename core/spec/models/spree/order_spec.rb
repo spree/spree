@@ -195,7 +195,7 @@ describe Spree::Order do
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustments = double
       order.stub :adjustments => adjustments
-      expect(adjustments).to receive(:update_all).with("state = 'closed'")
+      expect(adjustments).to receive(:update_all).with(state: 'closed')
       order.finalize!
     end
 
