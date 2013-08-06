@@ -126,11 +126,6 @@ module Spree
       "#{name} - #{sku}"
     end
 
-<<<<<<< HEAD
-    def in_stock?(quantity=1)
-      Spree::Stock::Quantifier.new(self).can_supply?(quantity)
-    end
-=======
     # Product may be created with deleted_at already set,
     # which would make AR's default finder return nil.
     # This is a stopgap for that little problem.
@@ -142,18 +137,8 @@ module Spree
       Spree::Stock::Quantifier.new(self).can_supply?(quantity)
     end
 
-    private
->>>>>>> Use paranoia for deleted_at functionality
-
     def total_on_hand
       Spree::Stock::Quantifier.new(self).total_on_hand
-    end
-
-    # Product may be created with deleted_at already set,
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
-    def product
-      Spree::Product.unscoped { super }
     end
 
     private
