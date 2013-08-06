@@ -41,12 +41,6 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before(:each) do
-    if example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-    DatabaseCleaner.start
     reset_spree_preferences
   end
 
