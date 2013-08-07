@@ -4,3 +4,7 @@
    browsers autocompleted the checkout form. #3068 #3085
 
    *Washington Luiz*
+
+*  Switch to new Google Analaytics analytics.js SDK from ga.js SDK for custom dimensions & metrics.
+
+   *Jeff Dutil*
