@@ -64,12 +64,12 @@ Suppose that in your store, you sell drink tumblers. All of the tumblers are mad
 
 Given this inventory, you will need to create a Drink Tumbler _Product_, with three _Option Types_, the corresponding _Option Values_, and twelve _Variants_:
 
-Size | Wrap | Lid Color
---- | --- | ---
+Size  | Wrap | Lid Color
+|-----|------|---------|
 Large | Stars | Blue
 Small | Stars | Blue
-Large | Owls | Orange
-Small | Owls | Orange
+Large | Owls  | Orange
+Small | Owls  | Orange
 Large | Pink Paisley | Pink
 Small | Pink Paisley | Pink
 Large | Purple Paisley | White
@@ -82,7 +82,7 @@ Small | Skulls | Black
 The _Option Types_ you would create for this inventory are - Size, Wrap, and Lid Color - with the corresponding _Option Values_ below.
 
 Option Type | Option Values
---- | ---
+|-----------|--------------|
 Size        | Large, Small
 Wrap        | Stars, Owls, Pink Paisley, Purple Paisley, Skulls
 Lid Color   | Blue, Orange, Pink, White, Black

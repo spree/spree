@@ -27,12 +27,12 @@ Changing the size settings for images will not cause the images you have uploade
 
 The four styles, and their default settings, are as follows:
 
-Style | Default Setting
---- | ---
-Mini | 48x48>
-Small | 100x100>
+  Style | Default Setting
+|-------|----------------|
+Mini    | 48x48>
+Small   | 100x100>
 Product | 240x240>
-Large | 600x600>
+Large   | 600x600>
 
 ### Adding Paperclip Styles
 
@@ -67,7 +67,7 @@ If you don't already have an account on Amazon, you will need to sign up in orde
 
 ![Amazon Access Keys](/images/user/config/amazon_access_keys.jpg)
 
- Click "Create New Root Key" in this area to create a new key. This will prompt you to download a file which contains the access key, and the secret key which you will need to put into Spree. 
+ Click "Create New Root Key" in this area to create a new key. This will prompt you to download a file which contains the access key, and the secret key which you will need to put into Spree.
 
  On Amazon's site, you will need to also create a "bucket" which Spree will put all its uploaded photos into. To do this, go to [https://console.aws.amazon.com/console/home](https://console.aws.amazon.com/console/home), click "Services" at the top left of the screen, then click "S3". To create the bucket, click "Create Bucket", enter a unique name for your bucket and then click "Create".
 
