@@ -304,7 +304,8 @@ module Spree
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      Spree::TaxRate.adjust(self)
+      Spree::TaxRate.adjust(self, line_items)
+      Spree::TaxRate.adjust(self, shipments)
     end
 
     def outstanding_balance
@@ -455,11 +456,14 @@ module Spree
       adjustments.destroy_all
     end
 
+<<<<<<< HEAD
     def clear_adjustments!
       self.adjustments.destroy_all
       self.line_item_adjustments.destroy_all
     end
 
+=======
+>>>>>>> Apply tax charges to line items for an order, rather than the order itself
     def has_step?(step)
       checkout_steps.include?(step)
     end

@@ -30,12 +30,9 @@ module Spree
       end
     end
 
-    def self.adjust(order)
-      order.adjustments.tax.destroy_all
-      order.line_item_adjustments.where(originator_type: 'Spree::TaxRate').destroy_all
-
+    def self.adjust(order, items)
       self.match(order).each do |rate|
-        rate.adjust(order)
+        rate.adjust(order, items)
       end
     end
 
@@ -53,29 +50,37 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order)
-      label = create_label
+    def adjust(order, items)
       if included_in_price
         if Zone.default_tax.contains? order.tax_zone
-          order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
+          adjust_order_items(order, items)
         else
-          amount = -1 * calculator.compute(order)
-          label = Spree.t(:refund) + label
-
-          order.adjustments.create(
-            amount: amount,
-            source: order,
-            originator: self,
-            state: "closed",
-            label: label
-          )
+          adjust_order_items(order, items, 'refund')
         end
       else
-        create_adjustment(label, order, order)
+        adjust_order_items(order, items)
       end
     end
 
     private
+
+    def adjust_order_items(order, items, type='normal')
+      items.each do |item|
+        next if item.tax_category != self.tax_category
+        amount = calculator.compute(item)
+        if type == 'refund'
+          amount = amount * -1
+          label = Spree.t(:refund) + create_label
+        end
+        order.adjustments.create!({
+          :adjustable => item,
+          :amount => amount,
+          :source => self,
+          :state => "closed",
+          :label => create_label
+        })
+      end
+    end
 
       def create_label
         label = ""
