@@ -19,7 +19,14 @@
       position: relative;
 
       > a {
-        text-transform: uppercase;
+        display: inline-block;
+        width: 200px;
+      }
+
+      > i.icon-dot {
+        display: inline-block;
+        float: left;
+        width: 20px;
       }
 
       .toc ul {
