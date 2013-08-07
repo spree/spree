@@ -125,9 +125,9 @@ module Spree
     #
     # Adjustments will check if they are still eligible. Ineligible adjustments
     # are preserved but not counted towards adjustment_total.
-    def update_promotion_adjustments
-      order.adjustments.reload.promotion.each { |adjustment| adjustment.update!(order) }
-      choose_best_promotion_adjustment
+    def update_adjustments
+      order.adjustments.reload.each { |adjustment| adjustment.update! }
+      # choose_best_promotion_adjustment
     end
 
     # Shipping adjustments don't receive order on update! because they calculated
@@ -141,12 +141,12 @@ module Spree
       # Picks one (and only one) promotion to be eligible for this order
       # This promotion provides the most discount, and if two promotions
       # have the same amount, then it will pick the latest one.
-      def choose_best_promotion_adjustment
-        if best_promotion_adjustment = order.adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
-          other_promotions = order.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
-          other_promotions.update_all(eligible: false)
-        end
-      end
+      # def choose_best_promotion_adjustment
+      #   if best_promotion_adjustment = order.adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
+      #     other_promotions = order.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
+      #     other_promotions.update_all(eligible: false)
+      #   end
+      # end
 
       def round_money(n)
         (n * 100).round / 100.0
