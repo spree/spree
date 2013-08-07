@@ -4,7 +4,7 @@ title: Mail Methods
 
 ## Introduction
 
-The configurable components of your Spree site are managed in the Mail Method Settings panel. You can reach this by going first to the Admin Interface, then clicking "Configuration" > "Mail Method Settings".
+The configurable components of your Spree site are managed in the Mail Method Settings panel. You can reach this by going first to the Admin Interface, clicking "Configuration" and then "Mail Method Settings".
 
 ![Mail Method Settings](/images/user/config/mail_method_settings.jpg)
 

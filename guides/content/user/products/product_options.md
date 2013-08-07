@@ -10,7 +10,7 @@ For each Option Type, you will need to create one or more corresponding Option V
 
 ### Creating Option Types and Option Values
 
-Option Types and Option Values are created at the store level, not the product level. This means that you only have to create each Option Type and Option Value once. Once an Option Type and Option Value is created it can be associated with any product in your store. To create an Option Type, click "Products" > "Option Types" > "New Option Type".
+Option Types and Option Values are created at the store level, not the product level. This means that you only have to create each Option Type and Option Value once. Once an Option Type and Option Value is created it can be associated with any product in your store. To create an Option Type, click "Products", then "Option Types", then "New Option Type".
 
 ![New Option Type](/images/user/products/new_option_type.jpg)
 

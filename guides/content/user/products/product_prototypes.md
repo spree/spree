@@ -14,7 +14,7 @@ This guide presumes you have already created the [Option Types](product_options)
 
 ### Creating a Prototype
 
-To create a prototype, go to the Admin Interface and click "Products">"Prototypes". Click the "New Prototype" button.
+To create a prototype, go to the Admin Interface and click "Products", then "Prototypes". Click the "New Prototype" button.
 
 ![New Prototype Form](/images/user/products/new_prototype.jpg)
 

@@ -44,7 +44,7 @@ In addition to a product's tax category, the zone an order is being shipped to w
 
 Tax rates are how it all comes together. A product with a given [Tax Category](#tax-categories), being shipped to a particular [Zone](#zones), will accrue tax charges based on the relevant tax rate that you create.
 
-To add a new Tax Rate, go to your Admin Interface. Click "Configuration">"Tax Rates".
+To add a new Tax Rate, go to your Admin Interface. Click "Configuration" then "Tax Rates".
 
 ![Tax Rates](/images/user/config/tax_rates.jpg)
 
