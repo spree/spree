@@ -18,14 +18,17 @@ Spree::Order.class_eval do
     order.create_line_items_from_api(line_items)
     order.create_adjustments_from_api(adjustments)
     order.create_payments_from_api(payments)
-
-    if completed_at
-      order.completed_at = completed_at
-      order.state = 'complete'
-    end
+    order.complete_from_api(completed_at)
 
     order.save!
     order
+  end
+
+  def complete_from_api(completed_at)
+    if completed_at
+      self.completed_at = completed_at
+      self.state = 'complete'
+    end
   end
 
   def create_shipments_from_api(shipments_hash)
