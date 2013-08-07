@@ -5,6 +5,6 @@
 
    *Washington Luiz*
 
-*  Switch to new Google Analaytics analytics.js SDK from ga.js SDK for custom dimensions & metrics.
+*  Switch to new Google Analytics analytics.js SDK from ga.js SDK for custom dimensions & metrics.
 
    *Jeff Dutil*
