@@ -14,7 +14,7 @@ Promotions depend on activators to know when to activate. Promotions can only be
 
 Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable.
 
-In some special cases where a promotion has a `code` or a `path` configured for it, the promotion will only be activated if the payload's code or path match the payload's. The `code` attribute is used for promotion codes, where a user must enter a code to receive the promotion, and the `path` attribute is used to apply a promotion once a user has visited a specific path.
+In some special cases where a promotion has a `code` or a `path` configured for it, the promotion will only be activated if the payload's code or path match the promotion's. The `code` attribute is used for promotion codes, where a user must enter a code to receive the promotion, and the `path` attribute is used to apply a promotion once a user has visited a specific path.
 
 !!!
 Path-based promotions will only work if the `spree.content.visited` event is triggered, with a call such as `fire_event('spree.content.visited')`. This is done within `Spree::ContentController`, as an example.
