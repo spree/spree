@@ -160,6 +160,7 @@ describe Spree::TaxRate do
     let(:order) { stub_model(Spree::Order) }
     let(:rate_1) { stub_model(Spree::TaxRate) }
     let(:rate_2) { stub_model(Spree::TaxRate) }
+    let(:line_items) { [stub_model(Spree::LineItem)] }
 
     before do
       Spree::TaxRate.stub :match => [rate_1, rate_2]
@@ -168,7 +169,7 @@ describe Spree::TaxRate do
     it "should apply adjustments for two tax rates to the order" do
       rate_1.should_receive(:adjust)
       rate_2.should_receive(:adjust)
-      Spree::TaxRate.adjust(order)
+      Spree::TaxRate.adjust(order, line_items)
     end
   end
 
@@ -233,17 +234,17 @@ describe Spree::TaxRate do
       before { @order.contents.add(@nontaxable.master, 1) }
 
       it "should not create a tax adjustment" do
-        @rate.adjust(@order)
+        @rate.adjust(@order, @order.line_items)
         @order.adjustments.tax.charge.count.should == 0
       end
 
-      it "should not create a line item adjustment" do
-        @rate.adjust(@order)
-        @order.line_item_adjustments.count.should == 0
+      it "should not create a price adjustment" do
+        @rate.adjust(@order, @order.line_items)
+        @order.price_adjustments.count.should == 0
       end
 
       it "should not create a refund" do
-        @rate.adjust(@order)
+        @rate.adjust(@order, @order.line_items)
         @order.adjustments.credit.count.should == 0
       end
     end
@@ -258,36 +259,35 @@ describe Spree::TaxRate do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
 
           it "should create one price adjustment" do
-            @rate.adjust(@order)
-            @order.line_item_adjustments.count.should == 1
+            @rate.adjust(@order, @order.line_items)
+            @order.price_adjustments.count.should == 1
           end
 
           it "should not create a tax refund" do
-            @rate.adjust(@order)
+            @rate.adjust(@order, @order.line_items)
             @order.adjustments.credit.count.should == 0
           end
 
-          it "should not create a tax adjustment" do
-            @rate.adjust(@order)
-            @order.adjustments.tax.charge.count.should == 0
+          it "should create a tax adjustment" do
+            @rate.adjust(@order, @order.line_items)
+            @order.adjustments.tax.charge.count.should == 1
           end
         end
 
         context "when zone is not contained by default tax zone" do
           before { Spree::Zone.stub_chain :default_tax, :contains? => false }
-
-          it "should not create a line item adjustment" do
-            @rate.adjust(@order)
-            @order.line_item_adjustments.count.should == 0
+          it "should not create a price adjustment" do
+            @rate.adjust(@order, @order.line_items)
+            @order.price_adjustments.count.should == 0
           end
 
           it "should create a tax refund" do
-            @rate.adjust(@order)
+            @rate.adjust(@order, @order.line_items)
             @order.adjustments.credit.count.should == 1
           end
 
           it "should not create a tax adjustment" do
-            @rate.adjust(@order)
+            @rate.adjust(@order, @order.line_items)
             @order.adjustments.tax.charge.count.should == 0
           end
         end
@@ -297,18 +297,18 @@ describe Spree::TaxRate do
       context "when price does not include tax" do
         before { @rate.included_in_price = false }
 
-        it "should not create line item adjustment" do
-          @rate.adjust(@order)
-          @order.line_item_adjustments.count.should == 0
+        it "should create a price adjustment" do
+          @rate.adjust(@order, @order.line_items)
+          @order.price_adjustments.count.should == 1
         end
 
         it "should not create a tax refund" do
-          @rate.adjust(@order)
+          @rate.adjust(@order, @order.line_items)
           @order.adjustments.credit.count.should == 0
         end
 
         it "should create a tax adjustment" do
-          @rate.adjust(@order)
+          @rate.adjust(@order, @order.line_items)
           @order.adjustments.tax.charge.count.should == 1
         end
       end
@@ -329,18 +329,18 @@ describe Spree::TaxRate do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
 
           it "should create multiple price adjustments" do
-            @rate.adjust(@order)
-            @order.line_item_adjustments.count.should == 2
+            @rate.adjust(@order, @order.line_items)
+            @order.price_adjustments.count.should == 2
           end
 
           it "should not create a tax refund" do
-            @rate.adjust(@order)
+            @rate.adjust(@order, @order.line_items)
             @order.adjustments.credit.count.should == 0
           end
 
           it "should not create a tax adjustment" do
-            @rate.adjust(@order)
-            @order.adjustments.tax.charge.count.should == 0
+            @rate.adjust(@order, @order.line_items)
+            @order.adjustments.tax.charge.count.should == 2
           end
         end
 
@@ -348,17 +348,17 @@ describe Spree::TaxRate do
           before { Spree::Zone.stub_chain :default_tax, :contains? => false }
 
           it "should not create a price adjustment" do
-            @rate.adjust(@order)
-            @order.line_item_adjustments.count.should == 0
+            @rate.adjust(@order, @order.line_items)
+            @order.price_adjustments.count.should == 0
           end
 
-          it "should create a single tax refund" do
-            @rate.adjust(@order)
-            @order.adjustments.credit.count.should == 1
+          it "should create a tax refund for both line items" do
+            @rate.adjust(@order, @order.line_items)
+            @order.adjustments.credit.count.should == 2
           end
 
           it "should not create a tax adjustment" do
-            @rate.adjust(@order)
+            @rate.adjust(@order, @order.line_items)
             @order.adjustments.tax.charge.count.should == 0
           end
         end
@@ -369,18 +369,18 @@ describe Spree::TaxRate do
         before { @rate.included_in_price = false }
 
         it "should not create a price adjustment" do
-          @rate.adjust(@order)
-          @order.line_item_adjustments.count.should == 0
+          @rate.adjust(@order, @order.line_items)
+          @order.price_adjustments.count.should == 2
         end
 
         it "should not create a tax refund" do
-          @rate.adjust(@order)
+          @rate.adjust(@order, @order.line_items)
           @order.adjustments.credit.count.should == 0
         end
 
-        it "should create a single tax adjustment" do
-          @rate.adjust(@order)
-          @order.adjustments.tax.charge.count.should == 1
+        it "should create a single tax adjustment for each line item" do
+          @rate.adjust(@order, @order.line_items)
+          @order.adjustments.tax.charge.count.should == 2
         end
       end
 

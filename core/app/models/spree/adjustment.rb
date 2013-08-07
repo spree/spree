@@ -26,7 +26,7 @@ module Spree
   class Adjustment < ActiveRecord::Base
     belongs_to :adjustable, polymorphic: true
     belongs_to :source, polymorphic: true
-    belongs_to :originator, polymorphic: true
+    belongs_to :order
 
     validates :label, presence: true
     validates :amount, numericality: true
@@ -48,7 +48,8 @@ module Spree
       end
     end
 
-    scope :tax, -> { where(originator_type: 'Spree::TaxRate', adjustable_type: 'Spree::Order') }
+    
+    scope :tax, -> { where(source_type: 'Spree::TaxRate') }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
     scope :shipping, -> { where(originator_type: 'Spree::ShippingMethod') }
     scope :optional, -> { where(mandatory: false) }
