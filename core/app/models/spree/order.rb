@@ -484,7 +484,7 @@ module Spree
     # Receives an adjustment +originator+ (here a PromotionAction object) and tells
     # if the order has adjustments from that already
     def promotion_credit_exists?(originator)
-      !! adjustments.promotion.reload.detect { |credit| credit.originator.id == originator.id }
+      !! adjustments.includes(:originator).promotion.reload.detect { |credit| credit.originator.id == originator.id }
     end
 
     def promo_total
