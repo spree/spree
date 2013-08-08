@@ -8,7 +8,7 @@
   <div class="omega nine columns">
     <div class="field">
       <label><%= Spree.t(:payment_method) %></label>
-      <ul>
+      <ul id='payment-methods'>
         <% @payment_methods.each do |method| %>
           <li>
             <label data-hook="payment_method_field">
