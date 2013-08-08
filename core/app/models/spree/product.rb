@@ -42,11 +42,10 @@ module Spree
       -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
       class_name: 'Spree::Variant'
 
-    has_many :variants_including_master, -> { order('spree_variants.position ASC') },
+    has_many :variants_including_master,
+      -> { order("#{::Spree::Variant.quoted_table_name}.position ASC") },
       class_name: 'Spree::Variant',
       dependent: :destroy
-
-    has_many :variants_including_master_and_deleted, class_name: 'Spree::Variant'
 
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
