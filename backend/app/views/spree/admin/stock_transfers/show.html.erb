@@ -25,21 +25,21 @@
 
   <div class="omega six columns">
     <div class="field">
-      <label><%= Spree.t('created') %>:</label>
+      <label><%= Spree.t('created_at') %>:</label>
       <div class="value"><%= @stock_transfer.created_at %></div>
     </div>
   </div>
 
   <% if @stock_transfer.source_movements.present? %>
     <fieldset class="no-border-bottom">
-      <legend><%= Spree.t('source') %> <i class="icon-arrow-right"></i> <%= @stock_transfer.source_location.name %></legend>
+      <legend id='stock-location-source'><%= Spree.t('source') %> <i class="icon-arrow-right"></i> <%= @stock_transfer.source_location.name %></legend>
       <%= render :partial => 'stock_movements', :object => @stock_transfer.source_movements %>
     </fieldset>
   <% end %>
 
   <% if @stock_transfer.destination_movements.present? %>
     <fieldset class="no-border-bottom">
-      <legend><%= Spree.t('destination') %> <i class="icon-arrow-right"></i> <%= @stock_transfer.destination_location.name %></legend>
+      <legend id='stock-location-destination'><%= Spree.t('destination') %> <i class="icon-arrow-right"></i> <%= @stock_transfer.destination_location.name %></legend>
       <%= render :partial => 'stock_movements', :object => @stock_transfer.destination_movements %>
     </fieldset>
   <% end %>
