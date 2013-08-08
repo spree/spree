@@ -19,7 +19,7 @@ module Spree
 
       def create
         authorize! :create, Order
-        @order = Order.build_from_api(current_api_user, nested_params)
+        @order = Order.build_from_api(current_api_user, order_params)
         respond_with(@order, :default_template => :show, :status => 201)
       end
 
@@ -48,10 +48,9 @@ module Spree
         # Parsing line items through as an update_attributes call in the API will result in
         # many line items for the same variant_id being created. We must be smarter about this,
         # hence the use of the update_line_items method, defined within order_decorator.rb.
-        order_params = nested_params
-        line_items = order_params.delete("line_items_attributes")
+        order_params.delete("line_items_attributes")
         if @order.update_attributes(order_params)
-          @order.update_line_items(line_items)
+          @order.update_line_items(params[:order][:line_items])
           @order.line_items.reload
           @order.update!
           respond_with(@order, :default_template => :show)
@@ -62,8 +61,15 @@ module Spree
 
       private
 
-      def nested_params
-        map_nested_attributes_keys Order, params[:order] || {}
+      def order_params
+        if params[:order]
+          params[:order][:line_items_attributes] = params[:order][:line_items]
+          params[:order][:ship_address_attributes] = params[:order][:ship_address] if params[:order][:ship_address]
+          params[:order][:bill_address_attributes] = params[:order][:bill_address] if params[:order][:bill_address]
+          params.require(:order).permit(permitted_order_attributes)
+        else
+          {}
+        end
       end
 
       def next!(options={})
