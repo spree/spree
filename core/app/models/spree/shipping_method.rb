@@ -14,8 +14,13 @@ module Spree
                                     :class_name => 'Spree::Zone',
                                     :foreign_key => 'shipping_method_id'
 
+    has_and_belongs_to_many :stock_locations, :join_table => 'spree_shipping_method_stock_locations',
+                                              :class_name => 'Spree::StockLocation',
+                                              :foreign_key => 'shipping_method_id'
+
     attr_accessible :name, :zones, :display_on, :shipping_category_id,
-                    :match_none, :match_one, :match_all, :tracking_url
+                    :match_none, :match_one, :match_all, :tracking_url,
+                    :stock_locations
 
     validates :name, presence: true
 

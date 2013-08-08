@@ -12,6 +12,9 @@ module Spree
         :backorderable_default, :state_name, :state_id, :country_id, :phone,
         :propagate_all_variants
 
+    has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_method_stock_locations',
+                                               :class_name => 'Spree::ShippingMethod',
+                                               :foreign_key => 'stock_location_id'
     scope :active, -> { where(active: true) }
 
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
