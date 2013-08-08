@@ -3,8 +3,10 @@ module Spree
     belongs_to :shipment, class_name: 'Spree::Shipment'
     belongs_to :shipping_method, class_name: 'Spree::ShippingMethod'
 
-    scope :frontend, -> { includes(:shipping_method).where(ShippingMethod.on_frontend_query) }
-    scope :backend, -> { includes(:shipping_method).where(ShippingMethod.on_backend_query) }
+    scope :frontend,
+      -> { includes(:shipping_method).where(ShippingMethod.on_frontend_query).references(:shipping_method) }
+    scope :backend,
+      -> { includes(:shipping_method).where(ShippingMethod.on_backend_query).references(:shipping_method) }
     
     delegate :order, :currency, to: :shipment
     delegate :name, to: :shipping_method
