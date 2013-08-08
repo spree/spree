@@ -23,7 +23,6 @@ module Spree
         @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
         @order.create_proposed_shipments if @order.shipments.any?
         return if after_update_attributes
-        @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
 
         fire_event('spree.order.contents_changed')
 
@@ -91,7 +90,11 @@ module Spree
     private
 
       def order_params
-        params[:order].permit(*permitted_order_attributes)
+        if params[:order]
+          params[:order].permit(*permitted_order_attributes)
+        else
+          {}
+        end
       end
 
       def after_update_attributes
