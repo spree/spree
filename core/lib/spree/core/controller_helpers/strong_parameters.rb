@@ -3,7 +3,11 @@ module Spree
     module ControllerHelpers
       module StrongParameters
         def permitted_order_attributes
-          [:coupon_code, :line_items_attributes => [:quantity, :id]]
+          [:line_items_attributes => permitted_line_item_attributes].push permitted_checkout_attributes
+        end
+
+        def permitted_line_item_attributes
+          [:id, :variant_id, :quantity]
         end
 
         def permitted_address_attributes
@@ -18,14 +22,15 @@ module Spree
         end
 
         def permitted_payment_attributes
-          [:payment_method_id, :source_attributes => permitted_source_attributes]
+          [:amount, :payment_method_id, :source_attributes => permitted_source_attributes]
         end
 
         def permitted_checkout_attributes
           [:email, :use_billing, :shipping_method_id, :coupon_code,
            :bill_address_attributes => permitted_address_attributes,
            :ship_address_attributes => permitted_address_attributes,
-           :payments_attributes => permitted_payment_attributes]
+           :payments_attributes => permitted_payment_attributes,
+           :shipments_attributes => permitted_shipment_attributes]
         end
 
         def permitted_image_attributes
@@ -42,10 +47,6 @@ module Spree
 
         def permitted_option_value_attributes
           [:name, :presentation]
-        end
-
-        def permitted_payment_attributes
-          [:amount, :payment_method_id, :source_attributes]
         end
 
         def permitted_product_properties_attributes
@@ -69,7 +70,7 @@ module Spree
         end
 
         def permitted_shipment_attributes
-          [:order, :special_instructions, :stock_location_id,
+          [:order, :special_instructions, :stock_location_id, :id,
            :tracking, :address, :inventory_units, :selected_shipping_rate_id]
         end
 
