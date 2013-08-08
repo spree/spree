@@ -63,6 +63,7 @@ en:
         zipcode: Shipping address zipcode
       spree/payment:
         amount: Amount
+        one: "Payment"
       spree/payment_method:
         name: Name
       spree/product:
