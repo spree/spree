@@ -4,6 +4,7 @@ module Spree
       before_filter :load_data, :except => [:index]
       before_filter :set_shipping_category, :only => [:create, :update]
       before_filter :set_zones, :only => [:create, :update]
+      before_filter :set_stock_locations, :only => [:create, :update]
 
       def destroy
         @object.touch :deleted_at
@@ -30,6 +31,13 @@ module Spree
         @shipping_method.zones = Spree::Zone.where(:id => params["shipping_method"][:zones])
         @shipping_method.save
         params[:shipping_method].delete(:zones)
+      end
+
+      def set_stock_locations
+        return true if params["shipping_method"][:stock_locations] == ""
+        @shipping_method.stock_locations = Spree::StockLocation.where(:id => params["shipping_method"][:stock_locations])
+        @shipping_method.save
+        params[:shipping_method].delete(:stock_locations)
       end
 
       def location_after_save
