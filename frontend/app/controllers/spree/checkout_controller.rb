@@ -114,15 +114,7 @@ module Spree
         end
 
         if params[:order]
-          params[:order].permit(
-            :email,
-            :use_billing,
-            :shipping_method_id,
-            :coupon_code,
-            :bill_address_attributes => permitted_address_attributes,
-            :ship_address_attributes => permitted_address_attributes,
-            :payments_attributes => permitted_payment_attributes
-          )
+          params[:order].permit(permitted_checkout_attributes)
         else
           {}
         end
