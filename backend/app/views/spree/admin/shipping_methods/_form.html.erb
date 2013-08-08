@@ -55,6 +55,22 @@
       <% end %>
     </fieldset>
   </div>
+
+  <div class="omage six columns">
+    <fieldset class="no-border-bottom">
+      <legend align="center"><%=Spree.t(:stock_location) %></legend>
+      <%= f.field_container :stock_locations do %>
+        <% Spree::StockLocation.all.each do |stock_location| %>
+          <%= label_tag do %>
+            <%= check_box_tag('shipping_method[stock_locations][]', stock_location.id, @shipping_method.stock_locations.include?(stock_location)) %>
+            <%= stock_location.name %>
+          <% end %>
+          <br>
+          <%= error_message_on :shipping_method, :stock_location %>
+        <% end %>
+      <% end %>
+    </fieldset>
+  </div>
 </div>
 
 <div data-hook="admin_shipping_method_form_calculator_fields" class="omega six columns">
