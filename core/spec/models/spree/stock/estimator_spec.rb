@@ -14,6 +14,7 @@ module Spree
           ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(true)
           ShippingMethod.any_instance.stub_chain(:calculator, :compute).and_return(4.00)
           ShippingMethod.any_instance.stub_chain(:calculator, :preferences).and_return({:currency => "USD"})
+          ShippingMethod.any_instance.stub_chain(:calculator, :marked_for_destruction?)
 
           package.stub(:shipping_methods => [shipping_method])
         end
