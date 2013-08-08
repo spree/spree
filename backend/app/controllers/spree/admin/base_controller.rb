@@ -28,10 +28,8 @@ module Spree
         # Need to generate an API key for a user due to some backend actions
         # requiring authentication to the Spree API
         def generate_admin_api_key
-          if user = try_spree_current_user
-            if user.spree_api_key.blank?
-              user.generate_spree_api_key!
-            end
+          if (user = try_spree_current_user) && user.spree_api_key.blank?
+            user.generate_spree_api_key!
           end
         end
 
