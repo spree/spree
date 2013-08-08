@@ -92,7 +92,7 @@ module Spree
       #
       # Otherwise redirect user to that step
       def can_transition_to_payment
-        unless @order.payment? || @order.complete?
+        unless @order.billing_address.present?
           flash[:notice] = Spree.t(:fill_in_customer_info)
           redirect_to edit_admin_order_customer_url(@order)
         end
