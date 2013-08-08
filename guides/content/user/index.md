@@ -8,4 +8,4 @@ Welcome to the Spree User Guides! This documentation is intended for business ow
 
 Should you find any errors in these guides, or topics you wish to see covered, please let us know by joining, then sending an email to the [Spree user mailing list](http://groups.google.com/group/spree-user).
 
-If you are a Spree developer, you may find the Developer Guides to be of benefit to you, though we strongly urge you to read through both sets of guides.
+If you are a Spree developer, you may find the [Developer Guides](\developer/index) to be of benefit to you, though we strongly urge you to read through both sets of guides.
