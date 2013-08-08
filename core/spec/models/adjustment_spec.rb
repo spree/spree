@@ -37,35 +37,42 @@ describe Spree::Adjustment do
   end
 
   context "#eligible? after #set_eligibility" do
-    context "when amount is 0" do
-      before { adjustment.amount = 0 }
-      it "should be eligible if mandatory?" do
+    context "when is eligible_for_originator?" do
+      before { adjustment.stub(:eligible_for_originator? => true) }
+      it "should be eligible if mandatory" do
         adjustment.mandatory = true
         adjustment.set_eligibility
         adjustment.should be_eligible
       end
-      it "should not be eligible unless mandatory?" do
+      it "should be eligible if not mandatory and is_free_ship?" do
         adjustment.mandatory = false
+        adjustment.stub(:is_free_ship? => true)
+        adjustment.set_eligibility
+        adjustment.should be_eligible
+      end
+      it "should be eligible if not mandatory and amount is greater than 0" do
+        adjustment.mandatory = false
+        adjustment.amount = 25.00
+        adjustment.set_eligibility
+        adjustment.should be_eligible
+      end
+      it "should not be eligible if not mandatory and amount is 0 and not is_free_ship?" do
+        adjustment.mandatory = false
+        adjustment.amount = 0
+        adjustment.stub(:is_free_ship? => false)
         adjustment.set_eligibility
         adjustment.should_not be_eligible
       end
     end
-    context "when amount is greater than 0" do
-      before { adjustment.amount = 25.00 }
-      it "should be eligible if mandatory?" do
+    context "when is not eligible_for_originator?" do
+      before { adjustment.stub(:eligible_for_originator? => false) }
+      it "should be eligible if mandatory" do
         adjustment.mandatory = true
         adjustment.set_eligibility
         adjustment.should be_eligible
       end
-      it "should be eligible if not mandatory and eligible for the originator" do
+      it "should not be eligible unless mandatory" do
         adjustment.mandatory = false
-        adjustment.stub(:eligible_for_originator? => true)
-        adjustment.set_eligibility
-        adjustment.should be_eligible
-      end
-      it "should not be eligible if not mandatory not eligible for the originator" do
-        adjustment.mandatory = false
-        adjustment.stub(:eligible_for_originator? => false)
         adjustment.set_eligibility
         adjustment.should_not be_eligible
       end

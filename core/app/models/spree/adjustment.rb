@@ -34,12 +34,12 @@ module Spree
     after_save :update_adjustable
     after_destroy :update_adjustable
 
-    # Update the boolean _eligible_ attribute which deterimes which adjustments count towards the order's
+    # Update the boolean _eligible_ attribute which determines which adjustments count towards the order's
     # adjustment_total.
     def set_eligibility
-      update_attribute_without_callbacks(:eligible,
-                                         mandatory ||
-                                         (amount != 0 && eligible_for_originator?))
+      result = self.mandatory || (self.amount != 0 && self.eligible_for_originator?) ||
+          (self.is_free_ship? && self.eligible_for_originator?)
+      update_attribute_without_callbacks(:eligible, result)
     end
 
     # Allow originator of the adjustment to perform an additional eligibility of the adjustment
@@ -47,6 +47,10 @@ module Spree
     def eligible_for_originator?
       return true if originator.nil?
       !originator.respond_to?(:eligible?) || originator.eligible?(source)
+    end
+
+    def is_free_ship?
+      self.originator && self.originator.calculator.class == Spree::Calculator::FreeShipping
     end
 
     # Update both the eligibility and amount of the adjustment. Adjustments delegate updating of amount to their Originator
