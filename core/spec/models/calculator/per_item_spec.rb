@@ -26,9 +26,14 @@ describe Spree::Calculator::PerItem do
     calculator.compute(object).to_f.should == 50 # 5 x 10
   end
 
-  it 'correctly calculates per item promotion with no rules i.e. no product restrictions' do
+  it "correctly calculates per item promotion with no rules i.e. no product restrictions" do
     calculator.stub(:calculable => double("Calculable", :promotion => promotion_without_rules))
     calculator.compute(object).to_f.should == 80 # 5 x 10 + 3 x 10
+  end
+
+  it "correctly calculates on a single line item object" do
+    calculator.stub(:calculable => shipping_calculable)
+    calculator.compute(line_items.first).to_f.should == 50 # 5 x 10
   end
 
   it "returns 0 when no object passed" do

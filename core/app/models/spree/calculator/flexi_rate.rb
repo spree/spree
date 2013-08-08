@@ -20,7 +20,7 @@ module Spree
     def compute(object)
       sum = 0
       max = self.preferred_max_items.to_i
-      items_count = object.line_items.map(&:quantity).sum
+      items_count = line_items_for(object).map(&:quantity).sum
       items_count.times do |i|
         # check max value to avoid divide by 0 errors
         if (max == 0 && i == 0) || (max > 0) && (i % max == 0)
