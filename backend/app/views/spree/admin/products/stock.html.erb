@@ -64,8 +64,7 @@
                       <% end %>
                     </td>
                     <td class="align-center">
-                      <%= link_to "", [:admin, item], method: :delete, remote: true,
-                        confirm: Spree.t(:are_you_sure), class: "icon_link with-tip icon-trash" %>
+                      <%= link_to "", [:admin, item], method: :delete, remote: true, data: { confirm: Spree.t(:are_you_sure) }, class: "icon_link with-tip icon-trash" %>
                     </td>
                   </tr>
                 <% end %>
