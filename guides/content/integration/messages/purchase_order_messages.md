@@ -54,3 +54,47 @@ Use this type of Message whenever a new order is created.
       }
     }
   }```
+
+### purchase_order:received
+Use this message to mark a purchase order as received
+
+---purchase_order_received.json---
+```json
+{
+  "message": "purchase_order:received",
+  "payload": {
+    "purchase_order": {
+      "po_number": "123456",
+      "items": [
+        {
+          "line": "1",
+          "item_number": "334392",
+          "quantity": "64",
+          "date": "2012-08-22T20:25:45.2706497Z"
+        },
+        {
+          "line": "2",
+          "item_number": "334393",
+          "quantity": "27",
+          "date": "2012-08-22T20:25:45.286285Z"
+        }
+      ]
+    }
+  }
+}
+```
+
+### purchase_order:confirm
+Use this message to mark a purchase order as confirmed
+
+---purchase_order_confirm.json---
+```json
+{
+  "message": "purchase_order:confirm",
+  "payload": {
+    "purchase_order": {
+      "po_number": "123456"
+    }
+  }
+}
+```
