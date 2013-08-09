@@ -37,6 +37,11 @@ module Spree
         end
 
         context "try to skip customer details step" do
+          before do
+            order.bill_address = nil
+            order.save
+          end
+          
           it "redirect to customer details step" do
             spree_get :index, { amount: 100 }
             response.should redirect_to(spree.edit_admin_order_customer_path(order))
