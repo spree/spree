@@ -7,7 +7,7 @@ rescue ActiveRecord::RecordNotFound
 end
 
 europe_vat = Spree::Zone.find_by_name!("EU_VAT")
-shipping_category = Spree::ShippingCategory.find_or_create_by_name!('Default')
+shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Default')
 
 shipping_methods = [
   {
