@@ -15,6 +15,16 @@
     <% end %>
   </div>
 
+  <div class="alpha omega twelve columns">
+    <div class="alpha six columns">
+      <%= f.field_container :admin_name do %>
+        <%= f.label :admin_name, Spree.t(:internal_name) %><br />
+        <%= f.text_field :admin_name, :class => 'fullwidth', :label => false  %>
+        <%= error_message_on :shipping_method, :admin_name %>
+      <% end %>
+    </div>
+  </div>
+
   <div class="alpha twelve columns">
     <%= f.field_container :tracking_url do %>
       <%= f.label :tracking_url, Spree.t(:tracking_url) %><br />
