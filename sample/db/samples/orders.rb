@@ -1,7 +1,7 @@
 Spree::Sample.load_sample("addresses")
 
 orders = []
-orders << Spree::Order.create!({
+orders << Spree::Order.create!(
   :number => "R123456789",
   :email => "spree@example.com",
   :item_total => 150.95,
@@ -10,7 +10,7 @@ orders << Spree::Order.create!({
   :shipping_address => Spree::Address.first,
   :billing_address => Spree::Address.last)
 
-orders << Spree::Order.create!({
+orders << Spree::Order.create!(
   :number => "R987654321",
   :email => "spree@example.com",
   :item_total => 15.95,
@@ -19,17 +19,15 @@ orders << Spree::Order.create!({
   :shipping_address => Spree::Address.first,
   :billing_address => Spree::Address.last)
 
-orders[0].line_items.create!({
+orders[0].line_items.create!(
   :variant => Spree::Product.find_by_name!("Ruby on Rails Tote").master,
   :quantity => 1,
-  :price => 15.99
-}, :without_protection => true)
+  :price => 15.99)
 
-orders[1].line_items.create!({
+orders[1].line_items.create!(
   :variant => Spree::Product.find_by_name!("Ruby on Rails Bag").master,
   :quantity => 1,
-  :price => 22.99
-}, :without_protection => true)
+  :price => 22.99)
 
 orders.each(&:create_proposed_shipments)
 
