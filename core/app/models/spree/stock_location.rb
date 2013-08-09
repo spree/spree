@@ -8,7 +8,7 @@ module Spree
 
     validates_presence_of :name
 
-    attr_accessible :name, :active, :address1, :address2, :city, :zipcode,
+    attr_accessible :name, :admin_name, :active, :address1, :address2, :city, :zipcode,
         :backorderable_default, :state_name, :state_id, :country_id, :phone,
         :country_id, :propagate_all_variants
 
