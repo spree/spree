@@ -12,8 +12,6 @@ gem 'sqlite3'
 gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 4.0.0'
 
-gem 'ransack', github: 'ernie/ransack', branch: 'rails-4'
-
 group :test do
   gem 'capybara', '~> 2.1'
   gem 'database_cleaner', '~> 1.0.1'
