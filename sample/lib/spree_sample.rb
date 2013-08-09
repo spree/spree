@@ -24,7 +24,6 @@ module SpreeSample
       Spree::Sample.load_sample("assets")
 
       Spree::Sample.load_sample("orders")
-      Spree::Sample.load_sample("line_items")
       Spree::Sample.load_sample("adjustments")
       Spree::Sample.load_sample("payments")
     end
