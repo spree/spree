@@ -289,6 +289,10 @@ generate test applications and run specs for all the facets:
 bash build.sh
 ```
 
+Further Documentation
+------------
+Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com). 
+
 Contributing
 ------------
 
