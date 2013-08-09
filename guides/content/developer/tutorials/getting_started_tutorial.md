@@ -9,12 +9,14 @@ Before starting this tutorial, make sure you have Ruby and RubyGems installed on
 
 By following this tutorial, you will create a simple Spree project called `mystore`. Before you can start building the application, you need to make sure that you have Rails itself installed.
 
+To run Spree 2.0 you need the latest Rails 3.2.x version.
+
 ### Installing Rails
 
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
 ```bash
-$ gem install rails```
+$ gem install rails -v 3.2.14```
 
 ### Installing Bundler
 
@@ -32,6 +34,8 @@ If you are using OSX, a recommended approach is to install ImageMagick using [Ho
 ```bash
 $ brew install imagemagick```
 
+If you are using Unix or Windows check [Imagemagick.org](http://www.imagemagick.org/).
+
 ### Installing Spree
 
 The easiest way to get Spree setup is by installing the `spree_cmd` gem. This can be done with the following command:
@@ -48,7 +52,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 Let's start by creating a standard Rails application using the following command:
 
 ```bash
-$ rails new mystore```
+$ rails _3.2.14_ new mystore```
 
 ### Adding Spree to Your Rails Application
 
