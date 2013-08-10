@@ -20,6 +20,16 @@ describe Spree::LineItem do
       line_item.order.should_receive(:create_tax_charge!)
       line_item.destroy
     end
+
+    it "fetches deleted products" do
+      line_item.product.destroy
+      expect(line_item.reload.product).to be_a Spree::Product
+    end
+
+    it "fetches deleted variants" do
+      line_item.variant.destroy
+      expect(line_item.reload.variant).to be_a Spree::Variant
+    end
   end
 
   # Test for #3391
