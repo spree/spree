@@ -430,7 +430,7 @@ module Spree
     def merge!(order)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
-        current_line_item = self.line_items.find_by_variant_id(line_item.variant_id)
+        current_line_item = self.line_items.find_by(variant: line_item.variant)
         if current_line_item
           current_line_item.quantity += line_item.quantity
           current_line_item.save

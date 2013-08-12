@@ -1,6 +1,6 @@
 module Spree
   class ProductProperty < ActiveRecord::Base
-    belongs_to :product, class_name: 'Spree::Product'
+    belongs_to :product,  class_name: 'Spree::Product'
     belongs_to :property, class_name: 'Spree::Property'
 
     validates :property, presence: true
@@ -15,7 +15,7 @@ module Spree
 
     def property_name=(name)
       unless name.blank?
-        unless property = Property.find_by_name(name)
+        unless property = Property.find_by(name: name)
           property = Property.create(name: name, presentation: name)
         end
         self.property = property

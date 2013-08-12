@@ -8,7 +8,7 @@ module Spree
       #
       # Example:
       #
-      # product.variants_including_master.has_option(OptionType.find_by_name("shoe-size"),OptionValue.find_by_name("8"))
+      # product.variants_including_master.has_option(OptionType.find_by(name: 'shoe-size'), OptionValue.find_by(name: '8'))
       def has_option(option_type, *option_values)
         option_types = OptionType.table_name
 
