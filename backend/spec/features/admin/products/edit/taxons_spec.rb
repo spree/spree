@@ -36,7 +36,9 @@ describe "Product Taxons" do
       selected_taxons.should =~ [taxon_1.id, taxon_2.id]
 
       # Regression test for #2139
-      all("#s2id_product_taxon_ids .select2-search-choice").count.should == 2
+      sleep(1)
+      expect(first(".select2-search-choice", text: taxon_1.name)).to be_present
+      expect(first(".select2-search-choice", text: taxon_2.name)).to be_present
     end
   end
 end
