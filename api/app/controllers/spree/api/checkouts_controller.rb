@@ -1,8 +1,8 @@
 module Spree
   module Api
     class CheckoutsController < Spree::Api::BaseController
-      before_filter :load_order, :only => [:show, :update, :next]
-      before_filter :associate_user, :only => :update
+      before_filter :load_order,     only: [:show, :update, :next]
+      before_filter :associate_user, only: :update
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
@@ -12,33 +12,33 @@ module Spree
       def create
         authorize! :create, Order
         @order = Order.build_from_api(current_api_user, nested_params)
-        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 201)
+        respond_with(@order, default_template: 'spree/api/orders/show', status: 201)
       end
 
       def next
         authorize! :update, @order, params[:order_token]
         @order.next!
-        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
+        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
       rescue StateMachine::InvalidTransition
-        respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
+        respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
       end
 
       def show
-        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
+        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
       end
 
       def update
         authorize! :update, @order, params[:order_token]
         order_params = object_params
-        line_items = order_params.delete("line_items_attributes")
+        line_items = order_params.delete('line_items_attributes')
         if @order.update_attributes(object_params)
           @order.update_line_items(line_items)
-          if current_api_user.has_spree_role?("admin") && user_id.present?
+          if current_api_user.has_spree_role?('admin') && user_id.present?
             @order.associate_user!(Spree.user_class.find(user_id))
           end
           return if after_update_attributes
           state_callback(:after) if @order.next
-          respond_with(@order, :default_template => 'spree/api/orders/show')
+          respond_with(@order, default_template: 'spree/api/orders/show')
         else
           invalid_resource!(@order)
         end
@@ -50,7 +50,7 @@ module Spree
           # For payment step, filter order parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
           # respond_to check is necessary due to issue described in #2910
           object_params = nested_params
-          if @order.has_checkout_step?("payment") && @order.payment?
+          if @order.has_checkout_step?('payment') && @order.payment?
             if object_params[:payments_attributes].is_a?(Hash)
               object_params[:payments_attributes] = [object_params[:payments_attributes]]
             end
@@ -84,7 +84,7 @@ module Spree
         end
 
         def load_order
-          @order = Spree::Order.find_by_number!(params[:id])
+          @order = Spree::Order.find_by!(number: params[:id])
           raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
           @order.state = params[:state] if params[:state]
           state_callback(:before)
@@ -99,7 +99,7 @@ module Spree
         end
 
         def raise_insufficient_quantity
-          respond_with(@order, :default_template => 'spree/api/orders/insufficient_quantity')
+          respond_with(@order, default_template: 'spree/api/orders/insufficient_quantity')
         end
 
         def state_callback(before_or_after = :before)
@@ -113,9 +113,9 @@ module Spree
 
         def next!(options={})
           if @order.valid? && @order.next
-            render 'spree/api/orders/show', :status => options[:status] || 200
+            render 'spree/api/orders/show', status: options[:status] || 200
           else
-            render 'spree/api/orders/could_not_transition', :status => 422
+            render 'spree/api/orders/could_not_transition', status: 422
           end
         end
 
@@ -124,7 +124,7 @@ module Spree
             coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
             if !coupon_result[:coupon_applied?]
               @coupon_message = coupon_result[:error]
-              respond_with(@order, :default_template => 'spree/api/orders/could_not_apply_coupon')
+              respond_with(@order, default_template: 'spree/api/orders/could_not_apply_coupon')
               return true
             end
           end

@@ -6,7 +6,7 @@ module Spree
         authorize! :create, ReturnAuthorization
         @return_authorization = order.return_authorizations.build(return_authorization_params)
         if @return_authorization.save
-          respond_with(@return_authorization, :status => 201, :default_template => :show)
+          respond_with(@return_authorization, status: 201, default_template: :show)
         else
           invalid_resource!(@return_authorization)
         end
@@ -15,7 +15,7 @@ module Spree
       def destroy
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :destroy).find(params[:id])
         @return_authorization.destroy
-        respond_with(@return_authorization, :status => 204)
+        respond_with(@return_authorization, status: 204)
       end
 
       def index
@@ -39,7 +39,7 @@ module Spree
       def update
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
         if @return_authorization.update_attributes(return_authorization_params)
-          respond_with(@return_authorization, :default_template => :show)
+          respond_with(@return_authorization, default_template: :show)
         else
           invalid_resource!(@return_authorization)
         end
@@ -76,7 +76,7 @@ module Spree
       private
 
       def order
-        @order ||= Order.find_by_number!(params[:order_id])
+        @order ||= Spree::Order.find_by!(number: params[:order_id])
         authorize! :read, @order
       end
 

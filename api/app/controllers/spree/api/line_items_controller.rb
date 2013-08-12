@@ -6,7 +6,7 @@ module Spree
         variant = Spree::Variant.find(params[:line_item][:variant_id])
         @line_item = order.contents.add(variant, params[:line_item][:quantity])
         if @line_item.save
-          respond_with(@line_item, :status => 201, :default_template => :show)
+          respond_with(@line_item, status: 201, default_template: :show)
         else
           invalid_resource!(@line_item)
         end
@@ -15,7 +15,7 @@ module Spree
       def update
         @line_item = order.line_items.find(params[:id])
         if @line_item.update_attributes(line_item_params)
-          respond_with(@line_item, :default_template => :show)
+          respond_with(@line_item, default_template: :show)
         else
           invalid_resource!(@line_item)
         end
@@ -24,19 +24,19 @@ module Spree
       def destroy
         @line_item = order.line_items.find(params[:id])
         @line_item.destroy
-        respond_with(@line_item, :status => 204)
+        respond_with(@line_item, status: 204)
       end
 
       private
 
-      def order
-        @order ||= Order.find_by_number!(params[:order_id])
-        authorize! :update, @order, params[:order_token]
-      end
+        def order
+          @order ||= Spree::Order.find_by!(number: params[:order_id])
+          authorize! :update, @order, params[:order_token]
+        end
 
-      def line_item_params
-        params.require(:line_item).permit(:quantity, :variant_id)
-      end
+        def line_item_params
+          params.require(:line_item).permit(:quantity, :variant_id)
+        end
     end
   end
 end
