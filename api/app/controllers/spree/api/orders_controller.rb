@@ -20,14 +20,14 @@ module Spree
       def create
         authorize! :create, Order
         @order = Order.build_from_api(current_api_user, order_params)
-        respond_with(@order, :default_template => :show, :status => 201)
+        respond_with(@order, default_template: :show, status: 201)
       end
 
       def empty
         find_order
         @order.line_items.destroy_all
         @order.update!
-        render :text => nil, :status => 200
+        render text: nil, status: 200
       end
 
       def index
@@ -53,7 +53,7 @@ module Spree
           @order.update_line_items(params[:order][:line_items])
           @order.line_items.reload
           @order.update!
-          respond_with(@order, :default_template => :show)
+          respond_with(@order, default_template: :show)
         else
           invalid_resource!(@order)
         end
@@ -61,33 +61,33 @@ module Spree
 
       private
 
-      def order_params
-        if params[:order]
-          params[:order][:line_items_attributes] = params[:order][:line_items]
-          params[:order][:ship_address_attributes] = params[:order][:ship_address] if params[:order][:ship_address]
-          params[:order][:bill_address_attributes] = params[:order][:bill_address] if params[:order][:bill_address]
-          params.require(:order).permit(permitted_order_attributes)
-        else
-          {}
+        def order_params
+          if params[:order]
+            params[:order][:line_items_attributes] = params[:order][:line_items]
+            params[:order][:ship_address_attributes] = params[:order][:ship_address] if params[:order][:ship_address]
+            params[:order][:bill_address_attributes] = params[:order][:bill_address] if params[:order][:bill_address]
+            params.require(:order).permit(permitted_order_attributes)
+          else
+            {}
+          end
         end
-      end
 
-      def next!(options={})
-        if @order.valid? && @order.next
-          render :show, :status => options[:status] || 200
-        else
-          render :could_not_transition, :status => 422
+        def next!(options={})
+          if @order.valid? && @order.next
+            render :show, status: options[:status] || 200
+          else
+            render :could_not_transition, status: 422
+          end
         end
-      end
 
-      def find_order
-        @order = Order.find_by_number!(params[:id])
-        authorize! :update, @order, params[:order_token]
-      end
+        def find_order
+          @order = Spree::Order.find_by!(number: params[:id])
+          authorize! :update, @order, params[:order_token]
+        end
 
-      def before_delivery
-        @order.create_proposed_shipments
-      end
+        def before_delivery
+          @order.create_proposed_shipments
+        end
 
     end
   end

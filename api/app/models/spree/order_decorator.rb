@@ -35,7 +35,7 @@ Spree::Order.class_eval do
         unit.variant_id = iu[:variant_id]
       end
 
-      shipping_method = Spree::ShippingMethod.find_by_name!(s[:shipping_method])
+      shipping_method = Spree::ShippingMethod.find_by!(name: s[:shipping_method])
       shipping_rate = Spree::ShippingRate.new
       shipping_rate.cost = s[:cost]
       shipping_rate.shipping_method = shipping_method
@@ -90,13 +90,13 @@ Spree::Order.class_eval do
 
   def self.ensure_variant_id_from_api(hash)
     unless hash[:variant_id]
-      hash[:variant_id] = Spree::Variant.find_by_sku(hash.delete(:sku)).id
+      hash[:variant_id] = Spree::Variant.find_by(sku: hash.delete(:sku)).id
     end
   end
 
   def self.ensure_stock_location_id_from_api(hash)
     unless hash[:stock_location_id]
-      hash[:stock_location_id] = Spree::StockLocation.find_by_name(hash.delete(:stock_location)).id
+      hash[:stock_location_id] = Spree::StockLocation.find_by(name: hash.delete(:stock_location)).id
     end
   end
 
