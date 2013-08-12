@@ -168,14 +168,14 @@ module Spree
     end
 
     def property(property_name)
-      return nil unless prop = properties.find_by_name(property_name)
-      product_properties.find_by_property_id(prop.id).try(:value)
+      return nil unless prop = properties.find_by(name: property_name)
+      product_properties.find_by(property: prop).try(:value)
     end
 
     def set_property(property_name, property_value)
       ActiveRecord::Base.transaction do
         property = Property.where(name: property_name).first_or_create!(presentation: property_name)
-        product_property = ProductProperty.where(product_id: id, property_id: property.id).first_or_initialize
+        product_property = ProductProperty.where(product: self, property: property).first_or_initialize
         product_property.value = property_value
         product_property.save!
       end
@@ -198,7 +198,7 @@ module Spree
     # which would make AR's default finder return nil.
     # This is a stopgap for that little problem.
     def master
-      super || variants_including_master.with_deleted.where(:is_master => true).first
+      super || variants_including_master.with_deleted.where(is_master: true).first
     end
 
     private
@@ -219,7 +219,7 @@ module Spree
       end
 
       def add_properties_and_option_types_from_prototype
-        if prototype_id && prototype = Spree::Prototype.find_by_id(prototype_id)
+        if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
           prototype.properties.each do |property|
             product_properties.create(property: property)
           end
@@ -245,7 +245,7 @@ module Spree
 
       def punch_permalink
         update_attribute :permalink, "#{Time.now.to_i}_#{permalink}" # punch permalink with date prefix
-      end  
+      end
   end
 end
 

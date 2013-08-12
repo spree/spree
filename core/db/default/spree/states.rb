@@ -1,4 +1,4 @@
-country = Spree::Country.find_by_name('United States')
+country = Spree::Country.find_by(name: 'United States')
 
 Spree::State.create!([
   { name: 'Michigan', abbr: 'MI', country: country },

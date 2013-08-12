@@ -11,7 +11,7 @@ FactoryGirl.define do
     authentication_token { generate(:user_authentication_token) } if Spree.user_class.attribute_method? :authentication_token
 
     factory :admin_user do
-      spree_roles { [Spree::Role.find_by_name('admin') || create(:role, name: 'admin')] }
+      spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
     end
   end
 end

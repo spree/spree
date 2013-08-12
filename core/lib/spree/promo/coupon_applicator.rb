@@ -13,7 +13,7 @@ module Spree
           if @order.adjustments.promotion.eligible.detect { |p| p.originator.promotion.code == @order.coupon_code }.present?
             return { :coupon_applied? => true, :notice => Spree.t(:coupon_code_already_applied) }
           else
-            promotion = Spree::Promotion.find_by_code(@order.coupon_code)
+            promotion = Spree::Promotion.find_by(code: @order.coupon_code)
             if promotion.present?
               handle_present_promotion(promotion)
             else
