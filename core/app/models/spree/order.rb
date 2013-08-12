@@ -4,7 +4,6 @@ require 'spree/order/checkout'
 module Spree
   class Order < ActiveRecord::Base
     include Checkout
-    include ActiveModel::ForbiddenAttributesProtection
 
     checkout_flow do
       go_to_state :address
