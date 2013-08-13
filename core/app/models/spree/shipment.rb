@@ -13,7 +13,7 @@ module Spree
     has_many :adjustments, as: :adjustable, dependent: :destroy
 
     before_create :generate_shipment_number
-    after_save :ensure_correct_adjustment, :update_order
+    after_save :ensure_correct_amount, :update_order
 
     attr_accessor :special_instructions
 
@@ -252,8 +252,10 @@ module Spree
         ShipmentMailer.shipped_email(self.id).deliver
       end
 
-      def ensure_correct_adjustment
-        self.update_column(:amount, shipping_method.calculator.compute(self.to_package))
+      def ensure_correct_amount
+        if shipping_method
+          self.update_column(:amount, shipping_method.calculator.compute(self.to_package))
+        end
       end
 
       def update_order
