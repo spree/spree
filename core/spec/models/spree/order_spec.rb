@@ -505,22 +505,6 @@ describe Spree::Order do
     end
   end
 
-  context "promotion adjustments" do
-    let(:originator) { double("Originator", id: 1) }
-    let(:adjustment) { double("Adjustment", originator: originator) }
-
-    before { order.stub_chain(:adjustments, :includes, :promotion, reload: [adjustment]) }
-
-    context "order has an adjustment from given promo action" do
-      it { expect(order.promotion_credit_exists? originator).to be_true }
-    end
-
-    context "order has no adjustment from given promo action" do
-      before { originator.stub(id: 12) }
-      it { expect(order.promotion_credit_exists? originator).to be_true }
-    end
-  end
-
   context "payment required?" do
     let(:order) { Spree::Order.new }
 
