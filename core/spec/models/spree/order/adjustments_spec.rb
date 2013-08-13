@@ -36,8 +36,7 @@ describe Spree::Order do
         order.tax_total.should == 15
       end
     end
-  end
-  
+  end 
 
   context "line item adjustment totals" do
     before { @order = Spree::Order.create! }
