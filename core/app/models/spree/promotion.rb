@@ -3,9 +3,6 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
-    Activator.event_names << 'spree.checkout.coupon_code_added'
-    Activator.event_names << 'spree.content.visited'
-
     has_many :promotion_rules, foreign_key: :activator_id, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 

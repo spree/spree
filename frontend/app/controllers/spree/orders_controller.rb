@@ -24,8 +24,6 @@ module Spree
         @order.ensure_updated_shipments
         return if after_update_attributes
 
-        fire_event('spree.order.contents_changed')
-
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
@@ -53,8 +51,6 @@ module Spree
       if populator.populate(params.slice(:products, :variants, :quantity))
         current_order.ensure_updated_shipments
 
-        fire_event('spree.cart.add')
-        fire_event('spree.order.contents_changed')
         respond_with(@order) do |format|
           format.html { redirect_to cart_path }
         end
