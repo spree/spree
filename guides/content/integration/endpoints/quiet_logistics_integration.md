@@ -52,11 +52,43 @@ Indicates that a new shipping order was successfuly transmitted to Quiet Logisti
 This only means that the message was successfully placed on the SQS queue used by QL to process this type of request. QL may end up rejecting the API request at a later point and signal a problem by placing an error message on the store's queue
 !!!
 
----purchase_order_transmit.json---
+---shipping_order_transmit.json---
 ```json
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "shipping_order:transmit",
+  "payload": {
+    "shipping_order": {
+      "order_id": "T100045",
+      "shipping_notice_id": "100045_20025",
+      "source_warehouse": {
+        "warehouse_id": "QL",
+        "address": {
+          "address1": "ATTN Bonobos",
+          "address2": "66 Saratoga Blvd",
+          "address3": null,
+          "address4": null,
+          "city": "Devens",
+          "country": "US",
+          "zip": "01434",
+          "state": "MA"
+        }
+      },
+      "destination_warehouse": {
+        "warehouse_id": "GSNY1",
+        "address": {
+          "address1": "45 W 25th St",
+          "address2": "5th Floor",
+          "address3": null,
+          "address4": null,
+          "city": "New York",
+          "country": "US",
+          "zip": "10010",
+          "state": "NY"
+        }
+      }
+    }
+  }
 }```
 
 ### purchase_order:received
