@@ -25,21 +25,10 @@ describe Spree::Shipment do
     shipment.should be_backordered
   end
 
-  context "#cost" do
-    it "should return the amount of any shipping charges that it originated" do
-      shipment.stub_chain :adjustment, amount: 10
-      shipment.cost.should == 10
-    end
-
-    it "should return 0 if there are no relevant shipping adjustments" do
-      shipment.cost.should == 0
-    end
-  end
-
-  context "display_cost" do
+  context "display_amount" do
     it "retuns a Spree::Money" do
-      shipment.stub(:cost) { 21.22 }
-      shipment.display_cost.should == Spree::Money.new(21.22)
+      shipment.stub(:amount) { 21.22 }
+      shipment.display_amount.should == Spree::Money.new(21.22)
     end
   end
 
@@ -49,7 +38,6 @@ describe Spree::Shipment do
       shipment.display_item_cost.should == Spree::Money.new(21.22)
     end
   end
-
 
   it "#item_cost" do
     shipment = create(:shipment, order: create(:order_with_totals))
