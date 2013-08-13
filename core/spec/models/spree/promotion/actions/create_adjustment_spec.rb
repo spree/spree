@@ -14,6 +14,8 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
 
     it "should create a discount with correct negative amount" do
+      order.shipments.create!(:amount => 10)
+
       action.perform(:order => order)
       promotion.credits_count.should == 1
       order.adjustments.count.should == 1
@@ -21,6 +23,8 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
 
     it "should not create a discount when order already has one from this promotion" do
+      order.shipments.create!(:amount => 10)
+
       action.perform(:order => order)
       action.perform(:order => order)
       promotion.credits_count.should == 1
