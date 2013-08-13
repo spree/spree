@@ -66,7 +66,7 @@ module Spree
 
     def adjust_order_items(order, items, type='normal')
       items.each do |item|
-        next if item.tax_category != self.tax_category
+        item.adjustments.tax.delete_all
         amount = calculator.compute(item)
         if type == 'refund'
           amount = amount * -1
