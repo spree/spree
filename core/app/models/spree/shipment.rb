@@ -122,19 +122,9 @@ module Spree
       order ? order.currency : Spree::Config[:currency]
     end
 
-    # The adjustment amount associated with this shipment (if any.)  Returns only the first adjustment to match
-    # the shipment but there should never really be more than one.
-    def cost
-      adjustment ? adjustment.amount : 0
+    def display_amount
+      Spree::Money.new(amount, { currency: currency })
     end
-
-    alias_method :amount, :cost
-
-    def display_cost
-      Spree::Money.new(cost, { currency: currency })
-    end
-
-    alias_method :display_amount, :display_cost
 
     def item_cost
       line_items.map(&:amount).sum
@@ -142,14 +132,6 @@ module Spree
 
     def display_item_cost
       Spree::Money.new(item_cost, { currency: currency })
-    end
-
-    def total_cost
-      cost + item_cost
-    end
-
-    def display_total_cost
-      Spree::Money.new(total_cost, { currency: currency })
     end
 
     def editable_by?(user)
@@ -274,16 +256,7 @@ module Spree
       end
 
       def ensure_correct_adjustment
-        if adjustment
-          adjustment.originator = shipping_method
-          adjustment.label = shipping_method.adjustment_label
-          adjustment.amount = selected_shipping_rate.cost if adjustment.open?
-          adjustment.save!
-          adjustment.reload
-        elsif selected_shipping_rate_id
-          shipping_method.create_adjustment shipping_method.adjustment_label, order, self, true, "open"
-          reload #ensure adjustment is present on later saves
-        end
+        self.update_column(:amount, shipping_method.calculator.compute(self.to_package))
       end
 
       def update_order
