@@ -486,7 +486,7 @@ module Spree
     end
 
     def promo_total
-      adjustments.eligible.promotion.map(&:amount).sum
+      adjustments.promotion.eligible.sum(:amount)
     end
 
     def shipped?
