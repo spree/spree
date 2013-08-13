@@ -59,25 +59,11 @@ module Spree
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
 
-    def promotion?
-      originator_type == 'Spree::PromotionAction'
+    def immutable?
+      state != "open"
     end
-
-    # Update the boolean _eligible_ attribute which determines which adjustments
-    # count towards the order's adjustment_total.
-    def set_eligibility
-      result = mandatory || ((amount != 0 || promotion?) && eligible_for_originator?)
-      update_column(:eligible, result)
-    end
-
-    # Allow originator of the adjustment to perform an additional eligibility of the adjustment
-    # Should return _true_ if originator is absent or doesn't implement _eligible?_
-    def eligible_for_originator?
-      return true if originator.nil?
-      !originator.respond_to?(:eligible?) || originator.eligible?(source)
-    end
-
-    # Update both the eligibility and amount of the adjustment. Adjustments
+    
+    # Update both the eligibility and amount of the adjustment. Adjustments 
     # delegate updating of amount to their Originator when present, but only if
     # +locked+ is false. Adjustments that are +locked+ will never change their amount.
     #
@@ -97,8 +83,8 @@ module Spree
       # If we attempt to call 'source' before the reload, then source is currently
       # the order object. After calling a reload, the source is the Shipment.
       reload
-      originator.update_adjustment(self, calculable || source) if originator.present?
-      set_eligibility
+      self.update_column(:amount, source.compute_amount(adjustable))
+      # set_eligibility
     end
 
     def currency
@@ -107,10 +93,6 @@ module Spree
 
     def display_amount
       Spree::Money.new(amount, { currency: currency })
-    end
-
-    def immutable?
-      state != "open"
     end
 
     private
