@@ -17,12 +17,11 @@ module Spree
         # through options hash
         def perform(options = {})
           order = options[:order]
-          return if order.promotion_credit_exists?(self)
-
           order.line_items.each do |line_item|
+            next if line_item.promotion_credit_exists?(self)
             amount = self.calculator.compute(line_item)
-            order.adjustments.create(
-              amount: amount,
+            order.adjustments.create!(
+              amount: -1 * amount,
               adjustable: line_item,
               source: self,
               label: "#{Spree.t(:promotion)} (#{promotion.name})",
@@ -44,12 +43,17 @@ module Spree
           end
 
           def deals_with_adjustments
-            self.adjustments.each do |adjustment|
-              if adjustment.adjustable.complete?
-                adjustment.update_column(:source_id, nil)
-              else
-                adjustment.destroy
-              end
+            adjustment_scope = Adjustment.includes(:order).references(:spree_orders)
+            # For incomplete orders, remove the adjustment completely.
+            adjustment_scope.where("spree_orders.completed_at IS NULL").each do |adjustment|
+              adjustment.destroy
+            end
+
+            # For complete orders, the source will be invalid.
+            # Therefore we nullify the source_id, leaving the adjustment in place.
+            # This would mean that the order's total is not altered at all.
+            adjustment_scope.where("spree_orders.completed_at IS NOT NULL").each do |adjustment|
+              adjustment.update_column(:source_id, nil)
             end
           end
       end
