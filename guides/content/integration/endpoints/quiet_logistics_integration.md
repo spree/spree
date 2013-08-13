@@ -100,6 +100,128 @@ Indicates that a purchase order was received by Quiet Logistics.
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "purchase_order:received",
+  "message": "purchase_order:received",
+  "payload": {
+    "purchase_order": {
+      "po_number": "8735",
+      "items": [
+        {
+          "line": "1",
+          "item_number": "334392",
+          "quantity": "64",
+          "date": "2012-08-22T20:25:45.2706497Z"
+        },
+        {
+          "line": "2",
+          "item_number": "334393",
+          "quantity": "27",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "3",
+          "item_number": "334394",
+          "quantity": "33",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "4",
+          "item_number": "334395",
+          "quantity": "64",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "5",
+          "item_number": "334396",
+          "quantity": "3",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "6",
+          "item_number": "334397",
+          "quantity": "19",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "7",
+          "item_number": "334399",
+          "quantity": "5",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "8",
+          "item_number": "334379",
+          "quantity": "33",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "9",
+          "item_number": "334382",
+          "quantity": "31",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "10",
+          "item_number": "334383",
+          "quantity": "91",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "11",
+          "item_number": "334384",
+          "quantity": "120",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "12",
+          "item_number": "334385",
+          "quantity": "5",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "13",
+          "item_number": "334387",
+          "quantity": "45",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "14",
+          "item_number": "334402",
+          "quantity": "37",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "15",
+          "item_number": "334403",
+          "quantity": "126",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "16",
+          "item_number": "334404",
+          "quantity": "75",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "17",
+          "item_number": "334405",
+          "quantity": "82",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "18",
+          "item_number": "334406",
+          "quantity": "40",
+          "date": "2012-08-22T20:25:45.286285Z"
+        },
+        {
+          "line": "19",
+          "item_number": "334408",
+          "quantity": "18",
+          "date": "2012-08-22T20:25:45.286285Z"
+        }
+      ]
+    }
+  }
 }```
 
 ### ql:shipment:confirm
