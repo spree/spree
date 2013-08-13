@@ -10,7 +10,7 @@ module Spree
       def apply
         if @order.coupon_code.present?
           # check if coupon code is already applied
-          if @order.adjustments.promotion.eligible.detect { |p| p.originator.promotion.code == @order.coupon_code }.present?
+          if @order.adjustments.promotion.eligible.detect { |p| p.source.promotion.code == @order.coupon_code }.present?
             return { :coupon_applied? => true, :notice => Spree.t(:coupon_code_already_applied) }
           else
             promotion = Spree::Promotion.find_by(code: @order.coupon_code)
@@ -32,8 +32,8 @@ module Spree
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?
 
         event_name = "spree.checkout.coupon_code_added"
-        promotion.activate(:coupon_code => @order.coupon_code, :order => @order)
-        promo = @order.adjustments.includes(:originator).promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
+        ActiveSupport::Notifications.instrument(event_name, :coupon_code => @order.coupon_code, :order => @order)
+        promo = @order.adjustments.promotion.detect { |p| p.source.promotion.code == @order.coupon_code }
         determine_promotion_application_result(promo)
       end
 
