@@ -56,7 +56,8 @@ module Spree
       order.payment_total = payments.completed.map(&:amount).sum
       order.item_total = line_items.map(&:amount).sum
       order.adjustment_total = adjustments.eligible.map(&:amount).sum
-      order.total = order.item_total + order.adjustment_total
+      order.shipment_total = shipments.map(&:amount).sum
+      order.total = order.item_total + order.shipment_total + order.adjustment_total 
     end
 
     # Updates the +shipment_state+ attribute according to the following logic:
