@@ -485,16 +485,6 @@ module Spree
       @coupon_code = code.strip.downcase rescue nil
     end
 
-    # Tells us if there if the specified promotion is already associated with the order
-    # regardless of whether or not its currently eligible. Useful because generally
-    # you would only want a promotion action to apply to order no more than once.
-    #
-    # Receives an adjustment +originator+ (here a PromotionAction object) and tells
-    # if the order has adjustments from that already
-    def promotion_credit_exists?(originator)
-      !! adjustments.includes(:originator).promotion.reload.detect { |credit| credit.originator.id == originator.id }
-    end
-
     def promo_total
       adjustments.eligible.promotion.map(&:amount).sum
     end
