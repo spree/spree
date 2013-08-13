@@ -19,6 +19,29 @@ This only means that the message was successfully placed on the SQS queue used b
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "purhcase_order:transmit",
+  "payload": {
+    "purchase_order": {
+      "order_id": "T100045",
+      "shipping_notice_id": "100045_20025",
+      "warehouse": "QL",
+      "order_date": "2013-08-07 00:00:00 +0000",
+      "vendor": {
+        "type": "vendor",
+        "vendorid": "GSNY1",
+        "name": "GUIDESHOP NY1 - HQ",
+        "address": {
+          "address1": "45 W 25th St",
+          "address2": "5th Floor",
+          "address3": null,
+          "address4": null,
+          "city": "New York",
+          "country": "US",
+          "zip": "10010",
+          "state": "NY"
+        }
+      }
+    }
+  }
 }```
 
 ### shipping_order:transmit
