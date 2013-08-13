@@ -1,18 +1,5 @@
 module Spree
   class Activator < ActiveRecord::Base
-    cattr_accessor :event_names
-
-    self.event_names = [
-      'spree.cart.add',
-      'spree.order.contents_changed',
-      'spree.user.signup'
-    ]
-
-    def self.register_event_name(name)
-      self.event_names << name
-    end
-
-    scope :event_name_starts_with, ->(name) { where('event_name LIKE ?', "#{name}%") }
 
     def self.active
       where('starts_at IS NULL OR starts_at < ?', Time.now).

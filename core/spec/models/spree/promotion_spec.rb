@@ -213,7 +213,6 @@ describe Spree::Promotion do
   context "#eligible?" do
     before do
       @order = create(:order)
-      promotion.event_name = 'spree.checkout.coupon_code_added'
       promotion.name = "Foo"
       promotion.code = "XXX"
       calculator = Spree::Calculator::FlatRate.new
