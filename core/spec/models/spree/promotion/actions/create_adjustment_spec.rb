@@ -1,21 +1,19 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment do
-  let(:order) { create(:order) }
+  let(:order) { create(:order_with_line_items, :line_items_count => 1) }
   let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
 
   # From promotion spec:
   context "#perform" do
     before do
-      action.calculator = Spree::Calculator::FreeShipping.new
+      action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
       promotion.promotion_actions = [action]
       action.stub(:promotion => promotion)
     end
 
     it "should create a discount with correct negative amount" do
-      order.shipments.create!(:amount => 10)
-
       action.perform(:order => order)
       promotion.credits_count.should == 1
       order.adjustments.count.should == 1
@@ -23,8 +21,6 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
 
     it "should not create a discount when order already has one from this promotion" do
-      order.shipments.create!(:amount => 10)
-
       action.perform(:order => order)
       action.perform(:order => order)
       promotion.credits_count.should == 1
@@ -33,6 +29,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
   context "#destroy" do
     before(:each) do
+      action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
       promotion.promotion_actions = [action]
     end
 
@@ -45,7 +42,12 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
 
     context "when order is complete" do
-      let(:order) { create(:order, :state => "complete") }
+      let(:order) do
+        create(:order_with_line_items, 
+               :state => "complete",
+               :completed_at => Time.now,
+               :line_items_count => 1)
+      end
 
       before(:each) do
         action.perform(:order => order)
@@ -56,8 +58,8 @@ describe Spree::Promotion::Actions::CreateAdjustment do
         order.adjustments.count.should == 1
       end
 
-      it "should nullify the adjustment originator" do
-        order.adjustments.first.originator.should be_nil
+      it "should nullify the adjustment source" do
+        order.adjustments.reload.first.source.should be_nil
       end
     end
   end
