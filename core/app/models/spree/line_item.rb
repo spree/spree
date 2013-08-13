@@ -23,6 +23,7 @@ module Spree
     before_save :update_inventory
 
     after_save :update_order
+    after_save :choose_best_promotion_adjustment
     after_destroy :update_order
 
     attr_accessor :target_shipment
@@ -83,9 +84,29 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
+    # Tells us if there if the specified promotion is already associated with the line item
+    # regardless of whether or not its currently eligible. Useful because generally
+    # you would only want a promotion action to apply to order no more than once.
+    #
+    # Receives an adjustment +source+ (here a PromotionAction object) and tells
+    # if the order has adjustments from that already
+    def promotion_credit_exists?(source)
+      !!adjustments.promotion.where(:source_id => source.id).exists?
+    end
+
     private
       def update_inventory
         Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+      end
+
+      # Picks one (and only one) promotion to be eligible for this order
+      # This promotion provides the most discount, and if two promotions
+      # have the same amount, then it will pick the latest one.
+      def choose_best_promotion_adjustment
+        if best_promotion_adjustment = self.adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
+          other_promotions = self.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
+          other_promotions.update_all(:eligible => false)
+        end
       end
 
       def update_order
