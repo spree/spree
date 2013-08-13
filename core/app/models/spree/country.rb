@@ -3,6 +3,8 @@ module Spree
     has_many :states, -> { order('name ASC') }
 
     validates :name, :iso_name, presence: true
+    
+    attr_accessible :name, :iso3, :iso, :iso_name, :numcode
 
     def self.states_required_by_country_id
       states_required = Hash.new(true)
