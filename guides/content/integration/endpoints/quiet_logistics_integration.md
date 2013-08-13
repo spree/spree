@@ -100,7 +100,6 @@ Indicates that a purchase order was received by Quiet Logistics.
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "purchase_order:received",
-  "message": "purchase_order:received",
   "payload": {
     "purchase_order": {
       "po_number": "8735",
