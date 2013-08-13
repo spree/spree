@@ -19,28 +19,15 @@ module Spree
           order = options[:order]
           return if order.promotion_credit_exists?(self)
 
-          self.create_adjustment("#{Spree.t(:promotion)} (#{promotion.name})", order, order)
-        end
-
-        # Override of CalculatedAdjustments#create_adjustment so promotional
-        # adjustments are added all the time. They will get their eligibility
-        # set to false if the amount is 0.
-        #
-        # Currently an adjustment is created even when its promotion is not eligible.
-        # This helps to figure out later which adjustments should be eligible
-        # as the order is being updated
-        #
-        # BTW The order is updated (through order#update) every time an adjustment
-        # is saved
-        def create_adjustment(label, target, calculable, mandatory=false)
-          amount = compute_amount(calculable)
-          target.adjustments.create(
-            amount: amount,
-            source: calculable,
-            originator: self,
-            label: label,
-            mandatory: mandatory
-          )
+          order.line_items.each do |line_item|
+            amount = self.calculator.compute(line_item)
+            order.adjustments.create(
+              amount: amount,
+              adjustable: line_item,
+              source: self,
+              label: "#{Spree.t(:promotion)} (#{promotion.name})",
+            )
+          end
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
@@ -57,10 +44,9 @@ module Spree
           end
 
           def deals_with_adjustments
-            self.adjustments.each do |adjustment|
+            Adjustment.promotion.where(:source_id => self.id).each do |adjustment|
               if adjustment.adjustable.complete?
-                adjustment.originator = nil
-                adjustment.save
+                adjustment.update_column(:source_id, nil)
               else
                 adjustment.destroy
               end
