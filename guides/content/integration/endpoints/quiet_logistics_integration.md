@@ -4,95 +4,67 @@ title: Quiet Logistics Endpoint
 
 ## Overview
 
-Quiet Logistics is... This endpoint can be used for...
+## Messages Generated
 
-* ,
-* , or
-* .
+### purchase_order:transmit
 
-## Requirements
+Indicates that a new purchase order was successfuly transmitted to Quiet Logistics.
 
-In order to configure and use the [quiet_logistics_endpoint](https://github.com/spree/quiet_logistics_endpoint), you will need to first have:
+!!!
+This only means that the message was successfully placed on the SQS queue used by QL to process this type of request. QL may end up rejecting the API request at a later point and signal a problem by placing an error message on the store's queue
+!!!
 
-* ,
-* , and
-*
-
-## Services
-
-There are Message types that the Endpoint can respond to (incoming), and those that it can, in turn, generate (outgoing). A Service Request is the sequence of actions the Endpoint takes when the Integrator sends it a Message. There are several types of Service Requests you can make to the Endpoint. Each is listed below, along with one or more sample JSON Messages like the ones you would send.
-
-***
-To see thorough detail on how a particular JSON Message should be formatted, check out the [Notification Messages guide](notification_messages).
-***
-
-### abc
-
-This Service should be triggered {when}. When the Endpoint receives a validly-formatted Message to the `/{abc}` URL, it {takes some actions}.
-
-<pre class="headers"><code>Event</code></pre>
+---purchase_order_transmit.json---
 ```json
 {
-  "message": "order:new",
-  "payload": {
-    ...
-  }
+  "message_id": "51af1dc5fe53543f1200f519",
+  "message": "purhcase_order:transmit",
 }```
 
-### abc
+### shipping_order:transmit
 
-This Service should be triggered {when}. When the Endpoint receives a validly-formatted Message to the `/{abc}` URL, it {takes some actions}.
+Indicates that a new shipping order was successfuly transmitted to Quiet Logistics.
 
-<pre class="headers"><code>Event</code></pre>
+!!!
+This only means that the message was successfully placed on the SQS queue used by QL to process this type of request. QL may end up rejecting the API request at a later point and signal a problem by placing an error message on the store's queue
+!!!
+
+---purchase_order_transmit.json---
 ```json
 {
-  "message": "order:new",
-  "payload": {
-    ...
-  }
+  "message_id": "51af1dc5fe53543f1200f519",
+  "message": "shipping_order:transmit",
 }```
 
-### abc
+### purchase_order:received
 
-This Service should be triggered {when}. When the Endpoint receives a validly-formatted Message to the `/{abc}` URL, it {takes some actions}.
+Indicates that a purchase order was received by Quiet Logistics.
 
-<pre class="headers"><code>Event</code></pre>
+---purchase_order_received.json---
 ```json
 {
-  "message": "order:new",
-  "payload": {
-    ...
-  }
+  "message_id": "51af1dc5fe53543f1200f519",
+  "message": "purchase_order:received",
 }```
 
-## Configuration
+### ql:shipment:confirm
 
-$$$
-Elaborate when we finalize the connector.
-$$$
+Indicates that Quiet Logistics has shipped the specified shipment.
 
-### Name
+---ql_shipment_confirm.json---
+```json
+{
+  "message_id": "51af1dc5fe53543f1200f519",
+  "message": "ql:shipment:confirm",
+}```
 
-### Keys
+### document:download
 
-#### {abc}
+Contains the necessary information to download an XML document from S3 that corresponds to an SQS message.
 
-#### {from}
-
-#### {subject}
-
-#### {template}
-
-### Parameters
-
-### Url
-
-### Token
-
-### Event Keys
-
-### Event Details
-
-### Filters
-
-### Retries
+---document_download.json---
+```json
+{
+  "message_id": "51af1dc5fe53543f1200f519",
+  "message": "document:download",
+}```
