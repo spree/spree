@@ -31,9 +31,6 @@ module Spree
     validates :label, presence: true
     validates :amount, numericality: true
 
-    after_save :update_adjustable
-    after_destroy :update_adjustable
-
     state_machine :state, initial: :open do
       event :close do
         transition from: :open, to: :closed
@@ -47,7 +44,6 @@ module Spree
         transition from: [:open, :closed], to: :finalized
       end
     end
-
     
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
@@ -94,11 +90,5 @@ module Spree
     def display_amount
       Spree::Money.new(amount, { currency: currency })
     end
-
-    private
-
-      def update_adjustable
-        adjustable.update! if adjustable.is_a? Order
-      end
   end
 end
