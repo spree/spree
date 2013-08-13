@@ -235,7 +235,6 @@ describe Spree::Shipment do
 
   context "#cancel" do
     it 'cancels the shipment' do
-      shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
 
       shipment.state = 'pending'
@@ -254,7 +253,6 @@ describe Spree::Shipment do
 
   context "#resume" do
     it 'will determine new state based on order' do
-      shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
 
       shipment.state = 'canceled'
@@ -272,7 +270,6 @@ describe Spree::Shipment do
     end
 
     it 'will determine new state based on order' do
-      shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
 
       shipment.state = 'canceled'
@@ -290,7 +287,6 @@ describe Spree::Shipment do
       shipment.stub(require_inventory: false, update_order: true, state: 'ready')
       shipment.stub(adjustment: charge)
       shipping_method.stub(:create_adjustment)
-      shipment.stub(:ensure_correct_adjustment)
     end
 
     it "should update shipped_at timestamp" do
@@ -330,46 +326,6 @@ describe Spree::Shipment do
     end
   end
 
-  context "ensure_correct_adjustment" do
-    before { shipment.stub(:reload) }
-
-    it "should create adjustment when not present" do
-      shipment.stub(:selected_shipping_rate_id => 1)
-      shipping_method.should_receive(:create_adjustment).with(shipping_method.adjustment_label, order, shipment, true, "open")
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    # Regression test for #3138
-    it "should use the shipping method's adjustment label" do
-      shipment.stub(:selected_shipping_rate_id => 1)
-      shipping_method.stub(:adjustment_label => "Foobar")
-      shipping_method.should_receive(:create_adjustment).with("Foobar", order, shipment, true, "open")
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    it "should update originator when adjustment is present" do
-      shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
-      shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: true))
-      shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.adjustment_label)
-      shipment.adjustment.should_receive(:amount=).with(10.00)
-      shipment.adjustment.should_receive(:save!)
-      shipment.adjustment.should_receive(:reload)
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    it 'should not update amount if adjustment is not open?' do
-      shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
-      shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: false))
-      shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.adjustment_label)
-      shipment.adjustment.should_not_receive(:amount=).with(10.00)
-      shipment.adjustment.should_receive(:save!)
-      shipment.adjustment.should_receive(:reload)
-      shipment.send(:ensure_correct_adjustment)
-    end
-  end
-
   context "update_order" do
     it "should update order" do
       order.should_receive(:update!)
@@ -379,7 +335,6 @@ describe Spree::Shipment do
 
   context "after_save" do
     it "should run correct callbacks" do
-      shipment.should_receive(:ensure_correct_adjustment)
       shipment.should_receive(:update_order)
       shipment.run_callbacks(:save)
     end
