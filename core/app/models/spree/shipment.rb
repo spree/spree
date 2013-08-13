@@ -10,7 +10,7 @@ module Spree
     has_many :shipping_methods, through: :shipping_rates
     has_many :state_changes, as: :stateful
     has_many :inventory_units, dependent: :destroy
-    has_one :adjustment, as: :source, dependent: :destroy
+    has_many :adjustments, as: :adjustable, dependent: :destroy
 
     before_create :generate_shipment_number
     after_save :ensure_correct_adjustment, :update_order
