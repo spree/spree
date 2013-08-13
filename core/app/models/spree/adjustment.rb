@@ -56,7 +56,7 @@ module Spree
     scope :eligible, -> { where(eligible: true) }
     scope :charge, -> { where('amount >= 0') }
     scope :credit, -> { where('amount < 0') }
-    scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
+    scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
 
     def promotion?
