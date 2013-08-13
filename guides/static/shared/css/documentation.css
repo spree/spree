@@ -426,6 +426,15 @@ pre.headers code {
   background-image: url('../../images/developer-pattern.jpg');
 }
 
+/* INTEGRATOR GUIDES */
+.integration.home #subheader .container {
+  background: url('../../images/integrator-banner.png') no-repeat center 120px;
+  min-height: 440px;
+}
+.integration.home #subheader .container #site-title {
+  margin-top: 0;
+}
+
 /* Browser fixes */
 .firefox #main-footer .social-icons i { padding-top: 0; padding-bottom: 1px }
 .ie #main-footer .social-icons i { height: 28px; width: 29px }
