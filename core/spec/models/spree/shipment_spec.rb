@@ -50,12 +50,6 @@ describe Spree::Shipment do
     end
   end
 
-  context "display_total_cost" do
-    it "retuns a Spree::Money" do
-      shipment.stub(:total_cost) { 21.22 }
-      shipment.display_total_cost.should == Spree::Money.new(21.22)
-    end
-  end
 
   it "#item_cost" do
     shipment = create(:shipment, order: create(:order_with_totals))
@@ -132,13 +126,7 @@ describe Spree::Shipment do
       end
     end
   end
-
-  it '#total_cost' do
-    shipment.stub cost: 5.0
-    shipment.stub item_cost: 50.0
-    shipment.total_cost.should eql(55.0)
-  end
-
+  
   context "#update!" do
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
