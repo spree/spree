@@ -233,6 +233,11 @@ Indicates that Quiet Logistics has shipped the specified shipment.
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "ql:shipment:confirm",
+  "payload": {
+    "type": "shipment_order_result",
+    "number": "T100044A",
+    "warehouse": "QL"
+  }
 }```
 
 ### document:download
@@ -244,4 +249,10 @@ Contains the necessary information to download an XML document from S3 that corr
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "document:download",
+    "payload": {
+    "document_name": "SoResultV2_BONOBOS_T100365542_20130725_152104655.xml",
+    "document_type": "ShipmentOrderResult",
+    "message_date": "2013-07-25T15:20:39.4436744-04:00",
+    "original_message_id": "e6681ea3-4411-40e7-95fe-61dd1387beae"
+  }
 }```
