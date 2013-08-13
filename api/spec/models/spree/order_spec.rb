@@ -23,10 +23,16 @@ module Spree
        :phone => '666-666-6666'
     }}
 
+    it 'can import an order number' do
+      params = { number: '123-456-789' }
+      order = Order.build_from_api(user, params)
+      order.number.should eq '123-456-789'
+    end
+
     it 'optionally add completed at' do
-      params = {email: 'test@test.com',
-                completed_at: Time.now,
-                line_items_attributes: line_items }
+      params = { email: 'test@test.com',
+                 completed_at: Time.now,
+                 line_items_attributes: line_items }
 
       order = Order.build_from_api(user, params)
       order.should be_completed
