@@ -12,7 +12,7 @@ describe Spree::OrderInventory do
 
   context "when order is missing inventory units" do
     before do
-      line_item.update_attribute_without_callbacks(:quantity, 2)
+      line_item.update_column(:quantity, 2)
     end
 
     it 'should be a messed up order' do
@@ -67,7 +67,7 @@ describe Spree::OrderInventory do
     before do
       order.shipments.create(:stock_location_id => stock_location.id)
       shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id)
-      shipped.update_attribute_without_callbacks(:state, 'shipped')
+      shipped.update_column(:state, 'shipped')
     end
 
     it 'should select first non-shipped shipment that already contains given variant' do
@@ -95,7 +95,7 @@ describe Spree::OrderInventory do
       line_item.quantity = 3
       line_item.save!
 
-      line_item.update_attribute_without_callbacks(:quantity, 2)
+      line_item.update_column(:quantity, 2)
       order.reload
     end
 
