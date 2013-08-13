@@ -68,17 +68,19 @@ module Spree
       items.each do |item|
         item.adjustments.tax.delete_all
         amount = calculator.compute(item)
-        if type == 'refund'
-          amount = amount * -1
-          label = Spree.t(:refund) + create_label
+        if amount > 0
+          if type == 'refund'
+            amount = amount * -1
+            label = Spree.t(:refund) + create_label
+          end
+          order.adjustments.create!({
+            :adjustable => item,
+            :amount => amount,
+            :source => self,
+            :state => "closed",
+            :label => create_label
+          })
         end
-        order.adjustments.create!({
-          :adjustable => item,
-          :amount => amount,
-          :source => self,
-          :state => "closed",
-          :label => create_label
-        })
       end
     end
 
