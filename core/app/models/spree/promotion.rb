@@ -1,5 +1,5 @@
 module Spree
-  class Promotion < Spree::Activator
+  class Promotion < ActiveRecord::Base
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
@@ -31,6 +31,15 @@ module Spree
 
     def self.with_code
       where(event_name: 'spree.checkout.coupon_code_added')
+    end
+
+    def self.active
+      where('starts_at IS NULL OR starts_at < ?', Time.now).
+        where('expires_at IS NULL OR expires_at > ?', Time.now)
+    end
+
+    def expired?
+      starts_at && Time.now < starts_at || expires_at && Time.now > expires_at
     end
 
     def activate(payload)
