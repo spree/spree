@@ -6,7 +6,7 @@ module Spree
       class CreateAdjustment < PromotionAction
         include Spree::Core::CalculatedAdjustments
 
-        has_many :adjustments, as: :originator
+        has_many :adjustments, as: :source
 
         delegate :eligible?, to: :promotion
 
@@ -44,7 +44,7 @@ module Spree
           end
 
           def deals_with_adjustments
-            Adjustment.promotion.where(:source_id => self.id).each do |adjustment|
+            self.adjustments.each do |adjustment|
               if adjustment.adjustable.complete?
                 adjustment.update_column(:source_id, nil)
               else
