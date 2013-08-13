@@ -62,7 +62,7 @@ module Spree
     # count towards the order's adjustment_total.
     def set_eligibility
       result = self.mandatory || (self.amount != 0 && self.eligible_for_originator?)
-      update_attribute_without_callbacks(:eligible, result)
+      update_column(:eligible, result)
     end
 
     # Allow originator of the adjustment to perform an additional eligibility of the adjustment

@@ -194,7 +194,7 @@ module Spree
                             :amount => -500,
                             :state => "closed",
                             :label => "Some other credit")
-        order.adjustments.each {|a| a.update_attribute_without_callbacks(:eligible, true)}
+        order.adjustments.each {|a| a.update_column(:eligible, true)}
 
         updater.update_adjustments
 
@@ -207,8 +207,8 @@ module Spree
         let!(:promo_c) { create_adjustment("Promotion C", -300) }
 
         before do
-          promo_a.update_attribute_without_callbacks(:eligible, true)
-          promo_c.update_attribute_without_callbacks(:eligible, false)
+          promo_a.update_column(:eligible, true)
+          promo_c.update_column(:eligible, false)
         end
 
         # regression for #3274
