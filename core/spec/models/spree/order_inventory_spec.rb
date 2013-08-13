@@ -65,8 +65,8 @@ describe Spree::OrderInventory do
     let(:variant) { line_item.variant }
 
     before do
-      order.shipments.create(:stock_location_id => stock_location.id)
-      shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id)
+      order.shipments.create(:stock_location_id => stock_location.id, :amount => 5)
+      shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id, :amount => 10)
       shipped.update_column(:state, 'shipped')
     end
 

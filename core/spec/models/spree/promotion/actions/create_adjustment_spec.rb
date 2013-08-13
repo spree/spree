@@ -14,20 +14,16 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
 
     it "should create a discount with correct negative amount" do
-      order = create(:line_item, :price => 5000).order
-
-      order.stub(:ship_total => 2500)
+      order.shipments.create!(:amount => 10)
 
       action.perform(:order => order)
       promotion.credits_count.should == 1
       order.adjustments.count.should == 1
-      order.adjustments.first.amount.to_i.should == -2500
+      order.adjustments.first.amount.to_i.should == -10
     end
 
     it "should not create a discount when order already has one from this promotion" do
-      order.stub(:ship_total => 5, :item_total => 50, :reload => nil)
-      promotion.stub(:eligible? => true)
-      action.calculator.stub(:compute => 2500)
+      order.shipments.create!(:amount => 10)
 
       action.perform(:order => order)
       action.perform(:order => order)
