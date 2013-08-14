@@ -18,7 +18,7 @@ This only means that the message was successfully placed on the SQS queue used b
 ```json
 {
   "message_id": "51af1dc5fe53543f1200f519",
-  "message": "purhcase_order:transmit",
+  "message": "purchase_order:transmit",
   "payload": {
     "purchase_order": {
       "order_id": "T100045",
