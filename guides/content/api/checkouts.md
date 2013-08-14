@@ -27,7 +27,7 @@ To create a new, empty order, make this request:
 
 To create a new order with line items, pass line item attributes through like this:
 
-    POST /api/checkouts?line_items[0][variant_id]=1&line_items[0][quantity]=5
+    POST /api/checkouts?order[line_items][0][variant_id]=1&order[line_items][0][quantity]=5
 
 <%= headers 200 %>
 <%= json :new_order_with_line_items %>
