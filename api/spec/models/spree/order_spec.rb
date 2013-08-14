@@ -30,9 +30,9 @@ module Spree
     end
 
     it 'optionally add completed at' do
-      params = { email: 'test@test.com',
-                 completed_at: Time.now,
-                 line_items_attributes: line_items }
+      params = {:email => 'test@test.com',
+                :completed_at => Time.now,
+                :line_items_attributes => line_items }
 
       order = Order.build_from_api(user, params)
       order.should be_completed
@@ -155,10 +155,10 @@ module Spree
     end
 
     it 'builds a shipments' do
-      params = { :shipments_attributes => [{ tracking: '123456789',
-                                             cost: '4.99',
-                                             shipping_method: shipping_method.name,
-                                             inventory_units: [{ sku: sku }]
+      params = { :shipments_attributes => [{ :tracking => '123456789',
+                                             :cost => '4.99',
+                                             :shipping_method => shipping_method.name,
+                                             :inventory_units => [{ :sku => sku }]
                                            }] }
       order = Order.build_from_api(user, params)
       shipment = order.shipments.first
@@ -169,10 +169,10 @@ module Spree
     end
 
     it 'handles shipment building exceptions' do
-      params = { :shipments_attributes => [{ tracking: '123456789',
-                                             cost: '4.99',
-                                             shipping_method: 'XXX',
-                                             inventory_units: [{ sku: sku }]
+      params = { :shipments_attributes => [{ :tracking => '123456789',
+                                             :cost => '4.99',
+                                             :shipping_method => 'XXX',
+                                             :inventory_units [{ :sku => sku }]
                                            }] }
       expect {
         order = Order.build_from_api(user, params)
@@ -201,15 +201,15 @@ module Spree
     end
 
     it 'builds a payment' do
-      params = { :payments_attributes => [{ amount: '4.99',
-                                            payment_method: payment_method.name }] }
+      params = { :payments_attributes => [{ :amount => '4.99',
+                                            :payment_method => payment_method.name }] }
       order = Order.build_from_api(user, params)
       order.payments.first.amount.should eq 4.99
     end
 
     it 'handles payment building exceptions' do
-      params = { :payments_attributes => [{ amount: '4.99',
-                                            payment_method: 'XXX' }] }
+      params = { :payments_attributes => [{ :amount => '4.99',
+                                            :payment_method => 'XXX' }] }
       expect {
         order = Order.build_from_api(user, params)
       }.to raise_error /XXX/
