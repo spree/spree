@@ -9,6 +9,8 @@ module Spree
     validates_presence_of :name
 
     scope :active, -> { where(active: true) }
+    
+    attr_accessible :name
 
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
 
