@@ -23,7 +23,7 @@ module Spree
       end
 
       def compute_shipment(shipment)
-        round_to_two_places(shipment.amount * rate.amount)
+        round_to_two_places(shipment.cost * rate.amount)
       end
 
       def compute_line_item(line_item)

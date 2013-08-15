@@ -47,7 +47,7 @@ module Spree
     def update_totals
       order.payment_total = payments.completed.map(&:amount).sum
       order.item_total = line_items.map(&:amount).sum
-      order.shipment_total = shipments.map(&:amount).sum
+      order.shipment_total = shipments.map(&:cost).sum
       order.adjustment_total = line_items.map(&:adjustment_total).sum
       order.total = order.item_total + order.shipment_total + order.adjustment_total
 

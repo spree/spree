@@ -7,7 +7,7 @@ describe Spree::Calculator::DefaultTax do
   let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
   let!(:order) { create(:order) }
   let!(:line_item) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
-  let!(:shipment) { create(:shipment, :amount => 15) }
+  let!(:shipment) { create(:shipment, :cost => 15) }
 
   context "#compute" do
     context "when tax is included in price" do

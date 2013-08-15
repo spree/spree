@@ -27,7 +27,7 @@ describe Spree::Shipment do
 
   context "display_amount" do
     it "retuns a Spree::Money" do
-      shipment.stub(:amount) { 21.22 }
+      shipment.stub(:cost) { 21.22 }
       shipment.display_amount.should == Spree::Money.new(21.22)
     end
   end
@@ -324,7 +324,7 @@ describe Spree::Shipment do
   context "after_save" do
     it "should run correct callbacks" do
       shipment.should_receive(:update_order)
-      shipment.should_receive(:ensure_correct_amount)
+      shipment.should_receive(:ensure_correct_cost)
       shipment.run_callbacks(:save)
     end
   end
