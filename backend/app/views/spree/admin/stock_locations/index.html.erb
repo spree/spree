@@ -37,7 +37,7 @@
            @delete_url = admin_stock_location_path(stock_location)
       %>
         <tr id="<%= spree_dom_id stock_location %>" data-hook="stock_location_row" class="<%= cycle('odd', 'even')%>">
-          <td><%= stock_location.name %></td>
+          <td><%= stock_location.admin_name + ' / ' if stock_location.admin_name.present? %><%= stock_location.name %></td>
           <td><span class="state <%= stock_location.active? ? 'active' : 'inactive' %>"><%= stock_location.active? ? 'active' : 'inactive' %></span></td>
           <td><%= link_to Spree.t(:stock_movements), admin_stock_location_stock_movements_path(stock_location.id) %> </td>
           <td class="actions">
