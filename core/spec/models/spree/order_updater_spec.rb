@@ -9,17 +9,14 @@ module Spree
       payments = [double(:amount => 5), double(:amount => 5)]
       order.stub_chain(:payments, :completed).and_return(payments)
 
-      line_items = [double(:amount => 10), double(:amount => 20)]
+      line_items = [double(:amount => 10, :adjustment_total => 1), double(:amount => 20, :adjustment_total => 2)]
       order.stub :line_items => line_items
-
-      adjustments = [double(:amount => 10), double(:amount => -20)]
-      order.stub_chain(:adjustments, :eligible).and_return(adjustments)
 
       updater.update_totals
       order.payment_total.should == 10
       order.item_total.should == 30
-      order.adjustment_total.should == -10
-      order.total.should == 20
+      order.adjustment_total.should == 3
+      order.total.should == 33
     end
 
     context "updating shipment state" do
@@ -160,11 +157,6 @@ module Spree
         expect(shipment).not_to receive(:update!).with(order)
         updater.update
       end
-    end
-
-    it "updates totals twice" do
-      updater.should_receive(:update_totals).twice
-      updater.update
     end
   end
 end
