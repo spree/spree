@@ -322,10 +322,15 @@ describe Spree::Shipment do
   end
 
   context "after_save" do
-    it "should run correct callbacks" do
-      shipment.should_receive(:update_order)
-      shipment.should_receive(:ensure_correct_cost)
-      shipment.run_callbacks(:save)
+    it "updates a linked adjustment" do
+      # Need a persisted order for this
+      shipment.order = create(:order)
+      tax_rate = create(:tax_rate, :amount => 10)
+      adjustment = create(:adjustment, :source => tax_rate)
+      shipment.cost = 10
+      shipment.adjustments << adjustment
+      shipment.save
+      shipment.reload.adjustment_total.should == 100
     end
   end
 

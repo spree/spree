@@ -13,7 +13,7 @@ module Spree
     has_one :adjustment, as: :source, dependent: :destroy
 
     before_create :generate_shipment_number
-    after_save :ensure_correct_cost, :update_order
+    after_save :update_adjustments
 
     attr_accessor :special_instructions
 
@@ -247,7 +247,6 @@ module Spree
 
       def after_ship
         inventory_units.each &:ship!
-        adjustment.finalize!
         send_shipped_email
         touch :shipped_at
       end
@@ -256,14 +255,13 @@ module Spree
         ShipmentMailer.shipped_email(self.id).deliver
       end
 
-      def ensure_correct_cost
-        if shipping_method
-          self.update_column(:cost, shipping_method.calculator.compute(self.to_package))
-        end
+      def update_adjustments
+        adjustment_total = adjustments.map(&:update!).compact.sum
+        # choose_best_promotion_adjustment
+        self.update_column(:adjustment_total, adjustment_total)
+        OrderUpdater.new(order).update_totals
+        order.save
       end
 
-      def update_order
-        order.update!
-      end
   end
 end
