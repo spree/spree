@@ -236,8 +236,8 @@ describe Spree::Promotion do
 
         @order.adjustments.create(
           :amount => 1,
-          :source => @order,
-          :originator => @action,
+          :adjustable => @order,
+          :source => @action,
           :label => "Foo"
         )
       end
