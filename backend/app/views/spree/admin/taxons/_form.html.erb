@@ -3,7 +3,7 @@
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
       <%= error_message_on :taxon, :name, :class => 'fullwidth title' %>
-      <%= text_field :taxon, :name, :class => 'fullwidth' %>
+      <%= text_field :taxon, :name, :class => 'fullwidth', :label => false %>
     <% end %>
 
     <%= f.field_container :permalink_part do %>
@@ -14,31 +14,31 @@
 
     <%= f.field_container :icon do %>
       <%= f.label :icon, Spree.t(:icon) %><br />
-      <%= f.file_field :icon %>
+      <%= f.file_field :icon, :label => false %>
     <% end %>
   </div>
 
   <div class="omega seven columns">
     <%= f.field_container :description do %>
       <%= f.label :description, Spree.t(:description) %><br />
-      <%= f.text_area :description, :class => 'fullwidth', :rows => 6 %>
+      <%= f.text_area :description, :class => 'fullwidth', :rows => 6, :label => false %>
     <% end %>
   </div>
 
   <div class="twelve columns alpha omega">
     <%= f.field_container :meta_title do %>
       <%= f.label :meta_title, Spree.t(:meta_title) %><br />
-      <%= f.text_field :meta_title, :class => 'fullwidth', :rows => 6 %>
+      <%= f.text_field :meta_title, :class => 'fullwidth', :rows => 6, :label => false %>
     <% end %>
 
     <%= f.field_container :meta_description do %>
       <%= f.label :meta_description, Spree.t(:meta_description) %><br />
-      <%= f.text_field :meta_description, :class => 'fullwidth', :rows => 6 %>
+      <%= f.text_field :meta_description, :class => 'fullwidth', :rows => 6, :label => false %>
     <% end %>
 
     <%= f.field_container :meta_description do %>
       <%= f.label :meta_keywords, Spree.t(:meta_keywords) %><br />
-      <%= f.text_field :meta_keywords, :class => 'fullwidth', :rows => 6 %>
+      <%= f.text_field :meta_keywords, :class => 'fullwidth', :rows => 6, :label => false %>
     <% end %>
   </div>
 

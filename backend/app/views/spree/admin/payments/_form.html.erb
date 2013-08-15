@@ -2,7 +2,7 @@
   <div class="alpha three columns">
     <div class="field">
       <%= f.label :amount, Spree.t(:amount) %>
-      <%= f.text_field :amount, :value => @order.outstanding_balance, :class => 'fullwidth' %>
+      <%= f.text_field :amount, :value => @order.outstanding_balance, :class => 'fullwidth', :label => false %>
     </div>
   </div>
   <div class="omega nine columns">

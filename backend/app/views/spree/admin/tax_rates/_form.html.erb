@@ -6,15 +6,15 @@
       <div class="alpha six columns">
         <div data-hook="name" class="field">
           <%= f.label :name, Spree.t(:name) %>
-          <%= f.text_field :name, :class => 'fullwidth' %>
+          <%= f.text_field :name, :class => 'fullwidth', :label => false %>
         </div>
         <div data-hook="rate" class="field">
           <%= f.label :amount, Spree.t(:rate) %>
-          <%= f.text_field :amount, :class => 'fullwidth' %>
+          <%= f.text_field :amount, :class => 'fullwidth', :label => false %>
           <p><em><%= Spree.t(:tax_rate_amount_explanation) %></em></p>
         </div>
         <div data-hook="included" class="field">
-          <%= f.check_box :included_in_price %>
+          <%= f.check_box :included_in_price, :label => false %>
           <%= f.label :included_in_price, Spree.t(:included_in_price) %>      
         </div>
       </div>
@@ -26,10 +26,10 @@
         </div>      
         <div data-hook="category" class="field">
           <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-          <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, {:class => 'select2 fullwidth'}) %>
+          <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, { :label => false }, {:class => 'select2 fullwidth'}) %>
         </div>
         <div data-hook="show_rate" class="field">
-          <%= f.check_box :show_rate_in_label %>
+          <%= f.check_box :show_rate_in_label, :label => false %>
           <%= f.label :show_rate_in_label, Spree.t(:show_rate_in_label) %>      
         </div>  
       </div>

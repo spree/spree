@@ -4,7 +4,7 @@
   <div id="preference-settings" data-hook>
     <div class="field">
       <%= f.label(:calculator_type, Spree.t(:calculator), :for => 'calc_type') %>
-      <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {}, {:id => 'calc_type', :class => 'select2 fullwidth'}) %>
+      <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, { :label => false }, {:id => 'calc_type', :class => 'select2 fullwidth'}) %>
     </div>
     <% if !@object.new_record? %>
       <div class="field">

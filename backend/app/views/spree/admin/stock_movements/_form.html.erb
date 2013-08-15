@@ -2,7 +2,7 @@
   <div class="alpha four columns">
     <%= f.field_container :quantity do %>
       <%= f.label :quantity, Spree.t(:quantity) %>
-      <%= f.text_field :quantity, :class => 'fullwidth' %>
+      <%= f.text_field :quantity, :class => 'fullwidth', :label => false %>
     <% end %>
     <%= f.field_container :stock_item_id do %>
       <%= f.label :stock_item_id, Spree.t(:stock_item_id) %>
