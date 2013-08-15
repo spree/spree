@@ -25,15 +25,6 @@ module Spree
 
       update_totals
 
-      order.update_attributes_without_callbacks({
-        payment_state: order.payment_state,
-        shipment_state: order.shipment_state,
-        item_total: order.item_total,
-        adjustment_total: order.adjustment_total,
-        payment_total: order.payment_total,
-        total: order.total
-      })
-
       run_hooks
     end
 
@@ -55,9 +46,19 @@ module Spree
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
       order.payment_total = payments.completed.map(&:amount).sum
-      order.item_total = line_items.map(&:final_amount).sum
+      order.item_total = line_items.map(&:amount).sum
       order.shipment_total = shipments.map(&:amount).sum
+      order.adjustment_total = line_items.map(&:adjustment_total).sum
       order.total = order.item_total + order.shipment_total + order.adjustment_total
+
+      order.update_attributes_without_callbacks(
+        payment_state: order.payment_state,
+        shipment_state: order.shipment_state,
+        item_total: order.item_total,
+        adjustment_total: order.adjustment_total,
+        payment_total: order.payment_total,
+        total: order.total
+      )
     end
 
     # Updates the +shipment_state+ attribute according to the following logic:
