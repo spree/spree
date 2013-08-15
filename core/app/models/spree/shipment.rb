@@ -13,7 +13,7 @@ module Spree
     has_many :adjustments, as: :adjustable, dependent: :destroy
 
     before_create :generate_shipment_number
-    after_save :ensure_correct_amount, :update_order
+    after_save :ensure_correct_cost, :update_order
 
     attr_accessor :special_instructions
 
@@ -119,9 +119,10 @@ module Spree
       order ? order.currency : Spree::Config[:currency]
     end
 
-    def display_amount
-      Spree::Money.new(amount, { currency: currency })
+    def display_cost
+      Spree::Money.new(cost, { currency: currency })
     end
+    alias display_amount display_cost
 
     def item_cost
       line_items.map(&:amount).sum
@@ -252,9 +253,9 @@ module Spree
         ShipmentMailer.shipped_email(self.id).deliver
       end
 
-      def ensure_correct_amount
+      def ensure_correct_cost
         if shipping_method
-          self.update_column(:amount, shipping_method.calculator.compute(self.to_package))
+          self.update_column(:cost, shipping_method.calculator.compute(self.to_package))
         end
       end
 
