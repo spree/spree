@@ -11,27 +11,28 @@ module Spree
         before_validation :ensure_action_has_calculator
         before_destroy :deals_with_adjustments
 
-        # Creates the adjustment related to a promotion for the order passed
-        # through options hash
-        def perform(options = {})
-          order = options[:order]
-          order.line_items.each do |line_item|
-            next if line_item.promotion_credit_exists?(self)
-            amount = self.calculator.compute(line_item)
-            order.adjustments.create!(
-              amount: -1 * amount,
-              adjustable: line_item,
-              source: self,
-              label: "#{Spree.t(:promotion)} (#{promotion.name})",
-            )
+        def perform(payload = {})
+          line_item = payload[:line_item]
+          unless line_item.promotion_credit_exists?(self)
+            self.create_adjustment(line_item)
           end
+        end
+
+        def create_adjustment(adjustable)
+          amount = self.compute_amount(adjustable)
+          self.adjustments.create!(
+            amount: amount,
+            adjustable: adjustable,
+            order: adjustable.order,
+            label: "#{Spree.t(:promotion)} (#{promotion.name})",
+          )
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
         # item_total and ship_total
-        def compute_amount(calculable)
-          amount = self.calculator.compute(calculable).to_f.abs
-          [(calculable.item_total + calculable.ship_total), amount].min * -1
+        def compute_amount(adjustable)
+          amount = self.calculator.compute(adjustable).to_f.abs
+          [adjustable.total, amount].min * -1
         end
 
         private
