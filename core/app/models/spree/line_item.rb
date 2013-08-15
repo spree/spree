@@ -1,7 +1,7 @@
 module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
-    belongs_to :order, class_name: "Spree::Order"
+    belongs_to :order, class_name: "Spree::Order", :inverse_of => :line_items
     belongs_to :variant, class_name: "Spree::Variant"
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
