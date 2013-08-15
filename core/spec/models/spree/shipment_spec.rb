@@ -324,6 +324,7 @@ describe Spree::Shipment do
   context "after_save" do
     it "should run correct callbacks" do
       shipment.should_receive(:update_order)
+      shipment.should_receive(:ensure_correct_amount)
       shipment.run_callbacks(:save)
     end
   end
