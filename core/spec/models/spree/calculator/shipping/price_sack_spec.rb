@@ -10,7 +10,7 @@ describe Spree::Calculator::PriceSack do
   end
 
   let(:order) { stub_model(Spree::Order) }
-  let(:shipment) { stub_model(Spree::Shipment) }
+  let(:shipment) { stub_model(Spree::Shipment, :amount => 10) }
 
   # Regression test for #714 and #739
   it "computes with an order object" do
