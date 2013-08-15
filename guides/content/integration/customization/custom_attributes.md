@@ -18,13 +18,65 @@ Let's assume you need to add a `upc` field to your products' variants. Your deco
 
 ```ruby
 Spree::Api::ApiHelpers.class_eval do
-
   def variant_attributes_with_upc
     variant_attributes_without_upc << :upc
   end
 
   alias_method_chain :variant_attributes, :upc
-
 end```
 
 You name this file `api_helpers_decorator.rb` and store it in your application's `/app/helpers/spree/api` directory.
+
+Then, when your store's orders are output, you'll see the custom `upc` field in the JSON file (much of the output is omitted below for brevity).
+
+```json
+{
+  "message": "order:new",
+  "payload": {
+    "orders": [ {
+      "id": 12345,
+      "number": "R123456789",
+      "line_items": [ {
+        "id": 54321,
+        "variant": {
+          "id": 67890,
+          "name": "Ruby on Rails Tote",
+          "upc": "ABC123" }
+      } ]
+    } ]
+  }
+}```
+
+## Messages From the Integrator
+
+Messages that come from the Integrator will not have the custom fields encoded like the ones exported from Spree. The Integrator's messages use the standard [order message format](order_messages), but the custom fields will be accessible through the `original` key within the `order`.
+
+```json
+{
+  "message": "order:new",
+  "payload": {
+    "orders": [ {
+      "current": {
+        "id": 12345,
+        "number": "R123456789",
+        "line_items": [ {
+          "id": 54321,
+          "variant": {
+            "id": 67890,
+            "name": "Ruby on Rails Tote" }
+        } ]
+      },
+      "original": {
+        "id": 12345,
+        "number": "R123456789",
+        "line_items": [ {
+          "id": 54321,
+          "variant": {
+            "id": 67890,
+            "name": "Ruby on Rails Tote",
+            "upc": "ABC123" }
+        } ]
+      }
+    } ]
+  }
+}```
