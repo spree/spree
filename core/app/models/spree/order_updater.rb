@@ -24,8 +24,8 @@ module Spree
       end
 
       update_totals
-
       run_hooks
+      persist_totals
     end
 
     def run_hooks
@@ -50,7 +50,9 @@ module Spree
       order.shipment_total = shipments.map(&:cost).sum
       order.adjustment_total = line_items.map(&:adjustment_total).sum
       order.total = order.item_total + order.shipment_total + order.adjustment_total
+    end
 
+    def persist_totals
       order.update_attributes_without_callbacks(
         payment_state: order.payment_state,
         shipment_state: order.shipment_state,
