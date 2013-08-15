@@ -1,7 +1,7 @@
 module Spree
   class Promotion
     module Actions
-      class CreateAdjustment < PromotionAction
+      class CreateItemAdjustment < PromotionAction
         include Spree::Core::CalculatedAdjustments
 
         has_many :adjustments, as: :source
@@ -15,15 +15,16 @@ module Spree
         # through options hash
         def perform(options = {})
           order = options[:order]
-          return if order.promotion_credit_exists?(self)
-
-          amount = compute_amount(calculable)
-          order.adjustments.create!(
-            amount: amount,
-            adjustable: order,
-            source: self,
-            label: "#{Spree.t(:promotion)} (#{promotion.name})",
-          )
+          order.line_items.each do |line_item|
+            next if line_item.promotion_credit_exists?(self)
+            amount = self.calculator.compute(line_item)
+            order.adjustments.create!(
+              amount: -1 * amount,
+              adjustable: line_item,
+              source: self,
+              label: "#{Spree.t(:promotion)} (#{promotion.name})",
+            )
+          end
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
@@ -40,7 +41,7 @@ module Spree
           end
 
           def deals_with_adjustments
-            adjustment_scope = self.adjustments.includes(:order).references(:spree_orders)
+            adjustment_scope = Adjustment.includes(:order).references(:spree_orders)
             # For incomplete orders, remove the adjustment completely.
             adjustment_scope.where("spree_orders.completed_at IS NULL").each do |adjustment|
               adjustment.destroy
