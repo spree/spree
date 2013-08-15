@@ -15,8 +15,6 @@ module Spree
     # object with callbacks (otherwise you will end up in an infinite recursion as the
     # associations try to save and then in turn try to call +update!+ again.)
     def update
-      update_totals
-
       if order.completed?
         update_payment_state
 
@@ -24,10 +22,7 @@ module Spree
         shipments.each { |shipment| shipment.update!(order) }
         update_shipment_state
       end
-      
-      update_promotion_adjustments
-      update_shipping_adjustments
-      # update totals a second time in case updated adjustments have an effect on the total
+
       update_totals
 
       order.update_attributes_without_callbacks({
@@ -60,10 +55,9 @@ module Spree
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
       order.payment_total = payments.completed.map(&:amount).sum
-      order.item_total = line_items.map(&:amount).sum
-      order.adjustment_total = adjustments.eligible.map(&:amount).sum
+      order.item_total = line_items.map(&:final_amount).sum
       order.shipment_total = shipments.map(&:amount).sum
-      order.total = order.item_total + order.shipment_total + order.adjustment_total 
+      order.total = order.item_total + order.shipment_total + order.adjustment_total
     end
 
     # Updates the +shipment_state+ attribute according to the following logic:
