@@ -22,9 +22,7 @@ module Spree
 
     before_save :update_inventory
 
-    after_save :update_order
-    after_save :choose_best_promotion_adjustment
-    after_destroy :update_order
+    after_save :update_adjustments
 
     attr_accessor :target_shipment
 
@@ -111,12 +109,11 @@ module Spree
         end
       end
 
-      def update_order
-        if changed? || destroyed?
-          # update the order totals, etc.
-          order.create_tax_charge!
-          order.update!
-        end
+      def update_adjustments
+        adjustment_total = adjustments.map(&:update!)
+        choose_best_promotion_adjustment
+        self.update_column(:adjustment_total, adjustment_total)
+        OrderUpdater.new(order).update_adjustments
       end
   end
 end

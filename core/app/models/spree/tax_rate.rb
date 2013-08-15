@@ -62,12 +62,17 @@ module Spree
       end
     end
 
+    # This method is used by Adjustment#update to recalculate the cost.
+    def compute_amount(item)
+      calculator.compute(item)
+    end
+
     private
 
     def adjust_order_items(order, items, type='normal')
       items.each do |item|
         item.adjustments.tax.delete_all
-        amount = calculator.compute(item)
+        amount = compute_amount(item)
         if amount > 0
           if type == 'refund'
             amount = amount * -1

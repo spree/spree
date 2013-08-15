@@ -3,6 +3,6 @@ FactoryGirl.define do
     zone
     amount 100.00
     tax_category
-    # association(:calculator, factory: :default_tax_calculator, strategy: :build)
+    association(:calculator, factory: :default_tax_calculator)
   end
 end
