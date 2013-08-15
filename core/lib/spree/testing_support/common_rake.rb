@@ -10,7 +10,7 @@ namespace :common do
     args.with_defaults(:user_class => "Spree::LegacyUser")
     require "#{ENV['LIB_NAME']}"
 
-    Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--database=#{ENV['DB_NAME']}", "--quiet"]
+    Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--quiet"]
     Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--auto-accept", "--migrate=false", "--seed=false", "--sample=false", "--quiet", "--user_class=#{args[:user_class]}"]
 
     puts "Setting up dummy database..."
