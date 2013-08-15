@@ -4,6 +4,9 @@ function set_gemfile(){
   export BUNDLE_GEMFILE="`pwd`/Gemfile"
 }
 
+# Target postgres
+export DB=postgres
+
 # Spree defaults
 echo "Setup Spree defaults and creating test application..."
 bundle check || bundle update
