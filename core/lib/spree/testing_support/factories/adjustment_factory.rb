@@ -3,7 +3,7 @@ FactoryGirl.define do
     association(:adjustable, factory: :order)
     amount 100.0
     label 'Shipping'
-    association(:source, factory: :shipment)
+    association(:source, factory: :tax_rate)
     eligible true
   end
 

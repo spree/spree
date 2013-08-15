@@ -46,6 +46,12 @@ module Spree
       update_hooks.each { |hook| order.send hook }
     end
 
+    # Whenever a series of adjustments are updated, this method should be called.
+    # This is done currently in the LineItem and Shipment models when instances are saved.
+    def update_adjustments
+      order.update_column(:adjustment_total, adjustments.eligible.sum(:amount))
+    end
+
     # Updates the following Order total values:
     #
     # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
@@ -118,24 +124,7 @@ module Spree
 
       order.state_changed('payment')
     end
-
-    # Updates each of the Order adjustments.
-    #
-    # This is intended to be called from an Observer so that the Order can
-    # respond to external changes to LineItem, Shipment, other Adjustments, etc.
-    #
-    # Adjustments will check if they are still eligible. Ineligible adjustments
-    # are preserved but not counted towards adjustment_total.
-    def update_adjustments
-      order.adjustments.reload.each { |adjustment| adjustment.update! }
-    end
-
-    # Shipping adjustments don't receive order on update! because they calculated
-    # over a shipping / package object rather than an order object
-    def update_shipping_adjustments
-      order.adjustments.reload.shipping.each { |adjustment| adjustment.update! }
-    end
-
+    
     private
 
       def round_money(n)

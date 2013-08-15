@@ -93,4 +93,28 @@ describe Spree::Adjustment do
       adjustment.currency.should == 'USD'
     end
   end
+
+  context '#update!' do
+    context "when adjustment is immutable" do
+      before { adjustment.stub :immutable? => true } 
+
+      it "does not update the adjustment" do
+        adjustment.should_not_receive(:update_column)
+        adjustment.update!
+      end
+    end
+
+    context "when adjustment mutable" do
+      before { adjustment.stub :immutable? => false } 
+
+      it "updates the amount" do
+        adjustment.stub :adjustable => double("Adjustable")
+        adjustment.stub :source => double("Source")
+        adjustment.source.should_receive("compute_amount").with(adjustment.adjustable).and_return(5)
+        adjustment.should_receive(:update_column).with(:amount, 5)
+        adjustment.update!
+      end
+    end
+
+  end
 end

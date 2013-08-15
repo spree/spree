@@ -75,8 +75,10 @@ module Spree
     # adjustment calculations would not performed on proper values
     def update!(calculable = nil)
       return if immutable?
-      self.update_column(:amount, source.compute_amount(adjustable))
+      amount = source.compute_amount(adjustable)
+      self.update_column(:amount, amount)
       # set_eligibility
+      amount
     end
 
     def currency

@@ -12,6 +12,16 @@ describe Spree::LineItem do
       line_item.quantity = 2
       line_item.save
     end
+
+    it "updates a linked adjustment" do
+      tax_rate = create(:tax_rate, :amount => 10)
+      adjustment = create(:adjustment, :source => tax_rate)
+      line_item.price = 10
+      line_item.tax_category = tax_rate.tax_category
+      line_item.adjustments << adjustment
+      line_item.save
+      line_item.reload.adjustment_total.should == 100
+    end
   end
 
   context '#destroy' do
