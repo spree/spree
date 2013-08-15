@@ -6,62 +6,69 @@ module Spree
       @order = order
     end
 
-    # Get current line item for variant if exists
-    # Add variant qty to line_item
     def add(variant, quantity = 1, currency = nil, shipment = nil)
-      line_item = order.find_line_item_by_variant(variant)
-      add_to_line_item(line_item, variant, quantity, currency, shipment)
+      line_item = add_to_line_item(variant, quantity, currency, shipment)
+      adjust_line_item line_item
     end
 
-    # Get current line item for variant
-    # Remove variant qty from line_item
     def remove(variant, quantity = 1, shipment = nil)
-      line_item = order.find_line_item_by_variant(variant)
-
-      unless line_item
-        raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
-      end
-
-      remove_from_line_item(line_item, variant, quantity, shipment)
+      line_item = remove_from_line_item(variant, quantity, shipment)
+      adjust_line_item line_item
     end
 
     private
+      def adjust_line_item(line_item)
+        line_item = ItemAdjustments.new(line_item).update
+        OrderUpdater.new(order).update
 
-    def add_to_line_item(line_item, variant, quantity, currency=nil, shipment=nil)
-      if line_item
-        line_item.target_shipment = shipment
-        line_item.quantity += quantity.to_i
-        line_item.currency = currency unless currency.nil?
-      else
-        line_item = order.line_items.new(quantity: quantity, variant: variant)
-        line_item.target_shipment = shipment
-        if currency
+        order.reload
+        line_item
+      end
+
+      def add_to_line_item(variant, quantity, currency=nil, shipment=nil)
+        line_item = grab_line_item_by_variant(variant)
+
+        if line_item
+          line_item.target_shipment = shipment
+          line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
-          line_item.price    = variant.price_in(currency).amount
         else
-          line_item.price    = variant.price
+          line_item = order.line_items.new(quantity: quantity, variant: variant)
+          line_item.target_shipment = shipment
+          if currency
+            line_item.currency = currency unless currency.nil?
+            line_item.price    = variant.price_in(currency).amount
+          else
+            line_item.price    = variant.price
+          end
         end
+
+        line_item.save
+        line_item
       end
 
-      line_item.save
-      order.reload
-      line_item
-    end
+      def remove_from_line_item(variant, quantity, shipment=nil)
+        line_item = grab_line_item_by_variant(variant, true)
+        line_item.quantity += -quantity
+        line_item.target_shipment= shipment
 
-    def remove_from_line_item(line_item, variant, quantity, shipment=nil)
-      line_item.quantity += -quantity
-      line_item.target_shipment= shipment
+        if line_item.quantity == 0
+          line_item.destroy
+        else
+          line_item.save!
+        end
 
-      if line_item.quantity == 0
-        Spree::OrderInventory.new(order).verify(line_item, shipment)
-        line_item.destroy
-      else
-        line_item.save!
+        line_item
       end
 
-      order.reload
-      line_item
-    end
+      def grab_line_item_by_variant(variant, raise_error = false)
+        line_item = order.find_line_item_by_variant(variant)
 
+        if !line_item.present? && raise_error
+          raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
+        end
+
+        line_item
+      end
   end
 end

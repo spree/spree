@@ -22,8 +22,6 @@ module Spree
 
     before_save :update_inventory
 
-    after_save :update_adjustments
-
     attr_accessor :target_shipment
 
     def copy_price
@@ -102,24 +100,6 @@ module Spree
         if changed?
           Spree::OrderInventory.new(self.order).verify(self, target_shipment)
         end
-      end
-
-      # Picks one (and only one) promotion to be eligible for this order
-      # This promotion provides the most discount, and if two promotions
-      # have the same amount, then it will pick the latest one.
-      def choose_best_promotion_adjustment
-        if best_promotion_adjustment = self.adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
-          other_promotions = self.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
-          other_promotions.update_all(:eligible => false)
-        end
-      end
-
-      def update_adjustments
-        adjustment_total = adjustments.map(&:update!).compact.sum
-        choose_best_promotion_adjustment
-        self.update_column(:adjustment_total, adjustment_total)
-        OrderUpdater.new(order).update_totals
-        order.save
       end
   end
 end

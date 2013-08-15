@@ -4,18 +4,6 @@ describe Spree::LineItem do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
-  context '#save' do
-    it "updates a linked adjustment" do
-      tax_rate = create(:tax_rate, :amount => 10)
-      adjustment = create(:adjustment, :source => tax_rate)
-      line_item.price = 10
-      line_item.tax_category = tax_rate.tax_category
-      line_item.adjustments << adjustment
-      line_item.save
-      line_item.reload.adjustment_total.should == 100
-    end
-  end
-
   context '#destroy' do
     it "fetches deleted products" do
       line_item.product.destroy
