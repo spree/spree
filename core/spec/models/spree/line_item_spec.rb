@@ -5,14 +5,6 @@ describe Spree::LineItem do
   let(:line_item) { order.line_items.first }
 
   context '#save' do
-    it 'should update inventory, totals, and tax' do
-      # Regression check for #1481
-      line_item.order.should_receive(:create_tax_charge!)
-      line_item.order.should_receive(:update!)
-      line_item.quantity = 2
-      line_item.save
-    end
-
     it "updates a linked adjustment" do
       tax_rate = create(:tax_rate, :amount => 10)
       adjustment = create(:adjustment, :source => tax_rate)
@@ -25,12 +17,6 @@ describe Spree::LineItem do
   end
 
   context '#destroy' do
-    # Regression test for #1481
-    it "applies tax adjustments" do
-      line_item.order.should_receive(:create_tax_charge!)
-      line_item.destroy
-    end
-
     it "fetches deleted products" do
       line_item.product.destroy
       expect(line_item.reload.product).to be_a Spree::Product

@@ -43,7 +43,12 @@ module Spree
     def amount
       price * quantity
     end
-    alias total amount
+    alias subtotal amount
+
+    def final_amount
+      amount + adjustment_total.to_f
+    end
+    alias total final_amount
 
     def single_money
       Spree::Money.new(price, { currency: currency })
@@ -108,7 +113,7 @@ module Spree
       end
 
       def update_adjustments
-        adjustment_total = adjustments.map(&:update!)
+        adjustment_total = adjustments.map(&:update!).compact.sum
         choose_best_promotion_adjustment
         self.update_column(:adjustment_total, adjustment_total)
         OrderUpdater.new(order).update_adjustments
