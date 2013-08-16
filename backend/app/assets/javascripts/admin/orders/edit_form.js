@@ -1,16 +1,20 @@
-$(document).ready(function() {
-  $.each($('td.qty input'), function(i, input) {
+$(document).ready(function () {
+  'use strict';
 
-    $(input).on('change', function() {
+  $.each($('td.qty input'), function (i, input) {
 
-      var id = "#" + $(this).attr('id').replace("_quantity", "_id");
+    $(input).on('change', function () {
 
-      jQuery.post("/admin/orders/" + $('input#order_number').val() + "/line_items/" + $(id).val(),
-        { _method: "put", "line_item[quantity]": $(this).val()},
-        function(resp) {
+      var id = '#' + $(this).attr('id').replace('_quantity', '_id');
+
+      $.post('/admin/orders/' + $('input#order_number').val() + '/line_items/' + $(id).val(), {
+          _method: 'put',
+          'line_item[quantity]': $(this).val()
+        },
+
+        function (resp) {
           $('#order-form-wrapper').html(resp.responseText);
-      })
-    })
-  })
+        });
+    });
+  });
 });
-
