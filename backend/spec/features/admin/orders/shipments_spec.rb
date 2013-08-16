@@ -26,7 +26,6 @@ describe "Shipments" do
   context "moving variants between shipments", js: true do
     let!(:la) { create(:stock_location, name: "LA") }
     before(:each) do
-      create(:stock_location, name: "LA")
       visit spree.admin_path
       click_link "Orders"
       within_row(1) do

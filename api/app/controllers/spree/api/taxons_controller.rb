@@ -8,9 +8,9 @@ module Spree
           @taxons = taxonomy.root.children
         else
           if params[:ids]
-            @taxons = Taxon.where(:id => params[:ids].split(","))
+            @taxons = Taxon.accessible_by(current_ability, :read).where(:id => params[:ids].split(","))
           else
-            @taxons = Taxon.ransack(params[:q]).result
+            @taxons = Taxon.accessible_by(current_ability, :read).order(:taxonomy_id, :lft).ransack(params[:q]).result
           end
         end
         respond_with(@taxons)
