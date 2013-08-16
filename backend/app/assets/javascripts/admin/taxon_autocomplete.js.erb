@@ -1,32 +1,40 @@
-$(document).ready(function() {
-  if ($("#product_taxon_ids").length > 0) {
-    $("#product_taxon_ids").select2({
+$(document).ready(function () {
+  'use strict';
+
+  if ($('#product_taxon_ids').length > 0) {
+    $('#product_taxon_ids').select2({
       placeholder: Spree.translations.taxon_placeholder,
       multiple: true,
-      initSelection: function(element, callback) {
-        url = Spree.url(Spree.routes.taxons_search, { ids: element.val() })
-        return $.getJSON(url, null, function(data) {
+      initSelection: function (element, callback) {
+        var url = Spree.url(Spree.routes.taxons_search, {
+          ids: element.val()
+        });
+        return $.getJSON(url, null, function (data) {
           return callback(data);
-        })
+        });
       },
       ajax: {
         url: Spree.routes.taxons_search,
         datatype: 'json',
-        data: function(term, page) {
-          return { q:
-            { name_cont: term }
-          }
+        data: function (term) {
+          return {
+            q: {
+              name_cont: term
+            }
+          };
         },
-        results: function (data, page) {
-          return { results: data }
+        results: function (data) {
+          return {
+            results: data
+          };
         }
       },
-      formatResult: function(taxon) {
-        return taxon.pretty_name
+      formatResult: function (taxon) {
+        return taxon.pretty_name;
       },
-      formatSelection: function(taxon) {
-        return taxon.pretty_name
+      formatSelection: function (taxon) {
+        return taxon.pretty_name;
       }
-    })
+    });
   }
-})
+});
