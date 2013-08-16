@@ -1,64 +1,72 @@
-<%#encoding: UTF-8%>
 // Shipments AJAX API
+$(document).ready(function () {
+  'use strict';
 
-$(document).ready(function() {
-
-  //handle ship click
-  $('[data-hook=admin_order_edit_form] a.ship').click(function(){
+  // handle ship click
+  $('[data-hook=admin_order_edit_form] a.ship').on('click', function () {
     var link = $(this);
     var shipment_number = link.data('shipment-number');
-    var url = Spree.url( Spree.routes.orders_api + "/" + order_number + "/shipments/" + shipment_number + "/ship.json");
+    var url = Spree.url(Spree.routes.orders_api + '/' + order_number + '/shipments/' + shipment_number + '/ship.json');
     $.ajax({
-      type: "PUT",
+      type: 'PUT',
       url: url
-    }).done(function( msg ) {
+    }).done(function () {
       window.location.reload();
-    }).error(function( msg ) {
+    }).error(function (msg) {
       console.log(msg);
     });
   });
 
-  //handle shipping method edit click
+  // handle shipping method edit click
   $('a.edit-method').click(toggleMethodEdit);
   $('a.cancel-method').click(toggleMethodEdit);
 
-  //handle shipping method save
-  $('[data-hook=admin_order_edit_form] a.save-method').click(function(){
+  // handle shipping method save
+  $('[data-hook=admin_order_edit_form] a.save-method').on('click', function () {
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
     var unlock = link.parents('tbody').find("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
-    var url = Spree.url( Spree.routes.orders_api + "/" + order_number + "/shipments/" + shipment_number + ".json");
+    var url = Spree.url(Spree.routes.orders_api + '/' + order_number + '/shipments/' + shipment_number + '.json');
 
     $.ajax({
-      type: "PUT",
+      type: 'PUT',
       url: url,
-      data: { shipment: { selected_shipping_rate_id: selected_shipping_rate_id, unlock: unlock  } }
-    }).done(function( msg ) {
+      data: {
+        shipment: {
+          selected_shipping_rate_id: selected_shipping_rate_id,
+          unlock: unlock
+        }
+      }
+    }).done(function () {
       window.location.reload();
-    }).error(function( msg ) {
+    }).error(function (msg) {
       console.log(msg);
     });
   });
 
-  //handle tracking edit click
-  $('a.edit-tracking').click(toggleTrackingEdit);
-  $('a.cancel-tracking').click(toggleTrackingEdit);
+  // handle tracking edit click
+  $('a.edit-tracking').on('click', toggleTrackingEdit);
+  $('a.cancel-tracking').on('click', toggleTrackingEdit);
 
-  //handle tracking save
-  $('[data-hook=admin_order_edit_form] a.save-tracking').click(function(){
+  // handle tracking save
+  $('[data-hook=admin_order_edit_form] a.save-tracking').on('click', function () {
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var tracking = link.parents('tbody').find('input#tracking').val();
-    var url = Spree.url( Spree.routes.orders_api + "/" + order_number + "/shipments/" + shipment_number + ".json");
+    var url = Spree.url(Spree.routes.orders_api + '/' + order_number + '/shipments/' + shipment_number + '.json');
 
     $.ajax({
-      type: "PUT",
+      type: 'PUT',
       url: url,
-      data: { shipment: { tracking: tracking } }
-    }).done(function( msg ) {
+      data: {
+        shipment: {
+          tracking: tracking
+        }
+      }
+    }).done(function () {
       window.location.reload();
-    }).error(function( msg ) {
+    }).error(function (msg) {
       console.log(msg);
     });
   });
