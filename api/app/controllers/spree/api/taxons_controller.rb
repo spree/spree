@@ -8,7 +8,7 @@ module Spree
           if params[:ids]
             @taxons = Spree::Taxon.accessible_by(current_ability, :read).where(id: params[:ids].split(','))
           else
-            @taxons = Spree::Taxon.accessible_by(current_ability, :read).ransack(params[:q]).result
+            @taxons = Spree::Taxon.accessible_by(current_ability, :read).order(:taxonomy_id, :lft).ransack(params[:q]).result
           end
         end
         respond_with(@taxons)

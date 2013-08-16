@@ -20,9 +20,6 @@ before_install:
 script:
   - bundle exec rake test_app
   - bundle exec rake spec
-notifications:
-  email:
-    - ryan@spreecommerce.com
 rvm:
   - 1.9.3
   - 2.0.0
