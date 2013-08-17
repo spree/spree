@@ -188,7 +188,7 @@ describe Spree::Order do
     end
 
     after do
-      Spree::Order.checkout_flow = @old_checkout_flow
+      Spree::Order.checkout_flow(&@old_checkout_flow)
     end
 
     it "should not keep old event transitions when checkout_flow is redefined" do
@@ -202,6 +202,73 @@ describe Spree::Order do
       known_states.should_not include(:address)
       known_states.should_not include(:delivery)
       known_states.should_not include(:confirm)
+    end
+  end
+
+  context "insert checkout step" do
+    before do 
+      @old_checkout_flow = Spree::Order.checkout_flow
+      Spree::Order.class_eval do
+        insert_checkout_step :new_step, :before => :address
+      end
+    end
+
+    after do
+      Spree::Order.checkout_flow(&@old_checkout_flow)
+    end
+
+    it "should maintain removed transitions" do
+      transition = Spree::Order.find_transition(:from => :delivery, :to => :confirm)
+      transition.should be_nil
+    end
+
+    context "before" do
+      before do
+        Spree::Order.class_eval do
+          insert_checkout_step :before_address, :before => :address
+        end
+      end
+
+      specify do
+        order = Spree::Order.new
+        order.checkout_steps.should == %w(new_step before_address address delivery complete)
+      end
+    end
+
+    context "after" do
+      before do
+        Spree::Order.class_eval do
+          insert_checkout_step :after_address, :after => :address
+        end
+      end
+
+      specify do
+        order = Spree::Order.new
+        order.checkout_steps.should == %w(new_step address after_address delivery complete)
+      end
+    end
+  end
+
+  context "remove checkout step" do
+    before do 
+      @old_checkout_flow = Spree::Order.checkout_flow
+      Spree::Order.class_eval do
+        remove_checkout_step :address
+      end
+    end
+
+    after do
+      Spree::Order.checkout_flow(&@old_checkout_flow)
+    end
+
+    it "should maintain removed transitions" do
+      transition = Spree::Order.find_transition(:from => :delivery, :to => :confirm)
+      transition.should be_nil
+    end
+
+    specify do
+      order = Spree::Order.new
+      order.checkout_steps.should == %w(delivery complete)
     end
   end
 end

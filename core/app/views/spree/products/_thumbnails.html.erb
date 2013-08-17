@@ -2,8 +2,8 @@
 <% if (@product.images + @product.variant_images).uniq.size > 1 %>
   <ul id="product-thumbnails" class="thumbnails inline" data-hook>
     <% @product.images.each do |i| %>
-      <li class='tmb-all' id='tmb-<%= i.id %>'>
-        <%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product), :class => 'tmb-all', :id => "tmb-#{i.id}") %>
+      <li class='tmb-all tmb-<%= i.viewable.id %>'>
+        <%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %>
       </li>
     <% end %>
 
@@ -11,7 +11,7 @@
       <% @variants.select(&:available?).each do |v| %>
         <% v.images.each do |i| %>
           <% next if @product.images.include?(i) %>
-          <li class='vtmb-<%= v.id %> vtmb' id='tmb-<%= i.id %>'>
+          <li class='vtmb tmb-<%= i.viewable.id %>'>
             <%= link_to(image_tag(i.attachment.url(:mini)), i.attachment.url(:product)) %>
           </li>
         <% end %>

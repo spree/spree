@@ -4,37 +4,37 @@ Spree::StoreController.class_eval do
     def apply_coupon_code
       if @order.coupon_code.present?
         # check if coupon code is already applied
-        if @order.adjustments.promotion.eligible.detect { |p| p.originator.promotion.code == @order.coupon_code }.present?
+        if @order.coupon_code_applied?
           flash[:notice] = t(:coupon_code_already_applied)
           true
         else
           event_name = "spree.checkout.coupon_code_added"
 
           # TODO should restrict to payload's event name?
-          promotion = Spree::Promotion.find_by_code(@order.coupon_code)
+          current_promotion = @order.find_promo_for_coupon_code
 
-          if promotion.present?
-            if promotion.expired?
+          if current_promotion.present?
+            if current_promotion.expired?
               flash[:error] = t(:coupon_code_expired)
               return false
             end
 
-            if promotion.usage_limit_exceeded?
+            if current_promotion.usage_limit_exceeded?
               flash[:error] = t(:coupon_code_max_usage)
               return false
             end
 
             previous_promo = @order.adjustments.promotion.eligible.first
-            fire_event(event_name, :coupon_code => @order.coupon_code)
-            promo = @order.adjustments.promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
+            current_promotion.activate(:order => @order, :coupon_code => @order.coupon_code)
+            promo_adjustment = @order.find_adjustment_for_coupon_code
 
-            if promo.present? and promo.eligible
+            if promo_adjustment.present? and promo_adjustment.eligible
               flash[:success] = t(:coupon_code_applied)
               true
-            elsif previous_promo.present? and promo.present?
+            elsif previous_promo.present? and promo_adjustment.present?
               flash[:error] = t(:coupon_code_better_exists)
               false
-            elsif promo.present?
+            elsif promo_adjustment.present?
               flash[:error] = t(:coupon_code_not_eligible)
               false
             else

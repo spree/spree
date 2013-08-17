@@ -14,10 +14,6 @@ module Spree
     attr_accessible :first_name, :last_name, :number, :verification_value, :year,
                     :month, :gateway_customer_profile_id, :gateway_payment_profile_id
 
-    def number=(num)
-      @number = num.gsub(/[^0-9]/, '') rescue nil
-    end
-
     def set_last_digits
       number.to_s.gsub!(/\s/,'')
       verification_value.to_s.gsub!(/\s/,'')
@@ -30,6 +26,19 @@ module Spree
       class << self
         include ActiveMerchant::Billing::CreditCardMethods::ClassMethods
       end
+    end
+
+    # Some payment gateways, such as USA EPay, only support an ActiveMerchant::Billing::CreditCard
+    # object, rather than an object *like* that. So we need to convert it.
+    def to_active_merchant
+      ActiveMerchant::Billing::CreditCard.new(
+        :number => number,
+        :month => month,
+        :year => year,
+        :verification_value => verification_value,
+        :first_name => first_name,
+        :last_name => last_name
+        )
     end
 
     # sets self.cc_type while we still have the card number
@@ -64,7 +73,7 @@ module Spree
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     def brand
-      cc_type
+      spree_cc_type
     end
 
     scope :with_payment_profile, lambda { where('gateway_customer_profile_id IS NOT NULL') }

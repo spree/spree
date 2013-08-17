@@ -21,7 +21,7 @@ All of the gems are designed to work together to provide a fully functional e-co
 however, to use only the pieces you are interested in.  So for example, you could use just the barebones spree\_core gem
 and perhaps combine it with your own custom promotion scheme instead of using spree_promo.
 
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/spree/spree)
+[![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
 
 Installation
 ------------
@@ -29,9 +29,9 @@ Installation
 The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
-    $ gem install rails -v 3.2.13
+    $ gem install rails -v 3.2.14
     $ gem install spree
-    $ rails _3.2.13_ new my_store
+    $ rails _3.2.14_ new my_store
     $ spree install my_store
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations and

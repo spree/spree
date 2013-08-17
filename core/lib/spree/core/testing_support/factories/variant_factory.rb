@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :base_variant, :class => Spree::Variant do
     price 19.99
     cost_price 17.00
-    sku    { Faker::Lorem.sentence }
+    sku    { SecureRandom.hex }
     weight { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
     height { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
     width  { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
@@ -14,8 +14,10 @@ FactoryGirl.define do
   end
 
   factory :variant, :parent => :base_variant do
-    on_hand 5
-    
+    if Spree::Config[:track_inventory_levels]
+      on_hand 5
+    end
+
     # associations:
     product { |p| p.association(:product) }
   end

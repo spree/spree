@@ -16,11 +16,11 @@ describe Spree::OrderMailer do
     order
   end
 
-  before do
-    Spree::MailMethod.create!(
-      :environment => Rails.env,
-      :preferred_mails_from => "spree@example.com"
-    )
+  context ":from not set explicitly" do
+    it "falls back to spree config" do
+      message = Spree::OrderMailer.confirm_email(order)
+      message.from.should == [Spree::Config.emails_sent_from]
+    end
   end
 
   it "doesn't aggressively escape double quotes in confirmation body" do

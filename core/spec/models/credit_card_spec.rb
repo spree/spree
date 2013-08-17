@@ -192,24 +192,24 @@ describe Spree::CreditCard do
     end
   end
 
-  context "#number=" do
-    it "should strip non-numeric characters from card input" do
-      credit_card.number = "6011000990139424"
-      credit_card.number.should == "6011000990139424"
-
-      credit_card.number = "  6011-0009-9013-9424  "
-      credit_card.number.should == "6011000990139424"
+  context "#to_active_merchant" do
+    before do
+      credit_card.number = "4111111111111111"
+      credit_card.year = Time.now.year
+      credit_card.month = Time.now.month
+      credit_card.first_name = "Bob"
+      credit_card.last_name = "Boblaw"
+      credit_card.verification_value = 123
     end
 
-    it "should not raise an exception on non-string input" do
-      credit_card.number = Hash.new
-      credit_card.number.should be_nil
-    end
-  end
-
-  context "#associations" do
-    it "should be able to access its payments" do
-      lambda { credit_card.payments.all }.should_not raise_error ActiveRecord::StatementInvalid
+    it "converts to an ActiveMerchant::Billing::CreditCard object" do
+      am_card = credit_card.to_active_merchant
+      am_card.number.should == "4111111111111111"
+      am_card.year.should == Time.now.year
+      am_card.month.should == Time.now.month
+      am_card.first_name.should == "Bob"
+      am_card.last_name = "Boblaw"
+      am_card.verification_value.should == 123
     end
   end
 end

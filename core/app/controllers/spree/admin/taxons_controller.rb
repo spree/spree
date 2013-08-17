@@ -106,7 +106,7 @@ module Spree
       def destroy
         @taxon = Taxon.find(params[:id])
         @taxon.destroy
-        respond_with(@taxon) { |format| format.json { render :json => '' } }
+        render :text => "", :status => 204
       end
 
     end

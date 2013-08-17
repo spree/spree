@@ -66,7 +66,7 @@ module Spree
         response.status.should == 201
 
         taxonomy.reload.root.children.count.should eq 2
-        
+
         Spree::Taxon.last.parent_id.should eq taxonomy.root.id
         Spree::Taxon.last.taxonomy_id.should eq taxonomy.id
       end
@@ -79,15 +79,15 @@ module Spree
 
         taxonomy.reload.root.children.count.should eq 1
       end
-      
+
       it "cannot create a new taxon with invalid taxonomy_id" do
         api_post :create, :taxonomy_id => 1000, :taxon => { :name => "Colors" }
         response.status.should == 422
         json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        
+
         errors = json_response["errors"]
         errors["taxonomy_id"].should_not be_nil
-        errors["taxonomy_id"].first.should eq "Invalid taxonomy_id."
+        errors["taxonomy_id"].first.should eq "Invalid taxonomy id."
 
         taxonomy.reload.root.children.count.should eq 1
       end

@@ -19,7 +19,7 @@ hr {
   background-color: transparent;
   color: transparent;
   border: none;
-  border-bottom: 1px solid $border_color;
+  border-bottom: $default_border;
 }
 
 /* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
@@ -72,7 +72,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       padding: 5px;
 
       &.odd {
-        background-color: lighten($body_text_color, 60);
+        background-color: $table_head_color;
       }
     }
     dt {
@@ -215,7 +215,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   /*--------------------------------------*/
   footer#footer {
     padding: 10px 0;
-    border-top: 1px solid lighten($body_text_color, 60);
+    border-top: $default_border;
   }
 
   /*--------------------------------------*/
@@ -230,7 +230,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   /*--------------------------------------*/
   table {
     thead {
-      background-color: lighten($body_text_color, 60);
+      background-color: $table_head_color;
       text-transform: uppercase;
 
       tr {
@@ -242,7 +242,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
     tbody, tfoot {
       tr {
-        border-bottom: 1px solid lighten($body_text_color, 60);
+        border-bottom: $default_border;
 
         td {
           vertical-align: middle;
@@ -281,7 +281,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     text-transform: uppercase;
     font-weight: bold;
     margin-top: 20px;
-    border-bottom: 1px solid lighten($body_text_color, 60);
+    border-bottom: $default_border;
     padding-bottom: 6px;
 
     li {
@@ -318,7 +318,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
           .amount {
             font-size: $horizontal_navigation_font_size + 2;
             font-weight: bold;
-            border-left: 1px solid lighten($body_text_color, 60);
+            border-left: $default_border;
             padding-left: 5px;
             padding-bottom: 5px;
           }
@@ -330,7 +330,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   nav#taxonomies {
     .taxonomy-root {
       text-transform: uppercase;
-      border-bottom: 1px solid lighten($body_text_color, 60);
+      border-bottom: $default_border;
       margin-bottom: 5px;
       font-size: $main_navigation_header_font_size;
     }
@@ -345,7 +345,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
   }
 
   #breadcrumbs {
-    border-bottom: 1px solid lighten($body_text_color, 60);
+    border-bottom: $default_border;
     padding: 3px 0;
     margin-bottom: 15px;
 
@@ -473,7 +473,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
           margin-top: 5px;
           font-size: $product_list_name_font_size;
           color: $product_link_text_color;
-          border-bottom: 1px solid lighten($body_text_color, 60);
+          border-bottom: $default_border;
           overflow: hidden;
         }
       }
@@ -513,7 +513,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   .search-results-title {
     text-transform: uppercase;
-    border-bottom: 1px solid lighten($body_text_color, 60);
+    border-bottom: $default_border;
     margin-bottom: 10px;
   }
 
@@ -558,7 +558,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
 
   #product-description {
     .product-title {
-      border-bottom: 1px solid lighten($body_text_color, 60);
+      border-bottom: $default_border;
       margin-bottom: 15px;
       color: $product_title_text_color;
       font-size: $product_detail_name_font_size;
@@ -641,7 +641,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       }
 
       &.completed-first, &.completed {
-        background-color: lighten($body_text_color, 60);
+        background-color: $table_head_color;
         color: $layout_background_color;
 
         a {
@@ -684,7 +684,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
     h3 {
       text-transform: uppercase;
       font-size: $base_font_size + 2;
-      border-bottom: 1px solid lighten($body_text_color, 60);
+      border-bottom: $default_border;
     }
 
     table {
@@ -760,7 +760,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
         color: $body_text_color;
 
         tr {
-          border-top: 1px solid lighten($body_text_color, 60);
+          border-top: $default_border;
 
           td {
             padding: 10px;
@@ -780,7 +780,7 @@ mark {background-color: $link_text_color; color: $layout_background_color; font-
       }
 
       h6 {
-        border-bottom: 1px solid lighten($body_text_color, 60);
+        border-bottom: $default_border;
         margin-bottom: 5px;
       }
     }
