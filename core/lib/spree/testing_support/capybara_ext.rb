@@ -109,7 +109,7 @@ end
 
 RSpec::Matchers.define :have_meta do |name, expected|
   match do |actual|
-    has_css?("meta[name='#{name}'][content='#{expected}']")
+    has_css?("meta[name='#{name}'][content='#{expected}']", visible: false)
   end
 
   failure_message_for_should do |actual|
@@ -124,7 +124,7 @@ end
 
 RSpec::Matchers.define :have_title do |expected|
   match do |actual|
-    has_css?("title", :text => expected)
+    has_css?("title", :text => expected, visible: false)
   end
 
   failure_message_for_should do |actual|
