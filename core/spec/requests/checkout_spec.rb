@@ -86,8 +86,8 @@ describe "Checkout" do
         Spree::CheckoutController.any_instance.stub(:current_order => order)
         Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
         Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
-
       end
+
       it "redirects to payment page" do
         visit spree.checkout_state_path(:delivery)
         click_button "Save and Continue"
@@ -176,5 +176,36 @@ describe "Checkout" do
         end
       end
     end
+
+    context "when several payment methods are available" do
+      let(:credit_cart_payment) {create(:bogus_payment_method, :environment => 'test') }
+      let(:check_payment) {create(:payment_method, :environment => 'test') }
+
+      before(:each) do
+        order = OrderWalkthrough.up_to(:delivery)
+        order.stub(:available_payment_methods => [check_payment,credit_cart_payment])
+        order.user = create(:user)
+        order.update!
+
+        Spree::CheckoutController.any_instance.stub(:current_order => order)
+        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => order.user)
+
+        visit spree.checkout_state_path(:payment)
+      end
+
+      it "the first payment method should be selected", :js => true do
+        payment_method_css = "#order_payments_attributes__payment_method_id_"
+        find("#{payment_method_css}#{check_payment.id}").should be_checked
+        find("#{payment_method_css}#{credit_cart_payment.id}").should_not be_checked
+      end
+
+      it "the fields for the other payment methods should be hidden", :js => true do
+        payment_method_css = "#payment_method_"
+        find("#{payment_method_css}#{check_payment.id}").should be_visible
+        find("#{payment_method_css}#{credit_cart_payment.id}").should_not be_visible
+      end
+
+    end
+
   end
 end

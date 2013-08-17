@@ -16,16 +16,30 @@ describe Spree::OrderMailer do
     order
   end
 
-  before do
-    Spree::MailMethod.create!(
-      :environment => Rails.env,
-      :preferred_mails_from => "spree@example.com"
-    )
+  context ":from not set explicitly" do
+    it "falls back to spree config" do
+      message = Spree::OrderMailer.confirm_email(order)
+      message.from.should == [Spree::Config.emails_sent_from]
+    end
   end
 
   it "doesn't aggressively escape double quotes in confirmation body" do
     confirmation_email = Spree::OrderMailer.confirm_email(order)
     confirmation_email.body.should_not include("&quot;")
+  end
+
+  it "confirm_email accepts an order id as an alternative to an Order object" do
+    Spree::Order.should_receive(:find).with(order.id).and_return(order)
+    lambda {
+      confirmation_email = Spree::OrderMailer.confirm_email(order.id)
+    }.should_not raise_error
+  end
+
+  it "cancel_email accepts an order id as an alternative to an Order object" do
+    Spree::Order.should_receive(:find).with(order.id).and_return(order)
+    lambda {
+      cancel_email = Spree::OrderMailer.cancel_email(order.id)
+    }.should_not raise_error
   end
 
   context "only shows eligible adjustments in emails" do

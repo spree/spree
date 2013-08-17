@@ -35,7 +35,8 @@ module Spree
     before_validation :set_cost_currency
     after_save :process_backorders
     after_save :save_default_price
-    after_save :recalculate_product_on_hand, :if => :is_master?
+    after_save :recalculate_product_on_hand
+    after_create :set_position
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
@@ -220,6 +221,10 @@ module Spree
 
       def set_cost_currency
         self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+      end
+
+      def set_position
+        self.update_column(:position, product.variants.maximum(:position).to_i + 1)
       end
   end
 end

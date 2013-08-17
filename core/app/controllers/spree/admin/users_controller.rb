@@ -2,7 +2,9 @@ module Spree
   module Admin
     class UsersController < ResourceController
 
-      rescue_from "#{Spree.user_class}::DestroyWithOrdersError".constantize, :with => :user_destroy_with_orders_error
+      if Spree.user_class.const_defined?("DestroyWithOrdersError")
+        rescue_from "#{Spree.user_class}::DestroyWithOrdersError".constantize, :with => :user_destroy_with_orders_error
+      end
 
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
       before_filter :check_json_authenticity, :only => :index

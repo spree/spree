@@ -21,3 +21,4 @@ en:
         invalid_shipping_method: "Invalid shipping method specified."
       shipment:
         cannot_ready: "Cannot ready shipment."
+      invalid_taxonomy_id: "Invalid taxonomy id."

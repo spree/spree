@@ -18,13 +18,17 @@ module Spree
       ]
     end
 
-    simple_scopes.each do |name|
-      # We should not define price scopes here, as they require something slightly different
-      next if name.to_s.include?("master_price")
-      parts = name.to_s.match(/(.*)_by_(.*)/)
-      order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
-      self.scope(name.to_s, relation.order(order_text))
+    def self.add_simple_scopes(scopes)
+      scopes.each do |name|
+        # We should not define price scopes here, as they require something slightly different
+        next if name.to_s.include?("master_price")
+        parts = name.to_s.match(/(.*)_by_(.*)/)
+        order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
+        self.scope(name.to_s, relation.order(order_text))
+      end
     end
+
+    add_simple_scopes simple_scopes
 
     add_search_scope :ascend_by_master_price do
       joins(:master => :default_price).order("#{price_table_name}.amount ASC")
@@ -64,9 +68,14 @@ module Spree
     #
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
-      select("DISTINCT(spree_products.id), spree_products.*").
-      joins(:taxons).
-      where(Taxon.table_name => { :id => taxon.self_and_descendants.pluck(:id) })
+      if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
+        scope = select("DISTINCT ON (spree_products.id) spree_products.*")
+      else
+        scope = select("DISTINCT(spree_products.id), spree_products.*")
+      end
+
+      scope.joins(:taxons).
+      where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
     end
 
     # This scope selects products in all taxons AND all its descendants

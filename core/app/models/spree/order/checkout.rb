@@ -7,6 +7,7 @@ module Spree
           class_attribute :previous_states
           class_attribute :checkout_flow
           class_attribute :checkout_steps
+          class_attribute :removed_transitions
 
           def self.checkout_flow(&block)
             if block_given?
@@ -22,6 +23,7 @@ module Spree
             self.checkout_steps = ActiveSupport::OrderedHash.new
             self.next_event_transitions = []
             self.previous_states = [:cart]
+            self.removed_transitions = []
 
             # Build the checkout flow using the checkout_flow defined either
             # within the Order class, or a decorator for that class.
@@ -93,7 +95,40 @@ module Spree
             end
           end
 
+          def self.insert_checkout_step(name, options = {})
+            before = options.delete(:before)
+            after = options.delete(:after) unless before
+            after = self.checkout_steps.keys.last unless before || after
+
+            cloned_steps = self.checkout_steps.clone
+            cloned_removed_transitions = self.removed_transitions.clone
+            self.checkout_flow do
+              cloned_steps.each_pair do |key, value|
+                self.go_to_state(name, options) if key == before
+                self.go_to_state(key, value)
+                self.go_to_state(name, options) if key == after
+              end
+              cloned_removed_transitions.each do |transition|
+                self.remove_transition(transition)
+              end
+            end
+          end
+
+          def self.remove_checkout_step(name)
+            cloned_steps = self.checkout_steps.clone
+            cloned_removed_transitions = self.removed_transitions.clone
+            self.checkout_flow do
+              cloned_steps.each_pair do |key, value|
+                self.go_to_state(key, value) unless key == name
+              end
+              cloned_removed_transitions.each do |transition|
+                self.remove_transition(transition)
+              end
+            end
+          end
+
           def self.remove_transition(options={})
+            self.removed_transitions << options
             if transition = find_transition(options)
               self.next_event_transitions.delete(transition)
             end
@@ -138,6 +173,10 @@ module Spree
 
           def checkout_step_index(step)
             self.checkout_steps.index(step)
+          end
+
+          def self.removed_transitions
+            @removed_transitions ||= []
           end
 
           def can_go_to_state?(state)

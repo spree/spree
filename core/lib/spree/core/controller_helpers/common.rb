@@ -29,7 +29,7 @@ module Spree
         end
 
         # can be used in views as well as controllers.
-        # e.g. <% title = 'This is a custom title for this view' %>
+        # e.g. <% self.title = 'This is a custom title for this view' %>
         attr_writer :title
 
         def title

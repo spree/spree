@@ -14,6 +14,8 @@ module Spree
 
     # update the order totals, etc.
     after_save :update_order
+    # invalidate previously entered payments
+    after_create :invalidate_old_payments
 
     attr_accessor :source_attributes
     after_initialize :build_source
@@ -66,9 +68,10 @@ module Spree
       order.currency
     end
 
-    def display_amount
+    def money
       Spree::Money.new(amount, { :currency => currency })
     end
+    alias display_amount money
 
     def offsets_total
       offsets.pluck(:amount).sum
@@ -117,6 +120,12 @@ module Spree
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
+      end
+
+      def invalidate_old_payments
+        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+          payment.invalidate!
+        end
       end
 
       def update_order

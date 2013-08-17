@@ -17,17 +17,24 @@ describe Spree::ShipmentMailer do
     shipment
   end
 
-  before do
-    Spree::MailMethod.create!(
-      :environment => Rails.env,
-      :preferred_mails_from => "spree@example.com"
-    )
+  context ":from not set explicitly" do
+    it "falls back to spree config" do
+      message = Spree::ShipmentMailer.shipped_email(shipment)
+      message.from.should == [Spree::Config.emails_sent_from]
+    end
   end
 
   # Regression test for #2196
   it "doesn't include out of stock in the email body" do
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
     shipment_email.body.should_not include(%Q{Out of Stock})
+  end
+
+  it "shipment_email accepts an shipment id as an alternative to an Shipment object" do
+    Spree::Shipment.should_receive(:find).with(shipment.id).and_return(shipment)
+    lambda {
+      shipped_email = Spree::ShipmentMailer.shipped_email(shipment.id)
+    }.should_not raise_error
   end
 
   context "emails must be translatable" do

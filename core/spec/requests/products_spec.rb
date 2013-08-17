@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 describe "Visiting Products" do
@@ -9,11 +10,50 @@ describe "Visiting Products" do
 
   it "should be able to show the shopping cart after adding a product to it" do
     click_link "Ruby on Rails Ringer T-Shirt"
-
     page.should have_content("$19.99")
 
     click_button 'add-to-cart-button'
     page.should have_content("Shopping Cart")
+  end
+
+  context "using Russian Rubles as a currency" do
+    before do
+      Spree::Config[:currency] = "RUB"
+    end
+
+    let!(:product) do
+      product = Spree::Product.find_by_name("Ruby on Rails Ringer T-Shirt")
+      product.price = 19.99
+      product.tap(&:save)
+    end
+
+    # Regression tests for #2737
+    context "uses руб as the currency symbol" do
+      it "on products page" do
+        visit spree.root_path
+        within("#product_#{product.id}") do
+          within(".price") do
+            page.should have_content("руб19.99")
+          end
+        end
+      end
+
+      it "on product page" do
+        visit spree.product_path(product)
+        within(".price") do
+          page.should have_content("руб19.99")
+        end
+      end
+
+      it "when adding a product to the cart" do
+        visit spree.product_path(product)
+        click_button "Add To Cart"
+        click_link "Home"
+        within(".cart-info") do
+          page.should have_content("руб19.99")
+        end
+      end
+    end
   end
 
   it "should be able to search for a product" do
@@ -160,4 +200,20 @@ describe "Visiting Products" do
     page.should have_content "This product is not available in the selected currency."
     page.should_not have_content "add-to-cart-button"
   end  
+
+  context "a product with variants" do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:option_value) { create(:option_value) }
+    let!(:variant) { product.variants.create!(:price => 5.59) }
+
+    it "displays price of first variant listed", :js => true do
+      product.option_types << option_value.option_type
+      variant.option_values << option_value
+
+      click_link product.name
+      within("#product-price") do
+        expect(page).to have_content variant.price
+      end
+    end
+  end
 end

@@ -289,6 +289,7 @@ en:
   back_to_tax_categories_list: "Back To Tax Categories List"
   back_to_taxonomies_list: "Back To Taxonomies List"
   back_to_trackers_list: "Back To Trackers List"
+  back_to_users_list: "Back To Users List"
   back_to_zones_list: "Back To Zones List"
   backordered: Backordered
   backordering_is_allowed: "Backordering %{not} allowed"
@@ -360,8 +361,10 @@ en:
   credits: Credits
   current: Current
   currency: Currency
+  currency_decimal_mark: "Currency decimal mark"
   currency_symbol_position: "Put currency symbol before or after dollar amount?"
   currency_settings: "Currency Settings"
+  currency_thousands_separator: "Currency thousands separator"
   customer: Customer
   customer_details: "Customer Details"
   customer_details_updated: "The customer's details have been updated."
@@ -652,9 +655,14 @@ en:
       order_summary_canceled: "Order Summary [CANCELED]"
       subtotal: "Subtotal: %{subtotal}"
       total: "Order Total: %{total}"
-  order_not_in_system: That order number is not valid on this site.
+  order_not_found: "We couldn't find your order. Please try that action again."
+  order_not_in_system: "That order number is not valid on this site."
   order_number: Order
   order_operation_authorize: Authorize
+  order_populator:
+    please_enter_reasonable_quantity: "Please enter a reasonable quantity."
+    remainder_message: "There are only %{on_hand} of %{item} remaining. Please select a quantity less than or equal to this value."
+    out_of_stock: "%{item} is out of stock."
   order_processed_but_following_items_are_out_of_stock: "Your order has been processed, but following items are out of stock:"
   order_processed_successfully: "Your order has been processed successfully"
   order_state:
@@ -1041,6 +1049,7 @@ en:
   tax_categories: "Tax Categories"
   tax_categories_setting_description: "Set up tax categories to identify which products should be taxable."
   tax_category: "Tax Category"
+  tax_rate_amount_explanation: "Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)"
   tax_rates: "Tax Rates"
   tax_rates_description: Tax rates setup and configuration.
   tax_settings: "Tax Settings"

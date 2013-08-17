@@ -37,12 +37,17 @@ module Spree
       where(:advertise => true)
     end
 
+    def self.with_code
+      where(:event_name => 'spree.checkout.coupon_code_added')
+    end
+
     def activate(payload)
       return unless order_activatable? payload[:order]
 
       if code.present?
-        event_code = payload[:coupon_code]
-        return unless event_code == self.code
+        normalized_submitted_code = Spree::Promotion.normalize_coupon_code(payload[:coupon_code])
+        normalized_expected_code = Spree::Promotion.normalize_coupon_code(self.code)
+        return unless normalized_submitted_code == normalized_expected_code
       end
 
       if path.present?
@@ -98,8 +103,10 @@ module Spree
       credits.count
     end
 
-    def code=(coupon_code)
-      write_attribute(:code, (coupon_code.downcase.strip rescue nil))
+    private
+
+    def self.normalize_coupon_code(code)
+      code.to_s.strip.downcase rescue ""
     end
   end
 end

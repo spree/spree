@@ -15,6 +15,7 @@ require 'spree/api/testing_support/setup'
 
 RSpec.configure do |config|
   config.backtrace_clean_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
+  config.color = true
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller

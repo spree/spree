@@ -65,9 +65,9 @@ describe Spree::OrderPopulator do
         Spree::Config[:allow_backorders] = false
 
         order.should_not_receive(:add_variant)
-        subject.populate(:products => { 1 => 2 }, :quantity => 2_147_483_648)
+        subject.populate(:products => { 1 => 2 }, :quantity => Spree::Config[:max_quantity] + 1)
         subject.should_not be_valid
-        output = %Q{Please enter a reasonable quantity.}
+        output = "Please enter a reasonable quantity."
         subject.errors.full_messages.join("").should == output
       end
     end

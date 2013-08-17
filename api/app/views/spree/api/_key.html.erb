@@ -1,0 +1,4 @@
+<script>
+  Spree.api_key = <%= raw(try_spree_current_user.try(:spree_api_key).to_s.inspect) %>;
+</script>
+

@@ -44,7 +44,7 @@ module Spree
             response = payment_method.capture(self, source, gateway_options)
           else
             # Standard ActiveMerchant capture usage
-            response = payment_method.capture((amount * 100).round,
+            response = payment_method.capture(money.money.cents,
                                               response_code,
                                               gateway_options)
           end
@@ -155,6 +155,11 @@ module Spree
         unless response.authorization.nil?
           self.response_code = response.authorization
           self.avs_response = response.avs_result['code']
+
+          if response.cvv_result
+            self.cvv_response_code = response.cvv_result['code']
+            self.cvv_response_message = response.cvv_result['message']
+          end
         end
         self.send("#{success_state}!")
       else

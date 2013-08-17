@@ -197,31 +197,13 @@ describe "Promotion Adjustments" do
       visit spree.root_path
       click_link "RoR Bag"
       click_button "Add To Cart"
-      click_button "Checkout"
-
-      fill_in "Customer E-Mail", :with => "spree@example.com"
-      str_addr = "bill_address"
-      select "United States", :from => "order_#{str_addr}_attributes_country_id"
-      ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
-        fill_in "order_#{str_addr}_attributes_#{field}", :with => "#{address.send(field)}"
-      end
-      select "#{address.state.name}", :from => "order_#{str_addr}_attributes_state_id"
-      check "order_use_billing"
-      click_button "Save and Continue"
-      click_button "Save and Continue"
-
-      choose('Credit Card')
-      fill_in "card_number", :with => "4111111111111111"
-      fill_in "card_code", :with => "123"
-      click_button "Save and Continue"
-      Spree::Order.last.total.to_f.should == 30.00 # bag(20) + shipping(10)
-      page.should_not have_content("Free Shipping")
 
       visit spree.root_path
       click_link "RoR Mug"
       click_button "Add To Cart"
-      click_button "Checkout"
+      click_button "Checkout" 
 
+      fill_in "Customer E-Mail", :with => "spree@example.com"
       str_addr = "bill_address"
       select "United States", :from => "order_#{str_addr}_attributes_country_id"
       ['firstname', 'lastname', 'address1', 'city', 'zipcode', 'phone'].each do |field|
@@ -303,13 +285,12 @@ describe "Promotion Adjustments" do
       sleep(1)
       page.execute_script "$('.create_line_items .select2-choice').mousedown();"
       sleep(1)
-      page.execute_script "$('.select2-focused').val('RoR Mug').trigger('keyup-change');"
+      page.execute_script "$('.select2-input:visible').val('RoR Mug').trigger('keyup-change');"
       sleep(1)
       page.execute_script "$('.select2-highlighted').mouseup();"
 
       within('#actions_container') { click_button "Update" }
 
-      sleep(1)
       select2 "Create adjustment", :from => "Add action of type"
       within('#new_promotion_action_form') { click_button "Add" }
       select2 "Flat Rate (per order)", :from => "Calculator"

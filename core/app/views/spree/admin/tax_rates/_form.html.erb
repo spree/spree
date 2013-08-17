@@ -11,6 +11,7 @@
         <div data-hook="rate" class="field">
           <%= f.label :amount, t(:rate) %>
           <%= f.text_field :amount, :class => 'fullwidth' %>
+          <p><em><%= t(:tax_rate_amount_explanation) %></em></p>
         </div>
         <div data-hook="included" class="field">
           <%= f.check_box :included_in_price %>
