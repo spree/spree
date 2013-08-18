@@ -15,6 +15,9 @@ env:
   - GEM=frontend DB=sqlite
   - GEM=frontend DB=mysql
   - GEM=frontend DB=postgres
+  - GEM=sample DB=sqlite
+  - GEM=sample DB=mysql
+  - GEM=sample DB=postgres
 before_install:
   - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
