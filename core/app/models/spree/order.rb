@@ -47,7 +47,7 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    has_many :adjustments, as: :adjustable, dependent: :destroy, order: 'created_at ASC'
+    has_many :adjustments, -> { order('created_at ASC') }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :line_items, -> { order('created_at ASC') }, dependent: :destroy
     has_many :payments, dependent: :destroy
