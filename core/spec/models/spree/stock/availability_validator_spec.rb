@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     describe AvailabilityValidator do
-      let!(:line_item) { double(quantity: 5, variant_id: 1, variant: double.as_null_object, errors: double('errors')) }
+      let!(:line_item) { double(quantity: 5, target_shipment: nil, variant_id: 1, variant: double.as_null_object, errors: double('errors')) }
 
       subject { described_class.new(nil) }
 
