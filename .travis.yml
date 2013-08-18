@@ -11,6 +11,7 @@ env:
   - GEM=core DB=postgres
   - GEM=frontend DB=mysql
   - GEM=frontend DB=postgres
+  - GEM=sample DB=sqlite
   - GEM=sample DB=mysql
   - GEM=sample DB=postgres
 before_install:
