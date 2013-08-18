@@ -15,8 +15,7 @@ This guide assumes you already have [bundler](http://bundler.io/) installed and 
 Add the `spree_pro_connector` gem to your store's `Gemfile`:
 
 ```ruby
-gem 'spree_pro_connector', :git => 'https://github.com/spree/spree_pro_connector.git', :branch => '2-0-stable'
-```
+gem 'spree_pro_connector', :git => 'https://github.com/spree/spree_pro_connector.git', :branch => '2-0-stable'```
 
 ***
 Be sure to point to the branch that matches your store's version of Spree.
@@ -28,8 +27,8 @@ Next, run these commands:
 $ bundle install
 $ bundle exec rails generate spree_pro_connector:install```
 
-Now when you go to the `/admin` section of your store and look at a particular order, you will notice under the "Return Authorizations" link a new "Order Events" link. This allows you to see any Spree Integrator events for that particular order.
+Now when you go to the `/admin` section of your store, you will see a new "Integration" tab between the "Products" and "Configuration" tabs. This is where you will configure your store's integrations.
 
-![Order Events Link](/images/integration/order_events_link.jpg)
+![Integration Tab](/images/integration/integration_tab.jpg)
 
 ## Configuration
