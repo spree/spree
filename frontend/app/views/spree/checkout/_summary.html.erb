@@ -19,9 +19,9 @@
       <td><strong><%= Spree.t(:order_total) %>:</strong></td>
       <td><strong><span id='summary-order-total'><%= @order.display_total.to_html %></span></strong></td>
     </tr>
-    <% if order.price_adjustment_totals.present? %>
+    <% if order.line_item_adjustment_totals.present? %>
       <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
-        <% @order.price_adjustment_totals.each do |label, total| %>
+        <% @order.line_item_adjustment_totals.each do |label, total| %>
           <tr class="total">
             <td><strong><%= label %></strong></td>
             <td><strong><span><%= total.to_html %></span></strong></td>

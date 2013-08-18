@@ -82,9 +82,9 @@
       <td class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
     </tr>
   </tfoot>
-  <% if order.price_adjustment_totals.present? %>
+  <% if order.line_item_adjustment_totals.present? %>
     <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
-      <% @order.price_adjustment_totals.each do |key, total| %>
+      <% @order.line_item_adjustment_totals.each do |key, total| %>
         <tr class="total">
           <td colspan="4"><strong><%= key %></strong></td>
           <td class="total"><span><%= total %></span></td>
