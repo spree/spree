@@ -4,8 +4,13 @@ module Spree
       class User < PromotionRule
         attr_accessible :user_ids_string
 
-        belongs_to :user, :class_name => Spree.user_class.to_s
-        has_and_belongs_to_many :users, :class_name => Spree.user_class.to_s, :join_table => 'spree_promotion_rules_users', :foreign_key => 'promotion_rule_id'
+        if Spree.user_class
+          belongs_to :user, class_name: Spree.user_class.to_s
+          has_and_belongs_to_many :users, class_name: Spree.user_class.to_s, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id'
+        else
+          belongs_to :user
+          has_and_belongs_to_many :users, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id'
+        end
 
         def eligible?(order, options = {})
           users.include?(order.user)
