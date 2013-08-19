@@ -26,8 +26,8 @@ body.index {
       margin-bottom: em(40);
 
       li {
-        @include span-columns(3);
-        @include omega(4n);
+        @include span-columns(2 of 10);
+        @include omega(5n);
         text-align: center;
 
         a {
