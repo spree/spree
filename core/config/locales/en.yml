@@ -455,6 +455,7 @@ en:
     date: Date
     date_completed: Date Completed
     date_picker:
+      first_day: 0
       format: ! '%Y/%m/%d'
       js_format: yy/mm/dd
     date_range: Date Range
