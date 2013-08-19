@@ -600,7 +600,7 @@ en:
       operators:
         gt: greater than
         gte: greater than or equal to
-    items_cannot_be_shipped: We are unable to ship the selected items to your shipping address. Please choose another shipping address.
+    items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     jirafe: Jirafe
     landing_page_rule:
       path: Path
