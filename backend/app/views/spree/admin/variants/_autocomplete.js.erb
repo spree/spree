@@ -13,7 +13,7 @@
       <h6 class="variant-name">{{variant.name}}</h6>
 
       <ul class='variant-data'>
-        <li class='variant-sku'><strong>{{t 'sku'}}:</strong> {{variant.sku}}</li>
+        <li class='variant-sku'><strong><%= Spree.t(:sku) %>:</strong> {{variant.sku}}</li>
       </ul>
 
       {{#if variant.option_values}}
@@ -51,13 +51,13 @@
               {{#if this.available}}
                 <td>
                   {{this.count_on_hand}}
-                  {{#if this.backorderable}} (backorders allowed) {{/if}}
+                  {{#if this.backorderable}} (<%= Spree.t(:backorders_allowed) %>) {{/if}}
                 </td>
                 <td>
                   <input class="quantity" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
                 </td>
                 <td class="actions">
-                  <button class="add_variant no-text icon-plus icon_link with-tip" data-stock-location-id="{{this.stock_location_id}}" title="Add" data-action="add"></button>
+                  <button class="add_variant no-text icon-plus icon_link with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
                 </td>
               {{else}}
                 <td><%= Spree.t(:out_of_stock) %></td>
