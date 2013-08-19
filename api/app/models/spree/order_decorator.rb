@@ -218,4 +218,11 @@ Spree::Order.class_eval do
     end
     self.ensure_updated_shipments
   end
+
+  def update_line_items(line_item_params)
+    return if line_item_params.blank?
+    line_item_params.each do |id, attributes|
+      self.line_items.find(id).update_attributes!(attributes)
+    end
+  end
 end
