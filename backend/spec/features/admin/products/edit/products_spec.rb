@@ -57,10 +57,10 @@ describe 'Product Details' do
     it "is still able to find the master variant" do
       create(:product)
 
-      visit spree.admin_path
-      click_link 'Products'
+      visit spree.admin_products_path
       within_row(1) { click_icon :trash }
       page.driver.browser.switch_to.alert.accept
+      wait_for_ajax
     end
   end
 end
