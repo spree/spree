@@ -49,8 +49,8 @@
               <div class="field omega four columns">
                 <label><%= Spree.t(:associated_adjustment_closed) %></label>
                 <ul>
-                  <li><%= radio_button_tag :open_adjustment, 'yes', false, :data => {'shipment-number' => shipment.number } %> Yes</li>
-                  <li><%= radio_button_tag :open_adjustment, 'no', true, :data => {'shipment-number' => shipment.number } %> No</li>
+                  <li><%= radio_button_tag :open_adjustment, 'yes', false, data: { 'shipment-number' => shipment.number } %> <%= Spree.t(:say_yes) %></li>
+                  <li><%= radio_button_tag :open_adjustment, 'no', true, data: { 'shipment-number' => shipment.number } %> <%= Spree.t(:say_no) %></li>
                 </ul>
               </div>
             <% end %>
