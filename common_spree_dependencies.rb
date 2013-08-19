@@ -3,8 +3,6 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'json'
-gem 'multi_json'
 gem 'mysql2'
 gem 'pg'
 gem 'sqlite3'
@@ -20,7 +18,7 @@ group :test do
   gem 'launchy'
   gem 'pry'
   gem 'rspec-rails', '~> 2.14.0'
-  gem 'selenium-webdriver', '~> 2.33'
+  gem 'selenium-webdriver', '~> 2.35'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
 end
