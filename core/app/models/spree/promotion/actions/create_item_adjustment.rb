@@ -13,7 +13,7 @@ module Spree
 
         def perform(payload = {})
           line_item = payload[:line_item]
-          unless line_item.promotion_credit_exists?(self)
+          unless promotion_credit_exists?(line_item)
             self.create_adjustment(line_item)
           end
         end
@@ -36,6 +36,16 @@ module Spree
         end
 
         private
+          # Tells us if there if the specified promotion is already associated with the line item
+          # regardless of whether or not its currently eligible. Useful because generally
+          # you would only want a promotion action to apply to order no more than once.
+          #
+          # Receives an adjustment +source+ (here a PromotionAction object) and tells
+          # if the order has adjustments from that already
+          def promotion_credit_exists?(adjustable)
+            self.adjustments.where(:adjustable_id => adjustable.id).exists?
+          end
+
           def ensure_action_has_calculator
             return if self.calculator
             self.calculator = Calculator::FlatPercentItemTotal.new
