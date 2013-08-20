@@ -8,6 +8,7 @@ module Spree
 
     def add(variant, quantity = 1, currency = nil, shipment = nil)
       line_item = add_to_line_item(variant, quantity, currency, shipment)
+      PromotionItemHandlers.new(line_item).activate
       adjust_line_item line_item
     end
 
