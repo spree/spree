@@ -19,7 +19,7 @@ module Spree
 
     private
       def adjust_line_item(line_item)
-        line_item = ItemAdjustments.new(line_item).update
+        ItemAdjustments.new(line_item).update
         OrderUpdater.new(order).update
 
         order.reload
