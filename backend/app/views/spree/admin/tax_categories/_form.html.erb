@@ -2,21 +2,21 @@
   <div class="alpha four columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.text_field :name, :class => 'fullwidth', :label => false %>
     <% end %>  
   </div>
   
   <div class="five columns">
     <%= f.field_container :description do %>
       <%= f.label :description, Spree.t(:description) %><br>
-      <%= f.text_field :description, :class => 'fullwidth' %>
+      <%= f.text_field :description, :class => 'fullwidth', :label => false %>
     <% end %>
   </div>
 
   <div class="three columns omega">
     <%= f.field_container :is_default, :class => ['checkbox'] do %>
       <label>
-        <%= f.check_box :is_default %>
+        <%= f.check_box :is_default, :label => false %>
         <%= Spree.t(:default) %>
       </label>
     <% end %>

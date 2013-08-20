@@ -2,7 +2,7 @@
   <div class="alpha six columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %><br />
-      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.text_field :name, :class => 'fullwidth', :label => false %>
       <%= error_message_on :shipping_method, :name %>
     <% end %>
   </div>
@@ -28,7 +28,7 @@
   <div class="alpha twelve columns">
     <%= f.field_container :tracking_url do %>
       <%= f.label :tracking_url, Spree.t(:tracking_url) %><br />
-      <%= f.text_field :tracking_url, :class => 'fullwidth', :placeholder => Spree.t(:tracking_url_placeholder) %>
+      <%= f.text_field :tracking_url, :class => 'fullwidth', :placeholder => Spree.t(:tracking_url_placeholder), :label => false %>
       <%= error_message_on :shipping_method, :tracking_url %>
     <% end %>
   </div>

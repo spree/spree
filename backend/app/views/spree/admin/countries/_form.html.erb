@@ -2,19 +2,19 @@
   <div class="alpha four columns">
     <div data-hook="name" class="field">
       <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.text_field :name, :class => 'fullwidth', :label => false %>
     </div>
   </div>
   <div class="four columns">
     <div data-hook="iso_name" class="field">
       <%= f.label :iso_name, Spree.t(:iso_name) %>
-      <%= f.text_field :iso_name, :class => 'fullwidth' %>
+      <%= f.text_field :iso_name, :class => 'fullwidth', :label => false %>
     </div>
   </div>
   <div class="omega four columns">
     <div data-hook="states_required" class="field checkbox">
       <label>
-        <%= f.check_box :states_required %>
+        <%= f.check_box :states_required, :label => false %>
         <%= Spree.t(:states_required) %>
       </label>
     </div>

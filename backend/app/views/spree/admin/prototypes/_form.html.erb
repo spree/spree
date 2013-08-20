@@ -2,7 +2,7 @@
   <div class="alpha four columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.text_field :name, :class => 'fullwidth', :label => false %>
       <%= f.error_message_on :name %>
     <% end %>
   </div>
@@ -11,7 +11,7 @@
     <div id='properties' data-hook>
       <%= f.field_container :property_ids do %>
         <%= f.label :property_ids, Spree.t(:properties) %><br>
-        <%= f.select :property_ids, Spree::Property.all.map { |p| [p.presentation, p.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+        <%= f.select :property_ids, Spree::Property.all.map { |p| [p.presentation, p.id] }, { :label => false}, { :multiple => true, :class => "select2 fullwidth" } %>
       <% end %>
     </div>
   </div>
@@ -19,7 +19,7 @@
   <div class="six columns omega">
     <%= f.field_container :option_type_ids do %>
       <%= f.label :option_type_ids, Spree.t(:option_types) %><br>
-      <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+      <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, { :label => false }, { :multiple => true, :class => "select2 fullwidth" } %>
     <% end %>
   </div>
 </div>

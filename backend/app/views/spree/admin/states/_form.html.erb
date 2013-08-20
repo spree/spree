@@ -2,13 +2,13 @@
   <div class="alpha six columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.text_field :name, :class => 'fullwidth', :label => false %>
     <% end %>
   </div>
   <div class="omega six columns">
     <%= f.field_container :abbr do %>
       <%= f.label :abbr, Spree.t(:abbreviation) %>
-      <%= f.text_field :abbr, :class => 'fullwidth' %>
+      <%= f.text_field :abbr, :class => 'fullwidth', :label => false %>
     <% end %>
   </div>
 </div>

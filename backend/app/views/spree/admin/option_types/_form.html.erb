@@ -2,7 +2,7 @@
   <div class="alpha eight columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
-      <%= f.text_field :name, :class => "fullwidth" %>
+      <%= f.text_field :name, :class => "fullwidth", :label => false %>
       <%= f.error_message_on :name %>
     <% end %>
   </div>
@@ -10,7 +10,7 @@
   <div class="omega eight columns">
     <%= f.field_container :presentation do %>
       <%= f.label :presentation, Spree.t(:presentation) %> <span class="required">*</span><br />
-      <%= f.text_field :presentation, :class => "fullwidth" %>
+      <%= f.text_field :presentation, :class => "fullwidth", :label => false %>
       <%= f.error_message_on :presentation %>
     <% end %>
   </div>

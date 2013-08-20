@@ -9,7 +9,7 @@
 
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
-      <%= f.text_field :name, :class => 'fullwidth title' %>
+      <%= f.text_field :name, :class => 'fullwidth title', :label => false %>
       <%= f.error_message_on :name %>
     <% end %>
 
@@ -18,7 +18,7 @@
         <div class="alpha four columns">
           <%= f.field_container :sku do %>
             <%= f.label :sku, Spree.t(:sku) %><br />
-            <%= f.text_field :sku, :size => 16, :class => 'fullwidth' %>
+            <%= f.text_field :sku, :size => 16, :class => 'fullwidth', :label => false %>
             <%= f.error_message_on :sku %>
           <% end %>
         </div>
@@ -34,7 +34,7 @@
       <div class="four columns">
         <%= f.field_container :price do %>
           <%= f.label :price, Spree.t(:master_price) %> <span class="required">*</span><br />
-          <%= f.text_field :price, :class => 'fullwidth' %>
+          <%= f.text_field :price, :class => 'fullwidth', :label => false %>
           <%= f.error_message_on :price %>
         <% end %>
       </div>
@@ -43,7 +43,7 @@
         <%= f.field_container :available_on do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
-          <%= f.text_field :available_on, :class => 'datepicker fullwidth' %>
+          <%= f.text_field :available_on, :class => 'datepicker fullwidth', :label => false %>
         <% end %>
       </div>
 

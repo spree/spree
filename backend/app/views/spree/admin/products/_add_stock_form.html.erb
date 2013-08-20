@@ -6,7 +6,7 @@
       <div class="alpha two columns">
         <%= f.field_container :quantity do %>
           <%= f.label :quantity, Spree.t(:quantity) %>
-          <%= f.number_field :quantity, class: 'fullwidth', value: 1 %>
+          <%= f.number_field :quantity, class: 'fullwidth', value: 1, label: false %>
         <% end %>
       </div>
       <div class="five columns">

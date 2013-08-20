@@ -3,7 +3,7 @@
     <div class="alpha twelve columns">
       <%= f.field_container :name do %>
         <%= f.label :name, Spree.t(:name) %>
-        <%= f.text_field :name, :class => 'fullwidth' %>
+        <%= f.text_field :name, :class => 'fullwidth', :label => false %>
       <% end %><br>
       <%= f.field_container :admin_name do %>
         <%= f.label :admin_name, Spree.t(:internal_name) %>
@@ -15,16 +15,16 @@
         <label for="active"><%= Spree.t(:state) %></label>
         <ul>
           <li>
-            <%= f.label :active, Spree.t(:active) + ':' %>
-            <%= f.check_box :active %>
-          </li>
+            <%= f.check_box :active, :label => false %>
+            <%= f.label :active, ': ' + Spree.t(:active) %>
+          </li><br />
           <li>
-            <%= f.label :active, Spree.t(:backorderable_default) + ':' %>
-            <%= f.check_box :backorderable_default %>
+            <%= f.check_box :backorderable_default, :label => false %>
+            <%= f.label :active, ': ' + Spree.t(:backorderable_default) %>
           </li>
-          <li>
-            <%= f.label :active, Spree.t(:propagate_all_variants) + ':' %>
-            <%= f.check_box :propagate_all_variants %>
+          <li><br />
+            <%= f.check_box :propagate_all_variants, :label => false %>
+            <%= f.label :active, ': ' + Spree.t(:propagate_all_variants) %>
           </li>
         </ul>
       <% end %>
@@ -35,27 +35,27 @@
     <div class="alpha four columns">
       <div class="field ">
         <%= f.label :address1, Spree.t(:street_address) + ':' %>
-        <%= f.text_field :address1, :class => 'fullwidth' %>
+        <%= f.text_field :address1, :class => 'fullwidth', :label => false %>
       </div>
     </div>
 
     <div class="four columns">
       <div class="field ">
         <%= f.label :address2, Spree.t(:street_address_2) + ':' %>
-        <%= f.text_field :address2, :class => 'fullwidth' %>
+        <%= f.text_field :address2, :class => 'fullwidth', :label => false %>
       </div>
     </div>
     <div class="four columns">
       <div class="field ">
         <%= f.label :city, Spree.t(:city) + ':' %>
-        <%= f.text_field :city, :class => 'fullwidth' %>
+        <%= f.text_field :city, :class => 'fullwidth', :label => false %>
       </div>
     </div>
 
     <div class="omega four columns">
       <div class="field ">
         <%= f.label :zipcode, Spree.t(:zip) + ':' %>
-        <%= f.text_field :zipcode, :class => 'fullwidth' %>
+        <%= f.text_field :zipcode, :class => 'fullwidth', :label => false %>
       </div>
     </div>
   </div>
@@ -73,7 +73,7 @@
         <% if f.object.country %>
           <%= f.label :state_id, Spree.t(:state) + ':' %>
           <span id="state" class="region">
-            <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
+            <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name', :label => false %>
             <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
           </span>
         <% end %>
@@ -83,7 +83,7 @@
     <div class="omega four columns">
       <div class="field ">
         <%= f.label :phone, Spree.t(:phone) + ':' %>
-        <%= f.phone_field :phone, :class => 'fullwidth' %>
+        <%= f.phone_field :phone, :class => 'fullwidth', :label => false %>
       </div>
     </div>
   </div>

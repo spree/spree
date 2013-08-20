@@ -4,16 +4,16 @@
 
     <%= zone_form.field_container :name do %>
       <%= zone_form.label :name, Spree.t(:name) %><br />
-      <%= zone_form.text_field :name, :class => 'fullwidth' %>
+      <%= zone_form.text_field :name, :class => 'fullwidth', :label => false %>
     <% end %>
 
     <%= zone_form.field_container :description do %>
       <%= zone_form.label :description, Spree.t(:description) %><br />
-      <%= zone_form.text_field :description, :class => 'fullwidth' %>
+      <%= zone_form.text_field :description, :class => 'fullwidth', :label => false %>
     <% end %>
 
     <div data-hook="default" class="field">
-      <%= zone_form.check_box :default_tax %>
+      <%= zone_form.check_box :default_tax, :label => false %>
       <%= label_tag Spree.t(:default_tax_zone) %>
     </div>
 
