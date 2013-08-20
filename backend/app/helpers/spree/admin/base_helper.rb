@@ -24,7 +24,7 @@ module Spree
 
       def datepicker_field_value(date)
         unless date.blank?
-          l(date, :format => Spree.t('date_picker.format'))
+          l(date, :format => Spree.t('date_picker.format', default: '%Y/%m/%d'))
         else
           nil
         end
