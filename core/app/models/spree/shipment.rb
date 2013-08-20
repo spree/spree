@@ -119,6 +119,10 @@ module Spree
       order ? order.currency : Spree::Config[:currency]
     end
 
+    def cost
+      adjustments.any? ? adjustments.to_a.sum(&:amount) : 0
+    end
+
     def display_cost
       Spree::Money.new(cost, { currency: currency })
     end
