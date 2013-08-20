@@ -244,6 +244,7 @@ module Spree
 
       def after_ship
         inventory_units.each &:ship!
+        adjustments.map(&:finalize!)
         send_shipped_email
         touch :shipped_at
       end
@@ -252,13 +253,13 @@ module Spree
         ShipmentMailer.shipped_email(self.id).deliver
       end
 
+      # TODO remove this callback, sometimes we just want to save the shipment
+      # and not do anything related to adjustments
       def update_adjustments
         adjustment_total = adjustments.map(&:update!).compact.sum
         # choose_best_promotion_adjustment
         self.update_column(:adjustment_total, adjustment_total)
-        OrderUpdater.new(order).update_totals
-        order.save
+        order.update!
       end
-
   end
 end
