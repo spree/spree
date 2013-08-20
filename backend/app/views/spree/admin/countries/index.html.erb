@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:listing_countries) %>
@@ -24,7 +24,7 @@
       <tr id="<%= spree_dom_id country %>" data-hook="country_row" class="<%= cycle('odd', 'even')%>">
         <td><%= country.name %></td>
         <td><%= country.iso_name %></td>
-        <td class="align-center"><%= country.states_required.to_s.titleize %></td>
+        <td class="align-center"><%= country.states_required? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
         <td class="actions">
           <%= link_to_edit country, :no_text => true %>
         </td>
