@@ -81,6 +81,10 @@ module Spree
       end.flatten.uniq
     end
 
+    def product_ids
+      products.map(&:id)
+    end
+
     def usage_limit_exceeded?(order = nil)
       usage_limit.present? && usage_limit > 0 && adjusted_credits_count(order) >= usage_limit
     end
