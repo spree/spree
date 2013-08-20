@@ -10,15 +10,17 @@ module Spree
 
     subject { PromotionItemHandlers.new(line_item) }
 
-    context "activates in LineItem level" do
-      let!(:action) { Promotion::Actions::CreateItemAdjustment.create(promotion: promotion, calculator: calculator) }
-
-      context "line item promotion with no rules" do
+    shared_context "activates properly" do
+      shared_context "creates the adjustment" do
         it "creates the adjustment" do
           expect {
             subject.activate
-          }.to change { line_item.adjustments.count }.by(1)
+          }.to change { adjustable.adjustments.count }.by(1)
         end
+      end
+
+      context "promotion with no rules" do
+        include_context "creates the adjustment"
       end
 
       context "promotion doesn't include item involved" do
@@ -35,23 +37,29 @@ module Spree
       context "promotion includes item involved" do
         let!(:rule) { Promotion::Rules::Product.create(products: [line_item.product], promotion: promotion) }
 
-        it "creates the adjustment" do
-          expect {
-            subject.activate
-          }.to change { line_item.adjustments.count }.by(1)
-        end
+        include_context "creates the adjustment"
       end
 
       context "promotion has item total rule" do
         let(:shirt) { create(:product) }
         let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator: 'gt', preferred_amount: 50, promotion: promotion) }
 
-        it "creates the adjustment" do
-          expect {
-            subject.activate
-          }.to change { line_item.adjustments.count }.by(1)
-        end
+        include_context "creates the adjustment"
       end
+    end
+
+    context "activates in LineItem level" do
+      let!(:action) { Promotion::Actions::CreateItemAdjustment.create(promotion: promotion, calculator: calculator) }
+      let(:adjustable) { line_item }
+
+      include_context "activates properly"
+    end
+
+    context "activates in Order level" do
+      let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+      let(:adjustable) { order }
+
+      include_context "activates properly"
     end
   end
 end

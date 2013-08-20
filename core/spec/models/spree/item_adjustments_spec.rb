@@ -55,7 +55,6 @@ module Spree
 
         line_item.adjustments.promotion.eligible.count.should == 1
         line_item.adjustments.promotion.eligible.first.label.should == 'Promotion C'
-        assert line_item.promotion_credit_exists?(source)
       end
 
       context "multiple adjustments and the best one is not eligible" do
