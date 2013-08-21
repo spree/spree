@@ -1,18 +1,18 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
-  <%= Spree.t('stock_transfers') %>
+  <%= Spree.t(:stock_transfers) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t('new_stock_transfer'), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
+    <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'icon-forward' } %>
   </li>
 <% end %>
 
 <div data-hook="admin_orders_index_search">
   <fieldset>
-    <legend align="center"><%= Spree.t('search') %></legend>
+    <legend align="center"><%= Spree.t(:search) %></legend>
     <%= search_form_for @q, :url => admin_stock_transfers_path do |f| %>
 
       <div class="field-block alpha four columns">
@@ -24,7 +24,7 @@
 
       <div class="four columns">
         <div class="field">
-          <%= f.label :source_location, Spree.t('source') %>
+          <%= f.label :source_location, Spree.t(:source) %>
           <%= f.select :source_location_id_eq,
                options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
                { include_blank: true }, class: 'select2 fullwidth' %>
@@ -33,7 +33,7 @@
 
       <div class="omega four columns">
         <div class="field">
-          <%= f.label :destination_location, Spree.t('destination') %>
+          <%= f.label :destination_location, Spree.t(:destination) %>
           <%= f.select :destination_location_id_eq,
                options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
                { include_blank: true }, class: 'select2 fullwidth' %>
@@ -44,14 +44,14 @@
 
       <div class="actions filter-actions">
         <div data-hook="admin_stock_transfers_index_search_buttons">
-          <%= button Spree.t('filter_results'), 'icon-search' %>
+          <%= button Spree.t(:filter_results), 'icon-search' %>
         </div>
       </div>
     <% end %>
   </fieldset>
 </div>
 
-<% if !@stock_transfers.empty? %>
+<% if @stock_transfers.any? %>
   <table class='index' id='listing_stock_transfers' data-hook>
     <colgroup>
       <col style='width: 25%' />
@@ -62,20 +62,20 @@
     </colgroup>
     <thead>
       <tr data-hook='stock_transfers_header'>
-        <th><%= Spree.t('created_at') %></th>
-        <th><%= Spree.t('reference') %></th>
-        <th><%= Spree.t('source') %></th>
-        <th><%= Spree.t('destination') %></th>
+        <th><%= Spree.t(:created_at) %></th>
+        <th><%= Spree.t(:reference) %></th>
+        <th><%= Spree.t(:source) %></th>
+        <th><%= Spree.t(:destination) %></th>
         <th class='actions'></th>
       </tr>
     </thead>
     <tbody>
       <% @stock_transfers.each do |stock_transfer| %>
         <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row" class="<%= cycle('odd', 'even')%>">
-          <td><%= stock_transfer.created_at %></td>
-          <td class='align-center'><%= stock_transfer.reference %></td>
-          <td><%= stock_transfer.source_location.try(:name) %></td>
-          <td><%= stock_transfer.destination_location.try(:name) %></td>
+          <td class="align-center"><%= stock_transfer.created_at %></td>
+          <td class="align-center"><%= stock_transfer.reference %></td>
+          <td class="align-center"><%= stock_transfer.source_location.try(:name) %></td>
+          <td class="align-center"><%= stock_transfer.destination_location.try(:name) %></td>
           <td class='actions'>
             <%= link_to '', admin_stock_transfer_path(stock_transfer),
             title: 'view', class: 'view icon_link with-tip icon-eye-open no-text',
@@ -86,8 +86,9 @@
     </tbody>
   </table>
 <% else %>
-  <div class="no-objects-found">
-    <%= Spree.t('empty') %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/stock_transfer')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_stock_transfer_path %>!
   </div>
 <% end %>
 
