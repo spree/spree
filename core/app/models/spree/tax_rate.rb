@@ -15,6 +15,8 @@ module Spree
     belongs_to :zone, class_name: "Spree::Zone"
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
+    has_many :adjustments, as: :source, dependent: :destroy
+
     validates :amount, presence: true, numericality: true
     validates :tax_category_id, presence: true
     validates_with DefaultTaxZoneValidator
@@ -68,26 +70,30 @@ module Spree
     end
 
     private
-
-    def adjust_order_items(order, items, type='normal')
-      items.each do |item|
-        item.adjustments.tax.delete_all
-        amount = compute_amount(item)
-        if amount > 0
-          if type == 'refund'
-            amount = amount * -1
-            label = Spree.t(:refund) + ' ' + create_label
-          end
-          order.adjustments.create!({
-            :adjustable => item,
-            :amount => amount,
-            :source => self,
-            :state => "closed",
-            :label => label || create_label
-          })
+      def adjust_order_items(order, items, type='normal')
+        items.each do |item|
+          create_adjustment order, item, type
         end
       end
-    end
+
+      def create_adjustment(order, item, type)
+        item.adjustments.tax.delete_all
+        amount = compute_amount(item)
+        return unless amount > 0
+
+        if type == 'refund'
+          amount = amount * -1
+          label = Spree.t(:refund) + ' ' + create_label
+        end
+
+        self.adjustments.create!({
+          :adjustable => item,
+          :amount => amount,
+          :order => order,
+          :state => "closed",
+          :label => label || create_label
+        })
+      end
 
       def create_label
         label = ""
