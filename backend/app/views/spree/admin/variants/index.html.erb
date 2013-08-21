@@ -45,7 +45,10 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:no_results)%>.</div>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
+  </div>
 <% end %>
 
 <% if @product.empty_option_values? %>
@@ -59,16 +62,15 @@
   <% content_for :page_actions do %>
     <ul class="inline-menu" data-hook="toolbar">
       <li id="new_var_link" data-hook>
-        <%= link_to_with_icon('icon-plus', 
-                              Spree.t(:new_variant), 
-                              new_admin_product_variant_url(@product), 
-                              :remote => :true, 
-                              :'data-update' => 'new_variant', 
+        <%= link_to_with_icon('icon-plus',
+                              Spree.t(:new_variant),
+                              new_admin_product_variant_url(@product),
+                              :remote => :true,
+                              :'data-update' => 'new_variant',
                               :class => 'button'
                              ) %>
       </li>
       <li><%= link_to_with_icon('icon-filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
     </ul>
   <% end %>
-
 <% end %>
