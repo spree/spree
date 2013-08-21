@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:shipping_categories) %>
@@ -10,6 +10,7 @@
   </li>
 <% end %>
 
+<% if @shipping_categories.any? %>
 <table class="index">
   <colgroup>
     <col style="width: 85%">
@@ -24,7 +25,7 @@
   <tbody>
     <% @shipping_categories.each do |shipping_category|%>
     <tr id="<%= spree_dom_id shipping_category %>" data-hook="category_row" class="<%= cycle('odd', 'even')%>">
-      <td style="width:350px;"><%= shipping_category.name %></td>
+      <td class="align-center" style="width:350px;"><%= shipping_category.name %></td>
       <td class="actions">
         <%= link_to_edit shipping_category, :no_text => true %>
         <%= link_to_delete shipping_category, :no_text => true %>
@@ -33,3 +34,9 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/shipping_category')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_shipping_category_path %>!
+  </div>
+<% end %>

@@ -152,6 +152,9 @@ en:
       spree/product:
         one: Product
         other: Products
+      spree/promotion:
+        one: Promotion
+        other: Promotions
       spree/property:
         one: Property
         other: Properties
@@ -173,6 +176,9 @@ en:
       spree/state:
         one: State
         other: States
+      spree/stock_location:
+        one: Stock Location
+        other: Stock Locations
       spree/tax_category:
         one: Tax Category
         other: Tax Categories
@@ -678,6 +684,7 @@ en:
     no_promotions_found: No promotions found
     no_results: No results
     no_rules_added: No rules added
+    no_resource_found: ! 'No %{resource} found'
     no_shipping_methods_found: No shipping methods found
     no_trackers_found: No Trackers Found
     no_stock_locations_found: No stock locations found

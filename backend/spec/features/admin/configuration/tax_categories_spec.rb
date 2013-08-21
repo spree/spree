@@ -16,7 +16,7 @@ describe "Tax Categories" do
       within_row(1) do
         column_text(1).should == "Clothing"
         column_text(2).should == "For Clothing"
-        column_text(3).should == "False"
+        column_text(3).should == "No"
       end
     end
   end
