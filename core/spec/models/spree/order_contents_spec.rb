@@ -42,6 +42,11 @@ describe Spree::OrderContents do
       let(:promotion) { create(:promotion) }
       let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
 
+      shared_context "discount changes order total" do
+        before { subject.add(variant, 1) }
+        it { expect(subject.order.total).not_to eq variant.price }
+      end
+
       context "one active order promotion" do
         let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
@@ -49,6 +54,8 @@ describe Spree::OrderContents do
           subject.add(variant, 1)
           expect(subject.order.adjustments.to_a.sum(&:amount)).not_to eq 0
         end
+
+        include_context "discount changes order total"
       end
 
       context "one active line item promotion" do
@@ -58,6 +65,8 @@ describe Spree::OrderContents do
           subject.add(variant, 1)
           expect(subject.order.line_item_adjustments.to_a.sum(&:amount)).not_to eq 0
         end
+
+        include_context "discount changes order total"
       end
     end
   end

@@ -33,7 +33,6 @@ module Spree
     end
 
     # Whenever a series of adjustments are updated, this method should be called.
-    # This is done currently in the LineItem and Shipment models when instances are saved.
     def update_adjustments
       order.update_column(:adjustment_total, adjustments.eligible.sum(:amount))
     end
@@ -48,8 +47,12 @@ module Spree
       order.payment_total = payments.completed.map(&:amount).sum
       update_item_total
       order.shipment_total = shipments.map(&:cost).sum
-      order.adjustment_total = line_items.map(&:adjustment_total).sum
+      update_adjustment_total
       order.total = order.item_total + order.shipment_total + order.adjustment_total
+    end
+
+    def update_adjustment_total
+      order.adjustment_total = adjustments.eligible.map(&:amount).sum + line_items.map(&:adjustment_total).sum
     end
 
     def update_item_total
