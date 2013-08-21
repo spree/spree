@@ -43,6 +43,7 @@ module Spree
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :inventory_units
 
+    has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :shipments, dependent: :destroy do
       def states
         pluck(:state).uniq
