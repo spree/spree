@@ -13,6 +13,7 @@
   </li>
 <% end %>
 
+<% if @stock_movements.any? %>
 <table class="index" id='listing_stock_movements'>
   <colgroup>
     <col style="width: 35%">
@@ -36,5 +37,11 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/stock_movement')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_stock_movement_path %>!
+  </div>
+<% end %>
 
 <%= paginate @stock_movements %>

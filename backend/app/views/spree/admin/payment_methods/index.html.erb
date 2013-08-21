@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:payment_methods) %>
@@ -28,13 +28,13 @@
         <th><%= Spree.t(:display) %></th>
         <th><%= Spree.t(:active) %></th>
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
-      </tr>  
+      </tr>
     </thead>
     <tbody>
       <% @payment_methods.each do |method|%>
         <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows" class="<%= cycle('odd', 'even')%>">
           <td class="align-center"><%= method.name %></td>
-          <td><%= method.type %></td>
+          <td class="align-center"><%= method.type %></td>
           <td class="align-center"><%= method.environment.to_s.titleize %></td>
           <td class="align-center"><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
           <td class="align-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
@@ -47,6 +47,9 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:no_payment_methods_found) %></div>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/payment_method')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_payment_method_path %>!
+  </div>
 <% end %>
 

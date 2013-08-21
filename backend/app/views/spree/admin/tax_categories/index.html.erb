@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:listing_tax_categories) %>
@@ -12,6 +12,7 @@
   </ul>
 <% end %>
 
+<% if @tax_categories.any? %>
 <table class="index" id='listing_tax_categories' data-hook>
   <colgroup>
     <col style="width: 30%" />
@@ -33,16 +34,19 @@
          @delete_url = admin_tax_category_path(tax_category)
     %>
       <tr id="<%= spree_dom_id tax_category %>" data-hook="tax_row" class="<%= cycle('odd', 'even')%>">
-        <td><%= tax_category.name %></td>
-        <td><%= tax_category.description %></td>
-        <td class="align-center"><%= tax_category.is_default.to_s.titleize %></td>
+        <td class="align-center"><%= tax_category.name %></td>
+        <td class="align-center"><%= tax_category.description %></td>
+        <td class="align-center"><%= tax_category.is_default? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
         <td class="actions">
           <%= link_to_edit tax_category, :no_text => true %>
           <%= link_to_delete tax_category, :no_text => true %>
       </tr>
     <% end %>
-    <% if @tax_categories.empty? %>
-      <tr data-hook="tax_none"><td colspan="4"><%= Spree.t(:none) %></td></tr>
-    <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/tax_category')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_tax_category_path %>!
+  </div>
+<% end %>
