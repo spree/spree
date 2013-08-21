@@ -366,12 +366,18 @@ describe Spree::Order do
   end
 
   context "empty!" do
-    it "should clear out all line items and adjustments" do
-      order = stub_model(Spree::Order)
+    let(:order) { stub_model(Spree::Order) }
+    
+    before do
       order.stub(:line_items => line_items = [])
       order.stub(:adjustments => adjustments = [])
-      order.line_items.should_receive(:destroy_all)
-      order.adjustments.should_receive(:destroy_all)
+    end
+
+    it "clears out line items, adjustments and update totals" do
+      expect(order.line_items).to receive(:destroy_all)
+      expect(order.adjustments).to receive(:destroy_all)
+      expect(order.updater).to receive(:update_totals)
+      expect(order.updater).to receive(:persist_totals)
 
       order.empty!
     end
