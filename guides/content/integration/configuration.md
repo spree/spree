@@ -15,7 +15,8 @@ This guide assumes you already have [bundler](http://bundler.io/) installed and 
 Add the `spree_pro_connector` gem to your store's `Gemfile`:
 
 ```ruby
-gem 'spree_pro_connector', :git => 'https://github.com/spree/spree_pro_connector.git', :branch => '2-0-stable'```
+gem 'spree_pro_connector', :git => 'https://github.com/spree/spree_pro_connector.git', 
+  :branch => '2-0-stable'```
 
 ***
 Be sure to point to the branch that matches your store's version of Spree.
