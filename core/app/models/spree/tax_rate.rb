@@ -34,7 +34,7 @@ module Spree
 
     def self.adjust(order, items)
       self.match(order).each do |rate|
-        rate.adjust(order, items)
+        items.each { |item| rate.adjust(order, item) }
       end
     end
 
@@ -52,15 +52,15 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order, items)
+    def adjust(order, item)
       if included_in_price
         if Zone.default_tax.contains? order.tax_zone
-          adjust_order_items(order, items)
+          create_adjustment order, item
         else
-          adjust_order_items(order, items, 'refund')
+          create_adjustment order, item, 'refund'
         end
       else
-        adjust_order_items(order, items)
+        create_adjustment order, item
       end
     end
 
@@ -70,13 +70,7 @@ module Spree
     end
 
     private
-      def adjust_order_items(order, items, type='normal')
-        items.each do |item|
-          create_adjustment order, item, type
-        end
-      end
-
-      def create_adjustment(order, item, type)
+      def create_adjustment(order, item, type = 'normal')
         item.adjustments.tax.delete_all
         amount = compute_amount(item)
         return unless amount > 0
