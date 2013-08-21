@@ -4,7 +4,9 @@ title: Configuration
 
 ## Overview
 
-The `spree_pro_connector` is at the heart of the Spree Integrator service. It is what handles communication between your Spree store and the Spree Integrator itself. This guide will instruct you on the installation and configuration of this tool.
+The Spree Integrator Configuration tool is designed to make managing your Spree integrations quick and painless. It is what handles communication between your Spree store and the Spree Integrator itself.
+
+Installing the tool is a simple matter of adding one line to your product's `Gemfile`, and running two commands. Once that is done, you can manage your own third-party service integrations on the fly.
 
 ## Prerequisites
 
@@ -18,9 +20,7 @@ Add the `spree_pro_connector` gem to your store's `Gemfile`:
 gem 'spree_pro_connector', :git => 'https://github.com/spree/spree_pro_connector.git', 
   :branch => '2-0-stable'```
 
-***
-Be sure to point to the branch that matches your store's version of Spree.
-***
+The preceding line assumes you are using the [2-0-stable branch of Spree](https://github.com/spree/spree/tree/2-0-stable). If you are using a different branch of Spree, you should then change the `:branch` value to match.
 
 Next, run these commands:
 
@@ -28,13 +28,25 @@ Next, run these commands:
 $ bundle install
 $ bundle exec rails generate spree_pro_connector:install```
 
-Now when you go to the `/admin` section of your store, you will see a new "Integration" tab between the "Products" and "Configuration" tabs. This is where you will configure your store's integrations.
+The first command installs the `spree_pro_connector` gem in your application. The second uses the gem's install generator to add Integrator-specific styles to your store's Admin Interface.
+
+## Verifying Install Was Successful
+
+Now when you launch your store and visit your Admin Interface by navigating to the `admin` directory, you'll notice that there is a new "Integration" tab, between the "Products" and "Configuration" tabs.
 
 ![Integration Tab](/images/integration/integration_tab.jpg)
 
-## Configuration
+It is here that you will establish connections to the Integrator, add and remove integrations, configure integrations, and enable and disable services.
 
-When you click the "Integrations" tab, you will be faced with a choice of environment types - Custom, Staging, or Production - for your new connection.
+## Making a Connection
+
+Now that you have `spree_pro_connector` installed in your application, you need to connect it to the Spree Integrator.
+
+***
+If you have multiple stores that you maintain from the same domain, you will first need to select the store you want to make connections for before you can manage your integrations.
+***
+
+Click the "Integration" tab. The first thing you'll need to do is to select the environment for your connection. Your choices are "Custom", "Staging", and "Production".
 
 ![Choose Environment](/images/integration/choose_environment.jpg)
 
@@ -46,11 +58,9 @@ Values for "Email", "Store Name", and "Store API URL" will already be filled in,
 
 ![Integration Overview](/images/integration/integration_overview.jpg)
 
-If need be, you can select a different connection from the "Change Connection" drop-down list.
+## Configuration
 
-When you expand the "Add New Integration" drop-down menu, you'll see a list of all of the globally-available integrations. You can also [create a custom integration](custom_integrations) to suit your business' particular needs.
-
-You should review the particular configuration details for any of the [supported integrations](supported_integrations) you want to use, but we'll use [Mandrill](mandrill_integration) as an example to understand how the Configuration tool is used generally.
+When you expand the "Add New Integration" drop-down menu, you'll see a list of all of the globally-available integrations. You should review the particular configuration details for any of the [supported integrations](supported_integrations) you want to use, but we'll use [Mandrill](mandrill_integration) as an example to understand how the Configuration tool is used generally.
 
 ![Mandrill Configuration](/images/integration/mandrill_config.jpg)
 
