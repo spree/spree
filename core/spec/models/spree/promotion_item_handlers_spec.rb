@@ -8,7 +8,7 @@ module Spree
     let(:promotion) { Promotion.create(name: "At line items") }
     let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
-    subject { PromotionItemHandlers.new(line_item) }
+    subject { PromotionItemHandlers.new(order, line_item) }
 
     shared_context "activates properly" do
       shared_context "creates the adjustment" do

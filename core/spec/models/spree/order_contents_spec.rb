@@ -37,6 +37,29 @@ describe Spree::OrderContents do
       order.item_total.to_f.should == 19.99
       order.total.to_f.should == 19.99
     end
+
+    context "running promotions" do
+      let(:promotion) { create(:promotion) }
+      let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
+
+      context "one active order promotion" do
+        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+
+        it "creates valid discount on order" do
+          subject.add(variant, 1)
+          expect(subject.order.adjustments.to_a.sum(&:amount)).not_to eq 0
+        end
+      end
+
+      context "one active line item promotion" do
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustment.create(promotion: promotion, calculator: calculator) }
+
+        it "creates valid discount on order" do
+          subject.add(variant, 1)
+          expect(subject.order.line_item_adjustments.to_a.sum(&:amount)).not_to eq 0
+        end
+      end
+    end
   end
 
   context "#remove" do
@@ -86,7 +109,5 @@ describe Spree::OrderContents do
       order.item_total.to_f.should == 19.99
       order.total.to_f.should == 19.99
     end
-
   end
-
 end
