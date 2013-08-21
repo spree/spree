@@ -835,6 +835,9 @@ en:
       create_adjustment:
         description: Creates a promotion credit adjustment on the order
         name: Create adjustment
+      create_item_adjustment:
+        description: Creates a promotion credit adjustment on a line item
+        name: Create order item adjustment
       create_line_items:
         description: Populates the cart with the specified quantity of variant
         name: Create line items
