@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:analytics_trackers) %>
@@ -10,12 +10,7 @@
   </li>
 <% end %>
 
-<% unless @trackers.any? %>
-  <div class="no-objects-found">
-    <%= Spree.t(:no_trackers_found)%>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
-  </div>
-<% else %>
+<% if @trackers.any? %>
   <table class="index">
     <colgroup>
       <col style="width: 30%">
@@ -34,8 +29,8 @@
     <tbody>
       <% @trackers.each do |tracker|%>
         <tr id="<%= spree_dom_id tracker %>" data-hook="admin_trackers_index_rows" class="<%= cycle('odd', 'even')%>">
-          <td><%= tracker.analytics_id %></td>
-          <td><%= tracker.environment.to_s.titleize %></td>
+          <td class="align-center"><%= tracker.analytics_id %></td>
+          <td class="align-center"><%= tracker.environment.to_s.titleize %></td>
           <td class="align-center"><%= tracker.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td class="actions">
             <%= link_to_edit tracker, :no_text => true %>
@@ -45,4 +40,9 @@
       <% end %>
     </tbody>
   </table>
-<% end%>
+<% else %>
+  <div class="no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/tracker')) %>,
+    <%= link_to Spree.t(:add_one), new_object_url %>!
+  </div>
+<% end %>

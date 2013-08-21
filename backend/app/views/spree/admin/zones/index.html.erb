@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:zones) %>
@@ -12,11 +12,7 @@
 
 <%= paginate @zones %>
 
-<% if @zones.empty? %>
-  <div class="no-objects-found">
-    <%= Spree.t(:none) %>
-  </div>
-<% else %>
+<% if @zones.any? %>
   <table class="index" id='listing_zones' data-hook>
     <colgroup>
       <col style="width: 30%" />
@@ -37,9 +33,9 @@
     <tbody>
       <% @zones.each do |zone| %>
         <tr id="<%= spree_dom_id zone %>" data-hook="zones_row" class="<%= cycle('odd', 'even')%>">
-          <td><%=zone.name %></td>
-          <td><%=zone.description %></td>
-          <td class="align-center"><%=zone.default_tax %></td>
+          <td class="align-center"><%= zone.name %></td>
+          <td><%= zone.description %></td>
+          <td class="align-center"><%= zone.default_tax? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td class="actions">
             <%=link_to_edit zone, :no_text => true %>
             <%=link_to_delete zone, :no_text => true %>
@@ -48,6 +44,11 @@
       <% end %>
     </tbody>
   </table>
-<% end%>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/zone')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_zone_path %>!
+  </div>
+<% end %>
 
 <%= paginate @zones %>
