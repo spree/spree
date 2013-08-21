@@ -5,18 +5,32 @@ module Spree
     let(:order) { stub_model(Spree::Order, :backordered? => false) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
-    it "updates totals" do
-      payments = [double(:amount => 5), double(:amount => 5)]
-      order.stub_chain(:payments, :completed).and_return(payments)
+    context "order totals" do
+      let(:line_items) { 2.times.map { double(amount: 10, adjustment_total: -2) } }
 
-      line_items = [double(:amount => 10, :adjustment_total => 1), double(:amount => 20, :adjustment_total => 2)]
-      order.stub :line_items => line_items
+      it "updates payment totals" do
+        payments = [double(:amount => 5), double(:amount => 5)]
+        order.stub_chain(:payments, :completed).and_return(payments)
 
-      updater.update_totals
-      order.payment_total.should == 10
-      order.item_total.should == 30
-      order.adjustment_total.should == 3
-      order.total.should == 33
+        updater.update_totals
+        order.payment_total.should == 10
+      end
+
+      it "update item total" do
+        order.stub :line_items => line_items
+
+        updater.update_totals
+        order.item_total.should == 20
+      end
+
+      it "update order adjustments" do
+        adjustments = 2.times.map { double(:amount => -5) }
+        order.stub_chain(:adjustments, :eligible).and_return(adjustments)
+        order.stub :line_items => line_items
+
+        updater.update_totals
+        order.adjustment_total.should == -14
+      end
     end
 
     context "updating shipment state" do
