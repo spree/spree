@@ -46,10 +46,14 @@ module Spree
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
       order.payment_total = payments.completed.map(&:amount).sum
-      order.item_total = line_items.map(&:amount).sum
+      update_item_total
       order.shipment_total = shipments.map(&:cost).sum
       order.adjustment_total = line_items.map(&:adjustment_total).sum
       order.total = order.item_total + order.shipment_total + order.adjustment_total
+    end
+
+    def update_item_total
+      order.item_total = line_items.map(&:amount).sum
     end
 
     def persist_totals

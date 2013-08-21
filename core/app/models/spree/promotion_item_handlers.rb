@@ -14,8 +14,8 @@ module Spree
   class PromotionItemHandlers
     attr_reader :line_item, :order
 
-    def initialize(line_item)
-      @line_item, @order = line_item, line_item.order
+    def initialize(order, line_item)
+      @order, @line_item = order, line_item
     end
 
     def activate
