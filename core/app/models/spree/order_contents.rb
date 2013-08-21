@@ -8,14 +8,14 @@ module Spree
 
     # Get current line item for variant if exists
     # Add variant qty to line_item
-    def add(variant, quantity, currency=nil, shipment=nil)
+    def add(variant, quantity = 1, currency = nil, shipment = nil)
       line_item = order.find_line_item_by_variant(variant)
       add_to_line_item(line_item, variant, quantity, currency, shipment)
     end
 
     # Get current line item for variant
     # Remove variant qty from line_item
-    def remove(variant, quantity, shipment=nil)
+    def remove(variant, quantity = 1, shipment = nil)
       line_item = order.find_line_item_by_variant(variant)
 
       unless line_item
@@ -32,21 +32,18 @@ module Spree
         line_item.target_shipment = shipment
         line_item.quantity += quantity.to_i
         line_item.currency = currency unless currency.nil?
-        line_item.save
       else
-        line_item = LineItem.new(quantity: quantity)
+        line_item = order.line_items.new(quantity: quantity, variant: variant)
         line_item.target_shipment = shipment
-        line_item.variant = variant
         if currency
           line_item.currency = currency unless currency.nil?
           line_item.price    = variant.price_in(currency).amount
         else
           line_item.price    = variant.price
         end
-        order.line_items << line_item
-        line_item
       end
 
+      line_item.save
       order.reload
       line_item
     end
