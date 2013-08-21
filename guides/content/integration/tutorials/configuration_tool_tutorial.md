@@ -37,6 +37,8 @@ It is here that you will establish connections to the Integrator, add and remove
 
 ## Configuring Integrations
 
+There are a number of default global integrations that you can choose from as a customer of the Spree Integrator service. You can browse the [full list of global integrations](supported_integrations), including configuration and usage details for each one. For now, we will use the [Mandrill Integration](mandrill_integration) to illustrate the general usage of the Configuration tool.
+
 ### Adding an Integration
 
 ### Removing an Integration
