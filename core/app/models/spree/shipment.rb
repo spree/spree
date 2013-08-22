@@ -216,6 +216,10 @@ module Spree
       self.inventory_units.create(variant_id: variant.id, state: state, order_id: order.id)
     end
 
+    def create_adjustment
+      self.shipping_method.create_adjustment(self)
+    end
+
     private
 
       def manifest_unstock(item)

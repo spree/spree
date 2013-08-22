@@ -5,6 +5,7 @@ module Spree
 
     default_scope -> { where(deleted_at: nil) }
 
+    has_many :adjustments, as: :source
     has_many :shipments
     has_many :shipping_method_categories
     has_many :shipping_categories, through: :shipping_method_categories
@@ -52,7 +53,22 @@ module Spree
       self.display_on != "back_end"
     end
 
+    def create_adjustment(shipment)
+      amount = compute_amount(shipment)
+      self.adjustments.create(
+        :amount => amount,
+        :adjustable => shipment,
+        :label => adjustment_label,
+        :mandatory => true,
+        :state => "open"
+      )
+    end
+
     private
+      def compute_amount(calculable)
+        self.calculator.compute(calculable)
+      end
+
       def at_least_one_shipping_category
         if self.shipping_categories.empty?
           self.errors[:base] << "You need to select at least one shipping category"

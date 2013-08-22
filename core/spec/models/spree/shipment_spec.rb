@@ -311,6 +311,17 @@ describe Spree::Shipment do
     end
   end
 
+  context "create adjustments" do
+    let(:shipping_method) { mock_model Spree::ShippingMethod }
+    let(:shipment) { create(:shipment) }
+
+    it "delegates to shipping_method" do
+      shipment.stub shipping_method: shipping_method
+      expect(shipping_method).to receive(:create_adjustment).with(shipment)
+      shipment.create_adjustment
+    end
+  end
+
   context "after_save" do
     it "updates a linked adjustment" do
       # Need a persisted order for this

@@ -4,9 +4,9 @@ class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
 describe Spree::ShippingMethod do
-  context 'calculators' do
-    let(:shipping_method){ create(:shipping_method) }
+  let(:shipping_method){ create(:shipping_method) }
 
+  context 'calculators' do
     it "Should reject calculators that don't inherit from Spree::ShippingCalculator" do
       Spree::ShippingMethod.stub_chain(:spree_calculators, :shipping_methods).and_return([
         Spree::Calculator::Shipping::FlatPercentItemTotal,
@@ -39,9 +39,17 @@ describe Spree::ShippingMethod do
     end
   end
 
-  context 'factory' do
-    let(:shipping_method){ create :shipping_method }
+  context "create adjustment" do
+    let(:shipment) { create(:shipment) }
 
+    it "sets self as adjustment source and shipment as adjustable" do
+      adjustment = shipping_method.create_adjustment shipment
+      expect(adjustment.source).to eq shipping_method
+      expect(adjustment.adjustable).to eq shipment
+    end
+  end
+
+  context 'factory' do
     it "should set calculable correctly" do
       shipping_method.calculator.calculable.should == shipping_method
     end
