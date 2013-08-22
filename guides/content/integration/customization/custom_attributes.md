@@ -23,7 +23,8 @@ Spree::Api::ApiHelpers.class_eval do
   end
 
   alias_method_chain :variant_attributes, :upc
-end```
+end
+```
 
 You name this file `api_helpers_decorator.rb` and store it in your application's `/app/helpers/spree/api` directory.
 
@@ -45,7 +46,8 @@ Then, when your store's orders are output, you'll see the custom `upc` field in 
       } ]
     }
   }
-}```
+}
+```
 
 ## Messages From the Integrator
 
@@ -77,4 +79,5 @@ Messages that come from the Integrator will not have the custom fields encoded l
       } ]
     }
   }
-}```
+}
+```
