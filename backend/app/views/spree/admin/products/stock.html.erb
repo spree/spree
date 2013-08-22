@@ -63,16 +63,11 @@
                               id: "stock_item_backorderable_#{item.stock_location.id}" %>
                       <% end %>
                     </td>
-<<<<<<< HEAD
-                    <td class="align-center">
-                      <%= link_to "", [:admin, item], method: :delete, remote: true, data: { confirm: Spree.t(:are_you_sure) }, class: "icon_link with-tip icon-trash" %>
-=======
                     <td class="actions">
                       <%= link_to(icon('delete'), [:admin, item],
-                            method: :delete, remote: true, confirm: Spree.t(:are_you_sure),
+                            method: :delete, remote: true,
                             class: 'icon_link with-tip icon-trash no-text',
-                            title: Spree.t(:remove), data: { action: :remove }) %>
->>>>>>> cd248d6... Fixes outdate jQuery live.
+                            title: Spree.t(:remove), data: { action: :remove, confirm: Spree.t(:are_you_sure) }) %>
                     </td>
                   </tr>
                 <% end %>
