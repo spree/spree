@@ -504,6 +504,18 @@ module Spree
       shipments
     end
 
+    # Clean shipments and make order back to address state
+    #
+    # At some point the might need to force the order to transition from address
+    # to delivery again so that proper updated shipments are created.
+    # e.g. customer goes back from payment step and changes order items 
+    def ensure_updated_shipments
+      if shipments.any?
+        self.shipments.destroy_all
+        self.update_column(:state, "address")
+      end
+    end
+
     private
 
       def link_by_email

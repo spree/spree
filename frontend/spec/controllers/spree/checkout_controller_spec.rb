@@ -256,12 +256,10 @@ describe Spree::CheckoutController do
       configure_spree_preferences do |config|
         config.track_inventory_levels = true
       end
-
     end
 
     context "and back orders are not allowed" do
       before do
-        controller.should_receive(:before_payment)
         spree_post :update, { :state => "payment" }
       end
 
@@ -288,6 +286,8 @@ describe Spree::CheckoutController do
   end
 
   it "does remove unshippable items before payment" do
+    controller.stub :check_authorization => true
+
     expect {
       spree_post :update, { :state => "payment" }
     }.to change { order.line_items }
