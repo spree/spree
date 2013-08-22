@@ -7,6 +7,14 @@ describe Spree::OrderContents do
   context "#add" do
     let(:variant) { create(:variant) }
 
+    context 'given quantity is not explicitly provided' do
+      it 'should add one line item' do
+        line_item = subject.add(variant)
+        line_item.quantity.should == 1
+        order.line_items.size.should == 1
+      end
+    end
+
     it 'should add line item if one does not exist' do
       line_item = subject.add(variant, 1)
       line_item.quantity.should == 1
@@ -39,6 +47,15 @@ describe Spree::OrderContents do
         expect {
           subject.remove(variant, 1)
         }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'given quantity is not explicitly provided' do
+      it 'should remove one line item' do
+        line_item = subject.add(variant, 3)
+        subject.remove(variant)
+
+        line_item.reload.quantity.should == 2
       end
     end
 
