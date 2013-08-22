@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:taxon_edit) %>
@@ -13,11 +13,26 @@
 <% # Because otherwise the form would attempt to use to_param of @taxon %>
 <% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
 <%= form_for [:admin, @taxonomy, @taxon], :method => :put, :url => form_url, :html => { :multipart => true } do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
+  <%= render 'form', :f => f %>
 
   <div class="form-buttons" data-hook="buttons">
     <%= button Spree.t('actions.update'), 'icon-refresh' %>
     <%= Spree.t(:or) %>
     <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), :icon => "icon-remove" %>
   </div>
+<% end %>
+
+<% content_for :head do %>
+  <%= javascript_tag do -%>
+    $(document).ready(function() {
+      var field  = $('#permalink_part'),
+          target = $('#permalink_part_display'),
+          permalink_part_default = target.text().trim();
+
+      target.text(permalink_part_default + field.val());
+      field.on('keyup blur', function () {
+        target.text(permalink_part_default + $(this).val());
+      });
+    });
+  <% end -%>
 <% end %>
