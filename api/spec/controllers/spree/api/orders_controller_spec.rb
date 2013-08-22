@@ -168,18 +168,6 @@ module Spree
         address
       end
 
-      it "can update quantities of existing line items" do
-        api_put :update, :id => order.to_param, :order => {
-          :line_items => {
-            line_item.id => { :quantity => 10 }
-          }
-        }
-
-        response.status.should == 200
-        json_response['line_items'].count.should == 1
-        json_response['line_items'].first['quantity'].should == 10
-      end
-
       it "can add billing address" do
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
 
@@ -361,3 +349,4 @@ module Spree
     end
   end
 end
+
