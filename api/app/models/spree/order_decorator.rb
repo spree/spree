@@ -21,7 +21,7 @@ Spree::Order.class_eval do
     order.complete_from_api(completed_at)
 
     order.save!
-    order
+    order.reload
   end
 
   def complete_from_api(completed_at)
