@@ -2,14 +2,16 @@
   <div class="alpha five columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
-      <%= error_message_on :taxon, :name, :class => 'fullwidth title' %>
       <%= text_field :taxon, :name, :class => 'fullwidth' %>
+      <%= error_message_on :taxon, :name, :class => 'fullwidth title' %>
     <% end %>
 
     <%= f.field_container :permalink_part do %>
-      <%= f.label :permalink_part, Spree.t(:permalink) %><span class="required">*</span><br />
-      <%= @taxon.permalink.split("/")[0...-1].join("/") + "/" %>
-      <%= text_field_tag :permalink_part, @permalink_part %>
+      <%= f.label :permalink_part, Spree.t(:permalink) %> <span class="required">*</span><br />
+      <%= text_field_tag :permalink_part, @permalink_part, :class => 'fullwidth' %><br />
+      <span class="info" id="permalink_part_display">
+        <%= @taxon.permalink.split('/')[0...-1].join('/') + '/' %>
+      </span>
     <% end %>
 
     <%= f.field_container :icon do %>
@@ -41,5 +43,4 @@
       <%= f.text_field :meta_keywords, :class => 'fullwidth', :rows => 6 %>
     <% end %>
   </div>
-
 </div>

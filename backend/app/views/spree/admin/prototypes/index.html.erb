@@ -8,7 +8,7 @@
   </li>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+<%= render 'spree/admin/shared/product_sub_menu' %>
 
 <%= image_tag 'select2-spinner.gif', :plugin => 'spree', :style => 'display: none', :id => 'busy_indicator' %>
 
@@ -29,7 +29,7 @@
   <tbody>
     <% @prototypes.each do |prototype| %>
       <tr id="<%= spree_dom_id prototype %>" data-hook="prototypes_row" class="<%= cycle('odd', 'even')%>">
-        <td><%= prototype.name %></td>
+        <td style="padding-left:1em"><%= prototype.name %></td>
         <td class="actions">
           <%= link_to_edit(prototype, :no_text => true, :class => 'admin_edit_prototype') %>
           <%= link_to_delete(prototype, :no_text => true) %>

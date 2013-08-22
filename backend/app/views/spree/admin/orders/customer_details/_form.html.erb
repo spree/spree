@@ -6,13 +6,13 @@
     <div data-hook="customer_fields" class="row">
       <div class="alpha eight columns">
         <div class="field">
-          <%= f.label :email, Spree.t(:email) + ':' %>
+          <%= f.label :email, Spree.t(:email) %>
           <%= f.email_field :email, :class => 'fullwidth' %>
         </div>
       </div>
       <div class="omega four columns">
         <div class="field">
-          <%= label_tag nil, "#{Spree.t(:guest_checkout)}:" %>
+          <%= label_tag nil, Spree.t(:guest_checkout) %>
           <ul>
             <% if @order.completed? %>
               <li>
