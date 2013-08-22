@@ -11,7 +11,7 @@
       <% @preferences_general.each do |key|
           type = Spree::Config.preference_type(key) %>
           <div class="field">
-            <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
+            <%= label_tag(key, Spree.t(key)) + tag(:br) if type != :boolean %>
             <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
             <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
           </div>
@@ -25,7 +25,7 @@
             <% @preferences_security.each do |key|
                 type = Spree::Config.preference_type(key) %>
                 <div class="field">
-                  <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= label_tag(key, Spree.t(key)) + tag(:br) if type != :boolean %>
                   <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>
@@ -38,7 +38,7 @@
             <% @preferences_currency.each do |key|
                 type = Spree::Config.preference_type(key) %>
                 <div class="field">
-                  <%= label_tag(key, Spree.t(key) + ': ') + tag(:br) if type != :boolean %>
+                  <%= label_tag(key, Spree.t(key)) + tag(:br) if type != :boolean %>
                   <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
                   <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
                 </div>

@@ -13,52 +13,52 @@
 
 <div id="<%= is_shipping_address ? 'shipping' : 'billing' %>" style="display: <%= (use_billing && (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.eql?(@order.ship_address))) ? 'none' : 'block' %>" data-hook="address_fields">
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :firstname, Spree.t(:first_name) + ':' %>
+    <%= f.label :firstname, Spree.t(:first_name) %>
     <%= f.text_field :firstname, :class => 'fullwidth' %>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :lastname, Spree.t(:last_name) + ':' %>
+    <%= f.label :lastname, Spree.t(:last_name) %>
     <%= f.text_field :lastname, :class => 'fullwidth' %>
   </div>
   <% if Spree::Config[:company] %>
     <div class="field <%= "#{shipping_or_billing}-row" %>">
-      <%= f.label :company, Spree.t(:company) + ':' %>
+      <%= f.label :company, Spree.t(:company) %>
       <%= f.text_field :company, :class => 'fullwidth' %>
     </div>
   <% end %>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :address1, Spree.t(:street_address) + ':' %>
+    <%= f.label :address1, Spree.t(:street_address) %>
     <%= f.text_field :address1, :class => 'fullwidth' %>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :address2, Spree.t(:street_address_2) + ':' %>
+    <%= f.label :address2, Spree.t(:street_address_2) %>
     <%= f.text_field :address2, :class => 'fullwidth' %>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :city, Spree.t(:city) + ':' %>
+    <%= f.label :city, Spree.t(:city) %>
     <%= f.text_field :city, :class => 'fullwidth' %>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :zipcode, Spree.t(:zip) + ':' %>
+    <%= f.label :zipcode, Spree.t(:zip) %>
     <%= f.text_field :zipcode, :class => 'fullwidth' %>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :country_id, Spree.t(:country) + ':' %>
+    <%= f.label :country_id, Spree.t(:country) %>
     <span id="<%= s_or_b %>country">
       <%= f.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %>
     </span>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :state_id, Spree.t(:state) + ':' %>
+    <%= f.label :state_id, Spree.t(:state) %>
     <span id="<%= s_or_b %>state">
-      <%= f.text_field :state_name, 
+      <%= f.text_field :state_name,
             :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };",
            :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
       <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
     </span>
   </div>
   <div class="field <%= "#{shipping_or_billing}-row" %>">
-    <%= f.label :phone, Spree.t(:phone) + ':' %>
+    <%= f.label :phone, Spree.t(:phone) %>
     <%= f.phone_field :phone, :class => 'fullwidth' %>
   </div>
 </div>
