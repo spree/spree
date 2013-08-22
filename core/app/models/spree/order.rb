@@ -505,6 +505,10 @@ module Spree
       (bill_address.empty? && ship_address.empty?) || bill_address.same_as?(ship_address)
     end
 
+    def create_shipment_adjustments
+      shipments.each { |shipment| shipment.create_adjustment }
+    end
+
     private
 
       def link_by_email
