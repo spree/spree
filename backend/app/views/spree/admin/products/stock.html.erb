@@ -65,9 +65,9 @@
                     </td>
                     <td class="actions">
                       <%= link_to(icon('delete'), [:admin, item],
-                            method: :delete, remote: true, confirm: Spree.t(:are_you_sure),
+                            method: :delete, remote: true,
                             class: 'icon_link with-tip icon-trash no-text',
-                            title: Spree.t(:remove), data: { action: :remove }) %>
+                            title: Spree.t(:remove), data: { action: :remove, confirm: Spree.t(:are_you_sure) }) %>
                     </td>
                   </tr>
                 <% end %>
