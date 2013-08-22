@@ -172,7 +172,7 @@ module Spree
       params = { :shipments_attributes => [{ :tracking => '123456789',
                                              :cost => '4.99',
                                              :shipping_method => 'XXX',
-                                             :inventory_units [{ :sku => sku }]
+                                             :inventory_units => [{ :sku => sku }]
                                            }] }
       expect {
         order = Order.build_from_api(user, params)

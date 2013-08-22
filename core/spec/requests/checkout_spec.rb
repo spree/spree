@@ -6,13 +6,16 @@ describe "Checkout" do
     create(:state, :name => "Victoria", :country => country)
   end
 
+  let!(:shipping_method) { create(:shipping_method) }
+
+  let!(:product) { create(:product, :name => "RoR Mug") }
+  let!(:payment_method) { create(:payment_method) } 
+  let!(:zone) { create(:zone) } 
+
   context "visitor makes checkout as guest without registration" do
     before(:each) do
-      Spree::Product.delete_all
-      @product = create(:product, :name => "RoR Mug")
-      @product.on_hand = 1
-      @product.save
-      create(:zone)
+      product.on_hand = 1
+      product.save
     end
 
     context "when backordering is disabled" do
@@ -23,12 +26,10 @@ describe "Checkout" do
       end
 
       it "should warn the user about out of stock items" do
-        visit spree.root_path
-        click_link "RoR Mug"
-        click_button "add-to-cart-button"
+        add_mug_to_cart
 
-        @product.on_hand = 0
-        @product.save
+        product.on_hand = 0
+        product.save
 
         click_button "Checkout"
 
@@ -38,11 +39,7 @@ describe "Checkout" do
 
     context "defaults to use billing address" do
       before do
-        shipping_method = create(:shipping_method)
         shipping_method.zone.zone_members << Spree::ZoneMember.create(:zoneable => country)
-
-        # So that the order can transition from address
-        payment_method = create(:payment_method)
 
         visit spree.root_path
         click_link "RoR Mug"
@@ -56,15 +53,7 @@ describe "Checkout" do
       end
 
       it "should remain checked when used and visitor steps back to address step", :js => true do
-        address = "order_bill_address_attributes"
-        fill_in "#{address}_firstname", :with => "Ryan"
-        fill_in "#{address}_lastname", :with => "Bigg"
-        fill_in "#{address}_address1", :with => "143 Swan Street"
-        fill_in "#{address}_city", :with => "Richmond"
-        select "Kangaland", :from => "#{address}_country_id"
-        select "Victoria", :from => "#{address}_state_id"
-        fill_in "#{address}_zipcode", :with => "12345"
-        fill_in "#{address}_phone", :with => "(555) 5555-555"
+        fill_in_address
         click_button "Save and Continue"
         click_link "Address"
 
@@ -150,26 +139,16 @@ describe "Checkout" do
           shipping_method.calculator = calculator
           shipping_method.save
 
-          @product.shipping_category = shipping_method.shipping_category
-          @product.save!
+          product.shipping_category = shipping_method.shipping_category
+          product.save!
         end
 
         it "does not break the per-item shipping method calculator", :js => true do
-          visit spree.root_path
-          click_link "RoR Mug"
-          click_button "add-to-cart-button"
+          add_mug_to_cart
           click_button "Checkout"
           Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
 
-          address = "order_bill_address_attributes"
-          fill_in "#{address}_firstname", :with => "Ryan"
-          fill_in "#{address}_lastname", :with => "Bigg"
-          fill_in "#{address}_address1", :with => "143 Swan Street"
-          fill_in "#{address}_city", :with => "Richmond"
-          select "Kangaland", :from => "#{address}_country_id"
-          select "Victoria", :from => "#{address}_state_id"
-          fill_in "#{address}_zipcode", :with => "12345"
-          fill_in "#{address}_phone", :with => "(555) 5555-555"
+          fill_in_address
 
           click_button "Save and Continue"
           page.should_not have_content("undefined method `promotion'")
@@ -204,8 +183,50 @@ describe "Checkout" do
         find("#{payment_method_css}#{check_payment.id}").should be_visible
         find("#{payment_method_css}#{credit_cart_payment.id}").should_not be_visible
       end
-
     end
-
   end
+
+  # regression for #2921
+  context "goes back from payment to add another item", js: true do
+    let!(:bag) { create(:product, :name => "RoR Bag") }
+
+    it "transit nicely through checkout steps again" do
+      add_mug_to_cart
+      click_on "Checkout"
+      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in_address
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+      expect(current_path).to eql(spree.checkout_state_path("payment"))
+
+      visit spree.root_path
+      click_link bag.name
+      click_button "add-to-cart-button"
+
+      click_on "Checkout"
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+      click_on "Save and Continue"
+
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+  end 
+
+  def fill_in_address
+    address = "order_bill_address_attributes"
+    fill_in "#{address}_firstname", :with => "Ryan"
+    fill_in "#{address}_lastname", :with => "Bigg"
+    fill_in "#{address}_address1", :with => "143 Swan Street"
+    fill_in "#{address}_city", :with => "Richmond"
+    select "Kangaland", :from => "#{address}_country_id"
+    select "Victoria", :from => "#{address}_state_id"
+    fill_in "#{address}_zipcode", :with => "12345"
+    fill_in "#{address}_phone", :with => "(555) 5555-555"
+  end 
+
+  def add_mug_to_cart
+    visit spree.root_path
+    click_link product.name
+    click_button "add-to-cart-button"
+  end 
 end
