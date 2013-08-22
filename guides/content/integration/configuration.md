@@ -18,7 +18,8 @@ Add the `spree_pro_connector` gem to your store's `Gemfile`:
 
 ```ruby
 gem 'spree_pro_connector', :git => 'https://github.com/spree/spree_pro_connector.git', 
-  :branch => '2-0-stable'```
+  :branch => '2-0-stable'
+```
 
 The preceding line assumes you are using the [2-0-stable branch of Spree](https://github.com/spree/spree/tree/2-0-stable). If you are using a different branch of Spree, you should then change the `:branch` value to match.
 
@@ -26,7 +27,8 @@ Next, run these commands:
 
 ```bash
 $ bundle install
-$ bundle exec rails generate spree_pro_connector:install```
+$ bundle exec rails generate spree_pro_connector:install
+```
 
 The first command installs the `spree_pro_connector` gem in your application. The second uses the gem's install generator to add Integrator-specific styles to your store's Admin Interface.
 

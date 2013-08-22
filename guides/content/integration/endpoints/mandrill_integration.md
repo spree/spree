@@ -41,7 +41,8 @@ This Service should be triggered any time a new order is created, or when an exi
       ...
     }
   }
-}```
+}
+```
 
 <pre class="headers"><code>An order is updated</code></pre>
 ```json
@@ -52,7 +53,8 @@ This Service should be triggered any time a new order is created, or when an exi
       ...
     }
   }
-}```
+}
+```
 
 ### Order Cancellation
 
@@ -70,7 +72,8 @@ If a user or an admin cancels an existing order, the store should send a JSON me
       ...
     }
   }
-}```
+}
+```
 
 ### Shipment Confirmation
 
@@ -88,7 +91,8 @@ After an order moves to the `shipped` order state, the store should send notice 
     "shipped_date": "2013-06-27T13:29:46Z",
     ...
   }
-}```
+}
+```
 
 $$$
 Supply whatever substitutes for the "..." above

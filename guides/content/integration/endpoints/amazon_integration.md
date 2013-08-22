@@ -32,7 +32,8 @@ When the Endpoint receives a validly-formatted Message to the `/get_orders` URL,
 {
   "message": "amazon:order:poll",
   "message_id": "1234567"
-}```
+}
+```
 
 ## Configuration
 

@@ -51,9 +51,10 @@ Use this type of Message whenever a new order is created.
             }
           }
         ]
-      }
     }
-  }```
+  }
+}
+```
 
 ### purchase_order:received
 Use this message to mark a purchase order as received

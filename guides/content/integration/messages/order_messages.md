@@ -115,7 +115,8 @@ Use this type of Message whenever a new order is created.
       ]
     }
   }
-}```
+}
+```
 
 ### order:update
 
@@ -226,7 +227,8 @@ This type of Message should be sent when an existing order is updated.
       ]
     }
   }
-}```
+}
+```
 
 ### order:cancel
 
@@ -337,4 +339,5 @@ You should send this type of Message whenever an order is canceled, whether by t
       ]
     }
   }
-}```
+}
+```

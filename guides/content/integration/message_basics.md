@@ -40,7 +40,8 @@ post '/process_shipment' do
         }
       ]
     }
-end```
+end
+```
 
 In the above example, we returned a single Message in the response, but Messages generated in this way are technically an array of Messages and so it is possible to generate more than one Message as part of a Service Request. For example, if you were designing a Service that returned the list of shipments that have shipped since the last check, then you would likely need to return multiple `shipment:confirm` Messages.
 
@@ -88,7 +89,8 @@ The following is a simple example of an Endpoint built using Sinatra to return t
 post '/do_something' do
   message = JSON.parse(request.body.read)
   json 'message_id' => message['message_id']
-end```
+end
+```
 
 Here's what the server sends back when a Message is sent to the `do_something` service via `HTTP POST`:
 
@@ -101,7 +103,8 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Tue, 02 Jul 2013 20:12:23 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r84910000001"}```
+{"message_id":"518726r84910000001"}
+```
 
 ***
 See the [Creating Endpoints](creating_endpoints_tutorial) tutorial for more detailed examples of how to build simple Endpoints.
@@ -141,7 +144,8 @@ post '/capture_payment' do
         }
       ]
     }
-end```
+end
+```
 
 In this case we've actually returned multiple Messages. We return a `notification:info` Message so that can be displayed on the events tab in the Spree store, but we also return a `payment:capture` Message. The idea here is that another integration can then listen specifically for `payment:capture` Messages and do something specific knowing that a payment has been captured (update Quickbooks, send an email to the customer, etc.)
 
@@ -172,7 +176,8 @@ post '/ship_package' do
         }
       ]
     }
-end```
+end
+```
 
 ***
 Use a Notification Error when the problem is a "validation" type issue or some other problem with a third party API where it does not make sense to reattempt the Service Request.
@@ -224,7 +229,8 @@ Once configured the Integrator will send the parameters for a particular mapping
       }
     ]
   }
-}```
+}
+```
 
 Message parameters can also contain lookup data. In addition to passing API type parameters there are usecases where parameters can provide lookup data needed to bridge two different systems. For instance, if you are importing orders into your Spree store you may need to translate the shipping method names Amazon uses into the ones used by your Spree store.  The following is an example of the type of message and parameters you could use to accomplish this.
 
@@ -259,4 +265,5 @@ Message parameters can also contain lookup data. In addition to passing API type
       }
     ]
   }
-}```
+}
+```

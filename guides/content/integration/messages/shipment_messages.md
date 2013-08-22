@@ -57,7 +57,8 @@ title: Shipment Messages
       ...
     }
   }
-}```
+}
+```
 
 ### shipment:confirm
 
@@ -112,8 +113,8 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
       ...
     }
   }
-}```
-
+}
+```
 
 ### ql:shipment:confirm
 
@@ -181,7 +182,8 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
       ...
     }
   }
-}```
+}
+```
 
 ### shipment:update
 
@@ -234,4 +236,5 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
       ...
     }
   }
-}```
+}
+```
