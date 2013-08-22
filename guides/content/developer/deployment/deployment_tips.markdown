@@ -29,7 +29,8 @@ Rails to serve you public assets you will need to change this setting in
 `config/environments/production.rb` of your Rails app as follows:
 
 ```ruby
- config.serve_static_assets = true```
+ config.serve_static_assets = true
+```
 
 ***
 There is a good reason why this is disabled by default in Rails
@@ -47,7 +48,8 @@ approach just make sure that it's configured properly in the
 `config/environments/production.rb` of your Rails app.
 
 ```ruby
-config.serve_static_assets = false```
+config.serve_static_assets = false
+```
 ***
 This is the default setting of Rails so it's also fine if this setting is missing or commented out.
 ***
@@ -62,7 +64,8 @@ DocumentRoot /webapps/mystore/public
 Allow from all
 Options ~~MultiViews
 </Directory>
-</VirtualHost>```
+</VirtualHost>
+```
 
 Each web server will have its own method for doing this so please consult the appropriate documentation for more details.
 
@@ -113,23 +116,21 @@ recommended to fix the setting in an initializer . In
 `/config/initializers/spree.rb`, add a line such as:
 
 ```ruby
-config.allow_ssl_in_staging = false```
+config.allow_ssl_in_staging = false
+```
 
 ### Configuring Email Options
 
 Mail delivery in Spree is disabled by default. You can enable it in two ways.
 
-First, if you need to keep your default Rails app action mailer configs you need to
-tell Spree to not override them by setting the ``override_actionmailer_config``
-option to ``false``. You should also tell Spree which email should go on the
-header *from* using the ``mails_from`` option. A typical spree initializer which disables
-all Spree default mail settings and interceptor looks like this:
+First, if you need to keep your default Rails app action mailer configs you need to tell Spree to not override them by setting the `override_actionmailer_config` option to `false`. You should also tell Spree which email should go on the header *from* using the `mails_from` option. A typical spree initializer which disables all Spree default mail settings and interceptor looks like this:
 
 ```ruby
 Spree.config do |config|
   config.override_actionmailer_config = false
   config.mails_from = "no-reply@yourdomain.com"
-end```
+end
+```
 
 Secondly, in case you want to use Spree admin UI or config options via
 initializer to properly enable email delivery, you need to provide valid
@@ -156,15 +157,16 @@ Spree.config do |config|
     config.mail_port = 25
     # other configs ..
   end
-end```
+end
+```
 
-The default ``override_actionmailer_config`` value also gives you the chance
+The default `override_actionmailer_config` value also gives you the chance
 to set *bcc* headers for all spree outgoing emails and to intercept them and
 reroute to someone else. This could come in handy on staging servers since
 it prevents the store from accidentally sending emails to a real world
 customer when testing operations such as canceling an order or marking it
-shipped. At last you need to set ``enable_mail_delivery = true``
-as it defaults to ``false``. e.g.
+shipped. At last you need to set `enable_mail_delivery = true`
+as it defaults to `false`. e.g.
 
 ```ruby
 Spree.config do |config|
@@ -174,11 +176,12 @@ Spree.config do |config|
   if Rails.env.staging?
     config.intercept_email = "testing@yourstore.com"
   end
-end```
+end
+```
 
 Both smtp and inteceptor configs listed above can be found on the mail section
 in the configuration tab. Note that the *Mail Method Setting* link will not
-be displayed if ``override_actionmailer_config`` is ``false``.
+be displayed if `override_actionmailer_config` is `false`.
 
 ![Changing Mail Server Setting](../images/developer/mail_server_settings.png "Changing Mail Server Setting")
 
@@ -205,19 +208,15 @@ make sure that you are running in "production mode." You can start your
 server in production mode as follows:
 
 ```bash
-$ bundle exec rails server -e production```
+$ bundle exec rails server -e production
+```
 
 Please consult your web server documentation for more details on
 enabling production mode for your particular web server.
 
 ### Passenger Timeout
 
-If you are running on [Passenger](http://www.modrails.com) then you may
-be noticing that the first request to your Spree application is very
-slow if the application has been idle for some time (or you have just
-restarted.) Consider changing the
-[PassengerPoolIdleTime](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerPoolIdleTime)
-as described in the Passenger documentation.
+If you are running on [Passenger](http://www.modrails.com) then you may be noticing that the first request to your Spree application is very slow if the application has been idle for some time (or you have just restarted.) Consider changing the [PassengerPoolIdleTime](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerPoolIdleTime) as described in the Passenger documentation.
 
 ### Caching
 

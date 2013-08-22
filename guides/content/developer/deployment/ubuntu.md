@@ -34,11 +34,12 @@ called "spree", but you may choose to call it whatever you wish.
 
 To set up this new user, run these commands on the server:
 
-    useradd -d /home/spree -m -s /bin/bash spree
-    passwd spree
+```bash
+$ useradd -d /home/spree -m -s /bin/bash spree
+$ passwd spree
+```
 
-Set a new password for the user and remember it, as you will require it in just
-a moment.
+Set a new password for the user and remember it, as you will require it in just a moment.
 
 ### Key-based authentication
 
@@ -51,20 +52,23 @@ security.
 On the remote server, set up an `.ssh` directory to contain the new public key
 for a user by running these commands:
 
-    mkdir /home/spree/.ssh
-    chown spree:spree /home/spree/.ssh
-    chmod 700 /home/spree/.ssh
+```bash
+$ mkdir /home/spree/.ssh
+$ chown spree:spree /home/spree/.ssh
+$ chmod 700 /home/spree/.ssh
+```
 
 This directory is used to authenticate key-based authentication when using SSH.
 
 On your local machine, generate a private key using `ssh-keygen` like this:
 
-    ssh-keygen -t rsa
+```bash
+$ ssh-keygen -t rsa
+```
 
 Set the filename to be [your home directory]/.ssh/spree_rsa.
 
-You can choose to enter a password if you wish. All that would mean is that you
-would need to provide that password to use the key.
+You can choose to enter a password if you wish. All that would mean is that you would need to provide that password to use the key.
 
 ***
 If you already have a private key, you can use that one.
@@ -73,7 +77,9 @@ If you already have a private key, you can use that one.
 Once you've finished generating this key, you will need to copy the public
 version of this key over to the new server. To do this, run this command:
 
-    scp ~/.ssh/spree_rsa.pub spree@[your server's address]:~/.ssh/authorized_keys
+```bash
+$ scp ~/.ssh/spree_rsa.pub spree@[your server's address]:~/.ssh/authorized_keys
+```
 
 The password you will need to enter here is the password for the user account on
 the remote server.
@@ -81,7 +87,9 @@ the remote server.
 Once you've set this up, you will then be able to use key-based authentication
 to connect to the server:
 
-    ssh spree@[your server's address] -i [your home directory]/.ssh/spree_rsa
+```bash
+$ ssh spree@[your server's address] -i [your home directory]/.ssh/spree_rsa
+```
 
 To save having to use the `-i` option here, you can place the following lines
 inside `.ssh/config` on your local machine:
@@ -110,7 +118,9 @@ It should be this when you're done:
 Then you will need to restart the SSH daemon on the server, by running this
 command:
 
-    service ssh restart
+```bash
+$ service ssh restart
+```
 
 After this, if you attempt to run `ssh spree@localhost` from within the server
 itself, it will return "Permission denied (publickey)", indicating that it has
@@ -125,10 +135,12 @@ are locked down a bit tighter, it's time to set up Ruby.
 To install Ruby, you are going to use the "RVM":http://rvm.io tool. This tool
 provides a simple way of installing a version of Ruby onto your server.
 
-To install it, run these command:
+To install it, run these commands:
 
-    curl -L https://get.rvm.io | bash -s stable
-    . ~/.bashrc
+```bash
+$ curl -L https://get.rvm.io | bash -s stable
+$ . ~/.bashrc
+```
 
 Next, you will need to install the operating system dependencies required for
 Ruby. When you run `rvm requirements`, these dependencies are listed underneath
@@ -143,48 +155,63 @@ follows:
 
 To install these dependencies, run these commands **as root**:
 
-    apt-get update apt-get install -y build-essential openssl libreadline6 \
-    libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev \
-    libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev \
-    automake libtool bison subversion pkg-config
+```bash
+apt-get update apt-get install -y build-essential openssl libreadline6 \
+libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev \
+libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev \
+automake libtool bison subversion pkg-config
+```
 
 You will also need to install a JavaScript runtime. You can install the `nodejs`
 package from `apt-get`:
 
-    apt-get install -y nodejs
+```bash
+$ apt-get install -y nodejs
+```
 
 Or, you can put a dependency for `therubyracer` gem into your `Gemfile`:
 
 ```ruby
 group :production do
  gem 'therubyracer'
-end```
+end
+```
 
 You will also need the `imagemagick` package, which is used to handle image
 manipulation which is used when you upload product images in your store:
 
-    apt-get install -y imagemagick
+```bash
+$ apt-get install -y imagemagick
+```
 
 Once these dependencies are installed, switch back into the `spree` user and
 install Ruby 1.9.3 by running this command:
 
-    rvm install 1.9.3
+```bash
+$ rvm install 1.9.3
+```
 
 This command will take a couple of minutes to finish running.
 
 Once it's finished running, run this command to make that version of Ruby the
 default for this user:
 
-    rvm use 1.9.3 --default
+```bash
+$ rvm use 1.9.3 --default
+```
 
 Ensure that this version of Ruby is really the new default by running this
 command:
 
-    ruby -v
+```bash
+ruby -v
+```
 
 It should output something similar to this:
 
-    ruby 1.9.3p392 (2013-02-22 revision 39386) [i686-linux]
+```bash
+ruby 1.9.3p392 (2013-02-22 revision 39386) [i686-linux]
+```
 
 You now have a version of Ruby correctly configured on your server.
 
@@ -196,12 +223,16 @@ will use the deployment tool called
 
 Install Capistrano on your local system by running this command:
 
-    gem install capistrano
+```bash
+$ gem install capistrano
+```
 
 Then, inside the directory for your Spree app, run this command to set up a
 Capistrano deploy configuration:
 
-    capify .
+```bash
+$ capify .
+```
 
 This command will create two files: a `Capfile` and a `config/deploy.rb`. The
 `config/deploy.rb` file is where you will be configuring how Capistrano chooses
@@ -218,7 +249,8 @@ set :scm, :subversion
 role :web, "your web-server here" # Your HTTP server, Apache/etc
 role :app, "your app-server here" # This may be the same as your `Web` server
 role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-role :db,  "your slave db-server here"```
+role :db,  "your slave db-server here"
+```
 
 The contents of this file tell Capistrano about the deployment of your
 application.
@@ -239,7 +271,8 @@ will continue to do so. Therefore, these roles should look like this:
 server = "[your server's address]"
 role :web, server
 role :app, server
-role :db,  server, :primary => true```
+role :db,  server, :primary => true
+```
 
 After this, you will need to tell Capistrano the account name to use for
 deploying to your server. In this guide, we've used "spree" so far, but you may
@@ -247,7 +280,8 @@ have chosen to use something different. To tell Capistrano the user to use, put
 this line inside your `config/deploy.rb`:
 
 ```ruby
-set :user, "spree"```
+set :user, "spree"
+```
 
 You will also need to tell it the path to deploy at. By default in Capistrano,
 this path is `/u/apps/[application_name]`. There is probably no `/u/` directory on the
@@ -257,27 +291,31 @@ user's home directory would make better sense. Add this line to
 `config/deploy.rb` to do that:
 
 ```ruby
-set :deploy_to, "/home/spree/#{application}"```
+set :deploy_to, "/home/spree/#{application}"
+```
 
 You will also need to tell Capistrano to never use sudo, since you're going to
 be operating as a user without sudo permission:
 
 ```ruby
-set :use_sudo, false```
+set :use_sudo, false
+```
 
 Along with this, you will also need to tell it to use the `bash` shell, as you
 will need access to the commands for gems such as `bundler`, which are provided
 by RVM.
 
 ```ruby
-default_run_options[:shell] = '/bin/bash --login'```
+default_run_options[:shell] = '/bin/bash --login'
+```
 
 And because all the Rails-specific commands are going to need to run on the
 production environment, it'd be a great idea to add this to the configuration as
 well:
 
 ```ruby
-default_environment["RAILS_ENV"] = 'production'```
+default_environment["RAILS_ENV"] = 'production'
+```
 
 With that configuration, your `config/deploy.rb` should look like this:
 
@@ -297,7 +335,8 @@ set :deploy_to, "/home/spree/#{application}"
 set :use_sudo, false
 
 default_run_options[:shell] = '/bin/bash --login'
-default_environment["RAILS_ENV"] = 'production'```
+default_environment["RAILS_ENV"] = 'production'
+```
 
 To set up the server for Capistrano, run `cap deploy:setup`. This will create
 the required Capistrano directories for your application inside
@@ -309,7 +348,8 @@ and the assets are precompiled. These two lines are this:
 
 ```ruby
 require "bundler/capistrano"
-load "deploy/assets"```
+load "deploy/assets"
+```
 
 To attempt to deploy the actual application to the server, run `cap deploy`. If
 the `repository` option points to GitHub, this will fail because the server has
@@ -321,7 +361,9 @@ never verified GitHub's host key.
 
 To verify this, run this command:
 
-    ssh github.com
+```bash
+$ ssh github.com
+```
 
 This will ask you to verify that GitHub's RSA key fingerprint is
 `16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48`. If that's correct, type "yes"
@@ -337,7 +379,9 @@ This means that your application does not have a deploy key setup for it on
 GitHub. To set up a deploy key for the application, run this command as the
 "spree" user on the server:
 
-    ssh-keygen -t rsa
+```bash
+$ ssh-keygen -t rsa
+```
 
 !!!
 Do not enter a password for this key. Otherwise you will need to use it
@@ -376,20 +420,26 @@ the necessary tables for your Spree store.
 
 To install PostgreSQL, run this command:
 
-    apt-get install -y postgresql
+```bash
+$ apt-get install -y postgresql
+```
 
 You will also need to install its development headers, which the `pg` gem will
 use to connect to the database:
 
-    apt-get install -y libpq-dev
+```bash
+$ apt-get install -y libpq-dev
+```
 
 Once those two packages are installed, you will need to create a new database
 for your application to use. This database should have the same name as the
 server's deploy user account, which in this guide has been "spree" so far. Yours
 could be different. To set up this database, run this command as `root`:
 
-    sudo -u postgres createdb spree
-    sudo -u postgres createuser spree
+```bash
+$ sudo -u postgres createdb spree
+$ sudo -u postgres createuser spree
+```
 
 To get your application to connect to this database, you will need to set up a
 `database.yml` file on the server. This file needs to be kept on the server in a
@@ -400,7 +450,8 @@ name]/shared/config/database.yml`. Inside this file, put this content:
 ```yaml
 production:
   adapter: postgresql
-  database: spree```
+  database: spree
+  ```
 
 If you're not already using the PostgreSQL adapter on your application, as
 specified by `gem 'pg'` in your `Gemfile`, you'll need to add this gem to your
@@ -409,7 +460,8 @@ specified by `gem 'pg'` in your `Gemfile`, you'll need to add this gem to your
 ```ruby
 group :production do
   gem 'pg'
-end```
+end
+```
 
 ***
 If you need to add this gem, you will need to run `bundle install` on your
@@ -432,7 +484,8 @@ task :symlink_database_yml do
   run "rm #{release_path}/config/database.yml"
   run "ln -sfn #{shared_path}/config/database.yml #{release_path}/config/database.yml"
 end
-after "bundle:install", "symlink_database_yml"```
+after "bundle:install", "symlink_database_yml"
+```
 
 After `bundle install` has finished running on the server, Capistrano will now
 copy over the `config/database.yml` into the current path. In order for
@@ -459,7 +512,8 @@ inside the `production` group:
 group :production do
   gem 'pg'
   gem 'unicorn'
-end```
+end
+```
 
 Unicorn requires some configuration in order to work, which belongs in
 `config/unicorn.rb`. This is the content required for Unicorn:
@@ -527,7 +581,8 @@ after_fork do |server, worker|
   # and Redis.  TokyoCabinet file handles are safe to reuse
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
-end```
+end
+```
 
 Remember to replace `[application's name]` above with your actual application
 name. Run `bundle install` and commit and push your `Gemfile`, `Gemfile.lock`
@@ -555,7 +610,8 @@ namespace :unicorn do
   end
 end
 
-after "deploy:restart", "unicorn:restart"```
+after "deploy:restart", "unicorn:restart"
+```
 
 Commit your `config/deploy.rb` to Git, push the changes to GitHub and run `cap
 deploy` again to ensure the latest code is available on your server. This will
@@ -566,7 +622,9 @@ nginx and getting it to serve requests from your application.
 
 To install nginx, run this command as `root`:
 
-    apt-get install nginx
+```bash
+$ apt-get install nginx
+```
 
 Once this command is installed, you will then need to configure nginx to serve
 requests from your unicorn workers. To do this, put this content inside
@@ -725,7 +783,9 @@ countries, states, zones, zone members and an admin role.
 To install this data, run this command on the server, inside the current
 directory:
 
-    RAILS_ENV=production bundle exec rake db:seed
+```bash
+RAILS_ENV=production bundle exec rake db:seed
+```
 
 If you have `spree_auth_devise` installed, this command will also prompt you for
 a username and password for your admin user. If you're not using
@@ -735,7 +795,8 @@ the console and assign it the admin role, like this:
 ```ruby
 user = User.create!(:email => "email@example.com", :password => "topsekret")
 user.spree_roles << Spree::Role.find_by_name("admin")
-user.save!```
+user.save!
+```
 
 Note that your `User` model may require additional attributes before it can be
 created.
@@ -755,7 +816,9 @@ The final step in configuring the server is symlinking the images so that on
 subsequent deploys they don't disappear. To do this, you can create a new `spree`
 directory within the `shared` directory by using this command:
 
-    mkdir -p /home/spree/[application's name]/shared/spree
+```bash
+mkdir -p /home/spree/[application's name]/shared/spree
+```
 
 This is the directory where all the uploads for the application will live. This
 directory should be symlinked over to the application upon every deployment, and
@@ -768,7 +831,8 @@ namespace :images do
     run "ln -nfs #{shared_path}/spree #{release_path}/public/spree"
   end
 end
-after "bundle:install", "images:symlink"```
+after "bundle:install", "images:symlink"
+```
 
 Now upon every deploy, Capistrano will symlink the `spree` directory in the `shared`
 directory into the current version of the app so that the product images are

@@ -35,7 +35,7 @@ Variant records can track some individual properties regarding a variant, such a
 
 Every single product has a master variant, which tracks basic information such as a count on hand, a price and a SKU. Whenever a product is created, a master variant for that product will be created too.
 
-Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and <%= link_to "line items", :orders, "line-items" %>. If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
+Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and [line items](orders#line-items). If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
 
 By having a master variant, the code within Spree to track  is simplified.
 
@@ -65,12 +65,14 @@ Spree automatically handles creation and storage of several size versions of eac
   :small => '100x100>',
   :product => '240x240>',
   :large => '600x600>'
-}```
+}
+```
 
 These sizes can be changed by altering the value of `Spree::Config[:attachment_styles]`. Once `Spree::Config[:attachment_styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
 
 ```bash
-$ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image```
+$ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image
+```
 
 If you want to change the image that is displayed when a product has no image, simply create new versions of the files within [Spree's app/assets/images/noimage directory](https://github.com/spree/spree/tree/master/frontend/app/assets/images/noimage). These image names must match the keys within `Spree::Config[:attachment_styles]`.
 
@@ -84,12 +86,14 @@ You can retrieve the value for a property on a `Product` object by calling the `
 
 ```bash
 $ product.property("material")
-=> "100% Cotton"```
+=> "100% Cotton"
+```
 
 You can set a property on a product by calling the `set_property` method:
 
 ```ruby
-product.set_property("material", "100% cotton")```
+product.set_property("material", "100% cotton")
+```
 
 If this property doesn't already exist, a new `Property` instance with this name will be created.
 
@@ -103,13 +107,15 @@ You may see what price a product would be in the current currency (`Spree::Confi
 
 ```bash
 $ product.price
-=> "15.99"```
+=> "15.99"
+```
 
 To find a list of currencies that this product is available in, call `prices` to get a list of related `Price` objects:
 
 ```bash
 $ product.prices
-=> [#<Spree::Price id: 2 ...]```
+=> [#<Spree::Price id: 2 ...]
+```
 
 ## Prototypes
 

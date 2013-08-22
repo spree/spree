@@ -13,7 +13,9 @@ Please do not announce potential security vulnerabilities in public. We have a [
 
 If you would like to provide a patch yourself for the security issue **do not open a pull request for it**. Instead, create a commit on your fork of Spree and run this command:
 
-```git format-patch HEAD~1..HEAD --stdout > patch.txt```
+```bash
+$ git format-patch HEAD~1..HEAD --stdout > patch.txt
+```
 
 This command will generate a file called `patch.txt` with your changes. Please email a description of the patch along with the patch itself to our [dedicated email address](mailto:security@spreecommerce.com).
 
@@ -85,7 +87,8 @@ else
   can :read, Taxon
   can :index, Taxon
   #############################
-end```
+end
+```
 
 The above rule set has the following practical effects for Spree users
 
@@ -118,9 +121,10 @@ class AbilityDecorator
   end
 end
 
-Ability.register_ability(AbilityDecorator)```
+Ability.register_ability(AbilityDecorator)
+```
 
-### Custom Roles in the Admin Namespace.
+### Custom Roles in the Admin Namespace
 
 If you plan on allowing a custom role you create to access the Spree administrative
 panels, there are a couple of considerations to keep in mind.
@@ -143,7 +147,8 @@ class AbilityDecorator
   end
 end
 
-Ability.register_ability(AbilityDecorator)```
+Ability.register_ability(AbilityDecorator)
+```
 
 This is required by the following code in Spree's `Admin::BaseController` which
 is the controller every controller in the Admin namespace inherits from.
@@ -157,7 +162,8 @@ def authorize_admin
   end
   authorize! :admin, record
   authorize! action, record
-end```
+end
+```
 
 If you need to create custom controllers for your own models under the Admin
 namespace, you will need to manually specify the model your controller manipulates
@@ -177,7 +183,8 @@ module Spree
       end
     end
   end
-end```
+end
+```
 
 This is necessary because CanCan cannot, by default, detect the model used to
 authorize controllers under the Admin namespace. By specifying `model_class`, Spree
@@ -217,15 +224,16 @@ module Spree
   end
 end
 
-ActiveRecord::Base.class_eval { include Spree::Core::TokenResource }```
-
+ActiveRecord::Base.class_eval { include Spree::Core::TokenResource }
+```
 
 The `Order` model is one such model in Spree where this interface is already in use. The following code snippet shows how to add this functionality through the use of the `token_resource` declaration:
 
 ```ruby
 Spree::Order.class_eval do
   token_resource
-end```
+end
+```
 
 If we examine the default CanCan permissions for `Order` we can see how tokens can be used to grant access in cases where the user is not authenticated.
 
@@ -238,24 +246,28 @@ can :update, Spree::Order do |order, token|
   order.user == user || order.token && token == order.token
 end
 
-can :create, Spree::Order```
+can :create, Spree::Order
+```
 
 This configuration states that in order to read or update an order, you must be either authenticated as the correct user, or supply the correct authorizing token.
 
 The final step is to ensure that the token is passed to CanCan when the authorization is performed, which is done in the controller.
 
 ```ruby
-authorize! action, resource, session[:access_token]```
+authorize! action, resource, session[:access_token]
+```
 
 Of course this also assumes that the token has been stored in the session. Generally this can be achieved with a route that maps the token to the correct parameter:
 
 ```ruby
-get '/orders/:id/token/:token' => 'orders#show', :as => :token_order```
+get '/orders/:id/token/:token' => 'orders#show', :as => :token_order
+```
 
 This is followed by a call to store the token in the session for possible future access.
 
 ```ruby
-  session[:access_token] ||= params[:token]```
+  session[:access_token] ||= params[:token]
+```
 
 ## Credit Card Data
 
@@ -293,5 +305,5 @@ Spree will periodically check for important security and release announcements. 
   "version": "0.70.1",
   "rails_env": "production",
   "host": "www.spreecommerce.com"
-}```
-
+}
+```

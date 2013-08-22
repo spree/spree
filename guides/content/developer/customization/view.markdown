@@ -43,7 +43,8 @@ this:
       <%% end %>
     </div>
   <%% end %>
-</div>```
+</div>
+```
 
 If you wanted to insert some code just before the +#registration+ div on the page you would define an override as follows:
 
@@ -143,7 +144,8 @@ For example, spree/products/show.html.erb looks as follows:
       <%%= render 'taxons' %>
     </div>
   </div>
-</div>```
+</div>
+```
 
 As you can see from the example above the `data-hook` can be present in
 a number of ways:
@@ -167,13 +169,15 @@ attribute wherever possible. Here are a few examples based on
 
 :insert_top => "#thumbnails[data-hook]"
 
-:remove => "[data-hook='cart_form']"```
+:remove => "[data-hook='cart_form']"
+```
 
 You can also use a combination of both styles of selectors in a single
 override to ensure maximum protection against changes:
 
 ```ruby
- :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"```
+ :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"
+ ```
 
 #### Targeting ruby blocks
 
@@ -189,7 +193,8 @@ Given the following Erb file:
  <%%= Spree.t(:no_products_found) %>
 <%% elsif params.key?(:keywords) %>
   <h3><%%= Spree.t(:products) %></h3>
-<%% end %>```
+<%% end %>
+```
 
 Would be seen by Deface as:
 
@@ -202,7 +207,8 @@ Would be seen by Deface as:
   <h3><code erb-loud> Spree.t(:products) </code></h3>
 
   <code erb-silent> end </code>
-</html>```
+</html>
+```
 
 So you can target ruby code blocks with the same standard CSS3 style
 selectors, for example:
@@ -210,7 +216,8 @@ selectors, for example:
 ```ruby
  :replace => "code[erb-loud]:contains('t(:products)')"
 
-:insert_before => "code[erb-silent]:contains('elsif')"```
+:insert_before => "code[erb-silent]:contains('elsif')"
+```
 
 #### View upgrade protection
 
@@ -287,4 +294,3 @@ locally copied version.
 
 To this end we strongly suggest you use Deface to achieve the desired
 customizations wherever possible.
-

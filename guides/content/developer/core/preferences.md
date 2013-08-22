@@ -50,7 +50,8 @@ Kona::StoreConfiguration < Preferences::Configuration
 end
 
 KONA::STORE_CONFIG = Kona::StoreConfiguration.new
-puts KONA::STORE_CONFIG.hot_coffee```
+puts KONA::STORE_CONFIG.hot_coffee
+```
 
 ## Defining Preferences
 
@@ -63,7 +64,8 @@ class User < ActiveRecord::Base
   preference :color, :string
   preference :favorite_number, :integer
   preference :language, :string, :default => "English"
-end```
+end
+```
 
 In the above model, five preferences have been defined:
 
@@ -95,24 +97,28 @@ Query methods:
 
 ```ruby
 user.prefers_hot_salsa? # => false
-user.prefers_dark_chocolate? # => false```
+user.prefers_dark_chocolate? # => false
+```
 
 Reader methods:
 
 ```ruby
 user.preferred_color      # => nil
-user.preferred_language   # => "English"```
+user.preferred_language   # => "English"
+```
 
 Writer methods:
 
 ```ruby
 user.prefers_hot_salsa = false         # => false
-user.preferred_language = "English"    # => "English"```
+user.preferred_language = "English"    # => "English"
+```
 
 Check if a preference is available:
 
 ```ruby
-user.has_preference? :hot_salsa```
+user.has_preference? :hot_salsa
+```
 
 ### Generic Methods
 
@@ -122,30 +128,35 @@ Query method:
 
 ```ruby
 user.prefers?(:hot_salsa)       # => false
-user.prefers?(:dark_chocolate)  # => false```
+user.prefers?(:dark_chocolate)  # => false
+```
 
 Reader methods:
 
 ```ruby
 user.preferred(:color)      # => nil
-user.preferred(:language)   # => "English"```
+user.preferred(:language)   # => "English"
+```
 
 ```ruby
 user.get_preference :color
-user.get_preference :language```
+user.get_preference :language
+```
 
 Writer method:
 
 ```ruby
 user.set_preference(:hot_salsa, false)     # => false
-user.set_preference(:language, "English")  # => "English"```
+user.set_preference(:language, "English")  # => "English"
+```
 
 ### Accessing All Preferences
 
 You can get a hash of all stored preferences by accessing the `preferences` helper:
 
 ```ruby
-user.preferences # => {"language"=>"English", "color"=>nil}```
+user.preferences # => {"language"=>"English", "color"=>nil}
+```
 
 This hash will contain the value for every preference that has been defined for the model instance, whether the value is the default or one that has been previously stored.
 
@@ -154,12 +165,14 @@ This hash will contain the value for every preference that has been defined for 
 You can access the default value for a preference:
 
 ```ruby
-user.preferred_color_default # => 'blue'```
+user.preferred_color_default # => 'blue'
+```
 
 Types are used to generate forms or display the preference. You can also get the type defined for a preference:
 
 ```ruby
-user.preferred_color_type # => :string```
+user.preferred_color_type # => :string
+```
 
 ## Configuring Spree Preferences
 
@@ -179,7 +192,8 @@ You can access these preferences directly in code. To see this in action, just f
 >> Spree::Config.site_name
 => "Spree Demo Site"
 >> Spree::Config.admin_products_per_page
-=> 10```
+=> 10
+```
 
 The above examples show the default configuration values for these preferences. The defaults themselves are coded within the `Spree::AppConfiguration` class.
 
@@ -188,7 +202,8 @@ class Spree::AppConfiguration < Configuration
   #... snip ...
   preference :site_name, :string, :default => 'Spree Demo Site'
   #... snip ...
-end```
+end
+```
 
 If you are using the default preferences without any modifications, then nothing will be stored in the database. If you set a value for the preference it will save it to `spree_preferences`. It will use a memory cached version to maintain performance.
 
@@ -200,7 +215,8 @@ The default Spree preferences in `Spree::AppConfiguration` can be changed using 
 >> Spree::Config.admin_products_per_page = 20
 => 20
 >> Spree::Config.admin_products_per_page
-=> 20```
+=> 20
+```
 
 Here we are changing a preference to something other than the default as specified in `Spree::AppConfiguration`. In this case the preference system will persist the new value in the `spree_preferences` table.
 
@@ -213,7 +229,8 @@ Spree.config do |config|
   # Example:
   # Uncomment to override the default site name.
   # config.site_name = "Spree Demo Site"
-end```
+end
+```
 
 The `Spree.config` block acts as a shortcut to setting `Spree::Config` multiple times. If you have multiple default preferences you would like to override within your code you may override them here. Using the initializer for setting the defaults is a nice shortcut, and helps keep your preferences organized in a standard location.
 
@@ -222,7 +239,8 @@ For example if you would like to change the site name and default locale you can
 ```ruby
 Spree.config do |config|
   config.site_name = 'My Awesome Spree Site'
-end```
+end
+```
 
 ***
 Initializing preferences in `config/initializer.rb` will overwrite any changes that were made through the admin user interface when you restart.
@@ -241,7 +259,8 @@ class Spree::MyApplicationConfiguration < Spree::Preferences::Configuration
   preference :theme, :string, :default => "Default"
   preference :show_splash_page, :boolean
   preference :number_of_articles, :integer
-end```
+end
+```
 
 In the above configuration file, three preferences have been defined:
 
@@ -266,7 +285,8 @@ end
 
 Spree::MyApp::Config[:theme] = "blue_theme"
 Spree::MyApp::Config[:show_spash_page] = true
-Spree::MyApp::Config[:number_of_articles] = 5```
+Spree::MyApp::Config[:number_of_articles] = 5
+```
 
 The above example will configure the preferences we defined earlier. Take note of the second line. In order to set and get preferences using `Spree::MyApp::Config`, we must first instantiate the configuration object.
 
@@ -336,7 +356,8 @@ A JSON hash of different styles that are supported by attachments. Defaults to:
   "small":"100x100>",
   "product":"240x240>",
   "large":"600x600>"
-}```
+}
+```
 
 `attachment_default_style`
 
@@ -401,7 +422,8 @@ The path to the layout of your application, relative to the `app/views` director
 ```ruby
 Spree.config do |config|
   config.layout = "application"
-end```
+end
+```
 
 `logo`
 
@@ -469,17 +491,20 @@ Spree.config do |config|
   config.s3_bucket = '<bucket>'
   config.s3_access_key = "<key>"
   config.s3_secret = "<secret>"
-end```
+end
+```
 
 It's also a good idea to not include the `rails_root` path inside the `attachment_path` configuration option, which by default is this:
 
 ```ruby
-:rails_root/public/spree/products/:id/:style/:basename.:extension```
+:rails_root/public/spree/products/:id/:style/:basename.:extension
+```
 
 To change this, add the following line underneath the `s3_secret` configuration setting:
 
 ```ruby
-config.attachment_path = '/spree/products/:id/:style/:basename.:extension'```
+config.attachment_path = '/spree/products/:id/:style/:basename.:extension'
+```
 
 If you're using the Western Europe S3 server, you will need to set two additional options inside this block:
 
@@ -488,11 +513,13 @@ Spree.config do |config|
   ...
   config.attachment_url = ":s3_eu_url"
   config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end```
+end
+```
 
 Additionally, you will need to tell `paperclip` how to construct the URLs for your images by placing this code outside the `config` block inside `config/initializers/spree.rb`:
 
 ```ruby
 Paperclip.interpolates(:s3_eu_url) do |attachment, style|
   "#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/}, "")}"
-end```
+end
+```

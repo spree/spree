@@ -145,8 +145,8 @@ Say for example you want to replace the following CSS snippet:
 
 div#footer {
  clear: both;
-}```
-
+}
+```
 
 You can now just create a new stylesheet inside
 `your_app/app/assets/stylesheets/store/` and include the following CSS:
@@ -157,7 +157,8 @@ You can now just create a new stylesheet inside
 div#footer {
  clear: none;
  border: 1px solid red;
-}```
+}
+```
 
 The `store/all.css` manifest will automatically include `foo.css` and it
 will actually include both definitions with the one from `foo.css` being
@@ -206,7 +207,8 @@ var show_variant_images = function(variant_id) {
    $("#main-image").data('selectedThumb', newImg);
    $("#main-image").data('selectedThumbId', thumb.attr('id'));
  }
-}```
+}
+```
 
 Again, just create a new JavaScript file inside
 `your_app/app/assets/stylesheets/store` and include the new method
@@ -217,7 +219,8 @@ definition:
 
 var show_variant_images = function(variant_id) {
  alert('hello world');
-}```
+}
+```
 
 The resulting `store/all.js` would include both methods, with the latter
 being the one executed on request.
@@ -245,4 +248,3 @@ like to replace.
 
 For example, to replace the Spree logo you would simply copy your logo
 to: `your_app/app/assets/images/admin/bg/spree_50.png`.
-

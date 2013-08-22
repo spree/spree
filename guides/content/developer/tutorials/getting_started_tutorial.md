@@ -16,14 +16,16 @@ To run Spree 2.0 you need the latest Rails 3.2.x version.
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
 ```bash
-$ gem install rails -v 3.2.14```
+$ gem install rails -v 3.2.14
+```
 
 ### Installing Bundler
 
 Bundler is the current standard for maintaining Ruby gem dependencies. It is recommended that you have a decent working knowledge of Bundler and how it used within Rails before attempting to install Spree. You can install Bundler using the following command:
 
 ```bash
-$ gem install bundler```
+$ gem install bundler
+```
 
 ### Installing Image Magick
 
@@ -32,7 +34,8 @@ Spree also uses the ImageMagick library for manipulating images. Using this libr
 If you are using OSX, a recommended approach is to install ImageMagick using [Homebrew](http://mxcl.github.com/homebrew/). This can be done with the following command:
 
 ```bash
-$ brew install imagemagick```
+$ brew install imagemagick
+```
 
 If you are using Unix or Windows check [Imagemagick.org](http://www.imagemagick.org/).
 
@@ -41,7 +44,8 @@ If you are using Unix or Windows check [Imagemagick.org](http://www.imagemagick.
 The easiest way to get Spree setup is by installing the `spree_cmd` gem. This can be done with the following command:
 
 ```bash
-$ gem install spree_cmd```
+$ gem install spree_cmd
+```
 
 ## Creating a New Spree Project
 
@@ -52,7 +56,8 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 Let's start by creating a standard Rails application using the following command:
 
 ```bash
-$ rails _3.2.14_ new mystore```
+$ rails _3.2.14_ new mystore
+```
 
 ### Adding Spree to Your Rails Application
 
@@ -61,19 +66,22 @@ Now that we have a basic Rails application we can add Spree to it. This approach
 After you create the store application, switch to its folder to continue work directly in that application:
 
 ```bash
-$ cd mystore```
+$ cd mystore
+```
 
 Now let's add Spree to our Rails application:
 
 ```bash
-$ spree install --auto-accept```
+$ spree install --auto-accept
+```
 
 ## Hello, Spree!
 
 You now have a functional Spree application after running only a few commands! To see it, you need to start a web server on your development machine. You can do this by running another command:
 
 ```bash
-$ rails server```
+$ rails server
+```
 
 This will fire up an instance of the Webrick web server by default (Spree can also use several other web servers). To see your application in action, open a browser window and navigate to http://localhost:3000. You should see the Spree default home page:
 
@@ -89,7 +97,8 @@ The next thing you'll probably want to do is to log into the admin interface. Us
 If you elected not to use the `--auto-accept` option when you added Spree to your Rails app, and did not install the seed data, the admin user will not yet exist in your database. You can run a simple rake task to create a new admin user.
 
 ```bash
-$ rake spree_auth:admin:create```
+$ rake spree_auth:admin:create
+```
 ***
 
 Upon successful authentication, you should see the admin screen:

@@ -55,4 +55,5 @@ valid:
 ```ruby
 Spree::Adjustment.eligible
 order.adjustments.eligible
-line_item.adjustments.eligible```
+line_item.adjustments.eligible
+```

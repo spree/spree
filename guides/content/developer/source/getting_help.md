@@ -39,6 +39,3 @@ If you think you have discovered a security issue with Spree, please do not
 report them publically. Instead, email [our security
 address](mailto:security@spreecommerce.com)
 !!!
-
-## Consulting Services
-

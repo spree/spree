@@ -116,13 +116,9 @@ to the field. For example, we've used:
 
 -   Html tags in the description
 -   WxHxD for a shorthand for the dimensions
--   "green & small = small_green_shirt @ $10.00" to code up a
-variant which is small and green, has sku *small_green_shirt* and
-costs $10.
--   "foo\nbar" in the taxons column to encode membership of two
-taxons
--   "alpha > beta > gamma" in the taxons column to encode membership
-a particular nesting.
+-   "green & small = small_green_shirt @ $10.00" to code up a variant which is small and green, has sku *small_green_shirt* and costs $10.
+-   "foo\nbar" in the taxons column to encode membership of two taxons
+-   "alpha > beta > gamma" in the taxons column to encode membership a particular nesting.
 
 The taxon nesting notation is useful for when 'gamma' doesn't uniquely
 identify a taxon (and so you need some context, ie a few ancestor

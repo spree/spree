@@ -14,7 +14,8 @@ end
 
 def compute(object=nil)
   # Returns the value after performing the required calculation
-end```
+end
+```
 
 Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the [`Spree::Core::CalculatedAdjustment`](#calculated-adjustments) module to provide an easy way to calculate adjustments for their objects.
 
@@ -31,12 +32,14 @@ For information about this calculator, please read the [Taxation](taxation) guid
 This calculator has one preference: `flat_percent` and can be set like this:
 
 ```ruby
-calculator.preferred_flat_percent = 10```
+calculator.preferred_flat_percent = 10
+```
 
 This calculator takes an order and calculates an amount using this calculation:
 
 ```ruby
-[item total] x [flat percentage]```
+[item total] x [flat percentage]
+```
 
 For example, if an order had an item total of $31 and the calculator was configured to have a flat percent amount of 10, the discount would be $3.10, because $31 x 10% = $3.10.
 
@@ -48,7 +51,8 @@ This calculator has two preferences: `amount` and `currency`. These can be set l
 
 ```ruby
 calculator.preferred_amount = 10
-calculator.currency = "USD"```
+calculator.currency = "USD"
+```
 
 The currency for this calculator is used to check to see if a shipping method is available for an order. If an order's currency does not match the shipping method's currency, then that shipping method will not be displayed on the frontend.
 
@@ -154,7 +158,8 @@ class CustomCalculator < Spree::Calculator
   def compute(object=nil)
     # Returns the value after performing the required calculation
   end
-end```
+end
+```
 
 You can register this calculator as a tax, shipping, or promotion adjustment calculator by calling code like this at the end of `config/initializers/spree.rb` inside your application (`config` variable defined for brevity):
 
@@ -162,7 +167,8 @@ You can register this calculator as a tax, shipping, or promotion adjustment cal
 config = Rails.application.config
 config.spree.calculators.tax_rates << CustomCalculator
 config.spree.calculators.shipping_methods << CustomCalculator
-config.spree.calculators.promotion_actions_create_adjustments << CustomCalculator```
+config.spree.calculators.promotion_actions_create_adjustments << CustomCalculator
+```
 
 ### Determining Availability
 
@@ -173,7 +179,8 @@ class CustomCalculator < Spree::Calculator
   def available?(object)
     object.currency == "USD"
   end
-end```
+end
+```
 
 ## Calculated Adjustments
 
@@ -182,34 +189,40 @@ If you wish to use Spree's calculator functionality for your own application, yo
 ```ruby
 class Plan < ActiveRecord::Base
   include Spree::Core::CalculatedAdjustments
-end```
+end
+```
 
 To have calculators available for this class, you will need to register them:
 
 ```ruby
-config.spree.calculators.plans << CustomCalculator```
+config.spree.calculators.plans << CustomCalculator
+```
 
 Then you can access these calculators by calling this method:
 
 ```ruby
-Plan.calculators```
+Plan.calculators
+```
 
 Using this method, you can then display the calculators as you please. Each object for this new class will need to have a calculator associated so that adjustments can be calculated on them.
 
 This module provides a `has_one` association to a `calculator` object, as well as some convenience helpers for creating and updating adjustments for objects. Assuming that an object has a calculator associated with it first, creating an adjustment is simple:
 
 ```ruby
-plan.create_adjustment("#{plan.name}", <target object>, <calculable object>)```
+plan.create_adjustment("#{plan.name}", <target object>, <calculable object>)
+```
 
 To update this adjustment:
 
 ```ruby
-plan.update_adjustment(<adjustment object>, <calculable object>)```
+plan.update_adjustment(<adjustment object>, <calculable object>)
+```
 
 To work out what the calculator would compute an amount to be:
 
 ```ruby
-plan.compute_amount(<calculable object>)```
+plan.compute_amount(<calculable object>)
+```
 
 `create_adjustment`, `update_adjustment` and `compute_amount` will call `compute` on the `Calculator` object. This `calculable` amount is whatever object your
 `CustomCalculator` class supports.

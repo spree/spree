@@ -93,10 +93,6 @@ To achieve this setup you need the following configuration:
 |Regular|Per Item ($5)|Per Item ($2)|Per Item ($8)|
 |Heavy|Per Item ($50)|Flexi Rate($20,$15)|Per Item ($20)|
 
-$$$
-What do we do for calculating the default category?
-$$$
-
 ## Design & Functionality
 
 To properly leverage Spree's shipping system's flexibility you must understand a few key concepts:
@@ -228,7 +224,8 @@ To install the `spree-active-shipping` extension add the following to your `Gemf
 
 ```ruby
 gem 'spree_active_shipping'
-gem 'active_shipping', :git => 'git://github.com/Shopify/active_shipping.git'```
+gem 'active_shipping', :git => 'git://github.com/Shopify/active_shipping.git'
+```
 
 and run `bundle install` from the command line.
 
@@ -251,7 +248,8 @@ def activate
     Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
     Calculator::Usps::PriorityMailLargeFlatRateBox
   ].each(&:register)
-end```
+end
+```
 
 Each USPS delivery service you want to make available at checkout has to be associated with a corresponding shipping method. Which shipping methods are made available at checkout is ultimately determined by the zone of the customer's shipping address. The USPS' basic shipping categories are domestic and international, so we'll set up zones to mimic this distinction. We need to set up two zones then - a domestic one, consisting of the USA and its territories; and an international one, consisting of all other countries.
 
@@ -265,7 +263,8 @@ The `spree_active_shipping` gem needs some configuration variables set in order 
   Spree::ActiveShipping::Config.set(:origin_country => "US")
   Spree::ActiveShipping::Config.set(:origin_state => "HI")
   Spree::ActiveShipping::Config.set(:origin_city => "Pahoa")
-  Spree::ActiveShipping::Config.set(:origin_zip => "96778")```
+  Spree::ActiveShipping::Config.set(:origin_zip => "96778")
+```
 
 ### Adding Additional Calculators
 
@@ -278,7 +277,8 @@ class Calculator::Usps::FirstClassMailInternationalParcels < Calculator::Usps::B
   def self.description
     "USPS First-Class Mail International Package"
   end
-end```
+end
+```
 
 !!!
 Note that, unlike calculators that you write yourself, these calculators do not have to implement a `compute` instance method that returns a shipping amount. The superclasses take care of that requirement.
@@ -310,7 +310,8 @@ class Calculator::ActiveShipping < Calculator
     h = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
     #....
   end
-end```
+end
+```
 
 As you can see in the code above, the `spree_active_shipping` gem returns an array of services with their corresponding prices, which the `retrieve_rates` method converts into a hash. Below is what would get returned for an order with an international destination:
 
@@ -329,19 +330,22 @@ As you can see in the code above, the `spree_active_shipping` gem returns an arr
   "USPS Global Express Guaranteed (GXG)"=>4295,
   "USPS Express Mail International"=>2895,
   "USPS Priority Mail International Small Flat Rate Box"=>1345
-}```
+}
+```
 
 From all of the viable shipping services in this hash, the `compute` method selects the one that matches the description of the calculator. At this point, an optional flat handling fee (set via preferences) can be added:
 
 ```ruby
-rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)```
+rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
+```
 
 Finally, don't forget to register the calculator you added. In extensions, this is accomplished with the `activate` method:
 
 ```ruby
 def activate
   Calculator::Usps::FirstClassMailInternationalParcels.register
-end```
+end
+```
 
 ## Filtering Shipping Methods On Criteria Other Than the Zone
 
@@ -356,7 +360,8 @@ class Spree::Stock::Estimator
     shipping_methods.delete_if { |ship_method| !(ship_method.calculator.preferences[:currency].nil? || ship_method.calculator.preferences[:currency] == currency) }
     shipping_methods
   end
-end```
+end
+```
 
 Unless overridden, the calculator's `available?` method returns `true` by default. It is, therefore, the zone of the destination address that filters out the shipping methods in most cases. However, in some circumstances it may be necessary to filter out additional shipping methods.
 
@@ -378,7 +383,8 @@ class Calculator::Usps::FirstClassMailParcels < Calculator::Usps::Base
     #if weight in ounces > 13, then First Class Mail is not available for the order
       weight > 13 ? false : true
   end
-end```
+end
+```
 
 ## Split Shipments
 
@@ -436,7 +442,8 @@ After creating your splitter, you need to add it to the array of splitters Spree
 ```ruby
 initializer 'custom_spree_splitters', :after => 'spree.register.stock_splitters' do |app|
   app.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
-end```
+end
+```
 
 You can also completely override the splitters used in Spree, rearrange them, etc. To do this, add the following to your `application.rb` file:
 
@@ -446,7 +453,8 @@ initializer 'custom_spree_splitters', :after => 'spree.register.stock_splitters'
     Spree::Stock::Splitter::CustomSplitter,
     Spree::Stock::Splitter::ShippingCategory
   ]
-end```
+end
+```
 
 If you want to add different splitters for each `StockLocation`, you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
 
@@ -471,7 +479,8 @@ Spree::Stock::Coordinator.class_eval do
     prioritizer = Prioritizer.new(order, packages, Spree::Stock::CustomAdjuster)
     prioritizer.prioritized_packages
   end
-end```
+end
+```
 
 ### The Estimator
 

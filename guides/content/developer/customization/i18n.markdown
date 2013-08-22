@@ -43,7 +43,8 @@ of a locale file:
 pt-BR:
   spree:
     say_no: "Não"
-    say_yes: "Sim"```
+    say_yes: "Sim"
+```
 
 ***
 All translations for Spree are "namespaced" within the `spree` key so that they
@@ -73,13 +74,14 @@ You don't need to copy any files from `spree_i18n` or `rails-i18n` for their
 translations to be available within your application. They are made available
 automatically, because both `spree_i18n` and `rails-i18n` are railties.
 
-### Translating views
+### Translating Views
 
 When reviewing the source of any view in Spree you'll notice that all text is
 rendered by passing a string to a helper method similar to:
 
 ```erb
-<%%= Spree.t(:price) %>```
+<%%= Spree.t(:price) %>
+```
 
 The *Spree.t()* helper method looks up the currently configured locale and retrieves
 the translated value from the relevant locale YAML file. Assuming a default
@@ -90,7 +92,8 @@ translation files would need to be this:
 ```yaml
 en:
   spree:
-    price: Price```
+    price: Price
+```
 
 ### The Default Locale
 
@@ -100,14 +103,16 @@ language.  We can verify this in the rails console
 
 ```ruby
 >> I18n.locale
-=> :en```
+=> :en
+```
 
 You can also see in the console how the default locale values are translated
 into English
 
 ```ruby
 >> Spree.t(:action)
-=> Action```
+=> Action
+```
 
 ## Deploying the Translations
 
@@ -115,7 +120,8 @@ The `spree_i18n` gem is configured in the same manner as any Rubygem in a Rails
 application.  Simply add it to the `Gemfile.` using the git url.
 
 ```ruby
-gem 'spree_i18n', :github => 'spree/spree_i18n'```
+gem 'spree_i18n', :github => 'spree/spree_i18n'
+```
 
 ### Setting the Default Locale
 
@@ -144,12 +150,9 @@ your store.
 
 There are three configuration options for currency:
 
-* `Spree::Config[:currency]`: 3-letter currency code representing the current
-currency.
-* `Spree::Config[:currency_symbol_position]`: Whether to include the symbol
-  before or after the monetary amount.
-* `Spree::Config[:display_currency]`: Whether or not to display the currency
-  with prices.
+* `Spree::Config[:currency]`: 3-letter currency code representing the current currency.
+* `Spree::Config[:currency_symbol_position]`: Whether to include the symbol before or after the monetary amount.
+* `Spree::Config[:display_currency]`: Whether or not to display the currency with prices.
 
 ## Creating and Modifying Locales
 

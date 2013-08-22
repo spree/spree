@@ -47,7 +47,8 @@ class MyPromotionAction < Spree::PromotionAction
   def perform(options={})
     ...
   end
-end```
+end
+```
 
 ***
 You can access promotion information using the `promotion` method within any `Spree::PromotionAction`.
@@ -56,7 +57,8 @@ You can access promotion information using the `promotion` method within any `Sp
 This action must then be registered with Spree, which can be done by adding this code to `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotions.actions << MyPromotionAction```
+Rails.application.config.spree.promotions.actions << MyPromotionAction
+```
 
 Once this has been registered, it will be available within Spree's interface. To provide translations for the interface, you will need to define them within your locale file. For instance, to define English translations for your new promotion action, use this code within `config/locales/en.yml`:
 
@@ -66,7 +68,8 @@ en:
     promotion_action_types:
       my_promotion_action:
         name: My Promotion Action
-        description: Performs my promotion action.```
+        description: Performs my promotion action.
+```
 
 ## Rules
 
@@ -93,14 +96,16 @@ class MyPromotionRule < Spree::PromotionRule
   def eligible?(order)
     ...
   end
-end```
+end
+```
 
 The `eligible?` method should then return `true` or `false` to indicate if the promotion should be eligible for an order. You can retrieve promotion information by calling `promotion`.
 
 Then register it using this code inside `config/initializers/spree.rb`:
 
 ```ruby
-Rails.application.config.spree.promotions.rules << MyPromotionRule```
+Rails.application.config.spree.promotions.rules << MyPromotionRule
+```
 
 NOTE: proper location and file name for the rule in this example would be: app/models/spree/promotion/rules/my_promotion_rule.rb
 

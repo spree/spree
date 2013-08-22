@@ -24,17 +24,20 @@ There are three steps we need to take to install spree_fancy.
 First, we need to add the gem to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git'```
+gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git'
+```
 
 Now, let's install the gem via Bundler with the following command:
 
 ```bash
-$ bundle install```
+$ bundle install
+```
 
 Finally, let's copy over the required migrations and assets from the extension with the following command:
 
 ```bash
-$ bundle exec rails g spree_fancy:install```
+$ bundle exec rails g spree_fancy:install
+```
 
 Answer **yes** when prompted to run migrations.
 
@@ -49,12 +52,14 @@ Let's build a simple extension. Suppose we want the ability to mark certain prod
 So let's start by generating the extension. Run the following command from a directory of your choice outside of our Spree application:
 
 ```bash
-$ spree extension simple_sales```
+$ spree extension simple_sales
+```
 
 This creates a `spree_simple_sales` directory with several additional files and directories. After generating the extension make sure you change to its directory:
 
 ```bash
-$ cd spree_simple_sales```
+$ cd spree_simple_sales
+```
 
 ### Adding a Sale Price to Variants
 
@@ -63,7 +68,8 @@ The first thing we need to do is create a migration that adds a sale_price colum
 We can do this with the following command:
 
 ```bash
-rails g migration add_sale_price_to_spree_variants sale_price:decimal```
+rails g migration add_sale_price_to_spree_variants sale_price:decimal
+```
 
 $$$
 Make above generator actually work in extension directories
@@ -76,28 +82,36 @@ class AddSalePriceToSpreeVariants < ActiveRecord::Migration
   def change
     add_column :spree_variants, :sale_price, :decimal, :precision => 8, :scale => 2
   end
-end```
+end
+```
 
 ### Adding Our Extension to the Spree Application
 
 Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](). This will allow us to see how the extension works with an actual Spree store while we develop it.
 
+$$$
+Fix preceding link
+$$$
+
 Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_simple_sales', :path => '../spree_simple_sales'```
+gem 'spree_simple_sales', :path => '../spree_simple_sales'
+```
 
 You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `mystore` application.
 
 Once you have added the gem, it's time to bundle:
 
 ```bash
-$ bundle install```
+$ bundle install
+```
 
 Finally, let's run the `spree_simple_sales` install generator to copy over the migration we just created (answer **yes** if prompted to run migrations):
 
 ```bash
-$ rails g spree_simple_sales:install```
+$ rails g spree_simple_sales:install
+```
 
 ### Adding a Controller Action to HomeController
 
@@ -106,7 +120,8 @@ Now we need to extend `Spree::HomeController` and add an action that selects "on
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
 ```bash
-$ mkdir -p app/controllers/spree```
+$ mkdir -p app/controllers/spree
+```
 
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
@@ -117,7 +132,8 @@ module Spree
       @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').uniq
     end
   end
-end```
+end
+```
 
 This will select just the products that have a variant with a `sale_price` set.
 
@@ -126,7 +142,8 @@ We also need to add a route to this action in our `config/routes.rb` file. Let's
 ```ruby
 Spree::Core::Engine.routes.draw do
   get "/sale" => "home#sale"
-end```
+end
+```
 
 ### Viewing On Sale Products
 
@@ -137,7 +154,8 @@ Now that our variants have the attribute `sale_price` available to them, let's u
 So, in order to do this, first open up the rails console:
 
 ```bash
-$ rails console```
+$ rails console
+```
 
 Now, follow the steps I take in selecting a product and updating its master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
 
@@ -152,7 +170,8 @@ Now, follow the steps I take in selecting a product and updating its master vari
 => 8.0
 
 > variant.save
-=> true```
+=> true
+```
 
 ### Creating a View
 
@@ -161,14 +180,16 @@ Now we have at least one product in our database that is on sale. Let's create a
 First, create the required views directory with the following command:
 
 ```bash
-$ mkdir -p app/views/spree/home```
+$ mkdir -p app/views/spree/home
+```
 
 Next, create the file `app/views/spree/home/sale.html.erb` and add the following content to it:
 
 ```erb
 <div data-hook="homepage_products">
   <%%= render 'spree/shared/products', :products => @products %>
-</div>```
+</div>
+```
 
 If you navigate to `http://localhost:3000/sale` you should now see the product(s) listed that we set a `sale_price` on earlier in the tutorial. However, if you look at the price, you'll notice that it's not actually displaying the correct price. This is easy enough to fix and we will cover that in the next section.
 
@@ -179,7 +200,8 @@ Let's fix our extension so that it uses the `sale_price` when it is present.
 First, create the required directory structure for our new decorator:
 
 ```bash
-$ mkdir -p app/models/spree```
+$ mkdir -p app/models/spree
+```
 
 Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
 
@@ -192,7 +214,8 @@ module Spree
       Spree::Price.new(:variant_id => self.id, :amount => self.sale_price, :currency => currency)
     end
   end
-end```
+end
+```
 
 Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in`.
 
@@ -207,7 +230,8 @@ An extension is not a full Rails application, so we need something to test our e
 We can do this with the following command from the root directory of our extension:
 
 ```bash
-$ bundle exec rake test_app```
+$ bundle exec rake test_app
+```
 
 After this command completes, you should be able to run `rspec` and see the following output:
 
@@ -215,12 +239,14 @@ After this command completes, you should be able to run `rspec` and see the foll
 No examples found.
 
 Finished in 0.00005 seconds
-0 examples, 0 failures```
+0 examples, 0 failures
+```
 
 Great! We're ready to start adding some tests. Let's replicate the extension's directory structure in our spec directory by running the following command
 
 ```bash
-$ mkdir -p spec/models/spree```
+$ mkdir -p spec/models/spree
+```
 
 Now, let's create a new file in this directory called `variant_decorator_spec.rb` and add the following tests to it:
 
@@ -251,7 +277,8 @@ describe Spree::Variant do
       result.currency.should == expected.currency
     end
   end
-end```
+end
+```
 
 These specs test that the `price_in` method we overrode in our `VariantDecorator` returns the correct price both when the sale price is present and when it is not.
 

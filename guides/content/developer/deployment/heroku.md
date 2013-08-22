@@ -33,7 +33,8 @@ If you are not using Spree 2.0.0 and above, then you can safely ignore this sect
 Spree 2.0.0 requires a version of Ruby greater than or equal to Ruby 1.9.3. By default, Heroku uses Ruby 1.9.2, which *will not work* with Spree. To force Heroku to use Ruby 1.9.3, put this line in your Gemfile:
 
 ```ruby
-ruby '1.9.3'```
+ruby '1.9.3'
+```
 
 ### Asset Pipeline
 
@@ -46,7 +47,8 @@ To work around this issue, put this line underneath the other `config.assets`
 lines inside `config/application.rb`:
 
 ```ruby
-config.assets.initialize_on_precompile = false```
+config.assets.initialize_on_precompile = false
+```
 
 The assets for your application will still be precompiled, it's just that Rails
 won't be intialized during this process.
@@ -70,7 +72,8 @@ Spree.config do |config|
   config.s3_bucket = '<bucket>'
   config.s3_access_key = "<key>"
   config.s3_secret = "<secret>"
-end```
+end
+```
 
 If you're using the Western Europe S3 server, you will need to set two
 additional options inside this block:
@@ -80,7 +83,8 @@ Spree.config do |config|
   ...
   config.attachment_url = ":s3_eu_url"
   config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end```
+end
+```
 
 And additionally you will need to tell paperclip how to construct the URLs for
 your images by placing this code outside the +config+ block inside
@@ -89,7 +93,8 @@ your images by placing this code outside the +config+ block inside
 ```ruby
 Paperclip.interpolates(:s3_eu_url) do |attachment, style|
 "#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/},"")}"
-end```
+end
+```
 
 ## Pushing to Heroku
 
@@ -97,30 +102,33 @@ Once you have configured the above settings, you can push your Spree application
 to Heroku:
 
 ```bash
-$ git push heroku master```
+$ git push heroku master
+```
 
 Once your application is on Heroku, you will need to set up the schema by
 running this command:
 
 ```bash
-$ heroku run rake db:migrate```
+$ heroku run rake db:migrate
+```
 
 You may then wish to set up an admin user as well which can be done by loading
 the rails console:
 
 ```bash
-$ heroku run rails console```
+$ heroku run rails console
+```
 
 And then running this code:
 
 ```ruby
 user = Spree::User.create!(:email => "you@example.com", :password => "yourpassword")
-user.spree_roles.create!(:name => "admin")```
+user.spree_roles.create!(:name => "admin")
+```
 
 Exit out of the console and then attempt to sign in to your application to
 verify these credentials.
 
 ## SSL Support
 
-For information about SSL support with Heroku, please read their [SSL
-Guide](https://devcenter.heroku.com/articles/ssl)
+For information about SSL support with Heroku, please read their [SSL Guide](https://devcenter.heroku.com/articles/ssl).

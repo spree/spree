@@ -17,13 +17,8 @@ address common search engine optimization issues.
 
 #### Relevant, Meaningful URLs
 
-The helper method `seo_url(taxon)` yields SEO friendly URLs
-such as
-[demo.spreecommerce.com/products/xm-direct2-interface-adapter](http://demo.spreecommerce.com/products/xm-direct2-interface-adapter)
-an
-[demo.spreecommerce.com/t/categories/headphones](http://demo.spreecommerce.com/t/categories/headphones).
-Each controller is configured to serve the content using these keyword
-relevant, meaningful URLs.
+The helper method `seo_url(taxon)` yields SEO friendly URLs such as [demo.spreecommerce.com/products/xm-direct2-interface-adapter](http://demo.spreecommerce.com/products/xm-direct2-interface-adapter) and [demo.spreecommerce.com/t/categories/headphones](http://demo.spreecommerce.com/t/categories/headphones).
+Each controller is configured to serve the content using these keyword-relevant, meaningful URLs.
 
 #### On Page Keyword Targeting
 
@@ -114,10 +109,8 @@ also be integrated to improve social networking site performance.
 The following list shows extensions that can improve search engine
 performance. Refer to the GitHub README for developer notes.
 
--   [Static Content
-    Management](https://github.com/spree/spree_static_content)
--   [Spree Sitemap
-    Generation](https://github.com/romul/spree_dynamic_sitemaps)
+-   [Static Content Management](https://github.com/spree/spree_static_content)
+-   [Spree Sitemap Generation](https://github.com/romul/spree_dynamic_sitemaps)
 -   [Product Reviews](https://github.com/spree/spree_reviews)
 
 ### External Search Engine Optimization Efforts

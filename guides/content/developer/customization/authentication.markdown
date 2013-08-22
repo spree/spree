@@ -72,14 +72,16 @@ lives at *lib/spree/authentication_helpers.rb* to the
 Run this generator with this command:
 
 ```bash
-$ bundle exec rails g spree:custom_user User```
+$ bundle exec rails g spree:custom_user User
+```
 
 This will tell the generator that you want to use the *User* class as
 the class that represents users in Spree. Run the new migration by
 running this:
 
 ```bash
-$ bundle exec rake db:migrate```
+$ bundle exec rake db:migrate
+```
 
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
@@ -250,7 +252,8 @@ important. This file will then contain this code:
   <li>
     <%%= link_to Spree.t(:signup), spree_signup_path %>
   </li>
-<%% end %>```
+<%% end %>
+```
 
 This will then use the URL helpers you have defined in
 *lib/spree/authentication_helpers.rb* to define three links, one to
@@ -274,4 +277,3 @@ controller deals with user signup:
 This line will cause the Spree event notifiers to be notified of this
 event and to apply any promotions to an order that are triggered once a
 user signs up.
-

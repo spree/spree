@@ -40,7 +40,8 @@ Here is what the erb template looks like in Spree:
       <%% end %>
     </div>
   <%% end %>
-</div>```
+</div>
+```
 
 If you wanted to insert some code just before the `#registration` div on the page, you would define an override in `app/overrides` (creating a new file with an `rb` extension) as follows:
 
@@ -48,7 +49,8 @@ If you wanted to insert some code just before the `#registration` div on the pag
 Deface::Override.new(:virtual_path  => "spree/checkout/registration",
                      :insert_before => "div#registration",
                      :text          => "<p>Registration is the future!</p>",
-                     :name          => "registration_future")```
+                     :name          => "registration_future")
+```
 
 This override will insert a paragraph tag with the content "Registration is the future!" before the `#registration` div.
 
@@ -63,7 +65,8 @@ Deface applies an action to element(s) matching the supplied CSS selector. These
 
 :insert_after => "div#wow p.header"
 
-:insert_bottom => "ul#giant-list"```
+:insert_bottom => "ul#giant-list"
+```
 
 Deface currently supports the following actions:
 
@@ -106,7 +109,8 @@ We want to override the product edit admin page, so the view we want to modify i
 First, let's create the overrides directory with the following command:
 
 ```bash
-$ mkdir app/overrides```
+$ mkdir app/overrides
+```
 
 So we want to override `spree/admin/products/_form.html.erb`. Here is the part of the file we are going to add content to (you can also view the [full file](https://github.com/spree/spree/blob/master/backend/app/views/spree/admin/products/_form.html.erb)):
 
@@ -118,7 +122,8 @@ So we want to override `spree/admin/products/_form.html.erb`. Here is the part o
     <%%= f.text_field :price, :value => number_to_currency(@product.price,
       :unit => '') %>
     <%%= f.error_message_on :price %>
-<%% end %>```
+<%% end %>
+```
 
 We want our override to insert another field container after the price field container. We can do this by creating a new file `app/overrides/add_sale_price_to_product_edit.rb` and adding the following content:
 
@@ -133,7 +138,8 @@ Deface::Override.new(:virtual_path => 'spree/admin/products/_form',
         number_to_currency(@product.sale_price, :unit => '') %>
       <%%= f.error_message_on :sale_price %>
     <%% end %>
-  ")```
+  ")
+```
 
 There is one more change we will need to make in order to get the updated product edit form working. We need to make `sale_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `sale_price`.
 
@@ -146,6 +152,7 @@ module Spree
 
     attr_accessible :sale_price
   end
-end```
+end
+```
 
 Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application (created in the [Getting Started](getting_started_tutorial) tutorial).

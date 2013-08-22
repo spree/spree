@@ -63,7 +63,8 @@ def self.available(display_on = 'both')
     (p.display_on == display_on.to_s || p.display_on.blank?) &&
     (p.environment == Rails.env || p.environment.blank?)
   end
-end```
+end
+```
 
 If a payment method meets these criteria, then it will be available.
 
@@ -77,7 +78,8 @@ class FancyPaymentMethod < Spree::PaymentMethod
   def auto_capture?
     false
   end
-end```
+end
+```
 
 The result of this method determines if a payment will be automatically authorized or not during the processing of the payment.
 
@@ -121,12 +123,14 @@ When an order is completed in spree, each `Payment` object associated with the o
 If the `PaymentMethod` object is configured to auto-capture payments, then the `Payment#purchase!` method will be called, which will call `PaymentMethod#purchase` like this:
 
 ```ruby
-payment_method.purchase(<amount>, <source>, <gateway options>)```
+payment_method.purchase(<amount>, <source>, <gateway options>)
+```
 
 If the payment is *not* configured to auto-capture payments, the `Payment#authorize!` method will be called, with the same arguments as the `purchase` method above:
 
 ```ruby
-payment_method.authorize(<amount>, <source>, <gateway options>)```
+payment_method.authorize(<amount>, <source>, <gateway options>)
+```
 
 How the payment is actually put through depends on the `PaymentMethod` sub-class' implementation of the `purchase` and `authorize` methods.
 
