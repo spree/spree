@@ -32,13 +32,6 @@ Spree::Order.class_eval do
     end
   end
 
-  def complete_from_api(completed_at)
-    if completed_at
-      self.completed_at = completed_at
-      self.state = 'complete'
-    end
-  end
-
   def create_shipments_from_api(shipments_hash)
     shipments_hash.each do |s|
       begin
