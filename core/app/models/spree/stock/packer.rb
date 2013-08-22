@@ -10,7 +10,11 @@ module Spree
       end
 
       def packages
-        build_splitter.split [default_package]
+        if splitters.empty?
+          [default_package]
+        else
+          build_splitter.split [default_package]
+        end
       end
 
       def default_package
