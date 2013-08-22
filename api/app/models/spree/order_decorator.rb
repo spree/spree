@@ -77,7 +77,13 @@ Spree::Order.class_eval do
       begin
         line_item = line_items_hash[k]
         self.class.ensure_variant_id_from_api(line_item)
-        self.add_variant(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+
+        item  = self.add_variant(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+
+        if line_item.key? :price
+          item.price = line_item[:price]
+          item.save!
+        end
       rescue Exception => e
         raise "#{e.message} #{line_item}"
       end

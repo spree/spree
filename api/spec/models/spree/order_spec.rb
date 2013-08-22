@@ -50,6 +50,16 @@ module Spree
       line_item.variant_id.should == variant_id
     end
 
+    it 'uses line item price if present' do
+      line_items['0'][:price] = 12.00
+      params = { :line_items_attributes => line_items }
+
+      order = Order.build_from_api(user, params)
+
+      line_item = order.line_items.first
+      line_item.price.to_f.should == 12.00
+    end
+
     it 'handles line_item building exceptions' do
       line_items['0'][:variant_id] = 'XXX'
       params = { :line_items_attributes => line_items }
