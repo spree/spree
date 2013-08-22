@@ -252,10 +252,11 @@ module Spree
     def associate_user!(user)
       self.user = user
       self.email = user.email
+      self.created_by = user if self.created_by.blank?
 
       if persisted?
         # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        self.class.unscoped.where(id: id).update_all(email: user.email, user_id: user.id)
+        self.class.unscoped.where(id: id).update_all(email: user.email, user_id: user.id, created_by_id: self.created_by_id)
       end
     end
 
