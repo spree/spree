@@ -14,12 +14,14 @@
 
 <table class="index sortable" id="listing_option_types" data-hook data-sortable-link="<%= update_positions_admin_option_types_url %>">
   <colgroup>
-    <col style="width: 44%">
-    <col style="width: 44%">
-    <col style="width: 12%">
+    <col style="width: 10%">
+    <col style="width: 35%">
+    <col style="width: 40%">
+    <col style="width: 15%">
   </colgroup>
   <thead>
     <tr data-hook="option_header">
+      <th class="no-border"></th>
       <th><%= Spree.t(:name) %></th>
       <th><%= Spree.t(:presentation) %></th>
       <th class="actions"></th>
@@ -28,8 +30,9 @@
   <tbody>
     <% @option_types.each do |option_type| %>
       <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
-        <td><span class="handle"></span> <%= option_type.name %></td>
-        <td class="presentation"><%= option_type.presentation %></td>
+        <td class="no-border"><span class="handle"></span></td>
+        <td class="align-center"><%= option_type.name %></td>
+        <td class="align-center presentation"><%= option_type.presentation %></td>
         <td class="actions">
           <%= link_to_edit(option_type, :class => 'admin_edit_option_type', :no_text => true) %>
           <%= link_to_delete(option_type, :no_text => true) %>
