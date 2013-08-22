@@ -23,7 +23,7 @@ group :test do
   gem 'ffaker'
   gem 'shoulda-matchers', '~> 1.0.0'
   gem 'capybara', '~> 1.1'
-  gem 'selenium-webdriver', '2.32.0'
+  gem 'selenium-webdriver', '2.35.0'
   gem 'database_cleaner', '0.7.1'
   gem 'launchy'
   # gem 'debugger'
