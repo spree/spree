@@ -14,17 +14,17 @@
       <%= f.field_container :active do %>
         <label for="active"><%= Spree.t(:state) %></label>
         <ul>
-          <li>
+          <li style="padding:4px;display:block">
+            <%= f.check_box(:active) %>
             <%= f.label :active, Spree.t(:active) %>
-            <%= f.check_box :active %>
           </li>
-          <li>
+          <li style="padding:4px">
+            <%= f.check_box(:backorderable_default) %>
             <%= f.label :active, Spree.t(:backorderable_default) %>
-            <%= f.check_box :backorderable_default %>
           </li>
-          <li>
+          <li style="padding:4px">
+            <%= f.check_box(:propagate_all_variants) %>
             <%= f.label :active, Spree.t(:propagate_all_variants) %>
-            <%= f.check_box :propagate_all_variants %>
           </li>
         </ul>
       <% end %>
