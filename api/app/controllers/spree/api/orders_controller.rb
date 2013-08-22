@@ -25,7 +25,7 @@ module Spree
 
       def empty
         find_order
-        @order.line_items.destroy_all
+        @order.empty!
         @order.update!
         render text: nil, status: 200
       end

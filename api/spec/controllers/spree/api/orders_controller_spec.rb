@@ -216,15 +216,19 @@ module Spree
       end
 
       context "with a line item" do
-        before do
-          create(:line_item, :order => order)
-          order.reload
+        let(:order_with_line_items) do
+          order = create(:order_with_line_items)
+          create(:adjustment, :adjustable => order)
+          order
         end
 
         it "can empty an order" do
-          api_put :empty, :id => order.to_param
+          order_with_line_items.adjustments.count.should be == 1
+          api_put :empty, :id => order_with_line_items.to_param
           response.status.should == 200
-          order.reload.line_items.should be_empty
+          order_with_line_items.reload
+          order_with_line_items.line_items.should be_empty
+          order_with_line_items.adjustments.should be_empty
         end
 
         it "can list its line items with images" do
