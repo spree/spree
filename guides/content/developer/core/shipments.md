@@ -437,23 +437,30 @@ Note that splitters can be customized, and creating your own can be done with re
 
 For an example of a simple splitter, take a look at Spree's [weight based splitter](https://github.com/spree/spree/blob/235e470b242225d7c75c7c4c4c033ee3d739bb36/core/app/models/spree/stock/splitter/weight.rb). This splitter pulls items with a weight greater than 150 into their own shipment.
 
-After creating your splitter, you need to add it to the array of splitters Spree uses. To do this, add the following to your application's `application.rb` file:
+After creating your splitter, you need to add it to the array of splitters Spree
+uses. To do this, add the following to your application's spree initializer
+`spree.rb` file:
 
 ```ruby
-initializer 'custom_spree_splitters', :after => 'spree.register.stock_splitters' do |app|
-  app.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
-end
+Rails.application.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
 ```
 
-You can also completely override the splitters used in Spree, rearrange them, etc. To do this, add the following to your `application.rb` file:
+You can also completely override the splitters used in Spree, rearrange them, etc.
+To do this, add the following to your `spree.rb` file:
 
 ```ruby
-initializer 'custom_spree_splitters', :after => 'spree.register.stock_splitters' do |app|
-  app.config.spree.stock_splitters = [
-    Spree::Stock::Splitter::CustomSplitter,
-    Spree::Stock::Splitter::ShippingCategory
-  ]
-end
+Rails.application.config.spree.stock_splitters = [
+  Spree::Stock::Splitter::CustomSplitter,
+  Spree::Stock::Splitter::ShippingCategory
+]
+```
+
+Or if you don't want to split packages just set the option above to an empty
+array. e.g. a store with the following configuration in spree.rb won't have any
+package splitted.
+
+```ruby
+Rails.application.config.spree.stock_splitters = []
 ```
 
 If you want to add different splitters for each `StockLocation`, you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
