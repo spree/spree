@@ -211,15 +211,27 @@ module Spree
       package
     end
 
+<<<<<<< HEAD
     def set_up_inventory(state, variant, order)
       self.inventory_units.create(variant_id: variant.id, state: state, order_id: order.id)
     end
 
     def create_adjustment
       self.shipping_method.create_adjustment(self)
+=======
+    def persist_cost
+      self.cost = selected_shipping_rate.cost
+      update_amounts
+>>>>>>> No need to create an shipping cost adjustment
     end
 
     private
+      def update_amounts
+        self.update_columns(
+          cost: self.cost,
+          adjustment_total: adjustments.map(&:update!).compact.sum
+        )
+      end
 
       def manifest_unstock(item)
         stock_location.unstock item.variant, item.quantity, self
