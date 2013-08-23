@@ -13,11 +13,7 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @zone } %>
 
 <%= form_for [:admin, @zone] do |zone_form| %>
-  <fieldset class="no-border-top">
-    <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
-    <%= render :partial => 'member_type', :locals => { :type => 'country', :zone_form => zone_form }%>
-    <%= render :partial => 'member_type', :locals => { :type => 'state', :zone_form => zone_form } %>
-    <div class="clear"></div>
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
-  </fieldset>
+  <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
+  <div class="clear"></div>
+  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
 <% end %>
