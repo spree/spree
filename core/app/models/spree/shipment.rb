@@ -14,6 +14,8 @@ module Spree
 
     before_create :generate_shipment_number
 
+    before_validation :set_cost_zero_when_nil
+
     attr_accessor :special_instructions
 
     accepts_nested_attributes_for :address
@@ -270,6 +272,10 @@ module Spree
 
       def send_shipped_email
         ShipmentMailer.shipped_email(self.id).deliver
+      end
+
+      def set_cost_zero_when_nil
+        self.cost = 0 unless self.cost
       end
   end
 end
