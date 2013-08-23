@@ -496,6 +496,12 @@ module Spree
       shipments.each { |shipment| shipment.create_adjustment }
     end
 
+    def create_shipments_cost
+      shipments.each { |shipment| shipment.create_cost_adjustment }
+      updater.update_shipment_total
+      updater.persist_totals
+    end
+
     private
 
       def link_by_email

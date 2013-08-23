@@ -23,6 +23,13 @@ module Spree
         order.item_total.should == 20
       end
 
+      it "update shipment total" do
+        order.stub :shipments => [double(cost: 10)]
+
+        updater.update_totals
+        order.shipment_total.should == 10
+      end
+
       it "update order adjustments" do
         adjustments = 2.times.map { double(:amount => -5) }
         order.stub_chain(:adjustments, :eligible).and_return(adjustments)
