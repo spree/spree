@@ -159,6 +159,20 @@ describe Spree::Order do
     end
   end
 
+  context "creates shipments cost" do
+    let(:shipment) { double }
+
+    before { order.stub shipments: [shipment] }
+
+    it "update and persist totals" do
+      expect(shipment).to receive :create_cost_adjustment
+      expect(order.updater).to receive :update_shipment_total
+      expect(order.updater).to receive :persist_totals
+
+      order.create_shipments_cost
+    end
+  end
+
   context "#finalize!" do
     let(:order) { Spree::Order.create }
     it "should set completed_at" do
