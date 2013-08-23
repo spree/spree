@@ -6,6 +6,10 @@
       <td><strong><%= Spree.t(:item_total) %>:</strong></td>
       <td><strong><%= order.display_item_total.to_html %></strong></td>
     </tr>
+    <tr data-hook="item_total">
+      <td><strong><%= Spree.t(:shipping_total) %>:</strong></td>
+      <td><strong><%= order.shipment_total %></strong></td>
+    </tr>
     <% if order.adjustments.eligible.exists? %>
       <tbody id="summary-order-charges" data-hook>
         <tr>
@@ -13,7 +17,7 @@
         </tr>
         <% order.adjustments.eligible.each do |adjustment| %>
         <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
-          <tr>
+          <tr class="total">
             <td><%= adjustment.label %>: </td>
             <td><%= adjustment.display_amount.to_html %></td>
           </tr>
@@ -22,28 +26,28 @@
     <% end %>
 
     <% if order.shipment_adjustments.exists? %>
-      <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
+      <tbody data-hook="order_details_price_adjustments">
         <tr>
           <td colspan="2">Shipment adjustments</td>
         </tr>
         <% @order.shipment_adjustments.each do |adjustment| %>
           <tr class="total">
-            <td><strong><%= adjustment.label %></strong></td>
-            <td><strong><span><%= adjustment.amount %></span></strong></td>
+            <td><%= adjustment.label %></td>
+            <td><%= adjustment.amount %></strong></td>
           </tr>
         <% end %>
       </tbody>
     <% end %>
 
     <% if order.line_item_adjustments.exists? %>
-      <tbody id="price-adjustments" data-hook="order_details_price_adjustments">
+      <tbody data-hook="order_details_price_adjustments">
         <tr>
           <td colspan="2">Item adjustments</td>
         </tr>
         <% @order.line_item_adjustments.each do |adjustment| %>
           <tr class="total">
-            <td><strong><%= adjustment.label %></strong></td>
-            <td><strong><span><%= adjustment.amount %></span></strong></td>
+            <td><%= adjustment.label %></td>
+            <td><%= adjustment.amount %></td>
           </tr>
         <% end %>
       </tbody>
