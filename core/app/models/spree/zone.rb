@@ -14,7 +14,7 @@ module Spree
     accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
 
     attr_accessible :name, :description, :default_tax, :kind, :zone_members,
-                    :zone_members_attributes
+                    :zone_members_attributes, :state_ids, :country_ids
 
     def kind
       if members.any? && !members.any? { |member| member.try(:zoneable_type).nil? }
