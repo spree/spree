@@ -14,8 +14,6 @@
 
 <%= form_for [:admin, @zone] do |zone_form| %>
   <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
-
   <div class="clear"></div>
-  
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
 <% end %>

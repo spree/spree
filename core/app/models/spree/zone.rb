@@ -70,6 +70,42 @@ module Spree
       members.collect(&:zoneable)
     end
 
+    def country_ids
+      if kind == 'country'
+        members.collect(&:zoneable_id)
+      else
+        []
+      end
+    end
+
+    def state_ids
+      if kind == 'state'
+        members.collect(&:zoneable_id)
+      else
+        []
+      end
+    end
+
+    def country_ids=(ids)
+      zone_members.destroy_all
+      ids.reject{ |id| id.blank? }.map do |id|
+        member = ZoneMember.new
+        member.zoneable_type = 'Spree::Country'
+        member.zoneable_id = id
+        members << member
+      end
+    end
+
+    def state_ids=(ids)
+      zone_members.destroy_all
+      ids.reject{ |id| id.blank? }.map do |id|
+        member = ZoneMember.new
+        member.zoneable_type = 'Spree::State'
+        member.zoneable_id = id
+        members << member
+      end
+    end
+
     def self.default_tax
       where(default_tax: true).first
     end
@@ -89,7 +125,6 @@ module Spree
     end
 
     private
-
       def remove_defunct_members
         if zone_members.any?
           zone_members.where('zoneable_id IS NULL OR zoneable_type != ?', "Spree::#{kind.capitalize}").destroy_all
