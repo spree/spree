@@ -23,8 +23,6 @@ module Spree
         line_items = order_params.delete("line_items_attributes")
         if @order.update_attributes(order_params)
           @order.update_line_items(line_items)
-          # TODO: Replace with better code when we switch to strong_parameters
-          # Also remove above user_id stripping
           if current_api_user.has_spree_role?("admin") && user_id.present?
             @order.associate_user!(Spree.user_class.find(user_id))
           end

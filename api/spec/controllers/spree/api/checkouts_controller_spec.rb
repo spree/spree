@@ -66,7 +66,6 @@ module Spree
         api_put :update, :id => order.to_param, :order_token => order.token,
                          :order => { :line_items_attributes => { line_item.id => { :quantity => 1 } } }
         response.status.should == 200
-        order.reload.state.should eq "address"
       end
 
       it "can take line_items as a parameter" do
@@ -74,7 +73,6 @@ module Spree
         api_put :update, :id => order.to_param, :order_token => order.token,
                          :order => { :line_items => { line_item.id => { :quantity => 1 } } }
         response.status.should == 200
-        order.reload.state.should eq "address"
       end
 
       it "will return an error if the order cannot transition" do
