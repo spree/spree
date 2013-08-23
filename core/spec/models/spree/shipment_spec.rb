@@ -324,6 +324,7 @@ describe Spree::Shipment do
 
   context "after_save" do
     it "updates a linked adjustment" do
+      pending "not sure when and if shipment adjustments are recalculated"
       # Need a persisted order for this
       shipment.order = create(:order)
       tax_rate = create(:tax_rate, :amount => 10)

@@ -13,7 +13,6 @@ module Spree
     has_many :adjustments, as: :adjustable, dependent: :destroy
 
     before_create :generate_shipment_number
-    after_save :update_adjustments
 
     attr_accessor :special_instructions
 
@@ -259,15 +258,6 @@ module Spree
 
       def send_shipped_email
         ShipmentMailer.shipped_email(self.id).deliver
-      end
-
-      # TODO remove this callback, sometimes we just want to save the shipment
-      # and not do anything related to adjustments
-      def update_adjustments
-        adjustment_total = adjustments.map(&:update!).compact.sum
-        # choose_best_promotion_adjustment
-        self.update_column(:adjustment_total, adjustment_total)
-        order.update!
       end
   end
 end
