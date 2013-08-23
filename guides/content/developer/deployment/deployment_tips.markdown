@@ -193,12 +193,6 @@ techniques such as [Delayed Job](https://github.com/tobi/delayed_job)
 for handling email delivery as a separate process.
 !!!
 
-***
-The Spree core team is actively working on a solution for improved
-email processing, perhaps involving an optional extension for Delayed
-Job support.
-***
-
 ## Performance Tips
 
 ### Running in Production Mode
