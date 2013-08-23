@@ -347,6 +347,14 @@ describe Spree::Shipment do
     end
   end
 
+  context "nil costs" do
+    it "sets cost to 0" do
+      shipment = Spree::Shipment.new
+      shipment.valid?
+      expect(shipment.cost).to eq 0
+    end
+  end
+
   context "#tracking_url" do
     it "uses shipping method to determine url" do
       shipping_method.should_receive(:build_tracking_url).with('1Z12345').and_return(:some_url)
