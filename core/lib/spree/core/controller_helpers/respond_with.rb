@@ -8,7 +8,7 @@ module ActionController
         options = resources.size == 1 ? {} : resources.extract_options!
 
 
-        if defined_response = collector.response and !(Spree::BaseController.spree_responders[self.class.to_s.to_sym].try(:[], action_name.to_sym)
+        if defined_response = collector.response and !(Spree::BaseController.spree_responders[self.class.to_s.to_sym].try(:[], action_name.to_sym))
           if action = options.delete(:action)
             render :action => action
           else
