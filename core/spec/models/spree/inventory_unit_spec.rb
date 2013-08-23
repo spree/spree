@@ -53,6 +53,17 @@ describe Spree::InventoryUnit do
     end
   end
 
+  context "variants deleted" do
+    let!(:unit) do
+      Spree::InventoryUnit.create(variant: stock_item.variant)
+    end
+
+    it "can still fetch variant" do
+      unit.variant.destroy
+      expect(unit.reload.variant).to be_a Spree::Variant
+    end
+  end
+
   context "#finalize_units!" do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
