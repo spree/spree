@@ -46,14 +46,12 @@ describe Spree::Order do
          order.state.should == "confirm"
         end
       end
-
     end
 
-    context "when current state is address" do
+    context "when current state is delivery" do
       before do
-        order.stub(:has_available_payment)
-        order.stub(:ensure_available_shipping_rates)
-        order.state = "address"
+        order.stub :payment_required? => true
+        order.state = "delivery"
       end
 
       it "adjusts tax rates when transitioning to delivery" do
@@ -62,14 +60,6 @@ describe Spree::Order do
         order.next!
       end
     end
-
-    context "when current state is delivery" do
-      before do
-        order.state = "delivery"
-        order.stub :total => 10.0
-      end
-    end
-
   end
 
   context "#can_cancel?" do
