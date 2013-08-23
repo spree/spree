@@ -53,6 +53,11 @@ module Spree
         variant_id: variant_id).first
     end
 
+    # Remove variant default_scope `deleted_at: nil`
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
     private
 
       def allow_ship?
