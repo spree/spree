@@ -312,13 +312,18 @@ describe Spree::Shipment do
   end
 
   context "create adjustments" do
-    let(:shipping_method) { mock_model Spree::ShippingMethod }
     let(:shipment) { create(:shipment) }
 
-    it "delegates to shipping_method" do
-      shipment.stub shipping_method: shipping_method
-      expect(shipping_method).to receive(:create_adjustment).with(shipment)
-      shipment.create_adjustment
+    before { shipment.stub_chain :selected_shipping_rate, cost: 5 }
+
+    it "updates shipment totals" do
+      expect(shipment).to receive :update_amounts
+      shipment.persist_cost
+    end
+
+    it "set cost as per selected shipping rate" do
+      shipment.persist_cost
+      expect(shipment.cost).to eq 5
     end
   end
 
