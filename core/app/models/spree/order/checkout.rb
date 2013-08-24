@@ -125,9 +125,7 @@ module Spree
 
           def self.remove_transition(options={})
             self.removed_transitions << options
-            if transition = find_transition(options)
-              self.next_event_transitions.delete(transition)
-            end
+            self.next_event_transitions.delete(find_transition(options))
           end
 
           def self.find_transition(options={})
@@ -149,15 +147,10 @@ module Spree
           end
 
           def checkout_steps
-            checkout_steps = []
-            # TODO: replace this with each_with_object once Ruby 1.9 is standard
-            self.class.checkout_steps.each do |step, options|
-              if options[:if]
-                next unless options[:if].call(self)
-              end
+            steps = self.class.checkout_steps.each_with_object([]) { |(step, options), checkout_steps|
+              next if options.include?(:if) && !options[:if].call(self)
               checkout_steps << step
-            end
-            steps = checkout_steps.map(&:to_s)
+            }.map(&:to_s)
             # Ensure there is always a complete step
             steps << "complete" unless steps.include?("complete")
             steps
