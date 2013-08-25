@@ -6,9 +6,9 @@ title: Terminology
 
 ## Messages
 
-Messages are the core of the Integrator platform. A single action within a Spree store can result in several discrete Messages being sent to multiple Endpoints. A Message can be created in one of two ways:
+Messages are the core of the Spree Commerce hub. A single action within a storefront can result in several discrete Messages being sent to multiple Endpoints. A Message can be created in one of two ways:
 
-1. Indirectly as the result of events within a Spree store which the Integrator discovers when it polls the store. Examples of such events are new customers, orders, and shipments.
+1. Indirectly as the result of events within a Spree Commerce storefront which the hub discovers when it polls the store. Examples of such events are new customers, orders, and shipments.
 2. In response to a Message that is being processed by an Endpoint.
 
 ### Attributes
@@ -30,11 +30,11 @@ The following is an example of the JSON representation of a typical message:
 
 ## Endpoints
 
-Endpoints are small standalone web applications that can be subscribed to certain Message types. The Integrator delivers and tracks each Message as a Service Request is sent to all of its subscribed Endpoints. The Integrator includes lots of existing Endpoints for popular services and applications, but you can also create custom or private Endpoints to help integrate with proprietary systems.
+Endpoints are small standalone web applications that can be subscribed to certain Message types. Our hub delivers and tracks each Message as a Service Request is sent to all of its subscribed Endpoints. The Integrator includes lots of existing Endpoints for popular services and applications, but you can also create custom or private Endpoints to help integrate with proprietary systems.
 
-Any Message within the Integrator can be consumed by an Endpoint, with each individual Message resulting in a JSON-encoded Message being sent via an `HTTP POST` request to a pre-configured Endpoint URL.
+Any Message within the Spree Commerce hub can be consumed by an Endpoint, with each individual Message resulting in a JSON-encoded Message being sent via an `HTTP POST` request to a pre-configured Endpoint URL.
 
-Using the Integrator's control panel, you can configure a list of the Message types you want to subscribe to, and a list of corresponding Endpoint URLs that will process them.
+Using the hub's control panel, you can configure a list of the Message types you want to subscribe to, and a list of corresponding Endpoint URLs that will process them.
 
 ## Services
 
@@ -52,7 +52,7 @@ class HubspotEndpoint < EndpointBase
       begin
         importer = ContactImporter.new(@config, @message[:payload]['order']['actual'])
         importer.import
-        
+
         response = base_message.merge({ success: 'Contact Updated' })
         code = 200
       rescue => e
@@ -82,7 +82,7 @@ Content-Length: 169
 ```
 
 ***
-If you are building your own Integration Endpoint you may want to try some of the [Testing Tools](testing_tools) which provide a convenient way to send Service Requests to your Endpoint.
+If you are building your own Endpoint you may want to try some of the [Testing Tools](testing_tools) which provide a convenient way to send Service Requests to your Endpoint.
 ***
 
 ### Service Responses
@@ -113,6 +113,6 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2011-10-30)
 
 ## Schedulers
 
-Pollers are responsible for monitoring a Spree store's API for changes and converting these changes to new messages as events are detected. This polling approach simplifies integration from a store owner's perspective, as there are no components of the Integrator operating within the Spree store itself.
+Pollers are responsible for monitoring a Spree Commerce storefront's API for changes and converting these changes to new messages as events are detected. This polling approach simplifies integration from a store owner's perspective, as there are no components of the Spree Commerce hub operating within the storefront itself.
 
 The Poller also provides a heart beat monitor for a store which can raise alerts quickly when failures occur.
