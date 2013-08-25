@@ -20,14 +20,14 @@ module Spree
       end
     end
 
+    context "taxes and promotions" do
+      pending "calculates item taxes properly after promotions"
+    end
+
     context "best promotion is always applied" do
-      let(:source) do
-        source = Spree::Promotion::Actions::CreateAdjustment.create
-        calculator = Spree::Calculator::PerItem.create(:calculable => source)
-        source.calculator = calculator
-        source.save
-        source
-      end
+      let(:calculator) { Calculator::FlatRate.new(:preferred_amount => 10) }
+
+      let(:source) { Promotion::Actions::CreateItemAdjustment.create calculator: calculator }
 
       def create_adjustment(label, amount)
         create(:adjustment, :order      => order,
@@ -51,7 +51,7 @@ module Spree
                             :label => "Some other credit")
         line_item.adjustments.each {|a| a.update_column(:eligible, true)}
 
-        subject.update
+        subject.choose_best_promotion_adjustment
 
         line_item.adjustments.promotion.eligible.count.should == 1
         line_item.adjustments.promotion.eligible.first.label.should == 'Promotion C'
@@ -68,7 +68,7 @@ module Spree
 
         # regression for #3274
         it "still makes the previous best eligible adjustment valid" do
-          subject.update
+          subject.choose_best_promotion_adjustment
           line_item.adjustments.promotion.first.label.should == 'Promotion A'
         end
       end
@@ -78,7 +78,7 @@ module Spree
         create_adjustment("Promotion B", -200)
         create_adjustment("Promotion C", -200)
 
-        subject.update
+        subject.choose_best_promotion_adjustment
 
         line_item.adjustments.promotion.eligible.count.should == 1
         line_item.adjustments.promotion.eligible.first.amount.to_i.should == -200
