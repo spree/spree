@@ -16,7 +16,7 @@ module Spree
 
     def update_adjustments
       adjustment_total = adjustments.map(&:update!).compact.sum
-      choose_best_promotion_adjustment
+      choose_best_promotion_adjustment unless adjustment_total == 0
 
       item.update_column(:adjustment_total, adjustment_total)
     end
