@@ -45,6 +45,7 @@ module Spree
       end
     end
     
+    scope :open, -> { where(state: 'open') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
     scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
@@ -59,25 +60,15 @@ module Spree
       state != "open"
     end
     
-    # Update both the eligibility and amount of the adjustment. Adjustments 
-    # delegate updating of amount to their Originator when present, but only if
-    # +locked+ is false. Adjustments that are +locked+ will never change their amount.
+    # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
-    # Adjustments delegate updating of amount to their Originator when present,
-    # but only if when they're in "open" state, closed or finalized adjustments
-    # are not recalculated.
-    #
-    # It receives +calculable+ as the updated source here so calculations can be
-    # performed on the current values of that source. If we used +source+ it 
-    # could load the old record from db for the association. e.g. when updating
-    # more than on line items at once via accepted_nested_attributes the order
-    # object on the association would be in a old state and therefore the
-    # adjustment calculations would not performed on proper values
-    def update!(calculable = nil)
+    # Passing a target here would always be recommended as it would avoid
+    # hitting the database again and would ensure you're compute values over
+    # the specific object amount passed here
+    def update!(target = nil)
       return if immutable?
-      amount = source.compute_amount(adjustable)
+      amount = source.compute_amount(target || adjustable)
       self.update_column(:amount, amount)
-      # set_eligibility
       amount
     end
 

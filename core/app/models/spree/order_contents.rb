@@ -25,7 +25,10 @@ module Spree
 
       def adjust_line_item(line_item)
         ItemAdjustments.new(line_item).update
-        order_updater.update
+
+        order_updater.update_item_total
+        order_updater.update_adjustment_total
+        order_updater.persist_totals
 
         order.reload
         line_item

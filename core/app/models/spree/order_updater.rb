@@ -32,9 +32,8 @@ module Spree
       update_hooks.each { |hook| order.send hook }
     end
 
-    # Whenever a series of adjustments are updated, this method should be called.
-    def update_adjustments
-      order.update_column(:adjustment_total, adjustments.eligible.sum(:amount))
+    def recalculate_adjustments
+      adjustments.includes(:source).open.each { |adjustment| adjustment.update! order }
     end
 
     # Updates the following Order total values:
@@ -60,6 +59,7 @@ module Spree
     end
 
     def update_adjustment_total
+      recalculate_adjustments
       order.adjustment_total = adjustments.eligible.map(&:amount).sum + line_items.map(&:adjustment_total).sum
       update_order_total
     end

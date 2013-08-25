@@ -35,6 +35,7 @@ module Spree
         order.stub_chain(:adjustments, :eligible).and_return(adjustments)
         order.stub :line_items => line_items
 
+        expect(updater).to receive(:recalculate_adjustments)
         updater.update_totals
         order.adjustment_total.should == -14
       end
