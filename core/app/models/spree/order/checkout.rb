@@ -129,6 +129,7 @@ module Spree
           end
 
           def self.find_transition(options={})
+            return nil if options.nil? || !options.include?(:from) || !options.include?(:to)
             self.next_event_transitions.detect do |transition|
               transition[options[:from].to_sym] == options[:to].to_sym
             end
