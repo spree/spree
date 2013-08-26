@@ -106,7 +106,7 @@ Spree::Order.class_eval do
   def self.ensure_variant_id_from_api(hash)
     begin
       unless hash[:variant_id].present?
-        hash[:variant_id] = Spree::Variant.find_by_sku!(hash[:sku]).id
+        hash[:variant_id] = Spree::Variant.active.find_by_sku!(hash[:sku]).id
         hash.delete(:sku)
       end
     rescue Exception => e
