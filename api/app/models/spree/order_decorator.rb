@@ -86,7 +86,6 @@ Spree::Order.class_eval do
       end
     end
   end
-<<<<<<< HEAD
 
   def create_adjustments_from_api(adjustments)
     adjustments.each do |a|
@@ -150,73 +149,7 @@ Spree::Order.class_eval do
       address[:state_id] = Spree::State.where(search).first!.id
     rescue Exception => e
       raise "#{e.message} #{search}"
-=======
-
-  def create_adjustments_from_api(adjustments)
-    adjustments.each do |a|
-      begin
-        adjustment = self.adjustments.build(:amount => a['amount'].to_f,
-                                            :label => a['label'])
-        adjustment.save!
-        adjustment.finalize!
-      rescue Exception => e
-        raise "#{e.message} #{a}"
-      end
     end
-  end
-
-  def self.ensure_variant_id_from_api(hash)
-    begin
-      unless hash[:variant_id].present?
-        hash[:variant_id] = Spree::Variant.find_by_sku!(hash[:sku]).id
-        hash.delete(:sku)
-      end
-    rescue Exception => e
-      raise "#{e.message} #{hash}"
->>>>>>> initial port from 1-3-stable of spree order import api, updated for stock and adjustment states
-    end
-  end
-
-  def self.ensure_country_id_from_api(address)
-    return if address.nil? or address[:country_id].present? or address[:country].nil?
-
-    begin
-      search = {}
-      if name = address[:country]['name']
-        search[:name] = name
-      elsif iso_name = address[:country]['iso_name']
-        search[:iso_name] = iso_name.upcase
-      elsif iso = address[:country]['iso']
-        search[:iso] = iso.upcase
-      elsif iso3 = address[:country]['iso3']
-        search[:iso3] = iso3.upcase
-      end
-
-      address.delete(:country)
-      address[:country_id] = Spree::Country.where(search).first!.id
-
-    rescue Exception => e
-      raise "#{e.message} #{search}"
-    end
-  end
-
-  def self.ensure_state_id_from_api(address)
-    return if address.nil? or address[:state_id].present? or address[:state].nil?
-
-    begin
-      search = {}
-      if name = address[:state]['name']
-        search[:name] = name
-      elsif abbr = address[:state]['abbr']
-        search[:abbr] = abbr.upcase
-      end
-
-      address.delete(:state)
-      address[:state_id] = Spree::State.where(search).first!.id
-    rescue Exception => e
-      raise "#{e.message} #{search}"
-    end
-    self.ensure_updated_shipments
   end
 
   def update_line_items(line_item_params)
