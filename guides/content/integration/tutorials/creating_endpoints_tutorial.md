@@ -111,7 +111,6 @@ gem 'endpoint_base', github: 'spree/endpoint_base'
 ---hello_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class HelloEndpoint < EndpointBase
   post '/' do
@@ -170,7 +169,6 @@ In the `get_id.json` message that we passed to our endpoint, we indicated with t
 ---hello_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class HelloEndpoint < EndpointBase
   post '/' do
@@ -273,7 +271,6 @@ Now that we know the product is in stock, it would be helpful if we knew how muc
 ---hello_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class HelloEndpoint < EndpointBase
   post '/' do
