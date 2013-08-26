@@ -86,8 +86,7 @@ Spree::Order.class_eval do
       end
     end
   end
-<<<<<<< HEAD
-
+  
   def create_adjustments_from_api(adjustments)
     adjustments.each do |a|
       begin
@@ -150,30 +149,6 @@ Spree::Order.class_eval do
       address[:state_id] = Spree::State.where(search).first!.id
     rescue Exception => e
       raise "#{e.message} #{search}"
-=======
-
-  def create_adjustments_from_api(adjustments)
-    adjustments.each do |a|
-      begin
-        adjustment = self.adjustments.build(:amount => a['amount'].to_f,
-                                            :label => a['label'])
-        adjustment.save!
-        adjustment.finalize!
-      rescue Exception => e
-        raise "#{e.message} #{a}"
-      end
-    end
-  end
-
-  def self.ensure_variant_id_from_api(hash)
-    begin
-      unless hash[:variant_id].present?
-        hash[:variant_id] = Spree::Variant.find_by_sku!(hash[:sku]).id
-        hash.delete(:sku)
-      end
-    rescue Exception => e
-      raise "#{e.message} #{hash}"
->>>>>>> initial port from 1-3-stable of spree order import api, updated for stock and adjustment states
     end
   end
 
