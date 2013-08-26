@@ -88,6 +88,7 @@ module Spree
         credit.source = self
         credit.adjustable = order
         credit.save
+        order.update!
 
         order.return if inventory_units.all?(&:returned?)
       end
