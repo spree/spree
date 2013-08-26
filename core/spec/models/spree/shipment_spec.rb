@@ -296,9 +296,10 @@ describe Spree::Shipment do
     end
 
     it "finalizes adjustments" do
-      pending "cant make it work for now"
       shipment.stub(:send_shipped_email)
-      expect(shipment.adjustments).to receive(:map).with(&:finalize!)
+      shipment.adjustments.each do |adjustment|
+        expect(adjustment).to receive(:finalize!)
+      end
       shipment.ship!
     end
   end
