@@ -492,7 +492,7 @@ module Spree
     end
 
     def set_shipments_cost
-      shipments.each { |shipment| shipment.persist_cost }
+      shipments.each(&:update_amounts)
       updater.update_shipment_total
       updater.persist_totals
     end
