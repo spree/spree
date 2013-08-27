@@ -71,6 +71,8 @@ module Spree
 
               before_transition :from => :cart, :do => :ensure_line_items_present
 
+              before_transition :from => :address, :do => :create_tax_charge!
+
               before_transition :to => :delivery, :do => :create_proposed_shipments
               before_transition :to => :delivery, :do => :ensure_available_shipping_rates
               before_transition :to => :payment, :do => :set_shipments_cost
