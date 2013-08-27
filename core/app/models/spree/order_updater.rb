@@ -60,7 +60,9 @@ module Spree
 
     def update_adjustment_total
       recalculate_adjustments
-      order.adjustment_total = adjustments.eligible.sum(:amount) + line_items.sum(:adjustment_total)
+      order.adjustment_total = line_items.sum(:adjustment_total) + 
+                               shipments.sum(:adjustment_total)  +
+                               adjustments.eligible.sum(:amount)
       update_order_total
     end
 
