@@ -26,8 +26,7 @@ To start with, we need a new directory to house our integration files.
 
 ```bash
 $ mkdir fulfillment_endpoint
-$ cd fulfillment_endpoint
-```
+$ cd fulfillment_endpoint```
 
 Within our new `fulfillment_endpoint` directory, we will obviously need to have files to make our integration work correctly. We'll need:
 
@@ -35,8 +34,7 @@ Within our new `fulfillment_endpoint` directory, we will obviously need to have 
 ```ruby
 source 'https://rubygems.org'
 
-gem 'endpoint_base', github: 'spree/endpoint_base'
-```
+gem 'endpoint_base', github: 'spree/endpoint_base'```
 
 ***
 Throughout this tutorial, nothing changes in our `Gemfile`, so it will not be re-shown.
@@ -45,8 +43,7 @@ Throughout this tutorial, nothing changes in our `Gemfile`, so it will not be re
 ---config.ru---
 ```ruby
 require './fulfillment_endpoint'
-run FulfillmentEndpoint
-```
+run FulfillmentEndpoint```
 
 ---fulfillment_endpoint.rb---
 ```ruby
@@ -57,8 +54,7 @@ class FulfillmentEndpoint < EndpointBase
   post '/drop_ship' do
     process_result 200, { 'message_id' => @message[:message_id] }
   end
-end
-```
+end```
 
 This is already enough to function as a working endpoint. Let's create a sample incoming JSON file.
 
@@ -68,15 +64,13 @@ This is already enough to function as a working endpoint. Let's create a sample 
   "message_id": "518726r85010000001",
   "payload": {
   }
-}
-```
+}```
 
 Now install the gems, and start the Sinatra server.
 
 ```bash
 $ bundle install
-$ bundle exec rackup -p 9292
-```
+$ bundle exec rackup -p 9292```
 
 Open a new Terminal window, navigate to the /fulfillment_endpoint directory, and run:
 
@@ -91,8 +85,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Wed, 10 Jul 2013 16:47:31 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r84910000001"}
-```
+{"message_id":"518726r84910000001"}```
 
 The output (including headers, as we included the `-H` switch in our curl command) does exactly what we expect: it returns a success (200) status message along with the `message_id` of the JSON file we passed.
 
@@ -113,8 +106,7 @@ module DummyShip
       raise "This order is outside our shipping zone."
     end
   end
-end
-```
+end```
 
 We'll need to require this API in our `config.ru` file.
 
@@ -123,8 +115,7 @@ We'll need to require this API in our `config.ru` file.
 require './fulfillment_endpoint'
 require './dummy_ship'
 
-run FulfillmentEndpoint
-```
+run FulfillmentEndpoint```
 
 Of course, we'll need to update our endpoint to interact with the API.
 
@@ -150,8 +141,7 @@ class FulfillmentEndpoint < EndpointBase
         "payload" => { "result" => e.message } }
     end
   end
-end
-```
+end```
 
 As you can see, our new `validate_address` service will accept an incoming JSON file and extract the shipping_address, storing it in the `address` variable. It then makes a call to our `DummyShip` API's `validate_address` method, passing in the `message` variable. If there are no exceptions, the endpoint returns a `notification:info` message with a payload indicating that all's well.
 
@@ -182,8 +172,7 @@ Now we just need a couple of JSON files we can try out. Let's make one that pass
       }
     }
   }
-}
-```
+}```
 
 ---bad_address.json---
 ```json
@@ -206,8 +195,7 @@ Now we just need a couple of JSON files we can try out. Let's make one that pass
       }
     }
   }
-}
-```
+}```
 
 ***
 Remember: Sinatra doesn't reload your changes unless you explicitly tell it to. There is a [Sinatra Reloader](http://www.sinatrarb.com/contrib/reloader) gem you can try out on your own, if you like.
@@ -227,8 +215,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:41:57 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}
-```
+{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}```
 
 Hooray! Our shipment to Leesburg is a go! Now let's try the shipment to Greensboro.
 
@@ -243,8 +230,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:42:49 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}
-```
+{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}```
 
 As we expected, the zip code for this order is outside the API's acceptable range; this shipment can not be sent with the `DummyShip` fulfillment process.
 
@@ -262,8 +248,7 @@ require './fulfillment_endpoint'
 require './dummy_ship'
 require './shipment'
 
-run FulfillmentEndpoint
-```
+run FulfillmentEndpoint```
 
 The `Shipment` class we included above will be used to represent an actual outgoing package for our `DummyShip` fulfiller.
 
@@ -282,8 +267,7 @@ class Shipment
   def generate_shipment_number
     "S#{Array.new(6){rand(6)}.join}"
   end
-end
-```
+end```
 
 Now our fake API needs to get more complex, since it's going to be doing more interesting things.
 
@@ -301,8 +285,7 @@ module DummyShip
       raise "This order is outside our shipping zone."
     end
   end
-end
-```
+end```
 
 Naturally, our endpoint will need to have a service that taps into all this cool API functionality. Rather than writing a new service, it's more logical to change the `/drop_ship` service we wrote in the [first section of this tutorial](#create-a-basic-endpoint).
 
@@ -344,8 +327,7 @@ class FulfillmentEndpoint < EndpointBase
   def get_address
     @address = @message[:payload]['order']['shipping_address']
   end
-end
-```
+end```
 
 ***
 To keep the code as maintainable and DRY as possible, we extracted out the address-assignment functionality into the `get_address` method. That means we also need to make sure our calls to the API's methods pass in the `@address` variable, and not the `address` variable.
@@ -365,8 +347,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:50:31 GMT
 Connection: Keep-Alive
 
-[{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}},{"message_id":"518726r85010000001","message":"shipment:confirm","payload":{"tracking_number":"S350455","ship_date":"2013-07-12"}}]
-```
+[{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}},{"message_id":"518726r85010000001","message":"shipment:confirm","payload":{"tracking_number":"S350455","ship_date":"2013-07-12"}}]```
 
 As you can see, the endpoint returns an array of messages. The first is a `notification:info` like the ones we've used all along, basically just saying that the address is valid. The second is a `shipment:confirm` message that includes the new shipment's `tracking_number` and date of shipping. The tracking number is randomly-generated, so both it and the `ship_date` should be different from those shown above.
 
@@ -383,7 +364,6 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:52:37 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}
-```
+{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}```
 
 Exactly what we want to have happen: the shipment is not created, the exception is captured elegantly, and a `notification:error` message is returned.
