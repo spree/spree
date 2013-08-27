@@ -239,6 +239,7 @@ This only means that the message was successfully placed on the SQS queue and S3
   ]
 }
 ```
+
 ### Transmit Product
 
 Sends an item profile document containing the product and packaging attributes for the client products.
