@@ -271,3 +271,28 @@ Connection: Keep-Alive
 As we expected, the address is reported as invalid.
 
 ## Accessing Custom Data
+
+Our endpoint up to this point doesn't make use of our custom attributes at all. Let's add that functionality now.
+
+---custom_attribute_endpoint.rb---
+```ruby
+require 'endpoint_base'
+require 'multi_json'
+
+class CustomAttributeEndpoint < EndpointBase
+  post '/validate_address' do
+    address = @message[:payload]['order']['shipping_address']
+
+    begin
+      result = DummyShip.validate_address(address)
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:info",
+        "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
+    rescue Exception => e
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
+        "payload" => { "result" => e.message } }
+    end
+  end
+
+  post '/get_home_signer'
+end
+```
