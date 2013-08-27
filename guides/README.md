@@ -192,7 +192,7 @@ Set `EDGE_DOCS=true` in an environment variable in order to generate the "edge" 
 
 The guides can no longer be deployed to production from this
 repo. Sufficiently-privileged users should see the private repo
-[https://github.com/spree/guides_deploy](guides_deploy).
+[guides_deploy](https://github.com/spree/guides_deploy).
 
 ## TODO
 
