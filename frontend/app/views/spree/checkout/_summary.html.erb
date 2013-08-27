@@ -21,10 +21,12 @@
       </tbody>
     <% end %>
 
-    <tr data-hook="shipping_total">
-      <td><strong><%= Spree.t(:shipping_total) %>:</strong></td>
-      <td><strong><%= Spree::Money.new(order.shipment_total).to_html %></strong></td>
-    </tr>
+    <% if order.shipment_total > 0 %>
+      <tr data-hook="shipping_total">
+        <td><strong><%= Spree.t(:shipping_total) %>:</strong></td>
+        <td><strong><%= Spree::Money.new(order.shipment_total).to_html %></strong></td>
+      </tr>
+    <% end %>
 
     <% if order.shipment_adjustments.exists? %>
       <tbody data-hook="order_details_price_adjustments">
