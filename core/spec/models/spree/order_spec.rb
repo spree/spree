@@ -165,7 +165,7 @@ describe Spree::Order do
     before { order.stub shipments: [shipment] }
 
     it "update and persist totals" do
-      expect(shipment).to receive :persist_cost
+      expect(shipment).to receive :update_amounts
       expect(order.updater).to receive :update_shipment_total
       expect(order.updater).to receive :persist_totals
 

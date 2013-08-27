@@ -123,10 +123,6 @@ module Spree
       order ? order.currency : Spree::Config[:currency]
     end
 
-    def cost
-      adjustments.any? ? adjustments.to_a.sum(&:amount) : 0
-    end
-
     def display_cost
       Spree::Money.new(cost, { currency: currency })
     end
@@ -216,27 +212,23 @@ module Spree
       package
     end
 
-<<<<<<< HEAD
     def set_up_inventory(state, variant, order)
       self.inventory_units.create(variant_id: variant.id, state: state, order_id: order.id)
     end
 
-    def create_adjustment
-      self.shipping_method.create_adjustment(self)
-=======
     def persist_cost
       self.cost = selected_shipping_rate.cost
       update_amounts
->>>>>>> No need to create an shipping cost adjustment
+    end
+
+    def update_amounts
+      self.update_columns(
+        cost: selected_shipping_rate.cost,
+        adjustment_total: adjustments.map(&:update!).compact.sum
+      )
     end
 
     private
-      def update_amounts
-        self.update_columns(
-          cost: self.cost,
-          adjustment_total: adjustments.map(&:update!).compact.sum
-        )
-      end
 
       def manifest_unstock(item)
         stock_location.unstock item.variant, item.quantity, self
