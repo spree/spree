@@ -156,9 +156,9 @@ Then, when your store's orders are output, you'll see the custom `variety` field
 }
 ```
 
-&&&
+$$$
 Figure out some way to get the JSON output to show that it really does what we just said it does.
-&&&
+$$$
 
 ## Creating Custom Endpoint
 
@@ -227,9 +227,9 @@ The `validate_address` service will accept an incoming JSON file, compare the pa
 
 
 
-&&&
+$$$
 Figure out how to extract the JSON from the Spree store to run it through the endpoint.
-&&&
+$$$
 
 
 
