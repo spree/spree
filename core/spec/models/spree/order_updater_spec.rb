@@ -9,8 +9,7 @@ module Spree
       let(:line_items) { 2.times.map { double(amount: 10, adjustment_total: -2) } }
 
       it "updates payment totals" do
-        payments = [double(:amount => 5), double(:amount => 5)]
-        order.stub_chain(:payments, :completed).and_return(payments)
+        order.stub_chain(:payments, :completed, :sum).and_return(10)
 
         updater.update_totals
         order.payment_total.should == 10
@@ -18,25 +17,22 @@ module Spree
 
       it "update item total" do
         order.stub :line_items => line_items
-
-        updater.update_totals
+        updater.update_item_total
         order.item_total.should == 20
       end
 
       it "update shipment total" do
-        order.stub :shipments => [double(cost: 10)]
-
-        updater.update_totals
+        order.stub_chain(:shipments, sum: 10)
+        updater.update_shipment_total
         order.shipment_total.should == 10
       end
 
       it "update order adjustments" do
-        adjustments = 2.times.map { double(:amount => -5) }
-        order.stub_chain(:adjustments, :eligible).and_return(adjustments)
-        order.stub :line_items => line_items
+        order.stub_chain(:adjustments, :eligible, :sum).and_return(-10)
+        order.stub_chain(:line_items, sum: -4)
 
         expect(updater).to receive(:recalculate_adjustments)
-        updater.update_totals
+        updater.update_adjustment_total
         order.adjustment_total.should == -14
       end
     end

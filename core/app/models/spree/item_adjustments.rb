@@ -20,7 +20,7 @@ module Spree
       adjustment_total = adjustments.map(&:update!).compact.sum
 
       unless adjustment_total == 0
-        adjustment_total = adjustments.tax.map(&:amount).sum
+        adjustment_total = adjustments.tax.sum(:amount)
 
         if best_promotion_adjustment
           choose_best_promotion_adjustment
