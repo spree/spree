@@ -133,10 +133,6 @@ Spree::Api::ApiHelpers.class_eval do
 end
 ```
 
-&&&
-Pretty sure that the spree_endpoint will then pull `variety` in as a function of `import_order` on the `import_controller`, right?
-&&&
-
 Then, when your store's orders are output, you'll see the custom `variety` field in the JSON file (much of the output is omitted below for brevity).
 
 ```json
@@ -159,10 +155,148 @@ Then, when your store's orders are output, you'll see the custom `variety` field
 ```
 
 &&&
-Figure out some way to hook up spree_endpoint to the sandbox and get the JSON output to show that it really does what we just said it does.
+Figure out some way to get the JSON output to show that it really does what we just said it does.
 &&&
 
 ## Creating Custom Endpoint
 
+In the [Creating a Fulfillment Endpoint Tutorial](creating_fulfillment_tutorial), we made a basic endpoint that had some simple logic relating to shipments. In this tutorial, we'll create a similar fulfillment endpoint. In [the next section](#accessing-custom-data), we'll extend it to account for the custom attribute and take different actions accordingly.
+
+First, we'll create a fake API with which to interact, called `DummyShip`.
+
+---dummy_ship.rb---
+```ruby
+module DummyShip
+  def self.validate_address(address)
+    ## Zipcode must be within a given range.
+    unless (20170..20179).to_a.include?(address['zipcode'].to_i)
+      raise "This order is outside our shipping zone."
+    end
+  end
+end```
+
+Next, we need a new directory to house our integration files.
+
+```bash
+$ mkdir custom_attribute_endpoint
+$ cd custom_attribute_endpoint```
+
+Within our new `custom_attribute_endpoint` directory, we need:
+
+---Gemfile---
+```ruby
+source 'https://rubygems.org'
+
+gem 'endpoint_base', github: 'spree/endpoint_base'```
+
+---config.ru---
+```ruby
+require './custom_attribute_endpoint'
+require './dummy_ship'
+
+run CustomAttributeEndpoint```
+
+---custom_attribute_endpoint.rb---
+```ruby
+require 'endpoint_base'
+require 'multi_json'
+
+class CustomAttributeEndpoint < EndpointBase
+  post '/validate_address' do
+    address = @message[:payload]['order']['shipping_address']
+
+    begin
+      result = DummyShip.validate_address(address)
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:info",
+        "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
+    rescue Exception => e
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
+        "payload" => { "result" => e.message } }
+    end
+  end
+end```
+
+The `validate_address` service will accept an incoming JSON file, compare the passed-in `shipping_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
+
+To test this out, we need some JSON files - one with a valid address, and one with an invalid address.
+
+---good_address.json---
+```json
+{
+  "message": "order:new",
+  "message_id": "518726r85010000001",
+  "payload": {
+    "order": {
+      "shipping_address": {
+        "firstname": "Chris",
+        "lastname": "Mar",
+        "address1": "112 Hula Lane",
+        "address2": "",
+        "city": "Leesburg",
+        "zipcode": "20175",
+        "phone": "555-555-1212",
+        "company": "RubyLoco",
+        "country": "US",
+        "state": "Virginia"
+      }
+    }
+  }
+}```
+
+---bad_address.json---
+```json
+{
+  "message": "order:new",
+  "message_id": "518726r85010000001",
+  "payload": {
+    "order": {
+      "shipping_address": {
+        "firstname": "Sally",
+        "lastname": "Albright",
+        "address1": "55 Rye Lane",
+        "address2": "",
+        "city": "Greensboro",
+        "zipcode": "27235",
+        "phone": "555-555-1212",
+        "company": "Subs and Sandwiches",
+        "country": "US",
+        "state": "North Carolina"
+      }
+    }
+  }
+}```
+
+Time to test it out in curl. First, the address that our API considers valid:
+
+```bash
+$ bundle exec rackup -p 9292
+$ curl --data @./good_address.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/validate_address
+
+=> HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Length: 141
+X-Content-Type-Options: nosniff
+Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
+Date: Fri, 12 Jul 2013 22:41:57 GMT
+Connection: Keep-Alive
+
+{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}```
+
+The address is confirmed valid. Now let's try the invalid address.
+
+```bash
+$ curl --data @./bad_address.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/validate_address
+
+=> HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Length: 130
+X-Content-Type-Options: nosniff
+Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
+Date: Fri, 12 Jul 2013 22:42:49 GMT
+Connection: Keep-Alive
+
+{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}```
+
+As we expected, the address is reported as invalid.
 
 ## Accessing Custom Data
