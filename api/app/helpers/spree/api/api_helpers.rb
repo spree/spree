@@ -71,6 +71,10 @@ module Spree
         [:id, :number, :state, :amount, :order_id, :reason, :created_at, :updated_at]
       end
 
+      def address_attributes
+        [:id, :firstname, :lastname, :full_name, :address1, :address2, :city, :zipcode, :phone, :company, :alternative_phone, :country_id, :state_id, :state_name]
+      end
+
       def country_attributes
         [:id, :iso_name, :iso, :iso3, :name, :numcode]
       end
