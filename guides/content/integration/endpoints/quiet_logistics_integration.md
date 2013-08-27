@@ -4,15 +4,25 @@ title: Quiet Logistics Endpoint
 
 ## Overview
 
-## Messages Generated
+$$$
+Add basic description of QL and what this integration would be used for
+$$$
 
-### purchase_order:transmit
++++
+The source code for the [Quiet Logistics Endpoint](https://github.com/spree/quiet_logistics_endpoint/)  is available on Github.
++++
+
+## Services
+
+### Transmit PO
 
 Indicates that a new purchase order was successfuly transmitted to Quiet Logistics.
 
-!!!
+***
 This only means that the message was successfully placed on the SQS queue used by QL to process this type of request. QL may end up rejecting the API request at a later point and signal a problem by placing an error message on the store's queue
-!!!
+***
+
+####Request
 
 ---purchase_order_transmit.json---
 ```json
@@ -44,6 +54,16 @@ This only means that the message was successfully placed on the SQS queue used b
   }
 }
 ```
+
+#### Response
+
+$$$
+Add all standard response messages here
+$$$
+
+$$$
+Mention any notification info/error messages
+$$$
 
 ### shipping_order:transmit
 
