@@ -6,10 +6,41 @@
       <td><strong><%= Spree.t(:item_total) %>:</strong></td>
       <td><strong><%= order.display_item_total.to_html %></strong></td>
     </tr>
-    <tr data-hook="item_total">
+
+    <% if order.line_item_adjustments.exists? %>
+      <tbody data-hook="order_details_price_adjustments">
+        <tr>
+          <td colspan="2">Item adjustments</td>
+        </tr>
+        <% @order.line_item_adjustments.each do |adjustment| %>
+          <tr class="total">
+            <td><%= adjustment.label %></td>
+            <td><%= adjustment.display_amount.to_html %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    <% end %>
+
+    <tr data-hook="shipping_total">
       <td><strong><%= Spree.t(:shipping_total) %>:</strong></td>
-      <td><strong><%= order.shipment_total %></strong></td>
+      <td><strong><%= Spree::Money.new(order.shipment_total).to_html %></strong></td>
     </tr>
+
+    <% if order.shipment_adjustments.exists? %>
+      <tbody data-hook="order_details_price_adjustments">
+        <tr>
+          <td colspan="2">Shipment adjustments</td>
+        </tr>
+        <% @order.shipment_adjustments.each do |adjustment| %>
+          <tr class="total">
+            <td><%= adjustment.label %></td>
+            <td><%= adjustment.display_amount.to_html %></strong></td>
+          </tr>
+        <% end %>
+      </tbody>
+    <% end %>
+
+
     <% if order.adjustments.eligible.exists? %>
       <tbody id="summary-order-charges" data-hook>
         <tr>
@@ -20,34 +51,6 @@
           <tr class="total">
             <td><%= adjustment.label %>: </td>
             <td><%= adjustment.display_amount.to_html %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    <% end %>
-
-    <% if order.shipment_adjustments.exists? %>
-      <tbody data-hook="order_details_price_adjustments">
-        <tr>
-          <td colspan="2">Shipment adjustments</td>
-        </tr>
-        <% @order.shipment_adjustments.each do |adjustment| %>
-          <tr class="total">
-            <td><%= adjustment.label %></td>
-            <td><%= adjustment.amount %></strong></td>
-          </tr>
-        <% end %>
-      </tbody>
-    <% end %>
-
-    <% if order.line_item_adjustments.exists? %>
-      <tbody data-hook="order_details_price_adjustments">
-        <tr>
-          <td colspan="2">Item adjustments</td>
-        </tr>
-        <% @order.line_item_adjustments.each do |adjustment| %>
-          <tr class="total">
-            <td><%= adjustment.label %></td>
-            <td><%= adjustment.amount %></td>
           </tr>
         <% end %>
       </tbody>
