@@ -162,7 +162,13 @@ Figure out some way to get the JSON output to show that it really does what we j
 
 In the [Creating a Fulfillment Endpoint Tutorial](creating_fulfillment_tutorial), we made a basic endpoint that had some simple logic relating to shipments. In this tutorial, we'll create a similar fulfillment endpoint. In [the next section](#accessing-custom-data), we'll extend it to account for the custom attribute and take different actions accordingly.
 
-First, we'll create a fake API with which to interact, called `DummyShip`.
+First, we need a new directory to house our integration files.
+
+```bash
+$ mkdir custom_attribute_endpoint
+$ cd custom_attribute_endpoint```
+
+Within this directory, we'll create a fake API with which to interact, called `DummyShip`.
 
 ---dummy_ship.rb---
 ```ruby
@@ -175,13 +181,7 @@ module DummyShip
   end
 end```
 
-Next, we need a new directory to house our integration files.
-
-```bash
-$ mkdir custom_attribute_endpoint
-$ cd custom_attribute_endpoint```
-
-Within our new `custom_attribute_endpoint` directory, we need:
+We also need to create files to support our endpoint:
 
 ---Gemfile---
 ```ruby
@@ -237,7 +237,8 @@ To test this out, we need some JSON files - one with a valid address, and one wi
         "phone": "555-555-1212",
         "company": "RubyLoco",
         "country": "US",
-        "state": "Virginia"
+        "state": "Virginia",
+        "variety": "Residence"
       }
     }
   }
@@ -260,7 +261,8 @@ To test this out, we need some JSON files - one with a valid address, and one wi
         "phone": "555-555-1212",
         "company": "Subs and Sandwiches",
         "country": "US",
-        "state": "North Carolina"
+        "state": "North Carolina",
+        "variety": "Residence"
       }
     }
   }
