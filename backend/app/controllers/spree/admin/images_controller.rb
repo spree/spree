@@ -5,7 +5,6 @@ module Spree
 
       create.before :set_viewable
       update.before :set_viewable
-      destroy.before :destroy_before
 
       private
 
@@ -28,10 +27,6 @@ module Spree
         def set_viewable
           @image.viewable_type = 'Spree::Variant'
           @image.viewable_id = params[:image][:viewable_id]
-        end
-
-        def destroy_before
-          @viewable = @image.viewable
         end
 
     end
