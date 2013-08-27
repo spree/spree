@@ -1,3 +1,5 @@
+require 'kramdown'
+
 class ParseInfoBoxes < Nanoc::Filter
 
   identifier :parse_info_boxes
@@ -13,7 +15,7 @@ class ParseInfoBoxes < Nanoc::Filter
 
     content = content.gsub(/^\+\+\+\n(.*?)\+\+\+/m) do
       generate_div("github", $1)
-    end    
+    end
 
     content = content.gsub(/^\$\$\$\n(.*?)\$\$\$/m) do
       "<p>**************** TODO ****************</p>" + $1 + "<p>**************************************</p>"
