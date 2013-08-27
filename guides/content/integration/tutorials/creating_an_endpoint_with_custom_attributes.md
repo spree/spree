@@ -158,6 +158,11 @@ Then, when your store's orders are output, you'll see the custom `variety` field
 }
 ```
 
+&&&
+Figure out some way to hook up spree_endpoint to the sandbox and get the JSON output to show that it really does what we just said it does.
+&&&
+
 ## Creating Custom Endpoint
+
 
 ## Accessing Custom Data
