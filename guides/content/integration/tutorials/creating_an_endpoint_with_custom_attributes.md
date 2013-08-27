@@ -25,14 +25,12 @@ This tutorial assumes that you have installed [bundler](http://bundler.io/#getti
 First, clone the spree gem:
 
 ```bash
-$ git clone https://github.com/spree/spree.git
-```
+$ git clone https://github.com/spree/spree.git```
 
 Then go into this new `spree` directory and run the following command to generate the sandbox app:
 
 ```bash
-$ bundle exec rake sandbox
-```
+$ bundle exec rake sandbox```
 
 This creates the sandbox Spree store, complete with sample data and a default admin user, with the username **spree@example.com** and password **spree123**.
 
@@ -47,21 +45,18 @@ A `type` attribute would work nicely here, but since `type` is a reserved word i
 Let's generate a migration to add the new field.
 
 ```bash
-$ bundle exec rails g migration add_variety_field_to_addresses
-```
+$ bundle exec rails g migration add_variety_field_to_addresses```
 
 --- add_variety_field_to_addresses.rb ---
 ```ruby
 change
   add_column :spree_addresses, :variety, :string
-end
-```
+end```
 
 Run the migration. 
 
 ```bash
-$ bundle exec rake db:migrate
-```
+$ bundle exec rake db:migrate```
 
 Next, we need to make the field attr_accessible on the `Address` object. Create a new file: `/app/models/spree/address_decorator.rb` and add the following content to it:
 
@@ -70,8 +65,7 @@ module Spree
   Address.class_eval do
     attr_accessible :variety
   end
-end
-```
+end```
 
 Next, we need to add this field to the checkout form so customers can indicate the type of address. The checkout form resides within the `spree` gem at `/frontend/app/views/spree/address/_form.html.erb`, the relevant portion of which is:
 
@@ -84,8 +78,7 @@ Next, we need to add this field to the checkout form so customers can indicate t
   </p>
   ...
   <!-- other address fields here -->
-</div>
-```
+</div>```
 
 We're going to use the [deface gem](https://github.com/spree/deface) to make changes to the spree app files.
 
@@ -130,8 +123,7 @@ Spree::Api::ApiHelpers.class_eval do
   end
 
   alias_method_chain :address_attributes, :variety
-end
-```
+end```
 
 Then, when your store's orders are output, you'll see the custom `variety` field in the JSON file (much of the output is omitted below for brevity).
 
@@ -151,8 +143,7 @@ Then, when your store's orders are output, you'll see the custom `variety` field
       }
     }
   }
-}
-```
+}```
 
 &&&
 Figure out some way to get the JSON output to show that it really does what we just said it does.
@@ -218,55 +209,15 @@ end```
 
 The `validate_address` service will accept an incoming JSON file, compare the passed-in `shipping_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
 
-To test this out, we need some JSON files - one with a valid address, and one with an invalid address.
 
----good_address.json---
-```json
-{
-  "message": "order:new",
-  "message_id": "518726r85010000001",
-  "payload": {
-    "order": {
-      "shipping_address": {
-        "firstname": "Chris",
-        "lastname": "Mar",
-        "address1": "112 Hula Lane",
-        "address2": "",
-        "city": "Leesburg",
-        "zipcode": "20175",
-        "phone": "555-555-1212",
-        "company": "RubyLoco",
-        "country": "US",
-        "state": "Virginia",
-        "variety": "Residence"
-      }
-    }
-  }
-}```
 
----bad_address.json---
-```json
-{
-  "message": "order:new",
-  "message_id": "518726r85010000001",
-  "payload": {
-    "order": {
-      "shipping_address": {
-        "firstname": "Sally",
-        "lastname": "Albright",
-        "address1": "55 Rye Lane",
-        "address2": "",
-        "city": "Greensboro",
-        "zipcode": "27235",
-        "phone": "555-555-1212",
-        "company": "Subs and Sandwiches",
-        "country": "US",
-        "state": "North Carolina",
-        "variety": "Residence"
-      }
-    }
-  }
-}```
+&&&
+Figure out how to extract the JSON from the Spree store to run it through the endpoint.
+&&&
+
+
+
+
 
 Time to test it out in curl. First, the address that our API considers valid:
 
