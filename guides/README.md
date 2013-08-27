@@ -190,13 +190,9 @@ Set `EDGE_DOCS=true` in an environment variable in order to generate the "edge" 
 
 ## Deploy
 
-Standard deploy for the latest stable guides:
-
-    $ bundle exec cap deploy
-
-To deploy the latest edge guides:
-
-    $ bundle exec cap deploy -S edge=true
+The guides can no longer be deployed to production from this
+repo. Sufficiently-privileged users should see the private repo
+[https://github.com/spree/guides_deploy](guides_deploy).
 
 ## TODO
 
