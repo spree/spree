@@ -121,7 +121,8 @@ You can specify terminal blocks by setting it off with <code>```bash</code>. In 
 $ irb
 $ c = "Hello world"
 $ c
-=> "Hello world"```
+=> "Hello world"
+```
 
 ####Special Blocks####
 
