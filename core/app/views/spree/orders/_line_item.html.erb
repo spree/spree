@@ -14,7 +14,9 @@
         <%= variant.in_stock? ? t(:insufficient_stock, :on_hand => variant.on_hand) : t(:out_of_stock) %>&nbsp;&nbsp;<br />
       </span>
     <% end %>
-    <%= line_item_description(variant) %>
+    <span class="line-item-description" data-hook="line_item_description">
+      <%= line_item_description(variant) %>
+    </span>
   </td>
   <td class="cart-item-price" data-hook="cart_item_price">
     <%= line_item.single_money %>
