@@ -52,6 +52,7 @@ module Spree
     it 'can build an order from API with just line items' do
       params = { :line_items_attributes => line_items }
 
+      Order.should_receive(:ensure_variant_id_from_api)
       order = Order.build_from_api(user, params)
       order.user.should == nil
       line_item = order.line_items.first
@@ -137,6 +138,24 @@ module Spree
       }.to raise_error /XXX/
     end
 
+    context 'variant not deleted' do
+      it 'ensures variant id from api' do
+        hash = { sku: variant.sku }
+        Order.ensure_variant_id_from_api(hash)
+        expect(hash[:variant_id]).to eq variant.id
+      end
+    end
+
+    context 'variant was deleted' do
+      it 'raise error as variant shouldnt be found' do
+        variant.product.destroy
+        hash = { sku: variant.sku }
+        expect {
+          Order.ensure_variant_id_from_api(hash)
+        }.to raise_error
+      end
+    end
+
     it 'ensures_country_id for country fields' do
       [:name, :iso, :iso_name, :iso3].each do |field|
         address = { :country => { field => country.send(field) }}
@@ -153,18 +172,30 @@ module Spree
       end
     end
 
-    it 'builds a shipments' do
-      params = { :shipments_attributes => [{ tracking: '123456789',
-                                             cost: '4.99',
-                                             shipping_method: shipping_method.name,
-                                             inventory_units: [{ sku: sku }]
-                                           }] }
-      order = Order.build_from_api(user, params)
+    context "shippments" do
+      let(:params) do
+        { :shipments_attributes => [
+            { :tracking => '123456789',
+              :cost => '4.99',
+              :shipping_method => shipping_method.name,
+              :inventory_units => [{ :sku => sku }]
+            }
+        ] }
+      end
 
-      shipment = order.shipments.first
-      shipment.inventory_units.first.variant_id.should eq product.master.id
-      shipment.tracking.should eq '123456789'
-      shipment.shipping_rates.first.cost.should eq 4.99
+      it 'ensures variant exists and is not deleted' do
+        Order.should_receive(:ensure_variant_id_from_api)
+        order = Order.build_from_api(user, params)
+      end
+
+      it 'builds them properly' do
+        order = Order.build_from_api(user, params)
+
+        shipment = order.shipments.first
+        shipment.inventory_units.first.variant_id.should eq product.master.id
+        shipment.tracking.should eq '123456789'
+        shipment.shipping_rates.first.cost.should eq 4.99
+      end
     end
 
     it 'handles shipment building exceptions' do
