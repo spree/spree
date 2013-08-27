@@ -109,11 +109,54 @@ Spree.config do |config|
   config.company = true
 end```
 
+***
+To learn more about Spree's built-in preferences, see the [Preferences guide](/developer/preferences).
+***
+
 Save your changes, then stop and restart your server to load the new configuration information. Now, when you go to checkout, you will see the new "Company" field.
 
 ![Company Field at Checkout](/images/integration/company_field_checkout.jpg)
 
 ## Extending JSON Output
+
+Once you [get connected to the Spree Integrator](configuration), it will periodically poll your store for any relevant new or updated information based on the [integrations](supported_integrations) you have enabled. This information is transmitted using a standardized [JSON format](terminology#messages) and includes all of the information from a basic Spree store, per the [Spree::Api::ApiHelpers class](https://github.com/spree/spree/blob/master/api/app/helpers/spree/api/api_helpers.rb). 
+
+It will not include any customized attributes. To extend the JSON output to include your custom attributes, you need to decorate the `ApiHelpers` class within your project. Create a file at `/app/helpers/spree/api/api_helpers_decorator.rb` and update it as follows:
+
+```ruby
+Spree::Api::ApiHelpers.class_eval do
+  def address_attributes_with_variety
+    address_attributes_without_variety << :variety
+  end
+
+  alias_method_chain :address_attributes, :variety
+end
+```
+
+&&&
+Pretty sure that the spree_endpoint will then pull `variety` in as a function of `import_order` on the `import_controller`, right?
+&&&
+
+Then, when your store's orders are output, you'll see the custom `variety` field in the JSON file (much of the output is omitted below for brevity).
+
+```json
+{
+  "message": "order:new",
+  "payload": {
+    "order": {
+      "id": 12345,
+      "number": "R123456789",
+      "line_items": [ ... ],
+      "billing_address": {
+        "firstname": "John",
+        "lastname": "Smith",
+        "address": "123 Main St.",
+        "variety": "Residence"
+      }
+    }
+  }
+}
+```
 
 ## Creating Custom Endpoint
 
