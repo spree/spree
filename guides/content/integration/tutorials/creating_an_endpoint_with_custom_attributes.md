@@ -25,12 +25,14 @@ This tutorial assumes that you have installed [bundler](http://bundler.io/#getti
 First, clone the spree gem:
 
 ```bash
-$ git clone https://github.com/spree/spree.git```
+$ git clone https://github.com/spree/spree.git
+```
 
 Then go into this new `spree` directory and run the following command to generate the sandbox app:
 
 ```bash
-$ bundle exec rake sandbox```
+$ bundle exec rake sandbox
+```
 
 This creates the sandbox Spree store, complete with sample data and a default admin user, with the username **spree@example.com** and password **spree123**.
 
@@ -45,18 +47,21 @@ A `type` attribute would work nicely here, but since `type` is a reserved word i
 Let's generate a migration to add the new field.
 
 ```bash
-$ bundle exec rails g migration add_variety_field_to_addresses```
+$ bundle exec rails g migration add_variety_field_to_addresses
+```
 
 --- add_variety_field_to_addresses.rb ---
 ```ruby
 change
   add_column :spree_addresses, :variety, :string
-end```
+end
+```
 
 Run the migration. 
 
 ```bash
-$ bundle exec rake db:migrate```
+$ bundle exec rake db:migrate
+```
 
 Next, we need to make the field attr_accessible on the `Address` object. Create a new file: `/app/models/spree/address_decorator.rb` and add the following content to it:
 
@@ -65,7 +70,8 @@ module Spree
   Address.class_eval do
     attr_accessible :variety
   end
-end```
+end
+```
 
 Next, we need to add this field to the checkout form so customers can indicate the type of address. The checkout form resides within the `spree` gem at `/frontend/app/views/spree/address/_form.html.erb`, the relevant portion of which is:
 
@@ -78,7 +84,8 @@ Next, we need to add this field to the checkout form so customers can indicate t
   </p>
   ...
   <!-- other address fields here -->
-</div>```
+</div>
+```
 
 We're going to use the [deface gem](https://github.com/spree/deface) to make changes to the spree app files.
 
@@ -89,7 +96,8 @@ Create a new file at `/app/overrides/spree/address/_form/address_variety_overrid
 <p class="field" id=<%%="#{address_id}variety" %>>
   <%%= form.label :variety, Spree.t(:variety) %><br />
   <%%= form.select :variety, ["Residence", "Business", "Other"] %>
-</p>```
+</p>
+```
 
 Now, when you go to your store and check out, you should see the new select box at the address entry step.
 
@@ -100,7 +108,8 @@ Given that we will be selling to business addresses, we should enable the site-w
 ```ruby
 Spree.config do |config|
   config.company = true
-end```
+end
+```
 
 ***
 To learn more about Spree's built-in preferences, see the [Preferences guide](/developer/preferences).
@@ -123,7 +132,8 @@ Spree::Api::ApiHelpers.class_eval do
   end
 
   alias_method_chain :address_attributes, :variety
-end```
+end
+```
 
 Then, when your store's orders are output, you'll see the custom `variety` field in the JSON file (much of the output is omitted below for brevity).
 
@@ -143,7 +153,8 @@ Then, when your store's orders are output, you'll see the custom `variety` field
       }
     }
   }
-}```
+}
+```
 
 &&&
 Figure out some way to get the JSON output to show that it really does what we just said it does.
@@ -157,7 +168,8 @@ First, we need a new directory to house our integration files.
 
 ```bash
 $ mkdir custom_attribute_endpoint
-$ cd custom_attribute_endpoint```
+$ cd custom_attribute_endpoint
+```
 
 Within this directory, we'll create a fake API with which to interact, called `DummyShip`.
 
@@ -170,7 +182,8 @@ module DummyShip
       raise "This order is outside our shipping zone."
     end
   end
-end```
+end
+```
 
 We also need to create files to support our endpoint:
 
@@ -178,14 +191,16 @@ We also need to create files to support our endpoint:
 ```ruby
 source 'https://rubygems.org'
 
-gem 'endpoint_base', github: 'spree/endpoint_base'```
+gem 'endpoint_base', github: 'spree/endpoint_base'
+```
 
 ---config.ru---
 ```ruby
 require './custom_attribute_endpoint'
 require './dummy_ship'
 
-run CustomAttributeEndpoint```
+run CustomAttributeEndpoint
+```
 
 ---custom_attribute_endpoint.rb---
 ```ruby
@@ -205,7 +220,8 @@ class CustomAttributeEndpoint < EndpointBase
         "payload" => { "result" => e.message } }
     end
   end
-end```
+end
+```
 
 The `validate_address` service will accept an incoming JSON file, compare the passed-in `shipping_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
 
@@ -233,7 +249,8 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:41:57 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}```
+{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}
+```
 
 The address is confirmed valid. Now let's try the invalid address.
 
@@ -248,7 +265,8 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:42:49 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}```
+{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}
+```
 
 As we expected, the address is reported as invalid.
 
