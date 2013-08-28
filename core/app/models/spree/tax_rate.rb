@@ -84,7 +84,6 @@ module Spree
           :adjustable => item,
           :amount => amount,
           :order => order,
-          :state => "closed",
           :label => label || create_label
         })
       end
