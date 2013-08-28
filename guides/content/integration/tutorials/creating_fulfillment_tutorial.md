@@ -20,7 +20,7 @@ We will begin our integration with the simplest possible successful endpoint, an
 
 ### Create a Basic Endpoint
 
-As with the more basic [endpoint creation tutorial](creating_endpoints_tutorial), we'll use the Spree [EndpointBase gem](https://github.com/spree/endpoint_base) to create our fulfillment endpoint.
+As with the more basic [endpoint creation tutorial](creating_endpoints_tutorial), we'll use the [EndpointBase gem](https://github.com/spree/endpoint_base) to create our fulfillment endpoint.
 
 To start with, we need a new directory to house our integration files.
 
@@ -78,7 +78,7 @@ $ bundle install
 $ bundle exec rackup -p 9292
 ```
 
-Open a new Terminal window, navigate to the /fulfillment_endpoint directory, and run:
+Open a new Terminal window, navigate to the `/fulfillment_endpoint` directory, and run:
 
 ```bash
 $ curl --data @./return_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/drop_ship
@@ -102,7 +102,7 @@ The sample files for the preceding example are available on [Github](https://git
 
 ### Make the API Call
 
-This is great, as far as it goes, but it doesn't really show the power of the Spree Integrator. We want our Endpoints to interact with third-party services, not just return status messages. We can approximate this by writing a fake fulfillment API, called DummyShip.
+This is great, as far as it goes, but it doesn't really show the power of the Spree Commerce hub. We want our endpoints to interact with third-party services, not just return status messages. We can approximate this by writing a fake fulfillment API, called `DummyShip`.
 
 ---dummy_ship.rb---
 ```ruby
@@ -153,11 +153,11 @@ class FulfillmentEndpoint < EndpointBase
 end
 ```
 
-As you can see, our new `validate_address` service will accept an incoming JSON file and extract the shipping_address, storing it in the `address` variable. It then makes a call to our `DummyShip` API's `validate_address` method, passing in the `message` variable. If there are no exceptions, the endpoint returns a `notification:info` message with a payload indicating that all's well.
+As you can see, our new `validate_address` service will accept an incoming JSON file and extract the `shipping_address`, storing it in the `address` variable. It then makes a call to our `DummyShip` API's `validate_address` method, passing in the `message` variable. If there are no exceptions, the endpoint returns a `notification:info` message with a payload indicating that all's well.
 
 If there is an exception, however, the endpoint elegantly rescues the exception, and returns a `notification:error` message with a payload indicating that our address is not valid.
 
-Our admittedly simplistic API does nothing more at this point than make sure the zip code we pass in is within a pre-defined range. If it's not, the API raises an exception.
+Our admittedly simplistic API does nothing more at this point than make sure the zip code we pass in is within a pre-defined range. If it's not, it raises an exception.
 
 Now we just need a couple of JSON files we can try out. Let's make one that passes an order whose shipping address is within the range, and one which is not.
 
@@ -250,9 +250,9 @@ As we expected, the zip code for this order is outside the API's acceptable rang
 
 ### Return Multiple Messages
 
-We have definitely taken some steps toward more useful functionality, but the real beauty of the Spree Integrator is in the way one incoming message can have a ripple effect of several actions and messages to a variety of endpoints and their third-party services.
+We have definitely taken some steps toward more useful functionality, but the real beauty of the Spree Commerce hub is in the way one incoming message can have a ripple effect of several actions and messages to a variety of endpoints and their third-party services.
 
-In reality, it wouldn't be enough to know that the address was valid. If the address is valid, we want our DummyShip fulfiller to ship the package and return the shipment information in a new `shipment:confirm` message. If we have an integration with [Mandrill](http://mandrill.com/) or some other email-sending platform, we can have _that_ integration's endpoint watch for `shipment:confirm` messages, and send an email to our customer reassuring them that their purchase is on the way.
+In reality, it wouldn't be enough to know that the address was valid. If the address is valid, we want our `DummyShip` fulfiller to ship the package and return the shipment information in a new `shipment:confirm` message. If we have an integration with [Mandrill](http://mandrill.com/) or some other email-sending platform, we can have _that_ integration's endpoint watch for `shipment:confirm` messages, and send an email to our customer reassuring them that their purchase is on the way.
 
 The key to this process is in getting our fulfillment endpoint to generate just such a message. We can accomplish that with only a few tweaks to our integration files.
 
