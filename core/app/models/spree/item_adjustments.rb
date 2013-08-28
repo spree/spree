@@ -18,7 +18,6 @@ module Spree
     # values after promotions are applied
     def update_adjustments
       # Reloading all adjustments as this method may be called directly after an adjustment is created.
-      # For example, TaxRate#create_adjustment calls this method.
       adjustment_total = adjustments.reload.map(&:update!).compact.sum
 
       unless adjustment_total == 0
