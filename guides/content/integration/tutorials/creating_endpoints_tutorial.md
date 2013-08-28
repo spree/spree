@@ -99,7 +99,7 @@ Connection: Keep-Alive
 {"message_id":"518726r84910000001"}
 ```
 
-So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using Spree's [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
+So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using the [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
 
 ---Gemfile---
 ```ruby
@@ -165,7 +165,7 @@ The `message_id` is the minimum information an endpoint has to return in a messa
 For more information about Messages, be sure to read the [Integration Terminology Guide](terminology) thoroughly.
 ***
 
-In the `get_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our store. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
+In the `get_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our storefront. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
 
 ---hello_endpoint.rb---
 ```ruby
@@ -256,7 +256,7 @@ Skipping the headers this time, you can see that the response we get is what we 
 {"message_id":"518726r84910000015","message":"notification:info"}
 ```
 
-Now, let's try a product our supplier does not carry. There is no need to restart rack here, since we haven't changed our endpoint.
+Now, let's try a product our supplier does not carry. There is no need to restart `rack` here, since we haven't changed our endpoint.
 
 ```bash
 $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
