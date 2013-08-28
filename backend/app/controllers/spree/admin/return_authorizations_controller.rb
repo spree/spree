@@ -7,8 +7,12 @@ module Spree
       create.after :associate_inventory_units
 
       def fire
-        @return_authorization.send("#{params[:e]}!")
-        flash[:success] = Spree.t(:return_authorization_updated)
+        if  @return_authorization.respond_to?("#{params[:e]}") && @return_authorization.send("can_#{params[:e]}?")
+          @return_authorization.send("#{params[:e]}!")
+          flash[:success] = Spree.t(:return_authorization_updated)
+        else
+          flash[:error] = Spree.t(:cannot_perform_operation)
+        end
         redirect_to :back
       end
 
