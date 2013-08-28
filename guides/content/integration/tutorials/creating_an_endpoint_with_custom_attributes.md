@@ -213,7 +213,6 @@ run CustomAttributeEndpoint
 ---custom_attribute_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
@@ -251,7 +250,6 @@ Our endpoint up to this point doesn't make use of our custom attributes at all. 
 ---custom_attribute_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
