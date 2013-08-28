@@ -183,10 +183,9 @@ One thing: remember to add trailing slashes to all nanoc links!
 
 ## Edge guides
 
-Set `EDGE_DOCS=true` in an environment variable in order to generate the "edge" badge. You may need to remove any previously generated output for the change to take effect
+Set `EDGE_GUIDES=true` in an environment variable in order to generate the "edge" badge. You may need to remove any previously generated output for the change to take effect
 
-    $ export EDGE_DOCS=true
-    $ nanoc autocompile
+    $ EDGE_GUIDES=true nanoc autocompile
 
 ## Deploy
 
