@@ -14,6 +14,10 @@ require 'coderay_bash'
 compile '/static/*' do
 end
 
+compile '/misc/*' do
+  filter :erb
+end
+
 compile '/' do
   filter :pretty_urls
   filter :erb
@@ -162,6 +166,14 @@ end
 
 route '/static/*' do
   item.identifier[7..-2]
+end
+
+###############################################################
+# Put the misc stuff in root directory after processing
+###############################################################
+route '/misc/*' do
+  location = item.identifier.gsub('/misc/', '/')
+  location.chop + ".txt"
 end
 
 ###############################################################
