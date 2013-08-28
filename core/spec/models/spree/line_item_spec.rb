@@ -16,6 +16,26 @@ describe Spree::LineItem do
     end
   end
 
+  context "#save" do
+    context "line item changes" do
+      before do
+        line_item.quantity = line_item.quantity + 1
+      end
+
+      it "triggers adjustment total recalculation" do
+        line_item.should_receive(:recalculate_adjustments)
+        line_item.save
+      end
+    end
+
+    context "line item does not change" do
+      it "does not trigger adjustment total recalculation" do
+        line_item.should_not_receive(:recalculate_adjustments)
+        line_item.save
+      end
+    end
+  end
+
   # Test for #3391
   context '#copy_price' do
     it "copies over a variant's prices" do
