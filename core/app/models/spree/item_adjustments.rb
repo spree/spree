@@ -17,7 +17,9 @@ module Spree
     # TODO this should be probably the place to calculate proper item taxes
     # values after promotions are applied
     def update_adjustments
-      adjustment_total = adjustments.map(&:update!).compact.sum
+      # Reloading all adjustments as this method may be called directly after an adjustment is created.
+      # For example, TaxRate#create_adjustment calls this method.
+      adjustment_total = adjustments.reload.map(&:update!).compact.sum
 
       unless adjustment_total == 0
         adjustment_total = adjustments.tax.sum(:amount)
