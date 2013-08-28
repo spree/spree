@@ -7,16 +7,16 @@ module Spree
 
     let(:subject) { ItemAdjustments.new(line_item) }
 
-    context '#save' do
+    context '#update' do
       it "updates a linked adjustment" do
-        tax_rate = create(:tax_rate, :amount => 10)
-        adjustment = create(:adjustment, :source => tax_rate)
+        tax_rate = create(:tax_rate, :amount => 0.05)
+        adjustment = create(:adjustment, :source => tax_rate, :adjustable => line_item)
         line_item.price = 10
         line_item.tax_category = tax_rate.tax_category
-        line_item.adjustments << adjustment
 
         subject.update
-        line_item.adjustment_total.should == 100
+        line_item.adjustment_total.should == 0.5
+        line_item.tax_total.should == 0.5
       end
     end
 
