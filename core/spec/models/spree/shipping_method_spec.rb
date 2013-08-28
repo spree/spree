@@ -39,16 +39,6 @@ describe Spree::ShippingMethod do
     end
   end
 
-  context "create adjustment" do
-    let(:shipment) { create(:shipment) }
-
-    it "sets self as adjustment source and shipment as adjustable" do
-      adjustment = shipping_method.create_adjustment shipment
-      expect(adjustment.source).to eq shipping_method
-      expect(adjustment.adjustable).to eq shipment
-    end
-  end
-
   context 'factory' do
     it "should set calculable correctly" do
       shipping_method.calculator.calculable.should == shipping_method

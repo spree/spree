@@ -53,17 +53,6 @@ module Spree
       self.display_on != "back_end"
     end
 
-    def create_adjustment(shipment)
-      amount = compute_amount(shipment)
-      self.adjustments.create(
-        :amount => amount,
-        :adjustable => shipment,
-        :label => adjustment_label,
-        :mandatory => true,
-        :state => "open"
-      )
-    end
-
     private
       def compute_amount(calculable)
         self.calculator.compute(calculable)
