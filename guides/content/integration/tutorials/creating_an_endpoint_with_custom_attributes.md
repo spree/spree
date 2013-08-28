@@ -4,7 +4,7 @@ title: Creating an Endpoint with Custom Attributes
 
 ## Introduction
 
-One of the greatest things about both the Spree Commerce storefront is its flexibility. Using this full-featured open source e-commerce package means that you have total freedom to customize it to suit your business' own special needs.
+One of the greatest things about the Spree Commerce storefront is its flexibility. Using this full-featured open source e-commerce package means that you have total freedom to customize it to suit your business' own special needs.
 
 The Spree Commerce hub extends the customizations you make in your storefront's schema so that you can make use of them within your third-party services.
 
@@ -18,7 +18,7 @@ In this tutorial, you will:
 
 ## Prerequisites
 
-This tutorial assumes that you have installed [bundler](http://bundler.io/#getting-started) and [Sinatra](http://www.sinatrarb.com/intro.html), and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), [Sinatra](http://www.sinatrarb.com/), and [Rack](http://rack.rubyforge.org). It also assumes that you are using Rails 4 and Ruby 2.0.
+This tutorial assumes that you have installed [bundler](http://bundler.io/#getting-started), and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), and [Rack](http://rack.rubyforge.org). It also assumes that you are using Rails 4 and Ruby 2.0.
 
 ## Creating a Sandbox Store
 
@@ -50,10 +50,11 @@ Let's generate a migration to add the new field.
 $ bundle exec rails g migration add_variety_field_to_addresses
 ```
 
---- add_variety_field_to_addresses.rb ---
 ```ruby
-change
-  add_column :spree_addresses, :variety, :string
+class AddVarietyFieldToAddresses < ActiveRecord::Migration
+  def change
+    add_column :spree_addresses, :variety, :string
+  end
 end
 ```
 
@@ -92,14 +93,10 @@ We're going to use the [deface gem](https://github.com/spree/deface) to make cha
 ```erb
 <!-- insert_top 'div.inner' -->
 <p class="field" id=<%%="#{address_id}variety" %>>
-  <%%= form.label :variety, Spree.t(:variety) %><br />
+  <%%= form.label :variety, "Address Type" %><br />
   <%%= form.select :variety, ["Residence", "Business", "Other"] %>
 </p>
 ```
-
-$$$
-Input the translation for t.variety above into localeapp.
-$$$
 
 Now, when you go to your storefront and check out, you should see the new select box at the address entry step.
 
@@ -165,8 +162,57 @@ We can use `curl` to verify our order output format. To do so, you'll first need
 Running the following command:
 
 ```bash
-$ curl --header "X-Spree-Token: 31849d29d5d1323da1867981e36500a13826d9fdc701f66c" http://localhost:3000/api/orders.json
+$ curl --header "X-Spree-Token: your_spree_token" 
+  http://yourdomain.com/api/orders.json
 ```
+
++++
+If you are working in development mode, `yourdomain.com` is likely to be `localhost:3000`.
++++
+
+Your output should look something like this:
+
+```bash
+{"count":3,"current_page":1,"pages":1,"orders":[{"id":1,"number":"R123456789",
+"item_total":"15.99","total":"22.59","state":"complete","adjustment_total":"6.6",
+"user_id":null,"created_at":"2013-08-28T18:20:19Z",
+"updated_at":"2013-08-28T18:20:19Z","completed_at":"2013-08-27T18:20:19Z",
+"payment_total":"0.0","shipment_state":"pending","payment_state":"balance_due",
+"email":"spree@example.com","special_instructions":null,
+"token":"d32f89f869d639a7"},{"id":2,"number":"R987654321","item_total":"22.99",
+"total":"30.29","state":"complete","adjustment_total":"7.3","user_id":null,
+"created_at":"2013-08-28T18:20:19Z","updated_at":"2013-08-28T18:20:19Z",
+"completed_at":"2013-08-27T18:20:19Z","payment_total":"0.0",
+"shipment_state":"pending","payment_state":"balance_due",
+"email":"spree@example.com","special_instructions":null,
+"token":"dcf341a8ca660bd4"}, {"id":3,"number":"R555208170","item_total":"15.99",
+"total":"15.99","state":"cart","adjustment_total":"0.0","user_id":1,
+"created_at":"2013-08-28T21:07:00Z","updated_at":"2013-08-28T21:07:03Z",
+"completed_at":null,"payment_total":"0.0","shipment_state":null,
+"payment_state":null,"email":"spree@example.com","special_instructions":null,
+"token":"bd75e26374040274"}]}
+```
+
+None of this includes the details for a particular orders, so as yet, you don't see the custom fields. For that, we need to make a change to our API call:
+
+```bash
+$ curl --header "X-Spree-Token: your_spree_token" 
+  http://yourdomain.com/api/orders/R123456789.json
+```
+
+This command fetches the details for the order with the number `R123456789`. The return is very long (orders complex objects), but the part we care about is there:
+
+```bash
+"ship_address":{"id":1,"firstname":"Retha","lastname":"Murray",
+"full_name":"Retha Murray","address1":"8730 Dickens Keys","address2":"Apt. 049",
+"city":"Karenburgh","zipcode":"16804","phone":"425-355-5233","company":null,
+"alternative_phone":null,"country_id":49,"state_id":48,"state_name":null,
+"variety":null,"country":{"id":49,"iso_name":"UNITED STATES","iso":"US",
+"iso3":"USA","name":"United States","numcode":840},"state":{"id":48,
+"name":"New York","abbr":"NY","country_id":49}}
+```
+
+The `variety` field is there in the output (line 5). There is no value for it, because the order was part of the seed data and so preceded our modifications, but our integrations can still see and make use of this attribute.
 
 ## Creating Custom Endpoint
 
