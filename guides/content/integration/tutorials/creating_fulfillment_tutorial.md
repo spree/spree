@@ -51,7 +51,6 @@ run FulfillmentEndpoint
 ---fulfillment_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class FulfillmentEndpoint < EndpointBase
   post '/drop_ship' do
@@ -131,7 +130,6 @@ Of course, we'll need to update our endpoint to interact with the API.
 ---fulfillment_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class FulfillmentEndpoint < EndpointBase
   post '/drop_ship' do
@@ -309,7 +307,6 @@ Naturally, our endpoint will need to have a service that taps into all this cool
 ---fulfillment_endpoint.rb---
 ```ruby
 require 'endpoint_base'
-require 'multi_json'
 
 class FulfillmentEndpoint < EndpointBase
   post '/drop_ship' do
