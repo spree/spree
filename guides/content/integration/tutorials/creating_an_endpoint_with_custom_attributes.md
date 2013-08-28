@@ -4,17 +4,17 @@ title: Creating an Endpoint with Custom Attributes
 
 ## Introduction
 
-One of the greatest things about both Spree is its flexibility. Using this full-featured open source e-commerce package means that you are total freedom to customize it to suit your business' own special needs.
+One of the greatest things about both the Spree Commerce storefront is its flexibility. Using this full-featured open source e-commerce package means that you have total freedom to customize it to suit your business' own special needs.
 
-The Spree Integrator extends the customizations you make in your store's schema so that you can make use of them within your third party service.
+The Spree Commerce hub extends the customizations you make in your storefront's schema so that you can make use of them within your third-party services.
 
 In this tutorial, you will:
 
-* create a Spree sandbox store,
+* create a sandbox storefront,
 * add custom attributes to it,
-* extend the store's JSON output to include the new attributes,
+* extend the storefront's JSON output to include the new attributes,
 * create a custom endpoint for a fictional third-party service, and
-* use this endpoint to access and utilize your store's custom attributes.
+* use this endpoint to access and utilize your storefront's custom attributes.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ This tutorial assumes that you have installed [bundler](http://bundler.io/#getti
 
 ## Creating a Sandbox Store
 
-First, clone the spree gem:
+First, clone the `spree` gem:
 
 ```bash
 $ git clone https://github.com/spree/spree.git
@@ -34,14 +34,14 @@ Then go into this new `spree` directory and run the following command to generat
 $ bundle exec rake sandbox
 ```
 
-This creates the sandbox Spree store, complete with sample data and a default admin user, with the username **spree@example.com** and password **spree123**.
+This creates the sandbox Spree Commerce storefront, complete with sample data and a default admin user, with the username **spree@example.com** and password **spree123**.
 
-## Adding Custom Attributes to Store
+## Adding Custom Attributes to Storefront
 
-Suppose that the nature of your business is such that you often sell products to businesses rather than solely to individuals. Suppose further than the fulfillment company you use handles shipments to businesses differently than those to home addresses. This scenario requires that you add a new `variety` attribute to your Spree store's `Address` objects.
+Suppose that the nature of your business is such that you often sell products to businesses rather than solely to individuals. Suppose further than the fulfillment company you use handles shipments to businesses differently than those to home addresses. This scenario requires that you add a new `variety` attribute to your storefront's `Address` objects.
 
 ***
-A `type` attribute would work nicely here, but since `type` is a reserved word in ActiveRecord, and we want our store's frontend to continue to function flawlessly, we have to go with a different term. The customer will never know the difference, since we can still use "Address Type" as our input's label.
+A `type` attribute would work nicely here, but since `type` is a reserved word in ActiveRecord, and we want our frontend to continue to function flawlessly, we have to go with a different term. The customer will never know the difference, since we can still use "Address Type" as our input's label.
 ***
 
 Let's generate a migration to add the new field.
@@ -73,7 +73,7 @@ module Spree
 end
 ```
 
-Next, we need to add this field to the checkout form so customers can indicate the type of address. The checkout form resides within the `spree` gem at `/frontend/app/views/spree/address/_form.html.erb`, the relevant portion of which is:
+Of course, we need to add this field to the checkout form so customers can indicate the type of address. The checkout form resides within the `spree` gem at `/frontend/app/views/spree/address/_form.html.erb`, the relevant portion of which is:
 
 ```erb
 <%% address_id = address_type.chars.first %>
@@ -87,9 +87,7 @@ Next, we need to add this field to the checkout form so customers can indicate t
 </div>
 ```
 
-We're going to use the [deface gem](https://github.com/spree/deface) to make changes to the spree app files.
-
-Create a new file at `/app/overrides/spree/address/_form/address_variety_override.html.erb.deface` and include the following content:
+We're going to use the [deface gem](https://github.com/spree/deface) to make changes to the `spree` files. Create a new file at `/app/overrides/spree/address/_form/address_variety_override.html.erb.deface` and include the following content:
 
 ```erb
 <!-- insert_top 'div.inner' -->
@@ -99,7 +97,11 @@ Create a new file at `/app/overrides/spree/address/_form/address_variety_overrid
 </p>
 ```
 
-Now, when you go to your store and check out, you should see the new select box at the address entry step.
+$$$
+Input the translation for t.variety above into localeapp.
+$$$
+
+Now, when you go to your storefront and check out, you should see the new select box at the address entry step.
 
 ![Variety Select Box](/images/integration/address_variety_select.jpg)
 
@@ -112,7 +114,7 @@ end
 ```
 
 ***
-To learn more about Spree's built-in preferences, see the [Preferences guide](/developer/preferences).
+To learn more about the storefront's built-in preferences, see the [Preferences guide](/developer/preferences).
 ***
 
 Save your changes, then stop and restart your server to load the new configuration information. Now, when you go to checkout, you will see the new "Company" field.
@@ -121,7 +123,7 @@ Save your changes, then stop and restart your server to load the new configurati
 
 ## Extending JSON Output
 
-Once you [get connected to the Spree Integrator](configuration), it will periodically poll your store for any relevant new or updated information based on the [integrations](supported_integrations) you have enabled. This information is transmitted using a standardized [JSON format](terminology#messages) and includes all of the information from a basic Spree store, per the [Spree::Api::ApiHelpers class](https://github.com/spree/spree/blob/master/api/app/helpers/spree/api/api_helpers.rb). 
+Once you [get connected to the Spree Commerce hub](configuration), it will periodically poll your storefront for any relevant new or updated information based on the [integrations](supported_integrations) you have enabled. This information is transmitted using a standardized [JSON format](terminology#messages) and includes all of the information from a basic Spree Commerce storefront, per the [Spree::Api::ApiHelpers class](https://github.com/spree/spree/blob/master/api/app/helpers/spree/api/api_helpers.rb). 
 
 It will not include any customized attributes. To extend the JSON output to include your custom attributes, you need to decorate the `ApiHelpers` class within your project. Create a file at `/app/helpers/spree/api/api_helpers_decorator.rb` and update it as follows:
 
@@ -135,7 +137,7 @@ Spree::Api::ApiHelpers.class_eval do
 end
 ```
 
-Then, when your store's orders are output, you'll see the custom `variety` field in the JSON file (much of the output is omitted below for brevity).
+Then, when your storefront's orders are output, you'll see the custom `variety` field in the JSON file (much of the output is omitted below for brevity).
 
 ```json
 {
@@ -156,7 +158,7 @@ Then, when your store's orders are output, you'll see the custom `variety` field
 }
 ```
 
-We can use `curl` to verify our store's order output format. To do so, you'll first need to get an API authentication token. To do so, go to your Admin Interface and click the "Users" tab. Click the "Edit" icon next to your name. You should see the API key for your user, but if you don't you can clear and regenerate it.
+We can use `curl` to verify our order output format. To do so, you'll first need to get an API authentication token. Go to your Admin Interface and click the "Users" tab. Click the "Edit" icon next to your name. You should see the API key for your user, but if you don't you can clear and regenerate it.
 
 ![User Edit Page for API Key Access](/images/integration/user_api_key.jpg)
 
@@ -215,7 +217,7 @@ require 'multi_json'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
-    address = @message[:payload]['order']['shipping_address']
+    address = @message[:payload]['order']['ship_address']
 
     begin
       result = DummyShip.validate_address(address)
@@ -229,52 +231,18 @@ class CustomAttributeEndpoint < EndpointBase
 end
 ```
 
-The `validate_address` service will accept an incoming JSON file, compare the passed-in `shipping_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
+The `validate_address` service will accept an incoming JSON file, compare the passed-in `ship_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
 
 
 
 $$$
-Figure out how to extract the JSON from the Spree store to run it through the endpoint.
+Extract the JSON from the storefront and run it through the endpoint.
 $$$
 
 
 
 
 
-Time to test it out in curl. First, the address that our API considers valid:
-
-```bash
-$ bundle exec rackup -p 9292
-$ curl --data @./good_address.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/validate_address
-
-=> HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-Content-Length: 141
-X-Content-Type-Options: nosniff
-Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Fri, 12 Jul 2013 22:41:57 GMT
-Connection: Keep-Alive
-
-{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}
-```
-
-The address is confirmed valid. Now let's try the invalid address.
-
-```bash
-$ curl --data @./bad_address.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/validate_address
-
-=> HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-Content-Length: 130
-X-Content-Type-Options: nosniff
-Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Fri, 12 Jul 2013 22:42:49 GMT
-Connection: Keep-Alive
-
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}
-```
-
-As we expected, the address is reported as invalid.
 
 ## Accessing Custom Data
 
@@ -287,7 +255,7 @@ require 'multi_json'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
-    address = @message[:payload]['order']['shipping_address']
+    address = @message[:payload]['order']['ship_address']
 
     begin
       result = DummyShip.validate_address(address)
