@@ -1,0 +1,10 @@
+<div id="country_members" data-hook="member" class="omega six columns">
+  <fieldset class="no-border-bottom">
+    <legend align="center"><%= Spree.t(:countries) %></legend>
+
+    <%= zone_form.field_container :country_ids do %>
+      <%= zone_form.label :country_ids, Spree.t(:countries) %><br>
+      <%= zone_form.collection_select :country_ids, @countries, :id, :name, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+    <% end %>
+  </fieldset>
+</div>
