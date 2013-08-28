@@ -16,17 +16,3 @@ last_order.adjustments.create!(
   :label => "Tax",
   :state => "open",
   :mandatory => true)
-
-first_order.adjustments.create!(
-  :amount => 0,
-  :source => Spree::ShippingMethod.find_by_name!("UPS Ground (USD)"),
-  :label => "Shipping",
-  :state => "finalized",
-  :mandatory => true)
-
-last_order.adjustments.create!(
-  :amount => 0,
-  :source => Spree::ShippingMethod.find_by_name!("UPS Ground (USD)"),
-  :label => "Shipping",
-  :state => "finalized",
-  :mandatory => true)
