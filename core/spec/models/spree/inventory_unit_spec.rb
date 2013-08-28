@@ -54,7 +54,7 @@ describe Spree::InventoryUnit do
 
   context "variants deleted" do
     let!(:unit) do
-      Spree::InventoryUnit.create(variant: stock_item.variant)
+      Spree::InventoryUnit.create({ variant: stock_item.variant }, :without_protection => true)
     end
 
     it "can still fetch variant" do
