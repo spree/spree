@@ -145,7 +145,7 @@ Then, when your store's orders are output, you'll see the custom `variety` field
       "id": 12345,
       "number": "R123456789",
       "line_items": [ ... ],
-      "billing_address": {
+      "ship_address": {
         "firstname": "John",
         "lastname": "Smith",
         "address": "123 Main St.",
@@ -156,9 +156,15 @@ Then, when your store's orders are output, you'll see the custom `variety` field
 }
 ```
 
-$$$
-Figure out some way to get the JSON output to show that it really does what we just said it does.
-$$$
+We can use `curl` to verify our store's order output format. To do so, you'll first need to get an API authentication token. To do so, go to your Admin Interface and click the "Users" tab. Click the "Edit" icon next to your name. You should see the API key for your user, but if you don't you can clear and regenerate it.
+
+![User Edit Page for API Key Access](/images/integration/user_api_key.jpg)
+
+Running the following command:
+
+```bash
+$ curl --header "X-Spree-Token: 31849d29d5d1323da1867981e36500a13826d9fdc701f66c" http://localhost:3000/api/orders.json
+```
 
 ## Creating Custom Endpoint
 
