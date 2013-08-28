@@ -44,6 +44,8 @@ module Spree
         transition from: [:open, :closed], to: :finalized
       end
     end
+
+    after_create :update_adjustable_adjustment_total
     
     scope :open, -> { where(state: 'open') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
@@ -78,6 +80,13 @@ module Spree
 
     def display_amount
       Spree::Money.new(amount, { currency: currency })
+    end
+
+    private
+
+    def update_adjustable_adjustment_total
+      # Cause adjustable's total to be recalculated
+      Spree::ItemAdjustments.new(adjustable).update
     end
   end
 end
