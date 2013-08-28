@@ -21,15 +21,17 @@ module Spree
       adjustment_total = adjustments.reload.map(&:update!).compact.sum
 
       unless adjustment_total == 0
-        adjustment_total = adjustments.tax.sum(:amount)
+        adjustment_total = tax_total = adjustments.tax.sum(:amount)
 
         if best_promotion_adjustment
           choose_best_promotion_adjustment
           adjustment_total += best_promotion_adjustment.amount
         end
       end
-
-      item.update_column(:adjustment_total, adjustment_total)
+      item.update_columns(
+        :adjustment_total => adjustment_total,
+        :tax_total => tax_total
+      )
     end
 
     # Picks one (and only one) promotion to be eligible for this order
