@@ -93,8 +93,12 @@ module Spree
 
       def update_adjustments
         if quantity_changed?
-          Spree::ItemAdjustments.new(self).update
+          recalculate_adjustments
         end
+      end
+
+      def recalculate_adjustments
+        Spree::ItemAdjustments.new(self).update
       end
   end
 end
