@@ -21,6 +21,7 @@ module Spree
     validates_with Stock::AvailabilityValidator
 
     before_save :update_inventory
+    after_save :update_adjustments
 
     attr_accessor :target_shipment
 
@@ -89,6 +90,12 @@ module Spree
       def update_inventory
         if changed?
           Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+        end
+      end
+
+      def update_adjustments
+        if quantity_changed?
+          Spree::ItemAdjustments.new(self).update
         end
       end
   end
