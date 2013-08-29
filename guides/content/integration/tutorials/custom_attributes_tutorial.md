@@ -1,5 +1,5 @@
 ---
-title: Creating an Endpoint with Custom Attributes
+title: Custom Attributes
 ---
 
 ## Introduction
@@ -58,7 +58,7 @@ class AddVarietyFieldToAddresses < ActiveRecord::Migration
 end
 ```
 
-Run the migration. 
+Run the migration.
 
 ```bash
 $ bundle exec rake db:migrate
@@ -120,7 +120,7 @@ Save your changes, then stop and restart your server to load the new configurati
 
 ## Extending JSON Output
 
-Once you [get connected to the Spree Commerce hub](configuration), it will periodically poll your storefront for any relevant new or updated information based on the [integrations](supported_integrations) you have enabled. This information is transmitted using a standardized [JSON format](terminology#messages) and includes all of the information from a basic Spree Commerce storefront, per the [Spree::Api::ApiHelpers class](https://github.com/spree/spree/blob/master/api/app/helpers/spree/api/api_helpers.rb). 
+Once you [get connected to the Spree Commerce hub](configuration), it will periodically poll your storefront for any relevant new or updated information based on the [integrations](supported_integrations) you have enabled. This information is transmitted using a standardized [JSON format](terminology#messages) and includes all of the information from a basic Spree Commerce storefront, per the [Spree::Api::ApiHelpers class](https://github.com/spree/spree/blob/master/api/app/helpers/spree/api/api_helpers.rb).
 
 It will not include any customized attributes. To extend the JSON output to include your custom attributes, you need to decorate the `ApiHelpers` class within your project. Create a file at `/app/helpers/spree/api/api_helpers_decorator.rb` and update it as follows:
 
@@ -162,7 +162,7 @@ We can use `curl` to verify our order output format. To do so, you'll first need
 Running the following command:
 
 ```bash
-$ curl --header "X-Spree-Token: your_spree_token" 
+$ curl --header "X-Spree-Token: your_spree_token"
   http://yourdomain.com/api/orders.json
 ```
 
@@ -196,7 +196,7 @@ Your output should look something like this:
 None of this includes the details for a particular orders, so as yet, you don't see the custom fields. For that, we need to make a change to our API call:
 
 ```bash
-$ curl --header "X-Spree-Token: your_spree_token" 
+$ curl --header "X-Spree-Token: your_spree_token"
   http://yourdomain.com/api/orders/R123456789.json
 ```
 
@@ -266,12 +266,12 @@ class CustomAttributeEndpoint < EndpointBase
 
     begin
       result = DummyShip.validate_address(address)
-      process_result 200, { 'message_id' => @message[:message_id], 
-        'message' => "notification:info", "payload" => { "result" => 
+      process_result 200, { 'message_id' => @message[:message_id],
+        'message' => "notification:info", "payload" => { "result" =>
         "The address is valid, and the shipment will be sent." } }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 
-        'message' => "notification:error", "payload" => { "result" => 
+      process_result 200, { 'message_id' => @message[:message_id],
+        'message' => "notification:error", "payload" => { "result" =>
         e.message } }
     end
   end
@@ -280,7 +280,7 @@ end
 
 The `validate_address` service will accept an incoming JSON file, compare the passed-in `ship_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
 
-We'll navigate to the custom_attribute_endpoint directory, install gems, start our Sinatra server, then launch a `curl` command to run the aforementioned order's JSON output through our new endpoint's `validate_address` service. 
+We'll navigate to the custom_attribute_endpoint directory, install gems, start our Sinatra server, then launch a `curl` command to run the aforementioned order's JSON output through our new endpoint's `validate_address` service.
 
 +++
 We can't directly encode the order output message to the format we need (that's part of the magic the hub handles for us), but we can use hard-coded JSON files that would directly mimic the polling message the hub would generate in this case. These JSON files are provided to you - along with the other sample files - at [https://github.com/spree/hello_endpoint/tree/master/custom_attribute_endpoint_tutorial](https://github.com/spree/hello_endpoint/tree/master/custom_attribute_endpoint_tutorial).
@@ -290,14 +290,14 @@ We can't directly encode the order output message to the format we need (that's 
 $ cd custom_attribute_endpoint
 $ bundle install
 $ bundle exec rackup -p 9292
-$ curl --data @./residential_order.json -i -X POST -H 
+$ curl --data @./residential_order.json -i -X POST -H
   'Content-type:application/json' http://localhost:9292/validate_address
 ```
 
 Since the ZIP code for the shipping address on this order is 16804 - not inside our API's "acceptable" range, the return we get is:
 
 ```bash
-HTTP/1.1 200 OK 
+HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 Content-Length: 117
 X-Content-Type-Options: nosniff
@@ -305,7 +305,7 @@ Server: WEBrick/1.3.1 (Ruby/2.0.0/2013-06-27)
 Date: Wed, 28 Aug 2013 23:05:53 GMT
 Connection: Keep-Alive
 
-{"message_id":"12345","message":"notification:error","payload":{"result":"This order 
+{"message_id":"12345","message":"notification:error","payload":{"result":"This order
   is outside our shipping zone."}}
 ```
 
@@ -319,15 +319,15 @@ require 'endpoint_base'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
-    get_address    
+    get_address
 
     begin
       result = DummyShip.validate_address(@address)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
-        "notification:info", "payload" => { "result" => 
+      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
+        "notification:info", "payload" => { "result" =>
         "The address is valid, and the shipment will be sent." } }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
+      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
         "notification:error", "payload" => { "result" => e.message } }
     end
   end
@@ -337,11 +337,11 @@ class CustomAttributeEndpoint < EndpointBase
 
     begin
       result = @address['variety'] == "Business" ? "do" : "do not"
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
-        "notification:info", "payload" => { "result" => 
+      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
+        "notification:info", "payload" => { "result" =>
         "You #{result} need to get a signature for this package." } }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
+      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
         "notification:error", "payload" => { "result" => e.message} }
     end
   end
@@ -361,7 +361,7 @@ Remember: Sinatra doesn't reload your changes unless you explicitly tell it to. 
 When you run the curl command against the residential delivery:
 
 ```bash
-$ curl --data @./residential_order.json -i -X POST -H 
+$ curl --data @./residential_order.json -i -X POST -H
   'Content-type:application/json' http://localhost:9292/get_biz_signer
 ```
 
@@ -374,7 +374,7 @@ you get the following return:
 Yet when you run it against the business delivery:
 
 ```bash
-$ curl --data @./business_order.json -i -X POST -H 
+$ curl --data @./business_order.json -i -X POST -H
   'Content-type:application/json' http://localhost:9292/get_biz_signer
 ```
 

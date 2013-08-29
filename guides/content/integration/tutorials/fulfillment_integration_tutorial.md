@@ -1,5 +1,5 @@
 ---
-title: Creating a Fulfillment Integration
+title: Fulfillment Integration
 ---
 
 ## Prerequisites
