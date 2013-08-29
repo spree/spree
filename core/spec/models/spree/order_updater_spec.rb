@@ -39,6 +39,7 @@ module Spree
 
     context "updating shipment state" do
       before do
+        order.stub :backordered? => false
         order.stub_chain(:shipments, :shipped, :count).and_return(0)
         order.stub_chain(:shipments, :ready, :count).and_return(0)
         order.stub_chain(:shipments, :pending, :count).and_return(0)
@@ -146,7 +147,7 @@ module Spree
         shipments.stub :shipped => []
 
         shipment.should_receive(:update!).with(order)
-        updater.update
+        updater.update_shipments
       end
     end
 
@@ -172,7 +173,8 @@ module Spree
         shipments.stub :pending => []
         shipments.stub :shipped => []
 
-        expect(shipment).not_to receive(:update!).with(order)
+        updater.stub(:update_totals) # Otherwise this gets called and causes a scene
+        expect(updater).not_to receive(:update_shipments).with(order)
         updater.update
       end
     end
