@@ -18,10 +18,10 @@
               <col style="width: 20%;" />
             </colgroup>
             <thead>
-              <th>image</th>
-              <th>name</th>
-              <th>quantity</th>
-              <th>price</th>
+              <th></th>
+              <th align='left'><%= Spree.t(:item) %></th>
+              <th><%= Spree.t(:qty) %></th>
+              <th><%= Spree.t(:price) %></th>
             </thead>
             <tbody>
               <% ship_form.object.manifest.each do |item| %>
@@ -64,10 +64,10 @@
               <col style="width: 20%;" />
             </colgroup>
             <thead>
-              <th>image</th>
-              <th>name</th>
-              <th>quantity</th>
-              <th>price</th>
+              <th></th>
+              <th align='left'><%= Spree.t(:item) %></th>
+              <th><%= Spree.t(:qty) %></th>
+              <th><%= Spree.t(:price) %></th>
             </thead>
             <tbody>
               <% @differentiator.missing.each do |variant, quantity| %>
