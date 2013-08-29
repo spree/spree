@@ -6,7 +6,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
   let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
 
   # From promotion spec:
-  pending "#perform", "while focus it on line item adjustments" do
+  context "#perform" do
     before do
       action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
       promotion.promotion_actions = [action]
@@ -31,7 +31,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     end
   end
 
-  pending "#destroy", "while focus it on line item adjustments" do
+  context "#destroy" do
     before(:each) do
       action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
       promotion.promotion_actions = [action]
