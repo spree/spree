@@ -212,7 +212,7 @@ This command fetches the details for the order with the number `R123456789`. The
 "name":"New York","abbr":"NY","country_id":49}}
 ```
 
-The `variety` field is there in the output (line 5). There is no value for it, because the order was part of the seed data and so preceded our modifications, but our integrations can still see and make use of this attribute.
+The `variety` key is there in the output (line 5). There is no value for it, because the order was part of the seed data and so preceded our modifications, but our integrations can still see and make use of this attribute.
 
 ## Creating Custom Endpoint
 
@@ -266,11 +266,13 @@ class CustomAttributeEndpoint < EndpointBase
 
     begin
       result = DummyShip.validate_address(address)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:info",
-        "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
+      process_result 200, { 'message_id' => @message[:message_id], 
+        'message' => "notification:info", "payload" => { "result" => 
+        "The address is valid, and the shipment will be sent." } }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => e.message } }
+      process_result 200, { 'message_id' => @message[:message_id], 
+        'message' => "notification:error", "payload" => { "result" => 
+        e.message } }
     end
   end
 end
@@ -278,16 +280,34 @@ end
 
 The `validate_address` service will accept an incoming JSON file, compare the passed-in `ship_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
 
+We'll navigate to the custom_attribute_endpoint directory, install gems, start our Sinatra server, then run the following `curl` command to run the aforementioned order's JSON output through our new endpoint's `validate_address` service:
 
+```bash
+$ cd custom_attribute_endpoint
+$ bundle install
+$ bundle exec rackup -p 9292
+$ curl --data http://localhost:3000/api/orders/R123456789.json -i -X POST -H 
+  'Content-type:application/json' http://localhost:9292/validate_address
+```
 
 $$$
-Extract the JSON from the storefront and run it through the endpoint.
+The command above returns a 406 because the JSON output from a Spree store isn't formatted how we need it. We need @message[:payload]['order'] but the whole JSON is the order. Need to get with Brian to figure out how to make this so; in the meantime, I wrote up a hard-coded JSON file with the order's JSON on it, and added that to the project.
 $$$
 
+Since the ZIP code for the shipping address on this order is 16804 - not inside our API's "acceptable" range, the return we get is:
 
+```bash
+HTTP/1.1 200 OK 
+Content-Type: application/json;charset=utf-8
+Content-Length: 117
+X-Content-Type-Options: nosniff
+Server: WEBrick/1.3.1 (Ruby/2.0.0/2013-06-27)
+Date: Wed, 28 Aug 2013 23:05:53 GMT
+Connection: Keep-Alive
 
-
-
+{"message_id":"12345","message":"notification:error","payload":{"result":"This order 
+  is outside our shipping zone."}}
+```
 
 ## Accessing Custom Data
 
@@ -299,18 +319,68 @@ require 'endpoint_base'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
-    address = @message[:payload]['order']['ship_address']
+    get_address    
 
     begin
-      result = DummyShip.validate_address(address)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:info",
-        "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
+      result = DummyShip.validate_address(@address)
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
+        "notification:info", "payload" => { "result" => 
+        "The address is valid, and the shipment will be sent." } }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => e.message } }
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
+        "notification:error", "payload" => { "result" => e.message } }
     end
   end
 
-  post '/get_home_signer'
+  post '/get_biz_signer' do
+    get_address
+
+    begin
+      result = @address['variety'] == "Business" ? "do" : "do not"
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
+        "notification:info", "payload" => { "result" => 
+        "You #{result} need to get a signature for this package." } }
+    rescue Exception => e
+      process_result 200, { 'message_id' => @message[:message_id], 'message' => 
+        "notification:error", "payload" => { "result" => e.message} }
+    end
+  end
+
+  def get_address
+    @address = @message[:payload]['order']['ship_address']
+  end
 end
 ```
+
+So we've added a new service - `get_biz_signer` - to our endpoint. This endpoint verifies the value of the `variety` key in our order and returns a message whose payload indicates whether the fulfiller will or won't need to get a signature upon delivery.
+
+We need to modify a couple of our storefront's sample orders to test this functionality. It's easiest to do that in the Admin Interface. Set the shipping address `variety` on the order with the number "R123456789" to "Business" and the order with the number "R987654321" to "Residence". Be sure to save your changes each time.
+
+Now, navigate back to the custom_attribute_endpoint directory. When you run the curl command against the residential delivery:
+
+```bash
+$ curl --data http://localhost:3000/api/orders/R987654321.json -i -X POST -H 
+  'Content-type:application/json' http://localhost:9292/get_biz_signer
+```
+
+you get the following return:
+
+```bash
+{"message_id":"12345","message":"notification:info","payload":{"result":
+  "You do not need to get a signature for this package."}}```
+
+Yet when you run it against the business delivery:
+
+```bash
+$ curl --data http://localhost:3000/api/orders/R123456789.json -i -X POST -H 
+  'Content-type:application/json' http://localhost:9292/get_biz_signer
+```
+
+you get the following return:
+
+```bash
+{"message_id":"12345","message":"notification:info","payload":{"result":
+  "You do need to get a signature for this package."}}
+```
+
+Through this relatively simplistic scenario, you get a sense of just how much flexibility you have in writing both storefronts and integrations to suit your particular needs.
