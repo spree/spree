@@ -513,7 +513,7 @@ describe Spree::Order do
       # Don't care about available payment methods in this test
       persisted_order.stub(:has_available_payment => false)
       persisted_order.line_items << line_item
-      persisted_order.adjustments.create(:amount => -line_item.amount, :label => "Promotion")
+      create(:adjustment, :amount => -line_item.amount, :label => "Promotion", :adjustable => line_item)
       persisted_order.state = 'delivery'
       persisted_order.save # To ensure new state_change event
     end
