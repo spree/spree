@@ -427,7 +427,7 @@ pre.headers code {
 
 /* INTEGRATOR GUIDES */
 .integration.home #subheader .container {
-  background: url('../../images/integrator-banner.png') no-repeat center 120px;
+  background: url('../../images/integrator-banner.png') no-repeat center 100px;
   min-height: 440px;
 }
 .integration.home #subheader .container #site-title {
