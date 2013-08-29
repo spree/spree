@@ -53,41 +53,36 @@ module Spree
 
     # Creates necessary tax adjustments for the order.
     def adjust(order, item)
-      if included_in_price
-        if Zone.default_tax.contains? order.tax_zone
-          create_adjustment order, item
-        else
-          create_adjustment order, item, 'refund'
-        end
-      else
-        create_adjustment order, item
+      item.adjustments.tax.delete_all
+      amount = compute_amount(item)
+      return if amount == 0
+
+      if amount < 0
+        label = Spree.t(:refund) + ' ' + create_label
       end
+      self.adjustments.create!({
+        :adjustable => item,
+        :amount => amount,
+        :order => order,
+        :label => label || create_label
+      })
     end
 
     # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
-      calculator.compute(item)
+      if included_in_price
+        if Zone.default_tax.contains? item.order.tax_zone
+          calculator.compute(item)
+        else
+          # In this case, it's a refund.
+          calculator.compute(item) * - 1
+        end
+      else
+        calculator.compute(item)
+      end
     end
 
     private
-      def create_adjustment(order, item, type = 'normal')
-        item.adjustments.tax.delete_all
-        amount = compute_amount(item)
-        return unless amount > 0
-
-        if type == 'refund'
-          amount = amount * -1
-          label = Spree.t(:refund) + ' ' + create_label
-        end
-
-        self.adjustments.create!({
-          :adjustable => item,
-          :amount => amount,
-          :order => order,
-          :label => label || create_label
-        })
-      end
-
       def create_label
         label = ""
         label << (name.present? ? name : tax_category.name) + " "
