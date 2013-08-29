@@ -131,6 +131,7 @@ describe Spree::Order do
         end
 
         it "transitions to payment" do
+          order.should_receive(:set_shipments_cost)
           order.next!
           order.state.should == 'payment'
         end
