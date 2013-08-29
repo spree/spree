@@ -243,7 +243,7 @@ describe Spree::TaxRate do
       let!(:line_item) { @order.contents.add(@taxable.master, 1) }
 
       context "when price includes tax" do
-        before { @rate.included_in_price = true }
+        before { @rate.update_column(:included_in_price, true) }
 
         context "when zone is contained by default tax zone" do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
@@ -274,7 +274,7 @@ describe Spree::TaxRate do
       end
 
       context "when price does not include tax" do
-        before { @rate.included_in_price = false }
+        before { @rate.update_column(:included_in_price, false) }
 
         it "should create an adjustment" do
           @rate.adjust(@order, line_item)
