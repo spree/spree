@@ -67,6 +67,7 @@ module Spree
       order.adjustment_total = line_items.sum(:adjustment_total) + 
                                shipments.sum(:adjustment_total)  +
                                adjustments.eligible.sum(:amount)
+      order.tax_total = line_items.sum(:tax_total) + shipments.sum(:tax_total)
       update_order_total
     end
 
@@ -81,6 +82,7 @@ module Spree
         shipment_state: order.shipment_state,
         item_total: order.item_total,
         adjustment_total: order.adjustment_total,
+        tax_total: order.tax_total,
         payment_total: order.payment_total,
         total: order.total
       )

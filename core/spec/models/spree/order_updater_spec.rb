@@ -2,11 +2,15 @@ require 'spec_helper'
 
 module Spree
   describe OrderUpdater do
-    let(:order) { stub_model(Spree::Order, :backordered? => false) }
+    let(:order) { Spree::Order.create }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context "order totals" do
-      let(:line_items) { 2.times.map { double(amount: 10, adjustment_total: -2) } }
+      before do 
+        2.times do
+          create(:line_item, :order => order, price: 10)
+        end
+      end
 
       it "updates payment totals" do
         order.stub_chain(:payments, :completed, :sum).and_return(10)
@@ -16,7 +20,6 @@ module Spree
       end
 
       it "update item total" do
-        order.stub :line_items => line_items
         updater.update_item_total
         order.item_total.should == 20
       end
@@ -28,12 +31,13 @@ module Spree
       end
 
       it "update order adjustments" do
-        order.stub_chain(:adjustments, :eligible, :sum).and_return(-10)
-        order.stub_chain(:line_items, sum: -4)
-
-        expect(updater).to receive(:recalculate_adjustments)
+        order.line_items.first.update_columns({
+          :adjustment_total => 10.05,
+          :tax_total => 0.05
+        })
         updater.update_adjustment_total
-        order.adjustment_total.should == -14
+        order.adjustment_total.should == 10.05
+        order.tax_total.should == 0.05
       end
     end
 
