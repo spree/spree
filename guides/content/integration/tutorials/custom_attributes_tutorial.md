@@ -1,6 +1,14 @@
 ---
-title: Custom Attributes
+title: Custom Attributesgit
 ---
+
+## Prerequisites
+
+This tutorial assumes that you have installed [bundler](http://bundler.io/#getting-started), and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), and [Rack](http://rack.rubyforge.org). It also assumes that you are using Rails 4 and Ruby 2.0.
+
++++
+The source code for the [Custom Attributes Tutorial](https://github.com/spree/integration_tutorials/tree/master/custom_attributes) (along with all of the integration tutorials) is available on Github.
++++
 
 ## Introduction
 
@@ -15,10 +23,6 @@ In this tutorial, you will:
 * extend the storefront's JSON output to include the new attributes,
 * create a custom endpoint for a fictional third-party service, and
 * use this endpoint to access and utilize your storefront's custom attributes.
-
-## Prerequisites
-
-This tutorial assumes that you have installed [bundler](http://bundler.io/#getting-started), and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), and [Rack](http://rack.rubyforge.org). It also assumes that you are using Rails 4 and Ruby 2.0.
 
 ## Creating a Sandbox Store
 

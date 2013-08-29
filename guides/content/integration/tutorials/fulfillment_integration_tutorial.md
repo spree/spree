@@ -7,7 +7,7 @@ title: Fulfillment Integration
 This tutorial assumes that you have [installed bundler](http://bundler.io/#getting-started) and Sinatra, and that you have a working knowledge of [Ruby](http://www.ruby-lang.org/en/), [JSON](http://www.json.org/), [Sinatra](http://www.sinatrarb.com/), and [Rack](http://rack.rubyforge.org).
 
 +++
-The source code for the [Fulfillment Tutorial](https://github.com/spree/hello_endpoint/tree/master/fulfillment_tutorial) (along with all of the integration tutorials) is available on Github.
+The source code for the [Fulfillment Integration Tutorial](https://github.com/spree/integration_tutorials/tree/master/fulfillment_integration) (along with all of the integration tutorials) is available on Github.
 +++
 
 ## Introduction

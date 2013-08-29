@@ -11,7 +11,7 @@ For detailed information about Endpoints, check out the [endpoints](terminology#
 ***
 
 +++
-The source code for the [Basic Endpoints Tutorial](https://github.com/spree/hello_endpoint/tree/master/create_endpoint_tutorial) (along with all of the integration tutorials) is available on Github.
+The source code for the [Basic Endpoints Tutorial](https://github.com/spree/integration_tutorials/tree/master/basic_endpoints) (along with all of the integration tutorials) is available on Github.
 +++
 
 ## Steps
