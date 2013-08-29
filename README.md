@@ -34,6 +34,10 @@ spree_api.
 Installation
 ------------
 
+**THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY
+EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
+SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
+
 The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
