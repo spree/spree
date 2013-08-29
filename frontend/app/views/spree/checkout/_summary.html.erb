@@ -12,10 +12,10 @@
         <tr>
           <td colspan="2">Item adjustments</td>
         </tr>
-        <% @order.line_item_adjustments.each do |adjustment| %>
+        <% @order.line_item_adjustments.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
-            <td><%= adjustment.label %></td>
-            <td><%= adjustment.display_amount.to_html %></td>
+            <td><%= label %></td>
+            <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
           </tr>
         <% end %>
       </tbody>
@@ -33,10 +33,10 @@
         <tr>
           <td colspan="2">Shipment adjustments</td>
         </tr>
-        <% @order.shipment_adjustments.each do |adjustment| %>
+        <% @order.shipment_adjustments.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
-            <td><%= adjustment.label %></td>
-            <td><%= adjustment.display_amount.to_html %></strong></td>
+            <td><%= label %></td>
+            <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
           </tr>
         <% end %>
       </tbody>
