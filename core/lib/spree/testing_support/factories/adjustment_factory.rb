@@ -7,7 +7,7 @@ FactoryGirl.define do
     eligible true
   end
 
-  factory :line_item_adjustment, class: Spree::Adjustment do
+  factory :tax_adjustment, class: Spree::Adjustment do
     association(:adjustable, factory: :line_item)
     amount 10.0
     label 'VAT 5%'
