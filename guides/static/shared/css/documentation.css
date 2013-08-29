@@ -434,6 +434,18 @@ pre.headers code {
   margin-top: 0;
 }
 
+/* USER GUIDES */
+.user.home #subheader .container {
+  background: url('../../images/user-banner.png') no-repeat center top;
+  min-height: 440px;
+}
+.user.home #subheader .container #site-title {
+  margin-top: 100px;
+}
+.user.home #subheader .container #site-title h1 {
+  letter-spacing: 10px
+}
+
 /* Browser fixes */
 .firefox #main-footer .social-icons i { padding-top: 0; padding-bottom: 1px }
 .ie #main-footer .social-icons i { height: 28px; width: 29px }
