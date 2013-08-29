@@ -66,7 +66,6 @@ module Spree
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
     validate :has_available_shipment
-    validate :has_available_payment
 
     make_permalink field: :number
 
@@ -535,11 +534,6 @@ module Spree
         if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
           errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
         end
-      end
-
-      def has_available_payment
-        return unless delivery?
-        # errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
 
       def after_cancel
