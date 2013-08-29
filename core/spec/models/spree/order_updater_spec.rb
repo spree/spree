@@ -22,7 +22,7 @@ module Spree
       end
 
       it "update shipment total" do
-        order.stub_chain(:shipments, sum: 10)
+        create(:shipment, :order => order, :cost => 10)
         updater.update_shipment_total
         order.shipment_total.should == 10
       end
