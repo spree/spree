@@ -280,19 +280,19 @@ end
 
 The `validate_address` service will accept an incoming JSON file, compare the passed-in `ship_address` to the `DummyShip` API's `validate_address` method, and return a `notification:info` message for a valid address, or a rescued exception for an invalid address.
 
-We'll navigate to the custom_attribute_endpoint directory, install gems, start our Sinatra server, then run the following `curl` command to run the aforementioned order's JSON output through our new endpoint's `validate_address` service:
+We'll navigate to the custom_attribute_endpoint directory, install gems, start our Sinatra server, then launch a `curl` command to run the aforementioned order's JSON output through our new endpoint's `validate_address` service. 
+
++++
+We can't directly encode the order output message to the format we need (that's part of the magic the hub handles for us), but we can use hard-coded JSON files that would directly mimic the polling message the hub would generate in this case. These JSON files are provided to you - along with the other sample files - at [https://github.com/spree/hello_endpoint/tree/master/custom_attribute_endpoint_tutorial](https://github.com/spree/hello_endpoint/tree/master/custom_attribute_endpoint_tutorial).
++++
 
 ```bash
 $ cd custom_attribute_endpoint
 $ bundle install
 $ bundle exec rackup -p 9292
-$ curl --data http://localhost:3000/api/orders/R123456789.json -i -X POST -H 
+$ curl --data @./residential_order.json -i -X POST -H 
   'Content-type:application/json' http://localhost:9292/validate_address
 ```
-
-$$$
-The command above returns a 406 because the JSON output from a Spree store isn't formatted how we need it. We need @message[:payload]['order'] but the whole JSON is the order. Need to get with Brian to figure out how to make this so; in the meantime, I wrote up a hard-coded JSON file with the order's JSON on it, and added that to the project.
-$$$
 
 Since the ZIP code for the shipping address on this order is 16804 - not inside our API's "acceptable" range, the return we get is:
 
@@ -354,12 +354,14 @@ end
 
 So we've added a new service - `get_biz_signer` - to our endpoint. This endpoint verifies the value of the `variety` key in our order and returns a message whose payload indicates whether the fulfiller will or won't need to get a signature upon delivery.
 
-We need to modify a couple of our storefront's sample orders to test this functionality. It's easiest to do that in the Admin Interface. Set the shipping address `variety` on the order with the number "R123456789" to "Business" and the order with the number "R987654321" to "Residence". Be sure to save your changes each time.
+***
+Remember: Sinatra doesn't reload your changes unless you explicitly tell it to. Stop and restart your rack server any time you make changes to your endpoint.
+***
 
-Now, navigate back to the custom_attribute_endpoint directory. When you run the curl command against the residential delivery:
+When you run the curl command against the residential delivery:
 
 ```bash
-$ curl --data http://localhost:3000/api/orders/R987654321.json -i -X POST -H 
+$ curl --data @./residential_order.json -i -X POST -H 
   'Content-type:application/json' http://localhost:9292/get_biz_signer
 ```
 
@@ -372,14 +374,14 @@ you get the following return:
 Yet when you run it against the business delivery:
 
 ```bash
-$ curl --data http://localhost:3000/api/orders/R123456789.json -i -X POST -H 
+$ curl --data @./business_order.json -i -X POST -H 
   'Content-type:application/json' http://localhost:9292/get_biz_signer
 ```
 
 you get the following return:
 
 ```bash
-{"message_id":"12345","message":"notification:info","payload":{"result":
+{"message_id":"54321","message":"notification:info","payload":{"result":
   "You do need to get a signature for this package."}}
 ```
 
