@@ -88,7 +88,7 @@ adjustItems = function(shipment_number, variant_id, quantity){
         url: Spree.url(url),
         data: { variant_id: variant_id, quantity: new_quantity }
       }).done(function( msg ) {
-        window.location.reload();
+        advanceOrder();
       });
     }
 }
@@ -189,7 +189,7 @@ completeItemSplit = function(event) {
         url: Spree.url(Spree.routes.orders_api + "/" + order_number + "/shipments.json"),
         data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
       }).done(function(msg) {
-        window.location.reload();
+        advanceOrder();
       });
     } else {
       $.ajax({
@@ -198,10 +198,20 @@ completeItemSplit = function(event) {
         url: Spree.url(Spree.routes.orders_api + "/" + order_number + "/shipments/" + target_shipment_number + "/add.json"),
         data: { variant_id: variant_id, quantity: quantity }
       }).done(function(msg) {
-        window.location.reload();
+        advanceOrder();
       });
     }
   }
+}
+
+advanceOrder = function() {
+  $.ajax({
+    type: "PUT",
+    async: false,
+    url: Spree.url(Spree.routes.checkouts_api + "/" + order_number + "/advance")
+  }).done(function() {
+    window.location.reload();
+  });
 }
 
 cancelItemSplit = function(event) {
@@ -231,7 +241,7 @@ addVariantFromStockLocation = function() {
       url: Spree.url(Spree.routes.orders_api + "/" + order_number + "/shipments.json"),
       data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
     }).done(function( msg ) {
-      window.location.reload();
+      advanceOrder();
     }).error(function( msg ) {
       console.log(msg);
     });
