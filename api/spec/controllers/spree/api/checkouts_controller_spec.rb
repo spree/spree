@@ -243,5 +243,18 @@ module Spree
         json_response["errors"]["base"].should include(Spree.t(:no_pending_payments))
       end
     end
+
+    context "PUT 'advance'" do
+      let!(:order) { create(:order_with_line_items) }
+      it 'continues to advance advances an order while it can move forward' do
+        Spree::Order.any_instance.should_receive(:next).exactly(3).times.and_return(true, true, false)
+        api_put :advance, :id => order.to_param, :order_token => order.token
+      end
+      it 'returns the order' do
+        api_put :advance, :id => order.to_param, :order_token => order.token
+        json_response['id'].should == order.id
+      end
+
+    end
   end
 end
