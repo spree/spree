@@ -124,26 +124,6 @@ describe Spree::Ability do
 
   context 'as Guest User' do
 
-    context 'for Address' do
-      context 'requested by any user' do
-        let(:resource) {
-          address = Spree::Address.new
-          address.stub user: create(:user)
-          address
-        }
-        it_should_behave_like 'access denied'
-      end
-
-      context 'requested by user' do
-        let(:resource) {
-          address = Spree::Address.new
-          address.stub user: user
-          address
-        }
-        it_should_behave_like 'access granted'
-      end
-    end
-
     context 'for Country' do
       let(:resource) { Spree::Country.new }
       context 'requested by any user' do
