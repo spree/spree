@@ -18,6 +18,7 @@ Spree::Core::Engine.routes.draw do
     resources :checkouts do
       member do
         put :next
+        put :advance
       end
     end
 
