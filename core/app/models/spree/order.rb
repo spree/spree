@@ -516,6 +516,10 @@ module Spree
       end
     end
 
+    def refresh_shipment_rates
+      shipments.map &:refresh_rates
+    end
+
     private
 
       def link_by_email

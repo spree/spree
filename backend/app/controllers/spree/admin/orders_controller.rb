@@ -52,7 +52,10 @@ module Spree
       end
 
       def edit
-        @order.shipments.map &:refresh_rates
+        unless @order.complete?
+          @order.refresh_shipment_rates
+        end
+
         # Transition as far as we can go
         while @order.next; end
         # The payment step shows an error of 'No pending payments'
