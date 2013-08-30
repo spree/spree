@@ -52,7 +52,9 @@ module Spree
       end
 
       def edit
-        @order.shipments.map &:refresh_rates
+        unless @order.complete?
+          @order.refresh_shipment_rates
+        end
       end
 
       def update

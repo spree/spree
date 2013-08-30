@@ -22,7 +22,7 @@ module Spree
             end
             while @order.next; end
 
-            @order.shipments.map &:refresh_rates
+            @order.refresh_shipment_rates
             flash[:success] = Spree.t('customer_details_updated')
             redirect_to admin_order_customer_path(@order)
           else
