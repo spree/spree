@@ -37,11 +37,6 @@ module Spree
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
-        can [:manage], Address do |address|
-          # The addresses user method will be dependent upon your authentication solution.
-          # Spree assumes you will add a user method to Address in order to authorize users other than admins to modify the address.
-          address.user == user
-        end
         can [:index, :read], Country
         can [:index, :read], OptionType
         can [:index, :read], OptionValue
