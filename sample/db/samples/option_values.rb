@@ -49,5 +49,5 @@ option_values = [
 ]
 
 option_values.each do |option_value_attrs|
-  Spree::OptionValue.create!(option_values, :without_protection => true)
+  Spree::OptionValue.create!(option_value_attrs, :without_protection => true)
 end
