@@ -33,6 +33,10 @@ FactoryGirl.define do
         state 'complete'
         completed_at { Time.now }
 
+        after(:create) do |order|
+          order.refresh_shipment_rates
+        end
+
         factory :order_ready_to_ship do
           payment_state 'paid'
           shipment_state 'ready'

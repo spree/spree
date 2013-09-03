@@ -105,13 +105,11 @@ module Spree
     def refresh_rates
       return shipping_rates if shipped?
 
-      shipping_method_id = shipping_method.try(:id)
       self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
 
-
-      if shipping_method_id
+      if shipping_method
         selected_rate = shipping_rates.detect { |rate|
-          rate.shipping_method_id == shipping_method_id
+          rate.shipping_method_id == shipping_method.id
         }
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
       end
