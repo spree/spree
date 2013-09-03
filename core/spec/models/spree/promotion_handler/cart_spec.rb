@@ -21,7 +21,11 @@ module Spree
         end
 
         context "promotion with no rules" do
-          include_context "creates the adjustment"
+          it "doesnt create any adjustment as it cant be eligible" do
+            expect {
+              subject.activate
+            }.not_to change { adjustable.adjustments.count }
+          end
         end
 
         context "promotion doesn't include item involved" do
