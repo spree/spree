@@ -14,7 +14,6 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :code, presence: true, if: lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
     validates :path, presence: true, if: lambda{|r| r.event_name == 'spree.content.visited' }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
 
@@ -27,10 +26,6 @@ module Spree
 
     def self.advertised
       where(advertise: true)
-    end
-
-    def self.with_code
-      where(event_name: 'spree.checkout.coupon_code_added')
     end
 
     def self.active
@@ -100,10 +95,6 @@ module Spree
 
     def credits_count
       credits.count
-    end
-
-    def code=(coupon_code)
-      write_attribute(:code, (coupon_code.downcase.strip rescue nil))
     end
   end
 end
