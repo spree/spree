@@ -13,7 +13,7 @@
   </span>
 </p>
 <p class="field" data-hook="card_expiration">
-  <%= label_tag "card_month", t(:expiration) %><span class="required">*</span><br />
+  <%= label_tag "card_month", Spree.t(:expiration) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[expiry]", '', :id => 'card_expiry', :class => "required", :placeholder => "MM / YY" %>
 </p>
 <p class="field" data-hook="card_code">
