@@ -4,6 +4,10 @@ title: Terminology
 
 ## Integrations
 
+An integration is a collection of [services](#services) that provide support for connecting your storefront to third-party or in-house applications, like Amazon, Mandrill, Quickbooks, Quiet Logistics and many more.
+
+Each integration is generally provided by a single [endpoint](#endpoints) application, that are responsible for processing JSON [messages](#messages) that are POST'd to it and relaying the information to the third-party systems.
+
 ## Messages
 
 Messages are the core of the Spree Commerce hub. A single action within a storefront can result in several discrete Messages being sent to multiple Endpoints. A Message can be created in one of two ways:
