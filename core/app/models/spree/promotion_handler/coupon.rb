@@ -1,6 +1,6 @@
 module Spree
-  module Promo
-    class CouponApplicator
+  module PromotionHandler
+    class Coupon
       attr_reader :order
 
       def initialize(order)
