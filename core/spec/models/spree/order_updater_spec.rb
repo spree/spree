@@ -6,14 +6,12 @@ module Spree
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     it "updates totals" do
-      payments = [double(:amount => 5), double(:amount => 5)]
-      order.stub_chain(:payments, :completed).and_return(payments)
+      order.stub_chain(:payments, :completed, :sum).and_return(10)
 
       line_items = [double(:amount => 10), double(:amount => 20)]
       order.stub :line_items => line_items
 
-      adjustments = [double(:amount => 10), double(:amount => -20)]
-      order.stub_chain(:adjustments, :eligible).and_return(adjustments)
+      order.stub_chain(:adjustments, :eligible, :sum).and_return(-10)
 
       updater.update_totals
       order.payment_total.should == 10
@@ -185,6 +183,13 @@ module Spree
                             :mandatory  => false)
       end
 
+      it "update adjustments in proper order" do
+        expect(updater).to receive(:update_promo_adjustments).ordered
+        expect(updater).to receive(:update_shipping_adjustments).ordered
+        expect(updater).to receive(:update_tax_adjustments).ordered
+        updater.update
+      end
+
       it "should make all but the most valuable promotion adjustment ineligible, leaving non promotion adjustments alone" do
         create_adjustment("Promotion A", -100)
         create_adjustment("Promotion B", -200)
@@ -196,7 +201,7 @@ module Spree
                             :label => "Some other credit")
         order.adjustments.each {|a| a.update_column(:eligible, true)}
 
-        updater.update_adjustments
+        updater.update_promo_adjustments
 
         order.adjustments.eligible.promotion.count.should == 1
         order.adjustments.eligible.promotion.first.label.should == 'Promotion C'
@@ -213,7 +218,7 @@ module Spree
 
         # regression for #3274
         it "still makes the previous best eligible adjustment valid" do
-          updater.update_adjustments
+          updater.update_promo_adjustments
           order.adjustments.eligible.promotion.first.label.should == 'Promotion A'
         end
       end
@@ -223,7 +228,7 @@ module Spree
         create_adjustment("Promotion B", -200)
         create_adjustment("Promotion C", -200)
 
-        updater.update_adjustments
+        updater.update_promo_adjustments
 
         order.adjustments.eligible.promotion.count.should == 1
         order.adjustments.eligible.promotion.first.amount.to_i.should == -200

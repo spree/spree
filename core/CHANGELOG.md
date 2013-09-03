@@ -1,6 +1,13 @@
 ## Spree 2.1.0 (unreleased) ##
 
-* Product requires `shipping_category_id` on create #3188.
+*   Recalculate taxes after a promotion discount is applied on the order so
+    that it reflects an accurate tax amount. Also change OrderUpdater api. Now
+    each adjustment type has its own method `update_promo_adjustments`,
+    `update_shipping_adjustments` and `update_tax_adjustments`
+
+    *Washington Luiz*
+
+*   Product requires `shipping_category_id` on create #3188.
 
     *Jeff Dutil*
 

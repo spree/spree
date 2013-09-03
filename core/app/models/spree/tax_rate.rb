@@ -70,7 +70,7 @@ module Spree
           )
         end
       else
-        create_adjustment(label, order, order)
+        create_adjustment(label, order, order, false, "open")
       end
     end
 

@@ -24,8 +24,11 @@ module Spree
         shipments.each { |shipment| shipment.update!(order) }
         update_shipment_state
       end
-      
-      update_adjustments
+
+      update_promo_adjustments
+      update_shipping_adjustments
+      update_tax_adjustments
+
       # update totals a second time in case updated adjustments have an effect on the total
       update_totals
 
@@ -52,9 +55,9 @@ module Spree
     # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
-      order.payment_total = payments.completed.map(&:amount).sum
+      order.payment_total = payments.completed.sum(:amount)
       order.item_total = line_items.map(&:amount).sum
-      order.adjustment_total = adjustments.eligible.map(&:amount).sum
+      order.adjustment_total = adjustments.eligible.sum(:amount)
       order.total = order.item_total + order.adjustment_total
     end
 
@@ -124,9 +127,17 @@ module Spree
     #
     # Adjustments will check if they are still eligible. Ineligible adjustments
     # are preserved but not counted towards adjustment_total.
-    def update_adjustments
-      order.adjustments.reload.each { |adjustment| adjustment.update! }
+    def update_promo_adjustments
+      order.adjustments.reload.promotion.each { |adjustment| adjustment.update! }
       choose_best_promotion_adjustment
+    end
+
+    def update_shipping_adjustments
+      order.adjustments.shipping.each { |adjustment| adjustment.update! }
+    end
+
+    def update_tax_adjustments
+      order.adjustments.tax.each { |adjustment| adjustment.update! }
     end
 
     private

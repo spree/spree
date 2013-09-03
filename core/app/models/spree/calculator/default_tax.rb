@@ -15,9 +15,7 @@ module Spree
       end
     end
 
-
     private
-
       def rate
         self.calculable
       end
@@ -28,6 +26,8 @@ module Spree
         end
 
         line_items_total = matched_line_items.sum(&:total)
+        line_items_total += order.adjustments.promotion.eligible.sum(:amount)
+
         round_to_two_places(line_items_total * rate.amount)
       end
 
@@ -50,6 +50,5 @@ module Spree
       def deduced_total_by_rate(total, rate)
         round_to_two_places(total - ( total / (1 + rate.amount) ) )
       end
-
   end
 end
