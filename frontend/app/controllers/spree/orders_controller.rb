@@ -8,20 +8,15 @@ module Spree
 
     respond_to :html
 
+    before_filter :assign_order, only: :update
+    before_filter :apply_coupon_code, only: :update
+
     def show
       @order = Order.find_by_number!(params[:id])
     end
 
     def update
-      @order = current_order
-      unless @order
-        flash[:error] = Spree.t(:order_not_found)
-        redirect_to root_path and return
-      end
-
       if @order.contents.update_cart(order_params)
-        return if after_update_attributes
-
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
@@ -91,16 +86,11 @@ module Spree
         end
       end
 
-      def after_update_attributes
-        handler = PromotionHandler::Coupon.new(@order).apply
-
-        if handler.error.present?
-          flash[:error] = handler.error
-          respond_with(@order) { |format| format.html { render :edit } }
-          true
-        elsif handler.success
-          flash[:success] = handler.success
-          false
+      def assign_order
+        @order = current_order
+        unless @order
+          flash[:error] = Spree.t(:order_not_found)
+          redirect_to root_path and return
         end
       end
   end
