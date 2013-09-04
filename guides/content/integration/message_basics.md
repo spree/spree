@@ -4,7 +4,7 @@ title: Message Basics
 
 ## Message Generation
 
-The Spree Integrator is responsible for processing and delivering [Messages](terminology#messages) based on a pre-configured set of business logic specific to a particular store. The Messages processed by the Integrator are generated in one of three possible ways.
+The Spree Commerce hub is responsible for processing and delivering [messages](terminology#messages) based on a pre-configured set of business logic specific to a particular store. The messages processed by the Integrator are generated in one of three possible ways.
 
 ### Polling
 
