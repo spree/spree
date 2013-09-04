@@ -89,6 +89,7 @@ This only means that the message was successfully placed on the SQS queue and th
 #### Parameters
 
 | Name | Value | Example |
+| :----| :-----| :------ |
 | quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
 | quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
 | quiet_logistics.ql_outgoing_queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
@@ -204,6 +205,7 @@ This only means that the message was successfully placed on the SQS queue and S3
 #### Parameters
 
 | Name | Value | Example |
+| :----| :-----| :------ |
 | quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
 | quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
 | quiet_logistics.ql_outgoing_queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
@@ -299,6 +301,7 @@ This only means that the message was successfully placed on the SQS queue and S3
 #### Parameters
 
 | Name | Value | Example |
+| :----| :-----| :------ |
 | quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
 | quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
 | quiet_logistics.ql_outgoing_queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
@@ -339,6 +342,7 @@ Polls a SQS queue for incoming messages sent by Quiet Logistics.
 #### Parameters
 
 | Name | Value | Example |
+| :----| :-----| :------ |
 | quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
 | quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
 | quiet_logistics.ql_incoming_queue | Name of the SQS queue to read messages from | ql_incoming_queue |
