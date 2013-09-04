@@ -280,15 +280,16 @@ The recommended way to configure site-wide preferences is through an initializer
 
 ```ruby
 module Spree
-  Spree::MyApp::Config = Spree::MyApplicationConfiguration.new
+  MyApp::Config = Spree::MyApplicationConfiguration.new
 end
 
-Spree::MyApp::Config[:theme] = "blue_theme"
-Spree::MyApp::Config[:show_spash_page] = true
-Spree::MyApp::Config[:number_of_articles] = 5
-```
+MyApp::Config[:theme] = "blue_theme"
+MyApp::Config[:show_spash_page] = true
+MyApp::Config[:number_of_articles] = 5```
 
-The above example will configure the preferences we defined earlier. Take note of the second line. In order to set and get preferences using `Spree::MyApp::Config`, we must first instantiate the configuration object.
+The `MyApp` name used here is an example and should be replaced with your actual application's name, found in `config/application.rb`.
+
+The above example will configure the preferences we defined earlier. Take note of the second line. In order to set and get preferences using `MyApp::Config`, we must first instantiate the configuration object.
 
 ## Spree Configuration Options
 
