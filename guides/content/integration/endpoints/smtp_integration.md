@@ -99,6 +99,8 @@ We use the [pony](https://github.com/benprew/pony) gem internally and always con
 }
 ```
 
+When an exception occures when sending the email we will catch the exception and send an error_response. Any exception that comes up will end up in the error_response. That way it's easy to find out what happend. For convenience we also send back all the parameters used while the error occured.
+
 ---error_response.json---
 ```json
 {
