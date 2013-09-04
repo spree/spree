@@ -4,12 +4,23 @@ module Spree
   class Promotion
     module Rules
       describe CouponCode do
-        it "validates presence of code" do
-          subject.valid?
-          expect(subject).to have(1).error_on(:code)
+        context "new record" do
+          it "doesnt validate presence of new code" do
+            subject.valid?
+            expect(subject).to have(0).error_on(:code)
+          end
+        end
 
-          subject.code = "Huhu"
-          expect(subject).to have(0).error_on(:code)
+        context "persisted record" do
+          before { subject.save }
+
+          it "validates presence of code" do
+            subject.valid?
+            expect(subject).to have(1).error_on(:code)
+
+            subject.code = "Huhu"
+            expect(subject).to have(0).error_on(:code)
+          end
         end
 
         context "matches order coupon code" do
