@@ -96,5 +96,11 @@ module Spree
     def credits_count
       credits.count
     end
+
+    # TODO can be removed from here once we have another way to ensure the
+    # promotion was activated in PromotionHandler::Coupon
+    def code
+      self.promotion_rules.where(type: "Spree::Promotion::Rules::CouponCode").first.try(:code)
+    end
   end
 end

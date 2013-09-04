@@ -127,9 +127,10 @@ module Spree
 
         def after_update_attributes
           if object_params && object_params[:coupon_code].present?
-            coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
-            if !coupon_result[:coupon_applied?]
-              @coupon_message = coupon_result[:error]
+            handler = PromotionHandler::Coupon.new(@order).apply
+
+            if handler.error.present?
+              @coupon_message = handler.error
               respond_with(@order, default_template: 'spree/api/orders/could_not_apply_coupon')
               return true
             end

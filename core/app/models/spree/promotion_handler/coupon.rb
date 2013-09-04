@@ -2,7 +2,7 @@ module Spree
   module PromotionHandler
     class Coupon
       attr_reader :order
-      attr_accessor :error
+      attr_accessor :error, :success
 
       def initialize(order)
         @order = order
@@ -12,7 +12,7 @@ module Spree
         if order.coupon_code.present?
           # check if coupon code is already applied
           if order.adjustments.promotion.eligible.detect { |p| p.source.promotion.code == order.coupon_code }.present?
-            return { :coupon_applied? => true, :notice => Spree.t(:coupon_code_already_applied) }
+            self.error = Spree.t(:coupon_code_already_applied)
           else
             if promotion.present?
               handle_present_promotion(promotion)
@@ -21,6 +21,8 @@ module Spree
             end
           end
         end
+
+        self
       end
 
       def promotion
@@ -39,21 +41,21 @@ module Spree
       end
 
       def promotion_usage_limit_exceeded
-        { :coupon_applied? => false, :error =>  Spree.t(:coupon_code_max_usage) }
+        self.error = Spree.t(:coupon_code_max_usage)
       end
 
       def determine_promotion_application_result(discount)
         previous_promo = order.adjustments.promotion.eligible.first
 
         if discount.present? and discount.eligible
-          return { :coupon_applied? => true, :success =>  Spree.t(:coupon_code_applied) }
+          self.success = Spree.t(:coupon_code_applied)
         elsif previous_promo.present? and discount.present?
-          return { :coupon_applied? => false, :error =>  Spree.t(:coupon_code_better_exists) }
+          self.error = Spree.t(:coupon_code_better_exists)
         elsif discount.present?
-          return { :coupon_applied? => false, :error =>  Spree.t(:coupon_code_not_eligible) }
+          self.error = Spree.t(:coupon_code_not_eligible)
         else
           # if the promotion was created after the order
-          return { :coupon_applied? => false, :error =>  Spree.t(:coupon_code_not_found) }
+          self.error = Spree.t(:coupon_code_not_found)
         end
       end
     end
