@@ -86,6 +86,13 @@ This only means that the message was successfully placed on the SQS queue and th
 }
 ```
 
+#### Parameters
+
+| Name | Value | Example |
+| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| Outgoing Queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
+| Outgoing Bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
 
 #### Response
 
@@ -162,9 +169,9 @@ This only means that the message was successfully placed on the SQS queue and S3
       },
       "destination_warehouse": {
         "warehouse_id": "EX01",
-        "name": "EXAMPLE WAREHOUSE",
+        "name": "Example WAREHOUSE",
         "address": {
-          "address1": "123 example lane",
+          "address1": "123 Example lane",
           "address2": "",
           "address3": null,
           "address4": null,
@@ -193,6 +200,15 @@ This only means that the message was successfully placed on the SQS queue and S3
   }
 }
 ```
+
+#### Parameters
+
+| Name | Value | Example |
+| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| Outgoing Queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
+| Outgoing Bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
+
 
 #### Response
 ---shipping_order_transmit.json---
@@ -280,6 +296,14 @@ This only means that the message was successfully placed on the SQS queue and S3
 }
 ```
 
+#### Parameters
+
+| Name | Value | Example |
+| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| Outgoing Queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
+| Outgoing Bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
+
 
 #### Response
 ---notification.json---
@@ -311,6 +335,13 @@ Polls a SQS queue for incoming messages sent by Quiet Logistics.
   "payload": {}
 }
 ```
+
+#### Parameters
+
+| Name | Value | Example |
+| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| Incoming Queue | Name of the SQS queue to read messages from | ql_incoming_queue |
 
 ### Response
 ---quiet_logistics_document_download.json---
@@ -361,6 +392,13 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
 }
 ```
 
+#### Parameters
+
+| Name | Value | Example |
+| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| Incoming Bucket | Name of the S3 bucket to read documents from | ql-incoming-bucket |
+
 ### Response (ShipmentOrderResult)
 
 ---ql_shipment_confirm.json---
@@ -404,6 +442,13 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
   ]
 }
 ```
+
+#### Parameters
+
+| Name | Value | Example |
+| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| Incoming Queue | Name of the SQS queue to read messages from | ql_incoming_queue |
 
 #### Response (PurchaseOrderReceipt)
 
