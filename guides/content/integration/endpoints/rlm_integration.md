@@ -16,6 +16,17 @@ The source code for the [RLM Endpoint](https://github.com/spree/rlm_endpoint/) i
 
 Stores the individual line items from a shipment:ready request
 
+
+#### Parameters
+
+| key | desc |
+| ------------- |-------------|
+|`rlm.shipping_map` | the mapping to determine the routing_code
+|`rlm.ground_shipping_map` | the mapping to determine the routing_code (FX3 or FXG)
+|`rlm.options_mapping` | the mapping from the options to size and color
+|`rlm.sku_colors_mapping` | the mapping for SKU value for the color value.
+
+
 ####Request
 
 ---shipment_ready.json---
@@ -789,6 +800,16 @@ Stores the individual line items from a shipment:ready request
 ### Flush
 
 Exports the stored lines in 2 different csv files. One for Amazon imported orders, and one for the regular Spree orders.
+
+#### Parameters
+
+| key | desc |
+| ------------- |-------------|
+|`rlm.csv_target_bucket` | Bucket where we will store the RLM CSV
+|`rlm.aws_access_key_id` | AWS access ID
+|`rlm.aws_secret_access_key` | AWS access Key
+|`rlm.timezone` | The timezone on the server to correctly name the files
+
 
 #### Request
 

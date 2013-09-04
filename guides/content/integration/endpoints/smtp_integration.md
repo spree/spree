@@ -14,7 +14,7 @@ The source code for the [SMTP Endpoint](https://github.com/spree/smtp_endpoint/)
 
 ### send
 
-Receives notification:[info|warn|error] messages and sends the notification to the configured recipients.
+Receives notification messages (info, warn and error) and sends the notification to the configured recipients.
 
 The subject of the mail will always be the same as the notification subject, with the level (info, warn or error) as an suffix in brackets. for example: ```[WARN] Disk space is low```
 
@@ -38,67 +38,112 @@ We use the [pony](https://github.com/benprew/pony) gem internally and always con
 ---notification_info.json---
 ```json
 {
-  "message_id": "abc",
-  "message": "notification:info",
-  "payload": {
-    "subject": "This is an info notification",
-    "description": "You just received an info notification, live long and prosper!",
-    "parameters" : [
-      { "name": "smtp.from", "type": "string", "value": "noreply@spreecommerce.com" },
-      { "name": "smtp.to", "type": "string", "value": "spree@example.com" },
-      { "name": "smtp.cc", "type": "string", "value": "spree+cc@example.com" },
-      { "name": "smtp.bcc", "type": "string","value": "spree+bcc@example.com" },
-      { "name": "smtp.options", "type": "list", "value": [{
-                                                            "address": "smtp.mandrillapp.com",
-                                                            "port": "587",
-                                                            "user_name": "peter@spreecommerce.com",
-                                                            "password": "p4ssw0rd!",
-                                                            "enable_starttls_auto": "true",
-                                                            "authentication": "login",
-                                                            "domain": "spreecommerce.com"
-                                                          }] 
+  "store_id":"1234",
+  "message_id":"abc",
+  "message":"notification:info",
+  "payload":{
+    "subject":"This is an info notification",
+    "description":"You just received an info notification, live long and prosper!",
+    "parameters":[
+      {
+        "name":"smtp.from",
+        "type":"string",
+        "value":"noreply@spreecommerce.com"
+      },
+      {
+        "name":"smtp.to",
+        "type":"string",
+        "value":"spree@example.com"
+      },
+      {
+        "name":"smtp.cc",
+        "type":"string",
+        "value":"spree+cc@example.com"
+      },
+      {
+        "name":"smtp.bcc",
+        "type":"string",
+        "value":"spree+bcc@example.com"
+      },
+      {
+        "name":"smtp.options",
+        "type":"list",
+        "value":[
+          {
+            "address":"smtp.mandrillapp.com",
+            "port":"587",
+            "user_name":"peter@spreecommerce.com",
+            "password":"p4ssw0rd!",
+            "enable_starttls_auto":"true",
+            "authentication":"login",
+            "domain":"spreecommerce.com"
+          }
+        ]
       }
     ]
   }
-}
-```
+}```
 
 #### Response
 
 ---success_response.json---
 ```json
 {
-  "message_id": "abc",
-  "message": "email:sent",
-  "payload": {
-    "status": [Mail object inspect]
-  }
+  "message_id":"abc",
+  "messages":[
+    {
+      "message":"email:sent",
+      "payload":{},
+    }
+  ]
 }
 ```
 
 ---error_response.json---
 ```json
 {
-  "message_id": "abc",
-  "payload": {
-  	"parameters" : [
-      { "name": "smtp.from", "type": "string", "value": "noreply@spreecommerce.com" },
-      { "name": "smtp.to", "type": "string", "value": "spree@example.com" },
-      { "name": "smtp.cc", "type": "string", "value": "spree+cc@example.com" },
-      { "name": "smtp.bcc", "type": "string","value": "spree+bcc@example.com" },
-      { "name": "smtp.options", "type": "list", "value": [{
-                                                            "address": "smtp.mandrillapp.com",
-                                                            "port": "587",
-                                                            "user_name": "peter@spreecommerce.com",
-                                                            "password": "p4ssw0rd!",
-                                                            "enable_starttls_auto": "true",
-                                                            "authentication": "login",
-                                                            "domain": "spreecommerce.com"
-                                                          }] 
+  "message_id":"abc",
+  "payload":{
+    "parameters":[
+      {
+        "name":"smtp.from",
+        "type":"string",
+        "value":"noreply@spreecommerce.com"
+      },
+      {
+        "name":"smtp.to",
+        "type":"string",
+        "value":"spree@example.com"
+      },
+      {
+        "name":"smtp.cc",
+        "type":"string",
+        "value":"spree+cc@example.com"
+      },
+      {
+        "name":"smtp.bcc",
+        "type":"string",
+        "value":"spree+bcc@example.com"
+      },
+      {
+        "name":"smtp.options",
+        "type":"list",
+        "value":[
+          {
+            "address":"smtp.mandrillapp.com",
+            "port":"587",
+            "user_name":"peter@spreecommerce.com",
+            "password":"p4ssw0rd!",
+            "enable_starttls_auto":"true",
+            "authentication":"login",
+            "domain":"spreecommerce.com"
+          }
+        ]
       }
-    ]
+    ],
+    "message":"MESSAGE INSPECT DATA"
   },
-  "error": "error message",
-  "backtrace": "error backtrace"
+  "error":"error message",
+  "backtrace":"error backtrace"
 }
 ```
