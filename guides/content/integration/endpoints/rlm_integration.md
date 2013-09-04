@@ -35,20 +35,33 @@ $$$
 
 #### Parameters
 
-| key | desc |
-| ------------- |-------------|
-|`rlm.shipping_map` | the mapping to determine the routing_code
-|`rlm.ground_shipping_map` | the mapping to determine the routing_code (FX3 or FXG)
-|`rlm.options_mapping` | the mapping from the options to size and color
-|`rlm.sku_colors_mapping` | the mapping for SKU value for the color value.
+| name | data_type | desc |
+| -------------|---------|-------------|
+|`rlm.shipping_map` | list | the mapping to determine the routing_code
+|`rlm.ground_shipping_map` | list | the mapping to determine the routing_code (FX3 or FXG)
+|`rlm.options_mapping` | list | the mapping from the options to size and color
+|`rlm.sku_colors_mapping` | list | the mapping for SKU value for the color value.
 
 ### List type parameters.
 
-$$$
-Explain and show the list parameters and how they are used.
-$$$
+We use the list types parameters to map values from the line_items to RLM used values.
 
-####Request
+The `rlm.shipping_map` parameter can look like this:
+
+```ruby
+{ 
+  "name" => "rlm.shipping_map", 
+  "data_type"=>"list", 
+  "value" => [
+    {"Overnight"=>"FXN", "International"=>"FXI", "Alaska"=>"FX2"}
+  ]
+}
+```
+
+In the endpoint we have access to this hash through the `@config` variable. We can access it with `@config["rlm.shipping_map"]` and it will return an array of hashes. For this list we only have one hash in the array so it's save to always pick the first one like this `@config["rlm.shipping_map"].first`. The hash that we get from this paramater is used to map the used `shipping_method` to the rlm routing code. So if the the `shipping_method` was "Overnight" this mapping configures that the routing code will be "FXN".
+
+
+#### Request
 
 ---shipment_ready.json---
 ```json
