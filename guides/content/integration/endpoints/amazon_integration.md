@@ -166,5 +166,7 @@ Returns all new orders created in the Amazon store since the `amazon.last_update
           }
         }
       }
-    },
+    }
+  ]
+}
 ```
