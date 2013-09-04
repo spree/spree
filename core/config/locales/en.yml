@@ -857,9 +857,9 @@ en:
       item_total:
         description: Order total meets these criteria
         name: Item total
-      landing_page:
-        description: Customer must have visited the specified page
-        name: Landing Page
+      coupon_code:
+        description: Requires a coupon code to be activated
+        name: Coupon code
       product:
         description: Order includes specified product(s)
         name: Product(s)
