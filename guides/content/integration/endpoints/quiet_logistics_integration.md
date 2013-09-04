@@ -89,10 +89,10 @@ This only means that the message was successfully placed on the SQS queue and th
 #### Parameters
 
 | Name | Value | Example |
-| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
-| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
-| Outgoing Queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
-| Outgoing Bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
+| quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| quiet_logistics.ql_outgoing_queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
+| quiet_logistics.ql_outgoing_bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
 
 #### Response
 
@@ -204,10 +204,10 @@ This only means that the message was successfully placed on the SQS queue and S3
 #### Parameters
 
 | Name | Value | Example |
-| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
-| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
-| Outgoing Queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
-| Outgoing Bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
+| quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| quiet_logistics.ql_outgoing_queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
+| quiet_logistics.ql_outgoing_bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
 
 
 #### Response
@@ -299,10 +299,10 @@ This only means that the message was successfully placed on the SQS queue and S3
 #### Parameters
 
 | Name | Value | Example |
-| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
-| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
-| Outgoing Queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
-| Outgoing Bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
+| quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| quiet_logistics.ql_outgoing_queue | Name of the SQS queue to send messages to | ql_outgoing_queue |
+| quiet_logistics.ql_outgoing_bucket | Name of the S3 bucket to send documents to | ql-outgoing-bucket |
 
 
 #### Response
@@ -339,9 +339,9 @@ Polls a SQS queue for incoming messages sent by Quiet Logistics.
 #### Parameters
 
 | Name | Value | Example |
-| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
-| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
-| Incoming Queue | Name of the SQS queue to read messages from | ql_incoming_queue |
+| quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| quiet_logistics.ql_incoming_queue | Name of the SQS queue to read messages from | ql_incoming_queue |
 
 ### Response
 ---quiet_logistics_document_download.json---
@@ -395,9 +395,9 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
 #### Parameters
 
 | Name | Value | Example |
-| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
-| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
-| Incoming Bucket | Name of the S3 bucket to read documents from | ql-incoming-bucket |
+| quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| quiet_logistics.ql_incoming_bucket | Name of the S3 bucket to read documents from | ql-incoming-bucket |
 
 ### Response (ShipmentOrderResult)
 
@@ -446,9 +446,9 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
 #### Parameters
 
 | Name | Value | Example |
-| Amazon Access Key | Your AWS Access Key | Aqws3958dhdjwb39 |
-| Amazon Secret Key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
-| Incoming Queue | Name of the SQS queue to read messages from | ql_incoming_queue |
+| quiet_logistics.amazon_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| quiet_logistics.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| quiet_logistics.ql_incoming_queue | Name of the SQS queue to read messages from | ql_incoming_queue |
 
 #### Response (PurchaseOrderReceipt)
 
