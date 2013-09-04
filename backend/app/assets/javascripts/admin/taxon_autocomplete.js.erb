@@ -10,22 +10,27 @@ $(document).ready(function () {
           ids: element.val()
         });
         return $.getJSON(url, null, function (data) {
-          return callback(data);
+          return callback(data['taxons']);
         });
       },
       ajax: {
         url: Spree.routes.taxons_search,
         datatype: 'json',
-        data: function (term) {
+        data: function (term, page) {
           return {
+            per_page: 50,
+            page: page,
             q: {
               name_cont: term
             }
           };
         },
-        results: function (data) {
+        results: function (data, page) {
+          var more = page < data.pages;
+          console.log(more)
           return {
-            results: data
+            results: data['taxons'],
+            more: more
           };
         }
       },

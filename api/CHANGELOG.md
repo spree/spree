@@ -27,3 +27,18 @@
 * Attributes other than "quantity" and "variant_id" will be added to a line item when creating along with an order. #3404
 
     *Alex Marles & Ryan Bigg* 
+
+* Taxon attributes from `/api/taxons` are now returned within `taxons` subkey. Before:
+
+```json
+[{ name: 'Ruby' ... }]
+```
+
+Now:
+
+```json
+{ taxons: [{ name: 'Ruby' }]}
+```
+
+    * Ryan Bigg
+>>>>>>> 01943b1... [api] Implement pagination for taxons#index route
