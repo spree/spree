@@ -195,17 +195,11 @@ module Spree
       end
 
       it "can apply a coupon code to an order" do
+        pending "ensure that the order totals are properly updated, see frontend orders_controller or checkout_controller as example"
+
         order.update_column(:state, "payment")
         PromotionHandler::Coupon.should_receive(:new).with(order).and_call_original
         PromotionHandler::Coupon.any_instance.should_receive(:apply).and_return({:coupon_applied? => true})
-        api_put :update, :id => order.to_param, :order_token => order.token, :order => { :coupon_code => "foobar" }
-      end
-
-      it "can apply a coupon code to an order" do
-        order.update_column(:state, "payment")
-        PromotionHandler::Coupon.should_receive(:new).with(order).and_call_original
-        coupon_result = { :coupon_applied? => true }
-        PromotionHandler::Coupon.any_instance.should_receive(:apply).and_return(coupon_result)
         api_put :update, :id => order.to_param, :order_token => order.token, :order => { :coupon_code => "foobar" }
       end
     end

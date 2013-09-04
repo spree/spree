@@ -35,7 +35,7 @@ module Spree
       def handle_present_promotion(promotion)
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?
 
-        promotion.activate(:order => @order)
+        promotion.activate(:order => order)
         discount = order.adjustments.promotion.detect { |p| p.source.promotion.code == order.coupon_code }
         determine_promotion_application_result(discount)
       end
