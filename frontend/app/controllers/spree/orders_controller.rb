@@ -92,14 +92,15 @@ module Spree
       end
 
       def after_update_attributes
-        coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
-        if coupon_result[:coupon_applied?]
-          flash[:success] = coupon_result[:success] if coupon_result[:success].present?
-          return false
-        else
-          flash[:error] = coupon_result[:error]
+        handler = PromotionHandler::Coupon.new(@order).apply
+
+        if handler.error.present?
+          flash[:error] = handler.error
           respond_with(@order) { |format| format.html { render :edit } }
-          return true
+          true
+        elsif handler.success
+          flash[:success] = handler.success
+          false
         end
       end
   end

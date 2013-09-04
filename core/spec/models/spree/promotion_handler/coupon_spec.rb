@@ -8,6 +8,10 @@ module Spree
 
       subject { Coupon.new(order) }
 
+      it "returns self in apply" do
+        expect(subject.apply).to be_a Coupon
+      end
+
       context "coupon code promotion doesnt exist" do
         it "doesnt fetch any promotion" do
           expect(subject.promotion).to be_blank
@@ -27,6 +31,21 @@ module Spree
         it "fetches with given code" do
           expect(subject.promotion).to eq promotion
         end
+
+        context "right coupon given" do
+          let(:order) { Order.create }
+          let!(:line_item) { order.contents.add create(:variant) }
+
+          let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+          let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+
+          before { order.stub coupon_code: rule.code }
+
+          it "successfully activates promo" do
+            subject.apply
+            expect(subject.success).to be_present
+          end
+        end
       end
 
       pending "coupon already applied to the order" do
@@ -37,16 +56,6 @@ module Spree
       pending "coupon code hit max usage" do
         subject.apply
         expect(subject.error).to eq Spree.t(:coupon_code_max_usage)
-      end
-
-      context "existing eligible promo" do
-        context "right coupon given" do
-          pending "successfully apply coupon"
-        end
-
-        context "wrong coupon given" do
-          pending "coupon code not eligible"
-        end
       end
     end
   end
