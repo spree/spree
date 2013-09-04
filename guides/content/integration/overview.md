@@ -19,6 +19,14 @@ Messages are the core of the Spree Commerce hub. A single action within a storef
 
 For more details on messages please refer to the [Message Basics Guide](/integration/message_basics.html), to review specific message structures and examples please refer to the [Message Overview Guide](/integration/messages_overview.html).
 
+## Architecture
+
+The Spree Commerce hub is a fully managed commercial SaaS product, that leverages our open source experience to provide a unique and flexible integration environment. Each integration (such as Quickbooks, NetSuite, Mandrill, Quiet Logistics) are provided by a single standalone [endpoint](/integration/terminology.html#endpoints) application. 
+
+We are committed to open sourcing all endpoint applications (where possible), along with providing extensive documentation and support for creating your own custom endpoints to further extend the integration possibilities available.
+
+Each official endpoint application is hosted as part of the hub, but can also be forked and self-hosted if custom requirements are needed.
+
 ## Message Flow
 
 The hub uses a dual-queue configuration to handle the processing of messages, each received message can be fanned out to one ore more [Integrations](/integration/terminology.html#integrations) by way of [Mappings](/integration/terminology.html#mappings).
