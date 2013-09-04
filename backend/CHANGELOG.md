@@ -33,4 +33,8 @@
 
 *   We now use [jQuery.payment](https://stripe.com/blog/jquery-payment) (from Stripe) to provide slightly better formatting on credit card number, expiry and CVV fields.
 
-   *Ryan Bigg*
+    *Ryan Bigg*
+
+*   "Infinite scrolling" now implemented for products taxon search to prevent loading all taxons at once. Only 50 taxons are loaded at a time now.
+    
+    *Ryan Bigg*

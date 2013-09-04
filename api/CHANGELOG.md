@@ -83,3 +83,17 @@
 * Checkouts API's update action will now correctly process line item attributes (either `line_items` or `line_item_attributes`)
 
     * Ryan Bigg
+
+* Taxon attributes from `/api/taxons` are now returned within `taxons` subkey. Before:
+
+```json
+[{ name: 'Ruby' ... }]
+```
+
+Now:
+
+```json
+{ taxons: [{ name: 'Ruby' }]}
+```
+
+    * Ryan Bigg

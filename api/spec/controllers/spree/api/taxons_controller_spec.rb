@@ -20,18 +20,30 @@ module Spree
       it "gets all taxons for a taxonomy" do
         api_get :index, :taxonomy_id => taxonomy.id
 
-        json_response.first['name'].should eq taxon.name
-        children = json_response.first['taxons']
+        json_response['taxons'].first['name'].should eq taxon.name
+        children = json_response['taxons'].first['taxons']
         children.count.should eq 1
         children.first['name'].should eq taxon2.name
         children.first['taxons'].count.should eq 1
       end
 
+      it "paginates through taxons" do
+        new_taxon = create(:taxon, :name => "Go", :taxonomy => taxonomy)
+        taxonomy.root.children << new_taxon
+        expect(taxonomy.root.children.count).to eql(2)
+        api_get :index, :taxonomy_id => taxonomy.id, :page => 1, :per_page => 1
+        expect(json_response["count"]).to eql(1)
+        expect(json_response["total_count"]).to eql(2)
+        expect(json_response["current_page"]).to eql(1)
+        expect(json_response["per_page"]).to eql(1)
+        expect(json_response["pages"]).to eql(2)
+      end
+
       it "gets all taxons" do
         api_get :index
 
-        json_response.first['name'].should eq taxonomy.root.name
-        children = json_response.first['taxons']
+        json_response['taxons'].first['name'].should eq taxonomy.root.name
+        children = json_response['taxons'].first['taxons']
         children.count.should eq 1
         children.first['name'].should eq taxon.name
         children.first['taxons'].count.should eq 1
@@ -40,8 +52,8 @@ module Spree
       it "can search for a single taxon" do
         api_get :index, :q => { :name_cont => "Ruby" }
 
-        json_response.count.should == 1
-        json_response.first['name'].should eq "Ruby"
+        json_response['taxons'].count.should == 1
+        json_response['taxons'].first['name'].should eq "Ruby"
       end
 
       it "gets a single taxon" do
