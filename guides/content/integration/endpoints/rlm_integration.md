@@ -4,18 +4,34 @@ title: RLM Endpoint
 
 ## Overview
 
-Endpoint for the [RLM](http://www2.ronlynn.com) ERP that saves order lines locally to be exported into RLM CSV and upload the csv to S3.
+Endpoint for the [RLM](http://www2.ronlynn.com) ERP that saves order lines locally to be exported into RLM CSV and upload the csv to S3. The RLM ERP processes the orders line by line from a CSV file, this endpoint will break up the individual line items from the shipment and stores them in a format ready for RLM. 
+
+We also store the complete payload for reference, so any future adjustments can be made from this endpoint.
 
 +++
 The source code for the [RLM Endpoint](https://github.com/spree/rlm_endpoint/) is available on Github.
 +++
 
+## Requirements for the connecting Spree store
+
+To properly connect your Spree store with this endpoint you need to add a few custom attributes.
+
+you need to add `upc` and `rlm_sku` attributes to `Spree::Variant` class. Both attributes are Strings.
+
+***
+For details on how to customize your store read the [Custom Attributes Tutorial](/integration/custom_attributes_tutorial.html)
+***
+
+
 ## Services
 
 ### Persist
 
-Stores the individual line items from a shipment:ready request
+Stores the individual line items from a `shipment:ready` message. 
 
+$$$
+Explain how the line items are persisted and what we do
+$$$
 
 #### Parameters
 
@@ -26,6 +42,11 @@ Stores the individual line items from a shipment:ready request
 |`rlm.options_mapping` | the mapping from the options to size and color
 |`rlm.sku_colors_mapping` | the mapping for SKU value for the color value.
 
+### List type parameters.
+
+$$$
+Explain and show the list parameters and how they are used.
+$$$
 
 ####Request
 
@@ -689,8 +710,9 @@ Stores the individual line items from a shipment:ready request
 }
 ```
 
-
 #### Response
+
+The content of the payload storage is truncated in the example response below.
 
 ---persisted_lines.json---
 
@@ -800,6 +822,12 @@ Stores the individual line items from a shipment:ready request
 ### Flush
 
 Exports the stored lines in 2 different csv files. One for Amazon imported orders, and one for the regular Spree orders.
+
+$$$
+* file naming
+* uploading
+* schedule
+$$$
 
 #### Parameters
 
