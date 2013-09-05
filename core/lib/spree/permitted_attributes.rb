@@ -65,7 +65,7 @@ module Spree
     # month / year may be provided by some sources, or others may elect to use one field
     @@source_attributes = [
       :number, :month, :year, :expiry, :verification_value,
-      :first_name, :last_name]
+      :first_name, :last_name, :cc_type]
 
     @@stock_item_attributes = [:variant, :stock_location, :backorderable, :variant_id]
 
