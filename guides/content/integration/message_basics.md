@@ -63,13 +63,13 @@ Endpoints should never push Messages, since they are intended to be a passive co
 
 ## Service Requests
 
-Integration Endpoints expose various [Services](terminology#services) to the Integrator. The Integrator is configured with a series of [Mappings](terminology#mappings), which tell it how it route a specific Message to a particular Service offered by an Endpoint.
+Integration Endpoints expose various [services](terminology#services) to the Integrator. The Integrator is configured with a series of [mappings](terminology#mappings), which tell it how it route a specific Message to a particular Service offered by an Endpoint.
 
 ***
 See the [Mapping Guide](mapping_basics) for more information on how Messages are mapped to Endpoints.
 ***
 
-Passing a Message to a particular Endpoint Service is also referred to as making a [Service Request](terminology#service_request). Service Requests are always made use the `HTTP POST` method and the Messages they pass are required to be in a JSON format. Now let's take a look at some aspects of message delivery.
+Passing a Message to a particular Endpoint Service is also referred to as making a [service request](terminology#service_request). Service Requests are always made use the `HTTP POST` method and the Messages they pass are required to be in a JSON format. Now let's take a look at some aspects of message delivery.
 
 ***
 Integrations can be written in any language (not just Ruby). All that is required is that your Endpoint be able to respond to `HTTP POST` requests, and that your Service methods be capable of reading a JSON-formatted form parameter.
@@ -77,13 +77,13 @@ Integrations can be written in any language (not just Ruby). All that is require
 
 ## Message Delivery
 
-Messages routed through the Integrator are guaranteed to be delivered to their intended Endpoints. When attempting to deliver a Message to a Service (i.e. making a Service Request), one of three things can happen.
+Messages routed through the Integrator are guaranteed to be delivered to their intended endpoints. When attempting to deliver a message to a service (i.e. making a service request), one of three things can happen.
 
 ### Successful Delivery
 
-If the Message is delivered to the Endpoint and it is processed without incident, then the Message can be considered successfully delivered. The minimum requirement for an Endpoint to indicate that the Service Request was successful is to return a `200 OK` response, along with the `message_id`.
+If the message is delivered to the endpoint and it is processed without incident, then the message can be considered successfully delivered. The minimum requirement for an endpoint to indicate that the service request was successful is to return a `200 OK` response, along with the `message_id`.
 
-The following is a simple example of an Endpoint built using Sinatra to return the bare minimum required to indicate successful processing of the Message.
+The following is a simple example of an endpoint built using sinatra to return the bare minimum required to indicate successful processing of the message.
 
 ```ruby
 post '/do_something' do
@@ -92,7 +92,7 @@ post '/do_something' do
 end
 ```
 
-Here's what the server sends back when a Message is sent to the `do_something` service via `HTTP POST`:
+Here's what the server sends back when a message is sent to the `do_something` service via `HTTP POST`:
 
 ```bash
 HTTP/1.1 200 OK
@@ -107,16 +107,16 @@ Connection: Keep-Alive
 ```
 
 ***
-See the [Creating Endpoints](creating_endpoints_tutorial) tutorial for more detailed examples of how to build simple Endpoints.
+See the [Creating Endpoints](creating_endpoints_tutorial) tutorial for more detailed examples of how to build simple endpoints.
 ***
 
-There is, however, a more informative way to convey the successful delivery of a Message. In addition to returning `200 OK` a Service can return an array of Messages (or just a single Message). The previous discussion of [Responses](#response) contains an example of how this can be done.
+There is, however, a more informative way to convey the successful delivery of a message. In addition to returning `200 OK` a service can return an array of messages (or just a single message). The previous discussion of [responses](#response) contains an example of how this can be done.
 
-Responding with a [Notification Message](notification_messages) has the advantage of allowing the Service to pass additional human-readable information back to the Integrator. By default, Notification Messages will be turned into [Log Entries](terminology#log_entries), which can be displayed in a detailed tab in the store's admin interface.
+Responding with a [notification message](notification_messages) has the advantage of allowing the service to pass additional human-readable information back to the hub. By default, notification messages will be turned into [log entries](terminology#log_entries), which can be displayed in a detailed tab in the store's admin interface.
 
-Sometimes, however, it's important to convey more than just "success" plus a log entry. A major advantage to using Spree Integrator is that it allows one integration to respond to events taking place in another. In order for this to happen, however, the Service Request of the first integration needs to return something more specific in addition to a log message.
+Sometimes, however, it's important to convey more than just "success" plus a log entry. A major advantage to using Spree Commerce hub is that it allows one integration to respond to events taking place in another. In order for this to happen, however, the Service Request of the first integration needs to return something more specific in addition to a log message.
 
-Let's look at a specific example where we want a particular integration to capture a previously authorized credit card payment once a shipment is ready to ship. Suppose further that we want to send an email message to the customer once we capture the payment on their card. Once we've taken care of the necessary Mappings, we could use an Endpoint with a `capture_payment` method.
+Let's look at a specific example where we want a particular integration to capture a previously authorized credit card payment once a shipment is ready to ship. Suppose further that we want to send an email message to the customer once we capture the payment on their card. Once we've taken care of the necessary mappings, we could use an endpoint with a `capture_payment` method.
 
 ---payment_integration.rb---
 ```ruby
@@ -147,19 +147,19 @@ post '/capture_payment' do
 end
 ```
 
-In this case we've actually returned multiple Messages. We return a `notification:info` Message so that can be displayed on the events tab in the Spree store, but we also return a `payment:capture` Message. The idea here is that another integration can then listen specifically for `payment:capture` Messages and do something specific knowing that a payment has been captured (update Quickbooks, send an email to the customer, etc.)
+In this case we've actually returned multiple messages. We return a `notification:info` message so that can be displayed on the events tab in the Spree Commerce storefront, but we also return a `payment:capture` message. The idea here is that another integration can then listen specifically for `payment:capture` messages and do something specific knowing that a payment has been captured (update Quickbooks, send an email to the customer, etc.)
 
 ***
-Note that Services are not required to return a pre-defined Message Type. You are free to create your own Endpoints that return custom Message Types.
+Note that services are not required to return a pre-defined message Type. You are free to create your own endpoints that return custom message types.
 ***
 
 ### Error on Delivery
 
-There are various error conditions that may be encountered during the processing of a Service Request. Endpoints can have logic that maps to either internal business rules or the rules/validation logic of a third party API that it's facilitating integration with.
+There are various error conditions that may be encountered during the processing of a service request. Endpoints can have logic that maps to either internal business rules or the rules/validation logic of a third party API that it's facilitating integration with.
 
-Let's look at a specific example. Suppose you are working with a third party logistics (3PL) firm to drop ship your packages to your customers. Suppose further that this 3PL has an API that checks to verify that it can deliver to the requested address before it accepts your ship instructions. When this happens, you will most likely want to return a [Notification Error](notification_messages#error) Message.
+Let's look at a specific example. Suppose you are working with a third party logistics (3PL) firm to drop ship your packages to your customers. Suppose further that this 3PL has an API that checks to verify that it can deliver to the requested address before it accepts your ship instructions. When this happens, you will most likely want to return a [notification error](notification_messages#error) message.
 
-The `notification:error` Message is used to signify that there was a problem with processing that Service Request. This approach should be used when the nature of the problem is that the request is not consistent with some type of business logic, or the rules of the third party API that you're communicating with are not met.
+The `notification:error` message is used to signify that there was a problem with processing that service request. This approach should be used when the nature of the problem is that the request is not consistent with some type of business logic, or the rules of the third party API that you're communicating with are not met.
 
 ---validation_failure_example.rb---
 ```ruby
@@ -180,11 +180,11 @@ end
 ```
 
 ***
-Use a Notification Error when the problem is a "validation" type issue or some other problem with a third party API where it does not make sense to reattempt the Service Request.
+Use a notification error when the problem is a "validation" type issue or some other problem with a third party API where it does not make sense to reattempt the service request.
 ***
 
 !!!
-Error conditions should always be returned with status code `200 OK` even though there was technically a problem. They are distinct from [Failures](terminology#failures) which are returned with `HTTP 5XX` error codes.
+Error conditions should always be returned with status code `200 OK` even though there was technically a problem. They are distinct from [failures](terminology#failures) which are returned with `HTTP 5XX` error codes.
 !!!
 
 ### Failed Delivery
@@ -193,27 +193,27 @@ There are times where processing a service request results in an exceptional con
 
 #### How Failures are Generated
 
-Endpoints can sometimes encounter an exception when trying to communicate with a third-party service through their API (ex. Shipwire is down for maintenance.) Typically these situations will result in exceptions. In these instances there is typically no need to rescue the exception, you can just allow it to result in a `5XX Error` response and the Integrator will treat the request has failed.
+Endpoints can sometimes encounter an exception when trying to communicate with a third-party service through their API (ex. Shipwire is down for maintenance.) Typically these situations will result in exceptions. In these instances there is typically no need to rescue the exception, you can just allow it to result in a `5XX Error` response and the Spree Commerce hub will treat the request has failed.
 
 If the third party API is recuing exceptions or reporting permanent failure type situations as `200 OK` you may need to examine the respone more carefully and then raise your own exception (or just return `500 Internal Server Error` and supply your own error message.)
 
 #### How Failures are Handled
 
-The Integrator will treat a failure as extraordinary condition. It will continue to attempt to redeliver the message until it is successful. This is extremely useful when third party services experience temporary service disruptions since no messages are ever lost during the outage.
+The Spree Commerce hub will treat a failure as extraordinary condition. It will continue to attempt to redeliver the message until it is successful. This is extremely useful when third party services experience temporary service disruptions since no messages are ever lost during the outage.
 
 ***
-The Integrator uses an [Exponential Backoff](http://en.wikipedia.org/wiki/Exponential_backoff) algorithm to gradually increase the amount of time between retries.
+Our hub uses an [exponential backoff](http://en.wikipedia.org/wiki/Exponential_backoff) algorithm to gradually increase the amount of time between retries.
 ***
 
-Failure conditions in a live production environment are also monitored by the Spree staff. If you have a paid support plan they will take action to help rectify the situation.
+Failure conditions in a live production environment are also monitored by the Spree Commerce staff. As part of your paid Spree Commerce plan they will take action to help rectify the situation.
 
 ## Message Parameters
 
-Integration endpoints are typically stateless, meaning that they don't retain information from one service request to the next. This allows the same endpoint to serve more than one store and to function in more than one environment at a time (ex. staging and production.) This poses a challenge, however, since each store may have its own API keys or other configuration inforamtion needed to talk to a third party service.
+Integration endpoints are typically stateless, meaning that they don't retain information from one service request to the next. This allows the same endpoint to serve more than one store and to function in more than one environment at a time (ex. staging and production.) This poses a challenge, however, since each storefront may have its own API keys or other configuration inforamtion needed to talk to a third party service.
 
 [Parameters](terminology#parameters) serve as a mechanism for transmitting this type of information to the endpoint. They are configured on a per store basis using the mapping tool (see the [Mapping Configuration](mapping_configuration)) guide for more details.
 
-Once configured the Integrator will send the parameters for a particular mapping upon each request.
+Once configured the hub will send the parameters for a particular mapping upon each request.
 
 ---order_cancel.json---
 ```ruby
