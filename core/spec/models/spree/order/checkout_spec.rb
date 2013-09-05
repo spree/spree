@@ -241,6 +241,30 @@ describe Spree::Order do
     end
   end
 
+  # Regression test for #3665
+  context "with only a complete step" do
+    before do
+      @old_checkout_flow = Spree::Order.checkout_flow
+      Spree::Order.class_eval do
+        checkout_flow do
+          go_to_state :complete
+        end
+      end
+    end
+
+    after do
+      Spree::Order.checkout_flow(&@old_checkout_flow)
+    end
+
+    it "does not attempt to process payments" do
+      order.stub_chain(:line_items, :present?).and_return(true)
+      order.should_not_receive(:payment_required?)
+      order.should_not_receive(:process_payments!)
+      order.next!
+    end
+
+  end
+
   context "insert checkout step" do
     before do
       @old_checkout_flow = Spree::Order.checkout_flow
