@@ -8,23 +8,23 @@ The Spree Commerce hub is responsible for processing and delivering [messages](t
 
 ### Polling
 
-The most common way for Messages to enter the system is via a scheduled Poller that talks to the Spree API. These Pollers will ask Spree for new Messages that have been created or updated since the last time it checked.
+The most common way for messages to enter the system is via a scheduled poller that talks to the Spree Commerce [storefront API](/api). These pollers will ask the storefront for new messages that have been created or updated since the last time it checked.
 
-It's not important to understand exactly how these API differences result in a Message. For the purposes of this guide, it is sufficient for you to understand that changes to Orders, Payments, Shipments, etc. come in via a scheduled polling action at regular intervals. The result of this will be a series of appropriate Messages relevant to the state change.
+It's not important to understand exactly how these API differences result in a message. For the purposes of this guide, it is sufficient for you to understand that changes to orders, payments, shipments, etc. come in via a scheduled polling action at regular intervals. The result of this will be a series of appropriate messages relevant to the state change.
 
-For example, if the API Poller comes back with an order that the Integrator is not already aware of, then this results in an `order:new` Message. If the order already existed but the API Poller was showing some kind of change (ex. a change in quantity for a line item) then an `order:update` Message would be generated instead.
+For example, if the API poller comes back with an order that the hub is not already aware of, then this results in an `order:new` message. If the order already existed but the API poller was showing some kind of change (ex. a change in quantity for a line item) then an `order:update` message would be generated instead.
 
-Finally, in some instances, an update to an order can result in a more specific Message being generated. For instance, if the order status was changed from `complete` to `canceled` an `order:cancel` Message would be produced instead of the more general `order:update`.
+Finally, in some instances, an update to an order can result in a more specific message being generated. For instance, if the order status was changed from `complete` to `canceled` an `order:cancel` message would be produced instead of the more general `order:update`.
 
 ***
-See the specific [Message](messages_overview) guides for more details on each of these and other Message Types.
+See the specific [Message](messages_overview) guides for more details on each of these and other message Types.
 ***
 
 ### Response
 
-The second way for a Message to enter the system is in response to a [Service Request](terminology#service_requests) to an [Endpoint](terminology#endpoints). When an Endpoint is processing a Message, it will typically respond with a new Message. That new Message can in turn be processed by the Integrator.
+The second way for a message to enter the system is in response to a [service request](terminology#service_requests) to an [endpoint](terminology#endpoints). When an end point is processing a message, it will typically respond with a new message. That new message can in turn be processed by the Spree Commerce hub.
 
-Let's look at a specific example where we are using an integration that takes new shipments and dispatches them to a third party logistics provider (3PL) for drop shipping. The `process_shipment` Service of this Endpoint will return a `notification:info` Message in response to this Service Request.
+Let's look at a specific example where we are using an integration that takes new shipments and dispatches them to a third party logistics provider (3PL) for drop shipping. The `process_shipment` service of this endpoint will return a `notification:info` message in response to this service request.
 
 ```ruby
 post '/process_shipment' do
@@ -43,15 +43,15 @@ post '/process_shipment' do
 end
 ```
 
-In the above example, we returned a single Message in the response, but Messages generated in this way are technically an array of Messages and so it is possible to generate more than one Message as part of a Service Request. For example, if you were designing a Service that returned the list of shipments that have shipped since the last check, then you would likely need to return multiple `shipment:confirm` Messages.
+In the above example, we returned a single message in the response, but messages generated in this way are technically an array of messages and so it is possible to generate more than one message as part of a service request. For example, if you were designing a service that returned the list of shipments that have shipped since the last check, then you would likely need to return multiple `shipment:confirm` messages.
 
 ***
-See the [Creating Endpoints](creating_endpoints_tutorial) tutorial for some more detailed examples on how to generate Messages in response to processing a Service Request.
+See the [Creating Endpoints](creating_endpoints_tutorial) tutorial for some more detailed examples on how to generate messages in response to processing a service request.
 ***
 
 ### Push
 
-Finally, it is possible to push Messages into the Integrator from an external source.
+Finally, it is possible to push messages into the hub from an external source.
 
 $$$
 Need more docs on message push.
