@@ -10,7 +10,6 @@ gem 'nanoc-toolbox'
 gem 'rake'
 gem 'thin'
 gem "yajl-ruby"
-gem 'capistrano'
 gem 'sass'
 gem 'bourbon'
 gem 'neat'
