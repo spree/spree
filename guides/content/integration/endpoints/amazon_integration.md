@@ -46,7 +46,7 @@ Returns all new orders created in the Amazon store since the `amazon.last_update
 | amazon.secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
 | amazon.marketplace_id | Your Amazon Marketplace ID | nama9vach3kis |
 | amazon.seller_id | Your Amazon Seller ID | hugi0ty8su2zyh |
-| amazon.last_updated_after | The last updated_at ([iso8601](http://pt.wikipedia.org/wiki/ISO_8601) format) to poll orders | 2012-08-16T01:00:00Z |
+| amazon.last_updated_after | The last updated_at ([iso8601](http://en.wikipedia.org/wiki/ISO_8601) format) to poll orders | 2012-08-16T01:00:00Z |
 
 
 #### Response
