@@ -149,6 +149,9 @@ en:
       spree/payment:
         one: Payment
         other: Payments
+      spree/payment_method:
+        one: Payment Method
+        other: Payment Methods
       spree/product:
         one: Product
         other: Products
@@ -173,12 +176,18 @@ en:
       spree/shipping_category:
         one: Shipping Category
         other: Shipping Categories
+      spree/shipping_method:
+        one: Shipping Method
+        other: Shipping Methods
       spree/state:
         one: State
         other: States
       spree/stock_location:
         one: Stock Location
         other: Stock Locations
+      spree/stock_transfer:
+        one: Stock Transfer
+        other: Stock Transfers
       spree/tax_category:
         one: Tax Category
         other: Tax Categories
@@ -191,6 +200,9 @@ en:
       spree/taxonomy:
         one: Taxonomy
         other: Taxonomies
+      spree/tracker:
+        one: Tracker
+        other: Trackers
       spree/user:
         one: User
         other: Users
