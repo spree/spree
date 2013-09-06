@@ -25,6 +25,42 @@ describe Spree::Admin::NavigationHelper do
       admin_tab = helper.tab(:orders, :label => "přehled")
       admin_tab.should include("Přehled")
     end
+
+    describe "selection" do
+      context "when match_path option is not supplied" do
+        subject(:tab) { helper.tab(:orders) }
+
+        it "should be selected if the controller matches" do
+          controller.stub(:controller_name).and_return("orders")
+          subject.should include('class="selected"')
+        end
+
+        it "should not be selected if the controller does not match" do
+          controller.stub(:controller_name).and_return("bonobos")
+          subject.should_not include('class="selected"')
+        end
+
+      end
+
+      context "when match_path option is supplied" do
+        before do
+          helper.stub(:admin_path).and_return("/somepath")
+          helper.stub(:request).and_return(double(ActionDispatch::Request, :fullpath => "/somepath/orders/edit/1"))
+        end
+
+        it "should be selected if the fullpath matches" do
+          controller.stub(:controller_name).and_return("bonobos")
+          tab = helper.tab(:orders, :label => "delivered orders", :match_path => '/orders')
+          tab.should include('class="selected"')
+        end
+
+        it "should not be selected if the fullpath does not match" do
+          controller.stub(:controller_name).and_return("bonobos")
+          tab = helper.tab(:orders, :label => "delivered orders", :match_path => '/shady')
+          tab.should_not include('class="selected"')
+        end
+      end
+    end
   end
 
   describe '#klass_for' do
