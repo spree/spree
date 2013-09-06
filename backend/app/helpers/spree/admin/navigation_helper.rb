@@ -30,7 +30,7 @@ module Spree
         end
 
         selected = if options[:match_path]
-          request.fullpath.starts_with?("admin#{options[:match_path]}")
+          request.fullpath.starts_with?("#{admin_path}#{options[:match_path]}")
         else
           args.include?(controller.controller_name.to_sym)
         end
