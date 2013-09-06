@@ -12,6 +12,7 @@
 
 <div id="new_option_type"></div>
 
+<% if @option_types.any? %>
 <table class="index sortable" id="listing_option_types" data-hook data-sortable-link="<%= update_positions_admin_option_types_url %>">
   <colgroup>
     <col style="width: 10%">
@@ -41,3 +42,9 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/option_type')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_option_type_path %>!
+  </div>
+<% end %>

@@ -12,6 +12,7 @@
 
 <div id="new_property"></div>
 
+<% if @properties.any? %>
 <table class="index" id='listing_properties' data-hook>
   <colgroup>
     <col style="width: 40%">
@@ -38,4 +39,10 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/property')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_property_path %>!
+  </div>
+<% end %>
 
