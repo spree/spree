@@ -54,7 +54,7 @@ module Spree
       end
 
       context "activates in LineItem level" do
-        let!(:action) { Promotion::Actions::CreateItemAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
         let(:adjustable) { line_item }
 
         include_context "activates properly"

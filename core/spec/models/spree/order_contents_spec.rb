@@ -61,7 +61,7 @@ describe Spree::OrderContents do
       end
 
       context "one active line item promotion" do
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         it "creates valid discount on order" do
           subject.add(variant, 1)

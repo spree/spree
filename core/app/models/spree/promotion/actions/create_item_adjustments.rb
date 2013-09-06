@@ -1,7 +1,7 @@
 module Spree
   class Promotion
     module Actions
-      class CreateItemAdjustment < PromotionAction
+      class CreateItemAdjustments < PromotionAction
         include Spree::Core::CalculatedAdjustments
 
         has_many :adjustments, as: :source
@@ -12,8 +12,12 @@ module Spree
         before_destroy :deals_with_adjustments
 
         def perform(payload = {})
-          line_item = payload[:line_item]
-          unless promotion_credit_exists?(line_item)
+          order = payload[:order]
+          # Find only the line items which have not already been adjusted by this promotion
+          # HACK: Need to use [0] because `pluck` may return an empty array, which AR helpfully
+          # coverts to meaning NOT IN (NULL) and the DB isn't happy about that.
+          already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
+          order.line_items.where("id NOT IN (?)", already_adjusted_line_items).each do |line_item|
             self.create_adjustment(line_item)
           end
         end
@@ -38,7 +42,7 @@ module Spree
         private
           # Tells us if there if the specified promotion is already associated with the line item
           # regardless of whether or not its currently eligible. Useful because generally
-          # you would only want a promotion action to apply to order no more than once.
+          # you would only want a promotion action to apply to line item no more than once.
           #
           # Receives an adjustment +source+ (here a PromotionAction object) and tells
           # if the order has adjustments from that already

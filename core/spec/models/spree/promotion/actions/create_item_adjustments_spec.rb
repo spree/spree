@@ -3,10 +3,10 @@ require 'spec_helper'
 module Spree
   class Promotion
     module Actions
-      describe CreateItemAdjustment do
+      describe CreateItemAdjustments do
         let(:order) { create(:order) }
         let(:promotion) { create(:promotion) }
-        let(:action) { CreateItemAdjustment.new }
+        let(:action) { CreateItemAdjustments.new }
         let!(:line_item) { create(:line_item, :order => order) }
 
         before { action.stub(:promotion => promotion) }
@@ -15,17 +15,17 @@ module Spree
           before { promotion.promotion_actions = [action] }
 
           it "creates adjustment with item as adjustable" do
-            action.perform(line_item: line_item)
+            action.perform(order: order)
             line_item.reload.adjustments.should == action.adjustments
           end
 
           it "creates adjustment with self as source" do
-            action.perform(line_item: line_item)
+            action.perform(order: order)
             expect(line_item.reload.adjustments.first.source).to eq action
           end
 
           it "does not perform twice on the same item" do
-            2.times { action.perform(line_item: line_item) }
+            2.times { action.perform(order: order) }
             action.adjustments.count.should == 1
           end
         end
