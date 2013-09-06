@@ -8,7 +8,6 @@ module Spree
     context "adds item to cart and activates promo" do
       let(:promotion) { Promotion.create name: 'Huhu' }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(:preferred_flat_percent => 10) }
-      let!(:rule) { Spree::Promotion::Rules::Product.create(promotion: promotion, products: [shirt.product]) }
       let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
       before { order.contents.add(shirt, 1) }

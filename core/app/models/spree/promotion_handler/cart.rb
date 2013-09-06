@@ -20,7 +20,7 @@ module Spree
       end
 
       def activate
-        promotion_scope.each do |promotion|
+        promotions.each do |promotion|
           if promotion.rules.empty?
             promotion.activate(line_item: line_item, order: order)
             next
@@ -45,9 +45,8 @@ module Spree
           [PromotionRuleHandler::Product]
         end
 
-        def promotion_scope
+        def promotions
           Promotion.active.includes(:promotion_rules)
-            .where.not({spree_promotion_rules: {type: [Promotion::Rules::CouponCode]}}).references(:promotion_rules)
         end
     end
 

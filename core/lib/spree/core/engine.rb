@@ -86,7 +86,6 @@ module Spree
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,
-          Spree::Promotion::Rules::CouponCode,
           Spree::Promotion::Rules::FirstOrder,
           Spree::Promotion::Rules::UserLoggedIn]
       end

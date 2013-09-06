@@ -42,8 +42,6 @@ describe Spree::OrderContents do
       let(:promotion) { create(:promotion) }
       let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
 
-      let!(:rule) { Spree::Promotion::Rules::Product.create(promotion: promotion, products: [variant.product]) }
-
       shared_context "discount changes order total" do
         before { subject.add(variant, 1) }
         it { expect(subject.order.total).not_to eq variant.price }
