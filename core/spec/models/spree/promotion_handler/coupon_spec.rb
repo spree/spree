@@ -33,17 +33,20 @@ module Spree
         end
 
         context "right coupon given" do
-          let(:order) { Order.create }
+          let(:order) { create(:order_with_line_items, :line_items_count => 3) }
           let!(:line_item) { order.contents.add create(:variant) }
 
           let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
-          let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+          let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
           before { order.stub coupon_code: rule.code }
 
           it "successfully activates promo" do
             subject.apply
             expect(subject.success).to be_present
+            order.line_items.each do |line_item|
+              line_item.adjustments.count.should == 1
+            end
           end
         end
       end

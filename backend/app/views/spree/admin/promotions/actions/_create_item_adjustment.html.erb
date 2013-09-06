@@ -4,7 +4,7 @@
     <% field_name = "#{param_prefix}[calculator_type]" %>
     <%= label_tag field_name, Spree.t(:calculator) %>
     <%= select_tag field_name,
-                   options_from_collection_for_select(Spree::Promotion::Actions::CreateItemAdjustment.calculators, :to_s, :description, promotion_action.calculator.type),
+                   options_from_collection_for_select(Spree::Promotion::Actions::CreateItemAdjustments.calculators, :to_s, :description, promotion_action.calculator.type),
                    :class => 'type-select select2 fullwidth' %>
     <% if promotion_action.calculator.respond_to?(:preferences) %>
       <span class="warning info"><%= Spree.t(:calculator_settings_warning) %></span>
