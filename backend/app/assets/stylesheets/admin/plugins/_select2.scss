@@ -68,7 +68,7 @@
   input {
     @extend input[type="text"];
     margin-top: 5px;
-    margin-left: -6px;
+    margin-left: 4px;
     padding-left: 25px;
     padding-top: 6px;
     padding-bottom: 6px;
@@ -99,7 +99,7 @@
   }
 }
 
-.select2-results { 
+.select2-results {
   padding-left: 0 !important;
 
   li {
