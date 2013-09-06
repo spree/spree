@@ -15,6 +15,7 @@
 <%# Placeholder for new prototype form %>
 <div id="new_prototype"></div>
 
+<% if @prototypes.any? %>
 <table class="index" id='listing_prototypes' data-hook>
   <colgroup>
     <col style="width: 90%">
@@ -38,3 +39,9 @@
     <% end %>
   </tbody>
 </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/prototype')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_prototype_path %>!
+  </div>
+<% end %>
