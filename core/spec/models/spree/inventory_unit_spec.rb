@@ -61,6 +61,11 @@ describe Spree::InventoryUnit do
       unit.variant.destroy
       expect(unit.reload.variant).to be_a Spree::Variant
     end
+
+    it "can still fetch variants by eager loading (remove default_scope)" do
+      unit.variant.destroy
+      expect(Spree::InventoryUnit.joins(:variant).includes(:variant).first.variant).to be_a Spree::Variant
+    end
   end
 
   context "#finalize_units!" do

@@ -62,6 +62,25 @@ describe Spree::Shipment do
     shipment.item_cost.should eql(10.0)
   end
 
+  context "manifest" do
+    let(:order) { Spree::Order.create }
+    let(:variant) { create(:variant) }
+    let!(:line_item) { order.contents.add variant }
+    let!(:shipment) { order.create_proposed_shipments.first }
+
+    it "returns variant expected" do
+      expect(shipment.manifest.first.variant).to eq variant
+    end
+
+    context "variant was removed" do
+      before { variant.product.destroy }
+
+      it "still returns variant expected" do
+        expect(shipment.manifest.first.variant).to eq variant
+      end
+    end
+  end
+
   context 'shipping_rates' do
     let(:shipment) { create(:shipment) }
     let(:shipping_method1) { create(:shipping_method) }
@@ -238,7 +257,7 @@ describe Spree::Shipment do
     end
 
     it 'restocks the items' do
-      shipment.stub_chain(:inventory_units, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(:inventory_units, :joins, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -258,7 +277,7 @@ describe Spree::Shipment do
     end
 
     it 'unstocks them items' do
-      shipment.stub_chain(:inventory_units, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(:inventory_units, :joins, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
