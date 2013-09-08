@@ -124,9 +124,14 @@ module Spree
         send(method_name) if respond_to?(method_name, true)
       end
 
+      # Skip setting ship address if order doesn't have a delivery checkout step
+      # to avoid triggering validations on shipping address
       def before_address
         @order.bill_address ||= Address.default
-        @order.ship_address ||= Address.default
+
+        if @order.checkout_steps.include? "delivery"
+          @order.ship_address ||= Address.default
+        end
       end
 
       def before_delivery
