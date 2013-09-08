@@ -253,19 +253,9 @@ checkout_flow do
   remove_transition :from => :delivery, :to => :confirm
 ```
 
-The first two states, `address` and `delivery`, will always be the first two
-states for any checkout processed through this store. There are no conditional
-statements for these states.
-
-The third step, payment, will only be available if payment is required on the
-order, which is determined by the `payment_required?` method defined on the
-`Spree::Order` model. However, before checking the payment, the order is checked
-for a shipping method. If the order has a shipping method, a shipment is created
-(unless one already exists), and the payment totals are updated. This is to
-prevent a bug ([Issue #2191](https://github.com/spree/spree/issues/2191) that
-previously happened in Spree.
-
-Similarly to the payment state, the confirm state is only used if confirmation is required.
+we can pass a block on each checkout step definition and work some logic to
+figure if the step is required dynamically. e.g. the confirm step might only
+be necessary for payment gateways that support payment profiles.
 
 These conditional states present a situation where an order could transition
 from delivery to one of payment, confirm or complete. In the default checkout,
