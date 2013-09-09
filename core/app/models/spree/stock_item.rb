@@ -17,13 +17,17 @@ module Spree
       variant.name
     end
 
-    def adjust_count_on_hand(value)
+    def adjust_count_on_hand(value, forced = false)
       self.with_lock do
-        self.count_on_hand = self.count_on_hand + value
+        self.count_on_hand = forced ? value : self.count_on_hand + value
         process_backorders if in_stock?
 
         self.save!
       end
+    end
+
+    def set_count_on_hand(value)
+      adjust_count_on_hand(value, true)
     end
 
     def in_stock?
