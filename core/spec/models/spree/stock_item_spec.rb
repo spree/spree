@@ -83,7 +83,7 @@ describe Spree::StockItem do
 
       copy.count_on_hand.should eq(current_on_hand)
       copy.set_count_on_hand(10)
-      copy.count_on_hand.should eq(10)
+      copy.count_on_hand.should eq(current_on_hand)
     end
 
     context "item out of stock (by two items)" do
