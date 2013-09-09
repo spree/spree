@@ -39,8 +39,8 @@ module Spree
           params[:stock_item].delete(:count_on_hand)
         end
 
-        updated = params[:stock_item][:append] ? @stock_item.adjust_count_on_hand(count_on_hand)
-                                               : @stock_item.set_count_on_hand(count_on_hand)
+        updated = params[:stock_item][:force] ? @stock_item.adjust_count_on_hand(count_on_hand)
+                                              : @stock_item.set_count_on_hand(count_on_hand)
 
         if updated
           respond_with(@stock_item, status: 200, default_template: :show)

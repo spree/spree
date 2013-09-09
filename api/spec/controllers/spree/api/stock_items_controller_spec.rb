@@ -69,7 +69,7 @@ module Spree
           id: stock_item.to_param,
           stock_item: {
             count_on_hand: 40,
-            append: true,
+            force: true,
           }
         }
 
