@@ -16,17 +16,14 @@ production:
 development:
   adapter: mysql2
   database: <%= database_prefix %>spree_development
-  username:
   encoding: utf8
 test:
   adapter: mysql2
   database: <%= database_prefix %>spree_test
-  username:
   encoding: utf8
 production:
   adapter: mysql2
   database: <%= database_prefix %>spree_production
-  username:
   encoding: utf8
 <% when 'postgres' %>
 development:
