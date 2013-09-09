@@ -10,7 +10,14 @@ module Spree
     it "gets current alerts" do
       alerts_json = File.read(File.join(fixture_path, "alerts.json"))
 
-      stub_request(:get, "alerts.spreecommerce.com/alerts.json").to_return(alerts_json)
+      stub_request(:get, "alerts.spreecommerce.com/alerts.json").
+        with(:query => {
+          version: Spree.version,
+          name: Spree::Config[:site_name],
+          host: "localhost",
+          rails_env: Rails.env,
+          rails_version: Rails.version
+        }).to_return(alerts_json)
       alerts = Spree::Alert.current("localhost")
       alerts.first.should == {
         "created_at"=>"2012-07-13T11:47:58Z",
