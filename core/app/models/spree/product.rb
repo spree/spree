@@ -20,7 +20,10 @@
 
 module Spree
   class Product < ActiveRecord::Base
+    LIKE = self.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
+
     acts_as_paranoid
+
     has_many :product_option_types, dependent: :destroy
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy
