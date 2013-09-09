@@ -13,7 +13,7 @@ module Spree
                 end
               else
                 invalidate!
-                raise Core::GatewayError.new(I18n.t(:payment_method_not_supported))
+                raise Core::GatewayError.new(Spree.t(:payment_method_not_supported))
               end
             end
           else
