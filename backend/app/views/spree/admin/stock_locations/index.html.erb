@@ -49,5 +49,8 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:no_stock_locations_found) %></div>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/stock_location')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_stock_location_path %>!
+  </div>
 <% end %>

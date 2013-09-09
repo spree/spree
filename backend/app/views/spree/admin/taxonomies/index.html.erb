@@ -10,6 +10,13 @@
   </li>
 <% end %>
 
+<% if @taxonomies.any? %>
 <div id="list-taxonomies" data-hook>
   <%= render 'list' %>
 </div>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/taxonomy')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_taxonomy_path %>!
+  </div>
+<% end %>
