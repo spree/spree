@@ -35,15 +35,10 @@ module Spree
 
         def check_alerts
           return unless should_check_alerts?
-
           unless session.has_key? :alerts
-            begin
-              session[:alerts] = Spree::Alert.current(request.host)
-              filter_dismissed_alerts
-              Spree::Config.set :last_check_for_spree_alerts => DateTime.now.to_s
-            rescue
-              session[:alerts] = nil
-            end
+            session[:alerts] = Spree::Alert.current(request.host)
+            filter_dismissed_alerts
+            Spree::Config.set :last_check_for_spree_alerts => DateTime.now.to_s
           end
         end
 
