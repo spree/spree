@@ -69,7 +69,6 @@ module Spree
           id: stock_item.to_param,
           stock_item: {
             count_on_hand: 40,
-            force: true,
           }
         }
 
@@ -85,6 +84,7 @@ module Spree
           id: stock_item.to_param,
           stock_item: {
             count_on_hand: 40,
+            force: true,
           }
         }
 
