@@ -11,7 +11,7 @@ module Spree
         rails_version: Rails.version
       }
 
-      HTTParty.get('http://alerts.spreecommerce.com/alerts.json', body: params).parsed_response
+      HTTParty.get('http://alerts.spreecommerce.com/alerts.json', query: params).parsed_response
     end
   end
 end
