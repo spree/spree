@@ -89,34 +89,66 @@ describe Spree::TaxRate do
           @zone.zone_members.create(:zoneable => country)
         end
 
+        let(:included_in_price) { false }
+        let!(:rate) do
+          Spree::TaxRate.create(:amount => 1,
+                                :zone => @zone,
+                                :tax_category => tax_category,
+                                :calculator => calculator,
+                                :included_in_price => included_in_price)
+        end
+
+        subject { Spree::TaxRate.match(order) }
+
+        context "when the order has the same tax zone" do
+          before do
+            order.stub :tax_zone => @zone
+            order.stub :tax_address => tax_address
+          end
+
+          let(:tax_address) { stub_model(Spree::Address) }
+
+          context "when the tax is not a VAT" do
+            it { should == [rate] }
+          end
+
+          context "when the tax is a VAT" do
+            let(:included_in_price) { true }
+            it { should be_empty }
+          end
+        end
+
         context "when there order has a different tax zone" do
           before do
             order.stub :tax_zone => create(:zone, :name => "Other Zone")
             order.stub :tax_address => tax_address
           end
 
-          let!(:rate) do
-            Spree::TaxRate.create(:amount => 1,
-                                  :zone => @zone,
-                                  :tax_category => tax_category,
-                                  :calculator => calculator)
-          end
-
-          subject { Spree::TaxRate.match(order) }
-
           context "when the order has a tax_address" do
             let(:tax_address) { stub_model(Spree::Address) }
 
-            it "returns no tax rate" do
-              subject.should be_empty
+            context "when the tax is a VAT" do
+              let(:included_in_price) { true }
+              it { should == [rate] }
+            end
+
+            context "when the tax is not VAT" do
+              it "returns no tax rate" do
+                subject.should be_empty
+              end
             end
           end
 
           context "when the order does not have a tax_address" do
             let(:tax_address) { nil}
 
-            it "should return the rates associated with the default tax zone" do
-              subject.should == [rate]
+            context "when the tax is not a VAT" do
+              let(:included_in_price) { true }
+              it { should be_empty }
+            end
+
+            context "when the tax is not a VAT" do
+              it { should == [rate] }
             end
           end
         end
