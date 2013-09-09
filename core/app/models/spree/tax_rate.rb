@@ -25,7 +25,8 @@ module Spree
     def self.match(order)
       return [] unless order.tax_zone
       all.select do |rate|
-        rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || (order.tax_address.nil? && rate.zone.default_tax)
+        (!rate.included_in_price && (rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || (order.tax_address.nil? && rate.zone.default_tax))) ||
+        (rate.included_in_price && !order.tax_address.nil? && !rate.zone.contains?(order.tax_zone) && rate.zone.default_tax)
       end
     end
 
