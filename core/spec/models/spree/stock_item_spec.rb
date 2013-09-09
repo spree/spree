@@ -71,4 +71,42 @@ describe Spree::StockItem do
       end
     end
   end
+
+  context "set count_on_hand" do
+    let!(:current_on_hand) { subject.count_on_hand }
+
+    it 'is updated pessimistically' do
+      copy = Spree::StockItem.find(subject.id)
+
+      subject.set_count_on_hand(5)
+      subject.count_on_hand.should eq(5)
+
+      copy.count_on_hand.should eq(current_on_hand)
+      copy.set_count_on_hand(10)
+      copy.count_on_hand.should eq(10)
+    end
+
+    context "item out of stock (by two items)" do
+      let(:inventory_unit) { double('InventoryUnit') }
+      let(:inventory_unit_2) { double('InventoryUnit2') }
+
+      before { subject.set_count_on_hand(-2) }
+
+      it "doesn't process backorders" do
+        subject.should_not_receive(:backordered_inventory_units)
+      end
+
+      context "adds new items" do
+        before { subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+
+        it "fills existing backorders" do
+          inventory_unit.should_receive(:fill_backorder)
+          inventory_unit_2.should_receive(:fill_backorder)
+
+          subject.set_count_on_hand(1)
+          subject.count_on_hand.should == 1
+        end
+      end
+    end
+  end
 end
