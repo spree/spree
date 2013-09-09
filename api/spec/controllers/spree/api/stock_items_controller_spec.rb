@@ -77,6 +77,22 @@ module Spree
         json_response['count_on_hand'].should eq 50
       end
 
+      it 'can set a stock item to modify the current inventory' do
+        stock_item.count_on_hand.should == 10
+
+        params = {
+          id: stock_item.to_param,
+          stock_item: {
+            count_on_hand: 40,
+            force: true,
+          }
+        }
+
+        api_put :update, params
+        response.status.should == 200
+        json_response['count_on_hand'].should eq 40
+      end
+
       it 'can delete a stock item' do
         api_delete :destroy, id: stock_item.to_param
         response.status.should == 204

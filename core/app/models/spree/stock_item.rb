@@ -26,6 +26,13 @@ module Spree
       end
     end
 
+    def set_count_on_hand(value)
+      self.count_on_hand = value
+      process_backorders if in_stock?
+
+      self.save!
+    end
+
     def in_stock?
       self.count_on_hand > 0
     end
