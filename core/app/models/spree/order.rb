@@ -17,7 +17,8 @@ module Spree
       go_to_state :delivery
       go_to_state :payment, :if => lambda { |order|
         # Fix for #2191
-        if order.shipping_method
+        # See #3708 also
+        if order.total.to_f <= 0 && order.shipping_method
           order.create_shipment!
           order.update_totals
         end
