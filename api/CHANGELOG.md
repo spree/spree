@@ -41,4 +41,3 @@ Now:
 ```
 
     * Ryan Bigg
->>>>>>> 01943b1... [api] Implement pagination for taxons#index route
