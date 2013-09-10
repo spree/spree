@@ -5,35 +5,18 @@ describe Spree::OrdersController do
 
   context "Order model mock" do
     let(:order) do
-      mock_model(Spree::Order, :number => "R123",
-                               :reload => nil,
-                               :save! => true,
-                               :coupon_code => nil,
-                               :user => user,
-                               :created_by => nil,
-                               :completed? => false,
-                               :currency => "USD",
-                               :token => 'a1b2c3d4',
-                               :shipments => [])
+      Spree::Order.create
     end
 
     before do
-      # Don't care about IP address or created_by being set here
-      order.stub(:last_ip_address=)
-      order.stub(:created_by=)
-      # Don't care about shipments either as feature specs will cover it
-      order.stub :ensure_updated_shipments
-      Spree::Order.stub(:find).with(1).and_return(order)
       controller.stub(:try_spree_current_user => user)
     end
 
     context "#populate" do
-      before { Spree::Order.stub(:new).and_return(order) }
-
       it "should create a new order when none specified" do
-        Spree::Order.should_receive(:new).and_return order
         spree_post :populate, {}, {}
-        session[:order_id].should == order.id
+        session[:order_id].should_not be_blank
+        Spree::Order.find(session[:order_id]).should be_persisted
       end
 
       context "with Variant" do
@@ -57,34 +40,31 @@ describe Spree::OrdersController do
     end
 
     context "#update" do
-      before do
-        order.stub(:update_attributes).and_return true
-        order.stub(:line_items).and_return([])
-        order.stub(:line_items=).with([])
-        order.stub(:last_ip_address=)
-        subject.should_receive(:current_order).at_least(:once).and_return(order)
-      end
+      context "with authorization" do
+        before do
+          controller.stub :check_authorization
+        end
 
-      it "should not result in a flash success" do
-        spree_put :update, {}, {:order_id => 1}
-        flash[:success].should be_nil
-      end
+        it "should render the edit view (on failure)" do
+          # email validation is only after cart state
+          order.update_column(:state, "address")
+          spree_put :update, { :order => { :email => "" } }, {:order_id => order.id }
+          response.should render_template :edit
+        end
 
-      it "should render the edit view (on failure)" do
-        order.stub(:update_attributes).and_return false
-        order.stub(:errors).and_return({:email => "is invalid"})
-        spree_put :update, { :order => { :email => "" } }, {:order_id => 1}
-        response.should render_template :edit
-      end
-
-      it "should redirect to cart path (on success)" do
-        order.stub(:update_attributes).and_return true
-        spree_put :update, {}, {:order_id => 1}
-        response.should redirect_to(spree.cart_path)
+        it "should redirect to cart path (on success)" do
+          order.stub(:update_attributes).and_return true
+          spree_put :update, {}, {:order_id => 1}
+          response.should redirect_to(spree.cart_path)
+        end
       end
     end
 
     context "#empty" do
+      before do
+        controller.stub :check_authorization
+      end
+
       it "should destroy line items in the current order" do
         controller.stub(:current_order).and_return(order)
         order.should_receive(:empty!)
