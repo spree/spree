@@ -19,7 +19,7 @@ describe "Promotion adjustments", :js => true do
      calculator = Spree::Calculator::FlatRate.new
      calculator.preferred_amount = 10
 
-     action = Spree::Promotion::Actions::CreateAdjustment.new
+     action = Spree::Promotion::Actions::CreateItemAdjustments.new
      action.calculator = calculator
      action.promotion = promotion
      action.save
@@ -169,8 +169,11 @@ describe "Promotion adjustments", :js => true do
           fill_in "order_line_items_attributes_1_quantity", :with => 2
           click_button "Update"
 
+
           within '#cart_adjustments' do
-            # 20% off $60 item_total (2x $10 + 2x $20)
+            # 20% of $40 = 8
+            # 20% of $20 = 4
+            # Therefore: promotion discount amount is $12.
             page.should have_content("Promotion (Onetwo) $-12.00")
           end
           within '.order-total' do
