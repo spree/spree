@@ -98,28 +98,6 @@ describe "Promotion adjustments", :js => true do
         page.should have_content(Spree.t(:coupon_code_max_usage))
       end
 
-      context "informs the user if the previous promotion is better" do
-        before do
-          better_promotion = create_basic_coupon_promotion("50off")
-          calculator = better_promotion.actions.first.calculator
-          calculator.preferred_amount = 50
-          calculator.save
-        end
-
-        specify do
-          visit spree.cart_path
-
-          fill_in "order_coupon_code", :with => "50off"
-          click_button "Update"
-          page.should have_content(Spree.t(:coupon_code_applied))
-
-          fill_in "order_coupon_code", :with => "onetwo"
-          click_button "Update"
-
-          page.should have_content(Spree.t(:coupon_code_better_exists))
-        end
-      end
-
       context "informs the user if the coupon code is not eligible" do
         before do
           rule = Spree::Promotion::Rules::ItemTotal.new
