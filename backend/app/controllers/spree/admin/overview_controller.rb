@@ -2,8 +2,6 @@
 module Spree
   module Admin
     class OverviewController < Spree::Admin::BaseController
-      #todo, add rss feed of information that is happening
-
       def index
         @users = User.all
       end
