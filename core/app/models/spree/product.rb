@@ -171,7 +171,9 @@ module Spree
     end
 
     def self.like_any(fields, values)
-      where_str = fields.map { |field| Array.new(values.size, "#{self.quoted_table_name}.#{field} #{LIKE} ?").join(' OR ') }.join(' OR ')
+      # PostgreSQL is case sensitive, so we need to use ILIKE to work around that.
+      like = ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' ? 'ILIKE' : 'LIKE'
+      where_str = fields.map { |field| Array.new(values.size, "#{self.quoted_table_name}.#{field} #{like} ?").join(' OR ') }.join(' OR ')
       self.where([where_str, values.map { |value| "%#{value}%" } * fields.size].flatten)
     end
 
