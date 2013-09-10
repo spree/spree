@@ -46,7 +46,7 @@ module Spree
     end
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
-    alias :brand, :cc_type
+    alias_method :brand, :cc_type
 
     def actions
       %w{capture void credit}
