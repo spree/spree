@@ -51,18 +51,6 @@ describe "Checkout", inaccessible: true do
         click_button "Save and Continue"
         page.should have_content(shipping_method.adjustment_label)
       end
-
-      # Regression test, no issue number
-      it "does not create a closed adjustment for an order's shipment upon reaching the delivery step", :js => true do
-        add_mug_to_cart
-        click_button "Checkout"
-
-        fill_in "order_email", :with => "ryan@spreecommerce.com"
-        fill_in_address
-
-        click_button "Save and Continue"
-        Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
-      end
     end
   end
 
