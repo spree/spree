@@ -17,9 +17,12 @@ module Spree
           # HACK: Need to use [0] because `pluck` may return an empty array, which AR helpfully
           # coverts to meaning NOT IN (NULL) and the DB isn't happy about that.
           already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
+          result = false
           order.line_items.where("id NOT IN (?)", already_adjusted_line_items).each do |line_item|
             self.create_adjustment(line_item)
+            result = true
           end
+          return result
         end
 
         def create_adjustment(adjustable)
