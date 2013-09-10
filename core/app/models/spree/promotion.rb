@@ -44,9 +44,14 @@ module Spree
         return unless path == payload[:path]
       end
 
-      actions.each do |action|
+      # Track results from actions to see if any action has been taken.
+      # Actions should return nil/false if no action has been taken.
+      # If an action returns true, then an action has been taken.
+      results = actions.map do |action|
         action.perform(payload)
       end
+      # If an action has been taken, report back to whatever activated this promotion.
+      return results.include?(true)
     end
 
     # called anytime order.update! happens
