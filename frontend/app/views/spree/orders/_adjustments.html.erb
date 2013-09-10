@@ -4,10 +4,10 @@
   </tr>
 </thead>
 <tbody id="cart_adjustments" data-hook>
-  <% @order.adjustments.eligible.each do |adjustment| %>
+  <% @order.line_item_adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
     <tr>
-      <td colspan="4"><%= adjustment.label %></td>
-      <td><%= adjustment.display_amount.to_html %></td>
+      <td colspan="4"><%= label %></td>
+      <td><%= Spree::Money.new(adjustments.sum(&:amount), :currency => @order.currency) %></td>
       <td></td>
     </tr>
   <% end %>
