@@ -185,7 +185,9 @@ $(document).ready(function(){
         },
         dataType: 'script',
         success: function(response) {
-          el.parents("tr").fadeOut('hide');
+          el.parents("tr").fadeOut('hide', function() {
+            $(this).remove();
+          })
         },
         error: function(response, textStatus, errorThrown) {
           show_flash_error(response.responseText);
