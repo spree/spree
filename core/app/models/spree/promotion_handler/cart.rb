@@ -46,7 +46,7 @@ module Spree
         end
 
         def promotions
-          Promotion.active.includes(:promotion_rules)
+          Promotion.active.includes(:promotion_rules).where(:code => nil)
         end
     end
 
