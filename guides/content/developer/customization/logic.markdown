@@ -17,12 +17,12 @@ easily be extended / overridden to meet your exact requirements using
 standard Ruby idioms.
 
 Standard practice for including such changes in your application or
-extension is to create a file within the relevant **app/models** or
-**app/controllers** directory with the original class name with
+extension is to create a file within the relevant **app/models/spree** or
+**app/controllers/spree** directory with the original class name with
 **_decorator** appended.
 
 **Adding a custom method to the Product model:**
-app/models/product_decorator.rb
+app/models/spree/product_decorator.rb
 
 <% ruby do %>
     Spree::Product.class_eval do
@@ -33,7 +33,7 @@ app/models/product_decorator.rb
 <% end %>
 
 **Adding a custom action to the ProductsController:**
-app/controllers/products_controller_decorator.rb
+app/controllers/spree/products_controller_decorator.rb
 
 <% ruby do %>
     Spree::ProductsController.class_eval do
@@ -105,7 +105,7 @@ using the following syntax:
 
 If you wanted to render a custom partial for the index action of
 ProductsController, you could include the following in your
-**app/controllers/products_controller_decorator.rb** file.
+**app/controllers/spree/products_controller_decorator.rb** file.
 
 <% ruby do %>
     Spree::ProductsController.class_eval do
