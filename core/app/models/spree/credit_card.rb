@@ -13,6 +13,9 @@ module Spree
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
 
+    # needed for some of the ActiveMerchant gateways (eg. SagePay)
+    alias_attribute :brand, :cc_type
+
     def expiry=(expiry)
       self[:month], self[:year] = expiry.split(" / ")
       self[:year] = "20" + self[:year]
@@ -44,9 +47,6 @@ module Spree
     def display_number
       "XXXX-XXXX-XXXX-#{last_digits}"
     end
-
-    # needed for some of the ActiveMerchant gateways (eg. SagePay)
-    alias_method :brand, :cc_type
 
     def actions
       %w{capture void credit}
