@@ -155,9 +155,19 @@ describe Spree::Order do
       order.finalize!
     end
 
-    it "should log state event" do
-      order.state_changes.should_receive(:create).exactly(3).times #order, shipment & payment state changes
+    it "should log state events" do
       order.finalize!
+      payment_state_changes = order.state_changes.where(:name => "payment")
+      payment_state_changes.count.should == 1
+      payment_state_change = payment_state_changes.first
+      payment_state_change.previous_state.should be_nil
+      payment_state_change.next_state.should == "balance_due"
+
+      order_state_changes = order.state_changes.where(:name => "order")
+      order_state_changes.count.should == 1
+      order_state_change = order_state_changes.first
+      order_state_change.previous_state.should == "cart"
+      order_state_change.next_state.should == "complete"
     end
   end
 
