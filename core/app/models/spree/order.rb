@@ -515,12 +515,15 @@ module Spree
       state = "#{name}_state"
       if persisted?
         old_state = self.send("#{state}_was")
-        self.state_changes.create({
-          :previous_state => old_state,
-          :next_state     => self.send(state),
-          :name           => name,
-          :user_id        => self.user_id
-        }, :without_protection => true)
+        new_state = self.send(state)
+        if old_state != new_state
+          self.state_changes.create({
+            :previous_state => old_state,
+            :next_state     => self.send(state),
+            :name           => name,
+            :user_id        => self.user_id
+          }, :without_protection => true)
+        end
       end
     end
 
