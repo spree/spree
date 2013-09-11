@@ -162,7 +162,7 @@ module Spree
 
       def apply_coupon_code
         if params[:order] && params[:order][:coupon_code]
-          @order.coupon_code = params[:order][:coupon_code] 
+          @order.coupon_code = params[:order][:coupon_code]
 
           coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
           if coupon_result[:coupon_applied?]
