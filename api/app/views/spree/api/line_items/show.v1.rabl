@@ -8,3 +8,7 @@ child :variant do
   attributes :product_id
   child(:images => :images) { extends "spree/api/images/show" }
 end
+
+child :adjustments => :adjustments do
+  extends "spree/api/adjustments/show"
+end
