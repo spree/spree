@@ -195,12 +195,6 @@ describe Spree::CheckoutController do
         FactoryGirl.create(:order_with_line_items).tap do |order|
           order.next!
           order.state.should == 'address'
-          order.ship_address.tap do |address|
-            # A different country which is not included in the list of shippable countries
-            address.country = FactoryGirl.create(:country, :name => "Australia")
-            address.state_name = 'Victoria'
-            address.save
-          end
         end
       end
 
@@ -209,12 +203,37 @@ describe Spree::CheckoutController do
         controller.stub :check_authorization => true
       end
 
-      it "due to no available shipping rates for any of the shipments" do
-        order.shipments.count.should == 1
-        order.shipments.first.shipping_rates.delete_all
-        spree_put :update, :order => {}
-        flash[:error].should == Spree.t(:items_cannot_be_shipped)
-        response.should redirect_to(spree.checkout_state_path('address'))
+      context "when the country is not a shippable country" do
+        before do
+          order.ship_address.tap do |address|
+            # A different country which is not included in the list of shippable countries
+            address.country = FactoryGirl.create(:country, :name => "Australia")
+            address.state_name = 'Victoria'
+            address.save
+          end
+        end
+
+        it "due to no available shipping rates for any of the shipments" do
+          order.shipments.count.should == 1
+          order.shipments.first.shipping_rates.delete_all
+          spree_put :update, :order => {}
+          flash[:error].should == Spree.t(:items_cannot_be_shipped)
+          response.should redirect_to(spree.checkout_state_path('address'))
+        end
+      end
+
+      context "when the order is invalid" do
+        before do
+          order.stub :update_attributes => true, :next => nil
+          order.errors.add :base, 'Base error'
+          order.errors.add :adjustments, 'error'
+        end
+
+        it "due to the order having errors" do
+          spree_put :update, :order => {}
+          flash[:error].should == "Base error\nAdjustments error"
+          response.should redirect_to(spree.checkout_state_path('address'))
+        end
       end
     end
 
