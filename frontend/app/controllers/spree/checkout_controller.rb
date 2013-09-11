@@ -29,7 +29,7 @@ module Spree
         fire_event('spree.checkout.update')
 
         unless @order.next
-          flash[:error] = @order.errors[:base].join("\n")
+          flash[:error] = @order.errors.full_messages.join("\n")
           redirect_to checkout_state_path(@order.state) and return
         end
 
