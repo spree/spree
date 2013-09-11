@@ -27,7 +27,7 @@ module Spree
     def update
       if @order.update_attributes(object_params)
         unless @order.next
-          flash[:error] = @order.errors[:base].join("\n")
+          flash[:error] = @order.errors.full_messages.join("\n")
           redirect_to checkout_state_path(@order.state) and return
         end
 
