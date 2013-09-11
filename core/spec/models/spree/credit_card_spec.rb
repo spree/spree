@@ -150,6 +150,25 @@ describe Spree::CreditCard do
     end
   end
 
+  context "#cc_type=" do
+    it "converts between the different types" do
+      credit_card.cc_type = 'mastercard'
+      credit_card.cc_type.should == 'master'
+
+      credit_card.cc_type = 'maestro'
+      credit_card.cc_type.should == 'master'
+
+      credit_card.cc_type = 'amex'
+      credit_card.cc_type.should == 'american_express'
+
+      credit_card.cc_type = 'dinersclub'
+      credit_card.cc_type.should == 'diners_club'
+
+      credit_card.cc_type = 'some_outlandish_cc_type'
+      credit_card.cc_type.should == 'some_outlandish_cc_type'
+    end
+  end
+
   context "#associations" do
     it "should be able to access its payments" do
       expect { credit_card.payments.to_a }.not_to raise_error

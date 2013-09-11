@@ -25,6 +25,22 @@ module Spree
       @number = num.gsub(/[^0-9]/, '') rescue nil
     end
 
+    # cc_type is set by jquery.payment, which helpfully provides different
+    # types from Active Merchant. Converting them is necessary.
+    def cc_type=(type)
+      real_type = case type
+      when 'mastercard', 'maestro'
+        'master'
+      when 'amex'
+        'american_express'
+      when 'dinersclub'
+        'diners_club'
+      else
+        type
+      end
+      self[:cc_type] = real_type
+    end
+
     def set_last_digits
       number.to_s.gsub!(/\s/,'')
       verification_value.to_s.gsub!(/\s/,'')
