@@ -20,6 +20,7 @@ describe "Customer Details" do
     end
 
     create(:shipping_method, :display_on => "front_end")
+    create(:payment_method)
     create(:order_with_inventory_unit_shipped, :completed_at => "2011-02-01 12:36:15")
     # We need a unique name that will appear for the customer dropdown
     ship_address = create(:address, :country => country, :state => state, :firstname => "Rumpelstiltskin")
@@ -89,7 +90,7 @@ describe "Customer Details" do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
-        find(".state").text.should == "ADDRESS"
+        find(".state").text.should == "PAYMENT"
       end
 
     end
