@@ -6,7 +6,7 @@ module Spree
 
     let(:user) { create(:user) }
     let(:guest_user) { create(:user) }
-    let(:order) { Spree::Order.new }
+    let(:order) { Spree::Order.create }
 
     it 'should understand order routes with token' do
       spree.token_order_path('R123456', 'ABCDEF').should == '/orders/R123456/token/ABCDEF'
