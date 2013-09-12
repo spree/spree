@@ -19,10 +19,6 @@ module Spree
 
     validate :at_least_one_shipping_category
 
-    def adjustment_label
-      Spree.t(:shipping)
-    end
-
     def include?(address)
       return false unless address
       zones.any? do |zone|

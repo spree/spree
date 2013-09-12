@@ -35,6 +35,7 @@ describe "Checkout", inaccessible: true do
     # Regression test for #1596
     context "full checkout" do
       before do
+        shipping_method.calculator.preferred_amount = 10
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
       end
@@ -49,7 +50,7 @@ describe "Checkout", inaccessible: true do
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        page.should have_content(shipping_method.adjustment_label)
+        page.should have_content("Shipping Total:  $10.00")
       end
     end
   end
