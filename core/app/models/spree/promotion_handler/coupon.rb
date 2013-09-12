@@ -53,7 +53,9 @@ module Spree
       end
 
       def determine_promotion_application_result(result)
-        discount = order.line_item_adjustments.promotion.detect { |p| p.source.promotion.code == order.coupon_code }
+        detector = lambda { |p| p.source.promotion.code == order.coupon_code }
+        discount = order.line_item_adjustments.promotion.detect(&detector)
+        discount ||= order.adjustments.promotion.detect(&detector)
 
         if result and discount.eligible
           self.success = Spree.t(:coupon_code_applied)

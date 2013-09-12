@@ -13,6 +13,9 @@ module Spree
 
         # Creates the adjustment related to a promotion for the order passed
         # through options hash
+        #
+        # Returns `true` if an adjustment is applied to an order,
+        # `false` if the promotion has already been applied.
         def perform(options = {})
           order = options[:order]
           return if promotion_credit_exists?(order)
@@ -24,6 +27,7 @@ module Spree
             source: self,
             label: "#{Spree.t(:promotion)} (#{promotion.name})",
           )
+          true
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
