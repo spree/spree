@@ -67,15 +67,8 @@ module Spree
     def add_to_shipment(shipment, variant, quantity)
       on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
 
-      on_hand.times do
-        shipment.inventory_units.create({variant_id: variant.id,
-                                          state: 'on_hand'}, without_protection: true)
-      end
-
-      back_order.times do
-        shipment.inventory_units.create({variant_id: variant.id,
-                                         state: 'backordered'}, without_protection: true)
-      end
+      on_hand.times { shipment.set_up_inventory('on_hand', variant, order) }
+      back_order.times { shipment.set_up_inventory('backordered', variant, order) }
 
       # adding to this shipment, and removing from stock_location
       if order.completed?
