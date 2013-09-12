@@ -51,7 +51,7 @@ module Spree
                                                  :option_type_name,
                                                  :option_type_id])
     end
-    
+
     it "variants returned contain images data" do
       variant.images.create!(:attachment => image("thinking-cat.jpg"))
 
@@ -97,13 +97,13 @@ module Spree
                                                  :option_type_name,
                                                  :option_type_id])
     end
-    
+
     it "can see a single variant with images" do
       variant.images.create!(:attachment => image("thinking-cat.jpg"))
-      
+
       api_get :show, :id => variant.to_param
-      
-      json_response.should have_attributes(attributes + [:images])      
+
+      json_response.should have_attributes(attributes + [:images])
       option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
@@ -168,6 +168,18 @@ module Spree
         response.status.should == 204
         lambda { variant.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
+
+      context "without product" do
+        sign_in_as_admin!
+        let(:resource_scoping) { { :product_id => "" } }
+
+        it "raises ActiveRecord::ReadOnlyRecord exception" do
+          api_put :update, :id => variant.to_param, :variant => { :sku => "12345", :on_hand => 5 }
+          response.status.should == 422
+          json_response["exception"].should eql "ActiveRecord::ReadOnlyRecord"
+        end
+      end
+
     end
 
 
