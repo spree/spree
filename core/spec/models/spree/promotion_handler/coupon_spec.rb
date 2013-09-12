@@ -36,28 +36,52 @@ module Spree
           expect(subject.promotion).to eq promotion
         end
 
-        context "right coupon given" do
-          let(:order) { create(:order_with_line_items, :line_items_count => 3) }
-          let!(:line_item) { order.contents.add create(:variant) }
-
-          let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+        context "with a per-item adjustment action" do
           let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+          context "right coupon given" do
+            let(:order) { create(:order_with_line_items, :line_items_count => 3) }
 
-          before { order.stub :coupon_code => "10off" }
+            let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
-          it "successfully activates promo" do
-            subject.apply
-            expect(subject.success).to be_present
-            order.line_items.each do |line_item|
-              line_item.adjustments.count.should == 1
+            before { order.stub :coupon_code => "10off" }
+
+            it "successfully activates promo" do
+              subject.apply
+              expect(subject.success).to be_present
+              order.line_items.each do |line_item|
+                line_item.adjustments.count.should == 1
+              end
+            end
+
+            it "coupon already applied to the order" do
+              subject.apply
+              expect(subject.success).to be_present
+              subject.apply
+              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
             end
           end
+        end
 
-          it "coupon already applied to the order" do
-            subject.apply
-            expect(subject.success).to be_present
-            subject.apply
-            expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+        context "with a whole-order adjustment action" do
+          let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+          context "right coupon given" do
+            let(:order) { create(:order) }
+            let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+
+            before { order.stub :coupon_code => "10off" }
+
+            it "successfully activates promo" do
+              subject.apply
+              expect(subject.success).to be_present
+              order.adjustments.count.should == 1
+            end
+
+            it "coupon already applied to the order" do
+              subject.apply
+              expect(subject.success).to be_present
+              subject.apply
+              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+            end
           end
         end
       end
