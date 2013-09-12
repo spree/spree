@@ -19,10 +19,6 @@ module Spree
 
     validate :at_least_one_shipping_category
 
-    def adjustment_label
-      Spree.t(:shipping)
-    end
-
     def zone
       ActiveSupport::Deprecation.warn("[SPREE] ShippingMethod#zone is no longer correct. Multiple zones need to be supported")
       zones.first
