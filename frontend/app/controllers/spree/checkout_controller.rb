@@ -27,7 +27,7 @@ module Spree
     def update
       if @order.update_attributes(object_params)
         unless @order.next
-          flash[:error] = @order.errors[:base].join("\n")
+          flash[:error] = @order.errors.full_messages.join("\n")
           redirect_to checkout_state_path(@order.state) and return
         end
 
@@ -162,7 +162,7 @@ module Spree
 
       def apply_coupon_code
         if params[:order] && params[:order][:coupon_code]
-          @order.coupon_code = params[:order][:coupon_code] 
+          @order.coupon_code = params[:order][:coupon_code]
 
           coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
           if coupon_result[:coupon_applied?]
