@@ -6,5 +6,8 @@
     Spree.routes = {}
   }
   Spree.routes.states_search = "<%= spree.api_states_path(:format => 'json') %>"
+  Spree.routes.apply_coupon_code = function(order_id) {
+    return "<%= spree.api_orders_path %>/" + order_id + "/apply_coupon_code"
+  }
 </script>
 

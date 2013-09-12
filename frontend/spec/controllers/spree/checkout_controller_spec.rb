@@ -58,11 +58,6 @@ describe Spree::CheckoutController do
         order.should_receive(:associate_user!).with(user)
         spree_get :edit, {}, :order_id => 1
       end
-
-      it "should fire the spree.user.signup event if user has just signed up" do
-        controller.should_receive(:fire_event).with("spree.user.signup", :user => user, :order => order)
-        spree_get :edit, {}, :spree_user_signup => true
-      end
     end
   end
 

@@ -619,6 +619,7 @@ en:
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
+    line_item_adjustments: "Line item adjustments"
     list: List
     listing_countries: Listing Countries
     listing_orders: Listing Orders
@@ -835,6 +836,9 @@ en:
       create_adjustment:
         description: Creates a promotion credit adjustment on the order
         name: Create adjustment
+      create_item_adjustment:
+        description: Creates a promotion credit adjustment on a line item
+        name: Create order item adjustment
       create_line_items:
         description: Populates the cart with the specified quantity of variant
         name: Create line items
@@ -936,6 +940,7 @@ en:
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment
+    shipment_adjustments: "Shipment adjustments"
     shipment_inc_vat: Shipment including VAT
     shipment_mailer:
       shipped_email:
@@ -966,6 +971,7 @@ en:
     shipping_method: Shipping Method
     shipping_methods: Shipping Methods
     shipping_price_sack: Price sack
+    shipping_total: Shipping total
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart
     show: Show

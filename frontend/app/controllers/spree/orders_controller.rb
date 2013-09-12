@@ -8,24 +8,15 @@ module Spree
 
     respond_to :html
 
+    before_filter :assign_order, only: :update
+    before_filter :apply_coupon_code, only: :update
+
     def show
       @order = Order.find_by_number!(params[:id])
     end
 
     def update
-      @order = current_order
-      unless @order
-        flash[:error] = Spree.t(:order_not_found)
-        redirect_to root_path and return
-      end
-
-      if @order.update_attributes(order_params)
-        @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
-        @order.ensure_updated_shipments
-        return if after_update_attributes
-
-        fire_event('spree.order.contents_changed')
-
+      if @order.contents.update_cart(order_params)
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
@@ -53,8 +44,6 @@ module Spree
       if populator.populate(params.slice(:products, :variants, :quantity))
         current_order.ensure_updated_shipments
 
-        fire_event('spree.cart.add')
-        fire_event('spree.order.contents_changed')
         respond_with(@order) do |format|
           format.html { redirect_to cart_path }
         end
@@ -97,15 +86,11 @@ module Spree
         end
       end
 
-      def after_update_attributes
-        coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
-        if coupon_result[:coupon_applied?]
-          flash[:success] = coupon_result[:success] if coupon_result[:success].present?
-          return false
-        else
-          flash[:error] = coupon_result[:error]
-          respond_with(@order) { |format| format.html { render :edit } }
-          return true
+      def assign_order
+        @order = current_order
+        unless @order
+          flash[:error] = Spree.t(:order_not_found)
+          redirect_to root_path and return
         end
       end
   end

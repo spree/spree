@@ -104,6 +104,19 @@ describe Spree::Order do
         order.save!
       end
 
+      it "updates totals" do
+        order.stub(:ensure_available_shipping_rates => true)
+        line_item = FactoryGirl.create(:line_item, :price => 10, :adjustment_total => 10)
+        order.line_items << line_item
+        tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
+        FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate)
+        order.email = "user@example.com"
+        order.next!
+        order.adjustment_total.should == 0.5
+        order.tax_total.should == 0.5
+        order.total.should == 10.5
+      end
+
       it "transitions to delivery" do
         order.stub(:ensure_available_shipping_rates => true)
         order.next!
@@ -131,6 +144,7 @@ describe Spree::Order do
         end
 
         it "transitions to payment" do
+          order.should_receive(:set_shipments_cost)
           order.next!
           order.state.should == 'payment'
         end

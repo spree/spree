@@ -20,12 +20,10 @@
       <% end %>
     </ul>
     <br style="clear:both;" />
-    <% if Spree::Promotion.with_code.count > 0 %>
-      <p class='field' data-hook='coupon_code'>
-        <%= form.label :coupon_code %><br />
-        <%= form.text_field :coupon_code %>
-      </p>
-    <% end %>
+    <p class='field' data-hook='coupon_code'>
+      <%= form.label :coupon_code %><br />
+      <%= form.text_field :coupon_code %>
+    </p>
   </div>
 </fieldset>
 

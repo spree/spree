@@ -4,6 +4,9 @@ module Spree
   # for all matching products in an order. This should not be used as a
   # shipping calculator since it would be the same thing as a flat percent
   # off the entire order.
+  #
+  #
+  # TODO Should be deprecated now that we have adjustments at the line item level in spree core
 
   class Calculator::PercentPerItem < Calculator
     preference :percent, :decimal, default: 0

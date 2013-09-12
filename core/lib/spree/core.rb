@@ -42,10 +42,8 @@ require 'spree/core/engine'
 
 require 'spree/i18n'
 require 'spree/money'
-require 'spree/promo/coupon_applicator'
 
 require 'spree/core/delegate_belongs_to'
-require 'spree/core/ext/active_record'
 require 'spree/core/permalinks'
 require 'spree/core/token_resource'
 require 'spree/core/calculated_adjustments'

@@ -4,23 +4,7 @@ describe Spree::LineItem do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
-  context '#save' do
-    it 'should update inventory, totals, and tax' do
-      # Regression check for #1481
-      line_item.order.should_receive(:create_tax_charge!)
-      line_item.order.should_receive(:update!)
-      line_item.quantity = 2
-      line_item.save
-    end
-  end
-
   context '#destroy' do
-    # Regression test for #1481
-    it "applies tax adjustments" do
-      line_item.order.should_receive(:create_tax_charge!)
-      line_item.destroy
-    end
-
     it "fetches deleted products" do
       line_item.product.destroy
       expect(line_item.reload.product).to be_a Spree::Product
@@ -29,6 +13,26 @@ describe Spree::LineItem do
     it "fetches deleted variants" do
       line_item.variant.destroy
       expect(line_item.reload.variant).to be_a Spree::Variant
+    end
+  end
+
+  context "#save" do
+    context "line item changes" do
+      before do
+        line_item.quantity = line_item.quantity + 1
+      end
+
+      it "triggers adjustment total recalculation" do
+        line_item.should_receive(:recalculate_adjustments)
+        line_item.save
+      end
+    end
+
+    context "line item does not change" do
+      it "does not trigger adjustment total recalculation" do
+        line_item.should_not_receive(:recalculate_adjustments)
+        line_item.save
+      end
     end
   end
 

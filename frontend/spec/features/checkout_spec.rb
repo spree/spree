@@ -35,6 +35,7 @@ describe "Checkout" do
     # Regression test for #1596
     context "full checkout" do
       before do
+        shipping_method.calculator.preferred_amount = 10
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
       end
@@ -49,19 +50,7 @@ describe "Checkout" do
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        page.should have_content(shipping_method.adjustment_label)
-      end
-
-      # Regression test, no issue number
-      it "does not create a closed adjustment for an order's shipment upon reaching the delivery step", :js => true do
-        add_mug_to_cart
-        click_button "Checkout"
-
-        fill_in "order_email", :with => "ryan@spreecommerce.com"
-        fill_in_address
-
-        click_button "Save and Continue"
-        Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
+        page.should have_content("Shipping Total:  $10.00")
       end
     end
   end
@@ -258,7 +247,7 @@ describe "Checkout" do
   context "in coupon promotion, submits coupon along with payment", js: true do
     let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", event_name: "spree.checkout.coupon_code_added", code: "huhu") }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
-    let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(calculator: calculator) }
+    let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
     before do
       promotion.actions << action

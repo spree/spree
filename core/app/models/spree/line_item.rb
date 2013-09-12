@@ -1,7 +1,7 @@
 module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
-    belongs_to :order, class_name: "Spree::Order"
+    belongs_to :order, class_name: "Spree::Order", :inverse_of => :line_items
     belongs_to :variant, class_name: "Spree::Variant"
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
@@ -21,9 +21,7 @@ module Spree
     validates_with Stock::AvailabilityValidator
 
     before_save :update_inventory
-
-    after_save :update_order
-    after_destroy :update_order
+    after_save :update_adjustments
 
     attr_accessor :target_shipment
 
@@ -44,7 +42,12 @@ module Spree
     def amount
       price * quantity
     end
-    alias total amount
+    alias subtotal amount
+
+    def final_amount
+      amount + adjustment_total.to_f
+    end
+    alias total final_amount
 
     def single_money
       Spree::Money.new(price, { currency: currency })
@@ -88,10 +91,14 @@ module Spree
         Spree::OrderInventory.new(self.order).verify(self, target_shipment)
       end
 
-      def update_order
-        # update the order totals, etc.
-        order.create_tax_charge!
-        order.update!
+      def update_adjustments
+        if quantity_changed?
+          recalculate_adjustments
+        end
+      end
+
+      def recalculate_adjustments
+        Spree::ItemAdjustments.new(self).update
       end
   end
 end

@@ -259,6 +259,19 @@ module Spree
           json_response['line_items'].first['variant'].should have_attributes([:product_id])
         end
 
+        it "lists line item adjustments" do
+          adjustment = create(:adjustment, 
+            :label => "10% off!",
+            :order => order,
+            :adjustable => order.line_items.first)
+          adjustment.update_column(:amount, 5)
+          api_get :show, :id => order.to_param
+
+          adjustment = json_response['line_items'].first['adjustments'].first
+          adjustment['label'].should == "10% off!"
+          adjustment['amount'].should == "5.0"
+        end
+
         context "when in delivery" do
           let!(:shipping_method) do
             FactoryGirl.create(:shipping_method).tap do |shipping_method|

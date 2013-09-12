@@ -5,6 +5,7 @@ module Spree
 
     default_scope -> { where(deleted_at: nil) }
 
+    has_many :adjustments, as: :source
     has_many :shipments
     has_many :shipping_method_categories
     has_many :shipping_categories, through: :shipping_method_categories
@@ -17,10 +18,6 @@ module Spree
     validates :name, presence: true
 
     validate :at_least_one_shipping_category
-
-    def adjustment_label
-      Spree.t(:shipping)
-    end
 
     def zone
       ActiveSupport::Deprecation.warn("[SPREE] ShippingMethod#zone is no longer correct. Multiple zones need to be supported")
@@ -53,6 +50,10 @@ module Spree
     end
 
     private
+      def compute_amount(calculable)
+        self.calculator.compute(calculable)
+      end
+
       def at_least_one_shipping_category
         if self.shipping_categories.empty?
           self.errors[:base] << "You need to select at least one shipping category"

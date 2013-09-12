@@ -71,13 +71,28 @@ module Spree
 
               before_transition :from => :cart, :do => :ensure_line_items_present
 
-              before_transition :to => :delivery, :do => :create_proposed_shipments
-              before_transition :to => :delivery, :do => :ensure_available_shipping_rates
+              if states[:address]
+                before_transition :from => :address, :do => :create_tax_charge!
+              end
+
+              if states[:delivery]
+                before_transition :to => :delivery, :do => :create_proposed_shipments
+                before_transition :to => :delivery, :do => :ensure_available_shipping_rates
+              end
+
+              if states[:payment]
+                before_transition :to => :payment, :do => :set_shipments_cost
+                before_transition :to => :payment, :do => :create_tax_charge!
+              end
 
               after_transition :to => :complete, :do => :finalize!
-              after_transition :to => :delivery, :do => :create_tax_charge!
               after_transition :to => :resumed,  :do => :after_resume
               after_transition :to => :canceled, :do => :after_cancel
+
+              after_transition :from => any - :cart, :to => any - [:confirm, :complete] do |order|
+                order.updater.update_totals
+                order.updater.persist_totals
+              end
             end
           end
 

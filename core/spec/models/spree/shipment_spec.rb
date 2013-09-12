@@ -14,7 +14,6 @@ describe Spree::Shipment do
     shipment
   end
 
-  let(:charge) { create(:adjustment) }
   let(:variant) { mock_model(Spree::Variant) }
 
   it 'is backordered if one if its inventory_units is backordered' do
@@ -25,21 +24,10 @@ describe Spree::Shipment do
     shipment.should be_backordered
   end
 
-  context "#cost" do
-    it "should return the amount of any shipping charges that it originated" do
-      shipment.stub_chain :adjustment, amount: 10
-      shipment.cost.should == 10
-    end
-
-    it "should return 0 if there are no relevant shipping adjustments" do
-      shipment.cost.should == 0
-    end
-  end
-
-  context "display_cost" do
+  context "display_amount" do
     it "retuns a Spree::Money" do
       shipment.stub(:cost) { 21.22 }
-      shipment.display_cost.should == Spree::Money.new(21.22)
+      shipment.display_amount.should == Spree::Money.new(21.22)
     end
   end
 
@@ -47,13 +35,6 @@ describe Spree::Shipment do
     it "retuns a Spree::Money" do
       shipment.stub(:item_cost) { 21.22 }
       shipment.display_item_cost.should == Spree::Money.new(21.22)
-    end
-  end
-
-  context "display_total_cost" do
-    it "retuns a Spree::Money" do
-      shipment.stub(:total_cost) { 21.22 }
-      shipment.display_total_cost.should == Spree::Money.new(21.22)
     end
   end
 
@@ -132,13 +113,7 @@ describe Spree::Shipment do
       end
     end
   end
-
-  it '#total_cost' do
-    shipment.stub cost: 5.0
-    shipment.stub item_cost: 50.0
-    shipment.total_cost.should eql(55.0)
-  end
-
+  
   context "#update!" do
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
@@ -247,7 +222,6 @@ describe Spree::Shipment do
 
   context "#cancel" do
     it 'cancels the shipment' do
-      shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
 
       shipment.state = 'pending'
@@ -266,7 +240,6 @@ describe Spree::Shipment do
 
   context "#resume" do
     it 'will determine new state based on order' do
-      shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
 
       shipment.state = 'canceled'
@@ -284,7 +257,6 @@ describe Spree::Shipment do
     end
 
     it 'will determine new state based on order' do
-      shipment.stub(:ensure_correct_adjustment)
       shipment.order.stub(:update!)
 
       shipment.state = 'canceled'
@@ -300,9 +272,6 @@ describe Spree::Shipment do
     before do
       order.stub(:update!)
       shipment.stub(require_inventory: false, update_order: true, state: 'ready')
-      shipment.stub(adjustment: charge)
-      shipping_method.stub(:create_adjustment)
-      shipment.stub(:ensure_correct_adjustment)
     end
 
     it "should update shipped_at timestamp" do
@@ -326,11 +295,12 @@ describe Spree::Shipment do
       shipment_id.should == shipment.id
     end
 
-    it "should finalize the shipment's adjustment" do
+    it "finalizes adjustments" do
       shipment.stub(:send_shipped_email)
+      shipment.adjustments.each do |adjustment|
+        expect(adjustment).to receive(:finalize!)
+      end
       shipment.ship!
-      shipment.adjustment.state.should == 'finalized'
-      shipment.adjustment.should be_immutable
     end
   end
 
@@ -342,64 +312,42 @@ describe Spree::Shipment do
     end
   end
 
-  context "ensure_correct_adjustment" do
-    before { shipment.stub(:reload) }
+  context "create adjustments" do
+    let(:shipment) { create(:shipment) }
 
-    it "should create adjustment when not present" do
-      shipment.stub(:selected_shipping_rate_id => 1)
-      shipping_method.should_receive(:create_adjustment).with(shipping_method.adjustment_label, order, shipment, true, "open")
-      shipment.send(:ensure_correct_adjustment)
-    end
+    before { shipment.stub_chain :selected_shipping_rate, cost: 5 }
 
-    # Regression test for #3138
-    it "should use the shipping method's adjustment label" do
-      shipment.stub(:selected_shipping_rate_id => 1)
-      shipping_method.stub(:adjustment_label => "Foobar")
-      shipping_method.should_receive(:create_adjustment).with("Foobar", order, shipment, true, "open")
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    it "should update originator when adjustment is present" do
-      shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
-      shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: true))
-      shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.adjustment_label)
-      shipment.adjustment.should_receive(:amount=).with(10.00)
-      shipment.adjustment.should_receive(:save!)
-      shipment.adjustment.should_receive(:reload)
-      shipment.send(:ensure_correct_adjustment)
-    end
-
-    it 'should not update amount if adjustment is not open?' do
-      shipment.stub(selected_shipping_rate: mock_model(Spree::ShippingRate, cost: 10.00))
-      shipment.stub(adjustment: mock_model(Spree::Adjustment, open?: false))
-      shipment.adjustment.should_receive(:originator=).with(shipping_method)
-      shipment.adjustment.should_receive(:label=).with(shipping_method.adjustment_label)
-      shipment.adjustment.should_not_receive(:amount=).with(10.00)
-      shipment.adjustment.should_receive(:save!)
-      shipment.adjustment.should_receive(:reload)
-      shipment.send(:ensure_correct_adjustment)
-    end
-  end
-
-  context "update_order" do
-    it "should update order" do
-      order.should_receive(:update!)
-      shipment.send(:update_order)
+    it "updates shipment totals" do
+      shipment.update_amounts
+      shipment.reload.cost.should == 5
     end
   end
 
   context "after_save" do
-    it "should run correct callbacks" do
-      shipment.should_receive(:ensure_correct_adjustment)
-      shipment.should_receive(:update_order)
-      shipment.run_callbacks(:save)
+    it "updates a linked adjustment" do
+      pending "not sure when and if shipment adjustments are recalculated"
+      # Need a persisted order for this
+      shipment.order = create(:order)
+      tax_rate = create(:tax_rate, :amount => 10)
+      adjustment = create(:adjustment, :source => tax_rate)
+      shipment.cost = 10
+      shipment.adjustments << adjustment
+      shipment.save
+      shipment.reload.adjustment_total.should == 100
     end
   end
 
   context "currency" do
     it "returns the order currency" do
       shipment.currency.should == order.currency
+    end
+  end
+
+  context "nil costs" do
+    it "sets cost to 0" do
+      shipment = Spree::Shipment.new
+      shipment.valid?
+      expect(shipment.cost).to eq 0
     end
   end
 

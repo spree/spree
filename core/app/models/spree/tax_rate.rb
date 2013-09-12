@@ -15,6 +15,8 @@ module Spree
     belongs_to :zone, class_name: "Spree::Zone"
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
+    has_many :adjustments, as: :source, dependent: :destroy
+
     validates :amount, presence: true, numericality: true
     validates :tax_category_id, presence: true
     validates_with DefaultTaxZoneValidator
@@ -30,12 +32,9 @@ module Spree
       end
     end
 
-    def self.adjust(order)
-      order.adjustments.tax.destroy_all
-      order.line_item_adjustments.where(originator_type: 'Spree::TaxRate').destroy_all
-
+    def self.adjust(order, items)
       self.match(order).each do |rate|
-        rate.adjust(order)
+        items.each { |item| rate.adjust(order, item) }
       end
     end
 
@@ -53,30 +52,37 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order)
-      label = create_label
-      if included_in_price
-        if Zone.default_tax.contains? order.tax_zone
-          order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
-        else
-          amount = -1 * calculator.compute(order)
-          label = Spree.t(:refund) + label
+    def adjust(order, item)
+      item.adjustments.tax.delete_all
+      amount = compute_amount(item)
+      return if amount == 0
 
-          order.adjustments.create(
-            amount: amount,
-            source: order,
-            originator: self,
-            state: "closed",
-            label: label
-          )
+      if amount < 0
+        label = Spree.t(:refund) + ' ' + create_label
+      end
+      self.adjustments.create!({
+        :adjustable => item,
+        :amount => amount,
+        :order => order,
+        :label => label || create_label
+      })
+    end
+
+    # This method is used by Adjustment#update to recalculate the cost.
+    def compute_amount(item)
+      if included_in_price
+        if Zone.default_tax.contains? item.order.tax_zone
+          calculator.compute(item)
+        else
+          # In this case, it's a refund.
+          calculator.compute(item) * - 1
         end
       else
-        create_adjustment(label, order, order)
+        calculator.compute(item)
       end
     end
 
     private
-
       def create_label
         label = ""
         label << (name.present? ? name : tax_category.name) + " "

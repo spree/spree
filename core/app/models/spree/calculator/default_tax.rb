@@ -8,8 +8,8 @@ module Spree
 
     def compute(computable)
       case computable
-        when Spree::Order
-          compute_order(computable)
+        when Spree::Shipment
+          compute_shipment(computable)
         when Spree::LineItem
           compute_line_item(computable)
       end
@@ -22,21 +22,16 @@ module Spree
         self.calculable
       end
 
-      def compute_order(order)
-        matched_line_items = order.line_items.select do |line_item|
-          line_item.tax_category == rate.tax_category
-        end
-
-        line_items_total = matched_line_items.sum(&:total)
-        round_to_two_places(line_items_total * rate.amount)
+      def compute_shipment(shipment)
+        round_to_two_places(shipment.cost * rate.amount)
       end
 
       def compute_line_item(line_item)
         if line_item.tax_category == rate.tax_category
           if rate.included_in_price
-            deduced_total_by_rate(line_item.total, rate)
+            deduced_total_by_rate(line_item.amount, rate)
           else
-            round_to_two_places(line_item.total * rate.amount)
+            round_to_two_places(line_item.amount * rate.amount)
           end
         else
           0

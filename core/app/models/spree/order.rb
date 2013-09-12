@@ -9,7 +9,6 @@ module Spree
       go_to_state :address
       go_to_state :delivery
       go_to_state :payment, if: ->(order) {
-        order.update_totals
         order.payment_required?
       }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
@@ -42,6 +41,7 @@ module Spree
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
 
+    has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :shipments, dependent: :destroy do
       def states
         pluck(:state).uniq
@@ -61,12 +61,10 @@ module Spree
     attr_accessor :use_billing
 
     before_create :link_by_email
-    after_create :create_tax_charge!
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
     validate :has_available_shipment
-    validate :has_available_payment
 
     make_permalink field: :number
 
@@ -190,28 +188,6 @@ module Spree
       Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
     end
 
-    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
-    # include tax (ex. VAT) and you need to record the tax amount separately.
-    def price_adjustments
-      ActiveSupport::Deprecation.warn("Order#price_adjustments will be deprecated in Spree 2.1, please use Order#line_item_adjustments instead.")
-      self.line_item_adjustments
-    end
-
-    # Array of totals grouped by Adjustment#label. Useful for displaying line item
-    # adjustments on an invoice. For example, you can display tax breakout for
-    # cases where tax is included in price.
-    def line_item_adjustment_totals
-      Hash[self.line_item_adjustments.eligible.group_by(&:label).map do |label, adjustments|
-        total = adjustments.sum(&:amount)
-        [label, Spree::Money.new(total, { currency: currency })]
-      end]
-    end
-
-    def price_adjustment_totals
-      ActiveSupport::Deprecation.warn("Order#price_adjustment_totals will be deprecated in Spree 2.1, please use Order#line_item_adjustment_totals instead.")
-      self.line_item_adjustment_totals
-    end
-
     def updater
       @updater ||= OrderUpdater.new(self)
     end
@@ -294,17 +270,14 @@ module Spree
     end
 
     def ship_total
-      adjustments.shipping.map(&:amount).sum
-    end
-
-    def tax_total
-      adjustments.tax.map(&:amount).sum
+      shipments.sum(:cost)
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      Spree::TaxRate.adjust(self)
+      Spree::TaxRate.adjust(self, line_items)
+      Spree::TaxRate.adjust(self, shipments)
     end
 
     def outstanding_balance
@@ -430,7 +403,7 @@ module Spree
     end
 
     def insufficient_stock_lines
-      line_items.select &:insufficient_stock?
+     @insufficient_stock_lines ||= line_items.select(&:insufficient_stock?)
     end
 
     def merge!(order)
@@ -453,11 +426,8 @@ module Spree
     def empty!
       line_items.destroy_all
       adjustments.destroy_all
-    end
-
-    def clear_adjustments!
-      self.adjustments.destroy_all
-      self.line_item_adjustments.destroy_all
+      updater.update_totals
+      updater.persist_totals
     end
 
     def has_step?(step)
@@ -481,18 +451,8 @@ module Spree
       @coupon_code = code.strip.downcase rescue nil
     end
 
-    # Tells us if there if the specified promotion is already associated with the order
-    # regardless of whether or not its currently eligible. Useful because generally
-    # you would only want a promotion action to apply to order no more than once.
-    #
-    # Receives an adjustment +originator+ (here a PromotionAction object) and tells
-    # if the order has adjustments from that already
-    def promotion_credit_exists?(originator)
-      !! adjustments.includes(:originator).promotion.reload.detect { |credit| credit.originator.id == originator.id }
-    end
-
     def promo_total
-      adjustments.eligible.promotion.map(&:amount).sum
+      adjustments.promotion.eligible.sum(:amount)
     end
 
     def shipped?
@@ -526,6 +486,12 @@ module Spree
       shipments.map &:refresh_rates
     end
 
+    def set_shipments_cost
+      shipments.each(&:update_amounts)
+      updater.update_shipment_total
+      updater.persist_totals
+    end
+
     private
 
       def link_by_email
@@ -554,11 +520,6 @@ module Spree
         if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
           errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
         end
-      end
-
-      def has_available_payment
-        return unless delivery?
-        # errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
 
       def after_cancel
