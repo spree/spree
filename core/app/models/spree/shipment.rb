@@ -227,6 +227,13 @@ module Spree
       package
     end
 
+    def set_up_inventory(state, variant, order)
+      self.inventory_units.create(
+        { variant_id: variant.id, state: state, order_id: order.id },
+        without_protection: true
+      )
+    end
+
     private
 
       def manifest_unstock(item)

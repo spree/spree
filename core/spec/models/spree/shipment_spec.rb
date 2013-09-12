@@ -412,6 +412,21 @@ describe Spree::Shipment do
     end
   end
 
+  context "set up new inventory units" do
+    let(:variant) { double("Variant", id: 9) }
+    let(:inventory_units) { double }
+    let(:params) do
+      { variant_id: variant.id, state: 'on_hand', order_id: order.id }
+    end
+
+    before { shipment.stub inventory_units: inventory_units }
+
+    it "associates variant and order" do
+      expect(inventory_units).to receive(:create).with(params, without_protection: true)
+      unit = shipment.set_up_inventory('on_hand', variant, order)
+    end
+  end
+
   # Regression test for #3349
   context "#destroy" do
     it "destroys linked shipping_rates" do
