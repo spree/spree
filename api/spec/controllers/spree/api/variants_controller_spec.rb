@@ -166,6 +166,17 @@ module Spree
         response.status.should == 204
         lambda { Spree::Variant.find(variant.id) }.should raise_error(ActiveRecord::RecordNotFound)
       end
+
+      context "without product" do
+        sign_in_as_admin!
+        let(:resource_scoping) { { :product_id => variant.product_id } }
+
+        it "will not raise an ActiveRecord::ReadOnlyRecord exception" do
+          api_put :update, :id => variant.to_param, :variant => { :sku => "12345", :on_hand => 5 }
+          response.status.should_not eql 422
+          json_response["exception"].should_not eql "ActiveRecord::ReadOnlyRecord"
+        end
+      end
     end
 
   end
