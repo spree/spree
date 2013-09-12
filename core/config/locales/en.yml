@@ -619,6 +619,7 @@ en:
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
+    line_item_adjustments: "Line item adjustments"
     list: List
     listing_countries: Listing Countries
     listing_orders: Listing Orders
@@ -939,6 +940,7 @@ en:
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment
+    shipment_adjustments: "Shipment adjustments"
     shipment_inc_vat: Shipment including VAT
     shipment_mailer:
       shipped_email:

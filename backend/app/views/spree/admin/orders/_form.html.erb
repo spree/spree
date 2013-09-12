@@ -4,26 +4,21 @@
   <% end %>
 
   <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
-  <% if order.adjustments.eligible.exists? %>
-    <fieldset class="no-border-bottom">
-      <legend><%= Spree.t('adjustments') %></legend>
-      <table>
-        <thead>
-          <th><%= Spree.t('name')%></th>
-          <th><%= Spree.t('amount')%></th>
-        </thead>
-        <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
-          <% order.adjustments.eligible.each do |adjustment| %>
-            <% next if ((adjustment.originator_type == 'Spree::TaxRate') and (adjustment.amount == 0)) || adjustment.originator_type == 'Spree::ShippingMethod' %>
-            <tr class="total">
-              <td><strong><%= adjustment.label %>:</strong></td>
-              <td class="total align-center"><span><%= adjustment.display_amount %></span></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </fieldset>
-  <% end %>
+  <%= render :partial => "spree/admin/orders/adjustments", :locals => {
+        :adjustments => @order.line_item_adjustments, 
+        :order => order,
+        :title => Spree.t(:line_item_adjustments)
+   } %>
+  <%= render :partial => "spree/admin/orders/adjustments", :locals => {
+        :adjustments => @order.shipment_adjustments, 
+        :order => order,
+        :title => Spree.t(:shipment_adjustments)
+   } %>
+  <%= render :partial => "spree/admin/orders/adjustments", :locals => {
+        :adjustments => @order.adjustments, 
+        :order => order,
+        :title => Spree.t(:order_adjustments)
+   } %>
 
   <% if order.line_items.exists? %>
     <fieldset class="no-border-bottom" id="order-total" data-hook="order_details_total">
