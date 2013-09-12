@@ -171,12 +171,12 @@ module Spree
 
       context "without product" do
         sign_in_as_admin!
-        let(:resource_scoping) { { :product_id => "" } }
+        let(:resource_scoping) { { :product_id => variant.product_id } }
 
-        it "raises ActiveRecord::ReadOnlyRecord exception" do
+        it "will not raise an ActiveRecord::ReadOnlyRecord exception" do
           api_put :update, :id => variant.to_param, :variant => { :sku => "12345", :on_hand => 5 }
-          response.status.should == 422
-          json_response["exception"].should eql "ActiveRecord::ReadOnlyRecord"
+          response.status.should_not eql 422
+          json_response["exception"].should_not eql "ActiveRecord::ReadOnlyRecord"
         end
       end
 
