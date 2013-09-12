@@ -1,0 +1,19 @@
+<% if adjustments.eligible.exists? %>
+  <fieldset class="no-border-bottom">
+    <legend><%= title %></legend>
+    <table>
+      <thead>
+        <th><%= Spree.t('name')%></th>
+        <th><%= Spree.t('amount')%></th>
+      </thead>
+      <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
+        <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
+          <tr class="total">
+            <td><strong><%= label %>:</strong></td>
+            <td class="total align-center"><span><%= Spree::Money.new(adjustments.sum(&:amount)) %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </fieldset>
+<% end %>
