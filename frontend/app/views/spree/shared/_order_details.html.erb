@@ -85,21 +85,31 @@
       <td class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
     </tr>
   </tfoot>
-  <% if order.line_item_adjustments.exists? %>
-    <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
-      <% order.line_item_adjustments.each do |adjustment| %>
-        <tr class="total">
-          <td colspan="4"><strong><%= adjustment.label %></strong></td>
-          <td class="total"><span><%= adjustment.amount %></span></td>
-        </tr>
-      <% end %>
-    </tfoot>
-  <% end %>
+
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= Spree.t(:subtotal) %>:</b></td>
       <td class="total"><span><%= @order.display_item_total.to_html %></span></td>
     </tr>
+  </tfoot>
+  <% if order.line_item_adjustments.exists? %>
+    <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
+      <% order.line_item_adjustments.group_by(&:label).each do |label, adjustments| %>
+        <tr class="total">
+          <td colspan="4"><strong><%= label %></strong></td>
+          <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount)) %></span></td>
+        </tr>
+      <% end %>
+    </tfoot>
+  <% end %>
+  <tfoot id='shipment-total'>
+    <% order.shipments.each do |shipment| %>
+      <% next if shipment.cost.zero? %>
+      <tr class="total" data-hook='shipment-row'>
+        <td colspan="4"><strong><%= shipment.shipping_method.name %></strong></td>
+        <td class="total"><span><%= shipment.display_cost %></span></td>
+      </tr>
+    <% end %>
   </tfoot>
   <tfoot id="order-charges" data-hook="order_details_adjustments">
     <% @order.adjustments.eligible.each do |adjustment| %>
