@@ -59,6 +59,15 @@ describe "Promotion adjustments", :js => true do
         page.should have_content(Spree.t(:coupon_code_not_found))
       end
 
+      it "can enter an invalid coupon code, then a real one" do
+        fill_in "order_coupon_code", :with => "coupon_codes_rule_man"
+        click_button "Save and Continue"
+        page.should have_content(Spree.t(:coupon_code_not_found))
+        fill_in "order_coupon_code", :with => "onetwo"
+        click_button "Save and Continue"
+        page.should have_content("Promotion (Onetwo)   $-10.00")
+      end
+
       context "with a promotion" do
         it "applies a promotion to an order" do
           fill_in "order_coupon_code", :with => "onetwo"
