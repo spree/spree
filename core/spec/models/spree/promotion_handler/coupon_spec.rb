@@ -46,11 +46,14 @@ module Spree
             before { order.stub :coupon_code => "10off" }
 
             it "successfully activates promo" do
+              order.total.should == 130
               subject.apply
               expect(subject.success).to be_present
               order.line_items.each do |line_item|
                 line_item.adjustments.count.should == 1
               end
+              # Ensure that applying the adjustment actually affects the order's total!
+              order.reload.total.should == 100
             end
 
             it "coupon already applied to the order" do
