@@ -28,6 +28,10 @@ module Spree
         @promotion ||= Promotion.active.includes(:promotion_rules, :promotion_actions).find_by(code: order.coupon_code)
       end
 
+      def successful?
+        success.present? && error.blank?
+      end
+
       private
 
       def handle_present_promotion(promotion)
