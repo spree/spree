@@ -883,6 +883,17 @@ p[data-hook="use_billing"] {
   padding: 5px;
 }
 
+#coupon_status {
+  font-weight: bold;
+  font-size: 125%;
+  &.success {
+    color: $c_green;
+  }
+  &.error {
+    color: $c_red;
+  }
+}
+
 /*--------------------------------------*/
 /* Cart
 /*--------------------------------------*/
