@@ -25,65 +25,87 @@ This only means that the message was successfully placed on the SQS queue and th
 ---purchase_order_new.json---
 ```json
 {
-  "message_id": "51af1dc5fe53543f1200f519",
-  "message": "purchase_order:new",
+  "message": "purchase_order.new",
   "payload": {
     "purchase_order": {
-      "order_id": 123,
-      "shipment_id": "456",
-      "shipping_notice_id": "1111111",
-      "simparel_notice_id": "123_456",
+      "po_number": "123456",
+      "client_id": "SPREE",
+      "business_unit": "SPREE",
+      "alt_po_number": 1234,
       "arrival_date": "2013-07-19 00:00:00 +0000",
       "order_date": "2013-04-09 00:00:00 +0000",
-      "title": "SWEATSHIRTS",
+      "comments": "SWEATSHIRTS",
       "warehouse": "QL",
       "vendor": {
         "type": "Vendor",
-        "name": "JOE VENDOR",
-        "vendorid": "JOE1",
+        "name": "JOE Vendor",
+        "vendorid": "JOE001",
         "address": {
-          "address1":"",
-          "address2":"",
-          "address3":"",
-          "address4":"",
-          "city":"",
-          "country":"",
-          "zip":"",
-          "state":""
+          "address1": "1234 Test Lane",
+          "address2": "",
+          "address3": "",
+          "address4": "",
+          "city": "Bethesda",
+          "country": "",
+          "zip": "",
+          "state": "MD"
         },
         "contact": null
-      },
-      "line_items": [
-        {
-          "quantity":12,
-           "itemno":68627,
-           "line_item_number":7,
-           "item_size":"XS",
-           "description":"",
-           "upc":"1234567",
-           "whs_item_id":"13341",
-           "ql_sku":"999999",
-           "ql_description":"Sweats-Grey",
-           "unit_price":"20.98",
-           "total_price":"251.76"
-         },
-        {
-          "quantity":41,
-           "itemno":68626,
-           "line_item_number":8,
-           "item_size":"S",
-           "description":"",
-           "upc":"1234567",
-           "whs_item_id":"13341",
-           "ql_sku":"999999",
-           "ql_description":"Sweats-Grey",
-           "unit_price":"20.98",
-           "total_price":"860.18"
-         }
-      ]
+        },
+        "line_items": [
+          {
+            "quantity": 12,
+            "itemno": "968066",
+            "line_item_number": 7,
+            "description": "Sweats-Grey",
+            "unit_price": "20.98"
+          },
+          {
+            "quantity": 41,
+            "itemno": "968065",
+            "line_item_number": 8,
+            "description": "Sweats-Grey",
+            "unit_price": "20.98"
+          },
+          {
+            "quantity": 86,
+            "itemno": "968064",
+            "line_item_number": 9,
+            "description": "Sweats-Grey",
+            "unit_price": "20.98"
+          },
+          {
+            "quantity": 49,
+            "itemno": "968063",
+            "line_item_number": 10,
+            "description": "Sweats-Grey",
+            "unit_price": "20.98"
+          },
+          {
+            "quantity": 18,
+            "itemno": "968062",
+            "line_item_number": 11,
+            "description": "Sweats-Grey",
+            "unit_price": "20.98"
+          },
+          {
+            "quantity": 2,
+            "itemno": "968061",
+            "line_item_number": 12,
+            "description": "Sweats-Grey",
+            "unit_price": "20.98"
+          },
+          {
+            "quantity": 12,
+            "itemno": "970329",
+            "line_item_number": 13,
+            "description": "Sweats-Grey",
+            "unit_price": "18.48"
+          }
+        ]
+      }
     }
   }
-}
 ```
 
 #### Parameters
@@ -108,7 +130,8 @@ This only means that the message was successfully placed on the SQS queue and th
       "payload": {
         "purchase_order": {
           "order_id": "123",
-          "shipping_notice_id": "123_456",
+          "sqs_id": "12132-23523523-13512412",
+          "s3_url": "http://test-bucket.s3.amazonaws.com/TEST_DOC.xml",
           "warehouse": "QL",
           "order_date": "2013-08-07 00:00:00 +0000",
           "vendor": {
@@ -150,53 +173,55 @@ This only means that the message was successfully placed on the SQS queue and S3
   "message": "shipment_order:new",
   "payload": {
     "shipment_order": {
-      "order_id": "123",
-      "shipment_id": 456,
-      "shipping_notice_id": "88833337",
-      "simparel_notice_id": "123_456",
-      "source_warehouse": {
-        "warehouse_id": "QL",
-        "name": "QUIET LOGISTICS",
-        "address": {
-          "address1": "ATTN Bonobos",
-          "address2": "66 Saratoga Blvd",
-          "address3":null,
-          "address4":null,
-          "city": "Devens",
-          "country": "US",
-          "zip": "01434",
-          "state": "MA"
-        }
-      },
-      "destination_warehouse": {
-        "warehouse_id": "EX01",
-        "name": "Example WAREHOUSE",
-        "address": {
-          "address1": "123 Example lane",
-          "address2": "",
-          "address3": null,
-          "address4": null,
-          "city": "New York",
-          "country": "US",
-          "zip": "10010",
-          "state": "NY"
-        }
-      },
-      "line_items": [
-        {
-          "itemno": 123456,
-          "quantity": 1,
-          "price": 24.49,
-          "upc": "986885",
-          "whs_item_id": "11598-3452",
-          "ql_sku": "99999",
-          "ql_description": "Blue Jeans",
-          "line_item_number":1,
-          "description": "loose fit jeans"
-        }
-      ],
-      "due_date":null,
-      "ship_date": "2013-08-05 00:00:00 +0000"
+      {
+        "shipment_number": "T100044_20024",
+        "order_date": "2013-09-05T17:19:28Z",
+        "order_type": "TO",
+        "client_id": "SPREE",
+        "comments" : '',
+        "business_unit": "SPREE",
+        "ship_mode": {
+          "carrier": "UPS",
+          "service_level": "GROUND"
+        },
+        "ship_to": {
+          "name": "Spree",
+          "address": {
+            "address1": "",
+            "address2": "",
+            "address3": null,
+            "address4": null,
+            "city": "",
+            "country": "",
+            "zip": "",
+            "state": ""
+          }
+        },
+        "bill_to": {
+          "name": "SPREE",
+          "address": {
+            "address1": "",
+            "address2": "",
+            "address3": null,
+            "address4": null,
+            "city": "",
+            "country": "",
+            "zip": "",
+            "state": ""
+          }
+        },
+        "line_items": [
+          {
+            "description": "Washed Chinos",
+            "itemno": "332110",
+            "quantity_ordered": 1,
+            "quantity_to_ship": 1,
+            "line_item_number": 1,
+            "price": 24.49,
+            "UOM": "EA"
+          }
+        ]
+      }
     }
   }
 }
@@ -224,31 +249,19 @@ This only means that the message was successfully placed on the SQS queue and S3
       "payload": {
         "shipping_order": {
           "order_id": "T100045",
-          "shipping_notice_id": "100045_20025",
-          "source_warehouse": {
-            "warehouse_id": "QL",
+          "sqs_id": "1214-2453-35325",
+          "s3_url": "http://test-bucket.s3.amazonaws.com/TEST_DOC.xml"
+          "ship_to": {
+            "name": "SPREE",
             "address": {
-              "address1": "ATTN Bonobos",
-              "address2": "66 Saratoga Blvd",
+              "address1": "",
+              "address2": "",
               "address3": null,
               "address4": null,
-              "city": "Devens",
-              "country": "US",
-              "zip": "01434",
-              "state": "MA"
-            }
-          },
-          "destination_warehouse": {
-            "warehouse_id": "GSNY1",
-            "address": {
-              "address1": "45 W 25th St",
-              "address2": "5th Floor",
-              "address3": null,
-              "address4": null,
-              "city": "New York",
-              "country": "US",
-              "zip": "10010",
-              "state": "NY"
+              "city": "",
+              "country": "",
+              "zip": "",
+              "state": ""
             }
           }
         }
@@ -414,7 +427,6 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
     {
       "message": "ql:shipment:confirm",
       "payload": {
-        "type": "shipment_order_result",
         "number": "T600110212",
         "warehouse": "QL"
       }
