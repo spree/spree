@@ -215,14 +215,14 @@ describe Spree::Promotion do
       before { promotion.match_policy = 'all' }
 
       it "should have eligible rules if all rules are eligible" do
-        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
-                                     mock_model(Spree::PromotionRule, :eligible? => true)]
+        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
+                                     mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true)]
         promotion.rules_are_eligible?(@order).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
-        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true),
-                                     mock_model(Spree::PromotionRule, :eligible? => false)]
+        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
+                                     mock_model(Spree::PromotionRule, :eligible? => false, :applicable? => true)]
         promotion.rules_are_eligible?(@order).should be_false
       end
     end
