@@ -56,7 +56,7 @@ module Spree
 
     # called anytime order.update! happens
     def eligible?(order)
-      return false if expired? || usage_limit_exceeded?(order)
+      return false if expired? || usage_limit_exceeded?
       rules_are_eligible?(order, {})
     end
 
@@ -85,13 +85,8 @@ module Spree
       products.map(&:id)
     end
 
-    def usage_limit_exceeded?(order = nil)
-      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(order) >= usage_limit
-    end
-
-    def adjusted_credits_count(order)
-      return credits_count if order.nil?
-      credits_count - (order.promotion_credit_exists?(self) ? 1 : 0)
+    def usage_limit_exceeded?
+      usage_limit > 0 && credits_count >= usage_limit
     end
 
     def credits
