@@ -23,7 +23,7 @@ module Spree
       class_name: 'Spree::Price',
       dependent: :destroy
 
-    delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency if Spree::Price.table_exists?
+    delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency 
 
     has_many :prices,
       class_name: 'Spree::Price',
@@ -31,7 +31,8 @@ module Spree
 
     validate :check_price
     validates :price, numericality: { greater_than_or_equal_to: 0 }, presence: true, if: proc { Spree::Config[:require_master_price] }
-    validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true } if self.table_exists? && self.column_names.include?('cost_price')
+
+    validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
     before_validation :set_cost_currency
     after_save :save_default_price
