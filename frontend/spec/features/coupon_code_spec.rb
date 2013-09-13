@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Promotion adjustments", :js => true do
+describe "Coupon code promotions", :js => true do
   let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
