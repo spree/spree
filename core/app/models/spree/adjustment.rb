@@ -61,6 +61,10 @@ module Spree
     def immutable?
       state != "open"
     end
+
+    def promotion?
+      source.class < Spree::PromotionAction
+    end
     
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
@@ -71,6 +75,9 @@ module Spree
       return amount if immutable?
       amount = source.compute_amount(target || adjustable)
       self.update_column(:amount, amount)
+      if promotion?
+        self.update_column(:eligible, source.promotion.eligible?(adjustable))
+      end
       amount
     end
 

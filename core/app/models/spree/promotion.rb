@@ -86,7 +86,7 @@ module Spree
     end
 
     def usage_limit_exceeded?
-      usage_limit > 0 && credits_count >= usage_limit
+      usage_limit.present? && usage_limit > 0 && credits_count >= usage_limit
     end
 
     def credits
