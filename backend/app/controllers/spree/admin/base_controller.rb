@@ -74,7 +74,12 @@ module Spree
         def filter_dismissed_alerts
           return unless session[:alerts]
           dismissed = (Spree::Config[:dismissed_spree_alerts] || '').split(',')
-          session[:alerts].reject! { |a| dismissed.include? a["id"].to_s }
+          # If it's a string, something has gone wrong with the alerts service. Ignore it.
+          if session[:alerts].is_a?(String)
+            session[:alerts] = nil
+          else
+            session[:alerts].reject! { |a| dismissed.include? a["id"].to_s }
+          end
         end
 
         def config_locale
