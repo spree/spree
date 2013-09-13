@@ -55,18 +55,18 @@ module Spree
     end
 
     # called anytime order.update! happens
-    def eligible?(order)
+    def eligible?(promotable)
       return false if expired? || usage_limit_exceeded?
-      rules_are_eligible?(order, {})
+      rules_are_eligible?(promotable, {})
     end
 
-    def rules_are_eligible?(order, options = {})
+    def rules_are_eligible?(promotable, options = {})
       return true if rules.none?
-      eligible = lambda { |r| r.eligible?(order, options) }
+      eligible = lambda { |r| r.eligible?(promotable, options) }
       if match_policy == 'all'
-        rules.all?(&eligible)
+        rules.for(promotable).all?(&eligible)
       else
-        rules.any?(&eligible)
+        rules.for(promotable).any?(&eligible)
       end
     end
 

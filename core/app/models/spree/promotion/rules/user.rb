@@ -10,6 +10,10 @@ module Spree
           has_and_belongs_to_many :users, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id'
         end
 
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order)
+        end
+
         def eligible?(order, options = {})
           users.include?(order.user)
         end

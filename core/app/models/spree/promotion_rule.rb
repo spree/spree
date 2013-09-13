@@ -8,8 +8,16 @@ module Spree
     validate :promotion, presence: true
     validate :unique_per_activator, on: :create
 
-    def eligible?(order, options = {})
-      raise 'eligible? should be implemented in a sub-class of Promotion::PromotionRule'
+    def self.for(promotable)
+      all.select { |rule| rule.applicable?(promotable) }
+    end
+
+    def applicable?(promotable)
+      raise 'applicable? should be implemented in a sub-class of Spree::PromotionRule'
+    end
+
+    def eligible?(promotable, options = {})
+      raise 'eligible? should be implemented in a sub-class of Spree::PromotionRule'
     end
 
     private
