@@ -4,6 +4,10 @@ module Spree
       class FirstOrder < PromotionRule
         attr_reader :user, :email
 
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order)
+        end
+
         def eligible?(order, options = {})
           @user = order.try(:user) || options[:user]
           @email = order.email

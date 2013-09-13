@@ -16,6 +16,10 @@ module Spree
           products
         end
 
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order)
+        end
+
         def eligible?(order, options = {})
           return true if eligible_products.empty?
           if preferred_match_policy == 'all'
