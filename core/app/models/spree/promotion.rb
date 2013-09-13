@@ -56,7 +56,7 @@ module Spree
 
     # called anytime order.update! happens
     def eligible?(promotable)
-      return false if expired? || usage_limit_exceeded?
+      return false if expired? || usage_limit_exceeded?(promotable)
       rules_are_eligible?(promotable, {})
     end
 
@@ -85,8 +85,12 @@ module Spree
       products.map(&:id)
     end
 
-    def usage_limit_exceeded?
-      usage_limit.present? && usage_limit > 0 && credits_count >= usage_limit
+    def usage_limit_exceeded?(promotable)
+      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+    end
+
+    def adjusted_credits_count(promotable)
+      credits_count - promotable.adjustments.promotion.where(:source_id => actions.pluck(:id)).count
     end
 
     def credits
