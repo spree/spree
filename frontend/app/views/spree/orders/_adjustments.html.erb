@@ -5,10 +5,12 @@
 </thead>
 <tbody id="cart_adjustments" data-hook>
   <% @order.line_item_adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
-    <tr>
-      <td colspan="4"><%= label %></td>
-      <td><%= Spree::Money.new(adjustments.sum(&:amount), :currency => @order.currency) %></td>
-      <td></td>
-    </tr>
+    <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments %>
+  <% end %>
+  <% @order.shipment_adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
+    <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments %>
+  <% end %>
+  <% @order.adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
+    <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments %>
   <% end %>
 </tbody>

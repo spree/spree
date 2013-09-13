@@ -12,5 +12,7 @@
   <tbody id="line_items" data-hook>
     <%= render partial: 'line_item', collection: order_form.object.line_items, locals: {order_form: order_form} %>
   </tbody>
-  <%= render "spree/orders/adjustments" unless @order.line_item_adjustments.eligible.blank? %>
+  <% if @order.adjustments.exists? || @order.line_item_adjustments.exists? || @order.shipment_adjustments.exists? %>
+    <%= render "spree/orders/adjustments" %>
+  <% end %>
 </table>
