@@ -63,12 +63,18 @@ nav.menu {
 #admin-menu {
   background-color: $color-3;
 
+  ul{
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+
   li {
-    min-width: 90px;
+    display: table-cell;
 
     a {
       display: block;
-      padding: 25px 20px;
+      padding: 25px 15px;
       color: $color-1 !important;
       text-transform: uppercase;
       position: relative;
