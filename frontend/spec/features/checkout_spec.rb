@@ -50,7 +50,7 @@ describe "Checkout" do
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        page.should have_content("Shipping Total:  $10.00")
+        page.should have_content("Shipping total:  $10.00")
       end
     end
   end
