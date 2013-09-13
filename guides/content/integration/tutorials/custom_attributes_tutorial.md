@@ -204,7 +204,7 @@ $ curl --header "X-Spree-Token: your_spree_token"
   http://yourdomain.com/api/orders/R123456789.json
 ```
 
-This command fetches the details for the order with the number `R123456789`. The return is very long (orders complex objects), but the part we care about is there:
+This command fetches the details for the order with the number `R123456789`. The return is very long (orders are complex objects), but the part we care about is there:
 
 ```bash
 "ship_address":{"id":1,"firstname":"Retha","lastname":"Murray",
@@ -266,17 +266,26 @@ require 'endpoint_base'
 
 class CustomAttributeEndpoint < EndpointBase
   post '/validate_address' do
-    address = @message[:payload]['order']['ship_address']
+    get_address
 
     begin
-      result = DummyShip.validate_address(address)
+      result = DummyShip.validate_address(@address)
       process_result 200, { 'message_id' => @message[:message_id],
-        'message' => "notification:info", "payload" => { "result" =>
-        "The address is valid, and the shipment will be sent." } }
+                            'notifications' => [
+                              { 'level' => "info",
+                                'subject' => "",
+                                'description' => "The address is valid, and the shipment will be sent." }
+                            ]
+                          }
+
     rescue Exception => e
       process_result 200, { 'message_id' => @message[:message_id],
-        'message' => "notification:error", "payload" => { "result" =>
-        e.message } }
+                            'notifications' => [
+                              { 'level' => "error",
+                                'subject' => 'address is invalid',
+                                'description' => e.message }
+                            ]
+                          }
     end
   end
 end
@@ -294,7 +303,7 @@ We can't directly encode the order output message to the format we need (that's 
 $ cd custom_attribute_endpoint
 $ bundle install
 $ bundle exec rackup -p 9292
-$ curl --data @./residential_order.json -i -X POST -H
+$ curl --data @./residential_order.json -i -X POST -H 
   'Content-type:application/json' http://localhost:9292/validate_address
 ```
 
@@ -309,8 +318,7 @@ Server: WEBrick/1.3.1 (Ruby/2.0.0/2013-06-27)
 Date: Wed, 28 Aug 2013 23:05:53 GMT
 Connection: Keep-Alive
 
-{"message_id":"12345","message":"notification:error","payload":{"result":"This order
-  is outside our shipping zone."}}
+{"message_id":"12345","notifications":[{"level":"error","subject":"address is invalid","description":"This order is outside our shipping zone."}]}
 ```
 
 ## Accessing Custom Data
@@ -327,12 +335,22 @@ class CustomAttributeEndpoint < EndpointBase
 
     begin
       result = DummyShip.validate_address(@address)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
-        "notification:info", "payload" => { "result" =>
-        "The address is valid, and the shipment will be sent." } }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "info",
+                                'subject' => "",
+                                'description' => "The address is valid, and the shipment will be sent." }
+                            ]
+                          }
+
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
-        "notification:error", "payload" => { "result" => e.message } }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "error",
+                                'subject' => 'address is invalid',
+                                'description' => e.message }
+                            ]
+                          }
     end
   end
 
@@ -341,12 +359,22 @@ class CustomAttributeEndpoint < EndpointBase
 
     begin
       result = @address['variety'] == "Business" ? "do" : "do not"
-      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
-        "notification:info", "payload" => { "result" =>
-        "You #{result} need to get a signature for this package." } }
+
+      process_result 200, { 'message_id' => @message[:message_id], 
+                            'notifications' => [
+                              { 'level' => "info",
+                                'subject' => 'Address details',
+                                'result' => "You #{result} need to get a signature for this package." }
+                            ]
+                          }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' =>
-        "notification:error", "payload" => { "result" => e.message} }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "error",
+                                'subject' => 'unexpected error',
+                                'description' => e.message }
+                            ]
+                          }
     end
   end
 
@@ -365,28 +393,24 @@ Remember: Sinatra doesn't reload your changes unless you explicitly tell it to. 
 When you run the curl command against the residential delivery:
 
 ```bash
-$ curl --data @./residential_order.json -i -X POST -H
-  'Content-type:application/json' http://localhost:9292/get_biz_signer
+$ curl --data @./residential_order.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/get_biz_signer
 ```
 
 you get the following return:
 
 ```bash
-{"message_id":"12345","message":"notification:info","payload":{"result":
-  "You do not need to get a signature for this package."}}```
+{"message_id":"12345","notifications":[{"level":"info","subject":"Address details","result":"You do not need to get a signature for this package."}]}
 
 Yet when you run it against the business delivery:
 
 ```bash
-$ curl --data @./business_order.json -i -X POST -H
-  'Content-type:application/json' http://localhost:9292/get_biz_signer
+$ curl --data @./business_order.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/get_biz_signer
 ```
 
 you get the following return:
 
 ```bash
-{"message_id":"54321","message":"notification:info","payload":{"result":
-  "You do need to get a signature for this package."}}
+{"message_id":"54321","notifications":[{"level":"info","subject":"Address details","result":"You do need to get a signature for this package."}]}
 ```
 
 Through this relatively simplistic scenario, you get a sense of just how much flexibility you have in writing both storefronts and integrations to suit your particular needs.

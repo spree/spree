@@ -141,11 +141,22 @@ class FulfillmentEndpoint < EndpointBase
 
     begin
       result = DummyShip.validate_address(address)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:info",
-        "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
+      process_result 200, { 'message_id' => @message[:message_id], 
+                            'notifications' => [
+                              { 'level' => "info",
+                                'subject' => "",
+                                'description' => "The address is valid, and the shipment will be sent." }
+                            ]
+                          }
+
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => e.message } }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "error",
+                                'subject' => 'addres is invalid',
+                                'description' => e.message } 
+                            ]
+                          }
     end
   end
 end
@@ -225,7 +236,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:41:57 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}}
+{"message_id":"518726r85010000001","notifications":[{"level":"info","subject":"","description":"The address is valid, and the shipment will be sent."}]}
 ```
 
 Hooray! Our shipment to Leesburg is a go! Now let's try the shipment to Greensboro.
@@ -241,7 +252,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:42:49 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}
+{"message_id":"518726r85010000001","notifications":[{"level":"error","subject":"addres is invalid","description":"This order is outside our shipping zone."}]}
 ```
 
 As we expected, the zip code for this order is outside the API's acceptable range; this shipment can not be sent with the `DummyShip` fulfillment process.
@@ -315,13 +326,28 @@ class FulfillmentEndpoint < EndpointBase
 
     begin
       result = DummyShip.ship_package(@address, @order)
-      process_result 200, [ { 'message_id' => @message[:message_id], 'message' => "notification:info",
-        "payload" => { "result" => "The address is valid, and the shipment will be sent." } },
-        { 'message_id' => @message[:message_id], 'message' => "shipment:confirm",
-        "payload" => { "tracking_number" => result.tracking_number, "ship_date" => result.ship_date } } ]
+      process_result 200, { 'message_id' => @message[:message_id], 
+                            'notifications' => [
+                              { 'level' => "info",
+                                'subject' => "",
+                                'description' => "The address is valid, and the shipment will be sent." }
+                            ],
+                            'messages' => [
+                              { 'message' => "shipment:confirm",
+                                'payload' => {
+                                  "tracking_number" => result.tracking_number,
+                                  "ship_date" => result.ship_date }
+                              }
+                            ]
+                          }
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => e.message } }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "error",
+                                'subject' => 'addres is invalid',
+                                'description' => e.message } 
+                            ]
+                          }
     end
   end
 
@@ -330,11 +356,22 @@ class FulfillmentEndpoint < EndpointBase
 
     begin
       result = DummyShip.validate_address(@address)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:info",
-        "payload" => { "result" => "The address is valid, and the shipment will be sent." } }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "info",
+                                'subject' => "",
+                                'description' => "The address is valid, and the shipment will be sent." }
+                            ]
+                          }
+
     rescue Exception => e
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => "notification:error",
-        "payload" => { "result" => e.message } }
+      process_result 200, { 'message_id' => @message[:message_id],
+                            'notifications' => [
+                              { 'level' => "error",
+                                'subject' => 'addres is invalid',
+                                'description' => e.message }
+                            ]
+                          }
     end
   end
 
@@ -362,7 +399,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:50:31 GMT
 Connection: Keep-Alive
 
-[{"message_id":"518726r85010000001","message":"notification:info","payload":{"result":"The address is valid, and the shipment will be sent."}},{"message_id":"518726r85010000001","message":"shipment:confirm","payload":{"tracking_number":"S350455","ship_date":"2013-07-12"}}]
+{"message_id":"518726r85010000001","notifications":[{"level":"info","subject":"","description":"The address is valid, and the shipment will be sent."}],"messages":[{"message":"shipment:confirm","payload":{"tracking_number":"S434114","ship_date":"2013-09-13"}}]}
 ```
 
 As you can see, the endpoint returns an array of messages. The first is a `notification:info` like the ones we've used all along, basically just saying that the address is valid. The second is a `shipment:confirm` message that includes the new shipment's `tracking_number` and date of shipping. The tracking number is randomly-generated, so both it and the `ship_date` should be different from those shown above.
@@ -380,7 +417,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
 Date: Fri, 12 Jul 2013 22:52:37 GMT
 Connection: Keep-Alive
 
-{"message_id":"518726r85010000001","message":"notification:error","payload":{"result":"This order is outside our shipping zone."}}
+{"message_id":"518726r85010000001","notifications":[{"level":"error","subject":"addres is invalid","description":"This order is outside our shipping zone."}]}
 ```
 
 Exactly what we want to have happen: the shipment is not created, the exception is captured elegantly, and a `notification:error` message is returned.
