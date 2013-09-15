@@ -49,7 +49,9 @@ module Spree
 
       it 'can create a new stock item' do
         variant = create(:variant)
-        variant.stock_items.delete_all
+        # Creating a variant also creates stock items.
+        # We don't want any to exist (as they would conflict with what we're about to create)
+        StockItem.delete_all
         params = {
           stock_location_id: stock_location.to_param,
           stock_item: {
@@ -96,7 +98,7 @@ module Spree
       it 'can delete a stock item' do
         api_delete :destroy, id: stock_item.to_param
         response.status.should == 204
-        lambda { stock_item.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        lambda { Spree::StockItem.find(stock_item.id) }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
