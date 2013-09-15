@@ -20,23 +20,26 @@ Git is used to push the code to Heroku.
 
 ## Configuring your application
 
-There are three major things you will need to edit before you can deploy your
-application to Heroku: your Gemfile to specify Ruby 1.9.3, the asset pipeline's `initialize_on_precompile` setting
-and S3 settings.
+### Specify Ruby version
 
-### Using Ruby 1.9.3
-
-***
-If you are not using Spree 2.0.0 and above, then you can safely ignore this section.
-***
-
-Spree 2.0.0 requires a version of Ruby greater than or equal to Ruby 1.9.3. By default, Heroku uses Ruby 1.9.2, which *will not work* with Spree. To force Heroku to use Ruby 1.9.3, put this line in your Gemfile:
+You should speficy the exact ruby version you want to run in your Gemfile:
 
 ```ruby
-ruby '1.9.3'
+ruby '2.0.0'
 ```
 
+Keep in mind that Spree 2.0.0 requires a version of Ruby greater than or equal to Ruby 1.9.3.
+See [Heroku Ruby support page](https://devcenter.heroku.com/articles/ruby-support#build-behavior)
+for details on build behaviour related to Ruby versions.
+
 ### Asset Pipeline
+
+***
+You can ignore this section if you're on Rails 4 or greater. There's no longer
+a `initialize_on_precompile` config option because you should be able to run
+`assets:precompile` without a database connection. See Heroku [troubleshooting
+page for details](https://devcenter.heroku.com/articles/rails-asset-pipeline#troubleshooting).
+***
 
 When deploying to Heroku by default Rails will attempt to intialize itself
 before the assets are precompiled. This step will fail because the application
