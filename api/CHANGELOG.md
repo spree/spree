@@ -1,4 +1,4 @@
-## Spree 2.1.0 (unreleased) ##
+## Spree 2.1.0 ##
 
 * The Products API endpoint now returns an additional key called `shipping_category_id`, and also requires `shipping_category_id` on create.
 

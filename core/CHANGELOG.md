@@ -1,4 +1,4 @@
-## Spree 2.1.0 (unreleased) ##
+## Spree 2.1.0 ##
 
 * Product requires `shipping_category_id` on create #3188.
 
