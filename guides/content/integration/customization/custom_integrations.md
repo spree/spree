@@ -4,9 +4,9 @@ title: Custom Integrations
 
 ## Overview
 
-Customization is one of the key features of Spree Commerce, every merchant has their own unique requirements and being able to build out custom functionality in both your storefront and within hub is critical.
+Customization is one of the key features of Spree Commerce, every merchant has their own unique requirements and being able to build out custom functionality in both your storefront and within the hub is critical.
 
-The hub allows you to use it's powerful messaging and routing features to connect your own custom endpoints, allowing you to integrate in-house systems into your existing work-flows.
+The hub allows you to use its powerful messaging and routing features to connect your own custom endpoints, allowing you to integrate in-house systems into your existing workflows.
 
 We've created several [Tutorials](/integration/basic_endpoints_tutorial.html) that walk you through creating a number of different endpoints.
 
@@ -19,7 +19,7 @@ The hub uses the details within this file to advertise the integration to the Sp
 
 When configuring an Integration using the Spree Hub Connector the information from the `endpoint.json` is used to populate a [mapping](/integration/mapping_basics.html) with default configuration for each configured service.
 
-The file contains some basic details about your endpoint and lists all the available services including which messages you recommend the service to process and all configuration details (like parameters, filters, identifiers that the service may require).
+The file contains some basic details about your endpoint and lists all the available services including which messages you recommend the service process and all configuration details (like parameters, filters, identifiers that the service may require).
 
 The `endpoint.json` file must be available at the root path of your application via `HTTP GET` request i.e. /endpoint.json
 
@@ -34,9 +34,9 @@ The `endpoint.json` file must be available at the root path of your application 
     "services": [] 
 }```
 
-In the example above we see the general details from the Mandrill `endpoint.json` file, the required files include:
+In the example above we see the general details from the Mandrill `endpoint.json` file, the required entries include:
 
-1. **name** - Name is the title of an endpoint and must be unique, may only contain lowercase letters, and - or _. No whitespace, numbers, or special characters allowed. The name attribute is used in several places for referencing the endpoint, think of it as a permalink.
+1. **name** - Name is the title of an endpoint and must be unique, may only contain lowercase letters, and - or _. No whitespace, numbers, or special characters allowed. The name attribute is used in several places for referencing the endpoint; think of it as a permalink.
 2. **display** - This is the human name for the endpoint, presented when displaying details relating to the endpoint.
 3. **description** - A short text description of the endpoint and the integration it provides.
 4. **icon_url** - Is a relative path to an icon file, displayed with listing details relating to the endpoint. Should not exceed 130x130 pixels.
@@ -49,7 +49,7 @@ In the example above we see the general details from the Mandrill `endpoint.json
 The majority of the details within an `endpoint.json` file are related to a service entry. The service entries outline all the details required for the hub to interact with your endpoints action:
 
 1. **name** - Following the same formatting rules an the overall endpoint name, each service requires a unique name (within the current endpoint).
-2. **path** - The relative path for the service, a message destined for a service with be POST'd to endpoints base url + the service path. i.e http://ep-mandrill.spree.fm/order_confirmation
+2. **path** - The relative path for the service, a message destined for a service with be POST'd to endpoints base url + the service path. i.e /order_confirmation
 3. **description** - A short text description of the service.
 4. **requires** - Identifies any required configuration for a given service (currently only supports listing parameters).
     1. **parameters** - Any parameters required for the given service to process a message. Each parameter has the following attributes:

@@ -4,13 +4,13 @@ title: Connecting your endpoint
 
 ## Overview
 
-Once you've created your endpoint and you'll want to connect it to hub so it can start processing messages. This guides explains:
+Once you've created your endpoint you'll want to connect it to the hub so it can start processing messages. This guides explains:
 
 1. Adding an `endpoint.json` file for your endpoint.
 
 2. Deploying your endpoint and configuring the security.
 
-3. Regisitering your endpoint with the hub using the spree_hub_connector gem.
+3. Registering your endpoint with the hub using the spree_hub_connector gem.
 
 
 ## endpoint.json
@@ -25,7 +25,7 @@ For more details on the contents of the file please refer to the [Custom Integra
 
 ## Deployment and Security
 
-All endpoints must be publiclly accessible in order for the hub to be able to route messages to it successfully. All production endpoints must be deployed on SSL secured hosts.
+All endpoints must be publicly accessible in order for the hub to be able to route messages to it successfully. All production endpoints must be deployed on SSL secured hosts.
 
 To ensure your endpoint only processes messages from the hub you must configure a preshared key that the hub will include as a HTTP header with each message it delivers.
 
