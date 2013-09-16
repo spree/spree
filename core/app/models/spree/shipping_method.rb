@@ -22,16 +22,6 @@ module Spree
       Spree.t(:shipping)
     end
 
-    def zone
-      ActiveSupport::Deprecation.warn("[SPREE] ShippingMethod#zone is no longer correct. Multiple zones need to be supported")
-      zones.first
-    end
-
-    def zone=(zone)
-      ActiveSupport::Deprecation.warn("[SPREE] ShippingMethod#zone= is no longer correct. Multiple zones need to be supported")
-      zones = zone
-    end
-
     def include?(address)
       return false unless address
       zones.any? do |zone|

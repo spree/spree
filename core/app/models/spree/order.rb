@@ -190,13 +190,6 @@ module Spree
       Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
     end
 
-    # Array of adjustments that are inclusive in the variant price.  Useful for when prices
-    # include tax (ex. VAT) and you need to record the tax amount separately.
-    def price_adjustments
-      ActiveSupport::Deprecation.warn("Order#price_adjustments will be deprecated in Spree 2.1, please use Order#line_item_adjustments instead.")
-      self.line_item_adjustments
-    end
-
     # Array of totals grouped by Adjustment#label. Useful for displaying line item
     # adjustments on an invoice. For example, you can display tax breakout for
     # cases where tax is included in price.
@@ -205,11 +198,6 @@ module Spree
         total = adjustments.sum(&:amount)
         [label, Spree::Money.new(total, { currency: currency })]
       end]
-    end
-
-    def price_adjustment_totals
-      ActiveSupport::Deprecation.warn("Order#price_adjustment_totals will be deprecated in Spree 2.1, please use Order#line_item_adjustment_totals instead.")
-      self.line_item_adjustment_totals
     end
 
     def updater
