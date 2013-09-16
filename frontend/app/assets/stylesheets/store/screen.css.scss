@@ -118,7 +118,7 @@ input[type="week"] {
   font-size: $input_box_font_size;
 
   &:active, &:focus {
-    border-color: $link_text_color;;
+    border-color: $link_text_color;
     outline: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
