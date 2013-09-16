@@ -1,4 +1,4 @@
-## Spree 2.1.0 (unreleased) ##
+## Spree 2.1.0 ##
 
 *  Fix issue where "Use Billing Address" checkbox was unticked when certain
    browsers autocompleted the checkout form. #3068 #3085
