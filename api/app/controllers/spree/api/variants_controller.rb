@@ -66,7 +66,7 @@ module Spree
               variants = variants.active
             end
           end
-          variants.readonly(false)
+          variants
         end
 
         def variant_params
