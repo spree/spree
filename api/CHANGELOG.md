@@ -1,4 +1,4 @@
-## Spree 2.0.4 (unreleased)
+## Spree 2.0.x ##
 
 * PUT requests to Checkouts API endpoints now require authorization to alter an order.
 

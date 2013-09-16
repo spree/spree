@@ -1,4 +1,4 @@
-## Spree 2.0.1 (unreleased) ##
+## Spree 2.0.x ##
 
 *   Symbolize attachment style keys on ImageSettingController otherwise users
     would get *undefined method `processors' for "48x48>":String>* since
