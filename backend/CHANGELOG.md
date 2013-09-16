@@ -1,4 +1,4 @@
-## Spree 2.1.0 (unreleased) ##
+## Spree 2.1.0 ##
 
 *   layouts/admin.html.erb was broken into partials for each section. e.g.
     header, menu, submenu, sidebar. Extensions should update their deface
