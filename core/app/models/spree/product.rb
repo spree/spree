@@ -83,11 +83,6 @@ module Spree
 
     before_destroy :punch_permalink
 
-    def variants_with_only_master
-      ActiveSupport::Deprecation.warn("[SPREE] Spree::Product#variants_with_only_master will be deprecated in Spree 1.3. Please use Spree::Product#master instead.")
-      master
-    end
-
     def to_param
       permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
     end
