@@ -611,6 +611,15 @@ describe Spree::Payment do
       payment.identifier.should be_a(String)
     end
 
+    # Regression test for #3733
+    it "does not regenerate the identifier on re-save" do
+      payment.save
+      old_identifier = payment.identifier
+      payment.save
+      payment.identifier.should == old_identifier
+    end
+
+
     context "other payment exists" do
       let(:other_payment) {
         payment = Spree::Payment.new
