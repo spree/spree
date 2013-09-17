@@ -14,7 +14,7 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :path, presence: true, if: lambda{|r| r.event_name == 'spree.content.visited' }
+    validates :path, uniqueness: true
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
@@ -39,10 +39,6 @@ module Spree
 
     def activate(payload)
       return unless order_activatable? payload[:order]
-
-      if path.present?
-        return unless path == payload[:path]
-      end
 
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
