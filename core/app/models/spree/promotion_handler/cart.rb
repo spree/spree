@@ -28,7 +28,7 @@ module Spree
       private
 
         def promotions
-          Promotion.active.includes(:promotion_rules).where(:code => nil)
+          Promotion.active.includes(:promotion_rules).where(:code => nil, :path => nil)
         end
     end
   end
