@@ -12,7 +12,6 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create a flat rate discount coupon promo" do
       fill_in "Name", :with => "Promotion"
-      select2 "Coupon code added", :from => "Event Name"
       fill_in "Code", :with => "order"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -32,7 +31,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.checkout.coupon_code_added"
       promotion.code.should == "order"
 
       first_rule = promotion.rules.first
@@ -49,7 +47,6 @@ describe "Promotion Adjustments" do
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
       fill_in "Name", :with => "Promotion"
       fill_in "Usage Limit", :with => "1"
-      select2 "Coupon code added", :from => "Event Name"
       fill_in "Code", :with => "single_use"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -63,7 +60,6 @@ describe "Promotion Adjustments" do
 
       promotion = Spree::Promotion.find_by_name("Promotion")
       promotion.usage_limit.should == 1
-      promotion.event_name.should == "spree.checkout.coupon_code_added"
       promotion.code.should == "single_use"
 
       first_action = promotion.actions.first
@@ -75,7 +71,6 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Promotion"
-      select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -93,7 +88,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.order.contents_changed"
       promotion.code.should be_blank
 
       first_rule = promotion.rules.first
@@ -111,7 +105,6 @@ describe "Promotion Adjustments" do
       create(:product, :name => "RoR Mug")
 
       fill_in "Name", :with => "Promotion"
-      select2 "Add to cart", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -128,7 +121,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.cart.add"
       promotion.code.should be_blank
 
       first_rule = promotion.rules.first
@@ -158,7 +150,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.cart.add"
       promotion.code.should be_blank
 
       first_rule = promotion.rules.first
@@ -172,7 +163,6 @@ describe "Promotion Adjustments" do
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Promotion"
-      select2 "Visit static content page", :from => "Event Name"
       fill_in "Path", :with => "content/cvv"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -185,7 +175,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.content.visited"
       promotion.path.should == "content/cvv"
       promotion.code.should be_blank
       promotion.rules.should be_blank
@@ -200,7 +189,6 @@ describe "Promotion Adjustments" do
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
       create(:product, :name => "RoR Mug")
       fill_in "Name", :with => "Promotion"
-      select2 "Coupon code added", :from => "Event Name"
       fill_in "Code", :with => "complex"
       click_button "Create"
       page.should have_content("Editing Promotion")
@@ -235,7 +223,6 @@ describe "Promotion Adjustments" do
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Promotion"
-      select2 "Order contents changed", :from => "Event Name"
       click_button "Create"
       page.should have_content("Editing Promotion")
 
@@ -252,7 +239,6 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.event_name.should == "spree.order.contents_changed"
 
       first_rule = promotion.rules.first
       first_rule.class.should == Spree::Promotion::Rules::ItemTotal

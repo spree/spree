@@ -245,7 +245,7 @@ describe "Checkout" do
   end
 
   context "in coupon promotion, submits coupon along with payment", js: true do
-    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", event_name: "spree.checkout.coupon_code_added", code: "huhu") }
+    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", code: "huhu") }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
