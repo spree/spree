@@ -605,7 +605,7 @@ describe Spree::Payment do
   context "#set_unique_identifier" do
     # Regression test for #1998
     it "sets a unique identifier on create" do
-      payment.run_callbacks(:save)
+      payment.run_callbacks(:create)
       payment.identifier.should_not be_blank
       payment.identifier.size.should == 8
       payment.identifier.should be_a(String)
@@ -635,7 +635,7 @@ describe Spree::Payment do
         payment.should_receive(:generate_identifier).and_return(other_payment.identifier)
         payment.should_receive(:generate_identifier).and_call_original
 
-        payment.run_callbacks(:save)
+        payment.run_callbacks(:create)
 
         payment.identifier.should_not be_blank
         payment.identifier.should_not == other_payment.identifier
