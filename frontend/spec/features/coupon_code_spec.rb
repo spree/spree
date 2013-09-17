@@ -12,7 +12,6 @@ describe "Coupon code promotions", :js => true do
     def create_basic_coupon_promotion(code)
       promotion = Spree::Promotion.create!(:name       => code.titleize,
                                            :code       => code,
-                                           :event_name => "spree.checkout.coupon_code_added",
                                            :starts_at  => 1.day.ago,
                                            :expires_at => 1.day.from_now)
 
