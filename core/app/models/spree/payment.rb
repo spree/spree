@@ -13,7 +13,7 @@ module Spree
     has_many :log_entries, as: :source
 
     before_validation :validate_source
-    before_save :set_unique_identifier
+    before_create :set_unique_identifier
 
     after_save :create_payment_profile, if: :profiles_supported?
 
