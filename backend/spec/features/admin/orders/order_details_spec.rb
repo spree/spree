@@ -31,7 +31,9 @@ describe "Order Details", js: true do
         end
         click_icon :ok
 
-        page.should have_content("TOTAL: $20.00")
+        within("#order_total") do
+          page.should have_content("$20.00")
+        end
       end
 
       it "can add an item to a shipment" do
@@ -41,7 +43,9 @@ describe "Order Details", js: true do
           click_icon :plus
         end
 
-        page.should have_content("TOTAL: $70.00")
+        within("#order_total") do
+          page.should have_content("$70.00")
+        end
       end
 
       it "can remove an item from a shipment" do
