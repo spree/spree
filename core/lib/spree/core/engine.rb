@@ -71,8 +71,7 @@ module Spree
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
           Spree::Calculator::PerItem,
-          Spree::Calculator::PercentPerItem,
-          Spree::Calculator::FreeShipping
+          Spree::Calculator::PercentPerItem
         ]
 
         app.config.spree.calculators.add_class('promotion_actions_create_item_adjustments')
@@ -94,7 +93,8 @@ module Spree
         app.config.spree.promotions.actions = [
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
-          Promotion::Actions::CreateLineItems]
+          Promotion::Actions::CreateLineItems,
+          Promotion::Actions::FreeShipping]
       end
 
       # filter sensitive information during logging
