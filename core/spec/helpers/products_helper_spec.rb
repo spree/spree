@@ -153,5 +153,32 @@ THIS IS THE BEST PRODUCT EVER!
       end
 
     end
+
+    shared_examples_for "line item descriptions" do
+      context 'variant has a blank description' do
+        let(:description) { nil }
+        it { should == Spree.t(:product_has_no_description) }
+      end
+      context 'variant has a description' do
+        let(:description) { 'test_desc' }
+        it { should == description }
+      end
+      context 'description has nonbreaking spaces' do
+        let(:description) { 'test&nbsp;desc' }
+        it { should == 'test desc' }
+      end
+    end
+    context "#line_item_description" do
+      let(:variant) { create(:variant, :product => product, description: description) }
+      subject { line_item_description(variant) }
+
+      it_should_behave_like "line item descriptions"
+    end
+    context '#line_item_description_text' do
+      subject { line_item_description_text description }
+
+      it_should_behave_like "line item descriptions"
+    end
+
   end
 end
