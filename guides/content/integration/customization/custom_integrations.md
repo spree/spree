@@ -63,8 +63,8 @@ The majority of the details within an `endpoint.json` file are related to a serv
         1. **path** - the path to value(s) within the message you would like to compare.
         2. **operator** - the comparison operator to use.
         3. **value** - the value to use in the comparison (optional).
-    4. **options** - an other recommended options.
-        1. **retried_allowed** - a boolean indicating if a message may be automatically retired on failure (defaults to true).
+    4. **options** - any other recommended options.
+        1. **retries_allowed** - a boolean indicating if a message may be automatically retried on failure (defaults to true).
 
 
 ---Example 'services' entry---

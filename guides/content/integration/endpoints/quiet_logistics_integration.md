@@ -7,7 +7,7 @@ title: Quiet Logistics Endpoint
 [Quiet Logistics](http://quietlogistics.com/) is a company specializing in third party fullfillment. Quiet Logistics utilizes Amazon's Web Services to provide an API for sending and receiving documents. When transmitting a document to Quiet Logistics an event message must be sent to SQS and a corresponding document must be sent to S3. When receiving messages from Quiet Logistics, messages are read from an incoming SQS queue and documents are downloaded from an incoming S3 bucket.
 
 +++
-The source code for the [Quiet Logistics Endpoint](https://github.com/spree/quiet_logistics_endpoint/)  is available on Github.
+The source code for the [Quiet Logistics Endpoint](https://github.com/spree/quiet_logistics_endpoint/) is available on Github.
 +++
 
 ## Services
