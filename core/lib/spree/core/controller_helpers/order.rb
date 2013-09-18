@@ -22,9 +22,6 @@ module Spree
             @current_order.user ||= try_spree_current_user
             @current_order.save!
 
-            # See issue #3346 for reasons why this line is here
-            @current_order.update_attribute(:created_by, try_spree_current_user)
-
             # make sure the user has permission to access the order (if they are a guest)
             if try_spree_current_user.nil?
               session[:access_token] = @current_order.token
