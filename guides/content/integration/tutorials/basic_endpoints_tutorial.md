@@ -158,7 +158,7 @@ Connection: Keep-Alive
 
 ### Simple Notification
 
-The `message_id` is the minimum information an endpoint has to return in a message it passes to the Integrator. In the first example above, that's all that was returned. Now let's move to passing a simple Notification in the response. Notifications are human readable messages which can be processed by other endpoints.
+The `message_id` is the minimum information an endpoint has to return in a message it passes to the Hub. In the first example above, that's all that was returned. Now let's move to passing a simple Notification in the response. Notifications are human readable messages which can be processed by other endpoints.
 
 ***
 For more information about Notifications, be sure to read the [Integration Terminology Guide](terminology) thoroughly.

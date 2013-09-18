@@ -4,7 +4,7 @@ title: Pushing Messages
 
 ## Pushing Messages
 
-External systems can push messages on to the Integrators processing queue by using the Integrators API. These new messages are submitted by a HTTP POST to API at http://hub.spreecommerce.com, and must contain the following fields:
+External systems can push messages on to the Hubs processing queue by using the Hubs API. These new messages are submitted by a HTTP POST to API at http://hub.spreecommerce.com, and must contain the following fields:
 
 * `message` - This key represents the message type, in colon notation. For example: `order:new`, `order:updated`, `user:new`, `shipment:ready`
 * `payload` - The payload contains all message-specific details. For example, in the case of `order:new` it would contains order details.
