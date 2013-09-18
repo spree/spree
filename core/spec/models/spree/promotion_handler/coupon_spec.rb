@@ -65,6 +65,31 @@ module Spree
           end
         end
 
+        context "with a free-shipping adjustment action" do
+          let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
+          context "right coupon code given" do
+            let(:order) { create(:order_with_line_items, :line_items_count => 3) }
+
+            before { order.stub :coupon_code => "10off" }
+
+            it "successfully activates promo" do
+              order.total.should == 130
+              subject.apply
+              binding.pry
+              expect(subject.success).to be_present
+
+              order.shipment_adjustments.count.should == 1
+            end
+
+            it "coupon already applied to the order" do
+              subject.apply
+              expect(subject.success).to be_present
+              subject.apply
+              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+            end
+          end
+        end
+
         context "with a whole-order adjustment action" do
           let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
           context "right coupon given" do
