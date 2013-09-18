@@ -23,6 +23,8 @@ module Spree
     after_save :update_order
     after_destroy :update_order
 
+    delegate :name, :description, to: :variant
+
     def copy_price
       if variant
         self.price = variant.price if price.nil?
