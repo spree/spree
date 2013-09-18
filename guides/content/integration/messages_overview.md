@@ -28,6 +28,12 @@ For more information please see the [Payment Messages](payment_messages) guide w
 * [Cancel Payment](payment_messages#cancel)
 * [Void Payment](payment_messages#void)
 
+# Stock Messages
+
+For more information please see the [Stock Messages](stock_messages) guide which has information on each of the Message Types.
+
+* [Change](stock_messages#change)
+
 # Notification Messages
 
 For more information please see the [Notification Messages](notification_messages) guide which has information on each of the Message Types.
