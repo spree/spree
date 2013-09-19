@@ -152,6 +152,15 @@ describe Spree::Product do
         expect { product.destroy }.not_to raise_error
       end
     end
+
+    # Regression test for #3737 
+    context "has stock items" do
+      let(:product) { create(:product) }
+      it "can retreive stock items" do
+        product.master.stock_items.first.should_not be_nil
+        product.stock_items.first.should_not be_nil
+      end
+    end
   end
 
   context "permalink" do
