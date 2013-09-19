@@ -434,6 +434,13 @@ describe Spree::Order do
       lambda { order_2.reload }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
+    context "user is provided" do
+      it "assigns user to new order" do
+        order_1.merge!(order_2, user)
+        expect(order_1.user).to eq user
+      end
+    end
+
     context "merging together two orders with line items for the same variant" do
       before do
         order_1.contents.add(variant, 1)
