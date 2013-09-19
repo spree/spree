@@ -92,6 +92,7 @@ module Spree
     # balance_due   when +payment_total+ is less than +total+
     # credit_owed   when +payment_total+ is greater than +total+
     # failed        when most recent payment is in the failed state
+    # emptied       when +payment_total+ and +total+ are zero
     #
     # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
     def update_payment_state
@@ -105,6 +106,8 @@ module Spree
         end
       elsif round_money(order.payment_total) > round_money(order.total)
         order.payment_state = 'credit_owed'
+      elsif (round_money(order.payment_total) == 0 && round_money(order.total) == 0)
+        order.payment_state = 'emptied'
       else
         order.payment_state = 'paid'
       end
@@ -122,7 +125,7 @@ module Spree
     def update_adjustments
       order.adjustments.reload.each { |adjustment| adjustment.update!(order) }
     end
-    
+
 
     private
 
