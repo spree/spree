@@ -463,7 +463,7 @@ module Spree
      @insufficient_stock_lines ||= line_items.select(&:insufficient_stock?)
     end
 
-    def merge!(order)
+    def merge!(order, user = nil)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
         current_line_item = self.line_items.find_by_variant_id(line_item.variant_id)
@@ -475,6 +475,9 @@ module Spree
           line_item.save
         end
       end
+
+      self.associate_user!(user) if !self.user && !user.blank?
+
       # So that the destroy doesn't take out line items which may have been re-assigned
       order.line_items.reload
       order.destroy
