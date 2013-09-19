@@ -53,6 +53,7 @@ module Spree
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy
     has_many :state_changes, as: :stateful
+    has_many :inventory_units
 
     has_many :shipments, dependent: :destroy, :class_name => "Shipment" do
       def states
