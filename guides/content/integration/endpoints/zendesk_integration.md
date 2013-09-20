@@ -62,7 +62,7 @@ Imports a notification message of type "notification:error" or "notification:war
   "notifications": [
     "level": "info",
     "subject": "Help ticket created",
-    "description": "New Zendesk ticket created"
+    "description": "New Zendesk ticket number 12 created, priority: high."
   ]
 }
 ```
