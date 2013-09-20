@@ -116,21 +116,6 @@ This type of Message is sent whenever an order shipment is confirmed and sent. I
 }
 ```
 
-### ql:shipment:confirm
-
----ql_shipment_confirm.json---
-```json
-{
-  "message": "ql:shipment:confirm",
-  "payload": {
-    "transfer_order": {
-      "type": "shipment_order_result",
-      "number": "T123456"
-    }
-  }
-}
-```
-
 ### shipment:cancel
 
 ---shipment_cancel.json---
