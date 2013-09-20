@@ -110,10 +110,9 @@ Send a shipment to Fosdick .
 
 Check an S3 bucket to see if there are any shipment result files ready to be downloaded
 
----fosdick_shipment_results_poll.json---
-
 ### Request
 
+---fosdick_shipment_results_poll.json---
 ```json
 
 {
@@ -133,6 +132,7 @@ Check an S3 bucket to see if there are any shipment result files ready to be dow
 
 ### Response
 
+---shipment_confirm.json---
 ```json
 {
   "message_id": "51af1dc5fe53543f1200f519",
