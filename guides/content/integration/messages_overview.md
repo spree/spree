@@ -14,7 +14,7 @@ For more information please see the [Order Messages](order_messages) guide which
 
 For more information please see the [Shipment Messages](shipment_messages) guide which has information on each of the Message Types.
 
-* [New Shipment](shipment_messages#new)
+* [Shipment Ready](shipment_messages#ready)
 * [Update Shipment](shipment_messages#update)
 * [Confirm Shipment](shipment_messages#confirm)
 * [Cancel Shipment](shipment_messages#cancel)
