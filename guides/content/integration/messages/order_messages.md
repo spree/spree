@@ -125,7 +125,7 @@ This type of Message should be sent when an existing order is updated.
 ---order_update.json---
 ```json
 {
-  "message": "order:new",
+  "message": "order:update",
   "payload": {
     "order": {
       "channel": "Amazon",
