@@ -19,7 +19,7 @@ For more information please see the [Shipment Messages](shipment_messages) guide
 * [Confirm Shipment](shipment_messages#confirm)
 * [Cancel Shipment](shipment_messages#cancel)
 
-# Payment Messages
+<!-- # Payment Messages
 
 For more information please see the [Payment Messages](payment_messages) guide which has information on each of the Message Types.
 
@@ -27,7 +27,7 @@ For more information please see the [Payment Messages](payment_messages) guide w
 * [Capture Payment](payment_messages#capture)
 * [Cancel Payment](payment_messages#cancel)
 * [Void Payment](payment_messages#void)
-
+ -->
 # Stock Messages
 
 For more information please see the [Stock Messages](stock_messages) guide which has information on each of the Message Types.
