@@ -36,6 +36,41 @@ describe Spree::LineItem do
     end
   end
 
+  context "#create" do
+    let(:variant) { create(:variant) }
+
+    before do
+      create(:tax_rate, :zone => order.tax_zone, :tax_category => variant.tax_category)
+    end
+
+    context "when order has a tax zone" do
+      before do
+        order.tax_zone.should be_present
+      end
+
+      it "creates a tax adjustment" do
+        order.contents.add(variant)
+        line_item = order.find_line_item_by_variant(variant)
+        line_item.adjustments.tax.count.should == 1
+      end
+    end
+
+    context "when order does not have a tax zone" do
+      before do
+        order.bill_address = nil
+        order.ship_address = nil
+        order.save
+        order.tax_zone.should be_nil
+      end
+
+      it "does not create a tax adjustment" do
+        order.contents.add(variant)
+        line_item = order.find_line_item_by_variant(variant)
+        line_item.adjustments.tax.count.should == 0
+      end
+    end
+  end
+
   # Test for #3391
   context '#copy_price' do
     it "copies over a variant's prices" do
