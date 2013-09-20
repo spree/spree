@@ -23,6 +23,8 @@ module Spree
     before_save :update_inventory
     after_save :update_adjustments
 
+    after_create :create_tax_charge
+
     attr_accessor :target_shipment
 
     def copy_price
@@ -99,6 +101,10 @@ module Spree
 
       def recalculate_adjustments
         Spree::ItemAdjustments.new(self).update
+      end
+
+      def create_tax_charge
+        Spree::TaxRate.adjust(order, [self])
       end
   end
 end
