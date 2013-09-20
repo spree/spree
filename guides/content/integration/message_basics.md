@@ -4,7 +4,7 @@ title: Message Basics
 
 ## Message Generation
 
-The Spree Commerce hub is responsible for processing and delivering [messages](terminology#messages) based on a pre-configured set of business logic specific to a particular store. The messages processed by the Integrator are generated in one of three possible ways.
+The Spree Commerce hub is responsible for processing and delivering [messages](terminology#messages) based on a pre-configured set of business logic specific to a particular store. The messages processed by the Hub are generated in one of three possible ways.
 
 ### Polling
 
@@ -58,12 +58,12 @@ Need more docs on message push.
 $$$
 
 ***
-Endpoints should never push Messages, since they are intended to be a passive consumer of Messages. Instead, they should be polled via a Message sent from the Integrator, so that they can return the necessary information.
+Endpoints should never push Messages, since they are intended to be a passive consumer of Messages. Instead, they should be polled via a Message sent from the Hub, so that they can return the necessary information.
 ***
 
 ## Service Requests
 
-Integration Endpoints expose various [services](terminology#services) to the Integrator. The Integrator is configured with a series of [mappings](terminology#mappings), which tell it how it route a specific Message to a particular Service offered by an Endpoint.
+Integration Endpoints expose various [services](terminology#services) to the Hub. The Hub is configured with a series of [mappings](terminology#mappings), which tell it how it route a specific Message to a particular Service offered by an Endpoint.
 
 ***
 See the [Mapping Guide](mapping_basics) for more information on how Messages are mapped to Endpoints.
@@ -77,7 +77,7 @@ Integrations can be written in any language (not just Ruby). All that is require
 
 ## Message Delivery
 
-Messages routed through the Integrator are guaranteed to be delivered to their intended endpoints. When attempting to deliver a message to a service (i.e. making a service request), one of three things can happen.
+Messages routed through the Hub are guaranteed to be delivered to their intended endpoints. When attempting to deliver a message to a service (i.e. making a service request), one of three things can happen.
 
 ### Successful Delivery
 

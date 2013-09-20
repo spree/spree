@@ -50,8 +50,7 @@ $(function() {
 
   active_menu.addClass('active-open');
   if(active_menu.parent().next().attr('class') == 'js-guides'){
-    active_menu.parent().next().attr('style', 'display: block !important');
-    active_menu.prev().find('i.icon-right-open').removeClass('icon-right-open').addClass('icon-down-open')
+    active_menu.parent().next().show();
   }
   else {
     active_menu.parent().parent().show()

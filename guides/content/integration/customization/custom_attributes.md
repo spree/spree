@@ -4,7 +4,7 @@ title: Custom Attributes
 
 ## Introduction
 
-As a user of both Spree and the Spree Integrator, it's important to keep customizations you've made to your Spree store in synch with the mappings you have on the Integrator. This guide instructs you on using decorators to add any custom fields you've added in your store to the JSON output that is sent to the Integrator.
+As a user of both Spree and the Spree Hub, it's important to keep customizations you've made to your Spree store in synch with the mappings you have on the Hub. This guide instructs you on using decorators to add any custom fields you've added in your store to the JSON output that is sent to the Hub.
 
 ## Native JSON Output
 
@@ -49,9 +49,9 @@ Then, when your store's orders are output, you'll see the custom `upc` field in 
 }
 ```
 
-## Messages From the Integrator
+## Messages From the Hub 
 
-Messages that come from the Integrator will not have the custom fields encoded like the ones exported from Spree. The Integrator's messages use the standard [order message format](order_messages), but the custom fields will be accessible through the `original` key within the `payload`.
+Messages that come from the Hub will not have the custom fields encoded like the ones exported from Spree. The Hub's messages use the standard [order message format](order_messages), but the custom fields will be accessible through the `original` key within the `payload`.
 
 ```json
 {

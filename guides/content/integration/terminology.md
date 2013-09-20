@@ -36,7 +36,7 @@ The following is an example of the JSON representation of a typical message:
 
 ## Endpoints
 
-Endpoints are small standalone web applications that can be subscribed to certain Message types via Mappings. Our hub delivers and tracks each Message as a Service Request is sent to all of its subscribed Endpoints. The Integrator includes lots of existing Endpoints for popular services and applications, but you can also create custom or private Endpoints to help integrate with proprietary systems.
+Endpoints are small standalone web applications that can be subscribed to certain Message types via Mappings. Our hub delivers and tracks each Message as a Service Request is sent to all of its subscribed Endpoints. The Hub includes lots of existing Endpoints for popular services and applications, but you can also create custom or private Endpoints to help integrate with proprietary systems.
 
 Any Message within the Spree Commerce hub can be consumed by an Endpoint, with each individual Message resulting in a JSON-encoded Message being sent via an `HTTP POST` request to a pre-configured Endpoint URL.
 
