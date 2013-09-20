@@ -114,11 +114,14 @@ Check an S3 bucket to see if there are any shipment result files ready to be dow
 
 ### Request
 
+```json
+
 {
   "message_id": "51af1dc5fe53543f1200f519",
   "message": "fosdick:shipment_results:poll",
   "payload": {}
 }
+```
 
 #### Parameters
 
