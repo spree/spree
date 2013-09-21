@@ -1,5 +1,6 @@
 ---
 title: Line Items
+description: Use the Spree Commerce storefront API to access LineItem data.
 ---
 
 # Line Items API

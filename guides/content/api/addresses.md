@@ -1,5 +1,6 @@
 ---
 title: Address
+description: Use the Spree Commerce storefront API to access Address data.
 ---
 
 ## Show

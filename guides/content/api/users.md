@@ -1,5 +1,6 @@
 ---
 title: Users
+description: Use the Spree Commerce storefront API to access User data.
 ---
 
 List users visible to the authenticated user. If the user is not an admin,
@@ -96,7 +97,7 @@ For instance, to update a user\'s password, send it through like this:
 
 ### Failed response
 
-<%= headers 422 %> 
+<%= headers 422 %>
 <%= json :error => "Invalid resource. Please fix errors and try again.",
          :errors => { :email => ["can't be blank"] } %>
 

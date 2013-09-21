@@ -1,5 +1,6 @@
 ---
 title: Checkouts
+description: Use the Spree Commerce storefront API to access Checkout data.
 ---
 
 # Checkouts API

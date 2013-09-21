@@ -1,5 +1,6 @@
 ---
 title: Product Properties
+description: Use the Spree Commerce storefront API to access ProductProperty data.
 ---
 
 <%= warning "Requests to this API will only succeed if the user making them has access to the underlying products. If the user is not an admin and the product is not available yet, users will receive a 404 response from this API." %>

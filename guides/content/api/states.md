@@ -1,5 +1,6 @@
 ---
 title: States
+description: Use the Spree Commerce storefront API to access State data.
 ---
 
 ## Index

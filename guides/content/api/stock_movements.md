@@ -1,5 +1,6 @@
 ---
 title: Stock Movements
+description: Use the Spree Commerce storefront API to access StockMovement data.
 ---
 
 ## Index

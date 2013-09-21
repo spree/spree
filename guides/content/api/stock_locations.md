@@ -1,5 +1,6 @@
 ---
 title: Stock Locations
+description: Use the Spree Commerce storefront API to access StockLocation data.
 ---
 
 ## Index

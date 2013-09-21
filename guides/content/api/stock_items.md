@@ -1,5 +1,6 @@
 ---
 title: Stock Items
+description: Use the Spree Commerce storefront API to access StockItem data.
 ---
 
 ## Index

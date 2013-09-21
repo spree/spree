@@ -1,5 +1,6 @@
 ---
 title: Taxonomies
+description: Use the Spree Commerce storefront API to access Taxonomy data.
 ---
 
 ## Index
