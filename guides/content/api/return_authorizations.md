@@ -1,5 +1,6 @@
 ---
 title: Return Authorizations
+description: Use the Spree Commerce storefront API to access ReturnAuthorization data.
 ---
 
 # Return Authorizations API

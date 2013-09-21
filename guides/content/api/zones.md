@@ -1,5 +1,6 @@
 ---
 title: Zones
+description: Use the Spree Commerce storefront API to access Zone data.
 ---
 
 ## Index

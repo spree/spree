@@ -1,5 +1,6 @@
 ---
 title: Payments
+description: Use the Spree Commerce storefront API to access Payment data.
 ---
 
 # Payments API

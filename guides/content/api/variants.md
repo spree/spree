@@ -1,5 +1,6 @@
 ---
 title: Variants
+description: Use the Spree Commerce storefront API to access Variant data.
 ---
 
 ## Index

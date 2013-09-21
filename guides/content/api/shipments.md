@@ -1,5 +1,6 @@
 ---
 title: Shipments
+description: Use the Spree Commerce storefront API to access Shipment data.
 ---
 
 # Shipments API

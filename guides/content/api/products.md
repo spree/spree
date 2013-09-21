@@ -1,5 +1,6 @@
 ---
 title: Products
+description: Use the Spree Commerce storefront API to access Product data.
 ---
 
 ## Index
