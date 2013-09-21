@@ -1,7 +1,9 @@
 if ENV["COVERAGE"]
   # Run Coverage report
   require 'simplecov'
-  SimpleCov.start do
+  require 'simplecov-rcov'
+  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
+  SimpleCov.start 'rails' do
     add_group 'Controllers', 'app/controllers'
     add_group 'Helpers', 'app/helpers'
     add_group 'Mailers', 'app/mailers'

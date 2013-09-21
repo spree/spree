@@ -1,3 +1,9 @@
 eval(File.read(File.dirname(__FILE__) + '/../common_spree_dependencies.rb'))
 
 gemspec
+
+group :test do
+ gem 'simplecov'
+ gem 'simplecov-rcov'
+ gem 'yarjuf'
+end
