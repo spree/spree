@@ -14,18 +14,18 @@ module Spree
         unless shipping_rates.empty?
           available_rates = shipping_rates.clone
           available_rates.select! { |rate| rate.shipping_method.frontend? } if frontend_only
-          choose_default_shipping_rate( available_rates )
+          choose_default_shipping_rate(available_rates)
         end
 
-        sort_shipping_rates shipping_rates
+        sort_shipping_rates(shipping_rates)
       end
 
       private
-      def choose_default_shipping_rate shipping_rates
+      def choose_default_shipping_rate(shipping_rates)
         shipping_rates.min_by(&:cost).selected = true
       end
 
-      def sort_shipping_rates shipping_rates
+      def sort_shipping_rates(shipping_rates)
         shipping_rates.sort_by!(&:cost)
       end
 
