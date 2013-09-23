@@ -49,7 +49,14 @@
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:shipping_address) %></legend>
       <%= f.fields_for :ship_address do |sa_form| %>
-        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => Spree.t(:shipping_address), :use_billing => true } %>
+        <div class="field" style="position: absolute;margin-top: -15px;right: 0;">
+          <span data-hook="use_billing">
+            <%= check_box_tag 'order[use_billing]', '1', @order.shipping_eq_billing_address? %>
+            <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
+          </span>
+        </div>
+
+        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :type => 'shipping' } %>
       <% end %>
     </fieldset>
   </div>
