@@ -553,8 +553,12 @@ module Spree
       def after_cancel
         shipments.each { |shipment| shipment.cancel! }
 
-        OrderMailer.cancel_email(self.id).deliver
+        send_cancel_email
         self.payment_state = 'credit_owed' unless shipped?
+      end
+
+      def send_cancel_email
+        OrderMailer.cancel_email(self.id).deliver
       end
 
       def after_resume
