@@ -70,7 +70,7 @@ module Spree
     add_search_scope :in_taxon do |taxon|
       select("spree_products.id, spree_products.*").
       where(id: Classification.select('spree_products_taxons.product_id').
-            joins(:taxon). 
+            joins(:taxon).
             where(Taxon.table_name => { :id => taxon.self_and_descendants.pluck(:id) })
            )
     end
