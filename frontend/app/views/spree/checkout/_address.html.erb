@@ -12,7 +12,7 @@
     <%= form.fields_for :ship_address do |ship_form| %>
       <legend align="center"><%= Spree.t(:shipping_address) %></legend>
       <p class="field checkbox" data-hook="use_billing">
-        <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) || @order.bill_address.same_as?(@order.ship_address)) %>
+        <%= check_box_tag 'order[use_billing]', '1', @order.shipping_eq_billing_address? %>
         <%= label_tag :order_use_billing, Spree.t(:use_billing_address), :id => 'use_billing' %>
       </p>
       <%= render :partial => 'spree/address/form', :locals => { :form => ship_form, :address_type => 'shipping', :address => @order.ship_address } %>
