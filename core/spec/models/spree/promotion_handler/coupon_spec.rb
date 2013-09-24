@@ -75,7 +75,6 @@ module Spree
             it "successfully activates promo" do
               order.total.should == 130
               subject.apply
-              binding.pry
               expect(subject.success).to be_present
 
               order.shipment_adjustments.count.should == 1
