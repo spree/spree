@@ -61,6 +61,12 @@ describe Spree::Calculator::DefaultTax do
       it "should be 5% of 15" do
         calculator.compute(shipment).should == 0.75
       end
+
+      it "takes discounts into consideration" do
+        shipment.promo_total = -1
+        # 5% of 14
+        calculator.compute(shipment).should == 0.7
+      end
     end
   end
 end

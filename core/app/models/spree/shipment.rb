@@ -129,6 +129,10 @@ module Spree
       line_items.map(&:amount).sum
     end
 
+    def discounted_cost
+      cost + promo_total
+    end
+
     def display_item_cost
       Spree::Money.new(item_cost, { currency: currency })
     end
