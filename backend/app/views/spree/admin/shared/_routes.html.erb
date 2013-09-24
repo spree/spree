@@ -9,5 +9,5 @@
   Spree.routes.checkouts_api = "<%= spree.api_checkouts_url(:format => 'json') %>";
   Spree.routes.stock_locations_api = "<%= spree.api_stock_locations_url(:format => 'json') %>";
   Spree.routes.variants_api = "<%= spree.api_variants_url(:format => 'json') %>";
-
+  Spree.routes.payments_api = "<%= spree.api_order_payments_url(:format => 'json') if params[:order_id] %>";
 </script>

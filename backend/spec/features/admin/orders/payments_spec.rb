@@ -88,4 +88,70 @@ describe 'Payments' do
       page.should have_content('Payment Updated')
     end
   end
+
+  context 'payment is pending', js: true do
+    let(:state) { 'pending' }
+
+    it 'allows the amount to be edited by clicking on the edit button then saving' do
+      within_row(1) do
+        click_icon(:edit)
+        fill_in('amount', with: '$1')
+        click_icon(:save)
+        page.should have_selector('td.amount span', text: '$1.00')
+        payment.reload.amount.should == 1.00
+      end
+    end
+
+    it 'allows the amount to be edited by clicking on the amount then saving' do
+      within_row(1) do
+        find('td.amount span').click
+        fill_in('amount', with: '$1.01')
+        click_icon(:save)
+        page.should have_selector('td.amount span', text: '$1.01')
+        payment.reload.amount.should == 1.01
+      end
+    end
+
+    it 'allows the amount to be edited by clicking on the amount then clicking away' do
+      within_row(1) do
+        find('td.amount span').click
+        fill_in('amount', with: '$1.10')
+        page.execute_script("$('td.amount input:focus').blur()")
+        page.should have_selector('td.amount span', text: '$1.10')
+        payment.reload.amount.should == 1.10
+      end
+    end
+
+    it 'allows the amount change to be cancelled by clicking on the cancel button' do
+      within_row(1) do
+        click_icon(:edit)
+        fill_in('amount', with: '$1')
+        click_icon(:cancel)
+        page.should have_selector('td.amount span', text: '$50.00')
+        payment.reload.amount.should == 50.00
+      end
+    end
+
+    it 'displays an error when the amount is invalid' do
+      within_row(1) do
+        click_icon(:edit)
+        fill_in('amount', with: 'invalid')
+        click_icon(:save)
+        find('td.amount input').value.should == 'invalid'
+        payment.reload.amount.should == 50.00
+      end
+      page.should have_selector('.flash.error', text: 'Invalid resource. Please fix errors and try again.')
+    end
+  end
+
+  context 'payment is completed', js: true do
+    let(:state) { 'completed' }
+
+    it 'does not allow the amount to be edited' do
+      within_row(1) do
+        page.should_not have_selector('.icon-edit')
+        page.should_not have_selector('td.amount span')
+      end
+    end
+  end
 end
