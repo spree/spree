@@ -25,7 +25,7 @@ describe Spree::Payment do
     payment
   end
 
-  let(:amount_in_cents) { payment.amount.to_f * 100 }
+  let(:amount_in_cents) { (payment.amount * 100).round }
 
   let!(:success_response) do
     double('success_response', :success? => true,
@@ -55,7 +55,6 @@ describe Spree::Payment do
 
   # Regression test for https://github.com/spree/spree/pull/2224
   context 'failure' do
-
     it 'should transition to failed from pending state' do
       payment.state = 'pending'
       payment.failure
@@ -84,7 +83,7 @@ describe Spree::Payment do
       payment.stub(:create_payment_profile)
     end
 
-    context "#process!" do
+    describe "#process!" do
       it "should purchase if with auto_capture" do
         payment.payment_method.should_receive(:auto_capture?).and_return(true)
         payment.should_receive(:purchase!)
@@ -110,7 +109,7 @@ describe Spree::Payment do
 
     end
 
-    context "#authorize" do
+    describe "#authorize!" do
       it "should call authorize on the gateway with the payment amount" do
         payment.payment_method.should_receive(:authorize).with(amount_in_cents,
                                                                card,
@@ -171,7 +170,7 @@ describe Spree::Payment do
       end
     end
 
-    context "purchase" do
+    describe "#purchase!" do
       it "should call purchase on the gateway with the payment amount" do
         gateway.should_receive(:purchase).with(amount_in_cents, card, anything).and_return(success_response)
         payment.purchase!
@@ -218,7 +217,7 @@ describe Spree::Payment do
       end
     end
 
-    context "#capture" do
+    describe "#capture!" do
       before do
         payment.stub(:complete).and_return(true)
       end
@@ -270,7 +269,7 @@ describe Spree::Payment do
       end
     end
 
-    context "#void" do
+    describe "#void_transaction!" do
       before do
         payment.response_code = '123'
         payment.state = 'pending'
@@ -334,7 +333,7 @@ describe Spree::Payment do
       end
     end
 
-    context "#credit" do
+    describe "#credit!" do
       before do
         payment.state = 'completed'
         payment.response_code = '123'
@@ -449,7 +448,7 @@ describe Spree::Payment do
     end
   end
 
-  context "#credit_allowed" do
+  describe "#credit_allowed" do
     it "is the difference between offsets total and payment amount" do
       payment.amount = 100
       payment.stub(:offsets_total).and_return(0)
@@ -459,18 +458,19 @@ describe Spree::Payment do
     end
   end
 
-  context "#can_credit?" do
+  describe "#can_credit?" do
     it "is true if credit_allowed > 0" do
       payment.stub(:credit_allowed).and_return(100)
       payment.can_credit?.should be_true
     end
+
     it "is false if credit_allowed is 0" do
       payment.stub(:credit_allowed).and_return(0)
       payment.can_credit?.should be_false
     end
   end
 
-  context "#credit" do
+  describe "#credit!" do
     context "when amount <= credit_allowed" do
       it "makes the state processing" do
         payment.state = 'completed'
@@ -478,6 +478,7 @@ describe Spree::Payment do
         payment.partial_credit(10)
         payment.should be_processing
       end
+
       it "calls credit on the source with the payment and amount" do
         payment.state = 'completed'
         payment.stub(:credit_allowed).and_return(10)
@@ -485,6 +486,7 @@ describe Spree::Payment do
         payment.partial_credit(10)
       end
     end
+
     context "when amount > credit_allowed" do
       it "should not call credit on the source" do
         payment.state = 'completed'
@@ -495,7 +497,7 @@ describe Spree::Payment do
     end
   end
 
-  context "#save" do
+  describe "#save" do
     it "should call order#update!" do
       payment = Spree::Payment.create({:amount => 100, :order => order}, :without_protection => true)
       order.should_receive(:update!)
@@ -507,7 +509,6 @@ describe Spree::Payment do
         gateway.stub :payment_profiles_supported? => true
         payment.source.stub :has_payment_profile? => false
       end
-
 
       context "when there is an error connecting to the gateway" do
         it "should call gateway_error " do
@@ -522,8 +523,6 @@ describe Spree::Payment do
           payment = Spree::Payment.create({:amount => 100, :order => order, :source => card, :payment_method => gateway}, :without_protection => true)
         end
       end
-
-
     end
 
     context "when profiles are not supported" do
@@ -536,7 +535,7 @@ describe Spree::Payment do
     end
   end
 
-  context "#build_source" do
+  describe "#build_source" do
     it "should build the payment's source" do
       params = { :amount => 100, :payment_method => gateway,
         :source_attributes => {
@@ -564,21 +563,21 @@ describe Spree::Payment do
     end
   end
 
-  context "#currency" do
+  describe "#currency" do
     before { order.stub(:currency) { "ABC" } }
     it "returns the order currency" do
       payment.currency.should == "ABC"
     end
   end
 
-  context "#display_amount" do
+  describe "#display_amount" do
     it "returns a Spree::Money for this amount" do
       payment.display_amount.should == Spree::Money.new(payment.amount)
     end
   end
 
   # Regression test for #2216
-  context "#gateway_options" do
+  describe "#gateway_options" do
     before { order.stub(:last_ip_address => "192.168.1.1") }
 
     it "contains an IP" do
@@ -586,7 +585,7 @@ describe Spree::Payment do
     end
   end
 
-  context "#set_unique_identifier" do
+  describe "#set_unique_identifier" do
     # Regression test for #1998
     it "sets a unique identifier on create" do
       payment.run_callbacks(:create)
@@ -602,7 +601,6 @@ describe Spree::Payment do
       payment.save
       payment.identifier.should == old_identifier
     end
-
 
     context "other payment exists" do
       let(:other_payment) {
