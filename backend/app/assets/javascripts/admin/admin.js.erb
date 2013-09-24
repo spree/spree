@@ -33,15 +33,14 @@ jQuery(function($) {
     fadeOutTime: 50,
   });
 
-  $('.with-tip').on({
-    powerTipPreRender: function(){
-      $('#powerTip').addClass($(this).attr("data-action"));
-      $('#powerTip').addClass($(this).attr("data-tip-color"));
-    },
-    powerTipClose: function(){
-      $('#powerTip').removeClass($(this).attr("data-action"))
-    }
-  });
+  $('body')
+    .on('powerTipPreRender', '.with-tip', function() {
+      $('#powerTip').addClass($(this).data('action'));
+      $('#powerTip').addClass($(this).data('tip-color'));
+    })
+    .on('powerTipClose', '.with-tip', function() {
+      $('#powerTip').removeClass($(this).data('action'));
+    })
 
   // Make flash messages dissapear
   setTimeout('$(".flash").fadeOut()', 5000);
