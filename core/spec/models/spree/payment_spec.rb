@@ -38,7 +38,7 @@ describe Spree::Payment do
 
   before(:each) do
     # So it doesn't create log entries every time a processing method is called
-    payment.log_entries.stub(:create)
+    payment.log_entries.stub(:create!)
   end
 
   context 'validations' do
@@ -126,7 +126,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with(:details => anything)
+        payment.log_entries.should_receive(:create!).with(:details => anything)
         payment.authorize!
       end
 
@@ -177,7 +177,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with(:details => anything)
+        payment.log_entries.should_receive(:create!).with(:details => anything)
         payment.purchase!
       end
 
@@ -263,7 +263,7 @@ describe Spree::Payment do
         it "should do nothing" do
           payment.should_not_receive(:complete)
           payment.payment_method.should_not_receive(:capture)
-          payment.log_entries.should_not_receive(:create)
+          payment.log_entries.should_not_receive(:create!)
           payment.capture!
         end
       end
@@ -292,7 +292,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with(:details => anything)
+        payment.log_entries.should_receive(:create!).with(:details => anything)
         payment.void_transaction!
       end
 
@@ -374,7 +374,7 @@ describe Spree::Payment do
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create).with(:details => anything)
+        payment.log_entries.should_receive(:create!).with(:details => anything)
         payment.credit!
       end
 
@@ -387,7 +387,7 @@ describe Spree::Payment do
 
       context "when response is successful" do
         it "should create an offsetting payment" do
-          Spree::Payment.should_receive(:create)
+          Spree::Payment.should_receive(:create!)
           payment.credit!
         end
 
