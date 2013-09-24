@@ -43,6 +43,13 @@ describe Spree::Shipment do
     shipment.item_cost.should eql(10.0)
   end
 
+  it "#discounted_cost" do
+    shipment = create(:shipment)
+    shipment.cost = 10
+    shipment.promo_total = -1
+    shipment.discounted_cost.should == 9
+  end
+
   context "manifest" do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
