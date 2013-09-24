@@ -47,7 +47,7 @@ module Spree
 
       def credit
         if params[:amount].to_f > @payment.credit_allowed
-          render "spree/api/payments/credit_over_limit", :status => 422
+          render 'credit_over_limit', status: 422
         else
           perform_payment_action(:credit, params[:amount])
         end
