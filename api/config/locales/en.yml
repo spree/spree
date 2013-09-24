@@ -20,6 +20,7 @@ en:
         invalid_shipping_method: "Invalid shipping method specified."
       payment:
         credit_over_limit: "This payment can only be credited up to %{limit}. Please specify an amount less than or equal to this number."
+        update_forbidden: "This payment cannot be updated because it is %{state}."
       shipment:
         cannot_ready: "Cannot ready shipment."
       stock_location_required: "A stock_location_id parameter must be provided in order to retrieve stock movements."
