@@ -126,11 +126,11 @@ Processes incoming orders that are new, updated, or canceled and either creates 
 }
 ```
 
-### order:update
+### order:updated
 
 This type of Message should be sent when an existing order is updated.
 
----order_update.json---
+---order_updated.json---
 ```json
 {
   "message": "order:update",
@@ -233,19 +233,28 @@ This type of Message should be sent when an existing order is updated.
           ]
         }
       ]
+    },
+    "original": {
+      ... # Any custom values would be here.
+    }
+    "previous": {
+      ... # Similar format to the "order" key.
+    },
+    "diff": {
+      ... # Shows the difference between previous (first value in the array) and the udpated (second value in the array) orders.
     }
   }
 }
 ```
 
-### order:cancel
+### order:canceled
 
 You should send this type of Message whenever an order is canceled, whether by the customer or by a store administrator.
 
----order_cancel.json---
+---order_canceled.json---
 ```json
 {
-  "message": "order:cancel",
+  "message": "order:canceled",
   "payload": {
     "order": {
       "channel": "Amazon",

@@ -230,14 +230,14 @@ This type of Message should be sent when an existing order is updated.
 }
 ```
 
-### order:cancel
+### order:canceled
 
 You should send this type of Message whenever an order is canceled, whether by the customer or by a store administrator.
 
----order_cancel.json---
+---order_canceled.json---
 ```json
 {
-  "message": "order:cancel",
+  "message": "order:canceled",
   "payload": {
     "order": {
       "channel": "Amazon",
