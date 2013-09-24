@@ -80,17 +80,12 @@ jQuery(function($) {
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
 show_flash_error = function(message) {
-  error_div = $('.flash.error');
-  if (error_div.length > 0) {
-    error_div.html(message);
-    error_div.show();
-  } else {
-    if ($("#content .toolbar").length > 0) {
-      $("#content .toolbar").before('<div class="flash error">' + message + '</div>');
-    } else {
-      $("#content h1").before('<div class="flash error">' + message + '</div>');
-    }
+  var error_div = $('.flash.error');
+  if (error_div.length == 0) {
+    error_div = $('<div class="flash error" />');
+    $('#wrapper').prepend(error_div);
   }
+  error_div.html(message).show().fadeOut(5000);
 }
 
 // Apply to individual radio button that makes another element visible when checked
