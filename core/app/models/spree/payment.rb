@@ -38,7 +38,7 @@ module Spree
     def persist_invalid
       return unless ['failed', 'invalid'].include?(state)
       state_will_change!
-      save 
+      save
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
