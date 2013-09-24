@@ -34,6 +34,8 @@ module Spree
 
     after_rollback :persist_invalid
 
+    validates :amount, numericality: true
+
     def persist_invalid
       return unless ['failed', 'invalid'].include?(state)
       state_will_change!
