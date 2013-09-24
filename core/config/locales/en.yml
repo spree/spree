@@ -751,6 +751,7 @@ en:
     order_number: Order
     order_populator:
       out_of_stock: ! '%{item} is out of stock.'
+      selected_quantity_not_available: ! 'Selected quantity of %{item} is not available.'
       please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_state:
