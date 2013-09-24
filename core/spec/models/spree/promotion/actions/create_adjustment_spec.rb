@@ -67,28 +67,4 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       end
     end
   end
-
-  context "#compute_amount" do
-    before do
-      action.calculator = Spree::Calculator::FreeShipping.new
-    end
-
-    it "should always return a negative amount" do
-      order.stub(:item_total => 1000)
-      action.calculator.stub(:compute => -200)
-      action.compute_amount(order).to_i.should == -200
-      action.calculator.stub(:compute => 300)
-      action.compute_amount(order).to_i.should == -300
-    end
-
-    it "should not return an amount that exceeds order's item_total + ship_total" do
-      order.stub(:item_total => 1000, :ship_total => 100)
-      action.calculator.stub(:compute => 1000)
-      action.compute_amount(order).to_i.should == -1000
-      action.calculator.stub(:compute => 1100)
-      action.compute_amount(order).to_i.should == -1100
-      action.calculator.stub(:compute => 1200)
-      action.compute_amount(order).to_i.should == -1100
-    end
-  end
 end
