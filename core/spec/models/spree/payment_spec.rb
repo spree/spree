@@ -624,4 +624,67 @@ describe Spree::Payment do
       end
     end
   end
+
+  describe "#amount=" do
+    before do
+      subject.amount = amount
+    end
+
+    context "when the amount is a string" do
+      context "amount is a decimal" do
+        let(:amount) { '2.99' }
+
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
+
+      context "amount is an integer" do
+        let(:amount) { '2' }
+
+        its(:amount) { should eql(BigDecimal('2.0')) }
+      end
+
+      context "amount contains a dollar sign" do
+        let(:amount) { '$2.99' }
+
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
+
+      context "amount contains a comma" do
+        let(:amount) { '$2,999.99' }
+
+        its(:amount) { should eql(BigDecimal('2999.99')) }
+      end
+
+      context "amount contains a negative sign" do
+        let(:amount) { '-2.99' }
+
+        its(:amount) { should eql(BigDecimal('-2.99')) }
+      end
+
+      context "amount is invalid" do
+        let(:amount) { 'invalid' }
+
+        # this is a strange default for ActiveRecord
+        its(:amount) { should eql(BigDecimal('0')) }
+      end
+
+      context "amount is an empty string" do
+        let(:amount) { '' }
+
+        its(:amount) { should be_nil }
+      end
+    end
+
+    context "when the amount is a number" do
+      let(:amount) { 1.55 }
+
+      its(:amount) { should eql(BigDecimal('1.55')) }
+    end
+
+    context "when the amount is nil" do
+      let(:amount) { nil }
+
+      its(:amount) { should be_nil }
+    end
+  end
 end
