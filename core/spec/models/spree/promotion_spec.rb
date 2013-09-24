@@ -96,19 +96,21 @@ describe Spree::Promotion do
   end
 
   context "#usage_limit_exceeded" do
-     it "should not have its usage limit exceeded" do
-       promotion.should_not be_usage_limit_exceeded
-     end
+    let(:promotable) { double('Promotable') }
+    it "should not have its usage limit exceeded with no usage limit" do
+      promotion.usage_limit = 0
+      promotion.usage_limit_exceeded?(promotable).should be_false
+    end
 
-     it "should have its usage limit exceeded" do
-       promotion.usage_limit = 2
-       promotion.stub(:credits_count => 2)
-       promotion.usage_limit_exceeded?.should be_true
+    it "should have its usage limit exceeded" do
+      promotion.usage_limit = 2
+      promotion.stub(:adjusted_credits_count => 2)
+      promotion.usage_limit_exceeded?(promotable).should be_true
 
-       promotion.stub(:credits_count => 3)
-       promotion.usage_limit_exceeded?.should be_true
-     end
-   end
+      promotion.stub(:adjusted_credits_count => 3)
+      promotion.usage_limit_exceeded?(promotable).should be_true
+    end
+  end
 
   context "#expired" do
     it "should not be exipired" do
@@ -197,10 +199,9 @@ describe Spree::Promotion do
   end
 
   context "rules" do
-    before { @order = Spree::Order.new }
-
+    let(:promotable) { double('Promotable') }
     it "should have eligible rules if there are no rules" do
-      promotion.rules_are_eligible?(@order).should be_true
+      promotion.rules_are_eligible?(promotable).should be_true
     end
 
     context "with 'all' match policy" do
@@ -209,29 +210,35 @@ describe Spree::Promotion do
       it "should have eligible rules if all rules are eligible" do
         promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
                                      mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true)]
-        promotion.rules_are_eligible?(@order).should be_true
+        promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+        promotion.rules_are_eligible?(promotable).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
         promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
                                      mock_model(Spree::PromotionRule, :eligible? => false, :applicable? => true)]
-        promotion.rules_are_eligible?(@order).should be_false
+        promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+        promotion.rules_are_eligible?(promotable).should be_false
       end
     end
 
     context "with 'any' match policy" do
-      before(:each) do
-        @promotion = Spree::Promotion.new(:name => "Promo", :match_policy => 'any')
-        @promotion.save
+      let(:promotion) { Spree::Promotion.create(:name => "Promo", :match_policy => 'any') }
+      let(:promotable) { double('Promotable') }
+
+      it "should have eligible rules if any of the rules are eligible" do
+        Spree::PromotionRule.any_instance.stub(:applicable? => true)
+        true_rule = Spree::PromotionRule.create(:promotion => promotion)
+        true_rule.stub(:eligible? => true)
+        promotion.rules << true_rule
+        promotion.rules_are_eligible?(promotable).should be_true
       end
 
-      it "should have eligible rules if any of the rules is eligible" do
-        true_rule = Spree::PromotionRule.create(:promotion => @promotion)
-        true_rule.stub(:eligible?).and_return(true)
-        false_rule = Spree::PromotionRule.create(:promotion => @promotion)
-        false_rule.stub(:eligible?).and_return(false)
-        @promotion.rules << true_rule
-        @promotion.rules_are_eligible?(@order).should be_true
+      it "should have no eligible rules if no rules are applicable to promotable" do
+        Spree::PromotionRule.any_instance.stub(:applicable? => false)
+        rule = Spree::PromotionRule.create(:promotion => @promotion)
+        promotion.rules << rule
+        promotion.rules_are_eligible?(promotable).should be_false
       end
     end
   end
