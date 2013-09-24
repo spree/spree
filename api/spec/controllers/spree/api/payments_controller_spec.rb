@@ -44,6 +44,11 @@ module Spree
           json_response.should have_attributes(attributes << :display_amount)
         end
 
+        it "cannot update a payment" do
+          api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
+          assert_unauthorized!
+        end
+
         it "cannot authorize a payment" do
           api_put :authorize, :id => payment.to_param
           assert_unauthorized!
@@ -94,6 +99,31 @@ module Spree
       end
 
       context "for a given payment" do
+        context "updating" do
+          it "can update" do
+            payment.update_attributes(:state => 'pending')
+            api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
+            response.status.should == 200
+            payment.reload.amount.should == 2.01
+          end
+
+          context "update fails" do
+            it "returns a 422 status when the amount is invalid" do
+              payment.update_attributes(:state => 'pending')
+              api_put :update, :id => payment.to_param, :payment => { :amount => 'invalid' }
+              response.status.should == 422
+              json_response["error"].should == "Invalid resource. Please fix errors and try again."
+            end
+
+            it "returns a 403 status when the payment is not pending" do
+              payment.update_attributes(:state => 'completed')
+              api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
+              response.status.should == 403
+              json_response["error"].should == "This payment cannot be updated because it is completed."
+            end
+          end
+        end
+
         context "authorizing" do
           it "can authorize" do
             api_put :authorize, :id => payment.to_param
