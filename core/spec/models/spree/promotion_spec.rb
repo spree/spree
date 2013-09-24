@@ -12,14 +12,6 @@ describe Spree::Promotion do
       @valid_promotion.should be_valid
     end
 
-    it "validates the path when event is spree.content.visited" do
-      @valid_promotion.event_name = 'spree.content.visited'
-      @valid_promotion.should_not be_valid
-
-      @valid_promotion.path = 'content/cvv'
-      @valid_promotion.should be_valid
-    end
-
     it "validates usage limit" do
       @valid_promotion.usage_limit = -1
       @valid_promotion.should_not be_valid
