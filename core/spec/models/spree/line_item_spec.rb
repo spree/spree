@@ -94,6 +94,15 @@ describe Spree::LineItem do
     end
   end
 
+  describe '.discounted_amount' do
+    it "returns the amount minus any discounts" do
+      line_item.price = 10
+      line_item.quantity = 2
+      line_item.promo_total = -5
+      line_item.discounted_amount.should == 15
+    end
+  end
+
   describe '.currency' do
     it 'returns the globally configured currency' do
       line_item.currency == 'USD'
