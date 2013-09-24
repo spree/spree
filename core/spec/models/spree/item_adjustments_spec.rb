@@ -21,7 +21,36 @@ module Spree
     end
 
     context "taxes and promotions" do
-      pending "calculates item taxes properly after promotions"
+      let!(:tax_rate) do
+        create(:tax_rate, :amount => 0.05)
+      end
+
+      let!(:promotion) do
+        Spree::Promotion.create(:name => "$10 off")
+      end
+
+      let!(:promotion_action) do
+        calculator = Calculator::FlatRate.new(:preferred_amount => 10)
+        Promotion::Actions::CreateItemAdjustments.create calculator: calculator, promotion: promotion
+      end
+
+      before do
+        line_item.price = 20
+        line_item.tax_category = tax_rate.tax_category
+        line_item.save
+        create(:adjustment, :source => tax_rate, :adjustable => line_item)
+        create(:adjustment, :source => promotion_action, :adjustable => line_item)
+      end
+
+      it "applies promotions first, then tax" do
+        subject.update_adjustments
+        line_item.reload
+        # Taxable amount is: $20 (base) - $10 (promotion) = $10
+        # Tax rate is 5% (of $10).
+        line_item.tax_total.should == 0.5
+        line_item.promo_total.should == -10
+        line_item.adjustment_total.should == -9.5
+      end
     end
 
     context "best promotion is always applied" do
