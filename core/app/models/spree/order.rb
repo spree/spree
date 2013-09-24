@@ -451,10 +451,6 @@ module Spree
       @coupon_code = code.strip.downcase rescue nil
     end
 
-    def promo_total
-      adjustments.promotion.eligible.sum(:amount)
-    end
-
     def shipped?
       %w(partial shipped).include?(shipment_state)
     end
