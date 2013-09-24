@@ -1,3 +1,5 @@
+set -e
+
 # Switching Gemfile
 function set_gemfile(){
   echo "Switching Gemfile..."
