@@ -41,7 +41,7 @@ module Spree
 
         it "can view a pre-existing payment's details" do
           api_get :show, :id => payment.to_param
-          json_response.should have_attributes(attributes)
+          json_response.should have_attributes(attributes << :display_amount)
         end
 
         it "cannot authorize a payment" do
