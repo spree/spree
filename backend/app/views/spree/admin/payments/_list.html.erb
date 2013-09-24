@@ -10,9 +10,9 @@
   </thead>
   <tbody>
     <% payments.each do |payment| %>
-      <tr data-hook="payments_row" class="<%= cycle('odd', 'even')%>">
+      <tr id="<%= dom_id(payment) %>" data-hook="payments_row" class="<%= cycle('odd', 'even')%>">
         <td><%= pretty_time(payment.created_at) %></td>
-        <td class='align-center'><%= payment.display_amount.to_html %></td>
+        <td class="align-center amount"><%= payment.display_amount.to_html %></td>
         <td class="align-center"><%= link_to payment_method_name(payment), spree.admin_order_payment_path(@order, payment) %></td>
         <td class="align-center"> <span class="state <%= payment.state %>"><%= Spree.t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></span></td>
         <td class="actions">

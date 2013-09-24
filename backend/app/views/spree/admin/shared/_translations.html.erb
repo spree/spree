@@ -10,8 +10,10 @@
     :choose_a_customer        => Spree.t(:choose_a_customer),
     :confirm_delete           => Spree.t(:confirm_delete),
     :cut                      => Spree.t(:cut),
-    :destroy                  => Spree.t(:destroy),
-    :edit                     => Spree.t(:edit),
+    :destroy                  => Spree.t(:destroy, :scope => :actions),
+    :edit                     => Spree.t(:edit,    :scope => :actions),
+    :save                     => Spree.t(:save,    :scope => :actions),
+    :cancel                   => Spree.t(:cancel,  :scope => :actions),
     :first_day                => Spree.t(:first_day,
                                          :scope => 'date_picker',
                                          :default => 0).to_i,
@@ -31,7 +33,8 @@
     :type_to_search           => Spree.t(:type_to_search),
     :taxon_placeholder        => Spree.t(:taxon_placeholder),
     :variant_placeholder      => Spree.t(:variant_placeholder),
-    :value                    => Spree.t(:value)
+    :value                    => Spree.t(:value),
+    :currency_separator       => I18n.t('number.currency.format.separator'),
   }.to_json
 %>
 </script>
