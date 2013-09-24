@@ -26,11 +26,7 @@ To see thorough detail on how a particular JSON Message should be formatted, che
 
 ### Order Confirmation
 
-$$$
-The trigger language here is sloppy. Presume it's when an order reaches a particular state(s).
-$$$
-
-This Service should be triggered any time a new order is created, or when an existing order is updated. When the Endpoint receives a validly-formatted Message to the `/order_confirmation` URL, it passes the order's information on to Mandrill's API. Mandrill then sends an email to the user using its matching stored [template](#template), confirming that their order was received.
+This Service should be triggered when an order is completed, or when an existing order is updated. When the Endpoint receives a validly-formatted Message to the `/order_confirmation` URL, it passes the order's information on to Mandrill's API. Mandrill then sends an email to the user using its matching stored [template](#template), confirming that their order was received.
 
 <pre class="headers"><code>A new order is created</code></pre>
 ```json
@@ -56,13 +52,20 @@ This Service should be triggered any time a new order is created, or when an exi
 }
 ```
 
+#### Parameters
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| mandrill.api_key | Your Mandrill API Key | Aqws3958dhdjwb39 |
+| mandrill.order_confirmation.from | Email Address to Send From | orders@spreecommerce.com |
+| mandrill.order_confirmation.subject | Subject Line of Email | Your Order is Complete |
+| mandrill.order_confirmation.template | Mandrill Template to Fill In | order_confirmation |
+
+
+
 ### Order Cancellation
 
-$$$
-Is this the correct scenario?
-$$$
-
-If a user or an admin cancels an existing order, the store should send a JSON message with the relevant data to the `/order_cancellation` URL. The Endpoint will transmit a Message to Mandrill, which then sends an email to the user, confirming that the order was canceled.
+If an admin cancels an existing order, the hub will pick up on it and send a JSON message with the relevant data to the `/order_cancellation` URL. The Endpoint will transmit a Message to Mandrill, which then sends an email to the user, confirming that the order was canceled.
 
 ```json
 {
@@ -74,10 +77,20 @@ If a user or an admin cancels an existing order, the store should send a JSON me
   }
 }
 ```
+#### Parameters
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| mandrill.api_key | Your Mandrill API Key | Aqws3958dhdjwb39 |
+| mandrill.order_cancellation.from | Email Address to Send From | orders@spreecommerce.com |
+| mandrill.order_cancellation.subject | Subject Line of Email | Your Order has been Cancelled |
+| mandrill.order_cancellation.template | Mandrill Template to Fill In | order_cancellation |
+
+
 
 ### Shipment Confirmation
 
-After an order moves to the `shipped` order state, the store should send notice via the Integrator to theEndpoint's `/shipment_confirmation` URL, with the relevant order and shipment data. The Endpoint will then instruct Mandrill to email the customer, notifying them that the order is en route.
+After an order moves to the `shipped` order state, the store should send notice via the Hub to the Endpoint's `/shipment_confirmation` URL, with the relevant order and shipment data. The Endpoint will then instruct Mandrill to email the customer, notifying them that the order is en route.
 
 ```json
 {
@@ -94,38 +107,11 @@ After an order moves to the `shipped` order state, the store should send notice 
 }
 ```
 
-$$$
-Supply whatever substitutes for the "..." above
-$$$
-
-## Configuration
-
-$$$
-Elaborate when we finalize the connector.
-$$$
-
-### Name
-
-### Keys
-
-#### api_key
-
-#### from
-
-#### subject
-
-#### template
-
 ### Parameters
 
-### Url
-
-### Token
-
-### Event Keys
-
-### Event Details
-
-### Filters
-
-### Retries
+| Name | Value | Example |
+| :----| :-----| :------ |
+| mandrill.api_key | Your Mandrill API Key | Aqws3958dhdjwb39 |
+| mandrill.shipment_confirmation.from | Email Address to Send From | orders@spreecommerce.com |
+| mandrill.shipment_confirmation.subject | Subject Line of Email | Your Shipment has Shipped |
+| mandrill.shipment_confirmation.template | Mandrill Template to Fill In | shipment_confirmation |
