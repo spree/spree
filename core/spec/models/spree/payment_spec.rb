@@ -336,7 +336,7 @@ describe Spree::Payment do
 
     context "#credit" do
       before do
-        payment.state = 'complete'
+        payment.state = 'completed'
         payment.response_code = '123'
       end
 
