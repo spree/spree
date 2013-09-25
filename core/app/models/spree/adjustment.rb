@@ -85,7 +85,7 @@ module Spree
     # are not recalculated.
     #
     # It receives +calculable+ as the updated source here so calculations can be
-    # performed on the current values of that source. If we used +source+ it 
+    # performed on the current values of that source. If we used +source+ it
     # could load the old record from db for the association. e.g. when updating
     # more than on line items at once via accepted_nested_attributes the order
     # object on the association would be in a old state and therefore the
