@@ -511,7 +511,7 @@ module Spree
     #
     # At some point the might need to force the order to transition from address
     # to delivery again so that proper updated shipments are created.
-    # e.g. customer goes back from payment step and changes order items 
+    # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all

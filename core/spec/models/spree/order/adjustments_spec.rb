@@ -1,9 +1,9 @@
 require 'spec_helper'
+
 describe Spree::Order do
   let(:order) { Spree::Order.new }
 
   context "clear_adjustments" do
-
     let(:adjustment) { double("Adjustment") }
 
     it "destroys all order adjustments" do
@@ -41,7 +41,6 @@ describe Spree::Order do
 
   context "line item adjustment totals" do
     before { @order = Spree::Order.create! }
-
 
     context "when there are no line item adjustments" do
       before { @order.stub_chain(:line_item_adjustments, :eligible => []) }
@@ -146,4 +145,3 @@ describe Spree::Order do
     end
   end
 end
-
