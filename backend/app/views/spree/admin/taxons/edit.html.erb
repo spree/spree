@@ -10,7 +10,7 @@
   </li>
 <% end %>
 
-<% # Because otherwise the form would attempt to use to_param of @taxon %>
+<%# Because otherwise the form would attempt to use to_param of @taxon %>
 <% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
 <%= form_for [:admin, @taxonomy, @taxon], :method => :put, :url => form_url, :html => { :multipart => true } do |f| %>
   <%= render 'form', :f => f %>
