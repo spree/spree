@@ -24,6 +24,10 @@ In order to configure and use the [mandrill_endpoint](https://github.com/spree/m
 To see thorough detail on how a particular JSON Message should be formatted, check out the [Notification Messages guide](notification_messages).
 ***
 
+### Templates
+
+The Mandrill Integration sends a collection of Merge Variables which can be used in Mandrill templates to fill in relevant information. Example templates are included with each of the actions below, and full information about the variables being sent can be found in [the code](https://github.com/spree/mandrill_endpoint/blob/master/lib/mandrill_sender.rb).
+
 ### Order Confirmation
 
 This Service should be triggered when an order is completed, or when an existing order is updated. When the Endpoint receives a validly-formatted Message to the `/order_confirmation` URL, it passes the order's information on to Mandrill's API. Mandrill then sends an email to the user using its matching stored [template](#template), confirming that their order was received.
@@ -62,6 +66,48 @@ This Service should be triggered when an order is completed, or when an existing
 | mandrill.order_confirmation.template | Mandrill Template to Fill In | order_confirmation |
 
 
+#### Example Template
+```html
+<h1>*|ORDER_NUMBER|*</h1>
+
+Thank you for your order!
+
+<br>
+
+<table> 
+<tr> 
+<th>Name</th> 
+<th>Quantity</th> 
+<th>Price</th> 
+</tr> 
+*|LINE_ITEM_ROWS|*
+<tr>
+    <td colspan="3">&nbsp;</td>
+</tr>
+<tr>
+    <td align="right" colspan="2">Item Total:</td>
+    <td>*|ITEM_TOTAL|*</td>
+</tr>
+<tr>
+    <td align="right" colspan="2">Total:</td>
+    <td>*|TOTAL|*</td>
+</tr>
+</table>
+
+<p>
+    Ship to:
+
+*|SHIPPING_ADDRESS_FIRST_NAME|*
+*|SHIPPING_ADDRESS_LAST_NAME|*,<br>
+*|SHIPPING_ADDRESS_ADDRESS1|*,<br>
+*|SHIPPING_ADDRESS_CITY|*,<br>
+*|SHIPPING_ADDRESS_STATE|*,<br>
+*|SHIPPING_ADDRESS_COUNTRY|*,<br>
+*|SHIPPING_ADDRESS_ZIPCODE|*<br>
+</p>
+```
+
+
 
 ### Order Cancellation
 
@@ -85,6 +131,39 @@ If an admin cancels an existing order, the hub will pick up on it and send a JSO
 | mandrill.order_cancellation.from | Email Address to Send From | orders@spreecommerce.com |
 | mandrill.order_cancellation.subject | Subject Line of Email | Your Order has been Cancelled |
 | mandrill.order_cancellation.template | Mandrill Template to Fill In | order_cancellation |
+
+
+#### Example Template
+
+<h1>*|ORDER_NUMBER|*</h1>
+
+Your Order has been cancelled
+
+
+<table> 
+<tr> 
+<th>Name</th> 
+<th>Quantity</th> 
+<th>Price</th> 
+</tr> 
+*|LINE_ITEM_ROWS|*
+</table>
+
+Item Total: *|ITEM_TOTAL|*
+Total: *|TOTAL|*
+
+Thanks
+
+*|FIRST_NAME|*
+*|LAST_NAME|*
+*|COMPANY|*
+*|ADDRESS1|*
+*|ADDRESS2|*
+*|CITY|*
+*|STATE|*
+*|COUNTRY|*
+*|ZIPCODE|*
+
 
 
 
@@ -115,3 +194,39 @@ After an order moves to the `shipped` order state, the store should send notice 
 | mandrill.shipment_confirmation.from | Email Address to Send From | orders@spreecommerce.com |
 | mandrill.shipment_confirmation.subject | Subject Line of Email | Your Shipment has Shipped |
 | mandrill.shipment_confirmation.template | Mandrill Template to Fill In | shipment_confirmation |
+
+#### Example Template
+
+<h1>*|ORDER_NUMBER|*</h1>
+
+Your Order has Shipped!
+
+*|CARRIER|*
+
+*|TRACKING_NUMBER|*
+
+*|TRACKING_URL|*
+
+<table> 
+<tr> 
+<th>Name</th> 
+<th>Quantity</th> 
+<th>Price</th> 
+</tr> 
+*|LINE_ITEM_ROWS|*
+</table>
+
+Item Total: *|ITEM_TOTAL|*
+Total: *|TOTAL|*
+
+Thanks
+
+*|FIRST_NAME|*
+*|LAST_NAME|*
+*|COMPANY|*
+*|ADDRESS1|*
+*|ADDRESS2|*
+*|CITY|*
+*|STATE|*
+*|COUNTRY|*
+*|ZIPCODE|*
