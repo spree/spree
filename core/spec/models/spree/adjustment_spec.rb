@@ -6,14 +6,19 @@ require 'spec_helper'
 describe Spree::Adjustment do
 
   let(:order) { mock_model(Spree::Order, update!: nil) }
-  let(:adjustment) { Spree::Adjustment.create(:label => "Adjustment", :amount => 5) }
+  let!(:adjustment) { Spree::Adjustment.create!(:label => "Adjustment", :amount => 5) }
 
-  describe "scopes" do
-    let!(:arbitrary_adjustment) { create(:adjustment, source: nil, label: "Arbitrary") }
+  describe ".manual" do
+    it "returns manual adjustments" do
+      expect(Spree::Adjustment.manual).to eq([adjustment])
+    end
+  end
+
+  describe ".return_authorization" do
     let!(:return_authorization_adjustment) { create(:adjustment, source: create(:return_authorization)) }
 
     it "returns return_authorization adjustments" do
-      expect(Spree::Adjustment.return_authorization.to_a).to eq [return_authorization_adjustment]
+      expect(Spree::Adjustment.return_authorization).to eq([return_authorization_adjustment])
     end
   end
 

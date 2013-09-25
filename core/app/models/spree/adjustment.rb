@@ -56,6 +56,7 @@ module Spree
     scope :charge, -> { where('amount >= 0') }
     scope :credit, -> { where('amount < 0') }
     scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
+    scope :manual, -> { where(originator_type: nil) }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
 
     def promotion?
@@ -85,7 +86,7 @@ module Spree
     # are not recalculated.
     #
     # It receives +calculable+ as the updated source here so calculations can be
-    # performed on the current values of that source. If we used +source+ it 
+    # performed on the current values of that source. If we used +source+ it
     # could load the old record from db for the association. e.g. when updating
     # more than on line items at once via accepted_nested_attributes the order
     # object on the association would be in a old state and therefore the

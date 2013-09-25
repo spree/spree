@@ -126,7 +126,7 @@ module Spree
         options.merge!({ :shipping => order.ship_total * 100,
                          :tax      => order.tax_total * 100,
                          :subtotal => order.item_total * 100,
-                         :discount => order.promo_total * 100,
+                         :discount => order.discount_total * 100,
                          :currency => currency })
 
         options.merge!({ :billing_address  => order.bill_address.try(:active_merchant_hash),

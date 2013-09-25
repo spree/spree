@@ -283,11 +283,11 @@ module Spree
     end
 
     def ship_total
-      adjustments.shipping.map(&:amount).sum
+      adjustments.shipping.sum(:amount)
     end
 
     def tax_total
-      adjustments.tax.map(&:amount).sum
+      adjustments.tax.sum(:amount)
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
@@ -484,7 +484,15 @@ module Spree
     end
 
     def promo_total
-      adjustments.eligible.promotion.map(&:amount).sum
+      adjustments.eligible.promotion.sum(:amount)
+    end
+
+    def manual_adjustment_total
+      adjustments.eligible.manual.sum(:amount)
+    end
+
+    def discount_total
+      promo_total + manual_adjustment_total
     end
 
     def shipped?
@@ -507,7 +515,7 @@ module Spree
     #
     # At some point the might need to force the order to transition from address
     # to delivery again so that proper updated shipments are created.
-    # e.g. customer goes back from payment step and changes order items 
+    # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
