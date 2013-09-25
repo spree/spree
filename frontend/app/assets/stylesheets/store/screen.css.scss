@@ -300,7 +300,7 @@ nav #main-nav-bar {
     &#link-to-cart {
       float: right;
       padding-left: 24px;
-      background: asset-url("store/cart.png") no-repeat left center;
+      background: asset-url("store/cart.png", image) no-repeat left center;
 
       &:hover {
         border-color: $link_text_color;
