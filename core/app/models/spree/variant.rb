@@ -37,6 +37,8 @@ module Spree
     after_save :save_default_price
     after_create :create_stock_items
     after_create :set_position
+    after_create :set_master_out_of_stock, :unless => :is_master?
+
 
     # default variant scope only lists non-deleted variants
     scope :deleted, lambda { where('deleted_at IS NOT NULL') }
@@ -152,6 +154,13 @@ module Spree
         price.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
 
         price.to_d
+      end
+
+      def set_master_out_of_stock
+        if product.master && product.master.in_stock?
+          product.master.stock_items.update_all(:backorderable => false)
+          product.master.stock_items.each { |item| item.reduce_count_on_hand_to_zero }
+        end
       end
 
       # Ensures a new variant takes the product master price when price is not supplied

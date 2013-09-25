@@ -33,6 +33,21 @@ describe Spree::Variant do
         product.variants.create(:name => "Foobar")
       end
     end
+
+
+    describe 'mark_master_out_of_stock' do
+      context 'when product is created without variants' do
+        it { product.master.should be_in_stock }
+      end
+
+      context 'when a variant is created' do
+        before(:each) do
+          product.variants.create!(:name => 'any-name')
+        end
+
+        it { product.master.should_not be_in_stock }
+      end
+    end
   end
 
   context "product has other variants" do
