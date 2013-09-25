@@ -5,7 +5,7 @@ module Spree
     render_views
     let!(:order) { create(:order) }
     let!(:payment) { create(:payment, :order => order) }
-    let!(:attributes) { [:id, :source_type, :source_id, :amount,
+    let!(:attributes) { [:id, :source_type, :source_id, :amount, :display_amount,
                          :payment_method_id, :response_code, :state, :avs_response,
                          :created_at, :updated_at] }
 
@@ -41,7 +41,7 @@ module Spree
 
         it "can view a pre-existing payment's details" do
           api_get :show, :id => payment.to_param
-          json_response.should have_attributes(attributes << :display_amount)
+          json_response.should have_attributes(attributes)
         end
 
         it "cannot update a payment" do
