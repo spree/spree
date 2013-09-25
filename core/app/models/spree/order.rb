@@ -491,6 +491,10 @@ module Spree
       adjustments.eligible.promotion.sum(:amount)
     end
 
+    def manual_adjustment_total
+      adjustments.eligible.manual.sum(:amount)
+    end
+
     def shipped?
       %w(partial shipped).include?(shipment_state)
     end
