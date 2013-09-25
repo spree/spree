@@ -20,24 +20,31 @@ describe Spree::Order do
   end
 
   context "totaling adjustments" do
-    context "#ship_total" do
+    describe "#ship_total" do
       it "should return the correct amount" do
         order.stub_chain :adjustments, :shipping, :sum => 15
         order.ship_total.should == 15
       end
     end
 
-    context "#tax_total" do
+    describe "#tax_total" do
       it "should return the correct amount" do
         order.stub_chain :adjustments, :tax, :sum => 15
         order.tax_total.should == 15
       end
     end
 
-    context "#promo_total" do
+    describe "#promo_total" do
       it "should return the correct amount" do
         order.stub_chain :adjustments, :eligible, :promotion, :sum => 15
         order.promo_total.should == 15
+      end
+    end
+
+    describe "#manual_adjustment_total" do
+      it "should return the correct amount" do
+        order.stub_chain :adjustments, :eligible, :manual, :sum => 15
+        order.manual_adjustment_total.should == 15
       end
     end
   end
