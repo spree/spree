@@ -131,4 +131,13 @@ describe Spree::Money do
       money.to_html.should == "10.00&nbsp;&#x20AC;"
     end
   end
+
+  describe "#as_json" do
+    let(:options) { double('options') }
+
+    it "returns the expected string" do
+      money = Spree::Money.new(10)
+      money.as_json(options).should == "$10.00"
+    end
+  end
 end
