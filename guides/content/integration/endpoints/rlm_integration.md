@@ -4,7 +4,7 @@ title: RLM Endpoint
 
 ## Overview
 
-Endpoint for the [RLM](http://www2.ronlynn.com) ERP that saves order lines locally to be exported into RLM CSV and upload the csv to S3. The RLM ERP processes the orders line by line from a CSV file, this endpoint will break up the individual line items from the shipment and stores them in a format ready for RLM. 
+Endpoint for the [RLM](http://www2.ronlynn.com) ERP that saves order lines locally to be exported in bulk into a CSV formatted for RLM and uploaded to S3. The RLM ERP processes the orders line by line from a CSV file, this endpoint will break up the individual line items from the shipment and stores them in a format ready for RLM. 
 
 We also store the complete payload for reference, so any future adjustments can be made from this endpoint.
 
@@ -841,6 +841,18 @@ $$$
 * uploading
 * schedule
 $$$
+
+#### File Names
+
+File names take multiple datapoints to construct. 
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| file_name_ts | Current Date, formatted as Year_Month_Day | 2013_09_25 |
+| name_part | 10_40 or 14_40 depending on whether it is currently before noon or after noon | 10_40 |
+| file_type | Either orders_integrator or orders_amazon based on destination | orders_amazon |
+
+These all get put together into a final filename such as 2013_09_25_10_40_orders_amazon.csv
 
 #### Parameters
 
