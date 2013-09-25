@@ -519,6 +519,10 @@ module Spree
       shipments.map &:refresh_rates
     end
 
+    def shipping_eq_billing_address?
+      (bill_address.empty? && ship_address.empty?) || bill_address.same_as?(ship_address)
+    end
+
     private
 
       def link_by_email
