@@ -47,6 +47,14 @@ describe Spree::Order do
         order.manual_adjustment_total.should == 15
       end
     end
+
+    describe "#discount_total" do
+      it "should return the correct amount" do
+        order.should_receive(:promo_total).and_return(5)
+        order.should_receive(:manual_adjustment_total).and_return(10)
+        order.discount_total.should == 15
+      end
+    end
   end
 
   context "line item adjustment totals" do
