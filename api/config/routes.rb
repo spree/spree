@@ -1,4 +1,4 @@
-Spree::Core::Engine.routes.draw do
+Spree::Core::Engine.prepend_routes do
   namespace :admin do
     resources :users do
       member do
