@@ -1,4 +1,4 @@
-Spree::Core::Engine.prepend_routes do
+Spree::Core::Engine.add_routes do
 
   root :to => 'home#index'
 
