@@ -37,6 +37,7 @@ Spree::Order.class_eval do
       begin
         shipment = shipments.build
         shipment.tracking = s[:tracking]
+        shipment.stock_location = Spree::StockLocation.find_by_name!(s[:stock_location])
 
         inventory_units = s[:inventory_units] || []
         inventory_units.each do |iu|
