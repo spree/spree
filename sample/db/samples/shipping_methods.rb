@@ -13,25 +13,25 @@ shipping_methods = [
   {
     :name => "UPS Ground (USD)",
     :zones => [north_america],
-    :calculator => Spree::Calculator::FlatRate.create!,
+    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   },
   {
     :name => "UPS Two Day (USD)",
     :zones => [north_america],
-    :calculator => Spree::Calculator::FlatRate.create!,
+    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   },
   {
     :name => "UPS One Day (USD)",
     :zones => [north_america],
-    :calculator => Spree::Calculator::FlatRate.create!,
+    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   },
   {
     :name => "UPS Ground (EUR)",
     :zones => [europe_vat],
-    :calculator => Spree::Calculator::FlatRate.create!,
+    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   }
 ]
