@@ -7,7 +7,7 @@ FactoryGirl.define do
   factory :credit_card, class: TestCard do
     verification_value 123
     month 12
-    year 2013
+    year { Date.year }
     number '4111111111111111'
   end
 end
