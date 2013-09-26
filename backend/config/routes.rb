@@ -1,4 +1,4 @@
-Spree::Core::Engine.prepend_routes do
+Spree::Core::Engine.add_routes do
   get '/admin', :to => 'admin/orders#index', :as => :admin
 
   namespace :admin do
