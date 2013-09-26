@@ -512,10 +512,33 @@ describe Spree::Order do
   end
 
   context "#confirmation_required?" do
-    it "does not bomb out when an order has an unpersisted payment" do
-      order = Spree::Order.new
-      order.payments.build
-      assert !order.confirmation_required?
+
+    context 'Spree::Config[:always_include_confirm_step] == true' do
+
+      before do
+        Spree::Config[:always_include_confirm_step] = true
+      end
+
+      it "returns true if payments empty" do
+        order = Spree::Order.new
+        order.payments.build
+        assert order.confirmation_required?
+      end
+    end
+
+    context 'Spree::Config[:always_include_confirm_step] == false' do
+
+      it "returns false if payments empty and Spree::Config[:always_include_confirm_step] == false" do
+        order = Spree::Order.new
+        order.payments.build
+        assert !order.confirmation_required?
+      end
+
+      it "does not bomb out when an order has an unpersisted payment" do
+        order = Spree::Order.new
+        order.payments.build
+        assert !order.confirmation_required?
+      end
     end
   end
 
