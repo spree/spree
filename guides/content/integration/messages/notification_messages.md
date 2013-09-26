@@ -21,6 +21,7 @@ This Message type is for communicating interesting information from Endpoint Ser
 {
   "message": "notification:info",
   "message_id": "518726r84910000001",
+  "source": "incoming",
   "payload": {
     "subject": "Tracking number assigned",
     "description": "Shipment has been given a tracking #123443-5242."
@@ -37,6 +38,7 @@ Use this Message type to indicate that a Service executed successfully but that 
 {
   "message": "notification:warn",
   "message_id": "518726r84910000002",
+  "source": "accepted",
   "payload": {
     "subject": "Unable to verify address",
     "description": "Shipment #H123456 contains an address that was unabled to be verified. We have shipped the package anyways but it may not get there!"
@@ -61,6 +63,7 @@ $$$
 {
   "message": "notification:error",
   "message_id": "518726r84910000003",
+  "source": "incoming"
   "payload": {
     "subject": "Shipment rejected",
     "description": "We are unable to ship overnight packages to Afghanistan."
