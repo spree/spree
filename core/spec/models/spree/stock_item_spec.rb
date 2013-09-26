@@ -51,11 +51,25 @@ describe Spree::StockItem do
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
-      before { subject.adjust_count_on_hand(- (current_on_hand + 2)) }
+      before do
+        subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
+        subject.update_column(:count_on_hand, -2)
+      end
 
-      it "doesn't process backorders" do
-        subject.should_not_receive(:backordered_inventory_units)
+      # Regression test for #3755
+      it "processes existing backorders, even with negative stock" do
+        inventory_unit.should_receive(:fill_backorder)
+        inventory_unit_2.should_not_receive(:fill_backorder)
         subject.adjust_count_on_hand(1)
+        subject.count_on_hand.should == -1
+      end
+
+      # Test for #3755
+      it "does not process backorders when stock is adjusted negatively" do
+        inventory_unit.should_not_receive(:fill_backorder)
+        inventory_unit_2.should_not_receive(:fill_backorder)
+        subject.adjust_count_on_hand(-1)
+        subject.count_on_hand.should == -3
       end
 
       context "adds new items" do
