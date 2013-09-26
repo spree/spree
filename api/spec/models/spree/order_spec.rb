@@ -2,22 +2,25 @@ require 'spec_helper'
 
 module Spree
   describe Order do
-    let!(:country) { FactoryGirl.create(:country) }
-    let!(:state) { country.states.first || FactoryGirl.create(:state, :country => country) }
-    let!(:stock_location) { FactoryGirl.create(:stock_location) }
+    let!(:country) { create(:country) }
+    let!(:state) { country.states.first || create(:state, :country => country) }
+    let!(:stock_location) { create(:stock_location) }
 
     let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
     let(:shipping_method) { create(:shipping_method) }
     let(:payment_method) { create(:payment_method) }
+
     let(:product) { product = Spree::Product.create(:name => 'Test',
                                            :sku => 'TEST-1',
                                            :price => 33.22)
-                    product.shipping_category = FactoryGirl.create(:shipping_category)
+                    product.shipping_category = create(:shipping_category)
                     product.save
                     product }
+
     let(:variant) { variant = product.master
                     variant.stock_items.each { |si| si.update_attribute(:count_on_hand, 10) }
                     variant }
+
     let(:sku) { variant.sku }
     let(:variant_id) { variant.id }
 
@@ -178,6 +181,7 @@ module Spree
             { :tracking => '123456789',
               :cost => '4.99',
               :shipping_method => shipping_method.name,
+              :stock_location => stock_location.name,
               :inventory_units => [{ :sku => sku }]
             }
         ] }
@@ -195,6 +199,14 @@ module Spree
         shipment.inventory_units.first.variant_id.should eq product.master.id
         shipment.tracking.should eq '123456789'
         shipment.shipping_rates.first.cost.should eq 4.99
+        shipment.stock_location.should eq stock_location
+      end
+
+      it "raises if cant find stock location" do
+        params[:shipments_attributes][0][:stock_location] = "doesnt exist"
+        expect {
+          order = Order.build_from_api(user, params)
+        }.to raise_error
       end
     end
 
