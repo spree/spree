@@ -5,16 +5,6 @@ module Spree
 
       config.autoload_paths += %W(#{config.root}/lib)
 
-      # We need to reload the routes here due to how Spree sets them up.
-      # The different facets of Spree (auth, promo, etc.) append/prepend routes to Backend
-      # *after* Backend has been loaded.
-      #
-      # So we wait until after initialization is complete to do one final reload.
-      # This then makes the appended/prepended routes available to the application.
-      config.after_initialize do
-        Rails.application.routes_reloader.reload!
-      end
-
       initializer "spree.backend.environment", :before => :load_config_initializers do |app|
         Spree::Backend::Config = Spree::BackendConfiguration.new
       end
