@@ -16,12 +16,47 @@ The source code for the [Spree Endpoint](https://github.com/spree/spree_endpoint
 
 When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches new orders from Spree.
 
-
 ####Request
 
-~~~
-TODO: fill in request
-~~~
+```
+{
+  "store_name": "ABC Widgets",
+  "message": "spree:order:poll",
+  "created_at": "2013-09-26T20:26:17Z",
+  "completed_at": "2013-09-26T20:26:24Z",
+  "consumer_class": "Augury::Consumers::Remote",
+  "attempt_at": "2013-09-26T20:26:20Z",
+  "attempts": 0,
+  "mapping": {
+    "enabled": true,
+    "filters": [ ],
+    "identifiers": { },
+    "messages": [
+      "spree:order:poll"
+    ],
+    "name": "spree.order_poll",
+    "options": {
+      "retries_allowed": true
+    },
+    "parameters": [ ],
+    "required": true,
+    "store_id": {
+      "$oid": "123"
+    },
+    "token": "abc123",
+    "url": "http://ep-spree.spree.fm/orders/poller",
+    "usage": {
+      "1hr": 6,
+      "6hr": 36,
+      "24hr": 144,
+      "3d": 1937
+    },
+    "usage_updated_at": "2013-09-26T20:24:19Z",
+    "consumer": "Augury::Consumers::Remote"
+  },
+  "source": "accepted"
+}
+```
 
 #### Parameters
 
