@@ -14,10 +14,9 @@ For more information please see the [Order Messages](order_messages) guide which
 
 For more information please see the [Shipment Messages](shipment_messages) guide which has information on each of the Message Types.
 
-* [Shipment Ready](shipment_messages#ready)
-* [Update Shipment](shipment_messages#update)
-* [Confirm Shipment](shipment_messages#confirm)
-* [Cancel Shipment](shipment_messages#cancel)
+* [Shipment Ready](shipment_messages#shipmentready)
+* [Confirm Shipment](shipment_messages#shipmentconfirm)
+* [Cancel Shipment](shipment_messages#shipmentcanceled)
 
 <!-- # Payment Messages
 
@@ -28,6 +27,7 @@ For more information please see the [Payment Messages](payment_messages) guide w
 * [Cancel Payment](payment_messages#cancel)
 * [Void Payment](payment_messages#void)
  -->
+
 # Stock Messages
 
 For more information please see the [Stock Messages](stock_messages) guide which has information on each of the Message Types.

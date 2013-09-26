@@ -16,7 +16,7 @@ Notification Messages can be mapped to Endpoints just like any other Message. By
 
 This Message type is for communicating interesting information from Endpoint Services. It is common for this type of Message to be sent in response after an Endpoint processes an inbound Message.
 
-<pre class="headers"><code>notification:info</code></pre>
+---notification:info---
 ```json
 {
   "message": "notification:info",
@@ -32,7 +32,7 @@ This Message type is for communicating interesting information from Endpoint Ser
 
 Use this Message type to indicate that a Service executed successfully but that there may be a potential problem that's worth investigating.
 
-<pre class="headers"><code>notification:warn</code></pre>
+---notification:warn---
 ```json
 {
   "message": "notification:warn",
@@ -56,7 +56,7 @@ $$$
 Fix the link above
 $$$
 
-<pre class="headers"><code>notification:error</code></pre>
+---notification:error---
 ```json
 {
   "message": "notification:error",
