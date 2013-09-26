@@ -8,7 +8,7 @@ title: Order Messages
 
 ### order:new
 
-Use this type of Message whenever a new order is created.
+When a new order is created, this is the message that will be send out. The ```original``` is the Spree::Order, while the ```order``` is the generic Integrator order format.
 
 ---order_new.json---
 ```json
@@ -570,7 +570,7 @@ Use this type of Message whenever a new order is created.
 
 ### order:update
 
-This type of Message should be sent when an existing order is updated. 
+When an order is updated, the following message will be send out. The ```order``` and ```previous``` are all in the generic Integrator format, while the ```original``` is the ```Spree::Order```. The ```diff`` key contains all the changes that happend for this order.
 
 ---order_updated.json---
 ```json
@@ -620,7 +620,7 @@ This type of Message should be sent when an existing order is updated.
 
 ### order:cancel
 
-You should send this type of Message whenever an order is canceled, whether by the customer or by a store administrator.
+The only difference with this messages that is send out is the status, this will be ```canceled```
 
 ---order_canceled.json---
 ```json
