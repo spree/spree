@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activemerchant', '1.39.2'
   s.add_dependency 'acts_as_list', '= 0.2.0'
-  s.add_dependency 'awesome_nested_set', '~> 3.0.0.rc.1'
+  s.add_dependency 'awesome_nested_set', '~> 3.0.0.rc.2'
   s.add_dependency 'aws-sdk', '1.11.1' # temporarily locked down due to https://github.com/aws/aws-sdk-ruby/issues/273
   s.add_dependency 'cancan', '~> 1.6.10'
   s.add_dependency 'deface', '>= 1.0.0.rc3'
@@ -36,5 +36,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'stringex', '~> 1.5.1'
   s.add_dependency 'truncate_html', '0.9.2'
-
 end
