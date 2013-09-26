@@ -521,7 +521,6 @@ describe Spree::Order do
 
       it "returns true if payments empty" do
         order = Spree::Order.new
-        order.payments.build
         assert order.confirmation_required?
       end
     end
@@ -530,7 +529,6 @@ describe Spree::Order do
 
       it "returns false if payments empty and Spree::Config[:always_include_confirm_step] == false" do
         order = Spree::Order.new
-        order.payments.build
         assert !order.confirmation_required?
       end
 
