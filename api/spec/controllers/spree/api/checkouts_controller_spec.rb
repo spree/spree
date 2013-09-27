@@ -175,6 +175,14 @@ module Spree
         response.status.should == 200
       end
 
+      # Regression test for #3784
+      it "can update the special instructions for an order" do
+        instructions = "Don't drop it. (Please)"
+        api_put :update, :id => order.to_param, :order_token => order.token,
+          :order => { :special_instructions => instructions }
+        expect(json_response['special_instructions']).to eql(instructions)
+      end
+
       context "as an admin" do
         sign_in_as_admin!
         it "can assign a user to the order" do
