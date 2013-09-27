@@ -52,6 +52,12 @@ module Spree
       order.state.should eq 'complete'
     end
 
+    it "assigns order[email] over user email to order" do
+      params = { email: 'wooowww@test.com' }
+      order = Order.build_from_api(user, params)
+      expect(order.email).to eq params[:email]
+    end
+
     it 'can build an order from API with just line items' do
       params = { :line_items_attributes => line_items }
 
