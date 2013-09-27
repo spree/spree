@@ -70,10 +70,23 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
 
 #### Response
 
-~~~
-TODO: fill in response
-~~~
-
+```
+{
+  "code": "200",
+  "response": {
+    "message_id": "5245b538b4395707ef0036f5",
+    "parameters": [
+      {
+        "name": "spree.order_poll.last_updated_at",
+        "value": "2013-09-27T15:57:28Z"
+      }
+    ],
+    "messages": [
+      ...
+    ]
+  }
+}
+```
 ### Order Lock
 
 When sent an "order:ship" message to '/orders/lock', the endpoint Locks the order in a Spree store, preventing the admin from editing it.
