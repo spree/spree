@@ -194,9 +194,21 @@ When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoi
 
 ####Request
 
-~~~
-TODO: fill in request
-~~~
+```json
+{
+  "message": "shipment:confirm",
+  "message_id": "518726r84910000004",
+  "payload": {
+    "shipment_number": 1,
+    "tracking_number": "123456",
+    "tracking_url": "http://www.ups.com/WebTracking/track",
+    "carrier": "UPS",
+    "shipped_date": "2013-06-27T13:29:46Z",
+    ...
+  }
+}
+```
+
 
 #### Parameters
 
