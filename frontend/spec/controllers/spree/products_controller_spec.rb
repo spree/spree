@@ -94,7 +94,7 @@ describe Spree::ProductsController do
       it "should redirect to http" do
         spree_get :index
         response.should redirect_to("http://#{request.host}/products?foo=bar")
-        response.code.should == 301
+        response.status.should == 301
       end
     end
   end
