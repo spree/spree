@@ -22,11 +22,7 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
 {
   "store_name": "ABC Widgets",
   "message": "spree:order:poll",
-  "created_at": "2013-09-26T20:26:17Z",
-  "completed_at": "2013-09-26T20:26:24Z",
   "consumer_class": "Augury::Consumers::Remote",
-  "attempt_at": "2013-09-26T20:26:20Z",
-  "attempts": 0,
   "mapping": {
     "enabled": true,
     "filters": [ ],
@@ -45,13 +41,6 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
     },
     "token": "abc123",
     "url": "http://ep-spree.spree.fm/orders/poller",
-    "usage": {
-      "1hr": 6,
-      "6hr": 36,
-      "24hr": 144,
-      "3d": 1937
-    },
-    "usage_updated_at": "2013-09-26T20:24:19Z",
     "consumer": "Augury::Consumers::Remote"
   },
   "source": "accepted"
@@ -87,10 +76,10 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
   }
 }
 ```
+
 ### Order Lock
 
 When sent an "order:ship" message to '/orders/lock', the endpoint Locks the order in a Spree store, preventing the admin from editing it.
-
 
 ####Request
 
@@ -115,7 +104,6 @@ TODO: fill in response
 ### Order Count on Hand
 
 When sent an "stock:change" message to '/stock/change', the endpoint updates the count on hand for a product in a Spree store.
-
 
 ####Request
 
@@ -142,12 +130,41 @@ TODO: fill in response
 
 When sent an "order:import" message to '/orders/import', the endpoint imports an order into the Spree store.
 
-
 ####Request
 
-~~~
-TODO: fill in request
-~~~
+```
+{
+  "store_name": "ABC Widgets",
+  "message": "order:import",
+  "consumer_class": "Augury::Consumers::Remote",
+  "mapping": {
+    "enabled": true,
+    "filters": [
+      {
+        "path": "payload.order.channel",
+        "operator": "eq",
+        "value": "Amazon.com"
+      }
+    ],
+    "identifiers": {
+      "order_number": "payload.order.number"
+    },
+    "messages": [
+      "order:import"
+    ],
+    "name": "spree.order.new",
+    "options": {
+      "retries_allowed": true
+    },
+    "parameters": [ ],
+    "required": false,
+    "token": "123",
+    "url": "http://ep-spree1.spree.fm/orders/import",
+    "consumer": "Augury::Consumers::Remote"
+  },
+  "source": "accepted"
+}
+```
 
 #### Parameters
 
@@ -160,9 +177,24 @@ TODO: fill in request
 
 #### Response
 
-~~~
-TODO: fill in response
-~~~
+```
+{
+  "code": "200",
+  "response": {
+    "message_id": "523fcd00b439573338018fab",
+    "notifications": [
+      {
+        "level": "warn",
+        "subject": "address1 was truncated",
+        "description": "address1 was truncated from '2000 Grande Canyon Boulevard, No 3523' to '2000 Grande Canyon Boulev'"
+      }
+    ],
+    "order": {
+      ...
+    }
+  }
+}
+```
 
 ### Payments Capture
 
@@ -208,7 +240,6 @@ When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoi
   }
 }
 ```
-
 
 #### Parameters
 
@@ -446,7 +477,6 @@ Basically it's impossible to create any backorders for a Spree 1.3 store since t
 #### Forcing the quantity.
 
 It's possible to force the quantity, when the ```spree.force_quantity``` is set to true (it's false by default!) the provided quantity will be the new ```count_on_hand```. For a Spree 1-3-stable store an ```InvalidQuantityException``` will be raised when the quantity is negative.
-
 
 ####Request
 
