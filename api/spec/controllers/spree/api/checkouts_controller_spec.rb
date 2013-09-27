@@ -28,6 +28,12 @@ module Spree
         json_response['number'].should be_present
         response.status.should == 201
       end
+
+      it "assigns email when creating a new order" do
+        api_post :create, :order => { :email => "guest@spreecommerce.com" }
+        expect(json_response['email']).not_to eq controller.current_api_user
+        expect(json_response['email']).to eq "guest@spreecommerce.com"
+      end
     end
 
     context "PUT 'update'" do

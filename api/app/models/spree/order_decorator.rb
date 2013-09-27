@@ -14,6 +14,7 @@ Spree::Order.class_eval do
 
     order = create!(params)
     order.associate_user!(user)
+    order.update_column(:email, params[:email]) if params[:email]
 
     order.create_shipments_from_api(shipments)
     order.create_line_items_from_api(line_items)
