@@ -88,12 +88,13 @@ describe Spree::ProductsController do
     context "receives a SSL request" do
       before do
         request.env['HTTPS'] = 'on'
+        request.path = "/products?foo=bar"
       end
 
       it "should redirect to http" do
-        controller.should_receive(:redirect_to).with(hash_including(:protocol => 'http://'))
         spree_get :index
-        request.protocol.should eql('https://')
+        response.should redirect_to("http://#{request.host}/products?foo=bar")
+        response.code.should == 301
       end
     end
   end
