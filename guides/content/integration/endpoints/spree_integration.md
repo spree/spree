@@ -76,7 +76,7 @@ TODO: fill in response
 
 ### Order Lock
 
-When sent an "order:ship" message, the endpoint Locks the order in a Spree store, preventing the admin from editing it.
+When sent an "order:ship" message to '/orders/lock', the endpoint Locks the order in a Spree store, preventing the admin from editing it.
 
 
 ####Request
@@ -101,7 +101,7 @@ TODO: fill in response
 
 ### Order Count on Hand
 
-When sent an "stock:change" message, the endpoint updates the count on hand for a product in a Spree store.
+When sent an "stock:change" message to '/stock/change', the endpoint updates the count on hand for a product in a Spree store.
 
 
 ####Request
@@ -127,7 +127,7 @@ TODO: fill in response
 
 ### Order Import
 
-When sent an "order:import" message, the endpoint imports an order into the Spree store.
+When sent an "order:import" message to '/orders/import', the endpoint imports an order into the Spree store.
 
 
 ####Request
@@ -153,7 +153,7 @@ TODO: fill in response
 
 ### Payments Capture
 
-When sent an "order:capture" message, the endpoint captures the payment on an order.
+When sent an "order:capture" message to '/payments/capturer', the endpoint captures the payment on an order.
 
 ####Request
 
@@ -177,7 +177,7 @@ TODO: fill in response
 
 ### Inventory Unit Service
 
-When sent an "shipment:confirm" message, the endpoint logs serial numbers on an inventory unit based on the external_ref provided.
+When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoint logs serial numbers on an inventory unit based on the external_ref provided.
 
 ####Request
 
@@ -201,13 +201,24 @@ TODO: fill in response
 
 ### Shipments Dispatch
 
-When sent an "shipment:confirm" message, the endpoint marks a shipment as shipped, and adds tracking details.
+When sent an "shipment:confirm" message to '/stock/transfer_poller', the endpoint marks a shipment as shipped, and adds tracking details.
 
 ####Request
 
-~~~
-TODO: fill in request
-~~~
+```json
+{
+  "message": "shipment:confirm",
+  "message_id": "518726r84910000004",
+  "payload": {
+    "shipment_number": 1,
+    "tracking_number": "123456",
+    "tracking_url": "http://www.ups.com/WebTracking/track",
+    "carrier": "UPS",
+    "shipped_date": "2013-06-27T13:29:46Z",
+    ...
+  }
+}
+```
 
 #### Parameters
 
@@ -229,9 +240,45 @@ When sent an "spree:stock_transfer:poll" message, the endpoint polls the Spree s
 
 ####Request
 
-~~~
-TODO: fill in request
-~~~
+```
+{
+  "store_name": "ABC Widgets",
+  "message": "spree:stock_transfer:poll",
+  "created_at": "2013-09-26T20:26:17Z",
+  "completed_at": "2013-09-26T20:26:24Z",
+  "consumer_class": "Augury::Consumers::Remote",
+  "attempt_at": "2013-09-26T20:26:20Z",
+  "attempts": 0,
+  "mapping": {
+    "enabled": true,
+    "filters": [ ],
+    "identifiers": { },
+    "messages": [
+      "spree:stock_transfer:poll"
+    ],
+    "name": "spree.stock_transfer.poll",
+    "options": {
+      "retries_allowed": true
+    },
+    "parameters": [ ],
+    "required": true,
+    "store_id": {
+      "$oid": "123"
+    },
+    "token": "abc123",
+    "url": "http://ep-spree.spree.fm/stock/transfer_poller",
+    "usage": {
+      "1hr": 6,
+      "6hr": 36,
+      "24hr": 144,
+      "3d": 1937
+    },
+    "usage_updated_at": "2013-09-26T20:24:19Z",
+    "consumer": "Augury::Consumers::Remote"
+  },
+  "source": "accepted"
+}
+```
 
 #### Parameters
 
@@ -244,9 +291,103 @@ TODO: fill in request
 
 #### Response
 
-~~~
-TODO: fill in response
-~~~
+```
+{
+  "code": "200",
+  "response": {
+    "message_id": "51da39193ed6f0235700000a",
+    "parameters": [
+      {
+        "name": "spree.stock_transfer_poller.last_updated_at",
+        "value": "2013-07-09T16:20:05+00:00"
+      }
+    ],
+    "messages": [
+      {
+        "key": "stock_transfer:persist",
+        "payload": {
+          "id": 1,
+          "created_at": "2013-07-09T16:20:05Z",
+          "updated_at": "2013-07-09T16:20:05Z",
+          "source_location": {
+            "id": 1,
+            "address1": null,
+            "address2": null,
+            "city": null,
+            "zipcode": null,
+            "phone": null,
+            "country_id": 41,
+            "state_id": null,
+            "state_name": null,
+            "country": {
+              "id": 41,
+              "iso_name": "CHINA",
+              "iso": "CN",
+              "iso3": "CHN",
+              "name": "China",
+              "numcode": 156
+            },
+            "": null,
+            "name": "Default"
+          },
+          "source_movements": [
+            {
+              "id": 1176,
+              "quantity": -13,
+              "stock_item_id": 3,
+              "stock_item": {
+                "id": 3,
+                "count_on_hand": 541,
+                "backorderable": true,
+                "stock_location_id": 1,
+                "variant_id": 3,
+                "variant": {
+                  "id": 3,
+                  "name": "bobblehead",
+                  "product_id": 3,
+                  "external_ref": "Bobblehead1",
+                  "sku": "Bobblehead1",
+                  "price": "30.0",
+                  "weight": "3.000",
+                  "height": "10.0",
+                  "width": "34.0",
+                  "depth": "12.0",
+                  "is_master": true,
+                  "cost_price": null,
+                  "permalink": "bobblehead"
+                }
+              }
+            }
+          ],
+          "destination_location": {
+            "id": 3,
+            "address1": null,
+            "address2": null,
+            "city": null,
+            "zipcode": null,
+            "phone": null,
+            "country_id": 214,
+            "state_id": null,
+            "state_name": null,
+            "country": {
+              "id": 214,
+              "iso_name": "UNITED STATES",
+              "iso": "US",
+              "iso3": "USA",
+              "name": "United States",
+              "numcode": 840
+            },
+            "": null,
+            "name": "office"
+          }
+        }
+      }
+    ],
+    "response": {
+    }
+  }
+}
+```
 
 ### Stock Change
 
