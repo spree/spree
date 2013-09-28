@@ -165,12 +165,26 @@ module Spree
       end
     end
 
+    it "raises with proper message when cant find country" do
+      address = { :country => { "name" => "NoNoCountry" } }
+      expect {
+        Order.ensure_country_id_from_api(address)
+      }.to raise_error /NoNoCountry/
+    end
+
     it 'ensures_state_id for state fields' do
       [:name, :abbr].each do |field|
         address = { :state => { field => state.send(field) }}
         Order.ensure_state_id_from_api(address)
         address[:state_id].should eq state.id
       end
+    end
+
+    it "raises with proper message when cant find state" do
+      address = { :state => { "name" => "NoNoState" } }
+      expect {
+        Order.ensure_state_id_from_api(address)
+      }.to raise_error /NoNoState/
     end
 
     context "shippments" do
@@ -245,6 +259,16 @@ module Spree
       expect {
         order = Order.build_from_api(user, params)
       }.to raise_error /XXX/
+    end
+
+    context "raises error" do
+      it "clears out order from db" do
+        params = { :payments_attributes => [{ payment_method: "XXX" }] }
+        count = Order.count
+
+        expect { order = Order.build_from_api(user, params) }.to raise_error
+        expect(Order.count).to eq count
+      end
     end
   end
 end
