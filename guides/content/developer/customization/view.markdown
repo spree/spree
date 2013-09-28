@@ -74,8 +74,8 @@ Deface currently supports the following actions:
 * <tt>:remove</tt> - Removes all elements that match the supplied selector
 * <tt>:replace</tt> - Replaces all elements that match the supplied selector, with the content supplied
 * <tt>:replace_contents</tt> - Replaces the contents of all elements that match the supplied selector
-* <tt>:surround</tt> - Surrounds all elements that match the supplied selector, expects replacement markup to contain <%= render_original %> placeholder
-* <tt>:surround_contents</tt> - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain <%= render_original %> placeholder
+* <tt>:surround</tt> - Surrounds all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
+* <tt>:surround_contents</tt> - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
 * <tt>:insert_after</tt> - Inserts after all elements that match the supplied selector
 * <tt>:insert_before</tt> - Inserts before all elements that match the supplied selector
 * <tt>:insert_top</tt> - Inserts inside all elements that match the supplied selector, as the first child
