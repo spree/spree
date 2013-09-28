@@ -12,7 +12,7 @@ Spree store. This guide explains the options available, including:
 
 ### Using Deface
 
-Deface is a standalone Rails 3 library that enables you to customize Erb
+Deface is a standalone Rails library that enables you to customize Erb
 templates without needing to directly edit the underlying view file.
 Deface allows you to use standard CSS3 style selectors to target any
 element (including Ruby blocks), and perform an action against all the
