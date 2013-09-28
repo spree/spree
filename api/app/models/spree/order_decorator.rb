@@ -1,28 +1,26 @@
 Spree::Order.class_eval do
   def self.build_from_api(user, params)
-    completed_at = params.delete(:completed_at)
-    line_items = params.delete(:line_items_attributes) || {}
-    shipments = params.delete(:shipments_attributes) || []
-    payments = params.delete(:payments_attributes) || []
-    adjustments = params.delete(:adjustments_attributes) || []
+    begin
+      ensure_country_id_from_api params[:ship_address_attributes]
+      ensure_state_id_from_api params[:ship_address_attributes]
+      ensure_country_id_from_api params[:bill_address_attributes]
+      ensure_state_id_from_api params[:bill_address_attributes]
 
-    ensure_country_id_from_api params[:ship_address_attributes]
-    ensure_state_id_from_api params[:ship_address_attributes]
+      order = create!
+      order.associate_user!(user)
 
-    ensure_country_id_from_api params[:bill_address_attributes]
-    ensure_state_id_from_api params[:bill_address_attributes]
+      order.create_shipments_from_api params.delete(:shipments_attributes) || []
+      order.create_line_items_from_api params.delete(:line_items_attributes) || {}
+      order.create_adjustments_from_api params.delete(:adjustments_attributes) || []
+      order.create_payments_from_api params.delete(:payments_attributes) || []
+      order.complete_from_api params.delete(:completed_at)
 
-    order = create!(params)
-    order.associate_user!(user)
-
-    order.create_shipments_from_api(shipments)
-    order.create_line_items_from_api(line_items)
-    order.create_adjustments_from_api(adjustments)
-    order.create_payments_from_api(payments)
-    order.complete_from_api(completed_at)
-
-    order.save!
-    order.reload
+      order.update_attributes!(params)
+      order.reload
+    rescue Exception => e
+      order.destroy if order && order.persisted?
+      raise e.message
+    end
   end
 
   def complete_from_api(completed_at)
