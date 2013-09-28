@@ -11,7 +11,7 @@ In this tutorial we are going to learn about [Deface](https://github.com/spree/d
 
 ## What is Deface?
 
-Deface is a standalone Rails 3 library that enables you to customize Erb templates without needing to directly edit the underlying view file. Deface allows you to use standard CSS3 style selectors to target any element (including Ruby blocks), and perform an action against all the matching elements.
+Deface is a standalone Rails library that enables you to customize Erb templates without needing to directly edit the underlying view file. Deface allows you to use standard CSS3 style selectors to target any element (including Ruby blocks), and perform an action against all the matching elements.
 
 ## Using Deface
 
@@ -141,7 +141,8 @@ Deface::Override.new(:virtual_path => 'spree/admin/products/_form',
   ")
 ```
 
-There is one more change we will need to make in order to get the updated product edit form working. We need to make `sale_price` attr_accessible on the `Spree::Product` model and delegate to the master variant for `sale_price`.
+We also need to delegate `sale_price` to the master variant in order to get the
+updated product edit form working.
 
 We can do this by creating a new file `app/models/spree/product_decorator.rb` and adding the following content to it:
 
@@ -149,8 +150,6 @@ We can do this by creating a new file `app/models/spree/product_decorator.rb` an
 module Spree
   Product.class_eval do
     delegate_belongs_to :master, :sale_price
-
-    attr_accessible :sale_price
   end
 end
 ```
