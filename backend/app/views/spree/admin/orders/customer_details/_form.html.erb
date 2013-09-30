@@ -49,7 +49,7 @@
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:shipping_address) %></legend>
       <%= f.fields_for :ship_address do |sa_form| %>
-        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :type => 'shipping', :use_billing => true } %>
+        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => Spree.t(:shipping_address), :use_billing => true } %>
       <% end %>
     </fieldset>
   </div>
