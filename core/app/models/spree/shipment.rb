@@ -268,6 +268,12 @@ module Spree
         adjustments.map(&:finalize!)
         send_shipped_email
         touch :shipped_at
+        update_order_shipment_state
+      end
+
+      def update_order_shipment_state
+        new_state = OrderUpdater.new(order).update_shipment_state
+        order.update_column(:shipment_state, new_state)
       end
 
       def send_shipped_email
