@@ -14,7 +14,7 @@ module Spree
         end
 
         def template
-          request.headers.env['X-Spree-Template'] || controller.params[:template] || options[:default_template]
+          request.headers['X-Spree-Template'] || controller.params[:template] || options[:default_template]
         end
       end
     end

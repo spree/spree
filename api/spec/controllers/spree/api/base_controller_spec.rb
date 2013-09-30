@@ -29,7 +29,7 @@ describe Spree::Api::BaseController do
     end
 
     it "with an invalid API key" do
-      request.env["X-Spree-Token"] = "fake_key"
+      request.headers["X-Spree-Token"] = "fake_key"
       get :index, {}
       json_response.should == { "error" => "Invalid API key (fake_key) specified." }
       response.status.should == 401
