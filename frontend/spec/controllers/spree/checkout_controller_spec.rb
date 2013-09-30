@@ -308,6 +308,7 @@ describe Spree::CheckoutController do
   end
 
   it "does remove unshippable items before payment" do
+    order.stub :payment_required? => true
     controller.stub :check_authorization => true
 
     expect {
