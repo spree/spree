@@ -134,7 +134,7 @@ describe "Promotion Adjustments" do
       first_action_calculator.preferred_percent.should == 10
     end
 
-    it "should allow an admin to create an automatic promotion with free shipping (no code)" do
+    xit "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Promotion"
       click_button "Create"
       page.should have_content("Editing Promotion")
