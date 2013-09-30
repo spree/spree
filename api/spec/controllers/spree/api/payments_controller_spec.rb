@@ -101,7 +101,7 @@ module Spree
       context "for a given payment" do
         context "updating" do
           it "can update" do
-            payment.update_attributes(:state => 'pending')
+            payment.update_column(:state, 'pending')
             api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
             response.status.should == 200
             payment.reload.amount.should == 2.01
@@ -109,17 +109,17 @@ module Spree
 
           context "update fails" do
             it "returns a 422 status when the amount is invalid" do
-              payment.update_attributes(:state => 'pending')
+              payment.update_column(:state, 'pending')
               api_put :update, :id => payment.to_param, :payment => { :amount => 'invalid' }
               response.status.should == 422
               json_response["error"].should == "Invalid resource. Please fix errors and try again."
             end
 
             it "returns a 403 status when the payment is not pending" do
-              payment.update_attributes(:state => 'completed')
+              payment.update_column(:state, 'complete')
               api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
               response.status.should == 403
-              json_response["error"].should == "This payment cannot be updated because it is completed."
+              json_response["error"].should == "This payment cannot be updated because it is complete."
             end
           end
         end

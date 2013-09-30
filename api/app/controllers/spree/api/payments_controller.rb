@@ -27,9 +27,9 @@ module Spree
 
       def update
         authorize! params[:action], @payment
-        if ! @payment.pending?
+        if !@payment.pending?
           render 'update_forbidden', status: 403
-        elsif @payment.update_attributes(payment_params)
+        elsif @payment.update_attributes(params[:payment])
           respond_with(@payment, default_template: :show)
         else
           invalid_resource!(@payment)
