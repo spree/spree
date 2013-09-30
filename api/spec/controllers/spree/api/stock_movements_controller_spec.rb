@@ -16,12 +16,12 @@ module Spree
     context 'as a user' do
       it 'cannot see a list of stock movements' do
         api_get :index, stock_location_id: stock_location.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it 'cannot see a stock movement' do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_movement.id
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it 'cannot create a stock movement' do
@@ -33,7 +33,7 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 404
+        response.status.should == 401
       end
     end
 

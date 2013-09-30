@@ -4,11 +4,13 @@ module Spree
       before_filter :stock_location, except: [:update, :destroy]
 
       def index
+        authorize! :read, StockItem
         @stock_items = scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         respond_with(@stock_items)
       end
 
       def show
+        authorize! :read, StockItem
         @stock_item = scope.find(params[:id])
         respond_with(@stock_item)
       end

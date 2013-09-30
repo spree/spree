@@ -19,7 +19,7 @@ module Spree
 
       it "cannot see a single stock location" do
         api_get :show, :id => stock_location.id
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it "cannot create a new stock location" do
@@ -36,12 +36,12 @@ module Spree
 
       it "cannot update a stock location" do
         api_put :update, :stock_location => { :name => "South Pole" }, :id => stock_location.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it "cannot delete a stock location" do
         api_put :destroy, :id => stock_location.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
     end
 

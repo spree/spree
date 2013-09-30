@@ -16,12 +16,12 @@ module Spree
     context "as a normal user" do
       it "cannot list stock items for a stock location" do
         api_get :index, stock_location_id: stock_location.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it "cannot see a stock item" do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_item.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it "cannot create a stock item" do
@@ -35,17 +35,17 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it "cannot update a stock item" do
         api_put :update, stock_location_id: stock_location.to_param, stock_item_id: stock_item.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
 
       it "cannot destroy a stock item" do
         api_delete :destroy, stock_location_id: stock_location.to_param, stock_item_id: stock_item.to_param
-        response.status.should == 404
+        response.status.should == 401
       end
     end
 

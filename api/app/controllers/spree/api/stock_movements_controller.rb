@@ -10,6 +10,7 @@ module Spree
       end
 
       def show
+        authorize! :read, StockMovement
         @stock_movement = scope.find(params[:id])
         respond_with(@stock_movement)
       end
