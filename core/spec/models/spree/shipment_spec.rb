@@ -11,6 +11,8 @@ describe Spree::Shipment do
     shipment = Spree::Shipment.new order: order
     shipment.stub(shipping_method: shipping_method)
     shipment.state = 'pending'
+    shipment.cost = 1
+    shipment.save
     shipment
   end
 
@@ -283,6 +285,7 @@ describe Spree::Shipment do
 
     it "should update shipped_at timestamp" do
       shipment.stub(:send_shipped_email)
+      shipment.stub(:update_order_shipment_state)
       shipment.ship!
       shipment.shipped_at.should_not be_nil
       # Ensure value is persisted
@@ -298,12 +301,14 @@ describe Spree::Shipment do
         mail_message
       }
       mail_message.should_receive :deliver
+      shipment.stub(:update_order_shipment_state)
       shipment.ship!
       shipment_id.should == shipment.id
     end
 
     it "finalizes adjustments" do
       shipment.stub(:send_shipped_email)
+      shipment.stub(:update_order_shipment_state)
       shipment.adjustments.each do |adjustment|
         expect(adjustment).to receive(:finalize!)
       end
@@ -331,16 +336,28 @@ describe Spree::Shipment do
   end
 
   context "after_save" do
-    it "updates a linked adjustment" do
-      pending "not sure when and if shipment adjustments are recalculated"
-      # Need a persisted order for this
-      shipment.order = create(:order)
-      tax_rate = create(:tax_rate, :amount => 10)
-      adjustment = create(:adjustment, :source => tax_rate)
-      shipment.cost = 10
-      shipment.adjustments << adjustment
-      shipment.save
-      shipment.reload.adjustment_total.should == 100
+    context "line item changes" do
+      before do
+        shipment.cost = shipment.cost + 10
+      end
+
+      it "triggers adjustment total recalculation" do
+        shipment.should_receive(:recalculate_adjustments)
+        shipment.save
+      end
+
+      it "does not trigger adjustment recalculation if shipment has shipped" do
+        shipment.state = 'shipped'
+        shipment.should_not_receive(:recalculate_adjustments)
+        shipment.save
+      end
+    end
+
+    context "line item does not change" do
+      it "does not trigger adjustment total recalculation" do
+        shipment.should_not_receive(:recalculate_adjustments)
+        shipment.save
+      end
     end
   end
 

@@ -13,6 +13,7 @@ module Spree
     has_many :adjustments, as: :adjustable, dependent: :delete_all
 
     before_create :generate_shipment_number
+    after_save :update_adjustments
 
     before_validation :set_cost_zero_when_nil
 
@@ -275,6 +276,17 @@ module Spree
 
       def set_cost_zero_when_nil
         self.cost = 0 unless self.cost
+      end
+
+
+      def update_adjustments
+        if cost_changed? && state != 'shipped'
+          recalculate_adjustments
+        end
+      end
+
+      def recalculate_adjustments
+        Spree::ItemAdjustments.new(self).update
       end
   end
 end
