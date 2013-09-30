@@ -171,7 +171,7 @@ module Spree
 
       context "without product" do
         sign_in_as_admin!
-        let(:resource_scoping) { { :product_id => variant.product_id } }
+        let(:resource_scoping) { { :product_id => variant.product.to_param } }
 
         it "will not raise an ActiveRecord::ReadOnlyRecord exception" do
           api_put :update, :id => variant.to_param, :variant => { :sku => "12345", :on_hand => 5 }
