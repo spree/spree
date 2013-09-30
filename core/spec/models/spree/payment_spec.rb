@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe Spree::Payment do
   let(:order) do
-    order = Spree::Order.new(:bill_address => Spree::Address.new,
-                             :ship_address => Spree::Address.new)
+    Spree::Order.create!
   end
 
   let(:gateway) do
@@ -22,6 +21,7 @@ describe Spree::Payment do
     payment.source = card
     payment.order = order
     payment.payment_method = gateway
+    payment.save
     payment
   end
 
