@@ -48,13 +48,13 @@ module Spree
       end
 
       it "uses the specified template" do
-        request.headers.env['X-Spree-Template'] = 'show'
+        request.headers['X-Spree-Template'] = 'show'
         api_get :custom_show, :id => @zone.id
         response.should render_template('spree/api/zones/show')
       end
 
       it "falls back to the default template if the specified template does not exist" do
-        request.headers.env['X-Spree-Template'] = 'invoice'
+        request.headers['X-Spree-Template'] = 'invoice'
         api_get :show, :id => @zone.id
         response.should render_template('spree/api/zones/show')
       end
