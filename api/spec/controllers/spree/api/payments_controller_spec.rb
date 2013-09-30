@@ -171,17 +171,6 @@ module Spree
           end
         end
 
-<<<<<<< HEAD
-        it "returns a 422 status when purchasing fails" do
-          fake_response = double(:success? => false, :to_s => "Insufficient funds")
-          Spree::Gateway::Bogus.any_instance.should_receive(:purchase).and_return(fake_response)
-          api_put :purchase, :id => payment.to_param
-          response.status.should == 422
-          json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
-
-          payment.reload
-          payment.state.should == "failed"
-=======
         context "purchasing" do
           it "can purchase" do
             api_put :purchase, :id => payment.to_param
@@ -201,7 +190,6 @@ module Spree
               json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
             end
           end
->>>>>>> Refactor Spree::API::PaymentsController spec
         end
 
         context "voiding" do
