@@ -387,7 +387,7 @@ describe Spree::Payment do
 
       context "when response is successful" do
         it "should create an offsetting payment" do
-          Spree::Payment.should_receive(:create!)
+          Spree::Payment.should_receive(:create)
           payment.credit!
         end
 
