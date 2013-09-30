@@ -201,27 +201,6 @@ describe Spree::Ability do
       end
     end
 
-    context 'for StockItem' do
-      let(:resource) { Spree::StockItem.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
-    context 'for StockLocation' do
-      let(:resource) { Spree::StockLocation.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
-    context 'for StockMovement' do
-      let(:resource) { Spree::StockMovement.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
     context 'for Taxons' do
       let(:resource) { Spree::Taxon.new }
       context 'requested by any user' do
