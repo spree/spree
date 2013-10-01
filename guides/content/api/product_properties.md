@@ -110,7 +110,7 @@ You may also use a property's id if you know it:
 
 To delete a product property, make a request like this:
 
-    DELETE /api/prducts/1/product_porperties/size
+    DELETE /api/products/1/product_properties/size
 
 <%= headers 204 %>
 

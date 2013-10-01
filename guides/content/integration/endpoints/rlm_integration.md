@@ -4,7 +4,7 @@ title: RLM Endpoint
 
 ## Overview
 
-Endpoint for the [RLM](http://www2.ronlynn.com) ERP that saves order lines locally to be exported into RLM CSV and upload the csv to S3. The RLM ERP processes the orders line by line from a CSV file, this endpoint will break up the individual line items from the shipment and stores them in a format ready for RLM. 
+Endpoint for the [RLM](http://www2.ronlynn.com) ERP that saves order lines locally to be exported in bulk into a CSV formatted for RLM and uploaded to S3. Shipments are sent to the Persist method, and stored locally until Flush is called. The RLM ERP processes the orders line by line from a CSV file, this endpoint will break up the individual line items from the shipment and stores them in a format ready for RLM. 
 
 We also store the complete payload for reference, so any future adjustments can be made from this endpoint.
 
@@ -27,11 +27,8 @@ For details on how to customize your store read the [Custom Attributes Tutorial]
 
 ### Persist
 
-Stores the individual line items from a `shipment:ready` message. 
+Stores the individual line items from a `shipment:ready` message. Each line is combined with all of the order header information, so that it can be stored in MongoDB until it is ready to be flushed. Lines are stored within the Endpoint so that they can be sent in batches. 
 
-$$$
-Explain how the line items are persisted and what we do
-$$$
 
 #### Parameters
 
@@ -834,13 +831,26 @@ The content of the payload storage is truncated in the example response below.
 
 ### Flush
 
-Exports the stored lines in 2 different csv files. One for Amazon imported orders, and one for the regular Spree orders.
+Exports the stored lines in 2 different csv files. One for Amazon imported orders, and one for the regular Spree orders. Flush is called from the Hub periodically, using a scheduler. When Flush is called, it loads every shipment in the database that hasn't yet been sent into a CSV file. 
 
-$$$
-* file naming
-* uploading
-* schedule
-$$$
+#### File Structure
+
+Every line item on every shipment waiting to be flushed will be included in the file when the flush action is run. All of the Order Header information, such as number, address and totals are included on every line, so that RLM knows how to process it. A line is generated for each item on the shipment, containing identifying information (SKU, style, color, size), transactional information (price and discount), and quantity to ship. 
+
+#### File Names
+
+File names take multiple datapoints to construct. 
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| file_name_ts | Current Date, formatted as Year_Month_Day | 2013_09_25 |
+| name_part | 10_40 or 14_40 depending on whether it is currently before noon or after noon | 10_40 |
+| file_type | Either orders_integrator or orders_amazon based on destination | orders_amazon |
+
+These all get put together into a final filename such as 2013_09_25_10_40_orders_amazon.csv
+
+#### File Upload
+Files are generated in a temp location on the server the endpoint is running on. They are then uploaded to S3 based on the config parameters below, and the temp file is removed.
 
 #### Parameters
 

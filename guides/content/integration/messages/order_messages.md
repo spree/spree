@@ -178,6 +178,7 @@ When a new order is created, this is the message that will be send out. The ```o
           ]
         }
       ]
+<<<<<<< HEAD
     },
     "original": {
       "id": 5,
@@ -195,6 +196,24 @@ When a new order is created, this is the message that will be send out. The ```o
       "payment_state": "paid",
       "email": "spree@example.com",
       "special_instructions": null,
+=======
+    }
+  }
+}
+```
+
+### order:update
+
+This type of Message should be sent when an existing order is updated.
+
+---order_updated.json---
+```json
+{
+  "message": "order:updated",
+  "payload": {
+    "order": {
+      "channel": "Amazon",
+      "email": "test1@test.com",
       "currency": "USD",
       "ship_total": "10.0",
       "tax_total": "5.0",
@@ -568,14 +587,14 @@ When a new order is created, this is the message that will be send out. The ```o
 }
 ```
 
-### order:update
+### order:canceled
 
 When an order is updated, the following message will be send out. The ```order``` and ```previous``` are all in the generic Integrator format, while the ```original``` is the ```Spree::Order```. The ```diff`` key contains all the changes that happend for this order.
 
----order_updated.json---
+---order_canceled.json---
 ```json
 {
-  "message": "order:updated",
+  "message": "order:canceled",
   "payload": {
     "order": { ... },
     "original": { ... },
@@ -615,22 +634,5 @@ When an order is updated, the following message will be send out. The ```order``
       ]
     }
   }
-}
-```
-
-### order:cancel
-
-The only difference with this messages that is send out is the status, this will be ```canceled```
-
----order_canceled.json---
-```json
-{
-  "message": "order:canceled",
-  "payload": {
-  "order": {
-    ...
-    "status": "canceled",
-  },
-  "original": { ... }
 }
 ```

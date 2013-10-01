@@ -12,7 +12,7 @@ Spree store. This guide explains the options available, including:
 
 ### Using Deface
 
-Deface is a standalone Rails 3 library that enables you to customize Erb
+Deface is a standalone Rails library that enables you to customize Erb
 templates without needing to directly edit the underlying view file.
 Deface allows you to use standard CSS3 style selectors to target any
 element (including Ruby blocks), and perform an action against all the
@@ -73,11 +73,16 @@ Deface currently supports the following actions:
 
 * <tt>:remove</tt> - Removes all elements that match the supplied selector
 * <tt>:replace</tt> - Replaces all elements that match the supplied selector, with the content supplied
-* <tt>:insert_after</tt> - Inserts content supplied after all elements that match the supplied selector
-* <tt>:insert_before</tt> - Inserts content supplied before all elements that match the supplied selector
-* <tt>:insert_top</tt> - Inserts content supplied inside all elements that match the supplied selector, as the first child
-* <tt>:insert_bottom</tt> - Inserts content supplied inside all elements that match the supplied selector, as the last child
-* <tt>:set_attributes</tt> - Sets (or adds) attributes to all elements that match the supplied selector, expects :attributes option to be passed
+* <tt>:replace_contents</tt> - Replaces the contents of all elements that match the supplied selector
+* <tt>:surround</tt> - Surrounds all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
+* <tt>:surround_contents</tt> - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
+* <tt>:insert_after</tt> - Inserts after all elements that match the supplied selector
+* <tt>:insert_before</tt> - Inserts before all elements that match the supplied selector
+* <tt>:insert_top</tt> - Inserts inside all elements that match the supplied selector, as the first child
+* <tt>:insert_bottom</tt> - Inserts inside all elements that match the supplied selector, as the last child
+* <tt>:set_attributes</tt> - Sets attributes on all elements that match the supplied selector, replacing existing attribute value if present or adding if not. Expects :attributes option to be passed.
+* <tt>:add_to_attributes</tt> - Appends value to attributes on all elements that match the supplied selector, adds attribute if not present. Expects :attributes option to be passed.
+* <tt>:remove_from_attributes</tt> - Removes value from attributes on all elements that match the supplied selector. Expects :attributes option to be passed.
 
 ***
 Not all actions are applicable to all elements. For example, <tt>:insert_top</tt> and <tt>:insert_bottom</tt> expects a parent element with children.

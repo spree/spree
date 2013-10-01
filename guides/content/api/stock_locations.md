@@ -5,6 +5,8 @@ description: Use the Spree Commerce storefront API to access StockLocation data.
 
 ## Index
 
+<%= admin_only %>
+
 To get a list of stock locations, make this request:
 
 ```text
@@ -35,6 +37,8 @@ end %>
 
 ## Search
 
+<%= admin_only %>
+
 To search for a particular stock location, make a request like this:
 
 ```text
@@ -55,6 +59,8 @@ The search results are paginated.
 end %>
 
 ## Show
+
+<%= admin_only %>
 
 To get information for a single stock location, make this request:
 

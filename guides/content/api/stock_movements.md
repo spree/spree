@@ -5,6 +5,8 @@ description: Use the Spree Commerce storefront API to access StockMovement data.
 
 ## Index
 
+<%= admin_only %>
+
 To return a paginated list of all stock movements for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
 ```text
@@ -29,6 +31,8 @@ per_page
 end %>
 
 ## Search
+
+<%= admin_only %>
 
 To search for a particular stock movement, make a request like this:
 
@@ -57,6 +61,8 @@ Results can be returned in a specific order by specifying which field to sort by
 GET /api/stock_locations/1/stock_movements?q[s]=quantity%20asc```
 
 ## Show
+
+<%= admin_only %>
 
 To view the details for a single stock movement, make a request using that stock movement's id, along with its `stock_location_id`:
 
