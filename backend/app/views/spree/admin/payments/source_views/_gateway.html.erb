@@ -2,28 +2,18 @@
   <legend align="center"><%= Spree.t(:credit_card) %></legend>
 
   <div class="row">
-    <div class="alpha six columns">      
+    <div class="alpha six columns">
       <dl>
+        <dt><%= Spree.t(:card_type) %>:</dt>
+        <dd><%= payment.source.cc_type %></dd>
+
         <dt><%= Spree.t(:card_number) %>:</dt>
         <dd><%= payment.source.display_number %></dd>
 
         <dt><%= Spree.t(:expiration) %>:</dt>
         <dd><%= payment.source.month %>/<%= payment.source.year %></dd>
-
-        <dt><%= Spree.t(:card_code) %>:</dt>
-        <dd><%= payment.source.verification_value %></dd>
       </dl>
     </div>
-
-    <div class="omega six columns">
-      <dl>
-        <dt><%= Spree.t(:maestro_or_solo_cards) %>:</dt>
-        <dd><%= payment.source.issue_number %></dd>
-
-        <dt><%= Spree.t(:start_date) %>:</dt>
-        <dd><%= payment.source.start_month %>/<%= payment.source.start_year %></dd>
-      </dl>
-    </div>    
   </div>
 
 </fieldset>
