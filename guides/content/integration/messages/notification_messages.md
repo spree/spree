@@ -63,7 +63,7 @@ $$$
 {
   "message": "notification:error",
   "message_id": "518726r84910000003",
-  "source": "incoming"
+  "source": "spree.order_poller"
   "payload": {
     "subject": "Shipment rejected",
     "description": "We are unable to ship overnight packages to Afghanistan."

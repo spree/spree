@@ -876,3 +876,48 @@ It's possible to force the quantity, when the ```spree.force_quantity``` is set 
   "to": 5
 }
 ```
+
+### Stock Actual
+
+This message will change the ```count_on_hand``` for a ```Spree::Variant``` based on the provided sku and the quantity. The quantity can be negative!. This is a shortcut message to the ```stock:change``` message, but where the ```spree.force_quantity``` is always true. 
+
+####Request
+
+---stock_actual.json---
+
+```json
+{
+  "message": "stock:actual",
+  "payload": {
+  "sku": "APC-00001",
+  "quantity": 5
+  }
+}
+```
+
+#### Parameters
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| spree.stock_location_id | The Stock Location id, only Spree >= 2.0 | 1 |
+
+#### Response
+
+---stock_actual_response.json---
+
+```json
+{
+  "message_id": "523c677763e2990205000007",
+  "notifications": [
+    {
+      "level": "info",
+      "subject": "stock:actual",
+      "description": "received 5 for sku APC-00001, changed stock from 0 to 5 (force = true)"
+    }
+  ],
+  "sku": "APC-00001",
+  "quantity": 5,
+  "from": 0,
+  "to": 5
+}
+```
