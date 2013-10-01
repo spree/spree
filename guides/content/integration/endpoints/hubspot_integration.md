@@ -14,7 +14,7 @@ The source code for the [HubSpot Endpoint](https://github.com/spree/hubspot_endp
 
 ### Contact Import
 
-Processes incoming orders that are new, updated, or canceled and either creates or updates the HubSpot contact that matches billing address for the order. Mappings between fields are as follows:
+Processes incoming orders that are new, updated, or canceled and either creates or updates the HubSpot contact that matches email address for the order. Mappings between fields are as follows:
 
 | HubSpot Field Name | Spree Store Field Name |
 | :----| :-----| :------ |
@@ -54,24 +54,9 @@ Processes incoming orders that are new, updated, or canceled and either creates 
 {
   "message": "order:new",
   "payload": {
-    "parameters": [
-      {
-        "name": "access_token",
-        "value": "eac97693-26be-11e3-9a20-856fcdde1271"
-      },
-      {
-        "name": "refresh_token",
-        "value": "eac6b772-26be-11e3-9a20-856fcdde1271"
-      }
-    ],
     "order": {
       "number": "R123456789",
-      "channel": "Amazon",
       "email": "test1@test.com",
-      "currency": "USD",
-      "placed_on": "2013-09-20T16:24:22-04:00",
-      "updated_at": "2013-09-20T16:24:22-04:00",
-      "status": "complete",
       "totals": {
         "item": 12.99,
         "adjustment": 10,
@@ -81,51 +66,10 @@ Processes incoming orders that are new, updated, or canceled and either creates 
         "order": 29.99
       },
       "adjustments": [
-        {
-          "name": "Shipping Discount",
-          "value": "-4.99"
-        },
-        {
-          "name": "Promotion Discount",
-          "value": "-3.00"
-        }
       ],
       "line_items": [
-        {
-          "name": "Foo T-Shirt Size(L)",
-          "sku": "ABC-123",
-          "external_ref": "ABD-123",
-          "name": "Foo T-Shirt Size(L)",
-          "quantity": 1,
-          "price": 19.99,
-          "options": {
-            "color": "BLK", 
-            "size": "XL" 
-          }
-        },
-        {
-          "name": "Foo Shoe",
-          "sku": "DEF-123",
-          "external_ref": "DDD-123",
-          "name": "Foo Socks",
-          "quantity": 3,
-          "price": 23.99,
-          "options": {
-            "color": "BLK", 
-            "size": "XL" 
-          }
-        }
       ],
       "shipping_address": {
-        "firstname": "Chris",
-        "lastname": "Mar",
-        "address1": "112 Hula Lane",
-        "address2": "",
-        "city": "Leesburg",
-        "zipcode": "20175",
-        "phone": "555-555-1212",
-        "country": "US",
-        "state": "Virginia"
       },
       "billing_address": {
         "firstname": "Chris",
@@ -139,50 +83,8 @@ Processes incoming orders that are new, updated, or canceled and either creates 
         "state": "Viriginia"
       },
       "payments": [
-        {
-          "number": 1234,
-          "status": "completed",
-          "amount": 29.99,
-          "payment_method": "Standard"
-        }
       ],
       "shipments": [
-        {
-          "number": "1234567",
-          "cost": 29.99,
-          "status": "ready",
-          "stock_location": "PCH",
-          "shipping_method": "UPS Next Day",
-          "tracking": null,
-          "updated_at": null,
-          "shipped_at": null,
-          "items": [
-            {
-              "name": "Foo T-Shirt Size(L)",
-              "sku": "ABC-123",
-              "external_ref": "ABD-123",
-              "quantity": 1,
-              "price": 19.99,              
-              "variant_id": 123,
-              "options": {
-                "color": "BLK", 
-                "size": "XL" 
-              }
-            },
-            {
-              "name": "Foo Socks",
-              "sku": "DEF-123",
-              "external_ref": "DDD-123",
-              "quantity": 3,
-              "price": 23.99, 
-              "variant_id": 789,             
-              "options": {
-                "color": "BLK", 
-                "size": "XL" 
-              }
-            }
-          ]
-        }
       ]
     },
     "original": {
@@ -192,20 +94,12 @@ Processes incoming orders that are new, updated, or canceled and either creates 
       "campaign": "456",
       "item_total": "12.99",
       "total": "29.99",
-      "state": "complete",
       "adjustment_total": "10.00",
-      "user_id": 8567,
-      "created_at": "2013-09-20T16:24:22-04:00",
-      "updated_at": "2013-09-20T16:24:22-04:00",
-      "completed_at": "2013-09-20T16:24:22-04:00",
       "payment_total": "29.99",
-      "shipment_state": "ready",
-      "payment_state": "paid",
       "email": "test1@test.com",
-      "special_instructions": null,
-      "currency": "USD",
       "ship_total": "4.00",
       "tax_total": "6.00",
+      "completed_at": "2013-09-20T16:24:22-04:00",
       "bill_address": { 
         "firstname": "Chris",
         "lastname": "Mar",
@@ -227,10 +121,7 @@ Processes incoming orders that are new, updated, or canceled and either creates 
       "payments": [ { } ],
       "shipments": [ { } ],
       "adjustments": [ { } ],
-      "credit_cards": [ { } ],
-      "store_id": { "$oid": "62n8eaa2b4381934bc000001" },
-      "next_id": null,
-      "_id": "123poi67q98712304658mq8r"
+      "credit_cards": [ { } ]
     }
   }
 }
@@ -238,31 +129,15 @@ Processes incoming orders that are new, updated, or canceled and either creates 
 
 ### order:updated
 
-This type of Message should be sent when an existing order is updated.
+This type of message is generated when an existing order is updated.
 
 ---order_updated.json---
 ```json
 {
   "message": "order:updated",
   "payload": {
-    "parameters": [
-      {
-        "name": "access_token",
-        "value": "eac97693-26be-11e3-9a20-856fcdde1271"
-      },
-      {
-        
-        "name": "refresh_token",
-        "value": "eac6b772-26be-11e3-9a20-856fcdde1271"
-      }
-    ],
     "order": {
-      "channel": "Amazon",
       "email": "test1@test.com",
-      "currency": "USD",
-      "placed_on": "01/01/2013 12:34:22 UTC",
-      "updated_at": "01/01/2013 12:34:22 UTC",
-      "status": "complete",
       "totals": {
         "item": 112.99,
         "adjustment": 10,
@@ -271,45 +146,10 @@ This type of Message should be sent when an existing order is updated.
         "order": 129.99
       },
       "adjustments": [
-        {
-          "name": "Shipping Discount",
-          "value": "-4.99"
-        },
-        {
-          "name": "Promotion Discount",
-          "value": "-3.00"
-        }
       ],
       "line_items": [
-        {
-          "name": "Foo T-Shirt Size(L)",
-          "sku": "ABC-123",
-          "external_ref": "ABD-123",
-          "name": "Foo T-Shirt Size(L)",
-          "quantity": 1,
-          "price": 119.99,
-          "options": {"color": "BLK", "size": "XL" }
-        },
-        {
-          "name": "Foo Shoe",
-          "sku": "DEF-123",
-          "external_ref": "DDD-123",
-          "name": "Foo Socks",
-          "quantity": 3,
-          "price": 23.99,
-          "options": {"color": "BLK", "size": "XL" }
-        }
       ],
       "shipping_address": {
-        "firstname": "Chris",
-        "lastname": "Mar",
-        "address1": "112 Hula Lane",
-        "address2": "",
-        "city": "Leesburg",
-        "zipcode": "20175",
-        "phone": "555-555-1212",
-        "country": "US",
-        "state": "Virginia"
       },
       "billing_address": {
         "firstname": "Chris",
@@ -323,36 +163,8 @@ This type of Message should be sent when an existing order is updated.
         "state": "Viriginia"
       },
       "payments": [
-        {
-          "amount": 129.99,
-          "payment_method": "Standard"
-        }
       ],
       "shipments": [
-        {
-          "cost": 29.99,
-          "status": "ready",
-          "stock_location": "PCH",
-          "shipping_method": "UPS Next Day",
-          "items": [
-            {
-              "name": "Foo T-Shirt Size(L)",
-              "sku": "ABC-123",
-              "external_ref": "ABD-123",
-              "quantity": 1,
-              "price": 119.99,              
-              "options": {"color": "BLK", "size": "XL" }
-            },
-            {
-              "name": "Foo Socks",
-              "sku": "DEF-123",
-              "external_ref": "DDD-123",
-              "quantity": 3,
-              "price": 23.99,              
-              "options": {"color": "BLK", "size": "XL" }
-            }
-          ]
-        }
       ]
     },
     "original": {
@@ -362,18 +174,10 @@ This type of Message should be sent when an existing order is updated.
       "campaign": "456",
       "item_total": "112.99",
       "total": "129.99",
-      "state": "complete",
       "adjustment_total": "10.00",
-      "user_id": 8567,
-      "created_at": "2013-09-20T16:24:22-04:00",
-      "updated_at": "2013-09-20T16:24:22-04:00",
       "completed_at": "2013-09-20T16:24:22-04:00",
       "payment_total": "129.99",
-      "shipment_state": "ready",
-      "payment_state": "paid",
       "email": "test1@test.com",
-      "special_instructions": null,
-      "currency": "USD",
       "ship_total": "4.00",
       "tax_total": "6.00",
       "bill_address": { 
@@ -397,17 +201,11 @@ This type of Message should be sent when an existing order is updated.
       "payments": [ { } ],
       "shipments": [ { } ],
       "adjustments": [ { } ],
-      "credit_cards": [ { } ],
-      "store_id": { "$oid": "62n8eaa2b4381934bc000001" },
-      "next_id": null,
-      "_id": "123poi67q98712304658mq8r"
+      "credit_cards": [ { } ]
     },
     "previous": {
       "number": "R123456789",
       "email": "test1@test.com",
-      "currency": "USD",
-      "placed_on": "2013-09-20T16:24:22-04:00",
-      "updated_at": "2013-09-20T16:24:22-04:00",
       "status": "complete",
       "totals": {
         "item": 12.99,
@@ -440,32 +238,16 @@ This type of Message should be sent when an existing order is updated.
 
 ### order:canceled
 
-You should send this type of Message whenever an order is canceled, whether by the customer or by a store administrator.
+This type of message is sent whenever an order is canceled, whether by the customer or by a store administrator.
 
 ---order_canceled.json---
 ```json
 {
   "message": "order:canceled",
   "payload": {
-    "parameters": [
-      {
-        "name": "access_token",
-        "value": "eac97693-26be-11e3-9a20-856fcdde1271"
-      },
-      {
-        
-        "name": "refresh_token",
-        "value": "eac6b772-26be-11e3-9a20-856fcdde1271"
-      }
-    ],
     "order": {
       "number": "R123456789",
-      "channel": "Amazon",
       "email": "test1@test.com",
-      "currency": "USD",
-      "placed_on": "2013-09-20T16:24:22-04:00",
-      "updated_at": "2013-09-20T16:24:22-04:00",
-      "status": "complete",
       "totals": {
         "item": 12.99,
         "adjustment": 10,
@@ -475,51 +257,10 @@ You should send this type of Message whenever an order is canceled, whether by t
         "order": 29.99
       },
       "adjustments": [
-        {
-          "name": "Shipping Discount",
-          "value": "-4.99"
-        },
-        {
-          "name": "Promotion Discount",
-          "value": "-3.00"
-        }
       ],
       "line_items": [
-        {
-          "name": "Foo T-Shirt Size(L)",
-          "sku": "ABC-123",
-          "external_ref": "ABD-123",
-          "name": "Foo T-Shirt Size(L)",
-          "quantity": 1,
-          "price": 19.99,
-          "options": {
-            "color": "BLK", 
-            "size": "XL" 
-          }
-        },
-        {
-          "name": "Foo Shoe",
-          "sku": "DEF-123",
-          "external_ref": "DDD-123",
-          "name": "Foo Socks",
-          "quantity": 3,
-          "price": 23.99,
-          "options": {
-            "color": "BLK", 
-            "size": "XL" 
-          }
-        }
       ],
       "shipping_address": {
-        "firstname": "Chris",
-        "lastname": "Mar",
-        "address1": "112 Hula Lane",
-        "address2": "",
-        "city": "Leesburg",
-        "zipcode": "20175",
-        "phone": "555-555-1212",
-        "country": "US",
-        "state": "Virginia"
       },
       "billing_address": {
         "firstname": "Chris",
@@ -533,50 +274,8 @@ You should send this type of Message whenever an order is canceled, whether by t
         "state": "Viriginia"
       },
       "payments": [
-        {
-          "number": 1234,
-          "status": "completed",
-          "amount": 29.99,
-          "payment_method": "Standard"
-        }
       ],
       "shipments": [
-        {
-          "number": "1234567",
-          "cost": 29.99,
-          "status": "ready",
-          "stock_location": "PCH",
-          "shipping_method": "UPS Next Day",
-          "tracking": null,
-          "updated_at": null,
-          "shipped_at": null,
-          "items": [
-            {
-              "name": "Foo T-Shirt Size(L)",
-              "sku": "ABC-123",
-              "external_ref": "ABD-123",
-              "quantity": 1,
-              "price": 19.99,              
-              "variant_id": 123,
-              "options": {
-                "color": "BLK", 
-                "size": "XL" 
-              }
-            },
-            {
-              "name": "Foo Socks",
-              "sku": "DEF-123",
-              "external_ref": "DDD-123",
-              "quantity": 3,
-              "price": 23.99, 
-              "variant_id": 789,             
-              "options": {
-                "color": "BLK", 
-                "size": "XL" 
-              }
-            }
-          ]
-        }
       ]
     },
     "original": {
@@ -586,18 +285,10 @@ You should send this type of Message whenever an order is canceled, whether by t
       "campaign": "456",
       "item_total": "12.99",
       "total": "29.99",
-      "state": "complete",
       "adjustment_total": "10.00",
-      "user_id": 8567,
-      "created_at": "2013-09-20T16:24:22-04:00",
-      "updated_at": "2013-09-20T16:24:22-04:00",
       "completed_at": "2013-09-20T16:24:22-04:00",
       "payment_total": "29.99",
-      "shipment_state": "ready",
-      "payment_state": "paid",
       "email": "test1@test.com",
-      "special_instructions": null,
-      "currency": "USD",
       "ship_total": "4.00",
       "tax_total": "6.00",
       "bill_address": { 
@@ -621,10 +312,7 @@ You should send this type of Message whenever an order is canceled, whether by t
       "payments": [ { } ],
       "shipments": [ { } ],
       "adjustments": [ { } ],
-      "credit_cards": [ { } ],
-      "store_id": { "$oid": "62n8eaa2b4381934bc000001" },
-      "next_id": null,
-      "_id": "123poi67q98712304658mq8r"
+      "credit_cards": [ { } ]
     }
   }
 }
@@ -634,8 +322,12 @@ You should send this type of Message whenever an order is canceled, whether by t
 
 | Name | Value | Example |
 | :----| :-----| :------ |
-| hubspot.access_token | Your HubSpot OAuth Token | aaa11111-11aa-11a1-1a11-111aaaaa1111 |
+| hubspot.access_token | Your HubSpot OAuth Access Token | aaa11111-11aa-11a1-1a11-111aaaaa1111 |
 | hubspot.refresh_token | Your HubSpot OAuth Refresh Token | aaa11111-11aa-11a1-1a11-111aaaaa1111 |
+
+Your access token is generated via the API Access section of your HubSpot administration area. You need to use an authorization URL to grant permission to the Hub to access and modify your HubSpot account data, which will also generate a refresh token. Contact Spree Commerce technical support to complete this process.
+
+Once your refresh token has been created, the Hub will use it to automatically update your access token once it expires, as HubSpot tokens are only good for 8 hours.
 
 #### Response
 
