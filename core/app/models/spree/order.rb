@@ -154,7 +154,7 @@ module Spree
     end
 
     def completed?
-      !! completed_at
+      completed_at.present? || complete?
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.
