@@ -38,7 +38,7 @@ Use this Message type to indicate that a Service executed successfully but that 
 {
   "message": "notification:warn",
   "message_id": "518726r84910000002",
-  "source": "accepted",
+  "source": "mandrill.order_confirmation",
   "payload": {
     "subject": "Unable to verify address",
     "description": "Shipment #H123456 contains an address that was unabled to be verified. We have shipped the package anyways but it may not get there!"
