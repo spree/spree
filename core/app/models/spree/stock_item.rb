@@ -9,6 +9,7 @@ module Spree
 
     validates_presence_of :stock_location, :variant
     validates_uniqueness_of :variant_id, scope: :stock_location_id
+    validates :count_on_hand, :numericality => { :greater_than_or_equal_to => 0 }, :if => :verify_count_on_hand?
 
     delegate :weight, to: :variant
 
@@ -28,6 +29,11 @@ module Spree
         self.save!
       end
     end
+
+    def verify_count_on_hand?
+      count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+    end
+
 
     def set_count_on_hand(value)
       self.count_on_hand = value
