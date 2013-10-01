@@ -56,7 +56,7 @@ module Spree
               end
 
               event :resume do
-                transition :to => :resumed, :from => :canceled, :if => :allow_resume?
+                transition :to => :resumed, :from => :canceled, :if => :canceled?
               end
 
               event :authorize_return do

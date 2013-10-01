@@ -249,13 +249,6 @@ module Spree
       shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
     end
 
-    def allow_resume?
-      # we shouldn't allow resume for legacy orders b/c we lack the information
-      # necessary to restore to a previous state
-      return false if state_changes.empty? || state_changes.last.previous_state.nil?
-      true
-    end
-
     def awaiting_returns?
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
