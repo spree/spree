@@ -1,6 +1,7 @@
 module Spree
   class StockItem < ActiveRecord::Base
-    acts_as_paranoid
+    # Column name check here for #3805
+    acts_as_paranoid if column_names.include?("deleted_at")
 
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
     belongs_to :variant, class_name: 'Spree::Variant'
