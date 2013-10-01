@@ -16,7 +16,6 @@ For more information please see the [Shipment Messages](shipment_messages) guide
 
 * [Shipment Ready](shipment_messages#shipmentready)
 * [Confirm Shipment](shipment_messages#shipmentconfirm)
-* [Cancel Shipment](shipment_messages#shipmentcanceled)
 
 <!-- # Payment Messages
 
@@ -33,6 +32,7 @@ For more information please see the [Payment Messages](payment_messages) guide w
 For more information please see the [Stock Messages](stock_messages) guide which has information on each of the Message Types.
 
 * [Change](stock_messages#change)
+* [Actual](stock_messages#actual)
 
 # Notification Messages
 
