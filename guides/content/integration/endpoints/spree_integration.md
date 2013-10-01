@@ -363,9 +363,189 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
 
 ####Request
 
-~~~
-TODO: fill in request
-~~~
+```
+{
+  "message": "order:capture",
+  "payload": {
+    "parameters": [
+      {
+        "name": "access_token",
+        "value": "eac97693-26be-11e3-9a20-856fcdde1271"
+      },
+      {
+        "name": "refresh_token",
+        "value": "eac6b772-26be-11e3-9a20-856fcdde1271"
+      }
+    ],
+    "order": {
+      "number": "R123456789",
+      "channel": "Amazon",
+      "email": "test1@test.com",
+      "currency": "USD",
+      "placed_on": "2013-09-20T16:24:22-04:00",
+      "updated_at": "2013-09-20T16:24:22-04:00",
+      "status": "complete",
+      "totals": {
+        "item": 12.99,
+        "adjustment": 10,
+        "tax": 6,
+        "shipping": 4,
+        "payment": 29.99,
+        "order": 29.99
+      },
+      "adjustments": [
+        {
+          "name": "Shipping Discount",
+          "value": "-4.99"
+        },
+        {
+          "name": "Promotion Discount",
+          "value": "-3.00"
+        }
+      ],
+      "line_items": [
+        {
+          "name": "Foo T-Shirt Size(L)",
+          "sku": "ABC-123",
+          "external_ref": "ABD-123",
+          "quantity": 1,
+          "price": 19.99,
+          "options": {
+            "color": "BLK", 
+            "size": "XL" 
+          }
+        },
+        {
+          "name": "Foo Shoe",
+          "sku": "DEF-123",
+          "external_ref": "DDD-123",
+          "quantity": 3,
+          "price": 23.99,
+          "options": {
+            "color": "BLK", 
+            "size": "XL" 
+          }
+        }
+      ],
+      "shipping_address": {
+        "firstname": "Chris",
+        "lastname": "Mar",
+        "address1": "112 Hula Lane",
+        "address2": "",
+        "city": "Leesburg",
+        "zipcode": "20175",
+        "phone": "555-555-1212",
+        "country": "US",
+        "state": "Virginia"
+      },
+      "billing_address": {
+        "firstname": "Chris",
+        "lastname": "Mar",
+        "address1": "112 Billing Lane",
+        "address2": "",
+        "city": "Leesburg",
+        "zipcode": "20175",
+        "phone": "555-555-1212",
+        "country": "US",
+        "state": "Viriginia"
+      },
+      "payments": [
+        {
+          "number": 1234,
+          "status": "completed",
+          "amount": 29.99,
+          "payment_method": "Standard"
+        }
+      ],
+      "shipments": [
+        {
+          "number": "1234567",
+          "cost": 29.99,
+          "status": "ready",
+          "stock_location": "PCH",
+          "shipping_method": "UPS Next Day",
+          "tracking": null,
+          "updated_at": null,
+          "shipped_at": null,
+          "items": [
+            {
+              "name": "Foo T-Shirt Size(L)",
+              "sku": "ABC-123",
+              "external_ref": "ABD-123",
+              "quantity": 1,
+              "price": 19.99,              
+              "variant_id": 123,
+              "options": {
+                "color": "BLK", 
+                "size": "XL" 
+              }
+            },
+            {
+              "name": "Foo Socks",
+              "sku": "DEF-123",
+              "external_ref": "DDD-123",
+              "quantity": 3,
+              "price": 23.99, 
+              "variant_id": 789,             
+              "options": {
+                "color": "BLK", 
+                "size": "XL" 
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "original": {
+      "id": 900000,
+      "number": "R123456789",
+      "promotion": "123",
+      "campaign": "456",
+      "item_total": "12.99",
+      "total": "29.99",
+      "state": "complete",
+      "adjustment_total": "10.00",
+      "user_id": 8567,
+      "created_at": "2013-09-20T16:24:22-04:00",
+      "updated_at": "2013-09-20T16:24:22-04:00",
+      "completed_at": "2013-09-20T16:24:22-04:00",
+      "payment_total": "29.99",
+      "shipment_state": "ready",
+      "payment_state": "paid",
+      "email": "test1@test.com",
+      "special_instructions": null,
+      "currency": "USD",
+      "ship_total": "4.00",
+      "tax_total": "6.00",
+      "bill_address": { 
+        "firstname": "Chris",
+        "lastname": "Mar",
+        "address1": "112 Hula Lane",
+        "address2": "",
+        "city": "Leesburg",
+        "zipcode": "20175",
+        "phone": "555-555-1212",
+        "country": {
+          "name": "US"
+        },
+        "state": {
+          "abbr": "VA",
+          "name": "Virginia"
+        }
+      },
+      "ship_address": { },
+      "line_items": [ { } ],
+      "payments": [ { } ],
+      "shipments": [ { } ],
+      "adjustments": [ { } ],
+      "credit_cards": [ { } ],
+      "store_id": { "$oid": "62n8eaa2b4381934bc000001" },
+      "next_id": null,
+      "_id": "123poi67q98712304658mq8r"
+    }
+  }
+}
+```
 
 #### Parameters
 
@@ -377,9 +557,35 @@ TODO: fill in request
 
 #### Response
 
-~~~
-TODO: fill in response
-~~~
+```
+{
+   "code"   =>"200",
+   "response"   =>   {
+      "message_id"      =>"523f99asdfbasdf6be007808",
+      "payment"      =>      {
+         "id"         =>20437,
+         "source_type"         =>"Spree::CreditCard",
+         "source_id"         =>1,
+         "amount"         =>"264.73",
+         "payment_method_id"         =>1,
+         "response_code"         =>"507544062",
+         "state"         =>"completed",
+         "avs_response"         =>"Y",
+         "created_at"         =>"2013-09-23T01:28:19         Z",
+         "updated_at"         =>"2013-09-23T01:30:42         Z"
+      },
+      "messages"      =>      [
+         {
+            "message"            =>"order:            payment:captured",
+            "payload"            =>            {
+               "order_id"               =>"523f99b2fe53546fc504815d",
+               "payment_id"               =>1
+            }
+         }
+      ]
+   }
+}
+```
 
 ### Inventory Unit Service
 
@@ -412,44 +618,34 @@ When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoi
 
 #### Response
 
-~~~
-TODO: fill in response
-~~~
-
-### Shipments Dispatch
-
-When sent an "shipment:confirm" message to '/stock/transfer_poller', the endpoint marks a shipment as shipped, and adds tracking details.
-
-####Request
-
-```json
+```
 {
-  "message": "shipment:confirm",
-  "message_id": "518726r84910000004",
-  "payload": {
-    "shipment_number": 1,
-    "tracking_number": "123456",
-    "tracking_url": "http://www.ups.com/WebTracking/track",
-    "carrier": "UPS",
-    "shipped_date": "2013-06-27T13:29:46Z",
-    ...
-  }
+   "code"   =>"200",
+   "response"   =>   {
+      "message_id"      =>"523f99bcfe535466be007808",
+      "payment"      =>      {
+         "id"         =>20437,
+         "source_type"         =>"Spree::CreditCard",
+         "source_id"         =>16122,
+         "amount"         =>"264.73",
+         "payment_method_id"         =>931422127,
+         "response_code" => "507544062",
+         "state"         =>"completed",
+         "created_at" => "2013-09-23T01:28:19 Z",
+         "updated_at" => "2013-09-23T01:30:42 Z"
+      },
+      "messages" => [
+         {
+            "message"            =>"order:payment:captured",
+            "payload" => {
+               "order_id" => "523f99b2fe53546fc504815d",
+               "payment_id" => 20437
+            }
+         }
+      ]
+   }
 }
 ```
-
-#### Parameters
-
-| Name | Value | Example |
-| :----| :-----| :------ |
-| api_url | Your Spree Store's API URL | http://demostore.com/api/ |
-| api_key | API Key for an Admin User | dj20492dhjkdjeh2838w7 |
-| api_version | Spree Store Version | 2.0 |
-
-#### Response
-
-~~~
-TODO: fill in response
-~~~
 
 ### Stock Transfer Poller
 
