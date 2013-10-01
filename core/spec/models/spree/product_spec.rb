@@ -38,6 +38,64 @@ describe Spree::Product do
       end
     end
 
+    context "master variant" do
+      context "when master variant changed" do
+        before do
+          product.master.sku = "Something changed"
+        end
+
+        it "saves the master" do
+          product.master.should_receive(:save)
+          product.save
+        end
+      end
+
+      context "when master default price is a new record" do
+        before do
+          @price = product.master.build_default_price
+          @price.price = 12
+        end
+
+        it "saves the master" do
+          product.master.should_receive(:save)
+          product.save
+        end
+
+        it "saves the default price" do
+          proc do
+            product.save
+          end.should change{ @price.new_record? }.from(true).to(false)
+        end
+
+      end
+
+      context "when master default price changed" do
+        before do
+          master = product.master
+          master.default_price = create(:price, :variant => master)
+          master.save!
+          product.master.default_price.price = 12
+        end
+
+        it "saves the master" do
+          product.master.should_receive(:save)
+          product.save
+        end
+
+        it "saves the default price" do
+          product.master.default_price.should_receive(:save)
+          product.save
+        end
+      end
+
+      context "when master variant and price haven't changed" do
+        it "does not save the master" do
+          product.master.should_not_receive(:save)
+          product.save
+        end
+      end
+    end
+
     context "product has no variants" do
       context "#destroy" do
         it "should set deleted_at value" do
