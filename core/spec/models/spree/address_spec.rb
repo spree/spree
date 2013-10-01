@@ -98,7 +98,7 @@ describe Spree::Address do
 
     it "state is entered but country does not contain that state" do
       address.state = state
-      address.country = stub_model(Spree::Country)
+      address.country = stub_model(Spree::Country, :states_required => true)
       address.valid?
       address.errors["state"].should == ['is invalid']
     end
@@ -106,7 +106,7 @@ describe Spree::Address do
     it "both state and state_name are entered but country does not contain the state" do
       address.state = state
       address.state_name = 'maryland'
-      address.country = stub_model(Spree::Country)
+      address.country = stub_model(Spree::Country, :states_required => true)
       address.should be_valid
       address.state_id.should be_nil
     end

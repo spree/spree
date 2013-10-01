@@ -1,3 +1,4 @@
+set -e
 # Remove Gemfile.lock if it exists
 function rm_gemfile_lock(){
  if [ -e "Gemfile.lock" ]

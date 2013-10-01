@@ -4,7 +4,7 @@ module Spree
       respond_to :json
 
       before_filter :find_order
-      before_filter :find_payment, :only => [:show, :authorize, :purchase, :capture, :void, :credit]
+      before_filter :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void, :credit]
 
       def index
         @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
@@ -20,6 +20,17 @@ module Spree
         @payment = @order.payments.build(params[:payment])
         if @payment.save
           respond_with(@payment, :status => 201, :default_template => :show)
+        else
+          invalid_resource!(@payment)
+        end
+      end
+
+      def update
+        authorize! params[:action], @payment
+        if !@payment.pending?
+          render 'update_forbidden', status: 403
+        elsif @payment.update_attributes(params[:payment])
+          respond_with(@payment, default_template: :show)
         else
           invalid_resource!(@payment)
         end
@@ -47,7 +58,7 @@ module Spree
 
       def credit
         if params[:amount].to_f > @payment.credit_allowed
-          render "spree/api/payments/credit_over_limit", :status => 422
+          render 'credit_over_limit', status: 422
         else
           perform_payment_action(:credit, params[:amount])
         end

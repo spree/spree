@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Cart" do
+describe "Cart", inaccessible: true do
   it "shows cart icon on non-cart pages" do
     visit spree.root_path
     page.should have_selector("li#link-to-cart a")
@@ -52,7 +52,7 @@ describe "Cart" do
 
     before { variant.option_values.destroy_all }
 
-    it "still adds product to cart" do
+    it "still adds product to cart", inaccessible: true do
       visit spree.product_path(product)
       click_button "add-to-cart-button"
 

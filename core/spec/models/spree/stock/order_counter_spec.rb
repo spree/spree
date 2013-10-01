@@ -33,6 +33,17 @@ module Spree
         subject.remaining(variant1).should eq 1
         subject.remaining(variant2).should eq 0
       end
+
+
+      # Regression test for #3744
+      context "works with a persisted order" do
+        let(:order) { create(:completed_order_with_totals, :line_items_count => 1) }
+        let(:variant1) { order.variants.first }
+
+        it 'does not raise NoMethodError for Order#inventory_units' do
+          subject.ordered(variant1).should eq 1
+        end
+      end
     end
   end
 end

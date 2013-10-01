@@ -146,35 +146,6 @@ describe "Order Details", js: true do
             wait_for_ajax
             page.should have_content("Tracking: TRACKING_NUMBER")
           end
-
-          it "can change the second shipment's shipping method" do
-            click_link "Customer Details"
-
-            check "order_use_billing"
-            fill_in "order_bill_address_attributes_firstname", :with => "Joe"
-            fill_in "order_bill_address_attributes_lastname", :with => "User"
-            fill_in "order_bill_address_attributes_address1", :with => "7735 Old Georgetown Road"
-            fill_in "order_bill_address_attributes_address2", :with => "Suite 510"
-            fill_in "order_bill_address_attributes_city", :with => "Bethesda"
-            fill_in "order_bill_address_attributes_zipcode", :with => "20814"
-            fill_in "order_bill_address_attributes_phone", :with => "301-444-5002"
-            select2 "Alabama", :from => "State"
-            select2 "United States of Foo", :from => "Country"
-            click_icon :refresh
-
-            click_link "Order Details"
-
-            within("#shipment_#{order.shipments.last.id}") do
-              within("tr.show-method") do
-                click_icon :edit
-              end
-              select2 "Default", :from => "Shipping Method"
-            end
-            click_icon :ok
-            wait_for_ajax
-
-            page.should have_content("Default")
-          end
         end
       end
     end

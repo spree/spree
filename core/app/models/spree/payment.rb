@@ -35,10 +35,12 @@ module Spree
 
     after_rollback :persist_invalid
 
+    validates :amount, numericality: true
+
     def persist_invalid
       return unless ['failed', 'invalid'].include?(state)
       state_will_change!
-      save 
+      save
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
@@ -76,6 +78,16 @@ module Spree
       Spree::Money.new(amount, { currency: currency })
     end
     alias display_amount money
+
+    def amount=(amount)
+      self[:amount] =
+        case amount
+        when String
+          separator = I18n.t('number.currency.format.separator')
+          number    = amount.delete("^0-9-#{separator}").tr(separator, '.')
+          number.to_d if number.present?
+        end || amount
+    end
 
     def offsets_total
       offsets.pluck(:amount).sum

@@ -468,6 +468,13 @@ describe Spree::Order do
       lambda { order_2.reload }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
+    context "user is provided" do
+      it "assigns user to new order" do
+        order_1.merge!(order_2, user)
+        expect(order_1.user).to eq user
+      end
+    end
+
     context "merging together two orders with line items for the same variant" do
       before do
         order_1.contents.add(variant, 1)
@@ -505,10 +512,31 @@ describe Spree::Order do
   end
 
   context "#confirmation_required?" do
-    it "does not bomb out when an order has an unpersisted payment" do
-      order = Spree::Order.new
-      order.payments.build
-      assert !order.confirmation_required?
+
+    context 'Spree::Config[:always_include_confirm_step] == true' do
+
+      before do
+        Spree::Config[:always_include_confirm_step] = true
+      end
+
+      it "returns true if payments empty" do
+        order = Spree::Order.new
+        assert order.confirmation_required?
+      end
+    end
+
+    context 'Spree::Config[:always_include_confirm_step] == false' do
+
+      it "returns false if payments empty and Spree::Config[:always_include_confirm_step] == false" do
+        order = Spree::Order.new
+        assert !order.confirmation_required?
+      end
+
+      it "does not bomb out when an order has an unpersisted payment" do
+        order = Spree::Order.new
+        order.payments.build
+        assert !order.confirmation_required?
+      end
     end
   end
 

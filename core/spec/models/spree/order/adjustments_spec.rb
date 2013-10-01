@@ -110,7 +110,8 @@ describe Spree::Order do
       end
 
       it "should return the adjustments for that line item" do
-         @order.line_item_adjustments.should =~ [@adj1, @adj2]
+       expect(@order.line_item_adjustments).to include(@adj1)
+       expect(@order.line_item_adjustments).to include(@adj2)
       end
     end
 

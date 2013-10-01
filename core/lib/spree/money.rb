@@ -33,6 +33,10 @@ module Spree
       output
     end
 
+    def as_json(*)
+      to_s
+    end
+
     def ==(obj)
       @money == obj.money
     end

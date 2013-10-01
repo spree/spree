@@ -62,6 +62,7 @@ button, .button {
   color: $color-btn-text;
   text-transform: uppercase;
   font-weight: 600 !important;
+  white-space: nowrap;
 
   &:before {
     font-weight: normal !important;

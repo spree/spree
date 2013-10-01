@@ -40,11 +40,14 @@ module Spree
             def force_non_ssl_redirect(host = nil)
               return true if defined?(ssl_allowed_actions) and ssl_allowed_actions.include?(action_name.to_sym)
               if request.ssl? and (!defined?(ssl_required_actions) or !ssl_required_actions.include?(action_name.to_sym))
-                redirect_options = {:protocol => 'http://', :status => :moved_permanently}
-                redirect_options.merge!(:host => host) if host
-                redirect_options.merge!(:params => request.query_parameters)
+                redirect_options = {
+                  :protocol => 'http://',
+                  :host     => host || request.host,
+                  :path     => request.fullpath,
+                }
                 flash.keep if respond_to?(:flash)
-                redirect_to redirect_options
+                insecure_url = ActionDispatch::Http::URL.url_for(redirect_options)
+                redirect_to insecure_url, :status => :moved_permanently
               end
             end
 
