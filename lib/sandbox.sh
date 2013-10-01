@@ -1,5 +1,5 @@
+#!/bin/sh
 # Used in the sandbox rake task in Rakefile
-#!/bin/bash
 
 rm -rf ./sandbox
 bundle exec rails new sandbox --skip-bundle
