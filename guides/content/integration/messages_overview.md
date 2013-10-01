@@ -8,7 +8,7 @@ For more information please see the [Order Messages](order_messages) guide which
 
 * [New Order](order_messages#ordernew)
 * [Update Order](order_messages#orderupdate)
-* [Cancel Order](order_messages#ordercancel)
+* [Cancel Order](order_messages#ordercanceled)
 
 # Shipment Messages
 
@@ -31,8 +31,8 @@ For more information please see the [Payment Messages](payment_messages) guide w
 
 For more information please see the [Stock Messages](stock_messages) guide which has information on each of the Message Types.
 
-* [Change](stock_messages#change)
-* [Actual](stock_messages#actual)
+* [Change](stock_messages#stockchange)
+* [Actual](stock_messages#stockactual)
 
 # Notification Messages
 
