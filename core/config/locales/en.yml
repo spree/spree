@@ -395,6 +395,7 @@ en:
     capture: Capture
     card_code: Card Code
     card_number: Card Number
+    card_type: Brand
     card_type_is: Card type is
     cart: Cart
     categories: Categories
@@ -639,7 +640,6 @@ en:
     login_name: Login
     logout: Logout
     look_for_similar_items: Look for similar items
-    maestro_or_solo_cards: Maestro/Solo cards
     mail_method_settings: Mail Method Settings
     mail_methods: Mail Methods
     make_refund: Make refund
@@ -990,7 +990,6 @@ en:
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
     start: Start
-    start_date: Valid from
     state: State
     state_based: State Based
     states: States
