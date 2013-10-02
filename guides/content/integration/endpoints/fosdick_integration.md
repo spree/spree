@@ -90,7 +90,7 @@ Send a shipment to Fosdick .
 }
 ```
 
-### Response
+#### Response
 
 ---notification_info.json---
 
@@ -110,7 +110,7 @@ Send a shipment to Fosdick .
 
 Check an S3 bucket to see if there are any shipment result files ready to be downloaded
 
-### Request
+#### Request
 
 ---fosdick_shipment_results_poll.json---
 ```json
@@ -130,7 +130,7 @@ Check an S3 bucket to see if there are any shipment result files ready to be dow
 | fosdick.amazon_secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
 | fosdick.s3_bucket | Name Of The S3 Bucket | fosdick |
 
-### Response
+#### Response
 
 ---shipment_confirm.json---
 ```json
