@@ -9,7 +9,7 @@
       <% end %>
     </td>
     <td class="cart-item-description" data-hook="cart_item_description">
-      <h4><%= link_to variant.product.name, product_path(variant.product) %></h4>
+      <h4><%= link_to line_item.name, product_path(variant.product) %></h4>
       <%= variant.options_text %>
       <% if @order.insufficient_stock_lines.include? line_item %>
         <span class="out-of-stock">
@@ -17,7 +17,7 @@
         </span>
       <% end %>
       <span class="line-item-description" data-hook="line_item_description">
-        <%= line_item_description(variant) %>
+        <%= line_item_description_text(line_item.description) %>
       </span>
     </td>
     <td class="cart-item-price" data-hook="cart_item_price">

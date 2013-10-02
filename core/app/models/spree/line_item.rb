@@ -25,6 +25,8 @@ module Spree
 
     after_create :create_tax_charge
 
+    delegate :name, :description, to: :variant
+
     attr_accessor :target_shipment
 
     def copy_price
