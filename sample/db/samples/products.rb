@@ -2,7 +2,7 @@ Spree::Sample.load_sample("tax_categories")
 Spree::Sample.load_sample("shipping_categories")
 
 clothing = Spree::TaxCategory.find_by_name!("Clothing")
-shipping_category = Spree::ShippingCategory.find_by_name!("Default Shipping")
+shipping_category = Spree::ShippingCategory.find_by_name!("Default")
 
 default_attrs = {
   :description => Faker::Lorem.paragraph,
