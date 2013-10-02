@@ -13,5 +13,14 @@ FactoryGirl.define do
     label 'VAT 5%'
     association(:source, factory: :tax_rate)
     eligible true
+
+    after(:create) do |adjustment|
+      # Set correct tax category, so that adjustment amount is not 0
+      if adjustment.adjustable.is_a?(Spree::LineItem)
+        adjustment.source.tax_category = adjustment.adjustable.tax_category
+        adjustment.source.save
+        adjustment.update!
+      end
+    end
   end
 end
