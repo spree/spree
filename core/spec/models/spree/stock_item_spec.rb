@@ -153,6 +153,7 @@ describe Spree::StockItem do
     end
   end
 
+<<<<<<< HEAD
   context "destroyed" do
     before { subject.destroy }
 
@@ -227,6 +228,172 @@ describe Spree::StockItem do
     it "can be found even if the variant is deleted" do
       subject.variant.destroy
       subject.reload.variant.should_not be_nil
+    end
+  end
+
+  describe 'validations' do
+    describe 'count_on_hand' do
+      shared_examples_for 'valid count_on_hand' do
+        before(:each) do
+          subject.save
+        end
+
+        it { should have(:no).errors_on(:count_on_hand) }
+      end
+
+      shared_examples_for 'not valid count_on_hand' do
+        before(:each) do
+          subject.save
+        end
+
+        it { should have(1).error_on(:count_on_hand) }
+        it { subject.errors[:count_on_hand].should include 'must be greater than or equal to 0' }
+      end
+
+      context 'when count_on_hand not changed' do
+        context 'when not backorderable' do
+          before(:each) do
+            subject.backorderable = false
+          end
+          it_should_behave_like 'valid count_on_hand'
+        end
+
+        context 'when backorderable' do
+          before(:each) do
+            subject.backorderable = true
+          end
+          it_should_behave_like 'valid count_on_hand'
+        end
+      end
+
+      context 'when count_on_hand changed' do
+        context 'when backorderable' do
+          before(:each) do
+            subject.backorderable = true
+          end
+          context 'when both count_on_hand and count_on_hand_was are positive' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand + 3)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+
+            context 'when count_on_hand is smaller than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand - 2)
+              end
+
+              it_should_behave_like 'valid count_on_hand'
+            end
+          end
+
+          context 'when both count_on_hand and count_on_hand_was are negative' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, -3)
+                subject.send(:count_on_hand=, subject.count_on_hand + 2)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+
+            context 'when count_on_hand is smaller than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand - 3)
+              end
+
+              it_should_behave_like 'valid count_on_hand'
+            end
+          end
+
+          context 'when both count_on_hand is positive and count_on_hand_was is negative' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, -3)
+                subject.send(:count_on_hand=, subject.count_on_hand + 6)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+          end
+
+          context 'when both count_on_hand is negative and count_on_hand_was is positive' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand - 6)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+          end
+        end
+
+        context 'when not backorderable' do
+          before(:each) do
+            subject.backorderable = false
+          end
+
+          context 'when both count_on_hand and count_on_hand_was are positive' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand + 3)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+
+            context 'when count_on_hand is smaller than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand - 2)
+              end
+
+              it_should_behave_like 'valid count_on_hand'
+            end
+          end
+
+          context 'when both count_on_hand and count_on_hand_was are negative' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, -3)
+                subject.send(:count_on_hand=, subject.count_on_hand + 2)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+
+            context 'when count_on_hand is smaller than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, -3)
+                subject.send(:count_on_hand=, subject.count_on_hand - 3)
+              end
+
+              it_should_behave_like 'not valid count_on_hand'
+            end
+          end
+
+          context 'when both count_on_hand is positive and count_on_hand_was is negative' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, -3)
+                subject.send(:count_on_hand=, subject.count_on_hand + 6)
+              end
+              it_should_behave_like 'valid count_on_hand'
+            end
+          end
+
+          context 'when both count_on_hand is negative and count_on_hand_was is positive' do
+            context 'when count_on_hand is greater than count_on_hand_was' do
+              before(:each) do
+                subject.update_column(:count_on_hand, 3)
+                subject.send(:count_on_hand=, subject.count_on_hand - 6)
+              end
+              it_should_behave_like 'not valid count_on_hand'
+            end
+          end
+        end
+      end
     end
   end
 end
