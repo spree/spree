@@ -209,6 +209,12 @@ en:
       spree/zone:
         one: Zone
         other: Zones
+    errors:
+      models:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: "is already linked to this product"
   add: Add
   add_category: "Add Category"
   add_country: "Add Country"
