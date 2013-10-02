@@ -55,7 +55,7 @@ The `rlm.shipping_map` parameter can look like this:
 }
 ```
 
-In the endpoint we have access to this hash through the `@config` variable. We can access it with `@config["rlm.shipping_map"]` and it will return an array of hashes. For this list we only have one hash in the array so it's save to always pick the first one like this `@config["rlm.shipping_map"].first`. The hash that we get from this paramater is used to map the used `shipping_method` to the rlm routing code. So if the the `shipping_method` was "Overnight" this mapping configures that the routing code will be "FXN".
+In the endpoint we have access to this hash through the `@config` variable. We can access it with `@config["rlm.shipping_map"]` and it will return an array of hashes. For this list we only have one hash in the array so it's safe to always pick the first one like this `@config["rlm.shipping_map"].first`. The hash that we get from this paramater is used to map the used `shipping_method` to the rlm routing code. So if the the `shipping_method` was "Overnight" this mapping configures that the routing code will be "FXN".
 
 
 #### Request
