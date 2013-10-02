@@ -4,6 +4,14 @@
   <%= Spree.t(:listing_countries) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <ul class="actions inline-menu">
+    <li>
+      <%= button_link_to Spree.t(:new_country), new_object_url, { :icon => 'icon-plus', :id => 'admin_new_country' } %>
+    </li>
+  </ul>
+<% end %>
+
 <table class="index" id='listing_countries' data-hook>
   <colgroup>
     <col style="width: 35%" />
@@ -27,6 +35,7 @@
         <td class="align-center"><%= country.states_required? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
         <td class="actions">
           <%= link_to_edit country, :no_text => true %>
+          <%= link_to_delete country, :no_text => true %>
         </td>
       </tr>
     <% end %>

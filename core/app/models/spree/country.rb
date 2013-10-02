@@ -1,6 +1,7 @@
 module Spree
   class Country < ActiveRecord::Base
-    has_many :states, -> { order('name ASC') }
+    has_many :states, -> { order('name ASC') }, dependent: :destroy
+    has_many :addresses, dependent: :nullify
 
     validates :name, :iso_name, presence: true
 

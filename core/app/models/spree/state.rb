@@ -1,6 +1,7 @@
 module Spree
   class State < ActiveRecord::Base
     belongs_to :country, class_name: 'Spree::Country'
+    has_many :addresses, dependent: :nullify
 
     validates :country, :name, presence: true
 
