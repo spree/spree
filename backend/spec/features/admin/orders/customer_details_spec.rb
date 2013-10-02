@@ -77,6 +77,22 @@ describe "Customer Details" do
     end
   end
 
+  context "country associated was removed" do
+    let(:brazil) { create(:country, iso: "BRA", name: "Brazil") }
+
+    before do
+      order.bill_address.country.destroy
+      configure_spree_preferences do |config|
+        config.default_country_id = brazil.id
+      end
+    end
+
+    it "sets default country when displaying form" do
+      click_link "Customer Details"
+      expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
+    end
+  end
+
   it "should show validation errors" do
     click_link "Customer Details"
     click_button "Update"
