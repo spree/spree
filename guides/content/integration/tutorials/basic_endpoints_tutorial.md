@@ -255,16 +255,36 @@ $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/j
 
 Skipping the headers this time, you can see that the response we get is what we expect:
 
-```bash
-{"message_id":"518726r84910000015","notifications":[{"level":"info","subject":"product exists","description":"product exists in the database"}]}
+```json
+{
+  "message_id":"518726r84910000015",
+  "notifications": [
+    { 
+      "level": "info",
+      "subject": "product exists",
+      "description": "product exists in the database"
+    }
+  ]
+}
 ```
 
 Now, let's try a product our supplier does not carry. There is no need to restart `rack` here, since we haven't changed our endpoint.
 
 ```bash
 $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
+```
 
-{"message_id":"518726r84910000004","notifications":[{"level":"warn","subject":"product does not exsit","description":"product does not exist in the database"}]}
+```json
+{
+  "message_id":"518726r84910000004",
+  "notifications": [
+    {
+      "level": "warn",
+      "subject": "product does not exsit",
+      "description": "product does not exist in the database"
+    }
+  ]
+}
 ```
 
 The good news is that our endpoint works! The bad news is that we'll have to source our "Widgets Without Awesomeness" somewhere else.
