@@ -5,10 +5,8 @@ describe "Cancelling + Resuming" do
 
   let(:order) do 
     order = create(:order)
-    order.update_columns({
-      :state => 'complete',
-      :completed_at => Time.now
-    })
+    order.update_column(:state, 'complete')
+    order.update_column(:completed_at, 'complete')
     order
   end
 
