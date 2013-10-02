@@ -5,9 +5,11 @@ describe "Adjustments" do
 
   before(:each) do
     visit spree.admin_path
-    order = create(:order, :completed_at => "2011-02-01 12:36:15", :number => "R100")
-    create(:adjustment, :adjustable => order, :state => 'open')
-    create(:adjustment, :label => 'ineligible', :eligible => false, :state => 'finalized', :adjustable => order)
+    order = create(:completed_order_with_totals)
+    line_item = order.line_items.first
+    # so we can be sure of a determinate price in our assertions
+    line_item.update_column(:price, 10)
+    adjustment = create(:tax_adjustment, :adjustable => line_item, :state => 'open', :order => order, :label => "VAT 5%")
     click_link "Orders"
     within_row(1) { click_icon :edit }
     click_link "Adjustments"
@@ -16,8 +18,8 @@ describe "Adjustments" do
   context "admin managing adjustments" do
     it "should display the correct values for existing order adjustments" do
       within_row(1) do
-        column_text(2).should == "Shipping"
-        column_text(3).should == "$100.00"
+        column_text(2).should == "VAT 5%"
+        column_text(3).should == "$1.00"
       end
     end
 

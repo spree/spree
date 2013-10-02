@@ -300,6 +300,7 @@ en:
     additional_item: Additional Item Cost
     address1: Address
     address2: Address (contd.)
+    adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
     adjustment_successfully_closed: Adjustment has been successfully closed!
@@ -550,6 +551,7 @@ en:
     fill_in_customer_info: Please fill in customer info
     filter_results: Filter Results
     finalize: Finalize
+    finalized: Finalized
     first_item: First Item Cost
     first_name: First Name
     first_name_begins_with: First Name Begins With
