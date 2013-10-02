@@ -70,7 +70,9 @@ module Spree
     #
     # Passing a target here would always be recommended as it would avoid
     # hitting the database again and would ensure you're compute values over
-    # the specific object amount passed here
+    # the specific object amount passed here.
+    #
+    # Noop if the adjustment is locked.
     def update!(target = nil)
       return amount if immutable?
       amount = source.compute_amount(target || adjustable)
