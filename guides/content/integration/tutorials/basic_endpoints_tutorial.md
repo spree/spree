@@ -164,7 +164,7 @@ The `message_id` is the minimum information an endpoint has to return in a messa
 For more information about Notifications, be sure to read the [Integration Terminology Guide](terminology) thoroughly.
 ***
 
-In the `get_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our storefront. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
+In the `give_id.json` message that we passed to our endpoint, we indicated with the `product:new` value that we've added a new product to our storefront. Let's assume that our `HelloEndpoint` endpoint interfaces with a supplier's catalog, and we want to know if the supplier stocks a similar item. We need to add to the logic in our endpoint:
 
 ---hello_endpoint.rb---
 ```ruby
