@@ -357,14 +357,39 @@ If the product exists in the catalog, our endpoint returns a message with a succ
 ```bash
 $ bundle exec rackup -p 9292
 $ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+```
 
-{"message_id":"518726r84910000015","messages":[{"message":"product:in_stock","payload":{"product":{"name":"Somewhat Less Awesome Widgets","price":"8.00"}}}]}
+```json
+{
+  "message_id":"518726r84910000015",
+  "messages": [
+    {
+      "message":"product:in_stock",
+      "payload": { 
+        "product": {
+          "name": "Somewhat Less Awesome Widgets",
+          "price": "8.00"
+        }
+      }
+    }
+  ]
+}
 ```
 
 If the product doesn't exist in the catalog, our endpoint still returns a message with a success code and our referenced `message_id`, but the `message` key's value is now `product:not_in_stock`, and of course, there is no product in the payload.
 
 ```bash
 $ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/query_price
+```
 
-{"message_id":"518726r84910000004","messages":[{"message":"product:not_in_stock","payload":{}}]}
+```json
+{
+  "message_id":"518726r84910000004",
+  "messages": [
+    {
+      "message":"product:not_in_stock",
+      "payload":{}
+    }
+  ]
+}
 ```
