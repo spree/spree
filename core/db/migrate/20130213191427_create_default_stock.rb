@@ -4,6 +4,14 @@ class CreateDefaultStock < ActiveRecord::Migration
     Spree::StockItem.skip_callback(:save, :after, :process_backorders)
     location = Spree::StockLocation.new(name: 'default')
     location.save(validate: false)
+
+    Spree::StockItem.class_eval do
+      # Column name check here for #3805
+      unless column_names.include?("deleted_at")
+        def self.acts_as_paranoid; end
+      end
+    end
+
     Spree::Variant.all.each do |variant|
       stock_item = location.stock_items.build(variant: variant)
       stock_item.send(:count_on_hand=, variant.count_on_hand)
