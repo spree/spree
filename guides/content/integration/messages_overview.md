@@ -7,7 +7,7 @@ title: Messages Overview
 For more information please see the [Order Messages](order_messages) guide which has information on each of the Message Types.
 
 * [New Order](order_messages#ordernew)
-* [Update Order](order_messages#orderupdate)
+* [Update Order](order_messages#orderupdated)
 * [Cancel Order](order_messages#ordercanceled)
 
 # Shipment Messages
