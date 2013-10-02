@@ -49,7 +49,7 @@ In the example above we see the general details from the Mandrill `endpoint.json
 The majority of the details within an `endpoint.json` file are related to a service entry. The service entries outline all the details required for the hub to interact with your endpoints action:
 
 1. **name** - Following the same formatting rules an the overall endpoint name, each service requires a unique name (within the current endpoint).
-2. **path** - The relative path for the service, a message destined for a service with be POST'd to endpoints base url + the service path. i.e /order_confirmation
+2. **path** - The relative path for the service, a message destined for a service will be POST'd to its endpoint's base url + the service path. i.e /order_confirmation
 3. **description** - A short text description of the service.
 4. **requires** - Identifies any required configuration for a given service (currently only supports listing parameters).
     1. **parameters** - Any parameters required for the given service to process a message. Each parameter has the following attributes:
