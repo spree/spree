@@ -214,6 +214,10 @@ en:
         other: Zones
     errors:
       models:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: "is already linked to this product"
         spree/credit_card:
           attributes:
             base:
