@@ -113,4 +113,13 @@ describe Spree::OrderMailer do
       end
     end
   end
+
+  context "with preference :send_core_emails set to false" do
+    it "sends no email" do
+      Spree::Config.set(:send_core_emails, false)
+      message = Spree::OrderMailer.confirm_email(order)
+      message.body.should be_blank
+    end
+  end
+
 end

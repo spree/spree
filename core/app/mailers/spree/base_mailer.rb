@@ -8,5 +8,10 @@ module Spree
       Spree::Money.new(amount).to_s
     end
     helper_method :money
+
+    def mail(headers={}, &block)
+      super if Spree::Config[:send_core_emails]
+    end
+
   end
 end
