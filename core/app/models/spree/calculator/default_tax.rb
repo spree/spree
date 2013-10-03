@@ -12,6 +12,8 @@ module Spree
           compute_shipment(computable)
         when Spree::LineItem
           compute_line_item(computable)
+        when Spree::Order # for legacy reasons
+          compute_order(computable)
       end
     end
 
@@ -20,6 +22,19 @@ module Spree
 
       def rate
         self.calculable
+      end
+
+      # Default tax calculator still needs to support orders for legacy reasons
+      # Orders created before Spree 2.1 had tax adjustments applied to the order, as a whole.
+      # Orders created with Spree 2.2 and after, have them applied to the line items individually.
+      def compute_order(order)
+        matched_line_items = order.line_items.select do |line_item|
+          line_item.tax_category == rate.tax_category
+        end
+
+        line_items_total = matched_line_items.sum(&:total)
+        binding.pry
+        round_to_two_places(line_items_total * rate.amount)
       end
 
       def compute_shipment(shipment)
