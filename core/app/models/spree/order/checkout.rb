@@ -73,6 +73,8 @@ module Spree
 
               before_transition :to => :delivery, :do => :create_proposed_shipments
               before_transition :to => :delivery, :do => :ensure_available_shipping_rates
+              
+              before_transition :to => :resumed, :do => :ensure_line_items_are_in_stock
 
               after_transition :to => :complete, :do => :finalize!
               after_transition :to => :delivery, :do => :create_tax_charge!

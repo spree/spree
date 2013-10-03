@@ -421,6 +421,12 @@ module Spree
       line_items.select &:insufficient_stock?
     end
 
+    def ensure_line_items_are_in_stock
+      if insufficient_stock_lines.present?
+        errors.add(:base, Spree.t(:insufficient_stock_lines_present)) and return false
+      end
+    end
+
     def merge!(order)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency

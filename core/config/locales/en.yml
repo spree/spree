@@ -613,6 +613,7 @@ en:
         gt: greater than
         gte: greater than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
+    insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
     jirafe: Jirafe
     landing_page_rule:
       path: Path
