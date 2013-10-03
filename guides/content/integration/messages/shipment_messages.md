@@ -8,6 +8,8 @@ title: Shipment Messages
 
 ### shipment:ready
 
+When a shipment has a state of `ready`, generally indicating that they are ready to be fulfilled a `shipment:ready` message will be pushed to incoming queue.
+
 ---shipment_ready.json---
 ```json
 {
