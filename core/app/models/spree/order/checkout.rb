@@ -92,9 +92,17 @@ module Spree
                 before_transition :from => :delivery, :do => :apply_free_shipping_promotions
               end
 
+<<<<<<< HEAD
               after_transition :to => :complete, :do => :finalize!
               after_transition :to => :resumed,  :do => :after_resume
               after_transition :to => :canceled, :do => :after_cancel
+=======
+              before_transition to: :resumed, do: :ensure_line_items_are_in_stock
+
+              after_transition to: :complete, do: :finalize!
+              after_transition to: :resumed,  do: :after_resume
+              after_transition to: :canceled, do: :after_cancel
+>>>>>>> d5927ee... add a before_transition to verify if order is resumed only if there are no insufficient stock lines
 
               after_transition :from => any - :cart, :to => any - [:confirm, :complete] do |order|
                 order.update_totals

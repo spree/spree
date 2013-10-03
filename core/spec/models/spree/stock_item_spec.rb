@@ -132,7 +132,6 @@ describe Spree::StockItem do
     end
   end
 
-<<<<<<< HEAD
   context "destroyed" do
     before { subject.destroy }
 
