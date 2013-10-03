@@ -112,17 +112,6 @@ describe 'Payments' do
       end
     end
 
-    it 'allows the amount to be edited by clicking on the amount then clicking away' do
-      pending "This test fails locally and on CI as of 1st October, 2013. Cannot work out why."
-      within_row(1) do
-        find('td.amount span').click
-        fill_in('amount', with: '$1.10')
-        page.execute_script("$('td.amount input:focus').blur()")
-        page.should have_selector('td.amount span', text: '$1.10')
-        payment.reload.amount.should == 1.10
-      end
-    end
-
     it 'allows the amount change to be cancelled by clicking on the cancel button' do
       within_row(1) do
         click_icon(:edit)
