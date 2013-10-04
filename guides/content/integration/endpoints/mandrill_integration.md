@@ -123,6 +123,7 @@ If an admin cancels an existing order, the hub will pick up on it and send a JSO
   }
 }
 ```
+
 #### Parameters
 
 | Name | Value | Example |
@@ -135,6 +136,7 @@ If an admin cancels an existing order, the hub will pick up on it and send a JSO
 
 #### Example Template
 
+```html
 <h1>*|ORDER_NUMBER|*</h1>
 
 Your Order has been cancelled
@@ -164,7 +166,7 @@ Thanks
 *|COUNTRY|*
 *|ZIPCODE|*
 
-
+```
 
 
 ### Shipment Confirmation
@@ -196,6 +198,8 @@ After an order moves to the `shipped` order state, the store should send notice 
 | mandrill.shipment_confirmation.template | Mandrill Template to Fill In | shipment_confirmation |
 
 #### Example Template
+
+```html
 
 <h1>*|ORDER_NUMBER|*</h1>
 
@@ -230,3 +234,5 @@ Thanks
 *|STATE|*
 *|COUNTRY|*
 *|ZIPCODE|*
+
+```
