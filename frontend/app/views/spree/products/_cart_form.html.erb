@@ -7,7 +7,7 @@
         <ul>
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
-              <%= radio_button_tag "products[#{@product.id}]", variant.id, index == 0, 'data-price' => variant.price_in(current_currency).display_price %>
+              <%= radio_button_tag "products[#{@product.id}]", variant.id, index == 0, 'data-price' => display_price(variant) %>
               <label for="<%= ['products', @product.id, variant.id].join('_') %>">
                 <span class="variant-description">
                   <%= variant_options variant %>
@@ -29,7 +29,7 @@
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div>
             <span class="price selling" itemprop="price">
-              <%= display_price(@product.master) %>
+              <%= display_price(@product) %>
             </span>
             <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
           </div>
