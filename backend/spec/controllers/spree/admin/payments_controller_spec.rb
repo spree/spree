@@ -7,6 +7,26 @@ module Spree
 
       let(:order) { create(:order) }
 
+      context "with a valid credit card" do
+        it "should process payment correctly" do
+          order = create(:order_with_line_items, :state => "payment")
+          payment_method = create(:bogus_payment_method, :display_on => "back_end")
+          attributes = {
+            :order_id => order.number,
+            :card => "new",
+            :payment => {
+              :amount => order.total,
+              :payment_method_id => payment_method.id
+            },
+            :payment_source => {
+              "1" => {:number => Spree::Gateway::Bogus::TEST_VISA.sample}
+            }
+          }
+          spree_post :create, attributes
+          expect(response).to redirect_to spree.admin_order_payments_path(order)
+        end
+      end
+
       # Regression test for #3233
       context "with a backend payment method" do
         before do
@@ -21,7 +41,6 @@ module Spree
       end
 
       context "order has billing address" do
-
         before do
           order.bill_address = create(:address)
           order.save!
@@ -35,7 +54,6 @@ module Spree
         end
 
         context "order has payments" do
-          
           before do
             order.payments << create(:payment, amount: order.total, order: order, state: 'completed')
           end

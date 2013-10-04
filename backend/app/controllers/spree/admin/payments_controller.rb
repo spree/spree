@@ -71,7 +71,7 @@ module Spree
         if params[:payment] and params[:payment_source] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
           params[:payment][:source_attributes] = source_params
         end
-        params.require(:payment).permit(:amount, :payment_method_id, :source_attributes)
+        params.require(:payment).permit(:amount, :payment_method_id, source_attributes: [:number, :expiry, :verification_value])
       end
 
       def load_data
@@ -86,7 +86,7 @@ module Spree
       end
 
       def can_transition_to_payment
-        unless @order.billing_address.present? 
+        unless @order.billing_address.present?
           flash[:notice] = Spree.t(:fill_in_customer_info)
           redirect_to edit_admin_order_customer_url(@order)
         end
