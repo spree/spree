@@ -16,6 +16,7 @@ class UpgradeAdjustments < ActiveRecord::Migration
 
     # Promotion adjustments have their source altered also
     Spree::Adjustment.where(:originator_type => "Spree::PromotionAction").find_each do |adjustment|
+      next if adjustment.originator.nil?
       adjustment.source = adjustment.originator
       if adjustment.source.calculator_type == "Spree::Calculator::FreeShipping"
         # Previously this was a Spree::Promotion::Actions::CreateAdjustment
