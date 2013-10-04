@@ -18,7 +18,7 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
 
 ####Request
 
-```
+```json
 {
   "store_name": "ABC Widgets",
   "message": "spree:order:poll",
@@ -59,7 +59,7 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
 
 #### Response
 
-```
+```json
 {
   "code": "200",
   "response": {
@@ -277,7 +277,7 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
 
 #### Response
 
-```
+```json
 {
    "message_id"   =>"52053091fe53545249000eee",
    "locked"   =>   {
@@ -293,7 +293,7 @@ When sent an "order:import" message to '/orders/import', the endpoint imports an
 
 ####Request
 
-```
+```json
 {
   "store_name": "ABC Widgets",
   "message": "order:import",
@@ -338,7 +338,7 @@ When sent an "order:import" message to '/orders/import', the endpoint imports an
 
 #### Response
 
-```
+```json
 {
   "code": "200",
   "response": {
@@ -363,7 +363,7 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
 
 ####Request
 
-```
+```json
 {
   "message": "order:capture",
   "payload": {
@@ -557,7 +557,7 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
 
 #### Response
 
-```
+```json
 {
    "code"   =>"200",
    "response"   =>   {
@@ -618,7 +618,7 @@ When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoi
 
 #### Response
 
-```
+```json
 {
    "code"   =>"200",
    "response"   =>   {
@@ -653,7 +653,7 @@ When sent an "spree:stock_transfer:poll" message, the endpoint polls the Spree s
 
 ####Request
 
-```
+```json
 {
   "store_name": "ABC Widgets",
   "message": "spree:stock_transfer:poll",
@@ -704,7 +704,7 @@ When sent an "spree:stock_transfer:poll" message, the endpoint polls the Spree s
 
 #### Response
 
-```
+```json
 {
   "code": "200",
   "response": {
