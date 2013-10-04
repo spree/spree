@@ -30,7 +30,7 @@ $ ->
 
       $('#transfer_receive_stock').change (event) => @receive_stock_change(event)
 
-      $.getJSON Spree.routes.stock_locations_api, (data) =>
+      $.getJSON Spree.url(Spree.routes.stock_locations_api), (data) =>
         @locations = (location for location in data.stock_locations)
         @force_receive_stock() if @locations.length < 2
 
@@ -92,13 +92,13 @@ $ ->
       if @cached_variants?
         @populate_select @cached_variants
       else
-        $.getJSON Spree.routes.variants_api, (data) =>
+        $.getJSON Spree.url(Spree.routes.variants_api), (data) =>
           @cached_variants = _.map(data.variants, (variant) -> new TransferVariant(variant))
           @populate_select @cached_variants
 
     _refresh_transfer_stock_items: ->
       stock_location_id = $('#transfer_source_location_id').val()
-      $.getJSON Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items", (data) =>
+      $.getJSON Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items"), (data) =>
         @populate_select _.map(data.stock_items, (stock_item) -> new TransferStockItem(stock_item))
 
     populate_select: (variants) ->
@@ -177,5 +177,3 @@ $ ->
     transfer_locations = new TransferLocations
     transfer_variants = new TransferVariants
     transfer_add_variants = new TransferAddVariants
-
-
