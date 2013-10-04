@@ -2,6 +2,8 @@ class UpgradeAdjustments < ActiveRecord::Migration
   def up
     # Shipping adjustments are now tracked as fields on the object
     Spree::Adjustment.where(:source_type => "Spree::Shipment").find_each do |adjustment|
+      # Account for possible invalid data
+      next if adjustment.source.nil?
       adjustment.source.update_column(:cost, adjustment.amount)
       adjustment.destroy
     end
