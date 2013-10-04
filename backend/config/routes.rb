@@ -9,7 +9,6 @@ Spree::Core::Engine.routes.draw do
       resources :promotion_actions
     end
 
-    resources :adjustments
     resources :zones
     resources :banners do
       member do
