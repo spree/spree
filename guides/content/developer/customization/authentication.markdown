@@ -199,8 +199,8 @@ such as accessing the admin section. Admin users of your system should
 be assigned the Spree admin role, like this:
 
 <% ruby do %>
-    user = User.find_by_email("master@example.com")
-    user.spree_roles << Spree::Role.find_or_create_by_name("admin")
+    user = User.find_by(email: "master@example.com")
+    user.spree_roles << Spree::Role.find_or_create_by(name: "admin")
 <% end %>
 
 To test that this has worked, use the *has_spree_role?* method, like
