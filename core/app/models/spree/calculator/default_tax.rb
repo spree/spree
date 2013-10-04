@@ -43,7 +43,7 @@ module Spree
       def compute_line_item(line_item)
         if line_item.tax_category == rate.tax_category
           if rate.included_in_price
-            deduced_total_by_rate(line_item.discounted_amount, rate)
+            deduced_total_by_rate(line_item, rate)
           else
             round_to_two_places(line_item.discounted_amount * rate.amount)
           end
@@ -56,8 +56,13 @@ module Spree
         BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
       end
 
-      def deduced_total_by_rate(total, rate)
-        round_to_two_places(total - ( total / (1 + rate.amount) ) )
+      def deduced_total_by_rate(line_item, rate)
+        combined_taxes = 0
+        line_item.product.tax_category.tax_rates.each do |tax|
+          combined_taxes += tax.amount
+        end
+        price_without_taxes = line_item.discounted_amount / (1 + combined_taxes)
+        round_to_two_places(price_without_taxes * rate.amount)
       end
 
   end

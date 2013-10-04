@@ -1,8 +1,10 @@
 require 'spec_helper'
 
 describe Spree::Calculator::DefaultTax do
+  let!(:country) { create(:country) }
+  let!(:zone) { create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => []) }
   let!(:tax_category) { create(:tax_category, :tax_rates => []) }
-  let!(:rate) { mock_model(Spree::TaxRate, :tax_category => tax_category, :amount => 0.05, :included_in_price => vat) }
+  let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => vat) }
   let(:vat) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
   let!(:order) { create(:order) }

@@ -52,8 +52,8 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order, item)
-      item.adjustments.tax.delete_all
+    def adjust(order, item, append = false)
+      item.adjustments.tax.delete_all unless append
       amount = compute_amount(item)
       return if amount == 0
 

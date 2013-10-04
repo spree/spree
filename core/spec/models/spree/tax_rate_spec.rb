@@ -214,10 +214,14 @@ describe Spree::TaxRate do
     before do
       @category    = Spree::TaxCategory.create :name => "Taxable Foo"
       @category2   = Spree::TaxCategory.create(:name => "Non Taxable")
-      @calculator  = Spree::Calculator::DefaultTax.new
       @rate        = Spree::TaxRate.create(
         :amount => 0.10,
-        :calculator => @calculator,
+        :calculator => Spree::Calculator::DefaultTax.create,
+        :tax_category => @category
+      )
+      @rate2       = Spree::TaxRate.create(
+        :amount => 0.05,
+        :calculator => Spree::Calculator::DefaultTax.create,
         :tax_category => @category
       )
       @order       = Spree::Order.create!
@@ -243,7 +247,10 @@ describe Spree::TaxRate do
       let!(:line_item) { @order.contents.add(@taxable.master, 1) }
 
       context "when price includes tax" do
-        before { @rate.update_column(:included_in_price, true) }
+        before {
+          @rate.update_column(:included_in_price, true)
+          @rate2.update_column(:included_in_price, true)
+        }
 
         context "when zone is contained by default tax zone" do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
@@ -269,6 +276,28 @@ describe Spree::TaxRate do
           it "should create a tax refund" do
             @rate.adjust(@order, line_item)
             line_item.adjustments.credit.count.should == 1
+          end
+        end
+
+        context "when two rates apply" do
+          before {
+            Spree::Zone.stub_chain :default_tax, :contains? => true
+            @combined_taxes = @rate.amount+@rate2.amount
+            @price_wo_taxes = @order.item_total/(1+@combined_taxes)
+            @rate.adjust(@order, line_item)
+            @rate2.adjust(@order, line_item, true)
+          }
+
+          it "should create two price adjustments" do
+            @order.line_item_adjustments.count.should == 2
+          end
+
+          it "price adjustments should be accurate" do
+            total = 0.0
+            @order.line_item_adjustments.each do |a|
+              total+= a.amount.to_f
+            end
+            Spree::Money.new(total).money.should == Spree::Money.new(@price_wo_taxes * @combined_taxes).money
           end
         end
       end
