@@ -11,8 +11,8 @@
     <%= variant.options_text %>
     <% if @order.insufficient_stock_lines.include? line_item %>
       <span class="out-of-stock">
-        <%= variant.in_stock? ? t(:insufficient_stock, :on_hand => variant.on_hand) : t(:out_of_stock) %>&nbsp;&nbsp;<br />
-      </span>
+        <%= variant.in_stock? ? t(:insufficient_stock, :on_hand => variant.on_hand) : t(:out_of_stock) %>
+      </span><br />
     <% end %>
     <span class="line-item-description" data-hook="line_item_description">
       <%= line_item_description(variant) %>
