@@ -39,23 +39,22 @@ module Spree::Preferences
         # has been cleared from the cache
 
         # does it exist in the database?
-        if Spree::Preference.table_exists? && preference = Spree::Preference.find_by_key(key)
-          # it does exist, so let's put it back into the cache
-          @cache.write(preference.key, preference.value)
-
-          # and return the value
-          return preference.value
+        if preference = Spree::Preference.find_by_key(key)
+          # it does exist
+          val = preference.value
+        else
+          # use the fallback value
+          val = fallback
         end
-      end
 
-      unless fallback.nil?
-        # cache fallback so we won't hit the db above on
-        # subsequent queries for the same key
-        #
-        @cache.write(key, fallback)
-      end
+        # Cache either the value from the db or the fallback value.
+        # This avoids hitting the db with subsequent queries.
+        @cache.write(key, val)
 
-      return fallback
+        return val
+      else
+        return fallback
+      end
     end
 
     def delete(key)
