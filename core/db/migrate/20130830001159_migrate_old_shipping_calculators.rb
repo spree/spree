@@ -9,8 +9,8 @@ class MigrateOldShippingCalculators < ActiveRecord::Migration
         pref_method = "preferred_#{pref}"
         new_calculator.send("#{pref_method}=", old_calculator.send(pref_method))
       end
+      new_calculator.calculable = old_calculator.calculable
       new_calculator.save
-      shipping_method.calculator = new_calculator
     end
   end
 
