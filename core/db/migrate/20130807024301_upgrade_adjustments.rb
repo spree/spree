@@ -1,5 +1,9 @@
 class UpgradeAdjustments < ActiveRecord::Migration
   def up
+    # Temporarily make originator association available
+    Spree::Adjustment.class_eval do
+      belongs_to :originator, polymorphic: true
+    end
     # Shipping adjustments are now tracked as fields on the object
     Spree::Adjustment.where(:source_type => "Spree::Shipment").find_each do |adjustment|
       # Account for possible invalid data
