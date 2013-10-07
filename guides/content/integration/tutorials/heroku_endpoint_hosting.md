@@ -2,7 +2,7 @@
 title: Hosting a Custom Endpoint on Heroku
 ---
 
-Once you have a tested, functioning endpoint, you need to get it hosted to a server on the web that the Hub can reach. [Heroku](https://www.heroku.com/) is a perfect option for hosting your endpoints, because you can do so for free, and because Heroku already has SSL (Secure Socket Layer) enabled. Transmitting messages via SSL will ensure they are encrypted and not vulnerable to malicious sniffing attacks.
+Once you have a tested, functioning endpoint, you need to get it hosted by a server on the web that the Hub can reach. [Heroku](https://www.heroku.com/) is a perfect option for hosting your endpoints, because you can do so for free, and because Heroku already has SSL (Secure Socket Layer) enabled through the shared herokuapp.com domain. Transmitting messages via SSL will ensure they are encrypted and not vulnerable to malicious sniffing attacks.
 
 ## Prerequisites
 
@@ -24,8 +24,12 @@ web: bundle exec rackup config.ru -p $PORT
 ```
 
 $$$
-Investigate process type (web) above; see if it's what we really need here. Do we declare the port? If so, which one? Do we need the `config.ru` part of the previous command? We haven't in testing. Do we need to declare the ruby version?
+Do we declare the port? If so, which one? Do we need the `config.ru` part of the previous command? We haven't in testing. Do we need to declare the ruby version?
 $$$
+
+***
+Heroku [defines dynos](https://devcenter.heroku.com/articles/how-heroku-works#running-applications-on-dynos) as "isolated, virtualized Unix containers, that provide the environment required to run an application."
+***
 
 Now you'll want to make sure you get your new endpoint stored in git:
 
@@ -74,6 +78,26 @@ ENDPOINT_KEY: 12345abcde12345abcde12345abcde12
 The previous command will list all of your environment variables and their values. Luckily, Heroku config vars are persistent across restarts and deploys, so you should not need to reset them once they are set.
 
 ## Deployment
+
+
+## Renaming Your Application
+
+The names that Heroku assigns by default to its deployed applications tend to be more poetic than you might prefer. If you are deploying a forked copy of the [Mandrill endpoint](https://github.com/spree/mandrill_endpoint), for example, you might prefer to have the application named "jane_doe_mandrill" rather than "bursting_sunset."
+
+To rename an application, you need only type the following command:
+
+```bash
+$ heroku apps:rename newname --app oldname
+```
+
+If you have git remotes that point to your application, you'll need to update them as well.
+
+```bash
+$ git remote rm heroku
+$ heroku git:remote -a newname
+```
+
+The "newname" value in the last command above needs to match what you used in the `rename` command above.
 
 ## Caveats
 
