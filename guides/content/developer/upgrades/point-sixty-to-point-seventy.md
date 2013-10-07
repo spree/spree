@@ -80,7 +80,7 @@ module YourStore
   config.assets.version = '1.0'
   
   end
-end````
+end```
 
 ## Verify that everything is OK
 
