@@ -131,4 +131,22 @@ describe Spree::StockItem do
       expect { subject.destroy }.not_to raise_error
     end
   end
+
+  context "destroyed" do
+    before { subject.destroy }
+
+    it "recreates stock item just fine" do
+      expect {
+        stock_location.stock_items.create!(variant: subject.variant)
+      }.not_to raise_error
+    end
+
+    it "doesnt allow recreating more than one stock item at once" do
+      stock_location.stock_items.create!(variant: subject.variant)
+
+      expect {
+        stock_location.stock_items.create!(variant: subject.variant)
+      }.to raise_error
+    end
+  end
 end
