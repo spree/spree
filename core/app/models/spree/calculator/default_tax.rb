@@ -33,7 +33,6 @@ module Spree
         end
 
         line_items_total = matched_line_items.sum(&:total)
-        binding.pry
         round_to_two_places(line_items_total * rate.amount)
       end
 
