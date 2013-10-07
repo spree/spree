@@ -6,11 +6,6 @@ describe Spree::Core::ControllerHelpers::SSL, :type => :controller do
     def index; render text: 'index'; end
     def self.ssl_supported?; true; end
   end
-  before do
-    @routes.draw do
-      get '/anonymous/index'
-    end
-  end
 
   describe 'redirect to http' do
     before { Spree::Config[:redirect_https_to_http] = true  }
