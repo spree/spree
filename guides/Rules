@@ -209,6 +209,11 @@ route '/developer/customization/*/' do
   location.chop + ".html"
 end
 
+route '/developer/upgrades/*/' do
+  location = item.identifier
+  location.chop + ".html"
+end
+
 ###############################################################
 # Flatten the user guide stuff into single directory
 ###############################################################
