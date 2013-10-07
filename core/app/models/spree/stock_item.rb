@@ -7,7 +7,7 @@ module Spree
     has_many :stock_movements
 
     validates_presence_of :stock_location, :variant
-    validates_uniqueness_of :variant_id, scope: :stock_location_id
+    validates_uniqueness_of :variant_id, scope: [:stock_location_id, :deleted_at]
 
     delegate :weight, to: :variant
 
