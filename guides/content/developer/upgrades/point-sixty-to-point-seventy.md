@@ -18,8 +18,7 @@ version from 3.1.1 up to 3.1.4. The first step in upgrading Spree is to
 upgrade the Rails version in the `Gemfile`:
 
 ```ruby
-gem 'rails', '3.1.12'
-```
+gem 'rails', '3.1.12'```
 
 ## Upgrade Spree
 
