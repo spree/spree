@@ -31,6 +31,8 @@ end
 gem 'jquery-rails', '2.1.4'
 ```
 
+For more information, please refer to the [Upgrading Ruby on Rails guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-3-1-to-rails-3-2).
+
 ## Upgrade Spree
 
 For best results, use the 1-1-stable branch from GitHub:
