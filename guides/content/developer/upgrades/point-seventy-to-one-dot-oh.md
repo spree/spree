@@ -23,6 +23,13 @@ Along with this, migrations must be copied over to the application using the
 `rake railties:install:migrations` command, rather than a `rails g spree:site`
 command as before.
 
+## Upgrade Rails
+
+Spree 1.0 depends on any Rails 3.1 release afer Rails 3.1.10. Ensure that you have that dependency specified in your Gemfile:
+
+```ruby
+gem 'rails', '~> 3.1.10'
+
 ## Upgrade Spree
 
 For best results, use the 1-0-stable branch from GitHub:
