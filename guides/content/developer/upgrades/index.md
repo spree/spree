@@ -12,3 +12,4 @@ If there are any issues with these guides, please let us know by [filing an issu
 * [0.60.x to 0.70.x](/developer/upgrades/point-sixty-to-point-seventy)
 * [0.70.x to 1.0.x](/developer/upgrades/point-seventy-to-one-dot-oh)
 * [1.0.x to 1.1.x](/developer/upgrades/one-dot-oh-to-one-dot-one)
+* [1.1.x to 1.2.x](/developer/upgrades/one-dot-one-to-one-dot-two)
