@@ -14,7 +14,7 @@ version of Spree will have a 1-1-stable branch.
 
 ## Upgrade Rails
 
-Spree 1.0 depends on any Rails 3.2 release afer Rails 3.2.9. Ensure that you have that dependency specified in your Gemfile:
+Spree 1.1 depends on any Rails 3.2 release afer Rails 3.2.9. Ensure that you have that dependency specified in your Gemfile:
 
 ```ruby
 gem 'rails', '~> 3.2.9'```
@@ -36,7 +36,7 @@ gem 'jquery-rails', '2.1.4'
 For best results, use the 1-1-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-0-stable'```
+gem 'spree', :github => 'spree/spree', :branch => '1-1-stable'```
 
 Run `bundle update spree`. 
 
@@ -57,8 +57,10 @@ Spree API no longer provides any asset files, so references to these must be rem
 * app/assets/javascripts/store/all.js
 * app/assets/javascripts/admin/all.js
 
+## Read the release notes
+
+For information about what has changed in this release, please read the [1.1.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_1_1_0.html).
+
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
-
-For more information, please read the [1.1.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_1_1_0.html)
