@@ -150,6 +150,25 @@ describe Spree::CreditCard do
     end
   end
 
+  # Regression test for #3847 & #3896
+  context "#expiry=" do
+    it "can set with a 2-digit month and year" do
+      credit_card.expiry = '04 / 14'
+      credit_card.month = '04'
+      credit_card.year = '2014'
+    end
+
+    it "can set with a 2-digit month and 4-digit year" do
+      credit_card.expiry = '04 / 2014'
+      credit_card.month = '04'
+      credit_card.year = '2014'
+    end
+
+    it "does not blow up when passed an empty string" do
+      lambda { credit_card.expiry = '' }.should_not raise_error
+    end
+  end
+
   context "#cc_type=" do
     it "converts between the different types" do
       credit_card.cc_type = 'mastercard'
