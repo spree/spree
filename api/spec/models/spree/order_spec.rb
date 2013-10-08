@@ -52,15 +52,23 @@ module Spree
       order.state.should eq 'complete'
     end
 
-    it 'can build an order from API with just line items' do
-      params = { :line_items_attributes => line_items }
+    context "build order with line items" do
+      let(:attributes) do
+        { :variant_id => variant.id, :quantity => 5, :price => 33.77 }
+      end
 
-      Order.should_receive(:ensure_variant_id_from_api)
-      order = Order.build_from_api(user, params)
-      order.user.should == nil
-      line_item = order.line_items.first
-      line_item.quantity.should == 5
-      line_item.variant_id.should == variant_id
+      it 'can build an order from API with just line items' do
+        params = { :line_items_attributes => { "0" => attributes } }
+        Order.should_receive(:ensure_variant_id_from_api)
+        order = Order.build_from_api(user, params)
+
+        order.user.should == nil
+        line_item = order.line_items.first
+
+        expect(line_item.quantity).to eq attributes[:quantity]
+        expect(line_item.variant_id).to eq attributes[:variant_id]
+        expect(line_item.price).to eq attributes[:price]
+      end
     end
 
     it 'handles line_item building exceptions' do

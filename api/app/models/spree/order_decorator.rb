@@ -79,7 +79,7 @@ Spree::Order.class_eval do
 
         extra_params = line_item.except(:variant_id, :quantity)
         line_item = self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
-        line_item.update_attributes(extra_params) unless extra_params.empty?
+        line_item.update_attributes(extra_params, as: :api) unless extra_params.empty?
       rescue Exception => e
         raise "#{e.message} #{line_item}"
       end
