@@ -23,10 +23,6 @@ You will need to add a Procfile to your application's root directory to start a 
 web: bundle exec rackup config.ru -p $PORT
 ```
 
-$$$
-Do we need the `config.ru` part of the previous command? We haven't in testing. Do we need to declare the ruby version?
-$$$
-
 ***
 Heroku [defines dynos](https://devcenter.heroku.com/articles/how-heroku-works#running-applications-on-dynos) as "isolated, virtualized Unix containers, that provide the environment required to run an application."
 ***
