@@ -86,7 +86,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
                 base_url.path() + '/' + e.attr('id') + '/jstree'
           themes:
             theme: "apple",
-            url: "/assets/jquery.jstree/themes/apple/style.css"
+            url: Spree.url(Spree.routes.jstree_theme_path)
           strings:
             new_node: new_taxon,
             loading: Spree.translations.loading + "..."
