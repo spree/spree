@@ -15,3 +15,4 @@ If there are any issues with these guides, please let us know by [filing an issu
 * [1.1.x to 1.2.x](/developer/upgrades/one-dot-one-to-one-dot-two)
 * [1.2.x to 1.3.x](/developer/upgrades/one-dot-two-to-one-dot-three)
 * [1.3.x to 2.0.x](/developer/upgrades/one-dot-three-to-two-dot-oh)
+* [2.0.x to 2.1.x](/developer/upgrades/two-dot-oh-to-two-dot-one)
