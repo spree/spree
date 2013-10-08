@@ -83,4 +83,4 @@ to its assets must be removed also. Remove references to spree_dash from:
 
 ## Verify that everything is OK
 
-Click around in your store and make sure it's performing as normal.
+Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
