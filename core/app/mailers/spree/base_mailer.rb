@@ -9,12 +9,8 @@ module Spree
     end
     helper_method :money
 
-    alias_method :orig_mail, :mail
-
     def mail(headers={}, &block)
-      if Spree::Config[:send_core_emails]
-        orig_mail
-      end
+      super if Spree::Config[:send_core_emails]
     end
 
   end
