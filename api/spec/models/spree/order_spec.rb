@@ -4,7 +4,7 @@ module Spree
   describe Order do
     let!(:country) { FactoryGirl.create(:country) }
     let!(:state) { country.states.first || FactoryGirl.create(:state, :country => country) }
-    let(:user) { stub_model(LegacyUser) }
+    let(:user) { create(:user) }
     let(:product) { Spree::Product.create!(:name => 'Test', :sku => 'TEST-1', :price => 33.22) }
     let(:sku) { product.master.sku }
     let(:variant) { product.master }
@@ -37,6 +37,12 @@ module Spree
       order = Order.build_from_api(user, params)
       order.should be_completed
       order.state.should eq 'complete'
+    end
+
+    it "assigns order[email] over user email to order" do
+      params = { email: 'wooowww@test.com' }
+      order = Order.build_from_api(user, params)
+      expect(order.email).to eq params[:email]
     end
 
     it 'can build an order from API with just line items' do
