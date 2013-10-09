@@ -17,7 +17,7 @@ Spree::Core::Engine.add_routes do
     request.referer || '/cart'
   end
 
-  get '/orders/populate', :via => :get, :to => populate_redirect
+  get '/orders/populate', :to => populate_redirect
   get '/orders/:id/token/:token' => 'orders#show', :as => :token_order
 
   resources :orders, :except => [:new, :create] do
