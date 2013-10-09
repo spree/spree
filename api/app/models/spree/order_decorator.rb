@@ -15,11 +15,19 @@ Spree::Order.class_eval do
       order.create_payments_from_api params.delete(:payments_attributes) || []
       order.complete_from_api params.delete(:completed_at)
 
+      destroy_automatic_taxes_on_import(order, params)
       order.update_attributes!(params)
+
       order.reload
     rescue Exception => e
       order.destroy if order && order.persisted?
       raise e.message
+    end
+  end
+
+  def self.destroy_automatic_taxes_on_import(order, params)
+    if params.delete :import
+      order.adjustments.tax.destroy_all
     end
   end
 

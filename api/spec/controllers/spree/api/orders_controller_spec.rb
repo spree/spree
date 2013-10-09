@@ -132,6 +132,30 @@ module Spree
       expect(Order.last.line_items.first.price.to_f).to eq 33.0
     end
 
+    context "import" do
+      let(:tax_rate) { create(:tax_rate, amount: 0.05, calculator: Calculator::DefaultTax.create) }
+      let(:other_variant) { create(:variant) }
+
+      let(:order_params) do
+        {
+          :line_items => {
+            "0" => { :variant_id => variant.to_param, :quantity => 5 },
+            "1" => { :variant_id => other_variant.to_param, :quantity => 5 }
+          }
+        }
+      end
+
+      before { Zone.stub default_tax: tax_rate.zone }
+
+      it "doesnt persist any automatic tax adjustment" do
+        expect {
+          api_post :create, :order => order_params.merge(:import => true)
+        }.not_to change { Adjustment.count }
+
+        expect(response.status).to eq 201
+      end
+    end
+
     # Regression test for #3404
     it "does not update line item needlessly" do
       Order.should_receive(:create!).and_return(order = Spree::Order.new)

@@ -72,6 +72,10 @@ module Spree
           end
         end
 
+        def permitted_order_attributes
+          super << [:import]
+        end
+
         def next!(options={})
           if @order.valid? && @order.next
             render :show, status: options[:status] || 200
@@ -88,7 +92,6 @@ module Spree
         def before_delivery
           @order.create_proposed_shipments
         end
-
     end
   end
 end

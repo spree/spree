@@ -286,5 +286,30 @@ module Spree
         expect(Order.count).to eq count
       end
     end
+
+    context "import param and tax adjustments" do
+      let!(:tax_rate) { create(:tax_rate, amount: 0.05, calculator: Calculator::DefaultTax.create) }
+      let(:other_variant) { create(:variant) }
+
+      let(:line_item_attributes) do
+        line_items.merge({ "1" => { :variant_id => other_variant.id, :quantity => 5 }})
+      end
+
+      before { Zone.stub default_tax: tax_rate.zone }
+
+      it "doesnt create any tax ajustments when importing order" do
+        params = { import: true, line_items_attributes: line_item_attributes }
+        expect {
+          Order.build_from_api(user, params)
+        }.not_to change { Adjustment.count }
+      end
+
+      it "does create tax adjustments if not importing order" do
+        params = { import: false, line_items_attributes: line_item_attributes }
+        expect {
+          Order.build_from_api(user, params)
+        }.to change { Adjustment.count }
+      end
+    end
   end
 end
