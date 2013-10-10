@@ -119,7 +119,7 @@ module Spree
       response.status.should == 201
     end
 
-    it "sets line items price" do
+    it "cannot arbitrarily set the line items price" do
       api_post :create, :order => {
         :line_items => {
           "0" => {
@@ -129,7 +129,7 @@ module Spree
       }
 
       expect(response.status).to eq 201
-      expect(Order.last.line_items.first.price.to_f).to eq 33.0
+      expect(Order.last.line_items.first.price.to_f).to eq(variant.price)
     end
 
     context "import" do
@@ -217,6 +217,19 @@ module Spree
         response.status.should == 200
         json_response['line_items'].count.should == 1
         json_response['line_items'].first['quantity'].should == 10
+      end
+
+      it "cannot change the price of an existing line item" do
+        api_put :update, :id => order.to_param, :order => {
+          :line_items => {
+            line_item.id => { :price => 0 }
+          }
+        }
+
+        response.status.should == 200
+        json_response['line_items'].count.should == 1
+        expect(json_response['line_items'].first['price'].to_f).to_not eq(0)
+        expect(json_response['line_items'].first['price'].to_f).to eq(line_item.variant.price)
       end
 
       it "can add billing address" do
@@ -393,6 +406,21 @@ module Spree
           json_response["count"].should == 1
           json_response["current_page"].should == 1
           json_response["pages"].should == 1
+        end
+      end
+
+      context "creation" do
+        it "can arbitrarily set the line items price" do
+          api_post :create, :order => {
+            :line_items => {
+              "0" => {
+                :price => 33.0, :variant_id => variant.to_param, :quantity => 5
+              }
+            }
+          }
+
+          expect(response.status).to eq 201
+          expect(Order.last.line_items.first.price.to_f).to eq(33.0)
         end
       end
 
