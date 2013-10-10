@@ -31,6 +31,26 @@ describe Spree::Preferences::Preferable do
     store.persistence = true
   end
 
+  # Regression test for #3831
+  describe "preference cache key" do
+    context "with a rails_cache_id set" do
+      before do
+        @a.stub(:rails_cache_id => 'cache')
+      end
+
+      it "includes the cache id within the key" do
+        expect(@a.preference_cache_key('foo')).to eql("cache/a/foo/#{@a.id}")
+      end
+    end
+
+    context "without a rails_cache_id set" do
+      it "includes the cache id within the key" do
+        expect(@a.preference_cache_key('foo')).to eql("a/foo/#{@a.id}")
+      end
+    end
+
+  end
+
   describe "preference definitions" do
     it "parent should not see child definitions" do
       @a.has_preference?(:color).should be_true

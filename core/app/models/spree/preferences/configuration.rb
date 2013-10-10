@@ -29,7 +29,11 @@ module Spree::Preferences
     end
 
     def preference_cache_key(name)
-      [ENV['RAILS_CACHE_ID'], self.class.name, name].flatten.join('::').underscore
+      [rails_cache_id, self.class.name, name].compact.join('::').underscore
+    end
+
+    def rails_cache_id
+      ENV['RAILS_CACHE_ID']
     end
 
     def reset
