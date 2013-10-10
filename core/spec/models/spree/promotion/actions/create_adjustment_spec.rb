@@ -22,6 +22,12 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       order.adjustments.first.amount.to_i.should == -10
     end
 
+    it "should create a discount accessible through both order_id and adjustable_id" do
+      action.perform(:order => order)
+      order.adjustments.count.should == 1
+      order.all_adjustments.count.should == 1
+    end
+
     it "should not create a discount when order already has one from this promotion" do
       order.shipments.create!(:cost => 10)
 
@@ -47,7 +53,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
     context "when order is complete" do
       let(:order) do
-        create(:order_with_line_items, 
+        create(:order_with_line_items,
                :state => "complete",
                :completed_at => Time.now,
                :line_items_count => 1)
