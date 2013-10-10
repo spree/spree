@@ -27,7 +27,6 @@ $(document).ready(function () {
         },
         results: function (data, page) {
           var more = page < data.pages;
-          console.log(more)
           return {
             results: data['taxons'],
             more: more
