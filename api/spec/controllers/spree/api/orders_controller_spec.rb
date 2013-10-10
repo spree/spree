@@ -76,6 +76,25 @@ module Spree
         json_response["user_id"].should == current_api_user.id
       end
 
+      it "cannot create an order with an abitrary price for the line item" do
+        variant = create(:variant)
+        api_post :create, :order => {
+          :line_items => {
+            "0" => {
+              :variant_id => variant.to_param,
+              :quantity => 5,
+              :price => 0.44
+            }
+          }
+        }
+        response.status.should == 201
+        order = Order.last
+        order.line_items.count.should == 1
+        order.line_items.first.variant.should == variant
+        order.line_items.first.quantity.should == 5
+        order.line_items.first.price.should == order.line_items.first.variant.price
+      end
+
       # Regression test for #3404
       it "can specify additional parameters for a line item" do
         variant = create(:variant)
@@ -176,6 +195,18 @@ module Spree
         response.status.should == 200
         json_response['line_items'].count.should == 1
         json_response['line_items'].first['quantity'].should == 10
+      end
+
+      it "cannot set a price for a line item" do
+        variant = create(:variant)
+        api_put :update, :id => order.to_param, :order => {
+          :line_items_attributes => { order.line_items.first.id =>
+            { :variant_id => variant.id, :quantity => 2, :price => 0.44}
+          }
+        }
+        response.status.should == 200
+        json_response['line_items'].count.should == 1
+        expect(json_response['line_items'].first['price']).to eq(variant.price.to_s)
       end
 
       it "can add billing address" do
