@@ -71,6 +71,25 @@ module Spree
       json_response["state"].should == "cart"
     end
 
+    it "cannot create an order with an abitrary price for the line item" do
+      variant = create(:variant)
+      api_post :create, :order => {
+        :line_items => {
+          "0" => {
+            :variant_id => variant.to_param,
+            :quantity => 5,
+            :price => 0.44
+          }
+        }
+      }
+      response.status.should == 201
+      order = Order.last
+      order.line_items.count.should == 1
+      order.line_items.first.variant.should == variant
+      order.line_items.first.quantity.should == 5
+      order.line_items.first.price.should == order.line_items.first.variant.price
+    end
+
     context "working with an order" do
       before do
         Order.any_instance.stub :user => current_api_user
@@ -96,8 +115,20 @@ module Spree
       let!(:shipping_method) { create(:shipping_method) }
       let!(:payment_method) { create(:payment_method) }
 
-      it "can add line items" do
-        api_put :update, :id => order.to_param, :order => { :line_items => [{:variant_id => create(:variant).id, :quantity => 2}] }
+      it "can not update line item prices" do
+        order.line_items << create(:line_item)
+        api_put :update, 
+          :id => order.to_param,
+          :order => {
+            :line_items => {
+              order.line_items.first.id =>
+              { 
+                :variant_id => create(:variant).id,
+                :quantity => 2,
+                :price => 0.44
+              }
+            }
+          }
 
         response.status.should == 200
         json_response['item_total'].to_f.should_not == order.item_total.to_f
