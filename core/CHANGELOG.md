@@ -44,6 +44,17 @@
 
     *Ryan Bigg*
 
+* Added Spree::Config[:send_core_emails] preference setting.
+
+This setting allows developers to use standard rails mail configuration (in config
+files) by setting :override_actionmailer_config to false without sending
+spree core emails (e.g. order confirmation). This is useful e.g. in the
+case where devs have opted to use an external mail API such as Mandrill
+for store-related emails but still want to use ActionMailer in other
+parts of their app. #3812
+    
+    *Sean O'Hara*
+
 ## Spree 2.1.0 ##
 
 * Product requires `shipping_category_id` on create #3188.
