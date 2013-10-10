@@ -78,7 +78,11 @@ module Spree::Preferences::Preferable
 
   def preference_cache_key(name)
     return unless id
-    [ENV["RAILS_CACHE_ID"], self.class.name, name, id].join('::').underscore
+    [rails_cache_id, self.class.name, name, id].compact.join('::').underscore
+  end
+
+  def rails_cache_id
+    ENV['RAILS_CACHE_ID']
   end
 
   def save_pending_preferences
