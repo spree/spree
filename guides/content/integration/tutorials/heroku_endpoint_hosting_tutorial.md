@@ -1,5 +1,5 @@
 ---
-title: Hosting a Custom Endpoint on Heroku
+title: Heroku Endpoint Hosting
 ---
 
 Once you have a tested, functioning endpoint, you need to get it hosted by a server on the web that the Hub can reach. [Heroku](https://www.heroku.com/) is a perfect option for hosting your endpoints, because you can do so for free, and because Heroku already has SSL (Secure Socket Layer) enabled through the shared herokuapp.com domain. Transmitting messages via SSL will ensure they are encrypted and not vulnerable to malicious sniffing attacks.
@@ -8,15 +8,15 @@ Once you have a tested, functioning endpoint, you need to get it hosted by a ser
 
 This tutorial assumes that you:
 
-* have a functional tutorial you are ready to deploy, 
-* have a hosting account on Heroku, 
+* have a functional tutorial you are ready to deploy,
+* have a hosting account on Heroku,
 * have installed the [Heroku Toolbelt](https://toolbelt.heroku.com/),
 * are comfortable using the command line and git to interact with file systems, and
 * have installed [bundler](http://bundler.io/)
 
 ## Endpoint Setup
 
-You will need to add a Procfile to your application's root directory to start a web dyno within your Heroku application. 
+You will need to add a Procfile to your application's root directory to start a web dyno within your Heroku application.
 
 ---Procfile---
 ```ruby
@@ -72,7 +72,7 @@ The Hub uses a 32-character key to establish that incoming requests are legitima
 
 The [`endpoint_base`](https://github.com/spree/endpoint_base) gem (on which your endpoint should be based) will verify when a request is received that the two keys match. If they don't, a 401 (unauthorized) error is returned. This prevents spoofing requests that the Hub may receive from malicious sources.
 
-With Heroku, you set environment variables using [config vars](https://devcenter.heroku.com/articles/config-vars). 
+With Heroku, you set environment variables using [config vars](https://devcenter.heroku.com/articles/config-vars).
 
 ```bash
 $ heroku config:set ENDPOINT_KEY=12345abcde12345abcde12345abcde12
@@ -108,7 +108,7 @@ The "newname" value in the last command above needs to match what you used in th
 
 ## Testing
 
-Now you can run a curl command against your deployed endpoint to verify that it is working correctly. For example, I deployed the [Zendesk endpoint](https://github.com/spree/zendesk_endpoint), which creates help desk tickets in your Zendesk account when it receives a `notification:error` or `notification:warning` message. I renamed my Heroku app to "zendesk-endpoint-copy". 
+Now you can run a curl command against your deployed endpoint to verify that it is working correctly. For example, I deployed the [Zendesk endpoint](https://github.com/spree/zendesk_endpoint), which creates help desk tickets in your Zendesk account when it receives a `notification:error` or `notification:warning` message. I renamed my Heroku app to "zendesk-endpoint-copy".
 
 Following is a sample JSON file you can save as `sample_error.json` to your home directory.
 
