@@ -1,3 +1,25 @@
+## Spree 2.1.2 ##
+
+*   Added ability to edit payment amount on the payments listing. #3765
+
+    *Dan Kubb*
+
+*   Added ability to create and delete countries via the backend.
+
+    *Washington Luiz*
+
+*   Fixed issue where rules select box was not being reloaded after a rule was selected.
+
+    *Washington Luiz*
+
+*   Fixed issue where API calls to stock locations endpoint were not passing through a token. #3828
+
+    *Alain Pilon*
+
+*   Fixed admin top menu spacing. #3839
+
+    *Ramon Roche*
+
 ## Spree 2.1.0 ##
 
 *   layouts/admin.html.erb was broken into partials for each section. e.g.

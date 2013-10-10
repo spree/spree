@@ -1,3 +1,49 @@
+## Spree 2.1.2 ##
+
+* Payment identifiers are no longer recalculated when they are saved. #3733
+
+    *Ryan Bigg*
+
+* Product#stock_items now returns stock items for the master variant as well. #3737
+
+    *Ryan Bigg*
+
+* Added a default format for datepicker_field_value, in case one is not available in locale file. #3602
+
+    *Peter Goldstein*
+
+* Bumped activemerchant to 1.38.1. #3745
+
+    *Piotr Usewicz*
+
+* Sandbox now references correct branch for spree_auth_devise when it is generated. #3770
+
+    *Wes Ketchum*
+
+* Better accessibility support (for more information, see #3414.)
+
+    *Cameron Cundiff and Trevor John*
+
+* StockItem#process_backorders will now process stock when it is adjusted postively (i.e. -3 => -2).
+
+    *Ryan Bigg*
+
+* Fixed shipping rates losing current rate when refreshing rates. #3766
+
+    *dan-ding*
+
+* Allow any version of the Money gem above 5.1.1. Related to #2737.
+
+    *Ryan Bigg*
+
+* Fixed issue where a stock item for a variant could not be created if one of the same variant had already been created. #3834
+
+    *Washington Luiz*
+
+* Added custom routing code to work around issues described in rails/rails#12367.
+
+    *Ryan Bigg*
+
 ## Spree 2.1.0 ##
 
 * Product requires `shipping_category_id` on create #3188.

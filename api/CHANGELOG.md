@@ -1,3 +1,21 @@
+## Spree 2.1.2 ##
+
+* States and countries endpoints now do not require authentication, even if it is forced with the `requires_authentication` setting. This is so the frontend's checkout address page can still work.
+
+    *Ryan Bigg*
+
+* You can now assign a location to a shipment when creating it through the orders API. f3ef2e1d46bc972442acbbcaae928e6ef2dc0eb5
+
+    *Washington Luiz*
+
+* Stock Items, Stock Movements and Stock Locations are now invisible to non-admin users.
+
+    *Ryan Bigg*
+
+* Fixed issue where X-Spree-Token header was being ignored. #3798
+
+    *Washington Luiz*
+
 ## Spree 2.1.0 ##
 
 * The Products API endpoint now returns an additional key called `shipping_category_id`, and also requires `shipping_category_id` on create.
