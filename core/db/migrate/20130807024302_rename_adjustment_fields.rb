@@ -8,8 +8,10 @@ class RenameAdjustmentFields < ActiveRecord::Migration
     # This enables the Spree::Order#all_adjustments association to work correctly
     Spree::Adjustment.reset_column_information
     Spree::Adjustment.find_each do |adjustment|
-      adjustment.order = adjustment.adjustable
-      adjustment.save
+      if adjustment.adjustable.is_a?(Order)
+        adjustment.order = adjustment.adjustable
+        adjustment.save
+      end
     end
   end
 end
