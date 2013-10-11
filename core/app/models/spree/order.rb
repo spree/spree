@@ -193,7 +193,7 @@ module Spree
     def tax_address
       Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
     end
-    
+
     def updater
       @updater ||= OrderUpdater.new(self)
     end
@@ -446,6 +446,11 @@ module Spree
       @coupon_code = code.strip.downcase rescue nil
     end
 
+    def can_add_coupon?
+      Spree::Promotion.order_activatable?(self)
+    end
+
+
     def shipped?
       %w(partial shipped).include?(shipment_state)
     end
@@ -466,7 +471,7 @@ module Spree
     #
     # At some point the might need to force the order to transition from address
     # to delivery again so that proper updated shipments are created.
-    # e.g. customer goes back from payment step and changes order items 
+    # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
@@ -482,7 +487,7 @@ module Spree
       (bill_address.empty? && ship_address.empty?) || bill_address.same_as?(ship_address)
     end
 
-  
+
     def set_shipments_cost
       shipments.each(&:update_amounts)
       updater.update_shipment_total
