@@ -10,7 +10,9 @@
 
 * Use `display_price` more consistently. #3822
 
+* When a payment fails, it will now include the message from the gateway as a validation error. This potentially provides additional information to the user, which may guide them to correcting the data they're inputting, allowing the payment to go through successfully. #3851
 
+    *Ryan Bigg*
 
 ## Spree 2.1.0 ##
 
