@@ -10,7 +10,7 @@ Installing the tool is a simple matter of adding one line to your product's `Gem
 
 ## Prerequisites
 
-This guide assumes you already have [bundler](http://bundler.io/) installed and that you are familiar with basic Ruby and Rails concepts. It also assume that you already have a functioning Spree storefront.
+This guide assumes you already have [bundler](http://bundler.io/) installed and that you are familiar with basic Ruby and Rails concepts. It also assumes that you already have a functioning Spree storefront.
 
 ## Installation
 
@@ -61,6 +61,8 @@ Values for "Email", "Store Name", and "Store API URL" will already be filled in,
 
 ## Configuration
 
+### Adding An Integration
+
 When you expand the "Add New Integration" drop-down menu, you'll see a list of all of the globally-available integrations. You should review the particular configuration details for any of the [supported integrations](supported_integrations) you want to use, but we'll use [Mandrill](mandrill_integration) as an example to understand how the Configuration tool is used generally.
 
 ![Mandrill Configuration](/images/integration/mandrill_config.jpg)
@@ -87,3 +89,69 @@ By hovering over the buttons on this integration, you see that you have several 
 * Refresh - Re-query the SpreeCommerce hub manually to get any new information.
 * Remove - Remove all of the mappings for individual services to this endpoint. Does not actually delete the integration itself, but will cause the integration not to appear on your store's "Active Integrations" section.
 * Disable All - Clicking the "Enabled" button means the individual services for the integration will be disabled. The integration will still appear on your store's "Active Integrations" section.
+
+### Adding A Custom Integration
+
+#### Overview
+
+***
+For more information on building a custom endpoint, please follow the [custom endpoint tutorials](basic_endpoints_tutorial).
+***
+
+Once you've created your endpoint you'll want to connect it to the hub so it can start processing messages. We'll go over:
+
+1. Adding an `endpoint.json` file for your endpoint.
+
+2. Deploying your endpoint and configuring the security.
+
+3. Registering your endpoint with the hub using the spree_hub_connector gem.
+
+#### endpoint.json
+
+When configuring an Integration using the Spree Hub Connector the information from the `endpoint.json` is used to populate a [mapping](/integration/mapping_basics.html) with default configuration for each configured service.
+
+The file contains some basic details about your endpoint and lists all the available services including which messages you recommend the service to process and all configuration details (like parameters, filters, identifiers that the service may require).
+
+The `endpoint.json` file must be available at the root path of your application via `HTTP GET` request i.e. /endpoint.json
+
+For more details on the contents of the file please refer to the [Custom Integrations](/integration/custom_integrations.html) guide.
+
+#### Deployment and Security
+
+All endpoints must be publicly accessible in order for the hub to be able to route messages to it successfully. All production endpoints must be deployed on SSL secured hosts.
+
+To ensure your endpoint only processes messages from the hub you must configure a preshared key that the hub will include as a HTTP header with each message it delivers.
+
+If you've used the Endpoint Base library to create your endpoint then security checks are already built-in and you just need to configure the `ENDPOINT_KEY` environment variable with a 32 digit (or longer) secret token of your choosing.
+
+#### Registering your endpoint.
+
+Once your endpoint has been deployed, and the `ENDPOINT_KEY` has been configured you are now ready to register your endpoint with the hub. You will need the following details:
+
+1. **URL** - Fully qualified domain name of the application.
+2. **Name** - The name of the endpoint (as contained in the `endpoint.json` file).
+3. **Token** - The 32 digit value you chose as your `ENDPOINT_KEY`
+
+When you expand the "Add New Integration" drop-down menu, you'll see an option to add a custom integration. You can choose this option in order to add an integration for an endpoint that is not in the list of globally available integrations.
+
+After selecting the "Add Custom" option, you will see a form that allows you to fill in your endpoint details and create the new integration.
+
+![Adding A Custom Integration](/images/integration/add_custom_integration.jpg)
+
+Once you have filled out this form, click the "Save" button. The Overview page will update and you will see your custom integration listed in the "Active Integrations" section in the pending state.
+
+![Pending Custom Integration](/images/integration/pending_custom_integration.jpg)
+
+The integration is initially in the pending state while the hub pulls down your endpoint's services from the `endpoint.json` file. While in this state, you can click on the "Edit Properties" option beneath your integration in the Active Integrations list to view it's current status.
+
+Initially you will see a message that tells you to wait while the endpoint configuration is fetched.
+
+![Pending Integration Being Fetched](/images/integration/fetch_custom_integration.jpg)
+
+If there are any errors in your endpoint's `endpoint.json` file this screen will automatically update and list the errors.
+
+![Custom Integration With Errors](/images/integration/errors_custom_integration.jpg)
+
+Once you fix any `endpoint.json` errors that may be present, the integration will be updated and you will be able to configure it exactly like any other global integration.
+
+If you ever need to update the endpoint information for a custom integration, click on the gear icon beneath you integration in the Active Integrations list. This will allow you to edit the endpoint's name, url, or token.

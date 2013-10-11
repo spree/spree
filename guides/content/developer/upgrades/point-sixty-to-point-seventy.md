@@ -20,6 +20,8 @@ upgrade the Rails version in the `Gemfile`:
 ```ruby
 gem 'rails', '3.1.12'```
 
+For more information, please read the [Upgrading Ruby on Rails Guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-3-0-to-rails-3-1).
+
 ## Upgrade Spree
 
 For best results, use the 0-70-stable branch from GitHub:
@@ -84,4 +86,4 @@ end```
 
 ## Verify that everything is OK
 
-Click around in your store and make sure it's performing as normal.
+Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.

@@ -160,6 +160,15 @@ Spree.config do |config|
 end
 ```
 
+Regardless of whether you decide to configure ActionMailer via the admin
+UI or an initializer, you may decide that while you need to have mail
+capabilities for other parts of your app, you don't want to send Spree's
+default email notifications (e.g. order confirmation). This may be the
+case if you use a transactional email service like Mandrill for such 
+notifications but you require regular ActionMailer capabilities for
+other parts of your app. If this is the case you can change the default
+``true`` value for the ``send_core_emails`` config to ``false``.
+
 The default `override_actionmailer_config` value also gives you the chance
 to set *bcc* headers for all spree outgoing emails and to intercept them and
 reroute to someone else. This could come in handy on staging servers since

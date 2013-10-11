@@ -131,8 +131,8 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
           "quantity": 1,
           "price": 19.99,
           "options": {
-            "color": "BLK", 
-            "size": "XL" 
+            "color": "BLK",
+            "size": "XL"
           }
         },
         {
@@ -142,8 +142,8 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
           "quantity": 3,
           "price": 23.99,
           "options": {
-            "color": "BLK", 
-            "size": "XL" 
+            "color": "BLK",
+            "size": "XL"
           }
         }
       ],
@@ -193,11 +193,11 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
               "sku": "ABC-123",
               "external_ref": "ABD-123",
               "quantity": 1,
-              "price": 19.99,              
+              "price": 19.99,
               "variant_id": 123,
               "options": {
-                "color": "BLK", 
-                "size": "XL" 
+                "color": "BLK",
+                "size": "XL"
               }
             },
             {
@@ -205,11 +205,11 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
               "sku": "DEF-123",
               "external_ref": "DDD-123",
               "quantity": 3,
-              "price": 23.99, 
-              "variant_id": 789,             
+              "price": 23.99,
+              "variant_id": 789,
               "options": {
-                "color": "BLK", 
-                "size": "XL" 
+                "color": "BLK",
+                "size": "XL"
               }
             }
           ]
@@ -237,7 +237,7 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
       "currency": "USD",
       "ship_total": "4.00",
       "tax_total": "6.00",
-      "bill_address": { 
+      "bill_address": {
         "firstname": "Chris",
         "lastname": "Mar",
         "address1": "112 Hula Lane",
@@ -279,10 +279,10 @@ When sent an "order:ship" message to '/orders/lock', the endpoint Locks the orde
 
 ```json
 {
-   "message_id"   =>"52053091fe53545249000eee",
-   "locked"   =>   {
-      "number"      =>"R514128512",
-      "locked_at"      =>"2013-08-09T20:10:33      Z"
+   "message_id": "52053091fe53545249000eee",
+   "locked": {
+      "number": "R514128512",
+      "locked_at": "2013-08-09T20:10:33"
    }
 }
 ```
@@ -411,8 +411,8 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
           "quantity": 1,
           "price": 19.99,
           "options": {
-            "color": "BLK", 
-            "size": "XL" 
+            "color": "BLK",
+            "size": "XL"
           }
         },
         {
@@ -422,8 +422,8 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
           "quantity": 3,
           "price": 23.99,
           "options": {
-            "color": "BLK", 
-            "size": "XL" 
+            "color": "BLK",
+            "size": "XL"
           }
         }
       ],
@@ -473,11 +473,11 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
               "sku": "ABC-123",
               "external_ref": "ABD-123",
               "quantity": 1,
-              "price": 19.99,              
+              "price": 19.99,
               "variant_id": 123,
               "options": {
-                "color": "BLK", 
-                "size": "XL" 
+                "color": "BLK",
+                "size": "XL"
               }
             },
             {
@@ -485,11 +485,11 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
               "sku": "DEF-123",
               "external_ref": "DDD-123",
               "quantity": 3,
-              "price": 23.99, 
-              "variant_id": 789,             
+              "price": 23.99,
+              "variant_id": 789,
               "options": {
-                "color": "BLK", 
-                "size": "XL" 
+                "color": "BLK",
+                "size": "XL"
               }
             }
           ]
@@ -517,7 +517,7 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
       "currency": "USD",
       "ship_total": "4.00",
       "tax_total": "6.00",
-      "bill_address": { 
+      "bill_address": {
         "firstname": "Chris",
         "lastname": "Mar",
         "address1": "112 Hula Lane",
@@ -559,27 +559,27 @@ When sent an "order:capture" message to '/payments/capturer', the endpoint captu
 
 ```json
 {
-   "code"   =>"200",
-   "response"   =>   {
-      "message_id"      =>"523f99asdfbasdf6be007808",
-      "payment"      =>      {
-         "id"         =>20437,
-         "source_type"         =>"Spree::CreditCard",
-         "source_id"         =>1,
-         "amount"         =>"264.73",
-         "payment_method_id"         =>1,
-         "response_code"         =>"507544062",
-         "state"         =>"completed",
-         "avs_response"         =>"Y",
-         "created_at"         =>"2013-09-23T01:28:19         Z",
-         "updated_at"         =>"2013-09-23T01:30:42         Z"
+   "code": "200",
+   "response": {
+      "message_id": "523f99asdfbasdf6be007808",
+      "payment": {
+         "id": 20437,
+         "source_type": "Spree::CreditCard",
+         "source_id": 1,
+         "amount": "264.73",
+         "payment_method_id": 1,
+         "response_code": "507544062",
+         "state": "completed",
+         "avs_response": "Y",
+         "created_at": "2013-09-23T01:28:19Z",
+         "updated_at": "2013-09-23T01:30:42Z"
       },
-      "messages"      =>      [
+      "messages": [
          {
-            "message"            =>"order:            payment:captured",
-            "payload"            =>            {
-               "order_id"               =>"523f99b2fe53546fc504815d",
-               "payment_id"               =>1
+            "message": "order:payment:captured",
+            "payload": {
+               "order_id": "523f99b2fe53546fc504815d",
+               "payment_id": 1
             }
          }
       ]
@@ -620,26 +620,26 @@ When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoi
 
 ```json
 {
-   "code"   =>"200",
-   "response"   =>   {
-      "message_id"      =>"523f99bcfe535466be007808",
-      "payment"      =>      {
-         "id"         =>20437,
-         "source_type"         =>"Spree::CreditCard",
-         "source_id"         =>16122,
-         "amount"         =>"264.73",
-         "payment_method_id"         =>931422127,
-         "response_code" => "507544062",
-         "state"         =>"completed",
-         "created_at" => "2013-09-23T01:28:19 Z",
-         "updated_at" => "2013-09-23T01:30:42 Z"
+   "code": "200",
+   "response": {
+      "message_id": "523f99bcfe535466be007808",
+      "payment": {
+         "id": 20437,
+         "source_type": "Spree::CreditCard",
+         "source_id": 16122,
+         "amount": "264.73",
+         "payment_method_id": 931422127,
+         "response_code": "507544062",
+         "state": "completed",
+         "created_at": "2013-09-23T01:28:19 Z",
+         "updated_at": "2013-09-23T01:30:42 Z"
       },
-      "messages" => [
+      "messages": [
          {
-            "message"            =>"order:payment:captured",
-            "payload" => {
-               "order_id" => "523f99b2fe53546fc504815d",
-               "payment_id" => 20437
+            "message": "order:payment:captured",
+            "payload": {
+               "order_id": "523f99b2fe53546fc504815d",
+               "payment_id": 20437
             }
          }
       ]
@@ -879,7 +879,7 @@ It's possible to force the quantity, when the ```spree.force_quantity``` is set 
 
 ### Stock Actual
 
-This message will change the ```count_on_hand``` for a ```Spree::Variant``` based on the provided sku and the quantity. The quantity can be negative!. This is a shortcut message to the ```stock:change``` message, but where the ```spree.force_quantity``` is always true. 
+This message will change the ```count_on_hand``` for a ```Spree::Variant``` based on the provided sku and the quantity. The quantity can be negative!. This is a shortcut message to the ```stock:change``` message, but where the ```spree.force_quantity``` is always true.
 
 ####Request
 

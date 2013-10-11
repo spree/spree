@@ -114,7 +114,14 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
 
 <%= admin_only %>
 
-To update a stock item's details, make this request with the necessary parameters:
+Note that using this endpoint, count_on_hand is APPENDED to its current value.
+
+Sending a request with a negative count_on_hand will subtract the current value.
+
+To force a value for count_on_hand, include force: true in your request, this will replace the current
+value as it's stored in the database.
+
+To update a stock item's details, make this request with the necessary parameters.
 
 ```text
 PUT /api/stock_locations/1/stock_items/2```
@@ -124,6 +131,14 @@ For instance, to update a stock item's count_on_hand, send it through like this:
 <%= json \
   :stock_item => {
     :count_on_hand => "30",
+  } %>
+
+Or alternatively with the force attribute to replace the current count_on_hand with a new value:
+
+<%= json \
+  :stock_item => {
+    :count_on_hand => "30",
+    :force => true,
   } %>
 
 ### Successful response

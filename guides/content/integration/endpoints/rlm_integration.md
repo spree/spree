@@ -37,6 +37,7 @@ Stores the individual line items from a `shipment:ready` message. Each line is c
 |`rlm.shipping_map` | list | the mapping to determine the routing_code
 |`rlm.ground_shipping_map` | list | the mapping to determine the routing_code (FX3 or FXG)
 |`rlm.options_mapping` | list | the mapping from the options to size and color
+|`rlm.options_mapping_defaults` |list | The list with default values for the option value when not available in payload. This can be empty.
 |`rlm.sku_colors_mapping` | list | the mapping for SKU value for the color value.
 
 ### List type parameters.
