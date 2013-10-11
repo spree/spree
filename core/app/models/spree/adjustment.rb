@@ -26,7 +26,7 @@ module Spree
   class Adjustment < ActiveRecord::Base
     belongs_to :adjustable, polymorphic: true
     belongs_to :source, polymorphic: true
-    belongs_to :order
+    belongs_to :order, :class_name => "Spree::Order"
 
     validates :label, presence: true
     validates :amount, numericality: true
