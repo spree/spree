@@ -41,14 +41,18 @@ module Spree
             # * <tt>host</tt> - Redirect to a different host name
             def force_non_ssl_redirect(host = nil)
               if request.ssl? && !ssl_allowed?
-                redirect_options = {
-                  :protocol => 'http://',
-                  :host     => host || request.host,
-                  :path     => request.fullpath,
-                }
-                flash.keep if respond_to?(:flash)
-                insecure_url = ActionDispatch::Http::URL.url_for(redirect_options)
-                redirect_to insecure_url, :status => :moved_permanently
+                if request.get?
+                  redirect_options = {
+                    :protocol => 'http://',
+                    :host     => host || request.host,
+                    :path     => request.fullpath,
+                  }
+                  flash.keep if respond_to?(:flash)
+                  insecure_url = ActionDispatch::Http::URL.url_for(redirect_options)
+                  redirect_to insecure_url, :status => :moved_permanently
+                else
+                  render :text => Spree.t(:change_protocol, :scope => :ssl), :status => :upgrade_required
+                end
               end
             end
         end
