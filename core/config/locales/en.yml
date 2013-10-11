@@ -1002,6 +1002,8 @@ en:
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
+    ssl:
+      change_protocol: "Please switch to using HTTP (rather than HTTPS) and retry this request."
     start: Start
     state: State
     state_based: State Based
