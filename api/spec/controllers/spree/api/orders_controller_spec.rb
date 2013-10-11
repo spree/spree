@@ -94,39 +94,6 @@ module Spree
         order.line_items.first.quantity.should == 5
         order.line_items.first.price.should == order.line_items.first.variant.price
       end
-
-      # Regression test for #3404
-      it "can specify additional parameters for a line item" do
-        variant = create(:variant)
-        Order.should_receive(:create!).and_return(order = Spree::Order.new)
-        order.stub(:associate_user!)
-        order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
-        line_item.should_receive(:update_attributes).with({"special" => true}, as: :api)
-        api_post :create, :order => { 
-          :line_items => {
-            "0" => {
-              :variant_id => variant.to_param, :quantity => 5, :special => true
-            }
-          }
-        }
-        response.status.should == 201
-      end
-
-      # Regression test for #3404
-      it "does not update line item needlessly" do
-        variant = create(:variant)
-        Order.should_receive(:create!).and_return(order = Spree::Order.new)
-        order.stub(:associate_user!)
-        order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
-        line_item.should_not_receive(:update_attributes)
-        api_post :create, :order => { 
-          :line_items => {
-            "0" => {
-              :variant_id => variant.to_param, :quantity => 5
-            }
-          }
-        }
-      end
     end
 
     it "can create an order without any parameters" do
