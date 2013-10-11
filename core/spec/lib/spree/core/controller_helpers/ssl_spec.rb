@@ -4,11 +4,13 @@ describe Spree::Core::ControllerHelpers::SSL, :type => :controller do
   before do
     @routes.draw do
       get '/anonymous/index'
+      post '/anonymous/create'
     end
   end
   controller do
     include Spree::Core::ControllerHelpers::SSL
     def index; render text: 'index'; end
+    def create; end
     def self.ssl_supported?; true; end
   end
 
@@ -38,6 +40,14 @@ describe Spree::Core::ControllerHelpers::SSL, :type => :controller do
     context 'ssl not allowed' do
       controller(described_class){ }
       specify{ get(:index).should be_redirect }
+    end
+    context 'using a post returns a HTTP status 426' do
+      controller(described_class){ }
+      specify do
+        post(:create)
+        response.body.should == "Please switch to using HTTP (rather than HTTPS) and retry this request."
+        response.status.should == 426
+      end
     end
   end
 
