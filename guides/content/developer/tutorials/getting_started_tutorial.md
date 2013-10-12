@@ -37,7 +37,7 @@ If you are using OSX, a recommended approach is to install ImageMagick using [Ho
 $ brew install imagemagick
 ```
 
-If you are using Unix or Windows check [Imagemagick.org](http://www.imagemagick.org/).
+If you are using Unix or Windows check out [Imagemagick.org](http://www.imagemagick.org/) for more detailed instructions on how to setup ImageMagick for your particular system.
 
 ### Installing Spree
 
@@ -74,6 +74,16 @@ Now let's add Spree to our Rails application:
 ```bash
 $ spree install --auto-accept
 ```
+
+***
+Note that this command will add the Spree dependencies to your gemfile. If you are using a custom build of Spree, or are bundling Spree from Github, you may want to use the rails generator provided by the `spree` gem instead:
+
+```bash
+$ rails generate spree:install
+```
+
+This will run the spree generator using the version of Spree you have defined in your Gemfile. Running spree install with a custom source or build will generate an error as your Gemfile will be amended to require different versions of Spree.
+***
 
 ## Hello, Spree!
 
