@@ -126,7 +126,7 @@ appropriate here. Please [consult the Rails Guides](http://edgeguides.rubyonrail
 Using a Spree gem is as simple as adding it to your *Gemfile*:
 
 ```ruby
-gem 'spree_core', '2.0.0'
+gem 'spree_core', '2.1.0'
 ```
 
 Distribution of Spree (and its extensions) is also consistent with Rails
@@ -153,7 +153,7 @@ For example, if you were to specify something like this in your
 application's *Gemfile*:
 
 ```ruby
-gem 'spree', '2.0.0'
+gem 'spree', '2.1.0'
 ```
 
 It would require all the individual parts of Spree. However, if you only
@@ -161,8 +161,8 @@ wanted to require the "core" and "backend" parts of Spree, you would do
 this:
 
 ```ruby
-gem 'spree_core', '2.0.0'
-gem 'spree_backend', '2.0.0'
+gem 'spree_core', '2.1.0'
+gem 'spree_backend', '2.1.0'
 ```
 
 ## Building a Sandbox Application
@@ -251,17 +251,17 @@ See the excellent [Bundler documentation](http://gembundler.com) for more detail
 ### "-stable" branches
 
 The Spree Git repository also contains stable branches for each minor Spree
-version. For instance, there is a 1-3-stable branch which contains the latest
-work for the 1.3.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
+version. For instance, there is a 2-1-stable branch which contains the latest
+work for the 2.1.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-3-stable'
+gem 'spree', :github => 'spree/spree', :branch => '2-1-stable'
 ```
 
 Similarly, all main Spree extensions use this versioning scheme as well. For example, here's a line that would be used for `spree_auth_devise`:
 
 ```ruby
-gem 'spree_auth_devise', :github => 'spree/spree', :branch => '1-3-stable'
+gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '2-1-stable'
 ```
 
 !!!
