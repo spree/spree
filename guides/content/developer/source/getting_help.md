@@ -12,7 +12,7 @@ you can go to ask Spree questions, and they are covered in this guide.
 The first of these places is our [Google Groups mailing
 list](http://groups.google.com/group/spree-user). On this list, any user may ask
 any question about Spree and it's up to the community to answer it, or in some
-cases, a Spree employee may answer the question. 
+cases, a Spree employee may answer the question.
 
 This list is perfect for *general* questions about Spree. If you think you have
 discovered a bug in Spree, please [file an issue on GitHub](#github-issues).
@@ -23,8 +23,11 @@ asking them.
 ## IRC Channel
 
 The IRC channel for Spree is at #spree on irc.freenode.net. Here you can talk to
-other users of Spree in real-time. There are sometimes Spree employees who are
-opped in the channel who may appear to have an `@` before their name.
+other users of Spree in real-time. Spree employees are represented in the channel with a `@` before their name on most clients.
+
+If you do not have an IRC client and still want to join the discussion, Freenode offers a webchat solution for their network. [Simply visit this link, enter your username and connect!](http://webchat.freenode.net/?channels=#spree)
+
+It is recommended that for people using IRC often, or on multiple networks that they download an IRC client. Popular IRC clients include: [Quassel (all platforms)](http://quassel-irc.org/), [XChat (windows and linux)](http://xchat.org/) and [mIRC (windows only)](http://www.mirc.com/).
 
 ## GitHub Issues
 
