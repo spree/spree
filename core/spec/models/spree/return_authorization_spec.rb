@@ -1,21 +1,38 @@
 require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
-  let(:stock_location) {Spree::StockLocation.create(:name => "test")}
-  let(:order) { FactoryGirl.create(:shipped_order)}
+  let(:stock_location) {Spree::StockLocation.create(:name => "test") }
+  let(:order) { FactoryGirl.create(:shipped_order) }
   let(:variant) { order.shipments.first.inventory_units.first.variant }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
 
-    context "save" do
+  context "save" do
     it "should be invalid when order has no inventory units" do
       order.shipments.destroy_all
       return_authorization.save
       return_authorization.errors[:order].should == ["has no shipped units"]
     end
+  end
 
-    it "should generate RMA number" do
-      return_authorization.should_receive(:generate_number)
-      return_authorization.save
+  describe ".before_create" do
+    describe "#generate_number" do
+      context "number is assigned" do
+        let(:return_authorization) { FactoryGirl.build(:return_authorization, number: '123') }
+
+        it "should return the assigned number" do
+          return_authorization.save
+          return_authorization.number.should == '123'
+        end
+      end
+
+      context "number is not assigned" do
+        let(:return_authorization) { FactoryGirl.build(:return_authorization, number: nil) }
+
+        it "should assign number with random RMA number" do
+          return_authorization.save
+          return_authorization.number.should =~ /RMA\d{9}/
+        end
+      end
     end
   end
 
@@ -38,7 +55,7 @@ describe Spree::ReturnAuthorization do
     end
 
     context "on rma that already has inventory_units" do
-      before do 
+      before do
         return_authorization.add_variant(variant.id, 1)
       end
 
@@ -50,9 +67,7 @@ describe Spree::ReturnAuthorization do
       it "should not update order state" do
         expect{return_authorization.add_variant(variant.id, 1)}.to_not change{order.state}
       end
-
     end
-
   end
 
   context "can_receive?" do
