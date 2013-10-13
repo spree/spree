@@ -1,7 +1,7 @@
 module Spree
   class Address < ActiveRecord::Base
-    belongs_to :country, class_name: "Spree::Country"
-    belongs_to :state, class_name: "Spree::State"
+    belongs_to :country
+    belongs_to :state
 
     has_many :shipments
 
@@ -75,6 +75,7 @@ module Spree
     end
 
     private
+
       def require_phone?
         true
       end
