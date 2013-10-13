@@ -19,7 +19,7 @@ module Spree
           if respond_to?(:model_class, true) && model_class
             record = model_class
           else
-            record = Object
+            record = controller_name.to_sym
           end
           authorize! :admin, record
           authorize! action, record
