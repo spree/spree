@@ -26,6 +26,9 @@ First, we need to add the gem to the bottom of our `Gemfile`:
 ```ruby
 gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git', :branch => '2-1-stable'
 ```
+****
+
+Note that if you are using the edge version of spree, you should omit the branch parameter to get the latest version of spree_fancy. Alternatively, you should select the version of spree_fancy that corresponds with your version of spree.
 
 ***
 If you are using a 2.1.x version of Spree, the above line will work fine. If you're using a 2.0.x version of Spree, you'll need to change the "branch" option to point to the "2-0-stable" branch. If you're using the "master" branch of Spree, change the "branch" argument for "spree_fancy" to be "master" as well.
