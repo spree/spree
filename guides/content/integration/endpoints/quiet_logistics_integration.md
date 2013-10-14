@@ -124,7 +124,7 @@ This only means that the message was successfully placed on the SQS queue and th
 ```json
 {
   "message_id": "51af1dc5fe53543f1200f519",
-  "messages" [
+  "messages": [
     {
       "message": "purchase_order:transmit",
       "payload": {
@@ -173,55 +173,53 @@ This only means that the message was successfully placed on the SQS queue and S3
   "message": "shipment_order:new",
   "payload": {
     "shipment_order": {
-      {
-        "shipment_number": "T100044_20024",
-        "order_date": "2013-09-05T17:19:28Z",
-        "order_type": "TO",
-        "client_id": "SPREE",
-        "comments" : '',
-        "business_unit": "SPREE",
-        "ship_mode": {
-          "carrier": "UPS",
-          "service_level": "GROUND"
-        },
-        "ship_to": {
-          "name": "Spree",
-          "address": {
-            "address1": "",
-            "address2": "",
-            "address3": null,
-            "address4": null,
-            "city": "",
-            "country": "",
-            "zip": "",
-            "state": ""
-          }
-        },
-        "bill_to": {
-          "name": "SPREE",
-          "address": {
-            "address1": "",
-            "address2": "",
-            "address3": null,
-            "address4": null,
-            "city": "",
-            "country": "",
-            "zip": "",
-            "state": ""
-          }
-        },
-        "line_items": [
-          {
-            "description": "Washed Chinos",
-            "itemno": "332110",
-            "quantity_ordered": 1,
-            "quantity_to_ship": 1,
-            "line_item_number": 1,
-            "price": 24.49,
-            "UOM": "EA"
-          }
-        ]
-      }
+      "shipment_number": "T100044_20024",
+      "order_date": "2013-09-05T17:19:28Z",
+      "order_type": "TO",
+      "client_id": "SPREE",
+      "comments" : "",
+      "business_unit": "SPREE",
+      "ship_mode": {
+        "carrier": "UPS",
+        "service_level": "GROUND"
+      },
+      "ship_to": {
+        "name": "Spree",
+        "address": {
+          "address1": "",
+          "address2": "",
+          "address3": null,
+          "address4": null,
+          "city": "",
+          "country": "",
+          "zip": "",
+          "state": ""
+        }
+      },
+      "bill_to": {
+        "name": "SPREE",
+        "address": {
+          "address1": "",
+          "address2": "",
+          "address3": null,
+          "address4": null,
+          "city": "",
+          "country": "",
+          "zip": "",
+          "state": ""
+        }
+      },
+      "line_items": [
+        {
+          "description": "Washed Chinos",
+          "itemno": "332110",
+          "quantity_ordered": 1,
+          "quantity_to_ship": 1,
+          "line_item_number": 1,
+          "price": 24.49,
+          "UOM": "EA"
+        }
+      ]
     }
   }
 }
@@ -250,7 +248,7 @@ This only means that the message was successfully placed on the SQS queue and S3
         "shipping_order": {
           "order_id": "T100045",
           "sqs_id": "1214-2453-35325",
-          "s3_url": "http://test-bucket.s3.amazonaws.com/TEST_DOC.xml"
+          "s3_url": "http://test-bucket.s3.amazonaws.com/TEST_DOC.xml",
           "ship_to": {
             "name": "SPREE",
             "address": {
@@ -331,7 +329,7 @@ This only means that the message was successfully placed on the SQS queue and S3
     {
       "level": "info",
       "subject": "ItemProfile Document Successfuly Sent",
-      "description": "SQS Id: e9ccc237-5129-44d1-9bb5-2f38247cb7cd S3 url: https://bonobos-to-quiet.s3.amazonaws.com/ItemProfile_963527_20130826_2334418.xml?AWSAccessKeyId=AKIAIK6HSAJEIKESRW3A&Expires=1377563677&Signature=Q0tSRmR3FbR6gw1jyMBUMC7SyWs%3D"
+      "description": "SQS Id: e9ccc237-5129-44d1-9bb5-2f38247cb7cd S3 url: https://test.s3.amazonaws.com/ItemProfile_963527_20130826_2334418.xml?AWSAccessKeyId=AKIAIK6HSAJEIKESRW3A&Expires=1377563677&Signature=Q0tSRmR3FbR6gw1jyMBUMC7SyWs%3D"
     }
   ]
 }
@@ -370,12 +368,10 @@ Polls a SQS queue for incoming messages sent by Quiet Logistics.
     {
       "message": "quiet_logistics:document:download",
       "payload": {
-        {
-          "document_name": "SoResultV2_600110212_20130823_140441759.xml",
-          "document_type": "ShipmentOrderResult",
-          "message_date": "2013-08-23T14:05:03.9009948-04:00",
-          "original_message_id": "76f2ed1c-7bb3-4106-86c4-547d1e3d1929"
-        }
+        "document_name": "SoResultV2_600110212_20130823_140441759.xml",
+        "document_type": "ShipmentOrderResult",
+        "message_date": "2013-08-23T14:05:03.9009948-04:00",
+        "original_message_id": "76f2ed1c-7bb3-4106-86c4-547d1e3d1929"
       }
     }
   ]
@@ -397,12 +393,10 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
     {
       "message": "quiet_logistics:document:download",
       "payload": {
-        {
-          "document_name": "SoResultV2_600110212_20130823_140441759.xml",
-          "document_type": "ShipmentOrderResult",
-          "message_date": "2013-08-23T14:05:03.9009948-04:00",
-          "original_message_id": "76f2ed1c-7bb3-4106-86c4-547d1e3d1929"
-        }
+        "document_name": "SoResultV2_600110212_20130823_140441759.xml",
+        "document_type": "ShipmentOrderResult",
+        "message_date": "2013-08-23T14:05:03.9009948-04:00",
+        "original_message_id": "76f2ed1c-7bb3-4106-86c4-547d1e3d1929"
       }
     }
   ]
@@ -447,12 +441,10 @@ Retrieves a document from a Quiet Logistics S3 bucket. The response message will
     {
       "message": "quiet_logistics:document:download",
       "payload": {
-        {
-          "document_name": "PoReceiptV2_600110212_20130823_140441759.xml",
-          "document_type": "PurchaseOrderReceipt",
-          "message_date": "2013-08-23T14:05:03.9009948-04:00",
-          "original_message_id": "76f2ed1c-7bb3-4106-86c4-547d1e3d1929"
-        }
+        "document_name": "PoReceiptV2_600110212_20130823_140441759.xml",
+        "document_type": "PurchaseOrderReceipt",
+        "message_date": "2013-08-23T14:05:03.9009948-04:00",
+        "original_message_id": "76f2ed1c-7bb3-4106-86c4-547d1e3d1929"
       }
     }
   ]

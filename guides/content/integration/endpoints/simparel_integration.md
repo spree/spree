@@ -60,48 +60,52 @@ Poll the simparel api for pending purchase orders. A purchase order is comprised
 ```json
 {
   "message_id": "5sfd3tehg4642",
-  "message": "purchase_order:new",
-  "payload": {
-    "purchase_order": {
-      "po_number": "10511_TI-41355",
-      "client_id": "Spree",
-      "business_unit": "SPREE",
-      "alt_po_number": 10511,
-      "arrival_date": "2013-09-19 00:00:00 +0000",
-      "order_date": "2013-05-16 00:00:00 +0000",
-      "comments": "",
-      "warehouse": "QL",
-      "vendor": {
-        "type": "Vendor",
-        "name": "JOE",
-        "vendorid": "JOE001",
-        "address": {
-          "address1": "",
-          "address2": "",
-          "address3": "",
-          "address4": "",
-          "city": "",
-          "country": "",
-          "zip": "",
-          "state": ""
-        },
-        "contact": {
-          "name": "",
-          "email": "",
-          "phone": ""
+  "messages": [
+    {
+      "message": "purchase_order:new",
+      "payload": {
+        "purchase_order": {
+          "po_number": "10511_TI-41355",
+          "client_id": "Spree",
+          "business_unit": "SPREE",
+          "alt_po_number": 10511,
+          "arrival_date": "2013-09-19 00:00:00 +0000",
+          "order_date": "2013-05-16 00:00:00 +0000",
+          "comments": "",
+          "warehouse": "QL",
+          "vendor": {
+            "type": "Vendor",
+            "name": "JOE",
+            "vendorid": "JOE001",
+            "address": {
+              "address1": "",
+              "address2": "",
+              "address3": "",
+              "address4": "",
+              "city": "",
+              "country": "",
+              "zip": "",
+              "state": ""
+            },
+            "contact": {
+              "name": "",
+              "email": "",
+              "phone": ""
+            }
+          },
+          "line_items": [
+            {
+              "quantity": 6,
+              "itemno": "123456",
+              "line_item_number": 2,
+              "description": "Hoodie",
+              "unit_price": "33.35"
+            }
+          ]
         }
-      },
-      "line_items": [
-        {
-          "quantity": 6,
-          "itemno": "123456",
-          "line_item_number": 2,
-          "description": "Hoodie",
-          "unit_price": "33.35"
-        }
-      ]
+      }
     }
-  }
+  ]
 }
 ```
 
@@ -133,61 +137,65 @@ Poll the simparel api for pending shipment orders. A purchase order is comprised
 
 ```json
 {
-  "message": "5weff3356gdsg",
-  "message": "shipment_order:new",
-  "payload": {
-    "shipment_order": {
-      "shipment_number": "T100121_20094",
-      "order_date": "2013-09-19T20:03:52Z",
-      "order_type": "TO",
-      "client_id": "SPREE",
-      "business_unit": "SPREE",
-      "comments": "",
-      "ship_mode": {
-        "carrier": "UPS",
-        "service_level": "GROUND"
-      },
-      "ship_to": {
-        "warehouse_id": "JOE01",
-        "name": "JOE",
-        "address": {
-          "address1": "",
-          "address2": "",
-          "address3": null,
-          "address4": null,
-          "city": "",
-          "country": "",
-          "zip": "",
-          "state": ""
+  "message_id": "5weff3356gdsg",
+  "messages": [
+    {
+      "message": "shipment_order:new",
+      "payload": {
+        "shipment_order": {
+          "shipment_number": "T100121_20094",
+          "order_date": "2013-09-19T20:03:52Z",
+          "order_type": "TO",
+          "client_id": "SPREE",
+          "business_unit": "SPREE",
+          "comments": "",
+          "ship_mode": {
+            "carrier": "UPS",
+            "service_level": "GROUND"
+          },
+          "ship_to": {
+            "warehouse_id": "JOE01",
+            "name": "JOE",
+            "address": {
+              "address1": "",
+              "address2": "",
+              "address3": null,
+              "address4": null,
+              "city": "",
+              "country": "",
+              "zip": "",
+              "state": ""
+            }
+          },
+          "bill_to": {
+            "warehouse_id": "JOE01",
+            "name": "JOE",
+            "address": {
+              "address1": "",
+              "address2": "",
+              "address3": null,
+              "address4": null,
+              "city": "",
+              "country": "",
+              "zip": "",
+              "state": ""
+            }
+          },
+          "line_items": [
+            {
+              "description": "Denim",
+              "itemno": "965564",
+              "quantity_ordered": 1,
+              "quantity_to_ship": 1,
+              "line_item_number": 1,
+              "price": 0.0,
+              "UOM": "EA"
+            }
+          ]
         }
-      },
-      "bill_to": {
-        "warehouse_id": "JOE01",
-        "name": "JOE",
-        "address": {
-          "address1": "",
-          "address2": "",
-          "address3": null,
-          "address4": null,
-          "city": "",
-          "country": "",
-          "zip": "",
-          "state": ""
-        }
-      },
-      "line_items": [
-        {
-          "description": "Denim",
-          "itemno": "965564",
-          "quantity_ordered": 1,
-          "quantity_to_ship": 1,
-          "line_item_number": 1,
-          "price": 0.0,
-          "UOM": "EA"
-        }
-      ]
+      }
     }
-  }
+  ]
 }
 ```
 

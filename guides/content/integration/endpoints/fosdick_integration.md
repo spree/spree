@@ -96,6 +96,7 @@ Send a shipment to Fosdick .
 
 ```json
 {
+  "message_id": "51af1dc5fe53543f1200f519",
   "notifications": [
     {
       "level": "info",
@@ -136,13 +137,17 @@ Check an S3 bucket to see if there are any shipment result files ready to be dow
 ```json
 {
   "message_id": "51af1dc5fe53543f1200f519",
-  "message": "shipment:confirm",
-  "payload": {
-    "shipment": {
-      "number": "70201201334520004",
-      "order_number": "104-0444357-8954627",
-      "tracking_number": "915293072790136"
+  "messages": [
+    {
+      "message": "shipment:confirm",
+      "payload": {
+        "shipment": {
+          "number": "70201201334520004",
+          "order_number": "104-0444357-8954627",
+          "tracking_number": "915293072790136"
+        }
+      }
     }
-  }
+  ]
 }
 ```
