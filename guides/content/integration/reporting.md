@@ -4,17 +4,17 @@ title: Reporting
 
 ## Overview
 
-The SpreeCommerce hub configuration tool is designed to make managing your Spree integrations quick and painless. It is what handles communication between your storefront and the SpreeCommerce hub itself.
+The SpreeCommerce hub connector is designed to make managing your storefront integrations quick and painless. It is what handles communication between your storefront and the Spree Commerce hub itself.
 
 In addition to allowing you to [configure](configuration) your integrations, it also provides functionality that let's you inspect your message queues and view any generated [notifications](notification_messages) from the hub.
 
 ***
-This guide assumes you already have the SpreeCommerce hub configuration tool configured for your Spree storefront. For more information on configuring the hub configuration tool, please view the [configuration](configuration) guide.
+This guide assumes you already have the Spree Commerce hub connector configured for your Spree storefront. For more information on configuring the hub, please view the [Configuration Guide](configuration).
 ***
 
 ## Message Queues
 
-This section explains how to view messages in the incoming, accepted and archived queues. For more information on messages in general, please view the [messages section](overview#messages) of the [overview guide](overview).
+This section explains how to view messages in the incoming, accepted and archived queues. For more information on messages in general, please view the [messages](overview#messages) section of the [Overview](overview) guide.
 
 ### Viewing Message Queues
 
