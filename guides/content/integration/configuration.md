@@ -59,9 +59,9 @@ Values for "Email", "Store Name", and "Store API URL" will already be filled in,
 
 ![Integration Overview](/images/integration/integration_overview.jpg)
 
-## Configuration
+## Adding Integrations
 
-### Adding An Integration
+### Standard Integrations
 
 When you expand the "Add New Integration" drop-down menu, you'll see a list of all of the globally-available integrations. You should review the particular configuration details for any of the [supported integrations](supported_integrations) you want to use, but we'll use [Mandrill](mandrill_integration) as an example to understand how the Configuration tool is used generally.
 
@@ -90,12 +90,12 @@ By hovering over the buttons on this integration, you see that you have several 
 * Remove - Remove all of the mappings for individual services to this endpoint. Does not actually delete the integration itself, but will cause the integration not to appear on your store's "Active Integrations" section.
 * Disable All - Clicking the "Enabled" button means the individual services for the integration will be disabled. The integration will still appear on your store's "Active Integrations" section.
 
-### Adding A Custom Integration
+### Custom Integrations
 
 #### Overview
 
 ***
-For more information on building a custom endpoint, please follow the [custom endpoint tutorials](basic_endpoints_tutorial).
+For more information on building a custom endpoint, please follow the [Custom Endpoint tutorial](basic_endpoints_tutorial).
 ***
 
 Once you've created your endpoint you'll want to connect it to the hub so it can start processing messages. We'll go over:
