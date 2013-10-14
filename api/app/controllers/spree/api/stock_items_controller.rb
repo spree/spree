@@ -68,7 +68,8 @@ module Spree
       end
 
       def scope
-        @stock_location.stock_items.includes(:variant => :product)
+        includes = {:variant => [{ :option_values => :option_type }, :product] }
+        @stock_location.stock_items.includes(includes)
       end
     end
   end
