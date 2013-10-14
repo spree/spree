@@ -8,7 +8,7 @@ module Spree
           label = "#{Spree.t(:promotion)} (#{promotion.name})"
           results = order.shipments.map do |shipment|
             return false if promotion_credit_exists?(shipment)
-            shipment.adjustments.create(
+            shipment.adjustments.create!(
               amount: compute_amount(shipment),
               source: self,
               label: label,
