@@ -26,8 +26,8 @@ describe Spree::Promotion::Actions::FreeShipping do
     it "should not create a discount when order already has one from this promotion" do
       action.perform(:order => order).should be_true
       action.perform(:order => order).should be_false
-      promotion.credits_count.should == 1
-      order.shipment_adjustments.count.should == 1
+      promotion.credits_count.should == 2
+      order.shipment_adjustments.count.should == 2
     end
   end
 end
