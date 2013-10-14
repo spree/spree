@@ -60,6 +60,19 @@ describe "Order Details", js: true do
         page.should_not have_content("spree t-shirt")
       end
 
+      # Regression test for #3862
+      it "can remove an item from a shipment" do
+        page.should have_content("spree t-shirt")
+
+        within_row(1) do
+          click_icon :trash
+        end
+
+        # Click "cancel" on confirmation dialog
+        page.driver.browser.switch_to.alert.dismiss
+        page.should have_content("spree t-shirt")
+      end
+
       it "can add tracking information" do
         within("table.index tr:nth-child(5)") do
           click_icon :edit
