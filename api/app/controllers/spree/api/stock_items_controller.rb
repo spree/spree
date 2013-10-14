@@ -63,7 +63,8 @@ module Spree
       end
 
       def scope
-        @stock_location.stock_items.accessible_by(current_ability, :read).includes(:variant => :product)
+        includes = {:variant => [{ :option_values => :option_type }, :product] }
+        @stock_location.stock_items.accessible_by(current_ability, :read).includes(includes)
       end
 
       def stock_item_params
