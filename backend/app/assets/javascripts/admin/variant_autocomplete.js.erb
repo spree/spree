@@ -54,14 +54,15 @@ $(document).ready(function() {
 
     //handle delete click
     $('a.delete-item').click(function(){
-      var del = $(this);
-      var shipment_number = del.data('shipment-number');
-      var variant_id = del.data('variant-id');
+      if (confirm(Spree.translations.are_you_sure_delete)) {
+        var del = $(this);
+        var shipment_number = del.data('shipment-number');
+        var variant_id = del.data('variant-id');
 
-      toggleItemEdit();
+        toggleItemEdit();
 
-      adjustItems(shipment_number, variant_id, 0);
-
+        adjustItems(shipment_number, variant_id, 0);
+      }
     });
   }
 });
