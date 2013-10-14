@@ -30,7 +30,9 @@
   <tbody>
     <% @stock_movements.each do |stock_movement|%>
       <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows" class="<%= cycle('odd', 'even')%>">
-        <td class="align-center"><%= stock_movement.stock_item.variant_name %></td>
+        <td class="align-center">
+          <%= display_variant(stock_movement) %>
+        </td>
         <td class="align-center"><%= stock_movement.quantity %></td>
         <td class="align-center"><%= pretty_originator(stock_movement) %></td>
       </tr>
