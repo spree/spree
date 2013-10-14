@@ -107,6 +107,11 @@
   li {
     font-size: 85% !important;
 
+
+    &:nth-child(odd) {
+      background: #efefef;
+    }
+
     &.select2-highlighted {
       .select2-result-label {
         &, h6 {
@@ -133,7 +138,7 @@
   }
 
   .select2-highlighted {
-    background-color: $color-sel-bg;
+    background-color: $color-sel-bg !important;
   }
 }
 
