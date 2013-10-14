@@ -24,8 +24,12 @@ There are three steps we need to take to install spree_fancy.
 First, we need to add the gem to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git'
+gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git', :branch => '2-1-stable'
 ```
+
+***
+If you are using a 2.1.x version of Spree, the above line will work fine. If you're using a 2.0.x version of Spree, you'll need to change the "branch" option to point to the "2-0-stable" branch. If you're using the "master" branch of Spree, change the "branch" argument for "spree_fancy" to be "master" as well.
+***
 
 Now, let's install the gem via Bundler with the following command:
 
