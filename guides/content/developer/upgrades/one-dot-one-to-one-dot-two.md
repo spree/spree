@@ -29,6 +29,14 @@ gems into an extension, called `spree_auth_devise`. If you want to continue usin
 ```ruby
 gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '1-2-stable'```
 
+Run `bundle install` to install this extension.
+
+### Rename current_user to current_spree_user
+
+To ensure that Spree does not conflict with any authentication provided by the application, Spree has renamed its `current_user` variable to `current_spree_user`. You should make this change wherever necessary within your application.
+
+Similar to this, any references to `@user` are now `@spree_user`.
+
 ## Copy and run migrations
 
 Copy over the migrations from Spree (and any other engine) and run them using
@@ -36,6 +44,8 @@ these commands:
 
     rake railties:install:migrations
     rake db:migrate
+
+This may copy over additional migrations from spree_auth_devise and run them as well.
 
 ## Read the release notes
 
