@@ -4,7 +4,7 @@ title: Reporting
 
 ## Overview
 
-The SpreeCommerce hub connector is designed to make managing your storefront integrations quick and painless. It is what handles communication between your storefront and the Spree Commerce hub itself.
+The Spree Commerce hub connector is designed to make managing your storefront integrations quick and painless. It is what handles communication between your storefront and the Spree Commerce hub itself.
 
 In addition to allowing you to [configure](configuration) your integrations, it also provides functionality that let's you inspect your message queues and view any generated [notifications](notification_messages) from the hub.
 
@@ -20,11 +20,26 @@ This section explains how to view messages in the incoming, accepted and archive
 
 ![Integration Overview](/images/integration/integration_overview.jpg)
 
-When on the  integration overview screen of the "Integration" tab of your storefront's backend, you will see three options that allow you to view the different message queues:
+When on the  integration overview screen of the "Integration" tab of your storefront's backend, you will see three options that allow you to view the different message queues.
 
-* Click on "View Incoming Messages" to view the incoming queue
-* Click on "View Accepted Messages" to view the accepted queue
-* Click on "View Archived Messages" to view the archived queue
+#### Incoming Queue
+
+The incoming queue contains newly created messages that have not yet been processed by the Spree Commerce hub. This is the starting queue for all new messages.
+
+#### Accepted Queue
+
+The accepted queue is split into four sections:
+
+* Pending - Messages that are pending are waiting to be processed by the hub. 
+* Failing - Messages that are failing were not able to be processed by the hub successfully, but will be retried again at a future time. If you see a message here, it means there is a problem with it.
+* Scheduled - Messages that are scheduled to be processed at a future time.
+* Parked - Messages that are parked have failed but have retries disabled.
+
+In general you won't see messages in the accepted queue unless they have failed or are scheduled to be processed at a future time.
+
+#### Archived Queue
+
+The archived queue contains messages that have been successfully processed by the hub.
 
 Once selecting a queue to view, you will see a listing of all the messages in that queue:
 
@@ -52,7 +67,7 @@ Once selecting a message to view, you will be taken to a view similar to the one
 * Attributes - All attributes of the current message.
 * Payload - The payload contains all message-specific details. For example, in the case of `order:new` it would contains order details.
 
-If you are viewing a message in the accepted queue that has errors present, you can retry the message by clicking on the "Rocket Ship" icon. You can also archive accepted messages by clicking on the "Filing" icon.
+If you are viewing a message in the accepted queue that has errors present, you can retry the message by clicking on the "Retry" icon. You can also archive accepted messages by clicking on the "Archive" icon.
 
 ![Message Icons](/images/integration/message_icons.jpg)
 
