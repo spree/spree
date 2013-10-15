@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class MailMethodsController < Spree::Admin::BaseController
-      after_filter :initialize_mail_settings
-
       def update
         if params[:smtp_password].blank?
           params.delete(:smtp_password)
@@ -14,7 +12,7 @@ module Spree
         end
 
         flash[:success] = Spree.t(:successfully_updated, :resource => Spree.t(:mail_methods))
-        render :edit
+        redirect_to edit_admin_mail_method_url
       end
 
       def testmail
@@ -28,11 +26,6 @@ module Spree
       ensure
         redirect_to edit_admin_mail_method_url
       end
-
-      private
-        def initialize_mail_settings
-          Spree::Core::MailSettings.init
-        end
     end
   end
 end
