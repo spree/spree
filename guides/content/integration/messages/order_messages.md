@@ -178,7 +178,6 @@ When a new order is created, this is the message that will be send out. The ```o
           ]
         }
       ]
-<<<<<<< HEAD
     },
     "original": {
       "id": 5,
@@ -196,7 +195,6 @@ When a new order is created, this is the message that will be send out. The ```o
       "payment_state": "paid",
       "email": "spree@example.com",
       "special_instructions": null,
-=======
     }
   }
 }
