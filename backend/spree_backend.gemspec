@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api', version
   s.add_dependency 'spree_core', version
 
-  s.add_dependency 'deface', '>= 0.9.0'
   s.add_dependency 'jquery-rails', '~> 3.0.0'
   s.add_dependency 'jquery-ui-rails', '~> 4.0.0'
   s.add_dependency 'select2-rails', '~> 3.4.7'
