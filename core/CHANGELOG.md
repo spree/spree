@@ -12,7 +12,7 @@
 
     *Peter Goldstein*
 
-* Bumped activemerchant to 1.38.1. #3745
+* Bumped activemerchant to 1.39.2. #3745
 
     *Piotr Usewicz*
 
@@ -58,6 +58,7 @@ parts of their app. #3812
 * Fixed issue where preferences_rescue was living in Frontend, but was necessary in Core. If you had migrations from older versions of Spree, they may have depended on this file. If you did not include the Frontend component, then this file would be unavailable. #3860
 
     *ayraju*
+
 
 ## Spree 2.1.0 ##
 

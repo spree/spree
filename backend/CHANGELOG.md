@@ -20,6 +20,11 @@
 
     *Ramon Roche*
 
+*   The name of the controller is now used rather than `Object` in authorize_admin. #3622
+    
+    *Ryan Bigg*
+    
+
 ## Spree 2.1.0 ##
 
 *   layouts/admin.html.erb was broken into partials for each section. e.g.
