@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'cancan', '~> 1.6.10'
   s.add_dependency 'deface', '= 0.9.1'
   s.add_dependency 'ffaker', '~> 1.16'
-  s.add_dependency 'highline', '= 1.6.18' # Necessary for the install generator
+  s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'kaminari', '~> 0.14.1'
