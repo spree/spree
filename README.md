@@ -30,9 +30,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
     $ gem install rails -v 3.2.14
-    $ gem install spree -v 1.3.3
+    $ gem install spree -v 1.3.4
     $ rails _3.2.14_ new my_store
-    $ spree _1.3.3_ install my_store
+    $ spree _1.3.4_ install my_store
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations and
 optionally generate sample products and orders.
