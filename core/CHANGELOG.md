@@ -1,3 +1,80 @@
+## Spree 2.0.6 ##
+
+* Fix admin menu not icons not being centered. #3725
+
+    *Ramon Roche*
+
+* Payment identifiers now do not change on each save. #3733
+
+    *Ryan Bigg*
+
+* Added migrations to make the migration from Spree 1.3.x to 2.0.x a little easier. #3605 #3660
+
+    *Stefan Wrobel*
+
+* Product#stock_items now returns stock items for the master variant as well. #3737
+
+    *Ryan Bigg*
+
+* Add inventory_units association back to the Order model. #3744
+
+    *Ryan Bigg*
+
+* Bump Activemerchant to 1.39.2.
+
+    *Ryan Bigg*
+
+* Fix issue where cart.png was not being dealt with correctly during precompilation.
+
+    *Ryan Bigg*
+
+* StockItem#process_backorders now processes backorders when the stock is adjusted postively. #3755
+
+    *Ryan Bigg*
+
+* Fixed issue where shipping rates would lose the current selected rate when refreshing rates. #3766
+
+    *dan-ding*
+
+* Fixed issue where force_non_ssl_redirect redirect location was like `/orders/populate?controller=home.`, rather than just `/`. #3799
+
+    *John Hawthorn*
+
+* Fixed sample data loading issues with shipping methods. #3776
+
+    *Washington Luiz*
+
+* Removed unused credit card fields, start_month, start_year and issue_number. #3802
+
+    *John Hawthorn*
+
+* Fixed issue where a product could be linked to a taxon more than once. #3494
+
+    *Ryan Bigg*
+
+* Included jquery.validate locale messages when the locale is not "en" #3794
+
+    *Ryan Bigg*
+
+* Fixed issue where stock items could not be created if a deleted stock item for that variant existed already. #3834
+
+    *Washington Luiz*
+
+* Removed force_ssl_redirect, as Rails 3.2.14 and Rails 4 both have this available.
+
+    *Washington Luiz*
+
+* Fixed redirect loop with redirect_https_to_http. #3813
+
+    *John Hawthorn*
+
+* Use sRGB colorspace in Image model. Using the RGB colorspace on more recent versions of ImageMagick cause the image to be uploaded darker. Caveat: Using sRGB on older versions of ImageMagick may also cause this bug. If you're seeing images being uploaded darker after this change, please upgrade your ImageMagick version.
+
+    *Ryan Bigg*
+
+* Fixed issue where not including frontend component may have caused the `preference_rescue.rb` that a migration depends on to go missing. #3860
+
+
 ## Spree 2.0.x ##
 
 *  Sandbox generator and installer now use the correct 2-0-stable branch of spree_auth_devise 

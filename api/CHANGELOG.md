@@ -1,3 +1,9 @@
+## Spree 2.0.6 ##
+
+* Normal users can no longer read stock item, stock location or stock movements API endpoints.
+
+  *Ryan Bigg*
+  
 ## Spree 2.0.x ##
 
 * PUT requests to Checkouts API endpoints now require authorization to alter an order.

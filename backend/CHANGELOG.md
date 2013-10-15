@@ -1,3 +1,35 @@
+## Spree 2.0.6 ##
+
+
+* Use default datepicker format is used if none is specified in the locale file. #3602
+
+    *Peter Goldstein*
+
+* Added the ability to change a payment's amount through the backend. #3765
+
+    *Dan Kubb*
+
+* Fixed issue where promotion rules select box was not being reloaded correctly. #3572 #3816
+
+    *Washington Luiz*
+
+* Prices are now displayed in the local format on products/new.
+
+    *laurens*
+
+* Change authorize_admin to use the controller's name, rather than `Object` when `model_class` does not return anything. #3622
+
+    *Ryan Bigg*
+
+* Fixed issue where cancelling a line item delete didn't actually cancel it. #3862
+
+    *Ryan Bigg*
+
+* Fixed slow loading of "Add Stock Movement" screen if there were a lot of variants in the system.
+    
+    *Ryan Bigg*
+
+ 
 ## Spree 2.0.x ##
 
 *   Symbolize attachment style keys on ImageSettingController otherwise users
