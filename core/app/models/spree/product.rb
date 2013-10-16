@@ -208,7 +208,7 @@ module Spree
         else
           Property.create(name: property_name, presentation: property_name)
         end
-        product_property = ProductProperty.where(product: self, property: property).first_or_initialize
+        product_property = ProductProperty.where(product_id: self.id, property_id: property.id).first_or_initialize
         product_property.value = property_value
         product_property.save!
       end
