@@ -36,7 +36,11 @@ module Spree
 
       def display_line_item(line_item)
         variant = line_item.variant
-        "#{variant.product.name} <br>(#{variant.options_text})<br>#{line_item.display_total}".html_safe
+        parts = []
+        parts << variant.product.name
+        parts << "(#{variant.options_text})" if variant.options_text.present?
+        parts << line_item.display_total
+        parts.join("<br>").html_safe
       end
 
       def display_shipment(shipment)
