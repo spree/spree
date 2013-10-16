@@ -236,7 +236,7 @@ describe Spree::Order do
     end
 
     it "should log state event" do
-      order.state_changes.should_receive(:create).exactly(3).times #order, shipment & payment state changes
+      order.state_changes.should_receive(:create).exactly(2).times # shipment & payment state changes
       order.finalize!
     end
   end

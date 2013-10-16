@@ -3,6 +3,11 @@ require 'spec_helper'
 describe Spree::Order do
   let(:order) { Spree::Order.new }
 
+  def assert_state_changed(order, from, to)
+    state_change_exists = order.state_changes.where(:previous_state => from, :next_state => to).exists?
+    assert state_change_exists, "Expected order to transition from #{from} to #{to}, but didn't."
+  end
+
   context "with default state machine" do
     let(:transitions) do
       [
@@ -87,6 +92,7 @@ describe Spree::Order do
       order.line_items << FactoryGirl.create(:line_item)
       order.email = "user@example.com"
       order.next!
+      assert_state_changed(order, 'cart', 'address')
       order.state.should == "address"
     end
 
@@ -120,6 +126,7 @@ describe Spree::Order do
       it "transitions to delivery" do
         order.stub(:ensure_available_shipping_rates => true)
         order.next!
+        assert_state_changed(order, 'address', 'delivery')
         order.state.should == "delivery"
       end
 
@@ -146,6 +153,7 @@ describe Spree::Order do
         it "transitions to payment" do
           order.should_receive(:set_shipments_cost)
           order.next!
+          assert_state_changed(order, 'delivery', 'payment')
           order.state.should == 'payment'
         end
       end
@@ -174,6 +182,7 @@ describe Spree::Order do
 
         it "transitions to confirm" do
           order.next!
+          assert_state_changed(order, 'payment', 'confirm')
           order.state.should == "confirm"
         end
       end
@@ -187,6 +196,7 @@ describe Spree::Order do
         it "transitions to complete" do
           order.should_receive(:process_payments!).once.and_return true
           order.next!
+          assert_state_changed(order, 'payment', 'complete')
           order.state.should == "complete"
         end
       end
@@ -200,6 +210,7 @@ describe Spree::Order do
         it "does not call process payments" do
           order.should_not_receive(:process_payments!)
           order.next!
+          assert_state_changed(order, 'payment', 'complete')
           order.state.should == "complete"
         end
       end
@@ -222,6 +233,7 @@ describe Spree::Order do
       order.should_receive(:process_payments!).once
       order.state = "payment"
       order.next!
+      assert_state_changed(order, 'payment', 'complete')
       order.state.should == "complete"
     end
   end
@@ -275,6 +287,7 @@ describe Spree::Order do
       order.should_not_receive(:payment_required?)
       order.should_not_receive(:process_payments!)
       order.next!
+      assert_state_changed(order, 'cart', 'complete')
     end
 
   end
