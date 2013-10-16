@@ -34,12 +34,16 @@ module Spree
         where('expires_at IS NULL OR expires_at > ?', Time.now)
     end
 
+    def self.order_activatable?(order)
+      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+    end
+
     def expired?
       starts_at && Time.now < starts_at || expires_at && Time.now > expires_at
     end
 
     def activate(payload)
-      return unless order_activatable? payload[:order]
+      return unless self.class.order_activatable?(payload[:order])
 
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
@@ -66,14 +70,6 @@ module Spree
         rules.for(promotable).any?(&eligible)
       end
     end
-
-    def self.order_activatable?(order)
-      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
-    end
-    def order_activatable?(order)
-      self.class.order_activatable?(order)
-    end
-
 
     # Products assigned to all product rules
     def products
