@@ -336,13 +336,6 @@ module Spree
       updater.run_hooks
 
       deliver_order_confirmation_email
-
-      self.state_changes.create(
-        previous_state: 'cart',
-        next_state:     'complete',
-        name:           'order' ,
-        user_id:        self.user_id
-      )
     end
 
     def deliver_order_confirmation_email
