@@ -823,6 +823,7 @@ en:
     price: Price
     price_range: Price Range
     price_sack: Price Sack
+    problem_adding_coupon_code: There was a problem adding this coupon code.
     process: Process
     product: Product
     product_details: Product Details

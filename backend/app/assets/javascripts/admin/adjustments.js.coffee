@@ -12,5 +12,5 @@ $(@).ready( ->
         if msg.responseJSON["error"]
           show_flash_error msg.responseJSON["error"]
         else
-          show_flash_error "There was a problem adding this coupon code."
+          show_flash_error Spree.translations.problem_adding_coupon_code
 )
