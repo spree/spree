@@ -67,9 +67,13 @@ module Spree
       end
     end
 
-    def order_activatable?(order)
+    def self.order_activatable?(order)
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
+    def order_activatable?(order)
+      self.class.order_activatable?(order)
+    end
+
 
     # Products assigned to all product rules
     def products
