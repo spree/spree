@@ -850,9 +850,9 @@ en:
       create_line_items:
         description: Populates the cart with the specified quantity of variant
         name: Create line items
-      give_store_credit:
-        description: Gives the user store credit of the amount specified
-        name: Give store credit
+      free_shipping:
+        description: Makes all shipments for the order free
+        name: Free shipping
     promotion_actions: Actions
     promotion_form:
       match_policies:
