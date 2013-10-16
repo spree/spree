@@ -88,6 +88,7 @@ describe Spree::Shipment do
 
     context 'refresh_rates' do
       let(:mock_estimator) { double('estimator', shipping_rates: shipping_rates) }
+      before { shipment.stub(:can_get_rates?){ true } }
 
       it 'should request new rates, and maintain shipping_method selection' do
         Spree::Stock::Estimator.should_receive(:new).with(shipment.order).and_return(mock_estimator)
@@ -109,6 +110,11 @@ describe Spree::Shipment do
         shipment.shipping_rates.delete_all
         shipment.stub(shipped?: true)
         shipment.refresh_rates.should == []
+      end
+
+      it "can't get rates without a shipping address" do
+        shipment.order(ship_address: nil)
+        expect(shipment.refresh_rates).to eq([])
       end
 
       context 'to_package' do
