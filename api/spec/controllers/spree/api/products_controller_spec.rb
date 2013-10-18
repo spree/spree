@@ -30,6 +30,17 @@ module Spree
         json_response["pages"].should == 1
       end
 
+      it "retrieves a list of products by ids string" do
+        second_product = create(:product)
+        api_get :index, :ids => [product.id, second_product.id].join(",")
+        json_response["products"].first.should have_attributes(attributes)
+        json_response["products"][1].should have_attributes(attributes)
+        json_response["total_count"].should == 2
+        json_response["current_page"].should == 1
+        json_response["pages"].should == 1
+        json_response["per_page"].should == Kaminari.config.default_per_page
+      end
+
       it "does not return inactive products when queried by ids" do
         api_get :index, :ids => [inactive_product.id]
         json_response["count"].should == 0
