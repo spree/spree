@@ -10,10 +10,6 @@ module Spree
       include ::ActionController::Head
       include ::ActionController::ConditionalGet
 
-      self.responder = Spree::Api::Responders::AppResponder
-
-      respond_to :json
-
       attr_accessor :current_api_user
 
       before_filter :set_content_type
