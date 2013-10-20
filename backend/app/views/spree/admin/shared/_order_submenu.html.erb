@@ -1,0 +1,35 @@
+<nav class="menu">
+  <ul data-hook="admin_order_tabs">
+    <% if can? :update, @order %>
+      <li<%== ' class="active"' if current == 'Order Details' %>>
+        <%= link_to_with_icon 'icon-edit', Spree.t(:order_details), edit_admin_order_url(@order) %>
+      </li>
+    <% end %>
+
+    <% if can? :update, @order && checkout_steps.include?("address") %>
+      <li<%== ' class="active"' if current == 'Customer Details' %>>
+        <%= link_to_with_icon 'icon-user', Spree.t(:customer_details), admin_order_customer_url(@order) %>
+      </li>
+    <% end %>
+
+    <% if can? :index, @order.adjustments %>
+      <li<%== ' class="active"' if current == 'Adjustments' %>>
+        <%= link_to_with_icon 'icon-cogs', Spree.t(:adjustments), admin_order_adjustments_url(@order) %>
+      </li>
+    <% end %>
+
+    <% if can? :index, @order.payments && @payment_required %>
+      <li<%== ' class="active"' if current == 'Payments' %>>
+        <%= link_to_with_icon 'icon-credit-card', Spree.t(:payments), admin_order_payments_url(@order) %>
+      </li>
+    <% end %>
+
+    <% if can? :index, @order.return_authorizations %>
+      <% if @order.completed? %>
+        <li<%== ' class="active"' if current == 'Return Authorizations' %>>
+          <%= link_to_with_icon 'icon-share-alt', Spree.t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+</nav>

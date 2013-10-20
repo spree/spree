@@ -1,0 +1,30 @@
+<header id="order_tab_summary" data-hook>
+  <dl class="additional-info">
+    <dt id="order_status" data-hook><%= Spree.t(:status) %>:</dt>
+    <dd><span class="state <%= @order.state %>"><%= Spree.t(@order.state, :scope => :order_state) %></span></dd>
+    <dt data-hook><%= Spree.t(:item_total) %>:</dt>
+    <dd id='item_total'><%= @order.display_item_total.to_html %></dd>
+    <% if checkout_steps.include?("delivery") && @order.ship_total > 0 %>
+      <dt data-hook><%= Spree.t(:ship_total) %>:</dt>
+      <dd id='item_total'><%= @order.display_ship_total.to_html %></dd>
+    <% end %>
+
+    <% if @order.tax_total > 0 %>
+      <dt data-hook><%= Spree.t(:tax_total) %>:</dt>
+      <dd id='item_total'><%= @order.display_tax_total.to_html %></dd>
+    <% end %>
+
+    <dt data-hook><%= Spree.t(:total) %>:</dt>
+    <dd id='order_total'><%= @order.display_total.to_html %></dd>
+
+  
+    <% if @order.completed? %>
+      <dt><%= Spree.t(:shipment) %>: </dt>
+      <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= Spree.t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>
+      <dt><%= Spree.t(:payment) %>: </dt>
+      <dd id='payment_status'><span class="state <%= @order.payment_state %>"><%= Spree.t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %></span></dd>
+      <dt data-hook><%= Spree.t(:date_completed) %>:</dt>
+      <dd id='date_complete'><%= pretty_time(@order.completed_at) %></dd>
+    <% end %>
+  </dl>
+</header>
