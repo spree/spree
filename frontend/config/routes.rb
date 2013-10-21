@@ -2,7 +2,7 @@ Spree::Core::Engine.add_routes do
 
   root :to => 'home#index'
 
-  resources :products
+  resources :products, :only => [:index, :show]
 
   get '/locale/set', :to => 'locale#set'
 
