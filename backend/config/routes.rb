@@ -10,11 +10,7 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :zones
-    resources :banners do
-      member do
-        post :dismiss
-      end
-    end
+
     resources :countries do
       resources :states
     end
