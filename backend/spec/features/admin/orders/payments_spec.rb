@@ -28,7 +28,19 @@ describe 'Payments' do
     visit current_path
   end
 
-  it 'should be able to list and create payment methods for an order', js: true do
+  it 'creates a new payment' do
+    click_on 'New Payment'
+    page.should have_content('New Payment')
+    click_button 'Update'
+    page.should have_content('successfully created!')
+
+    click_icon(:capture)
+    find('#payment_status').text.should == 'PAID'
+
+    page.should_not have_selector('#new_payment_section')
+  end
+
+  it 'voids a payment', js: true do
     find('#payment_status').text.should == 'BALANCE DUE'
     within_row(1) do
       column_text(2).should == '$50.00'
@@ -45,16 +57,6 @@ describe 'Payments' do
       column_text(3).should == 'Credit Card'
       column_text(4).should == 'VOID'
     end
-
-    click_on 'New Payment'
-    page.should have_content('New Payment')
-    click_button 'Update'
-    page.should have_content('successfully created!')
-
-    click_icon(:capture)
-    find('#payment_status').text.should == 'PAID'
-
-    page.should_not have_selector('#new_payment_section')
   end
 
   # Regression test for #1269
