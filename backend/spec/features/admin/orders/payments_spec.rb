@@ -28,7 +28,7 @@ describe 'Payments' do
     visit current_path
   end
 
-  it 'should be able to list and create payment methods for an order', js: true do
+  it 'should be able to void payments', js: true do
     find('#payment_status').text.should == 'BALANCE DUE'
     within_row(1) do
       column_text(2).should == '$50.00'
@@ -45,13 +45,20 @@ describe 'Payments' do
       column_text(3).should == 'Credit Card'
       column_text(4).should == 'VOID'
     end
+  end
 
+  it 'should be able to create new payments', js: true do
     click_on 'New Payment'
     page.should have_content('New Payment')
+    choose 'Use a new card'
+    fill_in 'card_number', :with => '4111 1111 1111 1111'
+    fill_in 'card_expiry', :with => "01/#{Time.now.year+1}"
+    fill_in 'card_code', :with => '123'
+
     click_button 'Update'
     page.should have_content('successfully created!')
 
-    click_icon(:capture)
+    click_icon(:capture)  
     find('#payment_status').text.should == 'PAID'
 
     page.should_not have_selector('#new_payment_section')
