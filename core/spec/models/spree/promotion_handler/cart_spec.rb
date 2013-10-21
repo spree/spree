@@ -24,17 +24,6 @@ module Spree
           include_context "creates the adjustment"
         end
 
-        context "promotion doesn't include item involved" do
-          let(:shirt) { create(:product) }
-          let!(:rule) { Promotion::Rules::Product.create(products: [shirt], promotion: promotion) }
-
-          it "doesn't create adjustment" do
-            expect {
-              subject.activate
-            }.not_to change { line_item.adjustments.count }
-          end
-        end
-
         context "promotion includes item involved" do
           let!(:rule) { Promotion::Rules::Product.create(products: [line_item.product], promotion: promotion) }
 
