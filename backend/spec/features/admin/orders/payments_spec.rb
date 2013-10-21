@@ -35,7 +35,7 @@ describe 'Payments' do
     page.should have_content('successfully created!')
 
     click_icon(:capture)
-    find('#payment_status').text.should == 'PAID'
+    find('#payment_status').text.should == 'paid'
 
     page.should_not have_selector('#new_payment_section')
   end
