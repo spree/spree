@@ -12,8 +12,6 @@ Spree::Core::Engine.add_routes do
     resources :adjustments
     resources :zones
 
-    post '/banners/:id/dismiss', :to => "banners#dismiss", :as => :dismiss_banner
-
     resources :countries do
       resources :states
     end
