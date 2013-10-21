@@ -32,6 +32,16 @@ Keep in mind that Spree 2.0.0 requires a version of Ruby greater than or equal t
 See [Heroku Ruby support page](https://devcenter.heroku.com/articles/ruby-support#build-behavior)
 for details on build behaviour related to Ruby versions.
 
+### Add Heroku 12 Factor Gem
+
+Add the [Heroku 12 Factor gem](https://github.com/heroku/rails_12factor) to your Gemfile:
+
+```ruby
+gem 'rails_12factor', group: :production
+```
+
+This will enable your application to serve static assets and direct logging to stdout.
+
 ### Asset Pipeline
 
 ***
