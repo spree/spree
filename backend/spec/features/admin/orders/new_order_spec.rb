@@ -4,7 +4,7 @@ describe "New Order" do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product) }
   let!(:state) { create(:state) }
-  let!(:user) { create(:user) }
+  let!(:user) { create(:user, :email => "foo@bar.com") }
   let!(:payment_method) { create(:payment_method) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_item) { product.master.stock_items.first.adjust_count_on_hand(10) }
@@ -49,9 +49,7 @@ describe "New Order" do
   it "transitions order after products are selected", js: true do
     click_on "Customer Details"
 
-    within "#select-customer" do
-      targetted_select2_search user.email, :from => "#s2id_customer_search"
-    end
+    targetted_select2_search "foo@bar", :from => "#s2id_customer_search"
     check "order_use_billing"
     fill_in_address
     click_on "Update"
