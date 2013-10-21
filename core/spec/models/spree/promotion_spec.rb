@@ -230,7 +230,8 @@ describe Spree::Promotion do
         Spree::PromotionRule.any_instance.stub(:applicable? => true)
         true_rule = Spree::PromotionRule.create(:promotion => promotion)
         true_rule.stub(:eligible? => true)
-        promotion.rules << true_rule
+        promotion.stub(:rules => [true_rule])
+        promotion.stub_chain(:rules, :for).and_return([true_rule])
         promotion.rules_are_eligible?(promotable).should be_true
       end
 
