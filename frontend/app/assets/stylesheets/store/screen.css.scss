@@ -117,6 +117,10 @@ input[type="week"] {
   font-family: $ff_base;
   font-size: $input_box_font_size;
 
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+
   &:active, &:focus {
     border-color: $link_text_color;
     outline: none;
@@ -146,6 +150,11 @@ span.required {
 
 fieldset {
   margin: 0;
+  min-width: 100%;
+  
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 input[type="submit"], input[type="button"],
@@ -724,6 +733,14 @@ ul#products {
     color: $link_text_color;
     padding: 5px;
     margin-left: 15px;
+  }
+}
+
+#billing {
+  input[type="text"], input[type="email"],
+  input[type="tel"], input[type="number"], 
+  select, textarea {
+    width: 100%;
   }
 }
 
