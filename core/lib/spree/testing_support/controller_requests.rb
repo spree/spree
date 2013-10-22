@@ -4,14 +4,14 @@
 # Inside your spec_helper.rb, include this module inside the RSpec.configure
 # block by doing this:
 #
-#   require 'spree/core/testing_support/controller_requests'
+#   require 'spree/testing_support/controller_requests'
 #   RSpec.configure do |c|
-#     c.include Spree::Core::TestingSupport::ControllerRequests, :type => :controller
+#     c.include Spree::TestingSupport::ControllerRequests, :type => :controller
 #   end
 #
 # Then, in your controller tests, you can access spree routes like this:
 #
-#   require 'spec_helper'
+#   require 'spec_helperr'
 #
 #   describe Spree::ProductsController do
 #     it "can see all the products" do
