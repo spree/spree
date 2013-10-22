@@ -11,7 +11,7 @@
 #
 # Then, in your controller tests, you can access spree routes like this:
 #
-#   require 'spec_helperr'
+#   require 'spec_helper'
 #
 #   describe Spree::ProductsController do
 #     it "can see all the products" do
