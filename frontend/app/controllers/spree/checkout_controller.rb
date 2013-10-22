@@ -26,6 +26,8 @@ module Spree
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_attributes(object_params)
+        persist_user_address
+
         unless @order.next
           flash[:error] = @order.errors.full_messages.join("\n")
           redirect_to checkout_state_path(@order.state) and return
@@ -127,10 +129,10 @@ module Spree
       # Skip setting ship address if order doesn't have a delivery checkout step
       # to avoid triggering validations on shipping address
       def before_address
-        @order.bill_address ||= Address.default
+        @order.bill_address ||= Address.default(spree_current_user, "bill")
 
         if @order.checkout_steps.include? "delivery"
-          @order.ship_address ||= Address.default
+          @order.ship_address ||= Address.default(spree_current_user, "ship")
         end
       end
 
@@ -159,6 +161,12 @@ module Spree
 
       def check_authorization
         authorize!(:edit, current_order, session[:access_token])
+      end
+
+      def persist_user_address
+        if @order.address? && spree_current_user.respond_to?(:persist_order_address)
+          spree_current_user.persist_order_address(@order)
+        end
       end
   end
 end
