@@ -105,9 +105,10 @@ module Spree
         response.status.should == 201
 
         taxonomy.reload.root.children.count.should eq 2
+        taxon = Spree::Taxon.where(:name => 'Colors').first
 
-        Spree::Taxon.last.parent_id.should eq taxonomy.root.id
-        Spree::Taxon.last.taxonomy_id.should eq taxonomy.id
+        taxon.parent_id.should eq taxonomy.root.id
+        taxon.taxonomy_id.should eq taxonomy.id
       end
 
       it "cannot create a new taxon with invalid attributes" do
