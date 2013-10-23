@@ -19,7 +19,7 @@ module Spree
     def expiry=(expiry)
       if expiry.present?
         self[:month], self[:year] = expiry.split(" / ")
-        self[:year] = "20" + self[:year]
+        self[:year] = "20" + self[:year] if self[:year].length == 2
       end
     end
 
