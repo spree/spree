@@ -154,14 +154,14 @@ describe Spree::CreditCard do
   context "#expiry=" do
     it "can set with a 2-digit month and year" do
       credit_card.expiry = '04 / 14'
-      credit_card.month = '04'
-      credit_card.year = '2014'
+      expect(credit_card.month).to eq('04')
+      expect(credit_card.year).to eq('2014')
     end
 
     it "can set with a 2-digit month and 4-digit year" do
       credit_card.expiry = '04 / 2014'
-      credit_card.month = '04'
-      credit_card.year = '2014'
+      expect(credit_card.month).to eq('04')
+      expect(credit_card.year).to eq('2014')
     end
 
     it "does not blow up when passed an empty string" do
