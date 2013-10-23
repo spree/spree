@@ -2,6 +2,13 @@
   paginated_products = @searcher.retrieve_products if params.key?(:keywords)
   paginated_products ||= products
 %>
+
+<% content_for :head do %>
+  <% if paginated_products.respond_to?(:num_pages) %>
+    <%= rel_next_prev_link_tags paginated_products %>
+  <% end %>
+<% end %>
+
 <% if products.empty? %>
   <%= Spree.t(:no_products_found) %>
 <% elsif params.key?(:keywords) %>
