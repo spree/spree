@@ -44,6 +44,9 @@ functionality or fixing a bug, we need tests!
 to the latest stable branches and master branch, you will only need to submit one
 pull request.
 
+5. If a PR does not apply cleanly to one of its targeted branches, then a separate
+PR should be created that does. For instance, if a PR applied to master & 2-1-stable but not 2-0-stable, then there should be one PR for master & 2-1-stable and another, separate PR for 2-0-stable.
+
 At this point you're waiting on us. We like to at least comment on, if not
 accept, pull requests within three business days (and, typically, one business
 day). We may suggest some changes or improvements or alternatives.
