@@ -316,3 +316,124 @@ Returns a specific order from Amazon store filtered by `amazon_order_id`.
   ]
 }
 ```
+
+### Confirm Shipment
+
+Confirm an order inside of Amazon as shipped using Amazon's MWS Feeds API. This action will submit an Order Fulfillment feed. Performing this action will add a tracking number, shipping method, and a shipped status to an order. Read more about the MWS Feeds API [here](https://images-na.ssl-images-amazon.com/images/G/01/mwsportal/doc/en_US/bde/MWSFeedsApiReference._V379394221_.pdf)
+
+####Request
+
+---shipment_confirm.json---
+```json
+{
+  "message": "shipment:confirm",
+  "message_id": "1234567",
+  "payload": {
+    "shipment": {
+      "number": "H03606064322",
+      "order_number": "103-6652650-4045858",
+      "email": "spree@example.com",
+      "cost": 0.0,
+      "status": "ready",
+      "stock_location": null,
+      "shipping_method": "UPS Ground",
+      "tracking": "915293072790129",
+      "updated_at": null,
+      "shipped_at": null,
+      "shipping_address": {
+      "firstname": "Brian",
+      "lastname": "Quinn",
+      "address1": "2 Wisconsin Cir.",
+      "address2": "",
+      "zipcode": "20815",
+      "city": "Chevy Chase",
+      "state": "Maryland",
+      "country": "US",
+      "phone": "555-123-123"
+      },
+      "items": [
+        {
+          "name": "test",
+          "sku": "27368845791002",
+          "external_ref": "",
+          "quantity": 1,
+          "price": 1.25,
+          "variant_id": 2,
+          "options": {
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+#### Parameters
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| amazon.aws_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| amazon.secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| amazon.marketplace_id | Your Amazon Marketplace ID | nama9vach3kis |
+| amazon.seller_id | Your Amazon Seller ID | hugi0ty8su2zyh |
+
+#### Response
+
+---amazon_feed_status.json---
+```json
+{
+  "message_id": "123456",
+  "messages": [
+    {
+      "message": "amazon:feed:status",
+      "payload": {
+         "feed_id": "123456"
+      }
+    }
+  ]
+}
+```
+
+### Get Feed Status
+
+Check the status of a submitted feed to see if it was successfully processed.
+
+####Request
+
+---amazon_feed_status.json---
+```json
+{
+  "message_id": "!23456",
+  "message": "amazon:feed:status",
+  "payload": {
+     "feed_id": "7891011"
+  }
+}
+```
+
+#### Parameters
+
+| Name | Value | Example |
+| :----| :-----| :------ |
+| amazon.aws_access_key | Your AWS Access Key | Aqws3958dhdjwb39 |
+| amazon.secret_key | Your AWS Secret Key | dj20492dhjkdjeh2838w7 |
+| amazon.marketplace_id | Your Amazon Marketplace ID | nama9vach3kis |
+| amazon.seller_id | Your Amazon Seller ID | hugi0ty8su2zyh |
+
+#### Response
+
+---notification_info.json---
+```json
+{
+  "message_id": "123456",
+  "notifications": [
+    {
+      "level": "info",
+      "subject": "Feed Complete",
+      "description": "Succesfully processed feed #7891011"
+    }
+  ]
+}
+```
+
+
