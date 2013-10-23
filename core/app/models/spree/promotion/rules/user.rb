@@ -9,7 +9,7 @@ module Spree
           has_and_belongs_to_many :users, class_name: Spree.user_class.to_s, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id'
         else
           belongs_to :user
-          has_and_belongs_to_many :users, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id'
+          has_and_belongs_to_many :users, join_table: 'spree_promotion_rules_users', foreign_key: 'promotion_rule_id', :class_name => Spree.user_class
         end
 
         def eligible?(order, options = {})
