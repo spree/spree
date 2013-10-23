@@ -15,7 +15,7 @@ module SpreeCmd
 
       directory 'app', "#{file_name}/app"
       directory 'lib', "#{file_name}/lib"
-      directory 'script', "#{file_name}/script"
+      directory 'bin', "#{file_name}/bin"
 
       template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
       template 'Gemfile', "#{file_name}/Gemfile"
