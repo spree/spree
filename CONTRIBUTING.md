@@ -44,6 +44,10 @@ functionality or fixing a bug, we need tests!
 to the latest stable branches and master branch, you will only need to submit one
 pull request.
 
+Note that we use the hub gem to add commits from pull requests to applicable branches.
+For this reason, please submit pull requests to the master branch and add a comment
+stating which branches that request is relevant to.
+
 At this point you're waiting on us. We like to at least comment on, if not
 accept, pull requests within three business days (and, typically, one business
 day). We may suggest some changes or improvements or alternatives.
