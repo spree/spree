@@ -2,6 +2,7 @@ module Spree
   class OptionType < ActiveRecord::Base
     has_many :option_values, order: :position, dependent: :destroy
     has_many :product_option_types, dependent: :destroy
+    has_many :products, through: :product_option_types
     has_and_belongs_to_many :prototypes, join_table: 'spree_option_types_prototypes'
 
     attr_accessible :name, :presentation, :option_values_attributes
