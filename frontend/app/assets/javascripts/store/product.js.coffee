@@ -22,10 +22,10 @@ $ ->
     ($ 'li.tmb-' + variantId).show()
     currentThumb = ($ '#' + ($ '#main-image').data('selectedThumbId'))
     if not currentThumb.hasClass('vtmb-' + variantId)
-      thumb = ($ ($ 'ul.thumbnails li:visible.vtmb').eq(0))
-      thumb = ($ ($ 'ul.thumbnails li:visible').eq(0)) unless thumb.length > 0
+      thumb = ($ ($ '#product-images ul.thumbnails li:visible.vtmb').eq(0))
+      thumb = ($ ($ '#product-images ul.thumbnails li:visible').eq(0)) unless thumb.length > 0
       newImg = thumb.find('a').attr('href')
-      ($ 'ul.thumbnails li').removeClass 'selected'
+      ($ '#product-images ul.thumbnails li').removeClass 'selected'
       thumb.addClass 'selected'
       ($ '#main-image img').attr 'src', newImg
       ($ '#main-image').data 'selectedThumb', newImg
