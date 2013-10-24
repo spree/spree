@@ -11,11 +11,13 @@ module Spree
         alias_attribute :shipping_address, :ship_address
 
         def persist_order_address(order)
-          unless self.bill_address || self.ship_address
-            self.bill_address = order.bill_address.clone
-            self.ship_address = order.ship_address.clone
-            self.save
-          end
+          address = self.bill_address || self.build_bill_address
+          address.attributes = order.bill_address.attributes.except('id', 'updated_at', 'created_at')
+          address.save
+
+          address = self.ship_address || self.build_ship_address
+          address.attributes = order.ship_address.attributes.except('id', 'updated_at', 'created_at')
+          address.save
         end
       end
     end
