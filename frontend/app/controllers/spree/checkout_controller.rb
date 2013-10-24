@@ -165,7 +165,7 @@ module Spree
 
       def persist_user_address
         if @order.address? && spree_current_user.respond_to?(:persist_order_address)
-          spree_current_user.persist_order_address(@order)
+          spree_current_user.persist_order_address(@order) if params[:save_user_address]
         end
       end
   end
