@@ -53,7 +53,7 @@ We want our override to insert another field container after the price field con
 ```ruby
 Deface::Override.new(:virtual_path => 'spree/admin/products/_form',
   :name => 'add_sale_price_to_product_edit',
-  :insert_after => "code[erb-loud]:contains('text_field :price')",
+  :insert_after => "erb[loud]:contains('text_field :price')",
   :text => "
     <%%= f.field_container :sale_price do %>
       <%%= f.label :sale_price, raw(Spree.t(:sale_price) + content_tag(:span, ' *')) %>
