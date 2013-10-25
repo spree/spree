@@ -73,6 +73,10 @@ module Spree
       inventory_units.any? { |inventory_unit| inventory_unit.backordered? }
     end
 
+    def ready_or_pending?
+      self.ready? || self.pending?
+    end
+
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.now
