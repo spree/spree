@@ -117,7 +117,7 @@ module Spree
       countries.collect do |country|
         country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
         country
-      end.sort { |a, b| a.name <=> b.name }
+      end.sort { |a, b| I18n.transliterate(a.name) <=> I18n.transliterate(b.name) }
     end
 
     def seo_url(taxon)
