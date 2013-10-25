@@ -103,7 +103,9 @@ The "newname" value in the last command above needs to match what you used in th
 
 ### Testing
 
-Now you can run a curl command against your deployed endpoint to verify that it is working correctly. For example, I deployed the [Zendesk endpoint](https://github.com/spree/zendesk_endpoint), which creates help desk tickets in your Zendesk account when it receives a `notification:error` or `notification:warning` message. I renamed my Heroku app to "zendesk-endpoint-copy".
+Everything should be in place now, so it's time to test the endpoint out.
+
+You can run a curl command against your deployed endpoint to verify that it is working correctly. For example, I deployed the [Zendesk endpoint](https://github.com/spree/zendesk_endpoint), which creates help desk tickets in your Zendesk account when it receives a `notification:error` or `notification:warning` message. I renamed my Heroku app to "zendesk-endpoint-copy".
 
 Following is a sample JSON file you can save as `sample_error.json` to your home directory.
 
@@ -152,7 +154,7 @@ Next, run the following command from your home directory:
 ```bash
 $ curl --data @./sample_error.json -i -X POST -H 'Content-Type:application/json' -H 'X_AUGURY_TOKEN:12345abcde12345abcde12345abcde12' https://zendesk-endpoint-copy.herokuapp.com/import```
 
-It produces the following result:
+If your endpoint is properly setup, you should see the following response:
 
 ```bash
 HTTP/1.1 200 OK
