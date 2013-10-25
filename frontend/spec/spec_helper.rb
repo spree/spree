@@ -43,6 +43,9 @@ require 'capybara/accessible'
 
 if ENV['WEBDRIVER'] == 'accessible'
   Capybara.javascript_driver = :accessible
+else
+  require 'capybara/poltergeist'
+  Capybara.javascript_driver = :poltergeist
 end
 
 RSpec.configure do |config|

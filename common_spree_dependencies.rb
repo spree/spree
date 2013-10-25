@@ -28,6 +28,7 @@ group :test do
   gem 'selenium-webdriver', '~> 2.35'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
+  gem 'poltergeist', '1.4.1'
 end
 
 gemspec
