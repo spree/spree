@@ -98,7 +98,7 @@ module Spree
     private
       def update_inventory
         if changed?
-          Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+          Spree::OrderInventory.new(self.order, self).verify(target_shipment)
         end
       end
 
