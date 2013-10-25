@@ -368,10 +368,6 @@ A key from the list of styles from `Spree::Config[:attachment_styles]` that is t
 
 Depending on whether or not Spree is configured to "auto capture" the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway).  Defaults to `false`.
 
-`cache_static_content`
-
-Enables or disables caching of static content from `Spree::ContentController`. Defaults to `true`.
-
 `checkout_zone`
 
 Limits the checkout to countries from a specific zone, by name. Defaults to `nil`.
@@ -379,10 +375,6 @@ Limits the checkout to countries from a specific zone, by name. Defaults to `nil
 `company`
 
 Determines whether or not a field for "Company" displays on the checkout pages for shipping and billing addresses. Defaults to `false`.
-
-`create_inventory_units`
-
-Determines if `inventory_units` will be created when products are purchased as part of an order. Defaults to `true`.
 
 `currency`
 
@@ -457,10 +449,6 @@ Determines if taxon descendants are shown when showing taxons. Defaults to `true
 `show_only_complete_orders_by_default`
 
 Determines if, on the admin listing screen, only completed orders should be shown. Defaults to `true`.
-
-`show_zero_stock_products`
-
-Determines if zero stock products should be shown alongside products with stock. Defaults to `true`.
 
 `show_variant_full_price`
 
