@@ -127,9 +127,9 @@ Track shipment dispatches.
 
 | Name | Value | Example |
 | :----| :-----| :------ |
-| API key | Your Dotcom Distribution API key | dj20492dhjkdjeh2838w7 |
+| api_key | Your Dotcom Distribution API key | dj20492dhjkdjeh2838w7 |
 | password | Your Dotcom Distribution account password | dj20492dhjkdjeh2838w7 |
-| last_shipment_date | Initial date shipment polling will start from | 2013-01-01 |
+| last_polling_datetime | Initial date shipment polling will start from | 2013-01-01 |
 
 #### Response
 
@@ -149,7 +149,7 @@ Track shipment dispatches.
       },
       "parameters": [
         {
-          "name": "dotcom.last_shipment_date",
+          "name": "dotcom.last_polling_datetime",
           "value": "2013-05-05"
         }
       ]
