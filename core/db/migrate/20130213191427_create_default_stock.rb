@@ -4,10 +4,13 @@ class CreateDefaultStock < ActiveRecord::Migration
     Spree::StockItem.skip_callback(:save, :after, :process_backorders)
     location = Spree::StockLocation.new(name: 'default')
     location.save(validate: false)
+
     Spree::Variant.all.each do |variant|
-      stock_item = location.stock_items.build(variant: variant)
+      stock_item = Spree::StockItem.unscoped.build(stock_location: location, variant: variant)
       stock_item.send(:count_on_hand=, variant.count_on_hand)
-      stock_item.save!
+      # Avoid running default_scope defined by acts_as_paranoid, related to #3805,
+      # validations would run a query with a delete_at column tha might not be present yet
+      stock_item.save! validate: false
     end
 
     remove_column :spree_variants, :count_on_hand

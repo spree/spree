@@ -52,15 +52,23 @@ module Spree
       order.state.should eq 'complete'
     end
 
-    it 'can build an order from API with just line items' do
-      params = { :line_items_attributes => line_items }
+    context "build order with line items" do
+      let(:attributes) do
+        { :variant_id => variant.id, :quantity => 5, :price => 33.77 }
+      end
 
-      Order.should_receive(:ensure_variant_id_from_api)
-      order = Order.build_from_api(user, params)
-      order.user.should == nil
-      line_item = order.line_items.first
-      line_item.quantity.should == 5
-      line_item.variant_id.should == variant_id
+      it 'can build an order from API with just line items' do
+        params = { :line_items_attributes => { "0" => attributes } }
+        Order.should_receive(:ensure_variant_id_from_api)
+        order = Order.build_from_api(user, params)
+
+        order.user.should == nil
+        line_item = order.line_items.first
+
+        expect(line_item.quantity).to eq attributes[:quantity]
+        expect(line_item.variant_id).to eq attributes[:variant_id]
+        expect(line_item.price).to eq attributes[:price]
+      end
     end
 
     it 'handles line_item building exceptions' do
@@ -167,12 +175,26 @@ module Spree
       end
     end
 
+    it "raises with proper message when cant find country" do
+      address = { :country => { "name" => "NoNoCountry" } }
+      expect {
+        Order.ensure_country_id_from_api(address)
+      }.to raise_error /NoNoCountry/
+    end
+
     it 'ensures_state_id for state fields' do
       [:name, :abbr].each do |field|
         address = { :state => { field => state.send(field) }}
         Order.ensure_state_id_from_api(address)
         address[:state_id].should eq state.id
       end
+    end
+
+    it "raises with proper message when cant find state" do
+      address = { :state => { "name" => "NoNoState" } }
+      expect {
+        Order.ensure_state_id_from_api(address)
+      }.to raise_error /NoNoState/
     end
 
     context "shippments" do
@@ -255,6 +277,41 @@ module Spree
       expect {
         order = Order.build_from_api(user, params)
       }.to raise_error /XXX/
+    end
+
+    context "raises error" do
+      it "clears out order from db" do
+        params = { :payments_attributes => [{ payment_method: "XXX" }] }
+        count = Order.count
+
+        expect { order = Order.build_from_api(user, params) }.to raise_error
+        expect(Order.count).to eq count
+      end
+    end
+
+    context "import param and tax adjustments" do
+      let!(:tax_rate) { create(:tax_rate, amount: 0.05, calculator: Calculator::DefaultTax.create) }
+      let(:other_variant) { create(:variant) }
+
+      let(:line_item_attributes) do
+        line_items.merge({ "1" => { :variant_id => other_variant.id, :quantity => 5 }})
+      end
+
+      before { Zone.stub default_tax: tax_rate.zone }
+
+      it "doesnt create any tax ajustments when importing order" do
+        params = { import: true, line_items_attributes: line_item_attributes }
+        expect {
+          Order.build_from_api(user, params)
+        }.not_to change { Adjustment.count }
+      end
+
+      it "does create tax adjustments if not importing order" do
+        params = { import: false, line_items_attributes: line_item_attributes }
+        expect {
+          Order.build_from_api(user, params)
+        }.to change { Adjustment.count }
+      end
     end
   end
 end

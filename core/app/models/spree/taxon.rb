@@ -20,6 +20,8 @@ module Spree
       path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
       default_url: '/assets/default_taxon.png'
 
+    default_scope order: "#{self.table_name}.position"
+
     include Spree::Core::S3Support
     supports_s3 :icon
 

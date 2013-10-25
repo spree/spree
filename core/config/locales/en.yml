@@ -214,6 +214,10 @@ en:
         other: Zones
     errors:
       models:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: "is already linked to this product"
         spree/credit_card:
           attributes:
             base:
@@ -395,6 +399,7 @@ en:
     capture: Capture
     card_code: Card Code
     card_number: Card Number
+    card_type: Brand
     card_type_is: Card type is
     cart: Cart
     categories: Categories
@@ -639,7 +644,6 @@ en:
     login_name: Login
     logout: Logout
     look_for_similar_items: Look for similar items
-    maestro_or_solo_cards: Maestro/Solo cards
     mail_method_settings: Mail Method Settings
     mail_methods: Mail Methods
     make_refund: Make refund
@@ -751,6 +755,7 @@ en:
     order_number: Order
     order_populator:
       out_of_stock: ! '%{item} is out of stock.'
+      selected_quantity_not_available: ! 'Selected quantity of %{item} is not available.'
       please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_state:
@@ -988,8 +993,9 @@ en:
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
+    ssl:
+      change_protocol: "Please switch to using HTTP (rather than HTTPS) and retry this request."
     start: Start
-    start_date: Valid from
     state: State
     state_based: State Based
     states: States

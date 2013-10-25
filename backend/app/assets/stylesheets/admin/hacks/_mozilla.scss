@@ -22,6 +22,7 @@ html.firefox {
 
   // Fix select2 search input left padding to not overlap search icon
   .select2-search input.select2-input {
+    padding-bottom: 12px !important;
     padding-left: 25px !important;
   }
 

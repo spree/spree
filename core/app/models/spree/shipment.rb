@@ -104,6 +104,7 @@ module Spree
 
     def refresh_rates
       return shipping_rates if shipped?
+      return [] unless can_get_rates?
 
       # StockEstimator.new assigment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
@@ -293,6 +294,10 @@ module Spree
 
       def update_order
         order.update!
+      end
+
+      def can_get_rates?
+        order.ship_address && order.ship_address.valid?
       end
   end
 end

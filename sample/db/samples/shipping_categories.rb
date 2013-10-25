@@ -1,1 +1,1 @@
-Spree::ShippingCategory.create!(:name => "Default Shipping")
+Spree::ShippingCategory.create!(:name => "Default")

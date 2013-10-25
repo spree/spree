@@ -2,7 +2,7 @@
 
 <% content_for :page_title do %>
   <i class="icon-arrow-right"></i>
-  <%= I18n.t("activerecord.models.#{@payment.class.to_s.underscore}.one") %>
+  <%= I18n.t(:one, scope: "activerecord.models.spree/payment") %>
   <i class="icon-arrow-right"></i>
   <%= payment_method_name(@payment) %>
 <% end %>

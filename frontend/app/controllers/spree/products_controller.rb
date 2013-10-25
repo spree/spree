@@ -26,7 +26,7 @@ module Spree
           # Do nothing
         else
           if referer_path && referer_path.match(/\/t\/(.*)/)
-            @taxon = Taxon.find_by_permalink($1)
+            @taxon = Spree::Taxon.find_by_permalink($1)
           end
         end
       end

@@ -25,7 +25,7 @@
           <%= link_to '', '#', :class => 'cancel-item icon_link icon-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
           <%= link_to '', '#', :class => 'edit-item icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
           <%= link_to '', '#', :class => 'split-item icon_link icon-resize-horizontal no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
-          <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove', :confirm => Spree.t(:are_you_sure)}, :title => Spree.t('delete') %>
+          <%= link_to '', '#', :class => 'delete-item icon-trash no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove' }, :title => Spree.t('delete') %>
         <% end %>
       </td>
     <% end %>

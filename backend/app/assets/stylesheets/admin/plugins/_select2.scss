@@ -63,7 +63,7 @@
     @extend [class^="icon-"]:before;
 
     position: absolute;
-    top: 13px;
+    top: 16px;
     left: 13px;
   }
 
@@ -105,6 +105,11 @@
   li {
     font-size: 85% !important;
 
+
+    &:nth-child(odd) {
+      background: #efefef;
+    }
+
     &.select2-highlighted {
       .select2-result-label {
         &, h6 {
@@ -131,7 +136,7 @@
   }
 
   .select2-highlighted {
-    background-color: $color-sel-bg;
+    background-color: $color-sel-bg !important;
   }
 }
 

@@ -481,8 +481,8 @@ module Spree
     end
 
     def empty!
-      line_items.destroy_all
       adjustments.destroy_all
+      line_items.destroy_all
     end
 
     def clear_adjustments!

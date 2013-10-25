@@ -202,8 +202,13 @@ module Spree
 
     def set_property(property_name, property_value)
       ActiveRecord::Base.transaction do
-        property = Property.where(name: property_name).first_or_create!(presentation: property_name)
-        product_property = ProductProperty.where(product_id: id, property_id: property.id).first_or_initialize
+        # Works around spree_i18n #301
+        property = if Property.exists?(name: property_name)
+          Property.where(name: property_name).first
+        else
+          Property.create(name: property_name, presentation: property_name)
+        end
+        product_property = ProductProperty.where(product_id: self.id, property_id: property.id).first_or_initialize
         product_property.value = property_value
         product_property.save!
       end
@@ -260,7 +265,7 @@ module Spree
       # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
       # when saving so we force a save using a hook.
       def save_master
-        master.save if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed || master.default_price.new_record)))
+        master.save if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
       end
 
       def ensure_master

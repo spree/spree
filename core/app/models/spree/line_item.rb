@@ -27,6 +27,8 @@ module Spree
     after_save :update_order
     after_destroy :update_order
 
+    delegate :name, :description, to: :variant
+
     attr_accessor :target_shipment
 
     def copy_price

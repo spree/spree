@@ -76,37 +76,23 @@ module Spree
         json_response["user_id"].should == current_api_user.id
       end
 
-      # Regression test for #3404
-      it "can specify additional parameters for a line item" do
+      it "cannot create an order with an abitrary price for the line item" do
         variant = create(:variant)
-        Order.should_receive(:create!).and_return(order = Spree::Order.new)
-        order.stub(:associate_user!)
-        order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
-        line_item.should_receive(:update_attributes).with("special" => true)
-        api_post :create, :order => { 
+        api_post :create, :order => {
           :line_items => {
             "0" => {
-              :variant_id => variant.to_param, :quantity => 5, :special => true
+              :variant_id => variant.to_param,
+              :quantity => 5,
+              :price => 0.44
             }
           }
         }
         response.status.should == 201
-      end
-
-      # Regression test for #3404
-      it "does not update line item needlessly" do
-        variant = create(:variant)
-        Order.should_receive(:create!).and_return(order = Spree::Order.new)
-        order.stub(:associate_user!)
-        order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
-        line_item.should_not_receive(:update_attributes)
-        api_post :create, :order => { 
-          :line_items => {
-            "0" => {
-              :variant_id => variant.to_param, :quantity => 5
-            }
-          }
-        }
+        order = Order.last
+        order.line_items.count.should == 1
+        order.line_items.first.variant.should == variant
+        order.line_items.first.quantity.should == 5
+        order.line_items.first.price.should == order.line_items.first.variant.price
       end
     end
 
@@ -155,17 +141,6 @@ module Spree
                                  :country_id => Country.first.id, :state_id => State.first.id} }
       let!(:payment_method) { create(:payment_method) }
 
-      it "can add line items" do
-        api_put :update, :id => order.to_param, :order => {
-          :line_items_attributes => [{:variant_id => create(:variant).id, :quantity => 2}] }
-
-        response.status.should == 200
-        json_response['item_total'].to_f.should_not == order.item_total.to_f
-        json_response['line_items'].count.should == 2
-        json_response['line_items'].first['quantity'].should == 1
-        json_response['line_items'].last['quantity'].should == 2
-      end
-
       it "updates quantities of existing line items" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
@@ -176,6 +151,18 @@ module Spree
         response.status.should == 200
         json_response['line_items'].count.should == 1
         json_response['line_items'].first['quantity'].should == 10
+      end
+
+      it "cannot set a price for a line item" do
+        variant = create(:variant)
+        api_put :update, :id => order.to_param, :order => {
+          :line_items_attributes => { order.line_items.first.id =>
+            { :variant_id => variant.id, :quantity => 2, :price => 0.44}
+          }
+        }
+        response.status.should == 200
+        json_response['line_items'].count.should == 1
+        expect(json_response['line_items'].first['price']).to eq(variant.price.to_s)
       end
 
       it "can add billing address" do

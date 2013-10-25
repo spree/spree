@@ -283,7 +283,7 @@ describe Spree::Variant do
 
       context 'when stock_items in stock' do
         before do
-          Spree::StockItem.any_instance.stub(count_on_hand: 10)
+          variant.stock_items.first.update_column(:count_on_hand, 10)
         end
 
         it 'returns true if stock_items in stock' do

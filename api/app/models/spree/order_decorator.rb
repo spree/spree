@@ -1,28 +1,34 @@
 Spree::Order.class_eval do
   def self.build_from_api(user, params)
-    completed_at = params.delete(:completed_at)
-    line_items = params.delete(:line_items_attributes) || {}
-    shipments = params.delete(:shipments_attributes) || []
-    payments = params.delete(:payments_attributes) || []
-    adjustments = params.delete(:adjustments_attributes) || []
+    begin
+      ensure_country_id_from_api params[:ship_address_attributes]
+      ensure_state_id_from_api params[:ship_address_attributes]
+      ensure_country_id_from_api params[:bill_address_attributes]
+      ensure_state_id_from_api params[:bill_address_attributes]
 
-    ensure_country_id_from_api params[:ship_address_attributes]
-    ensure_state_id_from_api params[:ship_address_attributes]
+      order = create!
+      order.associate_user!(user)
 
-    ensure_country_id_from_api params[:bill_address_attributes]
-    ensure_state_id_from_api params[:bill_address_attributes]
+      order.create_shipments_from_api params.delete(:shipments_attributes) || []
+      order.create_line_items_from_api params.delete(:line_items_attributes) || {}
+      order.create_adjustments_from_api params.delete(:adjustments_attributes) || []
+      order.create_payments_from_api params.delete(:payments_attributes) || []
+      order.complete_from_api params.delete(:completed_at)
 
-    order = create!(params)
-    order.associate_user!(user)
+      destroy_automatic_taxes_on_import(order, params)
+      order.update_attributes!(params)
 
-    order.create_shipments_from_api(shipments)
-    order.create_line_items_from_api(line_items)
-    order.create_adjustments_from_api(adjustments)
-    order.create_payments_from_api(payments)
-    order.complete_from_api(completed_at)
+      order.reload
+    rescue Exception => e
+      order.destroy if order && order.persisted?
+      raise e.message
+    end
+  end
 
-    order.save!
-    order.reload
+  def self.destroy_automatic_taxes_on_import(order, params)
+    if params.delete :import
+      order.adjustments.tax.destroy_all
+    end
   end
 
   def complete_from_api(completed_at)
@@ -81,7 +87,7 @@ Spree::Order.class_eval do
 
         extra_params = line_item.except(:variant_id, :quantity)
         line_item = self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
-        line_item.update_attributes(extra_params) unless extra_params.empty?
+        line_item.update_attributes(extra_params, as: :api) unless extra_params.empty?
       rescue Exception => e
         raise "#{e.message} #{line_item}"
       end
@@ -156,7 +162,7 @@ Spree::Order.class_eval do
   def update_line_items(line_item_params)
     return if line_item_params.blank?
     line_item_params.each do |id, attributes|
-      self.line_items.find(id).update_attributes!(attributes)
+      self.line_items.find(id).update_attributes!(attributes, :as => :api)
     end
     self.ensure_updated_shipments
   end

@@ -207,6 +207,40 @@ describe "Products" do
         page.should have_content("Name can't be blank")
       end
 
+      context "using a locale with a different decimal format " do
+        before do
+          # change English locale’s separator and delimiter to match 19,99 format
+          I18n.backend.store_translations(:en,
+            :number => {
+              :currency => {
+                :format => {
+                  :separator => ",",
+                  :delimiter => "."
+                }
+              }
+            })
+        end
+
+        after do
+          # revert changes to English locale
+          I18n.backend.store_translations(:en,
+            :number => {
+              :currency => {
+                :format => {
+                  :separator => ".",
+                  :delimiter => ","
+                }
+              }
+            })
+        end
+
+        it "should show localized price value on validation errors", :js => true do
+          fill_in "product_price", :with => "19,99"
+          click_button "Create"
+          find('input#product_price').value.should == '19,99'
+        end
+      end
+
       # Regression test for #2097
       it "can set the count on hand to a null value", :js => true do
         fill_in "product_name", :with => "Baseball Cap"
@@ -218,6 +252,7 @@ describe "Products" do
         page.should have_content("successfully updated!")
       end
     end
+    
 
     context "cloning a product", :js => true do
       it "should allow an admin to clone a product" do
