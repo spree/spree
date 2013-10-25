@@ -6,12 +6,22 @@ describe Spree::OrderInventory do
 
   subject { described_class.new(order, line_item) }
 
+  it 'inventory_units_for should return array of units for a given variant' do
+    units = subject.variant_units
+    units.map(&:variant_id).should == [line_item.variant.id]
+  end
+
   context "when order is missing inventory units" do
     before { line_item.update_column(:quantity, 2) }
 
-    it 'creates the proper number of inventory units' do
+    it 'should be a messed up order' do
+      order.shipments.first.inventory_units_for(line_item.variant).size.should == 1
+      line_item.reload.quantity.should == 2
+    end
+
+    it 'should increase the number of inventory units' do
       subject.verify
-      expect(subject.item_units.count).to eq 2
+      order.reload.shipments.first.inventory_units_for(line_item.variant).size.should == 2
     end
   end
 
@@ -29,7 +39,6 @@ describe Spree::OrderInventory do
 
     context "inventory units state" do
       before { shipment.inventory_units.destroy_all }
-
       it 'sets inventory_units state as per stock location availability' do
         shipment.stock_location.should_receive(:fill_status).with(subject.variant, 5).and_return([3, 2])
 
@@ -49,8 +58,8 @@ describe Spree::OrderInventory do
       it "creates only on hand inventory units" do
         variant.stock_items.destroy_all
 
-        # The before_save callback in LineItem would verify inventory
-        line_item = order.contents.add variant, 1, nil, shipment
+        line_item = order.contents.add variant, 1
+        subject.verify(shipment)
 
         units = shipment.inventory_units_for(line_item.variant)
         expect(units.count).to eq 1
@@ -106,12 +115,9 @@ describe Spree::OrderInventory do
     end
 
     context "when no shipments already contain this varint" do
-      before do
-        subject.line_item.reload
-        subject.item_units.destroy_all
-      end
-
       it 'selects first non-shipped shipment that leaves from same stock_location' do
+        subject.send(:remove_from_shipment, order.shipments.first, line_item.quantity)
+
         shipment = subject.send(:determine_target_shipment)
         shipment.reload
         shipment.shipped?.should be_false
@@ -137,7 +143,7 @@ describe Spree::OrderInventory do
 
     it 'should decrease the number of inventory units' do
       subject.verify
-      expect(subject.item_units.count).to eq 2
+      order.reload.shipments.first.inventory_units_for(line_item.variant).size.should == 2
     end
 
     context '#remove_from_shipment' do

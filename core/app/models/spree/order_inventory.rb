@@ -18,24 +18,25 @@ module Spree
     def verify(shipment = nil)
       if order.completed? || shipment.present?
 
-        if item_units.size < line_item.quantity
-          quantity = line_item.quantity - item_units.size
+        if variant_units.size < line_item.quantity
+          quantity = line_item.quantity - variant_units.size
 
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
-        elsif item_units.size > line_item.quantity
-          remove(item_units, shipment)
+        elsif variant_units.size > line_item.quantity
+          remove(variant_units, shipment)
         end
       end
     end
 
-    def item_units
-      line_item.inventory_units
+    def variant_units
+      units = order.shipments.collect{|s| s.inventory_units.to_a}.flatten
+      units.group_by(&:variant_id)[variant.id] || []
     end
 
     private
-      def remove(item_units, shipment = nil)
-        quantity = item_units.size - line_item.quantity
+      def remove(variant_units, shipment = nil)
+        quantity = variant_units.size - line_item.quantity
 
         if shipment.present?
           remove_from_shipment(shipment, quantity)
@@ -53,22 +54,21 @@ module Spree
       # first unshipped that's leaving from a stock_location that stocks this variant
       def determine_target_shipment
         shipment = order.shipments.detect do |shipment|
-          shipment.ready_or_pending? && shipment.include?(variant)
+          (shipment.ready? || shipment.pending?) && shipment.include?(variant)
         end
 
         shipment ||= order.shipments.detect do |shipment|
-          shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
+          (shipment.ready? || shipment.pending?) && variant.stock_location_ids.include?(shipment.stock_location_id)
         end
       end
 
       def add_to_shipment(shipment, quantity)
         if variant.should_track_inventory?
           on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
-
-          on_hand.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
-          back_order.times { shipment.set_up_inventory('backordered', variant, order, line_item) }
+          on_hand.times { shipment.set_up_inventory('on_hand', variant, order) }
+          back_order.times { shipment.set_up_inventory('backordered', variant, order) }
         else
-          quantity.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
+          quantity.times { shipment.set_up_inventory('on_hand', variant, order) }
         end
 
         # adding to this shipment, and removing from stock_location
