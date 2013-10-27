@@ -85,7 +85,6 @@ Send a shipment to Fosdick .
       },
       "order": {},
       "original": {}
-      ]
     }
 }
 ```
