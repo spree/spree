@@ -8,11 +8,8 @@
     </tr>
 
     <% if order.line_item_adjustments.exists? %>
-      <tbody data-hook="order_details_price_adjustments">
-        <tr>
-          <td colspan="2">Item adjustments</td>
-        </tr>
-        <% @order.line_item_adjustments.group_by(&:label).each do |label, adjustments| %>
+      <tbody data-hook="order_details_promotion_adjustments">
+        <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td><%= label %></td>
             <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
@@ -21,27 +18,24 @@
       </tbody>
     <% end %>
 
-    <% if order.shipment_total > 0 %>
+    <% @order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+      <tbody data-hook="order_details_tax_adjustments">
+        <% @order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+          <tr class="total">
+            <td><%= label %></td>
+            <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    <% end %>
+
+
+    <% @order.shipments.each do |shipment| %>
       <tr data-hook="shipping_total">
-        <td><strong><%= Spree.t(:shipping_total) %>:</strong></td>
-        <td><strong><%= Spree::Money.new(order.shipment_total).to_html %></strong></td>
+        <td><%= shipment.shipping_method.name %></td>
+        <td><%= shipment.display_discounted_cost %></td>
       </tr>
     <% end %>
-
-    <% if order.shipment_adjustments.exists? %>
-      <tbody data-hook="order_details_price_adjustments">
-        <tr>
-          <td colspan="2">Shipment adjustments</td>
-        </tr>
-        <% @order.shipment_adjustments.group_by(&:label).each do |label, adjustments| %>
-          <tr class="total">
-            <td><%= label %></td>
-            <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    <% end %>
-
 
     <% if order.adjustments.eligible.exists? %>
       <tbody id="summary-order-charges" data-hook>
