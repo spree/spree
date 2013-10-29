@@ -69,17 +69,6 @@ Send a shipment to Dotcom Distribution.
             "options": {
               "option-name": "value"
             }
-          },
-          {
-            "name": "Feet",
-            "sku": "2002SSBS",
-            "external_ref": "",
-            "quantity": 1,
-            "price": 29.0,
-            "variant_id": 1234,
-            "options": {
-              "toes": "present"
-            }
           }
         ]
       },
@@ -89,6 +78,14 @@ Send a shipment to Dotcom Distribution.
     }
 }
 ```
+
+#### Parameters
+
+| Name | Value | Data Type |Example |
+| :----| :-----| :------ |:------ |
+| api_key | Your Dotcom Distribution API key | string | dj20492dhjkdjeh2838w7 |
+| password | Your Dotcom Distribution account password | string | dj20492dhjkdjeh2838w7 |
+| shipping_lookup | Spree to Dotcom Distribution shipping methods' mapping | list | [{'UPS Ground (USD)' => '03'}, {'UPS Two Day (USD)' => '02'}] |
 
 #### Response
 
@@ -125,11 +122,11 @@ Track shipment dispatches.
 
 #### Parameters
 
-| Name | Value | Example |
-| :----| :-----| :------ |
-| api_key | Your Dotcom Distribution API key | dj20492dhjkdjeh2838w7 |
-| password | Your Dotcom Distribution account password | dj20492dhjkdjeh2838w7 |
-| last_polling_datetime | Initial date shipment polling will start from | 2013-01-01 |
+| Name | Value | Data Type |Example |
+| :----| :-----| :------ |:------ |
+| api_key | Your Dotcom Distribution API key | string |dj20492dhjkdjeh2838w7 |
+| password | Your Dotcom Distribution account password | string| dj20492dhjkdjeh2838w7 |
+| last_polling_datetime | Initial date shipment polling will start from | string | 2013-10-28 3:15:21 -0400 |
 
 #### Response
 
@@ -142,15 +139,15 @@ Track shipment dispatches.
       "message": "shipment:confirm",
       "payload": {
         "shipment": {
-          "number": "70201201334520004",
-          "order_number": "104-0444357-8954627",
-          "tracking_number": "915293072790136"
+          "number": "H662132822",
+          "order_number": "R894254432",
+          "tracking": "1ZV2X5140100003086"
         }
       },
       "parameters": [
         {
           "name": "dotcom.last_polling_datetime",
-          "value": "2013-05-05"
+          "value": "2013-10-29 3:15:21 -0400"
         }
       ]
     }
