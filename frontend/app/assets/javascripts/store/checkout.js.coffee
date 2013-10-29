@@ -17,7 +17,7 @@ Spree.ready ($) ->
     ($ '#checkout_form_address').validate()
 
     getCountryId = (region) ->
-      $('p#' + region + 'country select').val()
+      $('#' + region + 'country select').val()
 
     updateState = (region) ->
       countryId = getCountryId(region)
@@ -35,7 +35,7 @@ Spree.ready ($) ->
       statesRequired = data.states_required
       states = data.states
 
-      statePara = ($ 'p#' + region + 'state')
+      statePara = ($ '#' + region + 'state')
       stateSelect = statePara.find('select')
       stateInput = statePara.find('input')
       stateSpanRequired = statePara.find('state-required')
@@ -70,10 +70,10 @@ Spree.ready ($) ->
         stateInput.removeClass('hidden')
         stateSelect.removeClass('required')
 
-    ($ 'p#bcountry select').change ->
+    ($ '#bcountry select').change ->
       updateState 'b'
 
-    ($ 'p#scountry select').change ->
+    ($ '#scountry select').change ->
       updateState 's'
 
     updateState 'b'
