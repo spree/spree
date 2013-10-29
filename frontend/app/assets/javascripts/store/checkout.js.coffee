@@ -10,7 +10,7 @@ Spree.ready ($) ->
     getCountryId = (region) ->
       $('#' + region + 'country select').val()
 
-    updateState = (region) ->
+    Spree.updateState = (region) ->
       countryId = getCountryId(region)
       if countryId?
         unless Spree.Checkout[countryId]?
@@ -18,11 +18,11 @@ Spree.ready ($) ->
             Spree.Checkout[countryId] =
               states: data.states
               states_required: data.states_required
-            fillStates(Spree.Checkout[countryId], region)
+            Spree.fillStates(Spree.Checkout[countryId], region)
         else
-          fillStates(Spree.Checkout[countryId], region)
+          Spree.fillStates(Spree.Checkout[countryId], region)
 
-    fillStates = (data, region) ->
+    Spree.fillStates = (data, region) ->
       statesRequired = data.states_required
       states = data.states
 
@@ -61,12 +61,12 @@ Spree.ready ($) ->
         stateSelect.removeClass('required')
 
     ($ '#bcountry select').change ->
-      updateState 'b'
+      Spree.updateState 'b'
 
     ($ '#scountry select').change ->
-      updateState 's'
+      Spree.updateState 's'
 
-    updateState 'b'
+    Spree.updateState 'b'
 
     order_use_billing = ($ 'input#order_use_billing')
     order_use_billing.change ->
@@ -79,7 +79,7 @@ Spree.ready ($) ->
       else
         ($ '#shipping .inner').show()
         ($ '#shipping .inner input, #shipping .inner select').prop 'disabled', false
-        updateState('s')
+        Spree.updateState('s')
     
     update_shipping_form_state order_use_billing
 
