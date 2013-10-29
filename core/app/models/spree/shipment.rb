@@ -138,6 +138,10 @@ module Spree
       cost + promo_total
     end
 
+    def display_discounted_cost
+      Spree::Money.new(discounted_cost, { currency: currency })
+    end
+
     def display_item_cost
       Spree::Money.new(item_cost, { currency: currency })
     end

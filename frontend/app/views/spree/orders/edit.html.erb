@@ -18,10 +18,6 @@
           <%= render :partial => 'form', :locals => { :order_form => order_form } %>
         </div>
 
-        <div id="subtotal" data-hook class="columns sixteen alpha omega">
-          <h5><%= Spree.t(:subtotal) %>: <span class="order-total"><%= @order.display_total.to_html %></span></h5>
-        </div>
-
         <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
           <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code) %>
           <%= button_tag :class => 'primary', :id => 'update-button' do %>

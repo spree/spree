@@ -916,6 +916,8 @@ p[data-hook="use_billing"] {
 /*--------------------------------------*/
 table#cart-detail {
   width: 100%;
+  border-collapse: separate;
+
   tbody#line_items {
     tr {
 
@@ -925,7 +927,7 @@ table#cart-detail {
       }
       td[data-hook="cart_item_quantity"] {
         .line_item_quantity {
-          width: 40px;
+          width: 65px;
         }
       }
       td[data-hook="cart_item_delete"] {
@@ -956,8 +958,21 @@ div[data-hook="inside_cart_form"] {
 }
 
 #empty-cart {
-  margin-top: -75px;
+  margin-top: -50px;
   float: left;
+}
+
+.cart-subtotal, .cart-total {
+  background: #00ADEE;
+
+  td h5 {
+    color: #fff;
+  }
+}
+
+.adjustment:nth-child(even) {
+  background: #eaeaea;
+  
 }
 
 /*--------------------------------------*/
