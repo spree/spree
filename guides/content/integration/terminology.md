@@ -8,7 +8,7 @@ This guide provides a summary of the terms often used when referencing the Spree
 
 An integration is a collection of [services](#services) that provide support for connecting your storefront to third-party or in-house applications, like Amazon, Mandrill, Quickbooks, Quiet Logistics and many more.
 
-Each integration is generally provided by a single [endpoint](#endpoints) application, that are responsible for processing JSON [messages](#messages) that are POST'd to it and relaying the information to the third-party systems.
+Each integration is generally provided by a single [endpoint](#endpoints) application, that is responsible for processing JSON [messages](#messages) that are POST'd to it and relaying the information to the third-party systems.
 
 ## Messages
 
@@ -72,7 +72,7 @@ end
 ```
 
 ***
-For more information on how Services communicate please see [Messaging Basics](messaging basics).
+For more information on how Services communicate please see [Messaging Basics](message_basics).
 ***
 
 ### Service Requests
@@ -111,7 +111,7 @@ Server: WEBrick/1.3.1 (Ruby/1.9.3/2011-10-30)
 
 Mappings represent a subscription for specific message types to an endpoint's service, for example `order:new` to the Mandrill Order Confirmation service. Mappings include all the details required to provide routing, filtering, uniqueness protection and failure handling.
 
-For more please review the [Mappings Guide](/integration/mapping_basics.html)
+For more please review the [Mappings Guide](mapping_basics)
 
 ## Notifications
 
@@ -119,7 +119,7 @@ Notifications are human readable event logs that can be returned by endpoints as
 
 Notifications are also messages which can be mapped to other endpoints for processing (like logging tickets in Zendesk for failures or sending emails).
 
-For more please review the [Notification Messages guide](/integration/notification_messages.html)
+For more please review the [Notification Messages guide](notification_messages)
 
 ## Schedulers
 
