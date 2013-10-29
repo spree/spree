@@ -62,12 +62,18 @@ module Spree
     end
 
     def rules_are_eligible?(promotable, options = {})
+      # Promotions without rules are eligible by default.
       return true if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
+      specific_rules = rules.for(promotable)
       if match_policy == 'all'
-        rules.for(promotable).all?(&eligible)
+        # If there are rules for this promotion, but no rules for this 
+        # particular promotable, then the promotion is ineligible by default.
+        specific_rules.any? && specific_rules.all?(&eligible)
       else
-        rules.for(promotable).any?(&eligible)
+        # If there are no rules for this promotable, then this will return false.
+        # If there are rules for this promotable, but they are ineligible, this will return false.
+        specific_rules.any?(&eligible)
       end
     end
 

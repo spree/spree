@@ -14,6 +14,7 @@ module Spree
     # handler to activate promos as they wish once an item is added to cart
     class Cart
       attr_reader :line_item, :order
+      attr_accessor :error, :success
 
       def initialize(order, line_item=nil)
         @order, @line_item = order, line_item
@@ -21,7 +22,9 @@ module Spree
 
       def activate
         promotions.each do |promotion|
-          promotion.activate(line_item: line_item, order: order)
+          if promotion.eligible?(line_item) || promotion.eligible?(order)
+            promotion.activate(line_item: line_item, order: order)
+          end
         end
       end
 
