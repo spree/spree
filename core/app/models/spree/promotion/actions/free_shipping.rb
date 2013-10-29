@@ -9,6 +9,7 @@ module Spree
           results = order.shipments.map do |shipment|
             return false if promotion_credit_exists?(shipment)
             shipment.adjustments.create!(
+              order: shipment.order, 
               amount: compute_amount(shipment),
               source: self,
               label: label,
