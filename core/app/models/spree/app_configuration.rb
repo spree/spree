@@ -41,6 +41,7 @@ module Spree
     preference :currency, :string, default: "USD"
     preference :currency_decimal_mark, :string, default: "."
     preference :currency_symbol_position, :string, default: "before"
+    preference :currency_sign_before_symbol, :boolean, default: true
     preference :currency_thousands_separator, :string, default: ","
     preference :display_currency, :boolean, default: false
     preference :default_country_id, :integer
