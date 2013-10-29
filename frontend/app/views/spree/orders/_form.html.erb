@@ -12,12 +12,12 @@
   <tbody id="line_items" data-hook>
     <%= render partial: 'line_item', collection: order_form.object.line_items, locals: {order_form: order_form} %>
   </tbody>
-  <tr class="cart-subtotal">
-    <td colspan="4"><h5><%= Spree.t(:subtotal) %></h5></th>
-    <td colspan><h5><%= order_form.object.display_item_total %></h5></td>
-    <td></td>
-  </tr>
   <% if @order.adjustments.exists? || @order.line_item_adjustments.exists? || @order.shipment_adjustments.exists? %>
+    <tr class="cart-subtotal">
+      <td colspan="4"><h5><%= Spree.t(:subtotal) %></h5></th>
+      <td colspan><h5><%= order_form.object.display_item_total %></h5></td>
+      <td></td>
+    </tr>
     <%= render "spree/orders/adjustments" %>
   <% end %>
   <tr class="cart-total">
