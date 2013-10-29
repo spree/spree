@@ -9,6 +9,7 @@ FactoryGirl.define do
     height { generate(:random_float) }
     width  { generate(:random_float) }
     depth  { generate(:random_float) }
+    is_master 0
 
     product { |p| p.association(:base_product) }
     option_values { [create(:option_value)] }
@@ -20,5 +21,10 @@ FactoryGirl.define do
       # on_hand 5
       product { |p| p.association(:product) }
     end
+
+    factory :master_variant do
+      is_master 1
+    end
+
   end
 end

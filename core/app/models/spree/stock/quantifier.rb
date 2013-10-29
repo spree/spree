@@ -5,11 +5,12 @@ module Spree
 
       def initialize(variant)
         @variant = variant
+        @variant = Spree::Variant.find_by_id(@variant) unless @variant.respond_to?(:should_track_inventory?)
         @stock_items = Spree::StockItem.joins(:stock_location).where(:variant_id => @variant, Spree::StockLocation.table_name =>{ :active => true})
       end
 
       def total_on_hand
-        if Spree::Config.track_inventory_levels
+        if @variant.should_track_inventory?
           stock_items.sum(:count_on_hand)
         else
           Float::INFINITY

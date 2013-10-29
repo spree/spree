@@ -505,7 +505,7 @@ describe Spree::Product do
   describe '#total_on_hand' do
     it 'should be infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false
-      build(:product).total_on_hand.should eql(Float::INFINITY)
+      build(:product, :variants_including_master => [build(:master_variant)]).total_on_hand.should eql(Float::INFINITY)
     end
 
     it 'should return master variants quantity' do
