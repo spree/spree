@@ -69,6 +69,7 @@ describe "Address", inaccessible: true do
 
         select france.name, :from => @country_css
         page.find(@state_name_css).should have_content('')
+        sleep(2)
         find(@state_name_css)['class'].should_not =~ /hidden/
         find(@state_name_css)['class'].should_not =~ /required/
         find(@state_select_css)['class'].should_not =~ /required/
