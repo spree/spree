@@ -74,7 +74,7 @@ describe "Order Details", js: true do
       end
 
       it "can add tracking information" do
-        within("table.index tr:nth-child(5)") do
+        within(".show-tracking") do
           click_icon :edit
         end
         fill_in "tracking", :with => "FOOBAR"
