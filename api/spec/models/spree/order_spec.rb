@@ -138,6 +138,25 @@ module Spree
       order.ship_address.state.name.should eq 'Alabama'
     end
 
+    context "state passed is not associated with country" do
+      let(:params) do
+        params = { :ship_address_attributes => ship_address,
+                   :line_items_attributes => line_items }
+      end
+
+      let(:other_state) { create(:state, name: "Uhuhuh", country: create(:country)) }
+
+      before do
+        ship_address.delete(:state_id)
+        ship_address[:state] = { 'name' => other_state.name }
+      end
+
+      it 'sets states name instead of state id' do
+        order = Order.build_from_api(user, params)
+        expect(order.ship_address.state_name).to eq other_state.name
+      end
+    end
+
     it 'sets state name if state record not found' do
       ship_address.delete(:state_id)
       ship_address[:state] = { 'name' => 'XXX' }
@@ -183,7 +202,7 @@ module Spree
 
     it 'ensures_state_id for state fields' do
       [:name, :abbr].each do |field|
-        address = { :state => { field => state.send(field) }}
+        address = { country_id: country.id, :state => { field => state.send(field) }}
         Order.ensure_state_id_from_api(address)
         address[:state_id].should eq state.id
       end
