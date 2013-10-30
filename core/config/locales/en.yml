@@ -404,6 +404,9 @@ en:
     card_type: Brand
     card_type_is: Card type is
     cart: Cart
+    cart_subtotal:
+      one: 'Subtotal (1 item)'
+      other: 'Subtotal (%{count} items)'
     categories: Categories
     category: Category
     check_for_spree_alerts: Check for Spree alerts

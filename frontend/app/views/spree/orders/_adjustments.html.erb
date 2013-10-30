@@ -9,7 +9,7 @@
 
   <% @order.shipments.each do |shipment| %>
     <tr>
-      <td colspan="4"><h5><%= Spree.t(:shipping) %>: <%= shipment.shipping_method.name %></h5></td>
+      <td colspan="4" align='right'><h5><%= Spree.t(:shipping) %>: <%= shipment.shipping_method.name %></h5></td>
       <td colspan='2'>
         <h5><%= shipment.display_discounted_cost %></h5>
       </td>

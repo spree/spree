@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'font-awesome';
 
 /*--------------------------------------*/
 /* Basic styles
@@ -785,6 +786,12 @@ ul#products {
           padding: 10px;
         }
       }
+    }
+
+    &#subtotal {
+      text-transform: uppercase;
+      font-size: $base_font_size + 4;
+      color: $body_text_color;
     }
   }
 
