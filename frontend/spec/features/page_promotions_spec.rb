@@ -24,7 +24,7 @@ describe 'page promotions' do
     visit '/content/test'
     visit '/cart'
     page.should have_content("Promotion ($10 off) -$10.00")
-    page.should have_content("Subtotal: $10.00")
+    page.should have_content("Subtotal (1 item) $20.00")
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
