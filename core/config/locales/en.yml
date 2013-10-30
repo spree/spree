@@ -710,6 +710,7 @@ en:
     no_rules_added: No rules added
     no_resource_found: ! 'No %{resource} found'
     no_shipping_methods_found: No shipping methods found
+    no_shipping_method_selected: No shipping method selected.
     no_trackers_found: No Trackers Found
     no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.
