@@ -72,7 +72,7 @@ logs.
 <% ruby do %>
     Spree::BaseController.class_eval do
       def local_request?
-        ENV["RAILS_ENV] !="production" || current_user.present? &&
+        ENV["RAILS_ENV"] !="production" || current_user.present? &&
           current_user.has_role?(:admin)
       end
     end
