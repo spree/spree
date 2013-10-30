@@ -13,11 +13,19 @@ module CapybaraExt
   end
 
   def within_row(num, &block)
-    within("table.index tbody tr:nth-child(#{num})", &block)
+    if example.metadata[:js]
+      within("table.index tbody tr:nth-child(#{num})", &block)
+    else
+      within(:xpath, all("table.index tbody tr")[num-1].path, &block)
+    end
   end
 
   def column_text(num)
-    find("td:nth-child(#{num})").text
+    if example.metadata[:js]
+      find("td:nth-child(#{num})").text
+    else
+      all("td")[num-1].text
+    end
   end
 
   def set_select2_field(field, value)
