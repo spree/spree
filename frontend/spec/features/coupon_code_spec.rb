@@ -162,7 +162,8 @@ describe "Coupon code promotions", :js => true do
             # Therefore: promotion discount amount is $12.
             page.should have_content("Promotion (Onetwo) -$12.00")
           end
-          within '.order-total' do
+
+          within '.cart-total' do
             page.should have_content("$48.00")
           end
         end
