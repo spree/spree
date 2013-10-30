@@ -54,6 +54,26 @@
             <% end %>
           </td>
         </tr>
+
+
+        <tr class="show-method total">
+          <% if shipment.shipping_method %>
+            <td colspan="4">
+              <strong><%= shipment.shipping_method.name %></strong>
+            </td>
+            <td class="total" align="center">
+              <span><%= shipment.cost %></span>
+            </td>
+          <% else %>
+            <td colspan='5'><%= Spree.t(:no_shipping_method_selected) %></td>
+          <% end %>
+
+          <td class="actions">
+            <% if can? :update, shipment %>
+              <%= link_to '', '#', :class => 'edit-method icon_link icon-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
+            <% end %>
+          </td>
+        </tr>
       <% end %>
 
       <tr class="edit-tracking hidden total">
