@@ -173,8 +173,7 @@ describe "Promotion adjustments", :js => true do
             # 20% off $60 item_total (2x $10 + 2x $20)
             page.should have_content("Promotion (Onetwo) -$12.00")
           end
-
-          within '.cart-total' do
+          within '.order-total' do
             page.should have_content("$48.00")
           end
         end
