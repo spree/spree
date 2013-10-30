@@ -14,7 +14,7 @@ describe "Tax Rates" do
   it "can see a tax rate in the list if the tax category has been deleted" do
     tax_rate.tax_category.update_column(:deleted_at, Time.now)
     lambda { click_link "Tax Rates" }.should_not raise_error
-    within("table tbody td:nth-child(3)") do
+    within(:xpath, all("table tbody td")[2].path) do
       page.should have_content("N/A")
     end
   end
