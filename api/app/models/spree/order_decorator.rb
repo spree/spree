@@ -153,6 +153,7 @@ Spree::Order.class_eval do
       end
 
       address.delete(:state)
+      search[:country_id] = address[:country_id]
 
       if state = Spree::State.where(search).first
         address[:state_id] = state.id
