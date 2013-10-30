@@ -29,13 +29,10 @@
       </tbody>
     <% end %>
 
-
-    <% @order.shipments.each do |shipment| %>
-      <tr data-hook="shipping_total">
-        <td><%= shipment.shipping_method.name %></td>
-        <td><%= shipment.display_discounted_cost %></td>
-      </tr>
-    <% end %>
+    <tr data-hook="shipping_total">
+      <td><%= Spree.t(:shipping_total) %></td>
+      <td><%= Spree::Money.new(@order.shipment_total).to_html %></td>
+    </tr>
 
     <% if order.adjustments.eligible.exists? %>
       <tbody id="summary-order-charges" data-hook>
