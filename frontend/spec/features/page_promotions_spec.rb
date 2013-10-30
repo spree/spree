@@ -20,17 +20,17 @@ describe 'page promotions' do
   end
 
   it "automatically applies a page promotion upon visiting" do
-    page.should_not have_content("Promotion ($10 off) $-10.00")
+    page.should_not have_content("Promotion ($10 off) -$10.00")
     visit '/content/test'
     visit '/cart'
-    page.should have_content("Promotion ($10 off) $-10.00")
+    page.should have_content("Promotion ($10 off) -$10.00")
     page.should have_content("Subtotal: $10.00")
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
-    page.should_not have_content("Promotion ($10 off) $-10.00")
+    page.should_not have_content("Promotion ($10 off) -$10.00")
     visit '/content/cvv'
     visit '/cart'
-    page.should_not have_content("Promotion ($10 off) $-10.00")
+    page.should_not have_content("Promotion ($10 off) -$10.00")
   end
 end
