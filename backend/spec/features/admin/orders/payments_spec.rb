@@ -31,7 +31,7 @@ describe 'Payments' do
   it 'should be able to list and create payment methods for an order', js: true do
     find('#payment_status').text.should == 'BALANCE DUE'
     within_row(1) do
-      column_text(2).should == '$50.00'
+      column_text(2).should == '$150.00'
       column_text(3).should == 'Credit Card'
       column_text(4).should == 'CHECKOUT'
     end
@@ -41,7 +41,7 @@ describe 'Payments' do
     page.should have_content('Payment Updated')
 
     within_row(1) do
-      column_text(2).should == '$50.00'
+      column_text(2).should == '$150.00'
       column_text(3).should == 'Credit Card'
       column_text(4).should == 'VOID'
     end
@@ -127,8 +127,8 @@ describe 'Payments' do
         click_icon(:edit)
         fill_in('amount', with: '$1')
         click_icon(:cancel)
-        page.should have_selector('td.amount span', text: '$50.00')
-        payment.reload.amount.should == 50.00
+        page.should have_selector('td.amount span', text: '$150.00')
+        payment.reload.amount.should == 150.00
       end
     end
 
@@ -138,7 +138,7 @@ describe 'Payments' do
         fill_in('amount', with: 'invalid')
         click_icon(:save)
         find('td.amount input').value.should == 'invalid'
-        payment.reload.amount.should == 50.00
+        payment.reload.amount.should == 150.00
       end
       page.should have_selector('.flash.error', text: 'Invalid resource. Please fix errors and try again.')
     end
