@@ -19,7 +19,7 @@ module Spree
               :payment_method_id => payment_method.id
             },
             :payment_source => {
-              "1" => {:number => Spree::Gateway::Bogus::TEST_VISA.sample}
+              payment_method.id => {:number => Spree::Gateway::Bogus::TEST_VISA.sample}
             }
           }
           spree_post :create, attributes
