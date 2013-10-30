@@ -1,12 +1,12 @@
 Spree.ready ($) ->
   if ($ '#checkout_form_payment').is('*')
   
-      $(".cardNumber").payment('formatCardNumber')
-  $(".cardExpiry").payment('formatCardExpiry')
-  $(".cardCode").payment('formatCardCVC')
+    $(".cardNumber").payment('formatCardNumber')
+    $(".cardExpiry").payment('formatCardExpiry')
+    $(".cardCode").payment('formatCardCVC')
 
-  $(".cardNumber").change ->
-    $(this).parent().siblings(".ccType").val($.payment.cardType(@value))
+    $(".cardNumber").change ->
+      $(this).parent().siblings(".ccType").val($.payment.cardType(@value))
 
     ($ 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(->
       ($ '#payment-methods li').hide()
