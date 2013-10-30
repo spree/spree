@@ -14,6 +14,11 @@ describe Spree::LineItem do
       line_item.variant.destroy
       expect(line_item.reload.variant).to be_a Spree::Variant
     end
+
+    it "returns inventory when a line item is destroyed" do
+      Spree::OrderInventory.any_instance.should_receive(:verify).with(line_item, nil)
+      line_item.destroy
+    end
   end
 
   context "#save" do
