@@ -128,7 +128,7 @@ module Spree
 
     it 'can build an order from API with state attributes' do
       ship_address.delete(:state_id)
-      ship_address[:state] = { 'name' => 'Alabama' }
+      ship_address[:state] = { 'name' => state.name }
       params = { :ship_address_attributes => ship_address,
                  :line_items_attributes => line_items }
 
@@ -136,15 +136,14 @@ module Spree
       order.ship_address.state.name.should eq 'Alabama'
     end
 
-    it 'handles state lookup exceptions' do
+    it 'sets state name if state record not found' do
       ship_address.delete(:state_id)
       ship_address[:state] = { 'name' => 'XXX' }
       params = { :ship_address_attributes => ship_address,
                  :line_items_attributes => line_items }
 
-      expect {
-        order = Order.build_from_api(user, params)
-      }.to raise_error /XXX/
+      order = Order.build_from_api(user, params)
+      expect(order.ship_address.state_name).to eq 'XXX'
     end
 
     context 'variant not deleted' do
@@ -186,13 +185,6 @@ module Spree
         Order.ensure_state_id_from_api(address)
         address[:state_id].should eq state.id
       end
-    end
-
-    it "raises with proper message when cant find state" do
-      address = { :state => { "name" => "NoNoState" } }
-      expect {
-        Order.ensure_state_id_from_api(address)
-      }.to raise_error /NoNoState/
     end
 
     context "shippments" do
