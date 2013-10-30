@@ -19,9 +19,10 @@
         <h6><%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
         <div class="delivery">
           <% order.shipments.each do |shipment| %>
-            <%= shipment.stock_location.name %>
-            <%= shipment.shipping_method.name %>
-            <br/>
+            <div>
+              <i class='icon-truck'></i>
+              <%= Spree.t(:shipment_details, :stock_location => shipment.stock_location.name, :shipping_method => shipment.shipping_method.name) %>
+            </div>
           <% end %>
         </div>
         <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => @order}) if @order.shipped? %>

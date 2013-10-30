@@ -953,6 +953,7 @@ en:
     ship_total: Ship Total
     shipment: Shipment
     shipment_adjustments: "Shipment adjustments"
+    shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_inc_vat: Shipment including VAT
     shipment_mailer:
       shipped_email:
