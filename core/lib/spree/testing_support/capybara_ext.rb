@@ -13,7 +13,7 @@ module CapybaraExt
   end
 
   def within_row(num, &block)
-    within("table.index tbody tr:nth-child(#{num})", &block)
+    within(:xpath, all("table.index tbody tr")[num-1].path, &block)
   end
 
   def column_text(num)
