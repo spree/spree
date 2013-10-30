@@ -16,10 +16,10 @@ module Spree
             :card => "new",
             :payment => {
               :amount => order.total,
-              :payment_method_id => payment_method.id
+              :payment_method_id => payment_method.id.to_s
             },
             :payment_source => {
-              payment_method.id => {:number => Spree::Gateway::Bogus::TEST_VISA.sample}
+              payment_method.id.to_s => {:number => Spree::Gateway::Bogus::TEST_VISA.sample}
             }
           }
           spree_post :create, attributes
