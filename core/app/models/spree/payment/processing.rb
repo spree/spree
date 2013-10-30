@@ -132,9 +132,7 @@ module Spree
       protect_from_connection_error do
         check_environment
 
-        response = payment_method.send(action, (amount * 100).round,
-                                       source,
-                                       gateway_options)
+        response = payment_method.send(action, money.money.cents, source, gateway_options)
         handle_response(response, success_state, :failure)
       end
     end
