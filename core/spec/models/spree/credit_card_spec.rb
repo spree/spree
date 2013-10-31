@@ -103,13 +103,13 @@ describe Spree::CreditCard do
       credit_card.should_not be_valid
       credit_card.errors[:base].should be_blank
     end
-    
+
     it "does not run expiration in the past validation if year and month are empty" do
       credit_card.year = ""
       credit_card.month = ""
       credit_card.should_not be_valid
       credit_card.errors[:card].should be_blank
-    end 
+    end
 
     it "should only validate on create" do
       credit_card.attributes = valid_credit_card_attributes
@@ -164,6 +164,18 @@ describe Spree::CreditCard do
       expect(credit_card.year).to eq('2014')
     end
 
+    it "can set with a 2-digit month and 4-digit year without whitespace" do
+      credit_card.expiry = '04/14'
+      expect(credit_card.month).to eq('04')
+      expect(credit_card.year).to eq('2014')
+    end
+
+    it "can set with a 2-digit month and 4-digit year without whitespace" do
+      credit_card.expiry = '04/2014'
+      expect(credit_card.month).to eq('04')
+      expect(credit_card.year).to eq('2014')
+    end
+
     it "does not blow up when passed an empty string" do
       lambda { credit_card.expiry = '' }.should_not raise_error
     end
@@ -186,6 +198,36 @@ describe Spree::CreditCard do
       credit_card.cc_type = 'some_outlandish_cc_type'
       credit_card.cc_type.should == 'some_outlandish_cc_type'
     end
+
+    it "assigns the type based on card number in the event of js failure" do
+      credit_card.number = '4242424242424242'
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == 'visa'
+
+      credit_card.number = '5555555555554444'
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == 'master'
+
+      credit_card.number = '378282246310005'
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == 'american_express'
+
+      credit_card.number = '30569309025904'
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == 'diners_club'
+
+      credit_card.number = '3530111333300000'
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == 'jcb'
+
+      credit_card.number = ''
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == ''
+
+      credit_card.number = nil
+      credit_card.cc_type = ''
+      credit_card.cc_type.should == ''
+    end
   end
 
   context "#associations" do
@@ -193,7 +235,7 @@ describe Spree::CreditCard do
       expect { credit_card.payments.to_a }.not_to raise_error
     end
   end
-  
+
   context "#to_active_merchant" do
     before do
       credit_card.number = "4111111111111111"
