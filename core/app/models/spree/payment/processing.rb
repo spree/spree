@@ -83,11 +83,12 @@ module Spree
 
           credit_amount ||= credit_allowed >= order.outstanding_balance.abs ? order.outstanding_balance.abs : credit_allowed.abs
           credit_amount = credit_amount.to_f
+          credit_cents = Spree::Money.new(credit_amount, currency: currency).money.cents
 
           if payment_method.payment_profiles_supported?
-            response = payment_method.credit((credit_amount * 100).round, source, response_code, gateway_options)
+            response = payment_method.credit(credit_cents, source, response_code, gateway_options)
           else
-            response = payment_method.credit((credit_amount * 100).round, response_code, gateway_options)
+            response = payment_method.credit(credit_cents, response_code, gateway_options)
           end
 
           record_response(response)
@@ -141,7 +142,7 @@ module Spree
         protect_from_connection_error do
           check_environment
 
-          response = payment_method.send(action, (amount * 100).round,
+          response = payment_method.send(action, money.money.cents,
                                          source,
                                          gateway_options)
           handle_response(response, success_state, :failure)
