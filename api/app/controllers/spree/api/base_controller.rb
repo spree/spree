@@ -4,6 +4,7 @@ module Spree
   module Api
     class BaseController < ActionController::Metal
       include ActionController::StrongParameters
+      include ActionController::ParamsWrapper
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
       include Spree::Core::ControllerHelpers::StrongParameters
@@ -22,6 +23,8 @@ module Spree
       rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
       helper Spree::Api::ApiHelpers
+
+      wrap_parameters format: :json
 
       ssl_allowed
 
