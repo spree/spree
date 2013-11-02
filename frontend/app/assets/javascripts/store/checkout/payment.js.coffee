@@ -1,6 +1,6 @@
-Spree.ready ($) ->
+Spree.onPayment = () ->
   if ($ '#checkout_form_payment').is('*')
-  
+
     $(".cardNumber").payment('formatCardNumber')
     $(".cardExpiry").payment('formatCardExpiry')
     $(".cardCode").payment('formatCardCVC')
@@ -38,7 +38,7 @@ Spree.ready ($) ->
           coupon_status = $("#coupon_status")
 
         url = Spree.url(Spree.routes.apply_coupon_code(Spree.current_order_id),
-          { 
+          {
             order_token: Spree.current_order_token,
             coupon_code: coupon_code
           }
@@ -59,5 +59,6 @@ Spree.ready ($) ->
             $('.continue').attr('disabled', false)
             return false
         })
-        
 
+Spree.ready ($) ->
+  Spree.onPayment()
