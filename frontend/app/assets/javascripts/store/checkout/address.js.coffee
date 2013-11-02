@@ -1,4 +1,4 @@
-Spree.ready ($) ->
+Spree.onAddress = () ->
   if ($ '#checkout_form_address').is('*')
     ($ '#checkout_form_address').validate()
 
@@ -76,5 +76,8 @@ Spree.ready ($) ->
         ($ '#shipping .inner').show()
         ($ '#shipping .inner input, #shipping .inner select').prop 'disabled', false
         Spree.updateState('s')
-    
+
     update_shipping_form_state order_use_billing
+
+Spree.ready ($) ->
+  Spree.onAddress()
