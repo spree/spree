@@ -54,15 +54,20 @@ module Spree
 
       it "can update a line item on the order" do
         line_item = order.line_items.first
-        api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
+        api_put :update, :id => line_item.id, :line_item => { :quantity => 101 }
         response.status.should == 200
+        order.reload
+        order.total.should == 1050 # 50 original due to factory, + 1000 in this test
         json_response.should have_attributes(attributes)
+        json_response["quantity"].should == 101
       end
 
       it "can delete a line item on the order" do
         line_item = order.line_items.first
         api_delete :destroy, :id => line_item.id
         response.status.should == 204
+        order.reload
+        order.line_items.count.should == 4 # 5 original due to factory, - 1 in this test
         lambda { line_item.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
 
