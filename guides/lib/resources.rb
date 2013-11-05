@@ -125,6 +125,18 @@ module Spree
         headers(401) + json(:error => "You are not authorized to perform that action.")
       end
 
+      def invalid_resource
+        headers(422) + json(:error => "Invalid object.")
+      end
+
+      def invalid_token
+        headers(401) + json(:error => "Token is invalid.")
+      end
+
+      def store_not_found
+        headers(404) + json(:error => "Store not found.")
+      end
+
       def text_html(response, status, head = {})
         hs = headers(status, head.merge('Content-Type' => 'text/html'))
         res = CGI.escapeHTML(response)
