@@ -25,7 +25,7 @@ module Spree
     # Updates the order and advances to the next state (when possible.)
     # Overriden by the promo gem if it exists. 
     def update
-      if @order.update_attributes(object_params)
+      if @order.update_from_params(params)
         fire_event('spree.checkout.update')
 
         if @order.next
@@ -77,19 +77,6 @@ module Spree
       # Provides a route to redirect after order completion
       def completion_route
         order_path(@order)
-      end
-
-      def object_params
-        # For payment step, filter order parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
-        if @order.payment?
-          if params[:payment_source].present? && source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
-            params[:order][:payments_attributes].first[:source_attributes] = source_params
-          end
-          if (params[:order][:payments_attributes])
-            params[:order][:payments_attributes].first[:amount] = @order.total
-          end
-        end
-        params[:order]
       end
 
       def raise_insufficient_quantity

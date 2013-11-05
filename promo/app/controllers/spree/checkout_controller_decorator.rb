@@ -2,7 +2,7 @@ Spree::CheckoutController.class_eval do
 
   #TODO 90% of this method is duplicated code. DRY
   def update
-    if @order.update_attributes(object_params)
+    if @order.update_from_params(params)
 
       fire_event('spree.checkout.update')
       unless apply_coupon_code
