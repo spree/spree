@@ -870,7 +870,53 @@ module Spree
         "action"=>"received",
         "stock_item_id"=>1
       }
-    end
+
+    INTEGRATION ||=
+      {
+        "id"=> "5279322c84a816b42e000010",
+        "name"=> "dotcom",
+        "display"=> "Dotcom Distribution",
+        "description"=> "Order fulfillment and tracking using Dotcom Distribution",
+        "help"=> "http://guides.spreecommerce.com/integration/dotcom_integration.html",
+        "url"=> "http://ep-rlm.spree.fm",
+        "category"=> "distribution",
+        "services"=> [
+            {
+                "name"=> "send_shipment",
+                "path"=> "/send_shipment",
+                "description"=> "Send shipment details to Dotcom on completion",
+                "requires"=> {
+                    "parameters"=> [
+                        {
+                            "name"=> "api_key",
+                            "description"=> "Dotcom Distribution API key",
+                            "data_type"=> "string"
+                        },
+                        {
+                            "name"=> "password",
+                            "description"=> "Dotcom Distribution password",
+                            "data_type"=> "string"
+                        },
+                        {
+                            "name"=> "shipping_lookup",
+                            "description"=> "Spree to Dotcom Distribution mapping",
+                            "data_type"=> "list"
+                        }
+                    ]
+                },
+                "recommends"=> {
+                    "messages"=> [
+                        "shipment=>ready"
+                    ]
+                },
+                "produces"=> {}
+            }
+        ],
+        "error_messages"=> [],
+        "icon_url"=> "dotcom.png",
+        "store_id"=> nil
+      }
+  end
 end
 
 include Spree::Resources::Helpers
