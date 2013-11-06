@@ -50,11 +50,9 @@ module Spree
         # hence the use of the update_line_items method, defined within order_decorator.rb.
         order_params.delete("line_items_attributes")
         if @order.update_attributes(order_params)
-          line_item_attributes = params[:order][:line_items].map do |id, attributes|
-            [id, attributes.slice(*permitted_line_item_attributes)]
-          end
-          line_item_attributes = Hash[line_item_attributes].delete_if { |k,v| v.empty? }
-          @order.update_line_items(line_item_attributes)
+
+          deal_with_line_items if params[:order][:line_items]
+
           @order.line_items.reload
           @order.update!
           respond_with(@order, default_template: :show)
@@ -64,6 +62,13 @@ module Spree
       end
 
       private
+        def deal_with_line_items
+          line_item_attributes = params[:order][:line_items].map do |id, attributes|
+            [id, attributes.slice(*permitted_line_item_attributes)]
+          end
+          line_item_attributes = Hash[line_item_attributes].delete_if { |k,v| v.empty? }
+          @order.update_line_items(line_item_attributes)
+        end
 
         def order_params
           if params[:order]
