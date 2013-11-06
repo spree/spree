@@ -47,7 +47,7 @@ You may encounter the follow error messages when using the API.
 
 ## Rules
 
-The following are some simple rules that all Spree API endpoints comply with.
+The following are some simple rules that all Spree Commerce hub API endpoints comply with.
 
 1. All successful requests for the API will return a status of 200.
 2. Successful create and update requests will result in a status of 201 and 200 respectively.
