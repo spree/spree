@@ -309,7 +309,7 @@ How many products to display on the products listing in the admin interface. Def
 
 `allow_backorder_shipping`
 
-Determines if an `InventoryUnit` can ship or not. Defaults to `true`.
+Determines if an `InventoryUnit` can ship or not. Defaults to `false`.
 
 `allow_checkout_on_gateway_error`
 
