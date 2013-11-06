@@ -20,11 +20,12 @@ Developers communicate with the Spree Commerce hub API using the [JSON](http://w
 ### Making an API Call
 
 TODO: Describe where to find your api token
+TODO: Describe where to find your store id
 
 You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a `X-Augury-Token` header along with the request:
 
 ```bash
-$ curl --header "X-Augury-Token: YOUR_KEY_HERE" http://hub.spreecommerce.com/api/samples.json```
+$ curl --header "X-Augury-Token: YOUR_KEY_HERE" http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/integrations.json```
 
 The token allows the request to assume the same level of permissions as the actual user to whom the token belongs.
 
