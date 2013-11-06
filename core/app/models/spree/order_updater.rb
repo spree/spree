@@ -46,7 +46,7 @@ module Spree
       update_adjustment_total
     end
 
-    
+
     # give each of the shipments a chance to update themselves
     def update_shipments
       shipments.each { |shipment| shipment.update!(order) }
@@ -63,7 +63,7 @@ module Spree
 
     def update_adjustment_total
       recalculate_adjustments
-      order.adjustment_total = line_items.sum(:adjustment_total) + 
+      order.adjustment_total = line_items.sum(:adjustment_total) +
                                shipments.sum(:adjustment_total)  +
                                adjustments.eligible.sum(:amount)
       order.tax_total = line_items.sum(:tax_total) + shipments.sum(:tax_total)
@@ -83,7 +83,8 @@ module Spree
         adjustment_total: order.adjustment_total,
         tax_total: order.tax_total,
         payment_total: order.payment_total,
-        total: order.total
+        total: order.total,
+        updated_at: Time.now,
       )
     end
 
@@ -146,7 +147,7 @@ module Spree
 
       order.state_changed('payment')
     end
-    
+
     private
 
       def round_money(n)

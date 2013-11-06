@@ -12,7 +12,10 @@ module Spree
     private
       def set_name
         if root
-          root.update_column(:name, name)
+          root.update_columns(
+            name: name,
+            updated_at: Time.now,
+          )
         else
           self.root = Taxon.create!(taxonomy_id: id, name: name)
         end
