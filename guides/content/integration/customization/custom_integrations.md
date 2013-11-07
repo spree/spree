@@ -51,11 +51,14 @@ The majority of the details within an `endpoint.json` file are related to a serv
 1. **name** - Following the same formatting rules an the overall endpoint name, each service requires a unique name (within the current endpoint).
 2. **path** - The relative path for the service, a message destined for a service will be POST'd to its endpoint's base url + the service path. i.e /order_confirmation
 3. **description** - A short text description of the service.
-4. **requires** - Identifies any required configuration for a given service (currently only supports listing parameters).
+4. **requires** - Identifies any required configuration for a given service (currently only supports listing parameters) unless **optional** flag is provided and set to **true**.
     1. **parameters** - Any parameters required for the given service to process a message. Each parameter has the following attributes:
         1. **name** - Following the same formatting rules as the overall endpoint name, each parameter requires a unique name (within the current endpoint). Note: When parameters are POST'd to a endpoint service along with a message, their names will be prepended with the endpoints name, i.e. "mandrill.api_key".
         2. **description** - A short description of the parameter
         3. **data_type** - Parameters can be "string", "boolean", "integer", "float" or "list".
+        4. **default** - A default string value that will be used.
+        5. **allowed** - An array of allowed string values or a regular expression string that the parameter will be validated against.
+        6. **optional** - A boolean indicating if the parameter will be optional (defaults to false).
 5. **recommends** - Additional configuration that the mapping should use as defaults.
     1. **messages** - an array of message types the service would like to process.
     2. **identifiers** - a hash listing values which should be used to prevent duplicate messages from being processed. The key is an arbitrary name, and value is a path to value(s) within the message.
@@ -83,17 +86,22 @@ The majority of the details within an `endpoint.json` file are related to a serv
             {
                 "name": "order_confirmation.from",
                 "description": "Reply-to address for email",
-                "data_type": "string"
+                "data_type": "string",
+                "allowed": "^[a-zA-Z0-9]+@{1}[a-zA-Z0-9]+"
             },
             {
                 "name": "order_confirmation.subject",
                 "description": "Subject of email",
-                "data_type": "string"
+                "data_type": "string",
+                "default": "Thank you for placing an order!"
             },
             {
                 "name": "order_confirmation.template",
                 "description": "Mandrill template name",
-                "data_type": "string"
+                "data_type": "string",
+                "allowed": [
+                    "One", "Two", "Three"
+                ]
             }
         ]
     },
