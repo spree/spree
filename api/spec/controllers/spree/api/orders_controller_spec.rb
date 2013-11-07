@@ -157,6 +157,15 @@ module Spree
 
         expect(response.status).to eq 201
       end
+
+      it "doesnt blow up when passing a sku into line items hash" do
+        order_params[:line_items]["0"][:sku] = variant.sku
+        order_params[:line_items]["0"][:variant_id] = nil
+        order_params[:line_items]["1"][:sku] = other_variant.sku
+
+        api_post :create, :order => order_params
+        expect(response.status).to eq 201
+      end
     end
 
     # Regression test for #3404
