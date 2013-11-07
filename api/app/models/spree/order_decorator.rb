@@ -66,7 +66,7 @@ Spree::Order.class_eval do
         shipment.adjustment.amount = s[:cost].to_f
         shipment.adjustment.save
       rescue Exception => e
-        raise "#{e.message} #{s}"
+        raise "Order import shipments: #{e.message} #{s}"
       end
     end
   end
@@ -80,7 +80,7 @@ Spree::Order.class_eval do
         payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
         payment.save!
       rescue Exception => e
-        raise "#{e.message} #{p}"
+        raise "Order import payments: #{e.message} #{p}"
       end
     end
   end
@@ -98,7 +98,7 @@ Spree::Order.class_eval do
           item.save!
         end
       rescue Exception => e
-        raise "#{e.message} #{line_item}"
+        raise "Order import line items: #{e.message} #{line_item}"
       end
     end
   end
@@ -111,7 +111,7 @@ Spree::Order.class_eval do
         adjustment.locked = true
         adjustment.save!
       rescue Exception => e
-        raise "#{e.message} #{a}"
+        raise "Order import adjustments: #{e.message} #{a}"
       end
     end
   end
@@ -123,7 +123,7 @@ Spree::Order.class_eval do
         hash.delete(:sku)
       end
     rescue Exception => e
-      raise "#{e.message} #{hash}"
+      raise "Ensure order import variant: #{e.message} #{hash}"
     end
   end
 
@@ -146,7 +146,7 @@ Spree::Order.class_eval do
       address[:country_id] = Spree::Country.where(search).first!.id
 
     rescue Exception => e
-      raise "#{e.message} #{search}"
+      raise "Ensure order import address country: #{e.message} #{search}"
     end
   end
 
@@ -164,7 +164,7 @@ Spree::Order.class_eval do
       address.delete(:state)
       address[:state_id] = Spree::State.where(search).first!.id
     rescue Exception => e
-      raise "#{e.message} #{search}"
+      raise "Ensure order import address state: #{e.message} #{search}"
     end
   end
 end
