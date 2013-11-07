@@ -75,6 +75,7 @@ module Spree
     end
 
     private
+
       def require_phone?
         true
       end
