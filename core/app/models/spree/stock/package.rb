@@ -17,6 +17,10 @@ module Spree
         contents << ContentItem.new(variant, quantity, state)
       end
 
+      def line_items
+        order.line_items
+      end
+
       def weight
         contents.sum { |item| item.variant.weight * item.quantity }
       end
