@@ -29,7 +29,10 @@ module Spree
     @@address_attributes = [
       :firstname, :lastname, :address1, :address2,
       :city, :country_id, :state_id, :zipcode, :phone,
-      :state_name, :alternative_phone, :company]
+      :state_name, :alternative_phone, :company,
+      :country => [:iso, :name, :iso3, :iso_name],
+      :state => [:name, :abbr]
+    ]
 
     @@checkout_attributes = [:email, :use_billing, :shipping_method_id, :coupon_code, :special_instructions]
 
@@ -43,7 +46,7 @@ module Spree
 
     @@option_value_attributes = [:name, :presentation]
 
-    @@payment_attributes = [:amount, :payment_method_id]
+    @@payment_attributes = [:amount, :payment_method_id, :payment_method]
 
     @@product_properties_attributes = [:property_name, :value, :position]
 

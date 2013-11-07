@@ -72,9 +72,12 @@ module Spree
 
         def order_params
           if params[:order]
-            params[:order][:line_items_attributes] = params[:order][:line_items]
+            params[:order][:payments_attributes] = params[:order][:payments] if params[:order][:payments]
+            params[:order][:shipments_attributes] = params[:order][:shipments] if params[:order][:shipments]
+            params[:order][:line_items_attributes] = params[:order][:line_items] if params[:order][:line_items]
             params[:order][:ship_address_attributes] = params[:order][:ship_address] if params[:order][:ship_address]
             params[:order][:bill_address_attributes] = params[:order][:bill_address] if params[:order][:bill_address]
+
             params.require(:order).permit(permitted_order_attributes)
           else
             {}
@@ -82,7 +85,27 @@ module Spree
         end
 
         def permitted_order_attributes
-          super << [:import]
+          if current_api_user.has_spree_role? "admin"
+            super << admin_order_attributes
+          else
+            super
+          end
+        end
+
+        def permitted_shipment_attributes
+          if current_api_user.has_spree_role? "admin"
+            super << admin_shipment_attributes
+          else
+            super
+          end
+        end
+
+        def admin_shipment_attributes
+          [:shipping_method, :stock_location, :inventory_units => [:variant_id, :sku]]
+        end
+
+        def admin_order_attributes
+          [:import, :number, :completed_at, :locked_at]
         end
 
         def next!(options={})

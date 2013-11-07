@@ -145,7 +145,10 @@ module Spree
         }
       end
 
-      before { Zone.stub default_tax: tax_rate.zone }
+      before do
+        Zone.stub default_tax: tax_rate.zone
+        current_api_user.stub has_spree_role?: true
+      end
 
       it "doesnt persist any automatic tax adjustment" do
         expect {
