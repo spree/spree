@@ -3,6 +3,7 @@ module Spree
     class VariantsController < ResourceController
       belongs_to 'spree/product', :find_by => :permalink
       new_action.before :new_before
+      before_filter :load_data, :only => [:new, :create, :edit, :update]
 
       # override the destory method to set deleted_at value
       # instead of actually deleting the product.
@@ -37,6 +38,11 @@ module Spree
             @collection ||= Variant.where(:product_id => parent.id).deleted
           end
           @collection
+        end
+
+      private
+        def load_data
+          @tax_categories = TaxCategory.order(:name)
         end
     end
   end
