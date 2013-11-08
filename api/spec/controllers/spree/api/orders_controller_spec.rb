@@ -390,6 +390,14 @@ module Spree
         end
       end
 
+      it "responds with orders updated_at with miliseconds precision" do
+        api_get :index
+        milisecond = order.updated_at.strftime("%L")
+        updated_at = json_response["orders"].first["updated_at"]
+
+        expect(updated_at.split("T").last).to have_content(milisecond)
+      end
+
       context "with two orders" do
         before { create(:order) }
 
