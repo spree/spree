@@ -583,6 +583,8 @@ en:
     height: Height
     hide_cents: Hide cents
     home: Home
+    navigation:
+      admin: Admin
     i18n:
       available_locales: Available Locales
       fields: Fields

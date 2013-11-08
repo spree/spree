@@ -1,6 +1,9 @@
 <nav class="columns sixteen">
   <ul id="main-nav-bar" class="inline" data-hook>
     <li id="home-link" data-hook><%= link_to Spree.t(:home), spree.root_path %></li>
+    <% if try_spree_current_user.try(:has_spree_role?, :admin) %> 
+      <li id="admin-link" data-hook><%= link_to Spree.t('navigation.admin'), spree.admin_path %></li>
+    <% end %>
     <li id="link-to-cart" data-hook><%= link_to_cart %></li>
   </ul>
 </nav>
