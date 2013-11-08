@@ -166,7 +166,7 @@ module Spree
           end
 
           def has_checkout_step?(step)
-            step.present? ? self.checkout_steps.include?(step) : false
+            step.present? && self.checkout_steps.include?(step)
           end
 
           def checkout_step_index(step)
@@ -178,7 +178,7 @@ module Spree
           end
 
           def can_go_to_state?(state)
-            return false unless self.state.present? && has_checkout_step?(state) && has_checkout_step?(self.state)
+            return false unless has_checkout_step?(self.state) && has_checkout_step?(state)
             checkout_step_index(state) > checkout_step_index(self.state)
           end
         end
