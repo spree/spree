@@ -64,7 +64,12 @@ module Spree
             @taxon.move_to_right_of(new_siblings[new_position-1]) # we move down
           end
           # Reset legacy position, if any extensions still rely on it
-          new_parent.children.reload.each{|t| t.update_column(:position, t.position)}
+          new_parent.children.reload.each do |t|
+            t.update_columns(
+              position: t.position,
+              updated_at: Time.now,
+            )
+          end
 
           if parent_id
             @taxon.reload

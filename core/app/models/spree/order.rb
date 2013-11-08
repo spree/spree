@@ -475,7 +475,10 @@ module Spree
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
-        self.update_column(:state, "address")
+        self.update_columns(
+          state: "address",
+          updated_at: Time.now,
+        )
       end
     end
 
