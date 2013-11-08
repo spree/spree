@@ -64,6 +64,28 @@ describe "Checkout", inaccessible: true do
         Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
       end
     end
+
+    #regression test for #3945
+    context "when Spree::Config[:always_include_confirm_step] is true" do
+      before do
+        Spree::Config[:always_include_confirm_step] = true
+        # Spree::Order.any_instance.stub :confirmation_required? => true
+      end
+
+      it "displays confirmation step", :js => true do
+        add_mug_to_cart
+        click_button "Checkout"
+
+        fill_in "order_email", :with => "ryan@spreecommerce.com"
+        fill_in_address
+
+        click_button "Save and Continue"
+        click_button "Save and Continue"
+        click_button "Save and Continue"
+
+        page.should have_content("Place Order")
+      end
+    end
   end
 
   #regression test for #2694
