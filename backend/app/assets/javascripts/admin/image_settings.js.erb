@@ -25,10 +25,9 @@ $(document).ready(function() {
   });
 
   // Handle adding new styles
-  var styles_hash_index = 1;
   $(document).on('click', '.add_new_style', function(e) {
     e.preventDefault();
-    $('#new-styles').append(generate_html_for_hash("new_attachment_styles", styles_hash_index));
+    $('#new-styles').append(generate_html_for_hash("new_attachment_styles", new Date().getTime()));
   });
 
   // Handle adding new headers
