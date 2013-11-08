@@ -40,7 +40,7 @@ module Spree
 
     def copy_tax_category
       if variant
-        self.tax_category = variant.product.tax_category
+        self.tax_category = variant.tax_category
       end
     end
 

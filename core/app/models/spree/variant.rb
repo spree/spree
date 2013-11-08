@@ -3,10 +3,11 @@ module Spree
     acts_as_paranoid
 
     belongs_to :product, touch: true, class_name: 'Spree::Product'
+    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
-                        :tax_category_id, :shipping_category_id, :meta_description,
-                        :meta_keywords, :tax_category, :shipping_category
+                        :shipping_category_id, :meta_description, :meta_keywords,
+                        :shipping_category
 
     has_many :inventory_units
     has_many :line_items
@@ -44,6 +45,14 @@ module Spree
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
+    end
+
+    def tax_category
+      if self[:tax_category_id].nil?
+        product.tax_category
+      else
+        TaxCategory.find(self[:tax_category_id])
+      end
     end
 
     def cost_price=(price)
