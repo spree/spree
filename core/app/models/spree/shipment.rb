@@ -183,7 +183,10 @@ module Spree
     def update!(order)
       old_state = state
       new_state = determine_state(order)
-      update_column :state, new_state
+      update_columns(
+        state: new_state,
+        updated_at: Time.now,
+      )
       after_ship if new_state == 'shipped' and old_state != 'shipped'
     end
 
@@ -232,7 +235,8 @@ module Spree
     def update_amounts
       self.update_columns(
         cost: selected_shipping_rate.cost,
-        adjustment_total: adjustments.map(&:update!).compact.sum
+        adjustment_total: adjustments.map(&:update!).compact.sum,
+        updated_at: Time.now,
       )
     end
 
@@ -276,7 +280,10 @@ module Spree
 
       def update_order_shipment_state
         new_state = OrderUpdater.new(order).update_shipment_state
-        order.update_column(:shipment_state, new_state)
+        order.update_columns(
+          shipment_state: new_state,
+          updated_at: Time.now,
+        )
       end
 
       def send_shipped_email

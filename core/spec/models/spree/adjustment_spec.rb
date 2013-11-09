@@ -39,7 +39,7 @@ describe Spree::Adjustment do
       end
     end
   end
-  
+
   context "#display_amount" do
     before { adjustment.amount = 10.55 }
 
@@ -87,7 +87,7 @@ describe Spree::Adjustment do
 
   context '#update!' do
     context "when adjustment is immutable" do
-      before { adjustment.stub :immutable? => true } 
+      before { adjustment.stub :immutable? => true }
 
       it "does not update the adjustment" do
         adjustment.should_not_receive(:update_column)
@@ -96,13 +96,13 @@ describe Spree::Adjustment do
     end
 
     context "when adjustment mutable" do
-      before { adjustment.stub :immutable? => false } 
+      before { adjustment.stub :immutable? => false }
 
       it "updates the amount" do
         adjustment.stub :adjustable => double("Adjustable")
         adjustment.stub :source => double("Source")
         adjustment.source.should_receive("compute_amount").with(adjustment.adjustable).and_return(5)
-        adjustment.should_receive(:update_column).with(:amount, 5)
+        adjustment.should_receive(:update_columns).with(amount: 5, updated_at: kind_of(Time))
         adjustment.update!
       end
     end

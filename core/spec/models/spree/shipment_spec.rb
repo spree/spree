@@ -128,12 +128,12 @@ describe Spree::Shipment do
       end
     end
   end
-  
+
   context "#update!" do
     shared_examples_for "immutable once shipped" do
       it "should remain in shipped state once shipped" do
         shipment.state = 'shipped'
-        shipment.should_receive(:update_column).with(:state, 'shipped')
+        shipment.should_receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
       end
     end
@@ -141,7 +141,7 @@ describe Spree::Shipment do
     shared_examples_for "pending if backordered" do
       it "should have a state of pending if backordered" do
         shipment.stub(inventory_units: [mock_model(Spree::InventoryUnit, backordered?: true)])
-        shipment.should_receive(:update_column).with(:state, 'pending')
+        shipment.should_receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
         shipment.update!(order)
       end
     end
@@ -149,7 +149,7 @@ describe Spree::Shipment do
     context "when order cannot ship" do
       before { order.stub can_ship?: false }
       it "should result in a 'pending' state" do
-        shipment.should_receive(:update_column).with(:state, 'pending')
+        shipment.should_receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
         shipment.update!(order)
       end
     end
@@ -157,7 +157,7 @@ describe Spree::Shipment do
     context "when order is paid" do
       before { order.stub paid?: true }
       it "should result in a 'ready' state" do
-        shipment.should_receive(:update_column).with(:state, 'ready')
+        shipment.should_receive(:update_columns).with(state: 'ready', updated_at: kind_of(Time))
         shipment.update!(order)
       end
       it_should_behave_like 'immutable once shipped'
@@ -168,7 +168,7 @@ describe Spree::Shipment do
       before { order.stub paid?: false }
       it "should result in a 'pending' state" do
         shipment.state = 'ready'
-        shipment.should_receive(:update_column).with(:state, 'pending')
+        shipment.should_receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
         shipment.update!(order)
       end
       it_should_behave_like 'immutable once shipped'
@@ -179,7 +179,7 @@ describe Spree::Shipment do
       before { order.stub payment_state: 'credit_owed', paid?: true }
       it "should result in a 'ready' state" do
         shipment.state = 'pending'
-        shipment.should_receive(:update_column).with(:state, 'ready')
+        shipment.should_receive(:update_columns).with(state: 'ready', updated_at: kind_of(Time))
         shipment.update!(order)
       end
       it_should_behave_like 'immutable once shipped'
@@ -191,7 +191,7 @@ describe Spree::Shipment do
         shipment.state = 'pending'
         shipment.should_receive :after_ship
         shipment.stub determine_state: 'shipped'
-        shipment.should_receive(:update_column).with(:state, 'shipped')
+        shipment.should_receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
       end
     end
