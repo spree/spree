@@ -255,12 +255,6 @@ module Spree
         "#{Spree.t(:shipping)} (#{shipping_method.name})"
       end
 
-      def validate_shipping_method
-        unless shipping_method.nil?
-          errors.add :shipping_method, Spree.t(:is_not_available_to_shipment_address) unless shipping_method.include?(address)
-        end
-      end
-
       def after_ship
         inventory_units.each &:ship!
         adjustment.finalize!
