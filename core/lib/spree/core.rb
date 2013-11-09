@@ -15,10 +15,11 @@ module Spree
   mattr_accessor :user_class
 
   def self.user_class
-    if @@user_class.is_a?(Class)
-      raise "Spree.user_class MUST be a String object, not a Class object."
-    elsif @@user_class.is_a?(String)
-      @@user_class.constantize
+    case @@user_class
+    when Class
+      raise "Spree.user_class MUST be a String or Symbol object, not a Class object."
+    when String, Symbol
+      @@user_class.to_s.constantize
     end
   end
 
