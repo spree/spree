@@ -46,6 +46,25 @@ module Spree
         response.status.should == 204
         lambda { line_item.reload }.should raise_error(ActiveRecord::RecordNotFound)
       end
+
+      context "order contents changed after shipments were created" do
+        let!(:order) { Order.create }
+        let!(:line_item) { order.contents.add(product.master) }
+
+        before { order.create_proposed_shipments }
+
+        it "clear out shipments on create" do
+          expect(order.reload.shipments).not_to be_empty
+          api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
+          expect(order.reload.shipments).to be_empty
+        end
+
+        it "clear out shipments on update" do
+          expect(order.reload.shipments).not_to be_empty
+          api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
+          expect(order.reload.shipments).to be_empty
+        end
+      end
     end
 
     context "as just another user" do
@@ -68,6 +87,5 @@ module Spree
         lambda { line_item.reload }.should_not raise_error
       end
     end
-
   end
 end

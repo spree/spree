@@ -13,11 +13,19 @@ module CapybaraExt
   end
 
   def within_row(num, &block)
-    within("table.index tbody tr:nth-child(#{num})", &block)
+    if example.metadata[:js]
+      within("table.index tbody tr:nth-child(#{num})", &block)
+    else
+      within(:xpath, all("table.index tbody tr")[num-1].path, &block)
+    end
   end
 
   def column_text(num)
-    find("td:nth-child(#{num})").text
+    if example.metadata[:js]
+      find("td:nth-child(#{num})").text
+    else
+      all("td")[num-1].text
+    end
   end
 
   def set_select2_field(field, value)
@@ -94,7 +102,7 @@ module CapybaraExt
 
   def wait_for_ajax
     counter = 0
-    while page.execute_script("return $.active").to_i > 0
+    while page.evaluate_script("$.active").to_i > 0
       counter += 1
       sleep(0.1)
       raise "AJAX request took longer than 5 seconds." if counter >= 50

@@ -153,7 +153,13 @@ Spree::Order.class_eval do
       end
 
       address.delete(:state)
-      address[:state_id] = Spree::State.where(search).first!.id
+      search[:country_id] = address[:country_id]
+
+      if state = Spree::State.where(search).first
+        address[:state_id] = state.id
+      else
+        address[:state_name] = search[:name] || search[:abbr]
+      end
     rescue Exception => e
       raise "#{e.message} #{search}"
     end

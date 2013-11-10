@@ -81,6 +81,24 @@ describe Spree::Money do
     end
   end
 
+  context "sign before symbol" do
+    it "defaults to -$10.00" do
+      money = Spree::Money.new(-10)
+      money.to_s.should == "-$10.00"
+    end
+
+    it "passed in option" do
+      money = Spree::Money.new(-10, :sign_before_symbol => false)
+      money.to_s.should == "$-10.00"
+    end
+
+    it "config option" do
+      Spree::Config[:currency_sign_before_symbol] = false
+      money = Spree::Money.new(-10)
+      money.to_s.should == "$-10.00"
+    end
+  end
+
   context "JPY" do
     before do
       configure_spree_preferences do |config|

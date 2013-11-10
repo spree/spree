@@ -790,6 +790,7 @@ en:
     payment_method: Payment Method
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
+    payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
     payment_state: Payment State

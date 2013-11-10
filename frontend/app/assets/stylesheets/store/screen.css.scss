@@ -113,7 +113,7 @@ input[type="password"], input[type="search"], input[type="tel"],
 input[type="text"], input[type="time"], input[type="url"],
 input[type="week"] {
   border: $default_border;
-  padding: 5px 10px;
+  padding: 5px;
   font-family: $ff_base;
   font-size: $input_box_font_size;
 
@@ -151,7 +151,7 @@ span.required {
 fieldset {
   margin: 0;
   min-width: 100%;
-  
+
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
@@ -738,7 +738,7 @@ ul#products {
 
 #billing {
   input[type="text"], input[type="email"],
-  input[type="tel"], input[type="number"], 
+  input[type="tel"], input[type="number"],
   select, textarea {
     width: 100%;
   }

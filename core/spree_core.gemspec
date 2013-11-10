@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'
 
-  s.add_dependency 'activemerchant', '1.40.0'
+  s.add_dependency 'activemerchant', '1.41.0'
   s.add_dependency 'acts_as_list', '= 0.2.0'
   s.add_dependency 'awesome_nested_set', '2.1.5'
-  s.add_dependency 'aws-sdk', '~> 1.14.1'
+  s.add_dependency 'aws-sdk', '1.11.1' # temporarily locked down due to https://github.com/aws/aws-sdk-ruby/issues/273
   s.add_dependency 'cancan', '~> 1.6.10'
   s.add_dependency 'deface', '= 0.9.1'
   s.add_dependency 'ffaker', '~> 1.16'
@@ -28,11 +28,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'kaminari', '~> 0.14.1'
-  s.add_dependency 'money', '~> 5.1' # Allows anyone to use money from master. See #2737.
+  s.add_dependency 'money', '~> 5.1.1' # Move this dependency forward
   s.add_dependency 'paperclip', '~> 3.4.1'
   s.add_dependency 'paranoia', '~> 1.3'
   s.add_dependency 'rails', '~> 3.2.14'
-  s.add_dependency 'ransack', '~> 1.0.0'
+  s.add_dependency 'ransack', '~> 1.1.0'
   s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'stringex', '~> 1.5.1'
   s.add_dependency 'truncate_html', '0.9.2'

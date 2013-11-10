@@ -66,9 +66,7 @@ module Spree
     end
 
     def to_param
-      number if number
-      generate_shipment_number unless number
-      number.to_s.to_url.upcase
+      number
     end
 
     def backordered?
