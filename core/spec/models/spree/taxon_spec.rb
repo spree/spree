@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Spree::Taxon do
-  let(:taxon) { Spree::Taxon.new(:name => "Ruby on Rails") }
+  let(:taxon) { FactoryGirl.build(:taxon, :name => "Ruby on Rails") }
 
   context "set_permalink" do
 
@@ -19,10 +19,8 @@ describe Spree::Taxon do
     end
 
     context "with parent taxon" do
-      before do
-        taxon.stub :parent_id => 123
-        taxon.stub :parent => mock_model(Spree::Taxon, :permalink => "brands")
-      end
+      let(:parent) { FactoryGirl.build(:taxon, :permalink => "brands") }
+      before       { taxon.stub :parent => parent }
 
       it "should set permalink correctly when taxon has parent" do
         taxon.set_permalink
@@ -40,6 +38,23 @@ describe Spree::Taxon do
         taxon.set_permalink
         taxon.permalink.should == "brands/wo"
       end
+
+      # Regression test for #3390
+      context "setting a new node sibling position via :child_index=" do
+        let(:idx) { rand(0..100) }
+        before { parent.stub(:move_to_child_with_index) }
+        
+        context "taxon is not new" do
+          before { taxon.stub(:new_record?).and_return(false) }
+
+          it "passes the desired index move_to_child_with_index of :parent " do
+            taxon.should_receive(:move_to_child_with_index).with(parent, idx)
+
+            taxon.child_index = idx
+          end
+        end
+      end
+
     end
   end
 
@@ -51,5 +66,4 @@ describe Spree::Taxon do
       expect { taxonomy.root.children.where(:name => "Some name").first_or_create }.not_to raise_error
     end
   end
-
 end
