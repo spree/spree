@@ -646,6 +646,15 @@ en:
     look_for_similar_items: Look for similar items
     mail_method_settings: Mail Method Settings
     mail_methods: Mail Methods
+    mail_settings:
+      auth:
+        none: "None"
+        plain: "Plain"
+        login: "Login"
+        cram_md5: "cram_md5"
+      security:
+        ssl: "SSL"
+        tls: "TLS"
     make_refund: Make refund
     master_price: Master Price
     match_choices:
