@@ -16,9 +16,7 @@ module Spree
       url: '/spree/taxons/:id/:style/:basename.:extension',
       path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
       default_url: '/assets/default_taxon.png'
-
-    default_scope -> { order("#{self.table_name}.position") }
-
+      
     include Spree::Core::S3Support
     supports_s3 :icon
 
@@ -71,5 +69,14 @@ module Spree
       ancestor_chain + "#{name}"
     end
 
+    # awesome_nested_set sorts by :lft and :rgt. This call re-inserts the child
+    # node so that its resulting position matches the observable 0-indexed position.
+    # ** Note ** no :position column needed - a_n_s doesn't handle the reordering if
+    #  you bring your own :order_column.
+    #
+    #  See #3390 for background.
+    def child_index=(idx)
+      move_to_child_with_index(parent, idx.to_i)
+    end
   end
 end
