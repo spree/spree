@@ -344,4 +344,22 @@ describe Spree::Variant do
       expect(variant.total_on_hand).to eq(Spree::Stock::Quantifier.new(variant).total_on_hand)
     end
   end
+
+  describe '#tax_category' do
+    context 'when tax_category is nil' do
+      let(:product) { build(:product) }
+      let(:variant) { build(:variant, product: product, tax_category_id: nil) }
+      it 'returns the parent products tax_category' do
+        expect(variant.tax_category).to eq(product.tax_category)
+      end
+    end
+
+    context 'when tax_category is set' do
+      let(:tax_category) { create(:tax_category) }
+      let(:variant) { build(:variant, tax_category: tax_category) }
+      it 'returns the tax_category set on itself' do
+        expect(variant.tax_category).to eq(tax_category)
+      end
+    end
+  end
 end
