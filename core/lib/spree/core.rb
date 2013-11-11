@@ -54,3 +54,30 @@ require 'spree/core/product_duplicator'
 ActiveRecord::Base.class_eval do
   include CollectiveIdea::Acts::NestedSet
 end
+
+# Monkey patch to give us miliseconds precision in timestamps
+module ActiveSupport
+  class TimeWithZone
+    # Coerces time to a string for JSON encoding. The default format is ISO 8601. You can get
+    # %Y/%m/%d %H:%M:%S +offset style by setting <tt>ActiveSupport::JSON::Encoding.use_standard_json_time_format</tt>
+    # to false.
+    #
+    # ==== Examples
+    #
+    #   # With ActiveSupport::JSON::Encoding.use_standard_json_time_format = true
+    #   Time.utc(2005,2,1,15,15,10).in_time_zone.to_json
+    #   # => "2005-02-01T15:15:10.001Z"
+    #
+    #   # With ActiveSupport::JSON::Encoding.use_standard_json_time_format = false
+    #   Time.utc(2005,2,1,15,15,10).in_time_zone.to_json
+    #   # => "2005/02/01 15:15:10 +0000"
+    #
+    def as_json(options = nil)
+      if ActiveSupport::JSON::Encoding.use_standard_json_time_format
+        xmlschema(3)
+      else
+        %(#{time.strftime("%Y/%m/%d %H:%M:%S")} #{formatted_offset(false)})
+      end
+    end
+  end
+end
