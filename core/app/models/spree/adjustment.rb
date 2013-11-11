@@ -46,7 +46,7 @@ module Spree
     end
 
     after_create :update_adjustable_adjustment_total
-    
+
     scope :open, -> { where(state: 'open') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
@@ -65,7 +65,7 @@ module Spree
     def promotion?
       source.class < Spree::PromotionAction
     end
-    
+
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
     # Passing a target here would always be recommended as it would avoid
@@ -76,7 +76,10 @@ module Spree
     def update!(target = nil)
       return amount if immutable?
       amount = source.compute_amount(target || adjustable)
-      self.update_column(:amount, amount)
+      self.update_columns(
+        amount: amount,
+        updated_at: Time.now,
+      )
       if promotion?
         self.update_column(:eligible, source.promotion.eligible?(adjustable))
       end

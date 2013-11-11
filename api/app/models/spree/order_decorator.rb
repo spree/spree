@@ -52,7 +52,7 @@ Spree::Order.class_eval do
         shipment.shipping_rates.create!(:shipping_method => shipping_method,
                                         :cost => s[:cost])
       rescue Exception => e
-        raise "#{e.message} #{s}"
+        raise "Order import shipments: #{e.message} #{s}"
       end
     end
   end
@@ -66,7 +66,7 @@ Spree::Order.class_eval do
         payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
         payment.save!
       rescue Exception => e
-        raise "#{e.message} #{p}"
+        raise "Order import payments: #{e.message} #{p}"
       end
     end
   end
@@ -81,7 +81,7 @@ Spree::Order.class_eval do
         line_item = self.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
         line_item.update_attributes(extra_params) unless extra_params.empty?
       rescue Exception => e
-        raise "#{e.message} #{line_item}"
+        raise "Order import line items: #{e.message} #{line_item}"
       end
     end
   end
@@ -94,7 +94,7 @@ Spree::Order.class_eval do
         adjustment.save!
         adjustment.finalize!
       rescue Exception => e
-        raise "#{e.message} #{a}"
+        raise "Order import adjustments: #{e.message} #{a}"
       end
     end
   end
@@ -106,7 +106,7 @@ Spree::Order.class_eval do
         hash.delete(:sku)
       end
     rescue Exception => e
-      raise "#{e.message} #{hash}"
+      raise "Ensure order import variant: #{e.message} #{hash}"
     end
   end
 
@@ -129,7 +129,7 @@ Spree::Order.class_eval do
       address[:country_id] = Spree::Country.where(search).first!.id
 
     rescue Exception => e
-      raise "#{e.message} #{search}"
+      raise "Ensure order import address country: #{e.message} #{search}"
     end
   end
 
@@ -153,7 +153,7 @@ Spree::Order.class_eval do
         address[:state_name] = search[:name] || search[:abbr]
       end
     rescue Exception => e
-      raise "#{e.message} #{search}"
+      raise "Ensure order import address state: #{e.message} #{search}"
     end
   end
 

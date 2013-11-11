@@ -28,13 +28,13 @@ module Spree
         choose_best_promotion_adjustment
       end
       promo_total = best_promotion_adjustment.try(:amount).to_f
-      item.update_column(:promo_total, promo_total)
-
       tax_total = adjustments.tax.reload.map(&:update!).compact.sum
 
       item.update_columns(
+        :promo_total => promo_total,
         :tax_total => tax_total,
         :adjustment_total => promo_total + tax_total,
+        :updated_at => Time.now,
       )
     end
 
