@@ -16,9 +16,9 @@ module Spree
 
   def self.user_class
     if @@user_class.is_a?(Class)
-      raise "Spree.user_class MUST be a String object, not a Class object."
-    elsif @@user_class.is_a?(String)
-      @@user_class.constantize
+      raise "Spree.user_class MUST be a String or Symbol object, not a Class object."
+    elsif @@user_class.is_a?(String) || @@user_class.is_a?(Symbol)
+      @@user_class.to_s.constantize
     end
   end
 
