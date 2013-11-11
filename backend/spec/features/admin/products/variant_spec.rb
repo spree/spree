@@ -23,6 +23,7 @@ describe "Variants" do
       find('input#variant_height').value.should == "3.00"
       find('input#variant_width').value.should == "1.00"
       find('input#variant_depth').value.should == "1.50"
+      expect(page).to have_select('variant[tax_category_id]')
     end
   end
 
