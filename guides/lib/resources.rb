@@ -871,6 +871,15 @@ module Spree
         "stock_item_id"=>1
       }
 
+    MESSAGE ||=
+      {
+        "message"=>"stock:change",
+        "payload"=>{
+            "sku"=>"APC-00001",
+            "quantity"=>10
+        }
+      }
+
     INTEGRATION ||=
       {
         "id"=> "5279322c84a816b42e000010",
