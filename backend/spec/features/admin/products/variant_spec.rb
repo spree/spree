@@ -17,12 +17,12 @@ describe "Variants" do
       within_row(1) { click_icon :edit }
       click_link "Variants"
       click_on "New Variant"
-      find('input#variant_price').value.should == "1.99"
-      find('input#variant_cost_price').value.should == "1.00"
-      find('input#variant_weight').value.should == "2.50"
-      find('input#variant_height').value.should == "3.00"
-      find('input#variant_width').value.should == "1.00"
-      find('input#variant_depth').value.should == "1.50"
+      expect(find('input#variant_price').value).to eq("1.99")
+      expect(find('input#variant_cost_price').value).to eq("1.00")
+      expect(find('input#variant_weight').value).to eq("2.50")
+      expect(find('input#variant_height').value).to eq("3.00")
+      expect(find('input#variant_width').value).to eq("1.00")
+      expect(find('input#variant_depth').value).to eq("1.50")
       expect(page).to have_select('variant[tax_category_id]')
     end
   end
