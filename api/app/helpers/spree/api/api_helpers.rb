@@ -60,7 +60,7 @@ module Spree
       end
 
       def taxon_attributes
-        [:id, :name, :pretty_name, :permalink, :position, :parent_id, :taxonomy_id]
+        [:id, :name, :pretty_name, :permalink, :parent_id, :taxonomy_id]
       end
 
       def inventory_unit_attributes
