@@ -94,7 +94,7 @@ module Spree
     end
 
     def has_payment_profile?
-      gateway_customer_profile_id.present?
+      gateway_customer_profile_id.present? || gateway_payment_profile_id.present?
     end
 
     def spree_cc_type
