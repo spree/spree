@@ -97,7 +97,8 @@ module Spree
       # If we attempt to call 'source' before the reload, then source is currently
       # the order object. After calling a reload, the source is the Shipment.
       reload
-      originator.update_adjustment(self, calculable || source) if originator.present?
+      calculable = source unless calculable == source
+      originator.update_adjustment(self, calculable) if originator.present?
       set_eligibility
     end
 
