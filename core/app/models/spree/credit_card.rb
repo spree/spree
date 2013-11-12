@@ -7,7 +7,7 @@ module Spree
 
     attr_accessor :number, :verification_value
 
-    validates :month, :year, numericality: { only_integer: true }
+    validates :month, :year, numericality: { only_integer: true }, unless: :has_payment_profile?
     validates :number, presence: true, unless: :has_payment_profile?, on: :create
     validates :verification_value, presence: true, unless: :has_payment_profile?, on: :create
     validate :expiry_not_in_the_past
