@@ -925,6 +925,63 @@ module Spree
         "icon_url"=> "dotcom.png",
         "store_id"=> nil
       }
+
+    NOTIFICATION ||=
+      {
+        "id"=> "52794a8b84a816f2f5000241",
+        "store_id"=> "5279008084a81693d5000001",
+        "message_id"=> "52794a8a84a816f2f400022e",
+        "attributes"=> {
+            "_id"=> "52794a8b84a816f2f5000241",
+            "store_id"=> "5279008084a81693d5000001",
+            "message_id"=> "52794a8a84a816f2f400022e",
+            "subject"=> "Completed order poll",
+            "description"=> "Spree endpoint successfully polled for orders.",
+            "level"=> "info",
+            "occurrences"=> 1,
+            "logged_on"=> "2013-11-05T19:44:11Z",
+            "last_update"=> "2013-11-05T19:44:11Z",
+            "origin"=> "spree.order_poll",
+            "reference_id"=> nil,
+            "reference_token"=> nil,
+            "reference_type"=> nil
+        },
+        "level"=> "info",
+        "subject"=> "Completed order poll",
+        "description"=> "Spree endpoint successfully polled for orders.",
+        "occurrences"=> 1,
+        "logged_on"=> "2013-11-05T19:44:11Z",
+        "last_update"=> "2013-11-05T19:44:11Z",
+        "reference_type"=> nil,
+        "reference_id"=> nil,
+        "reference_token"=> nil
+      }
+
+    ERROR_NOTIFICATION ||=
+      {
+        "id"=> "52794a8b84a816f2f5000241",
+        "store_id"=> "5279008084a81693d5000001",
+        "message_id"=> "52794a8a84a816f2f400022e",
+        "attributes"=> {
+            "_id"=> "52794a8b84a816f2f5000241",
+            "store_id"=> "5279008084a81693d5000001",
+            "message_id"=> "52794a8a84a816f2f400022e",
+            "subject"=> "Could not complete order poll",
+            "description"=> "Spree endpoint failed while polling for orders.",
+            "level"=> "error",
+            "occurrences"=> 1,
+            "logged_on"=> "2013-11-05T19:44:11Z",
+            "last_update"=> "2013-11-05T19:44:11Z",
+            "origin"=> "spree.order_poll",
+            "reference_id"=> nil,
+            "reference_token"=> nil,
+            "reference_type"=> nil
+        },
+        "level"=> "error",
+        "occurrences"=> 1,
+        "logged_on"=> "2013-11-05T19:44:11Z",
+        "last_update"=> "2013-11-05T19:44:11Z",
+      }
   end
 end
 

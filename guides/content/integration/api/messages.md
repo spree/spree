@@ -51,7 +51,7 @@ Let's go over pushing a couple different messages to the Spree Commerce hub. Fir
 To push a `stock:change` message, make the following request:
 
 ```text
-post http://hub.spreecommerce.com/api/stores/your_store_id/messages```
+POST http://hub.spreecommerce.com/api/stores/your_store_id/messages```
 
 with the following JSON request body:
 
