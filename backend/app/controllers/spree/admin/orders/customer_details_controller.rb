@@ -48,6 +48,10 @@ module Spree
             @order = Order.includes(:adjustments).find_by_number!(params[:order_id])
           end
 
+          def model_class
+            Spree::Order
+          end
+
       end
     end
   end
