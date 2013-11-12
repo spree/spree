@@ -19,8 +19,10 @@ Developers communicate with the Spree Commerce hub API using the [JSON](http://w
 
 ### Making an API Call
 
-TODO: Describe where to find your api token
-TODO: Describe where to find your store id
+***
+To find your hub API token and Store ID, navigate to /admin/integration/connection within your
+hub connected store.
+***
 
 You will need an authentication token to access the API. These keys can be generated on the user edit screen within the admin interface. To make a request to the API, pass a `X-Augury-Token` header along with the request:
 
