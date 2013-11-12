@@ -4,7 +4,9 @@
     <% unless (cc_type = source.cc_type).blank? %>
       <%= image_tag "credit_cards/icons/#{cc_type}.png" %>
     <% end %>
-    <%= Spree.t(:ending_in) %> <%= source.last_digits %>
+    <% if source.last_digits %>
+      <%= Spree.t(:ending_in) %> <%= source.last_digits %>
+    <% end %>
   </span>
   <br />
   <span class="full-name">
