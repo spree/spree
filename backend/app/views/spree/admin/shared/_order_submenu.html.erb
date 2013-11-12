@@ -6,7 +6,7 @@
       </li>
     <% end %>
 
-    <% if can? :update, @order && checkout_steps.include?("address") %>
+    <% if can?(:update, @order) && checkout_steps.include?("address") %>
       <li<%== ' class="active"' if current == 'Customer Details' %>>
         <%= link_to_with_icon 'icon-user', Spree.t(:customer_details), admin_order_customer_url(@order) %>
       </li>
@@ -18,7 +18,7 @@
       </li>
     <% end %>
 
-    <% if can? :index, @order.payments && @payment_required %>
+    <% if can?(:index, @order.payments) && @payment_required %>
       <li<%== ' class="active"' if current == 'Payments' %>>
         <%= link_to_with_icon 'icon-credit-card', Spree.t(:payments), admin_order_payments_url(@order) %>
       </li>
