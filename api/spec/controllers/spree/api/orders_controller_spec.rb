@@ -132,6 +132,15 @@ module Spree
       expect(Order.last.line_items.first.price.to_f).to eq(variant.price)
     end
 
+    context "admin user imports order" do
+      before { current_api_user.stub has_spree_role?: true }
+
+      it "sets channel" do
+        api_post :create, :order => { channel: "amazon" }
+        expect(json_response['channel']).to eq "amazon"
+      end
+    end
+
     # Regression test for #3404
     it "does not update line item needlessly" do
       Order.should_receive(:create!).and_return(order = Spree::Order.new)

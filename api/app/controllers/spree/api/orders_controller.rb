@@ -113,7 +113,7 @@ module Spree
         end
 
         def admin_order_attributes
-          [:import, :number, :completed_at, :locked_at]
+          [:import, :number, :completed_at, :locked_at, :channel]
         end
 
         def next!(options={})
